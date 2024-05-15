@@ -64,20 +64,44 @@ For detailed information on the functional requirements, please refer to our Sof
 
 ### Team Profiles
 
-- ![Jessica Bloem](res/img/team%20photos/Jess.jpg) **Jessica Bloem** - Project Manager, Business Analyst, System Architect and Integration Engineer
-  - Jessica is a diligent and committed Computer Science student at the University of Pretoria. With experience working in programming languages including C++, Java, and Python, she possesses a strong foundation in software development. Her interests lie in backend development, API integration and system design.
-  
-- ![Hamza Mokiwa](res/img/team%20photos/Hamza.jpg) **Hamza Mokiwa** - System Architect, DevOps, Integration, Services and Testing Engineer 
-  - As a final-year Computer Science student, Hamza has a strong interest in backend development, Quality Assurance and DevOps. As such, he has honed his skills in software testing and automation of various processes in the (CI/CD) pipeline, ensuring efficient and reliable software deployment.
-  
-- ![Kumbirai Shonhiwa](res/img/team%20photos/Kumbi.jpg) **Kumbirai Shonhiwa** - UX/UI Designer, Services and Data Engineer
-  - As a final year Computer Science student at the University of Pretoria, Kumbi brings a wealth of experience and a diverse skill set to the table. With a strong foundation in Java, C++, and Python, he has honed his expertise in both frontend and backend development. His interests lie in database systems, cybersecurity and AI. His particularly passionate about frontend development and UI/UX design.
-  
-- ![Bob Dlamini](res/img/team%20photos/Bob.jpg) **Bob Dlamini** - UX Designer, UI, Services and Testing Engineer
-  - Bob is an adaptable web developer with a diverse skill set. With a background in teaching imperative programming in C++ to first-year students and hands-on experience in front-end development, he brings a unique blend of expertise to any team. He excels at solving complex problems and finding innovative solutions. His ability to analyze situations from multiple angles ensures efficient problem-solving. Bob seamlessly transitions between front-end and back-end development. He takes pride in his ability to learn quickly and solve problems efficiently.
+<div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
 
-- ![Thando Dlamini](res/img/team%20photos/Thando.png) **Thando Dlamini** - DevOps, Integration and Data Engineer
-  - Thando is a motivated Computer Science student at the University of Pretoria, with a keen interest in cybersecurity, particularly penetration testing and network security.He is eager to utilise his technical skills in this exciting field. He also possesses a foundation in DevOps, testing, and backend development, making him a well-rounded team member ready to contribute to a dynamic team.
+<div style="text-align: center; flex-basis: 30%;">
+<img src="res/img/team%20photos/Jess.jpg" alt="Jessica Bloem" width="200" height="200">
+<h3>Jessica Bloem</h3>
+<p>Project Manager, Business Analyst, System Architect and Integration Engineer</p>
+<p>Jessica is a diligent and committed Computer Science student at the University of Pretoria. With experience working in programming languages including C++, Java, and Python, she possesses a strong foundation in software development. Her interests lie in backend development, API integration, and system design.</p>
+</div>
+
+<div style="text-align: center; flex-basis: 30%;">
+<img src="res/img/team%20photos/Hamza.jpg" alt="Hamza Mokiwa" width="200" height="200">
+<h3>Hamza Mokiwa</h3>
+<p>System Architect, DevOps, Integration, Services, and Testing Engineer</p>
+<p>As a final-year Computer Science student, Hamza has a strong interest in backend development, Quality Assurance, and DevOps. As such, he has honed his skills in software testing and automation of various processes in the CI/CD pipeline, ensuring efficient and reliable software deployment.</p>
+</div>
+
+<div style="text-align: center; flex-basis: 30%;">
+<img src="res/img/team%20photos/Kumbi.jpg" alt="Kumbirai Shonhiwa" width="200" height="200">
+<h3>Kumbirai Shonhiwa</h3>
+<p>UX/UI Designer, Services, and Data Engineer</p>
+<p>As a final-year Computer Science student at the University of Pretoria, Kumbi brings a wealth of experience and a diverse skill set to the table. With a strong foundation in Java, C++, and Python, he has honed his expertise in both frontend and backend development. His interests lie in database systems, cybersecurity, and AI. He is particularly passionate about frontend development and UI/UX design.</p>
+</div>
+
+<div style="text-align: center; flex-basis: 30%;">
+<img src="res/img/team%20photos/Bob.jpg" alt="Bob Dlamini" width="200" height="200">
+<h3>Bob Dlamini</h3>
+<p>UX Designer, UI, Services, and Testing Engineer</p>
+<p>Bob is an adaptable web developer with a diverse skill set. With a background in teaching imperative programming in C++ to first-year students and hands-on experience in front-end development, he brings a unique blend of expertise to any team. He excels at solving complex problems and finding innovative solutions. His ability to analyze situations from multiple angles ensures efficient problem-solving. Bob seamlessly transitions between front-end and back-end development. He takes pride in his ability to learn quickly and solve problems efficiently.</p>
+</div>
+
+<div style="text-align: center; flex-basis: 30%;">
+<img src="res/img/team%20photos/Thando.png" alt="Thando Dlamini" width="200" height="200">
+<h3>Thando Dlamini</h3>
+<p>DevOps, Integration, and Data Engineer</p>
+<p>Thando is a motivated Computer Science student at the University of Pretoria, with a keen interest in cybersecurity, particularly penetration testing and network security. He is eager to utilize his technical skills in this exciting field. He also possesses a foundation in DevOps, testing, and backend development, making him a well-rounded team member ready to contribute to a dynamic team.</p>
+</div>
+
+</div>
 
 ### Professional Profiles
 
