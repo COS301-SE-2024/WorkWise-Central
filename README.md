@@ -36,7 +36,7 @@ By harnessing modern technology, WorkWise Central transforms business operations
 
 ## Demo Video
 
-🎥 [Watch our demo video - Boolean Hooligans Demo1](#)
+[Watch our demo video - Boolean Hooligans Demo1](#)
 
 ## Functional Requirements (SRS)
 
@@ -54,11 +54,11 @@ For detailed information on the functional requirements, please refer to our Sof
 4. **Section 4**
    - Subsection
 
-📄 [Read the full Functional Requirements (SRS) document](#)
+[Read the full Functional Requirements (SRS) document](#)
 
 ## GitHub Project Board
 
-📋 [View our GitHub Project Board](#)
+[View our GitHub Project Board](#)
 
 ## Team Members
 
