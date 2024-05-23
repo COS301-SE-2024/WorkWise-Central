@@ -4,6 +4,7 @@ import {UpdateUserDto} from './dto/update-user.dto';
 import {Model} from 'mongoose';
 import {InjectModel} from '@nestjs/mongoose';
 import {User} from './entities/user.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
@@ -13,7 +14,9 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    createUserDto.created_at = Date.now();
+    createUserDto.created_at = new Date();
+    createUserDto.user_UUID = uuidv4();
+
     const newUser = new this.userModel(createUserDto);
     const result = await newUser.save();
     //console.log(result);
@@ -25,10 +28,14 @@ export class UsersService {
     return this.userModel.find();
   }
 
-  async findUser(id: number) {
+  async findUser(id: string) {
     let result;
     try {
-      result = await this.userModel.find({ user_UUID : id });
+      result = await this.userModel.find(
+        {$and:
+            [{ user_UUID: id },
+              {deleted_at:{ $exists: false}}
+            ]});
       return result;
     } catch (error) {
       throw new NotFoundException("Error: User not found");
@@ -38,32 +45,34 @@ export class UsersService {
   async update(id: string, updateUserDto: UpdateUserDto) { //TODO: Test
     let result;
     try {
+      updateUserDto.updated_at = new Date();
+      console.log(updateUserDto);
       result = await this.userModel.findOneAndUpdate(
-          {$and:
-                [{user_UUID: id }]},
-          {$set:{updateUserDto, update_at: Date.now()}}
+        {$and:
+          [{ user_UUID: id },
+            {deleted_at:{ $exists: false }}
+          ]},
+          { $set: { ...updateUserDto } }
       );
-
       if (result == null) {
         throw new Error();
       }
       return result;
     } catch (error) {
-      //console.log(error);
       let response = "Error: User not found";
       throw new NotFoundException(response);
     }
-    //return `This action should update a #${id} user`;
   }
 
   async softDelete(id: string) {
     let result;
     try {
       result = await this.userModel.findOneAndUpdate(
-          {user_UUID: id}
-          ,
-          {$set:
-                {deleted_at: Date.now()}
+        {$and:
+            [{ user_UUID: id },
+              {deleted_at:{ $exists: false }}
+            ]},
+          {$set: { deleted_at: new Date() }
           });
 
       if (result == null) {
@@ -71,10 +80,8 @@ export class UsersService {
       }
       return result;
     } catch (error) {
-      //console.log(error);
       let response = "Error: User not found";
       throw new NotFoundException(response);
     }
-    //return `This action removes a #${id} user`;
   }
 }

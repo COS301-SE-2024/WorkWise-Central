@@ -14,8 +14,8 @@ export class User {
     @Prop({ required: false })
     password: string;
 
-    @Prop({ type: Number, required: true })
-    dateOfBirth: number;
+    @Prop({ type: Date, required: true })
+    dateOfBirth: Date;
     //dateOfBirth: { type: number; default: DateConstructor['now'] };
 
     @Prop({ required: true })
@@ -25,13 +25,13 @@ export class User {
     roles: string[];
 
     @Prop({ required: false })
-    public created_at: number;
+    public created_at: Date;
 
     @Prop({ required: false })
-    public updated_at: number;
+    public updated_at: Date;
 
     @Prop({ required: false })
-    public deleted_at: number;
+    public deleted_at: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
