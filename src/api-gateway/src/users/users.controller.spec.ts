@@ -12,25 +12,25 @@ describe('UsersController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
     })
-        .useMocker((token) => {
-          if (token === UsersService) {
-            return {
-              create: jest.fn().mockReturnValue(userStub()),
-              findAllUsers: jest.fn().mockReturnValue(userStub()),
-              findUser: jest.fn().mockReturnValue(userStub()),
-              update: jest.fn().mockReturnValue(userStub()),
-              remove: jest.fn().mockReturnValue(userStub()),
-            };
-          }
-          if (typeof token === 'function') {
-            const mockMetadata = moduleMocker.getMetadata(
-                token,
-            ) as MockFunctionMetadata<any, any>;
-            const Mock = moduleMocker.generateFromMetadata(mockMetadata);
-            return new Mock();
-          }
-        })
-        .compile();
+      .useMocker((token) => {
+        if (token === UsersService) {
+          return {
+            create: jest.fn().mockReturnValue(userStub()),
+            findAllUsers: jest.fn().mockReturnValue(userStub()),
+            findUser: jest.fn().mockReturnValue(userStub()),
+            update: jest.fn().mockReturnValue(userStub()),
+            remove: jest.fn().mockReturnValue(userStub()),
+          };
+        }
+        if (typeof token === 'function') {
+          const mockMetadata = moduleMocker.getMetadata(
+            token,
+          ) as MockFunctionMetadata<any, any>;
+          const Mock = moduleMocker.generateFromMetadata(mockMetadata);
+          return new Mock();
+        }
+      })
+      .compile();
 
     usersController = module.get(UsersController);
     jest.clearAllMocks();
