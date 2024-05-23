@@ -23,6 +23,15 @@ export class User {
 
     @Prop({ type: [String], required: true })
     roles: string[];
+
+    @Prop({ required: false })
+    public created_at: number;
+
+    @Prop({ required: false })
+    public updated_at: number;
+
+    @Prop({ required: false })
+    public deleted_at: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -13,6 +13,7 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
+    createUserDto.created_at = Date.now();
     const newUser = new this.userModel(createUserDto);
     const result = await newUser.save();
     console.log(result);
@@ -35,13 +36,14 @@ export class UsersService {
     }
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto) { //TODO: Test
     let result;
     try {
       result = await this.userModel.findOneAndUpdate(
           {$and:
                 [{user_UUID: id }]},
-          {$set:{updateUserDto}});
+          {$set:{updateUserDto, update_at: Date.now()}}
+      );
 
       if (result == null) {
         throw new Error();
@@ -52,11 +54,28 @@ export class UsersService {
       let response = "Error: User not found";
       throw new NotFoundException(response);
     }
-
-    return `This action should update a #${id} user`;
+    //return `This action should update a #${id} user`;
   }
 
-  softDelete(id: number) {
+  async softDelete(id: number) {
+    let result;
+    try {
+      result = await this.userModel.findOneAndUpdate(
+          {user_UUID: id}
+          ,
+          {$set:
+                {deleted_at: Date.now()}
+          });
+
+      if (result == null) {
+        throw new Error();
+      }
+      return result;
+    } catch (error) {
+      //console.log(error);
+      let response = "Error: User not found";
+      throw new NotFoundException(response);
+    }
     return `This action removes a #${id} user`;
   }
 }
