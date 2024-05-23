@@ -1,9 +1,9 @@
 import {Injectable, NotFoundException} from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { User } from './entities/user.entity';
+import {CreateUserDto} from './dto/create-user.dto';
+import {UpdateUserDto} from './dto/update-user.dto';
+import {Model} from 'mongoose';
+import {InjectModel} from '@nestjs/mongoose';
+import {User} from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -16,14 +16,13 @@ export class UsersService {
     createUserDto.created_at = Date.now();
     const newUser = new this.userModel(createUserDto);
     const result = await newUser.save();
-    console.log(result);
+    //console.log(result);
     return `${result.name} ${result.surname}'s account has been created`;
   }
 
   async findAllUsers() {
-    const result = await this.userModel.find();
-    console.log(result);
-    return result;
+    //console.log(result);
+    return this.userModel.find();
   }
 
   async findUser(id: number) {
@@ -36,7 +35,7 @@ export class UsersService {
     }
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) { //TODO: Test
+  async update(id: string, updateUserDto: UpdateUserDto) { //TODO: Test
     let result;
     try {
       result = await this.userModel.findOneAndUpdate(
@@ -57,7 +56,7 @@ export class UsersService {
     //return `This action should update a #${id} user`;
   }
 
-  async softDelete(id: number) {
+  async softDelete(id: string) {
     let result;
     try {
       result = await this.userModel.findOneAndUpdate(
@@ -76,6 +75,6 @@ export class UsersService {
       let response = "Error: User not found";
       throw new NotFoundException(response);
     }
-    return `This action removes a #${id} user`;
+    //return `This action removes a #${id} user`;
   }
 }
