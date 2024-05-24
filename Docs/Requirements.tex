@@ -1,4 +1,5 @@
 \documentclass{article}
+\usepackage{enumitem}
 
 \title{%
 	Requirements specifications \\
@@ -13,15 +14,58 @@
 	
 	\section*{Introduction}	
 	
+	This document outlines all the requirements for the WorkWise Central project. In this document all functional and quality requirements as well as architectural and technology requirements for this project will be specified in detail. The document also provided the user stories, use case diagrams and class diagrams for the project. 
+	
+	\subsection*{Project overview}	
+	WorkWise Central is a management tool for service delivery businesses. The main objective of this project it to create a tool that any service-delivery business can use to manage their employees, jobs and inventory as seamlessly as possible.  
+	
 	\newpage
 	
-	\section*{User Stories}
+	\newcounter{enumileveli}
+	\newcounter{enumilevelii}[enumileveli]
+	\newcounter{enumileveliii}[enumilevelii]
 	
-	\newpage
 	
 	\section*{Function requirements}
 	\subsection*{Authorization and Authentication subsystem}	
-	\subsection*{Account Management subsystem}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item The system must allow an new user to sign up
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The system must allow the user to sign up using their email address.
+			\item The system must allow the user to sign up using Google or Facebook.
+			\item The system must allow the user input their personal details when signing up. This includes specifying their role.
+		\end{list}
+		\item The system must allow a user to log in to an existing account.
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The system must allow a user to log in using their email.
+			\item The system must allow the user to log in using Google or Facebook.
+		\end{list}
+	\end{list}
+	
+	\subsection*{Settings subsystem}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+	\item The system must allow the user to view their profile.
+	\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+		\item The system must display the users
+		\item The system must display 
+	\end{list}
+	\item The system must allow the user to edit their profile.
+	\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+		\item The system must allow the user to change their 
+		\item The system must allow the user to log in using Google or Facebook.
+	\end{list}
+	
+	\end{list}
+	
+	\subsection*{Employee Management subsystem}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item This subsystem must only be available to the following types users:
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item Managers 
+		\end{list}
+		\item The system must allow a user to log in to an existing account.
+		
+	\end{list}
 	\subsection*{Job Management subsystem}	
 
 	\subsubsection*{Manager Job management}	
