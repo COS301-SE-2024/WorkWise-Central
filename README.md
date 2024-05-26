@@ -3,6 +3,7 @@
 ![WorkWise Central Logo](logo.png)
 
 [![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)
+![Uptime Robot status](https://img.shields.io/uptimerobot/status/m796617525-da8bacd4b5ef756cceb20b0e?logo=GitHub)
 ---
 
 ## Table of Contents
