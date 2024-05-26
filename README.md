@@ -2,7 +2,7 @@
 
 ![WorkWise Central Logo](logo.png)
 
-Code coverage badges go here
+[![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)
 
 ---
 
