@@ -27,100 +27,131 @@
 	
 	
 	\section*{Function requirements}
-	\subsection*{Authorization and Authentication subsystem}	
+	\subsection*{Authorization and Authentication Subsystem}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
 		\item The system must allow an new user to sign up
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
 			\item The system must allow the user to sign up using their email address.
-			\item The system must allow the user to sign up using Google or Facebook.
+			\item The system must allow the user to sign up using Google.
 			\item The system must allow the user input their personal details when signing up. This includes specifying their role.
 		\end{list}
 		\item The system must allow a user to log in to an existing account.
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
 			\item The system must allow a user to log in using their email.
-			\item The system must allow the user to log in using Google or Facebook.
+			\item The system must allow the user to log in using Google.
 		\end{list}
 	\end{list}
 	
-	\subsection*{Settings subsystem}	
+	\subsection*{Account Settings Subsystem}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-	\item The system must allow the user to view their profile.
-	\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-		\item The system must display the users
-		\item The system must display 
-	\end{list}
-	\item The system must allow the user to edit their profile.
-	\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-		\item The system must allow the user to change their 
-		\item The system must allow the user to log in using Google or Facebook.
-	\end{list}
+	\item The system must allow the user to view / edit their profile.
+	\item The system must allow the user to log out of their account 
+	\item The system must allow the user to change their theme (light and dark mode)
+	\item The system must allow the user to edit their account settings 
+	
 	
 	\end{list}
 	
-	\subsection*{Employee Management subsystem}	
+	\subsection*{Employee Management Subsystem}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-		\item This subsystem must only be available to the following types users:
+		\item This subsystem must only be available to managers
+		\item The system must display all the current employees.
+		\item The manager must be able to search for a specific employee
+		\item The manager must be able to sort the list of employees that are seen 
+		\item The system must be able to filter the employees that are shown
+		\item The system has to show the number jobs the employee has assigned to them
+		\item The system must show each of the jobs assigned to a specific employee.
+		\item The system must allow the manager to assign jobs to a particular employee.		
+	\end{list}
+	
+	\subsection*{Job Management Subsystem}	
+	\subsubsection*{Manager Job Subsystem}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item This subsystem is only visible for managers.
+		\item The system must show the manager all the jobs the company currently has. 
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-			\item Managers 
+			\item The manager should be able to sort the jobs
+			\item The manager should be able filter the jobs 
+			\item The manager should be able to search for a job by the job name, the employee name or the client name. 
 		\end{list}
-		\item The system must allow a user to log in to an existing account.
+		\item The system must allow the manager to view a job.
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item While the job is not in the review stage the manager can only view the details of the job.
+			\item Once the job is in the review phase, the manager will be able to edit any of the information and will be able to add comments to the job. 
+		\end{list}
+		\item The system must allow the manager to create a job
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The system must allow the manager to enter the date the job was received.
+			\item The system must allow the manager to enter the date on which the job must be complete 
+			\item The system must allow the manager to enter the client for who the job is
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item If the client does not exit the manger must be able to create a client and then add them to the job.
+				\item The client field is required.
+			\end{list}
+			\item The system must allow the manger to assign an employee or to leave the assignment for later.
+		\end{list}
+		\item The system must allow the manager to assign any jobs that have not yet been assigned.
 		
 	\end{list}
-	\subsection*{Job Management subsystem}	
-
-	\subsubsection*{Manager Job management}	
-	\subsubsection*{Employee Job management}	
-	\subsection*{Inventory management subsystem}
-\begin{itemize}
-    \item The inventory management subsystem serves as the backbone for tracking, updating, and managing the resources essential for the seamless delivery of services provided by the company. It ensures that adequate inventory levels are maintained, minimizing delays and ensuring smooth operations.
-\end{itemize}
-\subsubsection*{Manager Inventory management}	
-\begin{itemize}
-    \item The Manager Inventory Management feature empowers managers with comprehensive control over the company's inventory. Managers should have the capability to perform a range of actions including:
-    \item Adding Inventory Items: Managers should be able to effortlessly add new inventory items into the system, specifying details such as item name, category, quantity, and relevant attributes.
-    \item Updating Inventory Information: Managers should have the ability to update existing inventory records, modifying details like quantity on hand, location, and associated costs.
-    \item Deleting Inventory Items: In cases where certain inventory items are no longer relevant or available, managers should be able to securely delete them from the system.
-    \item Viewing Detailed Reports: The system should provide managers with insightful reports regarding inventory usage and status. These reports should encompass vital metrics such as inventory turnover rates, stock-out occurrences, and trends over time, aiding in informed decision-making.
-\end{itemize}
-\subsubsection*{Employee Inventory management}	
-\begin{itemize}
-    \item The Employee Inventory Management functionality empowers frontline employees with the necessary tools to efficiently interact with the inventory system. Key features include:
-    \item Viewing Inventory Items: Employees should have access to a comprehensive list of inventory items, categorized and easily searchable, along with pertinent details such as item descriptions and current availability.
-    \item Updating Inventory Status: Employees should be able to update the status of inventory items in real-time, marking them as in use, available, in need of replacement, or any other relevant status. This ensures accurate tracking of inventory utilization and facilitates timely replenishment.
-    \item Requesting Additional Inventory Items: Employees should have the capability to submit requests for additional inventory items as per operational requirements. These requests should be seamlessly integrated into the inventory management workflow, triggering appropriate actions by managers.
-\end{itemize}
-\subsection*{Real-time Communication and notification subsystem}	
-\begin{itemize}
-    \item The Real-time Communication and Notification subsystem serve as a vital conduit for facilitating seamless communication among managers, employees, and clients, ensuring timely updates and fostering transparency in operations.
-    \item Push Notifications and SMS Alerts: The system should support the delivery of push notifications and SMS alerts to relevant stakeholders, including managers, employees, and clients. These notifications should encompass critical updates such as job assignments, inventory changes, and urgent announcements, ensuring prompt attention and action.
-    \item Location Tracking: Real-time location tracking capabilities should be integrated into the system, enabling stakeholders to track the progress of jobs and deliveries in real-time. This feature enhances operational visibility and enables proactive decision-making based on the current status of activities.
-    \item Chat and Messaging: The system should provide chat and messaging functionality for seamless communication among team members, enabling quick exchanges of information, updates, and clarifications. This feature fosters collaboration and teamwork, enhancing operational efficiency and service quality.
-\end{itemize}
-\subsection*{Reporting subsystem}	
-\begin{itemize}
-    \item The Reporting subsystem empowers managers with actionable insights derived from comprehensive reports, facilitating data-driven decision-making and performance optimization across various facets of business operations.
-    \item Customizable Reports: Managers should have the flexibility to generate customized reports tailored to specific parameters and time periods. These reports should cover diverse aspects such as job progress, inventory status, employee performance, and client satisfaction, providing a holistic view of business performance.
-    \item Insightful Analytics: In addition to standard reports, the system should offer advanced analytical capabilities, including trend analysis, forecasting, and performance benchmarks. These analytics empower managers to identify patterns, anticipate future needs, and proactively address challenges, driving continuous improvement.
-    \item Automated Report Generation: The system should support automated report generation and distribution, streamlining the reporting process and ensuring timely access to critical information. Managers should be able to schedule report generation at regular intervals and receive reports via email or other channels, reducing manual effort and enhancing efficiency.
-\end{itemize}
-\subsection*{Feedback subsystem}	
-\begin{itemize}
-    \item The Feedback subsystem serves as a valuable mechanism for soliciting and acting upon feedback from clients, fostering a culture of continuous improvement and enhancing overall service quality.
-    \item Client Feedback Mechanism: The system should provide clients with intuitive channels for submitting feedback, including options for rating the service received, providing detailed comments, and suggesting improvements. This feedback mechanism should be seamlessly integrated into the client interaction process, ensuring convenience and accessibility.
-    \item Manager Review and Action: Feedback submitted by clients should be promptly accessible to managers for review and action. Managers should have the capability to analyze feedback trends, identify recurring issues or areas for improvement, and take proactive measures to address them, thereby enhancing client satisfaction and loyalty.
-    \item Performance Metrics: The system should capture and analyze key performance metrics derived from client feedback, such as satisfaction scores, response times, and service ratings. These metrics serve as valuable indicators of service quality and can be used to drive targeted improvements and training initiatives.
-\end{itemize}
-\subsection*{Job Scheduling subsystem}
-\begin{itemize}
-    \item The Job Scheduling subsystem plays a pivotal role in optimizing resource allocation, streamlining operations, and ensuring timely delivery of services to clients.
-    \item Automated Job Assignment: The system should support automated job assignment based on predefined criteria such as employee availability, skill set, and proximity to the job location. This feature minimizes manual intervention, reduces errors, and ensures efficient utilization of resources.
-    \item Real-time Job Updates: Managers and employees should receive real-time updates regarding job assignments, schedule changes, and client requests. These updates should be delivered through push notifications, SMS alerts, or other communication channels, enabling stakeholders to stay informed and responsive.
-    \item Optimization Algorithms: The system should leverage optimization algorithms to intelligently schedule jobs, considering factors such as travel time, resource availability, and client preferences. These algorithms help in maximizing operational efficiency, minimizing delays, and enhancing overall service quality.
-\end{itemize}
-\subsection*{Appointment Scheduling and Tracking subsystem}
-\begin{itemize}
-    \item The Appointment Scheduling and Tracking subsystem provides employees/managers with a user-friendly platform for booking services, managing appointments, and tracking service providers in real-time.
-\end{itemize}
+	\subsubsection*{Employee Job Subsystem}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item This subsystem is only available to the employees
+		\item The system must show the employee the jobs they are currently assigned to. 
+	\end{list}
+	
+	\subsubsection*{Dashboard Subsystem}	
+	
+	\subsection*{Inventory Management Subsystem}
+	\begin{itemize}
+	    \item The inventory management subsystem serves as the backbone for tracking, updating, and managing the resources essential for the seamless delivery of services provided by the company. It ensures that adequate inventory levels are maintained, minimizing delays and ensuring smooth operations.
+	\end{itemize}
+	\subsubsection*{Manager Inventory Management}	
+	\begin{itemize}
+	    \item The Manager Inventory Management feature empowers managers with comprehensive control over the company's inventory. Managers should have the capability to perform a range of actions including:
+	    \item Adding Inventory Items: Managers should be able to effortlessly add new inventory items into the system, specifying details such as item name, category, quantity, and relevant attributes.
+	    \item Updating Inventory Information: Managers should have the ability to update existing inventory records, modifying details like quantity on hand, location, and associated costs.
+	    \item Deleting Inventory Items: In cases where certain inventory items are no longer relevant or available, managers should be able to securely delete them from the system.
+	    \item Viewing Detailed Reports: The system should provide managers with insightful reports regarding inventory usage and status. These reports should encompass vital metrics such as inventory turnover rates, stock-out occurrences, and trends over time, aiding in informed decision-making.
+	\end{itemize}
+	\subsubsection*{Employee Inventory management}	
+	\begin{itemize}
+	    \item The Employee Inventory Management functionality empowers frontline employees with the necessary tools to efficiently interact with the inventory system. Key features include:
+	    \item Viewing Inventory Items: Employees should have access to a comprehensive list of inventory items, categorized and easily searchable, along with pertinent details such as item descriptions and current availability.
+	    \item Updating Inventory Status: Employees should be able to update the status of inventory items in real-time, marking them as in use, available, in need of replacement, or any other relevant status. This ensures accurate tracking of inventory utilization and facilitates timely replenishment.
+	    \item Requesting Additional Inventory Items: Employees should have the capability to submit requests for additional inventory items as per operational requirements. These requests should be seamlessly integrated into the inventory management workflow, triggering appropriate actions by managers.
+	\end{itemize}
+	\subsection*{Real-time Communication and notification subsystem}	
+	\begin{itemize}
+	    \item The Real-time Communication and Notification subsystem serve as a vital conduit for facilitating seamless communication among managers, employees, and clients, ensuring timely updates and fostering transparency in operations.
+	    \item Push Notifications and SMS Alerts: The system should support the delivery of push notifications and SMS alerts to relevant stakeholders, including managers, employees, and clients. These notifications should encompass critical updates such as job assignments, inventory changes, and urgent announcements, ensuring prompt attention and action.
+	    \item Location Tracking: Real-time location tracking capabilities should be integrated into the system, enabling stakeholders to track the progress of jobs and deliveries in real-time. This feature enhances operational visibility and enables proactive decision-making based on the current status of activities.
+	    \item Chat and Messaging: The system should provide chat and messaging functionality for seamless communication among team members, enabling quick exchanges of information, updates, and clarifications. This feature fosters collaboration and teamwork, enhancing operational efficiency and service quality.
+	\end{itemize}
+	\subsection*{Reporting subsystem}	
+	\begin{itemize}
+	    \item The Reporting subsystem empowers managers with actionable insights derived from comprehensive reports, facilitating data-driven decision-making and performance optimization across various facets of business operations.
+	    \item Customizable Reports: Managers should have the flexibility to generate customized reports tailored to specific parameters and time periods. These reports should cover diverse aspects such as job progress, inventory status, employee performance, and client satisfaction, providing a holistic view of business performance.
+	    \item Insightful Analytics: In addition to standard reports, the system should offer advanced analytical capabilities, including trend analysis, forecasting, and performance benchmarks. These analytics empower managers to identify patterns, anticipate future needs, and proactively address challenges, driving continuous improvement.
+	    \item Automated Report Generation: The system should support automated report generation and distribution, streamlining the reporting process and ensuring timely access to critical information. Managers should be able to schedule report generation at regular intervals and receive reports via email or other channels, reducing manual effort and enhancing efficiency.
+	\end{itemize}
+	\subsection*{Feedback subsystem}	
+	\begin{itemize}
+	    \item The Feedback subsystem serves as a valuable mechanism for soliciting and acting upon feedback from clients, fostering a culture of continuous improvement and enhancing overall service quality.
+	    \item Client Feedback Mechanism: The system should provide clients with intuitive channels for submitting feedback, including options for rating the service received, providing detailed comments, and suggesting improvements. This feedback mechanism should be seamlessly integrated into the client interaction process, ensuring convenience and accessibility.
+	    \item Manager Review and Action: Feedback submitted by clients should be promptly accessible to managers for review and action. Managers should have the capability to analyze feedback trends, identify recurring issues or areas for improvement, and take proactive measures to address them, thereby enhancing client satisfaction and loyalty.
+	    \item Performance Metrics: The system should capture and analyze key performance metrics derived from client feedback, such as satisfaction scores, response times, and service ratings. These metrics serve as valuable indicators of service quality and can be used to drive targeted improvements and training initiatives.
+	\end{itemize}
+	\subsection*{Job Scheduling subsystem}
+	\begin{itemize}
+	    \item The Job Scheduling subsystem plays a pivotal role in optimizing resource allocation, streamlining operations, and ensuring timely delivery of services to clients.
+	    \item Automated Job Assignment: The system should support automated job assignment based on predefined criteria such as employee availability, skill set, and proximity to the job location. This feature minimizes manual intervention, reduces errors, and ensures efficient utilization of resources.
+	    \item Real-time Job Updates: Managers and employees should receive real-time updates regarding job assignments, schedule changes, and client requests. These updates should be delivered through push notifications, SMS alerts, or other communication channels, enabling stakeholders to stay informed and responsive.
+	    \item Optimization Algorithms: The system should leverage optimization algorithms to intelligently schedule jobs, considering factors such as travel time, resource availability, and client preferences. These algorithms help in maximizing operational efficiency, minimizing delays, and enhancing overall service quality.
+	\end{itemize}
+	\subsection*{Appointment Scheduling and Tracking subsystem}
+	\begin{itemize}
+	    \item The Appointment Scheduling and Tracking subsystem provides employees/managers with a user-friendly platform for booking services, managing appointments, and tracking service providers in real-time.
+	\end{itemize}
 
 	
 	\newpage
