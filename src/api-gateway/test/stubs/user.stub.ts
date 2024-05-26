@@ -1,6 +1,6 @@
 import { User } from '../../src/users/entities/user.entity';
 
-const date = Date.now();
+const date = new Date();
 
 export const userStub = (): User => {
   const result = {

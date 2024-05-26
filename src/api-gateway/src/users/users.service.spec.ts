@@ -1,13 +1,25 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { userStub } from '../../test/stubs/user.stub';
+import { getModelToken } from '@nestjs/mongoose';
 
 describe('UsersService', () => {
   let service: UsersService;
-
   beforeEach(async () => {
+    function mockUserModel(dto: any) {
+      this.data = dto;
+      this.save  = () => {
+        return this.data;
+      };
+    }
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService],
+      providers: [
+        UsersService,
+        { provide: getModelToken('user'),
+          useValue: mockUserModel,
+        },
+    ],
     })
       .useMocker(() => {
         return {
@@ -20,7 +32,6 @@ describe('UsersService', () => {
         };
       })
       .compile();
-
     service = module.get(UsersService);
     jest.clearAllMocks();
   });
@@ -34,6 +45,6 @@ describe('UsersService', () => {
   });
 
   it('should be able to remove a user', async function () {
-    //await expect(await service.softDelete('')).rejects.toThrow("Error: User not found");
+    //await expect(await service.softDelete('')).toThrow(NotFoundException);
   });
 });
