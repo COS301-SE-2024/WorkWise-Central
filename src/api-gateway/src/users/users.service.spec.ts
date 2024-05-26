@@ -8,7 +8,7 @@ describe('UsersService', () => {
   beforeEach(async () => {
     function mockUserModel(dto: any) {
       this.data = dto;
-      this.save  = () => {
+      this.save = () => {
         return this.data;
       };
     }
@@ -16,10 +16,8 @@ describe('UsersService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
-        { provide: getModelToken('user'),
-          useValue: mockUserModel,
-        },
-    ],
+        { provide: getModelToken('user'), useValue: mockUserModel },
+      ],
     })
       .useMocker(() => {
         return {
