@@ -2,8 +2,7 @@
 
 ![WorkWise Central Logo](logo.png)
 
-[![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)
-
+[![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)
 ---
 
 ## Table of Contents
