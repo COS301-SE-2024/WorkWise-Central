@@ -2,11 +2,13 @@
 
 ![WorkWise Central Logo](logo.png)
 
-Code coverage badges go here
+![Uptime Robot status](https://img.shields.io/uptimerobot/status/m796617525-da8bacd4b5ef756cceb20b0e)
+[![codecov](https://codecov.io/gh/Hamza-Mokiwa/WorkWise-Central/graph/badge.svg?token=UFRTWRUHZC)](https://codecov.io/gh/Hamza-Mokiwa/WorkWise-Central)
 
 ---
 
 ## Table of Contents
+
 - [Project Description](#project-description)
 - [Demo Video](#demo-video)
 - [Functional Requirements (SRS)](#functional-requirements-srs)
@@ -142,4 +144,5 @@ For detailed information on the functional requirements, please refer to our Sof
 </div>
 
 ## Contact Us
+
 For any queries or further information, please reach out to our team at [booleanholigans100@gmail.com](mailto:booleanholigans100@gmail.com).

@@ -1,0 +1,64 @@
+name: Update codecov
+on:
+  push:
+    branches: [ main, develop , test ]
+
+  pull_request:
+    branches: [ main, develop , test ]
+
+permissions:
+  contents: read
+
+
+#flag_management:
+#  default_rules: # the rules that will be followed for any flag added, generally
+#    carryforward: true
+#    statuses:
+#      - type: project
+#        target: auto
+#        threshold: 1%
+#      - type: patch
+#        target: 90%
+#  individual_flags: # exceptions to the default rules above, stated flag by flag
+#    - name: feature_1  #fill in your own flag name
+#      paths:
+#        - src/feature_1  #fill in your own path. Note, accepts globs, not regexes
+#      carryforward: true
+#      statuses:
+#        - type: project
+#          target: 20%
+#        - type: patch
+#          target: 100%
+#    - name: feature_2 #fill in your own flag name
+#      paths:
+#        - src/feature_2  #fill in your own path. Note, accepts globs, not regexes
+#      carryforward: true
+#      statuses:
+#        - type: project
+#          target: 20%
+#        - type: patch
+#          target: 100%
+
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.17.0
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: src/frontend
+
+      - name: Run tests and collect coverage
+        run: npm run test:cov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

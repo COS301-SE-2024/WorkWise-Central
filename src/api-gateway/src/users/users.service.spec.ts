@@ -12,7 +12,7 @@ describe('UsersService', () => {
       .useMocker(() => {
         return {
           create: jest.fn().mockReturnValue(userStub()),
-          findAllUsers: jest.fn().mockReturnValue(userStub()),
+          findAllUsers: jest.fn().mockResolvedValue(userStub()),
           findUser: jest.fn().mockReturnValue(userStub()),
           update: jest.fn().mockReturnValue(userStub()),
           remove: jest.fn().mockReturnValue(userStub()),
@@ -34,6 +34,6 @@ describe('UsersService', () => {
   });
 
   it('should be able to remove a user', async function () {
-    //await expect(await service.softDelete('')).rejects.toThrow("Error: User not found");
+    await expect(await service.softDelete('')).rejects.toThrow("Error: User not found");
   });
 });

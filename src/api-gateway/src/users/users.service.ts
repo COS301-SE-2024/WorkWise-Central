@@ -17,13 +17,17 @@ export class UsersService {
     createUserDto.created_at = new Date();
     createUserDto.user_UUID = uuidv4();
 
-    const newUser = new this.userModel(createUserDto);
+    //const newUser = new this.userModel(createUserDto);
+    const newUser = new this.userModel({
+      name: 'Jack',
+    });
     const result = await newUser.save();
     return `${result.name} ${result.surname}'s account has been created`;
   }
 
   async findAllUsers() {
-    return this.userModel.find();
+    const result: User[] = await this.userModel.find();
+    return result;
   }
 
   async findUser(id: string) {
