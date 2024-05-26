@@ -9,8 +9,8 @@ import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel('User')
-    private readonly userModel: Model<User>,
+    @InjectModel('user')
+    public readonly userModel: Model<User>,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -23,7 +23,7 @@ export class UsersService {
   }
 
   async findAllUsers() {
-    return this.userModel.find();
+    return this.userModel.find().exec();
   }
 
   async findUser(id: string) {
@@ -66,7 +66,7 @@ export class UsersService {
       );
 
       if (result == null) {
-        throw new Error();
+        throw new NotFoundException();
       }
       return result;
     } catch (error) {
