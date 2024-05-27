@@ -48,24 +48,72 @@
 	\item The system must allow the user to log out of their account 
 	\item The system must allow the user to change their theme (light and dark mode)
 	\item The system must allow the user to edit their account settings 
-	
-	
 	\end{list}
 	
-	\subsection*{Employee Management Subsystem}	
+	\subsection*{Company Subsystem}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-		\item This subsystem must only be available to managers
-		\item The system must display all the current employees.
-		\item The manager must be able to search for a specific employee
-		\item The manager must be able to sort the list of employees that are seen 
-		\item The system must be able to filter the employees that are shown
-		\item The system has to show the number jobs the employee has assigned to them
-		\item The system must show each of the jobs assigned to a specific employee.
-		\item The system must allow the manager to assign jobs to a particular employee.		
+		\item A manager must be able to register a company.
+		\item The registration process needs to ask for information such as: 
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item Company registration number
+			\item Company name.
+			\item Company type.
+			\item Company vat number.
+			\item Company logo.
+			\item Company contact details.
+		\end{list} 
+		\item The manager that created the company must automatically be part f that company. 
+		\item The manager must be able to add their employees to the company (discussed in the employee subsystem) 
+		\item All users must be ale to be a part of multiple companies.
+		\item All users must be able to change the company for which they are viewing the system. 
 	\end{list}
 	
-	\subsection*{Job Management Subsystem}	
-	\subsubsection*{Manager Job Subsystem}	
+	\subsection*{Navbar Subsystem}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item The system must provide the user with a navbar to navigate between the different subsystems easily. 
+		\item The navbar for the manageer view must be contain the following links
+		 \begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+		 	\item Link to the dashboard subsystem.
+		 	\item Link to the job subsystem.
+		 	\item Link to the client subsystem.
+		 	\item Link to the inventory subsystem.
+		 	\item Link to the employees subsystem.
+		 \end{list} 
+		\item The navbar for the employee view must be contain the following links
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item Link to the dashboard subsystem.
+			\item Link to the job subsystem.
+			\item Link to the client subsystem.
+		\end{list} 
+	\end{list}
+	
+	
+	\subsection*{Dashboard Subsystem}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item The dashboard subsystem needs to show the most relevant information for each type of user.
+		\item The dashboard for employees needs to show the jobs they have in a calendar view 
+		\item The dashboard for managers need to show all the jobs the company has in a calander view.
+	\end{list}
+	
+	\subsection*{Job Subsystem}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item All jobs in the system will have the following information about the job:
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The client's name 
+			\item The client's contact details.
+			\item The job address.
+			\item The date the job is due.
+		\end{list} 
+		\item All jobs will have the following statuses:
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item Todo - the job has not been started.
+			\item In progress -  the job in being completed at the moment. 
+			\item Review - the employee completed their part of the job. The job needs to be reviewed and an invoice needs to be sent.
+			\item Awaiting payment - The invoice has been sent.
+			\item Completed - the payment has been received
+		\end{list}
+	\end{list}
+	\subsubsection*{Job Subsystem - Manager}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
 		\item This subsystem is only visible for managers.
 		\item The system must show the manager all the jobs the company currently has. 
@@ -77,7 +125,11 @@
 		\item The system must allow the manager to view a job.
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
 			\item While the job is not in the review stage the manager can only view the details of the job.
-			\item Once the job is in the review phase, the manager will be able to edit any of the information and will be able to add comments to the job. 
+			\item Once the job is in the review phase, the manager will be able to: 
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item Edit the details of the job.
+				\item Leave comments on the job.
+			\end{list}
 		\end{list}
 		\item The system must allow the manager to create a job
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
@@ -93,34 +145,116 @@
 		\item The system must allow the manager to assign any jobs that have not yet been assigned.
 		
 	\end{list}
-	\subsubsection*{Employee Job Subsystem}	
+	\subsubsection*{Job Subsystem - Employee}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-		\item This subsystem is only available to the employees
+		\item This subsystem is only available to the employees.
 		\item The system must show the employee the jobs they are currently assigned to. 
+		\item The system must allow the employee to access each job individually
+		\item On each individual job the employee will have two different views / actions available based on the stage the job is in
+		\item When the job status is Todo, the following must be showed / allowed:
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item All the information pertaining to the job. (refer to list above)
+			\item The employee must be able to change the status to in progress
+		\end{list}
+		\item When the job status is In progress, the following must be showed / allowed:
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The employee must be able to upload images of the job
+			\item The employee must be able to record details of the job.
+			\item The employee must be able to record all the inventory they used 
+			\item The employee must be able to change the status of the job to review (i.e. indicate that they are done)
+		\end{list}
+		\item When the job status is review, the following must be showed / allowed:
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The employee must be able to see all the information they added during the job.
+			\item The employee must be able to edit any of the information. 
+			\item The employee must be able to see the comments. 
+			\item The employee must be able to leave comments.
+		\end{list}
 	\end{list}
 	
-	\subsubsection*{Dashboard Subsystem}	
 	
-	\subsection*{Inventory Management Subsystem}
-	\begin{itemize}
-	    \item The inventory management subsystem serves as the backbone for tracking, updating, and managing the resources essential for the seamless delivery of services provided by the company. It ensures that adequate inventory levels are maintained, minimizing delays and ensuring smooth operations.
-	\end{itemize}
-	\subsubsection*{Manager Inventory Management}	
-	\begin{itemize}
-	    \item The Manager Inventory Management feature empowers managers with comprehensive control over the company's inventory. Managers should have the capability to perform a range of actions including:
+	\subsection*{Client Subsystem}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item All clients in the system will have relevant personal information stored:
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item Client name.
+			\item Client contact details.
+			\item Client company (optional).
+			\item Client address.
+			\item Notes on any preferences the client has, such as the time of day they would like jobs to happen or any special instructions such has how to get into the property where the job will happen etc.
+		\end{list}
+	\end{list}
+	\subsubsection*{Client Subsystem - Manager}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item This subsystem must only be available to managers
+		\item The system must provide a view of all the clients of the company.		
+		\item The manager must be able to search for a particular client.
+		\item The system must allow the user to sort the clients.
+		\item The system must allow the user to filter the clients.
+		\item The system must allow the user to create clients.
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The user must be able to enter the information of the client.
+			\item The user must be able to make multiple clients in succession.
+		\end{list}
+		\item The user must be able to edit ny of the information pertaining to a client.
+		\item The user must be able to view all the information of the client.
+		\item The system must all display all the jobs associated with this client.
+	\end{list}
+	\subsubsection*{Client Subsystem - Employee}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item This subsystem must only be available to employees.
+		\item The system must display all the clients the employee is currently assigned to.
+		\item The system must display all the jobs of a particular client that the employee has been assigned to.
+		\item The employee must be able to sort the list of clients.
+		\item The employee must be able to filter the list of clients.
+		\item The employee must be able to search for a particular client. 		
+	\end{list}
+	
+	\subsection*{Employee Management Subsystem}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item This subsystem is only available to the managers
+		\item The system must display all the current employees of the company.
+		\item The manager must be able to search for a specific employee.
+		\item The manager must be able to sort the list of employees.
+		\item The manager must be able to filter the list of employees.
+		\item The system has to show the number jobs the employee has assigned to them.
+		\item The system must show each of the jobs assigned to a specific employee.
+		\item The system must allow the manager to assign jobs to a particular employee.		
+	\end{list}
+	
+	\subsection*{Inventory Subsystem}
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item Each item in inventory has the following information:
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The name of the item. 
+			\item An image or icon of the item.
+			\item The cost price of the item.
+			\item The current stock level of the item.
+			\item Low stock threshold for the item.
+			\item Supplier information fo the item.
+		\end{list}
+	\end{list}
+	\subsubsection*{Inventory Subsystem - Manager}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item This subsystem is only available to a manager. 
+		\item The system should display all the items in the inventory.
+		\item The manager should be allowed to sort the list.
+		\item The manager should be allowed to filter the list.
+		\item The manager should be allowed to search for a particular item in the list.
+		\item The manager should be add new items to the inventory:
 	    \item Adding Inventory Items: Managers should be able to effortlessly add new inventory items into the system, specifying details such as item name, category, quantity, and relevant attributes.
 	    \item Updating Inventory Information: Managers should have the ability to update existing inventory records, modifying details like quantity on hand, location, and associated costs.
 	    \item Deleting Inventory Items: In cases where certain inventory items are no longer relevant or available, managers should be able to securely delete them from the system.
 	    \item Viewing Detailed Reports: The system should provide managers with insightful reports regarding inventory usage and status. These reports should encompass vital metrics such as inventory turnover rates, stock-out occurrences, and trends over time, aiding in informed decision-making.
-	\end{itemize}
-	\subsubsection*{Employee Inventory management}	
+	\end{list}
+	\subsubsection*{Inventory Subsystem - Employee}	
 	\begin{itemize}
 	    \item The Employee Inventory Management functionality empowers frontline employees with the necessary tools to efficiently interact with the inventory system. Key features include:
 	    \item Viewing Inventory Items: Employees should have access to a comprehensive list of inventory items, categorized and easily searchable, along with pertinent details such as item descriptions and current availability.
 	    \item Updating Inventory Status: Employees should be able to update the status of inventory items in real-time, marking them as in use, available, in need of replacement, or any other relevant status. This ensures accurate tracking of inventory utilization and facilitates timely replenishment.
 	    \item Requesting Additional Inventory Items: Employees should have the capability to submit requests for additional inventory items as per operational requirements. These requests should be seamlessly integrated into the inventory management workflow, triggering appropriate actions by managers.
 	\end{itemize}
-	\subsection*{Real-time Communication and notification subsystem}	
+	\subsection*{Communication and Notification subsystem}	
 	\begin{itemize}
 	    \item The Real-time Communication and Notification subsystem serve as a vital conduit for facilitating seamless communication among managers, employees, and clients, ensuring timely updates and fostering transparency in operations.
 	    \item Push Notifications and SMS Alerts: The system should support the delivery of push notifications and SMS alerts to relevant stakeholders, including managers, employees, and clients. These notifications should encompass critical updates such as job assignments, inventory changes, and urgent announcements, ensuring prompt attention and action.
