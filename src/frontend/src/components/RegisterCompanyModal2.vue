@@ -6,7 +6,7 @@
           class="text-none font-weight-regular"
           prepend-icon="mdi-account"
           color="black"
-          text="Register a company"
+          text="CONTINUE"
           variant="tonal"
           v-bind="activatorProps"
         ></v-btn>
@@ -15,7 +15,7 @@
       <v-card prepend-icon="mdi-account" title="Register your company">
         <v-card-text>
           <v-row dense>
-            <small class="Company email">Company name*</small>
+            <small class="text-caption text-medium-emphasis">Company email</small>
             <v-col cols="30" md="12" sm="20">
               <v-text-field
                 label="Enter the company's email adress"
@@ -56,8 +56,7 @@ export default {
 </script>
 
 <style scope>
-.text-none {
-  color: red;
-  background-color: blue;
+.text-medium-emphasis {
+  color: black;
 }
 </style>

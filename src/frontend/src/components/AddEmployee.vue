@@ -6,28 +6,39 @@
           class="text-none font-weight-regular"
           prepend-icon="mdi-account"
           color="black"
-          text="Seach for company"
+          text="Add Employee"
           variant="tonal"
           v-bind="activatorProps"
         ></v-btn>
       </template>
 
-      <v-card prepend-icon="mdi-account" title="">
+      <v-card prepend-icon="mdi-account" title="Add Employee">
         <v-card-text>
           <v-row dense>
-            <small class="text-caption text-medium-emphasis">Search for the company by name</small>
+            <small class="text-caption text-medium-emphasis">Add employee using employee ID</small>
             <v-col cols="30" md="12" sm="20">
               <v-text-field
-                label="Enter the company's name"
+                label="#####################"
                 model-value=""
                 variant="solo"
               ></v-text-field>
             </v-col>
 
-            <small class="text-caption text-medium-emphasis">Enter the Company ID</small>
+            <small class="text-caption text-medium-emphasis"
+              >Send teh employee the company ID to join the company</small
+            >
             <v-col cols="12" md="12" sm="20">
               <v-text-field
-                label="Enter the company ID"
+                label="#####################"
+                model-value=""
+                variant="solo"
+              ></v-text-field>
+            </v-col>
+
+            <small class="text-caption text-medium-emphasis">Send the employee this link</small>
+            <v-col cols="12" md="12" sm="20">
+              <v-text-field
+                label="#####################"
                 model-value=""
                 variant="solo"
               ></v-text-field>
@@ -42,7 +53,7 @@
 
           <v-btn
             color="primary"
-            text="Join company"
+            text="ADD EMPLOYEE"
             variant="tonal"
             @click="dialog = false"
           ></v-btn>
