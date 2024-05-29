@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
@@ -23,7 +28,12 @@ export class UsersService {
   }
 
   async findAllUsers() {
-    return this.userModel.find().exec();
+    try {
+      return this.userModel.find().exec();
+    } catch (error) {
+      console.log(error);
+      throw new ServiceUnavailableException('Users could not be retrieved');
+    }
   }
 
   async findUser(
@@ -49,7 +59,8 @@ export class UsersService {
       console.log(result);
       return result;
     } catch (error) {
-      throw new NotFoundException('Error: User not found');
+      console.log(error);
+      throw new NotFoundException('User not found');
     }
   }
 
@@ -68,12 +79,12 @@ export class UsersService {
         )
         .lean();
       if (result == null) {
-        throw new Error();
+        throw new Error('failed to update user');
       }
       return result;
     } catch (error) {
-      const response = 'Error: User not found';
-      throw new NotFoundException(response);
+      console.log(error);
+      throw new NotFoundException(error);
     }
   }
 
@@ -87,12 +98,12 @@ export class UsersService {
       );
 
       if (result == null) {
-        throw new NotFoundException();
+        throw new InternalServerErrorException('internal server server');
       }
       return true;
     } catch (error) {
-      const response = 'Error: User not found';
-      throw new NotFoundException(response);
+      console.log(error);
+      throw new InternalServerErrorException(error);
     }
   }
 }
