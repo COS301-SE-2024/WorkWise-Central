@@ -32,28 +32,101 @@
 		\item The system must allow an new user to sign up
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
 			\item The system must allow the user to sign up using their email address.
-			\item The system must allow the user to sign up using Google.
-			\item The system must allow the user input their personal details when signing up. This includes specifying their role.
+			\item The system must allow the user to input the following details:
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item Email address.
+				\item Their new password. 
+				\item Username.
+				\item Display image.
+				\item Their role in the company.
+				\item Date of birth.
+				\item Gender.
+				\item Preferred language.
+				\item Emergency contact. 
+			\end{list} 
+			\item The system must then allow the user to either join an existing company or to create a company.
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item The user must be able to search for a company to join by name.
+				\item The user must be able to join a company using their company ID.
+			\end{list} 
+			\item When creating a company the following must be entered:
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item Company registration number
+				\item Company name.
+				\item Company type.
+				\item Company vat number.
+				\item Company logo.
+				\item Company contact details.
+			\end{list} 
 		\end{list}
 		\item The system must allow a user to log in to an existing account.
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-			\item The system must allow a user to log in using their email.
-			\item The system must allow the user to log in using Google.
+			\item The system must allow a user to log in using their email and password.
 		\end{list}
 	\end{list}
 	
-	\subsection*{Account Settings Subsystem}	
+	\subsection*{Employee Subsystem}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-	\item The system must allow the user to view / edit their profile.
-	\item The system must allow the user to log out of their account 
-	\item The system must allow the user to change their theme (light and dark mode)
-	\item The system must allow the user to edit their account settings 
+		\item Users are employees of companies.
+		\item Each user has to be an employee of one or more companies. 
+		\item Employees must be given a role or permissions for a given company.
+		\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+			\item The user who registered the company will have full permissions.
+			\item The person who registered the company must be able to assign roles to employees.
+			\item They must also be able to just assign permissions without assigning a role.
+			\item The system must give default role.
+			\item These roles must be editable. (refer to company settings subsystem below)
+		\end{list}		
+		\item For employees with view permissions the following must be shown: 
+		\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+			\item The system must display all the current employees of the company.
+			\item The user must be able to search for a specific employee.
+			\item The user must be able to sort the list of employees.
+			\item The user must be able to filter the list of employees.
+		\end{list}
+		\item For employees with view and edit permissions the following must be shown: 
+		\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+			\item The system must display everything that one with view permission can see.
+			\item The system has to show the number jobs the employee has assigned to them.
+			\item The system must show each of the jobs assigned to a specific employee.
+			\item The system must allow the user to assign jobs to a particular employee.
+		\end{list}			
+	\end{list}
+	
+	\subsection*{Settings Subsystem}	
+	\subsubsection*{Account and Profile Settings Subsystem}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item The system must allow the user to view their personal information. 
+		\item The system must allow the user to edit their personal information.
+		\item The system must allow the user to log out of their account.
+		\item The system must allow the user to delete their account.
+		\item The system must allow the user to leave a company.
+		\item The system must allow the user to join a company.
+		\item The system must allow the user to edit their preferences: 
+		\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+			\item They must be able to change their themes
+			\item They must be able to change their preferred language.
+			\item They must be able to change their notification settings.
+			\item They must be able to change their default home page.
+		\end{list}
+	\end{list}
+	\subsubsection*{Company Settings Subsystem}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item The system must allow the user to view all the settings for the company to which they have access.
+		\item The system must allow the roles in the company to be changed.
+		\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+			\item The number of roles can be increased or decreased.
+			\item The labels for each role can be altered.
+			\item The permissions associated with that role can be changed.
+		\end{list}
+		\item The system must display all the information of to the company.
+		\item The user must be able to edit the information pertaining to the company.
 	\end{list}
 	
 	\subsection*{Company Subsystem}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-		\item A manager must be able to register a company.
-		\item The registration process needs to ask for information such as: 
+		\item A user must be able to register a company on the system.
+		\item The registration process needs get the following information form the user: 
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
 			\item Company registration number
 			\item Company name.
@@ -62,39 +135,61 @@
 			\item Company logo.
 			\item Company contact details.
 		\end{list} 
-		\item The manager that created the company must automatically be part f that company. 
-		\item The manager must be able to add their employees to the company (discussed in the employee subsystem) 
+		\item The user that registered the company should automatically be a part of the company.
+		\item The person who registered the company should have full permissions by default (refer to the permissions and roles subsystem)
 		\item All users must be ale to be a part of multiple companies.
-		\item All users must be able to change the company for which they are viewing the system. 
+		\item All users must be able to change for which company they are viewing the system. 
 	\end{list}
 	
-	\subsection*{Navbar Subsystem}	
+	\subsection*{Roles and permissions}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-		\item The system must provide the user with a navbar to navigate between the different subsystems easily. 
-		\item The navbar for the manageer view must be contain the following links
-		 \begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-		 	\item Link to the dashboard subsystem.
-		 	\item Link to the job subsystem.
-		 	\item Link to the client subsystem.
-		 	\item Link to the inventory subsystem.
-		 	\item Link to the employees subsystem.
-		 \end{list} 
-		\item The navbar for the employee view must be contain the following links
+		\item Roles are commonly used groupings of permissions that can be assigned to a user.
+		\item The system must provide the following permissions:
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-			\item Link to the dashboard subsystem.
-			\item Link to the job subsystem.
-			\item Link to the client subsystem.
+			\item Employee:
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item View
+				\item Edit
+				\item Add new employees.
+			\end{list} 
+			\item Jobs
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item View all.
+				\item View all under me. 
+				\item View mine.
+				\item Edit all.
+				\item Edit all under me.
+				\item Add new job.
+			\end{list}
+			\item Clients
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item View all
+				\item View client for all the jobs under me.
+				\item View clients for all my jobs.
+				\item Edit all.
+				\item Edit all clients for jobs under me.
+				\item Add new clients.
+			\end{list}
+			\item Inventory
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item View all inventory.
+				\item Edit all inventory.
+				\item Add new inventory items.
+				\item All employees that have been allocated a job may record the inventory they used.
+			\end{list}
 		\end{list} 
+		\item The system must provide a set of default roles:
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item Company registration number
+			\item Company name.
+			\item Company type.
+			\item Company vat number.
+			\item Company logo.
+			\item Company contact details.
+		\end{list} 
+		\item The roles of a given company must be able to change (refer to the company setting subsystem above)
 	\end{list}
-	
-	
-	\subsection*{Dashboard Subsystem}	
-	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-		\item The dashboard subsystem needs to show the most relevant information for each type of user.
-		\item The dashboard for employees needs to show the jobs they have in a calendar view 
-		\item The dashboard for managers need to show all the jobs the company has in a calander view.
-	\end{list}
-	
+
 	\subsection*{Job Subsystem}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
 		\item All jobs in the system will have the following information about the job:
@@ -210,18 +305,6 @@
 		\item The employee must be able to search for a particular client. 		
 	\end{list}
 	
-	\subsection*{Employee Management Subsystem}	
-	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-		\item This subsystem is only available to the managers
-		\item The system must display all the current employees of the company.
-		\item The manager must be able to search for a specific employee.
-		\item The manager must be able to sort the list of employees.
-		\item The manager must be able to filter the list of employees.
-		\item The system has to show the number jobs the employee has assigned to them.
-		\item The system must show each of the jobs assigned to a specific employee.
-		\item The system must allow the manager to assign jobs to a particular employee.		
-	\end{list}
-	
 	\subsection*{Inventory Subsystem}
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
 		\item Each item in inventory has the following information:
@@ -243,7 +326,7 @@
 		\item The manager should be allowed to search for a particular item in the list.
 		\item The manager should be add new items to the inventory:
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-			\item The manager should be able to specify all the information retaining to stock.
+			\item The manager should be able to specify all the information pertaining to stock (as mentioned above).
 		\end{list}
 	    \item Updating Inventory Information: Managers should have the ability to update existing inventory records, modifying details like quantity on hand, location, and associated costs.
 	    \item Deleting Inventory Items: In cases where certain inventory items are no longer relevant or available, managers should be able to securely delete them from the system.
