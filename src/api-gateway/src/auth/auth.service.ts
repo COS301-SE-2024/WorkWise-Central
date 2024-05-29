@@ -1,12 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+  ) {}
 
-  async signIn(userIdentifier: string, pass: string): Promise<any> {
+  async signIn(
+    userIdentifier: string,
+    pass: string,
+  ): Promise<{ access_token: string }> {
     const user = await this.usersService.findUser(userIdentifier);
     if (!user) {
       throw new NotFoundException('user not found');
@@ -16,10 +23,9 @@ export class AuthService {
       throw new NotFoundException('username or password is incorrect');
     }
 
-    const result = user;
-    result.password = '';
-    // TODO: Generate a JWT and return it here
-    // instead of the user object
-    return result;
+    const payload = { sub: user.user_UUID, username: user.displayName };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 }
