@@ -1,7 +1,5 @@
 # Boolean Hooligans - WorkWise Central
 
-![WorkWise Central Logo](logo.png)
-
 Code coverage badges go here
 
 ---
