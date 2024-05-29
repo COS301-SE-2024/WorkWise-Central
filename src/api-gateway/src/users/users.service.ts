@@ -26,11 +26,20 @@ export class UsersService {
     return this.userModel.find().exec();
   }
 
-  async findUser(id: string) {
+  async findUser(identifier: string) {
     let result;
     try {
       result = await this.userModel.find({
-        $and: [{ user_UUID: id }, { deleted_at: { $exists: false } }],
+        $and: [
+          {
+            $or: [
+              { user_UUID: identifier },
+              { email: identifier },
+              { displayName: identifier },
+            ],
+          },
+          { deleted_at: { $exists: false } },
+        ],
       });
       return result;
     } catch (error) {
