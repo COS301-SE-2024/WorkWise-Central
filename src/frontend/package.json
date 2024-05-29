@@ -16,6 +16,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
@@ -41,7 +42,9 @@
     "typescript": "~5.4.0",
     "vite": "^5.2.8",
     "vite-plugin-vue-devtools": "^7.0.25",
+    "vite-plugin-vuetify": "^2.0.3",
     "vitest": "^1.4.0",
-    "vue-tsc": "^2.0.11"
+    "vue-tsc": "^2.0.11",
+    "vuetify": "^3.6.8"
   }
 }
