@@ -17,7 +17,7 @@
           <!-- Left Half -->
           <v-col cols="6" align-self="center">
             <div>
-              <h1 class="splash-title header-title">
+              <h1 class="splash-title header-title text-center">
                 Welcome To <span class="colorAccent">Work</span>
                 <span class="colorAccent2">Wise</span> Central
               </h1>
@@ -29,7 +29,8 @@
                 @click="loginDialog = true"
                 rounded="xl"
                 align-center
-                class="my-3 button-width button-height"
+                justify-center
+                class="my-3 button-width button-height text-center"
               >
                 Log in
               </v-btn>
@@ -72,7 +73,7 @@
                 @click="signupDialog = true"
                 rounded="xl"
                 align-center
-                class="my-3 button-width button-height"
+                class="my-3 button-width button-height text-center"
               >
                 Sign up
               </v-btn>
@@ -211,6 +212,10 @@
                   </v-card>
                 </v-sheet>
               </v-dialog>
+              <p class="text-center">
+                By clicking Continue to join or sign in, you agree to WorkWise Central’s User
+                Agreement, Privacy Policy, and Cookie Policy
+              </p>
             </div>
           </v-col>
 
