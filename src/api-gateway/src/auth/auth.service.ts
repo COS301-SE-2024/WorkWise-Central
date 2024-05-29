@@ -24,7 +24,7 @@ export class AuthService {
     console.log('match');
     console.log(match);
     if (!match) {
-      throw new NotFoundException('username or password is incorrect');
+      throw new NotFoundException('Username or Password is incorrect');
     }
 
     const payload = { sub: user.user_UUID, username: user.displayName };

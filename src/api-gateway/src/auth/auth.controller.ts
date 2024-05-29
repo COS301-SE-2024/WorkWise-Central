@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { signInDto } from './dto/sign-in-dto.dto';
 
@@ -9,6 +16,10 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   signIn(@Body() signInDTO: signInDto) {
-    return this.authService.signIn(signInDTO.identifier, signInDTO.password);
+    try {
+      return this.authService.signIn(signInDTO.identifier, signInDTO.password);
+    } catch (Error) {
+      throw new HttpException('Invalid Login', HttpStatus.NOT_FOUND);
+    }
   }
 }

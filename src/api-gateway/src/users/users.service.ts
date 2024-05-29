@@ -78,7 +78,8 @@ export class UsersService {
   }
 
   async softDelete(id: string): Promise<boolean> {
-    let result: Document<unknown, {}, User> & User & { _id: Types.ObjectId };
+    let result: Document<unknown, NonNullable<unknown>, User> &
+      User & { _id: Types.ObjectId };
     try {
       result = await this.userModel.findOneAndUpdate(
         { $and: [{ user_UUID: id }, { deleted_at: { $exists: false } }] },
