@@ -46,18 +46,36 @@ export class UsersController {
 
   @Get('id/:identifier')
   findOne(@Param('identifier') identifier: string) {
-    return this.usersService.findUser(identifier);
+    try {
+      return this.usersService.findUser(identifier);
+    } catch (e) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+    try {
+      return this.usersService.update(id, updateUserDto);
+    } catch (e) {
+      throw new HttpException(
+        'internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.softDelete(id);
+    try {
+      return this.usersService.softDelete(id);
+    } catch (e) {
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.SERVICE_UNAVAILABLE,
+      );
+    }
   }
 }
