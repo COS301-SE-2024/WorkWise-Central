@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage{enumitem}
+\usepackage[a4paper, margin=0.8in]{geometry}
 
 \title{%
 	Requirements specifications \\
@@ -65,18 +66,91 @@
 		\end{list}
 	\end{list}
 	
+	\subsection*{Roles and permissions}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item Roles are commonly used groupings of permissions that can be assigned to a user.
+		\item The system must provide the following permissions:
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item Employee:
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item View
+				\item Edit
+				\item Add new employees.
+			\end{list} 
+			\item Jobs
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item View all.
+				\item View all under me. 
+				\item View mine. (default for all employees)
+				\item Edit all.
+				\item Edit all under me.
+				\item Add new job.
+			\end{list}
+			\item Clients
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item View all
+				\item View client for all the jobs under me.
+				\item View clients for all my jobs.
+				\item Edit all.
+				\item Edit all clients for jobs under me.
+				\item Add new clients.
+			\end{list}
+			\item Inventory
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item View all inventory.
+				\item Edit all inventory.
+				\item Add new inventory items.
+				\item All employees that have been allocated a job may record the inventory they used.
+			\end{list}
+		\end{list} 
+		\item The system must provide a set of default roles:
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item Owner - full permission
+			\item Admin - full permission
+			\item Supervisor. Must have the following permissions:
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item View all jobs under me.
+				\item Edit all jobs under me.
+				\item View all employees under me.
+				\item Edit all employees under me.
+				\item View client for all the jobs under me.
+				\item Edit all clients for jobs under me.
+			\end{list}
+			\item Team leader. Must have the following permissions:
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item View all jobs under me.
+				\item Edit all jobs under me.
+				\item View all employees under me.
+				\item Edit all employees under me.
+				\item View client for all the jobs under me.
+				\item Edit all clients for jobs under me.
+			\end{list}
+			\item Worker. Must have the following permissions:
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item View my jobs.
+				\item View client for all my jobs.
+			\end{list}
+		\end{list} 
+		\item The roles of a given company must be able to change (refer to the company setting subsystem above)
+	\end{list}
+	
 	\subsection*{Employee Subsystem}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
 		\item Users are employees of companies.
+		\item Each employee has information associated with them 
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item Email address.
+			\item Their new password. 
+			\item Username.
+			\item Display image.
+			\item Their role in the company.
+			\item Date of birth.
+			\item Gender.
+			\item Preferred language.
+			\item Emergency contact. 
+		\end{list} 
 		\item Each user has to be an employee of one or more companies. 
 		\item Employees must be given a role or permissions for a given company.
-		\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-			\item The user who registered the company will have full permissions.
-			\item The person who registered the company must be able to assign roles to employees.
-			\item They must also be able to just assign permissions without assigning a role.
-			\item The system must give default role.
-			\item These roles must be editable. (refer to company settings subsystem below)
-		\end{list}		
 		\item For employees with view permissions the following must be shown: 
 		\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
 			\item The system must display all the current employees of the company.
@@ -112,15 +186,19 @@
 	\end{list}
 	\subsubsection*{Company Settings Subsystem}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-		\item The system must allow the user to view all the settings for the company to which they have access.
+		\item The system must allow the user to view all the settings for the company if they have permission.
 		\item The system must allow the roles in the company to be changed.
 		\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
 			\item The number of roles can be increased or decreased.
 			\item The labels for each role can be altered.
 			\item The permissions associated with that role can be changed.
 		\end{list}
+		\item The system must allow the statuses available for the jobs to change
+		\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+			\item The labels for each status can be altered.
+		\end{list}
 		\item The system must display all the information of to the company.
-		\item The user must be able to edit the information pertaining to the company.
+		\item The user (if given permission) must be able to edit the information pertaining to the company.
 	\end{list}
 	
 	\subsection*{Company Subsystem}	
@@ -137,135 +215,110 @@
 		\end{list} 
 		\item The user that registered the company should automatically be a part of the company.
 		\item The person who registered the company should have full permissions by default (refer to the permissions and roles subsystem)
+		\item A user must be able to join a company
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item Using the company name.
+			\item Using the company ID.
+			\item Following a link for joining that company.
+		\end{list} 
 		\item All users must be ale to be a part of multiple companies.
-		\item All users must be able to change for which company they are viewing the system. 
+		\item All users must be able to change for which company they are viewing the system.
 	\end{list}
 	
-	\subsection*{Roles and permissions}	
-	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-		\item Roles are commonly used groupings of permissions that can be assigned to a user.
-		\item The system must provide the following permissions:
-		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-			\item Employee:
-			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-				\item View
-				\item Edit
-				\item Add new employees.
-			\end{list} 
-			\item Jobs
-			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-				\item View all.
-				\item View all under me. 
-				\item View mine.
-				\item Edit all.
-				\item Edit all under me.
-				\item Add new job.
-			\end{list}
-			\item Clients
-			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-				\item View all
-				\item View client for all the jobs under me.
-				\item View clients for all my jobs.
-				\item Edit all.
-				\item Edit all clients for jobs under me.
-				\item Add new clients.
-			\end{list}
-			\item Inventory
-			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-				\item View all inventory.
-				\item Edit all inventory.
-				\item Add new inventory items.
-				\item All employees that have been allocated a job may record the inventory they used.
-			\end{list}
-		\end{list} 
-		\item The system must provide a set of default roles:
-		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-			\item Company registration number
-			\item Company name.
-			\item Company type.
-			\item Company vat number.
-			\item Company logo.
-			\item Company contact details.
-		\end{list} 
-		\item The roles of a given company must be able to change (refer to the company setting subsystem above)
-	\end{list}
 
 	\subsection*{Job Subsystem}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
 		\item All jobs in the system will have the following information about the job:
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-			\item The client's name 
-			\item The client's contact details.
-			\item The job address.
+			\item The client fo who this job is, with all their associated details
+			\item The job address, if it is different from the address of the client.
 			\item The date the job is due.
+			\item A description of the job.
 		\end{list} 
-		\item All jobs will have the following statuses:
+		\item All jobs must have a status.
+		\item The system must provide default statuses:
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
 			\item Todo - the job has not been started.
 			\item In progress -  the job in being completed at the moment. 
-			\item Review - the employee completed their part of the job. The job needs to be reviewed and an invoice needs to be sent.
+			\item Paused - The job has been paused (for cases where jobs run over multiple days)
+			\item Awaiting sign off - the employee completed their part of the job. The job needs to be reviewed by a superior.
+			\item Awaiting invoice - an invoice needs to be sent (refer to the automatic invoicing system)
 			\item Awaiting payment - The invoice has been sent.
 			\item Completed - the payment has been received
 		\end{list}
+		\item The system must also allow the user to edit the statuses available on the system.  (refer to company settings subsystem) 
 	\end{list}
-	\subsubsection*{Job Subsystem - Manager}	
+	\subsubsection*{View Job Subsystem}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-		\item This subsystem is only visible for managers.
-		\item The system must show the manager all the jobs the company currently has. 
+		\item The system must show the user all the jobs they have access to.
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-			\item The manager should be able to sort the jobs
-			\item The manager should be able filter the jobs 
-			\item The manager should be able to search for a job by the job name, the employee name or the client name. 
+			\item The user should be able to sort the jobs
+			\item The user should be able filter the jobs 
+			\item The user should be able to search for a job by the job name, the employee name or the client name. 
 		\end{list}
-		\item The system must allow the manager to view a job.
-		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-			\item While the job is not in the review stage the manager can only view the details of the job.
-			\item Once the job is in the review phase, the manager will be able to: 
-			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-				\item Edit the details of the job.
-				\item Leave comments on the job.
-			\end{list}
-		\end{list}
-		\item The system must allow the manager to create a job
-		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-			\item The system must allow the manager to enter the date the job was received.
-			\item The system must allow the manager to enter the date on which the job must be complete 
-			\item The system must allow the manager to enter the client for who the job is
-			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-				\item If the client does not exit the manger must be able to create a client and then add them to the job.
-				\item The client field is required.
-			\end{list}
-			\item The system must allow the manger to assign an employee or to leave the assignment for later.
-		\end{list}
-		\item The system must allow the manager to assign any jobs that have not yet been assigned.
-		
-	\end{list}
-	\subsubsection*{Job Subsystem - Employee}	
-	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-		\item This subsystem is only available to the employees.
-		\item The system must show the employee the jobs they are currently assigned to. 
-		\item The system must allow the employee to access each job individually
-		\item On each individual job the employee will have two different views / actions available based on the stage the job is in
+		\item The system must allow the user to access each job individually.
+		\item On each individual job there will be a different view based on the status of the job
 		\item When the job status is Todo, the following must be showed / allowed:
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
 			\item All the information pertaining to the job. (refer to list above)
-			\item The employee must be able to change the status to in progress
+			\item The user must be able to change the status to in progress
 		\end{list}
-		\item When the job status is In progress, the following must be showed / allowed:
+		\item When the job status is In Progress, the following must be showed / allowed:
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-			\item The employee must be able to upload images of the job
-			\item The employee must be able to record details of the job.
-			\item The employee must be able to record all the inventory they used 
-			\item The employee must be able to change the status of the job to review (i.e. indicate that they are done)
+			\item The user must be able to upload images of the job
+			\item The user must be able to record details of the job.
+			\item The user must be able to record all the inventory they used. 
+			\item The user must be able to change the status of the job to review (i.e. indicate that they are done)
 		\end{list}
-		\item When the job status is review, the following must be showed / allowed:
+		\item When the job status is Paused, the user must be able to resume the the job.
+		\item When the job status is Awaiting sign off, the following must be showed / allowed:
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-			\item The employee must be able to see all the information they added during the job.
-			\item The employee must be able to edit any of the information. 
-			\item The employee must be able to see the comments. 
-			\item The employee must be able to leave comments.
+			\item The user must be able to see all the information they added during the job.
+			\item The user must be able to leave comments.
+			\item The user must be able to see the comments. 
+			\item The user must be able to edit the comments if they have permission (i.e. they worked on the job or they are a superior)
+			\item The user must be able to change the status of the job to Awaiting invoice (i.e. indicate the job has been signed off)
 		\end{list}
+		\item When the job status is Awaiting invoice, the following must be showed / allowed:
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The system must provide the user with a preview of the generated invoice. 
+			\item The user must be able to edit the generated invoice. 
+			\item The user must be able to download the invoice. 
+			\item The user must be able to send the invoice to the client.
+			\item The user must be able to change the status of the job to Awaiting payment (i.e. indicate the invoice has been sent)
+		\end{list}
+		\item When the job status is Awaiting payment, the system must show an overview of the job:
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The system must display all the information pertaining to the job. This includes the details provided by the client, the details about the work added by the employees and the invoice sent.
+			\item The system must show the date the invoice was sent.
+			\item The system must show how much the client owes.
+			\item The system must show the clients contact details.
+			\item The user must be able to change the status of the job to complete (i.e. indicate the payment has been received)			
+		\end{list}
+		\item When the job status is complete, the system must show an overview of the job (as discussed above)
+		\item At any point the system must allow the user to access an overview of the job. 
 	\end{list}
+	
+	
+	
+	\subsubsection*{Edit Job Subsystem}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item Everything available for the View Job Subsystem must also be available to this subsystem.
+		\item The system must allow the user to create a job
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The system must allow the user to enter the date the job was received.
+			\item The system must allow the user to enter the date on which the job must be complete 
+			\item The system must allow the user to enter the client for who the job is
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item If the client does not exit the user must be able to create a client and then be create the job for that client.
+				\item The client field is required.
+			\end{list}
+			\item The system must allow the user to assign an employee or to leave the assignment for later.
+		\end{list}
+		\item The system must allow the user to assign any jobs that have not been assigned when they were created.
+		
+	\end{list}
+	
 	
 	
 	\subsection*{Client Subsystem}	
@@ -273,37 +326,35 @@
 		\item All clients in the system will have relevant personal information stored:
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
 			\item Client name.
-			\item Client contact details.
-			\item Client company (optional).
+			\item Client email address.
+			\item Client contact number.
 			\item Client address.
-			\item Notes on any preferences the client has, such as the time of day they would like jobs to happen or any special instructions such has how to get into the property where the job will happen etc.
+			\item Client company (optional).
+			\item Company address (optional).
+			\item Preferred language spoken.
 		\end{list}
 	\end{list}
-	\subsubsection*{Client Subsystem - Manager}	
+	\subsubsection*{View Client Subsystem}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-		\item This subsystem must only be available to managers
-		\item The system must provide a view of all the clients of the company.		
-		\item The manager must be able to search for a particular client.
-		\item The system must allow the user to sort the clients.
-		\item The system must allow the user to filter the clients.
-		\item The system must allow the user to create clients.
+		\item The system must display all the clients the user has permission to view.
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The user must be able to sort the list of clients.
+			\item The user must be able to filter the list of clients.
+			\item The employee must be able to search for a particular client.
+		\end{list}
+		\item The system must display all the jobs of a particular client that the user has permission to view.
+	\end{list}
+	\subsubsection*{Edit Client Subsystem}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item This subsystem includes everything available in the View Client Subsystem.
+		\item The system must allow the user to create new clients.
 		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
 			\item The user must be able to enter the information of the client.
 			\item The user must be able to make multiple clients in succession.
 		\end{list}
-		\item The user must be able to edit ny of the information pertaining to a client.
-		\item The user must be able to view all the information of the client.
-		\item The system must all display all the jobs associated with this client.
+		\item The user must be able to edit any of the information pertaining to a client that they have permission to edit.
 	\end{list}
-	\subsubsection*{Client Subsystem - Employee}	
-	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-		\item This subsystem must only be available to employees.
-		\item The system must display all the clients the employee is currently assigned to.
-		\item The system must display all the jobs of a particular client that the employee has been assigned to.
-		\item The employee must be able to sort the list of clients.
-		\item The employee must be able to filter the list of clients.
-		\item The employee must be able to search for a particular client. 		
-	\end{list}
+	
 	
 	\subsection*{Inventory Subsystem}
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
@@ -314,63 +365,113 @@
 			\item The cost price of the item.
 			\item The current stock level of the item.
 			\item Low stock threshold for the item.
-			\item Supplier information fo the item.
+			\item Supplier information for the item. 
 		\end{list}
 	\end{list}
-	\subsubsection*{Inventory Subsystem - Manager}	
+	\subsubsection*{On The Job Inventory Subsystem}	
 	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
-		\item This subsystem is only available to a manager. 
-		\item The system should display all the items in the inventory.
-		\item The manager should be allowed to sort the list.
-		\item The manager should be allowed to filter the list.
-		\item The manager should be allowed to search for a particular item in the list.
-		\item The manager should be add new items to the inventory:
-		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
-			\item The manager should be able to specify all the information pertaining to stock (as mentioned above).
-		\end{list}
-	    \item Updating Inventory Information: Managers should have the ability to update existing inventory records, modifying details like quantity on hand, location, and associated costs.
-	    \item Deleting Inventory Items: In cases where certain inventory items are no longer relevant or available, managers should be able to securely delete them from the system.
-	    \item Viewing Detailed Reports: The system should provide managers with insightful reports regarding inventory usage and status. These reports should encompass vital metrics such as inventory turnover rates, stock-out occurrences, and trends over time, aiding in informed decision-making.
+		\item This is how anyone on site will be able to track the inventory they used.
+		\item The system should allow any on site employee to add a item to the list of items used for a job. 
+		\item The user should be able to add multiple at once 
+		\item The user should be able to remove any item they added (in case they make a mistake)
+		\item Any inventory used must be updated on the companies inventory.
+		\item The employee must also be able to log any job specific orders.
 	\end{list}
-	\subsubsection*{Inventory Subsystem - Employee}	
-	\begin{itemize}
-	    \item The Employee Inventory Management functionality empowers frontline employees with the necessary tools to efficiently interact with the inventory system. Key features include:
-	    \item Viewing Inventory Items: Employees should have access to a comprehensive list of inventory items, categorized and easily searchable, along with pertinent details such as item descriptions and current availability.
-	    \item Updating Inventory Status: Employees should be able to update the status of inventory items in real-time, marking them as in use, available, in need of replacement, or any other relevant status. This ensures accurate tracking of inventory utilization and facilitates timely replenishment.
-	    \item Requesting Additional Inventory Items: Employees should have the capability to submit requests for additional inventory items as per operational requirements. These requests should be seamlessly integrated into the inventory management workflow, triggering appropriate actions by managers.
-	\end{itemize}
+	\subsubsection*{View Inventory Subsystem}	
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item The system must allow the user to view all the inventory items the company has, if the user has the relevant permission.
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The user must be able to search for a particular item.
+			\item The user must be able to sort the items.
+			\item The user must be able to filter the items.
+		\end{list}
+		\item The system must highlight the items that are low in stock.
+	\end{list}
+	\subsubsection*{Edit Inventory Subsystem}	
+	\begin{list}{R\arabic{enumileveli}}{\usecounter{enumileveli}}
+		\item Everything that is available to the View Inventory Subsystem must also be available for this subsystem.
+		\item The user should be add new items to the inventory:
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The manager should be able to specify all the information pertaining to the item (as mentioned above).
+		\end{list}
+		\item The user should be able to update an existing item. They must be able to edit any of the information for that item
+		\item The user should be able to delete an item from the inventory.
+	    \item The user should be able to do a stock take at the end of the day.
+	    \begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+	    	\item The system should then generate a report based on the day 
+	    	\item The report should specify if there were any discrepancies in the amount of stock used and the stock take.
+	    \end{list}
+	\end{list}
+	
+	
 	\subsection*{Communication and Notification subsystem}	
-	\begin{itemize}
-	    \item The Real-time Communication and Notification subsystem serve as a vital conduit for facilitating seamless communication among managers, employees, and clients, ensuring timely updates and fostering transparency in operations.
-	    \item Push Notifications and SMS Alerts: The system should support the delivery of push notifications and SMS alerts to relevant stakeholders, including managers, employees, and clients. These notifications should encompass critical updates such as job assignments, inventory changes, and urgent announcements, ensuring prompt attention and action.
-	    \item Location Tracking: Real-time location tracking capabilities should be integrated into the system, enabling stakeholders to track the progress of jobs and deliveries in real-time. This feature enhances operational visibility and enables proactive decision-making based on the current status of activities.
-	    \item Chat and Messaging: The system should provide chat and messaging functionality for seamless communication among team members, enabling quick exchanges of information, updates, and clarifications. This feature fosters collaboration and teamwork, enhancing operational efficiency and service quality.
-	\end{itemize}
+		\subsubsection*{Push notifications}	
+		\begin{list}{R\arabic{enumileveli}}{\usecounter{enumileveli}}
+			\item All users of the system should get push notifications regarding any important changes in the system that involves them.
+			\item Users should get notifications when they are added to a job.
+			\item Users should get notifications when the status of a job they have access to changes
+			\item Users with appropriate permissions should get notifications about any inventory that needs to be ordered.
+			\item The system should also allow each user to change their notification settings (refer to the settings subsystem)
+			\item Users with permission should get notified about any client feedback after the job has been complete.
+		\end{list}
+		
+		\subsubsection*{SMS notifications}	
+		\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+			\item Clients of the company must receive an SMS when an employee is on their way to complete a job.
+		\end{list}
+		
+		\subsubsection*{Emails}	
+		\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+			\item The system should send an email to clients when an employee is on their way to complete a job.
+			\item The system should have the option to automatically email an invoice to a client.
+			\item The system should send an email to clients with a link to be able to fill in a feedback form.
+			\item The settings for emails must be changeable (refer to company settings subsystem) 
+		\end{list}
+	
+	
 	\subsection*{Reporting subsystem}	
-	\begin{itemize}
-	    \item The Reporting subsystem empowers managers with actionable insights derived from comprehensive reports, facilitating data-driven decision-making and performance optimization across various facets of business operations.
-	    \item Customizable Reports: Managers should have the flexibility to generate customized reports tailored to specific parameters and time periods. These reports should cover diverse aspects such as job progress, inventory status, employee performance, and client satisfaction, providing a holistic view of business performance.
-	    \item Insightful Analytics: In addition to standard reports, the system should offer advanced analytical capabilities, including trend analysis, forecasting, and performance benchmarks. These analytics empower managers to identify patterns, anticipate future needs, and proactively address challenges, driving continuous improvement.
-	    \item Automated Report Generation: The system should support automated report generation and distribution, streamlining the reporting process and ensuring timely access to critical information. Managers should be able to schedule report generation at regular intervals and receive reports via email or other channels, reducing manual effort and enhancing efficiency.
-	\end{itemize}
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item The system should be able to generate analytics on the following aspects of the system:
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The inventory system
+			\item The clients. The system should include any client feedback.
+			\item On employees
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item The these reports should be level based.
+				\item If there is no-one under a particular employee they should only be able to see a report og their own performance.
+				\item A team leader for instance can see the individual performance of his team as well as an overall team performance.
+			\end{list}
+		\end{list}
+		\item The system must be able to automatically generate a report based on those analytics. 
+	\end{list}
+	
 	\subsection*{Feedback subsystem}	
-	\begin{itemize}
-	    \item The Feedback subsystem serves as a valuable mechanism for soliciting and acting upon feedback from clients, fostering a culture of continuous improvement and enhancing overall service quality.
-	    \item Client Feedback Mechanism: The system should provide clients with intuitive channels for submitting feedback, including options for rating the service received, providing detailed comments, and suggesting improvements. This feedback mechanism should be seamlessly integrated into the client interaction process, ensuring convenience and accessibility.
-	    \item Manager Review and Action: Feedback submitted by clients should be promptly accessible to managers for review and action. Managers should have the capability to analyze feedback trends, identify recurring issues or areas for improvement, and take proactive measures to address them, thereby enhancing client satisfaction and loyalty.
-	    \item Performance Metrics: The system should capture and analyze key performance metrics derived from client feedback, such as satisfaction scores, response times, and service ratings. These metrics serve as valuable indicators of service quality and can be used to drive targeted improvements and training initiatives.
-	\end{itemize}
-	\subsection*{Job Scheduling subsystem}
-	\begin{itemize}
-	    \item The Job Scheduling subsystem plays a pivotal role in optimizing resource allocation, streamlining operations, and ensuring timely delivery of services to clients.
-	    \item Automated Job Assignment: The system should support automated job assignment based on predefined criteria such as employee availability, skill set, and proximity to the job location. This feature minimizes manual intervention, reduces errors, and ensures efficient utilization of resources.
-	    \item Real-time Job Updates: Managers and employees should receive real-time updates regarding job assignments, schedule changes, and client requests. These updates should be delivered through push notifications, SMS alerts, or other communication channels, enabling stakeholders to stay informed and responsive.
-	    \item Optimization Algorithms: The system should leverage optimization algorithms to intelligently schedule jobs, considering factors such as travel time, resource availability, and client preferences. These algorithms help in maximizing operational efficiency, minimizing delays, and enhancing overall service quality.
-	\end{itemize}
-	\subsection*{Appointment Scheduling and Tracking subsystem}
-	\begin{itemize}
-	    \item The Appointment Scheduling and Tracking subsystem provides employees/managers with a user-friendly platform for booking services, managing appointments, and tracking service providers in real-time.
-	\end{itemize}
+		\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+			\item This system is intended to gather feedback form clients.
+			\item The system must gather provide a feedback form for each client, for each job that has been complete.
+			\item The feedback form should include 
+			\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+				\item An overall star rating 
+				\item A star rating for the quality of work 
+				\item A star rating for customer service
+				\item An input box for them to leave any comments.
+			\end{list}
+		\end{list}
+		
+	
+	\subsection*{Automated Job Assignment subsystem}
+	This is added as a potential wow factor
+	\begin{list}{R\arabic{enumileveli}.}{\usecounter{enumileveli}}
+		\item This subsystem should automatically suggest a employee to which the job should be assigned when the job is being create. 
+		\item The system should make these recommendations based on the following
+		\begin{list}{R\arabic{enumileveli}.\arabic{enumilevelii}.\arabic{enumilevelii}}{\usecounter{enumilevelii}}
+			\item The availability of the employees.
+			\item The spread of jobs amongst all employees.
+			\item The skill level of an employee.
+			\item The location of the job
+			\item The date of the job
+		\end{list}
+	\end{list}
 
 	
 	\newpage
