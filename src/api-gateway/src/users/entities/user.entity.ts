@@ -28,10 +28,20 @@ export class User {
   @Prop({ type: [String], required: true })
   roles: string[];
 
-  @Prop({ required: false })
+  @Prop({
+    required: false,
+    default:
+      'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
+  })
   profilePicture: string; //Will be a base64 string
 
-  @Prop({ required: false })
+  @Prop({ required: true, default: 'Rather Not Say' })
+  gender: string;
+
+  @Prop({ required: false, default: 'English' })
+  preferred_Language: string;
+
+  @Prop({ required: false, default: new Date() })
   public created_at: Date;
 
   @Prop({ required: false })
@@ -48,6 +58,9 @@ UserSchema.pre('save', async function (next) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     console.log(this.email, this.password);
+    const match = await bcrypt.compare('ABC', this.password);
+    console.log(match);
+    next();
   } catch (error) {
     next(error);
   }
