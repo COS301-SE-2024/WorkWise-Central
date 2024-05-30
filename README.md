@@ -2,8 +2,8 @@
 
 ![WorkWise Central Logo](logo.png)
 
-Code coverage badges go here
-
+[![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)
+![Uptime Robot status](https://img.shields.io/uptimerobot/status/m796617525-da8bacd4b5ef756cceb20b0e?logo=GitHub)
 ---
 
 ## Table of Contents
@@ -57,7 +57,7 @@ For detailed information on the functional requirements, please refer to our Sof
 
 ## GitHub Project Board
 
-[View our GitHub Project Board](#)
+![View our GitHub Project Board](https://github.com/orgs/COS301-SE-2024/projects/59)
 
 ## Team Members
 
