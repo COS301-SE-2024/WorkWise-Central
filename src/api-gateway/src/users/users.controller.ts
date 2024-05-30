@@ -14,11 +14,12 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
-
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
+  @ApiBody({ type: [CreateUserDto] })
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     try {
@@ -54,6 +55,7 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBody({ type: [UpdateUserDto] })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     try {
