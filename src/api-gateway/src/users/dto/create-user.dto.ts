@@ -9,13 +9,14 @@ export class CreateUserDto extends OmitType(User, [
   @ApiProperty()
   displayName: string;
 
+  @ApiProperty()
   name: string;
+
+  @ApiProperty()
+  surname: string;
 
   @ApiPropertyOptional({ type: [String] })
   roles: string[];
-
-  @ApiPropertyOptional({ default: 'Rather Not Say' })
-  gender: string;
 
   @ApiPropertyOptional({ default: 'English' })
   preferred_Language: string;
