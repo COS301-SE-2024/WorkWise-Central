@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -19,6 +20,16 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
+    if ((await this.usernameExists(createUserDto.displayName)) == false) {
+      throw new ConflictException(
+        'Username already exists, please use another one',
+      );
+    }
+    if ((await this.emailExists(createUserDto.displayName)) == false) {
+      throw new ConflictException(
+        'Email already in use, please use another one',
+      );
+    }
     createUserDto.created_at = new Date();
     createUserDto.user_UUID = uuidv4();
 
@@ -38,12 +49,36 @@ export class UsersService {
     }
   }
 
+  async usernameExists(identifier: string): Promise<boolean> {
+    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
+      await this.userModel
+        .findOne({
+          $and: [
+            { displayName: identifier },
+            { deleted_at: { $exists: false } },
+          ],
+        })
+        .lean();
+
+    return result == null;
+  }
+
+  async emailExists(identifier: string): Promise<boolean> {
+    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
+      await this.userModel
+        .findOne({
+          $and: [{ email: identifier }, { deleted_at: { $exists: false } }],
+        })
+        .lean();
+
+    return result == null;
+  }
+
   async findUser(
     identifier: string,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
-    let result: FlattenMaps<User> & { _id: Types.ObjectId };
-    try {
-      result = await this.userModel
+    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
+      await this.userModel
         .findOne({
           $and: [
             {
@@ -58,12 +93,13 @@ export class UsersService {
         })
         .lean();
 
-      console.log(result);
-      return result;
-    } catch (error) {
-      console.log(error);
-      throw new NotFoundException('User not found');
+    if (result == null) {
+      throw new NotFoundException(
+        'Error: User not found, please verify your username and password',
+      );
     }
+
+    return result;
   }
 
   async update(

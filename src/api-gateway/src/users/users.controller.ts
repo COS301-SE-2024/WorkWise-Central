@@ -27,7 +27,7 @@ export class UsersController {
 
   @ApiInternalServerErrorResponse({
     type: HttpException,
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    status: HttpStatus.CONFLICT,
   })
   @ApiBody({ type: [CreateUserDto] })
   @Post()
@@ -37,10 +37,7 @@ export class UsersController {
     try {
       return await this.usersService.create(createUserDto);
     } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(Error, HttpStatus.CONFLICT);
     }
   }
 
@@ -62,7 +59,7 @@ export class UsersController {
     try {
       return this.usersService.findUser(identifier);
     } catch (e) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new HttpException(e, HttpStatus.NOT_FOUND);
     }
   }
 
