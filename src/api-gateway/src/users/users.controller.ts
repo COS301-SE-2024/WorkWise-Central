@@ -1,29 +1,41 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
+  Get,
   HttpException,
   HttpStatus,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, createUserResponseDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiInternalServerErrorResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+  })
   @ApiBody({ type: [CreateUserDto] })
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  async create(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<createUserResponseDto> {
     try {
-      return this.usersService.create(createUserDto);
+      return await this.usersService.create(createUserDto);
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',

@@ -4,7 +4,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, createUserResponseDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -24,7 +24,9 @@ export class UsersService {
 
     const newUser = new this.userModel(createUserDto);
     const result = await newUser.save();
-    return `${result.name} ${result.surname}'s account has been created`;
+    return new createUserResponseDto(
+      `${result.name} ${result.surname}'s account has been created`,
+    );
   }
 
   async findAllUsers() {
