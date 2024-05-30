@@ -8,7 +8,7 @@
         <span class="colorAccent2 toolbar-text">Wise</span>
       </v-app-bar-title>
       <v-spacer></v-spacer>
-      <v-switch label="Theme"></v-switch>
+      <!-- <v-switch label="Theme"></v-switch> -->
     </v-app-bar>
     <!-- Main Content -->
     <v-main>
@@ -279,7 +279,7 @@
                   <v-col>
                     <v-col>
                       <h4 class="text-center" style="font-size: 30px; font-weight: lighter">
-                        Create an account
+                        Create your profile
                       </h4></v-col
                     >
                     <v-spacer></v-spacer>
@@ -402,7 +402,7 @@
           <v-col cols="6">
             <div class="w-full h-full">
               <v-img
-                src="/img/splash.jpg"
+                src="/img/splash2.png"
                 alt="splash"
                 class="w-full h-full object-cover"
                 rounded="xl"
