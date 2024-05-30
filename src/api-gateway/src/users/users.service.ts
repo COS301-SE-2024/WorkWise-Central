@@ -106,42 +106,31 @@ export class UsersService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
-    let result: FlattenMaps<User> & { _id: Types.ObjectId };
-    try {
-      updateUserDto.updated_at = new Date();
-      console.log(updateUserDto);
-      result = await this.userModel
+    updateUserDto.updated_at = new Date();
+    //console.log(updateUserDto);
+    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
+      await this.userModel
         .findOneAndUpdate(
           { $and: [{ user_UUID: id }, { deleted_at: { $exists: false } }] },
           { $set: { ...updateUserDto } },
         )
         .lean();
-      if (result == null) {
-        throw new Error('failed to update user');
-      }
-      return result;
-    } catch (error) {
-      console.log(error);
-      throw new NotFoundException(error);
+    if (result == null) {
+      throw new NotFoundException('failed to update user');
     }
+    return result;
   }
 
   async softDelete(id: string): Promise<boolean> {
-    let result: Document<unknown, NonNullable<unknown>, User> &
-      User & { _id: Types.ObjectId };
-    try {
-      result = await this.userModel.findOneAndUpdate(
-        { $and: [{ user_UUID: id }, { deleted_at: { $exists: false } }] },
-        { $set: { deleted_at: new Date() } },
-      );
+    const result: Document<unknown, NonNullable<unknown>, User> &
+      User & { _id: Types.ObjectId } = await this.userModel.findOneAndUpdate(
+      { $and: [{ user_UUID: id }, { deleted_at: { $exists: false } }] },
+      { $set: { deleted_at: new Date() } },
+    );
 
-      if (result == null) {
-        throw new InternalServerErrorException('internal server server');
-      }
-      return true;
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(error);
+    if (result == null) {
+      throw new InternalServerErrorException('Internal server Error');
     }
+    return true;
   }
 }
