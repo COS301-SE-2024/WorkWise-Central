@@ -32,3 +32,11 @@ export class CreateUserDto extends OmitType(User, [
     this.user_UUID = ''; //The value will be instantiated before being saved to the DB
   }
 }
+
+export class createUserResponseDto {
+  message: string;
+
+  constructor(message: string) {
+    this.message = message;
+  }
+}
