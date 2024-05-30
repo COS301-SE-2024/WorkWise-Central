@@ -32,6 +32,7 @@
                   align-center
                   justify-center
                   class="my-3 button-width button-height text-center"
+                  size="x-large"
                 >
                   Log in
                 </v-btn></v-col
@@ -115,6 +116,7 @@
                   rounded="xl"
                   align-center
                   class="my-3 button-width button-height text-center"
+                  size="x-large"
                 >
                   Sign up
                 </v-btn></v-col
@@ -327,7 +329,7 @@
                     <v-col cols="8" offset="2">
                       <v-btn
                         text
-                        @click="(signup2Dialog = false)(signup)"
+                        @click="(signup2Dialog = false)((signup3Dialog = true))"
                         rounded="xl"
                         size="x-large"
                         color="blue-accent-2"
@@ -348,6 +350,45 @@
                       >
                     </v-col>
                   </v-col>
+                </v-sheet>
+              </v-dialog>
+              <v-dialog v-model="signup3Dialog" max-width="500" style="height: 700px">
+                <v-sheet width="500" height="250" border="md" color="" rounded="xl">
+                  <v-container
+                    ><v-row
+                      ><v-col align-self="center"
+                        ><v-col cols="8" offset="2">
+                          <v-btn
+                            text
+                            @click="(signup2Dialog = false)(signup)"
+                            rounded="xl"
+                            color="blue-accent-2"
+                            variant="elevated"
+                            width="100%"
+                            align-center
+                            justify-center
+                            class="my-3 button-width button-height text-center"
+                            size="x-large"
+                            >Register a company</v-btn
+                          >
+                        </v-col>
+                        <v-col cols="8" offset="2">
+                          <v-btn
+                            @click="((signup2Dialog = false))"
+                            rounded="xl"
+                            color="blue-grey-darken-1"
+                            variant="elevated"
+                            width="100%"
+                            align-center
+                            justify-center
+                            class="my-3 button-width button-height text-center"
+                            size="x-large"
+                            >Join a company</v-btn
+                          >
+                        </v-col></v-col
+                      ></v-row
+                    ></v-container
+                  >
                 </v-sheet>
               </v-dialog>
               <p class="text-center">
@@ -378,26 +419,16 @@ import {
   VAppBar,
   VBtn,
   VTextField,
-  VCard,
   VDialog,
-  VCardActions,
-  VCardText,
   VSpacer,
-  VCardTitle,
   VContainer,
   VCol,
   VRow,
   VApp,
-  VAvatar,
   VImg,
   VSelect,
-  VToolbar,
-  VToolbarTitle,
-  VAppBarNavIcon,
   VLayout,
   VMain,
-  VFooter,
-  VDivider,
   VSwitch
 } from 'vuetify/components'
 
@@ -407,7 +438,7 @@ export default {
     signupDialog: false,
     signup1Dialog: false,
     signup2Dialog: false,
-
+    signup3Dialog: false,
     email: '',
     password: ''
   }),
@@ -424,26 +455,16 @@ export default {
     VAppBar,
     VBtn,
     VTextField,
-    VCard,
     VDialog,
-    VCardActions,
-    VCardText,
     VSpacer,
-    VCardTitle,
     VContainer,
     VCol,
     VRow,
     VApp,
-    VAvatar,
     VImg,
     VSelect,
-    VToolbar,
-    VToolbarTitle,
-    VAppBarNavIcon,
     VLayout,
     VMain,
-    VFooter,
-    VDivider,
     VSwitch
   }
 }
