@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.2.27)  29 MAY 2024 18:48
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.2.27)  30 MAY 2024 18:46
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -121,68 +121,69 @@ LaTeX Font Info:    ... okay on input line 12.
 \c@enumileveli=\count267
 \c@enumilevelii=\count268
 \c@enumileveliii=\count269
-\c@numleveli=\count270
+\c@enumileveliiii=\count270
+\c@numleveli=\count271
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 21.
+(Font)              <12> on input line 22.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 21.
+(Font)              <8> on input line 22.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 21.
+(Font)              <6> on input line 22.
 [1
 
 {C:/Users/jessi/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 26--27
+Underfull \hbox (badness 10000) in paragraph at lines 27--28
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 28--29
+Underfull \hbox (badness 10000) in paragraph at lines 29--30
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 30--31
+Underfull \hbox (badness 10000) in paragraph at lines 31--32
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 32--33
+Underfull \hbox (badness 10000) in paragraph at lines 33--34
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 34--35
+Underfull \hbox (badness 10000) in paragraph at lines 35--36
 
  []
 
-[2] [3]
-Underfull \hbox (badness 10000) in paragraph at lines 44--45
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 40--42
 
  []
 
-[4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] (Requirements.aux)
+[3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] (Requirements.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-04>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 1404 strings out of 474486
- 24391 string characters out of 5743755
- 1938542 words of memory out of 5000000
- 23739 multiletter control sequences out of 15000+600000
+ 1408 strings out of 474486
+ 24457 string characters out of 5743755
+ 1937542 words of memory out of 5000000
+ 23743 multiletter control sequences out of 15000+600000
  562324 words of font info for 50 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,6n,65p,833b,303s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,6n,65p,833b,297s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/jessi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
 cmbx10.pfb><C:/Users/jessi/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
 fonts/cm/cmbx12.pfb><C:/Users/jessi/AppData/Local/Programs/MiKTeX/fonts/type1/p
 ublic/amsfonts/cm/cmr10.pfb><C:/Users/jessi/AppData/Local/Programs/MiKTeX/fonts
 /type1/public/amsfonts/cm/cmr12.pfb><C:/Users/jessi/AppData/Local/Programs/MiKT
 eX/fonts/type1/public/amsfonts/cm/cmr17.pfb>
-Output written on Requirements.pdf (15 pages, 104822 bytes).
+Output written on Requirements.pdf (13 pages, 103242 bytes).
 PDF statistics:
- 76 PDF objects out of 1000 (max. 8388607)
+ 70 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
