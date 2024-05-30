@@ -17,7 +17,7 @@ export class contactInfo {
   @Prop({ type: String, required: true })
   phoneNumber: string;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: true, lowercase: true })
   email: string;
 }
 @Schema()
@@ -88,7 +88,7 @@ export class roles {
 @Schema()
 export class availability {
   @Prop({ required: false })
-  schedule: any[];
+  schedule: any[]; //Todo: Ask thando
 }
 
 @Schema()
