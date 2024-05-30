@@ -15,7 +15,10 @@ import { RouterLink, RouterView } from 'vue-router'
       <br />
       <RouterLink to="/add-employee">AddEmployee</RouterLink>
       <br />
+      <RouterLink to="/job-details">Job Details</RouterLink>
+      <br />
       <v-btn color="red">Hello</v-btn> <v-dialog>CLICK</v-dialog>
+      <br />
     </v-main>
   </v-app>
 
