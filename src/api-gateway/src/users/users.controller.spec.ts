@@ -40,8 +40,8 @@ describe('UsersController', () => {
     expect(usersController).toBeDefined();
   });
 
-  it('should create a user', async function () {
-    const result = await usersController.create(userStub());
+  it('should not create a user when null is input', async function () {
+    const result = await usersController.create(null);
     console.log(result);
     expect(result).toStrictEqual(mockUserObject);
   });

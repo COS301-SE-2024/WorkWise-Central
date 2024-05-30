@@ -23,7 +23,7 @@ export class AuthService {
       throw new NotFoundException('Username or Password is incorrect');
     }
 
-    const payload = { sub: user.user_UUID, username: user.profile.displayName };
+    const payload = { sub: user.uuid, username: user.profile.displayName };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

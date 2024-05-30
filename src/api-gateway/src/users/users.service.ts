@@ -30,7 +30,7 @@ export class UsersService {
 
     console.log('createUserDto', createUserDto);
     createUserDto.created_at = new Date();
-    createUserDto.user_UUID = uuidv4();
+    createUserDto.uuid = uuidv4();
 
     const newUser = new this.userModel(createUserDto);
     console.log('newUser -> ', newUser);
@@ -56,7 +56,7 @@ export class UsersService {
       await this.userModel
         .findOne({
           $and: [
-            { 'profile.displayName': identifier },
+            { 'systemDetails.username': identifier },
             {
               $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
             },
@@ -77,8 +77,8 @@ export class UsersService {
           $and: [
             {
               $or: [
-                { user_UUID: identifier },
-                { 'profileInfo.displayName': identifier },
+                { uuid: identifier },
+                { 'systemDetails.username': identifier },
               ],
             },
             {
@@ -108,7 +108,7 @@ export class UsersService {
         .findOneAndUpdate(
           {
             $and: [
-              { user_UUID: id },
+              { uuid: id },
               {
                 $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
               },
@@ -128,7 +128,9 @@ export class UsersService {
       User & { _id: Types.ObjectId } = await this.userModel.findOneAndUpdate(
       {
         $and: [
-          { user_UUID: id },
+          {
+            $or: [{ uuid: id }, { 'systemDetails.username': id }],
+          },
           {
             $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
           },

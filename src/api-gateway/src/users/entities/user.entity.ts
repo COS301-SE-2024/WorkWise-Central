@@ -68,6 +68,7 @@ export class personalInfo {
 export class profile {
   @Prop({ type: String, required: true })
   displayName: string;
+  @ApiHideProperty()
   @Prop({
     required: false,
     default:
@@ -93,9 +94,9 @@ export class availability {
 
 @Schema()
 export class User {
-  @ApiProperty()
+  @ApiHideProperty()
   @Prop({ required: true, unique: true })
-  user_UUID: string;
+  uuid: string;
 
   @ApiProperty()
   @Prop({ required: true })
