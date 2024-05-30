@@ -18,12 +18,12 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('user not found');
     }
-    const match = await bcrypt.compare(pass, user.password);
+    const match = await bcrypt.compare(pass, user.systemDetails.password);
     if (!match) {
       throw new NotFoundException('Username or Password is incorrect');
     }
 
-    const payload = { sub: user.user_UUID, username: user.displayName };
+    const payload = { sub: user.user_UUID, username: user.profile.displayName };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

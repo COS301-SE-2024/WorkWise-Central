@@ -20,23 +20,25 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    if ((await this.usernameExists(createUserDto.displayName)) == false) {
+    if (
+      (await this.usernameExists(createUserDto.profile.displayName)) == false
+    ) {
       throw new ConflictException(
         'Username already exists, please use another one',
       );
     }
-    if ((await this.emailExists(createUserDto.displayName)) == false) {
-      throw new ConflictException(
-        'Email already in use, please use another one',
-      );
-    }
+
+    console.log('createUserDto', createUserDto);
     createUserDto.created_at = new Date();
     createUserDto.user_UUID = uuidv4();
 
     const newUser = new this.userModel(createUserDto);
+    console.log('newUser -> ', newUser);
     const result = await newUser.save();
+    console.log('result -> ', result);
+
     return new createUserResponseDto(
-      `${result.name} ${result.surname}'s account has been created`,
+      `${result.personalInfo.firstName} ${result.personalInfo.surname}'s account has been created`,
     );
   }
 
@@ -54,23 +56,15 @@ export class UsersService {
       await this.userModel
         .findOne({
           $and: [
-            { displayName: identifier },
-            { deleted_at: { $exists: false } },
+            { 'profile.displayName': identifier },
+            {
+              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            },
           ],
         })
         .lean();
 
-    return result == null;
-  }
-
-  async emailExists(identifier: string): Promise<boolean> {
-    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
-      await this.userModel
-        .findOne({
-          $and: [{ email: identifier }, { deleted_at: { $exists: false } }],
-        })
-        .lean();
-
+    console.log('usernameExists -> ', result);
     return result == null;
   }
 
@@ -84,11 +78,12 @@ export class UsersService {
             {
               $or: [
                 { user_UUID: identifier },
-                { email: identifier },
-                { displayName: identifier },
+                { 'profileInfo.displayName': identifier },
               ],
             },
-            { deleted_at: { $exists: false } },
+            {
+              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            },
           ],
         })
         .lean();
@@ -111,7 +106,14 @@ export class UsersService {
     const result: FlattenMaps<User> & { _id: Types.ObjectId } =
       await this.userModel
         .findOneAndUpdate(
-          { $and: [{ user_UUID: id }, { deleted_at: { $exists: false } }] },
+          {
+            $and: [
+              { user_UUID: id },
+              {
+                $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              },
+            ],
+          },
           { $set: { ...updateUserDto } },
         )
         .lean();
@@ -124,7 +126,14 @@ export class UsersService {
   async softDelete(id: string): Promise<boolean> {
     const result: Document<unknown, NonNullable<unknown>, User> &
       User & { _id: Types.ObjectId } = await this.userModel.findOneAndUpdate(
-      { $and: [{ user_UUID: id }, { deleted_at: { $exists: false } }] },
+      {
+        $and: [
+          { user_UUID: id },
+          {
+            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+          },
+        ],
+      },
       { $set: { deleted_at: new Date() } },
     );
 
