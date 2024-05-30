@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
-import { userStub } from '../../test/stubs/user.stub';
+import { getMockDate, userStub } from '../../test/stubs/user.stub';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -40,9 +40,18 @@ describe('UsersController', () => {
     expect(usersController).toBeDefined();
   });
 
-  it('should create a user', function () {
-    expect(usersController.create(userStub())).toBeDefined();
-    expect(usersController.create(userStub())).toStrictEqual(userStub());
+  it('should create a user', async function () {
+    const result = await usersController.create(userStub());
+    console.log(result);
+    expect(result).toStrictEqual({
+      name: 'John',
+      surname: 'Doe',
+      password: 'verySecurePassword',
+      dateOfBirth: getMockDate(),
+      email: 'john.doe@example.com',
+      roles: ['admin', 'user'],
+    });
+    //expect(usersController.create(userStub())).toStrictEqual(userStub());
   });
 
   it('should find all users', function () {
