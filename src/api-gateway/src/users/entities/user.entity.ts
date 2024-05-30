@@ -94,9 +94,9 @@ export class availability {
 
 @Schema()
 export class User {
-  @ApiHideProperty()
+  /*  @ApiHideProperty()
   @Prop({ required: true, unique: true })
-  uuid: string;
+  uuid: string;*/
 
   @ApiProperty()
   @Prop({ required: true })

@@ -43,7 +43,7 @@ export const mockUserObject = {
 */
 
 export const mockUserObject = {
-  user_UUID: '123e4567-e89b-12d3-a456-426614174030',
+  //user_UUID: '123e4567-e89b-12d3-a456-426614174030',
   systemDetails: {
     email: 'user@example.com',
     password: 'password',

@@ -10,7 +10,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
-import { v4 as uuidv4 } from 'uuid';
+//import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
@@ -30,7 +30,7 @@ export class UsersService {
 
     console.log('createUserDto', createUserDto);
     createUserDto.created_at = new Date();
-    createUserDto.uuid = uuidv4();
+    //createUserDto.uuid = uuidv4();
 
     const newUser = new this.userModel(createUserDto);
     console.log('newUser -> ', newUser);
@@ -77,7 +77,7 @@ export class UsersService {
           $and: [
             {
               $or: [
-                { uuid: identifier },
+                { _id: identifier },
                 { 'systemDetails.username': identifier },
               ],
             },
@@ -108,7 +108,7 @@ export class UsersService {
         .findOneAndUpdate(
           {
             $and: [
-              { uuid: id },
+              { _id: id },
               {
                 $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
               },
@@ -129,7 +129,7 @@ export class UsersService {
       {
         $and: [
           {
-            $or: [{ uuid: id }, { 'systemDetails.username': id }],
+            $or: [{ _id: id }, { 'systemDetails.username': id }],
           },
           {
             $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
