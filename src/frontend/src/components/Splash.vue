@@ -47,40 +47,48 @@
                       </h4></v-col
                     >
                     <v-spacer></v-spacer>
-                    <v-col>
-                      <v-row align="center"
-                        ><v-col
-                          ><label for="email" style="font-size: 20px; font-weight: lighter"
-                            >Email</label
-                          >
-                          <v-text-field
-                            color="grey-lighten-3"
-                            label="Enter your email"
-                            type="email"
-                            v-model="email"
-                            rounded="xl"
-                            variant="solo"
-                          ></v-text-field
-                        ></v-col>
-                      </v-row>
-                      <v-row align="center"
-                        ><v-col
-                          ><label for="password" style="font-size: 20px; font-weight: lighter"
-                            >Password</label
-                          >
-                          <v-text-field
-                            color="grey-lighten-4"
-                            label="Enter your password"
-                            type="password"
-                            v-model="password"
-                            rounded="xl"
-                            variant="solo"
-                          ></v-text-field></v-col
-                      ></v-row>
+                    <v-col
+                      ><v-form ref="form" v-model="valid">
+                        <v-row align="center"
+                          ><v-col
+                            ><label for="email" style="font-size: 20px; font-weight: lighter"
+                              >Email</label
+                            >
+
+                            <v-text-field
+                              color="grey-lighten-3"
+                              label="Enter your email"
+                              type="email"
+                              v-model="email"
+                              :rules="emailRules"
+                              rounded="xl"
+                              variant="solo"
+                              required
+                            ></v-text-field
+                          ></v-col>
+                        </v-row>
+                        <v-row align="center"
+                          ><v-col
+                            ><label for="password" style="font-size: 20px; font-weight: lighter"
+                              >Password</label
+                            >
+                            <v-text-field
+                              color="grey-lighten-4"
+                              label="Enter your password"
+                              type="password"
+                              v-model="password"
+                              :rules="passwordRules"
+                              rounded="xl"
+                              variant="solo"
+                              required
+                            ></v-text-field></v-col
+                        ></v-row>
+                      </v-form>
                     </v-col>
 
                     <v-col cols="8" offset="2">
                       <v-btn
+                        :disabled="!valid"
                         text
                         @click="login"
                         rounded="xl"
@@ -121,7 +129,7 @@
                   Sign up
                 </v-btn></v-col
               >
-
+              <!-- Flow 1 -->
               <v-dialog v-model="signupDialog" max-width="500" style="height: 700px">
                 <v-sheet elevation="14" rounded="xl" width="500" height="700">
                   <v-col>
@@ -133,48 +141,56 @@
                     <v-spacer></v-spacer>
 
                     <v-col>
-                      <v-row align="center"
-                        ><v-col>
-                          <label>Email</label>
-                          <v-text-field
-                            color="grey-lighten-4"
-                            label="Enter your email"
-                            type="email"
-                            v-model="email"
-                            rounded="xl"
-                            variant="solo"
-                          ></v-text-field></v-col
-                      ></v-row>
-                      <v-row
-                        ><v-col
-                          ><label>Password</label>
-                          <v-text-field
-                            color="grey-lighten-4"
-                            label="Enter your password"
-                            type="password"
-                            v-model="password"
-                            rounded="xl"
-                            variant="solo"
-                            aria-placeholder="Enter your password"
-                          ></v-text-field></v-col
-                      ></v-row>
-                      <v-row
-                        ><v-col
-                          ><label>Confirm Password</label
-                          ><v-text-field
-                            color="grey-lighten-4"
-                            label="Confirm your Password"
-                            type="password"
-                            v-model="password"
-                            rounded="xl"
-                            variant="solo"
-                          ></v-text-field></v-col
-                      ></v-row>
+                      <v-form ref="form" v-model="valid">
+                        <v-row align="center"
+                          ><v-col>
+                            <label>Email</label>
+                            <v-text-field
+                              color="grey-lighten-4"
+                              label="Enter your email"
+                              type="email"
+                              v-model="email"
+                              :rules="emailRules"
+                              rounded="xl"
+                              variant="solo"
+                              required
+                            ></v-text-field></v-col
+                        ></v-row>
+                        <v-row
+                          ><v-col
+                            ><label>Password</label>
+                            <v-text-field
+                              color="grey-lighten-4"
+                              label="Enter your password"
+                              type="password"
+                              v-model="password"
+                              :rules="passwordRules"
+                              rounded="xl"
+                              variant="solo"
+                              aria-placeholder="Enter your password"
+                            ></v-text-field></v-col
+                        ></v-row>
+                        <v-row
+                          ><v-col
+                            ><label>Confirm Password</label
+                            ><v-text-field
+                              color="grey-lighten-4"
+                              label="Confirm your Password"
+                              type="password"
+                              v-model="password"
+                              :rules="[(v) => v === password || 'Passwords do not match']"
+                              rounded="xl"
+                              variant="solo"
+                              required
+                            ></v-text-field></v-col
+                        ></v-row>
+                      </v-form>
                     </v-col>
                     <v-col cols="8" offset="2">
                       <v-btn
+                        :disabled="!valid"
                         text
-                        @click="(signupDialog = false), (signup1Dialog = true)"
+                        @click="nextFlow1"
                         rounded="xl"
                         boarder="xl"
                         width="100%"
@@ -197,7 +213,7 @@
                   </v-col>
                 </v-sheet>
               </v-dialog>
-
+              <!-- Flow 2 -->
               <v-dialog v-model="signup1Dialog" max-width="500" style="height: 700px">
                 <v-sheet width="500" height="700" border="md" color="" rounded="xl">
                   <v-col>
@@ -208,49 +224,58 @@
                     >
                     <v-spacer></v-spacer>
                     <v-col>
-                      <v-row align="center"
-                        ><v-col
-                          ><label>Name</label>
-                          <v-text-field
-                            color="grey-lighten-4"
-                            label="Enter your name"
-                            type="input"
-                            v-model="name"
-                            rounded="xl"
-                            variant="solo"
-                          ></v-text-field
-                        ></v-col>
-                      </v-row>
-                      <v-row
-                        ><v-col
-                          ><label>Surname</label
-                          ><v-text-field
-                            color="grey-lighten-4"
-                            label="Enter your surname"
-                            type="input"
-                            v-model="surname"
-                            rounded="xl"
-                            variant="solo"
-                            aria-placeholder="E1nter your password"
-                          ></v-text-field></v-col
-                      ></v-row>
-                      <v-row
-                        ><v-col
-                          ><label>Display Name</label>
-                          <v-text-field
-                            color="grey-lighten-4"
-                            label="Enter your display name"
-                            type="input"
-                            v-model="display_name"
-                            rounded="xl"
-                            variant="solo"
-                          ></v-text-field></v-col
-                      ></v-row>
+                      <v-form ref="form" v-model="valid">
+                        <v-row align="center"
+                          ><v-col
+                            ><label>Name</label>
+                            <v-text-field
+                              color="grey-lighten-4"
+                              label="Enter your name"
+                              type="input"
+                              v-model="name"
+                              :rules="nameRules"
+                              rounded="xl"
+                              variant="solo"
+                              required
+                            ></v-text-field
+                          ></v-col>
+                        </v-row>
+                        <v-row
+                          ><v-col
+                            ><label>Surname</label
+                            ><v-text-field
+                              color="grey-lighten-4"
+                              label="Enter your surname"
+                              type="input"
+                              v-model="surname"
+                              :rules="surnameRules"
+                              rounded="xl"
+                              variant="solo"
+                              required
+                              aria-placeholder="E1nter your password"
+                            ></v-text-field></v-col
+                        ></v-row>
+                        <v-row
+                          ><v-col
+                            ><label>Display Name</label>
+                            <v-text-field
+                              color="grey-lighten-4"
+                              label="Enter your display name"
+                              type="input"
+                              v-model="display_name"
+                              :rules="display_nameRules"
+                              rounded="xl"
+                              variant="solo"
+                              required
+                            ></v-text-field></v-col
+                        ></v-row>
+                      </v-form>
                     </v-col>
                     <v-col cols="8" offset="2">
                       <v-btn
+                        :disabled="!valid"
                         text
-                        @click="(signup1Dialog = false)((signup2Dialog = true))"
+                        @click="nextFlow2"
                         rounded="xl"
                         size="x-large"
                         color="blue-accent-2"
@@ -273,7 +298,7 @@
                   </v-col>
                 </v-sheet>
               </v-dialog>
-
+              <!-- Flow 3 -->
               <v-dialog v-model="signup2Dialog" max-width="500" style="height: 700px">
                 <v-sheet width="500" height="700" border="md" color="" rounded="xl">
                   <v-col>
@@ -284,52 +309,58 @@
                     >
                     <v-spacer></v-spacer>
                     <v-col>
-                      <v-row
-                        ><v-col
-                          ><label>Date of Birth</label
-                          ><v-text-field
-                            color="grey-lighten-4"
-                            label="Date of birth"
-                            type="input"
-                            v-model="date"
-                            rounded="xl"
-                            variant="solo"
-                            clearable
-                          ></v-text-field
-                        ></v-col>
-                      </v-row>
-                      <v-row algin="center"
-                        ><v-col
-                          ><label>Gender</label>
-                          <v-select
-                            color="grey-lighten-4"
-                            label="Gender"
-                            hint="Chose your gender"
-                            rounded="xl"
-                            variant="solo"
-                            clearable
-                          >
-                          </v-select></v-col
-                      ></v-row>
-                      <v-row
-                        ><v-col
-                          ><label>Preferred Language</label>
-                          <v-select
-                            color="grey-lighten-4"
-                            label="Preferred Language"
-                            hint="Chose your preferred language"
-                            rounded="xl"
-                            variant="solo"
-                            clearable
-                          >
-                          </v-select></v-col
-                      ></v-row>
+                      <v-form ref="form" v-model="valid">
+                        <v-row
+                          ><v-col
+                            ><label>Date of Birth</label
+                            ><v-text-field
+                              color="grey-lighten-4"
+                              label="Date of birth"
+                              type="input"
+                              v-model="date"
+                              :rules="date_rules"
+                              rounded="xl"
+                              variant="solo"
+                              clearable
+                            ></v-text-field
+                          ></v-col>
+                        </v-row>
+                        <v-row algin="center"
+                          ><v-col
+                            ><label>Gender</label>
+                            <v-select
+                              color="grey-lighten-4"
+                              label="Gender"
+                              hint="Chose your gender"
+                              :rules="gender_rules"
+                              rounded="xl"
+                              variant="solo"
+                              clearable
+                            >
+                            </v-select></v-col
+                        ></v-row>
+                        <v-row
+                          ><v-col
+                            ><label>Preferred Language</label>
+                            <v-select
+                              color="grey-lighten-4"
+                              label="Preferred Language"
+                              hint="Chose your preferred language"
+                              :rules="language_rules"
+                              rounded="xl"
+                              variant="solo"
+                              clearable
+                            >
+                            </v-select></v-col
+                        ></v-row>
+                      </v-form>
                     </v-col>
 
                     <v-col cols="8" offset="2">
                       <v-btn
+                        :disabled="!valid"
                         text
-                        @click="(signup2Dialog = false)((signup3Dialog = true))"
+                        @click="nextFlow3"
                         rounded="xl"
                         size="x-large"
                         color="blue-accent-2"
@@ -374,7 +405,7 @@
                         </v-col>
                         <v-col cols="8" offset="2">
                           <v-btn
-                            @click="((signup2Dialog = false))"
+                            @click="signup2Dialog = false"
                             rounded="xl"
                             color="blue-grey-darken-1"
                             variant="elevated"
@@ -440,15 +471,74 @@ export default {
     signup2Dialog: false,
     signup3Dialog: false,
     email: '',
-    password: ''
+    password: '',
+    confirm_password: '',
+    name: '',
+    surname: '',
+    display_name: '',
+    valid: true,
+    emailRules: [
+      (v) => !!v || 'E-mail is required',
+      (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+    ],
+    passwordRules: [
+      (v) => !!v || 'Password is required',
+      (v) => v.length >= 8 || 'Password must be at least 8 characters'
+    ],
+    nameRules: [
+      (v) => !!v || 'Name is required',
+      (v) => v.length >= 3 || 'Name must be at least 3 characters'
+    ],
+    surnameRules: [
+      (v) => !!v || 'Surname is required',
+      (v) => v.length >= 3 || 'Surname must be at least 3 characters'
+    ],
+    display_nameRules: [
+      (v) => !!v || 'Display name is required',
+      (v) => v.length >= 3 || 'Display name must be at least 3 characters'
+    ],
+    date_rules: [
+      (v) => !!v || 'Date of birth is required',
+      (v) => v.length >= 3 || 'Date of birth must be at least 3 characters'
+    ],
+    gender_rules: [(v) => !!v || 'Please select your gender'],
+    language_rules: [(v) => !!v || 'Please select your preferred language']
   }),
   methods: {
-    login() {},
-    signup() {},
-    nextFlow() {},
+    login() {
+      if (this.$refs.form.validate())
+        if (this.email === 'admin' && this.password === 'admin') {
+          this.$router.push('/dashboard')
+        }
+    },
+    signup() {
+      this.$router.push('/dashboard')
+    },
+    nextFlow1() {
+      if (this.$refs.form.validate()) {
+        this.signup2Dialog = false
+        this.signup1Dialog = true
+      }
+    },
+    nextFlow2() {
+      if (this.$refs.form.validate()) {
+        this.signup1Dialog = false
+        this.signup2Dialog = true
+      }
+    },
+    nextFlow3() {
+      if (this.$refs.form.validate()) {
+        this.signup2Dialog = false
+        this.signup3Dialog = true
+      }
+    },
     changeTheme() {},
     openDialog() {
       this.dialog = true
+    },
+    submit() {
+      if (this.$refs.form.validate()) {
+      }
     }
   },
   components: {
