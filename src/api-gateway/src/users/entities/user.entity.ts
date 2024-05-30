@@ -1,10 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 //import * as bcrypt from 'bcrypt';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import * as mongoose from 'mongoose';
 
 @Schema()
 export class systemDetails {
-  @Prop({ required: true })
+  @Prop({ required: true, lowercase: true })
   email: string;
   @Prop({ required: true, unique: false })
   password: string;
@@ -67,7 +68,6 @@ export class personalInfo {
 export class profile {
   @Prop({ type: String, required: true })
   displayName: string;
-
   @Prop({
     required: false,
     default:
@@ -75,6 +75,7 @@ export class profile {
   })
   displayImage: string;
 }
+
 @Schema()
 export class roles {
   @Prop({ type: String, required: false })
@@ -82,6 +83,12 @@ export class roles {
 
   @Prop({ type: [String], required: false })
   permissions: string[];
+}
+
+@Schema()
+export class availability {
+  @Prop({ required: false })
+  schedule: any[];
 }
 
 @Schema()
@@ -105,6 +112,14 @@ export class User {
   @ApiProperty()
   @Prop({ required: false })
   roles: roles;
+
+  @ApiProperty()
+  @Prop({ type: [mongoose.Types.ObjectId], required: false })
+  joinedCompanies: mongoose.Types.ObjectId[];
+
+  @ApiProperty()
+  @Prop({ type: [String], required: false })
+  skills: string[];
 
   @ApiHideProperty()
   @Prop({ required: false, default: new Date() })
