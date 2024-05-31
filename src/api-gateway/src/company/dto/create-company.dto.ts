@@ -7,9 +7,9 @@ export class CreateCompanyDto extends OmitType(Company, [
 ] as const) {}
 
 export class createCompanyResponseDto {
-  message: string;
+  id: string;
 
   constructor(message: string) {
-    this.message = message;
+    this.id = message;
   }
 }

@@ -33,6 +33,11 @@ export class UsersController {
     return true;
   }
 
+  @Get()
+  lookAtDocumentation() {
+    return { message: 'Refer to /documentation for details on the API' };
+  }
+
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.CONFLICT,

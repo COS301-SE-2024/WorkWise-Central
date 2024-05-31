@@ -39,14 +39,29 @@ export class CompanyService {
     const result = await newCompany.save();
     return new createCompanyResponseDto(`${result.id}`);
   }
-  async companyExists(id: string | Types.ObjectId): Promise<boolean> {
+  async companyExists(id: string): Promise<boolean> {
     const result: FlattenMaps<User> & { _id: Types.ObjectId } =
       await this.companyModel
         .findOne({
           $and: [
+            { registrationNumber: id },
             {
-              $or: [{ registrationNumber: id }, { _id: id }],
+              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
             },
+          ],
+        })
+        .lean();
+
+    //console.log('companyExists -> ', result);
+    return result == null;
+  }
+
+  async companyIdExists(id: Types.ObjectId): Promise<boolean> {
+    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
+      await this.companyModel
+        .findOne({
+          $and: [
+            { _id: id },
             {
               $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
             },
@@ -67,16 +82,14 @@ export class CompanyService {
     }
   }
 
-  async findOne(
+  async findById(
     identifier: string,
   ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
     const result: FlattenMaps<Company> & { _id: Types.ObjectId } =
       await this.companyModel
         .findOne({
           $and: [
-            {
-              $or: [{ _id: identifier }, { registrationNumber: identifier }],
-            },
+            { _id: identifier },
             {
               $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
             },
@@ -90,11 +103,34 @@ export class CompanyService {
 
     return result;
   }
+
+  async findByRegistrationNumber(
+    registrationNumber: string,
+  ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+    const result: FlattenMaps<Company> & { _id: Types.ObjectId } =
+      await this.companyModel
+        .findOne({
+          $and: [
+            { registrationNumber: registrationNumber },
+            {
+              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+
+    if (result == null) {
+      throw new NotFoundException('Company not found');
+    }
+
+    return result;
+  }
+
   //TODO:Add authorization for endpoint
   //For now, I assume the person is authorised
   async addEmployee(addUserDto: AddUserToCompanyDto) {
     //Add validation
-    if (await this.companyExists(addUserDto.currentCompany)) {
+    if (await this.companyIdExists(addUserDto.currentCompany)) {
       throw new NotFoundException(`Company not found`);
     }
 
