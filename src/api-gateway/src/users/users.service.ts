@@ -127,7 +127,7 @@ export class UsersService {
             $or: [{ _id: id }, { 'systemDetails.username': id }],
           },
           {
-            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }], //TODO: add an index
+            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
           },
         ],
       },
