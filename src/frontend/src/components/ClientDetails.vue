@@ -29,7 +29,7 @@
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption text-medium-emphasis white--text"
+                class="text-caption white--text"
                 >Name of client*</small
               >
 
@@ -38,6 +38,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the name of the client"
+                v-model="req_obj.client_name"
                 rounded="xl"
                 variant="solo"
                 required
@@ -46,7 +47,7 @@
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption text-medium-emphasis"
+                class="text-caption"
                 >Client email address*</small
               >
               <v-text-field
@@ -54,6 +55,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the client's email address"
+                v-model="req_obj.client_email"
                 rounded="xl"
                 variant="solo"
                 required
@@ -62,7 +64,7 @@
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption text-medium-emphasis"
+                class="text-caption"
                 >Client phone number*</small
               >
               <v-text-field
@@ -70,6 +72,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the client's phone number"
+                v-model="req_obj.client_number"
                 rounded="xl"
                 variant="solo"
                 required
@@ -78,7 +81,7 @@
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption text-medium-emphasis"
+                class="text-caption"
                 >Client address*</small
               >
               <v-text-field
@@ -86,6 +89,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the client's address"
+                v-model="req_obj.client_address"
                 rounded="xl"
                 variant="solo"
                 required
@@ -94,7 +98,7 @@
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption text-medium-emphasis"
+                class="text-caption"
                 >Company (if applicable)</small
               >
               <v-text-field
@@ -102,6 +106,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the company name"
+                v-model="req_obj.company_name"
                 rounded="xl"
                 variant="solo"
                 required
@@ -110,7 +115,7 @@
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption text-medium-emphasis"
+                class="text-caption"
                 >Company address (if applicable)</small
               >
               <v-text-field
@@ -118,6 +123,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the company address"
+                v-model="req_obj.company_address"
                 rounded="xl"
                 variant="solo"
                 required
@@ -126,7 +132,7 @@
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption text-medium-emphasis"
+                class="text-caption"
                 >Preferred language</small
               >
               <v-text-field
@@ -135,6 +141,7 @@
                 color="grey-lighten-4"
                 label="Enter the language preferred by the client"
                 rounded="xl"
+                v-model="req_obj.client_preferred_language"
                 variant="solo"
                 required
               ></v-text-field
@@ -170,7 +177,15 @@ export default {
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
-    req_obj: {}
+    req_obj: {
+      client_name: '',
+      client_email: '',
+      client_number: '',
+      client_address: '',
+      company_name: '',
+      company_address: '',
+      client_preferred_language: ''
+    }
   })
 }
 </script>
