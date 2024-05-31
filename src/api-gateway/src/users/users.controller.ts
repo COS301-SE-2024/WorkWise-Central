@@ -38,7 +38,7 @@ export class UsersController {
     status: HttpStatus.CONFLICT,
   })
   @ApiBody({ type: [CreateUserDto] })
-  @Post()
+  @Post('/create')
   async create(
     @Body() createUserDto: CreateUserDto,
   ): Promise<createUserResponseDto> {
@@ -50,7 +50,7 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
-  @Get()
+  @Get('all')
   findAll() {
     try {
       return this.usersService.findAllUsers();
