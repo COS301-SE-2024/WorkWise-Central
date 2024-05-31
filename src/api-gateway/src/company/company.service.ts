@@ -156,9 +156,11 @@ export class CompanyService {
       },
     );
 
+    const currentCompanyId = new Types.ObjectId(addUserDto.currentCompany);
+
     const updateUser = await this.userModel.findByIdAndUpdate(
       { _id: newId._id },
-      { $push: { joinedCompanies: addUserDto.currentCompany } },
+      { $push: { joinedCompanies: currentCompanyId } },
     );
 
     console.log(resultOfUpdate);
