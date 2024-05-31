@@ -20,11 +20,18 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
+import mongoose, { Types } from 'mongoose';
 
 @ApiTags('company')
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
+  validateObjectId(id: string | Types.ObjectId): boolean {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+    }
+    return true;
+  }
 
   @UseGuards(AuthGuard) //Need to add authorization
   @Get()
@@ -45,6 +52,9 @@ export class CompanyController {
   @ApiBody({ type: AddUserToCompanyDto })
   @Post('/add')
   async addEmployee(@Body() addUserDto: AddUserToCompanyDto) {
+    this.validateObjectId(addUserDto.adminId);
+    this.validateObjectId(addUserDto.currentCompany);
+
     try {
       return await this.companyService.addEmployee(addUserDto);
     } catch (Error) {

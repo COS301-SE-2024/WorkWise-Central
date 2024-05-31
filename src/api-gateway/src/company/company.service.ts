@@ -149,13 +149,20 @@ export class CompanyService {
       throw new ConflictException('User is already a member');
     }
     //
-    this.companyModel.findByIdAndUpdate(
-      { _id: addUserDto.adminId },
+    const resultOfUpdate = await this.companyModel.findByIdAndUpdate(
+      { _id: addUserDto.currentCompany },
       {
         $push: { employees: newId._id },
       },
     );
 
+    const updateUser = await this.userModel.findByIdAndUpdate(
+      { _id: newId._id },
+      { $push: { joinedCompanies: addUserDto.currentCompany } },
+    );
+
+    console.log(resultOfUpdate);
+    console.log(updateUser);
     return 'User added successfully';
 
     /*    const newCompany = new this.userModel(addUserDto.newEmployee);
