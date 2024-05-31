@@ -63,19 +63,38 @@ export class UsersService {
     return result == null;
   }
 
-  async findUser(
+  async findUserById(
     identifier: string,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
     const result: FlattenMaps<User> & { _id: Types.ObjectId } =
       await this.userModel
         .findOne({
           $and: [
+            { _id: identifier },
             {
-              $or: [
-                { _id: identifier },
-                { 'systemDetails.username': identifier },
-              ],
+              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
             },
+          ],
+        })
+        .lean();
+
+    if (result == null) {
+      throw new NotFoundException(
+        'Error: User not found, please verify your username and password',
+      );
+    }
+
+    return result;
+  }
+
+  async findUserByUsername(
+    identifier: string,
+  ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
+    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
+      await this.userModel
+        .findOne({
+          $and: [
+            { 'systemDetails.username': identifier },
             {
               $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
             },
@@ -96,9 +115,11 @@ export class UsersService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
-    updateUserDto.updated_at = new Date();
-    //console.log(updateUserDto);
-    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
+    /*    updateUserDto.updated_at = new Date();
+    console.log('updateUserDto');
+    console.log(updateUserDto);*/
+
+    const previousObject: FlattenMaps<User> & { _id: Types.ObjectId } =
       await this.userModel
         .findOneAndUpdate(
           {
@@ -109,13 +130,13 @@ export class UsersService {
               },
             ],
           },
-          { $set: { ...updateUserDto } },
+          { $set: { ...updateUserDto }, updated_at: new Date() },
         )
         .lean();
-    if (result == null) {
+    if (previousObject == null) {
       throw new NotFoundException('failed to update user');
     }
-    return result;
+    return previousObject;
   }
 
   async softDelete(id: string): Promise<boolean> {

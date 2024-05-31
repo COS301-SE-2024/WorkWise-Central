@@ -90,10 +90,18 @@ export class roles {
   permissions: string[];
 }
 
+export class day {
+  @Prop({ required: false })
+  day: string;
+
+  @Prop({ required: false })
+  hours: string;
+}
+
 @Schema()
 export class availability {
   @Prop({ required: false })
-  schedule: any[]; //Todo: Ask thando
+  schedule: day[];
 }
 
 @Schema()

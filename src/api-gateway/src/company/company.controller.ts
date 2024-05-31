@@ -14,25 +14,36 @@ import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { ApiBody, ApiInternalServerErrorResponse } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiInternalServerErrorResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
 
+@ApiTags('company')
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
+
+  @UseGuards(AuthGuard) //Need to add authorization
+  @Get()
+  hello() {
+    return { message: 'Refer to /documentation for details on the API' };
+  }
 
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.CONFLICT,
   })
   @ApiBody({ type: [CreateCompanyDto] })
-  @Post()
+  @Post('/create')
   create(@Body() createCompanyDto: CreateCompanyDto) {
     return this.companyService.create(createCompanyDto);
   }
 
   @ApiBody({ type: AddUserToCompanyDto })
-  @Post()
+  @Post('/add')
   async addEmployee(@Body() addUserDto: AddUserToCompanyDto) {
     try {
       return await this.companyService.addEmployee(addUserDto);
@@ -42,7 +53,7 @@ export class CompanyController {
   }
 
   @UseGuards(AuthGuard) //Need to add authorization
-  @Get()
+  @Get('/all')
   findAll() {
     try {
       return this.companyService.findAll();

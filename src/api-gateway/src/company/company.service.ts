@@ -114,7 +114,7 @@ export class CompanyService {
     }
     //
     this.companyModel.findByIdAndUpdate(
-      { _id: addUserDto.adminUsername },
+      { _id: addUserDto.adminId },
       {
         $push: { employees: newId._id },
       },

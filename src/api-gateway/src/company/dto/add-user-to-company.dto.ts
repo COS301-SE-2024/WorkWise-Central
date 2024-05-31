@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 
 export class AddUserToCompanyDto {
-  adminUsername: Types.ObjectId;
+  adminId: Types.ObjectId;
   currentCompany: Types.ObjectId;
   newEmployeeUsername: string;
 }
