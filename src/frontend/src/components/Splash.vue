@@ -1,8 +1,12 @@
 <template>
-  <v-app>
+  <v-app :style="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color">
     <v-layout>
       <!-- Toolbar -->
-      <v-app-bar app color="white" dark>
+      <v-app-bar
+        app
+        :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+        dark
+      >
         <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
         <v-app-bar-title>
           <span class="colorAccent toolbar-text">Work</span>
@@ -40,7 +44,13 @@
                 >
 
                 <v-dialog v-model="loginDialog" max-width="500" style="height: 700px">
-                  <v-sheet width="500" height="600" border="md" color="" rounded="xl">
+                  <v-sheet
+                    width="500"
+                    height="600"
+                    border="md"
+                    :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                    rounded="xl"
+                  >
                     <v-col>
                       <v-col>
                         <h4 class="text-center" style="font-size: 30px; font-weight: lighter">
@@ -57,7 +67,11 @@
                               >
 
                               <v-text-field
-                                color="grey-lighten-3"
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
                                 label="Enter your username"
                                 type="email"
                                 v-model="username"
@@ -74,7 +88,11 @@
                                 >Password</label
                               >
                               <v-text-field
-                                color="grey-lighten-4"
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
                                 label="Enter your password"
                                 type="password"
                                 v-model="password"
@@ -132,7 +150,13 @@
                 >
                 <!-- Flow 1 -->
                 <v-dialog v-model="signupDialog" max-width="500" style="height: 700px">
-                  <v-sheet elevation="14" rounded="xl" width="500" height="700">
+                  <v-sheet
+                    elevation="14"
+                    rounded="xl"
+                    width="500"
+                    height="700"
+                    :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  >
                     <v-col>
                       <v-col>
                         <h4 class="text-center" style="font-size: 30px; font-weight: lighter">
@@ -147,7 +171,11 @@
                             ><v-col>
                               <label>Email</label>
                               <v-text-field
-                                color="grey-lighten-4"
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
                                 label="Enter your email"
                                 type="email"
                                 v-model="email"
@@ -161,7 +189,11 @@
                             ><v-col
                               ><label>Password</label>
                               <v-text-field
-                                color="grey-lighten-4"
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
                                 label="Enter your password"
                                 type="password"
                                 v-model="password"
@@ -175,7 +207,11 @@
                             ><v-col
                               ><label>Confirm Password</label
                               ><v-text-field
-                                color="grey-lighten-4"
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
                                 label="Confirm your Password"
                                 type="password"
                                 v-model="confirm_password"
@@ -216,7 +252,13 @@
                 </v-dialog>
                 <!-- Flow 2 -->
                 <v-dialog v-model="signup1Dialog" max-width="500" style="height: 700px">
-                  <v-sheet width="500" height="700" border="md" color="" rounded="xl">
+                  <v-sheet
+                    width="500"
+                    height="700"
+                    border="md"
+                    rounded="xl"
+                    :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  >
                     <v-col>
                       <v-col>
                         <h4 class="text-center" style="font-size: 30px; font-weight: lighter">
@@ -230,7 +272,11 @@
                             ><v-col
                               ><label>Name</label>
                               <v-text-field
-                                color="grey-lighten-4"
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
                                 label="Enter your name"
                                 type="input"
                                 v-model="name"
@@ -245,7 +291,11 @@
                             ><v-col
                               ><label>Surname</label
                               ><v-text-field
-                                color="grey-lighten-4"
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
                                 label="Enter your surname"
                                 type="input"
                                 v-model="surname"
@@ -260,7 +310,11 @@
                             ><v-col
                               ><label>Username</label>
                               <v-text-field
-                                color="grey-lighten-4"
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
                                 label="Enter your display name"
                                 type="input"
                                 v-model="username"
@@ -301,7 +355,13 @@
                 </v-dialog>
                 <!-- Flow 3 -->
                 <v-dialog v-model="signup2Dialog" max-width="500" style="height: 700px">
-                  <v-sheet width="500" height="700" border="md" color="" rounded="xl">
+                  <v-sheet
+                    width="500"
+                    height="700"
+                    border="md"
+                    rounded="xl"
+                    :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  >
                     <v-col>
                       <v-col>
                         <h4 class="text-center" style="font-size: 30px; font-weight: lighter">
@@ -379,7 +439,13 @@
                   </v-sheet>
                 </v-dialog>
                 <v-dialog v-model="signup3Dialog" max-width="500" style="height: 750px">
-                  <v-sheet width="400" height="350" border="md" color="" rounded="xl">
+                  <v-sheet
+                    width="400"
+                    height="350"
+                    border="md"
+                    :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                    rounded="xl"
+                  >
                     <v-container
                       ><v-row
                         ><v-col align-self="center"
@@ -477,6 +543,11 @@ export default {
     gender: '',
     language: '',
     valid: true,
+    isdarkmode: true,
+    light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
+    dark_theme_text_color: 'color: #DCDBDB',
+    modal_dark_theme_color: '#2b2b2b',
+    modal_light_theme_color: '#FFFFFF',
     usernameRules: [(v) => !!v || 'Username is required'],
     emailRules: [
       (v) => !!v || 'E-mail is required',
@@ -484,11 +555,16 @@ export default {
     ],
     passwordRules: [
       (v) => !!v || 'Password is required',
-      (v) => v.length >= 8 || 'Password must be at least 8 characters'
+      (v) => v.length >= 8 || 'Password must be at least 8 characters',
+      (v) => /[A-Z]/.test(v) || 'Password must contain at least one uppercase letter',
+      (v) => /[a-z]/.test(v) || 'Password must contain at least one lowercase letter',
+      (v) => /[0-9]/.test(v) || 'Password must contain at least one number',
+      (v) => /[^A-Za-z0-9]/.test(v) || 'Password must contain at least one special character'
     ],
     nameRules: [
       (v) => !!v || 'Name is required',
-      (v) => v.length >= 3 || 'Name must be at least 3 characters'
+      (v) => v.length >= 3 || 'Name must be at least 3 characters',
+      (v) => /^[a-zA-Z]*$/.test(v) || 'Name must contain only letters'
     ],
     surnameRules: [
       (v) => !!v || 'Surname is required',
@@ -548,7 +624,14 @@ export default {
       }
     },
     toggleDarkMode() {
-      this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+      console.log(this.isdarkmode)
+      if (this.isdarkmode === true) {
+        this.isdarkmode = false
+        console.log(this.isdarkmode)
+      } else {
+        this.isdarkmode = true
+        console.log(this.isdarkmode)
+      }
     }
   },
   components: {
