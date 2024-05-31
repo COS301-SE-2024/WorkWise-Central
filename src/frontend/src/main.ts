@@ -2,12 +2,12 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import { createVuetify } from 'vuetify'
-import Vuetify from 'vuetify';
+// import Vuetify from 'vuetify';
 import 'vuetify/dist/vuetify.min.css'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import 'vuetify/styles'
-import Vue from 'vue'
+// import Vue from 'vue'
 
 const vuetify = createVuetify({
   components,

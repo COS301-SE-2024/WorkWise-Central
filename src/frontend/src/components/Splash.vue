@@ -178,7 +178,7 @@
                                 color="grey-lighten-4"
                                 label="Confirm your Password"
                                 type="password"
-                                v-model="password"
+                                v-model="confirm_password"
                                 :rules="[(v) => v === password || 'Passwords do not match']"
                                 rounded="xl"
                                 variant="solo"
