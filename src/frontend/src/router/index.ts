@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import SplashView from '../views/SplashView.vue'
+
 import RegisterCompanyModal from '../components/RegisterCompanyModal.vue'
 import RegisterCompanyModal2 from '../components/RegisterCompanyModal2.vue'
 import JoinCompanyModal from '../components/JoinCompanyModal.vue'
@@ -43,6 +45,11 @@ const router = createRouter({
       path: '/details-of-job',
       name: 'detailsofjob',
       component: JobDetailsModal
+    },
+    {
+      path: '/home',
+      name: 'home',
+      component: SplashView
     }
   ]
 })
