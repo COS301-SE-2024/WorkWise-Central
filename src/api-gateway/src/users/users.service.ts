@@ -10,7 +10,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
-import { v4 as uuidv4 } from 'uuid';
+//import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
@@ -21,7 +21,7 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     if (
-      (await this.usernameExists(createUserDto.profile.displayName)) == false
+      (await this.usernameExists(createUserDto.systemDetails.username)) == false
     ) {
       throw new ConflictException(
         'Username already exists, please use another one',
@@ -30,12 +30,10 @@ export class UsersService {
 
     console.log('createUserDto', createUserDto);
     createUserDto.created_at = new Date();
-    createUserDto.user_UUID = uuidv4();
+    //createUserDto.uuid = uuidv4();
 
     const newUser = new this.userModel(createUserDto);
-    console.log('newUser -> ', newUser);
     const result = await newUser.save();
-    console.log('result -> ', result);
 
     return new createUserResponseDto(
       `${result.personalInfo.firstName} ${result.personalInfo.surname}'s account has been created`,
@@ -56,7 +54,7 @@ export class UsersService {
       await this.userModel
         .findOne({
           $and: [
-            { 'profile.displayName': identifier },
+            { 'systemDetails.username': identifier },
             {
               $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
             },
@@ -77,8 +75,8 @@ export class UsersService {
           $and: [
             {
               $or: [
-                { user_UUID: identifier },
-                { 'profileInfo.displayName': identifier },
+                { _id: identifier },
+                { 'systemDetails.username': identifier },
               ],
             },
             {
@@ -108,7 +106,7 @@ export class UsersService {
         .findOneAndUpdate(
           {
             $and: [
-              { user_UUID: id },
+              { _id: id },
               {
                 $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
               },
@@ -128,7 +126,9 @@ export class UsersService {
       User & { _id: Types.ObjectId } = await this.userModel.findOneAndUpdate(
       {
         $and: [
-          { user_UUID: id },
+          {
+            $or: [{ _id: id }, { 'systemDetails.username': id }],
+          },
           {
             $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
           },
