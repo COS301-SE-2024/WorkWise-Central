@@ -21,7 +21,7 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     if (
-      (await this.usernameExists(createUserDto.profile.displayName)) == false
+      (await this.usernameExists(createUserDto.systemDetails.username)) == false
     ) {
       throw new ConflictException(
         'Username already exists, please use another one',

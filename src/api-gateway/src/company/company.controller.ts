@@ -46,7 +46,7 @@ export class CompanyController {
   @Get('id/:id')
   findOne(@Param('id') id: string) {
     try {
-      return this.companyService.findOne(+id);
+      return this.companyService.findOne(id);
     } catch (e) {
       throw new HttpException(e, HttpStatus.NOT_FOUND);
     }

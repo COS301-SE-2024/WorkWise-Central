@@ -47,7 +47,7 @@ export class Company {
 
   @ApiProperty()
   @Prop({ required: true, unique: true })
-  VatNumber: string;
+  vatNumber: string;
 
   @ApiProperty()
   @Prop({ required: true, unique: true })
