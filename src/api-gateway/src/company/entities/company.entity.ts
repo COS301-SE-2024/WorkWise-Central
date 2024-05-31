@@ -50,7 +50,7 @@ export class Company {
   vatNumber: string;
 
   @ApiProperty()
-  @Prop({ required: true, unique: true })
+  @Prop({ required: false })
   type: string;
 
   @ApiProperty()
@@ -62,19 +62,19 @@ export class Company {
   logo: string;
 
   @ApiProperty()
-  @Prop({ required: false })
+  @Prop({ required: true })
   contactDetails: contactDetails;
 
   @ApiProperty()
-  @Prop({ required: false })
+  @Prop({ required: true })
   address: address;
 
   @ApiProperty()
-  @Prop({ type: [mongoose.Types.ObjectId], required: false })
+  @Prop({ type: [mongoose.Types.ObjectId], required: true, default: [] })
   employees: mongoose.Types.ObjectId[];
 
   @ApiHideProperty()
-  @Prop({ type: [mongoose.Types.ObjectId], required: false })
+  @Prop({ type: [mongoose.Types.ObjectId], required: true, default: [] })
   inventoryItems: mongoose.Types.ObjectId[];
 
   @ApiHideProperty()
