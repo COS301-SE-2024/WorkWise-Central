@@ -258,13 +258,13 @@
                           ></v-row>
                           <v-row
                             ><v-col
-                              ><label>Display Name</label>
+                              ><label>Username</label>
                               <v-text-field
                                 color="grey-lighten-4"
                                 label="Enter your display name"
                                 type="input"
-                                v-model="display_name"
-                                :rules="display_nameRules"
+                                v-model="username"
+                                :rules="usernameRules"
                                 rounded="xl"
                                 variant="solo"
                                 required
@@ -311,19 +311,9 @@
                       <v-spacer></v-spacer>
                       <v-col>
                         <v-form ref="form" v-model="valid">
-                          <v-row
+                          <v-row justify="space-around"
                             ><v-col
-                              ><label>Date of Birth</label
-                              ><v-text-field
-                                color="grey-lighten-4"
-                                label="Date of birth"
-                                type="input"
-                                v-model="date"
-                                :rules="date_rules"
-                                rounded="xl"
-                                variant="solo"
-                                clearable
-                              ></v-text-field
+                              ><v-date-picker width="400" color="primary"></v-date-picker
                             ></v-col>
                           </v-row>
                           <v-row algin="center"
@@ -333,7 +323,9 @@
                                 color="grey-lighten-4"
                                 label="Gender"
                                 hint="Chose your gender"
+                                :items="genderList"
                                 :rules="gender_rules"
+                                v-model="gender"
                                 rounded="xl"
                                 variant="solo"
                                 clearable
@@ -347,7 +339,9 @@
                                 color="grey-lighten-4"
                                 label="Preferred Language"
                                 hint="Chose your preferred language"
+                                :items="languageList"
                                 :rules="language_rules"
+                                v-model="language"
                                 rounded="xl"
                                 variant="solo"
                                 clearable
@@ -384,15 +378,15 @@
                     </v-col>
                   </v-sheet>
                 </v-dialog>
-                <v-dialog v-model="signup3Dialog" max-width="500" style="height: 700px">
-                  <v-sheet width="500" height="250" border="md" color="" rounded="xl">
+                <v-dialog v-model="signup3Dialog" max-width="500" style="height: 750px">
+                  <v-sheet width="400" height="350" border="md" color="" rounded="xl">
                     <v-container
                       ><v-row
                         ><v-col align-self="center"
                           ><v-col cols="8" offset="2">
                             <v-btn
                               text
-                              @click="(signup2Dialog = false)(signup)"
+                              @click="(signup3Dialog = false)(signup)"
                               rounded="xl"
                               color="blue-accent-2"
                               variant="elevated"
@@ -406,7 +400,7 @@
                           </v-col>
                           <v-col cols="8" offset="2">
                             <v-btn
-                              @click="signup2Dialog = false"
+                              @click="signup3Dialog = false"
                               rounded="xl"
                               color="blue-grey-darken-1"
                               variant="elevated"
@@ -472,12 +466,16 @@ export default {
     signup1Dialog: false,
     signup2Dialog: false,
     signup3Dialog: false,
+    genderList: ['Male', 'Female', 'Other'],
+    languageList: ['English', 'French', 'Portuguese'],
     email: '',
     password: '',
     confirm_password: '',
     name: '',
     surname: '',
-    display_name: '',
+    username: '',
+    gender: '',
+    language: '',
     valid: true,
     usernameRules: [(v) => !!v || 'Username is required'],
     emailRules: [
@@ -496,9 +494,9 @@ export default {
       (v) => !!v || 'Surname is required',
       (v) => v.length >= 3 || 'Surname must be at least 3 characters'
     ],
-    display_nameRules: [
-      (v) => !!v || 'Display name is required',
-      (v) => v.length >= 3 || 'Display name must be at least 3 characters'
+    usernameRules: [
+      (v) => !!v || 'Username is required',
+      (v) => v.length >= 3 || 'Username must be at least 3 characters'
     ],
     date_rules: [
       (v) => !!v || 'Date of birth is required',
@@ -519,7 +517,7 @@ export default {
     },
     nextFlow1() {
       if (this.$refs.form.validate()) {
-        this.signup2Dialog = false
+        this.signupDialog = false
         this.signup1Dialog = true
       }
     },
@@ -533,6 +531,12 @@ export default {
       if (this.$refs.form.validate()) {
         this.signup2Dialog = false
         this.signup3Dialog = true
+      }
+    },
+    nextFlow4() {
+      if (this.$refs.form.validate()) {
+        this.signup3Dialog = false
+        this.$router.push('/home')
       }
     },
     changeTheme() {},
