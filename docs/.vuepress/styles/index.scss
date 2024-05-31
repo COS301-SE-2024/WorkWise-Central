@@ -1,0 +1,9 @@
+@use 'sass:list';
+
+:root {
+    --c-brand: #6A99CE;
+}
+ul.sidebar-items li:before {
+    content: none !important;
+}
+
