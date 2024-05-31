@@ -5,7 +5,7 @@ import { RouterLink, RouterView } from 'vue-router'
 <template>
   <v-app>
     <v-main>
-      <RouterLink to="/register-modal">Reg</RouterLink>
+      <!-- <RouterLink to="/register-modal">Reg</RouterLink>
       <br />
       <RouterLink to="/register-modal2">Reg2</RouterLink>
       <br />
@@ -18,7 +18,8 @@ import { RouterLink, RouterView } from 'vue-router'
       <RouterLink to="/job-details">Job Details</RouterLink>
       <br />
       <v-btn color="red">Hello</v-btn> <v-dialog>CLICK</v-dialog>
-      <br />
+      <br /> -->
+      <RouterLink />
     </v-main>
   </v-app>
 

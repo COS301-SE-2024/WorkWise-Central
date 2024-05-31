@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="500">
+  <v-dialog max-width="500" :height="300">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         v-bind="activatorProps"
@@ -68,14 +68,28 @@ export default {
   data() {
     return {
       job: {
-        name: 'John Doe',
+        name: 'John ',
         email: 'exmaple@gmail.com',
         phone: '1234567890',
         location: '1234 Main St, City, State, 12345',
         jobType: 'Plumbing',
-        date_of_job: '2021-09-01'
+        date_of_job: '2021-09-01',
+        click_create_client: false,
+        isdarkmode: true,
+        light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
+        dark_theme_text_color: 'color: #DCDBDB',
+        modal_dark_theme_color: '#2b2b2b',
+        modal_light_theme_color: '#FFFFFF'
       }
     }
+  },
+
+  methods: {
+    takes_login() {
+      let json = this.job
+    },
+
+    validate() {}
   }
 }
 </script>
