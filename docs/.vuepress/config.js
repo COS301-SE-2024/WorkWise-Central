@@ -22,7 +22,8 @@ export default defineUserConfig({
       { text: 'Home', link: '/' },
       { text: 'Docs', link: '/guide/' },
       // { text: 'About', link: '/about/' },
-      { text: 'GitHub', link: 'https://github.com/COS301-SE-2024/WorkWise-Central' }
+      { text: 'GitHub', link: 'https://github.com/COS301-SE-2024/WorkWise-Central' },
+      { text: 'Figma', link: 'https://www.figma.com/design/A2DXLoJH7QvZ6RzI711zUC/WorkWise?node-id=0-1&t=mAFPbit2in8F1o5m-0' }
     ],
     sidebar: [
       {
