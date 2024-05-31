@@ -1,5 +1,3 @@
-
-
 <template>
   <v-dialog max-width="500" height="800">
     <template v-slot:activator="{ props: activatorProps }">

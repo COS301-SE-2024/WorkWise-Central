@@ -14,24 +14,56 @@ import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { ApiBody, ApiInternalServerErrorResponse } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiInternalServerErrorResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
+import mongoose, { Types } from 'mongoose';
 
+@ApiTags('company')
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
+  validateObjectId(id: string | Types.ObjectId): boolean {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+    }
+    return true;
+  }
+
+  @UseGuards(AuthGuard) //Need to add authorization
+  @Get()
+  hello() {
+    return { message: 'Refer to /documentation for details on the API' };
+  }
 
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.CONFLICT,
   })
   @ApiBody({ type: [CreateCompanyDto] })
-  @Post()
+  @Post('/create')
   create(@Body() createCompanyDto: CreateCompanyDto) {
     return this.companyService.create(createCompanyDto);
   }
 
+  @ApiBody({ type: AddUserToCompanyDto })
+  @Post('/add')
+  async addEmployee(@Body() addUserDto: AddUserToCompanyDto) {
+    this.validateObjectId(addUserDto.adminId);
+    this.validateObjectId(addUserDto.currentCompany);
+
+    try {
+      return await this.companyService.addEmployee(addUserDto);
+    } catch (Error) {
+      throw new HttpException(Error, HttpStatus.CONFLICT);
+    }
+  }
+
   @UseGuards(AuthGuard) //Need to add authorization
-  @Get()
+  @Get('/all')
   findAll() {
     try {
       return this.companyService.findAll();
@@ -46,7 +78,7 @@ export class CompanyController {
   @Get('id/:id')
   findOne(@Param('id') id: string) {
     try {
-      return this.companyService.findOne(id);
+      return this.companyService.findById(id);
     } catch (e) {
       throw new HttpException(e, HttpStatus.NOT_FOUND);
     }

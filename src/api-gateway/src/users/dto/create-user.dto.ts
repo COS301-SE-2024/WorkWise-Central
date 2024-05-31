@@ -47,6 +47,9 @@ export class CreateUserDto extends OmitType(User, [
 
   @ApiPropertyOptional()
   roles: roles;
+
+  @ApiPropertyOptional()
+  inventoryItems: mongoose.Types.ObjectId[];
 }
 
 export class createUserResponseDto {
