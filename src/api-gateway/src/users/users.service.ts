@@ -33,9 +33,7 @@ export class UsersService {
     //createUserDto.uuid = uuidv4();
 
     const newUser = new this.userModel(createUserDto);
-    console.log('newUser -> ', newUser);
     const result = await newUser.save();
-    console.log('result -> ', result);
 
     return new createUserResponseDto(
       `${result.personalInfo.firstName} ${result.personalInfo.surname}'s account has been created`,

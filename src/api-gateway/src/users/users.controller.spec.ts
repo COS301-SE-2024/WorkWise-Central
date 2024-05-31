@@ -42,7 +42,7 @@ describe('UsersController', () => {
 
   it('should not create a user when null is input', async function () {
     const result = await usersController.create(null);
-    console.log(result);
+    //console.log(result);
     expect(result).toStrictEqual(mockUserObject);
   });
 
