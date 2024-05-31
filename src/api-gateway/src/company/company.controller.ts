@@ -15,6 +15,7 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { ApiBody, ApiInternalServerErrorResponse } from '@nestjs/swagger';
+import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
 
 @Controller('company')
 export class CompanyController {
@@ -28,6 +29,16 @@ export class CompanyController {
   @Post()
   create(@Body() createCompanyDto: CreateCompanyDto) {
     return this.companyService.create(createCompanyDto);
+  }
+
+  @ApiBody({ type: AddUserToCompanyDto })
+  @Post()
+  async addEmployee(@Body() addUserDto: AddUserToCompanyDto) {
+    try {
+      return await this.companyService.addEmployee(addUserDto);
+    } catch (Error) {
+      throw new HttpException(Error, HttpStatus.CONFLICT);
+    }
   }
 
   @UseGuards(AuthGuard) //Need to add authorization

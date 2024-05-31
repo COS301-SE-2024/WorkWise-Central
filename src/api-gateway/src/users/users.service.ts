@@ -14,10 +14,7 @@ import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectModel('user')
-    public readonly userModel: Model<User>,
-  ) {}
+  constructor(@InjectModel('user') private readonly userModel: Model<User>) {}
 
   async create(createUserDto: CreateUserDto) {
     if (
@@ -130,7 +127,7 @@ export class UsersService {
             $or: [{ _id: id }, { 'systemDetails.username': id }],
           },
           {
-            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }], //TODO: add an index
           },
         ],
       },

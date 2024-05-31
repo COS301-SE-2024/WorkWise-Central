@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-//import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import * as mongoose from 'mongoose';
+import { Types } from 'mongoose';
 
 @Schema()
 export class systemDetails {
@@ -79,7 +80,10 @@ export class profile {
 
 @Schema()
 export class roles {
-  @Prop({ type: String, required: false })
+  @Prop({ required: true })
+  companyId: Types.ObjectId;
+
+  @Prop({ type: String, required: true })
   role: string;
 
   @Prop({ type: [String], required: false })
@@ -137,12 +141,15 @@ export class User {
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
-/*UserSchema.pre('save', async function (next) {
+UserSchema.pre('save', async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    this.systemDetails.password = await bcrypt.hash(
+      this.systemDetails.password,
+      salt,
+    );
     next();
   } catch (error) {
     next(error);
   }
-});*/
+});

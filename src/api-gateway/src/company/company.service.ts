@@ -13,12 +13,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
 import { User } from '../users/entities/user.entity';
+import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
 
 @Injectable()
 export class CompanyService {
   constructor(
     @InjectModel('company')
-    public readonly companyModel: Model<Company>,
+    private readonly companyModel: Model<Company>,
+
+    @InjectModel('user')
+    private readonly userModel: Model<User>,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto) {
@@ -35,12 +39,14 @@ export class CompanyService {
     const result = await newCompany.save();
     return new createCompanyResponseDto(`${result.id}`);
   }
-  async companyExists(registrationNumber: string): Promise<boolean> {
+  async companyExists(id: string | Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<User> & { _id: Types.ObjectId } =
       await this.companyModel
         .findOne({
           $and: [
-            { registrationNumber: registrationNumber },
+            {
+              $or: [{ registrationNumber: id }, { _id: id }],
+            },
             {
               $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
             },
@@ -83,6 +89,42 @@ export class CompanyService {
     }
 
     return result;
+  }
+  //TODO:Add authorization for endpoint
+  //For now, I assume the person is authorised
+  async addEmployee(addUserDto: AddUserToCompanyDto) {
+    //Add validation
+    if (await this.companyExists(addUserDto.currentCompany)) {
+      throw new NotFoundException(`Company not found`);
+    }
+
+    const newId = await this.userModel
+      .findOne({
+        'systemDetails.username': addUserDto.newEmployeeUsername,
+      })
+      .select('_id joinedCompanies');
+
+    console.log(newId);
+    if (newId == null) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (newId.joinedCompanies.includes(addUserDto.currentCompany)) {
+      throw new ConflictException('User is already a member');
+    }
+    //
+    this.companyModel.findByIdAndUpdate(
+      { _id: addUserDto.adminUsername },
+      {
+        $push: { employees: newId._id },
+      },
+    );
+
+    return 'User added successfully';
+
+    /*    const newCompany = new this.userModel(addUserDto.newEmployee);
+    const result = await newCompany.save();
+    return new createCompanyResponseDto(`${result.id}`);*/
   }
 
   update(id: number, updateCompanyDto: UpdateCompanyDto) {
