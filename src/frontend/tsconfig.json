@@ -12,6 +12,14 @@
     }
   ],
   "compilerOptions": {
-    "module": "NodeNext"
+    "target": "ES6",
+    // this enables stricter inference for data properties on `this`
+    "strict": true,
+    "module": "NodeNext",
+    "paths": {
+      "@/*": [
+        "./src/*" // set path `@/*` as alias of `src/*`
+      ]
+    }
   }
 }
