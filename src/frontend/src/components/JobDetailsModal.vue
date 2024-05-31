@@ -85,9 +85,7 @@ export default {
   },
 
   methods: {
-    takes_login() {
-      let json = this.job
-    },
+    takes_login() {},
 
     validate() {}
   }

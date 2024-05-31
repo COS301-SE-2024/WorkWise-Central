@@ -91,7 +91,7 @@
                 label="Company Name"
                 variant="solo"
                 rounded="xl"
-                v-model="join_req_obj.company_name"
+                v-model="req_obj.company_name"
                 :items="['Plumber Tronics', 'Nedbank', 'FNB', 'Talker', 'Friends', 'Wyoming']"
               ></v-autocomplete
             ></v-col>
@@ -112,7 +112,7 @@
                 label="Enter the company ID"
                 rounded="xl"
                 variant="solo"
-                v-model="join_req_obj.companyID"
+                v-model="req_obj.companyID"
                 required
               ></v-text-field
             ></v-col>
@@ -138,6 +138,9 @@
 <script lang="ts">
 export default {
   name: 'RegisterCompanyModal',
+
+  props: [],
+
   data: () => ({
     dialog: false,
     isdarkmode: true,
@@ -147,11 +150,13 @@ export default {
     modal_light_theme_color: '#FFFFFF',
     click_create_client: false,
 
-    join_req_obj: {
+    req_obj: {
       company_name: '',
       companyID: ''
     }
-  })
+  }),
+
+  methods: {}
 }
 </script>
 
