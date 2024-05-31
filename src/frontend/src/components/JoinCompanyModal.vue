@@ -82,7 +82,7 @@
             <v-col>
               <small
                 class="text-caption"
-                :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >Search for the company by name</small
               >
               <v-autocomplete
@@ -103,7 +103,7 @@
             <v-col>
               <small
                 class="text-caption"
-                :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >Enter the Company ID</small
               >
               <v-text-field
@@ -143,7 +143,7 @@ export default {
 
   data: () => ({
     dialog: false,
-    isdarkmode: true,
+    isdarkmode: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',

@@ -14,8 +14,8 @@
       <v-card prepend-icon="mdi-account" title="Register your company">
         <v-card-text>
           <v-row dense>
-            <small class="text-caption text-medium-emphasis">Company name*</small>
-            <v-col cols="30" md="12" sm="20">
+            <small  :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color" class="text-caption ">Company name*</small>
+            <v-col  :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color" cols="30" md="12" sm="20">
               <v-text-field
                 density="compact"
                 :rounded="true"
@@ -26,8 +26,8 @@
               ></v-text-field>
             </v-col>
 
-            <small class="text-caption text-medium-emphasis">Type of business*</small>
-            <v-col cols="12" md="12" sm="20">
+            <small  :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color" class="text-caption ">Type of business*</small>
+            <v-col  :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color" cols="12" md="12" sm="20">
               <v-text-field
                 density="compact"
                 :rounded="true"
@@ -38,8 +38,8 @@
               ></v-text-field>
             </v-col>
 
-            <small class="text-caption text-medium-emphasis">Company registration number</small>
-            <v-col cols="12" md="12" sm="20">
+            <small  :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color" class="text-caption ">Company registration number</small>
+            <v-col  :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color" cols="12" md="12" sm="20">
               <v-text-field
                 density="compact"
                 :rounded="true"
@@ -50,8 +50,8 @@
               ></v-text-field>
             </v-col>
 
-            <small class="text-caption text-medium-emphasis">Company VAT number</small>
-            <v-col cols="12" md="12" sm="20">
+            <small  :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color" class="text-caption ">Company VAT number</small>
+            <v-col  :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color" cols="12" md="12" sm="20">
               <v-text-field
                 density="compact"
                 :rounded="true"
@@ -74,7 +74,7 @@
 </template> -->
 
 <template>
-  <v-dialog max-width="400" height="600">
+  <v-dialog max-width="500" height="800">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         class="text-none font-weight-regular"
@@ -85,7 +85,13 @@
         v-bind="activatorProps"
       ></v-btn>
     </template>
-    <v-sheet elevation="14" rounded="xl" width="400" height="700">
+    <v-sheet
+      elevation="14"
+      rounded="xl"
+      width="500"
+      height="800"
+      :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+    >
       <v-col>
         <v-col>
           <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -96,33 +102,51 @@
         <v-col>
           <v-form ref="form" v-model="valid">
             <v-col>
-              <small class="text-caption text-medium-emphasis">Company name*</small>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
+                >Company name*</small
+              >
               <v-text-field
                 density="compact"
                 color="grey-lighten-4"
                 label="Enter the company's name"
+                v-model="req_obj.company_name"
                 rounded="xl"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 variant="solo"
                 required
               ></v-text-field
             ></v-col>
             <v-col>
-              <small class="text-caption text-medium-emphasis">Type of business*</small>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
+                >Type of business*</small
+              >
               <v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Enter the company's name"
+                label="Plumbing"
+                v-model="req_obj.business_type"
                 rounded="xl"
                 variant="solo"
               ></v-text-field
             ></v-col>
             <v-col>
-              <small class="text-caption text-medium-emphasis">Company registration number</small>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
+                >Company registration number</small
+              >
               <v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
                 label="Enter the company's registration number"
                 type="number"
+                v-model="req_obj.reg_number"
                 rounded="xl"
                 variant="solo"
                 required
@@ -130,20 +154,31 @@
             ></v-col>
 
             <v-col>
-              <small class="text-caption text-medium-emphasis">Company VAT number</small>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
+                >Company VAT number</small
+              >
               <v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
                 label="Enter the company's VAT number"
                 type="number"
                 rounded="xl"
+                v-model="req_obj.vat_num"
                 variant="solo"
                 required
               ></v-text-field
             ></v-col>
           </v-form>
         </v-col>
-        <v-col cols="8" offset="2" align="center">
+        <v-col
+          :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
+          cols="8"
+          offset="2"
+          align="center"
+        >
           <v-btn
             text
             rounded="xl"
@@ -152,6 +187,7 @@
             height="35"
             variant="elevated"
             color="blue-accent-2"
+            :disabled="click_create_client"
             >Continue</v-btn
           >
         </v-col>
@@ -170,7 +206,14 @@ export default {
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
-    modal_light_theme_color: '#FFFFFF'
+    modal_light_theme_color: '#FFFFFF',
+
+    req_obj: {
+      company_name: '',
+      business_type: '',
+      reg_number: '',
+      vat_num: ''
+    }
   })
 }
 </script>
