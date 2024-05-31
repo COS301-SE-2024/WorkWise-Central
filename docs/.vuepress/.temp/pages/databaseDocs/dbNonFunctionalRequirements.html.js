@@ -1,5 +1,5 @@
 import comp from "/home/jessica/WorkWise-Central/docs/.vuepress/.temp/pages/databaseDocs/dbNonFunctionalRequirements.html.vue"
-const data = JSON.parse("{\"path\":\"/databaseDocs/dbNonFunctionalRequirements.html\",\"title\":\"\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":null,\"contributors\":[]},\"filePathRelative\":\"databaseDocs/dbNonFunctionalRequirements.md\"}")
+const data = JSON.parse("{\"path\":\"/databaseDocs/dbNonFunctionalRequirements.html\",\"title\":\"\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":1717183057000,\"contributors\":[{\"name\":\"JessicaBloem\",\"email\":\"jessicabloem8@gmail.com\",\"commits\":1}]},\"filePathRelative\":\"databaseDocs/dbNonFunctionalRequirements.md\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {

@@ -1,5 +1,5 @@
 import comp from "/home/jessica/WorkWise-Central/docs/.vuepress/.temp/pages/architeturalDocs/qualityRequirements.html.vue"
-const data = JSON.parse("{\"path\":\"/architeturalDocs/qualityRequirements.html\",\"title\":\"\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":null,\"contributors\":[]},\"filePathRelative\":\"architeturalDocs/qualityRequirements.md\"}")
+const data = JSON.parse("{\"path\":\"/architeturalDocs/qualityRequirements.html\",\"title\":\"\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":1717183057000,\"contributors\":[{\"name\":\"JessicaBloem\",\"email\":\"jessicabloem8@gmail.com\",\"commits\":1}]},\"filePathRelative\":\"architeturalDocs/qualityRequirements.md\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {
