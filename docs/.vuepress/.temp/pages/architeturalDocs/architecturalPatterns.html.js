@@ -1,5 +1,5 @@
 import comp from "/home/jessica/WorkWise-Central/docs/.vuepress/.temp/pages/architeturalDocs/architecturalPatterns.html.vue"
-const data = JSON.parse("{\"path\":\"/architeturalDocs/architecturalPatterns.html\",\"title\":\"\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":1717183057000,\"contributors\":[{\"name\":\"JessicaBloem\",\"email\":\"jessicabloem8@gmail.com\",\"commits\":1}]},\"filePathRelative\":\"architeturalDocs/architecturalPatterns.md\"}")
+const data = JSON.parse("{\"path\":\"/architeturalDocs/architecturalPatterns.html\",\"title\":\"Architectural Design & Patterns\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":1717183057000,\"contributors\":[{\"name\":\"JessicaBloem\",\"email\":\"jessicabloem8@gmail.com\",\"commits\":1}]},\"filePathRelative\":\"architeturalDocs/architecturalPatterns.md\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {

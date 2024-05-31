@@ -114,7 +114,7 @@ export default defineUserConfig({
         link: '/architeturalDocs/',
         children: [
           {
-            text: 'Quality Requirements',
+            text: 'Non-functional Requirements',
             link: '/architeturalDocs/qualityRequirements.md',
           },
           {
@@ -128,6 +128,10 @@ export default defineUserConfig({
           {
             text: 'Constraints',
             link: '/architeturalDocs/constraints.md',
+          },
+          {
+            text: 'Technologies',
+            link: '/architeturalDocs/techSpec.md',
           },
         ],
       },
