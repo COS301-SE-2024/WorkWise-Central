@@ -447,6 +447,186 @@
                       </v-col>
                     </v-sheet>
                   </v-dialog>
+                  <!-- Flow 4 -->
+                  <v-dialog v-model="signupAddressDialog" max-width="500" style="height: 700px">
+                    <v-sheet
+                      width="500"
+                      height="700"
+                      border="md"
+                      rounded="xl"
+                      :color="
+                        isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
+                      "
+                    >
+                      <v-col>
+                        <v-col>
+                          <h4 class="text-center" style="font-size: 30px; font-weight: lighter">
+                            Enter your residential details
+                          </h4></v-col
+                        >
+                        <v-spacer></v-spacer>
+                        <v-col>
+                          <v-form ref="form" v-model="valid">
+                            <v-row justify="space-around"
+                              ><v-col
+                                ><label>Street</label
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  label="Enter your street name"
+                                  type="input"
+                                  v-model="street"
+                                  :rules="streetRules"
+                                  rounded="xl"
+                                  variant="solo"
+                                  required
+                                >
+                                </v-text-field>
+                              </v-col>
+                            </v-row>
+                            <v-row algin="center"
+                              ><v-col
+                                ><label>Suburb</label
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  label="Enter your suburb name"
+                                  type="input"
+                                  v-model="suburb"
+                                  :rules="suburbRules"
+                                  rounded="xl"
+                                  variant="solo"
+                                  required
+                                >
+                                </v-text-field> </v-col
+                            ></v-row>
+                            <v-row
+                              ><v-col
+                                ><label>City</label
+                                ><v-select
+                                  label="Enter your city name"
+                                  type="input"
+                                  v-model="city"
+                                  :rules="cityRules"
+                                  rounded="xl"
+                                  variant="solo"
+                                  :items="cityList"
+                                  required
+                                ></v-select></v-col
+                            ></v-row>
+                            <v-row
+                              ><v-col
+                                ><label>Postal Code</label
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  label="Enter your postal code"
+                                  type="input"
+                                  v-model="postal_code"
+                                  :rules="postalCodeRules"
+                                  rounded="xl"
+                                  variant="solo"
+                                  required
+                                >
+                                </v-text-field></v-col
+                            ></v-row>
+                            <v-row
+                              ><v-col
+                                ><label>Complex</label
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  label="Enter your complex name"
+                                  type="input"
+                                  v-model="complex"
+                                  :rules="complexRules"
+                                  rounded="xl"
+                                  variant="solo"
+                                  required
+                                >
+                                </v-text-field></v-col
+                            ></v-row>
+                            <v-row
+                              ><v-col
+                                ><label>House Number</label
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  label="Enter your house number"
+                                  type="input"
+                                  v-model="houseNumber"
+                                  :rules="usernameRules"
+                                  rounded="xl"
+                                  variant="solo"
+                                  required
+                                >
+                                </v-text-field></v-col
+                            ></v-row>
+                            <v-row
+                              ><v-col
+                                ><label>Phone Number</label
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  label="Enter your phone number"
+                                  type="input"
+                                  v-model="phone_number"
+                                  :rules="phoneNumberRules"
+                                  rounded="xl"
+                                  variant="solo"
+                                  required
+                                >
+                                </v-text-field></v-col
+                            ></v-row>
+                          </v-form>
+                        </v-col>
+
+                        <v-col cols="8" offset="2">
+                          <v-btn
+                            :disabled="!valid"
+                            text
+                            @click="nextFlow3"
+                            rounded="xl"
+                            size="x-large"
+                            color="blue-accent-2"
+                            variant="elevated"
+                            width="100%"
+                            >Continue</v-btn
+                          >
+                        </v-col>
+                        <v-col cols="8" offset="2">
+                          <v-btn
+                            @click="(signup1Dialog = true)((signup2Dialog = false))"
+                            rounded="xl"
+                            color="blue-grey-darken-1"
+                            size="x-large"
+                            variant="elevated"
+                            width="100%"
+                            >Back</v-btn
+                          >
+                        </v-col>
+                      </v-col>
+                    </v-sheet>
+                  </v-dialog>
+                  <!-- Flow 5 -->
                   <v-dialog v-model="signup3Dialog" max-width="500" style="height: 750px">
                     <v-sheet
                       width="400"
@@ -536,24 +716,44 @@ import {
   VMain,
   VSwitch
 } from 'vuetify/components'
+import axios from 'axios'
+import bcrypt from 'bcryptjs'
 
 export default {
   data: () => ({
+    saltRounds: 10,
+
     loginDialog: false,
     signupDialog: false,
     signup1Dialog: false,
     signup2Dialog: false,
     signup3Dialog: false,
+    signupAddressDialog: false,
     genderList: ['Male', 'Female', 'Other'],
     languageList: ['English', 'French', 'Portuguese'],
+    cityList: ['Johannesburg', 'Cape Town', 'Durban', 'Pretoria', 'Bloemfontein'],
     email: '',
     password: '',
     confirm_password: '',
+    encryptedPassword: bcrypt.hash(this.password, this.saltRounds, function (err, hash) {
+      this.encryptedPassword = hash
+    }),
     name: '',
     surname: '',
     username: '',
     gender: '',
     language: '',
+    street: '',
+    city: '',
+    suburb: '',
+    postal_code: '',
+    complex: '',
+    houseNumber: '',
+    phone_number: '',
+    email: '',
+    skils: '',
+    roles: '',
+    url: 'http://localhost:3000/users',
     valid: true,
     isdarkmode: true,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
@@ -601,6 +801,16 @@ export default {
         }
     },
     signup() {
+      axios.post('http://localhost:3000/users', {
+        systemDetails: { email: this.email, password: this.password, username: this.username },
+        personalInfo: { firstname: this.name, surname: this.surname },
+        profile: { displayName: this.username },
+        roles: { plumber: true },
+        joinedCompanies: {},
+        skills: { None: true },
+        address: {},
+        contactInfo: {}
+      })
       this.$router.push('/dashboard')
     },
     nextFlow1() {

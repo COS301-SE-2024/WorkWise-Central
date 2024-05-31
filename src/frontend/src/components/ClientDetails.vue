@@ -170,6 +170,7 @@
 export default {
   name: 'RegisterCompanyModal',
   data: () => ({
+    valid: false,
     dialog: false,
     click_create_client: false,
     isdarkmode: true,
