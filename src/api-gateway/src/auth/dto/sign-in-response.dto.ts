@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 
-export class signInResponseDto {
+export class SignInResponseDto {
   id: Types.ObjectId;
   access_token: string;
 }
