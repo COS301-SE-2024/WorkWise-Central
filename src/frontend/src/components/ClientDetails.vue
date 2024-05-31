@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="500" height="800">
+  <v-dialog max-width="500" height="1000">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         class="text-none font-weight-regular"
@@ -15,7 +15,7 @@
       elevation="14"
       rounded="xl"
       width="500"
-      height="800"
+      height="1000"
     >
       <v-col>
         <v-col>
