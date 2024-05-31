@@ -1,13 +1,13 @@
 name: Run ESLint on Push and Pull Requests
-on:
-  push:
-    branches:
-      - main
-      - develop
-  pull_request:
-    branches:
-      - main
-      - develop
+  on:
+    push:
+      branches:
+        - main
+        - develop
+    pull_request:
+      branches:
+        - main
+        - develop
     
 jobs:
   build:

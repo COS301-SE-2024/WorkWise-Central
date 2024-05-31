@@ -1,16 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
-import { mockUserObject, userStub } from '../../test/stubs/user.stub';
+import { CompanyService } from './company.service';
+import { UsersService } from '../users/users.service';
+import { userStub } from '../../test/stubs/user.stub';
+import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
+import { CompanyController } from './company.controller';
 
 const moduleMocker = new ModuleMocker(global);
 
-describe('UsersController', () => {
-  let usersController: UsersController;
+describe('CompanyService', () => {
+  let service: CompanyService;
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [UsersController],
+      controllers: [CompanyController],
     })
       .useMocker((token) => {
         if (token === UsersService) {
@@ -32,21 +34,10 @@ describe('UsersController', () => {
       })
       .compile();
 
-    usersController = module.get(UsersController);
-    jest.clearAllMocks();
+    service = module.get<CompanyService>(CompanyService);
   });
 
   it('should be defined', () => {
-    expect(usersController).toBeDefined();
-  });
-
-  it('should not create a user when null is input', async function () {
-    const result = await usersController.create(null);
-    //console.log(result);
-    expect(result).toStrictEqual(mockUserObject);
-  });
-
-  it('should find all users', function () {
-    expect(usersController.findAll()).toBeDefined();
+    expect(service).toBeDefined();
   });
 });
