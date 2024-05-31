@@ -112,7 +112,7 @@
                           <v-btn
                             :disabled="!valid"
                             text
-                            @click="login"
+                            @click="testRequest"
                             rounded="xl"
                             size="x-large"
                             color="blue-accent-2"
@@ -448,10 +448,10 @@
                     </v-sheet>
                   </v-dialog>
                   <!-- Flow 4 -->
-                  <v-dialog v-model="signupAddressDialog" max-width="500" style="height: 700px">
+                  <v-dialog v-model="signupAddressDialog" max-width="1000" style="height: 1200px">
                     <v-sheet
-                      width="500"
-                      height="700"
+                      width="1000"
+                      height="1200"
                       border="md"
                       rounded="xl"
                       :color="
@@ -513,6 +513,11 @@
                                   label="Enter your city name"
                                   type="input"
                                   v-model="city"
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
                                   :rules="cityRules"
                                   rounded="xl"
                                   variant="solo"
@@ -570,7 +575,7 @@
                                   label="Enter your house number"
                                   type="input"
                                   v-model="houseNumber"
-                                  :rules="usernameRules"
+                                  :rules="houseRules"
                                   rounded="xl"
                                   variant="solo"
                                   required
@@ -603,7 +608,7 @@
                           <v-btn
                             :disabled="!valid"
                             text
-                            @click="nextFlow3"
+                            @click="nextFlowAddress"
                             rounded="xl"
                             size="x-large"
                             color="blue-accent-2"
@@ -614,7 +619,7 @@
                         </v-col>
                         <v-col cols="8" offset="2">
                           <v-btn
-                            @click="(signup1Dialog = true)((signup2Dialog = false))"
+                            @click="(signup2Dialog = true)((signupAddressDialog = false))"
                             rounded="xl"
                             color="blue-grey-darken-1"
                             size="x-large"
@@ -643,7 +648,7 @@
                             ><v-col cols="8" offset="2">
                               <v-btn
                                 text
-                                @click="(signup3Dialog = false)(signup)"
+                                @click="nextFlow4"
                                 rounded="xl"
                                 color="blue-accent-2"
                                 variant="elevated"
@@ -657,7 +662,7 @@
                             </v-col>
                             <v-col cols="8" offset="2">
                               <v-btn
-                                @click="signup3Dialog = false"
+                                @click="nextFlow4"
                                 rounded="xl"
                                 color="blue-grey-darken-1"
                                 variant="elevated"
@@ -717,7 +722,7 @@ import {
   VSwitch
 } from 'vuetify/components'
 import axios from 'axios'
-import bcrypt from 'bcryptjs'
+import * as bcrypt from 'bcryptjs'
 
 export default {
   data: () => ({
@@ -735,9 +740,7 @@ export default {
     email: '',
     password: '',
     confirm_password: '',
-    encryptedPassword: bcrypt.hash(this.password, this.saltRounds, function (err, hash) {
-      this.encryptedPassword = hash
-    }),
+    encryptedPassword: '',
     name: '',
     surname: '',
     username: '',
@@ -791,26 +794,65 @@ export default {
       (v) => v.length >= 3 || 'Date of birth must be at least 3 characters'
     ],
     gender_rules: [(v) => !!v || 'Please select your gender'],
-    language_rules: [(v) => !!v || 'Please select your preferred language']
+    language_rules: [(v) => !!v || 'Please select your preferred language'],
+    streetRules: [(v) => !!v || 'Street name is required'],
+    suburbRules: [(v) => !!v || 'Suburb name is required'],
+    cityRules: [(v) => !!v || 'City name is required'],
+    postalCodeRules: [(v) => !!v || 'Postal code is required'],
+    complexRules: [(v) => !!v || 'Complex name is required'],
+    houseRules: [
+      (v) => !!v || 'House number is required',
+      (v) => /^[0-9]*$/.test(v) || 'House number must contain only numbers'
+    ],
+    phoneNumberRules: [
+      (v) => !!v || 'Phone number is required',
+      (v) => v.length >= 10 || 'Phone number must be at least 10 characters',
+      (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers'
+    ]
   }),
   methods: {
     login() {
       if (this.$refs.form.validate())
         if (this.email === 'admin' && this.password === 'admin') {
+          axios.get('http://localhost:3000/users')
           this.$router.push('/dashboard')
         }
     },
+    testRequest() {
+      axios
+        .get('http://localhost:3000/', {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
     signup() {
-      axios.post('http://localhost:3000/users', {
-        systemDetails: { email: this.email, password: this.password, username: this.username },
-        personalInfo: { firstname: this.name, surname: this.surname },
-        profile: { displayName: this.username },
-        roles: { plumber: true },
-        joinedCompanies: {},
-        skills: { None: true },
-        address: {},
-        contactInfo: {}
-      })
+      this.encryptedPassword = bcrypt.hashSync(
+        this.password,
+        this.saltRounds,
+        function (err, hash) {
+          if (err) {
+            console.log(err)
+          }
+          console.log(hash)
+        }
+      )
+      // axios.post('http://localhost:3000/users', {
+      //   systemDetails: { email: this.email, password: this.encryptedPassword, username: this.username },
+      //   personalInfo: { firstname: this.name, surname: this.surname },
+      //   profile: { displayName: this.username },
+      //   roles: { plumber: true },
+      //   joinedCompanies: {},
+      //   skills: { None: true },
+      //   address: {},
+      //   contactInfo: {}
+      // })
       this.$router.push('/dashboard')
     },
     nextFlow1() {
@@ -828,14 +870,18 @@ export default {
     nextFlow3() {
       if (this.$refs.form.validate()) {
         this.signup2Dialog = false
+        this.signupAddressDialog = true
+      }
+    },
+    nextFlowAddress() {
+      if (this.$refs.form.validate()) {
+        this.signupAddressDialog = false
         this.signup3Dialog = true
       }
     },
     nextFlow4() {
-      if (this.$refs.form.validate()) {
-        this.signup3Dialog = false
-        this.$router.push('/home')
-      }
+      this.signup3Dialog = false
+      this.signup()
     },
     changeTheme() {},
     openDialog() {
