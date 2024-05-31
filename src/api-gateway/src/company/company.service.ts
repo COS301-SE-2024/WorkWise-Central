@@ -4,7 +4,10 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
-import { CreateCompanyDto } from './dto/create-company.dto';
+import {
+  CreateCompanyDto,
+  createCompanyResponseDto,
+} from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
@@ -27,6 +30,10 @@ export class CompanyService {
          exists,please enter another one or sign in`,
       );
     }
+    createCompanyDto.created_at = new Date();
+    const newCompany = new this.companyModel(createCompanyDto);
+    const result = await newCompany.save();
+    return new createCompanyResponseDto(`${result.id}`);
   }
   async companyExists(registrationNumber: string): Promise<boolean> {
     const result: FlattenMaps<User> & { _id: Types.ObjectId } =
