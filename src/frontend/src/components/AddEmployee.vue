@@ -112,13 +112,17 @@ export default {
   data: () => ({
     dialog: false,
     click_create_client: false,
-    isdarkmode: true,
+    isdarkmode: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
 
-    req_obj: { emp_username: '', compid_for_emp: '', link_for_emp: '' }
+    req_obj: {
+      emp_username: '',
+      compid_for_emp: '',
+      link_for_emp: ''
+    }
   })
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="400" height="600">
+  <v-dialog max-width="500" height="1000">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         class="text-none font-weight-regular"
@@ -14,8 +14,8 @@
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
       elevation="14"
       rounded="xl"
-      width="400"
-      height="700"
+      width="500"
+      height="1000"
     >
       <v-col>
         <v-col>
@@ -37,11 +37,12 @@
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                label="Enter the name of the client"
+                label="Enter the full name of the client"
                 v-model="req_obj.client_name"
                 rounded="xl"
                 variant="solo"
                 required
+                :rules="client_name_errors"
               ></v-text-field
             ></v-col>
             <v-col>
@@ -56,6 +57,8 @@
                 color="grey-lighten-4"
                 label="Enter the client's email address"
                 v-model="req_obj.client_email"
+                :rules="email_rules"
+                type="email"
                 rounded="xl"
                 variant="solo"
                 required
@@ -167,16 +170,25 @@
 </template>
 
 <script lang="ts">
+const name_reg = /^[a-zA-Z]+ [a-zA-Z]+$/
+const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
+
 export default {
-  name: 'RegisterCompanyModal',
+  name: 'RegisterCompanyModal ',
   data: () => ({
     dialog: false,
     click_create_client: false,
-    isdarkmode: true,
+    isdarkmode: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
+    client_name_errors: [
+      (val: string) => name_reg.test(val) || 'Name should contain two names separated by a space',
+      (val: string) => val.length !== 0 || 'Should not be empty'
+    ],
+    email_rules: [(val: string) => email_reg.test(val) || 'Email should contain an @ symbol'],
+
     req_obj: {
       client_name: '',
       client_email: '',
@@ -186,7 +198,12 @@ export default {
       company_address: '',
       client_preferred_language: ''
     }
-  })
+  }),
+  methods: {
+    validate_userinput() {
+      console.log('focus on us')
+    }
+  }
 }
 </script>
 
