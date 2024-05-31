@@ -15,7 +15,7 @@
       <v-card prepend-icon="mdi-account" title="Register your company">
         <v-card-text>
           <v-row dense>
-            <small class="text-caption text-medium-emphasis">Company email</small>
+            <small class="text-caption ">Company email</small>
             <v-col cols="30" md="12" sm="20">
               <v-text-field
                 label="Enter the company's email adress"
@@ -24,7 +24,7 @@
               ></v-text-field>
             </v-col>
 
-            <small class="text-caption text-medium-emphasis">Company phone number</small>
+            <small class="text-caption ">Company phone number</small>
             <v-col cols="12" md="12" sm="20">
               <v-text-field
                 label="Enter the company's phone number"
@@ -59,7 +59,13 @@
         v-bind="activatorProps"
       ></v-btn>
     </template>
-    <v-sheet elevation="14" rounded="xl" width="400" height="700">
+    <v-sheet
+      elevation="14"
+      rounded="xl"
+      width="400"
+      height="700"
+      :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+    >
       <v-col>
         <v-col>
           <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -70,30 +76,46 @@
         <v-col>
           <v-form ref="form" v-model="valid">
             <v-col>
-              <small class="text-caption text-medium-emphasis">Company email address</small>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
+                >Company email address</small
+              >
               <v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
                 label="Enter the company's email adress"
                 type="email"
+                v-model="req_obj.company_email"
                 rounded="xl"
                 variant="solo"
                 required
               ></v-text-field
             ></v-col>
             <v-col>
-              <small class="text-caption text-medium-emphasis">Company phone number</small>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
+                >Company phone number</small
+              >
               <v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
                 label="Enter the company's phone number"
                 rounded="xl"
                 variant="solo"
+                v-model="req_obj.company_num"
                 required
               ></v-text-field
             ></v-col>
             <v-col>
-              <small class="text-caption text-medium-emphasis">Company logo</small>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
+                >Company logo</small
+              >
             </v-col>
           </v-form>
         </v-col>
@@ -124,13 +146,14 @@ export default {
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
-    modal_light_theme_color: '#FFFFFF'
+    modal_light_theme_color: '#FFFFFF',
+
+    req_obj: {
+      company_email: '',
+      company_num: ''
+    }
   })
 }
 </script>
 
-<style scope>
-.text-medium-emphasis {
-  color: black;
-}
-</style>
+<style scope></style>

@@ -1,280 +1,3 @@
-<!-- <template>
-  <div class="pa-4 text-center">
-    <v-dialog v-model="dialog" max-width="450">
-      <template v-slot:activator="{ props: activatorProps }">
-        <v-btn
-          class="text-none font-weight-regular red--text"
-          prepend-icon="mdi-account"
-          color="black"
-          text="Add Client"
-          variant="tonal"
-          v-bind="activatorProps"
-        ></v-btn>
-      </template>
-
-      <v-card prepend-icon="mdi-account" title="Client Details" :rounded="10">
-        <v-card-text>
-          <v-row dense>
-            <small class="text-caption text-medium-emphasis">Name of client</small>
-            <v-col cols="30" md="12" sm="20">
-              <v-text-field
-                label="Enter the name of the client"
-                model-value=""
-                variant="solo"
-                density="compact"
-                :rounded="true"
-              ></v-text-field>
-            </v-col>
-
-            <small class="text-caption text-medium-emphasis">Client email address</small>
-            <v-col cols="12" md="12" sm="20">
-              <v-text-field
-                label="Enter the clients email address"
-                model-value=""
-                variant="solo"
-                density="compact"
-                :rounded="true"
-              ></v-text-field>
-            </v-col>
-
-            <small class="text-medium-emphasis small_dark_text">Client phone number</small>
-            <v-col cols="12" md="12" sm="20">
-              <v-text-field
-                label="Enter the clients phone number"
-                model-value=""
-                variant="solo"
-                density="compact"
-                :rounded="true"
-              ></v-text-field>
-            </v-col>
-
-            <small class="text-caption text-medium-emphasis">Clients address</small>
-            <v-col cols="12" md="12" sm="20">
-              <v-text-field
-                label="Enter the clients address"
-                model-value=""
-                variant="solo"
-                density="compact"
-                :rounded="true"
-              ></v-text-field>
-            </v-col>
-
-            <small class="text-caption text-medium-emphasis">Company (if applicable)</small>
-            <v-col cols="12" md="12" sm="20">
-              <v-text-field
-                label="Enter the company"
-                model-value=""
-                variant="solo"
-                density="compact"
-                :rounded="true"
-              ></v-text-field>
-            </v-col>
-
-            <small class="text-caption text-medium-emphasis">Company address (if applicable)</small>
-            <v-col cols="12" md="12" sm="20">
-              <v-text-field
-                label="Enter the company address"
-                model-value=""
-                variant="solo"
-                density="compact"
-                :rounded="true"
-              ></v-text-field>
-            </v-col>
-
-            <small class="text-caption text-medium-emphasis">Preferred language</small>
-            <v-col cols="12" md="12" sm="20">
-              <v-text-field
-                label="Enter the preferred language of the client"
-                model-value=""
-                variant="solo"
-                density="compact"
-                :rounded="true"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-
-          <v-btn
-            color="primary"
-            text="CREATE CLIENT"
-            variant="tonal"
-            @click="dialog = false"
-          ></v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
-
-  <div class="pa-4 text-center">
-    <v-dialog v-model="dialog" max-width="450">
-      <template v-slot:activator="{ props: activatorProps }">
-        <v-btn
-          class="text-none font-weight-regular"
-          prepend-icon="mdi-account"
-          color="black"
-          text="Add Client"
-          variant="tonal"
-          v-bind="activatorProps"
-        ></v-btn>
-      </template>
-
-      <v-card prepend-icon="mdi-account" title="Client Details" color="#1E1E1E">
-        <v-card-text>
-          <v-row dense>
-            <small class="text-caption text-medium-emphasis white--text">Name of client</small>
-            <v-col cols="30" md="12" sm="20">
-              <v-text-field
-                label="Enter the name of the client"
-                model-value=""
-                variant="solo"
-                density="compact"
-                :rounded="true"
-              ></v-text-field>
-            </v-col>
-
-            <small class="text-caption text-medium-emphasis">Client email address</small>
-            <v-col cols="12" md="12" sm="20">
-              <v-text-field
-                label="Enter the clients email address"
-                model-value=""
-                variant="solo"
-                density="compact"
-                :rounded="true"
-              ></v-text-field>
-            </v-col>
-
-            <small class="text-caption text-medium-emphasis">Client phone number</small>
-            <v-col cols="12" md="12" sm="20">
-              <v-text-field
-                label="Enter the clients phone number"
-                model-value=""
-                variant="solo"
-                density="compact"
-                :rounded="true"
-              ></v-text-field>
-            </v-col>
-
-            <small class="text-caption text-medium-emphasis">Clients address</small>
-            <v-col cols="12" md="12" sm="20">
-              <v-text-field
-                label="Enter the clients address"
-                model-value=""
-                variant="solo"
-                density="compact"
-                :rounded="true"
-              ></v-text-field>
-            </v-col>
-
-            <small class="text-caption text-medium-emphasis">Company (if applicable)</small>
-            <v-col cols="12" md="12" sm="20">
-              <v-text-field
-                label="Enter the company"
-                model-value=""
-                variant="solo"
-                density="compact"
-                :rounded="true"
-              ></v-text-field>
-            </v-col>
-
-            <small class="text-caption text-medium-emphasis">Company address (if applicable)</small>
-            <v-col cols="12" md="12" sm="20">
-              <v-text-field
-                label="Enter the company address"
-                model-value=""
-                variant="solo"
-                density="compact"
-                :rounded="true"
-              ></v-text-field>
-            </v-col>
-
-            <small class="text-caption text-medium-emphasis">Preferred language</small>
-            <v-col cols="12" md="12" sm="20">
-              <v-text-field
-                label="Enter the preferred language of the client"
-                model-value=""
-                variant="solo"
-                density="compact"
-                :rounded="true"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-
-          <v-btn
-            color="primary"
-            text="CREATE CLIENT"
-            variant="tonal"
-            @click="dialog = false"
-          ></v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
-</template> -->
-
-<!-- <template>
-  <div class="pa-4 text-center">
-    <v-dialog v-model="dialog" max-width="350">
-      <template v-slot:activator="{ props: activatorProps }">
-        <v-btn
-          class="text-none font-weight-regular"
-          prepend-icon="mdi-account"
-          color="black"
-          text="Seach for company"
-          variant="tonal"
-          v-bind="activatorProps"
-        ></v-btn>
-      </template>
-
-      <v-card prepend-icon="mdi-account" title="">
-        <v-card-text>
-          <v-row dense>
-            <small class="text-caption text-medium-emphasis">Search for the company by name</small>
-            <v-col cols="30" md="12" sm="20">
-              <v-text-field
-                label="Enter the company's name"
-                model-value=""
-                variant="solo"
-              ></v-text-field>
-            </v-col>
-
-            <small class="text-caption text-medium-emphasis">Enter the Company ID</small>
-            <v-col cols="12" md="12" sm="20">
-              <v-text-field
-                label="Enter the company ID"
-                model-value=""
-                variant="solo"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-
-          <v-btn
-            color="primary"
-            text="Join company"
-            variant="tonal"
-            @click="dialog = false"
-          ></v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
-</template> -->
 <template>
   <v-dialog max-width="400" height="600">
     <template v-slot:activator="{ props: activatorProps }">
@@ -287,7 +10,13 @@
         v-bind="activatorProps"
       ></v-btn>
     </template>
-    <v-sheet elevation="14" rounded="xl" width="400" height="700">
+    <v-sheet
+      :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+      elevation="14"
+      rounded="xl"
+      width="400"
+      height="700"
+    >
       <v-col>
         <v-col>
           <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -298,81 +27,121 @@
         <v-col>
           <v-form ref="form" v-model="valid">
             <v-col>
-              <small class="text-caption text-medium-emphasis white--text">Name of client*</small>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption white--text"
+                >Name of client*</small
+              >
 
               <v-text-field
                 density="compact"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the name of the client"
+                v-model="req_obj.client_name"
                 rounded="xl"
                 variant="solo"
                 required
               ></v-text-field
             ></v-col>
             <v-col>
-              <small class="text-caption text-medium-emphasis">Client email address*</small>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
+                >Client email address*</small
+              >
               <v-text-field
                 density="compact"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the client's email address"
+                v-model="req_obj.client_email"
                 rounded="xl"
                 variant="solo"
                 required
               ></v-text-field
             ></v-col>
             <v-col>
-              <small class="text-caption text-medium-emphasis">Client phone number*</small>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
+                >Client phone number*</small
+              >
               <v-text-field
                 density="compact"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the client's phone number"
+                v-model="req_obj.client_number"
                 rounded="xl"
                 variant="solo"
                 required
               ></v-text-field
             ></v-col>
             <v-col>
-              <small class="text-caption text-medium-emphasis">Client address*</small>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
+                >Client address*</small
+              >
               <v-text-field
                 density="compact"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the client's address"
+                v-model="req_obj.client_address"
                 rounded="xl"
                 variant="solo"
                 required
               ></v-text-field
             ></v-col>
             <v-col>
-              <small class="text-caption text-medium-emphasis">Company (if applicable)</small>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
+                >Company (if applicable)</small
+              >
               <v-text-field
                 density="compact"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the company name"
+                v-model="req_obj.company_name"
                 rounded="xl"
                 variant="solo"
                 required
               ></v-text-field
             ></v-col>
             <v-col>
-              <small class="text-caption text-medium-emphasis"
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
                 >Company address (if applicable)</small
               >
               <v-text-field
                 density="compact"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the company address"
+                v-model="req_obj.company_address"
                 rounded="xl"
                 variant="solo"
                 required
               ></v-text-field
             ></v-col>
             <v-col>
-              <small class="text-caption text-medium-emphasis">Preferred language</small>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
+                >Preferred language</small
+              >
               <v-text-field
                 density="compact"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the language preferred by the client"
                 rounded="xl"
+                v-model="req_obj.client_preferred_language"
                 variant="solo"
                 required
               ></v-text-field
@@ -407,7 +176,16 @@ export default {
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
-    modal_light_theme_color: '#FFFFFF'
+    modal_light_theme_color: '#FFFFFF',
+    req_obj: {
+      client_name: '',
+      client_email: '',
+      client_number: '',
+      client_address: '',
+      company_name: '',
+      company_address: '',
+      client_preferred_language: ''
+    }
   })
 }
 </script>
