@@ -1,4 +1,4 @@
-## Functional Requirements of the Database
+# Functional Requirements of the Database
 
 *Note: Only a subset of the collections in the database have been implemented.*
 

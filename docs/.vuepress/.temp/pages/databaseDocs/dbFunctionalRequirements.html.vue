@@ -1,4 +1,4 @@
-<template><div><h2 id="functional-requirements-of-the-database" tabindex="-1"><a class="header-anchor" href="#functional-requirements-of-the-database"><span>Functional Requirements of the Database</span></a></h2>
+<template><div><h1 id="functional-requirements-of-the-database" tabindex="-1"><a class="header-anchor" href="#functional-requirements-of-the-database"><span>Functional Requirements of the Database</span></a></h1>
 <p><em>Note: Only a subset of the collections in the database have been implemented.</em></p>
 <h3 id="authentication" tabindex="-1"><a class="header-anchor" href="#authentication"><span>Authentication</span></a></h3>
 <ul>
