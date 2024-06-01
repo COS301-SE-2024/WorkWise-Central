@@ -119,13 +119,13 @@ export default defineUserConfig({
             link: '/architeturalDocs/qualityRequirements.md',
           },
           {
-            text: 'Architectural Patterns',
+            text: 'Architectural Patterns and Design Patterns',
             link: '/architeturalDocs/architecturalPatterns.md',
           },
-          {
-            text: 'Design Patterns',
-            link: '/architeturalDocs/designPatterns.md',
-          },
+          // {
+          //   text: 'Design Patterns',
+          //   link: '/architeturalDocs/designPatterns.md',
+          // },
           {
             text: 'Constraints',
             link: '/architeturalDocs/constraints.md',
@@ -136,6 +136,23 @@ export default defineUserConfig({
           },
         ],
       },
+
+      {
+        text: 'DevOps',
+        prefix: '/devOps/',
+        link: '/devOps/',
+        children: [
+          {
+            text: 'Branching Strategy',
+            link: '/devOps/branching.md',
+          },
+          {
+            text: 'CI/CD',
+            link: '/devOps/cicd.md',
+          },
+        ],
+      },
+
     ]
   }),
 })

@@ -2,10 +2,9 @@
 <ul>
 <li>Usability</li>
 <li>Reliability</li>
-<li>Accessibility</li>
 <li>Security</li>
-<li>Performance and Scalability
-<code v-pre>Add goals/targets To be Complete</code></li>
+<li>Performance and Scalability</li>
+<li>Maintainability</li>
 </ul>
 <h2 id="usability" tabindex="-1"><a class="header-anchor" href="#usability"><span>Usability</span></a></h2>
 <ul>
@@ -16,7 +15,34 @@
 <p><strong>Quantification</strong>: User error rates and task completion time will be measured through usability tests, and  maintain specific thresholds. The tests will be conducted with a variety of the identified user-groups.</p>
 </li>
 </ul>
-<h2 id="performance" tabindex="-1"><a class="header-anchor" href="#performance"><span>Performance</span></a></h2>
+<h2 id="reliability" tabindex="-1"><a class="header-anchor" href="#reliability"><span>Reliability</span></a></h2>
+<ul>
+<li>
+<p><strong>Description</strong>: The reliability of the system depends on its ability to prevent and recover from failures. In the event of a user losing internet access, the application must retain its basic functionality, such that the user does not lose their recorded information. Additionally, the system must ensure that the inventory tracking remains in a consistent state.</p>
+</li>
+<li>
+<p><strong>Quantification</strong>:  The reliability of the system of the system is primarily measured by <strong>mean time between failures</strong> (MTBF) and <strong>mean time to recovery</strong> (MTTR). The number of critical failures per month will also be used as another metric to quantify the reliability of the system.</p>
+<ul>
+<li>MTBF is measured by the average time between two consecutive failures of a system or component.</li>
+<li>MTTR is measured by the time taken to restore the system to normal operation after a failure occurs.</li>
+<li>The number of critical failures per month is measured by the loss of data relating to an assigned job or company. It is further measured by the number errors that prevent users from performing any desired operations.</li>
+</ul>
+</li>
+</ul>
+<h2 id="security" tabindex="-1"><a class="header-anchor" href="#security"><span>Security</span></a></h2>
+<ul>
+<li>
+<p><strong>Description</strong>: Security is crucial in the system, due to the application's access to sensitive data related to clients and employees. The system must prevent and be capable of easily recovering from a data breach. The system must enforce authorisation through a role-based management system to ensure confidentiality of user data.</p>
+</li>
+<li>
+<p><strong>Quantification</strong>:  Security will be quantified through measuring the confidentiality and integrity of the system.</p>
+<ul>
+<li>The confidentiality of the system will be quantified by the amount of sensitive data about other users, that a user is authorised to view. It will be measured by the amount of security measures that are established, and the number of  policy violations that occur.</li>
+<li>The integrity of the system will be measured by the number of established policies regarding user rights.</li>
+</ul>
+</li>
+</ul>
+<h2 id="performance-and-scalability" tabindex="-1"><a class="header-anchor" href="#performance-and-scalability"><span>Performance and Scalability</span></a></h2>
 <ul>
 <li>
 <p><strong>Description</strong>: Given that the system will facilitate live communication, system performance is crucial. The system must be responsive and maintain a high throughput with multiple, concurrent requests.  The application must have low resource utilisation, to be compatible with mobile devices.</p>
@@ -29,24 +55,13 @@
 </ol>
 </li>
 </ul>
-<h2 id="security" tabindex="-1"><a class="header-anchor" href="#security"><span>Security</span></a></h2>
+<h2 id="maintainability" tabindex="-1"><a class="header-anchor" href="#maintainability"><span>Maintainability</span></a></h2>
 <ul>
 <li>
-<p><strong>Description</strong>: Security is crucial in the system, due to the application's access to sensitive data related to clients and employees. The system must prevent and be capable of easily recovering from a data breach.</p>
+<p><strong>Description</strong>: The maintainability of the system is very important to the client, since they plan on release the system after our development. As such, it must be relatively easy to extend the system or update the system later on. Documentation will also be very important for the system.</p>
 </li>
 <li>
-<p><strong>Quantification</strong>:  Security will be quantified through the measuring the availability, confidentiality and integrity of the system.
-The availability of the system will be determined by the uptime percentage.
-Confidentiality</p>
-</li>
-</ul>
-<h2 id="reliability" tabindex="-1"><a class="header-anchor" href="#reliability"><span>Reliability</span></a></h2>
-<ul>
-<li>
-<p><strong>Description</strong>: The reliability of the system depends on its ability to prevent and recover from failures. In the event of an employee losing internet access, the application must retain its basic functionality, in order to prevent inventory tracking from being inconsistent. Furthermore, the application must have a MTTF  of ...</p>
-</li>
-<li>
-<p><strong>Quantification</strong>:  <code v-pre>To be completed</code></p>
+<p><strong>Quantification</strong>:  Maintainability will be quantified through the degree by which the system can be effectively and efficeintly maintained and evolved over time. Thus code readability, modularity and documentation will be the some of the ways that maintainability will be quantified.</p>
 </li>
 </ul>
 </div></template>
