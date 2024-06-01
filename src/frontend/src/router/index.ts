@@ -4,9 +4,10 @@ import SplashView from '../views/SplashView.vue'
 import RegisterCompanyModal from '../components/RegisterCompanyModal.vue'
 import JoinCompanyModal from '../components/JoinCompanyModal.vue'
 import ClientDetails from '../components/ClientDetails.vue'
-import AddEmployee from '../components/AddEmployee.vue'
-import JobDetailsModal from '../components/JobDetailsModal.vue'
-import JobDetailsList from '../components/JobDetailsList.vue'
+import AddEmployee from '/src/components/AddEmployee.vue'
+import JobDetailsModal from '/src/components/JobDetailsModal.vue'
+import JobDetailsList from '/src/components/JobDetailsList.vue'
+import Modals from '@/views/Modals.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -44,6 +45,11 @@ const router = createRouter({
       path: '/',
       name: 'splash',
       component: SplashView
+    },
+    {
+      path: '/modals',
+      name: 'modals',
+      component: Modals
     }
   ]
 })
