@@ -6,7 +6,6 @@ import { userStub } from '../../test/stubs/user.stub';
 describe('ClientService', () => {
   let service: ClientService;
 
-  // Mock the client model
   const mockClientModel = {
     create: jest.fn().mockReturnValue(userStub()),
     findAll: jest.fn().mockReturnValue(userStub()),

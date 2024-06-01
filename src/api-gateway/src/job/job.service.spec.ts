@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JobService } from './job.service';
 import { userStub } from '../../test/stubs/user.stub';
+import { getModelToken } from '@nestjs/mongoose';
 
 describe('JobService', () => {
   let service: JobService;
@@ -14,7 +15,13 @@ describe('JobService', () => {
   };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [JobService],
+      providers: [
+        JobService,
+        {
+          provide: getModelToken('Job'),
+          useValue: mockJobModel,
+        },
+      ],
     }).compile();
 
     service = module.get<JobService>(JobService);
