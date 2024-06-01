@@ -8,7 +8,7 @@ export default defineUserConfig({
   lang: 'en-US',
   title: 'WorkWise Central',
   description: 'The is the offical documentation for the WorkWise Central project',
-  base: "/cos301-se-2024.github.io/WorkWise-Central/",
+  base: "/guide/",
   theme: defaultTheme({
     locales: {
       '/': {
