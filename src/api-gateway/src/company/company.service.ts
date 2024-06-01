@@ -165,11 +165,8 @@ export class CompanyService {
 
     console.log(resultOfUpdate);
     console.log(updateUser);
-    return 'User added successfully';
 
-    /*    const newCompany = new this.userModel(addUserDto.newEmployee);
-    const result = await newCompany.save();
-    return new createCompanyResponseDto(`${result.id}`);*/
+    return { message: 'User added successfully' };
   }
 
   update(id: number, updateCompanyDto: UpdateCompanyDto) {
