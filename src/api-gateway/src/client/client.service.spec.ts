@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClientService } from './client.service';
 import { getModelToken } from '@nestjs/mongoose';
-import { userStub } from '../../test/stubs/user.stub'; // Import getModelToken
+import { userStub } from '../../test/stubs/user.stub';
 
 describe('ClientService', () => {
   let service: ClientService;
@@ -13,7 +13,6 @@ describe('ClientService', () => {
     findUser: jest.fn().mockReturnValue(userStub()),
     update: jest.fn().mockReturnValue(userStub()),
     remove: jest.fn().mockReturnValue(userStub()),
-    // Add other methods as needed
   };
 
   beforeEach(async () => {
@@ -21,7 +20,7 @@ describe('ClientService', () => {
       providers: [
         ClientService,
         {
-          provide: getModelToken('client'), // Use the correct token ('Client')
+          provide: getModelToken('client'),
           useValue: mockClientModel,
         },
       ],

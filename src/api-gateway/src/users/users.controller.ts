@@ -95,7 +95,7 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
-  @Delete(':id')
+  @Delete()
   remove(@Param('id') id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
