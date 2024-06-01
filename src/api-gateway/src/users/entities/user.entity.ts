@@ -6,12 +6,10 @@ import { Types } from 'mongoose';
 
 @Schema()
 export class systemDetails {
-  @Prop({ required: true, lowercase: true })
-  email: string;
-  @Prop({ required: true, unique: false })
-  password: string;
   @Prop({ required: true, unique: true })
   username: string;
+  @Prop({ required: true, unique: false })
+  password: string;
 }
 @Schema()
 export class contactInfo {
@@ -23,17 +21,17 @@ export class contactInfo {
 }
 @Schema()
 export class address {
-  @Prop({ type: String, required: false })
+  @Prop({ type: String, required: true })
   street: string;
-  @Prop({ type: String, required: false })
+  @Prop({ type: String, required: true })
   suburb: string;
-  @Prop({ type: String, required: false })
+  @Prop({ type: String, required: true })
   city: string;
-  @Prop({ type: String, required: false })
+  @Prop({ type: String, required: true })
   postalCode: string;
-  @Prop({ type: String, required: false })
+  @Prop({ type: String, required: true })
   complex: string;
-  @Prop({ type: String, required: false })
+  @Prop({ type: String, required: true })
   houseNumber: string;
 }
 @Schema()
@@ -41,7 +39,7 @@ export class personalInfo {
   @Prop({ required: true })
   firstName: string;
 
-  @Prop({ required: true, unique: false })
+  @Prop({ required: true })
   surname: string;
 
   @ApiHideProperty()
@@ -53,7 +51,7 @@ export class personalInfo {
   gender: string;
 
   @ApiHideProperty()
-  @Prop({ required: false, default: 'English' })
+  @Prop({ required: true, default: 'English' })
   preferred_Language: string;
 
   @ApiHideProperty()
@@ -86,13 +84,13 @@ export class roles {
   @Prop({ type: String, required: true })
   role: string;
 
-  @Prop({ type: [String], required: false })
+  @Prop({ type: [String], required: true, default: ['read'] })
   permissions: string[];
 }
 
 export class day {
   @Prop({ required: false })
-  day: string;
+  dayOfWeek: string;
 
   @Prop({ required: false })
   hours: string;
@@ -106,10 +104,6 @@ export class availability {
 
 @Schema()
 export class User {
-  /*  @ApiHideProperty()
-  @Prop({ required: true, unique: true })
-  uuid: string;*/
-
   @ApiProperty()
   @Prop({ required: true })
   systemDetails: systemDetails;
@@ -127,12 +121,16 @@ export class User {
   roles: roles;
 
   @ApiProperty()
-  @Prop({ type: [mongoose.Types.ObjectId], required: false })
+  @Prop({ type: [mongoose.Types.ObjectId], required: true, default: [] })
   joinedCompanies: mongoose.Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ type: [String], required: false })
   skills: string[];
+
+  @ApiProperty()
+  @Prop({ required: false })
+  availability: availability;
 
   @ApiHideProperty()
   @Prop({ required: false, default: new Date() })
