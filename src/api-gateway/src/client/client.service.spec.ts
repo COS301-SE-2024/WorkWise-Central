@@ -1,12 +1,30 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClientService } from './client.service';
+import { getModelToken } from '@nestjs/mongoose';
+import { userStub } from '../../test/stubs/user.stub'; // Import getModelToken
 
 describe('ClientService', () => {
   let service: ClientService;
 
+  // Mock the client model
+  const mockClientModel = {
+    create: jest.fn().mockReturnValue(userStub()),
+    findAll: jest.fn().mockReturnValue(userStub()),
+    findUser: jest.fn().mockReturnValue(userStub()),
+    update: jest.fn().mockReturnValue(userStub()),
+    remove: jest.fn().mockReturnValue(userStub()),
+    // Add other methods as needed
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ClientService],
+      providers: [
+        ClientService,
+        {
+          provide: getModelToken('client'), // Use the correct token ('Client')
+          useValue: mockClientModel,
+        },
+      ],
     }).compile();
 
     service = module.get<ClientService>(ClientService);
