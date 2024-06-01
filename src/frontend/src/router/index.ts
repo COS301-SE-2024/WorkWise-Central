@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import SplashView from '../views/SplashView.vue'
 
 import RegisterCompanyModal from '../components/RegisterCompanyModal.vue'
-import RegisterCompanyModal2 from '../components/RegisterCompanyModal2.vue'
 import JoinCompanyModal from '../components/JoinCompanyModal.vue'
 import ClientDetails from '../components/ClientDetails.vue'
 import AddEmployee from '/src/components/AddEmployee.vue'
@@ -15,11 +14,6 @@ const router = createRouter({
       path: '/register-modal',
       name: 'regmodal',
       component: RegisterCompanyModal
-    },
-    {
-      path: '/register-modal2',
-      name: 'regmodal2',
-      component: RegisterCompanyModal2
     },
     {
       path: '/join',
