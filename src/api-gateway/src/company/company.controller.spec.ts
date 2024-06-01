@@ -3,6 +3,7 @@ import { CompanyController } from './company.controller';
 import { UsersService } from '../users/users.service';
 import { userStub } from '../../test/stubs/user.stub';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
+
 const moduleMocker = new ModuleMocker(global);
 
 describe('CompanyController', () => {
