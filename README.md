@@ -21,7 +21,6 @@
 [Functional Requirements (SRS)](#functional-requirements-srs) <br>
 [GitHub Project Board](#github-project-board) <br>
 [Team Members](#team-members) <br>
-[Contact Us](#contact-us) <br>
 
 ---
 
@@ -136,7 +135,4 @@ By harnessing modern technology, WorkWise Central transforms business operations
       <a href="https://github.com/BlockchainDlamini"><img src="https://img.shields.io/badge/GitHub-333?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
     </td>
 <table style="border: 1px solid #ddd; width: 100%; font-family: Arial, sans-serif; border-collapse: collapse;">
-
-## Contact Us
-For any queries or further information, please reach out to our team at [booleanholigans100@gmail.com](mailto:booleanholigans100@gmail.com).
 
