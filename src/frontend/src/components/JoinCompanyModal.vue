@@ -97,6 +97,7 @@ export default {
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
     click_create_client: false,
+    attribute_is_filled: false,
 
     req_obj: {
       company_name: '',
