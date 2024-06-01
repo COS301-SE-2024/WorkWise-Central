@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { CompanyModule } from './company/company.module';
 import { ClientModule } from './client/client.module';
+import { JobModule } from './job/job.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ClientModule } from './client/client.module';
     AuthModule,
     CompanyModule,
     ClientModule,
+    JobModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,6 +1,5 @@
 import { address } from '../entities/client.entity';
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Prop } from '@nestjs/mongoose';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateClientDto {
   @ApiProperty()
