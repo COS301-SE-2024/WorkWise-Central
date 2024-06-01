@@ -8,14 +8,14 @@ import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
-import { User } from '../users/entities/user.entity';
+//import { User } from '../users/entities/user.entity';
 import { Job } from './entities/job.entity';
 
 @Injectable()
 export class JobService {
   constructor(
     @InjectModel('job') private readonly jobModel: Model<Job>,
-    @InjectModel('user') private readonly userModel: Model<User>, //Will be used later
+    //@InjectModel('user') private readonly userModel: Model<User>, //Will be used later
   ) {}
 
   async create(createJobDto: CreateJobDto) {

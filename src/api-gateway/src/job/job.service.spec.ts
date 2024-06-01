@@ -18,7 +18,7 @@ describe('JobService', () => {
       providers: [
         JobService,
         {
-          provide: getModelToken('Job'),
+          provide: getModelToken('job'),
           useValue: mockJobModel,
         },
       ],
