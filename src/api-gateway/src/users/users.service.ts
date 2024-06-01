@@ -1,77 +1,145 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  ServiceUnavailableException,
+} from '@nestjs/common';
+import { CreateUserDto, createUserResponseDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Model } from 'mongoose';
+import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
-import { v4 as uuidv4 } from 'uuid';
+//import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel('User')
-    private readonly userModel: Model<User>,
+    @InjectModel('user')
+    public readonly userModel: Model<User>,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
+    if (
+      (await this.usernameExists(createUserDto.systemDetails.username)) == false
+    ) {
+      throw new ConflictException(
+        'Username already exists, please use another one',
+      );
+    }
+
+    console.log('createUserDto', createUserDto);
     createUserDto.created_at = new Date();
-    createUserDto.user_UUID = uuidv4();
+    //createUserDto.uuid = uuidv4();
 
     const newUser = new this.userModel(createUserDto);
     const result = await newUser.save();
-    return `${result.name} ${result.surname}'s account has been created`;
+
+    return new createUserResponseDto(
+      `${result.personalInfo.firstName} ${result.personalInfo.surname}'s account has been created`,
+    );
   }
 
   async findAllUsers() {
-    return this.userModel.find();
-  }
-
-  async findUser(id: string) {
-    let result;
     try {
-      result = await this.userModel.find({
-        $and: [{ user_UUID: id }, { deleted_at: { $exists: false } }],
-      });
-      return result;
+      return this.userModel.find().exec();
     } catch (error) {
-      throw new NotFoundException('Error: User not found');
+      console.log(error);
+      throw new ServiceUnavailableException('Users could not be retrieved');
     }
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    let result;
-    try {
-      updateUserDto.updated_at = new Date();
-      console.log(updateUserDto);
-      result = await this.userModel.findOneAndUpdate(
-        { $and: [{ user_UUID: id }, { deleted_at: { $exists: false } }] },
-        { $set: { ...updateUserDto } },
+  async usernameExists(identifier: string): Promise<boolean> {
+    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
+      await this.userModel
+        .findOne({
+          $and: [
+            { 'systemDetails.username': identifier },
+            {
+              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+
+    console.log('usernameExists -> ', result);
+    return result == null;
+  }
+
+  async findUser(
+    identifier: string,
+  ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
+    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
+      await this.userModel
+        .findOne({
+          $and: [
+            {
+              $or: [
+                { _id: identifier },
+                { 'systemDetails.username': identifier },
+              ],
+            },
+            {
+              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+
+    if (result == null) {
+      throw new NotFoundException(
+        'Error: User not found, please verify your username and password',
       );
-      if (result == null) {
-        throw new Error();
-      }
-      return result;
-    } catch (error) {
-      const response = 'Error: User not found';
-      throw new NotFoundException(response);
     }
+
+    return result;
   }
 
-  async softDelete(id: string) {
-    let result;
-    try {
-      result = await this.userModel.findOneAndUpdate(
-        { $and: [{ user_UUID: id }, { deleted_at: { $exists: false } }] },
-        { $set: { deleted_at: new Date() } },
-      );
-
-      if (result == null) {
-        throw new Error();
-      }
-      return result;
-    } catch (error) {
-      const response = 'Error: User not found';
-      throw new NotFoundException(response);
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
+    updateUserDto.updated_at = new Date();
+    //console.log(updateUserDto);
+    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
+      await this.userModel
+        .findOneAndUpdate(
+          {
+            $and: [
+              { _id: id },
+              {
+                $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              },
+            ],
+          },
+          { $set: { ...updateUserDto } },
+        )
+        .lean();
+    if (result == null) {
+      throw new NotFoundException('failed to update user');
     }
+    return result;
+  }
+
+  async softDelete(id: string): Promise<boolean> {
+    const result: Document<unknown, NonNullable<unknown>, User> &
+      User & { _id: Types.ObjectId } = await this.userModel.findOneAndUpdate(
+      {
+        $and: [
+          {
+            $or: [{ _id: id }, { 'systemDetails.username': id }],
+          },
+          {
+            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+          },
+        ],
+      },
+      { $set: { deleted_at: new Date() } },
+    );
+
+    if (result == null) {
+      throw new InternalServerErrorException('Internal server Error');
+    }
+    return true;
   }
 }

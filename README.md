@@ -1,7 +1,9 @@
 # Boolean Hooligans - WorkWise Central
 
-Code coverage badges go here
+![WorkWise Central Logo](logo.png)
 
+[![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)
+![Uptime Robot status](https://img.shields.io/uptimerobot/status/m796617525-da8bacd4b5ef756cceb20b0e?logo=GitHub)
 ---
 
 ## Table of Contents
@@ -42,7 +44,7 @@ By harnessing modern technology, WorkWise Central transforms business operations
 
 ## GitHub Project Board
 
-[View our GitHub Project Board](#)
+![View our GitHub Project Board](https://github.com/orgs/COS301-SE-2024/projects/59)
 
 ## Team Members
 
