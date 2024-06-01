@@ -176,6 +176,7 @@ const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
 export default {
   name: 'RegisterCompanyModal ',
   data: () => ({
+    valid: false,
     dialog: false,
     click_create_client: false,
     isdarkmode: false,
