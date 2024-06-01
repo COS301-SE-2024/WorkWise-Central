@@ -1,1 +1,1 @@
-export const siteData = JSON.parse("{\"base\":\"/guide/\",\"lang\":\"en-US\",\"title\":\"WorkWise Central\",\"description\":\"The is the offical documentation for the WorkWise Central project\",\"head\":[],\"locales\":{}}")
+export const siteData = JSON.parse("{\"base\":\"/WorkWise-Central/\",\"lang\":\"en-US\",\"title\":\"WorkWise Central\",\"description\":\"The is the offical documentation for the WorkWise Central project\",\"head\":[],\"locales\":{}}")
