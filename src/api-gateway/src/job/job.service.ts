@@ -26,7 +26,7 @@ export class JobService {
 
     return {
       id: result._id,
-      message: `Job: "${result.details.heading}", but "${result.assignedBy} has been created`,
+      message: `Job: "${result.details.heading}", by "${result.assignedBy} has been created`,
     };
   }
 
