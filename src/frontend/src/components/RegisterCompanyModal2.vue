@@ -72,7 +72,6 @@
         </v-col>
         <v-col cols="8" offset="2">
           <v-btn
-            text
             rounded="xl"
             boarder="xl"
             width="100%"
@@ -91,6 +90,7 @@
 export default {
   name: 'RegisterCompanyModal',
   data: () => ({
+    valid: false,
     dialog: false,
     click_create_client: false,
     isdarkmode: true,

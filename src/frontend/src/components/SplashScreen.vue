@@ -382,7 +382,8 @@
                           <v-form ref="form" v-model="valid">
                             <v-row align="center"
                               ><v-col
-                                ><label>Select your birth date</label><v-date-picker
+                                ><label>Select your birth date</label
+                                ><v-date-picker
                                   width="400"
                                   color="primary"
                                   v-model="birthDate"
@@ -820,10 +821,13 @@ export default {
           })
           .then((response) => {
             console.log(response)
+            // console.log(response.data.data.id, response.data.data.access_token)
+            // this.$store.commit('setUser', response.data.id)
+            // this.$store.commit('setToken', response.data.access_token)
             this.$router.push('/dashboard')
           })
           .catch((error) => {
-            console.log(error)
+            console.log(error.response.data.message)
           })
     },
     testRequest() {
@@ -867,14 +871,11 @@ export default {
         .post('http://localhost:3000/users/create', {
           systemDetails: { email: this.email, password: this.password, username: this.username },
           personalInfo: {
-            firstname: this.name,
+            firstName: this.name,
             surname: this.surname,
             dateOfBirth: this.date
           },
           profile: { displayName: this.username },
-          roles: { plumber: true },
-          joinedCompanies: {},
-          skills: { None: true },
           address: {
             street: this.street,
             city: this.city,
@@ -883,12 +884,10 @@ export default {
             complex: this.complex,
             houseNumber: this.houseNumber
           },
-          contactInfo: { phoneNumber: this.phone_number, email: this.email },
-          inventoryItems: {}
+          contactInfo: { phoneNumber: this.phone_number, email: this.email }
         })
         .then((response) => {
           console.log(response)
-          this.$router.push('/dashboard')
         })
         .catch((error) => {
           console.log(error)
