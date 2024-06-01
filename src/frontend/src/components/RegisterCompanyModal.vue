@@ -5,7 +5,7 @@
         class="text-none font-weight-regular"
         prepend-icon="mdi-account"
         color="black"
-        text="CONTINUE"
+        text="RegisterCompany"
         variant="tonal"
         v-bind="activatorProps"
       ></v-btn>
