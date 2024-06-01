@@ -33,25 +33,12 @@ Key features include:
 
 By harnessing modern technology, WorkWise Central transforms business operations, ensuring exceptional service and exceeding customer expectations. Join us in revolutionizing the future of service-based industries with WorkWise Central.
 
-## Demo Video
+## Demo Videos
+### BooleanHooligans-Demo1
 
 [Watch our demo video - Boolean Hooligans Demo1](#)
 
 ## Functional Requirements (SRS)
-
-For detailed information on the functional requirements, please refer to our Software Requirements Specification (SRS) document. The document includes the following sections:
-
-1. **Section 1**
-   - Subsection
-
-2. **Section 2**
-   - Subsection
-
-3. **Section 3**
-   - Subsection
-
-4. **Section 4**
-   - Subsection
 
 [Read the full Functional Requirements (SRS) document](#)
 
