@@ -4,7 +4,6 @@ import { CompanyController } from './company.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CompanySchema } from './entities/company.entity';
 import { UsersModule } from '../users/users.module';
-import { UsersService } from '../users/users.service';
 
 @Module({
   imports: [

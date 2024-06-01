@@ -21,7 +21,7 @@ import {
 import mongoose from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
 
-@ApiTags('clients')
+@ApiTags('Client')
 @Controller('client')
 export class ClientController {
   constructor(private readonly clientService: ClientService) {}
@@ -85,6 +85,7 @@ export class ClientController {
   @UseGuards(AuthGuard)
   @Delete()
   remove(@Param('id') id: string, @Body() pass: { pass: string }) {
+    console.log(pass); //Will be implemented later
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
     }

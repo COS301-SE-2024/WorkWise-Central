@@ -21,7 +21,7 @@ import {
 } from '@nestjs/swagger';
 import mongoose from 'mongoose';
 
-@ApiTags('users')
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

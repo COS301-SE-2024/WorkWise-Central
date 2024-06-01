@@ -1,5 +1,4 @@
 import {
-  ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -77,6 +76,7 @@ export class ClientService {
   }
 
   update(id: number, updateClientDto: UpdateClientDto) {
+    console.log(updateClientDto);
     return `This action updates a #${id} client`;
   }
 
