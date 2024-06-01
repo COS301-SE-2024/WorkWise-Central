@@ -1,0 +1,3 @@
+import comp from "/home/jessica/University/WorkWise-Central/docs/.vuepress/.temp/pages/revealJS/css/theme/index.html.vue"
+const data = JSON.parse("{\"path\":\"/revealJS/css/theme/\",\"title\":\"\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[{\"level\":2,\"title\":\"Dependencies\",\"slug\":\"dependencies\",\"link\":\"#dependencies\",\"children\":[]},{\"level\":2,\"title\":\"Creating a Theme\",\"slug\":\"creating-a-theme\",\"link\":\"#creating-a-theme\",\"children\":[]}],\"git\":{\"updatedTime\":1717250384000,\"contributors\":[{\"name\":\"JessicaBloem\",\"email\":\"jessicabloem8@gmail.com\",\"commits\":1}]},\"filePathRelative\":\"revealJS/css/theme/README.md\"}")
+export { comp, data }

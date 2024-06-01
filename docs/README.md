@@ -1,4 +1,4 @@
 ---
 home: true
-heroImage: /img/WorkWiseLogo.png
+heroImage: /WorkWiseLogo.png
 ---

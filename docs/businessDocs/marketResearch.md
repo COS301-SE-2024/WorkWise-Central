@@ -4,9 +4,9 @@
 
 ## Current results
 
-<img src="../../docs/.vuepress/public/img/marketResearch1.png"/>
-<img src="../../docs/.vuepress/public/img/marketResearch2.png"/>
-<img src="../../docs/.vuepress/public/img/marketResearch3.png"/>
-<img src="../../docs/.vuepress/public/img/marketResearch4.png"/>
-<img src="../../docs/.vuepress/public/img/marketResearch5.png"/>
+<img src="/marketResearch1.png"/>
+<img src="/marketResearch2.png"/>
+<img src="/marketResearch3.png"/>
+<img src="/marketResearch4.png"/>
+<img src="/marketResearch5.png"/>
 
