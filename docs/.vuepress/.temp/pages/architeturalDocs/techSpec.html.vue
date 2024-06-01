@@ -1,4 +1,4 @@
-<template><div><h1 id="technology-choice" tabindex="-1"><a class="header-anchor" href="#technology-choice"><span>Technology Choice</span></a></h1>
+<template><div><h1 id="technology-requirements" tabindex="-1"><a class="header-anchor" href="#technology-requirements"><span>Technology Requirements</span></a></h1>
 <h2 id="vue" tabindex="-1"><a class="header-anchor" href="#vue"><span>Vue</span></a></h2>
 <p>Vue.js is a progressive JavaScript framework that allows developers to build web interfaces and single-page applications. It is lightweight and flexible, making it optimal for the performance requirements of the project. Vue.js follows a component-based architecture, enabling the creation of reusable UI components for complex applications. Additionally, its reactive data binding system ensures automatic UI updates when data changes.</p>
 <h3 id="pros" tabindex="-1"><a class="header-anchor" href="#pros"><span>Pros</span></a></h3>
