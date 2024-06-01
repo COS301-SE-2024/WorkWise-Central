@@ -51,6 +51,10 @@ export class Company {
 
   @ApiProperty()
   @Prop({ required: false })
+  name: string;
+
+  @ApiProperty()
+  @Prop({ required: false })
   type: string;
 
   @ApiProperty()
