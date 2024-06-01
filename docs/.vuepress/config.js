@@ -8,7 +8,7 @@ export default defineUserConfig({
   lang: 'en-US',
   title: 'WorkWise Central',
   description: 'The is the offical documentation for the WorkWise Central project',
-  base: "/WorkWise-Central/",
+  // base: "/WorkWise-Central/",
   theme: defaultTheme({
     locales: {
       '/': {
