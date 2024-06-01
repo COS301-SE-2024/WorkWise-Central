@@ -66,7 +66,7 @@
                             <v-row align="center"
                               ><v-col
                                 ><label for="email" style="font-size: 20px; font-weight: lighter"
-                                  >Email</label
+                                  >Username</label
                                 >
 
                                 <v-text-field
@@ -112,7 +112,7 @@
                           <v-btn
                             :disabled="!valid"
                             text
-                            @click="testRequest"
+                            @click="login"
                             rounded="xl"
                             size="x-large"
                             color="blue-accent-2"
@@ -361,10 +361,10 @@
                     </v-sheet>
                   </v-dialog>
                   <!-- Flow 3 -->
-                  <v-dialog v-model="signup2Dialog" max-width="500" style="height: 700px">
+                  <v-dialog v-model="signup2Dialog" max-width="500" style="height: 1100px">
                     <v-sheet
                       width="500"
-                      height="700"
+                      height="1100"
                       border="md"
                       rounded="xl"
                       :color="
@@ -380,9 +380,13 @@
                         <v-spacer></v-spacer>
                         <v-col>
                           <v-form ref="form" v-model="valid">
-                            <v-row justify="space-around"
+                            <v-row align="center"
                               ><v-col
-                                ><v-date-picker width="400" color="primary"></v-date-picker
+                                ><label>Select your birth date</label><v-date-picker
+                                  width="400"
+                                  color="primary"
+                                  v-model="birthDate"
+                                ></v-date-picker
                               ></v-col>
                             </v-row>
                             <v-row algin="center"
@@ -680,8 +684,8 @@
                     </v-sheet>
                   </v-dialog>
                   <p class="text-center">
-                    By clicking Continue to join or sign in, you agree to WorkWise Central’s User
-                    Agreement, Privacy Policy, and Cookie Policy
+                    By clicking Continue to join or sign in, you agree to WorkWise Central's User
+                    Agreement, Privacy Policy, and Cookie Policy
                   </p>
                 </v-col>
               </v-col>
@@ -718,16 +722,13 @@ import {
   VImg,
   VSelect,
   VLayout,
-  VMain,
-  VSwitch
+  VMain
 } from 'vuetify/components'
 import axios from 'axios'
-import * as bcrypt from 'bcryptjs'
 
 export default {
   data: () => ({
     saltRounds: 10,
-
     loginDialog: false,
     signupDialog: false,
     signup1Dialog: false,
@@ -740,11 +741,12 @@ export default {
     email: '',
     password: '',
     confirm_password: '',
-    encryptedPassword: '',
+    date: '',
     name: '',
     surname: '',
     username: '',
     gender: '',
+    birthDate: null,
     language: '',
     street: '',
     city: '',
@@ -753,7 +755,6 @@ export default {
     complex: '',
     houseNumber: '',
     phone_number: '',
-    email: '',
     skils: '',
     roles: '',
     url: 'http://localhost:3000/users',
@@ -763,7 +764,6 @@ export default {
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
-    usernameRules: [(v) => !!v || 'Username is required'],
     emailRules: [
       (v) => !!v || 'E-mail is required',
       (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid'
@@ -811,19 +811,28 @@ export default {
     ]
   }),
   methods: {
-    login() {
+    async login() {
       if (this.$refs.form.validate())
-        if (this.email === 'admin' && this.password === 'admin') {
-          axios.get('http://localhost:3000/users')
-          this.$router.push('/dashboard')
-        }
+        await axios
+          .post('http://localhost:3000/auth/login', {
+            identifier: this.username,
+            password: this.password
+          })
+          .then((response) => {
+            console.log(response)
+            this.$router.push('/dashboard')
+          })
+          .catch((error) => {
+            console.log(error)
+          })
     },
     testRequest() {
       axios
-        .get('http://localhost:3000/', {
+        .get('http://localhost:3000/users/create', {
           headers: {
             'Content-Type': 'application/json'
-          }
+          },
+          withCredentials: false
         })
         .then((response) => {
           console.log(response)
@@ -832,28 +841,58 @@ export default {
           console.log(error)
         })
     },
-    signup() {
-      this.encryptedPassword = bcrypt.hashSync(
-        this.password,
-        this.saltRounds,
-        function (err, hash) {
-          if (err) {
-            console.log(err)
-          }
-          console.log(hash)
-        }
-      )
-      // axios.post('http://localhost:3000/users', {
-      //   systemDetails: { email: this.email, password: this.encryptedPassword, username: this.username },
-      //   personalInfo: { firstname: this.name, surname: this.surname },
-      //   profile: { displayName: this.username },
-      //   roles: { plumber: true },
-      //   joinedCompanies: {},
-      //   skills: { None: true },
-      //   address: {},
-      //   contactInfo: {}
-      // })
-      this.$router.push('/dashboard')
+    birthDateFormatter(date) {
+      const options = { day: 'numeric', month: 'long', year: 'numeric' }
+      this.date = new Date(date).toLocaleDateString(undefined, options)
+    },
+    async signup() {
+      // this.encryptedPassword = await bcrypt.hash(this.password, this.saltRounds)
+      // console.log(this.encryptedPassword)
+      this.birthDateFormatter(this.birthDate)
+      console.log(this.date)
+      console.log(this.email)
+      console.log(this.password)
+      console.log(this.name)
+      console.log(this.surname)
+      console.log(this.username)
+      console.log(this.street)
+      console.log(this.city)
+      console.log(this.suburb)
+      console.log(this.postal_code)
+      console.log(this.complex)
+      console.log(this.houseNumber)
+      console.log(this.phone_number)
+
+      await axios
+        .post('http://localhost:3000/users/create', {
+          systemDetails: { email: this.email, password: this.password, username: this.username },
+          personalInfo: {
+            firstname: this.name,
+            surname: this.surname,
+            dateOfBirth: this.date
+          },
+          profile: { displayName: this.username },
+          roles: { plumber: true },
+          joinedCompanies: {},
+          skills: { None: true },
+          address: {
+            street: this.street,
+            city: this.city,
+            suburb: this.suburb,
+            postalCode: this.postal_code,
+            complex: this.complex,
+            houseNumber: this.houseNumber
+          },
+          contactInfo: { phoneNumber: this.phone_number, email: this.email },
+          inventoryItems: {}
+        })
+        .then((response) => {
+          console.log(response)
+          this.$router.push('/dashboard')
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
     nextFlow1() {
       if (this.$refs.form.validate()) {
@@ -887,10 +926,7 @@ export default {
     openDialog() {
       this.dialog = true
     },
-    submit() {
-      if (this.$refs.form.validate()) {
-      }
-    },
+
     toggleDarkMode() {
       console.log(this.isdarkmode)
       if (this.isdarkmode === true) {
@@ -915,8 +951,7 @@ export default {
     VImg,
     VSelect,
     VLayout,
-    VMain,
-    VSwitch
+    VMain
   }
 }
 </script>
