@@ -51,7 +51,7 @@ By harnessing modern technology, WorkWise Central transforms business operations
 
 ## Functional Requirements (SRS)
 
-[Read the full Functional Requirements (SRS) document](#)
+[Read the full Functional Requirements (SRS) document](https://work-wise-central-1.vercel.app/)
 
 ## GitHub Project Board
 
