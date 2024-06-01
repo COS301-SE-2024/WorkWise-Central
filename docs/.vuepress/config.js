@@ -8,13 +8,6 @@ export default defineUserConfig({
   lang: 'en-US',
   title: 'WorkWise Central',
   description: 'The is the offical documentation for the WorkWise Central project',
-  configureWebpack: {
-    resolve: {
-      alias: {
-        '@assets': '/path/to/assets' // Adjust the path to your assets directory
-      }
-    }
-  },
   theme: defaultTheme({
     locales: {
       '/': {
