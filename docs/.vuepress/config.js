@@ -100,7 +100,7 @@ export default defineUserConfig({
             link: '/architeturalDocs/constraints.md',
           },
           {
-            text: 'Technologies',
+            text: 'Technology Requirements',
             link: '/architeturalDocs/techSpec.md',
           },
         ],
