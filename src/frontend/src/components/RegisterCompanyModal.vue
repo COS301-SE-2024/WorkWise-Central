@@ -383,9 +383,9 @@ export default {
     registrationHandler() {
       console.log(JSON.stringify(this.req_obj))
       axios
-        .post('http://localhost:3000/company', this.req_obj)
+        .post('http://localhost:3000/company/create', this.req_obj)
         .then((res) => {
-          console.log(res)
+          sessionStorage['currentCompany'] = res.data.id
         })
         .catch((res) => {
           console.log(res)
