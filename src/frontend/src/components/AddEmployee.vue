@@ -90,7 +90,6 @@
         </v-col>
         <v-col cols="8" offset="2" align="center">
           <v-btn
-            text
             rounded="xl"
             boarder="xl"
             width="80%"
@@ -107,7 +106,8 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue'
+export default defineComponent({
   name: 'RegisterCompanyModal',
   data: () => ({
     valid: false,
@@ -125,7 +125,7 @@ export default {
       link_for_emp: ''
     }
   })
-}
+})
 </script>
 
 <style scope>
