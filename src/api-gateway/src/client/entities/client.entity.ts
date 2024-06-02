@@ -35,10 +35,6 @@ export class clientInfo {
   @ApiProperty()
   @Prop({ type: address, required: false })
   address: address;
-
-  @ApiProperty()
-  @Prop({ required: false, default: 'English' })
-  preferred_Language: string;
 }
 
 export class details {
@@ -53,6 +49,10 @@ export class details {
   @Prop({ required: true })
   @ApiProperty()
   clientInfo: clientInfo;
+
+  @Prop({ required: false })
+  @ApiProperty()
+  preferred_Language: string;
 }
 
 @Schema()
@@ -61,11 +61,12 @@ export class Client {
     this.details = new details();
     this.details.firstName = createClientDto.firstName;
     this.details.surname = createClientDto.surname;
+    if (createClientDto.preferred_Language !== undefined)
+      this.details.preferred_Language = createClientDto.preferred_Language;
     this.details.clientInfo = {
       phoneNumber: createClientDto.phoneNumber,
       email: createClientDto.email,
       address: createClientDto.address,
-      preferred_Language: createClientDto.preferred_Language,
     };
     this.created_at = new Date();
   }
