@@ -10,13 +10,9 @@ it("renders client detials", () => {
         }
     })
     cy.contains('Join Company')
-    // cy.contains('Name of client')
-    // cy.contains('Client email address')
-    // cy.contains('Client phone number')
-    // cy.contains('Client address')
-    // cy.contains('Company (if applicable)')
-    // cy.contains('Company address (if applicable)')
-    // cy.contains('Preferred language')
+    cy.contains('Search for the company by name')
+    cy.contains('OR')
+    cy.contains('Enter the Company ID')
 });
 
 it("click create client button", () => {
@@ -27,5 +23,5 @@ it("click create client button", () => {
         }
     })
 
-    cy.contains('button','create client').click()
+    cy.contains('button','JOIN COMPANY').click()
 });
