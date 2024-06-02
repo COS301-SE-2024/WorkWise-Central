@@ -1112,7 +1112,7 @@ export default defineComponent({
 }
 .background-image-column {
   /* Set the background image */
-  background-image: url('C:\Users\Kumbirai\OneDrive\Documents\GitHub\WorkWise-Central\src\frontend\img\splash.jpg');
+  background-image: url('../../img/splash.jpg');
   /* Position the background image to fill the right side */
   background-position: right;
   background-size: cover; /* Auto width, full height */
