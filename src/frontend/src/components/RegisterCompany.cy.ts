@@ -10,5 +10,21 @@ it('shows the register company modal', () => {
     }
   })
   cy.contains('Register your company')
-    cy.contains('Company name*Type of business*Company email addressCompany phone numberCompany registration numberCompany VAT numberCompany logoCompany addressContinue')
+  cy.contains('Company name')
+  cy.contains('Type of business')
+  cy.contains('Company email address')
+  cy.contains('Company phone number')
+  cy.contains('Company registration number')
+  cy.contains('Company VAT number')
+  cy.contains('Company address')
 })
+
+it("click register company", () => {
+    const vuetify = createVuetify();
+    mount(RegisterCompany, {
+        global: {
+        plugins: [vuetify]
+        }
+    })
+  cy.contains('CONTINUE').click()
+});
