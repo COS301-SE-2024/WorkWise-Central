@@ -22,6 +22,11 @@
             <v-row>
               <!-- Left Half -->
               <v-col cols="6" align-self="center">
+                <v-progress-circular
+                  v-if="loading"
+                  indeterminate
+                  color="primary"
+                ></v-progress-circular>
                 <v-col>
                   <h1 class="splash-title header-title text-center">
                     Welcome To <span class="colorAccent">Work</span>
@@ -31,6 +36,7 @@
                 <v-col>
                   <v-col offset="4"
                     ><v-btn
+                      v-model="loginButton"
                       color="blue-accent-2"
                       dark
                       @click="loginDialog = true"
@@ -76,7 +82,8 @@
                                       : modal_light_theme_color
                                   "
                                   label="Enter your username"
-                                  type="email"
+                                  type="username"
+                                  name="username"
                                   v-model="username"
                                   :rules="usernameRules"
                                   rounded="xl"
@@ -98,6 +105,7 @@
                                   "
                                   label="Enter your password"
                                   type="password"
+                                  name="password"
                                   v-model="password"
                                   :rules="passwordRules"
                                   rounded="xl"
@@ -135,6 +143,12 @@
                           >
                         </v-col>
                       </v-col>
+                      <v-alert v-model="alertLogin" type="success">
+                        You have successfully logged in!</v-alert
+                      >
+                      <v-alert v-model="alertLoginFailure" type="error">
+                        Please enter valid credentials</v-alert
+                      >
                     </v-sheet>
                   </v-dialog>
 
@@ -201,6 +215,7 @@
                                   "
                                   label="Enter your password"
                                   type="password"
+                                  name="password"
                                   v-model="password"
                                   :rules="passwordRules"
                                   rounded="xl"
@@ -219,6 +234,7 @@
                                   "
                                   label="Confirm your Password"
                                   type="password"
+                                  name="confirm_password"
                                   v-model="confirm_password"
                                   :rules="[(v) => v === password || 'Passwords do not match']"
                                   rounded="xl"
@@ -384,8 +400,9 @@
                               ><v-col
                                 ><label>Select your birth date</label
                                 ><v-date-picker
+                                  dark
                                   width="400"
-                                  color="primary"
+                                  
                                   v-model="birthDate"
                                 ></v-date-picker
                               ></v-col>
@@ -403,6 +420,11 @@
                                   rounded="xl"
                                   variant="solo"
                                   clearable
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
                                 >
                                 </v-select></v-col
                             ></v-row>
@@ -419,6 +441,11 @@
                                   rounded="xl"
                                   variant="solo"
                                   clearable
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
                                 >
                                 </v-select></v-col
                             ></v-row>
@@ -681,7 +708,8 @@
                             </v-col></v-col
                           ></v-row
                         ></v-container
-                      >
+                      ><v-alert v-model="alertSignUp" type="success">Successful Sign up</v-alert>
+                      <v-alert v-model="alertSignUpFailure" type="error">Sign up failed</v-alert>
                     </v-sheet>
                   </v-dialog>
                   <v-dialog max-width="500" height="800" v-model="joinDialog">
@@ -830,15 +858,19 @@ export default defineComponent({
   data: () => ({
     saltRounds: 10,
     loginDialog: false,
+    alertSignUp: false,
+    alertSignUpFailure: false,
+    alertLogin: false,
     signupDialog: false,
     signup1Dialog: false,
     signup2Dialog: false,
     signup3Dialog: false,
+    alertLoginFailure: false,
     joinDialog: false,
     exists: false,
     signupAddressDialog: false,
     genderList: ['Male', 'Female', 'Other'],
-    languageList: ['English', 'French', 'Portuguese'],
+    languageList: ['English', 'Afrikaans'],
     cityList: ['Johannesburg', 'Cape Town', 'Durban', 'Pretoria', 'Bloemfontein'],
     email: '',
     access_token: '',
@@ -894,7 +926,7 @@ export default defineComponent({
     ],
     usernameRules: [
       (v) => !!v || 'Username is required',
-      (v) => v.length >= 3 || 'Username must be at least 3 characters',
+      (v) => v.length >= 3 || 'Username must be at least 3 characters'
       // usernameExist() || 'Username already exists'
     ],
     date_rules: [
@@ -918,9 +950,14 @@ export default defineComponent({
       (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers'
     ]
   }),
+  mounted() {
+    setTimeout(() => {
+      this.loading = false
+    }, 3000)
+  },
   methods: {
     async login() {
-      if (this.$refs.form.validate())
+      if (this.$refs.form.validate()) {
         await axios
           .post('http://localhost:3000/auth/login', {
             identifier: this.username,
@@ -931,11 +968,16 @@ export default defineComponent({
             console.log(response.data.access_token)
             sessionStorage.setItem('access_token', response.data.access_token)
             sessionStorage.setItem('id', response.data.id)
+            this.alertLoginFailure = false
+            this.alertLogin = true
             this.$router.push('/dashboard')
           })
           .catch((error) => {
             console.log(error.response.data.message)
+            this.alertLogin = false
+            this.alertLoginFailure = true
           })
+      }
     },
     birthDateFormatter(date) {
       const options = { day: 'numeric', month: 'long', year: 'numeric' }
@@ -966,9 +1008,13 @@ export default defineComponent({
         })
         .then((response) => {
           console.log(response)
+          this.alertSignUpFailure = false
+          this.alertSignUp = true
         })
         .catch((error) => {
           console.log(error)
+          this.alertSignUp = false
+          this.alertSignUpFailure = true
         })
     },
     nextFlow1() {
@@ -998,13 +1044,12 @@ export default defineComponent({
     finalFlow() {
       this.signup3Dialog = false
       this.joinDialog = true
-      signup()
+      this.signup()
     },
     registerCompany() {
-      if (this.$refs.form.validate()) {
-        this.signup3Dialog = false
-        this.$router.push('/register-modal')
-      }
+      this.signup3Dialog = false
+      this.$router.push('/register-modal')
+      this.signup()
     },
     join() {
       if (this.$refs.form.validate()) {
