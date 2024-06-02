@@ -16,7 +16,8 @@ import JobDetailsModal from '../components/JobDetailsModal.vue'
 import JobDetailsList from '../components/JobDetailsList.vue'
 import JoinCompanyModal from '../components/JoinCompanyModal.vue'
 import RegisterCompanyModal from '../components/RegisterCompanyModal.vue'
-export default {
+import { defineComponent } from 'vue'
+export default defineComponent({
   name: 'ModaLs',
   components: {
     RegisterCompanyModal,
@@ -26,7 +27,7 @@ export default {
     JobDetailsList,
     JoinCompanyModal
   }
-}
+})
 </script>
 
 <style></style>
