@@ -39,6 +39,7 @@ export class CompanyService {
     const result = await newCompany.save();
     return new createCompanyResponseDto(`${result.id}`);
   }
+
   async companyExists(id: string): Promise<boolean> {
     const result: FlattenMaps<User> & { _id: Types.ObjectId } =
       await this.companyModel

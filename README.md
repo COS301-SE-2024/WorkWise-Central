@@ -4,8 +4,12 @@
 
 ![WorkWise Central Logo](logo.png)
 
-[![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)
-![Uptime Robot status](https://img.shields.io/uptimerobot/status/m796617525-da8bacd4b5ef756cceb20b0e?logo=GitHub)
+
+[![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)&ensp;
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/WorkWise-Central/unit_test.yml)&ensp;
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/COS301-SE-2024/WorkWise-Central)&ensp;
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/COS301-SE-2024/WorkWise-Central)&ensp;
+![Uptime Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m796617525-da8bacd4b5ef756cceb20b0e?logo=GitHub)
 ---
 ![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D)
 ![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)
@@ -21,7 +25,6 @@
 [Functional Requirements (SRS)](#functional-requirements-srs) <br>
 [GitHub Project Board](#github-project-board) <br>
 [Team Members](#team-members) <br>
-
 
 ---
 
@@ -52,11 +55,11 @@ By harnessing modern technology, WorkWise Central transforms business operations
 
 ## Functional Requirements (SRS)
 
-[Read the full Functional Requirements (SRS) document](#)
+[Read the full Functional Requirements (SRS) document](https://work-wise-central-1.vercel.app/)
 
 ## GitHub Project Board
 
-![View our GitHub Project Board](https://github.com/orgs/COS301-SE-2024/projects/59)
+[View our GitHub Project Board](https://github.com/orgs/COS301-SE-2024/projects/59)
 
 ## Team Members
 
@@ -136,5 +139,4 @@ By harnessing modern technology, WorkWise Central transforms business operations
       <a href="https://github.com/BlockchainDlamini"><img src="https://img.shields.io/badge/GitHub-333?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
     </td>
 <table style="border: 1px solid #ddd; width: 100%; font-family: Arial, sans-serif; border-collapse: collapse;">
-
 

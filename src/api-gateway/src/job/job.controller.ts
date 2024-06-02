@@ -1,31 +1,30 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
   HttpException,
   HttpStatus,
-  Param,
-  Patch,
-  Post,
   UseGuards,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto, createUserResponseDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from '../auth/auth.guard';
+import { JobService } from './job.service';
+import { CreateJobDto } from './dto/create-job.dto';
+import { UpdateJobDto } from './dto/update-job.dto';
 import {
   ApiBody,
   ApiInternalServerErrorResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import mongoose from 'mongoose';
+import { AuthGuard } from '../auth/auth.guard';
 
-@ApiTags('Users')
-@Controller('users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
-
+@ApiTags('Job')
+@Controller('job')
+export class JobController {
+  constructor(private readonly jobService: JobService) {}
   validateObjectId(id: string): boolean {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
@@ -35,20 +34,22 @@ export class UsersController {
 
   @Get()
   lookAtDocumentation() {
-    return { message: 'Refer to /documentation for details on the API' };
+    return {
+      message: 'Refer to localhost:3000/documentation for details on the API',
+    };
   }
 
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.CONFLICT,
   })
-  @ApiBody({ type: [CreateUserDto] })
+  @ApiBody({ type: [CreateJobDto] })
   @Post('/create')
   async create(
-    @Body() createUserDto: CreateUserDto,
-  ): Promise<createUserResponseDto> {
+    @Body() createJobDto: CreateJobDto,
+  ): Promise<{ message: string }> {
     try {
-      return await this.usersService.create(createUserDto);
+      return await this.jobService.create(createJobDto);
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
@@ -58,7 +59,7 @@ export class UsersController {
   @Get('all')
   findAll() {
     try {
-      return this.usersService.findAllUsers();
+      return this.jobService.findAllJobs();
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
@@ -67,41 +68,31 @@ export class UsersController {
     }
   }
 
-  @Get('id/:identifier')
-  findOne(@Param('identifier') identifier: string) {
-    this.validateObjectId(identifier);
+  @Get('id/:id')
+  findOne(@Param('id') id: string) {
+    this.validateObjectId(id);
     try {
-      return this.usersService.findUserById(identifier);
+      return this.jobService.findJobById(id);
     } catch (e) {
       console.log(e);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
   }
 
-  @UseGuards(AuthGuard)
-  @ApiBody({ type: [UpdateUserDto] })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    this.validateObjectId(id);
-
-    try {
-      return this.usersService.update(id, updateUserDto);
-    } catch (e) {
-      throw new HttpException(
-        'internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+  update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
+    return this.jobService.update(+id, updateJobDto);
   }
 
   @UseGuards(AuthGuard)
   @Delete()
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string, @Body() pass: { pass: string }) {
+    console.log(pass); //Will be implemented later
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
     }
     try {
-      return this.usersService.softDelete(id);
+      return this.jobService.softDelete(id);
     } catch (e) {
       throw new HttpException(
         'Internal Server Error',

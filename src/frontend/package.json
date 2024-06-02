@@ -17,9 +17,13 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "axios": "^1.7.2",
+    "bcrpyt": "^2.0.0",
+    "bcryptjs": "^2.4.3",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
-    "vuetify": "^3.6.8"
+    "vuetify": "^3.6.8",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
