@@ -17,9 +17,7 @@ export class UsersService {
   constructor(@InjectModel('user') private readonly userModel: Model<User>) {}
 
   async create(createUserDto: CreateUserDto) {
-    if (
-      (await this.usernameExists(createUserDto.systemDetails.username)) == false
-    ) {
+    if (await this.usernameExists(createUserDto.systemDetails.username)) {
       throw new ConflictException(
         'Username already exists, please use another one',
       );
@@ -60,11 +58,28 @@ export class UsersService {
         .lean();
 
     console.log('usernameExists -> ', result);
+    return result != null;
+  }
+
+  async userIdExists(id: string): Promise<boolean> {
+    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
+      await this.userModel
+        .findOne({
+          $and: [
+            { _id: id },
+            {
+              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+
+    console.log('userIdExists -> ', result);
     return result == null;
   }
 
   async findUserById(
-    identifier: string,
+    identifier: string | Types.ObjectId,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
     const result: FlattenMaps<User> & { _id: Types.ObjectId } =
       await this.userModel
