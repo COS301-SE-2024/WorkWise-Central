@@ -937,21 +937,6 @@ export default defineComponent({
             console.log(error.response.data.message)
           })
     },
-    testRequest() {
-      axios
-        .get('http://localhost:3000/users/create', {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          withCredentials: false
-        })
-        .then((response) => {
-          console.log(response)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    },
     birthDateFormatter(date) {
       const options = { day: 'numeric', month: 'long', year: 'numeric' }
       this.date = new Date(date).toLocaleDateString(undefined, options)
@@ -1110,13 +1095,5 @@ export default defineComponent({
   font-size: 36px;
   font-display: 'Lato';
 }
-.background-image-column {
-  /* Set the background image */
-  background-image: url('C:\Users\Kumbirai\OneDrive\Documents\GitHub\WorkWise-Central\src\frontend\img\splash.jpg');
-  /* Position the background image to fill the right side */
-  background-position: right;
-  background-size: cover; /* Auto width, full height */
-  background-repeat: no-repeat;
-  max-height: max-content;
-}
+
 </style>
