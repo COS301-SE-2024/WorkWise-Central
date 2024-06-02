@@ -6,7 +6,6 @@
         prepend-icon="mdi-account"
         color="black"
         text="JOIN COMPANY"
-        text="JOIN COMPANY"
         variant="tonal"
         v-bind="activatorProps"
       ></v-btn>
@@ -18,7 +17,7 @@
       height="800"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
-      <v-form ref="form" v-model="valid" >
+      <v-form ref="form" v-model="valid">
         <v-col>
           <v-col>
             <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -80,22 +79,6 @@
           </v-col>
         </v-col>
       </v-form>
-          </v-col>
-          <v-col cols="8" offset="2" align="center">
-            <v-btn
-              text
-              rounded="xl"
-              boarder="xl"
-              width="85%"
-              height="35"
-              variant="elevated"
-              color="blue-accent-2"
-              :disabled="req_obj.company_name === '' && req_obj.companyID === ''"
-              >JOIN COMPANY</v-btn
-            >
-          </v-col>
-        </v-col>
-      </v-form>
     </v-sheet>
   </v-dialog>
 </template>
@@ -114,7 +97,6 @@ export default {
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
     click_create_client: false,
-    attribute_is_filled: false,
     attribute_is_filled: false,
 
     req_obj: {
