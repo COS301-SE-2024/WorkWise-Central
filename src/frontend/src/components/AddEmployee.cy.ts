@@ -24,5 +24,5 @@ it("click add employee button", () => {
         }
     })
 
-    cy.contains('button','add employee').click()
+    cy.contains('button','ADD EMPLOYEE').click()
 });
