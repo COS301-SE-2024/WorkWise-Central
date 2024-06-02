@@ -116,7 +116,6 @@
         </v-col>
         <v-col cols="8" offset="2" align="center">
           <v-btn
-            text
             rounded="xl"
             boarder="xl"
             width="60%"
@@ -133,14 +132,15 @@
 
 <script lang="ts">
 // import { RouterLink, RouterView } from 'vue-router'
-
-export default {
+import { defineComponent } from 'vue'
+export default defineComponent({
   name: 'JobDetailsList',
   props: [],
   data() {
     return {
       click_create_client: false,
-      isdarkmode: false, //this should be a prop thats taken in from the user to determin if the modal shoud also be in darkmode or not
+      valid: true,
+      isdarkmode: true, //this should be a prop thats taken in from the user to determin if the modal shoud also be in darkmode or not
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
@@ -157,7 +157,7 @@ export default {
   methods: {
     flick() {}
   }
-}
+})
 </script>
 
 <style></style>

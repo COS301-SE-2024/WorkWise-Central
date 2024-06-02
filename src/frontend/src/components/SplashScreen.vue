@@ -637,10 +637,10 @@
                     </v-sheet>
                   </v-dialog>
                   <!-- Flow 5 -->
-                  <v-dialog v-model="signup3Dialog" max-width="500" style="height: 750px">
+                  <v-dialog v-model="signup3Dialog" max-width="700" style="height: 750px">
                     <v-sheet
-                      width="400"
-                      height="350"
+                      width="700"
+                      height="550"
                       border="md"
                       :color="
                         isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -648,12 +648,12 @@
                       rounded="xl"
                     >
                       <v-container
-                        ><v-row
+                        ><v-row align-content="center"
                           ><v-col align-self="center"
                             ><v-col cols="8" offset="2">
                               <v-btn
                                 text
-                                @click="nextFlow4"
+                                @click="registerCompany"
                                 rounded="xl"
                                 color="blue-accent-2"
                                 variant="elevated"
@@ -667,7 +667,7 @@
                             </v-col>
                             <v-col cols="8" offset="2">
                               <v-btn
-                                @click="nextFlow4"
+                                @click="finalFlow"
                                 rounded="xl"
                                 color="blue-grey-darken-1"
                                 variant="elevated"
@@ -682,6 +682,104 @@
                           ></v-row
                         ></v-container
                       >
+                    </v-sheet>
+                  </v-dialog>
+                  <v-dialog max-width="500" height="800" v-model="joinDialog">
+                    <v-sheet
+                      elevation="14"
+                      rounded="xl"
+                      width="500"
+                      height="800"
+                      :color="
+                        isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
+                      "
+                    >
+                      <v-form ref="form" v-model="valid">
+                        <v-col>
+                          <v-col>
+                            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
+                              Join Company
+                            </h4></v-col
+                          >
+                          <v-spacer></v-spacer>
+                          <v-col>
+                            <v-col>
+                              <small
+                                class="text-caption"
+                                :style="
+                                  isdarkmode === true
+                                    ? dark_theme_text_color
+                                    : light_theme_text_color
+                                "
+                                >Search for the company by name</small
+                              >
+                              <v-autocomplete
+                                density="compact"
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
+                                label="Company Name"
+                                variant="solo"
+                                rounded="xl"
+                                v-model="req_obj.company_name"
+                                :items="[
+                                  'Plumber Tronics',
+                                  'Nedbank',
+                                  'FNB',
+                                  'Talker',
+                                  'Friends',
+                                  'Wyoming'
+                                ]"
+                              ></v-autocomplete
+                            ></v-col>
+                            <v-container fill-height fluid>
+                              <v-row align="center" justify="center">
+                                <h2 style="font-weight: lighter">OR</h2>
+                              </v-row>
+                            </v-container>
+                            <v-col>
+                              <small
+                                class="text-caption"
+                                :style="
+                                  isdarkmode === true
+                                    ? dark_theme_text_color
+                                    : light_theme_text_color
+                                "
+                                >Enter the Company ID</small
+                              >
+                              <v-text-field
+                                density="compact"
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
+                                label="Enter the company ID"
+                                rounded="xl"
+                                variant="solo"
+                                v-model="req_obj.companyID"
+                                required
+                              ></v-text-field
+                            ></v-col>
+                          </v-col>
+                          <v-col cols="8" offset="2" align="center">
+                            <v-btn
+                              text
+                              rounded="xl"
+                              boarder="xl"
+                              width="85%"
+                              height="35"
+                              variant="elevated"
+                              color="blue-accent-2"
+                              :disabled="req_obj.company_name === '' && req_obj.companyID === ''"
+                              @click="joinDialog = false"
+                              >JOIN COMPANY</v-btn
+                            >
+                          </v-col>
+                        </v-col>
+                      </v-form>
                     </v-sheet>
                   </v-dialog>
                   <p class="text-center">
@@ -726,8 +824,9 @@ import {
   VMain
 } from 'vuetify/components'
 import axios from 'axios'
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   data: () => ({
     saltRounds: 10,
     loginDialog: false,
@@ -735,11 +834,14 @@ export default {
     signup1Dialog: false,
     signup2Dialog: false,
     signup3Dialog: false,
+    joinDialog: false,
+    exists: false,
     signupAddressDialog: false,
     genderList: ['Male', 'Female', 'Other'],
     languageList: ['English', 'French', 'Portuguese'],
     cityList: ['Johannesburg', 'Cape Town', 'Durban', 'Pretoria', 'Bloemfontein'],
     email: '',
+    access_token: '',
     password: '',
     confirm_password: '',
     date: '',
@@ -765,6 +867,10 @@ export default {
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
+    req_obj: {
+      company_name: '',
+      companyID: ''
+    },
     emailRules: [
       (v) => !!v || 'E-mail is required',
       (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid'
@@ -788,7 +894,8 @@ export default {
     ],
     usernameRules: [
       (v) => !!v || 'Username is required',
-      (v) => v.length >= 3 || 'Username must be at least 3 characters'
+      (v) => v.length >= 3 || 'Username must be at least 3 characters',
+      // usernameExist() || 'Username already exists'
     ],
     date_rules: [
       (v) => !!v || 'Date of birth is required',
@@ -821,9 +928,9 @@ export default {
           })
           .then((response) => {
             console.log(response)
-            // console.log(response.data.data.id, response.data.data.access_token)
-            // this.$store.commit('setUser', response.data.id)
-            // this.$store.commit('setToken', response.data.access_token)
+            console.log(response.data.access_token)
+            sessionStorage.setItem('access_token', response.data.access_token)
+            sessionStorage.setItem('id', response.data.id)
             this.$router.push('/dashboard')
           })
           .catch((error) => {
@@ -853,20 +960,6 @@ export default {
       // this.encryptedPassword = await bcrypt.hash(this.password, this.saltRounds)
       // console.log(this.encryptedPassword)
       this.birthDateFormatter(this.birthDate)
-      console.log(this.date)
-      console.log(this.email)
-      console.log(this.password)
-      console.log(this.name)
-      console.log(this.surname)
-      console.log(this.username)
-      console.log(this.street)
-      console.log(this.city)
-      console.log(this.suburb)
-      console.log(this.postal_code)
-      console.log(this.complex)
-      console.log(this.houseNumber)
-      console.log(this.phone_number)
-
       await axios
         .post('http://localhost:3000/users/create', {
           systemDetails: { email: this.email, password: this.password, username: this.username },
@@ -917,11 +1010,39 @@ export default {
         this.signup3Dialog = true
       }
     },
-    nextFlow4() {
+    finalFlow() {
       this.signup3Dialog = false
-      this.signup()
+      this.joinDialog = true
+      signup()
     },
-    changeTheme() {},
+    registerCompany() {
+      if (this.$refs.form.validate()) {
+        this.signup3Dialog = false
+        this.$router.push('/register-modal')
+      }
+    },
+    join() {
+      if (this.$refs.form.validate()) {
+        this.$router.push('/join')
+      }
+    },
+
+    usernameExist() {
+      axios
+        .post('http://localhost:3000/users/exists', {
+          params: {
+            username: this.username
+          }
+        })
+        .then((response) => {
+          console.log(response)
+          this.exists = response
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      return this.exists
+    },
     openDialog() {
       this.dialog = true
     },
@@ -952,7 +1073,7 @@ export default {
     VLayout,
     VMain
   }
-}
+})
 </script>
 <style scoped>
 .header-title {

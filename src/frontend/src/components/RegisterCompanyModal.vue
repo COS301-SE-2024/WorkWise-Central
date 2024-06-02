@@ -314,7 +314,6 @@
             align="center"
           >
             <v-btn
-              text
               type="submit"
               rounded="xl"
               boarder="xl"
@@ -341,6 +340,7 @@ export default {
     return {
       dialog: false,
       click_create_client: false,
+      valid: true,
       isdarkmode: true,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
@@ -390,14 +390,14 @@ export default {
         .catch((res) => {
           console.log(res)
         })
-    },
-    base64image() {
-      let read = new FileReader()
-      read.readAsDataURL(this.req_obj.image)
-      read.onload = () => {
-        this.req_obj.image = read.result
-      }
     }
+    // base64image() {
+    //   let read = new FileReader()
+    //   read.readAsDataURL(this.req_obj.image)
+    //   read.onload = () => {
+    //     this.req_obj.image = read.result
+    //   }
+    // }
   }
 }
 </script>

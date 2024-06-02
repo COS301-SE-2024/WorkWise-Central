@@ -49,6 +49,10 @@ export class details {
   @Prop({ required: true })
   @ApiProperty()
   clientInfo: clientInfo;
+
+  @Prop({ required: false })
+  @ApiProperty()
+  preferred_Language: string;
 }
 
 @Schema()
@@ -57,6 +61,8 @@ export class Client {
     this.details = new details();
     this.details.firstName = createClientDto.firstName;
     this.details.surname = createClientDto.surname;
+    if (createClientDto.preferred_Language !== undefined)
+      this.details.preferred_Language = createClientDto.preferred_Language;
     this.details.clientInfo = {
       phoneNumber: createClientDto.phoneNumber,
       email: createClientDto.email,
