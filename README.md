@@ -55,7 +55,7 @@ By harnessing modern technology, WorkWise Central transforms business operations
 
 ## GitHub Project Board
 
-![View our GitHub Project Board](https://github.com/orgs/COS301-SE-2024/projects/59)
+[View our GitHub Project Board](https://github.com/orgs/COS301-SE-2024/projects/59)
 
 ## Team Members
 
