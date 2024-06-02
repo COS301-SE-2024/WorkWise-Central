@@ -141,6 +141,10 @@ export default defineUserConfig({
         prefix: '/devOps/',
         link: '/devOps/',
         children: [
+        {
+            text: 'Git originisation and management',
+            link: '/devOps/gitOrgMan.md',
+          },
           {
             text: 'Branching Strategy',
             link: '/devOps/branching.md',

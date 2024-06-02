@@ -28,6 +28,7 @@ export const routes = Object.fromEntries([
   ["/devOps/", { loader: () => import(/* webpackChunkName: "devOps_index.html" */"/home/jessica/University/WorkWise-Central/docs/.vuepress/.temp/pages/devOps/index.html.js"), meta: {"title":"DevOps"} }],
   ["/devOps/branching.html", { loader: () => import(/* webpackChunkName: "devOps_branching.html" */"/home/jessica/University/WorkWise-Central/docs/.vuepress/.temp/pages/devOps/branching.html.js"), meta: {"title":"Brancing strategy"} }],
   ["/devOps/cicd.html", { loader: () => import(/* webpackChunkName: "devOps_cicd.html" */"/home/jessica/University/WorkWise-Central/docs/.vuepress/.temp/pages/devOps/cicd.html.js"), meta: {"title":"CI/CD"} }],
+  ["/devOps/gitOrgMan.html", { loader: () => import(/* webpackChunkName: "devOps_gitOrgMan.html" */"/home/jessica/University/WorkWise-Central/docs/.vuepress/.temp/pages/devOps/gitOrgMan.html.js"), meta: {"title":"Git orginisation and management"} }],
   ["/guide/", { loader: () => import(/* webpackChunkName: "guide_index.html" */"/home/jessica/University/WorkWise-Central/docs/.vuepress/.temp/pages/guide/index.html.js"), meta: {"title":"Introduction"} }],
   ["/404.html", { loader: () => import(/* webpackChunkName: "404.html" */"/home/jessica/University/WorkWise-Central/docs/.vuepress/.temp/pages/404.html.js"), meta: {"title":""} }],
 ]);
