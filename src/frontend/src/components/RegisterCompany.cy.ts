@@ -5,7 +5,7 @@ import RegisterCompany from '../components/RegisterCompanyModal.vue'
 it('shows the register company modal', () => {
   const vuetify = createVuetify()
   mount(RegisterCompany, {
-    gloabal: {
+    global: {
       plugins: [vuetify]
     }
   })
