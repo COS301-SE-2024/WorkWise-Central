@@ -22,7 +22,7 @@ jobs:
           node-version: '18.18.0'
 
       - name: Install dependencies
-        run: npm install
+        run: npm install && npm run test:cov
         working-directory: src/frontend
 
       - name: Run api tests and collect coverage
