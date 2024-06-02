@@ -1,7 +1,38 @@
-// import SplashScreen from "../components/SplashScreen.vue";
-// import { mount } from "cypress/vue";
+import { createVuetify } from 'vuetify'
+import { mount } from 'cypress/vue'
+import SplashScreen from '../components/SplashScreen.vue'
 
-// it("shows the splash screen", () => {
-//   mount(SplashScreen);
-//   cy.contains("Loading...");
-// });
+it('shows the splash screen', () => {
+  const vuetify = createVuetify()
+  mount(SplashScreen, {
+    global: {
+      plugins: [vuetify]
+    }
+  })
+  cy.contains('WorkWise')
+  cy.contains('Welcome To WorkWise Central')
+})
+
+it('performs login', () => {
+  const vuetify = createVuetify()
+  mount(SplashScreen, {
+    global: {
+      plugins: [vuetify]
+    }
+  })
+  cy.contains('button', 'Log in').click() // Clicks the button containing the text 'Log in'
+
+  cy.get('input[name="username"]').type('test')
+  cy.get('input[name="password"]').type('test')
+  cy.contains('button', 'Log in').click() // Clicks the button containing the text 'Log in'
+})
+
+it('performs register', () => {
+  const vuetify = createVuetify()
+  mount(SplashScreen, {
+    global: {
+      plugins: [vuetify]
+    }
+  })
+  cy.contains('button', 'Sign up').click() // Clicks the button containing the text 'Sign up'
+})

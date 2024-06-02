@@ -22,6 +22,11 @@
             <v-row>
               <!-- Left Half -->
               <v-col cols="6" align-self="center">
+                <v-progress-circular
+                  v-if="loading"
+                  indeterminate
+                  color="primary"
+                ></v-progress-circular>
                 <v-col>
                   <h1 class="splash-title header-title text-center">
                     Welcome To <span class="colorAccent">Work</span>
@@ -30,7 +35,7 @@
                 </v-col>
                 <v-col>
                   <v-col offset="4"
-                    ><v-btn
+                    ><v-btn v-model="loginButton"
                       color="blue-accent-2"
                       dark
                       @click="loginDialog = true"
@@ -76,7 +81,8 @@
                                       : modal_light_theme_color
                                   "
                                   label="Enter your username"
-                                  type="email"
+                                  type="username"
+                                  name="username"
                                   v-model="username"
                                   :rules="usernameRules"
                                   rounded="xl"
@@ -98,6 +104,7 @@
                                   "
                                   label="Enter your password"
                                   type="password"
+                                  name="password"
                                   v-model="password"
                                   :rules="passwordRules"
                                   rounded="xl"
@@ -894,7 +901,7 @@ export default defineComponent({
     ],
     usernameRules: [
       (v) => !!v || 'Username is required',
-      (v) => v.length >= 3 || 'Username must be at least 3 characters',
+      (v) => v.length >= 3 || 'Username must be at least 3 characters'
       // usernameExist() || 'Username already exists'
     ],
     date_rules: [
@@ -918,6 +925,11 @@ export default defineComponent({
       (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers'
     ]
   }),
+  mounted() {
+    setTimeout(() => {
+      this.loading = false
+    }, 3000)
+  },
   methods: {
     async login() {
       if (this.$refs.form.validate())
