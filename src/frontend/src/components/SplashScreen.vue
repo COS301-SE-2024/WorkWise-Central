@@ -695,7 +695,8 @@
                             </v-col></v-col
                           ></v-row
                         ></v-container
-                      >
+                      ><v-alert v-model="alertSignUp" type="success">Successful Sign up</v-alert>
+                      <v-alert v-model="alertSignUpFailure" type="error">Sign up failed</v-alert>
                     </v-sheet>
                   </v-dialog>
                   <v-dialog max-width="500" height="800" v-model="joinDialog">
@@ -845,6 +846,7 @@ export default defineComponent({
     saltRounds: 10,
     loginDialog: false,
     alertSignUp: false,
+    alertSignUpFailure: false,
     alertLogin: false,
     signupDialog: false,
     signup1Dialog: false,
@@ -1008,9 +1010,13 @@ export default defineComponent({
         })
         .then((response) => {
           console.log(response)
+          this.alertSignUpFailure = false
+          this.alertSignUp = true
         })
         .catch((error) => {
           console.log(error)
+          this.alertSignUp = false
+          this.alertSignUpFailure = true
         })
     },
     nextFlow1() {
