@@ -1,31 +1,30 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ClientService } from './client.service';
-import { getModelToken } from '@nestjs/mongoose';
+import { JobService } from './job.service';
 import { userStub } from '../../test/stubs/user.stub';
+import { getModelToken } from '@nestjs/mongoose';
 
-describe('ClientService', () => {
-  let service: ClientService;
+describe('JobService', () => {
+  let service: JobService;
 
-  const mockClientModel = {
+  const mockJobModel = {
     create: jest.fn().mockReturnValue(userStub()),
     findAll: jest.fn().mockReturnValue(userStub()),
     findUser: jest.fn().mockReturnValue(userStub()),
     update: jest.fn().mockReturnValue(userStub()),
     remove: jest.fn().mockReturnValue(userStub()),
   };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ClientService,
+        JobService,
         {
-          provide: getModelToken('client'),
-          useValue: mockClientModel,
+          provide: getModelToken('job'),
+          useValue: mockJobModel,
         },
       ],
     }).compile();
 
-    service = module.get<ClientService>(ClientService);
+    service = module.get<JobService>(JobService);
   });
 
   it('should be defined', () => {

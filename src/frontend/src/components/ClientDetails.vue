@@ -5,7 +5,7 @@
         class="text-none font-weight-regular"
         prepend-icon="mdi-account"
         color="black"
-        text="CONTINUE"
+        text="ClientDetails"
         variant="tonal"
         v-bind="activatorProps"
       ></v-btn>

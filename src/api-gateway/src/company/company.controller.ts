@@ -22,7 +22,7 @@ import {
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
 import mongoose, { Types } from 'mongoose';
 
-@ApiTags('company')
+@ApiTags('Company')
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
