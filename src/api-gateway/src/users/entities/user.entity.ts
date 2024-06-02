@@ -118,7 +118,7 @@ export class User {
 
   @ApiProperty()
   @Prop({ required: false })
-  roles: roles;
+  roles: roles[];
 
   @ApiProperty()
   @Prop({ type: [mongoose.Types.ObjectId], required: true, default: [] })
