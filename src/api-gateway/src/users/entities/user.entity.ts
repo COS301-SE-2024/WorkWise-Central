@@ -52,7 +52,7 @@ export class personalInfo {
 
   @ApiHideProperty()
   @Prop({ required: true, default: 'English' })
-  preferred_Language: string;
+  preferredLanguage: string;
 
   @ApiHideProperty()
   @Prop({ type: contactInfo, required: false })

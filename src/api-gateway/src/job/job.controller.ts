@@ -18,16 +18,20 @@ import {
   ApiInternalServerErrorResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
 
 @ApiTags('Job')
 @Controller('job')
 export class JobController {
   constructor(private readonly jobService: JobService) {}
-  validateObjectId(id: string): boolean {
+  validateObjectId(id: string | Types.ObjectId, entity: string = ''): boolean {
+    let response: string;
+    if (entity === '') response = `Invalid ID`;
+    else response = `Invalid ${entity} ID`;
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+      throw new HttpException(response, HttpStatus.BAD_REQUEST);
     }
     return true;
   }
@@ -47,9 +51,21 @@ export class JobController {
   @Post('/create')
   async create(
     @Body() createJobDto: CreateJobDto,
-  ): Promise<{ message: string }> {
+  ): Promise<{ message: { id: Types.ObjectId; message: string } }> {
+    this.validateObjectId(createJobDto.clientId, 'client');
+    this.validateObjectId(createJobDto.assignedBy, 'assignedBy');
+    this.validateObjectId(createJobDto.companyId, 'company');
+
+    if (
+      createJobDto.inventoryUsed != undefined &&
+      createJobDto.inventoryUsed.length > 0
+    )
+      for (const item of createJobDto.inventoryUsed) {
+        this.validateObjectId(item, 'inventoryUsed');
+      }
+
     try {
-      return await this.jobService.create(createJobDto);
+      return { message: await this.jobService.create(createJobDto) };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }

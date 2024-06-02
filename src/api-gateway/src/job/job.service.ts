@@ -3,6 +3,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   ServiceUnavailableException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
@@ -10,17 +11,35 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
 //import { User } from '../users/entities/user.entity';
 import { Job } from './entities/job.entity';
+import { UsersService } from '../users/users.service';
+import { CompanyService } from '../company/company.service';
 
 @Injectable()
 export class JobService {
+  private authorisedList: string[] = ['owner', 'manager'];
+
   constructor(
     @InjectModel('job') private readonly jobModel: Model<Job>,
+    private readonly usersService: UsersService,
+    private readonly companyService: CompanyService,
     //@InjectModel('user') private readonly userModel: Model<User>, //Will be used later
   ) {}
 
   async create(createJobDto: CreateJobDto) {
-    console.log('createJobDto', createJobDto);
+    const assigner = createJobDto.assignedBy;
+    if (await this.usersService.userIdExists(assigner))
+      console.log('assignBy is valid');
+
+    if (
+      await this.companyService.companyIdExists(
+        new Types.ObjectId(createJobDto.companyId),
+      )
+    )
+      console.log('companyId is valid');
+
+    //console.log('done');
     const createdJob = new Job(createJobDto);
+    console.log('createdJob', createdJob);
     const newJob = new this.jobModel(createdJob);
     const result = await newJob.save();
 
