@@ -146,8 +146,5 @@ export default defineComponent({
 </script>
 
 <style scope>
-.text-none {
-  color: red;
-  background-color: blue;
-}
+
 </style>

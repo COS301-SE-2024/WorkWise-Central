@@ -17,6 +17,8 @@
       height="800"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
+      <v-form ref="form" v-model="valid">
+
       <v-col>
         <v-col>
           <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -25,7 +27,6 @@
         >
         <v-spacer></v-spacer>
         <v-col>
-          <v-form ref="form" v-model="valid">
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
@@ -82,6 +83,22 @@
               >
               </v-textarea>
             </v-col>
+              <v-col>
+                <small
+                    :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
+                    class="text-caption"
+                >Notes</small
+                >
+                <v-textarea
+                    :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                    label="Note taking"
+                    rounded="xl"
+                    variant="solo"
+                    v-model="req_obj.job_description"
+                    required
+                >
+                </v-textarea>
+            </v-col>
             <v-col align="center">
               <v-date-picker
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
@@ -90,29 +107,96 @@
                 border="md"
                 :color="isdarkmode === true ? modal_dark_theme_color : 'blue'"
                 elevation="5"
-                :v-model="req_obj.job_date"
+                :v-model="req_obj.scheduledDateTime"
                 required
               ></v-date-picker>
             </v-col>
 
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
-                class="text-caption"
-                >Job address</small
-              >
-              <v-text-field
+          <small
+              :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              class="text-caption"
+          >Company address</small
+          >
+          <v-row>
+            <v-col
+            ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Enter the clients address"
-                type="number"
+                label="Street"
                 rounded="xl"
-                :v-model="req_obj.job_address"
+                v-model="req_obj.address.street"
                 variant="solo"
-              ></v-text-field
+                required
+            ></v-text-field
             ></v-col>
-          </v-form>
+            <v-col
+            ><v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                density="compact"
+                color="grey-lighten-4"
+                label="Suburb"
+                rounded="xl"
+                v-model="req_obj.address.suburb"
+                variant="solo"
+                required
+            ></v-text-field
+            ></v-col>
+          </v-row>
+          <v-row>
+            <v-col
+            ><v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                density="compact"
+                color="grey-lighten-4"
+                label="City"
+                rounded="xl"
+                v-model="req_obj.address.city"
+                variant="solo"
+                required
+            ></v-text-field
+            ></v-col>
+            <v-col
+            ><v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                density="compact"
+                color="grey-lighten-4"
+                label="zipCode"
+                rounded="xl"
+                v-model="req_obj.address.postalCode"
+                variant="solo"
+                required
+            ></v-text-field
+            ></v-col>
+          </v-row>
+          <v-row>
+            <v-col
+            ><v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                density="compact"
+                color="grey-lighten-4"
+                label="Complex"
+                rounded="xl"
+                v-model="req_obj.address.complex"
+                variant="solo"
+                required
+            ></v-text-field
+            ></v-col>
+            <v-col
+            ><v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                density="compact"
+                color="grey-lighten-4"
+                label="House number"
+                rounded="xl"
+                v-model="req_obj.address.houseNumber"
+                variant="solo"
+                required
+            ></v-text-field
+            ></v-col>
+          </v-row>
+        </v-col>
+
         </v-col>
         <v-col cols="8" offset="2" align="center">
           <v-btn
@@ -125,7 +209,7 @@
             >CREATE JOB</v-btn
           >
         </v-col>
-      </v-col>
+      </v-form>
     </v-sheet>
   </v-dialog>
 </template>
@@ -133,13 +217,14 @@
 <script lang="ts">
 // import { RouterLink, RouterView } from 'vue-router'
 import { defineComponent } from 'vue'
+import axios from "axios";
 export default defineComponent({
   name: 'JobDetailsList',
   props: [],
   data() {
     return {
       click_create_client: false,
-      valid: true,
+      valid: false,
       isdarkmode: true, //this should be a prop thats taken in from the user to determin if the modal shoud also be in darkmode or not
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
@@ -147,15 +232,38 @@ export default defineComponent({
       modal_light_theme_color: '#FFFFFF',
 
       req_obj: {
-        client_name: '',
-        job_description: '',
-        job_date: '',
-        job_address: ''
+        clientId:'665b4cc2f3031b71eb6f2d0a',
+        assignedBy:sessionStorage['id'],
+        companyId:sessionStorage['currentCompany'],
+        scheduledDateTime: '',
+        status:'Not Started',
+        details:{
+          heading:'',
+          description:'',
+          notes:'',
+          address: {
+            street: '',
+            suburb: '',
+            city: '',
+            postalCode: '',
+            complex: '',
+            houseNumber: ''
+          }
+        }
       }
     }
   },
   methods: {
-    flick() {}
+    handleSubmission() {
+      axios
+          .post('http://localhost:3000/client/create', this.req_obj)
+          .then((res) => {
+            console.log(res)
+          })
+          .catch((res) => {
+            console.log(res)
+          })
+    }
   }
 })
 </script>

@@ -146,7 +146,9 @@
                 color="grey-lighten-4"
                 label="Enter the company's email adress"
                 type="email"
+                :rules="email_rules"
                 v-model="req_obj.contactDetails.email"
+
                 rounded="xl"
                 variant="solo"
                 required
@@ -180,7 +182,6 @@
                 density="compact"
                 color="grey-lighten-4"
                 label="Enter the company's registration number"
-                type="number"
                 v-model="req_obj.registrationNumber"
                 rounded="xl"
                 variant="solo"
@@ -199,7 +200,7 @@
                 density="compact"
                 color="grey-lighten-4"
                 label="Enter the company's VAT number"
-                type="number"
+                :rules="vat_number_rules"
                 rounded="xl"
                 v-model="req_obj.vatNumber"
                 variant="solo"
@@ -356,6 +357,17 @@ export default {
           /^[A-Z][a-zA-Z &-]{0,48}[a-zA-Z]$/.test(v) ||
           'Company name can contain both capital and lowercase letters, spaces, "&", or "-"'
       ],
+      email_rules: [
+        (v:string) => !!v || 'E-mail is required',
+        (v:string) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+      ],phone_number_rules: [
+        (v:string) => !!v || 'Phone number is required',
+        (v:string) => /^(\+27\d{9})$/.test(v) || 'Phone number must be a valid South African number',
+      ],vat_number_rules: [
+        (v:string) => !!v || 'VAT number is required',
+        (v:string) => /^\d{10}$/.test(v) || 'VAT number must be a valid South African VAT number',
+      ],
+
       req_obj: {
         name: '',
         type: '',

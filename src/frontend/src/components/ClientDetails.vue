@@ -42,7 +42,7 @@
                 rounded="xl"
                 variant="solo"
                 required
-                :rules="client_name_errors"
+                :rules="first_name_rules"
               ></v-text-field
             ></v-col>
           <v-col>
@@ -61,7 +61,7 @@
                 rounded="xl"
                 variant="solo"
                 required
-                :rules="client_name_errors"
+                :rules="surname_rules"
             ></v-text-field
             ></v-col>
             <v-col>
@@ -225,7 +225,6 @@
 <script lang="ts">
 import axios from "axios";
 
-const name_reg = /^[a-zA-Z]+ [a-zA-Z]+$/
 const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
 import { defineComponent } from 'vue'
 
@@ -240,11 +239,19 @@ export default defineComponent({
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
-    client_name_errors: [
-      (val: string) => name_reg.test(val) || 'Name should contain two names separated by a space',
-      (val: string) => val.length !== 0 || 'Should not be empty'
-    ],
     email_rules: [(val: string) => email_reg.test(val) || 'Email should contain an @ symbol'],
+    first_name_rules: [
+      (v:string)=> !!v || 'First name is required',
+      (v:string)=> /^[A-Za-z]+$/.test(v) || 'First name must be alphabetic characters',
+    ],
+    surname_rules:[
+      (v:string) => !!v || 'Surname is required',
+      (v:string) => /^[A-Za-z]+$/.test(v) || 'Surname must be alphabetic characters',
+    ],phone_number_rules: [
+      (v:string) => !!v || 'Phone number is required',
+      (v:string) => /^(\+27\d{9})$/.test(v) || 'Phone number must be a valid South African number',
+    ],
+
 
     req_obj: {
       firstName: '',
