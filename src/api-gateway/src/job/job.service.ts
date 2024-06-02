@@ -49,6 +49,32 @@ export class JobService {
     };
   }
 
+  async authorisedToAssign(userId: Types.ObjectId, companyId: Types.ObjectId) {
+    const user = await this.usersService.findUserById(userId);
+    if (!user.joinedCompanies.includes(companyId))
+      throw new NotFoundException(
+        'User does is not an employee of the company',
+      );
+    const validRolesInCompany = user.roles.filter(
+      (role) =>
+        role.companyId == companyId && this.authorisedList.includes(role.role),
+    );
+
+    if (validRolesInCompany.length == 0) {
+      throw new UnauthorizedException(
+        'User does not have an appropriate role in the company',
+      );
+    }
+
+    const result = await this.companyService.findById(companyId);
+    return result.employees.includes(userId);
+  }
+
+  async isMember(userId: Types.ObjectId, companyId: Types.ObjectId) {
+    const result = await this.companyService.findById(companyId);
+    return result.employees.includes(userId);
+  }
+
   async findJobById(
     identifier: string,
   ): Promise<FlattenMaps<Job> & { _id: Types.ObjectId }> {
