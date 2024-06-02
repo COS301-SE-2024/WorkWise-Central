@@ -139,7 +139,6 @@ export default {
   props: [],
   data() {
     return {
-      valid:'',
       click_create_client: false,
       isdarkmode: false, //this should be a prop thats taken in from the user to determin if the modal shoud also be in darkmode or not
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
