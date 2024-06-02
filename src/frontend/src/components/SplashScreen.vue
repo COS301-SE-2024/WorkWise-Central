@@ -824,8 +824,9 @@ import {
   VMain
 } from 'vuetify/components'
 import axios from 'axios'
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   data: () => ({
     saltRounds: 10,
     loginDialog: false,
@@ -834,6 +835,7 @@ export default {
     signup2Dialog: false,
     signup3Dialog: false,
     joinDialog: false,
+    exists: false,
     signupAddressDialog: false,
     genderList: ['Male', 'Female', 'Other'],
     languageList: ['English', 'French', 'Portuguese'],
@@ -892,7 +894,8 @@ export default {
     ],
     usernameRules: [
       (v) => !!v || 'Username is required',
-      (v) => v.length >= 3 || 'Username must be at least 3 characters'
+      (v) => v.length >= 3 || 'Username must be at least 3 characters',
+      // usernameExist() || 'Username already exists'
     ],
     date_rules: [
       (v) => !!v || 'Date of birth is required',
@@ -1024,7 +1027,22 @@ export default {
       }
     },
 
-    changeTheme() {},
+    usernameExist() {
+      axios
+        .post('http://localhost:3000/users/exists', {
+          params: {
+            username: this.username
+          }
+        })
+        .then((response) => {
+          console.log(response)
+          this.exists = response
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      return this.exists
+    },
     openDialog() {
       this.dialog = true
     },
@@ -1055,7 +1073,7 @@ export default {
     VLayout,
     VMain
   }
-}
+})
 </script>
 <style scoped>
 .header-title {

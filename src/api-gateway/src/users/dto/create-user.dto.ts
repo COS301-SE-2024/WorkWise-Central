@@ -46,7 +46,7 @@ export class CreateUserDto extends OmitType(User, [
   skills: string[];
 
   @ApiPropertyOptional()
-  roles: roles;
+  roles: roles[];
 }
 
 export class createUserResponseDto {

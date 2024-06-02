@@ -153,7 +153,6 @@
         </v-col>
         <v-col cols="8" offset="2" align="center">
           <v-btn
-            text
             rounded="xl"
             boarder="xl"
             width="80%"
@@ -172,8 +171,9 @@
 <script lang="ts">
 const name_reg = /^[a-zA-Z]+ [a-zA-Z]+$/
 const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   name: 'RegisterCompanyModal ',
   data: () => ({
     valid: false,
@@ -205,7 +205,7 @@ export default {
       console.log('focus on us')
     }
   }
-}
+})
 </script>
 
 <style scoped>
