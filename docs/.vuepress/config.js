@@ -79,6 +79,33 @@ export default defineUserConfig({
         ],
       },
       {
+        text: 'Architetural Documentation',
+        prefix: '/architeturalDocs/',
+        link: '/architeturalDocs/',
+        children: [
+          {
+            text: 'Non-functional Requirements',
+            link: '/architeturalDocs/qualityRequirements.md',
+          },
+          {
+            text: 'Architectural Patterns and Design Patterns',
+            link: '/architeturalDocs/architecturalPatterns.md',
+          },
+          // {
+          //   text: 'Design Patterns',
+          //   link: '/architeturalDocs/designPatterns.md',
+          // },
+          {
+            text: 'Constraints',
+            link: '/architeturalDocs/constraints.md',
+          },
+          {
+            text: 'Technology Requirements',
+            link: '/architeturalDocs/techSpec.md',
+          },
+        ],
+      },
+      {
         text: 'Database Documentation',
         prefix: '/databaseDocs/',
         link: '/databaseDocs/',
@@ -110,32 +137,21 @@ export default defineUserConfig({
         ],
       },
       {
-        text: 'Architetural Documentation',
-        prefix: '/architeturalDocs/',
-        link: '/architeturalDocs/',
+        text: 'DevOps',
+        prefix: '/devOps/',
+        link: '/devOps/',
         children: [
           {
-            text: 'Non-functional Requirements',
-            link: '/architeturalDocs/qualityRequirements.md',
+            text: 'Branching Strategy',
+            link: '/devOps/branching.md',
           },
           {
-            text: 'Architectural Patterns',
-            link: '/architeturalDocs/architecturalPatterns.md',
-          },
-          {
-            text: 'Design Patterns',
-            link: '/architeturalDocs/designPatterns.md',
-          },
-          {
-            text: 'Constraints',
-            link: '/architeturalDocs/constraints.md',
-          },
-          {
-            text: 'Technologies',
-            link: '/architeturalDocs/techSpec.md',
+            text: 'CI/CD',
+            link: '/devOps/cicd.md',
           },
         ],
       },
+
     ]
   }),
 })

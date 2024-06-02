@@ -1,4 +1,4 @@
-## Constraints
+# Constraints
 
 - **Database Technology**: MongoDB
   - **Deployment**: Currently hosted on MongoDB Atlas, planned to be self-hosted in the future.
