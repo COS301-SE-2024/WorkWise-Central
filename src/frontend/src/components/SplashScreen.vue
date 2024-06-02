@@ -35,7 +35,8 @@
                 </v-col>
                 <v-col>
                   <v-col offset="4"
-                    ><v-btn v-model="loginButton"
+                    ><v-btn
+                      v-model="loginButton"
                       color="blue-accent-2"
                       dark
                       @click="loginDialog = true"
@@ -142,6 +143,12 @@
                           >
                         </v-col>
                       </v-col>
+                      <v-alert v-model="alertLogin" type="success">
+                        You have successfully logged in!</v-alert
+                      >
+                      <v-alert v-model="alertLoginFailure" type="error">
+                        Please enter valid credentials</v-alert
+                      >
                     </v-sheet>
                   </v-dialog>
 
@@ -225,7 +232,7 @@
                                       : modal_light_theme_color
                                   "
                                   label="Confirm your Password"
-                                  type="confirm_password"
+                                  type="password"
                                   v-model="confirm_password"
                                   :rules="[(v) => v === password || 'Passwords do not match']"
                                   rounded="xl"
@@ -837,15 +844,18 @@ export default defineComponent({
   data: () => ({
     saltRounds: 10,
     loginDialog: false,
+    alertSignUp: false,
+    alertLogin: false,
     signupDialog: false,
     signup1Dialog: false,
     signup2Dialog: false,
     signup3Dialog: false,
+    alertLoginFailure: false,
     joinDialog: false,
     exists: false,
     signupAddressDialog: false,
     genderList: ['Male', 'Female', 'Other'],
-    languageList: ['English', 'French', 'Portuguese'],
+    languageList: ['English', 'Afrikaans'],
     cityList: ['Johannesburg', 'Cape Town', 'Durban', 'Pretoria', 'Bloemfontein'],
     email: '',
     access_token: '',
@@ -932,7 +942,7 @@ export default defineComponent({
   },
   methods: {
     async login() {
-      if (this.$refs.form.validate())
+      if (this.$refs.form.validate()) {
         await axios
           .post('http://localhost:3000/auth/login', {
             identifier: this.username,
@@ -943,11 +953,16 @@ export default defineComponent({
             console.log(response.data.access_token)
             sessionStorage.setItem('access_token', response.data.access_token)
             sessionStorage.setItem('id', response.data.id)
+            this.alertLoginFailure = false
+            this.alertLogin = true
             this.$router.push('/dashboard')
           })
           .catch((error) => {
             console.log(error.response.data.message)
+            this.alertLogin = false
+            this.alertLoginFailure = true
           })
+      }
     },
     testRequest() {
       axios
