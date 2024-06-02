@@ -1,5 +1,5 @@
 import comp from "/home/jessica/University/WorkWise-Central/docs/.vuepress/.temp/pages/devOps/gitOrgMan.html.vue"
-const data = JSON.parse("{\"path\":\"/devOps/gitOrgMan.html\",\"title\":\"Git orginisation and management\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":null,\"contributors\":[]},\"filePathRelative\":\"devOps/gitOrgMan.md\"}")
+const data = JSON.parse("{\"path\":\"/devOps/gitOrgMan.html\",\"title\":\"Git orginisation and management\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":1717311091000,\"contributors\":[{\"name\":\"JessicaBloem\",\"email\":\"jessicabloem8@gmail.com\",\"commits\":1}]},\"filePathRelative\":\"devOps/gitOrgMan.md\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {
