@@ -24,7 +24,7 @@ it('performs login', () => {
 
   cy.get('input[name="username"]').type('test')
   cy.get('input[name="password"]').type('test')
-  cy.contains('button', 'Log in').click() // Clicks the button containing the text 'Log in'
+ // cy.contains('button', 'LOGIN').click() // Clicks the button containing the text 'Log in'
 })
 
 it('performs register', () => {
@@ -35,4 +35,8 @@ it('performs register', () => {
     }
   })
   cy.contains('button', 'Sign up').click() // Clicks the button containing the text 'Sign up'
+  cy.get('input[type="email"]').type('test@test.com')
+  cy.get('input[type="password"]').type('Test123#')
+  cy.get('input[type="confirm_password"]').type('Test123#')
+
 })

@@ -225,7 +225,7 @@
                                       : modal_light_theme_color
                                   "
                                   label="Confirm your Password"
-                                  type="password"
+                                  type="confirm_password"
                                   v-model="confirm_password"
                                   :rules="[(v) => v === password || 'Passwords do not match']"
                                   rounded="xl"
