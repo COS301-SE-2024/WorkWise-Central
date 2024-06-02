@@ -2,9 +2,11 @@
   <v-dialog max-width="500" height="1000">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
+          base-color="red"
+          rounded="xl"
         class="text-none font-weight-regular"
         prepend-icon="mdi-account"
-        color="black"
+        color="white"
         text="ClientDetails"
         variant="tonal"
         v-bind="activatorProps"
@@ -274,9 +276,11 @@ export default defineComponent({
       axios
           .post('http://localhost:3000/client/create', this.req_obj)
           .then((res) => {
+            alert("Client created successfully");
             console.log(res)
           })
           .catch((res) => {
+            alert("Client creation failed");
             console.log(res)
           })
     }

@@ -2,9 +2,11 @@
   <v-dialog max-width="500" height="800">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
+          base-color="red"
+          rounded="xl"
         class="text-none font-weight-regular"
         prepend-icon="mdi-account"
-        color="black"
+        color="white"
         text="RegisterCompany"
         variant="tonal"
         v-bind="activatorProps"
@@ -342,7 +344,7 @@ export default {
       dialog: false,
       click_create_client: false,
       valid: true,
-      isdarkmode: true,
+      isdarkmode: false,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
@@ -397,9 +399,11 @@ export default {
       axios
         .post('http://localhost:3000/company/create', this.req_obj)
         .then((res) => {
+          alert('The Company was registered successfully')
           sessionStorage['currentCompany'] = res.data.id
         })
         .catch((res) => {
+          alert('The Company was not registered successfully')
           console.log(res)
         })
     }
@@ -415,8 +419,5 @@ export default {
 </script>
 
 <style scope>
-.text-none {
-  color: red;
-  background-color: blue;
-}
+
 </style>

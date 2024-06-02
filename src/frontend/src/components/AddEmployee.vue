@@ -2,9 +2,11 @@
   <v-dialog max-width="400" height="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
+          base-color="red"
+          rounded="xl"
         class="text-none font-weight-regular"
         prepend-icon="mdi-account"
-        color="black"
+        color="white"
         text="Add Employee"
         variant="tonal"
         v-bind="activatorProps"
@@ -17,7 +19,7 @@
       width="400"
       height="700"
     >
-      <v-form ref="form" v-model="valid" @submit.prevent = "handleSubmit">
+      <v-form ref="form" v-model="valid" @submit = "handleSubmit">
       <v-col>
         <v-col>
           <h4 class="text-center" style="font-size: 25px; font-weight: lighter">

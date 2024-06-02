@@ -2,9 +2,11 @@
   <v-dialog max-width="500" height="800">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
+          base-color="red"
+          rounded="xl"
         class="text-none font-weight-regular"
         prepend-icon="mdi-account"
-        color="black"
+        color="white"
         text="JOIN COMPANY"
         variant="tonal"
         v-bind="activatorProps"
@@ -17,7 +19,7 @@
       height="800"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
-      <v-form ref="form" v-model="valid">
+      <v-form ref="form" v-model="valid" @submit.prevent="handlesubmission">
         <v-col>
           <v-col>
             <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -106,7 +108,11 @@ export default defineComponent({
     }
   }),
 
-  methods: {}
+  methods: {
+    handlesubmission(){
+      alert("Added employee successfully")
+    }
+  }
 })
 </script>
 

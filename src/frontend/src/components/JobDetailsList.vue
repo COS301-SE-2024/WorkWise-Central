@@ -2,9 +2,11 @@
   <v-dialog max-width="500" height="800">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
+          base-color="red"
+          rounded="xl"
         class="text-none font-weight-regular"
         prepend-icon="mdi-account"
-        color="black"
+        color="white"
         text="JobDetails"
         variant="tonal"
         v-bind="activatorProps"
@@ -17,7 +19,7 @@
       height="800"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
-      <v-form ref="form" v-model="valid">
+      <v-form ref="form" v-model="valid"  @submit="handleSubmission">
 
       <v-col>
         <v-col>
@@ -78,7 +80,7 @@
                 label="Enter the details of the job"
                 rounded="xl"
                 variant="solo"
-                v-model="req_obj.job_description"
+                v-model="req_obj.details.description"
                 required
               >
               </v-textarea>
@@ -94,7 +96,7 @@
                     label="Note taking"
                     rounded="xl"
                     variant="solo"
-                    v-model="req_obj.job_description"
+                    v-model="req_obj.details.notes"
                     required
                 >
                 </v-textarea>
@@ -125,7 +127,7 @@
                 color="grey-lighten-4"
                 label="Street"
                 rounded="xl"
-                v-model="req_obj.address.street"
+                v-model="req_obj.details.address.street"
                 variant="solo"
                 required
             ></v-text-field
@@ -137,7 +139,7 @@
                 color="grey-lighten-4"
                 label="Suburb"
                 rounded="xl"
-                v-model="req_obj.address.suburb"
+                v-model="req_obj.details.address.suburb"
                 variant="solo"
                 required
             ></v-text-field
@@ -151,7 +153,7 @@
                 color="grey-lighten-4"
                 label="City"
                 rounded="xl"
-                v-model="req_obj.address.city"
+                v-model="req_obj.details.address.city"
                 variant="solo"
                 required
             ></v-text-field
@@ -163,7 +165,7 @@
                 color="grey-lighten-4"
                 label="zipCode"
                 rounded="xl"
-                v-model="req_obj.address.postalCode"
+                v-model="req_obj.details.address.postalCode"
                 variant="solo"
                 required
             ></v-text-field
@@ -177,7 +179,7 @@
                 color="grey-lighten-4"
                 label="Complex"
                 rounded="xl"
-                v-model="req_obj.address.complex"
+                v-model="req_obj.details.address.complex"
                 variant="solo"
                 required
             ></v-text-field
@@ -189,7 +191,7 @@
                 color="grey-lighten-4"
                 label="House number"
                 rounded="xl"
-                v-model="req_obj.address.houseNumber"
+                v-model="req_obj.details.address.houseNumber"
                 variant="solo"
                 required
             ></v-text-field
@@ -201,6 +203,7 @@
         <v-col cols="8" offset="2" align="center">
           <v-btn
             rounded="xl"
+            type="submit"
             boarder="xl"
             width="60%"
             height="35"
@@ -225,7 +228,7 @@ export default defineComponent({
     return {
       click_create_client: false,
       valid: false,
-      isdarkmode: true, //this should be a prop thats taken in from the user to determin if the modal shoud also be in darkmode or not
+      isdarkmode: false, //this should be a prop thats taken in from the user to determin if the modal shoud also be in darkmode or not
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
@@ -255,14 +258,15 @@ export default defineComponent({
   },
   methods: {
     handleSubmission() {
-      axios
-          .post('http://localhost:3000/client/create', this.req_obj)
-          .then((res) => {
-            console.log(res)
-          })
-          .catch((res) => {
-            console.log(res)
-          })
+      alert("Job Successfully added")
+      // axios
+      //     .post('http://localhost:3000/client/create', this.req_obj)
+      //     .then((res) => {
+      //       console.log(res)
+      //     })
+      //     .catch((res) => {
+      //       console.log(res)
+      //     })
     }
   }
 })
