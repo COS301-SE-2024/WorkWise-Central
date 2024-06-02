@@ -1,3 +1,3 @@
 # Entity Relationship Diagram 
 
-![ER Diagram](/ERDiagram.png)
+![ER Diagram](/ERDiagram.jpg)
