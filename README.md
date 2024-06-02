@@ -6,7 +6,7 @@
 
 
 [![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)&ensp;
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/WorkWise-Central/unit_test.yml)&ensp;
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/WorkWise-Central/build.yml)&ensp;
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/COS301-SE-2024/WorkWise-Central)&ensp;
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/COS301-SE-2024/WorkWise-Central)&ensp;
 ![Uptime Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m796617525-da8bacd4b5ef756cceb20b0e?logo=GitHub)
