@@ -19,18 +19,31 @@ import {
   ApiInternalServerErrorResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import mongoose from 'mongoose';
 
-@ApiTags('users')
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  validateObjectId(id: string): boolean {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+    }
+    return true;
+  }
+
+  @Get()
+  lookAtDocumentation() {
+    return { message: 'Refer to /documentation for details on the API' };
+  }
 
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.CONFLICT,
   })
   @ApiBody({ type: [CreateUserDto] })
-  @Post()
+  @Post('/create')
   async create(
     @Body() createUserDto: CreateUserDto,
   ): Promise<createUserResponseDto> {
@@ -42,7 +55,7 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
-  @Get()
+  @Get('all')
   findAll() {
     try {
       return this.usersService.findAllUsers();
@@ -56,10 +69,22 @@ export class UsersController {
 
   @Get('id/:identifier')
   findOne(@Param('identifier') identifier: string) {
+    this.validateObjectId(identifier);
     try {
-      return this.usersService.findUser(identifier);
+      return this.usersService.findUserById(identifier);
     } catch (e) {
-      throw new HttpException(e, HttpStatus.NOT_FOUND);
+      console.log(e);
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Post('exists')
+  async usernameAvailable(@Body('username') username: string) {
+    try {
+      return { response: !(await this.usersService.usernameExists(username)) };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException('Username Taken', HttpStatus.CONFLICT);
     }
   }
 
@@ -67,6 +92,8 @@ export class UsersController {
   @ApiBody({ type: [UpdateUserDto] })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    this.validateObjectId(id);
+
     try {
       return this.usersService.update(id, updateUserDto);
     } catch (e) {
@@ -78,8 +105,11 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
-  @Delete(':id')
+  @Delete()
   remove(@Param('id') id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+    }
     try {
       return this.usersService.softDelete(id);
     } catch (e) {

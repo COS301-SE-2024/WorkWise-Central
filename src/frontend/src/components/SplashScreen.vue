@@ -66,7 +66,7 @@
                             <v-row align="center"
                               ><v-col
                                 ><label for="email" style="font-size: 20px; font-weight: lighter"
-                                  >Email</label
+                                  >Username</label
                                 >
 
                                 <v-text-field
@@ -361,10 +361,10 @@
                     </v-sheet>
                   </v-dialog>
                   <!-- Flow 3 -->
-                  <v-dialog v-model="signup2Dialog" max-width="500" style="height: 700px">
+                  <v-dialog v-model="signup2Dialog" max-width="500" style="height: 1100px">
                     <v-sheet
                       width="500"
-                      height="700"
+                      height="1100"
                       border="md"
                       rounded="xl"
                       :color="
@@ -380,9 +380,14 @@
                         <v-spacer></v-spacer>
                         <v-col>
                           <v-form ref="form" v-model="valid">
-                            <v-row justify="space-around"
+                            <v-row align="center"
                               ><v-col
-                                ><v-date-picker width="400" color="primary"></v-date-picker
+                                ><label>Select your birth date</label
+                                ><v-date-picker
+                                  width="400"
+                                  color="primary"
+                                  v-model="birthDate"
+                                ></v-date-picker
                               ></v-col>
                             </v-row>
                             <v-row algin="center"
@@ -447,10 +452,195 @@
                       </v-col>
                     </v-sheet>
                   </v-dialog>
-                  <v-dialog v-model="signup3Dialog" max-width="500" style="height: 750px">
+                  <!-- Flow 4 -->
+                  <v-dialog v-model="signupAddressDialog" max-width="1000" style="height: 1200px">
                     <v-sheet
-                      width="400"
-                      height="350"
+                      width="1000"
+                      height="1200"
+                      border="md"
+                      rounded="xl"
+                      :color="
+                        isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
+                      "
+                    >
+                      <v-col>
+                        <v-col>
+                          <h4 class="text-center" style="font-size: 30px; font-weight: lighter">
+                            Enter your residential details
+                          </h4></v-col
+                        >
+                        <v-spacer></v-spacer>
+                        <v-col>
+                          <v-form ref="form" v-model="valid">
+                            <v-row justify="space-around"
+                              ><v-col
+                                ><label>Street</label
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  label="Enter your street name"
+                                  type="input"
+                                  v-model="street"
+                                  :rules="streetRules"
+                                  rounded="xl"
+                                  variant="solo"
+                                  required
+                                >
+                                </v-text-field>
+                              </v-col>
+                            </v-row>
+                            <v-row algin="center"
+                              ><v-col
+                                ><label>Suburb</label
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  label="Enter your suburb name"
+                                  type="input"
+                                  v-model="suburb"
+                                  :rules="suburbRules"
+                                  rounded="xl"
+                                  variant="solo"
+                                  required
+                                >
+                                </v-text-field> </v-col
+                            ></v-row>
+                            <v-row
+                              ><v-col
+                                ><label>City</label
+                                ><v-select
+                                  label="Enter your city name"
+                                  type="input"
+                                  v-model="city"
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  :rules="cityRules"
+                                  rounded="xl"
+                                  variant="solo"
+                                  :items="cityList"
+                                  required
+                                ></v-select></v-col
+                            ></v-row>
+                            <v-row
+                              ><v-col
+                                ><label>Postal Code</label
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  label="Enter your postal code"
+                                  type="input"
+                                  v-model="postal_code"
+                                  :rules="postalCodeRules"
+                                  rounded="xl"
+                                  variant="solo"
+                                  required
+                                >
+                                </v-text-field></v-col
+                            ></v-row>
+                            <v-row
+                              ><v-col
+                                ><label>Complex</label
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  label="Enter your complex name"
+                                  type="input"
+                                  v-model="complex"
+                                  :rules="complexRules"
+                                  rounded="xl"
+                                  variant="solo"
+                                  required
+                                >
+                                </v-text-field></v-col
+                            ></v-row>
+                            <v-row
+                              ><v-col
+                                ><label>House Number</label
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  label="Enter your house number"
+                                  type="input"
+                                  v-model="houseNumber"
+                                  :rules="houseRules"
+                                  rounded="xl"
+                                  variant="solo"
+                                  required
+                                >
+                                </v-text-field></v-col
+                            ></v-row>
+                            <v-row
+                              ><v-col
+                                ><label>Phone Number</label
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  label="Enter your phone number"
+                                  type="input"
+                                  v-model="phone_number"
+                                  :rules="phoneNumberRules"
+                                  rounded="xl"
+                                  variant="solo"
+                                  required
+                                >
+                                </v-text-field></v-col
+                            ></v-row>
+                          </v-form>
+                        </v-col>
+
+                        <v-col cols="8" offset="2">
+                          <v-btn
+                            :disabled="!valid"
+                            text
+                            @click="nextFlowAddress"
+                            rounded="xl"
+                            size="x-large"
+                            color="blue-accent-2"
+                            variant="elevated"
+                            width="100%"
+                            >Continue</v-btn
+                          >
+                        </v-col>
+                        <v-col cols="8" offset="2">
+                          <v-btn
+                            @click="(signup2Dialog = true)((signupAddressDialog = false))"
+                            rounded="xl"
+                            color="blue-grey-darken-1"
+                            size="x-large"
+                            variant="elevated"
+                            width="100%"
+                            >Back</v-btn
+                          >
+                        </v-col>
+                      </v-col>
+                    </v-sheet>
+                  </v-dialog>
+                  <!-- Flow 5 -->
+                  <v-dialog v-model="signup3Dialog" max-width="700" style="height: 750px">
+                    <v-sheet
+                      width="700"
+                      height="550"
                       border="md"
                       :color="
                         isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -458,12 +648,12 @@
                       rounded="xl"
                     >
                       <v-container
-                        ><v-row
+                        ><v-row align-content="center"
                           ><v-col align-self="center"
                             ><v-col cols="8" offset="2">
                               <v-btn
                                 text
-                                @click="(signup3Dialog = false)(signup)"
+                                @click="registerCompany"
                                 rounded="xl"
                                 color="blue-accent-2"
                                 variant="elevated"
@@ -477,7 +667,7 @@
                             </v-col>
                             <v-col cols="8" offset="2">
                               <v-btn
-                                @click="signup3Dialog = false"
+                                @click="finalFlow"
                                 rounded="xl"
                                 color="blue-grey-darken-1"
                                 variant="elevated"
@@ -494,9 +684,107 @@
                       >
                     </v-sheet>
                   </v-dialog>
+                  <v-dialog max-width="500" height="800" v-model="joinDialog">
+                    <v-sheet
+                      elevation="14"
+                      rounded="xl"
+                      width="500"
+                      height="800"
+                      :color="
+                        isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
+                      "
+                    >
+                      <v-form ref="form" v-model="valid">
+                        <v-col>
+                          <v-col>
+                            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
+                              Join Company
+                            </h4></v-col
+                          >
+                          <v-spacer></v-spacer>
+                          <v-col>
+                            <v-col>
+                              <small
+                                class="text-caption"
+                                :style="
+                                  isdarkmode === true
+                                    ? dark_theme_text_color
+                                    : light_theme_text_color
+                                "
+                                >Search for the company by name</small
+                              >
+                              <v-autocomplete
+                                density="compact"
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
+                                label="Company Name"
+                                variant="solo"
+                                rounded="xl"
+                                v-model="req_obj.company_name"
+                                :items="[
+                                  'Plumber Tronics',
+                                  'Nedbank',
+                                  'FNB',
+                                  'Talker',
+                                  'Friends',
+                                  'Wyoming'
+                                ]"
+                              ></v-autocomplete
+                            ></v-col>
+                            <v-container fill-height fluid>
+                              <v-row align="center" justify="center">
+                                <h2 style="font-weight: lighter">OR</h2>
+                              </v-row>
+                            </v-container>
+                            <v-col>
+                              <small
+                                class="text-caption"
+                                :style="
+                                  isdarkmode === true
+                                    ? dark_theme_text_color
+                                    : light_theme_text_color
+                                "
+                                >Enter the Company ID</small
+                              >
+                              <v-text-field
+                                density="compact"
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
+                                label="Enter the company ID"
+                                rounded="xl"
+                                variant="solo"
+                                v-model="req_obj.companyID"
+                                required
+                              ></v-text-field
+                            ></v-col>
+                          </v-col>
+                          <v-col cols="8" offset="2" align="center">
+                            <v-btn
+                              text
+                              rounded="xl"
+                              boarder="xl"
+                              width="85%"
+                              height="35"
+                              variant="elevated"
+                              color="blue-accent-2"
+                              :disabled="req_obj.company_name === '' && req_obj.companyID === ''"
+                              @click="joinDialog = false"
+                              >JOIN COMPANY</v-btn
+                            >
+                          </v-col>
+                        </v-col>
+                      </v-form>
+                    </v-sheet>
+                  </v-dialog>
                   <p class="text-center">
-                    By clicking Continue to join or sign in, you agree to WorkWise Central’s User
-                    Agreement, Privacy Policy, and Cookie Policy
+                    By clicking Continue to join or sign in, you agree to WorkWise Central's User
+                    Agreement, Privacy Policy, and Cookie Policy
                   </p>
                 </v-col>
               </v-col>
@@ -533,34 +821,56 @@ import {
   VImg,
   VSelect,
   VLayout,
-  VMain,
-  VSwitch
+  VMain
 } from 'vuetify/components'
+import axios from 'axios'
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   data: () => ({
+    saltRounds: 10,
     loginDialog: false,
     signupDialog: false,
     signup1Dialog: false,
     signup2Dialog: false,
     signup3Dialog: false,
+    joinDialog: false,
+    exists: false,
+    signupAddressDialog: false,
     genderList: ['Male', 'Female', 'Other'],
     languageList: ['English', 'French', 'Portuguese'],
+    cityList: ['Johannesburg', 'Cape Town', 'Durban', 'Pretoria', 'Bloemfontein'],
     email: '',
+    access_token: '',
     password: '',
     confirm_password: '',
+    date: '',
     name: '',
     surname: '',
     username: '',
     gender: '',
+    birthDate: null,
     language: '',
+    street: '',
+    city: '',
+    suburb: '',
+    postal_code: '',
+    complex: '',
+    houseNumber: '',
+    phone_number: '',
+    skils: '',
+    roles: '',
+    url: 'http://localhost:3000/users',
     valid: true,
     isdarkmode: true,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
-    usernameRules: [(v) => !!v || 'Username is required'],
+    req_obj: {
+      company_name: '',
+      companyID: ''
+    },
     emailRules: [
       (v) => !!v || 'E-mail is required',
       (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid'
@@ -584,24 +894,97 @@ export default {
     ],
     usernameRules: [
       (v) => !!v || 'Username is required',
-      (v) => v.length >= 3 || 'Username must be at least 3 characters'
+      (v) => v.length >= 3 || 'Username must be at least 3 characters',
+      // usernameExist() || 'Username already exists'
     ],
     date_rules: [
       (v) => !!v || 'Date of birth is required',
       (v) => v.length >= 3 || 'Date of birth must be at least 3 characters'
     ],
     gender_rules: [(v) => !!v || 'Please select your gender'],
-    language_rules: [(v) => !!v || 'Please select your preferred language']
+    language_rules: [(v) => !!v || 'Please select your preferred language'],
+    streetRules: [(v) => !!v || 'Street name is required'],
+    suburbRules: [(v) => !!v || 'Suburb name is required'],
+    cityRules: [(v) => !!v || 'City name is required'],
+    postalCodeRules: [(v) => !!v || 'Postal code is required'],
+    complexRules: [(v) => !!v || 'Complex name is required'],
+    houseRules: [
+      (v) => !!v || 'House number is required',
+      (v) => /^[0-9]*$/.test(v) || 'House number must contain only numbers'
+    ],
+    phoneNumberRules: [
+      (v) => !!v || 'Phone number is required',
+      (v) => v.length >= 10 || 'Phone number must be at least 10 characters',
+      (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers'
+    ]
   }),
   methods: {
-    login() {
+    async login() {
       if (this.$refs.form.validate())
-        if (this.email === 'admin' && this.password === 'admin') {
-          this.$router.push('/dashboard')
-        }
+        await axios
+          .post('http://localhost:3000/auth/login', {
+            identifier: this.username,
+            password: this.password
+          })
+          .then((response) => {
+            console.log(response)
+            console.log(response.data.access_token)
+            sessionStorage.setItem('access_token', response.data.access_token)
+            sessionStorage.setItem('id', response.data.id)
+            this.$router.push('/dashboard')
+          })
+          .catch((error) => {
+            console.log(error.response.data.message)
+          })
     },
-    signup() {
-      this.$router.push('/dashboard')
+    testRequest() {
+      axios
+        .get('http://localhost:3000/users/create', {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: false
+        })
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    birthDateFormatter(date) {
+      const options = { day: 'numeric', month: 'long', year: 'numeric' }
+      this.date = new Date(date).toLocaleDateString(undefined, options)
+    },
+    async signup() {
+      // this.encryptedPassword = await bcrypt.hash(this.password, this.saltRounds)
+      // console.log(this.encryptedPassword)
+      this.birthDateFormatter(this.birthDate)
+      await axios
+        .post('http://localhost:3000/users/create', {
+          systemDetails: { email: this.email, password: this.password, username: this.username },
+          personalInfo: {
+            firstName: this.name,
+            surname: this.surname,
+            dateOfBirth: this.date
+          },
+          profile: { displayName: this.username },
+          address: {
+            street: this.street,
+            city: this.city,
+            suburb: this.suburb,
+            postalCode: this.postal_code,
+            complex: this.complex,
+            houseNumber: this.houseNumber
+          },
+          contactInfo: { phoneNumber: this.phone_number, email: this.email }
+        })
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
     nextFlow1() {
       if (this.$refs.form.validate()) {
@@ -618,23 +1001,52 @@ export default {
     nextFlow3() {
       if (this.$refs.form.validate()) {
         this.signup2Dialog = false
+        this.signupAddressDialog = true
+      }
+    },
+    nextFlowAddress() {
+      if (this.$refs.form.validate()) {
+        this.signupAddressDialog = false
         this.signup3Dialog = true
       }
     },
-    nextFlow4() {
+    finalFlow() {
+      this.signup3Dialog = false
+      this.joinDialog = true
+      signup()
+    },
+    registerCompany() {
       if (this.$refs.form.validate()) {
         this.signup3Dialog = false
-        this.$router.push('/home')
+        this.$router.push('/register-modal')
       }
     },
-    changeTheme() {},
+    join() {
+      if (this.$refs.form.validate()) {
+        this.$router.push('/join')
+      }
+    },
+
+    usernameExist() {
+      axios
+        .post('http://localhost:3000/users/exists', {
+          params: {
+            username: this.username
+          }
+        })
+        .then((response) => {
+          console.log(response)
+          this.exists = response
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      return this.exists
+    },
     openDialog() {
       this.dialog = true
     },
-    submit() {
-      if (this.$refs.form.validate()) {
-      }
-    },
+
     toggleDarkMode() {
       console.log(this.isdarkmode)
       if (this.isdarkmode === true) {
@@ -659,10 +1071,9 @@ export default {
     VImg,
     VSelect,
     VLayout,
-    VMain,
-    VSwitch
+    VMain
   }
-}
+})
 </script>
 <style scoped>
 .header-title {

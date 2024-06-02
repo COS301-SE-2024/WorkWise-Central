@@ -14,15 +14,10 @@ import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectModel('user')
-    public readonly userModel: Model<User>,
-  ) {}
+  constructor(@InjectModel('user') private readonly userModel: Model<User>) {}
 
   async create(createUserDto: CreateUserDto) {
-    if (
-      (await this.usernameExists(createUserDto.systemDetails.username)) == false
-    ) {
+    if (await this.usernameExists(createUserDto.systemDetails.username)) {
       throw new ConflictException(
         'Username already exists, please use another one',
       );
@@ -63,22 +58,58 @@ export class UsersService {
         .lean();
 
     console.log('usernameExists -> ', result);
+    return result != null;
+  }
+
+  async userIdExists(id: string): Promise<boolean> {
+    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
+      await this.userModel
+        .findOne({
+          $and: [
+            { _id: id },
+            {
+              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+
+    console.log('userIdExists -> ', result);
     return result == null;
   }
 
-  async findUser(
+  async findUserById(
+    identifier: string | Types.ObjectId,
+  ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
+    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
+      await this.userModel
+        .findOne({
+          $and: [
+            { _id: identifier },
+            {
+              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+
+    if (result == null) {
+      throw new NotFoundException(
+        'Error: User not found, please verify your username and password',
+      );
+    }
+
+    return result;
+  }
+
+  async findUserByUsername(
     identifier: string,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
     const result: FlattenMaps<User> & { _id: Types.ObjectId } =
       await this.userModel
         .findOne({
           $and: [
-            {
-              $or: [
-                { _id: identifier },
-                { 'systemDetails.username': identifier },
-              ],
-            },
+            { 'systemDetails.username': identifier },
             {
               $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
             },
@@ -99,9 +130,11 @@ export class UsersService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
-    updateUserDto.updated_at = new Date();
-    //console.log(updateUserDto);
-    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
+    /*    updateUserDto.updated_at = new Date();
+    console.log('updateUserDto');
+    console.log(updateUserDto);*/
+
+    const previousObject: FlattenMaps<User> & { _id: Types.ObjectId } =
       await this.userModel
         .findOneAndUpdate(
           {
@@ -112,13 +145,13 @@ export class UsersService {
               },
             ],
           },
-          { $set: { ...updateUserDto } },
+          { $set: { ...updateUserDto }, updated_at: new Date() },
         )
         .lean();
-    if (result == null) {
+    if (previousObject == null) {
       throw new NotFoundException('failed to update user');
     }
-    return result;
+    return previousObject;
   }
 
   async softDelete(id: string): Promise<boolean> {
