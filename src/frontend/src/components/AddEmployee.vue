@@ -17,6 +17,7 @@
       width="400"
       height="700"
     >
+      <v-form ref="form" v-model="valid" @submit.prevent = "handleSubmit">
       <v-col>
         <v-col>
           <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -25,7 +26,6 @@
         >
         <v-spacer></v-spacer>
         <v-col>
-          <v-form ref="form" v-model="valid">
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
@@ -37,7 +37,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                v-model="req_obj.emp_username"
+                v-model="req_obj.newEmployeeUsername"
                 label="######################"
                 rounded="xl"
                 variant="solo"
@@ -86,12 +86,12 @@
                 required
               ></v-text-field
             ></v-col>
-          </v-form>
         </v-col>
         <v-col cols="8" offset="2" align="center">
           <v-btn
             rounded="xl"
             boarder="xl"
+            type="submit"
             width="80%"
             height="35"
             variant="elevated"
@@ -101,12 +101,15 @@
           >
         </v-col>
       </v-col>
+      </v-form>
     </v-sheet>
   </v-dialog>
 </template>
 
 <script lang="ts">
+
 import { defineComponent } from 'vue'
+import axios from 'axios';
 export default defineComponent({
   name: 'RegisterCompanyModal',
   data: () => ({
@@ -120,11 +123,25 @@ export default defineComponent({
     modal_light_theme_color: '#FFFFFF',
 
     req_obj: {
-      emp_username: '',
+      adminId: sessionStorage['id'],
+      currentCompany:sessionStorage['currentCompany'],
+      newEmployeeUsername: '',
       compid_for_emp: '',
       link_for_emp: ''
     }
-  })
+  }),
+  methods:{
+    handleSubmit(){
+      axios
+          .post('http://localhost:3000/company/add', this.req_obj)
+          .then((res) => {
+            console.log(res)
+          })
+          .catch((res) => {
+            console.log(res)
+          })
+    }
+  }
 })
 </script>
 
