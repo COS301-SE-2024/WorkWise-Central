@@ -2,7 +2,7 @@
 
 # Boolean Hooligans - WorkWise Central
 
-![WorkWise Central Logo](logo.png)
+![WorkWise Central Logo](/res/img/logo/WorkWiseLogo.png)
 
 
 [![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)&ensp;
