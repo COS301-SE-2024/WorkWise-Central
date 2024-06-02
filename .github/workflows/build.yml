@@ -1,4 +1,4 @@
-name: Update codecov
+name: Run Build Step
 on:
   push:
     branches: [ main, develop , test ]
