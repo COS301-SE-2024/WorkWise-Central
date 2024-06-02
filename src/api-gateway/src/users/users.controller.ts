@@ -78,6 +78,16 @@ export class UsersController {
     }
   }
 
+  @Post('exists')
+  async usernameAvailable(@Body('username') username: string) {
+    try {
+      return { response: !(await this.usersService.usernameExists(username)) };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException('Username Taken', HttpStatus.CONFLICT);
+    }
+  }
+
   @UseGuards(AuthGuard)
   @ApiBody({ type: [UpdateUserDto] })
   @Patch(':id')

@@ -17,7 +17,7 @@
       height="800"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
-      <v-form ref="form" v-model="valid" >
+      <v-form ref="form" v-model="valid">
         <v-col>
           <v-col>
             <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -66,7 +66,6 @@
           </v-col>
           <v-col cols="8" offset="2" align="center">
             <v-btn
-              text
               rounded="xl"
               boarder="xl"
               width="85%"
@@ -84,19 +83,22 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue'
+export default defineComponent({
   name: 'RegisterCompanyModal',
 
   props: [],
 
   data: () => ({
     dialog: false,
+    valid: false,
     isdarkmode: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
     click_create_client: false,
+    attribute_is_filled: false,
 
     req_obj: {
       company_name: '',
@@ -105,7 +107,7 @@ export default {
   }),
 
   methods: {}
-}
+})
 </script>
 
 <style scope>

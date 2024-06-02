@@ -2,12 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import SplashView from '../views/SplashView.vue'
 
 import RegisterCompanyModal from '../components/RegisterCompanyModal.vue'
-import RegisterCompanyModal2 from '../components/RegisterCompanyModal2.vue'
 import JoinCompanyModal from '../components/JoinCompanyModal.vue'
 import ClientDetails from '../components/ClientDetails.vue'
 import AddEmployee from '../components/AddEmployee.vue'
 import JobDetailsModal from '../components/JobDetailsModal.vue'
 import JobDetailsList from '../components/JobDetailsList.vue'
+import Modals from '../views/Modals.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -15,11 +15,6 @@ const router = createRouter({
       path: '/register-modal',
       name: 'regmodal',
       component: RegisterCompanyModal
-    },
-    {
-      path: '/register-modal2',
-      name: 'regmodal2',
-      component: RegisterCompanyModal2
     },
     {
       path: '/join',
@@ -50,6 +45,11 @@ const router = createRouter({
       path: '/',
       name: 'splash',
       component: SplashView
+    },
+    {
+      path: '/modals',
+      name: 'modals',
+      component: Modals
     }
   ]
 })
