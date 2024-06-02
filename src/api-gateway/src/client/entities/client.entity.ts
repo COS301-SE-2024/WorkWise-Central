@@ -35,6 +35,10 @@ export class clientInfo {
   @ApiProperty()
   @Prop({ type: address, required: false })
   address: address;
+
+  @ApiProperty()
+  @Prop({ required: false, default: 'English' })
+  preferred_Language: string;
 }
 
 export class details {
@@ -61,6 +65,7 @@ export class Client {
       phoneNumber: createClientDto.phoneNumber,
       email: createClientDto.email,
       address: createClientDto.address,
+      preferred_Language: createClientDto.preferred_Language,
     };
     this.created_at = new Date();
   }
