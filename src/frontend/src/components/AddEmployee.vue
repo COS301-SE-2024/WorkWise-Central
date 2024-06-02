@@ -89,7 +89,6 @@
         </v-col>
         <v-col cols="8" offset="2" align="center">
           <v-btn
-
             rounded="xl"
             boarder="xl"
             type="submit"
@@ -109,8 +108,9 @@
 
 <script lang="ts">
 
+import { defineComponent } from 'vue'
 import axios from 'axios';
-export default {
+export default defineComponent({
   name: 'RegisterCompanyModal',
   data: () => ({
     valid: false,
@@ -142,7 +142,7 @@ export default {
           })
     }
   }
-}
+})
 </script>
 
 <style scope>

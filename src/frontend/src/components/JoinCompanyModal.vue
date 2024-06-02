@@ -66,7 +66,6 @@
           </v-col>
           <v-col cols="8" offset="2" align="center">
             <v-btn
-              text
               rounded="xl"
               boarder="xl"
               width="85%"
@@ -84,13 +83,15 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue'
+export default defineComponent({
   name: 'RegisterCompanyModal',
 
   props: [],
 
   data: () => ({
     dialog: false,
+    valid: false,
     isdarkmode: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
@@ -106,7 +107,7 @@ export default {
   }),
 
   methods: {}
-}
+})
 </script>
 
 <style scope>
