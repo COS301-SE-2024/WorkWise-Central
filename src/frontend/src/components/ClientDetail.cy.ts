@@ -2,7 +2,7 @@ import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
 import ClientDetails from "./ClientDetails.vue"
 
-it("renders ClientDetials", () => {
+it("renders client detials", () => {
     const vuetify = createVuetify();
     mount(ClientDetails, {
         global: {
@@ -19,7 +19,7 @@ it("renders ClientDetials", () => {
     cy.contains('Preferred language')
 });
 
-it("Create Client Button", () => {
+it("click create client button", () => {
     const vuetify = createVuetify();
     mount(ClientDetails, {
         global: {
