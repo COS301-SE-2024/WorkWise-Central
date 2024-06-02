@@ -398,8 +398,9 @@
                               ><v-col
                                 ><label>Select your birth date</label
                                 ><v-date-picker
+                                  dark
                                   width="400"
-                                  color="primary"
+                                  
                                   v-model="birthDate"
                                 ></v-date-picker
                               ></v-col>
@@ -417,6 +418,11 @@
                                   rounded="xl"
                                   variant="solo"
                                   clearable
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
                                 >
                                 </v-select></v-col
                             ></v-row>
@@ -433,6 +439,11 @@
                                   rounded="xl"
                                   variant="solo"
                                   clearable
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
                                 >
                                 </v-select></v-col
                             ></v-row>
@@ -1046,13 +1057,12 @@ export default defineComponent({
     finalFlow() {
       this.signup3Dialog = false
       this.joinDialog = true
-      signup()
+      this.signup()
     },
     registerCompany() {
-      if (this.$refs.form.validate()) {
-        this.signup3Dialog = false
-        this.$router.push('/register-modal')
-      }
+      this.signup3Dialog = false
+      this.$router.push('/register-modal')
+      this.signup()
     },
     join() {
       if (this.$refs.form.validate()) {
