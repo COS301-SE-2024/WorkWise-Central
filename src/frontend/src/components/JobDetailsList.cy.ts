@@ -10,13 +10,11 @@ it("renders job detials", () => {
         }
     })
     cy.contains('Job Details')
-    // cy.contains('Name of client')
-    // cy.contains('Client email address')
-    // cy.contains('Client phone number')
-    // cy.contains('Client address')
-    // cy.contains('Company (if applicable)')
-    // cy.contains('Company address (if applicable)')
-    // cy.contains('Preferred language')
+    cy.contains('Client')
+    cy.contains('If it is a new client, create the client first.')
+    cy.contains('Job description')
+    cy.contains('Date of job')
+    cy.contains('Job address')
 });
 
 it("click create client button", () => {
@@ -27,7 +25,7 @@ it("click create client button", () => {
         }
     })
 
-    cy.contains('button','add new client').click()
+    cy.contains('button','Add new client').click()
 });
 
 it("click create Job Button", () => {
@@ -38,5 +36,5 @@ it("click create Job Button", () => {
         }
     })
 
-    cy.contains('button','add new client').click()
+    cy.contains('button','CREATE JOB').click()
 });
