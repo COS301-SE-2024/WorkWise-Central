@@ -2,7 +2,7 @@ import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
 import AddEmployee from "./AddEmployee.vue"
 
-it("renders AddEmployee", () => {
+it("renders add employee", () => {
     const vuetify = createVuetify();
     mount(AddEmployee, {
         global: {
@@ -16,7 +16,7 @@ it("renders AddEmployee", () => {
     cy.contains('Send the employee this link')
 });
 
-it("Add Employee Button", () => {
+it("click add employee button", () => {
     const vuetify = createVuetify();
     mount(AddEmployee, {
         global: {
