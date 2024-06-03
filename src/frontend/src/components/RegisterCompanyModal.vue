@@ -336,6 +336,7 @@
 
 <script lang="ts">
 import axios from 'axios'
+import router from '@/router/index'
 
 export default {
   name: 'RegisterCompanyModal',
@@ -401,6 +402,7 @@ export default {
         .then((res) => {
           alert('The Company was registered successfully')
           sessionStorage['currentCompany'] = res.data.id
+          router.push('/modals')
         })
         .catch((res) => {
           alert('The Company was not registered successfully')

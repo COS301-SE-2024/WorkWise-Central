@@ -1093,8 +1093,10 @@ import {
 } from 'vuetify/components'
 import axios from 'axios'
 import { defineComponent } from 'vue'
+import router from "@/router/index";
 
 export default defineComponent({
+
   data: () => ({
     click_create_client: false,
     saltRounds: 10,
@@ -1407,6 +1409,7 @@ export default defineComponent({
         .then((res) => {
           alert('The Company was registered successfully')
           sessionStorage['currentCompany'] = res.data.id
+          router.push('/modals')
         })
         .catch((res) => {
           alert('The Company was not registered successfully')
