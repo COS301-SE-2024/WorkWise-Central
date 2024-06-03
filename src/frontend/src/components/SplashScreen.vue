@@ -1377,7 +1377,7 @@ export default defineComponent({
             sessionStorage.setItem('id', response.data.id)
             this.alertLoginFailure = false
             this.alertLogin = true
-            this.$router.push('/dashboard')
+            this.$router.push('/modals')
           })
           .catch((error) => {
             console.log(error.response.data.message)
@@ -1453,9 +1453,11 @@ export default defineComponent({
       axios
         .post('http://localhost:3000/company/create', this.req_obj1)
         .then((res) => {
+          alert('The Company was registered successfully')
           sessionStorage['currentCompany'] = res.data.id
         })
         .catch((res) => {
+          alert('The Company was not registered successfully')
           console.log(res)
         })
     },
