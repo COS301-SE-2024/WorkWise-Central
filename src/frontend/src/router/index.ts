@@ -1,21 +1,55 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import SplashView from '../views/SplashView.vue'
 
+import RegisterCompanyModal from '../components/RegisterCompanyModal.vue'
+import JoinCompanyModal from '../components/JoinCompanyModal.vue'
+import ClientDetails from '../components/ClientDetails.vue'
+import AddEmployee from '../components/AddEmployee.vue'
+import JobDetailsModal from '../components/JobDetailsModal.vue'
+import JobDetailsList from '../components/JobDetailsList.vue'
+import Modals from '../views/Modals.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: HomeView
+      path: '/register-modal',
+      name: 'regmodal',
+      component: RegisterCompanyModal
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      path: '/join',
+      name: 'join',
+      component: JoinCompanyModal
+    },
+    {
+      path: '/client-details',
+      name: 'client-details',
+      component: ClientDetails
+    },
+    {
+      path: '/add-employee',
+      name: 'add-employee',
+      component: AddEmployee
+    },
+    {
+      path: '/job-details',
+      name: 'job-details',
+      component: JobDetailsList
+    },
+    {
+      path: '/details-of-job',
+      name: 'detailsofjob',
+      component: JobDetailsModal
+    },
+    {
+      path: '/',
+      name: 'splash',
+      component: SplashView
+    },
+    {
+      path: '/modals',
+      name: 'modals',
+      component: Modals
     }
   ]
 })
