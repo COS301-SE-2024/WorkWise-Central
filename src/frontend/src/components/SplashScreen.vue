@@ -403,6 +403,7 @@
                                   rounded="xl"
                                   variant="solo"
                                   clearable
+                                  required
                                 >
                                 </v-select></v-col
                             ></v-row>
@@ -419,6 +420,7 @@
                                   rounded="xl"
                                   variant="solo"
                                   clearable
+                                  required
                                 >
                                 </v-select></v-col
                             ></v-row>
@@ -1401,9 +1403,9 @@ export default defineComponent({
       }
     },
     registrationHandler() {
-      console.log(JSON.stringify(this.req_obj))
+      console.log(JSON.stringify(this.req_obj1))
       axios
-        .post('http://localhost:3000/company/create', this.req_obj)
+        .post('http://localhost:3000/company/create', this.req_obj1)
         .then((res) => {
           sessionStorage['currentCompany'] = res.data.id
         })
