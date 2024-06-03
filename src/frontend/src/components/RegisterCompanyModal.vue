@@ -56,7 +56,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Plumbing"
+                label="Select Job Type"
                 v-model="req_obj.type"
                 rounded="xl"
                 variant="solo"
@@ -209,23 +209,23 @@
                 required
               ></v-text-field
             ></v-col>
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Company logo</small
-              >
-              <v-file-input
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                variant="solo"
-                accept="image/*"
-                width="100%"
-                label="Company Logo"
-                @change="companyLogoHandler"
-                color="black"
-                rounded="xl"
-              ></v-file-input>
-            </v-col>
+<!--            <v-col>-->
+<!--              <small-->
+<!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
+<!--                class="text-caption"-->
+<!--                >Company logo</small-->
+<!--              >-->
+<!--              <v-file-input-->
+<!--                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
+<!--                variant="solo"-->
+<!--                accept="image/*"-->
+<!--                width="100%"-->
+<!--                label="Company Logo"-->
+<!--                @change="companyLogoHandler"-->
+<!--                color="black"-->
+<!--                rounded="xl"-->
+<!--              ></v-file-input>-->
+<!--            </v-col>-->
             <small
               :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
               class="text-caption"
@@ -275,7 +275,7 @@
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
                   color="grey-lighten-4"
-                  label="zipCode"
+                  label="Zip Code"
                   rounded="xl"
                   v-model="req_obj.address.postalCode"
                   variant="solo"

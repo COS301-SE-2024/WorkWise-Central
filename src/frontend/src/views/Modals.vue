@@ -2,17 +2,14 @@
   <div>
     <h2>Modals</h2>
     <br>
-    <RegisterCompanyModal />
-    <br><br>
+    <RegisterCompanyModal/>
+    <br>    <br>
+
     <AddEmployee />
     <br><br>
     <ClientDetails />
     <br><br>
     <JobDetailsList />
-    <br><br>
-
-    <JoinCompanyModal/>
-
   </div>
 </template>
 

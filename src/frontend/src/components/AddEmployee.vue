@@ -134,6 +134,8 @@ export default defineComponent({
   }),
   methods:{
     handleSubmit(){
+      alert("Employee added successfully")
+
       axios
           .post('http://localhost:3000/company/add', this.req_obj)
           .then((res) => {

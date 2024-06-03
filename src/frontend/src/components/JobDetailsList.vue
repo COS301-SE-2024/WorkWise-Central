@@ -7,7 +7,7 @@
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         color="white"
-        text="JOB DETAILS"
+        text="CREATE JOB"
         variant="tonal"
         v-bind="activatorProps"
       ></v-btn>
@@ -163,7 +163,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="zipCode"
+                label="Zip Code"
                 rounded="xl"
                 v-model="req_obj.details.address.postalCode"
                 variant="solo"
