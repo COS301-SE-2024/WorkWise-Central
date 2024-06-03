@@ -19,16 +19,20 @@ import {
   ApiInternalServerErrorResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  validateObjectId(id: string): boolean {
+  validateObjectId(id: string | Types.ObjectId, entity: string = ''): boolean {
+    let response: string;
+    if (entity === '') response = `Invalid ID`;
+    else response = `Invalid ${entity} ID`;
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+      throw new HttpException(response, HttpStatus.BAD_REQUEST);
     }
     return true;
   }
@@ -68,13 +72,23 @@ export class UsersController {
   }
 
   @Get('id/:identifier')
-  findOne(@Param('identifier') identifier: string) {
+  async findOne(@Param('identifier') identifier: string) {
     this.validateObjectId(identifier);
     try {
-      return this.usersService.findUserById(identifier);
+      return await this.usersService.findUserById(identifier);
     } catch (e) {
       console.log(e);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Post('exists')
+  async usernameAvailable(@Body('username') username: string) {
+    try {
+      return { response: !(await this.usersService.usernameExists(username)) };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException('Username Taken', HttpStatus.CONFLICT);
     }
   }
 

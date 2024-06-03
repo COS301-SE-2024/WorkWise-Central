@@ -17,6 +17,7 @@
       width="500"
       height="1000"
     >
+      <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
       <v-col>
         <v-col>
           <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -25,25 +26,43 @@
         >
         <v-spacer></v-spacer>
         <v-col>
-          <v-form ref="form" v-model="valid">
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 class="text-caption white--text"
-                >Name of client*</small
+                >First name of client*</small
               >
 
               <v-text-field
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                label="Enter the full name of the client"
-                v-model="req_obj.client_name"
+                label="Enter the first name of the client"
+                v-model="req_obj.firstName"
                 rounded="xl"
                 variant="solo"
                 required
                 :rules="client_name_errors"
               ></v-text-field
+            ></v-col>
+          <v-col>
+            <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption white--text"
+            >Second name of client*</small
+            >
+
+            <v-text-field
+                density="compact"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                color="grey-lighten-4"
+                label="Enter the second name of the client"
+                v-model="req_obj.surname"
+                rounded="xl"
+                variant="solo"
+                required
+                :rules="client_name_errors"
+            ></v-text-field
             ></v-col>
             <v-col>
               <small
@@ -56,7 +75,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the client's email address"
-                v-model="req_obj.client_email"
+                v-model="req_obj.email"
                 :rules="email_rules"
                 type="email"
                 rounded="xl"
@@ -75,63 +94,97 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the client's phone number"
-                v-model="req_obj.client_number"
+                v-model="req_obj.phoneNumber"
                 rounded="xl"
                 variant="solo"
                 required
               ></v-text-field
             ></v-col>
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Client address*</small
-              >
-              <v-text-field
-                density="compact"
+
+          <small
+              :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              class="text-caption"
+          >Company address</small
+          >
+          <v-row>
+            <v-col
+            ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                color="grey-lighten-4"
-                label="Enter the client's address"
-                v-model="req_obj.client_address"
-                rounded="xl"
-                variant="solo"
-                required
-              ></v-text-field
-            ></v-col>
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Company (if applicable)</small
-              >
-              <v-text-field
                 density="compact"
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                label="Enter the company name"
-                v-model="req_obj.company_name"
+                label="Street"
                 rounded="xl"
+                v-model="req_obj.address.street"
                 variant="solo"
                 required
-              ></v-text-field
+            ></v-text-field
             ></v-col>
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Company address (if applicable)</small
-              >
-              <v-text-field
+            <v-col
+            ><v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                label="Enter the company address"
-                v-model="req_obj.company_address"
+                label="Suburb"
                 rounded="xl"
+                v-model="req_obj.address.suburb"
                 variant="solo"
                 required
-              ></v-text-field
+            ></v-text-field
             ></v-col>
+          </v-row>
+          <v-row>
+            <v-col
+            ><v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                density="compact"
+                color="grey-lighten-4"
+                label="City"
+                rounded="xl"
+                v-model="req_obj.address.city"
+                variant="solo"
+                required
+            ></v-text-field
+            ></v-col>
+            <v-col
+            ><v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                density="compact"
+                color="grey-lighten-4"
+                label="zipCode"
+                rounded="xl"
+                v-model="req_obj.address.postalCode"
+                variant="solo"
+                required
+            ></v-text-field
+            ></v-col>
+          </v-row>
+          <v-row>
+            <v-col
+            ><v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                density="compact"
+                color="grey-lighten-4"
+                label="Complex"
+                rounded="xl"
+                v-model="req_obj.address.complex"
+                variant="solo"
+                required
+            ></v-text-field
+            ></v-col>
+            <v-col
+            ><v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                density="compact"
+                color="grey-lighten-4"
+                label="House number"
+                rounded="xl"
+                v-model="req_obj.address.houseNumber"
+                variant="solo"
+                required
+            ></v-text-field
+            ></v-col>
+          </v-row>
+
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
@@ -144,12 +197,11 @@
                 color="grey-lighten-4"
                 label="Enter the language preferred by the client"
                 rounded="xl"
-                v-model="req_obj.client_preferred_language"
+                v-model="req_obj.preferredLanguage"
                 variant="solo"
                 required
               ></v-text-field
             ></v-col>
-          </v-form>
         </v-col>
         <v-col cols="8" offset="2" align="center">
           <v-btn
@@ -157,6 +209,7 @@
             boarder="xl"
             width="80%"
             height="35"
+            type="submit"
             variant="elevated"
             color="blue-accent-2"
             :disabled="click_create_client"
@@ -164,11 +217,14 @@
           >
         </v-col>
       </v-col>
+      </v-form>
     </v-sheet>
   </v-dialog>
 </template>
 
 <script lang="ts">
+import axios from "axios";
+
 const name_reg = /^[a-zA-Z]+ [a-zA-Z]+$/
 const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
 import { defineComponent } from 'vue'
@@ -191,18 +247,31 @@ export default defineComponent({
     email_rules: [(val: string) => email_reg.test(val) || 'Email should contain an @ symbol'],
 
     req_obj: {
-      client_name: '',
-      client_email: '',
-      client_number: '',
-      client_address: '',
-      company_name: '',
-      company_address: '',
-      client_preferred_language: ''
+      firstName: '',
+      surname:'',
+      phoneNumber:'',
+      email:'',
+      preferredLanguage: '',
+      address: {
+        street: '',
+        suburb: '',
+        city: '',
+        postalCode: '',
+        complex: '',
+        houseNumber: ''
+      }
     }
   }),
   methods: {
-    validate_userinput() {
-      console.log('focus on us')
+    handleSubmission() {
+      axios
+          .post('http://localhost:3000/client/create', this.req_obj)
+          .then((res) => {
+            console.log(res)
+          })
+          .catch((res) => {
+            console.log(res)
+          })
     }
   }
 })
