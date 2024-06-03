@@ -949,31 +949,7 @@
                                 required
                               ></v-text-field
                             ></v-col>
-                            <v-col>
-                              <small
-                                :style="
-                                  isdarkmode === true
-                                    ? dark_theme_text_color
-                                    : light_theme_text_color
-                                "
-                                class="text-caption"
-                                >Company logo</small
-                              >
-                              <v-file-input
-                                :bg-color="
-                                  isdarkmode === true
-                                    ? modal_dark_theme_color
-                                    : modal_light_theme_color
-                                "
-                                variant="solo"
-                                accept="image/*"
-                                width="100%"
-                                label="Company Logo"
-                                @change="companyLogoHandler"
-                                color="black"
-                                rounded="xl"
-                              ></v-file-input>
-                            </v-col>
+
                             <small
                               :style="
                                 isdarkmode === true ? dark_theme_text_color : light_theme_text_color
@@ -1044,40 +1020,6 @@
                                   label="Zip Code"
                                   rounded="xl"
                                   v-model="req_obj1.address.postalCode"
-                                  variant="solo"
-                                  required
-                                ></v-text-field
-                              ></v-col>
-                            </v-row>
-                            <v-row>
-                              <v-col
-                                ><v-text-field
-                                  :bg-color="
-                                    isdarkmode === true
-                                      ? modal_dark_theme_color
-                                      : modal_light_theme_color
-                                  "
-                                  density="compact"
-                                  color="grey-lighten-4"
-                                  label="Complex"
-                                  rounded="xl"
-                                  v-model="req_obj1.address.complex"
-                                  variant="solo"
-                                  required
-                                ></v-text-field
-                              ></v-col>
-                              <v-col
-                                ><v-text-field
-                                  :bg-color="
-                                    isdarkmode === true
-                                      ? modal_dark_theme_color
-                                      : modal_light_theme_color
-                                  "
-                                  density="compact"
-                                  color="grey-lighten-4"
-                                  label="House number"
-                                  rounded="xl"
-                                  v-model="req_obj1.address.houseNumber"
                                   variant="solo"
                                   required
                                 ></v-text-field
