@@ -4,10 +4,10 @@
       <v-btn
           base-color="red"
           rounded="xl"
-        class="text-none font-weight-regular"
+        class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         color="white"
-        text="ClientDetails"
+        text="CREATE CLIENT"
         variant="tonal"
         v-bind="activatorProps"
       ></v-btn>
@@ -213,7 +213,7 @@
             height="35"
             type="submit"
             variant="elevated"
-            color="blue-accent-2"
+            class="hello"
             :disabled="click_create_client"
             >CREATE CLIENT</v-btn
           >
@@ -288,8 +288,11 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-.small_dark_text {
-  color: white;
+<style scope>
+.hello
+{
+  color:white;
+  background-color: #5A82AF;
 }
 </style>
+

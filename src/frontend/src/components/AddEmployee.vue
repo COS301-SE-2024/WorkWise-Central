@@ -4,10 +4,10 @@
       <v-btn
           base-color="red"
           rounded="xl"
-        class="text-none font-weight-regular"
+        class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         color="white"
-        text="Add Employee"
+        text="ADD EMPLOYEE"
         variant="tonal"
         v-bind="activatorProps"
       ></v-btn>
@@ -91,13 +91,13 @@
         </v-col>
         <v-col cols="8" offset="2" align="center">
           <v-btn
+              class="hello"
             rounded="xl"
             boarder="xl"
             type="submit"
             width="80%"
             height="35"
             variant="elevated"
-            color="blue-accent-2"
             :disabled="click_create_client"
             >ADD EMPLOYEE</v-btn
           >
@@ -148,5 +148,10 @@ export default defineComponent({
 </script>
 
 <style scope>
-
+.hello
+{
+  color:white;
+  background-color: #5A82AF;
+}
 </style>
+

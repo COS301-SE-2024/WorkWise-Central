@@ -4,10 +4,10 @@
       <v-btn
           base-color="red"
           rounded="xl"
-        class="text-none font-weight-regular"
+        class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         color="white"
-        text="JobDetails"
+        text="JOB DETAILS"
         variant="tonal"
         v-bind="activatorProps"
       ></v-btn>
@@ -107,7 +107,7 @@
                 title="SELECT DATE"
                 header="Date of job"
                 border="md"
-                :color="isdarkmode === true ? modal_dark_theme_color : 'blue'"
+                :color="isdarkmode === true ? modal_dark_theme_color : '#5A82AF'"
                 elevation="5"
                 :v-model="req_obj.scheduledDateTime"
                 required
@@ -208,7 +208,7 @@
             width="60%"
             height="35"
             variant="elevated"
-            color="blue-accent-2"
+           class="hello"
             >CREATE JOB</v-btn
           >
         </v-col>
@@ -271,5 +271,10 @@ export default defineComponent({
   }
 })
 </script>
-
-<style></style>
+<style scope>
+.hello
+{
+  color:white;
+  background-color: #5A82AF;
+}
+</style>

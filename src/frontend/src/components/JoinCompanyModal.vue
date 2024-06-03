@@ -4,7 +4,7 @@
       <v-btn
           base-color="red"
           rounded="xl"
-        class="text-none font-weight-regular"
+        class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         color="white"
         text="JOIN COMPANY"
@@ -68,6 +68,7 @@
           </v-col>
           <v-col cols="8" offset="2" align="center">
             <v-btn
+                class="hello"
               rounded="xl"
               boarder="xl"
               width="85%"
@@ -117,8 +118,9 @@ export default defineComponent({
 </script>
 
 <style scope>
-.text-none {
-  color: red;
-  background-color: blue;
+.hello
+{
+  color:white;
+  background-color: #5A82AF;
 }
 </style>

@@ -4,10 +4,10 @@
       <v-btn
           base-color="red"
           rounded="xl"
-        class="text-none font-weight-regular"
+        class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         color="white"
-        text="RegisterCompany"
+        text="REGISTER COMPANY"
         variant="tonal"
         v-bind="activatorProps"
       ></v-btn>
@@ -317,13 +317,13 @@
             align="center"
           >
             <v-btn
+                class="hello"
               type="submit"
               rounded="xl"
               boarder="xl"
               width="60%"
               height="35"
               variant="elevated"
-              color="blue-accent-2"
               :disabled="click_create_client"
               >Continue</v-btn
             >
@@ -419,5 +419,9 @@ export default {
 </script>
 
 <style scope>
-
+ .hello
+ {
+   color:white;
+   background-color: #5A82AF;
+ }
 </style>
