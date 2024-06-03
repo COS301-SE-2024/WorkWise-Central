@@ -240,6 +240,7 @@ export default defineComponent({
         companyId:sessionStorage['currentCompany'],
         scheduledDateTime: '',
         status:'Not Started',
+        client_name: '',
         details:{
           heading:'',
           description:'',
