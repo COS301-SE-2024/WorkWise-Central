@@ -1043,7 +1043,7 @@
                                   "
                                   density="compact"
                                   color="grey-lighten-4"
-                                  label="zipCode"
+                                  label="Zip Code"
                                   rounded="xl"
                                   v-model="req_obj1.address.postalCode"
                                   variant="solo"
