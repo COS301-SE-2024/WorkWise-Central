@@ -2,10 +2,12 @@
   <v-dialog max-width="500" height="1000">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-        class="text-none font-weight-regular"
+          base-color="red"
+          rounded="xl"
+        class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
-        color="black"
-        text="ClientDetails"
+        color="white"
+        text="CREATE CLIENT"
         variant="tonal"
         v-bind="activatorProps"
       ></v-btn>
@@ -42,7 +44,7 @@
                 rounded="xl"
                 variant="solo"
                 required
-                :rules="client_name_errors"
+                :rules="first_name_rules"
               ></v-text-field
             ></v-col>
           <v-col>
@@ -61,7 +63,7 @@
                 rounded="xl"
                 variant="solo"
                 required
-                :rules="client_name_errors"
+                :rules="surname_rules"
             ></v-text-field
             ></v-col>
             <v-col>
@@ -211,7 +213,7 @@
             height="35"
             type="submit"
             variant="elevated"
-            color="blue-accent-2"
+            class="hello"
             :disabled="click_create_client"
             >CREATE CLIENT</v-btn
           >
@@ -225,7 +227,6 @@
 <script lang="ts">
 import axios from "axios";
 
-const name_reg = /^[a-zA-Z]+ [a-zA-Z]+$/
 const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
 import { defineComponent } from 'vue'
 
@@ -240,11 +241,19 @@ export default defineComponent({
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
-    client_name_errors: [
-      (val: string) => name_reg.test(val) || 'Name should contain two names separated by a space',
-      (val: string) => val.length !== 0 || 'Should not be empty'
-    ],
     email_rules: [(val: string) => email_reg.test(val) || 'Email should contain an @ symbol'],
+    first_name_rules: [
+      (v:string)=> !!v || 'First name is required',
+      (v:string)=> /^[A-Za-z]+$/.test(v) || 'First name must be alphabetic characters',
+    ],
+    surname_rules:[
+      (v:string) => !!v || 'Surname is required',
+      (v:string) => /^[A-Za-z]+$/.test(v) || 'Surname must be alphabetic characters',
+    ],phone_number_rules: [
+      (v:string) => !!v || 'Phone number is required',
+      (v:string) => /^(\+27\d{9})$/.test(v) || 'Phone number must be a valid South African number',
+    ],
+
 
     req_obj: {
       firstName: '',
@@ -267,9 +276,11 @@ export default defineComponent({
       axios
           .post('http://localhost:3000/client/create', this.req_obj)
           .then((res) => {
+            alert("Client created successfully");
             console.log(res)
           })
           .catch((res) => {
+            alert("Client creation failed");
             console.log(res)
           })
     }
@@ -277,8 +288,11 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-.small_dark_text {
-  color: white;
+<style scope>
+.hello
+{
+  color:white;
+  background-color: #5A82AF;
 }
 </style>
+

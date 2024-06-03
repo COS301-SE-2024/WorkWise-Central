@@ -2,10 +2,12 @@
   <v-dialog max-width="400" height="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-        class="text-none font-weight-regular"
+          base-color="red"
+          rounded="xl"
+        class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
-        color="black"
-        text="Add Employee"
+        color="white"
+        text="ADD EMPLOYEE"
         variant="tonal"
         v-bind="activatorProps"
       ></v-btn>
@@ -17,7 +19,7 @@
       width="400"
       height="700"
     >
-      <v-form ref="form" v-model="valid" @submit.prevent = "handleSubmit">
+      <v-form ref="form" v-model="valid" @submit = "handleSubmit">
       <v-col>
         <v-col>
           <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -89,13 +91,13 @@
         </v-col>
         <v-col cols="8" offset="2" align="center">
           <v-btn
+              class="hello"
             rounded="xl"
             boarder="xl"
             type="submit"
             width="80%"
             height="35"
             variant="elevated"
-            color="blue-accent-2"
             :disabled="click_create_client"
             >ADD EMPLOYEE</v-btn
           >
@@ -146,8 +148,10 @@ export default defineComponent({
 </script>
 
 <style scope>
-.text-none {
-  color: red;
-  background-color: blue;
+.hello
+{
+  color:white;
+  background-color: #5A82AF;
 }
 </style>
+

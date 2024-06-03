@@ -2,10 +2,12 @@
   <v-dialog max-width="500" height="800">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-        class="text-none font-weight-regular"
+          base-color="red"
+          rounded="xl"
+        class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
-        color="black"
-        text="RegisterCompany"
+        color="white"
+        text="REGISTER COMPANY"
         variant="tonal"
         v-bind="activatorProps"
       ></v-btn>
@@ -146,7 +148,9 @@
                 color="grey-lighten-4"
                 label="Enter the company's email adress"
                 type="email"
+                :rules="email_rules"
                 v-model="req_obj.contactDetails.email"
+
                 rounded="xl"
                 variant="solo"
                 required
@@ -180,7 +184,6 @@
                 density="compact"
                 color="grey-lighten-4"
                 label="Enter the company's registration number"
-                type="number"
                 v-model="req_obj.registrationNumber"
                 rounded="xl"
                 variant="solo"
@@ -199,7 +202,7 @@
                 density="compact"
                 color="grey-lighten-4"
                 label="Enter the company's VAT number"
-                type="number"
+                :rules="vat_number_rules"
                 rounded="xl"
                 v-model="req_obj.vatNumber"
                 variant="solo"
@@ -314,13 +317,13 @@
             align="center"
           >
             <v-btn
+                class="hello"
               type="submit"
               rounded="xl"
               boarder="xl"
               width="60%"
               height="35"
               variant="elevated"
-              color="blue-accent-2"
               :disabled="click_create_client"
               >Continue</v-btn
             >
@@ -341,7 +344,7 @@ export default {
       dialog: false,
       click_create_client: false,
       valid: true,
-      isdarkmode: true,
+      isdarkmode: false,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
@@ -356,6 +359,17 @@ export default {
           /^[A-Z][a-zA-Z &-]{0,48}[a-zA-Z]$/.test(v) ||
           'Company name can contain both capital and lowercase letters, spaces, "&", or "-"'
       ],
+      email_rules: [
+        (v:string) => !!v || 'E-mail is required',
+        (v:string) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+      ],phone_number_rules: [
+        (v:string) => !!v || 'Phone number is required',
+        (v:string) => /^(\+27\d{9})$/.test(v) || 'Phone number must be a valid South African number',
+      ],vat_number_rules: [
+        (v:string) => !!v || 'VAT number is required',
+        (v:string) => /^\d{10}$/.test(v) || 'VAT number must be a valid South African VAT number',
+      ],
+
       req_obj: {
         name: '',
         type: '',
@@ -385,9 +399,11 @@ export default {
       axios
         .post('http://localhost:3000/company/create', this.req_obj)
         .then((res) => {
+          alert('The Company was registered successfully')
           sessionStorage['currentCompany'] = res.data.id
         })
         .catch((res) => {
+          alert('The Company was not registered successfully')
           console.log(res)
         })
     }
@@ -403,8 +419,9 @@ export default {
 </script>
 
 <style scope>
-.text-none {
-  color: red;
-  background-color: blue;
-}
+ .hello
+ {
+   color:white;
+   background-color: #5A82AF;
+ }
 </style>
