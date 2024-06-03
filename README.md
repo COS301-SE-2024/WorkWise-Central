@@ -4,7 +4,6 @@
 
 ![WorkWise Central Logo](/res/img/logo/WorkWiseLogo.png)
 
-
 [![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)&ensp;
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/WorkWise-Central/unit_test.yml)&ensp;
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/COS301-SE-2024/WorkWise-Central)&ensp;
@@ -32,8 +31,6 @@
 
 ## Project Description
 
-
-
 **Boolean Hooligans - WorkWise Central - Project Description**:
 
 WorkWise Central is a cutting-edge Progressive Web App (PWA) designed to revolutionize service-based industries like building, plumbing, electrical, and installation services. Built on a robust technology stack including Vuejs, NestJS, Node.js, Typecript, OAuth, MongoDB and Docker. WorkWise Central empowers companies to streamline operations, optimize resource utilization, and enhance customer satisfaction.
@@ -47,7 +44,6 @@ Key features include:
 - Advanced functionalities like push notifications, SMS alerts, and location tracking <br>
 
 By harnessing modern technology, WorkWise Central transforms business operations, ensuring exceptional service and exceeding customer expectations. Join us in revolutionizing the future of service-based industries with WorkWise Central.
-
 
 ## Demo Video
 
