@@ -399,12 +399,7 @@
                             <v-row align="center"
                               ><v-col
                                 ><label>Select your birth date</label
-                                ><v-date-picker
-                                  dark
-                                  width="400"
-                                  
-                                  v-model="birthDate"
-                                ></v-date-picker
+                                ><v-date-picker dark width="400" v-model="birthDate"></v-date-picker
                               ></v-col>
                             </v-row>
                             <v-row algin="center"
@@ -868,6 +863,7 @@
                                 label="Enter the company's email adress"
                                 type="email"
                                 v-model="req_obj1.contactDetails.email"
+                                :rules="email_rules"
                                 rounded="xl"
                                 variant="solo"
                                 required
@@ -892,6 +888,7 @@
                                 density="compact"
                                 color="grey-lighten-4"
                                 label="Enter the company's phone number"
+                                :rules="phone_number_rules"
                                 rounded="xl"
                                 variant="solo"
                                 v-model="req_obj1.contactDetails.phoneNumber"
@@ -944,6 +941,7 @@
                                 density="compact"
                                 color="grey-lighten-4"
                                 label="Enter the company's VAT number"
+                                :rules="vat_number_rules"
                                 type="number"
                                 rounded="xl"
                                 v-model="req_obj1.vatNumber"
@@ -951,31 +949,7 @@
                                 required
                               ></v-text-field
                             ></v-col>
-                            <v-col>
-                              <small
-                                :style="
-                                  isdarkmode === true
-                                    ? dark_theme_text_color
-                                    : light_theme_text_color
-                                "
-                                class="text-caption"
-                                >Company logo</small
-                              >
-                              <v-file-input
-                                :bg-color="
-                                  isdarkmode === true
-                                    ? modal_dark_theme_color
-                                    : modal_light_theme_color
-                                "
-                                variant="solo"
-                                accept="image/*"
-                                width="100%"
-                                label="Company Logo"
-                                @change="companyLogoHandler"
-                                color="black"
-                                rounded="xl"
-                              ></v-file-input>
-                            </v-col>
+
                             <small
                               :style="
                                 isdarkmode === true ? dark_theme_text_color : light_theme_text_color
@@ -1046,40 +1020,6 @@
                                   label="Zip Code"
                                   rounded="xl"
                                   v-model="req_obj1.address.postalCode"
-                                  variant="solo"
-                                  required
-                                ></v-text-field
-                              ></v-col>
-                            </v-row>
-                            <v-row>
-                              <v-col
-                                ><v-text-field
-                                  :bg-color="
-                                    isdarkmode === true
-                                      ? modal_dark_theme_color
-                                      : modal_light_theme_color
-                                  "
-                                  density="compact"
-                                  color="grey-lighten-4"
-                                  label="Complex"
-                                  rounded="xl"
-                                  v-model="req_obj1.address.complex"
-                                  variant="solo"
-                                  required
-                                ></v-text-field
-                              ></v-col>
-                              <v-col
-                                ><v-text-field
-                                  :bg-color="
-                                    isdarkmode === true
-                                      ? modal_dark_theme_color
-                                      : modal_light_theme_color
-                                  "
-                                  density="compact"
-                                  color="grey-lighten-4"
-                                  label="House number"
-                                  rounded="xl"
-                                  v-model="req_obj1.address.houseNumber"
                                   variant="solo"
                                   required
                                 ></v-text-field
@@ -1266,7 +1206,7 @@ export default defineComponent({
     complex: '',
     houseNumber: '',
     phone_number: '',
-    
+
     req_obj1: {
       name: '',
       type: '',
@@ -1337,6 +1277,18 @@ export default defineComponent({
         /^[A-Z][a-zA-Z &-]{0,48}[a-zA-Z]$/.test(v) ||
         'Company name can contain both capital and lowercase letters, spaces, "&", or "-"'
     ],
+    email_rules: [
+      (v) => !!v || 'E-mail is required',
+      (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+    ],
+    phone_number_rules: [
+      (v) => !!v || 'Phone number is required',
+      (v) => /^(\+27\d{9})$/.test(v) || 'Phone number must be a valid South African number'
+    ],
+    vat_number_rules: [
+      (v) => !!v || 'VAT number is required',
+      (v) => /^\d{10}$/.test(v) || 'VAT number must be a valid South African VAT number'
+    ],
     gender_rules: [(v) => !!v || 'Please select your gender'],
     language_rules: [(v) => !!v || 'Please select your preferred language'],
     streetRules: [(v) => !!v || 'Street name is required'],
@@ -1377,7 +1329,7 @@ export default defineComponent({
             sessionStorage.setItem('id', response.data.id)
             this.alertLoginFailure = false
             this.alertLogin = true
-            this.$router.push('/dashboard')
+            this.$router.push('/modals')
           })
           .catch((error) => {
             console.log(error.response.data.message)
@@ -1453,9 +1405,11 @@ export default defineComponent({
       axios
         .post('http://localhost:3000/company/create', this.req_obj1)
         .then((res) => {
+          alert('The Company was registered successfully')
           sessionStorage['currentCompany'] = res.data.id
         })
         .catch((res) => {
+          alert('The Company was not registered successfully')
           console.log(res)
         })
     },
