@@ -19,7 +19,7 @@
       width="500"
       height="1000"
     >
-      <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
+      <v-form ref="form" v-model="valid" @submit="handleSubmission">
       <v-col>
         <v-col>
           <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -51,14 +51,14 @@
             <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 class="text-caption white--text"
-            >Second name of client*</small
+            >Surname name of client*</small
             >
 
             <v-text-field
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                label="Enter the second name of the client"
+                label="Enter the Surname name of the client"
                 v-model="req_obj.surname"
                 rounded="xl"
                 variant="solo"
@@ -106,7 +106,7 @@
           <small
               :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
               class="text-caption"
-          >Company address</small
+          >Client address</small
           >
           <v-row>
             <v-col
@@ -152,7 +152,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="zipCode"
+                label="Zip Code"
                 rounded="xl"
                 v-model="req_obj.address.postalCode"
                 variant="solo"
@@ -273,6 +273,7 @@ export default defineComponent({
   }),
   methods: {
     handleSubmission() {
+      alert("Client created successfully");
       axios
           .post('http://localhost:3000/client/create', this.req_obj)
           .then((res) => {
