@@ -202,13 +202,13 @@
         </v-col>
         <v-col cols="8" offset="2" align="center">
           <v-btn
+              color="#5A82AF"
             rounded="xl"
             type="submit"
             boarder="xl"
             width="60%"
             height="35"
             variant="elevated"
-           class="hello"
             >CREATE JOB</v-btn
           >
         </v-col>

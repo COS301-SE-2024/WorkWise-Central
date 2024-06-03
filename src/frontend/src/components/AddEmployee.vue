@@ -91,7 +91,7 @@
         </v-col>
         <v-col cols="8" offset="2" align="center">
           <v-btn
-              class="hello"
+              color="#5A82AF"
             rounded="xl"
             boarder="xl"
             type="submit"
