@@ -213,7 +213,7 @@
             height="35"
             type="submit"
             variant="elevated"
-            class="hello"
+            color="#5A82AF"
             :disabled="click_create_client"
             >CREATE CLIENT</v-btn
           >
