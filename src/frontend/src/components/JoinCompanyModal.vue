@@ -68,13 +68,12 @@
           </v-col>
           <v-col cols="8" offset="2" align="center">
             <v-btn
-                class="hello"
+                color="#5A82AF"
               rounded="xl"
               boarder="xl"
               width="85%"
               height="35"
               variant="elevated"
-              color="blue-accent-2"
               :disabled="req_obj.company_name === '' && req_obj.companyID === ''"
               >JOIN COMPANY</v-btn
             >

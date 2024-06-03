@@ -317,7 +317,7 @@
             align="center"
           >
             <v-btn
-                class="hello"
+                color="#5A82AF"
               type="submit"
               rounded="xl"
               boarder="xl"
