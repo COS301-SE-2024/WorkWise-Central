@@ -22,6 +22,11 @@
             <v-row>
               <!-- Left Half -->
               <v-col cols="6" align-self="center">
+                <v-progress-circular
+                  v-if="loading"
+                  indeterminate
+                  color="primary"
+                ></v-progress-circular>
                 <v-col>
                   <h1 class="splash-title header-title text-center">
                     Welcome To <span class="colorAccent">Work</span>
@@ -31,6 +36,7 @@
                 <v-col>
                   <v-col offset="4"
                     ><v-btn
+                      v-model="loginButton"
                       color="blue-accent-2"
                       dark
                       @click="loginDialog = true"
@@ -76,7 +82,8 @@
                                       : modal_light_theme_color
                                   "
                                   label="Enter your username"
-                                  type="email"
+                                  type="username"
+                                  name="username"
                                   v-model="username"
                                   :rules="usernameRules"
                                   rounded="xl"
@@ -98,6 +105,7 @@
                                   "
                                   label="Enter your password"
                                   type="password"
+                                  name="password"
                                   v-model="password"
                                   :rules="passwordRules"
                                   rounded="xl"
@@ -135,6 +143,12 @@
                           >
                         </v-col>
                       </v-col>
+                      <v-alert v-model="alertLogin" type="success">
+                        You have successfully logged in!</v-alert
+                      >
+                      <v-alert v-model="alertLoginFailure" type="error">
+                        Please enter valid credentials</v-alert
+                      >
                     </v-sheet>
                   </v-dialog>
 
@@ -201,6 +215,7 @@
                                   "
                                   label="Enter your password"
                                   type="password"
+                                  name="password"
                                   v-model="password"
                                   :rules="passwordRules"
                                   rounded="xl"
@@ -219,6 +234,7 @@
                                   "
                                   label="Confirm your Password"
                                   type="password"
+                                  name="confirm_password"
                                   v-model="confirm_password"
                                   :rules="[(v) => v === password || 'Passwords do not match']"
                                   rounded="xl"
@@ -383,11 +399,7 @@
                             <v-row align="center"
                               ><v-col
                                 ><label>Select your birth date</label
-                                ><v-date-picker
-                                  width="400"
-                                  color="primary"
-                                  v-model="birthDate"
-                                ></v-date-picker
+                                ><v-date-picker dark width="400" v-model="birthDate"></v-date-picker
                               ></v-col>
                             </v-row>
                             <v-row algin="center"
@@ -403,6 +415,12 @@
                                   rounded="xl"
                                   variant="solo"
                                   clearable
+                                  required
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
                                 >
                                 </v-select></v-col
                             ></v-row>
@@ -419,6 +437,12 @@
                                   rounded="xl"
                                   variant="solo"
                                   clearable
+                                  required
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
                                 >
                                 </v-select></v-col
                             ></v-row>
@@ -551,44 +575,6 @@
                             ></v-row>
                             <v-row
                               ><v-col
-                                ><label>Complex</label
-                                ><v-text-field
-                                  :bg-color="
-                                    isdarkmode === true
-                                      ? modal_dark_theme_color
-                                      : modal_light_theme_color
-                                  "
-                                  label="Enter your complex name"
-                                  type="input"
-                                  v-model="complex"
-                                  :rules="complexRules"
-                                  rounded="xl"
-                                  variant="solo"
-                                  required
-                                >
-                                </v-text-field></v-col
-                            ></v-row>
-                            <v-row
-                              ><v-col
-                                ><label>House Number</label
-                                ><v-text-field
-                                  :bg-color="
-                                    isdarkmode === true
-                                      ? modal_dark_theme_color
-                                      : modal_light_theme_color
-                                  "
-                                  label="Enter your house number"
-                                  type="input"
-                                  v-model="houseNumber"
-                                  :rules="houseRules"
-                                  rounded="xl"
-                                  variant="solo"
-                                  required
-                                >
-                                </v-text-field></v-col
-                            ></v-row>
-                            <v-row
-                              ><v-col
                                 ><label>Phone Number</label
                                 ><v-text-field
                                   :bg-color="
@@ -653,7 +639,7 @@
                             ><v-col cols="8" offset="2">
                               <v-btn
                                 text
-                                @click="registerCompany"
+                                @click="(registerDialog = true)((signup3Dialog = false))"
                                 rounded="xl"
                                 color="blue-accent-2"
                                 variant="elevated"
@@ -681,9 +667,11 @@
                             </v-col></v-col
                           ></v-row
                         ></v-container
-                      >
+                      ><v-alert v-model="alertSignUp" type="success">Successful Sign up</v-alert>
+                      <v-alert v-model="alertSignUpFailure" type="error">Sign up failed</v-alert>
                     </v-sheet>
                   </v-dialog>
+
                   <v-dialog max-width="500" height="800" v-model="joinDialog">
                     <v-sheet
                       elevation="14"
@@ -782,6 +770,286 @@
                       </v-form>
                     </v-sheet>
                   </v-dialog>
+
+                  <v-dialog max-width="500" height="800" v-model="registerDialog">
+                    <v-sheet
+                      elevation="14"
+                      rounded="xl"
+                      width="500"
+                      height="800"
+                      :color="
+                        isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
+                      "
+                    >
+                      <v-form ref="form" v-model="valid" @submit.prevent="registrationHandler">
+                        <v-col>
+                          <v-col>
+                            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
+                              Register your company
+                            </h4></v-col
+                          >
+                          <v-spacer></v-spacer>
+                          <v-col>
+                            <v-col>
+                              <small
+                                :style="
+                                  isdarkmode === true
+                                    ? dark_theme_text_color
+                                    : light_theme_text_color
+                                "
+                                class="text-caption"
+                                >Company name*</small
+                              >
+                              <v-text-field
+                                density="compact"
+                                color="grey-lighten-4"
+                                label="Enter the company's name"
+                                v-model="req_obj1.name"
+                                :rules="company_name_rules"
+                                rounded="xl"
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
+                                variant="solo"
+                                required
+                              ></v-text-field
+                            ></v-col>
+                            <v-col>
+                              <small
+                                :style="
+                                  isdarkmode === true
+                                    ? dark_theme_text_color
+                                    : light_theme_text_color
+                                "
+                                class="text-caption"
+                                >Type of business*</small
+                              >
+                              <v-autocomplete
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
+                                density="compact"
+                                color="grey-lighten-4"
+                                label="Plumbing"
+                                v-model="req_obj1.type"
+                                rounded="xl"
+                                variant="solo"
+                                :items="registerList"
+                              ></v-autocomplete>
+                            </v-col>
+
+                            <v-col>
+                              <small
+                                :style="
+                                  isdarkmode === true
+                                    ? dark_theme_text_color
+                                    : light_theme_text_color
+                                "
+                                class="text-caption"
+                                >Company email address</small
+                              >
+                              <v-text-field
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
+                                density="compact"
+                                color="grey-lighten-4"
+                                label="Enter the company's email adress"
+                                type="email"
+                                v-model="req_obj1.contactDetails.email"
+                                :rules="email_rules"
+                                rounded="xl"
+                                variant="solo"
+                                required
+                              ></v-text-field
+                            ></v-col>
+                            <v-col>
+                              <small
+                                :style="
+                                  isdarkmode === true
+                                    ? dark_theme_text_color
+                                    : light_theme_text_color
+                                "
+                                class="text-caption"
+                                >Company phone number</small
+                              >
+                              <v-text-field
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
+                                density="compact"
+                                color="grey-lighten-4"
+                                label="Enter the company's phone number"
+                                :rules="phone_number_rules"
+                                rounded="xl"
+                                variant="solo"
+                                v-model="req_obj1.contactDetails.phoneNumber"
+                                required
+                              ></v-text-field
+                            ></v-col>
+                            <v-col>
+                              <small
+                                :style="
+                                  isdarkmode === true
+                                    ? dark_theme_text_color
+                                    : light_theme_text_color
+                                "
+                                class="text-caption"
+                                >Company registration number</small
+                              >
+                              <v-text-field
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
+                                density="compact"
+                                color="grey-lighten-4"
+                                label="Enter the company's registration number"
+                                type="number"
+                                v-model="req_obj1.registrationNumber"
+                                rounded="xl"
+                                variant="solo"
+                                required
+                              ></v-text-field
+                            ></v-col>
+
+                            <v-col>
+                              <small
+                                :style="
+                                  isdarkmode === true
+                                    ? dark_theme_text_color
+                                    : light_theme_text_color
+                                "
+                                class="text-caption"
+                                >Company VAT number</small
+                              >
+                              <v-text-field
+                                :bg-color="
+                                  isdarkmode === true
+                                    ? modal_dark_theme_color
+                                    : modal_light_theme_color
+                                "
+                                density="compact"
+                                color="grey-lighten-4"
+                                label="Enter the company's VAT number"
+                                :rules="vat_number_rules"
+                                type="number"
+                                rounded="xl"
+                                v-model="req_obj1.vatNumber"
+                                variant="solo"
+                                required
+                              ></v-text-field
+                            ></v-col>
+
+                            <small
+                              :style="
+                                isdarkmode === true ? dark_theme_text_color : light_theme_text_color
+                              "
+                              class="text-caption"
+                              >Company address</small
+                            >
+                            <v-row>
+                              <v-col
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  density="compact"
+                                  color="grey-lighten-4"
+                                  label="Street"
+                                  rounded="xl"
+                                  v-model="req_obj1.address.street"
+                                  variant="solo"
+                                  required
+                                ></v-text-field
+                              ></v-col>
+                              <v-col
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  density="compact"
+                                  color="grey-lighten-4"
+                                  label="Suburb"
+                                  rounded="xl"
+                                  v-model="req_obj1.address.suburb"
+                                  variant="solo"
+                                  required
+                                ></v-text-field
+                              ></v-col>
+                            </v-row>
+                            <v-row>
+                              <v-col
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  density="compact"
+                                  color="grey-lighten-4"
+                                  label="City"
+                                  rounded="xl"
+                                  v-model="req_obj1.address.city"
+                                  variant="solo"
+                                  required
+                                ></v-text-field
+                              ></v-col>
+                              <v-col
+                                ><v-text-field
+                                  :bg-color="
+                                    isdarkmode === true
+                                      ? modal_dark_theme_color
+                                      : modal_light_theme_color
+                                  "
+                                  density="compact"
+                                  color="grey-lighten-4"
+                                  label="Zip Code"
+                                  rounded="xl"
+                                  v-model="req_obj1.address.postalCode"
+                                  variant="solo"
+                                  required
+                                ></v-text-field
+                              ></v-col>
+                            </v-row>
+                          </v-col>
+                          <v-col
+                            :style="
+                              isdarkmode === true ? dark_theme_text_color : modal_light_theme_color
+                            "
+                            cols="8"
+                            offset="2"
+                            align="center"
+                          >
+                            <v-btn
+                              type="submit"
+                              rounded="xl"
+                              boarder="xl"
+                              width="60%"
+                              height="35"
+                              variant="elevated"
+                              color="blue-accent-2"
+                              :disabled="click_create_client"
+                              >Continue</v-btn
+                            >
+                          </v-col>
+                        </v-col>
+                      </v-form>
+                    </v-sheet>
+                  </v-dialog>
                   <p class="text-center">
                     By clicking Continue to join or sign in, you agree to WorkWise Central's User
                     Agreement, Privacy Policy, and Cookie Policy
@@ -825,21 +1093,103 @@ import {
 } from 'vuetify/components'
 import axios from 'axios'
 import { defineComponent } from 'vue'
+import router from "@/router/index";
 
 export default defineComponent({
+
   data: () => ({
+    click_create_client: false,
     saltRounds: 10,
     loginDialog: false,
+    alertSignUp: false,
+    alertSignUpFailure: false,
+    alertLogin: false,
     signupDialog: false,
     signup1Dialog: false,
     signup2Dialog: false,
     signup3Dialog: false,
+    alertLoginFailure: false,
     joinDialog: false,
+    registerDialog: false,
     exists: false,
     signupAddressDialog: false,
     genderList: ['Male', 'Female', 'Other'],
-    languageList: ['English', 'French', 'Portuguese'],
+    languageList: ['English', 'Afrikaans'],
     cityList: ['Johannesburg', 'Cape Town', 'Durban', 'Pretoria', 'Bloemfontein'],
+    registerList: [
+      'Construction Work',
+      'Landscaping',
+      'Lawn Care',
+      'Gardening',
+      'Tree Trimming',
+      'Roofing',
+      'Painting',
+      'Plumbing',
+      'Electrical Work',
+      'Carpentry',
+      'Masonry',
+      'Welding',
+      'HVAC Installation and Repair',
+      'Window Cleaning',
+      'Janitorial Services',
+      'Carpet Cleaning',
+      'Moving Services',
+      'Packing and Unpacking Services',
+      'Furniture Assembly',
+      'Pest Control',
+      'Extermination Services',
+      'Pool Cleaning',
+      'Snow Removal',
+      'Demolition Services',
+      'Flooring Installation',
+      'Tile Installation',
+      'Drywall Installation and Repair',
+      'Insulation Installation',
+      'Gutter Cleaning',
+      'Pressure Washing',
+      'Automotive Repair',
+      'Auto Detailing',
+      'Boat Cleaning',
+      'Farm Work',
+      'Harvesting',
+      'Fishing Services',
+      'Forestry Work',
+      'Mining Services',
+      'Oil and Gas Extraction',
+      'Construction Site Cleanup',
+      'Warehouse Labor',
+      'Loading and Unloading Services',
+      'Recycling Services',
+      'Scrap Metal Collection',
+      'Junk Removal',
+      'Waste Management',
+      'Event Setup and Teardown',
+      'Concert Setup and Teardown',
+      'Trade Show Setup and Teardown',
+      'Exhibit Installation',
+      'Rigging Services',
+      'Scaffolding Services',
+      'General Handyman Services',
+      'Home Renovation',
+      'Exterior Home Cleaning',
+      'Agricultural Labor',
+      'Livestock Care',
+      'Equestrian Services',
+      'Dog Walking',
+      'Pet Grooming',
+      'House Cleaning',
+      'Maid Services',
+      'Home Health Aide',
+      'Personal Care Assistant',
+      'Childcare Services',
+      'Elderly Care Services',
+      'Disaster Cleanup',
+      'Restoration Services',
+      'Fire Damage Cleanup',
+      'Water Damage Cleanup',
+      'Mold Remediation'
+    ],
+
     email: '',
     access_token: '',
     password: '',
@@ -858,6 +1208,25 @@ export default defineComponent({
     complex: '',
     houseNumber: '',
     phone_number: '',
+
+    req_obj1: {
+      name: '',
+      type: '',
+      registrationNumber: '',
+      vatNumber: '',
+      contactDetails: {
+        email: '',
+        phoneNumber: ''
+      },
+      address: {
+        street: '',
+        suburb: '',
+        city: '',
+        postalCode: '',
+        complex: '',
+        houseNumber: ''
+      }
+    },
     skils: '',
     roles: '',
     url: 'http://localhost:3000/users',
@@ -894,12 +1263,33 @@ export default defineComponent({
     ],
     usernameRules: [
       (v) => !!v || 'Username is required',
-      (v) => v.length >= 3 || 'Username must be at least 3 characters',
+      (v) => v.length >= 3 || 'Username must be at least 3 characters'
       // usernameExist() || 'Username already exists'
     ],
     date_rules: [
       (v) => !!v || 'Date of birth is required',
       (v) => v.length >= 3 || 'Date of birth must be at least 3 characters'
+    ],
+    company_name_rules: [
+      (v) => !!v || 'Company name is required',
+      (v) => /^[A-Z]/.test(v) || 'Company name must start with a capital letter',
+      (v) => !/[ &-]$/.test(v) || 'Company name must not end with a space or special character',
+      (v) => v.length <= 50 || 'Company name must be less than 50 characters',
+      (v) =>
+        /^[A-Z][a-zA-Z &-]{0,48}[a-zA-Z]$/.test(v) ||
+        'Company name can contain both capital and lowercase letters, spaces, "&", or "-"'
+    ],
+    email_rules: [
+      (v) => !!v || 'E-mail is required',
+      (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+    ],
+    phone_number_rules: [
+      (v) => !!v || 'Phone number is required',
+      (v) => /^(\+27\d{9})$/.test(v) || 'Phone number must be a valid South African number'
+    ],
+    vat_number_rules: [
+      (v) => !!v || 'VAT number is required',
+      (v) => /^\d{10}$/.test(v) || 'VAT number must be a valid South African VAT number'
     ],
     gender_rules: [(v) => !!v || 'Please select your gender'],
     language_rules: [(v) => !!v || 'Please select your preferred language'],
@@ -918,9 +1308,17 @@ export default defineComponent({
       (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers'
     ]
   }),
+  mounted() {
+    setTimeout(() => {
+      this.loading = false
+    }, 3000)
+  },
   methods: {
+    companyLogoHandler() {
+      console.log('')
+    },
     async login() {
-      if (this.$refs.form.validate())
+      if (this.$refs.form.validate()) {
         await axios
           .post('http://localhost:3000/auth/login', {
             identifier: this.username,
@@ -931,26 +1329,16 @@ export default defineComponent({
             console.log(response.data.access_token)
             sessionStorage.setItem('access_token', response.data.access_token)
             sessionStorage.setItem('id', response.data.id)
-            this.$router.push('/dashboard')
+            this.alertLoginFailure = false
+            this.alertLogin = true
+            this.$router.push('/modals')
           })
           .catch((error) => {
             console.log(error.response.data.message)
+            this.alertLogin = false
+            this.alertLoginFailure = true
           })
-    },
-    testRequest() {
-      axios
-        .get('http://localhost:3000/users/create', {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          withCredentials: false
-        })
-        .then((response) => {
-          console.log(response)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
+      }
     },
     birthDateFormatter(date) {
       const options = { day: 'numeric', month: 'long', year: 'numeric' }
@@ -974,16 +1362,20 @@ export default defineComponent({
             city: this.city,
             suburb: this.suburb,
             postalCode: this.postal_code,
-            complex: this.complex,
-            houseNumber: this.houseNumber
+            complex: 'none',
+            houseNumber: 12
           },
           contactInfo: { phoneNumber: this.phone_number, email: this.email }
         })
         .then((response) => {
           console.log(response)
+          this.alertSignUpFailure = false
+          this.alertSignUp = true
         })
         .catch((error) => {
           console.log(error)
+          this.alertSignUp = false
+          this.alertSignUpFailure = true
         })
     },
     nextFlow1() {
@@ -1010,16 +1402,29 @@ export default defineComponent({
         this.signup3Dialog = true
       }
     },
+    registrationHandler() {
+      console.log(JSON.stringify(this.req_obj1))
+      axios
+        .post('http://localhost:3000/company/create', this.req_obj1)
+        .then((res) => {
+          alert('The Company was registered successfully')
+          sessionStorage['currentCompany'] = res.data.id
+          router.push('/modals')
+        })
+        .catch((res) => {
+          alert('The Company was not registered successfully')
+          console.log(res)
+        })
+    },
     finalFlow() {
       this.signup3Dialog = false
       this.joinDialog = true
-      signup()
+      this.signup()
     },
     registerCompany() {
-      if (this.$refs.form.validate()) {
-        this.signup3Dialog = false
-        this.$router.push('/register-modal')
-      }
+      this.signup3Dialog = false
+      this.$router.push('/register-modal')
+      this.signup()
     },
     join() {
       if (this.$refs.form.validate()) {
@@ -1109,14 +1514,5 @@ export default defineComponent({
 .toolbar-text {
   font-size: 36px;
   font-display: 'Lato';
-}
-.background-image-column {
-  /* Set the background image */
-  background-image: url('C:\Users\Kumbirai\OneDrive\Documents\GitHub\WorkWise-Central\src\frontend\img\splash.jpg');
-  /* Position the background image to fill the right side */
-  background-position: right;
-  background-size: cover; /* Auto width, full height */
-  background-repeat: no-repeat;
-  max-height: max-content;
 }
 </style>

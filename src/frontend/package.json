@@ -22,7 +22,6 @@
     "bcryptjs": "^2.4.3",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
-    "vuetify": "^3.6.8",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
@@ -36,7 +35,7 @@
     "@vue/eslint-config-typescript": "^13.0.0",
     "@vue/test-utils": "^2.4.5",
     "@vue/tsconfig": "^0.5.1",
-    "cypress": "^13.7.2",
+    "cypress": "^13.10.0",
     "eslint": "^8.57.0",
     "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-vue": "^9.23.0",
