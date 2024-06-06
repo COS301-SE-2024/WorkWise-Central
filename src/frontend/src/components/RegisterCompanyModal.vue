@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="500" height="800">
+  <v-dialog  max-height="800" max-width="600" >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
           base-color="red"
@@ -15,8 +15,8 @@
     <v-sheet
       elevation="14"
       rounded="xl"
-      width="500"
-      height="800"
+      max-width="600"
+      max-height="800"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
       <v-form ref="form" v-model="valid" @submit.prevent="registrationHandler">
@@ -231,8 +231,8 @@
               class="text-caption"
               >Company address</small
             >
-            <v-row>
-              <v-col
+            <v-row class ="d-flex flex-wrap">
+              <v-col sm="6" cols="12"
                 ><v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
@@ -242,9 +242,9 @@
                   v-model="req_obj.address.street"
                   variant="solo"
                   required
-                ></v-text-field
+              ></v-text-field
               ></v-col>
-              <v-col
+              <v-col  sm="6" cols="12"
                 ><v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
@@ -254,11 +254,9 @@
                   v-model="req_obj.address.suburb"
                   variant="solo"
                   required
-                ></v-text-field
+              ></v-text-field
               ></v-col>
-            </v-row>
-            <v-row>
-              <v-col
+              <v-col sm="6" cols="12"
                 ><v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
@@ -270,8 +268,8 @@
                   required
                 ></v-text-field
               ></v-col>
-              <v-col
-                ><v-text-field
+              <v-col sm="6" cols="12"
+              ><v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
                   color="grey-lighten-4"
@@ -283,32 +281,32 @@
                 ></v-text-field
               ></v-col>
             </v-row>
-            <v-row>
-              <v-col
-                ><v-text-field
-                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                  density="compact"
-                  color="grey-lighten-4"
-                  label="Complex"
-                  rounded="xl"
-                  v-model="req_obj.address.complex"
-                  variant="solo"
-                  required
-                ></v-text-field
-              ></v-col>
-              <v-col
-                ><v-text-field
-                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                  density="compact"
-                  color="grey-lighten-4"
-                  label="House number"
-                  rounded="xl"
-                  v-model="req_obj.address.houseNumber"
-                  variant="solo"
-                  required
-                ></v-text-field
-              ></v-col>
-            </v-row>
+<!--            <v-row>-->
+<!--              <v-col-->
+<!--                ><v-text-field-->
+<!--                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
+<!--                  density="compact"-->
+<!--                  color="grey-lighten-4"-->
+<!--                  label="Complex"-->
+<!--                  rounded="xl"-->
+<!--                  v-model="req_obj.address.complex"-->
+<!--                  variant="solo"-->
+<!--                  required-->
+<!--                ></v-text-field-->
+<!--              ></v-col>-->
+<!--              <v-col-->
+<!--                ><v-text-field-->
+<!--                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
+<!--                  density="compact"-->
+<!--                  color="grey-lighten-4"-->
+<!--                  label="House number"-->
+<!--                  rounded="xl"-->
+<!--                  v-model="req_obj.address.houseNumber"-->
+<!--                  variant="solo"-->
+<!--                  required-->
+<!--                ></v-text-field-->
+<!--              ></v-col>-->
+<!--            </v-row>-->
           </v-col>
           <v-col
             :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
@@ -345,7 +343,7 @@ export default {
       dialog: false,
       click_create_client: false,
       valid: true,
-      isdarkmode: false,
+      isdarkmode: true,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
