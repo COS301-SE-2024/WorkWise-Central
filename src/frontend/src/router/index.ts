@@ -8,6 +8,7 @@ import AddEmployee from '../components/AddEmployee.vue'
 import JobDetailsModal from '../components/JobDetailsModal.vue'
 import JobDetailsList from '../components/JobDetailsList.vue'
 import Modals from '../views/Modals.vue'
+import EmployeeDesk from '../components/EmployeeDesk.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -50,6 +51,11 @@ const router = createRouter({
       path: '/modals',
       name: 'modals',
       component: Modals
+    },
+    {
+      path: '/employee-desk',
+      name: 'employee-desk',
+      component: EmployeeDesk
     }
   ]
 })
