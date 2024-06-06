@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="500" height="800">
+  <v-dialog  max-height="800" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
           base-color="red"
@@ -15,8 +15,7 @@
     <v-sheet
       elevation="14"
       rounded="xl"
-      width="500"
-      height="800"
+      max-height="800" max-width="600"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
       <v-form ref="form" v-model="valid"  @submit="handleSubmission">
@@ -77,7 +76,7 @@
               >
               <v-textarea
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                label="Enter the details of the job"
+                placeholder="Enter the details of the job"
                 rounded="xl"
                 variant="solo"
                 v-model="req_obj.details.description"
@@ -93,7 +92,7 @@
                 >
                 <v-textarea
                     :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                    label="Note taking"
+                    placeholder="Enter any additional notes here"
                     rounded="xl"
                     variant="solo"
                     v-model="req_obj.details.notes"
@@ -101,95 +100,95 @@
                 >
                 </v-textarea>
             </v-col>
+
             <v-col align="center">
               <v-date-picker
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 title="SELECT DATE"
                 header="Date of job"
                 border="md"
-                :color="isdarkmode === true ? modal_dark_theme_color : '#5A82AF'"
+                width="unset"
+                max-width="350"
+                :color="isdarkmode === false ? '#5A82AF': 'none'"
                 elevation="5"
                 :v-model="req_obj.scheduledDateTime"
                 required
+                :theme = "isdarkmode? 'dark' : 'light'"
               ></v-date-picker>
             </v-col>
 
           <small
               :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
               class="text-caption"
-          >Company address</small
+          >Client address</small
           >
           <v-row>
-            <v-col
+            <v-col cols="12" sm="6"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Street"
+                placeholder="Street"
                 rounded="xl"
                 v-model="req_obj.details.address.street"
                 variant="solo"
                 required
             ></v-text-field
             ></v-col>
-            <v-col
+            <v-col cols="12" sm="6"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Suburb"
+                placeholder="Suburb"
                 rounded="xl"
                 v-model="req_obj.details.address.suburb"
                 variant="solo"
                 required
             ></v-text-field
             ></v-col>
-          </v-row>
-          <v-row>
-            <v-col
+            <v-col cols="12" sm="6"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="City"
+                placeholder="City"
                 rounded="xl"
                 v-model="req_obj.details.address.city"
                 variant="solo"
                 required
             ></v-text-field
             ></v-col>
-            <v-col
+            <v-col cols="12" sm="6"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Zip Code"
+                placeholder="Zip Code"
                 rounded="xl"
                 v-model="req_obj.details.address.postalCode"
                 variant="solo"
                 required
             ></v-text-field
             ></v-col>
-          </v-row>
-          <v-row>
-            <v-col
+
+            <v-col cols="12" sm="6"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Complex"
+                placeholder="Complex"
                 rounded="xl"
                 v-model="req_obj.details.address.complex"
                 variant="solo"
                 required
             ></v-text-field
             ></v-col>
-            <v-col
+            <v-col cols="12" sm="6"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="House number"
+                placeholder="House number"
                 rounded="xl"
                 v-model="req_obj.details.address.houseNumber"
                 variant="solo"
@@ -223,12 +222,11 @@ import { defineComponent } from 'vue'
 // import axios from "axios";
 export default defineComponent({
   name: 'JobDetailsList',
-  props: [],
+  props: ['isdarkmode'],
   data() {
     return {
       click_create_client: false,
       valid: false,
-      isdarkmode: false, //this should be a prop thats taken in from the user to determin if the modal shoud also be in darkmode or not
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',

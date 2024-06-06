@@ -35,6 +35,7 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'JobDetailsModal',
+  props: ['isdarkmode'],
   data() {
     return {
       job: {
@@ -45,7 +46,6 @@ export default defineComponent({
         jobType: 'Plumbing',
         date_of_job: '2021-09-01',
         click_create_client: false,
-        isdarkmode: true,
         light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
         dark_theme_text_color: 'color: #DCDBDB',
         modal_dark_theme_color: '#2b2b2b',

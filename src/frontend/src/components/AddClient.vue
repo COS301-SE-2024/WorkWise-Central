@@ -38,7 +38,7 @@
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                label="Enter the first name of the client"
+                placeholder="Enter the first name of the client"
                 v-model="req_obj.firstName"
                 rounded="xl"
                 variant="solo"
@@ -57,7 +57,7 @@
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                label="Enter the Surname name of the client"
+                placeholder="Enter the Surname name of the client"
                 v-model="req_obj.surname"
                 rounded="xl"
                 variant="solo"
@@ -75,7 +75,7 @@
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                label="Enter the client's email address"
+                placeholder="Enter the client's email address"
                 v-model="req_obj.email"
                 :rules="email_rules"
                 type="email"
@@ -94,7 +94,7 @@
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                label="Enter the client's phone number"
+                placeholder="Enter the client's phone number"
                 v-model="req_obj.phoneNumber"
                 rounded="xl"
                 variant="solo"
@@ -113,7 +113,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Street"
+                placeholder="Street"
                 rounded="xl"
                 v-model="req_obj.address.street"
                 variant="solo"
@@ -125,7 +125,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Suburb"
+                placeholder="Suburb"
                 rounded="xl"
                 v-model="req_obj.address.suburb"
                 variant="solo"
@@ -138,7 +138,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="City"
+                placeholder="City"
                 rounded="xl"
                 v-model="req_obj.address.city"
                 variant="solo"
@@ -150,7 +150,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Zip Code"
+                placeholder="Zip Code"
                 rounded="xl"
                 v-model="req_obj.address.postalCode"
                 variant="solo"
@@ -163,7 +163,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Complex"
+                placeholder="Complex"
                 rounded="xl"
                 v-model="req_obj.address.complex"
                 variant="solo"
@@ -175,7 +175,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="House number"
+                placeholder="House number"
                 rounded="xl"
                 v-model="req_obj.address.houseNumber"
                 variant="solo"
@@ -230,11 +230,11 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'RegisterCompanyModal ',
+  props: ['isdarkmode'],
   data: () => ({
     valid: false,
     dialog: false,
     click_create_client: false,
-    isdarkmode: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',

@@ -8,6 +8,7 @@ import AddEmployee from '../components/AddEmployee.vue'
 import JobDetailsModal from '../components/JobDetailsModal.vue'
 import AddJob from '../components/AddJob.vue'
 import Modals from '../views/Modals.vue'
+import Calendar from '../components/Calendar.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -30,6 +31,11 @@ const router = createRouter({
       path: '/add-employee',
       name: 'addemployee',
       component: AddEmployee
+    },
+    {
+      path:'/calendar',
+      name:'calendar',
+      component: Calendar
     },
     {
       path: '/add-job',

@@ -338,12 +338,12 @@ import router from '@/router/index'
 
 export default {
   name: 'RegisterCompanyModal',
+  props: ['isdarkmode'],
   data() {
     return {
       dialog: false,
       click_create_client: false,
       valid: true,
-      isdarkmode: true,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
