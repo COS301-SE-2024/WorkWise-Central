@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="500" height="1000">
+  <v-dialog max-height="800" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
           base-color="red"
@@ -16,8 +16,7 @@
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
       elevation="14"
       rounded="xl"
-      width="500"
-      height="1000"
+      max-height="800" max-width="600"
     >
       <v-form ref="form" v-model="valid" @submit="handleSubmission">
       <v-col>
@@ -109,7 +108,7 @@
           >Client address</small
           >
           <v-row>
-            <v-col
+            <v-col sm="6" cols="12"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
@@ -121,7 +120,7 @@
                 required
             ></v-text-field
             ></v-col>
-            <v-col
+            <v-col sm="6" cols="12"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
@@ -133,9 +132,8 @@
                 required
             ></v-text-field
             ></v-col>
-          </v-row>
-          <v-row>
-            <v-col
+
+            <v-col sm="6" cols="12"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
@@ -147,7 +145,7 @@
                 required
             ></v-text-field
             ></v-col>
-            <v-col
+            <v-col sm="6" cols="12"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
@@ -159,9 +157,8 @@
                 required
             ></v-text-field
             ></v-col>
-          </v-row>
-          <v-row>
-            <v-col
+
+            <v-col sm="6" cols="12"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
@@ -173,7 +170,7 @@
                 required
             ></v-text-field
             ></v-col>
-            <v-col
+            <v-col sm="6" cols="12"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
@@ -193,7 +190,7 @@
                 class="text-caption"
                 >Preferred language</small
               >
-              <v-text-field
+              <v-autocomplete
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
@@ -201,8 +198,9 @@
                 rounded="xl"
                 v-model="req_obj.preferredLanguage"
                 variant="solo"
+                :items="[ 'English', 'Afrikaans', 'Zulu', 'Xhosa', 'Sotho', 'Tswana', 'Venda', 'Tsonga', 'Swati', 'Ndebele']"
                 required
-              ></v-text-field
+              ></v-autocomplete
             ></v-col>
         </v-col>
         <v-col cols="8" offset="2" align="center">
