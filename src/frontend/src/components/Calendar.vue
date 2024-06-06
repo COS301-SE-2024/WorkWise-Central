@@ -62,6 +62,7 @@
 
 <script>
 export default {
+  name:"Calendar-Componenet",
   data: () => ({
     type: 'month',
     start: '2019-01-01',
