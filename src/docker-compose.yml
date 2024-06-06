@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  vue-app:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vue-app
+    ports:
+      - '8080:80'
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-app
+    volumes:
+      - ./frontend/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - '80:80'
+    depends_on:
+      - vue-app
+
+  nest-app:
+    build:
+      context: ./api-gateway
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:7.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INIT_ROOT_DATABASE: 'WorkWise Central'
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/opt/data/db
+
+volumes:
+  mongodata:
+    driver: local
