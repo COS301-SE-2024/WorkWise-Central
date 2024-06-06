@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="400" height="600">
+  <v-dialog max-height="800" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
           base-color="red"
@@ -16,8 +16,7 @@
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
       elevation="14"
       rounded="xl"
-      width="400"
-      height="700"
+      max-height="800" max-width="600"
     >
       <v-form ref="form" v-model="valid" @submit = "handleSubmit">
       <v-col>
@@ -114,11 +113,11 @@ import { defineComponent } from 'vue'
 import axios from 'axios';
 export default defineComponent({
   name: 'RegisterCompanyModal',
+  props: ['isdarkmode'],
   data: () => ({
     valid: false,
     dialog: false,
     click_create_client: false,
-    isdarkmode: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
