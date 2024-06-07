@@ -56,11 +56,6 @@ const router = createRouter({
       path: '/modals',
       name: 'modals',
       component: Modals
-    },
-    {
-      path: '/employee-desk',
-      name: 'employee-desk',
-      component: EmployeeDesk
     }
   ]
 })
