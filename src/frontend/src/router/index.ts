@@ -9,6 +9,7 @@ import JobDetailsModal from '../components/JobDetailsModal.vue'
 import AddJob from '../components/AddJob.vue'
 import Modals from '../views/Modals.vue'
 import Calendar from '../components/Calendar.vue'
+import Client from '../components/ClientDesk.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -33,8 +34,8 @@ const router = createRouter({
       component: AddEmployee
     },
     {
-      path:'/calendar',
-      name:'calendar',
+      path: '/calendar',
+      name: 'calendar',
       component: Calendar
     },
     {
@@ -56,6 +57,11 @@ const router = createRouter({
       path: '/modals',
       name: 'modals',
       component: Modals
+    },
+    {
+      path: '/client',
+      name: 'client',
+      component: Client
     }
   ]
 })

@@ -1,18 +1,20 @@
 <template>
-  <v-card  height="300px" flat>
+  
     <v-text-field
-      prepend-icon="mdi-magnify"
+      append-icon="mdi-magnify"
       rounded="xl"
       :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+      :label="text"
     ></v-text-field>
-  </v-card>
+
 </template>
 
 <script lang="ts">
 export default {
   name: 'SearchBar',
   props: {
-    isDarkMode: Boolean
+    isDarkMode: Boolean,
+    text: String
   },
   data() {
     return {
