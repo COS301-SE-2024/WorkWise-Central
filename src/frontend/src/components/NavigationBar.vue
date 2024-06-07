@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import '@mdi/font/css/materialdesignicons.css'; // icon import
 
 const isVisible = ref(false);
