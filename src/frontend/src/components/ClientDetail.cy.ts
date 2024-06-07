@@ -1,6 +1,6 @@
 import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
-import ClientDetails from "./ClientDetails.vue"
+import ClientDetails from "./AddClient.vue"
 
 it("renders client detials", () => {
     const vuetify = createVuetify();
