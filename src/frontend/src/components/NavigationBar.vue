@@ -1,18 +1,14 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { useDisplay } from 'vuetify';
+// import { useDisplay } from 'vuetify';
 import '@mdi/font/css/materialdesignicons.css'; // icon import
 
 const isVisible = ref(false);
 const drawer = ref(true);
 const dashboardActive = ref(false);
 
-const {smAndUp} = useDisplay();
-const isDesktop = computed(() => smAndUp.value);
-
-const toggleDrawer = () => {
-  drawer.value = !drawer.value;
-}
+// const {smAndUp} = useDisplay();
+// const isDesktop = computed(() => smAndUp.value);
 
 const toggleDashboard = () => {
   dashboardActive.value = !dashboardActive.value;
@@ -41,7 +37,8 @@ const onEllipsisClick = () => {
         <v-icon @click="onEllipsisClick">mdi-dots-vertical</v-icon>
       </v-app-bar>
 
-      <v-navigation-drawer app v-model="drawer" :temporary="!isDesktop" :rail="isVisible">
+      <!-- <v-navigation-drawer app v-model="drawer" :temporary="!isDesktop" :rail="isVisible"> -->
+      <v-navigation-drawer app v-model="drawer" :rail="isVisible">
         <v-list-item title="Company Name"></v-list-item>
         <v-divider></v-divider>
 

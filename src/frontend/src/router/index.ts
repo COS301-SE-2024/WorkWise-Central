@@ -9,8 +9,6 @@ import JobDetailsModal from '../components/JobDetailsModal.vue'
 import JobDetailsList from '../components/JobDetailsList.vue'
 import Modals from '../views/Modals.vue'
 
-import TestView from '../views/TestView.vue'
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -53,11 +51,6 @@ const router = createRouter({
       path: '/modals',
       name: 'modals',
       component: Modals
-    }
-    {
-      path: '/testview',
-      name: 'testview',
-      component: TestView
     }
   ]
 })
