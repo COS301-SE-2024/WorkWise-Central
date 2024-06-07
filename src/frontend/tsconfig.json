@@ -18,6 +18,7 @@
         "./src/*" // set path `@/*` as alias of `src/*`
       ]
     },
-    "allowJs": true
+    "allowJs": true,
+    "noImplicitAny": false,
   }
 }
