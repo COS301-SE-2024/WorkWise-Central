@@ -1093,10 +1093,9 @@ import {
 } from 'vuetify/components'
 import axios from 'axios'
 import { defineComponent } from 'vue'
-import router from "@/router/index";
+import router from '@/router/index'
 
 export default defineComponent({
-
   data: () => ({
     click_create_client: false,
     saltRounds: 10,

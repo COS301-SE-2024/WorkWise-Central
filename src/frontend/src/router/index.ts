@@ -34,8 +34,8 @@ const router = createRouter({
       component: AddEmployee
     },
     {
-      path:'/calendar',
-      name:'calendar',
+      path: '/calendar',
+      name: 'calendar',
       component: Calendar
     },
     {
@@ -57,7 +57,7 @@ const router = createRouter({
       path: '/modals',
       name: 'modals',
       component: Modals
-    }, 
+    },
     {
       path: '/testview',
       name: 'testview',

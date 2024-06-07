@@ -1,22 +1,21 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import '@mdi/font/css/materialdesignicons.css'; // icon import
+import { ref } from 'vue'
+import '@mdi/font/css/materialdesignicons.css' // icon import
 
-const isVisible = ref(false);
-const drawer = ref(true);
-const dashboardActive = ref(false);
+const isVisible = ref(false)
+const drawer = ref(true)
+const dashboardActive = ref(false)
 
 const toggleDashboard = () => {
-  dashboardActive.value = !dashboardActive.value;
+  dashboardActive.value = !dashboardActive.value
 }
 const onProfileClick = () => {
-  console.log('Profile icon clicked');
+  console.log('Profile icon clicked')
 }
 
 const onEllipsisClick = () => {
-  console.log('Ellipsis icon clicked');
+  console.log('Ellipsis icon clicked')
 }
-
 </script>
 
 <template>
@@ -196,7 +195,7 @@ const onEllipsisClick = () => {
               <span>Sub-item 3</span>
             </v-list-item>
           </v-list-group>
-          
+
           <v-list-group>
             <template v-slot:activator>
               <v-list-item link>
@@ -232,12 +231,10 @@ const onEllipsisClick = () => {
       </v-navigation-drawer>
 
       <v-main>
-        <v-container fluid>
-        </v-container>
+        <v-container fluid> </v-container>
       </v-main>
     </v-app>
   </v-card>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
