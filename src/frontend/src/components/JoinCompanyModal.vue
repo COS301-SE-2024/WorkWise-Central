@@ -2,8 +2,8 @@
   <v-dialog max-width="500" height="800">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-          base-color="red"
-          rounded="xl"
+        base-color="red"
+        rounded="xl"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         color="white"
@@ -68,7 +68,7 @@
           </v-col>
           <v-col cols="8" offset="2" align="center">
             <v-btn
-                color="#5A82AF"
+              color="#5A82AF"
               rounded="xl"
               boarder="xl"
               width="85%"
@@ -107,17 +107,16 @@ export default defineComponent({
   }),
 
   methods: {
-    handlesubmission(){
-      alert("Added employee successfully")
+    handlesubmission() {
+      alert('Added employee successfully')
     }
   }
 })
 </script>
 
 <style scope>
-.hello
-{
-  color:white;
-  background-color: #5A82AF;
+.hello {
+  color: white;
+  background-color: #5a82af;
 }
 </style>

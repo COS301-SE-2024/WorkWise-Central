@@ -1,5 +1,5 @@
 <template>
-  <v-card  height="300px" flat>
+  <v-card height="300px" flat>
     <v-text-field
       prepend-icon="mdi-magnify"
       rounded="xl"
