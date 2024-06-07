@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import '@mdi/font/css/materialdesignicons.css'; // icon import
+import { ref } from 'vue'
+import '@mdi/font/css/materialdesignicons.css' // icon import
 
 const isVisible = ref(false)
 const drawer = ref(true)
@@ -237,9 +237,4 @@ const onEllipsisClick = () => {
   </v-card>
 </template>
 
-<<<<<<< HEAD
 <style scoped></style>
-=======
-<style scoped>
-</style>
->>>>>>> 1b465a11c1ac409a09bfecd518967674f6daa96e
