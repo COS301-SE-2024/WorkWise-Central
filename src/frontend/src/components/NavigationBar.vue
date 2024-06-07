@@ -21,22 +21,21 @@ const onEllipsisClick = () => {
 <template>
   <v-card>
     <v-app>
-      <v-app-bar app>
+      <v-app-bar app color="surface">
         <v-app-bar-nav-icon @click="isVisible = !isVisible">
           <v-icon>{{ isVisible ? 'mdi-close' : 'mdi-menu' }}</v-icon>
         </v-app-bar-nav-icon>
-        <v-spacer></v-spacer>
         <v-toolbar-title>WorkWise</v-toolbar-title>
-        <v-icon @click="onProfileClick">mdi-account-circle</v-icon>
-        <v-icon @click="onEllipsisClick">mdi-dots-vertical</v-icon>
+        <v-icon @click="onProfileClick" :style="{ fontSize: '40px' }">mdi-account-circle</v-icon>
+        <v-icon @click="onEllipsisClick" :style="{ fontSize: '40px' }">mdi-dots-vertical</v-icon>
       </v-app-bar>
 
-      <v-navigation-drawer app v-model="drawer" :rail="isVisible">
-        <v-list-item title="Company Name"></v-list-item>
+      <v-navigation-drawer app v-model="drawer" :rail="isVisible" color="background">
+        <v-list-item title="Company Name" class="title"></v-list-item>
         <v-divider></v-divider>
 
         <v-list>
-          <v-list-group v-model="dashboardActive">
+          <v-list-group v-model="dashboardActive" color="secondary">
             <template v-slot:activator>
               <v-list-item link @click="toggleDashboard">
                 <template v-slot:prepend>
@@ -100,9 +99,9 @@ const onEllipsisClick = () => {
             </v-list-item>
           </v-list-group>
 
-          <v-list-group>
+          <v-list-group color="primary">
             <template v-slot:activator>
-              <v-list-item link>
+              <v-list-item link color="secondary">
                 <template v-slot:prepend>
                   <v-icon>mdi-account-group</v-icon>
                 </template>
@@ -114,7 +113,7 @@ const onEllipsisClick = () => {
               <template v-slot:prepend>
                 <v-icon>mdi-subdirectory-arrow-right</v-icon>
               </template>
-              <span>Sub-item 1</span>
+              <span colour="secondary">Sub-item 1</span>
             </v-list-item>
 
             <v-list-item link>
@@ -237,4 +236,6 @@ const onEllipsisClick = () => {
   </v-card>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>
