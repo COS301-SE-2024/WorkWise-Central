@@ -60,10 +60,11 @@ export class details {
 export class Job {
   constructor(createJobDto: CreateJobDto) {
     this.clientId = new Types.ObjectId(createJobDto.clientId); //It must be validated in jobController
+    this.companyId = new Types.ObjectId(createJobDto.companyId); //It must be validated in jobController
     this.assignedBy = new Types.ObjectId(createJobDto.assignedBy);
     this.scheduledDateTime = createJobDto.scheduledDateTime;
     this.status = createJobDto.status;
-    if (createJobDto.inventoryUsed.length > 0)
+    if (createJobDto.inventoryUsed && createJobDto.inventoryUsed.length > 0)
       this.inventoryUsed = createJobDto.inventoryUsed.map(
         (item) => new Types.ObjectId(item),
       );
@@ -81,6 +82,10 @@ export class Job {
   @ApiProperty()
   @Prop({ required: true })
   clientId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  companyId: Types.ObjectId;
 
   @ApiProperty()
   @Prop({ type: Types.ObjectId, required: true })

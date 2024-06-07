@@ -60,7 +60,11 @@ export class CreateJobDto {
   clientId: string;
 
   @ApiProperty()
-  @Prop({ required: true }) //Todo: Convert to ObjectId in controller
+  @Prop({ required: true })
+  companyId: string;
+
+  @ApiProperty()
+  @Prop({ required: true })
   assignedBy: string;
 
   @ApiProperty()

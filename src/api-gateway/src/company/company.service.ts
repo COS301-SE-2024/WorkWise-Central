@@ -84,7 +84,7 @@ export class CompanyService {
   }
 
   async findById(
-    identifier: string,
+    identifier: string | Types.ObjectId,
   ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
     const result: FlattenMaps<Company> & { _id: Types.ObjectId } =
       await this.companyModel
@@ -167,7 +167,9 @@ export class CompanyService {
     console.log(resultOfUpdate);
     console.log(updateUser);
 
-    return { message: 'User added successfully' };
+    return {
+      message: `${updateUser.systemDetails.username} added to successfully`,
+    };
   }
 
   update(id: number, updateCompanyDto: UpdateCompanyDto) {

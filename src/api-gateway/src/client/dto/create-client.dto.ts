@@ -1,5 +1,6 @@
 import { address } from '../entities/client.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Prop } from '@nestjs/mongoose';
 
 export class CreateClientDto {
   @ApiProperty()
@@ -16,4 +17,8 @@ export class CreateClientDto {
 
   @ApiProperty()
   public address: address;
+
+  @ApiProperty()
+  @Prop({ required: false, default: 'English' })
+  preferred_Language: string;
 }

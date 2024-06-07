@@ -2,8 +2,7 @@
 
 # Boolean Hooligans - WorkWise Central
 
-![WorkWise Central Logo](logo.png)
-
+![WorkWise Central Logo](/res/img/logo/WorkWiseLogo.png)
 
 [![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)&ensp;
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/WorkWise-Central/build.yml)&ensp;
@@ -32,8 +31,6 @@
 
 ## Project Description
 
-
-
 **Boolean Hooligans - WorkWise Central - Project Description**:
 
 WorkWise Central is a cutting-edge Progressive Web App (PWA) designed to revolutionize service-based industries like building, plumbing, electrical, and installation services. Built on a robust technology stack including Vuejs, NestJS, Node.js, Typecript, OAuth, MongoDB and Docker. WorkWise Central empowers companies to streamline operations, optimize resource utilization, and enhance customer satisfaction.
@@ -48,10 +45,9 @@ Key features include:
 
 By harnessing modern technology, WorkWise Central transforms business operations, ensuring exceptional service and exceeding customer expectations. Join us in revolutionizing the future of service-based industries with WorkWise Central.
 
-
 ## Demo Video
 
-[Watch our demo video - Boolean Hooligans Demo1](#)
+[Watch our demo video - Boolean Hooligans Demo1](https://drive.google.com/drive/folders/1Cqqlc6tD-U0kXEPxzeeYuRkkoLvfFiU9)
 
 ## Functional Requirements (SRS)
 
