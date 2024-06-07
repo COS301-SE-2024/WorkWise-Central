@@ -15,8 +15,8 @@
 
 <script>
 import AddEmployee from '../components/AddEmployee.vue'
-import ClientDetails from '../components/ClientDetails.vue'
-import JobDetailsList from '../components/JobDetailsList.vue'
+import ClientDetails from '../components/AddClient.vue'
+import JobDetailsList from '../components/AddJob.vue'
 // import JoinCompanyModal from '../components/JoinCompanyModal.vue'
 import RegisterCompanyModal from '../components/RegisterCompanyModal.vue'
 import { defineComponent } from 'vue'

@@ -1,0 +1,31 @@
+name: Run Build Step
+on:
+  push:
+    branches: [ main, develop , test ]
+
+  pull_request:
+    branches: [ main, develop , test ]
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.18.0'
+
+      - name: Build Frontend
+        run: npm install && npm run build
+        working-directory: src/frontend
+
+      - name: Build Backend
+        run: npm install && npm run build
+        working-directory: src/api-gateway/
+
