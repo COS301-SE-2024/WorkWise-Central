@@ -3,41 +3,46 @@ import SplashView from '../views/SplashView.vue'
 
 import RegisterCompanyModal from '../components/RegisterCompanyModal.vue'
 import JoinCompanyModal from '../components/JoinCompanyModal.vue'
-import ClientDetails from '../components/ClientDetails.vue'
+import AddClient from '../components/AddClient.vue'
 import AddEmployee from '../components/AddEmployee.vue'
 import JobDetailsModal from '../components/JobDetailsModal.vue'
-import JobDetailsList from '../components/JobDetailsList.vue'
+import AddJob from '../components/AddJob.vue'
 import Modals from '../views/Modals.vue'
-
 import TestView from '../views/TestView.vue'
+import Calendar from '../components/Calendar.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/register-modal',
-      name: 'regmodal',
+      path: '/register-company',
+      name: 'registercompany',
       component: RegisterCompanyModal
     },
     {
-      path: '/join',
-      name: 'join',
+      path: '/join-company',
+      name: 'joincompany',
       component: JoinCompanyModal
     },
     {
-      path: '/client-details',
-      name: 'client-details',
-      component: ClientDetails
+      path: '/add-client',
+      name: 'addclient',
+      component: AddClient
     },
     {
       path: '/add-employee',
-      name: 'add-employee',
+      name: 'addemployee',
       component: AddEmployee
     },
     {
-      path: '/job-details',
-      name: 'job-details',
-      component: JobDetailsList
+      path:'/calendar',
+      name:'calendar',
+      component: Calendar
+    },
+    {
+      path: '/add-job',
+      name: 'addjob',
+      component: AddJob
     },
     {
       path: '/details-of-job',

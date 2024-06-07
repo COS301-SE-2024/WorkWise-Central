@@ -1,6 +1,6 @@
 import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
-import JobDetails from "./JobDetailsList.vue"
+import JobDetails from "./AddJob.vue"
 
 it("renders job detials", () => {
     const vuetify = createVuetify();

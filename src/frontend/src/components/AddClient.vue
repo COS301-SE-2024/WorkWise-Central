@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="500" height="1000">
+  <v-dialog max-height="800" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
           base-color="red"
@@ -16,8 +16,7 @@
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
       elevation="14"
       rounded="xl"
-      width="500"
-      height="1000"
+      max-height="800" max-width="600"
     >
       <v-form ref="form" v-model="valid" @submit="handleSubmission">
       <v-col>
@@ -39,7 +38,7 @@
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                label="Enter the first name of the client"
+                placeholder="Enter the first name of the client"
                 v-model="req_obj.firstName"
                 rounded="xl"
                 variant="solo"
@@ -58,7 +57,7 @@
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                label="Enter the Surname name of the client"
+                placeholder="Enter the Surname name of the client"
                 v-model="req_obj.surname"
                 rounded="xl"
                 variant="solo"
@@ -76,7 +75,7 @@
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                label="Enter the client's email address"
+                placeholder="Enter the client's email address"
                 v-model="req_obj.email"
                 :rules="email_rules"
                 type="email"
@@ -95,7 +94,7 @@
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                label="Enter the client's phone number"
+                placeholder="Enter the client's phone number"
                 v-model="req_obj.phoneNumber"
                 rounded="xl"
                 variant="solo"
@@ -109,76 +108,74 @@
           >Client address</small
           >
           <v-row>
-            <v-col
+            <v-col sm="6" cols="12"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Street"
+                placeholder="Street"
                 rounded="xl"
                 v-model="req_obj.address.street"
                 variant="solo"
                 required
             ></v-text-field
             ></v-col>
-            <v-col
+            <v-col sm="6" cols="12"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Suburb"
+                placeholder="Suburb"
                 rounded="xl"
                 v-model="req_obj.address.suburb"
                 variant="solo"
                 required
             ></v-text-field
             ></v-col>
-          </v-row>
-          <v-row>
-            <v-col
+
+            <v-col sm="6" cols="12"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="City"
+                placeholder="City"
                 rounded="xl"
                 v-model="req_obj.address.city"
                 variant="solo"
                 required
             ></v-text-field
             ></v-col>
-            <v-col
+            <v-col sm="6" cols="12"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Zip Code"
+                placeholder="Zip Code"
                 rounded="xl"
                 v-model="req_obj.address.postalCode"
                 variant="solo"
                 required
             ></v-text-field
             ></v-col>
-          </v-row>
-          <v-row>
-            <v-col
+
+            <v-col sm="6" cols="12"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Complex"
+                placeholder="Complex"
                 rounded="xl"
                 v-model="req_obj.address.complex"
                 variant="solo"
                 required
             ></v-text-field
             ></v-col>
-            <v-col
+            <v-col sm="6" cols="12"
             ><v-text-field
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="House number"
+                placeholder="House number"
                 rounded="xl"
                 v-model="req_obj.address.houseNumber"
                 variant="solo"
@@ -193,7 +190,7 @@
                 class="text-caption"
                 >Preferred language</small
               >
-              <v-text-field
+              <v-autocomplete
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
@@ -201,8 +198,9 @@
                 rounded="xl"
                 v-model="req_obj.preferredLanguage"
                 variant="solo"
+                :items="[ 'English', 'Afrikaans', 'Zulu', 'Xhosa', 'Sotho', 'Tswana', 'Venda', 'Tsonga', 'Swati', 'Ndebele']"
                 required
-              ></v-text-field
+              ></v-autocomplete
             ></v-col>
         </v-col>
         <v-col cols="8" offset="2" align="center">
@@ -232,11 +230,11 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'RegisterCompanyModal ',
+  props: ['isdarkmode'],
   data: () => ({
     valid: false,
     dialog: false,
     click_create_client: false,
-    isdarkmode: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
