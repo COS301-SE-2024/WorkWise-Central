@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 class address {
   @ApiProperty()
@@ -58,6 +59,7 @@ export class CreateClientDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsEmail()
+  @Transform(({ value }) => ('' + value).toLowerCase())
   public email: string;
 
   @ApiProperty()
