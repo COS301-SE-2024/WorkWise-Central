@@ -1,5 +1,5 @@
 <template>
-    <main>
-        <DashboardScreen/>
-    </main>
+  <main>
+    <DashboardScreen />
+  </main>
 </template>

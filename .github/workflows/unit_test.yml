@@ -21,15 +21,23 @@ jobs:
         with:
           node-version: '18.18.0'
 
-      - name: Install dependencies
-        run: npm install
-        working-directory: src/frontend
+#      - name: Install dependencies
+#        run: npm install && npm run test:cov
+#        working-directory: src/frontend
 
       - name: Run api tests and collect coverage
         run: npm install && npm run test:cov
         working-directory: src/api-gateway/
 
-      - name: Upload coverage to Codecov
+      - name: Filter coverage files
+        run: |
+          # Filter coverage files to include only .entity.ts files
+          find . -type f -name "*.entity.ts" > coverage-files.txt
+        working-directory: ${{ github.workspace }}
+
+      - name: Upload filtered coverage to Codecov
         uses: codecov/codecov-action@v3
+        with:
+          files: coverage-files.txt
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

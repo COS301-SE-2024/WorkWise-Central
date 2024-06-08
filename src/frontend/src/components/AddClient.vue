@@ -2,8 +2,8 @@
   <v-dialog max-height="800" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-          base-color="red"
-          rounded="xl"
+        base-color="red"
+        rounded="xl"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         color="white"
@@ -16,17 +16,18 @@
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
       elevation="14"
       rounded="xl"
-      max-height="800" max-width="600"
+      max-height="800"
+      max-width="600"
     >
       <v-form ref="form" v-model="valid" @submit="handleSubmission">
-      <v-col>
         <v-col>
-          <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-            Client Details
-          </h4></v-col
-        >
-        <v-spacer></v-spacer>
-        <v-col>
+          <v-col>
+            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
+              Client Details
+            </h4></v-col
+          >
+          <v-spacer></v-spacer>
+          <v-col>
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
@@ -46,14 +47,14 @@
                 :rules="first_name_rules"
               ></v-text-field
             ></v-col>
-          <v-col>
-            <small
+            <v-col>
+              <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 class="text-caption white--text"
-            >Surname name of client*</small
-            >
+                >Surname name of client*</small
+              >
 
-            <v-text-field
+              <v-text-field
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
@@ -63,7 +64,7 @@
                 variant="solo"
                 required
                 :rules="surname_rules"
-            ></v-text-field
+              ></v-text-field
             ></v-col>
             <v-col>
               <small
@@ -102,87 +103,87 @@
               ></v-text-field
             ></v-col>
 
-          <small
+            <small
               :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
               class="text-caption"
-          >Client address</small
-          >
-          <v-row>
-            <v-col sm="6" cols="12"
-            ><v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                density="compact"
-                color="grey-lighten-4"
-                placeholder="Street"
-                rounded="xl"
-                v-model="req_obj.address.street"
-                variant="solo"
-                required
-            ></v-text-field
-            ></v-col>
-            <v-col sm="6" cols="12"
-            ><v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                density="compact"
-                color="grey-lighten-4"
-                placeholder="Suburb"
-                rounded="xl"
-                v-model="req_obj.address.suburb"
-                variant="solo"
-                required
-            ></v-text-field
-            ></v-col>
+              >Client address</small
+            >
+            <v-row>
+              <v-col sm="6" cols="12"
+                ><v-text-field
+                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  density="compact"
+                  color="grey-lighten-4"
+                  placeholder="Street"
+                  rounded="xl"
+                  v-model="req_obj.address.street"
+                  variant="solo"
+                  required
+                ></v-text-field
+              ></v-col>
+              <v-col sm="6" cols="12"
+                ><v-text-field
+                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  density="compact"
+                  color="grey-lighten-4"
+                  placeholder="Suburb"
+                  rounded="xl"
+                  v-model="req_obj.address.suburb"
+                  variant="solo"
+                  required
+                ></v-text-field
+              ></v-col>
 
-            <v-col sm="6" cols="12"
-            ><v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                density="compact"
-                color="grey-lighten-4"
-                placeholder="City"
-                rounded="xl"
-                v-model="req_obj.address.city"
-                variant="solo"
-                required
-            ></v-text-field
-            ></v-col>
-            <v-col sm="6" cols="12"
-            ><v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                density="compact"
-                color="grey-lighten-4"
-                placeholder="Zip Code"
-                rounded="xl"
-                v-model="req_obj.address.postalCode"
-                variant="solo"
-                required
-            ></v-text-field
-            ></v-col>
+              <v-col sm="6" cols="12"
+                ><v-text-field
+                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  density="compact"
+                  color="grey-lighten-4"
+                  placeholder="City"
+                  rounded="xl"
+                  v-model="req_obj.address.city"
+                  variant="solo"
+                  required
+                ></v-text-field
+              ></v-col>
+              <v-col sm="6" cols="12"
+                ><v-text-field
+                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  density="compact"
+                  color="grey-lighten-4"
+                  placeholder="Zip Code"
+                  rounded="xl"
+                  v-model="req_obj.address.postalCode"
+                  variant="solo"
+                  required
+                ></v-text-field
+              ></v-col>
 
-            <v-col sm="6" cols="12"
-            ><v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                density="compact"
-                color="grey-lighten-4"
-                placeholder="Complex"
-                rounded="xl"
-                v-model="req_obj.address.complex"
-                variant="solo"
-                required
-            ></v-text-field
-            ></v-col>
-            <v-col sm="6" cols="12"
-            ><v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                density="compact"
-                color="grey-lighten-4"
-                placeholder="House number"
-                rounded="xl"
-                v-model="req_obj.address.houseNumber"
-                variant="solo"
-                required
-            ></v-text-field
-            ></v-col>
-          </v-row>
+              <v-col sm="6" cols="12"
+                ><v-text-field
+                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  density="compact"
+                  color="grey-lighten-4"
+                  placeholder="Complex"
+                  rounded="xl"
+                  v-model="req_obj.address.complex"
+                  variant="solo"
+                  required
+                ></v-text-field
+              ></v-col>
+              <v-col sm="6" cols="12"
+                ><v-text-field
+                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  density="compact"
+                  color="grey-lighten-4"
+                  placeholder="House number"
+                  rounded="xl"
+                  v-model="req_obj.address.houseNumber"
+                  variant="solo"
+                  required
+                ></v-text-field
+              ></v-col>
+            </v-row>
 
             <v-col>
               <small
@@ -198,32 +199,43 @@
                 rounded="xl"
                 v-model="req_obj.preferredLanguage"
                 variant="solo"
-                :items="[ 'English', 'Afrikaans', 'Zulu', 'Xhosa', 'Sotho', 'Tswana', 'Venda', 'Tsonga', 'Swati', 'Ndebele']"
+                :items="[
+                  'English',
+                  'Afrikaans',
+                  'Zulu',
+                  'Xhosa',
+                  'Sotho',
+                  'Tswana',
+                  'Venda',
+                  'Tsonga',
+                  'Swati',
+                  'Ndebele'
+                ]"
                 required
               ></v-autocomplete
             ></v-col>
+          </v-col>
+          <v-col cols="8" offset="2" align="center">
+            <v-btn
+              rounded="xl"
+              boarder="xl"
+              width="80%"
+              height="35"
+              type="submit"
+              variant="elevated"
+              color="#5A82AF"
+              :disabled="click_create_client"
+              >CREATE CLIENT</v-btn
+            >
+          </v-col>
         </v-col>
-        <v-col cols="8" offset="2" align="center">
-          <v-btn
-            rounded="xl"
-            boarder="xl"
-            width="80%"
-            height="35"
-            type="submit"
-            variant="elevated"
-            color="#5A82AF"
-            :disabled="click_create_client"
-            >CREATE CLIENT</v-btn
-          >
-        </v-col>
-      </v-col>
       </v-form>
     </v-sheet>
   </v-dialog>
 </template>
 
 <script lang="ts">
-import axios from "axios";
+import axios from 'axios'
 
 const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
 import { defineComponent } from 'vue'
@@ -241,23 +253,23 @@ export default defineComponent({
     modal_light_theme_color: '#FFFFFF',
     email_rules: [(val: string) => email_reg.test(val) || 'Email should contain an @ symbol'],
     first_name_rules: [
-      (v:string)=> !!v || 'First name is required',
-      (v:string)=> /^[A-Za-z]+$/.test(v) || 'First name must be alphabetic characters',
+      (v: string) => !!v || 'First name is required',
+      (v: string) => /^[A-Za-z]+$/.test(v) || 'First name must be alphabetic characters'
     ],
-    surname_rules:[
-      (v:string) => !!v || 'Surname is required',
-      (v:string) => /^[A-Za-z]+$/.test(v) || 'Surname must be alphabetic characters',
-    ],phone_number_rules: [
-      (v:string) => !!v || 'Phone number is required',
-      (v:string) => /^(\+27\d{9})$/.test(v) || 'Phone number must be a valid South African number',
+    surname_rules: [
+      (v: string) => !!v || 'Surname is required',
+      (v: string) => /^[A-Za-z]+$/.test(v) || 'Surname must be alphabetic characters'
     ],
-
+    phone_number_rules: [
+      (v: string) => !!v || 'Phone number is required',
+      (v: string) => /^(\+27\d{9})$/.test(v) || 'Phone number must be a valid South African number'
+    ],
 
     req_obj: {
       firstName: '',
-      surname:'',
-      phoneNumber:'',
-      email:'',
+      surname: '',
+      phoneNumber: '',
+      email: '',
       preferredLanguage: '',
       address: {
         street: '',
@@ -271,27 +283,25 @@ export default defineComponent({
   }),
   methods: {
     handleSubmission() {
-      alert("Client created successfully");
+      alert('Client created successfully')
       axios
-          .post('http://localhost:3000/client/create', this.req_obj)
-          .then((res) => {
-            alert("Client created successfully");
-            console.log(res)
-          })
-          .catch((res) => {
-            alert("Client creation failed");
-            console.log(res)
-          })
+        .post('http://localhost:3000/client/create', this.req_obj)
+        .then((res) => {
+          alert('Client created successfully')
+          console.log(res)
+        })
+        .catch((res) => {
+          alert('Client creation failed')
+          console.log(res)
+        })
     }
   }
 })
 </script>
 
 <style scope>
-.hello
-{
-  color:white;
-  background-color: #5A82AF;
+.hello {
+  color: white;
+  background-color: #5a82af;
 }
 </style>
-
