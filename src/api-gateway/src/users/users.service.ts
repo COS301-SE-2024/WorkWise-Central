@@ -10,24 +10,20 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
-//import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel('user') private readonly userModel: Model<User>) {}
 
   async create(createUserDto: CreateUserDto) {
-    if (await this.usernameExists(createUserDto.systemDetails.username)) {
+    if (await this.usernameExists(createUserDto.username)) {
       throw new ConflictException(
         'Username already exists, please use another one',
       );
     }
 
-    console.log('createUserDto', createUserDto);
-    createUserDto.created_at = new Date();
-    //createUserDto.uuid = uuidv4();
-
-    const newUser = new this.userModel(createUserDto);
+    const newUserObj = new User(createUserDto);
+    const newUser = new this.userModel(newUserObj);
     const result = await newUser.save();
 
     return new createUserResponseDto(

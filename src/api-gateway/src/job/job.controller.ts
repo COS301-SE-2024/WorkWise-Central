@@ -52,7 +52,6 @@ export class JobController {
   async create(
     @Body() createJobDto: CreateJobDto,
   ): Promise<{ message: { id: Types.ObjectId; message: string } }> {
-    this.validateObjectId(createJobDto.clientId, 'client');
     this.validateObjectId(createJobDto.assignedBy, 'assignedBy');
     this.validateObjectId(createJobDto.companyId, 'company');
 
