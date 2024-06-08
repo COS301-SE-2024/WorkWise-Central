@@ -68,6 +68,10 @@ export class CreateClientDto {
   public address: address;
 
   @ApiProperty()
+  @IsString()
+  clientUsername: string;
+
+  @ApiProperty()
   @IsOptional()
   @IsString()
   registrationNumber?: string;
