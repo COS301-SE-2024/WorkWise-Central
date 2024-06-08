@@ -9,7 +9,7 @@
       ></v-btn>
     </template>
 
-    <template >
+    <template>
       <v-card title="Job Details">
         <v-card-text>Name of Client {{ job.name }} </v-card-text>
         <divider></divider>
@@ -20,10 +20,10 @@
         <v-card-text>Email: {{ job.email }} </v-card-text>
         <v-card-text>Date of job {{ job.date_of_job }} </v-card-text>
         <v-card-actions>
-          <v-btn text="CANCEL" ></v-btn>
+          <v-btn text="CANCEL"></v-btn>
         </v-card-actions>
         <v-card-actions>
-          <v-btn text="ASSIGN" ></v-btn>
+          <v-btn text="ASSIGN"></v-btn>
         </v-card-actions>
       </v-card>
     </template>

@@ -9,7 +9,7 @@ export class CreateCompanyDto extends OmitType(Company, [
   creatorId: Types.ObjectId;
 }
 
-export class createCompanyResponseDto {
+export class CreateCompanyResponseDto {
   id: string;
 
   constructor(message: string) {

@@ -1,23 +1,14 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useDisplay } from 'vuetify'
+import { ref } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
 
 const isVisible = ref(false)
 const drawer = ref(true)
 const dashboardActive = ref(false)
 
-const { smAndUp } = useDisplay()
-const isDesktop = computed(() => smAndUp.value)
-
-const toggleDrawer = () => {
-  drawer.value = !drawer.value
-}
-
 const toggleDashboard = () => {
   dashboardActive.value = !dashboardActive.value
 }
-
 const onProfileClick = () => {
   console.log('Profile icon clicked')
 }
@@ -39,9 +30,9 @@ const onEllipsisClick = () => {
       <v-icon @click="onEllipsisClick">mdi-dots-vertical</v-icon>
     </v-app-bar>
 
-    <v-navigation-drawer app v-model="drawer" :temporary="!isDesktop" :rail="isVisible">
-      <v-list-item title="Company Name"></v-list-item>
-      <v-divider></v-divider>
+      <v-navigation-drawer app v-model="drawer" :rail="isVisible">
+        <v-list-item title="Company Name"></v-list-item>
+        <v-divider></v-divider>
 
       <v-list>
         <v-list-group v-model="dashboardActive">
@@ -196,23 +187,23 @@ const onEllipsisClick = () => {
             <span>Sub-item 2</span>
           </v-list-item>
 
-          <v-list-item link>
-            <template v-slot:prepend>
-              <v-icon>mdi-subdirectory-arrow-right</v-icon>
-            </template>
-            <span>Sub-item 3</span>
-          </v-list-item>
-        </v-list-group>
-
-        <v-list-group>
-          <template v-slot:activator>
             <v-list-item link>
               <template v-slot:prepend>
-                <v-icon> mdi-inbox</v-icon>
+                <v-icon>mdi-subdirectory-arrow-right</v-icon>
               </template>
-              <span>Inbox</span>
+              <span>Sub-item 3</span>
             </v-list-item>
-          </template>
+          </v-list-group>
+
+          <v-list-group>
+            <template v-slot:activator>
+              <v-list-item link>
+                <template v-slot:prepend>
+                  <v-icon> mdi-inbox</v-icon>
+                </template>
+                <span>Inbox</span>
+              </v-list-item>
+            </template>
 
           <v-list-item link>
             <template v-slot:prepend>
@@ -228,15 +219,20 @@ const onEllipsisClick = () => {
             <span>Sub-item 2</span>
           </v-list-item>
 
-          <v-list-item link>
-            <template v-slot:prepend>
-              <v-icon>mdi-subdirectory-arrow-right</v-icon>
-            </template>
-            <span>Sub-item 3</span>
-          </v-list-item>
-        </v-list-group>
-      </v-list>
-    </v-navigation-drawer>
+            <v-list-item link>
+              <template v-slot:prepend>
+                <v-icon>mdi-subdirectory-arrow-right</v-icon>
+              </template>
+              <span>Sub-item 3</span>
+            </v-list-item>
+          </v-list-group>
+        </v-list>
+      </v-navigation-drawer>
+
+      <v-main>
+        <v-container fluid> </v-container>
+      </v-main>
+    </v-app>
   </v-card>
 </template>
 

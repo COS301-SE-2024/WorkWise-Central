@@ -11,7 +11,10 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
-import { CreateCompanyDto } from './dto/create-company.dto';
+import {
+  CreateCompanyDto,
+  CreateCompanyResponseDto,
+} from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
@@ -45,8 +48,10 @@ export class CompanyController {
   })
   @ApiBody({ type: [CreateCompanyDto] })
   @Post('/create')
-  create(@Body() createCompanyDto: CreateCompanyDto) {
-    return this.companyService.create(createCompanyDto);
+  async create(
+    @Body() createCompanyDto: CreateCompanyDto,
+  ): Promise<{ data: CreateCompanyResponseDto }> {
+    return { data: await this.companyService.create(createCompanyDto) };
   }
 
   @ApiBody({ type: AddUserToCompanyDto })
@@ -56,7 +61,7 @@ export class CompanyController {
     this.validateObjectId(addUserDto.currentCompany);
 
     try {
-      return await this.companyService.addEmployee(addUserDto);
+      return { data: await this.companyService.addEmployee(addUserDto) };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
@@ -66,7 +71,7 @@ export class CompanyController {
   @Get('/all')
   findAll() {
     try {
-      return this.companyService.findAll();
+      return { data: this.companyService.findAll() };
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
@@ -78,7 +83,7 @@ export class CompanyController {
   @Get('id/:id')
   findOne(@Param('id') id: string) {
     try {
-      return this.companyService.findById(id);
+      return { data: this.companyService.findById(id) };
     } catch (e) {
       throw new HttpException(e, HttpStatus.NOT_FOUND);
     }
@@ -89,7 +94,7 @@ export class CompanyController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
     try {
-      return this.companyService.update(+id, updateCompanyDto);
+      return { data: this.companyService.update(+id, updateCompanyDto) };
     } catch (e) {
       throw new HttpException(
         'internal server error',
@@ -102,7 +107,7 @@ export class CompanyController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     try {
-      return this.companyService.remove(+id);
+      return { data: this.companyService.remove(+id) };
     } catch (e) {
       throw new HttpException(
         'Internal Server Error',

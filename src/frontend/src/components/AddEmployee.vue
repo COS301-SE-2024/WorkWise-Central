@@ -2,8 +2,8 @@
   <v-dialog max-height="800" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-          base-color="red"
-          rounded="xl"
+        base-color="red"
+        rounded="xl"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         color="white"
@@ -16,17 +16,18 @@
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
       elevation="14"
       rounded="xl"
-      max-height="800" max-width="600"
+      max-height="800"
+      max-width="600"
     >
-      <v-form ref="form" v-model="valid" @submit = "handleSubmit">
-      <v-col>
+      <v-form ref="form" v-model="valid" @submit="handleSubmit">
         <v-col>
-          <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-            Add Employee
-          </h4></v-col
-        >
-        <v-spacer></v-spacer>
-        <v-col>
+          <v-col>
+            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
+              Add Employee
+            </h4></v-col
+          >
+          <v-spacer></v-spacer>
+          <v-col>
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
@@ -87,30 +88,29 @@
                 required
               ></v-text-field
             ></v-col>
-        </v-col>
-        <v-col cols="8" offset="2" align="center">
-          <v-btn
+          </v-col>
+          <v-col cols="8" offset="2" align="center">
+            <v-btn
               color="#5A82AF"
-            rounded="xl"
-            boarder="xl"
-            type="submit"
-            width="80%"
-            height="35"
-            variant="elevated"
-            :disabled="click_create_client"
-            >ADD EMPLOYEE</v-btn
-          >
+              rounded="xl"
+              boarder="xl"
+              type="submit"
+              width="80%"
+              height="35"
+              variant="elevated"
+              :disabled="click_create_client"
+              >ADD EMPLOYEE</v-btn
+            >
+          </v-col>
         </v-col>
-      </v-col>
       </v-form>
     </v-sheet>
   </v-dialog>
 </template>
 
 <script lang="ts">
-
 import { defineComponent } from 'vue'
-import axios from 'axios';
+import axios from 'axios'
 export default defineComponent({
   name: 'RegisterCompanyModal',
   props: ['isdarkmode'],
@@ -125,34 +125,32 @@ export default defineComponent({
 
     req_obj: {
       adminId: sessionStorage['id'],
-      currentCompany:sessionStorage['currentCompany'],
+      currentCompany: sessionStorage['currentCompany'],
       newEmployeeUsername: '',
       compid_for_emp: '',
       link_for_emp: ''
     }
   }),
-  methods:{
-    handleSubmit(){
-      alert("Employee added successfully")
+  methods: {
+    handleSubmit() {
+      alert('Employee added successfully')
 
       axios
-          .post('http://localhost:3000/company/add', this.req_obj)
-          .then((res) => {
-            console.log(res)
-          })
-          .catch((res) => {
-            console.log(res)
-          })
+        .post('http://localhost:3000/company/add', this.req_obj)
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((res) => {
+          console.log(res)
+        })
     }
   }
 })
 </script>
 
 <style scope>
-.hello
-{
-  color:white;
-  background-color: #5A82AF;
+.hello {
+  color: white;
+  background-color: #5a82af;
 }
 </style>
-
