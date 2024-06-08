@@ -18,6 +18,21 @@ export class CreateClientDto {
   @ApiProperty()
   public address: address;
 
+  @Prop({ required: false })
+  registrationNumber?: string;
+
+  @ApiProperty()
+  @Prop({ required: false })
+  name?: string;
+
+  @ApiProperty()
+  @Prop({ required: false })
+  type?: string;
+
+  @ApiProperty()
+  @Prop({ required: false })
+  vatNumber?: string;
+
   @ApiProperty()
   @Prop({ required: false, default: 'English' })
   preferred_Language: string;
