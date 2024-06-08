@@ -6,13 +6,21 @@
       </v-row>
     </v-row>
 
-    <v-container fluid fill-height class="pa-auto ma-auto">
-      <v-row justify="center" xs="4" sm="4" md="12" >
+    <v-container fluid fill-height class="pa-16 ma-auto">
+      <v-row justify="center" xs="4" sm="4" md="12">
         <v-col cols="12">
           >
           <v-row justify="center">
-            <v-col cols="12" xs="4" sm="4" md="12" offset="4">
-              <v-card flat :height="auto" :width="1500" class="pa-11 ma-10">
+            <v-col cols="12" xs="4" sm="4" md="12" offset="3">
+              <v-card
+                flat
+                :height="auto"
+                :width="1500"
+                class="pa-11 ma-10"
+                rounded="xl"
+                elevation-2
+                :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+              >
                 <v-card-title class="d-flex align-center pe-2">
                   <v-icon icon="mdi-video-input-component"></v-icon> &nbsp; Client Details
 
@@ -31,16 +39,18 @@
                 </v-card-title>
 
                 <v-divider></v-divider>
-                <v-data-table :headers="headers" :items="clients" :search="search">
-                  <template v-slot:item.actions="{ item }">
-                    <v-btn icon>
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon>mdi-delete</v-icon>
-                    </v-btn>
-                  </template>
-                </v-data-table>
+                <div style="height: 700px; overflow-y: auto">
+                  <v-data-table :headers="headers" :items="clients" :search="search" rounded="xl">
+                    <template v-slot:item.actions="{ item }">
+                      <v-btn icon>
+                        <v-icon>mdi-pencil</v-icon>
+                      </v-btn>
+                      <v-btn icon>
+                        <v-icon>mdi-delete</v-icon>
+                      </v-btn>
+                    </template>
+                  </v-data-table>
+                </div>
               </v-card>
             </v-col>
           </v-row>
@@ -170,7 +180,7 @@ export default {
         phone: '123-456-7890',
         address: 'Toronto',
 
-        jobRequired: 'M1A 1A1',
+        jobRequired: 'No Jobs Required',
         actions: 'Edit | Delete'
       },
       {
@@ -188,7 +198,7 @@ export default {
         phone: '123-456-7890',
         address: 'Toronto',
 
-        jobRequired: 'M1A 1A1',
+        jobRequired: 'Needs to be done',
         actions: 'Edit | Delete'
       },
       {
@@ -197,7 +207,7 @@ export default {
         phone: '123-456-7890',
         address: 'Toronto',
 
-        jobRequired: 'M1A 1A1',
+        jobRequired: 'Currently in progress',
         actions: 'Edit | Delete'
       }
     ]
@@ -225,6 +235,12 @@ export default {
     },
     searchClient() {
       console.log('Searching client')
+    },
+    editClient() {
+      console.log('Editing client')
+    },
+    deleteClient() {
+      console.log('Deleting client')
     }
   }
 }
