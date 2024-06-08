@@ -119,6 +119,7 @@ export class User {
       dateOfBirth: createUserDto.personalInfo.dateOfBirth,
       gender: createUserDto.personalInfo.gender,
     };
+    this.personalInfo.contactInfo.email.toLowerCase();
 
     this.joinedCompanies = createUserDto.joinedCompanies as Types.ObjectId[];
 
@@ -127,7 +128,6 @@ export class User {
         displayName: createUserDto.profile.displayImage,
         displayImage: createUserDto.profile.displayImage,
       };
-      // this.profile.displayImage = createUserDto.profile.displayImage;
     } else {
       this.profile = {
         displayName: createUserDto.profile.displayImage,
@@ -182,6 +182,14 @@ export class User {
   @ApiHideProperty()
   @Prop({ required: false })
   public deleted_at: Date;
+
+  @ApiHideProperty()
+  @Prop({ type: [Types.ObjectId], required: false, default: [] })
+  public currentJobAssignments: Types.ObjectId[];
+
+  @ApiHideProperty()
+  @Prop({ type: Types.ObjectId, required: false })
+  public currentCompany: Types.ObjectId;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

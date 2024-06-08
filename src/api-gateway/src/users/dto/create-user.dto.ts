@@ -106,40 +106,11 @@ export class CreateUserDto {
   @IsOptional()
   @IsArray()
   roles?: roles[];
+
+  @IsOptional()
+  @IsString()
+  public currentCompany: Types.ObjectId;
 }
-
-/*export class CreateUserDto extends OmitType(User, [
-  'updated_at',
-  'deleted_at',
-] as const) {
-  @ApiHideProperty()
-  @Prop({ required: false })
-  uuid: string;
-
-  @ApiProperty()
-  systemDetails: systemDetails;
-
-  @ApiProperty()
-  personalInfo: personalInfo;
-
-  @ApiPropertyOptional()
-  address: address;
-
-  @ApiPropertyOptional()
-  joinedCompanies: mongoose.Types.ObjectId[];
-
-  @ApiProperty()
-  contactInfo: contactInfo;
-
-  @ApiProperty()
-  profile: profile;
-
-  @ApiPropertyOptional()
-  skills: string[];
-
-  @ApiPropertyOptional()
-  roles: roles[];
-}*/
 
 export class createUserResponseDto {
   response: string;
