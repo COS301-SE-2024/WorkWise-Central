@@ -6,37 +6,44 @@
       </v-row>
     </v-row>
 
-    <v-container
-      ><v-row justify="center">
-        <v-col cols="2" sm="1" md="1">
-          <v-btn height="50" width="100" rounded="xl">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn> </v-col
-        ><v-col cols="2" sm="1" md="1">
-          <v-btn height="50" width="100" rounded="xl">
-            <v-icon>mdi-filter</v-icon>
-          </v-btn>
-        </v-col>
-        <v-col cols="8" sm="2" md="4" xl="6"
-          ><SearchBar :isDarkMode="isdarkmode" :text="'Search Clients'"
-        /></v-col>
-      </v-row>
-      <v-row justify="center">
-        <v-col v-for="n in 4" :key="n" cols="12" sm="4" md="6" xl="8" offset="2"
-          ><v-sheet
-            ><v-col cols="12" sm="4" md="6" xl="8" offset="2">
-              <v-card rounded="xl">
-                <v-card>
-                  <v-card-title>Client Details</v-card-title>
-                  <v-card-text>
-                    <div>Name: John Doe</div>
-                    <div>Number: 1234567890</div>
-                    <div>Email: example@example.com</div>
-                  </v-card-text>
-                </v-card>
-              </v-card>
-            </v-col></v-sheet
+    <v-container fluid fill-height class="pa-auto ma-auto">
+      <v-row justify="center" xs="4" sm="4" md="12" >
+        <v-col cols="12">
           >
+          <v-row justify="center">
+            <v-col cols="12" xs="4" sm="4" md="12" offset="4">
+              <v-card flat :height="auto" :width="1500" class="pa-11 ma-10">
+                <v-card-title class="d-flex align-center pe-2">
+                  <v-icon icon="mdi-video-input-component"></v-icon> &nbsp; Client Details
+
+                  <v-spacer></v-spacer>
+
+                  <v-text-field
+                    v-model="search"
+                    density="compact"
+                    label="Search"
+                    prepend-inner-icon="mdi-magnify"
+                    variant="solo-filled"
+                    flat
+                    hide-details
+                    single-line
+                  ></v-text-field>
+                </v-card-title>
+
+                <v-divider></v-divider>
+                <v-data-table :headers="headers" :items="clients" :search="search">
+                  <template v-slot:item.actions="{ item }">
+                    <v-btn icon>
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                    <v-btn icon>
+                      <v-icon>mdi-delete</v-icon>
+                    </v-btn>
+                  </template>
+                </v-data-table>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-col></v-row
       ></v-container
     >
@@ -58,11 +65,167 @@ export default {
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
-    modal_light_theme_color: '#FFFFFF'
+    modal_light_theme_color: '#FFFFFF',
+    headers: [
+      {
+        title: 'Name',
+        align: 'start',
+        sortable: true,
+        value: 'name',
+        key: 'name'
+      },
+      { title: 'Email', value: 'email', key: 'email' },
+      { title: 'Phone', value: 'phone', key: 'phone' },
+      { title: 'Address', value: 'address', key: 'address' },
+      { title: 'Job Required', value: 'jobRequired', key: 'jobRequired' },
+      { title: 'Actions', value: 'actions', key: 'actions' }
+    ],
+    search: '',
+    clients: [
+      {
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        phone: '123-456-7890',
+        address: 'Toronto',
+        province: 'Ontario',
+        country: 'Canada',
+        jobRequired: 'M1A 1A1',
+        actions: 'Edit | Delete'
+      },
+      {
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        phone: '123-456-7890',
+        address: 'Toronto',
+
+        jobRequired: 'M1A 1A1',
+        actions: 'Edit | Delete'
+      },
+      {
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        phone: '123-456-7890',
+        address: 'Toronto',
+
+        jobRequired: 'M1A 1A1',
+        actions: 'Edit | Delete'
+      },
+      {
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        phone: '123-456-7890',
+        address: 'Toronto',
+
+        jobRequired: 'M1A 1A1',
+        actions: 'Edit | Delete'
+      },
+      {
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        phone: '123-456-7890',
+        address: 'Toronto',
+
+        jobRequired: 'M1A 1A1',
+        actions: 'Edit | Delete'
+      },
+      {
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        phone: '123-456-7890',
+        address: 'Toronto',
+
+        jobRequired: 'M1A 1A1',
+        actions: 'Edit | Delete'
+      },
+      {
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        phone: '123-456-7890',
+        address: 'Toronto',
+
+        jobRequired: 'M1A 1A1',
+        actions: 'Edit | Delete'
+      },
+      {
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        phone: '123-456-7890',
+        address: 'Toronto',
+
+        jobRequired: 'M1A 1A1',
+        actions: 'Edit | Delete'
+      },
+      {
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        phone: '123-456-7890',
+        address: 'Toronto',
+
+        jobRequired: 'M1A 1A1',
+        actions: 'Edit | Delete'
+      },
+      {
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        phone: '123-456-7890',
+        address: 'Toronto',
+
+        jobRequired: 'M1A 1A1',
+        actions: 'Edit | Delete'
+      },
+      {
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        phone: '123-456-7890',
+        address: 'Toronto',
+
+        jobRequired: 'M1A 1A1',
+        actions: 'Edit | Delete'
+      },
+      {
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        phone: '123-456-7890',
+        address: 'Toronto',
+
+        jobRequired: 'M1A 1A1',
+        actions: 'Edit | Delete'
+      },
+      {
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        phone: '123-456-7890',
+        address: 'Toronto',
+
+        jobRequired: 'M1A 1A1',
+        actions: 'Edit | Delete'
+      }
+    ]
   }),
   components: {
     NavigationBar,
     SearchBar
+  },
+  computed: {
+    filteredClients() {
+      if (!this.search) return this.clients
+      return this.clients.filter((client) => {
+        return Object.values(client).some((value) =>
+          value.toString().toLowerCase().includes(this.search.toLowerCase())
+        )
+      })
+    }
+  },
+  method: {
+    onProfileClick() {
+      console.log('Profile icon clicked')
+    },
+    onEllipsisClick() {
+      console.log('Ellipsis icon clicked')
+    },
+    searchClient() {
+      console.log('Searching client')
+    }
   }
 }
 </script>
