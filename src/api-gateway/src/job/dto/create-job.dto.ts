@@ -74,9 +74,13 @@ class clientFeedback {
 }
 
 export class CreateJobDto {
-  @ApiProperty()
+  /*  @ApiProperty()
   @IsObjectId()
-  clientId: string;
+  clientId: string;*/
+
+  @ApiProperty()
+  @IsString()
+  clientUsername: string;
 
   @ApiProperty()
   @IsObjectId()
