@@ -1,13 +1,13 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
   HttpException,
   HttpStatus,
+  Param,
+  Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
@@ -18,8 +18,9 @@ import {
   ApiInternalServerErrorResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import mongoose from 'mongoose';
+import mongoose, { FlattenMaps, Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
+import { Client } from './entities/client.entity';
 
 @ApiTags('Client')
 @Controller('client')
@@ -45,9 +46,11 @@ export class ClientController {
   @Post('/create')
   async create(
     @Body() createClientDto: CreateClientDto,
-  ): Promise<{ message: string }> {
+  ): Promise<{ data: string }> {
     try {
-      return await this.clientService.create(createClientDto);
+      return {
+        data: await this.clientService.create(createClientDto),
+      };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
@@ -55,9 +58,9 @@ export class ClientController {
 
   @UseGuards(AuthGuard)
   @Get('all')
-  findAll() {
+  async findAll() {
     try {
-      return this.clientService.findAllClients();
+      return { data: await this.clientService.findAllClients() };
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
@@ -67,10 +70,12 @@ export class ClientController {
   }
 
   @Get('id/:id')
-  findOne(@Param('id') id: string) {
+  async findOne(
+    @Param('id') id: string,
+  ): Promise<{ data: FlattenMaps<Client> & { _id: Types.ObjectId } }> {
     this.validateObjectId(id);
     try {
-      return this.clientService.findClientById(id);
+      return { data: await this.clientService.findClientById(id) };
     } catch (e) {
       console.log(e);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
@@ -78,8 +83,11 @@ export class ClientController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateClientDto: UpdateClientDto) {
-    return this.clientService.update(+id, updateClientDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateClientDto: UpdateClientDto,
+  ): { data: string } {
+    return { data: this.clientService.update(+id, updateClientDto) };
   }
 
   @UseGuards(AuthGuard)

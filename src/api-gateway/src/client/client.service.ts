@@ -22,14 +22,12 @@ export class ClientService {
     const newClient = new this.clientModel(createdClient);
     const result = await newClient.save();
 
-    return {
-      message: `Client: "${result.details.firstName} ${result.details.surname}" has been created`,
-    };
+    return `Client: "${result.details.firstName} ${result.details.surname}" has been created`;
   }
 
   async findAllClients() {
     try {
-      return this.clientModel.find().exec();
+      return this.clientModel.find().lean().exec();
     } catch (error) {
       console.log(error);
       throw new ServiceUnavailableException('Clients could not be retrieved');
