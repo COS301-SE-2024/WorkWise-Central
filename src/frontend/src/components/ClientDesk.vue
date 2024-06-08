@@ -20,9 +20,10 @@
                 rounded="xl"
                 elevation-2
                 :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                border="md"
               >
                 <v-card-title class="d-flex align-center pe-2">
-                  <v-icon icon="mdi-video-input-component"></v-icon> &nbsp; Client Details
+                  <v-icon icon="mdi-account"></v-icon> &nbsp; Client Details
 
                   <v-spacer></v-spacer>
 
@@ -36,34 +37,43 @@
                     hide-details
                     single-line
                   ></v-text-field>
+                  <v-spacer></v-spacer>
+                  <v-btn size="large" @click="openAddClient">New Client</v-btn>
                 </v-card-title>
 
                 <v-divider></v-divider>
                 <div style="height: 700px; overflow-y: auto">
                   <v-data-table :headers="headers" :items="clients" :search="search" rounded="xl">
                     <template v-slot:item.actions="{ item }">
-                      <v-btn icon>
-                        <v-icon>mdi-pencil</v-icon>
-                      </v-btn>
-                      <v-btn icon>
-                        <v-icon>mdi-delete</v-icon>
-                      </v-btn>
+                      <v-col cols="6">
+                        <v-btn icon size="small">
+                          <v-icon>mdi-pencil</v-icon>
+                        </v-btn>
+                      </v-col>
+                      <v-col cols="6"
+                        ><v-btn icon size="small">
+                          <v-icon>mdi-delete</v-icon>
+                        </v-btn></v-col
+                      >
+                      <v-col cols="6"
+                        ><v-btn icon size="small"> <v-icon icon="md:info"></v-icon> </v-btn
+                      ></v-col>
                     </template>
                   </v-data-table>
                 </div>
               </v-card>
             </v-col>
-          </v-row>
-        </v-col></v-row
-      ></v-container
-    >
+          </v-row> </v-col
+      ></v-row>
+      <v-col> <ClientDetails v-model="clientDialog" @close="clientDialog = false" /></v-col>
+    </v-container>
   </v-app>
 </template>
 
 <script>
 import NavigationBar from './NavigationBar.vue'
 import SearchBar from './SearchBar.vue'
-
+import ClientDetails from './AddClient.vue'
 export default {
   name: 'ClientDesk',
 
@@ -71,7 +81,9 @@ export default {
     isDarkMode: Boolean
   },
   data: () => ({
-    isdarkmode: true,
+    openAddClient: false,
+    isdarkmode: false,
+    clientDialog: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
@@ -214,7 +226,8 @@ export default {
   }),
   components: {
     NavigationBar,
-    SearchBar
+    SearchBar,
+    ClientDetails
   },
   computed: {
     filteredClients() {
@@ -241,6 +254,9 @@ export default {
     },
     deleteClient() {
       console.log('Deleting client')
+    },
+    openAddClient() {
+      this.clientDialog = true
     }
   }
 }

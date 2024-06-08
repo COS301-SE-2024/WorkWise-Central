@@ -30,9 +30,9 @@ const onEllipsisClick = () => {
       <v-icon @click="onEllipsisClick">mdi-dots-vertical</v-icon>
     </v-app-bar>
 
-      <v-navigation-drawer app v-model="drawer" :rail="isVisible">
-        <v-list-item title="Company Name"></v-list-item>
-        <v-divider></v-divider>
+    <v-navigation-drawer app v-model="drawer" :rail="isVisible">
+      <v-list-item title="Company Name"></v-list-item>
+      <v-divider></v-divider>
 
       <v-list>
         <v-list-group v-model="dashboardActive">
@@ -187,23 +187,23 @@ const onEllipsisClick = () => {
             <span>Sub-item 2</span>
           </v-list-item>
 
+          <v-list-item link>
+            <template v-slot:prepend>
+              <v-icon>mdi-subdirectory-arrow-right</v-icon>
+            </template>
+            <span>Sub-item 3</span>
+          </v-list-item>
+        </v-list-group>
+
+        <v-list-group>
+          <template v-slot:activator>
             <v-list-item link>
               <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
+                <v-icon> mdi-inbox</v-icon>
               </template>
-              <span>Sub-item 3</span>
+              <span>Inbox</span>
             </v-list-item>
-          </v-list-group>
-
-          <v-list-group>
-            <template v-slot:activator>
-              <v-list-item link>
-                <template v-slot:prepend>
-                  <v-icon> mdi-inbox</v-icon>
-                </template>
-                <span>Inbox</span>
-              </v-list-item>
-            </template>
+          </template>
 
           <v-list-item link>
             <template v-slot:prepend>
@@ -219,20 +219,19 @@ const onEllipsisClick = () => {
             <span>Sub-item 2</span>
           </v-list-item>
 
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 3</span>
-            </v-list-item>
-          </v-list-group>
-        </v-list>
-      </v-navigation-drawer>
+          <v-list-item link>
+            <template v-slot:prepend>
+              <v-icon>mdi-subdirectory-arrow-right</v-icon>
+            </template>
+            <span>Sub-item 3</span>
+          </v-list-item>
+        </v-list-group>
+      </v-list>
+    </v-navigation-drawer>
 
-      <v-main>
-        <v-container fluid> </v-container>
-      </v-main>
-    </v-app>
+    <v-main>
+      <v-container fluid> </v-container>
+    </v-main>
   </v-card>
 </template>
 

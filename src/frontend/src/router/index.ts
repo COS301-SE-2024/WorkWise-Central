@@ -59,6 +59,12 @@ const router = createRouter({
       component: Modals
     },
     {
+      path: '/client',
+      name: 'client',
+      component: Client
+    },
+    
+    {
       path: '/testview',
       name: 'testview',
       component: () => import('../views/TestView.vue')
