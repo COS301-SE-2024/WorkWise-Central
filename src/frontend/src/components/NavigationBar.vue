@@ -16,12 +16,51 @@ const onProfileClick = () => {
 const onEllipsisClick = () => {
   console.log('Ellipsis icon clicked')
 }
+
+// Drop down list items and routes with icons for each
+
+const dashboardItems = ref([
+    { icon: 'dashboard_icon_1', text: 'Dashboard Item 1', route: '/dashboard/item1' },
+    { icon: 'dashboard_icon_2', text: 'Dashboard Item 2', route: '/dashboard/item2' },
+    { icon: 'dashboard_icon_3', text: 'Dashboard Item 3', route: '/dashboard/item3' }
+]);
+
+const jobItems = ref([
+    { icon: 'job_icon_1', text: 'Job Item 1', route: '/jobs/item1' },
+    { icon: 'job_icon_2', text: 'Job Item 2', route: '/jobs/item2' },
+    { icon: 'job_icon_3', text: 'Job Item 3', route: '/jobs/item3' }
+]);
+
+const clientItems = ref([
+    { icon: 'client_icon_1', text: 'Client Item 1', route: '/clients/item1' },
+    { icon: 'client_icon_2', text: 'Client Item 2', route: '/clients/item2' },
+    { icon: 'client_icon_3', text: 'Client Item 3', route: '/clients/item3' }
+]);
+
+const employeesItems = ref([
+    { icon: 'employee_icon_1', text: 'Employee Item 1', route: '/employees/item1' },
+    { icon: 'employee_icon_2', text: 'Employee Item 2', route: '/employees/item2' },
+    { icon: 'employee_icon_3', text: 'Employee Item 3', route: '/employees/item3' }
+]);
+
+const inventoryItems = ref([
+    { icon: 'inventory_icon_1', text: 'Inventory Item 1', route: '/inventory/item1' },
+    { icon: 'inventory_icon_2', text: 'Inventory Item 2', route: '/inventory/item2' },
+    { icon: 'inventory_icon_3', text: 'Inventory Item 3', route: '/inventory/item3' }
+]);
+
+const inboxItems = ref([
+    { icon: 'inbox_icon_1', text: 'Inbox Item 1', route: '/inbox/item1' },
+    { icon: 'inbox_icon_2', text: 'Inbox Item 2', route: '/inbox/item2' },
+    { icon: 'inbox_icon_3', text: 'Inbox Item 3', route: '/inbox/item3' }
+]);
+
 </script>
 
 <template>
   <v-card>
     <v-app>
-      <v-app-bar app color="surface">
+      <v-app-bar app color="surface" :elevation="8">
         <v-app-bar-nav-icon @click="isVisible = !isVisible">
           <v-icon>{{ isVisible ? 'mdi-close' : 'mdi-menu' }}</v-icon>
         </v-app-bar-nav-icon>
