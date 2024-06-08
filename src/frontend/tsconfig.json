@@ -7,9 +7,6 @@
     {
       "path": "./tsconfig.app.json"
     },
-    {
-      "path": "./tsconfig.vitest.json"
-    }
   ],
   "compilerOptions": {
     "target": "ES6",
@@ -23,6 +20,7 @@
       ],
       "typeRoots": ["./node_modules/@types", "./types"],
     },
-    "allowJs": true
+    "allowJs": true,
+    "noImplicitAny": false,
   }
 }

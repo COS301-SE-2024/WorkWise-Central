@@ -1,93 +1,118 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prop } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
+import {
+  IsArray,
+  IsDate,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { IsObjectId } from 'class-validator-mongo-object-id';
 
 class address {
   @ApiProperty()
-  @Prop({ type: String, required: true })
+  @IsString()
   street: string;
+
   @ApiProperty()
-  @Prop({ type: String, required: true })
+  @IsString()
   suburb: string;
+
   @ApiProperty()
-  @Prop({ type: String, required: true })
+  @IsString()
   city: string;
+
   @ApiProperty()
-  @Prop({ type: String, required: true })
+  @IsString()
   postalCode: string;
+
   @ApiProperty()
-  @Prop({ type: String, required: true })
+  @IsOptional()
+  @IsString()
   complex: string;
+
+  @IsString()
   @ApiProperty()
-  @Prop({ type: String, required: true })
   houseNumber: string;
 }
 
-export class details {
+class details {
   @ApiProperty()
-  @Prop({ required: true })
+  @IsString()
   heading: string;
 
   @ApiProperty()
-  @Prop({ required: true })
+  @IsString()
   description: string;
 
   @ApiProperty()
-  @Prop({ required: false })
+  @IsString()
+  @IsOptional()
   notes: string;
 
   @ApiProperty()
-  @Prop({ required: true })
+  @IsObject()
   address: address;
 }
 
-export class clientFeedback {
+class clientFeedback {
   @ApiProperty()
-  @Prop({ required: false, default: 10 })
+  @IsOptional()
+  @IsNumber()
   jobRating: number;
 
   @ApiProperty()
-  @Prop({ required: false, default: 10 })
+  @IsOptional()
+  @IsNumber()
   customerServiceRating: number;
 
   @ApiProperty()
-  @Prop({ required: false, default: 10 })
+  @IsOptional()
+  @IsString()
   comments: string;
 }
 
 export class CreateJobDto {
-  @ApiProperty()
-  @Prop({ required: true })
-  clientId: string;
+  /*  @ApiProperty()
+  @IsObjectId()
+  clientId: string;*/
 
   @ApiProperty()
-  @Prop({ required: true })
-  companyId: string;
+  @IsString()
+  clientUsername: string;
 
   @ApiProperty()
-  @Prop({ required: true })
+  @IsObjectId()
+  companyId: Types.ObjectId;
+
+  @ApiProperty()
+  @IsString()
   assignedBy: string;
 
   @ApiProperty()
-  @Prop({ required: true })
+  @IsOptional()
+  @IsDate()
   scheduledDateTime: Date;
 
   @ApiProperty()
-  @Prop({ required: false, default: 'Not Started' })
+  @IsString()
   status: string;
 
   @ApiProperty()
-  @Prop({ required: false })
+  @IsArray()
   inventoryUsed: [string]; //TODO: Convert to ObjectId
 
   @ApiProperty()
-  @Prop({ required: true })
+  @IsObject()
   details: details;
 
   @ApiProperty()
-  @Prop({ required: false })
+  @IsOptional()
   clientFeedback: clientFeedback;
 
   @ApiProperty()
-  @Prop({ type: [String], required: true, default: [] })
+  @IsOptional()
+  @IsArray()
   imagesTaken: string[];
 }

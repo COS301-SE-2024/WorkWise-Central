@@ -1,14 +1,15 @@
 <template>
   <div>
     <h2>Modals</h2>
-    <br>
-    <RegisterCompanyModal/>
-    <br>    <br>
+    <br />
+    <RegisterCompanyModal />
+    <br />
+    <br />
 
     <AddEmployee />
-    <br><br>
+    <br /><br />
     <ClientDetails />
-    <br><br>
+    <br /><br />
     <JobDetailsList />
   </div>
 </template>

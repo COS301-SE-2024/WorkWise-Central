@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import {
   CreateCompanyDto,
-  createCompanyResponseDto,
+  CreateCompanyResponseDto,
 } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -37,7 +37,7 @@ export class CompanyService {
     createCompanyDto.created_at = new Date();
     const newCompany = new this.companyModel(createCompanyDto);
     const result = await newCompany.save();
-    return new createCompanyResponseDto(`${result.id}`);
+    return new CreateCompanyResponseDto(`${result.id}`);
   }
 
   async companyExists(id: string): Promise<boolean> {
@@ -76,7 +76,7 @@ export class CompanyService {
 
   findAll() {
     try {
-      return this.companyModel.find().exec();
+      return this.companyModel.find().lean().exec();
     } catch (error) {
       console.log(error);
       throw new ServiceUnavailableException('Users could not be retrieved');
@@ -167,9 +167,7 @@ export class CompanyService {
     console.log(resultOfUpdate);
     console.log(updateUser);
 
-    return {
-      message: `${updateUser.systemDetails.username} added to successfully`,
-    };
+    return `${updateUser.systemDetails.username} added to successfully`;
   }
 
   update(id: number, updateCompanyDto: UpdateCompanyDto) {
