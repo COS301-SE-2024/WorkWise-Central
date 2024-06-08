@@ -8,12 +8,14 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 class contactInfo {
   @Prop({ type: String, required: true })
   phoneNumber: string;
 
-  @Prop({ type: String, required: true, lowercase: true })
+  @IsString()
+  @Transform(({ value }) => value.toLowerCase())
   email: string;
 }
 

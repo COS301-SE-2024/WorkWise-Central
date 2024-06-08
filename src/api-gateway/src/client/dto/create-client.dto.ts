@@ -59,7 +59,7 @@ export class CreateClientDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsEmail()
-  @Transform(({ value }) => ('' + value).toLowerCase())
+  @Transform(({ value }) => value.toLowerCase())
   public email: string;
 
   @ApiProperty()

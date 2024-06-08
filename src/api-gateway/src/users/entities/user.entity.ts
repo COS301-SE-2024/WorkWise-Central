@@ -119,7 +119,7 @@ export class User {
       dateOfBirth: createUserDto.personalInfo.dateOfBirth,
       gender: createUserDto.personalInfo.gender,
     };
-    this.personalInfo.contactInfo.email.toLowerCase();
+    //this.personalInfo.contactInfo.email.toLowerCase();
 
     this.joinedCompanies = createUserDto.joinedCompanies as Types.ObjectId[];
 

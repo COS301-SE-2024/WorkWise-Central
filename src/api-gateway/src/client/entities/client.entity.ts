@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { CreateClientDto } from '../dto/create-client.dto';
+import { Transform } from 'class-transformer';
+import { IsString } from 'class-validator';
 
 export class address {
   @ApiProperty()
@@ -29,7 +31,8 @@ export class clientInfo {
   phoneNumber: string;
 
   @ApiProperty()
-  @Prop({ type: String, required: true, lowercase: true })
+  @IsString()
+  @Transform(({ value }) => value.toLowerCase())
   email: string;
 
   @ApiProperty()
