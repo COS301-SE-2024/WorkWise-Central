@@ -3,6 +3,7 @@ import * as bcrypt from 'bcryptjs';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import * as mongoose from 'mongoose';
 import { Types } from 'mongoose';
+import { CreateUserDto } from '../dto/create-user.dto';
 
 @Schema()
 export class systemDetails {
@@ -67,7 +68,7 @@ export class personalInfo {
 export class profile {
   @Prop({ type: String, required: true })
   displayName: string;
-  @ApiHideProperty()
+
   @Prop({
     required: false,
     default:
@@ -104,6 +105,44 @@ export class availability {
 
 @Schema()
 export class User {
+  constructor(createUserDto: CreateUserDto) {
+    this.systemDetails = {
+      username: createUserDto.username,
+      password: createUserDto.password,
+    };
+    this.personalInfo = {
+      address: createUserDto.address,
+      contactInfo: createUserDto.contactInfo,
+      firstName: createUserDto.personalInfo.firstName,
+      surname: createUserDto.personalInfo.surname,
+      preferredLanguage: createUserDto.personalInfo.preferredLanguage,
+      dateOfBirth: createUserDto.personalInfo.dateOfBirth,
+      gender: createUserDto.personalInfo.gender,
+    };
+
+    this.joinedCompanies = createUserDto.joinedCompanies as Types.ObjectId[];
+
+    if (createUserDto.profile.displayImage != null) {
+      this.profile = {
+        displayName: createUserDto.profile.displayImage,
+        displayImage: createUserDto.profile.displayImage,
+      };
+      // this.profile.displayImage = createUserDto.profile.displayImage;
+    } else {
+      this.profile = {
+        displayName: createUserDto.profile.displayImage,
+        displayImage:
+          'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
+      };
+    }
+
+    this.profile.displayName = createUserDto.profile.displayName;
+    this.skills = createUserDto.skills;
+    this.roles = createUserDto.roles;
+    if (createUserDto.roles) this.roles = createUserDto.roles;
+    this.created_at = new Date();
+  }
+
   @ApiProperty()
   @Prop({ required: true })
   systemDetails: systemDetails;
