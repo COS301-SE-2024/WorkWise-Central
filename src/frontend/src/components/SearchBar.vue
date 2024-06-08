@@ -1,12 +1,10 @@
 <template>
-  
-    <v-text-field
-      append-icon="mdi-magnify"
-      rounded="xl"
-      :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
-      :label="text"
-    ></v-text-field>
-
+  <v-text-field
+    append-icon="mdi-magnify"
+    rounded="xl"
+    :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+    :label="text"
+  ></v-text-field>
 </template>
 
 <script lang="ts">

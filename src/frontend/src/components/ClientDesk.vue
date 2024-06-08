@@ -44,7 +44,7 @@
                 <v-divider></v-divider>
                 <div style="height: 700px; overflow-y: auto">
                   <v-data-table :headers="headers" :items="clients" :search="search" rounded="xl">
-                    <template v-slot:item.actions="{ item }">
+                    <template v-slot:item="{}">
                       <v-col cols="6">
                         <v-btn icon size="small">
                           <v-icon>mdi-pencil</v-icon>
@@ -72,7 +72,7 @@
 
 <script>
 import NavigationBar from './NavigationBar.vue'
-import SearchBar from './SearchBar.vue'
+
 import ClientDetails from './AddClient.vue'
 export default {
   name: 'ClientDesk',
@@ -226,7 +226,6 @@ export default {
   }),
   components: {
     NavigationBar,
-    SearchBar,
     ClientDetails
   },
   computed: {

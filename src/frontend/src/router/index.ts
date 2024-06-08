@@ -63,7 +63,7 @@ const router = createRouter({
       name: 'client',
       component: Client
     },
-    
+
     {
       path: '/testview',
       name: 'testview',
