@@ -16,10 +16,12 @@
     // this enables stricter inference for data properties on `this`
     "strict": true,
     "module": "NodeNext",
+    "types": ["vuetify"],
     "paths": {
       "@/*": [
         "./src/*" // set path `@/*` as alias of `src/*`
-      ]
+      ],
+      "typeRoots": ["./node_modules/@types", "./types"],
     },
     "allowJs": true
   }

@@ -1,6 +1,13 @@
-// import Vue from 'vue';
 // import Vuetify from 'vuetify/lib'
-// import 'vuetify/dist/vuetify.min.css';
+import 'vuetify/dist/vuetify.min.css'
+import { VCalendar } from 'vuetify/labs/VCalendar'
+import { createVuetify } from 'vuetify'
+
+export default createVuetify({
+  components: {
+    VCalendar
+  }
+})
 
 // Vue.use(Vuetify,{
 //     theme: {
