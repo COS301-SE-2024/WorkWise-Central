@@ -89,7 +89,7 @@ export class Client {
 
   @ApiProperty()
   @Prop({ required: false, default: 'none' })
-  clientUsername: string;
+  clientUsername?: string;
 
   @ApiProperty()
   @Prop({ required: true })
