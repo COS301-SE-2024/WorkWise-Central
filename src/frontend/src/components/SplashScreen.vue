@@ -15,40 +15,45 @@
       <v-btn @click="toggleDarkMode">Theme change</v-btn>
     </v-app-bar>
     <!-- Main Content -->
-    <v-main :class="{ 'modal-dark-theme': isdarkmode, 'modal-light-theme': !isdarkmode }">
-      <v-row style="height: 1195px" no-gutters>
+    <v-main :class="{ 'modal-dark-theme': isdarkmode, 'modal-light-theme': !isdarkmode }" >
+      <v-row style="height: 1000px; width: 2000px " no-gutters>
         <!-- Left Half -->
-        <v-col cols="6" align-self="center">
-          <v-col>
-            <h1
-              :class="[
-                'splash-title',
-                'header-title',
-                'text-center',
-                { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
-              ]"
-            >
-              Welcome To <span class="colorAccent">Work</span>
-              <span class="colorAccent2">Wise</span> Central
-            </h1>
-          </v-col>
-          <v-col>
-            <v-col cols="12" offset="4"
-              ><v-btn
-                color="blue-accent-2"
-                dark
-                @click="loginDialog = true"
-                rounded="xl"
-                align-center
-                justify-center
-                class="my-3 button-width button-height text-center"
-                size="x-large"
+        <v-col cols="6" sm="3" md="6" align-self="center">
+          <v-row justify="center"
+            ><v-col align-self="center">
+              <h1
+                :class="[
+                  'splash-title',
+                  'header-title',
+                  'text-center',
+                  { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
+                ]"
               >
-                Log in
-              </v-btn></v-col
+                Welcome To <span class="colorAccent">Work</span>
+                <span class="colorAccent2">Wise</span> Central
+              </h1>
+            </v-col></v-row
+          >
+
+          <v-col>
+            <v-row justify="center">
+              <v-col cols="8" offset="3"
+                ><v-btn
+                  color="blue-accent-2"
+                  dark
+                  @click="loginDialog = true"
+                  rounded="xl"
+                  align-center
+                  justify-center
+                  class="my-3 button-width button-height text-center"
+                  size="large"
+                >
+                  Log in
+                </v-btn></v-col
+              ></v-row
             >
 
-            <v-dialog v-model="loginDialog" max-width="500" min-height="700">
+            <v-dialog v-model="loginDialog" max-width="400" min-height="500">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -58,7 +63,7 @@
               >
                 <v-col>
                   <v-col>
-                    <h4 class="text-center" style="font-size: 30px; font-weight: lighter">
+                    <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
                       Log into existing account
                     </h4></v-col
                   >
@@ -67,7 +72,7 @@
                     ><v-form ref="form" v-model="valid">
                       <v-row align="center"
                         ><v-col
-                          ><label for="email" style="font-size: 20px; font-weight: lighter"
+                          ><label for="email" style="font-size: 14px; font-weight: lighter"
                             >Username</label
                           >
 
@@ -88,7 +93,7 @@
                       </v-row>
                       <v-row align="center"
                         ><v-col
-                          ><label for="password" style="font-size: 20px; font-weight: lighter"
+                          ><label for="password" style="font-size: 14px; font-weight: lighter"
                             >Password</label
                           >
                           <v-text-field
@@ -114,7 +119,7 @@
                       text
                       @click="login"
                       rounded="xl"
-                      size="x-large"
+                      size="large"
                       color="blue-accent-2"
                       variant="elevated"
                       width="100%"
@@ -127,7 +132,7 @@
                       @click="(signupDialog = true)((loginDialog = false))"
                       rounded="xl"
                       color="blue-grey-darken-1"
-                      size="x-large"
+                      size="large"
                       variant="elevated"
                       width="100%"
                     >
@@ -143,22 +148,24 @@
                 >
               </v-sheet>
             </v-dialog>
-
-            <v-col cols="12" offset="4"
-              ><v-btn
-                color="blue-grey-darken-1"
-                dark
-                @click="signupDialog = true"
-                rounded="xl"
-                align-center
-                class="my-3 button-width button-height text-center"
-                size="x-large"
-              >
-                Sign up
-              </v-btn></v-col
+            <v-row justify="center"
+              ><v-col cols="8" offset="3"
+                ><v-btn
+                  color="blue-grey-darken-1"
+                  dark
+                  @click="signupDialog = true"
+                  rounded="xl"
+                  align-center
+                  class="my-3 button-width button-height text-center"
+                  size="large"
+                >
+                  Sign up
+                </v-btn></v-col
+              ></v-row
             >
+
             <!-- Flow 1 -->
-            <v-dialog v-model="signupDialog" max-width="500" min-height="700">
+            <v-dialog v-model="signupDialog" max-width="400" min-height="700">
               <v-sheet
                 elevation="14"
                 rounded="xl"
@@ -168,7 +175,7 @@
               >
                 <v-col>
                   <v-col>
-                    <h4 class="text-center" style="font-size: 30px; font-weight: lighter">
+                    <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
                       Create an account
                     </h4></v-col
                   >
@@ -178,7 +185,7 @@
                     <v-form ref="form" v-model="valid">
                       <v-row align="center"
                         ><v-col>
-                          <label>Email</label>
+                          <label style="font-size: 14px; font-weight: lighter">Email</label>
                           <v-text-field
                             :bg-color="
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -194,7 +201,7 @@
                       ></v-row>
                       <v-row
                         ><v-col
-                          ><label>Password</label>
+                          ><label style="font-size: 14px; font-weight: lighter">Password</label>
                           <v-text-field
                             :bg-color="
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -211,7 +218,7 @@
                       ></v-row>
                       <v-row
                         ><v-col
-                          ><label>Confirm Password</label
+                          ><label style="font-size: 14px; font-weight: lighter">Confirm Password</label
                           ><v-text-field
                             :bg-color="
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -236,7 +243,7 @@
                       rounded="xl"
                       boarder="xl"
                       width="100%"
-                      size="x-large"
+                      size="large"
                       variant="elevated"
                       color="blue-accent-2"
                       >Continue</v-btn
@@ -246,7 +253,7 @@
                       @click="(loginDialog = true), (signupDialog = false)"
                       rounded="xl"
                       width="100%"
-                      size="x-large"
+                      size="large"
                       variant="elevated"
                       color="blue-grey-darken-1"
                       >Log in</v-btn
@@ -256,7 +263,7 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 2 -->
-            <v-dialog v-model="signup1Dialog" max-width="500px" min-height="700px">
+            <v-dialog v-model="signup1Dialog" max-width="400" min-height="700">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -266,7 +273,7 @@
               >
                 <v-col>
                   <v-col>
-                    <h4 class="text-center" style="font-size: 30px; font-weight: lighter">
+                    <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
                       Create your profile
                     </h4></v-col
                   >
@@ -275,7 +282,7 @@
                     <v-form ref="form" v-model="valid">
                       <v-row align="center"
                         ><v-col
-                          ><label>Name</label>
+                          ><label style="font-size: 14px; font-weight: lighter">Name</label>
                           <v-text-field
                             :bg-color="
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -292,7 +299,7 @@
                       </v-row>
                       <v-row
                         ><v-col
-                          ><label>Surname</label
+                          ><label style="font-size: 14px; font-weight: lighter">Surname</label
                           ><v-text-field
                             :bg-color="
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -315,7 +322,7 @@
                       text
                       @click="nextFlow2"
                       rounded="xl"
-                      size="x-large"
+                      size="large"
                       color="blue-accent-2"
                       variant="elevated"
                       width="100%"
@@ -327,7 +334,7 @@
                       @click="(signupDialog = true)((signup1Dialog = false))"
                       rounded="xl"
                       color="blue-grey-darken-1"
-                      size="x-large"
+                      size="large"
                       variant="elevated"
                       width="100%"
                       >Back</v-btn
@@ -337,7 +344,7 @@
               </v-sheet>
             </v-dialog>
             <v-col xs="3" align-self="center">
-              <v-dialog v-model="signupUsernameDialog" max-width="500px" min-height="700px">
+              <v-dialog v-model="signupUsernameDialog" max-width="400" min-height="700">
                 <v-sheet
                   width="auto"
                   height="700"
@@ -347,14 +354,14 @@
                 >
                   <v-col>
                     <v-col>
-                      <h4 class="text-center" style="font-size: 30px; font-weight: lighter">
+                      <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
                         Create your profile
                       </h4></v-col
                     >
                     <v-form ref="form" v-model="valid">
                       <v-row
                         ><v-col align-self="center"
-                          ><label>Username</label>
+                          ><label style="font-size: 14px; font-weight: lighter">Username</label>
                           <v-select
                             :bg-color="
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -379,7 +386,7 @@
                       text
                       @click="nextFlowUsername"
                       rounded="xl"
-                      size="x-large"
+                      size="large"
                       color="blue-accent-2"
                       variant="elevated"
                       width="100%"
@@ -390,7 +397,7 @@
               </v-dialog>
             </v-col>
             <!-- Flow 3 -->
-            <v-dialog v-model="signup2Dialog" max-width="500" min-height="1100px">
+            <v-dialog v-model="signup2Dialog" max-width="400" min-height="800">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -400,7 +407,7 @@
               >
                 <v-col>
                   <v-col>
-                    <h4 class="text-center" style="font-size: 30px; font-weight: lighter">
+                    <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
                       Create your profile
                     </h4></v-col
                   >
@@ -409,7 +416,7 @@
                     <v-form ref="form" v-model="valid">
                       <v-row align="center"
                         ><v-col
-                          ><label>Date of Birth</label
+                          ><label style="font-size: 14px; font-weight: lighter">Date of Birth</label
                           ><VueDatePicker
                             :bg-color="
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -425,7 +432,7 @@
                       </v-row>
                       <v-row algin="center"
                         ><v-col
-                          ><label>Gender</label>
+                          ><label style="font-size: 14px; font-weight: lighter">Gender</label>
                           <v-select
                             :label="gender ? '' : 'Select your gender'"
                             hint="Chose your gender"
@@ -444,7 +451,7 @@
                       ></v-row>
                       <v-row
                         ><v-col
-                          ><label>Preferred Language</label>
+                          ><label style="font-size: 14px; font-weight: lighter">Preferred Language</label>
                           <v-select
                             color="grey-lighten-4"
                             :label="language ? '' : 'Select your preferred language'"
@@ -471,7 +478,7 @@
                       text
                       @click="nextFlow3"
                       rounded="xl"
-                      size="x-large"
+                      size="large"
                       color="blue-accent-2"
                       variant="elevated"
                       width="100%"
@@ -483,7 +490,7 @@
                       @click="(signup1Dialog = true)((signup2Dialog = false))"
                       rounded="xl"
                       color="blue-grey-darken-1"
-                      size="x-large"
+                      size="large"
                       variant="elevated"
                       width="100%"
                       >Back</v-btn
@@ -493,7 +500,7 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 4 -->
-            <v-dialog v-model="signupAddressDialog" max-width="1000" min-height="1200">
+            <v-dialog v-model="signupAddressDialog" max-width="1000" min-height="900">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -503,7 +510,7 @@
               >
                 <v-col>
                   <v-col>
-                    <h4 class="text-center" style="font-size: 30px; font-weight: lighter">
+                    <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
                       Enter your residential details
                     </h4></v-col
                   >
@@ -512,7 +519,7 @@
                     <v-form ref="form" v-model="valid">
                       <v-row justify="space-around"
                         ><v-col
-                          ><label>Street</label
+                          ><label style="font-size: 14px; font-weight: lighter">Street</label
                           ><v-text-field
                             :bg-color="
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -530,7 +537,7 @@
                       </v-row>
                       <v-row algin="center"
                         ><v-col
-                          ><label>Suburb</label
+                          ><label style="font-size: 14px; font-weight: lighter">Suburb</label
                           ><v-text-field
                             :bg-color="
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -547,7 +554,7 @@
                       ></v-row>
                       <v-row
                         ><v-col
-                          ><label>City</label
+                          ><label style="font-size: 14px; font-weight: lighter">City</label
                           ><v-select
                             :label="city ? '' : 'Select your city'"
                             type="input"
@@ -564,7 +571,7 @@
                       ></v-row>
                       <v-row
                         ><v-col
-                          ><label>Postal Code</label
+                          ><label style="font-size: 14px; font-weight: lighter">Postal Code</label
                           ><v-text-field
                             :bg-color="
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -581,7 +588,7 @@
                       ></v-row>
                       <v-row
                         ><v-col
-                          ><label>Phone Number</label
+                          ><label style="font-size: 14px; font-weight: lighter">Phone Number</label
                           ><v-text-field
                             :bg-color="
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -605,7 +612,7 @@
                       text
                       @click="nextFlowAddress"
                       rounded="xl"
-                      size="x-large"
+                      size="large"
                       color="blue-accent-2"
                       variant="elevated"
                       width="100%"
@@ -617,7 +624,7 @@
                       @click="(signup2Dialog = true)((signupAddressDialog = false))"
                       rounded="xl"
                       color="blue-grey-darken-1"
-                      size="x-large"
+                      size="large"
                       variant="elevated"
                       width="100%"
                       >Back</v-btn
@@ -652,10 +659,19 @@
         </v-col>
 
         <!-- Right Half -->
-        <v-col cols="6">
+        <v-col cols="6" sm="3" md="6">
           <div class="w-full h-full background-image"></div>
         </v-col>
       </v-row>
+      <v-footer :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color">
+        <v-container>
+          <v-row justify="space-between">
+            <v-col cols="12" sm="6">
+              <span>&copy; 2024 WorkWise Central</span>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-footer>
     </v-main>
   </v-app>
 </template>
