@@ -18,7 +18,7 @@
       max-height="800"
       max-width="600"
     >
-      <v-form ref="form" v-model="valid" @submit="handleSubmission">
+      <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
         <v-col>
           <v-col>
             <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -196,7 +196,7 @@
                 color="grey-lighten-4"
                 label="Enter the language preferred by the client"
                 rounded="xl"
-                v-model="req_obj.preferredLanguage"
+                v-model="req_obj.preferred_Language"
                 variant="solo"
                 :items="[
                   'English',
@@ -270,6 +270,7 @@ export default defineComponent({
       phoneNumber: '',
       email: '',
       preferredLanguage: '',
+      companyId: sessionStorage['currentCompany'],
       address: {
         street: '',
         suburb: '',
@@ -282,7 +283,6 @@ export default defineComponent({
   }),
   methods: {
     handleSubmission() {
-      alert('Client created successfully')
       axios
         .post('http://localhost:3000/client/create', this.req_obj)
         .then((res) => {

@@ -419,9 +419,4 @@ export default {
 }
 </script>
 
-<style scope>
-.hello {
-  color: white;
-  background-color: #5a82af;
-}
-</style>
+<style></style>
