@@ -1,12 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
+  IsMongoId,
   IsNotEmpty,
+  IsNumberString,
   IsObject,
   IsOptional,
+  IsPhoneNumber,
   IsString,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { Client } from '../entities/client.entity';
 
 class address {
   @ApiProperty()
@@ -26,7 +30,7 @@ class address {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
+  @IsNumberString()
   postalCode: string;
 
   @ApiProperty()
@@ -36,7 +40,7 @@ class address {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
+  @IsNumberString()
   houseNumber: string;
 }
 
@@ -53,7 +57,7 @@ export class CreateClientDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
+  @IsPhoneNumber()
   public phoneNumber: string;
 
   @ApiProperty()
@@ -68,8 +72,13 @@ export class CreateClientDto {
   public address: address;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
-  clientUsername: string;
+  clientUsername?: string;
+
+  @ApiProperty()
+  @IsMongoId()
+  companyId: string;
 
   @ApiProperty()
   @IsOptional()
@@ -95,4 +104,8 @@ export class CreateClientDto {
   @IsOptional()
   @IsString()
   preferred_Language: string;
+}
+
+export class findClientResponseDto {
+  data: Client[];
 }

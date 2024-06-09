@@ -8,14 +8,19 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
-import { CreateClientDto } from './dto/create-client.dto';
+import {
+  CreateClientDto,
+  findClientResponseDto,
+} from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import {
   ApiBody,
   ApiInternalServerErrorResponse,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import mongoose, { FlattenMaps, Types } from 'mongoose';
@@ -76,6 +81,27 @@ export class ClientController {
     this.validateObjectId(id);
     try {
       return { data: await this.clientService.findClientById(id) };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @ApiResponse({
+    type: findClientResponseDto,
+  })
+  @Get('search?')
+  async findByEmailOrName(
+    @Query('compId')
+    compId: string,
+    @Query('str') str: string,
+  ): Promise<{ data: (FlattenMaps<Client> & { _id: Types.ObjectId })[] }> {
+    this.validateObjectId(compId);
+    const companyId = new mongoose.Types.ObjectId(compId);
+    try {
+      return {
+        data: await this.clientService.findByEmailOrName(companyId, str),
+      };
     } catch (e) {
       console.log(e);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);

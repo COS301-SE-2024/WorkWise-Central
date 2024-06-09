@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import mongoose from 'mongoose';
+import { CreateCompanyDto } from '../dto/create-company.dto';
 
 @Schema()
 export class contactDetails {
@@ -41,6 +42,19 @@ export class address {
 
 @Schema()
 export class Company {
+  constructor(createCompanyDto: CreateCompanyDto) {
+    this.mapFromDto(createCompanyDto);
+    this.created_at = new Date();
+  }
+
+  mapFromDto(dto: CreateCompanyDto) {
+    for (const key in dto) {
+      if (Object.prototype.hasOwnProperty.call(dto, key)) {
+        this[key] = dto[key];
+      }
+    }
+  }
+
   @ApiProperty()
   @Prop({ required: true, unique: true })
   registrationNumber: string;
@@ -50,7 +64,7 @@ export class Company {
   vatNumber: string;
 
   @ApiProperty()
-  @Prop({ required: false })
+  @Prop({ required: true })
   name: string;
 
   @ApiProperty()
@@ -80,6 +94,10 @@ export class Company {
   @ApiHideProperty()
   @Prop({ type: [mongoose.Types.ObjectId], required: true, default: [] })
   inventoryItems: mongoose.Types.ObjectId[];
+
+  @ApiProperty()
+  @Prop({ required: false, default: false })
+  private: boolean;
 
   @ApiHideProperty()
   @Prop({ required: false, default: new Date() })
