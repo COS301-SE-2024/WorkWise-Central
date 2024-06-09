@@ -296,9 +296,5 @@ export default {
   font-weight: bold;
 }
 
-.e-kanban
-{
-  background-color: red;
-}
 
 </style>
