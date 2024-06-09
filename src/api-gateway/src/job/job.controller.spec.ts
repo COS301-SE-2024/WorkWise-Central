@@ -2,11 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JobController } from './job.controller';
 import { JobService } from './job.service';
 import { JwtService } from '@nestjs/jwt';
+import { ClientService } from '../client/client.service';
 
 describe('JobController', () => {
   let controller: JobController;
 
   const mockJobService = {
+    create: jest.fn(),
+    findAll: jest.fn(),
+  };
+
+  const mockClientService = {
     create: jest.fn(),
     findAll: jest.fn(),
   };
@@ -27,6 +33,10 @@ describe('JobController', () => {
         {
           provide: JwtService,
           useValue: mockJwtService,
+        },
+        {
+          provide: ClientService,
+          useValue: mockClientService,
         },
       ],
     }).compile();

@@ -13,6 +13,7 @@ import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { Job } from './entities/job.entity';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
+import { ClientService } from '../client/client.service';
 
 @Injectable()
 export class JobService {
@@ -22,6 +23,7 @@ export class JobService {
     @InjectModel('job') private readonly jobModel: Model<Job>,
     private readonly usersService: UsersService,
     private readonly companyService: CompanyService,
+    private readonly clientService: ClientService,
     //@InjectModel('user') private readonly userModel: Model<User>, //Will be used later
   ) {}
 

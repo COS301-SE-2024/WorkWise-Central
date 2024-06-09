@@ -35,6 +35,7 @@ export class ClientService {
   }
 
   async findClientById(
+    //TODO:Add role enforcement later
     identifier: string,
   ): Promise<FlattenMaps<Client> & { _id: Types.ObjectId }> {
     const result: FlattenMaps<Client> & { _id: Types.ObjectId } =
@@ -53,6 +54,35 @@ export class ClientService {
       throw new NotFoundException('Client not found');
     }
 
+    return result;
+  }
+
+  async findByEmailOrName(companyId: Types.ObjectId, identifier: string) {
+    const regex = `*${identifier}*`;
+    const searchTerm = new RegExp(regex, 'i');
+
+    const result = await this.clientModel
+      .find({
+        $and: [
+          { companyId: companyId },
+          {
+            $or: [
+              { 'clientInfo.email': { $regex: searchTerm } },
+              { 'details.firstName': { $regex: searchTerm } },
+              { 'details.surname': { $regex: searchTerm } },
+            ],
+          },
+          {
+            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+
+    if (result == null) {
+      throw new NotFoundException('Client not found');
+    }
+    console.log(result);
     return result;
   }
 
