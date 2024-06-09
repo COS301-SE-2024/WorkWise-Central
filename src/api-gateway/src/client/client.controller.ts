@@ -12,17 +12,20 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
-import { CreateClientDto } from './dto/create-client.dto';
+import {
+  CreateClientDto,
+  findClientResponseDto,
+} from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import {
   ApiBody,
   ApiInternalServerErrorResponse,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import mongoose, { FlattenMaps, Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
 import { Client } from './entities/client.entity';
-import { IsMongoId, IsObject } from 'class-validator';
 
 @ApiTags('Client')
 @Controller('client')
@@ -84,6 +87,9 @@ export class ClientController {
     }
   }
 
+  @ApiResponse({
+    type: findClientResponseDto,
+  })
   @Get('search?')
   async findByEmailOrName(
     @Query('compId')

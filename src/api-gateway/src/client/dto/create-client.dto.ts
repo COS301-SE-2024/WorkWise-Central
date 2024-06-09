@@ -10,6 +10,7 @@ import {
   IsString,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { Client } from '../entities/client.entity';
 
 class address {
   @ApiProperty()
@@ -102,4 +103,8 @@ export class CreateClientDto {
   @IsOptional()
   @IsString()
   preferred_Language: string;
+}
+
+export class findClientResponseDto {
+  data: Client[];
 }
