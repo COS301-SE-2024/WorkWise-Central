@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
@@ -21,6 +22,7 @@ import {
 import mongoose, { FlattenMaps, Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
 import { Client } from './entities/client.entity';
+import { IsMongoId, IsObject } from 'class-validator';
 
 @ApiTags('Client')
 @Controller('client')
@@ -76,6 +78,24 @@ export class ClientController {
     this.validateObjectId(id);
     try {
       return { data: await this.clientService.findClientById(id) };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Get('search?')
+  async findByEmailOrName(
+    @Query('compId')
+    compId: string,
+    @Query('str') str: string,
+  ): Promise<{ data: (FlattenMaps<Client> & { _id: Types.ObjectId })[] }> {
+    this.validateObjectId(compId);
+    const companyId = new mongoose.Types.ObjectId(compId);
+    try {
+      return {
+        data: await this.clientService.findByEmailOrName(companyId, str),
+      };
     } catch (e) {
       console.log(e);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);

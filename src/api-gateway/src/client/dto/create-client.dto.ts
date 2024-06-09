@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
+  IsMongoId,
   IsNotEmpty,
   IsNumberString,
   IsObject,
@@ -72,6 +73,10 @@ export class CreateClientDto {
   @ApiProperty()
   @IsString()
   clientUsername: string;
+
+  @ApiProperty()
+  @IsMongoId()
+  companyId: string;
 
   @ApiProperty()
   @IsOptional()
