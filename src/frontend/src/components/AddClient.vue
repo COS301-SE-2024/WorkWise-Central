@@ -196,7 +196,7 @@
                 color="grey-lighten-4"
                 label="Enter the language preferred by the client"
                 rounded="xl"
-                v-model="req_obj.preferred_Language"
+                v-model="req_obj.preferredLanguage"
                 variant="solo"
                 :items="[
                   'English',
