@@ -29,7 +29,25 @@
           <v-col>
             <v-col>
               <small
-                :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
+                >Job Title</small
+              >
+              <v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                density="compact"
+                color="grey-lighten-4"
+                label="Enter the title of the job"
+                v-model="req_obj.details.heading"
+                rounded="xl"
+                variant="solo"
+                :rules="job_title_rules"
+                required
+              ></v-text-field
+            ></v-col>
+            <v-col>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 class="text-caption"
                 >Client</small
               >
@@ -69,7 +87,7 @@
             >
             <v-col>
               <small
-                :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 class="text-caption"
                 >Job description</small
               >
@@ -85,7 +103,7 @@
             </v-col>
             <v-col>
               <small
-                :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 class="text-caption"
                 >Notes</small
               >
@@ -115,6 +133,7 @@
               ></v-date-picker>
             </v-col>
 
+            <v-time-picker></v-time-picker>
             <small
               :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
               class="text-caption"
@@ -229,13 +248,18 @@ export default defineComponent({
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
       modal_light_theme_color: '#FFFFFF',
+      job_title_rules: [
+        (v: string) => !!v || 'Job title is required',
+        (v: string) =>
+          /^[A-Za-z\s]+$/.test(v) || 'Job title must be alphabetic characters and spaces only'
+      ],
 
       req_obj: {
-        clientId: '665b4cc2f3031b71eb6f2d0a',
         assignedBy: sessionStorage['id'],
         companyId: sessionStorage['currentCompany'],
         scheduledDateTime: '',
-        status: 'Not Started',
+
+        status: 'No Status',
         client_name: '',
         details: {
           heading: '',
@@ -249,7 +273,13 @@ export default defineComponent({
             complex: '',
             houseNumber: ''
           }
-        }
+        },
+        clientFeedback: {
+          jobRating: 0,
+          customerServiceRating: 0,
+          comments: ''
+        },
+        imagesTaken: []
       }
     }
   },
