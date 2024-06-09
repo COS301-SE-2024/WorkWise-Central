@@ -83,6 +83,7 @@ export class CreateJobDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   clientUsername: string;
 
   @ApiProperty()

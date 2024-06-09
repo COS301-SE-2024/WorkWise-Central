@@ -72,8 +72,9 @@ export class CreateClientDto {
   public address: address;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
-  clientUsername: string;
+  clientUsername?: string;
 
   @ApiProperty()
   @IsMongoId()

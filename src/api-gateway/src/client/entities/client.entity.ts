@@ -66,7 +66,8 @@ export class Client {
     this.details.firstName = createClientDto.firstName;
     this.details.surname = createClientDto.surname;
     this.registrationNumber = createClientDto.registrationNumber;
-    this.clientUsername = createClientDto.clientUsername;
+    if (createClientDto.clientUsername)
+      this.clientUsername = createClientDto.clientUsername;
     this.companyId = new Types.ObjectId(createClientDto.companyId);
     this.name = createClientDto.name;
     this.type = createClientDto.type;
@@ -87,7 +88,7 @@ export class Client {
   registrationNumber?: string;
 
   @ApiProperty()
-  @Prop({ required: true, unique: true })
+  @Prop({ required: false, default: 'none' })
   clientUsername: string;
 
   @ApiProperty()
