@@ -2,13 +2,12 @@
   <v-dialog max-width="500" height="800">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-        base-color="red"
         rounded="xl"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
-        color="white"
         text="JOIN COMPANY"
-        variant="tonal"
+        variant="elevated"
+        color="#5A82AF"
         v-bind="activatorProps"
       ></v-btn>
     </template>
