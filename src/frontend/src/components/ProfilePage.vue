@@ -1,10 +1,11 @@
 <template>
     <main>
-        
+
     </main>
 </template>
 <script lang="ts">
 export default {
+    name: 'ProfilePage',
   data: () => {
     return {
       openAddClient: false,
