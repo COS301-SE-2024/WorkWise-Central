@@ -9,21 +9,25 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import {
   CreateCompanyDto,
   CreateCompanyResponseDto,
+  findCompanyResponseDto,
 } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiBody,
   ApiInternalServerErrorResponse,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
-import mongoose, { Types } from 'mongoose';
+import mongoose, { FlattenMaps, Types } from 'mongoose';
+import { Company } from './entities/company.entity';
 
 @ApiTags('Company')
 @Controller('company')
@@ -86,6 +90,23 @@ export class CompanyController {
       return { data: this.companyService.findById(id) };
     } catch (e) {
       throw new HttpException(e, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @ApiResponse({
+    type: findCompanyResponseDto,
+  })
+  @Get('search?')
+  async findByEmailOrName(
+    @Query('str') str: string,
+  ): Promise<{ data: (FlattenMaps<Company> & { _id: Types.ObjectId })[] }> {
+    try {
+      return {
+        data: await this.companyService.findByEmailOrName(str),
+      };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
   }
 
