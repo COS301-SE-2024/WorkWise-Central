@@ -34,9 +34,10 @@ export class CompanyService {
          exists,please enter another one or sign in`,
       );
     }
-    createCompanyDto.created_at = new Date();
-    const newCompany = new this.companyModel(createCompanyDto);
-    const result = await newCompany.save();
+    // createCompanyDto.created_at = new Date();
+    const newCompany = new Company(createCompanyDto);
+    const newCompanyModel = new this.companyModel(newCompany);
+    const result = await newCompanyModel.save();
     return new CreateCompanyResponseDto(`${result.id}`);
   }
 
@@ -102,6 +103,36 @@ export class CompanyService {
       throw new NotFoundException('Company not found');
     }
 
+    return result;
+  }
+
+  async findByEmailOrName(identifier: string) {
+    const regex = `*${identifier}*`;
+    const searchTerm = new RegExp(regex, 'i');
+
+    const result = await this.companyModel
+      .find({
+        $and: [
+          {
+            $or: [{ private: false }, { private: { $exists: false } }],
+          },
+          {
+            $or: [
+              { name: { $regex: searchTerm } },
+              { 'contactDetails.email': { $regex: searchTerm } },
+            ],
+          },
+          {
+            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+
+    if (result == null) {
+      throw new NotFoundException('Client not found');
+    }
+    console.log(result);
     return result;
   }
 
