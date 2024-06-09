@@ -3,7 +3,9 @@ import { Types } from 'mongoose';
 import {
   IsArray,
   IsDate,
+  IsMongoId,
   IsNumber,
+  IsNumberString,
   IsObject,
   IsOptional,
   IsString,
@@ -34,6 +36,7 @@ class address {
 
   @IsString()
   @ApiProperty()
+  @IsNumberString()
   houseNumber: string;
 }
 
@@ -101,7 +104,8 @@ export class CreateJobDto {
 
   @ApiProperty()
   @IsArray()
-  inventoryUsed: [string]; //TODO: Convert to ObjectId
+  @IsMongoId({ each: true })
+  inventoryUsed: [string];
 
   @ApiProperty()
   @IsObject()
@@ -114,5 +118,6 @@ export class CreateJobDto {
   @ApiProperty()
   @IsOptional()
   @IsArray()
+  @IsString({ each: true })
   imagesTaken: string[];
 }

@@ -2,8 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
+  IsNumberString,
   IsObject,
   IsOptional,
+  IsPhoneNumber,
   IsString,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
@@ -26,7 +28,7 @@ class address {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
+  @IsNumberString()
   postalCode: string;
 
   @ApiProperty()
@@ -36,7 +38,7 @@ class address {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
+  @IsNumberString()
   houseNumber: string;
 }
 
@@ -53,7 +55,7 @@ export class CreateClientDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
+  @IsPhoneNumber()
   public phoneNumber: string;
 
   @ApiProperty()

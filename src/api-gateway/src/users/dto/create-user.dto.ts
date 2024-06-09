@@ -3,15 +3,19 @@ import { Prop } from '@nestjs/mongoose';
 import {
   IsArray,
   IsDate,
+  IsMongoId,
   IsNotEmpty,
+  IsNumberString,
   IsObject,
   IsOptional,
+  IsPhoneNumber,
   IsString,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 class contactInfo {
-  @Prop({ type: String, required: true })
+  @IsPhoneNumber()
   phoneNumber: string;
 
   @IsString()
@@ -20,17 +24,34 @@ class contactInfo {
 }
 
 class address {
-  @Prop({ type: String, required: true })
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
   street: string;
-  @Prop({ type: String, required: true })
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
   suburb: string;
-  @Prop({ type: String, required: true })
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
   city: string;
-  @Prop({ type: String, required: true })
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumberString()
   postalCode: string;
-  @Prop({ type: String, required: true })
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
   complex: string;
-  @Prop({ type: String, required: true })
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumberString()
   houseNumber: string;
 }
 
@@ -65,6 +86,7 @@ class profile {
 }
 
 class roles {
+  @IsMongoId()
   companyId: Types.ObjectId;
   @IsString()
   role: string;
@@ -91,6 +113,7 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsArray()
+  @IsMongoId({ each: true })
   joinedCompanies?: string[] | Types.ObjectId[];
 
   @IsNotEmpty()
@@ -110,7 +133,7 @@ export class CreateUserDto {
   roles?: roles[];
 
   @IsOptional()
-  @IsString()
+  @IsMongoId()
   public currentCompany: Types.ObjectId;
 }
 
