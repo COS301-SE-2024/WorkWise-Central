@@ -20,7 +20,6 @@ const onEllipsisClick = () => {
 
 <template>
   <v-card>
-    <v-app>
       <v-app-bar app>
         <v-app-bar-nav-icon @click="isVisible = !isVisible">
           <v-icon>{{ isVisible ? 'mdi-close' : 'mdi-menu' }}</v-icon>
@@ -233,7 +232,6 @@ const onEllipsisClick = () => {
       <v-main>
         <v-container fluid> </v-container>
       </v-main>
-    </v-app>
   </v-card>
 </template>
 
