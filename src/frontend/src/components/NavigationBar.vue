@@ -228,9 +228,7 @@ const onEllipsisClick = () => {
           </v-list-group>
         </v-list>
       </v-navigation-drawer>
-
       <v-main>
-        <v-container fluid> </v-container>
       </v-main>
   </v-card>
 </template>

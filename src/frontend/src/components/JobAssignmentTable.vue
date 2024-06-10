@@ -1,4 +1,9 @@
 <script>
+  import JobDetailsList from "../components/AddJob.vue";
+  import {ref} from 'vue';
+  const showAddJobModal = ref(false);
+
+
   const desserts = [
     {
       name: 'Frozen Yogurt',
@@ -112,9 +117,9 @@
     data: () => ({
       itemsPerPage: 20,
       headers: [
-        { text: 'Dessert (100g serving)', value: 'name', align: 'start', sortable: false },
-        { text: 'Calories', value: 'calories', align: 'end' },
-        { text: 'Fat (g)', value: 'fat', align: 'end' },
+        { text: 'Assigned Employees', value: 'name', align: 'start', sortable: false },
+        { text: 'Job Name', value: 'calories', align: 'end' },
+        { text: 'Prioriy', value: 'fat', align: 'end' },
         { text: 'Carbs (g)', value: 'carbs', align: 'end' },
         { text: 'Protein (g)', value: 'protein', align: 'end' },
         { text: 'Iron (%)', value: 'iron', align: 'end' },
@@ -170,18 +175,33 @@
         offset="2"
       >
         <v-card-title class="d-flex align-center pe-2">
-          <v-icon left class="mr-2">mdi-account-group</v-icon>
+          <v-icon left class="mr-2">mdi-briefcase</v-icon>
           <span>Job Management</span>
           <v-spacer></v-spacer>
-          <v-btn icon @click="addNewJob">
+          <v-btn icon @click="showAddJobModal = true">
             <v-icon>mdi-plus</v-icon>
+            <JobDetailsList v-if="showAddJobModal" @close="showAddJobModal= false"/>
           </v-btn>
         </v-card-title>
 
         <v-divider></v-divider>
+
+        <v-row justify="end">
+          <v-col cols="4">
+            <v-text-field
+              v-model="search"
+              label="Search"
+              prepend-inner-icon="mdi-magnify"
+              variant="outlined"
+              hide-details
+              single-line
+            ></v-text-field>
+        </v-col>  
+        </v-row>
+
         <v-data-table-server
-          v-model:search="search"
-          v-model:items-per-page="itemsPerPage"
+          :search="search"
+          :items-per-page="itemsPerPage"
           :headers="headers"
           :items="serverItems"
           :items-length="totalItems"
