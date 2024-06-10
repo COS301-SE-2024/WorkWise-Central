@@ -15,10 +15,10 @@
       <v-btn @click="toggleDarkMode">Theme change</v-btn>
     </v-app-bar>
     <!-- Main Content -->
-    <v-main :class="{ 'modal-dark-theme': isdarkmode, 'modal-light-theme': !isdarkmode }" >
-      <v-row style="height: 1000px; width: 2000px " no-gutters>
+    <v-main :class="{ 'modal-dark-theme': isdarkmode, 'modal-light-theme': !isdarkmode }">
+      <v-row style="height: 1000px; width: 2000px" no-gutters>
         <!-- Left Half -->
-        <v-col cols="6" sm="3" md="6" align-self="center">
+        <v-col cols="6" xs="1" sm="3" md="6" align-self="center">
           <v-row justify="center"
             ><v-col align-self="center">
               <h1
@@ -218,7 +218,8 @@
                       ></v-row>
                       <v-row
                         ><v-col
-                          ><label style="font-size: 14px; font-weight: lighter">Confirm Password</label
+                          ><label style="font-size: 14px; font-weight: lighter"
+                            >Confirm Password</label
                           ><v-text-field
                             :bg-color="
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -451,7 +452,9 @@
                       ></v-row>
                       <v-row
                         ><v-col
-                          ><label style="font-size: 14px; font-weight: lighter">Preferred Language</label>
+                          ><label style="font-size: 14px; font-weight: lighter"
+                            >Preferred Language</label
+                          >
                           <v-select
                             color="grey-lighten-4"
                             :label="language ? '' : 'Select your preferred language'"
@@ -634,16 +637,23 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 5 -->
-            <v-dialog v-model="signup3Dialog" max-width="700" style="height: 750px">
-              <!-- <v-sheet
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-              > -->
-              <v-col cols="8" offset="2">
-                <RegisterCompanyModal v-model="registerDialog" @close="registerDialog = false" />
-                <!-- Join Company Model --><br />
-                <JoinCompanyModal v-model="joinDialog" @close="joinDialog = false"
-              /></v-col>
-              <!-- </v-sheet> -->
+            <v-dialog v-model="signup3Dialog" max-width="700px" style="height: 750px">
+              <v-sheet :bg-color="isdarkmode ? modal_dark_theme_color : modal_light_theme_color">
+                <v-card
+                  height="100%"
+                  width="100%"
+                  :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                >
+                  <v-col cols="8" offset="2">
+                    <RegisterCompanyModal
+                      v-model="registerDialog"
+                      @close="registerDialog = false"
+                    />
+
+                    <JoinCompanyModal v-model="joinDialog" @close="joinDialog = false" />
+                  </v-col>
+                </v-card>
+              </v-sheet>
             </v-dialog>
 
             <!-- Register Company Modal -->
@@ -659,7 +669,7 @@
         </v-col>
 
         <!-- Right Half -->
-        <v-col cols="6" sm="3" md="6">
+        <v-col cols="6" xs="1" sm="3" md="6">
           <div class="w-full h-full background-image"></div>
         </v-col>
       </v-row>

@@ -9,6 +9,7 @@
         variant="elevated"
         color="#5A82AF"
         v-bind="activatorProps"
+        size="large"
       ></v-btn>
     </template>
     <v-sheet
