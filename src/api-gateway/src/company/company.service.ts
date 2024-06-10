@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import {
   CreateCompanyDto,
-  createCompanyResponseDto,
+  CreateCompanyResponseDto,
 } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -34,10 +34,11 @@ export class CompanyService {
          exists,please enter another one or sign in`,
       );
     }
-    createCompanyDto.created_at = new Date();
-    const newCompany = new this.companyModel(createCompanyDto);
-    const result = await newCompany.save();
-    return new createCompanyResponseDto(`${result.id}`);
+    // createCompanyDto.created_at = new Date();
+    const newCompany = new Company(createCompanyDto);
+    const newCompanyModel = new this.companyModel(newCompany);
+    const result = await newCompanyModel.save();
+    return new CreateCompanyResponseDto(`${result.id}`);
   }
 
   async companyExists(id: string): Promise<boolean> {
@@ -76,7 +77,7 @@ export class CompanyService {
 
   findAll() {
     try {
-      return this.companyModel.find().exec();
+      return this.companyModel.find().lean().exec();
     } catch (error) {
       console.log(error);
       throw new ServiceUnavailableException('Users could not be retrieved');
@@ -102,6 +103,36 @@ export class CompanyService {
       throw new NotFoundException('Company not found');
     }
 
+    return result;
+  }
+
+  async findByEmailOrName(identifier: string) {
+    const regex = `*${identifier}*`;
+    const searchTerm = new RegExp(regex, 'i');
+
+    const result = await this.companyModel
+      .find({
+        $and: [
+          {
+            $or: [{ private: false }, { private: { $exists: false } }],
+          },
+          {
+            $or: [
+              { name: { $regex: searchTerm } },
+              { 'contactDetails.email': { $regex: searchTerm } },
+            ],
+          },
+          {
+            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+
+    if (result == null) {
+      throw new NotFoundException('Client not found');
+    }
+    console.log(result);
     return result;
   }
 
@@ -167,9 +198,7 @@ export class CompanyService {
     console.log(resultOfUpdate);
     console.log(updateUser);
 
-    return {
-      message: `${updateUser.systemDetails.username} added to successfully`,
-    };
+    return `${updateUser.systemDetails.username} added to successfully`;
   }
 
   update(id: number, updateCompanyDto: UpdateCompanyDto) {

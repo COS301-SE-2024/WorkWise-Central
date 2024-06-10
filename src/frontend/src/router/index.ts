@@ -9,9 +9,16 @@ import JobDetailsModal from '../components/JobDetailsModal.vue'
 import AddJob from '../components/AddJob.vue'
 import Modals from '../views/Modals.vue'
 import Calendar from '../components/Calendar.vue'
+import Client from '../components/ClientDesk.vue'
+import Kanban from "@/components/Kanban.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/kanban',
+      name: 'kanban',
+      component: Kanban
+    },
     {
       path: '/register-company',
       name: 'registercompany',
@@ -57,6 +64,12 @@ const router = createRouter({
       name: 'modals',
       component: Modals
     },
+    {
+      path: '/client',
+      name: 'client',
+      component: Client
+    },
+
     {
       path: '/testview',
       name: 'testview',

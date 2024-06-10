@@ -1,6 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { CreateClientDto } from '../dto/create-client.dto';
+import { Transform } from 'class-transformer';
+import { IsString } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class address {
   @ApiProperty()
@@ -29,7 +32,8 @@ export class clientInfo {
   phoneNumber: string;
 
   @ApiProperty()
-  @Prop({ type: String, required: true, lowercase: true })
+  @IsString()
+  @Transform(({ value }) => value.toLowerCase())
   email: string;
 
   @ApiProperty()
@@ -61,6 +65,14 @@ export class Client {
     this.details = new details();
     this.details.firstName = createClientDto.firstName;
     this.details.surname = createClientDto.surname;
+    this.registrationNumber = createClientDto.registrationNumber;
+    if (createClientDto.clientUsername)
+      this.clientUsername = createClientDto.clientUsername;
+    this.companyId = new Types.ObjectId(createClientDto.companyId);
+    this.name = createClientDto.name;
+    this.type = createClientDto.type;
+    this.vatNumber = createClientDto.vatNumber;
+
     if (createClientDto.preferred_Language !== undefined)
       this.details.preferred_Language = createClientDto.preferred_Language;
     this.details.clientInfo = {
@@ -70,6 +82,30 @@ export class Client {
     };
     this.created_at = new Date();
   }
+  //Company-specific traits
+  @ApiProperty()
+  @Prop({ required: false })
+  registrationNumber?: string;
+
+  @ApiProperty()
+  @Prop({ required: false, default: 'none' })
+  clientUsername?: string;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  companyId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ required: false })
+  name?: string;
+
+  @ApiProperty()
+  @Prop({ required: false })
+  type?: string;
+
+  @ApiProperty()
+  @Prop({ required: false })
+  vatNumber?: string;
 
   @ApiProperty()
   @Prop({ required: true })

@@ -59,7 +59,9 @@ export class details {
 @Schema()
 export class Job {
   constructor(createJobDto: CreateJobDto) {
-    this.clientId = new Types.ObjectId(createJobDto.clientId); //It must be validated in jobController
+    if (createJobDto.clientUsername)
+      this.clientUsername = createJobDto.clientUsername;
+    this.clientId = new Types.ObjectId(); //It must be validated in jobController
     this.companyId = new Types.ObjectId(createJobDto.companyId); //It must be validated in jobController
     this.assignedBy = new Types.ObjectId(createJobDto.assignedBy);
     this.scheduledDateTime = createJobDto.scheduledDateTime;
@@ -82,6 +84,10 @@ export class Job {
   @ApiProperty()
   @Prop({ required: true })
   clientId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ required: false, default: 'none' })
+  clientUsername: string;
 
   @ApiProperty()
   @Prop({ required: true })
