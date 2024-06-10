@@ -209,6 +209,7 @@
           item-value="name"
           @update:options="loadItems"
           class="elevation-1"
+          flat
         >
           <template v-slot:header>
             <tr>

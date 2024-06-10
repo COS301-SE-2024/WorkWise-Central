@@ -6,7 +6,7 @@ import JobAssignTable from '../components/JobAssignmentTable.vue'
 <template>
     <v-app>
       <NavigationBar/>
-      <JobAssignTable class="position-sticky" />
+      <JobAssignTable/>
     </v-app>
 </template>
 
