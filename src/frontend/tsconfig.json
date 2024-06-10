@@ -9,18 +9,23 @@
     },
   ],
   "compilerOptions": {
-    "target": "ES6",
-    // this enables stricter inference for data properties on `this`
+    "target": "esnext",
+    "module": "esnext",
     "strict": true,
-    "module": "NodeNext",
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "baseUrl": ".",
     "types": ["vuetify"],
     "paths": {
-      "@/*": [
-        "./src/*" // set path `@/*` as alias of `src/*`
-      ],
-      "typeRoots": ["./node_modules/@types", "./types"],
+      "@/*": ["src/*"]
     },
-    "allowJs": true,
-    "noImplicitAny": false,
-  }
+    "lib": ["esnext", "dom"]
+  },
+
 }
+

@@ -14,6 +14,30 @@
         <e-column keyField="Done" headerText="Done"></e-column>
         <e-column keyField="Stuck" headerText="Stuck"></e-column>
       </e-columns>
+      <template #cardTemplate="{ data }">
+        <div class="e-card-content">
+          <table class="card-template-wrap">
+            <tbody>
+              <th class="CardHeaderContainer">
+                <td class="CardHeader">
+                  {{ data.Client}}
+                </td>
+              </th>
+              <tr>
+                <td >
+                  <span class="bolded">Description: </span>{{ data.Description }}
+                </td>
+              </tr>
+              <tr>
+                <td ><span class="bolded">Date: </span>{{ data.Date }}</td>
+              </tr>
+<!--              <tr>-->
+<!--                <td ><span class="bolded">Address: </span>{{ data.Address }}</td>-->
+<!--              </tr>-->
+            </tbody>
+          </table>
+        </div>
+      </template>
     </ejs-kanban>
   </div>
 </template>
@@ -40,7 +64,7 @@ export default {
           Date: '2024-06-15',
           Address: '5678 Oak St',
           Assignee: '',
-          Priority: 'Medium',
+          Priority: 'Normal',
           Tags: ['Installation', 'Appliances', 'Kitchen']
         },
         {
@@ -100,7 +124,7 @@ export default {
           Date: '2024-06-12',
           Address: '1819 Spruce St',
           Assignee: 'Nancy Wilson',
-          Priority: 'Medium',
+          Priority: 'Normal',
           Tags: ['Landscaping', 'Design', 'Front Yard']
         },
         {
@@ -136,7 +160,7 @@ export default {
           Date: '2024-06-18',
           Address: '3456 Ash St',
           Assignee: 'David Johnson',
-          Priority: 'Medium',
+          Priority: 'Normal',
           Tags: ['Cleaning', 'Office', 'Deep Clean']
         },
         {
@@ -172,7 +196,7 @@ export default {
           Date: '2024-06-22',
           Address: '7890 Maple St',
           Assignee: 'Steve Wilson',
-          Priority: 'Medium',
+          Priority: 'Normal',
           Tags: ['Repair', 'Tiles', 'Bathroom']
         },
         {
@@ -208,7 +232,7 @@ export default {
           Date: '2024-06-16',
           Address: '2345 Birch St',
           Assignee: 'Tom Collins',
-          Priority: 'Medium',
+          Priority: 'Normal',
           Tags: ['Maintenance', 'Pool', 'Pump']
         },
         {
@@ -220,14 +244,15 @@ export default {
           Date: '2024-06-23',
           Address: '3456 Cedar St',
           Assignee: 'Emma Thompson',
-          Priority: 'Medium',
+          Priority: 'Normal',
           Tags: ['Installation', 'Fence', 'Wood']
         }
       ],
       cardSettings: {
         contentField: 'Description',
-        headerField: 'Client',
-        priority: 'Priority'
+        headerField: 'Id',
+        tagsField: 'Tags',
+        template: 'cardTemplate'
       },
       swimLaneSettings: {
         keyField: 'Assignee'
@@ -242,4 +267,34 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.CardHeaderContainer
+{
+  display: flex;
+  justify-content: center;
+  padding:0;
+  margin:0;
+}
+
+.CardHeader{
+  text-align: center;
+  font-size: 20px;
+  color: blue;
+}
+.card-template-wrap{
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #f5f5f5;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.10);
+}
+.e-kanban .card-template-wrap td {
+  background: none;
+}
+.bolded {
+  font-weight: bold;
+}
+
+
+</style>
