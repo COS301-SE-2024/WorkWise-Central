@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-height="800" max-width="600">
+  <v-dialog max-height="800" max-width="900">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="xl"
@@ -15,7 +15,7 @@
       elevation="14"
       rounded="xl"
       max-height="800"
-      max-width="600"
+      max-width="900"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
       <v-form ref="form" v-model="valid" @submit="handleSubmission">
@@ -118,22 +118,27 @@
               </v-textarea>
             </v-col>
 
-            <v-col align="center">
-              <v-date-picker
-                title="SELECT DATE"
-                header="Date of job"
-                border="md"
-                width="unset"
-                max-width="350"
-                :color="isdarkmode === false ? '#5A82AF' : 'none'"
-                elevation="5"
-                :v-model="req_obj.scheduledDateTime"
-                required
-                :theme="isdarkmode ? 'dark' : 'light'"
-              ></v-date-picker>
-            </v-col>
+            <v-row>
+              <v-col align="center" cols="12" md="6">
+                <v-date-picker
+                  title="SELECT DATE"
+                  header="Date of job"
+                  border="md"
+                  width="unset"
+                  max-width="350"
+                  v-model="date"
+                  :color="isdarkmode === false ? '#5A82AF' : 'none'"
+                  elevation="5"
+                  required
+                  @update:modelValue="combineDateTime"
+                  :theme="isdarkmode ? 'dark' : 'light'"
+                ></v-date-picker>
+              </v-col>
+              <v-col align="center" cols="12" md="6">
+                <v-time-picker v-model="time" @update:hour="combineDateTime"></v-time-picker>
+              </v-col>
+            </v-row>
 
-            <v-time-picker></v-time-picker>
             <small
               :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
               class="text-caption"
@@ -253,12 +258,12 @@ export default defineComponent({
         (v: string) =>
           /^[A-Za-z\s]+$/.test(v) || 'Job title must be alphabetic characters and spaces only'
       ],
-
+      time: '',
+      date: null,
       req_obj: {
         assignedBy: sessionStorage['id'],
         companyId: sessionStorage['currentCompany'],
         scheduledDateTime: '',
-
         status: 'No Status',
         client_name: '',
         details: {
@@ -294,6 +299,28 @@ export default defineComponent({
       //     .catch((res) => {
       //       console.log(res)
       //     })
+    },
+    inputshow() {
+      console.log(this.req_obj.scheduledDateTime)
+      console.log(this.time)
+    },
+    combineDateTime() {
+      if (this.date && this.time) {
+        // Split the time into hours and minutes
+        const [hours, minutes] = this.time.split(':')
+
+        // Create a new Date object with the selected date
+        const date = new Date(this.date)
+
+        // Set the hours and minutes from the selected time
+        date.setHours(Number(hours))
+        date.setMinutes(Number(minutes))
+        console.log(date)
+
+        // Format the date to ISO 8601 format
+        this.req_obj.scheduledDateTime = date.toISOString()
+        console.log(this.req_obj.scheduledDateTime)
+      }
     }
   }
 })
