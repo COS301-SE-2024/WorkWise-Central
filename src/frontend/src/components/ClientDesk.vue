@@ -6,7 +6,7 @@
       </v-row>
     </v-row>
 
-    <v-container fluid fill-height class="pa-16 ma-auto">
+    <v-container fluid fill-height class="pa-16 ma-auto pt-5 fixed-container">
       <v-row justify="center" xs="4" sm="4" md="12">
         <v-col cols="12">
           >
@@ -274,3 +274,13 @@ export default {
   }
 }
 </script>
+
+<style>
+.fixed-container {
+  position: fixed; /* or 'absolute' depending on your layout */
+  top: 30px; /* Adjust this value based on the height of your navigation bar */
+  left: 0;
+  width: 100%; /* Adjust width as necessary */
+  z-index: 1; /* Ensure this is below your navbar if it's fixed as well */
+}
+</style>
