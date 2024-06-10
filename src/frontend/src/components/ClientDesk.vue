@@ -61,12 +61,8 @@
                           <v-icon>mdi-delete</v-icon>
                         </v-btn></v-col
                       >
-                      <v-col cols="6"
-                        ><v-btn icon size="small"> <v-icon icon="md:info"></v-icon> </v-btn
-                      ></v-col>
                     </template>
                   </v-data-table>
-                  <pre>[{sortBy}]</pre>
                 </div>
               </v-card>
             </v-col>
@@ -78,7 +74,12 @@
         <DeleteClient v-model="deleteDialog" @close="deleteDialog = false" :opened="deleteDialog"
       /></v-col>
       <v-col>
-        <EditClient v-model="editDialog" @close="editDialog = false" :opened="editDialog"
+        <EditClient
+          v-model="editDialog"
+          @close="editDialog = false"
+          :opened="editDialog"
+          :editedItem="selectedItem"
+          @save="updatedEditedItem"
       /></v-col>
     </v-container>
   </v-app>
@@ -96,6 +97,7 @@ export default {
     isDarkMode: Boolean
   },
   data: () => ({
+    selectedItem: {},
     isdarkmode: false,
     clientDialog: false,
     deleteDialog: false,
@@ -281,6 +283,9 @@ export default {
     },
     openAddClient() {
       this.clientDialog = true
+    },
+    updatedEditedItem(newItem) {
+      this.selectedItem = newItem
     }
   }
 }
