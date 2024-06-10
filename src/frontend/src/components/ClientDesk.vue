@@ -38,7 +38,7 @@
                     single-line
                   ></v-text-field>
                   <v-spacer></v-spacer>
-                  <v-btn size="large" @click="openAddClient">New Client</v-btn>
+                  <v-btn size="large" @click="clientDialog = true">New Client</v-btn>
                 </v-card-title>
 
                 <v-divider></v-divider>
@@ -52,12 +52,12 @@
                   >
                     <template v-slot:item.actions="{ item }">
                       <v-col cols="6">
-                        <v-btn icon size="small">
+                        <v-btn icon size="small" @click="editDialog = true">
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
                       </v-col>
                       <v-col cols="6"
-                        ><v-btn icon size="small">
+                        ><v-btn icon size="small" @click="deleteDialog = true">
                           <v-icon>mdi-delete</v-icon>
                         </v-btn></v-col
                       >
@@ -74,13 +74,20 @@
         </v-col></v-row
       >
       <v-col> <ClientDetails v-model="clientDialog" @close="clientDialog = false" /></v-col>
+      <v-col>
+        <DeleteClient v-model="deleteDialog" @close="deleteDialog = false" :opened="deleteDialog"
+      /></v-col>
+      <v-col>
+        <EditClient v-model="editDialog" @close="editDialog = false" :opened="editDialog"
+      /></v-col>
     </v-container>
   </v-app>
 </template>
 
 <script>
 import NavigationBar from './NavigationBar.vue'
-
+import DeleteClient from './DeleteClient.vue'
+import EditClient from './EditClient.vue'
 import ClientDetails from './AddClient.vue'
 export default {
   name: 'ClientDesk',
@@ -91,6 +98,8 @@ export default {
   data: () => ({
     isdarkmode: false,
     clientDialog: false,
+    deleteDialog: false,
+    editDialog: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
@@ -240,7 +249,9 @@ export default {
   }),
   components: {
     NavigationBar,
-    ClientDetails
+    ClientDetails,
+    DeleteClient,
+    EditClient
   },
   computed: {
     filteredClients() {
