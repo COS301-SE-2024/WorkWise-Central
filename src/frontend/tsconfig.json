@@ -6,21 +6,20 @@
     },
     {
       "path": "./tsconfig.app.json"
-    },
+    }
   ],
   "compilerOptions": {
     "target": "ES6",
-    // this enables stricter inference for data properties on `this`
     "strict": true,
     "module": "NodeNext",
     "types": ["vuetify"],
     "paths": {
       "@/*": [
-        "./src/*" // set path `@/*` as alias of `src/*`
-      ],
-      "typeRoots": ["./node_modules/@types", "./types"],
+        "./src/*"
+      ]
     },
+    "typeRoots": ["./node_modules/@types", "./types"],
     "allowJs": true,
-    "noImplicitAny": false,
+    "noImplicitAny": false
   }
 }

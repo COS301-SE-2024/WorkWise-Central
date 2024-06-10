@@ -43,8 +43,14 @@
 
                 <v-divider></v-divider>
                 <div style="height: 700px; overflow-y: auto">
-                  <v-data-table :headers="headers" :items="clients" :search="search" rounded="xl">
-                    <template v-slot:item="{}">
+                  <v-data-table
+                    :headers="headers"
+                    :items="clients"
+                    :search="search"
+                    rounded="xl"
+                    show-expand
+                  >
+                    <template v-slot:item.actions="{ item }">
                       <v-col cols="6">
                         <v-btn icon size="small">
                           <v-icon>mdi-pencil</v-icon>
@@ -60,11 +66,13 @@
                       ></v-col>
                     </template>
                   </v-data-table>
+                  <pre>[{sortBy}]</pre>
                 </div>
               </v-card>
             </v-col>
-          </v-row> </v-col
-      ></v-row>
+          </v-row>
+        </v-col></v-row
+      >
       <v-col> <ClientDetails v-model="clientDialog" @close="clientDialog = false" /></v-col>
     </v-container>
   </v-app>
@@ -81,18 +89,24 @@ export default {
     isDarkMode: Boolean
   },
   data: () => ({
-    openAddClient: false,
     isdarkmode: false,
     clientDialog: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
+    sortBy: [
+      { key: 'name', order: 'asc' },
+      { key: 'email', order: 'asc' },
+      { key: 'phone', order: 'asc' },
+      { key: 'address', order: 'asc' },
+      { key: 'jobRequired', order: 'asc' }
+    ],
     headers: [
       {
         title: 'Name',
         align: 'start',
-        sortable: true,
+        sortable: false,
         value: 'name',
         key: 'name'
       },

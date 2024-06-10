@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
+import { useStore } from 'vuex'
+import { computed } from 'vue';
 
+const store = useStore()
+const expanded = computed(() => store.state.expanded)
 const isVisible = ref(false)
+
 const drawer = ref(true)
 const dashboardActive = ref(false)
 
