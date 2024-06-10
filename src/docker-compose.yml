@@ -2,7 +2,7 @@ version: '3.8'
 services:
   vue-app:
     build:
-      context: /frontend
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: vue-app
     ports:
@@ -25,6 +25,9 @@ services:
       - '3000:3000'
     depends_on:
       - mongo
+    environment:
+      DATABASE_URL:
+        "mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@0.0.0.0:27019/${MONGO_INIT_ROOT_DATABASE}"
 
   mongo:
     image: mongo:7.0
@@ -33,10 +36,9 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       MONGO_INIT_ROOT_DATABASE: ${MONGO_INIT_ROOT_DATABASE}
     ports:
-      - "27018:27017"
+      - "27019:27017"
     volumes:
-      - mongodata:/opt/data/db
+      - workwise_prod_volume:/data/db
 
 volumes:
-  mongodata:
-    driver: local
+  workwise_prod_volume:

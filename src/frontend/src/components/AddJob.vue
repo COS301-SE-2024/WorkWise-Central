@@ -1,14 +1,13 @@
 <template>
-  <v-dialog max-height="800" max-width="600">
+  <v-dialog max-height="800" max-width="900">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-        base-color="red"
         rounded="xl"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
-        color="white"
         text="CREATE JOB"
-        variant="tonal"
+        variant="elevated"
+        color="#5A82AF"
         v-bind="activatorProps"
       ></v-btn>
     </template>
@@ -16,7 +15,7 @@
       elevation="14"
       rounded="xl"
       max-height="800"
-      max-width="600"
+      max-width="900"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
       <v-form ref="form" v-model="valid" @submit="handleSubmission">
@@ -30,7 +29,25 @@
           <v-col>
             <v-col>
               <small
-                :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
+                >Job Title</small
+              >
+              <v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                density="compact"
+                color="grey-lighten-4"
+                label="Enter the title of the job"
+                v-model="req_obj.details.heading"
+                rounded="xl"
+                variant="solo"
+                :rules="job_title_rules"
+                required
+              ></v-text-field
+            ></v-col>
+            <v-col>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 class="text-caption"
                 >Client</small
               >
@@ -70,7 +87,7 @@
             >
             <v-col>
               <small
-                :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 class="text-caption"
                 >Job description</small
               >
@@ -86,7 +103,7 @@
             </v-col>
             <v-col>
               <small
-                :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 class="text-caption"
                 >Notes</small
               >
@@ -101,20 +118,26 @@
               </v-textarea>
             </v-col>
 
-            <v-col align="center">
-              <v-date-picker
-                title="SELECT DATE"
-                header="Date of job"
-                border="md"
-                width="unset"
-                max-width="350"
-                :color="isdarkmode === false ? '#5A82AF' : 'none'"
-                elevation="5"
-                :v-model="req_obj.scheduledDateTime"
-                required
-                :theme="isdarkmode ? 'dark' : 'light'"
-              ></v-date-picker>
-            </v-col>
+            <v-row>
+              <v-col align="center" cols="12" md="6">
+                <v-date-picker
+                  title="SELECT DATE"
+                  header="Date of job"
+                  border="md"
+                  width="unset"
+                  max-width="350"
+                  v-model="date"
+                  :color="isdarkmode === false ? '#5A82AF' : 'none'"
+                  elevation="5"
+                  required
+                  @update:modelValue="combineDateTime"
+                  :theme="isdarkmode ? 'dark' : 'light'"
+                ></v-date-picker>
+              </v-col>
+              <v-col align="center" cols="12" md="6">
+                <v-time-picker v-model="time" @update:hour="combineDateTime"></v-time-picker>
+              </v-col>
+            </v-row>
 
             <small
               :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
@@ -230,13 +253,18 @@ export default defineComponent({
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
       modal_light_theme_color: '#FFFFFF',
-
+      job_title_rules: [
+        (v: string) => !!v || 'Job title is required',
+        (v: string) =>
+          /^[A-Za-z\s]+$/.test(v) || 'Job title must be alphabetic characters and spaces only'
+      ],
+      time: '',
+      date: null,
       req_obj: {
-        clientId: '665b4cc2f3031b71eb6f2d0a',
         assignedBy: sessionStorage['id'],
         companyId: sessionStorage['currentCompany'],
         scheduledDateTime: '',
-        status: 'Not Started',
+        status: 'No Status',
         client_name: '',
         details: {
           heading: '',
@@ -250,7 +278,13 @@ export default defineComponent({
             complex: '',
             houseNumber: ''
           }
-        }
+        },
+        clientFeedback: {
+          jobRating: 0,
+          customerServiceRating: 0,
+          comments: ''
+        },
+        imagesTaken: []
       }
     }
   },
@@ -265,13 +299,30 @@ export default defineComponent({
       //     .catch((res) => {
       //       console.log(res)
       //     })
+    },
+    inputshow() {
+      console.log(this.req_obj.scheduledDateTime)
+      console.log(this.time)
+    },
+    combineDateTime() {
+      if (this.date && this.time) {
+        // Split the time into hours and minutes
+        const [hours, minutes] = this.time.split(':')
+
+        // Create a new Date object with the selected date
+        const date = new Date(this.date)
+
+        // Set the hours and minutes from the selected time
+        date.setHours(Number(hours))
+        date.setMinutes(Number(minutes))
+        console.log(date)
+
+        // Format the date to ISO 8601 format
+        this.req_obj.scheduledDateTime = date.toISOString()
+        console.log(this.req_obj.scheduledDateTime)
+      }
     }
   }
 })
 </script>
-<style scope>
-.hello {
-  color: white;
-  background-color: #5a82af;
-}
-</style>
+<style></style>

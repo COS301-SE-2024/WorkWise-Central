@@ -2,13 +2,12 @@
   <v-dialog max-height="800" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-        base-color="red"
         rounded="xl"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
-        color="white"
         text="CREATE CLIENT"
-        variant="tonal"
+        variant="elevated"
+        color="#5A82AF"
         v-bind="activatorProps"
       ></v-btn>
     </template>
@@ -19,7 +18,7 @@
       max-height="800"
       max-width="600"
     >
-      <v-form ref="form" v-model="valid" @submit="handleSubmission">
+      <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
         <v-col>
           <v-col>
             <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -271,6 +270,7 @@ export default defineComponent({
       phoneNumber: '',
       email: '',
       preferredLanguage: '',
+      companyId: sessionStorage['currentCompany'],
       address: {
         street: '',
         suburb: '',
@@ -283,7 +283,6 @@ export default defineComponent({
   }),
   methods: {
     handleSubmission() {
-      alert('Client created successfully')
       axios
         .post('http://localhost:3000/client/create', this.req_obj)
         .then((res) => {
@@ -299,7 +298,7 @@ export default defineComponent({
 })
 </script>
 
-<style scope>
+<style>
 .hello {
   color: white;
   background-color: #5a82af;

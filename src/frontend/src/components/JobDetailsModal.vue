@@ -1,11 +1,14 @@
 <template>
-  <v-dialog max-width="500" :height="300">
+  <v-dialog :max-width="500" :height="300">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         v-bind="activatorProps"
-        color="surface-variant"
-        text="Show Job Details"
-        variant="flat"
+        rounded="xl"
+        class="text-none font-weight-regular hello"
+        prepend-icon="mdi-account"
+        text="JOB DETAILS"
+        variant="elevated"
+        color="#5A82AF"
       ></v-btn>
     </template>
 

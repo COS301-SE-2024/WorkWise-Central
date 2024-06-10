@@ -2,13 +2,12 @@
   <v-dialog max-height="800" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-        base-color="red"
         rounded="xl"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
-        color="white"
         text="ADD EMPLOYEE"
-        variant="tonal"
+        variant="elevated"
+        color="#5A82AF"
         v-bind="activatorProps"
       ></v-btn>
     </template>
@@ -148,9 +147,4 @@ export default defineComponent({
 })
 </script>
 
-<style scope>
-.hello {
-  color: white;
-  background-color: #5a82af;
-}
-</style>
+<style></style>

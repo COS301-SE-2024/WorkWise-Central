@@ -9,17 +9,23 @@
     }
   ],
   "compilerOptions": {
-    "target": "ES6",
+    "target": "esnext",
+    "module": "esnext",
     "strict": true,
-    "module": "NodeNext",
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "baseUrl": ".",
     "types": ["vuetify"],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["src/*"]
     },
-    "typeRoots": ["./node_modules/@types", "./types"],
-    "allowJs": true,
-    "noImplicitAny": false
-  }
+    "lib": ["esnext", "dom"]
+  },
+
 }
+
