@@ -37,7 +37,7 @@
           </v-menu>
         </v-toolbar>
       </v-sheet>
-      
+
       <v-dialog v-model="dialog" max-width="500">
         <v-card>
           <v-container>

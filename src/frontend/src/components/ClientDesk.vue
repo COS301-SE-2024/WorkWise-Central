@@ -37,7 +37,7 @@
                     single-line
                   ></v-text-field>
                   <v-spacer></v-spacer>
-                  <v-btn size="large" @click="clientDialog = true">New Client</v-btn>
+                  <ClientDetails v-model="clientDialog" @close="clientDialog = false" />
                 </v-card-title>
 
                 <v-divider></v-divider>
@@ -50,13 +50,13 @@
                     show-expand
                   >
                     <template v-slot:[`item.actions`]="{}">
-                      <v-col cols="6">
-                        <v-btn icon size="small" @click="editDialog = true">
+                      <v-col cols="12">
+                        <v-btn icon size="small" text="Edit Client" @click="editDialog = true">
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
                       </v-col>
-                      <v-col cols="6"
-                        ><v-btn icon size="small" @click="deleteDialog = true">
+                      <v-col cols="12"
+                        ><v-btn icon size="small" text="Delete Client" @click="deleteDialog = true">
                           <v-icon>mdi-delete</v-icon>
                         </v-btn></v-col
                       >
@@ -68,7 +68,7 @@
           </v-row>
         </v-col></v-row
       >
-      <v-col> <ClientDetails v-model="clientDialog" @close="clientDialog = false" /></v-col>
+
       <v-col>
         <DeleteClient
           v-model="deleteDialog"

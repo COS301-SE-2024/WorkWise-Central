@@ -1,16 +1,13 @@
-
 <template>
   <div></div>
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: "EmployeeDesk"
+  name: 'EmployeeDesk'
 })
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

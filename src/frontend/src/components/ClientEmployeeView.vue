@@ -66,14 +66,13 @@
                       >
                       <v-col align-self="end">
                         <v-card-actions>
-                          <v-btn text>View Client Details</v-btn>
-                          <v-btn text>View Job Details</v-btn>
-                        </v-card-actions></v-col
-                      ></v-row
-                    >
-                  </v-card></v-col
-                >
-
+                          <ClientDetails :isDarkMode="isdarkmode" :colors="colors" />
+                          <ClientJobs
+                            :isdarkmode="isdarkmode"
+                            :colors="colors"
+                          ></ClientJobs> </v-card-actions></v-col
+                    ></v-row> </v-card
+                ></v-col>
                 <v-spacer></v-spacer>
               </v-sheet>
             </v-col>
@@ -86,13 +85,17 @@
 
 <script>
 import NavigationBar from './NavigationBar.vue'
+import ClientDetails from './ClientDetails.vue'
+import ClientJobs from './ClientJobs.vue'
 export default {
   name: 'ClientEmployeeView',
   props: {
     isDarkMode: Boolean
   },
   components: {
-    NavigationBar
+    NavigationBar,
+    ClientDetails,
+    ClientJobs
   },
   computed: {
     filteredClients() {
@@ -117,10 +120,13 @@ export default {
   data: () => ({
     isdarkmode: false,
     numCards: 5,
-    light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
-    dark_theme_text_color: 'color: #DCDBDB',
-    modal_dark_theme_color: '#2b2b2b',
-    modal_light_theme_color: '#FFFFFF',
+
+    colors: {
+      light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
+      dark_theme_text_color: 'color: #DCDBDB',
+      modal_dark_theme_color: '#2b2b2b',
+      modal_light_theme_color: '#FFFFFF'
+    },
     searchQuery: '',
     clients: [
       {

@@ -1,16 +1,5 @@
 <template>
   <v-dialog v-model="clientDialog" max-width="500" height="800">
-    <template v-slot:activator="{ props: activatorProps }">
-      <v-btn
-        rounded="xl"
-        class="text-none font-weight-regular hello"
-        prepend-icon="mdi-account"
-        variant="elevated"
-        color="#5A82AF"
-        v-bind="activatorProps"
-      >
-      </v-btn>
-    </template>
     <v-sheet
       elevation="14"
       rounded="md"
