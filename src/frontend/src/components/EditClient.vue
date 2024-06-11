@@ -1,48 +1,151 @@
 <template>
-  <v-dialog v-model="clientDialog" max-width="500px">
-    <v-card rounded="xl">
-      <v-card-title>
-        <span class="headline">Edit Client</span>
-      </v-card-title>
-      <v-card-text>
-        <v-container>
-          <v-row justify="center" align="center" class="fill-height"
-            ><v-col cols="8" sm="6" md="4">
-              <v-text-field v-model="editedItem.name" label="Name"></v-text-field> </v-col
-          ></v-row>
-          <v-row justify="center" align="center" class="fill-height">
-            <v-col cols="12" sm="6" md="4">
-              <v-text-field v-model="editedItem.email" label="Email"></v-text-field> </v-col
-          ></v-row>
-          <v-row justify="center" align="center" class="fill-height">
-            <v-col cols="12" sm="6" md="4">
-              <v-text-field v-model="editedItem.phone" label="Phone"></v-text-field> </v-col
-          ></v-row>
-          <v-row justify="center" align="center" class="fill-height">
-            <v-col cols="12" sm="6" md="4">
+  <v-dialog v-model="clientDialog" max-width="500" height="800">
+    <template v-slot:activator="{ props: activatorProps }">
+      <v-btn
+        rounded="xl"
+        class="text-none font-weight-regular hello"
+        prepend-icon="mdi-account"
+        variant="elevated"
+        color="#5A82AF"
+        v-bind="activatorProps"
+      >
+      </v-btn>
+    </template>
+    <v-sheet
+      elevation="14"
+      rounded="md"
+      width="500"
+      height="800"
+      :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+    >
+      <v-form>
+        <v-col>
+          <v-col>
+            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">Edit Client</h4>
+          </v-col>
+          <v-spacer></v-spacer>
+          <v-divider></v-divider>
+          <v-col>
+            <v-col>
+              <small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Name
+              </small>
+              <v-text-field v-model="Name" label="Name" variant="solo" rounded="xl"></v-text-field>
+            </v-col>
+            <v-divider></v-divider>
+            <v-col>
+              <small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Surname
+              </small>
               <v-text-field
-                v-model="editedItem.address"
-                label="Address"
-              ></v-text-field> </v-col></v-row
-          ><v-row justify="center" align="center" class="fill-height">
-            <v-col cols="12" sm="6" md="4">
+                v-model="Surname"
+                :label="Surname ? Surname : 'Surname'"
+                variant="solo"
+                rounded="xl"
+              ></v-text-field>
+            </v-col>
+            <v-divider></v-divider>
+            <v-col>
+              <small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Phone Number
+              </small>
               <v-text-field
-                v-model="editedItem.jobRequired"
-                label="Job Required"
-              ></v-text-field> </v-col
-          ></v-row>
-        </v-container>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-        <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-      </v-card-actions>
-    </v-card>
+                v-model="phone_number"
+                :label="phone_number ? phone_number : 'Phone Number'"
+                variant="solo"
+                rounded="xl"
+              ></v-text-field>
+            </v-col>
+            <v-divider></v-divider>
+            <v-col>
+              <small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Email
+              </small>
+              <v-text-field
+                v-model="email"
+                :label="email ? email : 'Email'"
+                variant="solo"
+                rounded="xl"
+              ></v-text-field>
+            </v-col>
+            <v-divider></v-divider>
+            <v-col>
+              <small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Address
+              </small>
+              <v-text-field
+                v-model="address"
+                :label="address ? address : 'Address'"
+                variant="solo"
+                rounded="xl"
+              ></v-text-field>
+            </v-col>
+            <v-divider></v-divider>
+            <v-col>
+              <small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Job Required
+              </small>
+              <v-text-field
+                v-model="job_required"
+                :label="job_required ? job_required : 'Job Required'"
+                variant="solo"
+                rounded="xl"
+              ></v-text-field>
+            </v-col>
+            <v-divider></v-divider>
+            <v-col align-self="center"
+              ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
+                <v-btn
+                  color="#5A82AF"
+                  rounded="xl"
+                  border="md"
+                  width="85%"
+                  height="35"
+                  variant="elevated"
+                >
+                  SAVE
+                </v-btn>
+              </v-col>
+              <v-col cols="12" md="12" xs="3" sm="6" offset="1">
+                <v-btn
+                  color="#5A82AF"
+                  rounded="xl"
+                  border="md"
+                  width="85%"
+                  height="35"
+                  variant="elevated"
+                >
+                  CANCEL
+                </v-btn>
+              </v-col></v-col
+            >
+          </v-col>
+        </v-col>
+      </v-form>
+    </v-sheet>
   </v-dialog>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'EditClient',
   props: {
@@ -53,7 +156,13 @@ export default {
     return {
       clientDialog: this.opened,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
-      isDeleting: false
+      isDeleting: false,
+      Name: '',
+      Surname: '',
+      phone_number: '',
+      email: '',
+      address: '',
+      job_required: ''
     }
   },
   methods: {
@@ -69,21 +178,17 @@ export default {
         jobRequired: this.editedItem.jobRequired
       }
       this.$emit('save', updatedItem)
+    },
+    async update() {
+      axios
+        .post('http://localhost:8000/api/clients/', this.editedItem)
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
-    // async deleteClient() {
-    //   this.isDeleting = true
-    //   try {
-    //     // Your delete logic here, e.g., an API call
-    //     await this.deleteClientApi(this.clientName)
-    //     this.$emit('clientDeleted')
-    //     this.close()
-    //   } catch (error) {
-    //     console.error('Failed to delete client:', error)
-    //     // Handle error, e.g., show a notification
-    //   } finally {
-    //     this.isDeleting = false
-    //   }
-    // }
   }
 }
 </script>

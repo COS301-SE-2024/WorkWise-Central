@@ -50,7 +50,7 @@
                     rounded="xl"
                     show-expand
                   >
-                    <template v-slot:item.actions="{ item }">
+                    <template v-slot:[`item.actions`]="{  }">
                       <v-col cols="6">
                         <v-btn icon size="small" @click="editDialog = true">
                           <v-icon>mdi-pencil</v-icon>
@@ -71,7 +71,11 @@
       >
       <v-col> <ClientDetails v-model="clientDialog" @close="clientDialog = false" /></v-col>
       <v-col>
-        <DeleteClient v-model="deleteDialog" @close="deleteDialog = false" :opened="deleteDialog"
+        <DeleteClient
+          v-model="deleteDialog"
+          @close="deleteDialog = false"
+          :opened="deleteDialog"
+          @updated_opened="deleteDialog = $event"
       /></v-col>
       <v-col>
         <EditClient
@@ -90,6 +94,8 @@ import NavigationBar from './NavigationBar.vue'
 import DeleteClient from './DeleteClient.vue'
 import EditClient from './EditClient.vue'
 import ClientDetails from './AddClient.vue'
+import axios from 'axios'
+
 export default {
   name: 'ClientDesk',
 
@@ -124,7 +130,7 @@ export default {
       { title: 'Email', value: 'email', key: 'email' },
       { title: 'Phone', value: 'phone', key: 'phone' },
       { title: 'Address', value: 'address', key: 'address' },
-      { title: 'Job Required', value: 'jobRequired', key: 'jobRequired' },
+      { title: 'Most Recent Job', value: 'mostRecentJob', key: 'mostRecentJob' },
       { title: 'Actions', value: 'actions', key: 'actions' }
     ],
     search: '',
@@ -265,7 +271,10 @@ export default {
       })
     }
   },
-  method: {
+  mounted() {
+    this.getClients()
+  },
+  methods: {
     onProfileClick() {
       console.log('Profile icon clicked')
     },
@@ -286,6 +295,16 @@ export default {
     },
     updatedEditedItem(newItem) {
       this.selectedItem = newItem
+    },
+    async getClients() {
+      axios
+        .get('http://localhost:3000/client/all')
+        .then((response) => {
+          console.log(response.data)
+        })
+        .catch((error) => {
+          console.error('Failed to fetch clients:', error)
+        })
     }
   }
 }

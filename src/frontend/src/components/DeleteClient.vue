@@ -25,10 +25,10 @@
 
 <script>
 export default {
-    name: 'DeleteClient',
-    props: {
-        opened: Boolean
-    },
+  name: 'DeleteClient',
+  props: {
+    opened: Boolean
+  },
   data() {
     return {
       clientDialog: this.opened,
@@ -39,8 +39,8 @@ export default {
   methods: {
     close() {
       this.clientDialog = false
-      this.opened = false
-    },
+      this.$emit('updated_opened', false)
+    }
     // async deleteClient() {
     //   this.isDeleting = true
     //   try {
