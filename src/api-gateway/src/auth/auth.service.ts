@@ -1,15 +1,31 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Global,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { Types } from 'mongoose';
+import { EmailService } from '../email/email.service';
+import { User } from '../users/entities/user.entity';
 
+@Global()
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
     private jwtService: JwtService,
+    private mailService: EmailService,
   ) {}
+
+  async signUp(user: User) {
+    const token = Math.floor(1000 + Math.random() * 9000).toString();
+    await this.mailService.sendUserConfirmation(user, token);
+  }
 
   async signIn(
     userIdentifier: string,
