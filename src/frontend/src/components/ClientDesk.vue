@@ -6,7 +6,7 @@
       </v-row>
     </v-row>
 
-    <v-container fluid fill-height class="pa-16 ma-auto">
+    <v-container fluid fill-height class="pa-16 ma-auto pt-5 fixed-container">
       <v-row justify="center" xs="4" sm="4" md="12">
         <v-col cols="12">
           >
@@ -38,42 +38,64 @@
                     single-line
                   ></v-text-field>
                   <v-spacer></v-spacer>
-                  <v-btn size="large" @click="openAddClient">New Client</v-btn>
+                  <v-btn size="large" @click="clientDialog = true">New Client</v-btn>
                 </v-card-title>
 
                 <v-divider></v-divider>
                 <div style="height: 700px; overflow-y: auto">
-                  <v-data-table :headers="headers" :items="clients" :search="search" rounded="xl">
-                    <template v-slot:item="{}">
+                  <v-data-table
+                    :headers="headers"
+                    :items="clients"
+                    :search="search"
+                    rounded="xl"
+                    show-expand
+                  >
+                    <template v-slot:[`item.actions`]="{  }">
                       <v-col cols="6">
-                        <v-btn icon size="small">
+                        <v-btn icon size="small" @click="editDialog = true">
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
                       </v-col>
                       <v-col cols="6"
-                        ><v-btn icon size="small">
+                        ><v-btn icon size="small" @click="deleteDialog = true">
                           <v-icon>mdi-delete</v-icon>
                         </v-btn></v-col
                       >
-                      <v-col cols="6"
-                        ><v-btn icon size="small"> <v-icon icon="md:info"></v-icon> </v-btn
-                      ></v-col>
                     </template>
                   </v-data-table>
                 </div>
               </v-card>
             </v-col>
-          </v-row> </v-col
-      ></v-row>
+          </v-row>
+        </v-col></v-row
+      >
       <v-col> <ClientDetails v-model="clientDialog" @close="clientDialog = false" /></v-col>
+      <v-col>
+        <DeleteClient
+          v-model="deleteDialog"
+          @close="deleteDialog = false"
+          :opened="deleteDialog"
+          @updated_opened="deleteDialog = $event"
+      /></v-col>
+      <v-col>
+        <EditClient
+          v-model="editDialog"
+          @close="editDialog = false"
+          :opened="editDialog"
+          :editedItem="selectedItem"
+          @save="updatedEditedItem"
+      /></v-col>
     </v-container>
   </v-app>
 </template>
 
 <script>
 import NavigationBar from './NavigationBar.vue'
-
+import DeleteClient from './DeleteClient.vue'
+import EditClient from './EditClient.vue'
 import ClientDetails from './AddClient.vue'
+import axios from 'axios'
+
 export default {
   name: 'ClientDesk',
 
@@ -81,25 +103,34 @@ export default {
     isDarkMode: Boolean
   },
   data: () => ({
-    openAddClient: false,
+    selectedItem: {},
     isdarkmode: false,
     clientDialog: false,
+    deleteDialog: false,
+    editDialog: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
+    sortBy: [
+      { key: 'name', order: 'asc' },
+      { key: 'email', order: 'asc' },
+      { key: 'phone', order: 'asc' },
+      { key: 'address', order: 'asc' },
+      { key: 'jobRequired', order: 'asc' }
+    ],
     headers: [
       {
         title: 'Name',
         align: 'start',
-        sortable: true,
+        sortable: false,
         value: 'name',
         key: 'name'
       },
       { title: 'Email', value: 'email', key: 'email' },
       { title: 'Phone', value: 'phone', key: 'phone' },
       { title: 'Address', value: 'address', key: 'address' },
-      { title: 'Job Required', value: 'jobRequired', key: 'jobRequired' },
+      { title: 'Most Recent Job', value: 'mostRecentJob', key: 'mostRecentJob' },
       { title: 'Actions', value: 'actions', key: 'actions' }
     ],
     search: '',
@@ -226,7 +257,9 @@ export default {
   }),
   components: {
     NavigationBar,
-    ClientDetails
+    ClientDetails,
+    DeleteClient,
+    EditClient
   },
   computed: {
     filteredClients() {
@@ -238,7 +271,10 @@ export default {
       })
     }
   },
-  method: {
+  mounted() {
+    this.getClients()
+  },
+  methods: {
     onProfileClick() {
       console.log('Profile icon clicked')
     },
@@ -256,7 +292,30 @@ export default {
     },
     openAddClient() {
       this.clientDialog = true
+    },
+    updatedEditedItem(newItem) {
+      this.selectedItem = newItem
+    },
+    async getClients() {
+      axios
+        .get('http://localhost:3000/client/all')
+        .then((response) => {
+          console.log(response.data)
+        })
+        .catch((error) => {
+          console.error('Failed to fetch clients:', error)
+        })
     }
   }
 }
 </script>
+
+<style>
+.fixed-container {
+  position: fixed; /* or 'absolute' depending on your layout */
+  top: 30px; /* Adjust this value based on the height of your navigation bar */
+  left: 0;
+  width: 100%; /* Adjust width as necessary */
+  z-index: 1; /* Ensure this is below your navbar if it's fixed as well */
+}
+</style>

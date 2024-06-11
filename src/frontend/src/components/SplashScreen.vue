@@ -15,8 +15,8 @@
       <v-btn @click="toggleDarkMode">Theme change</v-btn>
     </v-app-bar>
     <!-- Main Content -->
-    <v-main :class="{ 'modal-dark-theme': isdarkmode, 'modal-light-theme': !isdarkmode }" >
-      <v-row style="height: 1000px; width: 2000px " no-gutters>
+    <v-main :class="{ 'modal-dark-theme': isdarkmode, 'modal-light-theme': !isdarkmode }">
+      <v-row style="height: 1000px; width: 2000px" no-gutters>
         <!-- Left Half -->
         <v-col cols="6" sm="3" md="6" align-self="center">
           <v-row justify="center"
@@ -39,7 +39,7 @@
             <v-row justify="center">
               <v-col cols="8" offset="3"
                 ><v-btn
-                  color="blue-accent-2"
+                  color="#5A82AF"
                   dark
                   @click="loginDialog = true"
                   rounded="xl"
@@ -120,7 +120,7 @@
                       @click="login"
                       rounded="xl"
                       size="large"
-                      color="blue-accent-2"
+                      color="#5A82AF"
                       variant="elevated"
                       width="100%"
                       >Login</v-btn
@@ -218,7 +218,8 @@
                       ></v-row>
                       <v-row
                         ><v-col
-                          ><label style="font-size: 14px; font-weight: lighter">Confirm Password</label
+                          ><label style="font-size: 14px; font-weight: lighter"
+                            >Confirm Password</label
                           ><v-text-field
                             :bg-color="
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -245,7 +246,7 @@
                       width="100%"
                       size="large"
                       variant="elevated"
-                      color="blue-accent-2"
+                      color="#5A82AF"
                       >Continue</v-btn
                     > </v-col
                   ><v-col cols="8" offset="2">
@@ -323,7 +324,7 @@
                       @click="nextFlow2"
                       rounded="xl"
                       size="large"
-                      color="blue-accent-2"
+                      color="#5A82AF"
                       variant="elevated"
                       width="100%"
                       >Continue</v-btn
@@ -387,7 +388,7 @@
                       @click="nextFlowUsername"
                       rounded="xl"
                       size="large"
-                      color="blue-accent-2"
+                      color="#5A82AF"
                       variant="elevated"
                       width="100%"
                       >Continue</v-btn
@@ -451,7 +452,9 @@
                       ></v-row>
                       <v-row
                         ><v-col
-                          ><label style="font-size: 14px; font-weight: lighter">Preferred Language</label>
+                          ><label style="font-size: 14px; font-weight: lighter"
+                            >Preferred Language</label
+                          >
                           <v-select
                             color="grey-lighten-4"
                             :label="language ? '' : 'Select your preferred language'"
@@ -479,7 +482,7 @@
                       @click="nextFlow3"
                       rounded="xl"
                       size="large"
-                      color="blue-accent-2"
+                      color="#5A82AF"
                       variant="elevated"
                       width="100%"
                       >Continue</v-btn
@@ -613,7 +616,7 @@
                       @click="nextFlowAddress"
                       rounded="xl"
                       size="large"
-                      color="blue-accent-2"
+                      color="#5A82AF"
                       variant="elevated"
                       width="100%"
                       >Continue</v-btn
