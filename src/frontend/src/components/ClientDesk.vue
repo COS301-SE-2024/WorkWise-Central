@@ -9,7 +9,6 @@
     <v-container fluid fill-height class="pa-16 ma-auto pt-5 fixed-container">
       <v-row justify="center" xs="4" sm="4" md="12">
         <v-col cols="12">
-          >
           <v-row justify="center">
             <v-col cols="12" xs="4" sm="4" md="12" offset="3">
               <v-card
@@ -50,7 +49,7 @@
                     rounded="xl"
                     show-expand
                   >
-                    <template v-slot:[`item.actions`]="{  }">
+                    <template v-slot:[`item.actions`]="{}">
                       <v-col cols="6">
                         <v-btn icon size="small" @click="editDialog = true">
                           <v-icon>mdi-pencil</v-icon>
