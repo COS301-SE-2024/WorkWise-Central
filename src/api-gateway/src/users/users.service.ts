@@ -10,10 +10,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('user') private readonly userModel: Model<User>) {}
+  constructor(
+    @InjectModel('user') private readonly userModel: Model<User>,
+    private readonly authService: AuthService,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     if (await this.usernameExists(createUserDto.username)) {
@@ -25,6 +29,8 @@ export class UsersService {
     const newUserObj = new User(createUserDto);
     const newUser = new this.userModel(newUserObj);
     const result = await newUser.save();
+
+    await this.authService.signUp(newUserObj);
 
     return new createUserResponseDto(
       `${result.personalInfo.firstName} ${result.personalInfo.surname}'s account has been created`,
