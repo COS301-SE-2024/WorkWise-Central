@@ -38,3 +38,5 @@ functions/node_modules/
 .vscode/
 .code-workspace
 .vscode-test/
+
+*.idea
