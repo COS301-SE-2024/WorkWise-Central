@@ -20,9 +20,16 @@ export default defineComponent({
         <v-spacer></v-spacer>
 
         <v-col>
-          <v-card  rounded ="xl" class="h-xs-screen w-xs-screen h-lg-screen w-lg-screen" color="red">
-
-          </v-card>
+          <v-sheet rounded class="h-lg-screen w-lg-screen" color="red">
+            <v-row>
+              <v-col :cols="12">
+                <v-card color="white" :height="50" rounded="xl"> Hello </v-card>
+              </v-col>
+              <v-col :cols="12">
+                <v-card color="grey" :height="50">Now</v-card>
+              </v-col>
+            </v-row>
+          </v-sheet>
         </v-col>
       </v-col>
     </v-row>
