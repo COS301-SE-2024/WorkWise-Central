@@ -1,5 +1,5 @@
-import comp from "/home/jessica/WorkWise-Central/docs/.vuepress/.temp/pages/databaseDocs/datamodel.html.vue"
-const data = JSON.parse("{\"path\":\"/databaseDocs/datamodel.html\",\"title\":\"\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":null,\"contributors\":[]},\"filePathRelative\":\"databaseDocs/datamodel.md\"}")
+import comp from "/home/jessica/University/WorkWise-Central/docs/.vuepress/.temp/pages/databaseDocs/dataModel.html.vue"
+const data = JSON.parse("{\"path\":\"/databaseDocs/dataModel.html\",\"title\":\"Data Model\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":1717193035000,\"contributors\":[{\"name\":\"JessicaBloem\",\"email\":\"jessicabloem8@gmail.com\",\"commits\":2}]},\"filePathRelative\":\"databaseDocs/dataModel.md\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {
