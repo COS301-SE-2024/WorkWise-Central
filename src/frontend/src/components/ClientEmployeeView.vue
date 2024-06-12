@@ -3,7 +3,7 @@
     <v-row>
       <NavigationBar :isDarkMode="isdarkmode" />
     </v-row>
-    <v-container fluid fill-height class="pa-16 ma-auto pt-5 fixed-container">
+    <v-container fluid fill-height class="pa-16 ma-auto pt-5">
       <v-row justify="center" xs="4" sm="4" md="12">
         <v-col cols="12">
           <v-row justify="center">
@@ -47,6 +47,7 @@
                     single-line
                     hide-details
                     width="25%"
+                    class="mb-5"
                   ></v-select>
                   <v-spacer></v-spacer>
                   <v-card
@@ -54,6 +55,8 @@
                     :key="client.id"
                     border="md"
                     width="85%"
+                    class="mb-5"
+                    rounded="xl"
                     :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   >
                     <v-row>
