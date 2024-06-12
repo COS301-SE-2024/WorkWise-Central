@@ -4,17 +4,6 @@ import { Types } from 'mongoose';
 import { PickType } from '@nestjs/mapped-types';
 import { Job } from '../../job/entities/job.entity';
 
-export class roles {
-  @Prop({ required: true })
-  companyId: Types.ObjectId;
-
-  @Prop({ type: String, required: true })
-  role: string;
-
-  @Prop({ type: [String], required: true, default: ['read'] })
-  permissions: string[];
-}
-
 export class day {
   @Prop({ required: false })
   dayOfWeek: string;
