@@ -7,7 +7,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <v-contain>
+  <v-container>
     <v-row>
       <v-col>
         <v-col>
@@ -17,7 +17,7 @@ export default defineComponent({
         >
       </v-col>
     </v-row>
-  </v-contain>
+  </v-container>
 </template>
 
 <style scoped></style>
