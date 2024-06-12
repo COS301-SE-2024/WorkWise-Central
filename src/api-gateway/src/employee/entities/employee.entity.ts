@@ -103,6 +103,10 @@ export class Employee {
   Jobs: job[];
 
   @ApiProperty()
+  @Prop({ type: [String], required: true, default: [] })
+  skills: string[];
+
+  @ApiProperty()
   @Prop({ required: false, default: [] })
   subordinateEmployees: subordinateEmployee[];
 
@@ -115,7 +119,7 @@ export class Employee {
 
   @ApiProperty()
   @Prop({ required: true, default: 'Generic' })
-  roleName: string;
+  role: string;
 
   @ApiProperty()
   @Prop({ required: true })
