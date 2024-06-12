@@ -85,15 +85,6 @@ class profile {
   displayImage?: string;
 }
 
-class roles {
-  @IsMongoId()
-  companyId: Types.ObjectId;
-  @IsString()
-  role: string;
-  @IsArray()
-  permissions: string[];
-}
-
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
@@ -111,10 +102,10 @@ export class CreateUserDto {
   @IsObject()
   address: address;
 
-  @IsOptional()
+  /*  @IsOptional()
   @IsArray()
   @IsMongoId({ each: true })
-  joinedCompanies?: string[] | Types.ObjectId[];
+  joinedCompanies?: string[] | Types.ObjectId[];*/
 
   @IsNotEmpty()
   @IsObject()
@@ -126,11 +117,7 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsArray()
-  skills?: string[];
-
-  @IsOptional()
-  @IsArray()
-  roles?: roles[];
+  skills?: string[] = [];
 
   @IsOptional()
   @IsMongoId()

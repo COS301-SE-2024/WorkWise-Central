@@ -3,7 +3,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
   ServiceUnavailableException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
@@ -53,20 +52,20 @@ export class JobService {
 
   async authorisedToAssign(userId: Types.ObjectId, companyId: Types.ObjectId) {
     const user = await this.usersService.findUserById(userId);
-    if (!user.joinedCompanies.includes(companyId))
+    /*    if (!user.joinedCompanies.includes(companyId))
       throw new NotFoundException(
         'User does is not an employee of the company',
-      );
-    const validRolesInCompany = user.roles.filter(
+      );*/
+    /*    const validRolesInCompany = user.roles.filter(
       (role) =>
         role.companyId == companyId && this.authorisedList.includes(role.role),
-    );
+    );*/
 
-    if (validRolesInCompany.length == 0) {
+    /*    if (validRolesInCompany.length == 0) {
       throw new UnauthorizedException(
         'User does not have an appropriate role in the company',
       );
-    }
+    }*/
 
     const result = await this.companyService.findById(companyId);
     return result.employees.includes(userId);

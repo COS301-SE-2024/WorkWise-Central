@@ -77,30 +77,10 @@ export class profile {
   displayImage: string;
 }
 
-@Schema()
-export class roles {
-  @Prop({ required: true })
+export class joinedCompany {
+  employeeId: Types.ObjectId;
   companyId: Types.ObjectId;
-
-  @Prop({ type: String, required: true })
-  role: string;
-
-  @Prop({ type: [String], required: true, default: ['read'] })
-  permissions: string[];
-}
-
-export class day {
-  @Prop({ required: false })
-  dayOfWeek: string;
-
-  @Prop({ required: false })
-  hours: string;
-}
-
-@Schema()
-export class availability {
-  @Prop({ required: false })
-  schedule: day[];
+  companyName: string;
 }
 
 @Schema()
@@ -119,9 +99,8 @@ export class User {
       dateOfBirth: createUserDto.personalInfo.dateOfBirth,
       gender: createUserDto.personalInfo.gender,
     };
-    //this.personalInfo.contactInfo.email.toLowerCase();
 
-    this.joinedCompanies = createUserDto.joinedCompanies as Types.ObjectId[];
+    //this.joinedCompanies = createUserDto.joinedCompanies as Types.ObjectId[];
 
     if (createUserDto.profile.displayImage != null) {
       this.profile = {
@@ -138,8 +117,6 @@ export class User {
 
     this.profile.displayName = createUserDto.profile.displayName;
     this.skills = createUserDto.skills;
-    this.roles = createUserDto.roles;
-    if (createUserDto.roles) this.roles = createUserDto.roles;
     this.created_at = new Date();
   }
 
@@ -156,20 +133,12 @@ export class User {
   profile: profile;
 
   @ApiProperty()
-  @Prop({ required: false })
-  roles: roles[];
-
-  @ApiProperty()
-  @Prop({ type: [mongoose.Types.ObjectId], required: true, default: [] })
-  joinedCompanies: mongoose.Types.ObjectId[];
+  @Prop({ required: true, default: [] })
+  joinedCompanies: joinedCompany[];
 
   @ApiProperty()
   @Prop({ type: [String], required: false })
   skills: string[];
-
-  @ApiProperty()
-  @Prop({ required: false })
-  availability: availability;
 
   @ApiHideProperty()
   @Prop({ required: false, default: new Date() })
@@ -182,10 +151,6 @@ export class User {
   @ApiHideProperty()
   @Prop({ required: false })
   public deleted_at: Date;
-
-  @ApiHideProperty()
-  @Prop({ type: [Types.ObjectId], required: false, default: [] })
-  public currentJobAssignments: Types.ObjectId[];
 
   @ApiHideProperty()
   @Prop({ type: Types.ObjectId, required: false })
