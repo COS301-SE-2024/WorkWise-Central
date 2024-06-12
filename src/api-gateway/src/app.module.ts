@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { CompanyModule } from './company/company.module';
 import { ClientModule } from './client/client.module';
 import { JobModule } from './job/job.module';
+import { EmployeeModule } from './employee/employee.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { JobModule } from './job/job.module';
     CompanyModule,
     ClientModule,
     JobModule,
+    EmployeeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

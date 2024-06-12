@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { CreateJobDto } from '../dto/create-job.dto';
+import { getModelForClass } from '@typegoose/typegoose';
 
 export class address {
   @ApiProperty()
@@ -139,3 +140,5 @@ export class Job {
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);
+
+export const JobModel = getModelForClass(Job);
