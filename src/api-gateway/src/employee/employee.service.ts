@@ -1,15 +1,17 @@
 import {
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Document, Model, Types } from 'mongoose';
 import { Employee } from './entities/employee.entity';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class EmployeeService {
@@ -63,8 +65,8 @@ export class EmployeeService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} employee`;
+  async findOne(id: string) {
+    return this.employeeModel.findById(id);
   }
 
   update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
@@ -72,7 +74,28 @@ export class EmployeeService {
     return `This action updates a #${id} employee`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} employee`;
+  async remove(id: string): Promise<boolean> {
+    const employeeToDelete = await this.findOne(id);
+    //const removeFromCompany = await this.companyService.remove(id);
+    //const removeFromUser = await this.usersService.softDelete();
+
+    const result: Document<unknown, NonNullable<unknown>, User> &
+      User & { _id: Types.ObjectId } =
+      await this.employeeModel.findOneAndUpdate(
+        {
+          $and: [
+            { _id: employeeToDelete._id },
+            {
+              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            },
+          ],
+        },
+        { $set: { deleted_at: new Date() } },
+      );
+
+    if (result == null) {
+      throw new InternalServerErrorException('Internal server Error');
+    }
+    return true;
   }
 }

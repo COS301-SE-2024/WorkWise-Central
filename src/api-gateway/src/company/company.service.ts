@@ -206,7 +206,7 @@ export class CompanyService {
     return `This action updates a #${id} company`;
   }
 
-  remove(id: number) {
+  async remove(id: string) {
     return `This action removes a #${id} company`;
   }
 }
