@@ -1,0 +1,3543 @@
+{
+    "modelName": "New Model",
+    "collections": [
+        {
+            "collectionName": "Employee",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "_id",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "0163cfe9-200e-428f-a9fa-4ad1789568cb",
+                    "childRelationships": [
+                        "46e3b81d-7c89-4377-aca3-7e6c7364a9fd",
+                        "8718fc5d-23bf-4856-a887-f89fe5e0a30d",
+                        "97fae31c-d4ff-4b45-a398-fa1e8169d83b",
+                        "8521dbf6-fdd7-48d2-9ef3-d7f95fdd5f18",
+                        "c6f56caf-14a9-46d3-b1d5-67170b0d9605",
+                        "f9019bd8-5722-42fd-a8b7-ac2ece0fa738"
+                    ],
+                    "required": true,
+                    "primaryKey": true,
+                    "error": {}
+                },
+                {
+                    "name": "role",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "roleId",
+                            "hackoladeMeta": {
+                                "namingConvention": ""
+                            },
+                            "isActivated": true,
+                            "type": "objectId",
+                            "required": true,
+                            "GUID": "95535982-0d04-49e7-9faa-b44f8b11710b",
+                            "foreignCollection": "07d53381-7216-4c47-8b59-0f4e8e2a3283",
+                            "foreignField": [
+                                "07d53381-7216-4c47-8b59-0f4e8e2a3283",
+                                "3f3be1ad-9767-432d-9cd1-f7ada44761a4"
+                            ],
+                            "relationshipType": "Foreign Key",
+                            "parentRelationship": "6b24b11c-4d68-4f57-8ecd-891e55f40bab",
+                            "error": {}
+                        },
+                        {
+                            "name": "roleName",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "ec008c60-29a4-4325-9311-d6e992f76458",
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "permissionSuite",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "array",
+                            "properties": [
+                                {
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "e36d7083-9811-46d7-ac75-2e9258fe68bd",
+                                    "arrayItem": true,
+                                    "displayName": "permission",
+                                    "error": {}
+                                }
+                            ],
+                            "additionalItems": true,
+                            "GUID": "2675ba07-920b-4ca8-ad81-1bdcb0c1e9ab",
+                            "required": true,
+                            "error": {}
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "GUID": "f00d5817-c936-42b0-86af-ac2b58796501",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "currentJobAssignments",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "jobId",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "objectId",
+                                    "GUID": "b506fa1d-dc94-4f57-ab0f-10c35d4da98a",
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "jobDetails",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "document",
+                                    "properties": [
+                                        {
+                                            "name": "jobName",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "string",
+                                            "GUID": "e0cc668c-eabd-45a4-bddc-26f72bde4034",
+                                            "required": true,
+                                            "error": {}
+                                        },
+                                        {
+                                            "name": "jobEndDate",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "date",
+                                            "primaryKey": false,
+                                            "GUID": "7bbdd89f-3669-4d39-b03e-63c2a2f7a655",
+                                            "required": true,
+                                            "error": {}
+                                        },
+                                        {
+                                            "name": "jobStartDate",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "date",
+                                            "primaryKey": false,
+                                            "GUID": "0ce645ef-7be2-4797-be83-3d309364e903",
+                                            "required": true,
+                                            "error": {}
+                                        },
+                                        {
+                                            "name": "clientName",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "string",
+                                            "GUID": "96aff89e-ac5d-4189-9b54-713172c27ceb",
+                                            "required": true,
+                                            "error": {}
+                                        },
+                                        {
+                                            "name": "jobAddress",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "document",
+                                            "properties": [
+                                                {
+                                                    "name": "street",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "4461f8a8-5357-4de7-817e-538a64598e67",
+                                                    "required": true,
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "suburb",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "f509ccf6-43be-4821-8c03-e3aac19b3623",
+                                                    "required": true,
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "city",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "8cab287b-67fd-42c3-a841-eab0d61c8e92",
+                                                    "required": true,
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "province",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "95c1f9b9-e012-4133-a16c-d679f5b1aea9",
+                                                    "required": true,
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "postalCode",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "4eb16db2-7b41-49d3-a0df-26547b4328e4",
+                                                    "required": true,
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "complex",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "c4292ed3-48bc-4b57-bc0c-5eb667d50222",
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "houseNumber",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "c9ee8e6a-0bdc-4198-aee8-5284cca317c4",
+                                                    "error": {}
+                                                }
+                                            ],
+                                            "additionalProperties": false,
+                                            "GUID": "f83e3410-645e-4093-8a6f-f4fd86f0306b",
+                                            "required": true,
+                                            "error": {}
+                                        }
+                                    ],
+                                    "additionalProperties": false,
+                                    "GUID": "e711d6f2-9491-4530-a0ea-953c77577d7c",
+                                    "required": true,
+                                    "error": {}
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "GUID": "ada3f3a6-f991-4f2c-ba39-09a12230b604",
+                            "arrayItem": true,
+                            "displayName": "Job",
+                            "error": {}
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "314ee9f4-6c3e-4692-8dfe-92dad8dae189",
+                    "required": false,
+                    "error": {}
+                },
+                {
+                    "name": "superior",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "employeeId",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "objectId",
+                            "GUID": "62d29f27-9fb8-4fb3-a379-4b5f19c8d800",
+                            "required": true,
+                            "foreignCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+                            "foreignField": [
+                                "12962c2f-1695-4141-9815-740a6e64b936",
+                                "0163cfe9-200e-428f-a9fa-4ad1789568cb"
+                            ],
+                            "relationshipType": "Foreign Key",
+                            "parentRelationship": "8521dbf6-fdd7-48d2-9ef3-d7f95fdd5f18",
+                            "error": {}
+                        },
+                        {
+                            "name": "employeeDisplayName",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "917a22d2-944f-479b-b39c-52e7a8593d70",
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "employeeDisplayImage",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "f1691359-9e84-4fec-9513-89b41aaa6066",
+                            "required": true,
+                            "error": {}
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "GUID": "1caeac48-373e-4b06-bab8-5b3a8dd8cea0",
+                    "error": {}
+                },
+                {
+                    "name": "subordinates",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "employeeId",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "objectId",
+                                    "GUID": "61284f0f-1c97-46fc-9261-71dc6b47c37b",
+                                    "required": true,
+                                    "foreignCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+                                    "foreignField": [
+                                        "12962c2f-1695-4141-9815-740a6e64b936",
+                                        "0163cfe9-200e-428f-a9fa-4ad1789568cb"
+                                    ],
+                                    "relationshipType": "Foreign Key",
+                                    "parentRelationship": "97fae31c-d4ff-4b45-a398-fa1e8169d83b",
+                                    "error": {}
+                                },
+                                {
+                                    "name": "employeeDisplayName",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "98165613-a855-45a4-a855-7a1232082eaf",
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "eb6b3f08-888a-48d3-bc85-55e3a4d29486",
+                                    "name": "employeeDisplayImage",
+                                    "required": false,
+                                    "error": {}
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "GUID": "223109cc-35f0-42a4-ac94-f15e56e89582",
+                            "arrayItem": true,
+                            "displayName": "employee",
+                            "foreignCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+                            "error": {}
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "0c5e7924-bdd9-4652-a75a-d5630120b34d",
+                    "error": {}
+                },
+                {
+                    "name": "createdAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "2cc1f222-3ad0-4bf2-873e-2870fd74ad60",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "updatedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "a8dd6643-9600-4be9-80bb-309560cb7d2b",
+                    "required": false,
+                    "error": {}
+                },
+                {
+                    "name": "daletedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "f6687711-ea88-485c-9593-56b5ae8e9a27",
+                    "required": false,
+                    "error": {}
+                },
+                {
+                    "name": "userID",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "a0b8152f-0e8a-4eae-b373-c03cbb2c8a31",
+                    "foreignCollection": "044a679f-6a60-4a25-9b65-d7928f06e30c",
+                    "foreignField": [
+                        "044a679f-6a60-4a25-9b65-d7928f06e30c",
+                        "5600a65a-7d0b-4291-af5f-74849b9a75d2"
+                    ],
+                    "relationshipType": "Foreign Key",
+                    "parentRelationship": "a5eebb4a-0403-484c-9054-2b7942f9f9b4",
+                    "error": {}
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "4dc31876-7e13-4e9e-9c3f-46b9b93f409a"
+            },
+            "isActivated": true,
+            "additionalProperties": false,
+            "validationLevel": "Off",
+            "validationAction": "Warn",
+            "storageEngineName": "WiredTiger",
+            "collectionUsers": [],
+            "indexes": [],
+            "collation": {},
+            "sharding": {
+                "unique": true,
+                "collation": "null"
+            },
+            "GUID": "12962c2f-1695-4141-9815-740a6e64b936",
+            "bucketId": "0db365f5-4256-4a1f-81fe-d5e0e60ddc4d"
+        },
+        {
+            "collectionName": "User",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "_id",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "5600a65a-7d0b-4291-af5f-74849b9a75d2",
+                    "foreignCollection": "",
+                    "foreignField": [],
+                    "required": true,
+                    "primaryKey": true,
+                    "error": {},
+                    "childRelationships": [
+                        "a5eebb4a-0403-484c-9054-2b7942f9f9b4"
+                    ]
+                },
+                {
+                    "name": "systemDetails",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "password",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "1382f8da-0e80-4a62-bc65-76d54f729804",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "username",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "da5f084f-ea2c-432c-b20e-39dea52792ba",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "GUID": "3c8fc121-59da-447f-a258-d7164bb97631",
+                    "foreignCollection": "",
+                    "foreignField": [],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "profile",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "displayName",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "a6acf552-11ac-4ec2-83f3-563a8af89d31",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "displayImage",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "71e37510-36c3-4a73-a797-6f654f7fa36d",
+                            "error": {},
+                            "foreignCollection": "",
+                            "foreignField": []
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "GUID": "60b7c61b-b8ca-4dad-9ac8-edfda0b764bc",
+                    "foreignCollection": "",
+                    "foreignField": [],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "personalInfo",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "firstName",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "63a435b3-e41e-4b93-a1c4-50c2d65461fd",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "surname",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "49f9b166-261a-4635-b7ca-38e3a811a2cb",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "dateOfBirth",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "date",
+                            "primaryKey": false,
+                            "GUID": "8ee0f7bf-9e93-4550-80fe-8f2641c603e4",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "gender",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "6ae27c29-f46e-45fa-ba08-0ad00191ef66",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "address",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "street",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "47ef78bf-f103-44a8-a4af-51d18ba4b9e4",
+                                    "foreignCollection": "",
+                                    "foreignField": [],
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "suburb",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "df4f7c81-bf38-48ed-af8e-ffb735b618fe",
+                                    "foreignCollection": "",
+                                    "foreignField": [],
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "city",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "8909f580-95cf-4584-b2af-9981ac4e1c92",
+                                    "foreignCollection": "",
+                                    "foreignField": [],
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "5a7a73f6-3c13-4912-860d-4a1400eb6090",
+                                    "name": "province",
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "postalCode",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "87ed77bc-1fca-41bd-ad72-1e044cc74252",
+                                    "foreignCollection": "",
+                                    "foreignField": [],
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "complex",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "d00f50af-1244-4b30-b0d6-0aac9768ed43",
+                                    "error": {},
+                                    "foreignCollection": "",
+                                    "foreignField": []
+                                },
+                                {
+                                    "name": "houseNumber",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "074a4ad4-f4bd-4432-8b75-d9f131063618",
+                                    "error": {},
+                                    "foreignCollection": "",
+                                    "foreignField": []
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "GUID": "cf7828b4-5c7e-42a8-8c1c-8f96abe7e3db",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "preferredLanguage",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "70ce5c78-eae5-47fe-916f-b7c844aa3b8a",
+                            "error": {},
+                            "foreignCollection": "",
+                            "foreignField": []
+                        },
+                        {
+                            "name": "contactInfo",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "phone",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "538b2819-9b07-4edf-8917-cb9b9a17f8cd",
+                                    "error": {},
+                                    "foreignCollection": "",
+                                    "foreignField": []
+                                },
+                                {
+                                    "name": "email",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "d2b6341c-6662-42fb-8b13-42543a93d6c4",
+                                    "error": {},
+                                    "foreignCollection": "",
+                                    "foreignField": []
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "GUID": "69b80452-c33e-410c-af64-335d535396f0",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {
+                                "name": false
+                            }
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "GUID": "d826d539-c479-426a-92d0-ffe0abfcf6d1",
+                    "foreignCollection": "",
+                    "foreignField": [],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "joinedCompanies",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "employeeId",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "objectId",
+                                    "GUID": "a2e6d2c3-c7e6-40d2-9708-02a46b26f2b2",
+                                    "foreignCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+                                    "foreignField": [
+                                        "12962c2f-1695-4141-9815-740a6e64b936",
+                                        "0163cfe9-200e-428f-a9fa-4ad1789568cb"
+                                    ],
+                                    "relationshipType": "Foreign Key",
+                                    "parentRelationship": "46e3b81d-7c89-4377-aca3-7e6c7364a9fd",
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "companyName",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "c0241ab0-1819-467a-b534-c6cd9b09d0ee",
+                                    "required": true,
+                                    "error": {}
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "GUID": "24d88310-ee99-42e9-855e-701967d86a4e",
+                            "arrayItem": true,
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "displayName": "company",
+                            "error": {}
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "393c02e6-d8a1-43eb-8320-d1b7238f92e5",
+                    "foreignCollection": "",
+                    "foreignField": [],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "skills",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "8ac05d2e-68b3-40e0-bac2-fc5ae1ce8dd1",
+                            "arrayItem": true,
+                            "displayName": "skillName",
+                            "error": {}
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "8e0d3e90-84ff-4aa1-a8a6-c215577e1fe9",
+                    "error": {}
+                },
+                {
+                    "name": "currentEployeeId",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "b9292a16-8e2a-4d28-9c66-dab65e70070e",
+                    "parentRelationship": "8718fc5d-23bf-4856-a887-f89fe5e0a30d",
+                    "relationshipType": "Foreign Key",
+                    "required": true,
+                    "error": {}
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "d8c41f80-81ec-46c6-bd32-324a2bbf5e7c"
+            },
+            "isActivated": true,
+            "additionalProperties": false,
+            "validationLevel": "Off",
+            "validationAction": "Warn",
+            "storageEngineName": "WiredTiger",
+            "collectionUsers": [],
+            "indexes": [],
+            "collation": {},
+            "sharding": {
+                "unique": true,
+                "collation": "null"
+            },
+            "GUID": "044a679f-6a60-4a25-9b65-d7928f06e30c",
+            "bucketId": "0db365f5-4256-4a1f-81fe-d5e0e60ddc4d"
+        },
+        {
+            "collectionName": "Company",
+            "type": "object",
+            "properties": [
+                {
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "e1f99751-8ff7-407e-a50f-e344bcda953e",
+                    "name": "_id",
+                    "required": true,
+                    "childRelationships": [
+                        "f4f763e4-c4d4-4395-82a1-4efb0656294e",
+                        "e25fef8b-0a23-4d10-a934-021938804f05"
+                    ],
+                    "primaryKey": true,
+                    "error": {}
+                },
+                {
+                    "name": "name",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "23467b84-0ecf-43f1-b0c8-51bbee926f7f",
+                    "encrypt": false,
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "00c7d739-bfc7-469d-be9d-9edb9fdcc556",
+                    "name": "registrationNumber",
+                    "required": false,
+                    "error": {}
+                },
+                {
+                    "name": "vatNumber",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "1d2c4913-1bb6-4899-bedd-48a5a6f10a79",
+                    "required": false,
+                    "error": {}
+                },
+                {
+                    "name": "logo",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "73d6c8ef-03ec-4f79-b652-5a2588c3afb6",
+                    "error": {}
+                },
+                {
+                    "name": "contactInfo",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "phone",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "320593af-f8c2-45be-a672-bd6176e7a8d1",
+                            "error": {},
+                            "foreignCollection": "",
+                            "foreignField": []
+                        },
+                        {
+                            "name": "email",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "166bc165-4b09-4898-a3b6-2e82c1d1c4d2",
+                            "error": {},
+                            "foreignCollection": "",
+                            "foreignField": []
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "GUID": "fd3b475f-41c6-4088-ab89-6803dcb03fec",
+                    "foreignCollection": "",
+                    "foreignField": [],
+                    "required": true,
+                    "error": {
+                        "name": false,
+                        "code": false
+                    }
+                },
+                {
+                    "name": "address",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "street",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "320593af-f8c2-45be-a672-bd6176e7a8d1",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "suburb",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "166bc165-4b09-4898-a3b6-2e82c1d1c4d2",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "city",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "98f811db-f2a8-4a7a-b74a-fe566930e3c9",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "a0b8152f-0e8a-4eae-b373-c03cbb2c8a31",
+                            "name": "province",
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "postalCode",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "a85cb98d-dbea-4ddf-8a4c-5f3909bcf31a",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "complex",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "a5eebb4a-0403-484c-9054-2b7942f9f9b4",
+                            "error": {},
+                            "foreignCollection": "",
+                            "foreignField": []
+                        },
+                        {
+                            "name": "houseNumber",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "a1f6ecea-8d98-435a-8056-0ae2bdd541b5",
+                            "error": {},
+                            "foreignCollection": "",
+                            "foreignField": []
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "GUID": "f0f0fe49-0042-476d-989e-b70e10233725",
+                    "foreignCollection": "",
+                    "foreignField": [],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "employees",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "objectId",
+                            "GUID": "fae74824-861d-4e84-a214-05661b2a9781",
+                            "arrayItem": true,
+                            "displayName": "employeeID",
+                            "foreignCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+                            "foreignField": [
+                                "12962c2f-1695-4141-9815-740a6e64b936",
+                                "0163cfe9-200e-428f-a9fa-4ad1789568cb"
+                            ],
+                            "relationshipType": "Foreign Key",
+                            "parentRelationship": "c6f56caf-14a9-46d3-b1d5-67170b0d9605",
+                            "error": {}
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "f2a7b69c-4f79-4e29-aa16-2a35251dabc6",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "inventory",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "objectId",
+                            "GUID": "fa363fb7-b590-4bea-bbcd-85724a6c6177",
+                            "arrayItem": true,
+                            "displayName": "inventoryItem",
+                            "foreignCollection": "5a114539-d120-4034-906d-737ae38e03a4",
+                            "foreignField": [
+                                "5a114539-d120-4034-906d-737ae38e03a4",
+                                "1d9ecb70-c583-4e0e-9e30-3604decc2ab3"
+                            ],
+                            "relationshipType": "Foreign Key",
+                            "parentRelationship": "461b21b2-a794-49d3-b729-7bb436a29007",
+                            "error": {}
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "a4d43256-3100-44ec-aa5b-157d6bc13345",
+                    "error": {}
+                },
+                {
+                    "name": "createdAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "6ed23ba1-8bed-48ed-baf8-82450dc09bed",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "updatedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "24706500-bc83-430d-99d4-f4c9e592bf15",
+                    "error": {}
+                },
+                {
+                    "name": "deletedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "3d48ec7d-6fb6-41e7-987d-67c0ac1e018a",
+                    "error": {}
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "59980a05-7a0c-4a7a-9481-6b135757c170"
+            },
+            "isActivated": true,
+            "additionalProperties": false,
+            "validationLevel": "Off",
+            "validationAction": "Warn",
+            "storageEngineName": "WiredTiger",
+            "collectionUsers": [],
+            "indexes": [],
+            "collation": {},
+            "sharding": {
+                "unique": true,
+                "collation": "null"
+            },
+            "GUID": "1b9fbda8-2a10-4513-97be-a66eb5f19c6b",
+            "bucketId": "0db365f5-4256-4a1f-81fe-d5e0e60ddc4d"
+        },
+        {
+            "collectionName": "Roles",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "_id",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "3f3be1ad-9767-432d-9cd1-f7ada44761a4",
+                    "required": true,
+                    "childRelationships": [
+                        "6b24b11c-4d68-4f57-8ecd-891e55f40bab"
+                    ],
+                    "primaryKey": true,
+                    "error": {}
+                },
+                {
+                    "name": "roleName",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "6c4b11e6-0ecb-4cdc-967a-9060f97f5307",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "permissionSuite",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "ef5eb203-90c2-4825-97b7-ae3d6008bbae",
+                            "arrayItem": true,
+                            "displayName": "permission",
+                            "error": {}
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "5456ab71-308f-42a7-8565-8e3531fc5872",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "companyId",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "434a75f3-af2e-46d4-b540-db69421dc784",
+                    "required": true,
+                    "error": {}
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "bb428cc9-7680-466e-b36b-bb8a3241d977"
+            },
+            "isActivated": true,
+            "additionalProperties": false,
+            "validationLevel": "Off",
+            "validationAction": "Warn",
+            "storageEngineName": "WiredTiger",
+            "collectionUsers": [],
+            "indexes": [],
+            "collation": {},
+            "sharding": {
+                "unique": true,
+                "collation": "null"
+            },
+            "GUID": "07d53381-7216-4c47-8b59-0f4e8e2a3283",
+            "bucketId": "0db365f5-4256-4a1f-81fe-d5e0e60ddc4d"
+        },
+        {
+            "collectionName": "Team",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "_id",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "de0d441d-5c52-4671-b3ff-d6f5d653d0ff",
+                    "required": true,
+                    "error": {},
+                    "childRelationships": [
+                        "07acbdc6-86ce-48ab-96f2-2a1f480ae62c"
+                    ]
+                },
+                {
+                    "name": "companyId",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "e19817c5-6b8e-4873-a124-3b3ac3d59304",
+                    "required": true,
+                    "foreignCollection": "1b9fbda8-2a10-4513-97be-a66eb5f19c6b",
+                    "foreignField": [
+                        "1b9fbda8-2a10-4513-97be-a66eb5f19c6b",
+                        "e1f99751-8ff7-407e-a50f-e344bcda953e"
+                    ],
+                    "relationshipType": "Foreign Key",
+                    "parentRelationship": "f4f763e4-c4d4-4395-82a1-4efb0656294e",
+                    "error": {}
+                },
+                {
+                    "name": "teamName",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "af3b9c04-047d-4a3d-8851-535c91052a48",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "teamMembers",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "employeeId",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "objectId",
+                                    "GUID": "ae97f931-c483-4462-8917-f549269a6965",
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "employeeDisplayName",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "c1609dcd-7bd4-49a2-80a0-a44cba1d7623",
+                                    "encrypt": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "employeeDisplayImage",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "1cbed458-44da-4e30-bb6e-658cd7111502",
+                                    "error": {}
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "error": {},
+                            "GUID": "93c58011-a291-4bc9-9316-f274da8ac779",
+                            "arrayItem": true,
+                            "displayName": "employee"
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "dc04787d-23ae-4132-92eb-584a8db06852",
+                    "error": {}
+                },
+                {
+                    "name": "teamLeader",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "employeeId",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "objectId",
+                            "GUID": "68983faf-ff7c-4d45-9946-9d15862fe75e",
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "employeeDisplayName",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "536c124d-d297-45cd-a150-a4e9a303d80a",
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "employeeDisplayImage",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "8b1e19b7-6387-4174-8f46-cbdd17ced80e",
+                            "error": {}
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "GUID": "9f3c21ff-d83f-4d4c-a0ed-e3d2acfc0029",
+                    "error": {}
+                },
+                {
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "3823e03c-fdf0-47c9-b811-e7f9f574d1a8",
+                    "name": "createdAt",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "updatedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "5e5f6dd9-b9eb-46bd-a684-3afbab2fe50f",
+                    "error": {}
+                },
+                {
+                    "name": "deletedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "1b30dace-fe56-47a7-a436-8dc9b0c9d775",
+                    "error": {}
+                },
+                {
+                    "name": "assinedJobs",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "jobId",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "objectId",
+                                    "GUID": "ba0ce1e6-c33d-4918-b0bd-0a7a47756de6",
+                                    "required": true,
+                                    "foreignCollection": "611fb364-6394-42c3-848d-bea59d5d2b29",
+                                    "foreignField": [
+                                        "611fb364-6394-42c3-848d-bea59d5d2b29",
+                                        "7f906be1-7890-4ad7-850e-6bc49e20e238"
+                                    ],
+                                    "relationshipType": "Foreign Key",
+                                    "parentRelationship": "892b5fb9-aef3-4b2c-9780-0addd5199520",
+                                    "error": {}
+                                },
+                                {
+                                    "name": "jobDetails",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "document",
+                                    "properties": [
+                                        {
+                                            "name": "jobName",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "string",
+                                            "GUID": "525fe447-dbaf-4ed0-8359-a02778a0353f",
+                                            "required": true,
+                                            "error": {}
+                                        },
+                                        {
+                                            "name": "jobEndDate",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "date",
+                                            "primaryKey": false,
+                                            "GUID": "6826e874-68e7-4274-996a-a6af0a737bcf",
+                                            "required": true,
+                                            "error": {}
+                                        },
+                                        {
+                                            "name": "jobStartDate",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "date",
+                                            "primaryKey": false,
+                                            "GUID": "25d8709f-44ac-4cb7-8498-b10b11d8fb87",
+                                            "required": true,
+                                            "error": {}
+                                        },
+                                        {
+                                            "name": "clientName",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "string",
+                                            "GUID": "9953777d-684e-4041-a60c-94263210be2f",
+                                            "required": true,
+                                            "error": {}
+                                        },
+                                        {
+                                            "name": "jobAddress",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "document",
+                                            "properties": [
+                                                {
+                                                    "name": "street",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "d131f686-604d-4c4b-ade7-9950d35671d1",
+                                                    "required": true,
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "suburb",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "d5e20064-8ffa-4328-9b8c-e3355f636089",
+                                                    "required": true,
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "city",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "3c7f97e8-cbcb-4169-bece-5b1d3948e4fb",
+                                                    "required": true,
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "province",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "66360e31-87e3-4e1e-b50d-e85624e1eb10",
+                                                    "required": true,
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "postalCode",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "1994afe4-4224-44e9-991d-64360f970aed",
+                                                    "required": true,
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "complex",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "674d8bb7-00ef-4eed-b965-b6bfcfb4a6dd",
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "houseNumber",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "10beefec-bf3d-4f0f-a6e1-ca1d2d1a20cd",
+                                                    "error": {}
+                                                }
+                                            ],
+                                            "additionalProperties": false,
+                                            "GUID": "4976fe87-c609-4c54-8170-ffe73ad21ba7",
+                                            "required": true,
+                                            "error": {}
+                                        }
+                                    ],
+                                    "additionalProperties": false,
+                                    "GUID": "5681362a-2eac-4498-9331-85aba70cc632",
+                                    "required": true,
+                                    "error": {}
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "GUID": "29df0d29-2cc2-4670-be14-bce39ea7f417",
+                            "arrayItem": true,
+                            "displayName": "Job",
+                            "error": {},
+                            "foreignCollection": "",
+                            "foreignField": []
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "d93b98d7-1e30-43b0-bf14-974e60d3b2c2",
+                    "error": {}
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "d89f6136-c11a-47c7-8a07-ad9613d96c22"
+            },
+            "isActivated": true,
+            "additionalProperties": false,
+            "validationLevel": "Off",
+            "validationAction": "Warn",
+            "storageEngineName": "WiredTiger",
+            "collectionUsers": [],
+            "indexes": [],
+            "collation": {},
+            "sharding": {
+                "unique": true,
+                "collation": "null"
+            },
+            "GUID": "6563c096-9d5a-4840-8092-c38d840f2e6c",
+            "bucketId": "0db365f5-4256-4a1f-81fe-d5e0e60ddc4d"
+        },
+        {
+            "collectionName": "Job",
+            "type": "object",
+            "properties": [
+                {
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "7f906be1-7890-4ad7-850e-6bc49e20e238",
+                    "required": true,
+                    "primaryKey": true,
+                    "name": "_id",
+                    "error": {},
+                    "childRelationships": [
+                        "892b5fb9-aef3-4b2c-9780-0addd5199520"
+                    ]
+                },
+                {
+                    "name": "companyId",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "3a20bd1a-e8f2-4dd1-81ef-3431aedca469",
+                    "foreignCollection": "1b9fbda8-2a10-4513-97be-a66eb5f19c6b",
+                    "foreignField": [
+                        "1b9fbda8-2a10-4513-97be-a66eb5f19c6b",
+                        "e1f99751-8ff7-407e-a50f-e344bcda953e"
+                    ],
+                    "relationshipType": "Foreign Key",
+                    "parentRelationship": "e25fef8b-0a23-4d10-a934-021938804f05",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "clientId",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "2be77f0c-a57d-450e-aeb0-2b9d2e73a5fc",
+                    "foreignCollection": "2502e395-525b-4e7a-bc9c-5a6520512d81",
+                    "foreignField": [
+                        "2502e395-525b-4e7a-bc9c-5a6520512d81",
+                        "179ca950-7834-4680-81fc-bb74f7173b3f"
+                    ],
+                    "relationshipType": "Foreign Key",
+                    "parentRelationship": "3762cfdd-d795-4e29-b35a-39e36856fd7b",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "jobDetails",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "jobName",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "3b55231b-449e-4b90-9318-dab6059968d9",
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "jobEndDate",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "date",
+                            "primaryKey": false,
+                            "GUID": "2f392c7d-b06b-4588-8279-448202876e7e",
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "jobStartDate",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "date",
+                            "primaryKey": false,
+                            "GUID": "6eda34a5-fafa-4261-8394-05dc012528ca",
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "clientName",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "eef6d2c7-bd26-441b-bbe5-5ea0c95ba938",
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "jobAddress",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "street",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "728855aa-cb9f-4d96-ace7-d27ae30d3e09",
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "suburb",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "bf555d54-73c4-4e9e-91e9-b512cfc5f9ef",
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "city",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "5467cf9d-0beb-42fd-b582-42d54cd18778",
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "province",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "3a27a84e-4e7f-4fe7-ab1a-b9a056a7785e",
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "postalCode",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "88366b56-46c9-4559-96fd-85ce791ebbbb",
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "complex",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "dcefba6f-77e7-4c10-9b6b-9d58e3732bb3",
+                                    "error": {}
+                                },
+                                {
+                                    "name": "houseNumber",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "b123c32b-7bf8-426e-bc66-24fa0b78def3",
+                                    "error": {}
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "GUID": "e6618fe5-dbfb-48d2-a3f9-3a2051520783",
+                            "required": true,
+                            "error": {}
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "GUID": "093aab13-d3f2-4f90-bb44-71e9cf3cddb6",
+                    "required": true,
+                    "foreignCollection": "611fb364-6394-42c3-848d-bea59d5d2b29",
+                    "foreignField": [
+                        "611fb364-6394-42c3-848d-bea59d5d2b29",
+                        "97c5bd14-578d-4e52-8824-e41dbd0645a9"
+                    ],
+                    "relationshipType": "Foreign Master",
+                    "parentRelationship": "e82d6d79-b3e6-4c0a-aae9-6f0d405e1fdc",
+                    "error": {}
+                },
+                {
+                    "name": "assignedEmployees",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "employeeID",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "objectId",
+                                    "GUID": "14fcd865-b71c-485f-a8e6-ea72eaa14d5e",
+                                    "required": true,
+                                    "foreignCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+                                    "foreignField": [
+                                        "12962c2f-1695-4141-9815-740a6e64b936",
+                                        "0163cfe9-200e-428f-a9fa-4ad1789568cb"
+                                    ],
+                                    "relationshipType": "Foreign Key",
+                                    "parentRelationship": "f9019bd8-5722-42fd-a8b7-ac2ece0fa738",
+                                    "error": {}
+                                },
+                                {
+                                    "name": "employeeDisplayName",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "45a72c39-922e-4a40-893b-14f292465021",
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "employeeDisplayImage",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "4c67f62d-ed61-4034-a01b-bf35021a9865",
+                                    "error": {}
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "GUID": "6f389d88-5e6e-437c-8c6e-60954a812e14",
+                            "arrayItem": true,
+                            "displayName": "employee",
+                            "error": {}
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "7a841b65-cfe4-4c41-9acf-d1858a2cbf66",
+                    "error": {}
+                },
+                {
+                    "name": "assignedTeam",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "3015f340-0ae8-4157-8bac-a004a9819728",
+                    "foreignCollection": "6563c096-9d5a-4840-8092-c38d840f2e6c",
+                    "foreignField": [
+                        "6563c096-9d5a-4840-8092-c38d840f2e6c",
+                        "de0d441d-5c52-4671-b3ff-d6f5d653d0ff"
+                    ],
+                    "relationshipType": "Foreign Key",
+                    "parentRelationship": "07acbdc6-86ce-48ab-96f2-2a1f480ae62c",
+                    "error": {}
+                },
+                {
+                    "name": "recordedDetails",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "imagesTaken",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "array",
+                            "properties": [
+                                {
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "2df5adf7-17d7-4875-bda7-d128f1188f15",
+                                    "arrayItem": true,
+                                    "displayName": "image",
+                                    "error": {}
+                                }
+                            ],
+                            "additionalItems": true,
+                            "GUID": "f33d20db-5305-4417-88df-6ac4982a7bf1",
+                            "error": {}
+                        },
+                        {
+                            "name": "inventoryUsed",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "array",
+                            "properties": [
+                                {
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "7487f5d5-24ce-4a71-8cf7-268a2a01321e",
+                                    "arrayItem": true,
+                                    "displayName": "inventoryItemId",
+                                    "foreignCollection": "5a114539-d120-4034-906d-737ae38e03a4",
+                                    "error": {}
+                                }
+                            ],
+                            "additionalItems": true,
+                            "GUID": "a6ff07b3-40e9-4b66-befb-1460c14c55f0",
+                            "error": {}
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "GUID": "bf71f9a2-bd7a-4e13-a454-963bfb377652",
+                    "error": {
+                        "name": false
+                    }
+                },
+                {
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "97871c44-0f21-4fef-a42e-2152265bdc87",
+                    "name": "status",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "clientFeedback",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "rating",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "numeric",
+                            "GUID": "32d7d937-a25b-4694-91e5-fcf004675c65",
+                            "error": {}
+                        },
+                        {
+                            "name": "customerServiceRating",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "numeric",
+                            "GUID": "b1ba30db-8d5d-4e47-ba71-dc8c7c4dc7c9",
+                            "error": {}
+                        },
+                        {
+                            "name": "comments",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "bd8fc98a-21a0-40b4-b18b-dcf258e55bad",
+                            "error": {}
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "GUID": "d10435cb-520a-46af-8602-76754068a855",
+                    "error": {}
+                },
+                {
+                    "name": "taskList",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "taskName",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "b0313463-cad6-47a5-8c13-ec661b8724d9",
+                                    "error": {}
+                                },
+                                {
+                                    "name": "completed",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "boolean",
+                                    "GUID": "d9145e9a-03e7-428b-b4fb-12b9bf9a170f",
+                                    "error": {}
+                                },
+                                {
+                                    "name": "assignedEmployees",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "array",
+                                    "properties": [
+                                        {
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "document",
+                                            "properties": [
+                                                {
+                                                    "name": "employeeID",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "objectId",
+                                                    "GUID": "3bcb471f-748d-48c8-85b6-f0219c589dee",
+                                                    "required": true,
+                                                    "foreignCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+                                                    "foreignField": [
+                                                        "12962c2f-1695-4141-9815-740a6e64b936",
+                                                        "0163cfe9-200e-428f-a9fa-4ad1789568cb"
+                                                    ],
+                                                    "relationshipType": "Foreign Key",
+                                                    "parentRelationship": "f9019bd8-5722-42fd-a8b7-ac2ece0fa738",
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "employeeDisplayName",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "ab6f3d5e-a03f-4e1b-af3c-ca94e0377039",
+                                                    "required": true,
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "employeeDisplayImage",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "6773d725-7603-47fb-9aee-9a27cad48db2",
+                                                    "error": {}
+                                                }
+                                            ],
+                                            "additionalProperties": false,
+                                            "GUID": "738679d0-2eab-4df6-8367-63f71d24c395",
+                                            "arrayItem": true,
+                                            "displayName": "employee",
+                                            "error": {}
+                                        }
+                                    ],
+                                    "additionalItems": true,
+                                    "GUID": "9e7c47fd-8848-4810-9267-2189375cab88",
+                                    "error": {
+                                        "name": false,
+                                        "code": false
+                                    },
+                                    "foreignCollection": "",
+                                    "foreignField": []
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "GUID": "94d014ef-f879-433a-877b-d0cd7fd96d52",
+                            "arrayItem": true,
+                            "displayName": "task",
+                            "error": {}
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "efb5bedb-46ad-47aa-8ef0-cd17d9a0415f",
+                    "error": {}
+                },
+                {
+                    "name": "comments",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "Comment",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "da473a02-03df-47d6-b663-095cf46e4b15",
+                                    "error": {}
+                                },
+                                {
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "document",
+                                    "properties": [
+                                        {
+                                            "name": "employeeID",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "objectId",
+                                            "GUID": "268dc4b5-5790-485c-9d7d-6cd67b1fefab",
+                                            "required": true,
+                                            "foreignCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+                                            "foreignField": [
+                                                "12962c2f-1695-4141-9815-740a6e64b936",
+                                                "0163cfe9-200e-428f-a9fa-4ad1789568cb"
+                                            ],
+                                            "relationshipType": "Foreign Key",
+                                            "parentRelationship": "f9019bd8-5722-42fd-a8b7-ac2ece0fa738",
+                                            "error": {}
+                                        },
+                                        {
+                                            "name": "employeeDisplayName",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "string",
+                                            "GUID": "1ef50d08-5db9-4a93-b798-3bee07d1bf13",
+                                            "required": true,
+                                            "error": {}
+                                        },
+                                        {
+                                            "name": "employeeDisplayImage",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "string",
+                                            "GUID": "c8f8c6eb-59c7-49ce-b041-04956f890f50",
+                                            "error": {}
+                                        }
+                                    ],
+                                    "additionalProperties": false,
+                                    "GUID": "77c6eccb-11de-4303-9c7e-300a7eecbfa5",
+                                    "name": "employee",
+                                    "error": {}
+                                },
+                                {
+                                    "name": "commentDate",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "date",
+                                    "primaryKey": false,
+                                    "GUID": "6dcf42f9-c079-4d40-a8d6-759644119bc2",
+                                    "error": {}
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "GUID": "5aa3b24a-c9a5-4ce6-8dce-1b817cd649d9",
+                            "arrayItem": true,
+                            "displayName": "comentItem",
+                            "error": {}
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "f9b21b63-c525-4ac8-b402-62c62152217c",
+                    "error": {}
+                },
+                {
+                    "name": "createAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "d8e45d38-3e08-48ab-a361-ad2129749b48",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "updatedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "a846d4f7-70a7-46a7-ac56-21779db6b378",
+                    "error": {}
+                },
+                {
+                    "name": "deletedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "08096655-7bdd-4282-9725-9fb0c6697bc0",
+                    "error": {}
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "0925b718-5911-48df-8330-2e3721fbe263"
+            },
+            "isActivated": true,
+            "additionalProperties": false,
+            "validationLevel": "Off",
+            "validationAction": "Warn",
+            "storageEngineName": "WiredTiger",
+            "collectionUsers": [],
+            "indexes": [],
+            "collation": {},
+            "sharding": {
+                "unique": true,
+                "collation": "null"
+            },
+            "GUID": "611fb364-6394-42c3-848d-bea59d5d2b29",
+            "bucketId": "0db365f5-4256-4a1f-81fe-d5e0e60ddc4d"
+        },
+        {
+            "collectionName": "Client",
+            "type": "object",
+            "properties": [
+                {
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "179ca950-7834-4680-81fc-bb74f7173b3f",
+                    "required": true,
+                    "name": "_id",
+                    "primaryKey": true,
+                    "error": {},
+                    "childRelationships": [
+                        "3762cfdd-d795-4e29-b35a-39e36856fd7b"
+                    ]
+                },
+                {
+                    "name": "personalInfo",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "firstName",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "d35d11fa-4182-4491-b7b4-a57d19809e33",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "surname",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "e09d5577-7168-4289-a6cb-e56bbd839b41",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "dateOfBirth",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "date",
+                            "primaryKey": false,
+                            "GUID": "b2cd5b8a-95fa-482e-8c0b-2411ac5d05f1",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "gender",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "fcb31400-b278-43e6-a730-7ec0425f7571",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "address",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "street",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "1e4da599-0e65-4d85-9c1f-99b3a0789802",
+                                    "foreignCollection": "",
+                                    "foreignField": [],
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "suburb",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "d4aab2cc-ec22-4d8c-950f-fb291e4c951a",
+                                    "foreignCollection": "",
+                                    "foreignField": [],
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "city",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "0802dc03-eb49-4827-8107-5377dfcb6e18",
+                                    "foreignCollection": "",
+                                    "foreignField": [],
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "3f36b251-fe17-4894-8a0c-c8d1fbfd49d0",
+                                    "name": "province",
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "postalCode",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "b152dd98-9b29-425f-b4f5-141bc34c400f",
+                                    "foreignCollection": "",
+                                    "foreignField": [],
+                                    "required": true,
+                                    "error": {}
+                                },
+                                {
+                                    "name": "complex",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "c1e6cdd4-81d2-4363-95a3-cd04bd6308a4",
+                                    "error": {},
+                                    "foreignCollection": "",
+                                    "foreignField": []
+                                },
+                                {
+                                    "name": "houseNumber",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "d2abbfb3-d6bf-4d6c-bb9e-5f9a88d790c8",
+                                    "error": {},
+                                    "foreignCollection": "",
+                                    "foreignField": []
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "GUID": "5872ef15-8d91-4de8-a120-53df88c7d535",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "preferredLanguage",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "8dc5a0df-347c-4b5d-a510-e1ee0706552f",
+                            "error": {},
+                            "foreignCollection": "",
+                            "foreignField": []
+                        },
+                        {
+                            "name": "contactInfo",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "phone",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "6ec82b62-d189-4dbe-b51d-02c4ea3cc36f",
+                                    "error": {},
+                                    "foreignCollection": "",
+                                    "foreignField": []
+                                },
+                                {
+                                    "name": "email",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "f2d2ff93-dbb2-4f1d-9d29-0e4976553ea3",
+                                    "error": {},
+                                    "foreignCollection": "",
+                                    "foreignField": []
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "GUID": "ee973cae-1c1d-44b3-97f3-a40d1219489e",
+                            "foreignCollection": "",
+                            "foreignField": [],
+                            "required": true,
+                            "error": {
+                                "name": false
+                            }
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "GUID": "172464c8-97f5-4e7b-bbe8-42f0c046730f",
+                    "foreignCollection": "",
+                    "foreignField": [],
+                    "required": true,
+                    "error": {
+                        "name": false,
+                        "code": false
+                    }
+                },
+                {
+                    "name": "jobs",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "objectId",
+                            "error": {},
+                            "GUID": "f2993f42-0c59-4418-ad33-178eaf2710b5",
+                            "arrayItem": true,
+                            "displayName": "jobID"
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "3b2236b6-b896-46c3-91b6-90d82c469502",
+                    "error": {}
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "486d7c50-0604-467d-b46c-b77597af2e1a"
+            },
+            "isActivated": true,
+            "additionalProperties": false,
+            "validationLevel": "Off",
+            "validationAction": "Warn",
+            "storageEngineName": "WiredTiger",
+            "collectionUsers": [],
+            "indexes": [],
+            "collation": {},
+            "sharding": {
+                "unique": true,
+                "collation": "null"
+            },
+            "GUID": "2502e395-525b-4e7a-bc9c-5a6520512d81",
+            "bucketId": "0db365f5-4256-4a1f-81fe-d5e0e60ddc4d"
+        },
+        {
+            "collectionName": "InventoryItem",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "_id",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "1d9ecb70-c583-4e0e-9e30-3604decc2ab3",
+                    "required": true,
+                    "error": {},
+                    "childRelationships": [
+                        "461b21b2-a794-49d3-b729-7bb436a29007"
+                    ]
+                },
+                {
+                    "name": "name",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "b27e333a-9aab-4cf7-b078-3f882d2a357e",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "itemImage",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "cd6c399a-96ec-471c-a7af-8cb499f30116",
+                    "error": {}
+                },
+                {
+                    "name": "costPrice",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "numeric",
+                    "GUID": "260df551-ef83-4026-b6eb-c56eb62a8be3",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "currentStockLevel",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "numeric",
+                    "GUID": "7ef38c55-05da-4192-9c8f-9cb53def9639",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "lowStockThreshold",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "numeric",
+                    "GUID": "4cd1905c-5163-424d-a8e7-209012d81da1",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "createdAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "3b66bc5e-baca-4813-b429-9baa3f4e563e",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "updatedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "b5ece56c-511a-4556-9272-27f7a97fdded",
+                    "error": {}
+                },
+                {
+                    "name": "deletedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "5717020a-4e0a-4acf-bbf7-044d0533a1f1",
+                    "error": {}
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "7c8e2bf6-b7eb-4210-a80b-b1a2769f618d"
+            },
+            "isActivated": true,
+            "additionalProperties": false,
+            "validationLevel": "Off",
+            "validationAction": "Warn",
+            "storageEngineName": "WiredTiger",
+            "collectionUsers": [],
+            "indexes": [],
+            "collation": {},
+            "sharding": {
+                "unique": true,
+                "collation": "null"
+            },
+            "GUID": "5a114539-d120-4034-906d-737ae38e03a4",
+            "bucketId": "0db365f5-4256-4a1f-81fe-d5e0e60ddc4d"
+        }
+    ],
+    "buckets": [
+        {
+            "name": "WorkWise",
+            "type": "bucket",
+            "collectionIds": [
+                "12962c2f-1695-4141-9815-740a6e64b936",
+                "044a679f-6a60-4a25-9b65-d7928f06e30c",
+                "1b9fbda8-2a10-4513-97be-a66eb5f19c6b",
+                "07d53381-7216-4c47-8b59-0f4e8e2a3283",
+                "6563c096-9d5a-4840-8092-c38d840f2e6c",
+                "611fb364-6394-42c3-848d-bea59d5d2b29",
+                "2502e395-525b-4e7a-bc9c-5a6520512d81",
+                "5a114539-d120-4034-906d-737ae38e03a4"
+            ],
+            "backgroundColor": {
+                "r": 0,
+                "g": 188,
+                "b": 213,
+                "a": 1
+            },
+            "show": true,
+            "isActivated": true,
+            "GUID": "0db365f5-4256-4a1f-81fe-d5e0e60ddc4d",
+            "hackoladeMeta": {}
+        }
+    ],
+    "views": [],
+    "relationships": [
+        {
+            "name": "User",
+            "relationshipType": "Foreign Key",
+            "parentField": [],
+            "parentCardinality": "1",
+            "childField": [],
+            "isActivated": true,
+            "childCardinality": "1",
+            "GUID": "f9966639-5e36-4b40-a17f-47f49048dd8a"
+        },
+        {
+            "name": "fk User.joinedCompanies.[0].New Field to Employee._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "12962c2f-1695-4141-9815-740a6e64b936",
+                    "0163cfe9-200e-428f-a9fa-4ad1789568cb"
+                ]
+            ],
+            "parentCardinality": "n",
+            "childField": [
+                [
+                    "044a679f-6a60-4a25-9b65-d7928f06e30c",
+                    "393c02e6-d8a1-43eb-8320-d1b7238f92e5",
+                    "24d88310-ee99-42e9-855e-701967d86a4e",
+                    "a2e6d2c3-c7e6-40d2-9708-02a46b26f2b2"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "1",
+            "GUID": "46e3b81d-7c89-4377-aca3-7e6c7364a9fd",
+            "parentCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+            "childCollection": "044a679f-6a60-4a25-9b65-d7928f06e30c",
+            "hackoladeStyles": {
+                "GUID": "8067c5a8-1975-43bb-852b-aa01db790842",
+                "autoPositioning": false,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 1256.8778677419728,
+                        "y": 1742.945150535783
+                    },
+                    {
+                        "x": 1534.3687353218838,
+                        "y": 1742.945150535783
+                    }
+                ],
+                "sides": [
+                    "right",
+                    "left"
+                ]
+            }
+        },
+        {
+            "name": "fk User.currentEployeeId to Employee._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "12962c2f-1695-4141-9815-740a6e64b936",
+                    "0163cfe9-200e-428f-a9fa-4ad1789568cb"
+                ]
+            ],
+            "parentCardinality": "n",
+            "childField": [
+                [
+                    "044a679f-6a60-4a25-9b65-d7928f06e30c",
+                    "b9292a16-8e2a-4d28-9c66-dab65e70070e"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "1",
+            "GUID": "8718fc5d-23bf-4856-a887-f89fe5e0a30d",
+            "parentCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+            "childCollection": "044a679f-6a60-4a25-9b65-d7928f06e30c",
+            "hackoladeStyles": {
+                "GUID": "ca75e0ad-a528-4df0-bb99-1cb6ede81730",
+                "autoPositioning": false,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 1256.8778677419728,
+                        "y": 1742.980404605826
+                    },
+                    {
+                        "x": 1534.3687353218838,
+                        "y": 1742.980404605826
+                    }
+                ],
+                "sides": [
+                    "right",
+                    "left"
+                ]
+            }
+        },
+        {
+            "name": "fk Employee.role.roleId to roles._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "07d53381-7216-4c47-8b59-0f4e8e2a3283",
+                    "3f3be1ad-9767-432d-9cd1-f7ada44761a4"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "12962c2f-1695-4141-9815-740a6e64b936",
+                    "f00d5817-c936-42b0-86af-ac2b58796501",
+                    "95535982-0d04-49e7-9faa-b44f8b11710b"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "n",
+            "GUID": "6b24b11c-4d68-4f57-8ecd-891e55f40bab",
+            "parentCollection": "07d53381-7216-4c47-8b59-0f4e8e2a3283",
+            "childCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+            "hackoladeStyles": {
+                "GUID": "2ee71faf-8484-4e1b-bc15-5c5a8be5e0a6",
+                "autoPositioning": false,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 1951.3687353218838,
+                        "y": 1510.3063714410084
+                    },
+                    {
+                        "x": 2277.685162518412,
+                        "y": 1510.3063714410084
+                    }
+                ],
+                "sides": [
+                    "right",
+                    "left"
+                ]
+            }
+        },
+        {
+            "name": "fk Employee.subordinates.[0].employeeId to Employee._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "12962c2f-1695-4141-9815-740a6e64b936",
+                    "0163cfe9-200e-428f-a9fa-4ad1789568cb"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "12962c2f-1695-4141-9815-740a6e64b936",
+                    "0c5e7924-bdd9-4652-a75a-d5630120b34d",
+                    "223109cc-35f0-42a4-ac94-f15e56e89582",
+                    "61284f0f-1c97-46fc-9261-71dc6b47c37b"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "n",
+            "GUID": "97fae31c-d4ff-4b45-a398-fa1e8169d83b",
+            "parentCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+            "childCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+            "hackoladeStyles": {
+                "GUID": "5be3f2d5-48c7-43f1-a71d-b1b49c6d5576",
+                "autoPositioning": false,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 1951.3687353218838,
+                        "y": 1745.6222152772734
+                    },
+                    {
+                        "x": 1976.3687353218843,
+                        "y": 1745.6222152772734
+                    },
+                    {
+                        "x": 1976.3687353218843,
+                        "y": 1655.7778143577748
+                    },
+                    {
+                        "x": 1951.3687353218838,
+                        "y": 1655.7778143577748
+                    }
+                ],
+                "sides": [
+                    "right",
+                    "right"
+                ]
+            }
+        },
+        {
+            "name": "fk Employee.superior.employeeId to Employee._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "12962c2f-1695-4141-9815-740a6e64b936",
+                    "0163cfe9-200e-428f-a9fa-4ad1789568cb"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "12962c2f-1695-4141-9815-740a6e64b936",
+                    "1caeac48-373e-4b06-bab8-5b3a8dd8cea0",
+                    "62d29f27-9fb8-4fb3-a379-4b5f19c8d800"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "n",
+            "GUID": "8521dbf6-fdd7-48d2-9ef3-d7f95fdd5f18",
+            "parentCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+            "childCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+            "hackoladeStyles": {
+                "GUID": "7c62be92-5ce9-421b-a820-469397f05523",
+                "autoPositioning": false,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 1951.3687353218838,
+                        "y": 1745.0538503255182
+                    },
+                    {
+                        "x": 1976.3687353218843,
+                        "y": 1745.0538503255182
+                    },
+                    {
+                        "x": 1976.3687353218843,
+                        "y": 1654.6535289706665
+                    },
+                    {
+                        "x": 1951.3687353218838,
+                        "y": 1654.6535289706665
+                    }
+                ],
+                "sides": [
+                    "right",
+                    "right"
+                ]
+            }
+        },
+        {
+            "name": "fk Team.companyId to Company._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "1b9fbda8-2a10-4513-97be-a66eb5f19c6b",
+                    "e1f99751-8ff7-407e-a50f-e344bcda953e"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "6563c096-9d5a-4840-8092-c38d840f2e6c",
+                    "e19817c5-6b8e-4873-a124-3b3ac3d59304"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "n",
+            "GUID": "f4f763e4-c4d4-4395-82a1-4efb0656294e",
+            "parentCollection": "1b9fbda8-2a10-4513-97be-a66eb5f19c6b",
+            "childCollection": "6563c096-9d5a-4840-8092-c38d840f2e6c",
+            "hackoladeStyles": {
+                "GUID": "61acd904-2b9d-4dc7-b923-47324dd5dc68",
+                "autoPositioning": false,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 1522.8778677419714,
+                        "y": 2412.877977361732
+                    },
+                    {
+                        "x": 1283.7089179702814,
+                        "y": 2412.877977361732
+                    }
+                ],
+                "sides": [
+                    "left",
+                    "right"
+                ]
+            }
+        },
+        {
+            "name": "fk Company.employees.[0] to Employee._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "12962c2f-1695-4141-9815-740a6e64b936",
+                    "0163cfe9-200e-428f-a9fa-4ad1789568cb"
+                ]
+            ],
+            "parentCardinality": "n",
+            "childField": [
+                [
+                    "1b9fbda8-2a10-4513-97be-a66eb5f19c6b",
+                    "f2a7b69c-4f79-4e29-aa16-2a35251dabc6",
+                    "fae74824-861d-4e84-a214-05661b2a9781"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "1",
+            "GUID": "c6f56caf-14a9-46d3-b1d5-67170b0d9605",
+            "parentCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+            "childCollection": "1b9fbda8-2a10-4513-97be-a66eb5f19c6b",
+            "hackoladeStyles": {
+                "GUID": "98f811db-f2a8-4a7a-b74a-fe566930e3c9",
+                "autoPositioning": false,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 1283.7089179702814,
+                        "y": 2307.396326276459
+                    },
+                    {
+                        "x": 1409.0388266460827,
+                        "y": 2307.396326276459
+                    },
+                    {
+                        "x": 1409.0388266460827,
+                        "y": 1769.5492943129968
+                    },
+                    {
+                        "x": 1534.3687353218838,
+                        "y": 1769.5492943129968
+                    }
+                ],
+                "sides": [
+                    "right",
+                    "left"
+                ]
+            }
+        },
+        {
+            "name": "fk Employee.userID to User._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "044a679f-6a60-4a25-9b65-d7928f06e30c",
+                    "5600a65a-7d0b-4291-af5f-74849b9a75d2"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "12962c2f-1695-4141-9815-740a6e64b936",
+                    "a0b8152f-0e8a-4eae-b373-c03cbb2c8a31"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "n",
+            "GUID": "a5eebb4a-0403-484c-9054-2b7942f9f9b4",
+            "parentCollection": "044a679f-6a60-4a25-9b65-d7928f06e30c",
+            "childCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+            "hackoladeStyles": {
+                "GUID": "a1f6ecea-8d98-435a-8056-0ae2bdd541b5",
+                "autoPositioning": false,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 1534.3687353218838,
+                        "y": 1742.3826276463312
+                    },
+                    {
+                        "x": 1256.8778677419728,
+                        "y": 1742.3826276463312
+                    }
+                ],
+                "sides": [
+                    "left",
+                    "right"
+                ]
+            }
+        },
+        {
+            "name": "fk Job.companyId to Company._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "1b9fbda8-2a10-4513-97be-a66eb5f19c6b",
+                    "e1f99751-8ff7-407e-a50f-e344bcda953e"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "611fb364-6394-42c3-848d-bea59d5d2b29",
+                    "3a20bd1a-e8f2-4dd1-81ef-3431aedca469"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "n",
+            "GUID": "e25fef8b-0a23-4d10-a934-021938804f05",
+            "parentCollection": "1b9fbda8-2a10-4513-97be-a66eb5f19c6b",
+            "childCollection": "611fb364-6394-42c3-848d-bea59d5d2b29",
+            "hackoladeStyles": {
+                "GUID": "9064f2bf-43f5-465b-a6a1-319a774b5395",
+                "autoPositioning": false,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 2172.4664937278594,
+                        "y": 3141.2667017748163
+                    },
+                    {
+                        "x": 1436.4210391824088,
+                        "y": 3141.2667017748163
+                    },
+                    {
+                        "x": 1436.4210391824088,
+                        "y": 2578.560926662874
+                    },
+                    {
+                        "x": 1283.7089179702814,
+                        "y": 2578.560926662874
+                    }
+                ],
+                "sides": [
+                    "left",
+                    "right"
+                ]
+            }
+        },
+        {
+            "name": "fk Job.clientId to Client._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "2502e395-525b-4e7a-bc9c-5a6520512d81",
+                    "179ca950-7834-4680-81fc-bb74f7173b3f"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "611fb364-6394-42c3-848d-bea59d5d2b29",
+                    "2be77f0c-a57d-450e-aeb0-2b9d2e73a5fc"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "n",
+            "GUID": "3762cfdd-d795-4e29-b35a-39e36856fd7b",
+            "parentCollection": "2502e395-525b-4e7a-bc9c-5a6520512d81",
+            "childCollection": "611fb364-6394-42c3-848d-bea59d5d2b29",
+            "hackoladeStyles": {
+                "GUID": "e6bcfa52-7b79-4ee2-8e66-7c2b7ebef2d2",
+                "autoPositioning": true,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 2374.4664937278594,
+                        "y": 2518.3523246160244
+                    },
+                    {
+                        "x": 2374.4664937278594,
+                        "y": 2439.0341427978437
+                    },
+                    {
+                        "x": 2374.875584636949,
+                        "y": 2439.0341427978437
+                    },
+                    {
+                        "x": 2374.875584636949,
+                        "y": 2359.715960979663
+                    }
+                ],
+                "sides": [
+                    "top",
+                    "bottom"
+                ]
+            }
+        },
+        {
+            "name": "fk Team.assinedJobs.[0].jobId to Job._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "611fb364-6394-42c3-848d-bea59d5d2b29",
+                    "7f906be1-7890-4ad7-850e-6bc49e20e238"
+                ]
+            ],
+            "parentCardinality": "n",
+            "childField": [
+                [
+                    "6563c096-9d5a-4840-8092-c38d840f2e6c",
+                    "d93b98d7-1e30-43b0-bf14-974e60d3b2c2",
+                    "29df0d29-2cc2-4670-be14-bce39ea7f417",
+                    "ba0ce1e6-c33d-4918-b0bd-0a7a47756de6"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "1",
+            "GUID": "892b5fb9-aef3-4b2c-9780-0addd5199520",
+            "parentCollection": "611fb364-6394-42c3-848d-bea59d5d2b29",
+            "childCollection": "6563c096-9d5a-4840-8092-c38d840f2e6c",
+            "hackoladeStyles": {
+                "GUID": "00283bd0-88cc-4e8a-af97-cd4a88ad4ff6",
+                "autoPositioning": false,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 1984.8778677419714,
+                        "y": 2583.38262764633
+                    },
+                    {
+                        "x": 2078.6721807349154,
+                        "y": 2583.38262764633
+                    },
+                    {
+                        "x": 2078.6721807349154,
+                        "y": 2990.3523246160244
+                    },
+                    {
+                        "x": 2172.4664937278594,
+                        "y": 2990.3523246160244
+                    }
+                ],
+                "sides": [
+                    "right",
+                    "left"
+                ]
+            }
+        },
+        {
+            "name": "fk Job.assignedTeam to Team._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "6563c096-9d5a-4840-8092-c38d840f2e6c",
+                    "de0d441d-5c52-4671-b3ff-d6f5d653d0ff"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "611fb364-6394-42c3-848d-bea59d5d2b29",
+                    "3015f340-0ae8-4157-8bac-a004a9819728"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "1",
+            "GUID": "07acbdc6-86ce-48ab-96f2-2a1f480ae62c",
+            "parentCollection": "6563c096-9d5a-4840-8092-c38d840f2e6c",
+            "childCollection": "611fb364-6394-42c3-848d-bea59d5d2b29",
+            "hackoladeStyles": {
+                "GUID": "0d096cb0-ac86-46b6-b9fc-e9065d603465",
+                "autoPositioning": false,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 2172.4664937278594,
+                        "y": 2989.3523246160244
+                    },
+                    {
+                        "x": 2078.6721807349154,
+                        "y": 2989.3523246160244
+                    },
+                    {
+                        "x": 2078.6721807349154,
+                        "y": 2583.715960979663
+                    },
+                    {
+                        "x": 1984.8778677419714,
+                        "y": 2583.715960979663
+                    }
+                ],
+                "sides": [
+                    "left",
+                    "right"
+                ]
+            }
+        },
+        {
+            "name": "fk Job.assignedEmployees.[0].employeeID to Employee._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "12962c2f-1695-4141-9815-740a6e64b936",
+                    "0163cfe9-200e-428f-a9fa-4ad1789568cb"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "611fb364-6394-42c3-848d-bea59d5d2b29",
+                    "7a841b65-cfe4-4c41-9acf-d1858a2cbf66",
+                    "6f389d88-5e6e-437c-8c6e-60954a812e14",
+                    "14fcd865-b71c-485f-a8e6-ea72eaa14d5e"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "n",
+            "GUID": "f9019bd8-5722-42fd-a8b7-ac2ece0fa738",
+            "parentCollection": "12962c2f-1695-4141-9815-740a6e64b936",
+            "childCollection": "611fb364-6394-42c3-848d-bea59d5d2b29",
+            "hackoladeStyles": {
+                "GUID": "f2cd08ee-ef00-478e-80d2-8b37cf091b39",
+                "autoPositioning": false,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 2172.4664937278594,
+                        "y": 2909.032672874731
+                    },
+                    {
+                        "x": 2119.4933721006287,
+                        "y": 2909.032672874731
+                    },
+                    {
+                        "x": 2119.4933721006287,
+                        "y": 1767.465248728951
+                    },
+                    {
+                        "x": 1951.3687353218838,
+                        "y": 1767.465248728951
+                    }
+                ],
+                "sides": [
+                    "left",
+                    "right"
+                ]
+            }
+        },
+        {
+            "name": "fk Company.inventory.[0] to InventoryItem._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "5a114539-d120-4034-906d-737ae38e03a4",
+                    "1d9ecb70-c583-4e0e-9e30-3604decc2ab3"
+                ]
+            ],
+            "parentCardinality": "n",
+            "childField": [
+                [
+                    "1b9fbda8-2a10-4513-97be-a66eb5f19c6b",
+                    "a4d43256-3100-44ec-aa5b-157d6bc13345",
+                    "fa363fb7-b590-4bea-bbcd-85724a6c6177"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "1",
+            "GUID": "461b21b2-a794-49d3-b729-7bb436a29007",
+            "parentCollection": "5a114539-d120-4034-906d-737ae38e03a4",
+            "childCollection": "1b9fbda8-2a10-4513-97be-a66eb5f19c6b",
+            "hackoladeStyles": {
+                "GUID": "5bb050b0-8e55-44c9-b50c-f814158d9442",
+                "autoPositioning": false,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 1116.2089179702814,
+                        "y": 2663.062992943127
+                    },
+                    {
+                        "x": 1116.2089179702814,
+                        "y": 2914.715960979667
+                    }
+                ],
+                "sides": [
+                    "bottom",
+                    "top"
+                ]
+            }
+        }
+    ],
+    "users": [],
+    "diagramViews": [],
+    "idToNameHashTable": {
+        "0db365f5-4256-4a1f-81fe-d5e0e60ddc4d": "WorkWise",
+        "12962c2f-1695-4141-9815-740a6e64b936": "Employee",
+        "5600a65a-7d0b-4291-af5f-74849b9a75d2": "_id",
+        "3c8fc121-59da-447f-a258-d7164bb97631": "systemDetails",
+        "1382f8da-0e80-4a62-bc65-76d54f729804": "password",
+        "da5f084f-ea2c-432c-b20e-39dea52792ba": "username",
+        "60b7c61b-b8ca-4dad-9ac8-edfda0b764bc": "profile",
+        "a6acf552-11ac-4ec2-83f3-563a8af89d31": "displayName",
+        "71e37510-36c3-4a73-a797-6f654f7fa36d": "displayImage",
+        "d826d539-c479-426a-92d0-ffe0abfcf6d1": "personalInfo",
+        "49f9b166-261a-4635-b7ca-38e3a811a2cb": "surname",
+        "8ee0f7bf-9e93-4550-80fe-8f2641c603e4": "dateOfBirth",
+        "6ae27c29-f46e-45fa-ba08-0ad00191ef66": "gender",
+        "70ce5c78-eae5-47fe-916f-b7c844aa3b8a": "preferredLanguage",
+        "69b80452-c33e-410c-af64-335d535396f0": "contactInfo",
+        "538b2819-9b07-4edf-8917-cb9b9a17f8cd": "phone",
+        "044a679f-6a60-4a25-9b65-d7928f06e30c": "User",
+        "0163cfe9-200e-428f-a9fa-4ad1789568cb": "_id",
+        "f9966639-5e36-4b40-a17f-47f49048dd8a": "User",
+        "46e3b81d-7c89-4377-aca3-7e6c7364a9fd": "fk User.joinedCompanies.[0].New Field to Employee._id",
+        "63a435b3-e41e-4b93-a1c4-50c2d65461fd": "firstName",
+        "393c02e6-d8a1-43eb-8320-d1b7238f92e5": "joinedCompanies",
+        "c0241ab0-1819-467a-b534-c6cd9b09d0ee": "companyName",
+        "1b9fbda8-2a10-4513-97be-a66eb5f19c6b": "Company",
+        "e1f99751-8ff7-407e-a50f-e344bcda953e": "_id",
+        "23467b84-0ecf-43f1-b0c8-51bbee926f7f": "name",
+        "8e0d3e90-84ff-4aa1-a8a6-c215577e1fe9": "skills",
+        "d2b6341c-6662-42fb-8b13-42543a93d6c4": "email",
+        "b9292a16-8e2a-4d28-9c66-dab65e70070e": "currentEployeeId",
+        "8718fc5d-23bf-4856-a887-f89fe5e0a30d": "fk User.currentEployeeId to Employee._id",
+        "07d53381-7216-4c47-8b59-0f4e8e2a3283": "Roles",
+        "3f3be1ad-9767-432d-9cd1-f7ada44761a4": "_id",
+        "6c4b11e6-0ecb-4cdc-967a-9060f97f5307": "roleName",
+        "5456ab71-308f-42a7-8565-8e3531fc5872": "permissionSuite",
+        "434a75f3-af2e-46d4-b540-db69421dc784": "companyId",
+        "f00d5817-c936-42b0-86af-ac2b58796501": "role",
+        "95535982-0d04-49e7-9faa-b44f8b11710b": "roleId",
+        "6b24b11c-4d68-4f57-8ecd-891e55f40bab": "fk Employee.role.roleId to roles._id",
+        "ec008c60-29a4-4325-9311-d6e992f76458": "roleName",
+        "2675ba07-920b-4ca8-ad81-1bdcb0c1e9ab": "permissionSuite",
+        "314ee9f4-6c3e-4692-8dfe-92dad8dae189": "currentJobAssignments",
+        "1caeac48-373e-4b06-bab8-5b3a8dd8cea0": "superior",
+        "2cc1f222-3ad0-4bf2-873e-2870fd74ad60": "createdAt",
+        "a8dd6643-9600-4be9-80bb-309560cb7d2b": "updatedAt",
+        "f6687711-ea88-485c-9593-56b5ae8e9a27": "daletedAt",
+        "0c5e7924-bdd9-4652-a75a-d5630120b34d": "subordinates",
+        "62d29f27-9fb8-4fb3-a379-4b5f19c8d800": "employeeId",
+        "917a22d2-944f-479b-b39c-52e7a8593d70": "employeeDisplayName",
+        "eb6b3f08-888a-48d3-bc85-55e3a4d29486": "employeeDisplayImage",
+        "61284f0f-1c97-46fc-9261-71dc6b47c37b": "employeeId",
+        "f1691359-9e84-4fec-9513-89b41aaa6066": "employeeDisplayImage",
+        "98165613-a855-45a4-a855-7a1232082eaf": "employeeDisplayName",
+        "97fae31c-d4ff-4b45-a398-fa1e8169d83b": "fk Employee.subordinates.[0].employeeId to Employee._id",
+        "8521dbf6-fdd7-48d2-9ef3-d7f95fdd5f18": "fk Employee.superior.employeeId to Employee._id",
+        "e711d6f2-9491-4530-a0ea-953c77577d7c": "jobDetails",
+        "e0cc668c-eabd-45a4-bddc-26f72bde4034": "jobName",
+        "0ce645ef-7be2-4797-be83-3d309364e903": "jobStartDate",
+        "7bbdd89f-3669-4d39-b03e-63c2a2f7a655": "jobEndDate",
+        "96aff89e-ac5d-4189-9b54-713172c27ceb": "clientName",
+        "f83e3410-645e-4093-8a6f-f4fd86f0306b": "jobAddress",
+        "4461f8a8-5357-4de7-817e-538a64598e67": "street",
+        "f509ccf6-43be-4821-8c03-e3aac19b3623": "suburb",
+        "8cab287b-67fd-42c3-a841-eab0d61c8e92": "city",
+        "4eb16db2-7b41-49d3-a0df-26547b4328e4": "postalCode",
+        "95c1f9b9-e012-4133-a16c-d679f5b1aea9": "province",
+        "c4292ed3-48bc-4b57-bc0c-5eb667d50222": "complex",
+        "c9ee8e6a-0bdc-4198-aee8-5284cca317c4": "houseNumber",
+        "b506fa1d-dc94-4f57-ab0f-10c35d4da98a": "jobId",
+        "6563c096-9d5a-4840-8092-c38d840f2e6c": "Team",
+        "de0d441d-5c52-4671-b3ff-d6f5d653d0ff": "_id",
+        "af3b9c04-047d-4a3d-8851-535c91052a48": "teamName",
+        "f4f763e4-c4d4-4395-82a1-4efb0656294e": "fk Team.companyId to Company._id",
+        "e19817c5-6b8e-4873-a124-3b3ac3d59304": "companyId",
+        "dc04787d-23ae-4132-92eb-584a8db06852": "teamMembers",
+        "9f3c21ff-d83f-4d4c-a0ed-e3d2acfc0029": "teamLeader",
+        "68983faf-ff7c-4d45-9946-9d15862fe75e": "employeeId",
+        "536c124d-d297-45cd-a150-a4e9a303d80a": "employeeDisplayName",
+        "8b1e19b7-6387-4174-8f46-cbdd17ced80e": "employeeDisplayImage",
+        "3823e03c-fdf0-47c9-b811-e7f9f574d1a8": "createdAt",
+        "5e5f6dd9-b9eb-46bd-a684-3afbab2fe50f": "updatedAt",
+        "1b30dace-fe56-47a7-a436-8dc9b0c9d775": "deletedAt",
+        "c1609dcd-7bd4-49a2-80a0-a44cba1d7623": "employeeDisplayName",
+        "ae97f931-c483-4462-8917-f549269a6965": "employeeId",
+        "1cbed458-44da-4e30-bb6e-658cd7111502": "employeeDisplayImage",
+        "d93b98d7-1e30-43b0-bf14-974e60d3b2c2": "assinedJobs",
+        "ba0ce1e6-c33d-4918-b0bd-0a7a47756de6": "jobId",
+        "611fb364-6394-42c3-848d-bea59d5d2b29": "Job",
+        "2502e395-525b-4e7a-bc9c-5a6520512d81": "Client",
+        "5a114539-d120-4034-906d-737ae38e03a4": "InventoryItem",
+        "00c7d739-bfc7-469d-be9d-9edb9fdcc556": "registrationNumber",
+        "73d6c8ef-03ec-4f79-b652-5a2588c3afb6": "logo",
+        "f2a7b69c-4f79-4e29-aa16-2a35251dabc6": "employees",
+        "a4d43256-3100-44ec-aa5b-157d6bc13345": "inventory",
+        "6ed23ba1-8bed-48ed-baf8-82450dc09bed": "createdAt",
+        "1d2c4913-1bb6-4899-bedd-48a5a6f10a79": "vatNumber",
+        "24706500-bc83-430d-99d4-f4c9e592bf15": "updatedAt",
+        "3d48ec7d-6fb6-41e7-987d-67c0ac1e018a": "deletedAt",
+        "c6f56caf-14a9-46d3-b1d5-67170b0d9605": "fk Company.employees.[0] to Employee._id",
+        "f0f0fe49-0042-476d-989e-b70e10233725": "address",
+        "fd3b475f-41c6-4088-ab89-6803dcb03fec": "contactInfo",
+        "a0b8152f-0e8a-4eae-b373-c03cbb2c8a31": "userID",
+        "a5eebb4a-0403-484c-9054-2b7942f9f9b4": "fk Employee.userID to User._id",
+        "179ca950-7834-4680-81fc-bb74f7173b3f": "_id",
+        "cf7828b4-5c7e-42a8-8c1c-8f96abe7e3db": "address",
+        "172464c8-97f5-4e7b-bbe8-42f0c046730f": "personalInfo",
+        "d35d11fa-4182-4491-b7b4-a57d19809e33": "firstName",
+        "e09d5577-7168-4289-a6cb-e56bbd839b41": "surname",
+        "b2cd5b8a-95fa-482e-8c0b-2411ac5d05f1": "dateOfBirth",
+        "fcb31400-b278-43e6-a730-7ec0425f7571": "gender",
+        "5872ef15-8d91-4de8-a120-53df88c7d535": "address",
+        "1e4da599-0e65-4d85-9c1f-99b3a0789802": "street",
+        "d4aab2cc-ec22-4d8c-950f-fb291e4c951a": "suburb",
+        "0802dc03-eb49-4827-8107-5377dfcb6e18": "city",
+        "3f36b251-fe17-4894-8a0c-c8d1fbfd49d0": "province",
+        "b152dd98-9b29-425f-b4f5-141bc34c400f": "postalCode",
+        "c1e6cdd4-81d2-4363-95a3-cd04bd6308a4": "complex",
+        "d2abbfb3-d6bf-4d6c-bb9e-5f9a88d790c8": "houseNumber",
+        "8dc5a0df-347c-4b5d-a510-e1ee0706552f": "preferredLanguage",
+        "ee973cae-1c1d-44b3-97f3-a40d1219489e": "contactInfo",
+        "6ec82b62-d189-4dbe-b51d-02c4ea3cc36f": "phone",
+        "f2d2ff93-dbb2-4f1d-9d29-0e4976553ea3": "email",
+        "3b2236b6-b896-46c3-91b6-90d82c469502": "jobs",
+        "7f906be1-7890-4ad7-850e-6bc49e20e238": "_id",
+        "e25fef8b-0a23-4d10-a934-021938804f05": "fk Job.companyId to Company._id",
+        "3a20bd1a-e8f2-4dd1-81ef-3431aedca469": "companyId",
+        "3762cfdd-d795-4e29-b35a-39e36856fd7b": "fk Job.clientId to Client._id",
+        "2be77f0c-a57d-450e-aeb0-2b9d2e73a5fc": "clientId",
+        "892b5fb9-aef3-4b2c-9780-0addd5199520": "fk Team.assinedJobs.[0].jobId to Job._id",
+        "5681362a-2eac-4498-9331-85aba70cc632": "jobDetails",
+        "093aab13-d3f2-4f90-bb44-71e9cf3cddb6": "jobDetails",
+        "3b55231b-449e-4b90-9318-dab6059968d9": "jobName",
+        "2f392c7d-b06b-4588-8279-448202876e7e": "jobEndDate",
+        "6eda34a5-fafa-4261-8394-05dc012528ca": "jobStartDate",
+        "eef6d2c7-bd26-441b-bbe5-5ea0c95ba938": "clientName",
+        "e6618fe5-dbfb-48d2-a3f9-3a2051520783": "jobAddress",
+        "728855aa-cb9f-4d96-ace7-d27ae30d3e09": "street",
+        "bf555d54-73c4-4e9e-91e9-b512cfc5f9ef": "suburb",
+        "5467cf9d-0beb-42fd-b582-42d54cd18778": "city",
+        "3a27a84e-4e7f-4fe7-ab1a-b9a056a7785e": "province",
+        "88366b56-46c9-4559-96fd-85ce791ebbbb": "postalCode",
+        "dcefba6f-77e7-4c10-9b6b-9d58e3732bb3": "complex",
+        "b123c32b-7bf8-426e-bc66-24fa0b78def3": "houseNumber",
+        "7a841b65-cfe4-4c41-9acf-d1858a2cbf66": "assignedEmployees",
+        "3015f340-0ae8-4157-8bac-a004a9819728": "assignedTeam",
+        "07acbdc6-86ce-48ab-96f2-2a1f480ae62c": "fk Job.assignedTeam to Team._id",
+        "bf71f9a2-bd7a-4e13-a454-963bfb377652": "recordedDetails",
+        "f33d20db-5305-4417-88df-6ac4982a7bf1": "imagesTaken",
+        "a6ff07b3-40e9-4b66-befb-1460c14c55f0": "inventoryUsed",
+        "97871c44-0f21-4fef-a42e-2152265bdc87": "status",
+        "d10435cb-520a-46af-8602-76754068a855": "clientFeedback",
+        "32d7d937-a25b-4694-91e5-fcf004675c65": "rating",
+        "b1ba30db-8d5d-4e47-ba71-dc8c7c4dc7c9": "customerServiceRating",
+        "bd8fc98a-21a0-40b4-b18b-dcf258e55bad": "comments",
+        "efb5bedb-46ad-47aa-8ef0-cd17d9a0415f": "taskList",
+        "b0313463-cad6-47a5-8c13-ec661b8724d9": "taskName",
+        "d9145e9a-03e7-428b-b4fb-12b9bf9a170f": "completed",
+        "14fcd865-b71c-485f-a8e6-ea72eaa14d5e": "employeeID",
+        "45a72c39-922e-4a40-893b-14f292465021": "employeeDisplayName",
+        "f9019bd8-5722-42fd-a8b7-ac2ece0fa738": "fk Job.assignedEmployees.[0].employeeID to Employee._id",
+        "4c67f62d-ed61-4034-a01b-bf35021a9865": "employeeDisplayImage",
+        "9e7c47fd-8848-4810-9267-2189375cab88": "assignedEmployees",
+        "3bcb471f-748d-48c8-85b6-f0219c589dee": "employeeID",
+        "ab6f3d5e-a03f-4e1b-af3c-ca94e0377039": "employeeDisplayName",
+        "6773d725-7603-47fb-9aee-9a27cad48db2": "employeeDisplayImage",
+        "f9b21b63-c525-4ac8-b402-62c62152217c": "comments",
+        "da473a02-03df-47d6-b663-095cf46e4b15": "Comment",
+        "77c6eccb-11de-4303-9c7e-300a7eecbfa5": "employee",
+        "6dcf42f9-c079-4d40-a8d6-759644119bc2": "commentDate",
+        "d8e45d38-3e08-48ab-a361-ad2129749b48": "createAt",
+        "a846d4f7-70a7-46a7-ac56-21779db6b378": "updatedAt",
+        "08096655-7bdd-4282-9725-9fb0c6697bc0": "deletedAt",
+        "1d9ecb70-c583-4e0e-9e30-3604decc2ab3": "_id",
+        "b27e333a-9aab-4cf7-b078-3f882d2a357e": "name",
+        "cd6c399a-96ec-471c-a7af-8cb499f30116": "itemImage",
+        "260df551-ef83-4026-b6eb-c56eb62a8be3": "costPrice",
+        "4cd1905c-5163-424d-a8e7-209012d81da1": "lowStockThreshold",
+        "7ef38c55-05da-4192-9c8f-9cb53def9639": "currentStockLevel",
+        "3b66bc5e-baca-4813-b429-9baa3f4e563e": "createdAt",
+        "b5ece56c-511a-4556-9272-27f7a97fdded": "updatedAt",
+        "5717020a-4e0a-4acf-bbf7-044d0533a1f1": "deletedAt",
+        "461b21b2-a794-49d3-b729-7bb436a29007": "fk Company.inventory.[0] to InventoryItem._id"
+    },
+    "definitions": {
+        "type": "definitions",
+        "properties": [],
+        "GUID": "95f93909-a180-49f0-831b-33e9864d818b"
+    },
+    "polyglotDefinitions": {
+        "type": "polyglotDefinitions",
+        "properties": [],
+        "GUID": "908bbf14-1c5e-4839-bbb1-ce977e71bd06"
+    },
+    "externalDefinitions": {
+        "type": "externalDefinitions",
+        "properties": [],
+        "GUID": "b6501935-3b7a-4c40-b5c4-024682b01977"
+    },
+    "sources": [],
+    "decorativeSymbols": [],
+    "dbVersion": "v7.x",
+    "dbVendor": "MongoDB",
+    "appTarget": "MONGODB",
+    "creationTS": "2024-06-12T12:57:33.620Z",
+    "GUID": "c29299cd-00fa-4243-ad37-e6b796abf5da",
+    "isLineageEnabled": false,
+    "lastModifTS": "2024-06-12T15:32:31.210Z",
+    "persistenceSchemaVersion": "7",
+    "isCreatedByPlugin": true,
+    "pluginInformation": {
+        "pluginEngineVersion": "1.0.0"
+    },
+    "applicationInformation": {
+        "version": "7.4.7"
+    },
+    "settings": {
+        "centralPane": {
+            "dbLevel": {
+                "erd": [
+                    {
+                        "GUID": "12962c2f-1695-4141-9815-740a6e64b936",
+                        "x": 1534.3687353218838,
+                        "y": 1428.0492943129968,
+                        "width": 417,
+                        "height": 683,
+                        "color": {}
+                    },
+                    {
+                        "GUID": "044a679f-6a60-4a25-9b65-d7928f06e30c",
+                        "x": 954.8778677419726,
+                        "y": 1423.1417600664215,
+                        "width": 302,
+                        "height": 611,
+                        "color": {}
+                    },
+                    {
+                        "GUID": "1b9fbda8-2a10-4513-97be-a66eb5f19c6b",
+                        "x": 948.7089179702814,
+                        "y": 2197.062992943127,
+                        "width": 335,
+                        "height": 466,
+                        "color": {}
+                    },
+                    {
+                        "GUID": "07d53381-7216-4c47-8b59-0f4e8e2a3283",
+                        "x": 2277.685162518412,
+                        "y": 1454.3063714410066,
+                        "width": 245,
+                        "height": 117,
+                        "color": {}
+                    },
+                    {
+                        "GUID": "6563c096-9d5a-4840-8092-c38d840f2e6c",
+                        "x": 1522.8778677419714,
+                        "y": 2176.0492943129966,
+                        "width": 462,
+                        "height": 611,
+                        "color": {}
+                    },
+                    {
+                        "GUID": "611fb364-6394-42c3-848d-bea59d5d2b29",
+                        "x": 2172.4664937278594,
+                        "y": 2518.3523246160244,
+                        "width": 404,
+                        "height": 785,
+                        "color": {}
+                    },
+                    {
+                        "GUID": "2502e395-525b-4e7a-bc9c-5a6520512d81",
+                        "x": 2213.375584636949,
+                        "y": 1946.7159609796631,
+                        "width": 323,
+                        "height": 413,
+                        "color": {}
+                    },
+                    {
+                        "GUID": "5a114539-d120-4034-906d-737ae38e03a4",
+                        "x": 951.3755846369463,
+                        "y": 2914.715960979667,
+                        "width": 330,
+                        "height": 247,
+                        "color": {}
+                    }
+                ],
+                "erdDefinitions": {
+                    "erd": [],
+                    "rootPath": [],
+                    "entities": [],
+                    "decorativeSymbols": []
+                },
+                "buckets": [
+                    {
+                        "x": 908.7089179702814,
+                        "y": 1383.1417600664215,
+                        "GUID": "0db365f5-4256-4a1f-81fe-d5e0e60ddc4d"
+                    }
+                ],
+                "collapsedNodes": [
+                    "044a679f-6a60-4a25-9b65-d7928f06e30cd826d539-c479-426a-92d0-ffe0abfcf6d169b80452-c33e-410c-af64-335d535396f0"
+                ],
+                "activeRelationship": "",
+                "activeRelationshipFields": {
+                    "childField": [],
+                    "parentField": []
+                },
+                "selectedCollections": [],
+                "displayColorPicker": false,
+                "graphView": {
+                    "erd": [],
+                    "buckets": [],
+                    "decorativeSymbols": [],
+                    "forceLayout": true,
+                    "defaultLinkLength": 300
+                },
+                "diagramViews": [],
+                "decorativeSymbols": [],
+                "nestedCollectionsLayout": "horizontal",
+                "options": [
+                    {
+                        "autoWidth": false,
+                        "autoHeight": false,
+                        "GUID": "12962c2f-1695-4141-9815-740a6e64b936"
+                    },
+                    {
+                        "autoWidth": false,
+                        "autoHeight": false,
+                        "GUID": "044a679f-6a60-4a25-9b65-d7928f06e30c"
+                    },
+                    {
+                        "autoWidth": false,
+                        "autoHeight": false,
+                        "GUID": "07d53381-7216-4c47-8b59-0f4e8e2a3283"
+                    },
+                    {
+                        "autoWidth": false,
+                        "autoHeight": false,
+                        "GUID": "6563c096-9d5a-4840-8092-c38d840f2e6c"
+                    },
+                    {
+                        "autoWidth": false,
+                        "autoHeight": false,
+                        "GUID": "1b9fbda8-2a10-4513-97be-a66eb5f19c6b"
+                    },
+                    {
+                        "autoWidth": false,
+                        "autoHeight": false,
+                        "GUID": "5a114539-d120-4034-906d-737ae38e03a4"
+                    },
+                    {
+                        "autoWidth": false,
+                        "autoHeight": false,
+                        "GUID": "611fb364-6394-42c3-848d-bea59d5d2b29"
+                    },
+                    {
+                        "autoWidth": false,
+                        "autoHeight": false,
+                        "GUID": "2502e395-525b-4e7a-bc9c-5a6520512d81"
+                    }
+                ],
+                "relationshipUpdateDisabled": false
+            },
+            "collectionLevel": {},
+            "changed": false
+        },
+        "dtDiagram": {
+            "collapsedNodes": [],
+            "shouldDistributeCollections": false
+        }
+    }
+}

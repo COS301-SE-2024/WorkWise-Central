@@ -1,7 +1,9 @@
 # Table of Contents
 
-1. [Introduction](#introduction)
-2. [Functional Requirements of the Database](#functional-requirements-of-the-database)
+- [Table of Contents](#table-of-contents)
+- [WorkWise Central Database Design Documentation](#workwise-central-database-design-documentation)
+  - [Introduction](#introduction)
+  - [Functional Requirements of the Database](#functional-requirements-of-the-database)
     - [Authentication](#authentication)
     - [User/Employee Management](#useremployee-management)
     - [Company Management](#company-management)
@@ -9,27 +11,81 @@
     - [Client Management](#client-management)
     - [Appointment Management](#appointment-management)
     - [Job Management](#job-management)
-3. [Non-Functional Requirements](#non-functional-requirements)
+  - [Non-Functional Requirements](#non-functional-requirements)
     - [Availability and Reliability](#availability-and-reliability)
     - [Security](#security)
     - [Maintainability](#maintainability)
-4. [Constraints](#constraints)
-5. [Entity Relationship Diagram](#entity-relationship-diagram)
-6. [Data Model](#data-model)
-    - [User/Employee](#useremployee)
+  - [Constraints](#constraints)
+  - [Entity Relationship Diagram](#entity-relationship-diagram)
+    - [Data Model](#data-model)
+  - [Database Schema](#database-schema)
+    - [User](#user)
+      - [\_id](#_id)
+      - [systemDetails](#systemdetails)
+      - [profile](#profile)
+      - [personalInfo](#personalinfo)
+      - [joinedCompanies](#joinedcompanies)
+      - [skills](#skills)
+      - [currentEmployeeID](#currentemployeeid)
+    - [Employee](#employee)
+      - [\_id](#_id-1)
+      - [role](#role)
+      - [skills](#skills-1)
+      - [currentJobAssignments](#currentjobassignments)
+      - [superior](#superior)
+      - [subordinates](#subordinates)
+      - [createdAt](#createdat)
+      - [updatedAt](#updatedat)
+      - [deletedAt](#deletedat)
+    - [Team](#team)
+      - [\_id](#_id-2)
+      - [teamName](#teamname)
+      - [companyId](#companyid)
+      - [teamMembers](#teammembers)
+      - [createdAt](#createdat-1)
+      - [updatedAt](#updatedat-1)
+      - [deletedAt](#deletedat-1)
     - [Company](#company)
+      - [\_id (Primary Key)](#_id-primary-key)
+      - [registrationNumber](#registrationnumber)
+      - [name](#name)
+      - [type](#type)
+      - [vatNumber](#vatnumber)
+      - [logo](#logo)
+      - [contactDetails](#contactdetails)
+      - [address](#address)
+      - [employees](#employees)
+      - [inventoryItems](#inventoryitems)
+      - [createdAt](#createdat-2)
+      - [updatedAt](#updatedat-2)
+      - [deletedAt](#deletedat-2)
     - [Client](#client)
+      - [\_id (Primary Key)](#_id-primary-key-1)
+      - [details](#details)
+      - [createdAt](#createdat-3)
+      - [updatedAt](#updatedat-3)
+      - [deletedAt](#deletedat-3)
     - [Job](#job)
-    - [Appointment](#appointment)
+      - [\_id (Primary Key)](#_id-primary-key-2)
+      - [companyId](#companyid-1)
+      - [clientId (Foreign Key)](#clientid-foreign-key)
+      - [assignedEmployees](#assignedemployees)
+      - [recordedDetails](#recordeddetails)
+      - [jobDetails](#jobdetails)
+      - [clientFeedback](#clientfeedback)
+      - [createdAt](#createdat-4)
+      - [updatedAt](#updatedat-4)
+      - [deletedAt](#deletedat-4)
     - [InventoryItem](#inventoryitem)
-7. [ER Diagram](#er-diagram)
-8. [Database Schema](#database-schema)
-    - [User/Employee](#useremployee-1)
-    - [Company](#company-1)
-    - [Client](#client-1)
-    - [Job](#job-1)
-    - [Appointment](#appointment-1)
-    - [InventoryItem](#inventoryitem-1)
+      - [id (Primary Key)](#id-primary-key)
+      - [name](#name-1)
+      - [itemImage](#itemimage)
+      - [costPrice](#costprice)
+      - [currentStockLevel](#currentstocklevel)
+      - [lowStockThreshold](#lowstockthreshold)
+      - [createdAt](#createdat-5)
+      - [updatedAt](#updatedat-5)
+      - [deletedAt](#deletedat-5)
 
 
 # WorkWise Central Database Design Documentation
@@ -190,15 +246,24 @@ The Employee entity stores information for users.
 
 - **Data Type:** Object
 - **Attributes:**
-  - **email:** string
-    - **Reasoning:** Email used for login and communication.
-    - **Example:** "user@example.com"
+  
   - **password:** string
     - **Reasoning:** Hashed password for account security.
     - **Example:** "hashed_password_string"
   - **username:** string
     - **Reasoning:** Unique identifier for the user's profile.
     - **Example:** "user123"
+
+#### profile
+
+- **Data Type:** Object
+- **Attributes:**
+  - **displayImage:** string
+    - **Reasoning:** URL or base64 image string for profile picture.
+    - **Example:** "data:image/png;base64,iVBORw0KGgoAAAANS..."
+  - **displayName:** string
+    - **Reasoning:** Display name for user profile.
+    - **Example:** "JohnDoe"
 
 #### personalInfo
 
@@ -223,7 +288,7 @@ The Employee entity stores information for users.
       - **Reasoning:** Phone number for contact.
       - **Example:** "+1234567890"
     - **email:** string
-      - **Reasoning:** Secondary email for contact.
+      - **Reasoning:** Email for contact.
       - **Example:** "contact@example.com"
   - **address:** Object
     - **street:** string
@@ -249,7 +314,7 @@ The Employee entity stores information for users.
 
 - **Data Type:** Array of Objects
 - **Reasoning:** References companies the user is associated with.
-- **Example:** [ {"employeeID": "60d21b4667d0d8992e610c85", "companyName": "Work Wise Central"}...]
+- **Example:** [ {"employeeId": "60d21b4667d0d8992e610c85", "companyName": "Work Wise Central"}...]
 
 #### skills
 - **Data Type:** Array
@@ -274,29 +339,18 @@ The Employee entity stores information for employees.
 - **Reasoning:** Unique identifier for each employee.
 - **Example:** "60d21b4667d0d8992e610c85"
 
-#### profile
+#### role
 
-- **Data Type:** Object
+- **Data Type:** Objects
 - **Attributes:**
-  - **displayImage:** string
-    - **Reasoning:** URL or base64 image string for profile picture.
-    - **Example:** "data:image/png;base64,iVBORw0KGgoAAAANS..."
-  - **displayName:** string
-    - **Reasoning:** Display name for user profile.
-    - **Example:** "JohnDoe"
-
-#### roles
-
-- **Data Type:** Array of Objects
-- **Attributes:**
-  - **role:** Array
+  - **role:** string
     - **Reasoning:** Defines the user's role (e.g., admin, employee).
-    - **Example:** ["admin", "technician"]
+    - **Example:**"admin"
   - **permissions:** Array
     - **Reasoning:** Permissions associated with the role.
     - **Example:** ["read", "write", "delete"]
 
-#### availability
+<!-- #### availability
 
 - **Data Type:** Object
 - **Attributes:**
@@ -305,7 +359,7 @@ The Employee entity stores information for employees.
     - **Example:** "Available"
   - **schedule:** Object
     - **Reasoning:** Weekly schedule for the user.
-    - **Example:** {"Monday": "9:00-17:00", "Tuesday": "9:00-17:00"}
+    - **Example:** {"Monday": "9:00-17:00", "Tuesday": "9:00-17:00"} -->
 
 #### skills
 - **Data Type:** Array
@@ -318,7 +372,7 @@ The Employee entity stores information for employees.
 
 - **Data Type:** Array of Objects
 - **Reasoning:** References jobs the employee is currently assigned to.
-- **Example:** [{ "jobID": "60d21b4667d0d8992e610c87", "jobDetails": { "jobName": "Janet Jackson's floor tiling", "jobStartDate":"2024-06-01", "jobEndDate": "2024-06-05", "jobDescription": "Description goes here", "clientName": "Janet Jackson", "jobAddress":{"street": "123 Job St", "suburb": "Westside", "city": "Metropolis", "postalCode": "67890", "complex": "Workplace Plaza", "houseNumber": "5C"} }}...]
+- **Example:** [{ "jobId": "60d21b4667d0d8992e610c87", "jobDetails": { "jobName": "Janet Jackson's floor tiling", "jobStartDate":"2024-06-01", "jobEndDate": "2024-06-05", "jobDescription": "Description goes here", "clientName": "Janet Jackson", "jobAddress":{"street": "123 Job St", "suburb": "Westside", "city": "Metropolis", "postalCode": "67890", "complex": "Workplace Plaza", "houseNumber": "5C"} }}...]
   
 #### superior 
 
@@ -326,7 +380,7 @@ The Employee entity stores information for employees.
 - **Reasoning:** References the employee's superior.
 - **Example:** [{"employeeID": "60d21b4667d0d8992e610c87", "employeeName": "Tywin Lannister", profile : {"displayName":"Peter Parker", "displayImage":"..."}}...]
 
-#### subOrdinates
+#### subordinates
 
 - **Data Type:** Array of Objects
 - **Reasoning:** References the employees under the employee.
@@ -373,9 +427,9 @@ The Employee entity stores information for employees.
 
 #### teamMembers
 
-- **Data Type:** Array of Objects
-- **Reasoning:** References the employees under the employee.
-- **Example:** [{"employeeID": "60d21b4667d0d8992e610c87", "employeeName": "Jon Snow", profile : {"displayName":"Peter Parker", "displayImage":"..."}}...]
+- **Data Type:** Array 
+- **Reasoning:** Array of employee IDs .
+- **Example:** ["60d21b4667d0d8992e610c87", ...]
 
 #### createdAt
 
@@ -503,30 +557,6 @@ The Client entity stores information about clients who have jobs or appointments
 - **Reasoning:** Unique identifier for each client.
 - **Example:** "60d21b4667d0d8992e610c8c"
 
-#### registrationNumber (Company Specific)
-
-- **Data Type:** string
-- **Reasoning:** Unique registration number for the company.
-- **Example:** "REG123456"
-
-#### name (Company Specific)
-
-- **Data Type:** string
-- **Reasoning:** Name of the company.
-- **Example:** "Tech Solutions Inc."
-
-#### type (Company Specific)
-
-- **Data Type:** string
-- **Reasoning:** Type or industry of the company.
-- **Example:** "IT Services"
-
-#### vatNumber (Company Specific)
-
-- **Data Type:** string
-- **Reasoning:** VAT number for tax purposes.
-- **Example:** "VAT789012"
-
 #### details
 
 - **Data Type:** Object
@@ -544,6 +574,7 @@ The Client entity stores information about clients who have jobs or appointments
     - **phone:** string
       - **Reasoning:** Phone number for contact.
       - **Example:** "+1234567890"
+  - contactInfo
     - **email:** string
       - **Reasoning:** Email for contact.
       - **Example:** "jane.smith@example.com"
@@ -615,18 +646,12 @@ The Job entity stores information about jobs assigned to employees and clients.
 - **Reasoning:** Employees assigned to the job.
 - **Example:** [{"employeeId":"60d21b4667d0d8992e610c85", "employeeName": "Denzel Washington", profile : {"displayName":"Peter Parker", "displayImage":"..."}}...]
 
-#### assignedBy
+<!-- #### assignedBy
 
 - **Data Type:** Object
 - **Relationship:** References Employees table
 - **Reasoning:** Assignee of a job.
-- **Example:** {"employeeId":"60d21b4667d0d8992e610c85", "employeeName": "Denzel Washington", }
-
-#### scheduledDateTime
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Scheduled date and time for the job.
-- **Example:** "2024-06-01T09:00:00Z"
+- **Example:** {"employeeId":"60d21b4667d0d8992e610c85", "employeeName": "Denzel Washington", } -->
 
 #### recordedDetails
 
@@ -652,11 +677,11 @@ The Job entity stores information about jobs assigned to employees and clients.
     - **Reasoning:** Description of the job.
     - **Example:** "Fixing plumbing issues."
   - **jobStartDate:** Date
-  - **Reasoning:** Start date of the job.
-  - **Example:** "2024-06-01"
+    - **Reasoning:** Start date of the job.
+    - **Example:** "2024-06-01"
   - **jobEndDate:** Date
-  - **Reasoning:** End date of the job.
-  - **Example:** "2024-06-05"
+    - **Reasoning:** End date of the job.
+    - **Example:** "2024-06-05"
   - **status:** string
     - **Reasoning:** Current status of the job (e.g., pending, in progress, completed).
     - **Example:** "pending"
@@ -712,7 +737,7 @@ The Job entity stores information about jobs assigned to employees and clients.
 - **Reasoning:** Timestamp of when the document was deleted.
 - **Example:** "2024-06-01T10:00:00Z"
 
-### Appointment
+<!-- ### Appointment
 
 The Appointment entity stores information about appointments between clients and jobs.
 
@@ -770,7 +795,7 @@ The Appointment entity stores information about appointments between clients and
 
 - **Data Type:** Date (in string format)
 - **Reasoning:** Timestamp of when the document was deleted.
-- **Example:** "2024-06-01T10:00:00Z"
+- **Example:** "2024-06-01T10:00:00Z" -->
 
 ### InventoryItem
 
