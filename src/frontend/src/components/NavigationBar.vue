@@ -23,20 +23,6 @@ const onEllipsisClick = () => {
 }
 </script>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-import type { PropType } from 'vue'
-
-export default defineComponent({
-  name: 'NavigationBar',
-  props: {
-    component: {
-      type: Object as PropType<any>
-    }
-  }
-})
-</script>
-
 <template>
   <v-card>
     <v-app-bar app>
@@ -237,20 +223,20 @@ export default defineComponent({
             </template>
             <span>Sub-item 2</span>
           </v-list-item>
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 3</span>
-            </v-list-item>
-          </v-list-group>
-        </v-list>
-      </v-navigation-drawer>
 
-      <v-main>
-        <component :is="component" />
-      </v-main>
-    </v-app>
+          <v-list-item link>
+            <template v-slot:prepend>
+              <v-icon>mdi-subdirectory-arrow-right</v-icon>
+            </template>
+            <span>Sub-item 3</span>
+          </v-list-item>
+        </v-list-group>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-main>
+      <v-container fluid> </v-container>
+    </v-main>
   </v-card>
 </template>
 
