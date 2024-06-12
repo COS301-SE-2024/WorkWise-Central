@@ -11,6 +11,7 @@ import {
   IsString,
 } from 'class-validator';
 import { IsObjectId } from 'class-validator-mongo-object-id';
+import { Prop } from '@nestjs/mongoose';
 
 class address {
   @ApiProperty()
@@ -57,6 +58,14 @@ class details {
   @ApiProperty()
   @IsObject()
   address: address;
+
+  @ApiProperty()
+  @IsDate()
+  startDate: Date;
+
+  @ApiProperty()
+  @IsDate()
+  endDate: Date;
 }
 
 class clientFeedback {

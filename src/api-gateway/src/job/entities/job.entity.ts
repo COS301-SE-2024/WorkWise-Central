@@ -55,6 +55,14 @@ export class details {
   @ApiProperty()
   @Prop({ required: true })
   address: address;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  startDate: Date;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  endDate: Date;
 }
 
 @Schema()
@@ -65,7 +73,7 @@ export class Job {
     this.clientId = new Types.ObjectId(); //It must be validated in jobController
     this.companyId = new Types.ObjectId(createJobDto.companyId); //It must be validated in jobController
     this.assignedBy = new Types.ObjectId(createJobDto.assignedBy);
-    this.scheduledDateTime = createJobDto.scheduledDateTime;
+    //this.scheduledDateTime = createJobDto.scheduledDateTime;
     this.status = createJobDto.status;
     if (createJobDto.inventoryUsed && createJobDto.inventoryUsed.length > 0)
       this.inventoryUsed = createJobDto.inventoryUsed.map(
@@ -76,6 +84,8 @@ export class Job {
       description: createJobDto.details.description,
       notes: createJobDto.details.notes,
       address: createJobDto.details.address,
+      startDate: createJobDto.details.startDate,
+      endDate: createJobDto.details.endDate,
     };
 
     this.imagesTaken = createJobDto.imagesTaken;
@@ -98,13 +108,9 @@ export class Job {
   @Prop({ type: Types.ObjectId, required: true })
   assignedBy: Types.ObjectId;
 
-  @ApiProperty()
+  /*  @ApiProperty()
   @Prop({ type: [Types.ObjectId], required: true })
-  assignedEmployees: Types.ObjectId[];
-
-  @ApiProperty()
-  @Prop({ required: true })
-  scheduledDateTime: Date;
+  assignedEmployees: Types.ObjectId[];*/
 
   @ApiProperty()
   @Prop({ required: true })

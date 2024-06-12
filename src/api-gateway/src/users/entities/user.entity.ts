@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import * as mongoose from 'mongoose';
 import { Types } from 'mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 
