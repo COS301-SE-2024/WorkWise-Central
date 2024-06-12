@@ -1,16 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import SplashView from '../views/SplashView.vue'
-
-import RegisterCompanyModal from '../components/RegisterCompanyModal.vue'
-import JoinCompanyModal from '../components/JoinCompanyModal.vue'
-import AddClient from '../components/AddClient.vue'
-import AddEmployee from '../components/AddEmployee.vue'
-import JobDetailsModal from '../components/JobDetailsModal.vue'
-import AddJob from '../components/AddJob.vue'
-import Modals from '../views/Modals.vue'
-import Calendar from '../components/Calendar.vue'
-import Client from '../components/ClientDesk.vue'
-import Kanban from "@/components/Kanban.vue";
+import SplashView from '@/views/SplashView.vue'
+import RegisterCompanyModal from '@/components/RegisterCompanyModal.vue'
+import JoinCompanyModal from '@/components/JoinCompanyModal.vue'
+import AddClient from '@/components/AddClient.vue'
+import AddEmployee from '@/components/AddEmployee.vue'
+import JobDetailsModal from '@/components/JobDetailsModal.vue'
+import AddJob from '@/components/AddJob.vue'
+import Modals from '@/views/Modals.vue'
+import Calendar from '@/components/Calendar.vue'
+import Kanban from '@/components/Kanban.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -73,7 +71,12 @@ const router = createRouter({
     {
       path: '/testview',
       name: 'testview',
-      component: () => import('../views/TestView.vue')
+      component: () => import('@/views/TestView.vue')
+    },
+    {
+      path: '/manager-employees',
+      name: 'manageremployees',
+      component: () => import('@/views/ManagerEmployeesView.vue')
     }
   ]
 })
