@@ -7,23 +7,22 @@ export default defineComponent({
 </script>
 
 <template>
-  <v-container>
+  <v-container fluid fill-height>
     <v-row>
       <v-col>
         <v-col>
           <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-            Managers Desk
+            Employees
           </h4></v-col
         >
         <v-spacer></v-spacer>
-        <v-col col="12">
-          <v-sheet
-            :width="1400"
-            :height="900"
-            :max-width="1400"
-            :max-height="900"
-            color="red"
-          ></v-sheet>
+        <v-col class="search_bar_space"> </v-col>
+        <v-spacer></v-spacer>
+
+        <v-col>
+          <v-card  rounded ="xl" class="h-xs-screen w-xs-screen h-lg-screen w-lg-screen" color="red">
+
+          </v-card>
         </v-col>
       </v-col>
     </v-row>

@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SplashView from '@/views/SplashView.vue'
-
 import RegisterCompanyModal from '@/components/RegisterCompanyModal.vue'
 import JoinCompanyModal from '@/components/JoinCompanyModal.vue'
 import AddClient from '@/components/AddClient.vue'
