@@ -1,23 +1,22 @@
+<template>
+  <NavigationBar :component="Support" />
+</template>
+
 <script lang="ts">
 import { defineComponent } from 'vue'
-
+import Support from '@/components/Support.vue'
+import NavigationBar from '@/components/NavigationBar.vue'
 export default defineComponent({
-  name: 'SupportPage'
+  name: 'SupportView',
+  computed: {
+    Support() {
+      return Support
+    }
+  },
+  components: {
+    NavigationBar
+  }
 })
 </script>
 
-<template>
-  <v-container>
-    <v-row>
-      <v-col>
-        <v-col>
-          <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-            Managers Desk
-          </h4></v-col
-        >
-      </v-col>
-    </v-row>
-  </v-container>
-</template>
-
-<style scoped></style>
+<style></style>
