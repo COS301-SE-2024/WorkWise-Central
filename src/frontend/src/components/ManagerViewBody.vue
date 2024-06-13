@@ -23,10 +23,21 @@ export default defineComponent({
           <v-sheet rounded class="h-lg-screen w-lg-screen" color="red">
             <v-row>
               <v-col :cols="12">
-                <v-card color="white" :height="50" rounded="xl"> Hello </v-card>
+                <v-card color="#879898" :height="50" rounded="xl"> </v-card>
               </v-col>
               <v-col :cols="12">
-                <v-card color="grey" :height="50">Now</v-card>
+                <v-card color="#6A99CE" :height="50" rounded="xl" class="justify-center">
+                  <v-row class="center">
+                    <v-col :cols="2"><v-card class="pa-2 ma-1"> Tinashe Fadza</v-card></v-col>
+                    <v-col :cols="1"> <v-card class="pa-2 ma-1">TAFF</v-card></v-col>
+                    <v-col :cols="6" align="center">
+                      <v-card class="pa-2 ma-1">dummy@gmail.com</v-card></v-col
+                    >
+                    <v-col :cols="3" align="end">
+                      <v-card class="pa-2 ma-1 justify-lg-end">Button</v-card></v-col
+                    >
+                  </v-row>
+                </v-card>
               </v-col>
             </v-row>
           </v-sheet>
