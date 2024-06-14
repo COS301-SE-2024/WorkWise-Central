@@ -150,7 +150,7 @@ export class User {
 
   @ApiHideProperty()
   @Prop({ type: Date, required: false })
-  public updated_at?: Date;
+  public updateAt?: Date;
 
   @ApiHideProperty()
   @Prop({ type: Date, required: false })

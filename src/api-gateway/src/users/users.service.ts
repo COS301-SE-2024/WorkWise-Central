@@ -128,7 +128,7 @@ export class UsersService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
-    /*    updateUserDto.updated_at = new Date();
+    /*    updateUserDto.updateAt = new Date();
     console.log('updateUserDto');
     console.log(updateUserDto);*/
 
@@ -143,7 +143,7 @@ export class UsersService {
               },
             ],
           },
-          { $set: { ...updateUserDto }, updated_at: new Date() },
+          { $set: { ...updateUserDto }, updateAt: new Date() },
         )
         .lean();
     if (previousObject == null) {

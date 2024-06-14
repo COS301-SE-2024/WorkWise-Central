@@ -17,7 +17,7 @@ import { IsObjectId } from 'class-validator-mongo-object-id';
 import { Company } from '../entities/company.entity';
 
 /*export class CreateCompanyDto extends OmitType(Company, [
-  'updated_at',
+  'updateAt',
   'deleted_at',
 ] as const) {
   creatorId: Types.ObjectId;

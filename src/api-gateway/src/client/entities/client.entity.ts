@@ -117,7 +117,7 @@ export class Client {
 
   @ApiProperty()
   @Prop({ required: false })
-  public updated_at: Date;
+  public updateAt: Date;
 
   @ApiProperty()
   @Prop({ required: false })
