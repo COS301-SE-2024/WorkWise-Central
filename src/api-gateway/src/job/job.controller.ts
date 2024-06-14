@@ -53,7 +53,7 @@ export class JobController {
     @Body() createJobDto: CreateJobDto,
   ): Promise<{ message: { id: Types.ObjectId; message: string } }> {
     this.validateObjectId(createJobDto.assignedBy, 'assignedBy');
-    this.validateObjectId(createJobDto.companyId, 'company');
+    this.validateObjectId(createJobDto.companyId, 'Company');
 
     if (
       createJobDto.inventoryUsed != undefined &&

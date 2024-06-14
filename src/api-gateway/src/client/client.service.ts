@@ -13,7 +13,7 @@ import { CreateClientDto } from './dto/create-client.dto';
 @Injectable()
 export class ClientService {
   constructor(
-    @InjectModel('client') private readonly clientModel: Model<Client>,
+    @InjectModel(Client.name) private readonly clientModel: Model<Client>,
   ) {}
 
   async create(createClientDto: CreateClientDto) {

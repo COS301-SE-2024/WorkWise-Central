@@ -19,7 +19,7 @@ export class JobService {
   private authorisedList: string[] = ['owner', 'manager'];
 
   constructor(
-    @InjectModel('job')
+    @InjectModel(Job.name)
     private readonly jobModel: Model<Job>,
     private readonly usersService: UsersService,
     private readonly companyService: CompanyService,

@@ -18,7 +18,7 @@ import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
 @Injectable()
 export class CompanyService {
   constructor(
-    @InjectModel('company')
+    @InjectModel(Company.name)
     private readonly companyModel: Model<Company>,
 
     @InjectModel(User.name)
