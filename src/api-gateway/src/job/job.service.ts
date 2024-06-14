@@ -19,7 +19,8 @@ export class JobService {
   private authorisedList: string[] = ['owner', 'manager'];
 
   constructor(
-    @InjectModel('job') private readonly jobModel: Model<Job>,
+    @InjectModel('job')
+    private readonly jobModel: Model<Job>,
     private readonly usersService: UsersService,
     private readonly companyService: CompanyService,
     private readonly clientService: ClientService,
@@ -51,7 +52,7 @@ export class JobService {
   }
 
   async authorisedToAssign(userId: Types.ObjectId, companyId: Types.ObjectId) {
-    const user = await this.usersService.findUserById(userId);
+    //const user = await this.usersService.findUserById(userId);
     /*    if (!user.joinedCompanies.includes(companyId))
       throw new NotFoundException(
         'User does is not an employee of the company',

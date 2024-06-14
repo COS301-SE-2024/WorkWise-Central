@@ -3,7 +3,6 @@ import * as bcrypt from 'bcryptjs';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
-
 @Schema()
 export class systemDetails {
   @Prop({ required: true, unique: true })
@@ -11,6 +10,7 @@ export class systemDetails {
   @Prop({ required: true, unique: false })
   password: string;
 }
+
 @Schema()
 export class contactInfo {
   @Prop({ type: String, required: true })
@@ -19,6 +19,7 @@ export class contactInfo {
   @Prop({ type: String, required: true, lowercase: true })
   email: string;
 }
+
 @Schema()
 export class address {
   @Prop({ type: String, required: true })
@@ -34,6 +35,7 @@ export class address {
   @Prop({ type: String, required: true })
   houseNumber: string;
 }
+
 @Schema()
 export class personalInfo {
   @Prop({ required: true })
@@ -73,9 +75,11 @@ export class profile {
     default:
       'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
   })
-  displayImage: string;
+  displayImage?: string =
+    'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
 }
 
+@Schema()
 export class joinedCompany {
   employeeId: Types.ObjectId;
   companyId: Types.ObjectId;
@@ -132,28 +136,28 @@ export class User {
   profile: profile;
 
   @ApiProperty()
-  @Prop({ required: true, default: [] })
-  joinedCompanies: joinedCompany[];
+  @Prop({ required: false, default: [] })
+  joinedCompanies?: joinedCompany[] = [];
 
   @ApiProperty()
-  @Prop({ type: [String], required: false })
-  skills: string[];
+  @Prop({ type: [String], required: false, default: [] })
+  skills: string[] = [];
 
   @ApiHideProperty()
-  @Prop({ required: false, default: new Date() })
-  public created_at: Date;
-
-  @ApiHideProperty()
-  @Prop({ required: false })
-  public updated_at: Date;
+  @Prop({ required: true, default: new Date() })
+  public created_at: Date = new Date();
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public deleted_at: Date;
+  public updated_at?: Date;
 
   @ApiHideProperty()
-  @Prop({ type: Types.ObjectId, required: false })
-  public currentCompany: Types.ObjectId;
+  @Prop({ required: false })
+  public deleted_at?: Date;
+
+  @ApiHideProperty()
+  @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
+  public currentEmployee?: Types.ObjectId;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

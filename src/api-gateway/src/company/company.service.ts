@@ -177,9 +177,9 @@ export class CompanyService {
       throw new NotFoundException('User not found');
     }
 
-    if (newId.joinedCompanies.includes(addUserDto.currentCompany)) {
-      throw new ConflictException('User is already a member');
-    }
+    // if (newId.joinedCompanies.includes(addUserDto.currentCompany)) {
+    //   throw new ConflictException('User is already a member');
+    // }
     //
     const resultOfUpdate = await this.companyModel.findByIdAndUpdate(
       { _id: addUserDto.currentCompany },
