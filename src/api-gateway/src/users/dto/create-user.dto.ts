@@ -138,13 +138,13 @@ export class CreateUserDto {
   profile: Profile;
 
   @IsOptional()
-  @IsArray()
+  @IsArray({ each: true })
   @Type(() => String)
   skills?: string[] = [];
 
   @IsOptional()
   @IsMongoId()
-  public currentCompany: Types.ObjectId;
+  public currentCompany?: Types.ObjectId;
 }
 
 export class createUserResponseDto {

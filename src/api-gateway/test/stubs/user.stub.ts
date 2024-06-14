@@ -78,7 +78,7 @@ export const mockUserObject = {
     permissions: ['read', 'write'],
   },
   createdAt: '2024-05-30T17:39:30.000Z',
-  updateAt: null,
+  updatedAt: null,
 };
 
 export const userStub = () => {

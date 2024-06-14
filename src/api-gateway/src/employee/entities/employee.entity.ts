@@ -139,7 +139,7 @@ export class Employee {
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public updateAt: Date;
+  public updatedAt: Date;
 
   @ApiHideProperty()
   @Prop({ required: false })

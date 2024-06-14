@@ -3,7 +3,6 @@ import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import mongoose from 'mongoose';
 import { CreateCompanyDto } from '../dto/create-company.dto';
 
-@Schema()
 export class contactDetails {
   @ApiProperty()
   @Prop({ type: String, required: true })
@@ -105,7 +104,7 @@ export class Company {
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public updateAt: Date;
+  public updatedAt: Date;
 
   @ApiHideProperty()
   @Prop({ required: false })

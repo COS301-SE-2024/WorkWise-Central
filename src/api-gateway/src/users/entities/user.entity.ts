@@ -4,14 +4,14 @@ import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 
-class SystemDetails {
+export class SystemDetails {
   @Prop({ required: true, unique: true })
   username: string;
   @Prop({ required: true, unique: false })
   password: string;
 }
 
-class ContactInfo {
+export class ContactInfo {
   @Prop({ type: String, required: true })
   phoneNumber: string;
 
@@ -19,7 +19,7 @@ class ContactInfo {
   email: string;
 }
 
-class Address {
+export class Address {
   @Prop({ type: String, required: true })
   street: string;
   @Prop({ type: String, required: true })
@@ -34,7 +34,7 @@ class Address {
   houseNumber: string;
 }
 
-class PersonalInfo {
+export class PersonalInfo {
   @Prop({ type: String, required: true })
   firstName: string;
 
@@ -62,7 +62,6 @@ class PersonalInfo {
   address: Address;
 }
 
-@Schema()
 export class Profile {
   @Prop({ type: String, required: true })
   displayName: string;
@@ -157,7 +156,7 @@ export class User {
 
   @ApiHideProperty()
   @Prop({ type: Date, required: false })
-  public updateAt?: Date;
+  public updatedAt?: Date;
 
   @ApiHideProperty()
   @Prop({ type: Date, required: false })

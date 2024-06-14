@@ -138,7 +138,7 @@ export class Job {
 
   @ApiProperty()
   @Prop({ required: false })
-  public updateAt: Date;
+  public updatedAt: Date;
 
   @ApiProperty()
   @Prop({ required: false })
