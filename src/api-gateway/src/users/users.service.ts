@@ -49,7 +49,7 @@ export class UsersService {
           $and: [
             { 'systemDetails.username': identifier },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -66,7 +66,7 @@ export class UsersService {
           $and: [
             { _id: id },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -85,7 +85,7 @@ export class UsersService {
           $and: [
             { _id: identifier },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -109,7 +109,7 @@ export class UsersService {
           $and: [
             { 'systemDetails.username': identifier },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -139,7 +139,7 @@ export class UsersService {
             $and: [
               { _id: id },
               {
-                $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+                $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
               },
             ],
           },
@@ -161,11 +161,11 @@ export class UsersService {
             $or: [{ _id: id }, { 'systemDetails.username': id }],
           },
           {
-            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
         ],
       },
-      { $set: { deleted_at: new Date() } },
+      { $set: { deletedAt: new Date() } },
     );
 
     if (result == null) {

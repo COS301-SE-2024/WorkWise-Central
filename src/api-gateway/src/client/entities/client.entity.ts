@@ -121,7 +121,7 @@ export class Client {
 
   @ApiProperty()
   @Prop({ required: false })
-  public deleted_at: Date;
+  public deletedAt: Date;
 }
 
 export const ClientSchema = SchemaFactory.createForClass(Client);

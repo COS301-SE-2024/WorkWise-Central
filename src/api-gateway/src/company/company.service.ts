@@ -48,7 +48,7 @@ export class CompanyService {
           $and: [
             { registrationNumber: id },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -65,7 +65,7 @@ export class CompanyService {
           $and: [
             { _id: id },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -93,7 +93,7 @@ export class CompanyService {
           $and: [
             { _id: identifier },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -123,7 +123,7 @@ export class CompanyService {
             ],
           },
           {
-            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
         ],
       })
@@ -145,7 +145,7 @@ export class CompanyService {
           $and: [
             { registrationNumber: registrationNumber },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })

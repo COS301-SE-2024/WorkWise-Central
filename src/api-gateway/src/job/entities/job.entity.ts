@@ -142,7 +142,7 @@ export class Job {
 
   @ApiProperty()
   @Prop({ required: false })
-  public deleted_at: Date;
+  public deletedAt: Date;
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);

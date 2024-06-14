@@ -154,7 +154,7 @@ export class User {
 
   @ApiHideProperty()
   @Prop({ type: Date, required: false })
-  public deleted_at?: Date;
+  public deletedAt?: Date;
 
   @ApiHideProperty()
   @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })

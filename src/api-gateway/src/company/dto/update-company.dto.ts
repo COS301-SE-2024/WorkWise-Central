@@ -3,5 +3,5 @@ import { Company } from '../entities/company.entity';
 
 export class UpdateCompanyDto extends OmitType(Company, [
   'createdAt',
-  'deleted_at',
+  'deletedAt',
 ]) {}

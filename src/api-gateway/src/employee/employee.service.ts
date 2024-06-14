@@ -86,11 +86,11 @@ export class EmployeeService {
           $and: [
             { _id: employeeToDelete._id },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         },
-        { $set: { deleted_at: new Date() } },
+        { $set: { deletedAt: new Date() } },
       );
 
     if (result == null) {

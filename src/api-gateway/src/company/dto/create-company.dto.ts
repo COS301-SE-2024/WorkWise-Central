@@ -18,7 +18,7 @@ import { Company } from '../entities/company.entity';
 
 /*export class CreateCompanyDto extends OmitType(Company, [
   'updateAt',
-  'deleted_at',
+  'deletedAt',
 ] as const) {
   creatorId: Types.ObjectId;
 }*/

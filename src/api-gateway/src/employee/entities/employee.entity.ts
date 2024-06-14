@@ -143,7 +143,7 @@ export class Employee {
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public deleted_at: Date;
+  public deletedAt: Date;
 }
 
 export const EmployeeSchema = SchemaFactory.createForClass(Employee);
