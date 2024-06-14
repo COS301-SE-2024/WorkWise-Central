@@ -34,7 +34,7 @@ export class CompanyService {
          exists,please enter another one or sign in`,
       );
     }
-    // createCompanyDto.created_at = new Date();
+    // createCompanyDto.createdAt = new Date();
     const newCompany = new Company(createCompanyDto);
     const newCompanyModel = new this.companyModel(newCompany);
     const result = await newCompanyModel.save();

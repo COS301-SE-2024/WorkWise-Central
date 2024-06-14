@@ -92,7 +92,7 @@ export class CreateJobDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  clientUsername: string;
+  clientUsername?: string;
 
   @ApiProperty()
   @IsObjectId()

@@ -121,7 +121,7 @@ export class User {
 
     this.profile.displayName = createUserDto.profile.displayName;
     this.skills = createUserDto.skills;
-    this.created_at = new Date();
+    this.createdAt = new Date();
   }
 
   @ApiProperty()
@@ -146,7 +146,7 @@ export class User {
 
   @ApiHideProperty()
   @Prop({ type: Date, required: true, default: new Date() })
-  public created_at: Date = new Date();
+  public createdAt: Date = new Date();
 
   @ApiHideProperty()
   @Prop({ type: Date, required: false })

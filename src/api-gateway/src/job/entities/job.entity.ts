@@ -4,7 +4,7 @@ import { Types } from 'mongoose';
 import { CreateJobDto } from '../dto/create-job.dto';
 import { getModelForClass } from '@typegoose/typegoose';
 
-export class address {
+class Address {
   @ApiProperty()
   @Prop({ type: String, required: true })
   street: string;
@@ -25,7 +25,7 @@ export class address {
   houseNumber: string;
 }
 
-export class clientFeedback {
+class ClientFeedback {
   @ApiProperty()
   @Prop({ required: false, default: 10 })
   jobRating: number;
@@ -39,7 +39,7 @@ export class clientFeedback {
   comments: string;
 }
 
-export class details {
+class Details {
   @ApiProperty()
   @Prop({ required: true })
   heading: string;
@@ -54,7 +54,7 @@ export class details {
 
   @ApiProperty()
   @Prop({ required: true })
-  address: address;
+  address: Address;
 
   @ApiProperty()
   @Prop({ required: true })
@@ -89,7 +89,7 @@ export class Job {
     };
 
     this.imagesTaken = createJobDto.imagesTaken;
-    this.created_at = new Date();
+    this.createdAt = new Date();
   }
 
   @ApiProperty()
@@ -122,7 +122,7 @@ export class Job {
 
   @ApiProperty()
   @Prop({ required: true })
-  details: details;
+  details: Details;
 
   @ApiProperty()
   @Prop({ type: [String], required: true })
@@ -130,11 +130,11 @@ export class Job {
 
   @ApiProperty()
   @Prop({ required: false })
-  clientFeedback: clientFeedback;
+  clientFeedback: ClientFeedback;
 
   @ApiProperty()
   @Prop({ required: false, default: new Date() })
-  public created_at: Date;
+  public createdAt: Date;
 
   @ApiProperty()
   @Prop({ required: false })
@@ -147,4 +147,4 @@ export class Job {
 
 export const JobSchema = SchemaFactory.createForClass(Job);
 
-export const JobModel = getModelForClass(Job);
+//export const JobModel = getModelForClass(Job);

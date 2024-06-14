@@ -38,7 +38,7 @@ export const mockUserObject = {
   },
   joinedCompanies: ['company_id_1', 'company_id_2'],
   skills: ['Python', 'Java', 'JavaScript', 'Vue.js', 'NestJS'],
-  created_at: date,
+  createdAt: date,
 };
 */
 
@@ -77,7 +77,7 @@ export const mockUserObject = {
     role: 'user',
     permissions: ['read', 'write'],
   },
-  created_at: '2024-05-30T17:39:30.000Z',
+  createdAt: '2024-05-30T17:39:30.000Z',
   updated_at: null,
 };
 

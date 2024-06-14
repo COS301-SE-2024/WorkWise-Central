@@ -87,7 +87,7 @@ export class Employee {
     this.skills = createUserDto.skills;
     this.roles = createUserDto.roles;
     if (createUserDto.roles) this.roles = createUserDto.roles;
-    this.created_at = new Date();
+    this.createdAt = new Date();
   }*/
 
   @ApiProperty()
@@ -135,7 +135,7 @@ export class Employee {
 
   @ApiHideProperty()
   @Prop({ required: false, default: new Date() })
-  public created_at: Date;
+  public createdAt: Date;
 
   @ApiHideProperty()
   @Prop({ required: false })

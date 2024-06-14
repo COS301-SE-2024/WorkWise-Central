@@ -44,7 +44,7 @@ export class address {
 export class Company {
   constructor(createCompanyDto: CreateCompanyDto) {
     this.mapFromDto(createCompanyDto);
-    this.created_at = new Date();
+    this.createdAt = new Date();
   }
 
   mapFromDto(dto: CreateCompanyDto) {
@@ -101,7 +101,7 @@ export class Company {
 
   @ApiHideProperty()
   @Prop({ required: false, default: new Date() })
-  public created_at: Date;
+  public createdAt: Date;
 
   @ApiHideProperty()
   @Prop({ required: false })
