@@ -99,8 +99,6 @@ export class User {
       gender: createUserDto.personalInfo.gender,
     };
 
-    //this.joinedCompanies = createUserDto.joinedCompanies as Types.ObjectId[];
-
     if (createUserDto.profile.displayImage != null) {
       this.profile = {
         displayName: createUserDto.profile.displayImage,

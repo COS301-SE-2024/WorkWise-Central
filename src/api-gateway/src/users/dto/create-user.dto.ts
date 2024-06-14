@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 import { Prop } from '@nestjs/mongoose';
 import {
   IsArray,
-  IsDate,
+  IsDateString,
   IsEmail,
   IsMongoId,
   IsNotEmpty,
@@ -20,7 +20,10 @@ import { ApiProperty } from '@nestjs/swagger';
 class ContactInfo {
   @ApiProperty()
   @IsString()
-  @IsPhoneNumber()
+  @Transform(({ value }) =>
+    value.startsWith('0') ? `+27${value.slice(1)}` : value,
+  )
+  @IsPhoneNumber(null)
   phoneNumber: string;
 
   @ApiProperty()
@@ -79,7 +82,7 @@ class PersonalInfo {
   @Prop({ required: true })
   surname: string;
 
-  @IsDate()
+  @IsDateString()
   @Prop({ type: Date, required: true })
   dateOfBirth: Date;
 
@@ -99,6 +102,7 @@ class Profile {
   @MaxLength(35)
   displayName: string;
 
+  @IsOptional()
   @IsString()
   displayImage?: string;
 }
@@ -138,7 +142,7 @@ export class CreateUserDto {
   profile: Profile;
 
   @IsOptional()
-  @IsArray({ each: true })
+  @IsArray()
   @Type(() => String)
   skills?: string[] = [];
 
