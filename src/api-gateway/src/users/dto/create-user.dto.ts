@@ -157,3 +157,7 @@ export class createUserResponseDto {
     this.response = message;
   }
 }
+
+export class UserExistsResponseDto {
+  response: boolean;
+}

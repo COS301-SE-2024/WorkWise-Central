@@ -13,13 +13,18 @@ import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
 import { AuthService } from '../auth/auth.service';
+import { EmployeeService } from '../employee/employee.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
+
     @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
+
+    @Inject(forwardRef(() => EmployeeService))
+    private employeeService: EmployeeService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -175,10 +180,12 @@ export class UsersService {
       },
       { $set: { deletedAt: new Date() } },
     );
-
     if (result == null) {
       throw new InternalServerErrorException('Internal server Error');
     }
+
+    const deleteRelatedEmployees = await this.employeeService.remove(result.id);
+
     return true;
   }
 }

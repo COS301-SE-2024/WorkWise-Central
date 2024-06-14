@@ -1,5 +1,7 @@
 import {
   ConflictException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   ServiceUnavailableException,
@@ -18,6 +20,7 @@ export class EmployeeService {
   constructor(
     @InjectModel(Employee.name)
     private readonly employeeModel: Model<Employee>,
+    @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
     private companyService: CompanyService,
   ) {}
@@ -94,6 +97,22 @@ export class EmployeeService {
       );
 
     if (result == null) {
+      throw new InternalServerErrorException('Internal server Error');
+    }
+    return true;
+  }
+
+  async removeAllWithUserId(id: string): Promise<boolean> {
+    const employeesToDelete = await this.employeeModel.updateMany(
+      {
+        userId: id,
+      },
+      { $set: { deletedAt: new Date() } },
+    );
+    //const removeFromCompany = await this.companyService.remove(id);
+    //const removeFromUser = await this.usersService.softDelete();
+    console.log(employeesToDelete);
+    if (employeesToDelete == null) {
       throw new InternalServerErrorException('Internal server Error');
     }
     return true;

@@ -12,12 +12,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, createUserResponseDto } from './dto/create-user.dto';
+import {
+  CreateUserDto,
+  createUserResponseDto,
+  UserExistsResponseDto,
+} from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiBody,
   ApiInternalServerErrorResponse,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import mongoose, { Types } from 'mongoose';
@@ -83,7 +88,8 @@ export class UsersController {
     }
   }
 
-  @Post('exists')
+  @ApiResponse({ type: [UserExistsResponseDto] })
+  @Post('/exists')
   async usernameAvailable(@Body('username') username: string) {
     try {
       return { response: !(await this.usersService.usernameExists(username)) };
