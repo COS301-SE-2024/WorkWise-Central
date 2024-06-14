@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Request,
   HttpException,
   HttpStatus,
   Param,
@@ -71,8 +72,8 @@ export class UsersController {
     }
   }
 
-  @Get('id/:identifier')
-  async findOne(@Param('identifier') identifier: string) {
+  @Get('id/:id')
+  async findOne(@Param('id') identifier: string) {
     this.validateObjectId(identifier);
     try {
       return await this.usersService.findUserById(identifier);
@@ -94,12 +95,16 @@ export class UsersController {
 
   @UseGuards(AuthGuard)
   @ApiBody({ type: [UpdateUserDto] })
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    this.validateObjectId(id);
-
+  @Patch('/update')
+  async update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+    /*
+    console.log('Update');
+    console.log(req);
+    */
+    const id = req.user.sub; //This attribute is retrieved in the JWT
+    console.log(id);
     try {
-      return this.usersService.update(id, updateUserDto);
+      return await this.usersService.update(id, updateUserDto);
     } catch (e) {
       throw new HttpException(
         'internal server error',

@@ -49,5 +49,3 @@ export class UpdateUserDto {
   @IsMongoId()
   currentEmployee?: Types.ObjectId;
 }
-
-//export class UpdateUserDto extends PartialType(OmittedUser) {}
