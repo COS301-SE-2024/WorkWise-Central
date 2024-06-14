@@ -4,16 +4,14 @@ import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 
-@Schema()
-export class systemDetails {
+class SystemDetails {
   @Prop({ required: true, unique: true })
   username: string;
   @Prop({ required: true, unique: false })
   password: string;
 }
 
-@Schema()
-export class contactInfo {
+class ContactInfo {
   @Prop({ type: String, required: true })
   phoneNumber: string;
 
@@ -21,8 +19,7 @@ export class contactInfo {
   email: string;
 }
 
-@Schema()
-export class address {
+class Address {
   @Prop({ type: String, required: true })
   street: string;
   @Prop({ type: String, required: true })
@@ -37,12 +34,11 @@ export class address {
   houseNumber: string;
 }
 
-@Schema()
-export class personalInfo {
-  @Prop({ required: true })
+class PersonalInfo {
+  @Prop({ type: String, required: true })
   firstName: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   surname: string;
 
   @ApiHideProperty()
@@ -50,28 +46,29 @@ export class personalInfo {
   dateOfBirth: Date;
 
   @ApiHideProperty()
-  @Prop({ required: true, default: 'Rather Not Say' })
-  gender: string;
+  @Prop({ type: String, required: true, default: 'Rather Not Say' })
+  gender: string = 'Rather Not Say';
 
   @ApiHideProperty()
-  @Prop({ required: true, default: 'English' })
+  @Prop({ type: String, required: true, default: 'English' })
   preferredLanguage: string;
 
   @ApiHideProperty()
-  @Prop({ type: contactInfo, required: false })
-  contactInfo: contactInfo;
+  @Prop({ type: ContactInfo, required: false })
+  contactInfo: ContactInfo;
 
   @ApiHideProperty()
-  @Prop({ type: address, required: false })
-  address: address;
+  @Prop({ type: Address, required: false })
+  address: Address;
 }
 
 @Schema()
-export class profile {
+export class Profile {
   @Prop({ type: String, required: true })
   displayName: string;
 
   @Prop({
+    type: String,
     required: false,
     default:
       'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
@@ -80,8 +77,7 @@ export class profile {
     'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
 }
 
-@Schema()
-export class joinedCompany {
+export class JoinedCompany {
   employeeId: Types.ObjectId;
   companyId: Types.ObjectId;
   companyName: string;
@@ -126,15 +122,15 @@ export class User {
 
   @ApiProperty()
   @Prop({ required: true })
-  systemDetails: systemDetails;
+  systemDetails: SystemDetails;
 
   @ApiProperty()
   @Prop({ required: true })
-  personalInfo: personalInfo;
+  personalInfo: PersonalInfo;
 
   @ApiProperty()
   @Prop({ required: true })
-  profile: profile;
+  profile: Profile;
 
   @ApiProperty()
   @Prop({ type: [Types.ObjectId], required: false, default: [] })
@@ -143,6 +139,17 @@ export class User {
   @ApiProperty()
   @Prop({ type: [String], required: false, default: [] })
   skills: string[] = [];
+
+  @ApiHideProperty()
+  @Prop({
+    type: [{ type: Types.ObjectId, required: true, ref: 'Employee' }],
+    default: [],
+  })
+  public employeeIds: Types.ObjectId[] = [];
+
+  @ApiHideProperty()
+  @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
+  public currentEmployee?: Types.ObjectId;
 
   @ApiHideProperty()
   @Prop({ type: Date, required: true, default: new Date() })
@@ -155,24 +162,6 @@ export class User {
   @ApiHideProperty()
   @Prop({ type: Date, required: false })
   public deletedAt?: Date;
-
-  @ApiHideProperty()
-  @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
-  public currentEmployee?: Types.ObjectId;
-
-  /*  @ApiHideProperty()
-  @Prop({
-    type: [{ type: Types.ObjectId, required: true, ref: 'Employee' }],
-    default: [],
-  })
-  public employeeIds: Types.ObjectId[] = [];*/
-
-  @ApiHideProperty()
-  @Prop({
-    type: [{ type: Types.ObjectId, required: true, ref: 'Employee' }],
-    default: [],
-  })
-  public employeeIds: Types.ObjectId[] = [];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
