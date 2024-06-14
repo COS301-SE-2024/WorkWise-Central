@@ -1,5 +1,7 @@
 import {
   ConflictException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -10,11 +12,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
+    @Inject(forwardRef(() => AuthService))
+    private authService: AuthService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -28,9 +33,12 @@ export class UsersService {
     const newUser = new this.userModel(newUserObj);
     const result = await newUser.save();
 
-    return new createUserResponseDto(
-      `${result.personalInfo.firstName} ${result.personalInfo.surname}'s account has been created`,
-    );
+    const jwt: { access_token: string; id: Types.ObjectId } =
+      await this.authService.signIn(
+        result.systemDetails.username,
+        result.systemDetails.password,
+      );
+    return new createUserResponseDto(jwt);
   }
 
   async findAllUsers() {
