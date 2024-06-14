@@ -3,6 +3,7 @@ import { Prop } from '@nestjs/mongoose';
 import {
   IsArray,
   IsDate,
+  IsEmail,
   IsMongoId,
   IsNotEmpty,
   IsNumberString,
@@ -10,57 +11,71 @@ import {
   IsOptional,
   IsPhoneNumber,
   IsString,
+  MaxLength,
+  ValidateNested,
 } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-class contactInfo {
+class ContactInfo {
+  @ApiProperty()
+  @IsString()
   @IsPhoneNumber()
   phoneNumber: string;
 
+  @ApiProperty()
   @IsString()
+  @IsEmail()
   @Transform(({ value }) => value.toLowerCase())
   email: string;
 }
 
-class address {
+class Address {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   street: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   suburb: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   city: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumberString()
+  @MaxLength(20)
   postalCode: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   complex: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumberString()
+  @MaxLength(255)
   houseNumber: string;
 }
 
-class personalInfo {
+class PersonalInfo {
   @IsString()
+  @MaxLength(255)
   @Prop({ required: true })
   firstName: string;
 
   @IsString()
+  @MaxLength(255)
   @Prop({ required: true })
   surname: string;
 
@@ -69,16 +84,19 @@ class personalInfo {
   dateOfBirth: Date;
 
   @IsString()
+  @MaxLength(30)
   @Prop({ required: false, default: 'Rather Not Say' })
   gender: string;
 
   @IsString()
+  @MaxLength(30)
   @Prop({ required: false, default: 'English' })
   preferredLanguage: string;
 }
 
-class profile {
+class Profile {
   @IsString()
+  @MaxLength(35)
   displayName: string;
 
   @IsString()
@@ -88,6 +106,7 @@ class profile {
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   username: string;
 
   @IsNotEmpty()
@@ -96,27 +115,31 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsObject()
-  personalInfo: personalInfo;
+  @ValidateNested()
+  @Type(() => PersonalInfo)
+  personalInfo: PersonalInfo;
 
   @IsNotEmpty()
   @IsObject()
-  address: address;
-
-  /*  @IsOptional()
-  @IsArray()
-  @IsMongoId({ each: true })
-  joinedCompanies?: string[] | Types.ObjectId[];*/
+  @ValidateNested()
+  @Type(() => Address)
+  address: Address;
 
   @IsNotEmpty()
   @IsObject()
-  contactInfo: contactInfo;
+  @ValidateNested()
+  @Type(() => ContactInfo)
+  contactInfo: ContactInfo;
 
   @IsNotEmpty()
   @IsObject()
-  profile: profile;
+  @ValidateNested()
+  @Type(() => Profile)
+  profile: Profile;
 
   @IsOptional()
   @IsArray()
+  @Type(() => String)
   skills?: string[] = [];
 
   @IsOptional()
