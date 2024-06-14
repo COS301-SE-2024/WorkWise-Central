@@ -15,7 +15,7 @@ export class ContactInfo {
   @Prop({ type: String, required: true })
   phoneNumber: string;
 
-  @Prop({ type: String, required: true, lowercase: true })
+  @Prop({ type: String, unique: true, required: true, lowercase: true })
   email: string;
 }
 
