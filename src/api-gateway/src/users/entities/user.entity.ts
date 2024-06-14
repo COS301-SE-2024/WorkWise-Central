@@ -133,8 +133,8 @@ export class User {
   profile: Profile;
 
   @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: false, default: [] })
-  joinedCompanies?: Types.ObjectId[] = [];
+  @Prop({ type: [JoinedCompany], required: false, default: [] })
+  joinedCompanies?: JoinedCompany[] = [];
 
   @ApiProperty()
   @Prop({ type: [String], required: false, default: [] })
