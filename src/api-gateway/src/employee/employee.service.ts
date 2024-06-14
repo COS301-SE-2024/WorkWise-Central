@@ -16,7 +16,7 @@ import { User } from '../users/entities/user.entity';
 @Injectable()
 export class EmployeeService {
   constructor(
-    @InjectModel('employee')
+    @InjectModel(Employee.name)
     private readonly employeeModel: Model<Employee>,
     private usersService: UsersService,
     private companyService: CompanyService,

@@ -13,7 +13,9 @@ import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('user') private readonly userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     if (await this.usernameExists(createUserDto.username)) {

@@ -21,7 +21,7 @@ export class CompanyService {
     @InjectModel('company')
     private readonly companyModel: Model<Company>,
 
-    @InjectModel('user')
+    @InjectModel(User.name)
     private readonly userModel: Model<User>,
   ) {}
 

@@ -3,6 +3,7 @@ import * as bcrypt from 'bcryptjs';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
+
 @Schema()
 export class systemDetails {
   @Prop({ required: true, unique: true })
@@ -136,28 +137,42 @@ export class User {
   profile: profile;
 
   @ApiProperty()
-  @Prop({ required: false, default: [] })
-  joinedCompanies?: joinedCompany[] = [];
+  @Prop({ type: [Types.ObjectId], required: false, default: [] })
+  joinedCompanies?: Types.ObjectId[] = [];
 
   @ApiProperty()
   @Prop({ type: [String], required: false, default: [] })
   skills: string[] = [];
 
   @ApiHideProperty()
-  @Prop({ required: true, default: new Date() })
+  @Prop({ type: Date, required: true, default: new Date() })
   public created_at: Date = new Date();
 
   @ApiHideProperty()
-  @Prop({ required: false })
+  @Prop({ type: Date, required: false })
   public updated_at?: Date;
 
   @ApiHideProperty()
-  @Prop({ required: false })
+  @Prop({ type: Date, required: false })
   public deleted_at?: Date;
 
   @ApiHideProperty()
   @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
   public currentEmployee?: Types.ObjectId;
+
+  /*  @ApiHideProperty()
+  @Prop({
+    type: [{ type: Types.ObjectId, required: true, ref: 'Employee' }],
+    default: [],
+  })
+  public employeeIds: Types.ObjectId[] = [];*/
+
+  @ApiHideProperty()
+  @Prop({
+    type: [{ type: Types.ObjectId, required: true, ref: 'Employee' }],
+    default: [],
+  })
+  public employeeIds: Types.ObjectId[] = [];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

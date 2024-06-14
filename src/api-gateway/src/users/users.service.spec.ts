@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { userStub } from '../../test/stubs/user.stub';
 import { getModelToken } from '@nestjs/mongoose';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
+import { User } from './entities/user.entity';
 const moduleMocker = new ModuleMocker(global);
 
 describe('UsersService', () => {
@@ -18,7 +19,7 @@ describe('UsersService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
-        { provide: getModelToken('user'), useValue: mockUserModel },
+        { provide: getModelToken(User.name), useValue: mockUserModel },
       ],
     })
       .useMocker(() => {
