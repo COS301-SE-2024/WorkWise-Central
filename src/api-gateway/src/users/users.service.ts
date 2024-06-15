@@ -72,7 +72,7 @@ export class UsersService {
     return result != null;
   }
 
-  async userIdExists(id: string): Promise<boolean> {
+  async userIdExists(id: string | Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<User> & { _id: Types.ObjectId } =
       await this.userModel
         .findOne({
@@ -185,7 +185,7 @@ export class UsersService {
     }
 
     const deleteRelatedEmployees = await this.employeeService.remove(result.id);
-
+    console.log(deleteRelatedEmployees);
     return true;
   }
 }

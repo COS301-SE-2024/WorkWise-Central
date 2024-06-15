@@ -120,27 +120,7 @@ export class Comment {
 @Schema()
 export class Job {
   constructor(createJobDto: CreateJobDto) {
-    if (createJobDto.clientUsername)
-      this.clientUsername = createJobDto.clientUsername;
-    this.clientId = new Types.ObjectId(); //It must be validated in jobController
-    this.companyId = new Types.ObjectId(createJobDto.companyId); //It must be validated in jobController
-    this.assignedBy = new Types.ObjectId(createJobDto.assignedBy);
-    //this.scheduledDateTime = createJobDto.scheduledDateTime;
-    this.status = createJobDto.status;
-    /*if (createJobDto.inventoryUsed && createJobDto.inventoryUsed.length > 0)
-          this.inventoryUsed = createJobDto.inventoryUsed.map(
-       (item) => new Types.ObjectId(item),
-     );*/
-    this.details = {
-      heading: createJobDto.details.heading,
-      description: createJobDto.details.description,
-      //notes: createJobDto.details.notes,
-      address: createJobDto.details.address,
-      startDate: createJobDto.details.startDate,
-      endDate: createJobDto.details.endDate,
-    };
-
-    //this.imagesTaken = createJobDto.imagesTaken;
+    Object.assign(this, createJobDto);
     this.createdAt = new Date();
   }
 
