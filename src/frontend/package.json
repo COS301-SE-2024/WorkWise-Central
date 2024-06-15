@@ -28,7 +28,7 @@
     "vue-media-q": "^0.0.5",
     "vue-router": "^4.3.0",
     "vue3-mq": "^3.2.0",
-    "vuex": "^4.1.0"
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
