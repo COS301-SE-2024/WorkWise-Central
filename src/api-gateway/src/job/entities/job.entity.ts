@@ -47,10 +47,6 @@ export class Details {
 
   @ApiProperty()
   @Prop({ required: true })
-  notes: string;
-
-  @ApiProperty()
-  @Prop({ required: true })
   address: Address;
 
   @ApiProperty()
@@ -131,18 +127,18 @@ export class Job {
     this.assignedBy = new Types.ObjectId(createJobDto.assignedBy);
     //this.scheduledDateTime = createJobDto.scheduledDateTime;
     this.status = createJobDto.status;
-    if (createJobDto.inventoryUsed && createJobDto.inventoryUsed.length > 0)
-      /*      this.inventoryUsed = createJobDto.inventoryUsed.map(
-        (item) => new Types.ObjectId(item),
-      );*/
-      this.details = {
-        heading: createJobDto.details.heading,
-        description: createJobDto.details.description,
-        notes: createJobDto.details.notes,
-        address: createJobDto.details.address,
-        startDate: createJobDto.details.startDate,
-        endDate: createJobDto.details.endDate,
-      };
+    /*if (createJobDto.inventoryUsed && createJobDto.inventoryUsed.length > 0)
+          this.inventoryUsed = createJobDto.inventoryUsed.map(
+       (item) => new Types.ObjectId(item),
+     );*/
+    this.details = {
+      heading: createJobDto.details.heading,
+      description: createJobDto.details.description,
+      //notes: createJobDto.details.notes,
+      address: createJobDto.details.address,
+      startDate: createJobDto.details.startDate,
+      endDate: createJobDto.details.endDate,
+    };
 
     //this.imagesTaken = createJobDto.imagesTaken;
     this.createdAt = new Date();
