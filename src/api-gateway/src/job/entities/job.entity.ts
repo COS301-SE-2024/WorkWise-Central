@@ -4,7 +4,6 @@ import { Types } from 'mongoose';
 import { CreateJobDto } from '../dto/create-job.dto';
 import { Client } from '../../client/entities/client.entity';
 import { Company } from '../../company/entities/company.entity';
-import { Employee } from '../../employee/entities/employee.entity';
 
 export class Address {
   //They are optional for flexibility
@@ -81,7 +80,7 @@ export class AssignedEmployees {
   @Prop({
     type: [Types.ObjectId],
     required: false,
-    ref: Employee.name,
+    ref: 'Employee',
     default: [],
   })
   employeeIds?: Types.ObjectId[];
@@ -137,7 +136,7 @@ export class Job {
   clientUsername?: string;
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: true, ref: Employee.name })
+  @Prop({ type: Types.ObjectId, required: true, ref: 'Employee' })
   assignedBy: Types.ObjectId;
 
   @ApiProperty()
