@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import {
   IsArray,
-  IsDate,
   IsDateString,
   IsMongoId,
   IsNotEmpty,
@@ -94,12 +93,13 @@ class Details {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsDate()
+  @IsDateString()
   startDate: Date;
 
   @ApiProperty()
+  @ApiProperty()
   @IsNotEmpty()
-  @IsDate()
+  @IsDateString()
   endDate: Date;
 }
 
@@ -138,11 +138,13 @@ class RecordedDetails {
 class AssignedEmployees {
   @ApiProperty()
   @IsArray()
+  @IsMongoId({ each: true })
   @IsOptional()
   employeeIds?: Types.ObjectId[];
 
   @ApiProperty()
   @IsOptional()
+  @IsMongoId()
   teamId?: Types.ObjectId;
 }
 
@@ -181,48 +183,63 @@ class Comment {
 }
 
 export class CreateJobDto {
-  /*  @ApiProperty()
-  @IsObjectId()
-  clientId: string;*/
-
   @ApiProperty()
-  @IsString()
-  @IsOptional()
-  clientUsername?: string;
-
-  @ApiProperty()
-  @IsObjectId()
+  @IsNotEmpty()
+  @IsMongoId()
   companyId: Types.ObjectId;
 
   @ApiProperty()
+  @IsNotEmpty()
+  @IsMongoId()
+  clientId: Types.ObjectId;
+
+  @ApiProperty()
+  @IsOptional()
   @IsString()
-  assignedBy: string;
+  clientUsername?: string;
 
   @ApiProperty()
+  @IsNotEmpty()
+  assignedBy: Types.ObjectId;
+
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => AssignedEmployees)
   @IsOptional()
-  @IsDate()
-  scheduledDateTime: Date;
+  assignedEmployees?: AssignedEmployees;
 
   @ApiProperty()
+  @IsNotEmpty()
   @IsString()
-  status: string;
+  status: string = 'To do';
 
   @ApiProperty()
-  @IsArray()
-  @IsMongoId({ each: true })
-  inventoryUsed: [string];
+  @ValidateNested()
+  @Type(() => Details)
+  @IsNotEmpty()
+  details: Details;
 
   @ApiProperty()
-  @IsObject()
-  details: details;
-
-  @ApiProperty()
+  @ValidateNested()
+  @Type(() => RecordedDetails)
   @IsOptional()
-  clientFeedback: clientFeedback;
+  recordedDetails?: RecordedDetails;
 
   @ApiProperty()
+  @ValidateNested()
+  @Type(() => ClientFeedback)
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  imagesTaken: string[];
+  clientFeedback?: ClientFeedback;
+
+  @ApiProperty()
+  @ValidateNested({ each: true })
+  @Type(() => Task)
+  @IsOptional()
+  taskList?: Task[];
+
+  @ApiProperty()
+  @ValidateNested({ each: true })
+  @Type(() => Comment)
+  @IsOptional()
+  comments?: Comment[];
 }
