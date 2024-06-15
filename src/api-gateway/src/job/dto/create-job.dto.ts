@@ -3,85 +3,181 @@ import { Types } from 'mongoose';
 import {
   IsArray,
   IsDate,
+  IsDateString,
   IsMongoId,
+  IsNotEmpty,
   IsNumber,
   IsNumberString,
-  IsObject,
   IsOptional,
   IsString,
+  Max,
+  MaxLength,
+  Min,
+  ValidateNested,
 } from 'class-validator';
-import { IsObjectId } from 'class-validator-mongo-object-id';
+import { Type } from 'class-transformer';
 
-class address {
+class Address {
   @ApiProperty()
+  @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   street: string;
 
   @ApiProperty()
+  @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   suburb: string;
 
   @ApiProperty()
+  @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   city: string;
 
   @ApiProperty()
-  @IsString()
+  @IsNotEmpty()
+  @IsNumberString()
+  @MaxLength(20)
   postalCode: string;
 
   @ApiProperty()
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   complex: string;
 
-  @IsString()
   @ApiProperty()
+  @IsNotEmpty()
   @IsNumberString()
+  @MaxLength(255)
   houseNumber: string;
 }
 
-class details {
+class ClientFeedback {
   @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  @Max(10)
+  jobRating?: number = 10;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  @Max(10)
+  customerServiceRating?: number = 10;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  comments?: string = '';
+}
+
+class Details {
+  @ApiProperty()
+  @IsNotEmpty()
   @IsString()
   heading: string;
 
   @ApiProperty()
+  @IsNotEmpty()
   @IsString()
   description: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  notes: string;
+  @ApiProperty({ type: () => Address })
+  @ValidateNested()
+  @Type(() => Address)
+  address: Address;
 
   @ApiProperty()
-  @IsObject()
-  address: address;
-
-  @ApiProperty()
+  @IsNotEmpty()
   @IsDate()
   startDate: Date;
 
   @ApiProperty()
+  @IsNotEmpty()
   @IsDate()
   endDate: Date;
 }
 
-class clientFeedback {
+class InventoryUsed {
   @ApiProperty()
-  @IsOptional()
-  @IsNumber()
-  jobRating: number;
+  @IsNotEmpty()
+  inventoryItemId: Types.ObjectId;
 
   @ApiProperty()
-  @IsOptional()
-  @IsNumber()
-  customerServiceRating: number;
-
-  @ApiProperty()
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  comments: string;
+  inventoryItemName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  quantityUsed: number = 0;
+}
+
+class RecordedDetails {
+  @ApiProperty()
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  imagesTaken?: string[] = [];
+
+  @ApiProperty()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => InventoryUsed)
+  @IsOptional()
+  inventoryUsed?: InventoryUsed[] = [];
+}
+
+class AssignedEmployees {
+  @ApiProperty()
+  @IsArray()
+  @IsOptional()
+  employeeIds?: Types.ObjectId[];
+
+  @ApiProperty()
+  @IsOptional()
+  teamId?: Types.ObjectId;
+}
+
+class Task {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  status: string = 'To do';
+
+  @ApiProperty()
+  @IsArray()
+  @IsMongoId({ each: true })
+  assignedEmployees?: Types.ObjectId[] = [];
+}
+
+class Comment {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  comment: string;
+
+  @ApiProperty()
+  @IsDateString()
+  @IsOptional()
+  date?: Date = new Date();
 }
 
 export class CreateJobDto {
