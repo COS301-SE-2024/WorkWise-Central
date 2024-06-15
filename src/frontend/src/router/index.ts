@@ -12,6 +12,7 @@ import Calendar from '../components/Calendar.vue'
 import Client from '../components/ClientDesk.vue'
 import ClientEmployee from '../components/ClientEmployeeView.vue'
 import Kanban from '@/components/Kanban.vue'
+import ManagerView from '../views/ManagerView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -80,6 +81,11 @@ const router = createRouter({
       path: '/testview',
       name: 'testview',
       component: () => import('../views/TestView.vue')
+    },
+    {
+      path: '/manager',
+      name: 'manager-view',
+      component: ManagerView
     }
   ]
 })
