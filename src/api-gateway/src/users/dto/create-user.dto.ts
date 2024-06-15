@@ -54,6 +54,12 @@ class Address {
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsString()
+  @MaxLength(255)
+  province: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
   @IsNumberString()
   @MaxLength(20)
   postalCode: string;
