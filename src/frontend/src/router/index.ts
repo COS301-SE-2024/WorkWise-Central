@@ -9,10 +9,11 @@ import JobDetailsModal from '@/components/JobDetailsModal.vue'
 import AddJob from '@/components/AddJob.vue'
 import Modals from '@/views/Modals.vue'
 import Calendar from '@/components/Calendar.vue'
-import Client from '../components/ClientDesk.vue'
-import ClientEmployee from '../components/ClientEmployeeView.vue'
+import Client from '@/components/ClientDesk.vue'
+import ClientEmployee from '@/components/ClientEmployeeView.vue'
 import Kanban from '@/components/Kanban.vue'
-import ManagerView from '../views/ManagerView.vue'
+import ClientDesk from '@/views/ClientDesk.vue'
+import ManagerView from '@/views/ManagerView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -92,10 +93,15 @@ const router = createRouter({
       name: 'support',
       component: () => import('@/views/Support.vue')
     },
-      {
+    {
       path: '/manager',
       name: 'manager-view',
       component: ManagerView
+    },
+    {
+      path: '/client-desk-view',
+      name: 'clientdesk',
+      component: ClientDesk
     }
   ]
 })
