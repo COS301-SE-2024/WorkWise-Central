@@ -1,5 +1,6 @@
 <template>
   <NavigationBar :component="ManagerViewBody" />
+  <!--    <v-col> <v-sheet :elevation="10" :height="200" :width="200" color="red"></v-sheet> </v-col>-->
 </template>
 
 <script lang="ts">
