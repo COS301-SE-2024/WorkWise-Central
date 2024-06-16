@@ -16,9 +16,10 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@syncfusion/ej2-base": "^25.2.7",
+    "@syncfusion/ej2-vue-kanban": "^25.2.6",
     "@vuepic/vue-datepicker": "^8.7.0",
     "@vueuse/core": "^10.10.0",
-    "@syncfusion/ej2-vue-kanban": "^25.2.6",
     "axios": "^1.7.2",
     "bcrpyt": "^2.0.0",
     "bcryptjs": "^2.4.3",
@@ -27,7 +28,7 @@
     "vue-media-q": "^0.0.5",
     "vue-router": "^4.3.0",
     "vue3-mq": "^3.2.0",
-    "vuex": "^4.1.0"
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
@@ -52,9 +53,9 @@
     "vite": "^5.2.8",
     "vite-plugin-vue-devtools": "^7.0.25",
     "vite-plugin-vuetify": "^2.0.3",
-    "vue-mq": "^1.0.1",
     "vitest": "^1.4.0",
     "vue-kanban": "^1.8.0",
+    "vue-mq": "^1.0.1",
     "vue-tsc": "^2.0.11",
     "vuetify": "^3.6.8"
   }
