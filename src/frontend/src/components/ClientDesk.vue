@@ -109,7 +109,6 @@
 </template>
 
 <script>
-import NavigationBar from './NavigationBar.vue'
 import DeleteClient from './DeleteClient.vue'
 import EditClient from './EditClient.vue'
 import ClientDetails from './AddClient.vue'
@@ -286,7 +285,6 @@ export default {
     ]
   }),
   components: {
-    NavigationBar,
     ClientDetails,
     DeleteClient,
     EditClient
