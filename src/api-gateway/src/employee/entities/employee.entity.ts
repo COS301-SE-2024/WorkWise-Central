@@ -1,11 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
-import { PickType } from '@nestjs/mapped-types';
-import { Job } from '../../job/entities/job.entity';
+import { CreateEmployeeDto } from '../dto/create-employee.dto';
 
 @Schema()
 export class Employee {
+  constructor(createEmployeeDto: CreateEmployeeDto) {
+    // this.superiorId = createEmployeeDto.superiorId;
+    // this.roleId = createEmployeeDto.roleId;
+    this.userId = createEmployeeDto.userId;
+    this.companyId = createEmployeeDto.companyId;
+    this.createdAt = new Date();
+  }
 
   @ApiProperty()
   @Prop({ required: false })
