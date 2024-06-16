@@ -47,20 +47,22 @@
                     :single-expand="true"
                     v-model:expanded="expanded"
                     show-expand
-                    class="elevation-1"
                     rounded="xl"
                     :item-class="getRowClass"
                   >
-                    <template v-slot:[`item.name`]="{ value }">
-                      <v-chip> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
+                    <template v-slot:[`item.firstName`]="{ value }">
+                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
                     </template>
-                    <template v-slot:[`item.phone`]="{ value }">
-                      <v-chip> {{ value }}<v-icon>mdi-phone</v-icon></v-chip>
+                    <template v-slot:[`item.clientInfo.phoneNumber`]="{ value }">
+                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-phone</v-icon></v-chip>
                     </template>
                     <template v-slot:[`item.mostRecentJob`]="{ value }">
                       <v-chip :color="getColor(value)">
                         {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
                       >
+                    </template>
+                    <template v-slot:[`item.clientInfo.address.street`]="{ value }">
+                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-map-marker</v-icon></v-chip>
                     </template>
                     <!-- Expanded content slot -->
                     <template v-slot:expanded-row="{ columns, item }">
@@ -141,33 +143,24 @@ export default {
       {
         title: 'First Name',
         align: 'start',
-        sortable: false,
+        sortable: true,
         value: 'firstName',
         key: 'firstName'
       },
       {
         title: 'Surname',
         align: 'start',
-        sortable: false,
+        sortable: true,
         value: 'surname',
         key: 'surname'
       },
-      { title: 'Email', value: 'clientInfo.email', key: 'clientInfo.email' },
       { title: 'Phone', value: 'clientInfo.phoneNumber', key: 'clientInfo.phoneNumber' },
+      { title: 'Email', value: 'clientInfo.email', key: 'clientInfo.email' },
       { title: 'Address', value: 'clientInfo.address.street', key: 'clientInfo.address.street' },
-      { title: 'Actions', value: 'actions', key: 'actions' }
+      { title: 'Actions', value: 'actions', key: 'actions', sortable: false}
     ],
     search: '',
     expanded: [
-      {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-        province: 'Ontario',
-        country: 'Canada',
-        mostRecentJob: 'M1A 1A1'
-      }
     ], // This will hold the currently expanded item
     clients: [],
     clientDetails: []
