@@ -373,6 +373,7 @@ export default {
       req_obj: {
         name: '',
         type: '',
+        image: null,
         registrationNumber: '',
         vatNumber: '',
         contactDetails: {
@@ -410,9 +411,11 @@ export default {
     }
     // base64image() {
     //   let read = new FileReader()
-    //   read.readAsDataURL(this.req_obj.image)
-    //   read.onload = () => {
-    //     this.req_obj.image = read.result
+    //   if (this.req_obj.image != null) {
+    //     read.readAsDataURL(this.req_obj.image)
+    //     read.onload = () => {
+    //       if (read) this.req_obj.image = read.result.replace(/^data:image\/[a-z]+;base64,/, '')
+    //     }
     //   }
     // }
   }
