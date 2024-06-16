@@ -52,7 +52,7 @@
                   <v-spacer></v-spacer>
                   <v-card
                     v-for="client in filteredClients"
-                    :key="client.id"
+                    :key="client.firstName"
                     border="md"
                     width="85%"
                     class="mb-5"
@@ -61,15 +61,15 @@
                   >
                     <v-row>
                       <v-col
-                        ><v-card-title>{{ client.name }}</v-card-title>
+                        ><v-card-title>{{ client.firstName }}</v-card-title>
                         <v-card-text>
-                          <div>Email: {{ client.email }}</div>
-                          <div>Phone: {{ client.phone }}</div>
+                          <div>Email: {{ client.clientInfo.email }}</div>
+                          <div>Phone: {{ client.clientInfo.phoneNumber }}</div>
                         </v-card-text></v-col
                       >
                       <v-col align-self="end">
                         <v-card-actions>
-                          <ClientDetails :isDarkMode="isdarkmode" :colors="colors" />
+                          <ClientDetails :isDarkMode="isdarkmode" :colors="colors" :ClientDetails="client" />
                           <ClientJobs
                             :isdarkmode="isdarkmode"
                             :colors="colors"
@@ -88,6 +88,7 @@
 
 <script>
 import NavigationBar from './NavigationBar.vue'
+import axios from 'axios'
 import ClientDetails from './ClientDetails.vue'
 import ClientJobs from './ClientJobs.vue'
 export default {
@@ -102,7 +103,7 @@ export default {
   },
   computed: {
     filteredClients() {
-      let result = this.clients
+      let result = this.clientDetails
       if (this.searchQuery) {
         result = result.filter((client) => {
           return Object.values(client).some((value) =>
@@ -131,69 +132,33 @@ export default {
       modal_light_theme_color: '#FFFFFF'
     },
     searchQuery: '',
-    clients: [
-      {
-        id: 1,
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-        province: 'Ontario',
-        country: 'Canada',
-        jobRequired: 'M1A 1A1',
-        actions: 'Edit | Delete'
-      },
-      {
-        id: 2,
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        jobRequired: 'M1A 1A1',
-        actions: 'Edit | Delete'
-      },
-      {
-        id: 3,
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        jobRequired: 'M1A 1A1',
-        actions: 'Edit | Delete'
-      },
-      {
-        id: 4,
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        jobRequired: 'M1A 1A1',
-        actions: 'Edit | Delete'
-      },
-      {
-        id: 5,
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        jobRequired: 'M1A 1A1',
-        actions: 'Edit | Delete'
-      },
-      {
-        id: 6,
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        jobRequired: 'M1A 1A1',
-        actions: 'Edit | Delete'
+    clients: [],
+    clientDetails: []
+  }),
+  mounted() {
+    this.getClients()
+  },
+  methods: {
+    async getClients() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+        }
       }
-    ]
-  })
+      axios
+        .get('http://localhost:3000/client/all', config)
+        .then((response) => {
+          console.log(response.data)
+          this.clients = response.data.data
+          for (let i = 0; i < this.clients.length; i++) {
+            this.clientDetails[i] = this.clients[i].details
+          }
+        })
+        .catch((error) => {
+          console.error('Failed to fetch clients:', error)
+        })
+    }
+  }
 }
 </script>

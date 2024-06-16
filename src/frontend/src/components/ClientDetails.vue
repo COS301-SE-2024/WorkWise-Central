@@ -33,7 +33,7 @@
               :style="
                 isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
               "
-              >Name</small
+              >{{ ClientDetails.firstName }}</small
             ></v-col
           >
         </v-col>
@@ -44,7 +44,7 @@
               :style="
                 isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
               "
-              >Surname</small
+              >{{ ClientDetails.surname }}</small
             ></v-col
           >
         </v-col>
@@ -55,7 +55,7 @@
               :style="
                 isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
               "
-              >Phone Number</small
+              >{{ ClientDetails.clientInfo.phoneNumber }}</small
             ></v-col
           >
         </v-col>
@@ -66,7 +66,7 @@
               :style="
                 isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
               "
-              >Email</small
+              >{{ ClientDetails.clientInfo.email }}</small
             ></v-col
           >
         </v-col>
@@ -77,7 +77,43 @@
               :style="
                 isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
               "
-              >Address</small
+              >{{ ClientDetails.clientInfo.address.street }}</small
+            >
+            <br />
+            <small
+              class="text-caption"
+              :style="
+                isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
+              "
+              >{{ ClientDetails.clientInfo.address.suburb }}</small
+            >
+            <br /><small
+              class="text-caption"
+              :style="
+                isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
+              "
+              >{{ ClientDetails.clientInfo.address.city }}</small
+            >
+            <br /><small
+              class="text-caption"
+              :style="
+                isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
+              "
+              >{{ ClientDetails.clientInfo.address.postalCode }}</small
+            >
+            <br /><small
+              class="text-caption"
+              :style="
+                isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
+              "
+              >{{ ClientDetails.clientInfo.address.complex }}</small
+            >
+            <br /><small
+              class="text-caption"
+              :style="
+                isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
+              "
+              >{{ ClientDetails.clientInfo.address.houseNumber }}</small
             ></v-col
           >
         </v-col>
@@ -88,7 +124,9 @@
               :style="
                 isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
               "
-              >Preferred Languages</small
+              >{{
+                ClientDetails.preferred_Language ? ClientDetails.preferred_Language : 'None'
+              }}</small
             ></v-col
           >
         </v-col>
@@ -102,7 +140,8 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   props: {
     isdarkmode: Boolean,
-    colors: Array
+    colors: Array,
+    ClientDetails: Array
   },
   data() {
     return {
