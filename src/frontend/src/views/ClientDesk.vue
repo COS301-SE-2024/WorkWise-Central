@@ -1,16 +1,16 @@
 <template>
-  <NavigationBar :component="ManagerViewBody" />
+  <NavigationBar :component="ClientDesk" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import ManagerViewBody from '@/components/ManagerViewBody.vue'
+import ClientDesk from '@/components/ClientDesk.vue'
 import NavigationBar from '@/components/NavigationBar.vue'
 export default defineComponent({
-  name: 'ManagerEmployeesView',
+  name: 'ClientDeskView',
   computed: {
-    ManagerViewBody() {
-      return ManagerViewBody
+    ClientDesk() {
+      return ClientDesk
     }
   },
   components: {
