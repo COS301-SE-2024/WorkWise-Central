@@ -42,7 +42,7 @@
                 <div style="height: 700px; overflow-y: auto">
                   <v-data-table
                     :headers="headers"
-                    :items="clients"
+                    :items="clientDetails"
                     :search="search"
                     :single-expand="true"
                     v-model:expanded="expanded"
@@ -139,16 +139,22 @@ export default {
     ],
     headers: [
       {
-        title: 'Name',
+        title: 'First Name',
         align: 'start',
         sortable: false,
-        value: 'name',
-        key: 'name'
+        value: 'firstName',
+        key: 'firstName'
       },
-      { title: 'Email', value: 'email', key: 'email' },
-      { title: 'Phone', value: 'phone', key: 'phone' },
-      { title: 'Address', value: 'address', key: 'address' },
-      { title: 'Most Recent Job', value: 'mostRecentJob', key: 'mostRecentJob' },
+      {
+        title: 'Surname',
+        align: 'start',
+        sortable: false,
+        value: 'surname',
+        key: 'surname'
+      },
+      { title: 'Email', value: 'clientInfo.email', key: 'clientInfo.email' },
+      { title: 'Phone', value: 'clientInfo.phoneNumber', key: 'clientInfo.phoneNumber' },
+      { title: 'Address', value: 'clientInfo.address.street', key: 'clientInfo.address.street' },
       { title: 'Actions', value: 'actions', key: 'actions' }
     ],
     search: '',
@@ -163,126 +169,8 @@ export default {
         mostRecentJob: 'M1A 1A1'
       }
     ], // This will hold the currently expanded item
-    clients: [
-      {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-        province: 'Ontario',
-        country: 'Canada',
-        mostRecentJob: 'M1A 1A1',
-        actions: 'Edit | Delete'
-      },
-      {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        mostRecentJob: 'M1A 1A1',
-        actions: 'Edit | Delete'
-      },
-      {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        mostRecentJob: 'M1A 1A1',
-        actions: 'Edit | Delete'
-      },
-      {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        mostRecentJob: 'M1A 1A1',
-        actions: 'Edit | Delete'
-      },
-      {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        mostRecentJob: 'M1A 1A1',
-        actions: 'Edit | Delete'
-      },
-      {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        mostRecentJob: 'M1A 1A1',
-        actions: 'Edit | Delete'
-      },
-      {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        mostRecentJob: 'M1A 1A1',
-        actions: 'Edit | Delete'
-      },
-      {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        mostRecentJob: 'M1A 1A1',
-        actions: 'Edit | Delete'
-      },
-      {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        mostRecentJob: 'M1A 1A1',
-        actions: 'Edit | Delete'
-      },
-      {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        mostRecentJob: 'No Jobs Required',
-        actions: 'Edit | Delete'
-      },
-      {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        mostRecentJob: 'M1A 1A1',
-        actions: 'Edit | Delete'
-      },
-      {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        mostRecentJob: 'Needs to be done',
-        actions: 'Edit | Delete'
-      },
-      {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        phone: '123-456-7890',
-        address: 'Toronto',
-
-        mostRecentJob: 'Currently in progress',
-        actions: 'Edit | Delete'
-      }
-    ]
+    clients: [],
+    clientDetails: []
   }),
   components: {
     ClientDetails,
@@ -335,6 +223,10 @@ export default {
         .get('http://localhost:3000/client/all', config)
         .then((response) => {
           console.log(response.data)
+          this.clients = response.data.data
+          for (let i = 0; i < this.clients.length; i++) {
+            this.clientDetails[i] = this.clients[i].details
+          }
         })
         .catch((error) => {
           console.error('Failed to fetch clients:', error)
