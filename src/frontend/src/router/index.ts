@@ -1,16 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import SplashView from '../views/SplashView.vue'
+import SplashView from '@/views/SplashView.vue'
 
-import RegisterCompanyModal from '../components/RegisterCompanyModal.vue'
-import JoinCompanyModal from '../components/JoinCompanyModal.vue'
-import AddClient from '../components/AddClient.vue'
-import AddEmployee from '../components/AddEmployee.vue'
-import JobDetailsModal from '../components/JobDetailsModal.vue'
-import AddJob from '../components/AddJob.vue'
-import Modals from '../views/Modals.vue'
-import Calendar from '../components/Calendar.vue'
-import Client from '../components/ClientDesk.vue'
-import Kanban from "@/components/Kanban.vue";
+import RegisterCompanyModal from '@/components/RegisterCompanyModal.vue'
+import JoinCompanyModal from '@/components/JoinCompanyModal.vue'
+import AddClient from '@/components/AddClient.vue'
+import AddEmployee from '@/components/AddEmployee.vue'
+import JobDetailsModal from '@/components/JobDetailsModal.vue'
+import AddJob from '@/components/AddJob.vue'
+import Modals from '@/views/Modals.vue'
+import Calendar from '@/components/Calendar.vue'
+import Client from '@/components/ClientDesk.vue'
+import ClientEmployee from '@/components/ClientEmployeeView.vue'
+import Kanban from '@/components/Kanban.vue'
+import ClientDesk from '@/views/ClientDesk.vue'
+import ManagerView from '@/views/ManagerView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -69,6 +72,11 @@ const router = createRouter({
       name: 'client',
       component: Client
     },
+    {
+      path: '/client/employee',
+      name: 'client_employee',
+      component: ClientEmployee
+    },
 
     {
       path: '/testview',
@@ -76,9 +84,24 @@ const router = createRouter({
       component: () => import('../views/TestView.vue')
     },
     {
-      path: '/managerJobAssignment',
-      name: 'managerJobAssignment',
-      component: () => import('../views/ManagerJobAssignmentView.vue')
+      path: '/manager-employees',
+      name: 'manageremployees',
+      component: () => import('@/views/ManagerEmployeesView.vue')
+    },
+    {
+      path: '/support',
+      name: 'support',
+      component: () => import('@/views/Support.vue')
+    },
+    {
+      path: '/manager',
+      name: 'manager-view',
+      component: ManagerView
+    },
+    {
+      path: '/client-desk-view',
+      name: 'clientdesk',
+      component: ClientDesk
     }
   ]
 })
