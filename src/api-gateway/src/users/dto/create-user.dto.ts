@@ -65,13 +65,13 @@ class Address {
   postalCode: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(255)
   complex: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumberString()
   @MaxLength(255)
   houseNumber: string;

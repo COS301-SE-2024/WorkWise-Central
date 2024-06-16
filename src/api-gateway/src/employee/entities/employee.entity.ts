@@ -20,20 +20,20 @@ export class Employee {
   superiorId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: true, default: [] })
+  @Prop({ type: [Types.ObjectId], required: false, default: [] })
   subordinates: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: true, default: [] })
+  @Prop({ type: [Types.ObjectId], required: false, default: [] })
   subordinateTeams: Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ required: true })
   userId: Types.ObjectId;
 
-  // @ApiProperty()
-  // @Prop({ required: false })
-  // availability: availability;
+  @ApiProperty()
+  @Prop({ required: true })
+  companyId: Types.ObjectId;
 
   @ApiHideProperty()
   @Prop({ required: true, default: new Date() })
