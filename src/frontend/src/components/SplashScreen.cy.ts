@@ -2,50 +2,35 @@ import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
 import SplashScreen from '../components/SplashScreen.vue'
 
-it('shows the splash screen', () => {
+beforeEach(() => {
   const vuetify = createVuetify()
   mount(SplashScreen, {
     global: {
       plugins: [vuetify]
     }
   })
+})
+
+it('shows the splash screen', () => {
   cy.contains('WorkWise')
   cy.contains('Welcome To WorkWise Central')
 })
 
 it('performs login', () => {
-  const vuetify = createVuetify()
-  mount(SplashScreen, {
-    global: {
-      plugins: [vuetify]
-    }
-  })
-  cy.contains('button', 'Log in').click() // Clicks the button containing the text 'Log in'
-
+  cy.contains('button', 'Log in').click()
   cy.get('input[name="username"]').type('test')
   cy.get('input[name="password"]').type('test')
-  // cy.contains('button', 'LOGIN').click() // Clicks the button containing the text 'Log in'
+  // Ensure this matches your button's text
+  cy.contains('button', 'LOGIN').click()
 })
 
 it('performs register', () => {
-  const vuetify = createVuetify()
-  mount(SplashScreen, {
-    global: {
-      plugins: [vuetify]
-    }
-  })
-  cy.contains('button', 'Sign up').click() // Clicks the button containing the text 'Sign up'
+  cy.contains('button', 'Sign up').click()
   cy.get('input[type="email"]').type('test@test.com')
   cy.get('input[name="password"]').type('Test123#')
   cy.get('input[name="confirm_password"]').type('Test123#')
 })
 
 it('performs theme change', () => {
-  const vuetify = createVuetify()
-  mount(SplashScreen, {
-    global: {
-      plugins: [vuetify]
-    }
-  })
-  cy.contains('button', 'Theme').click() // Clicks the button containing the text 'Change Theme'
+  cy.contains('button', 'Theme').click()
 })
