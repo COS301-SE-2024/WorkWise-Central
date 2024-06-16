@@ -36,6 +36,27 @@ export class EmailService {
     console.log(result);
   }
 
+  async sendEmailConfirmation(
+    details: { name: string; surname: string; email: string },
+    token: string,
+  ) {
+    const url = `example.com/auth/confirm?token=${token}`; //TODO:confirm
+
+    const result = await this.mailerService.sendMail({
+      to: details.email,
+      from: '"Support Team" <support@workwise.com>',
+      subject: 'Welcome to WorkWise Central!',
+      template: './confirmation',
+      context: {
+        name: details.name,
+        surname: details.surname,
+        url,
+      },
+    });
+    console.log('sendUserConfirmation');
+    console.log(result);
+  }
+
   async sendMail() {
     const message = `Forgot your password? If you didn't forget your password, please ignore this email!`;
 

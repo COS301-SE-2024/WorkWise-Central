@@ -22,7 +22,7 @@ const temp = new User({
     complex: 'Complexity',
     houseNumber: '1A',
   },
-  joinedCompanies: [new Types.ObjectId('60d5ecb44b93ac2eda842f41')],
+  // joinedCompanies: [new Types.ObjectId('60d5ecb44b93ac2eda842f41')],
   contactInfo: {
     phoneNumber: '+1234567890',
     email: 'dokuzuku@gmail.com',
@@ -32,13 +32,6 @@ const temp = new User({
     displayImage: 'profile.jpg',
   },
   skills: ['JavaScript'],
-  roles: [
-    {
-      companyId: new Types.ObjectId('60d5ecb44b93ac2eda842f41'),
-      role: 'Developer',
-      permissions: ['read', 'write'],
-    },
-  ],
   currentCompany: new Types.ObjectId('60d5ecb44b93ac2eda842f41'),
 });
 
