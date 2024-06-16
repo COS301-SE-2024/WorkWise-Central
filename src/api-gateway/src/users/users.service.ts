@@ -1,5 +1,7 @@
 import {
   ConflictException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -11,12 +13,18 @@ import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
 import { AuthService } from '../auth/auth.service';
+import { EmployeeService } from '../employee/employee.service';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel('user') private readonly userModel: Model<User>,
-    private readonly authService: AuthService,
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+
+    @Inject(forwardRef(() => AuthService))
+    private authService: AuthService,
+
+    @Inject(forwardRef(() => EmployeeService))
+    private employeeService: EmployeeService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -30,11 +38,12 @@ export class UsersService {
     const newUser = new this.userModel(newUserObj);
     const result = await newUser.save();
 
-    await this.authService.signUp(newUserObj);
-
-    return new createUserResponseDto(
-      `${result.personalInfo.firstName} ${result.personalInfo.surname}'s account has been created`,
-    );
+    const jwt: { access_token: string; id: Types.ObjectId } =
+      await this.authService.signIn(
+        result.systemDetails.username,
+        result.systemDetails.password,
+      );
+    return new createUserResponseDto(jwt);
   }
 
   async findAllUsers() {
@@ -53,7 +62,7 @@ export class UsersService {
           $and: [
             { 'systemDetails.username': identifier },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -63,14 +72,14 @@ export class UsersService {
     return result != null;
   }
 
-  async userIdExists(id: string): Promise<boolean> {
+  async userIdExists(id: string | Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<User> & { _id: Types.ObjectId } =
       await this.userModel
         .findOne({
           $and: [
             { _id: id },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -89,7 +98,7 @@ export class UsersService {
           $and: [
             { _id: identifier },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -113,7 +122,7 @@ export class UsersService {
           $and: [
             { 'systemDetails.username': identifier },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -132,7 +141,7 @@ export class UsersService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
-    /*    updateUserDto.updated_at = new Date();
+    /*    updateUserDto.updatedAt = new Date();
     console.log('updateUserDto');
     console.log(updateUserDto);*/
 
@@ -143,11 +152,11 @@ export class UsersService {
             $and: [
               { _id: id },
               {
-                $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+                $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
               },
             ],
           },
-          { $set: { ...updateUserDto }, updated_at: new Date() },
+          { $set: { ...updateUserDto }, updatedAt: new Date() },
         )
         .lean();
     if (previousObject == null) {
@@ -165,16 +174,18 @@ export class UsersService {
             $or: [{ _id: id }, { 'systemDetails.username': id }],
           },
           {
-            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
         ],
       },
-      { $set: { deleted_at: new Date() } },
+      { $set: { deletedAt: new Date() } },
     );
-
     if (result == null) {
       throw new InternalServerErrorException('Internal server Error');
     }
+
+    const deleteRelatedEmployees = await this.employeeService.remove(result.id);
+    console.log(deleteRelatedEmployees);
     return true;
   }
 }

@@ -128,7 +128,7 @@ export class CompanyController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     try {
-      return { data: this.companyService.remove(+id) };
+      return { data: this.companyService.remove(id) };
     } catch (e) {
       throw new HttpException(
         'Internal Server Error',

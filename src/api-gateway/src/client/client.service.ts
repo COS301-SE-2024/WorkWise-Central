@@ -13,7 +13,7 @@ import { CreateClientDto } from './dto/create-client.dto';
 @Injectable()
 export class ClientService {
   constructor(
-    @InjectModel('client') private readonly clientModel: Model<Client>,
+    @InjectModel(Client.name) private readonly clientModel: Model<Client>,
   ) {}
 
   async create(createClientDto: CreateClientDto) {
@@ -44,7 +44,7 @@ export class ClientService {
           $and: [
             { _id: identifier },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -73,7 +73,7 @@ export class ClientService {
             ],
           },
           {
-            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
         ],
       })
@@ -93,7 +93,7 @@ export class ClientService {
           $and: [
             { _id: id },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -116,11 +116,11 @@ export class ClientService {
           $and: [
             { _id: id },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         },
-        { $set: { deleted_at: new Date() } },
+        { $set: { deletedAt: new Date() } },
       );
 
     if (result == null) {
