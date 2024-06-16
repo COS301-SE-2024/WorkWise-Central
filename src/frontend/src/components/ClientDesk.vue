@@ -73,12 +73,22 @@
                     <!-- Actions slot -->
                     <template v-slot:[`item.actions`]="{ item }">
                       <v-col cols="12">
-                        <v-btn icon size="small" @click="editClient(item)" color="#5A82AF">
+                        <v-btn
+                          icon
+                          size="small"
+                          @click="editClient(item), (editDialog = true)"
+                          color="#5A82AF"
+                        >
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
                       </v-col>
                       <v-col cols="12">
-                        <v-btn icon size="small" @click="deleteClient(item)" color="#5A82AF">
+                        <v-btn
+                          icon
+                          size="small"
+                          @click="deleteClient(item), (deleteDialog = true)"
+                          color="#5A82AF"
+                        >
                           <v-icon>mdi-delete</v-icon>
                         </v-btn>
                       </v-col>
@@ -91,21 +101,8 @@
         </v-col></v-row
       >
 
-      <v-col>
-        <DeleteClient
-          v-model="deleteDialog"
-          @close="deleteDialog = false"
-          :opened="deleteDialog"
-          @updated_opened="deleteDialog = $event"
-      /></v-col>
-      <v-col>
-        <EditClient
-          v-model="editDialog"
-          @close="editDialog = false"
-          :opened="editDialog"
-          :editedItem="selectedItem"
-          @save="updatedEditedItem"
-      /></v-col>
+      <v-col> <DeleteClient v-model="deleteDialog" :details="selectedItem"/></v-col>
+      <v-col> <EditClient v-model="editDialog" /></v-col>
     </v-container>
   </v-app>
 </template>
@@ -157,11 +154,10 @@ export default {
       { title: 'Phone', value: 'clientInfo.phoneNumber', key: 'clientInfo.phoneNumber' },
       { title: 'Email', value: 'clientInfo.email', key: 'clientInfo.email' },
       { title: 'Address', value: 'clientInfo.address.street', key: 'clientInfo.address.street' },
-      { title: 'Actions', value: 'actions', key: 'actions', sortable: false}
+      { title: 'Actions', value: 'actions', key: 'actions', sortable: false }
     ],
     search: '',
-    expanded: [
-    ], // This will hold the currently expanded item
+    expanded: [], // This will hold the currently expanded item
     clients: [],
     clientDetails: []
   }),
@@ -193,10 +189,12 @@ export default {
     searchClient() {
       console.log('Searching client')
     },
-    editClient() {
+    editClient(item) {
+      this.selectedItem = item
       console.log('Editing client')
     },
-    deleteClient() {
+    deleteClient(item) {
+      this.selectedItem = item
       console.log('Deleting client')
     },
     openAddClient() {

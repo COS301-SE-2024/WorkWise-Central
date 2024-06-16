@@ -2,7 +2,7 @@
   <v-dialog v-model="clientDialog" max-width="500" height="800">
     <v-sheet
       elevation="14"
-      rounded="md"
+      rounded="xl"
       width="500"
       height="800"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
@@ -137,13 +137,10 @@
 import axios from 'axios'
 export default {
   name: 'EditClient',
-  props: {
-    opened: Boolean,
-    editedItem: Array
-  },
+  
   data() {
     return {
-      clientDialog: this.opened,
+      clientDialog: false,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
       Name: '',
