@@ -1,3 +1,7 @@
 export class CreateNotificationDto {}
 
-export class CreateCompanyDto {}
+export class CreateAccountDto {
+  name: string;
+  surname: string;
+  email: string;
+}
