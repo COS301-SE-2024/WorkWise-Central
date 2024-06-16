@@ -8,7 +8,6 @@ import JobDetailsModal from '@/components/JobDetailsModal.vue'
 import AddJob from '@/components/AddJob.vue'
 import Modals from '@/views/Modals.vue'
 import Calendar from '@/components/Calendar.vue'
-import AddClient from '../components/AddClient.vue'
 import Client from '../components/ClientDesk.vue'
 import ClientEmployee from '../components/ClientEmployeeView.vue'
 import Kanban from '@/components/Kanban.vue'
@@ -93,8 +92,6 @@ const router = createRouter({
       component: () => import('@/views/Support.vue')
     },
       {
-          
-    
       path: '/manager',
       name: 'manager-view',
       component: ManagerView
