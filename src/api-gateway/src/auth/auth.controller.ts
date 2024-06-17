@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpException,
   HttpStatus,
   Post,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in-dto.dto';
@@ -36,5 +38,12 @@ export class AuthController {
     } catch (Error) {
       throw new HttpException('Invalid Login', HttpStatus.NOT_FOUND);
     }
+  }
+
+  @Get('verify')
+  verifyEmail(@Query('email') email: string, @Query('token') token: string) {
+    const verified = this.authService.verifyEmail(email, token);
+    const status: string = verified ? 'successful' : 'failed';
+    return { message: `Email verification ${status}` };
   }
 }
