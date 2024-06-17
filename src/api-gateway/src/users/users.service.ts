@@ -14,17 +14,21 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
 import { AuthService } from '../auth/auth.service';
 import { EmployeeService } from '../employee/employee.service';
+import { UserConfirmation } from './entities/user-confirmation.entity';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
-
+    @InjectModel(UserConfirmation.name)
+    private readonly userConfirmationModel: Model<UserConfirmation>,
     @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
-
     @Inject(forwardRef(() => EmployeeService))
     private employeeService: EmployeeService,
+    private emailService: EmailService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -37,6 +41,7 @@ export class UsersService {
     const newUserObj = new User(createUserDto);
     const newUser = new this.userModel(newUserObj);
     const result = await newUser.save();
+    await this.createUserConfirmation(newUserObj);
 
     const jwt: { access_token: string; id: Types.ObjectId } =
       await this.authService.signIn(
@@ -44,6 +49,30 @@ export class UsersService {
         result.systemDetails.password,
       );
     return new createUserResponseDto(jwt);
+  }
+
+  async createUserConfirmation(newUser: User) {
+    const userConfirmation: UserConfirmation = {
+      name: newUser.personalInfo.firstName,
+      surname: newUser.personalInfo.surname,
+      email: newUser.personalInfo.contactInfo.email,
+      key: randomStringGenerator(),
+    };
+    const result = await this.userConfirmationModel.create(userConfirmation);
+    console.log(result);
+    await this.emailService.sendUserConfirmation(userConfirmation);
+  }
+
+  async verifyUser(email: string) {
+    const result = await this.userModel.findOneAndUpdate(
+      {
+        'personalInfo.contactInfo.email': email,
+      },
+      { $set: { isValidated: true } },
+      { new: true },
+    );
+    console.log(result);
+    return true;
   }
 
   async findAllUsers() {
