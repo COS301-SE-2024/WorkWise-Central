@@ -115,6 +115,7 @@ export class User {
     this.profile.displayName = createUserDto.profile.displayName;
     this.skills = createUserDto.skills;
     this.createdAt = new Date();
+    //this.deletedAt = new Date(); //logically deleted until confirmed
   }
 
   @ApiProperty()
@@ -147,6 +148,10 @@ export class User {
   @ApiHideProperty()
   @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
   public currentEmployee?: Types.ObjectId;
+
+  @ApiHideProperty()
+  @Prop({ type: Boolean, required: false, default: false })
+  public isValidated?: boolean = false;
 
   @ApiHideProperty()
   @Prop({ type: Date, required: true, default: new Date() })
