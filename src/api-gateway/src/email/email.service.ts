@@ -1,7 +1,7 @@
 import { Global, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Email } from './entities/email.entity';
-import { User } from '../users/entities/user.entity';
+import { UserConfirmation } from '../users/entities/user-confirmation.entity';
 
 @Global()
 @Injectable()
@@ -18,17 +18,18 @@ export class EmailService {
     });
   }
 
-  async sendUserConfirmation(user: User, token: string) {
-    const url = `example.com/auth/confirm?token=${token}`; //TODO:confirm
+  async sendUserConfirmation(userConfirmation: UserConfirmation) {
+    const tempUrl = 'localhost:3000'; //TODO: Change to deployed url
+    const url = `${tempUrl}/auth/confirm?email=${encodeURIComponent(userConfirmation.email)}&token=${userConfirmation.key}`; //TODO:confirm
 
     const result = await this.mailerService.sendMail({
-      to: user.personalInfo.contactInfo.email,
+      to: userConfirmation.email,
       from: '"Support Team" <support@workwise.com>',
       subject: 'Welcome to Nice App! Confirm your Email',
       template: './confirmation',
       context: {
-        name: user.personalInfo.firstName,
-        surname: user.personalInfo.surname,
+        name: userConfirmation.name,
+        surname: userConfirmation.surname,
         url,
       },
     });
@@ -53,7 +54,7 @@ export class EmailService {
         url,
       },
     });
-    console.log('sendUserConfirmation');
+    console.log('sendEmailConfirmation');
     console.log(result);
   }
 

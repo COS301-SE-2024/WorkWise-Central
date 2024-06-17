@@ -40,7 +40,7 @@ const temp = new User({
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
 
-  @Get()
+  /*  @Get()
   async sendMail(@Res() response: any) {
     const mail = await this.emailService.sendUserConfirmation(temp, 'abcd');
     //const mail = '';
@@ -49,7 +49,7 @@ export class EmailController {
       message: 'success',
       mail,
     });
-  }
+  }*/
 
   /*  @Get()
   async sendMailer(@Res() response: any) {
