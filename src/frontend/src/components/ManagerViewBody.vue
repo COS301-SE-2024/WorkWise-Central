@@ -1,8 +1,17 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
+import AddEmployee from './AddEmployee.vue'
 
 export default defineComponent({
-  name: 'ManagerViewBody'
+  name: 'ManagerViewBody',
+  components: {
+    AddEmployee
+  },
+  data() {
+    return {
+      search: ''
+    }
+  }
 })
 </script>
 
@@ -16,6 +25,24 @@ export default defineComponent({
           </h4></v-col
         >
         <v-spacer></v-spacer>
+        <v-col>
+          <v-card-title class="d-flex align-center pe-2">
+            <v-spacer></v-spacer>
+            <v-text-field
+              v-model="search"
+              density="compact"
+              label="Search"
+              prepend-inner-icon="mdi-magnify"
+              variant="solo-filled"
+              flat
+              hide-details
+              :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+              single-line
+            ></v-text-field>
+            <v-spacer></v-spacer>
+            <v-col><AddEmployee></AddEmployee></v-col>
+          </v-card-title>
+        </v-col>
         <v-col class="search_bar_space"> </v-col>
         <v-spacer></v-spacer>
 
