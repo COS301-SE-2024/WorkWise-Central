@@ -6,9 +6,7 @@ import { CreateRoleDto } from '../dto/create-role.dto';
 @Schema()
 export class Role {
   constructor(createRoleDto: CreateRoleDto) {
-    // this.superiorId = createRoleDto.superiorId;
-    // this.roleId = createRoleDto.roleId;
-    this.userId = createRoleDto.userId;
+    this.roleName = createRoleDto.roleName;
     this.companyId = createRoleDto.companyId;
     this.createdAt = new Date();
   }
@@ -18,24 +16,12 @@ export class Role {
   roleId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: true, default: [] })
-  currentJobAssignments: Types.ObjectId[];
-   
-  @ApiProperty()
-  @Prop({ required: false })
-  superiorId: Types.ObjectId;
+  @Prop({ required: true})
+  roleName: string;
 
   @ApiProperty()
   @Prop({ type: [Types.ObjectId], required: false, default: [] })
-  subordinates: Types.ObjectId[];
-
-  @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: false, default: [] })
-  subordinateRoles: Types.ObjectId[];
-
-  @ApiProperty()
-  @Prop({ required: true })
-  userId: Types.ObjectId;
+  permissionSuite: Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ required: true })
