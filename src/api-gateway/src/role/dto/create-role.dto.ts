@@ -10,36 +10,13 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateRoleDto {
   @IsArray()
   @IsMongoId({ each: true })
-  @IsOptional()
-  @ApiProperty()
-  roleId: Types.ObjectId;
-
-  // @IsArray()
-  // @IsMongoId({ each: true })
-  // @ApiProperty()
-  // currentJobAssignments: Types.ObjectId[];
-   
-  @IsMongoId()
-  @IsOptional()
-  @ApiProperty()
-  superiorId: Types.ObjectId;
-
-  // @IsArray()
-  // @IsMongoId({ each: true })
-  // @IsOptional()
-  // @ApiProperty()
-  // subordinates: Types.ObjectId[];
-
-  // @IsArray()
-  // @IsMongoId({ each: true })
-  // @IsOptional()
-  // @ApiProperty()
-  // subordinateRoles: Types.ObjectId[];
-
   @IsNotEmpty()
-  @IsMongoId()
   @ApiProperty()
-  userId: Types.ObjectId;
+  permissionSuite: Types.ObjectId;
+   
+  @IsNotEmpty()
+  @ApiProperty()
+  roleName: string;
 
   @IsNotEmpty()
   @IsMongoId()
