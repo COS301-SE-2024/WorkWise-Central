@@ -4,6 +4,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -111,6 +112,28 @@ export class RoleService {
         })
         .lean();
     return result != null;
+  }
+
+  async findById(
+    identifier: string | Types.ObjectId,
+  ): Promise<FlattenMaps<Role> & { _id: Types.ObjectId }> {
+    const result: FlattenMaps<Role> & { _id: Types.ObjectId } =
+      await this.roleModel
+        .findOne({
+          $and: [
+            { _id: identifier },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+
+    if (result == null) {
+      throw new NotFoundException('Company not found');
+    }
+
+    return result;
   }
 
   async remove(id: string): Promise<boolean> {

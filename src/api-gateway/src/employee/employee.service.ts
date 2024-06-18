@@ -4,6 +4,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
@@ -207,8 +208,6 @@ export class EmployeeService {
 
   async remove(id: string): Promise<boolean> {
     const employeeToDelete = await this.findOne(id);
-    //const removeFromCompany = await this.companyService.remove(id);
-    //const removeFromUser = await this.usersService.softDelete();
 
     const result: Document<unknown, NonNullable<unknown>, User> &
       User & { _id: Types.ObjectId } =
@@ -229,20 +228,48 @@ export class EmployeeService {
     }
     return true;
   }
+  async findById(
+    identifier: string | Types.ObjectId,
+  ): Promise<FlattenMaps<Employee> & { _id: Types.ObjectId }> {
+    const result: FlattenMaps<Employee> & { _id: Types.ObjectId } =
+      await this.employeeModel
+        .findOne({
+          $and: [
+            { _id: identifier },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
 
-  async removeAllWithUserId(id: string): Promise<boolean> {
-    const employeesToDelete = await this.employeeModel.updateMany(
-      {
-        userId: id,
-      },
-      { $set: { deletedAt: new Date() } },
-    );
-    //const removeFromCompany = await this.companyService.remove(id);
-    //const removeFromUser = await this.usersService.softDelete();
-    console.log(employeesToDelete);
-    if (employeesToDelete == null) {
-      throw new InternalServerErrorException('Internal server Error');
+    if (result == null) {
+      throw new NotFoundException('Company not found');
     }
-    return true;
+
+    return result;
+  }
+
+  async findByIds(
+  identifiers: (string | Types.ObjectId)[]
+  ): Promise<(FlattenMaps<Employee> & { _id: Types.ObjectId })[]> {
+    const ids = identifiers.map(id => new Types.ObjectId(id));
+    
+    const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] = await this.employeeModel
+      .find({
+        $and: [
+          { _id: { $in: ids } },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+
+    if (result.length === 0) {
+      throw new NotFoundException('Employees not found');
+    }
+
+    return result;
   }
 }
