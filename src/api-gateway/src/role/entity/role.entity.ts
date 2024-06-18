@@ -20,8 +20,8 @@ export class Role {
   roleName: string;
 
   @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: false, default: [] })
-  permissionSuite: Types.ObjectId[];
+  @Prop({ type: [String], required: false, default: [] })
+  permissionSuite: string[];
 
   @ApiProperty()
   @Prop({ required: true })

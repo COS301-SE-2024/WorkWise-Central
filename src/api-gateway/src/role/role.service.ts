@@ -9,9 +9,8 @@ import {
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Document, Model, Types } from 'mongoose';
+import { Document, Model, Types, FlattenMaps } from 'mongoose';
 import { Role } from './entity/role.entity';
-import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
 import { User } from '../users/entities/user.entity';
 
@@ -19,49 +18,35 @@ import { User } from '../users/entities/user.entity';
 export class RoleService {
   constructor(
     @InjectModel(Role.name)
-    private readonly RoleModel: Model<Role>,
-    @Inject(forwardRef(() => UsersService))
-    private usersService: UsersService,
+    private readonly roleModel: Model<Role>,
+    @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
   ) {}
 
   async create(createRoleDto: CreateRoleDto) {
-    // if (
-    //   !(await this.usersService.userIdExists(
-    //     createRoleDto.userId.toString(),
-    //   ))
-    // ) {
-    //   throw new ConflictException('User not found');
-    // }
+    if (!(await this.companyService.companyIdExists(createRoleDto.companyId))) {
+      throw new ConflictException('User not found');
+    }
 
-    // const user = await this.usersService.findUserById(createRoleDto.userId);
-    // const company = await this.companyService.findById(
-    //   createRoleDto.companyId,
-    // );
+    const company = await this.companyService.findById(createRoleDto.companyId,);
+    if (!company) {
+      throw new ConflictException('Invalid ID given');
+    }
 
-    // if (!user || !company) {
-    //   throw new ConflictException('Invalid ID given');
-    // }
-    // const newRole = new Role();
+    const newRole = new Role(createRoleDto);
 
-    // newRole.userId = createRoleDto.userId;
-    // newRole.role = createRoleDto.role;
-    // const companyObject = await this.companyService.findById(
-    //   createRoleDto.companyId,
-    // );
-    // newRole.company = {
-    //   companyId: companyObject._id,
-    //   companyLogo: companyObject.logo,
-    //   companyName: companyObject.name,
-    // };
-    // const model = new this.RoleModel(newRole);
-    // const result = await model.save();
-    // return `${result}`;
+    newRole.roleName = createRoleDto.roleName;
+    newRole.companyId = createRoleDto.companyId;
+    newRole.permissionSuite = createRoleDto.permissionSuite;
+
+    const model = new this.roleModel(newRole);
+    const result = await model.save();
+    return `${result}`;
   }
 
   async findAll() {
     try {
-      return this.RoleModel.find().exec();
+      return this.roleModel.find().exec();
     } catch (error) {
       console.log(error);
       throw new ServiceUnavailableException('Roles could not be retrieved');
@@ -69,22 +54,70 @@ export class RoleService {
   }
 
   async findOne(id: string) {
-    return this.RoleModel.findById(id);
+    return this.roleModel.findById(id);
   }
 
-  update(id: number, updateRoleDto: UpdateRoleDto) {
-    console.log(updateRoleDto);
-    return `This action updates a #${id} Role`;
+  async update(id: number, updateRoleDto: UpdateRoleDto) {
+    const addPermission = updateRoleDto.addPermission;
+    const removePermission = updateRoleDto.removePermission;
+    const roleName = updateRoleDto.roleName;
+
+    const previousObject: FlattenMaps<Role> & { _id: Types.ObjectId } =
+      await this.roleModel
+        .findOneAndUpdate(
+          {
+            $and: [
+              { _id: id },
+              {
+                $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+              },
+            ],
+          },
+          { $set: { ...updateRoleDto }, updatedAt: new Date() },
+        )
+        .lean();
+    
+    if (addPermission) {
+      await this.roleModel.updateOne(
+        { _id: id },
+        { $addToSet: { permissionSuite: { $each: addPermission } } }
+      );
+    }
+    if (removePermission) {
+      await this.roleModel.updateOne(
+        { _id: id },
+        { $pull: { permissionSuite: { $in: removePermission } } }
+      );
+    }
+    if (roleName) {
+      await this.roleModel.updateOne(
+        { _id: id },
+        { $set: { roleName: roleName } }
+      );
+    }
+    return previousObject;
+  }
+
+  async roleExists(id: string): Promise<boolean> {
+    const result: FlattenMaps<Role> & { _id: Types.ObjectId } =
+      await this.roleModel
+        .findOne({
+          $and: [
+            { _id: id },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+    return result != null;
   }
 
   async remove(id: string): Promise<boolean> {
     const RoleToDelete = await this.findOne(id);
-    //const removeFromCompany = await this.companyService.remove(id);
-    //const removeFromUser = await this.usersService.softDelete();
-
     const result: Document<unknown, NonNullable<unknown>, User> &
       User & { _id: Types.ObjectId } =
-      await this.RoleModel.findOneAndUpdate(
+      await this.roleModel.findOneAndUpdate(
         {
           $and: [
             { _id: RoleToDelete._id },
@@ -97,22 +130,6 @@ export class RoleService {
       );
 
     if (result == null) {
-      throw new InternalServerErrorException('Internal server Error');
-    }
-    return true;
-  }
-
-  async removeAllWithUserId(id: string): Promise<boolean> {
-    const RolesToDelete = await this.RoleModel.updateMany(
-      {
-        userId: id,
-      },
-      { $set: { deletedAt: new Date() } },
-    );
-    //const removeFromCompany = await this.companyService.remove(id);
-    //const removeFromUser = await this.usersService.softDelete();
-    console.log(RolesToDelete);
-    if (RolesToDelete == null) {
       throw new InternalServerErrorException('Internal server Error');
     }
     return true;

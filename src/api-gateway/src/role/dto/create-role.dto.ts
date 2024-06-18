@@ -9,10 +9,9 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateRoleDto {
   @IsArray()
-  @IsMongoId({ each: true })
   @IsNotEmpty()
   @ApiProperty()
-  permissionSuite: Types.ObjectId;
+  permissionSuite: string[];
    
   @IsNotEmpty()
   @ApiProperty()
@@ -22,7 +21,6 @@ export class CreateRoleDto {
   @IsMongoId()
   @ApiProperty()
   companyId: Types.ObjectId;
-
 }
 
 export class createRoleResponseDto{

@@ -8,16 +8,17 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateRoleDto {
-  @IsArray()
-  @IsMongoId({ each: true })
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
-  permissionSuite: Types.ObjectId;
+  addPermission: string;
+
+  @IsOptional()
+  @ApiProperty()
+  removePermission: string;
    
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
   roleName: string;
-
 }
 
 export class updateRoleResponseDto{
