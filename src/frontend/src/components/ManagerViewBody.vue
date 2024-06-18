@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import AddEmployee from './AddEmployee.vue'
+import router from '@/router'
 
 export default defineComponent({
   name: 'ManagerViewBody',
@@ -10,6 +11,11 @@ export default defineComponent({
   data() {
     return {
       search: ''
+    }
+  },
+  methods: {
+    EditAccountClick() {
+      router.push('/manager-edit-employee')
     }
   }
 })
@@ -36,7 +42,6 @@ export default defineComponent({
               variant="solo-filled"
               flat
               hide-details
-              :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
               single-line
             ></v-text-field>
             <v-spacer></v-spacer>
@@ -136,7 +141,9 @@ export default defineComponent({
                                     {{ 'example@gamil.com' }}
                                   </p>
                                   <v-divider class="my-3"></v-divider>
-                                  <v-btn variant="text" rounded> Edit Account </v-btn>
+                                  <v-btn @click="EditAccountClick" variant="text" rounded>
+                                    Edit Account
+                                  </v-btn>
                                   <v-divider class="my-3"></v-divider>
                                   <v-btn variant="text" rounded> Remove Account </v-btn>
                                 </div>
