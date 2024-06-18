@@ -8,44 +8,34 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateTeamDto {
-  @IsArray()
-  @IsMongoId({ each: true })
+  @IsNotEmpty()
+  @ApiProperty()
+  teamName: string;
+
+  @IsMongoId()
   @IsOptional()
   @ApiProperty()
-  roleId: Types.ObjectId;
+  addTeamMember: Types.ObjectId;
 
-  // @IsArray()
-  // @IsMongoId({ each: true })
-  // @ApiProperty()
-  // currentJobAssignments: Types.ObjectId[];
+  @IsMongoId()
+  @IsOptional()
+  @ApiProperty()
+  removeTeamMember: Types.ObjectId;
    
   @IsMongoId()
   @IsOptional()
   @ApiProperty()
-  superiorId: Types.ObjectId;
+  teamLeaderId: Types.ObjectId;
 
-  // @IsArray()
-  // @IsMongoId({ each: true })
-  // @IsOptional()
-  // @ApiProperty()
-  // subordinates: Types.ObjectId[];
-
-  // @IsArray()
-  // @IsMongoId({ each: true })
-  // @IsOptional()
-  // @ApiProperty()
-  // subordinateTeams: Types.ObjectId[];
-
-  @IsNotEmpty()
   @IsMongoId()
+  @IsOptional()
   @ApiProperty()
-  userId: Types.ObjectId;
+  addJob: Types.ObjectId;
 
-  @IsNotEmpty()
   @IsMongoId()
+  @IsOptional()
   @ApiProperty()
-  companyId: Types.ObjectId;
-
+  removeJob: Types.ObjectId;
 }
 
 export class updateTeamResponseDto{
