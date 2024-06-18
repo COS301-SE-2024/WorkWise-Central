@@ -102,6 +102,11 @@ const router = createRouter({
       path: '/client-desk-view',
       name: 'clientdesk',
       component: ClientDesk
+    },
+    {
+      path: '/manager-edit-employee',
+      name: 'managereditemployee',
+      component: () => import('@/views/ManagerEditEmployee.vue')
     }
   ]
 })
