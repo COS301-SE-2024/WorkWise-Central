@@ -7,44 +7,45 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class updateEmployeeDto {
+export class UpdateEmployeeDto {
   @IsArray()
   @IsMongoId({ each: true })
   @IsOptional()
   @ApiProperty()
   roleId: Types.ObjectId;
-
-  @IsArray()
-  @IsMongoId({ each: true })
-  @ApiProperty()
-  currentJobAssignments: Types.ObjectId[];
    
   @IsMongoId()
   @IsOptional()
   @ApiProperty()
   superiorId: Types.ObjectId;
 
-  @IsArray()
+  @IsMongoId({ each: true })
+  @ApiProperty()
+  addJobId: Types.ObjectId;
+
   @IsMongoId({ each: true })
   @IsOptional()
   @ApiProperty()
-  subordinates: Types.ObjectId[];
+  addSubordinateId: Types.ObjectId;
 
-  @IsArray()
   @IsMongoId({ each: true })
   @IsOptional()
   @ApiProperty()
-  subordinateTeams: Types.ObjectId[];
+  addTeamId: Types.ObjectId;
 
-//   @IsNotEmpty()
-//   @IsMongoId()
-//   @ApiProperty()
-//   userId: Types.ObjectId;
+  @IsMongoId({ each: true })
+  @ApiProperty()
+  removeJobId: Types.ObjectId;
 
-//   @IsNotEmpty()
-//   @IsMongoId()
-//   @ApiProperty()
-//   companyId: Types.ObjectId;
+  @IsMongoId({ each: true })
+  @IsOptional()
+  @ApiProperty()
+  removeSubordinateId: Types.ObjectId;
+
+  @IsMongoId({ each: true })
+  @IsOptional()
+  @ApiProperty()
+  removeTeamId: Types.ObjectId;
 
 }
 
