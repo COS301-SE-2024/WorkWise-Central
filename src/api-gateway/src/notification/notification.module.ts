@@ -7,6 +7,8 @@ import {
   NotificationSchema,
 } from './entities/notification.entity';
 import { EmailModule } from '../email/email.module';
+import { NotificationController } from './notification.controller';
+import { NotificationRepository } from './notification.repository';
 
 @Module({
   imports: [
@@ -15,6 +17,7 @@ import { EmailModule } from '../email/email.module';
     ]),
     EmailModule,
   ],
-  providers: [NotificationGateway, NotificationService],
+  providers: [NotificationGateway, NotificationService, NotificationRepository],
+  controllers: [NotificationController],
 })
 export class NotificationModule {}

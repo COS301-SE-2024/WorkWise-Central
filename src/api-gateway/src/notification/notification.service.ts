@@ -1,15 +1,21 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import * as console from 'node:console';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Notification } from './entities/notification.entity';
+import { NotificationRepository } from './notification.repository';
 
 @Injectable()
 export class NotificationService implements OnModuleInit {
   constructor(
     @InjectModel('Notification')
     private readonly notificationModel: Model<Notification>,
+    private readonly notificationRepository: NotificationRepository,
   ) {}
 
   onModuleInit() {
@@ -44,5 +50,16 @@ export class NotificationService implements OnModuleInit {
     return {
       data: 'success',
     };
+  }
+
+  async findAllWithEmployeeId(id: Types.ObjectId) {
+    try {
+      const result =
+        await this.notificationRepository.findAllWithEmployeeId(id);
+      console.log(result);
+      return result;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 }
