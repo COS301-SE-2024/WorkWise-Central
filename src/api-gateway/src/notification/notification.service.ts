@@ -3,6 +3,7 @@ import { CreateNotificationDto } from './dto/create-notification.dto';
 import * as console from 'node:console';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Notification } from './entities/notification.entity';
 
 @Injectable()
 export class NotificationService implements OnModuleInit {
@@ -26,11 +27,22 @@ export class NotificationService implements OnModuleInit {
     });
   }
 
-  findAll() {
-    return `This action returns all notification`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} notification`;
+  async createNotificationsFromUser(newNotification: CreateNotificationDto) {
+    const listOfNotifications: Notification[] = [];
+    const senderId = newNotification.senderId;
+    const message = newNotification.message;
+    for (const recipient of newNotification.recipientIds) {
+      const singularNotification = new Notification(
+        senderId,
+        recipient,
+        message,
+      );
+      listOfNotifications.push(singularNotification);
+    }
+    const result = await this.notificationModel.create(listOfNotifications);
+    console.log(result);
+    return {
+      data: 'success',
+    };
   }
 }
