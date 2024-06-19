@@ -9,8 +9,6 @@ import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { Model, Types } from 'mongoose';
-import { EmailService } from '../email/email.service';
-import { User } from '../users/entities/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserConfirmation } from '../users/entities/user-confirmation.entity';
 

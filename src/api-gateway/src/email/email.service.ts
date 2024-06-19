@@ -1,22 +1,11 @@
 import { Global, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { Email } from './entities/email.entity';
 import { UserConfirmation } from '../users/entities/user-confirmation.entity';
 
 @Global()
 @Injectable()
 export class EmailService {
   constructor(private readonly mailerService: MailerService) {}
-
-  async sendWelcome() {
-    const welcomeEmail = new Email();
-    await this.mailerService.sendMail({
-      from: welcomeEmail.sender,
-      to: welcomeEmail.recipient,
-      subject: welcomeEmail.subject,
-      text: welcomeEmail.body,
-    });
-  }
 
   async sendUserConfirmation(userConfirmation: UserConfirmation) {
     const tempUrl = 'localhost:3000'; //TODO: Change to deployed url
