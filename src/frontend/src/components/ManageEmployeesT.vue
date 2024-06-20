@@ -6,6 +6,6 @@ export default defineComponent({
 })
 </script>
 
-<template></template>
+<template><div></div></template>
 
 <style scoped></style>
