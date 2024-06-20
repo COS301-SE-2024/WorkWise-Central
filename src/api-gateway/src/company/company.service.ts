@@ -18,10 +18,10 @@ import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
 @Injectable()
 export class CompanyService {
   constructor(
-    @InjectModel('company')
+    @InjectModel(Company.name)
     private readonly companyModel: Model<Company>,
 
-    @InjectModel('user')
+    @InjectModel(User.name)
     private readonly userModel: Model<User>,
   ) {}
 
@@ -34,7 +34,7 @@ export class CompanyService {
          exists,please enter another one or sign in`,
       );
     }
-    // createCompanyDto.created_at = new Date();
+    // createCompanyDto.createdAt = new Date();
     const newCompany = new Company(createCompanyDto);
     const newCompanyModel = new this.companyModel(newCompany);
     const result = await newCompanyModel.save();
@@ -48,7 +48,7 @@ export class CompanyService {
           $and: [
             { registrationNumber: id },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -65,7 +65,7 @@ export class CompanyService {
           $and: [
             { _id: id },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -93,7 +93,7 @@ export class CompanyService {
           $and: [
             { _id: identifier },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -123,7 +123,7 @@ export class CompanyService {
             ],
           },
           {
-            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
         ],
       })
@@ -145,7 +145,7 @@ export class CompanyService {
           $and: [
             { registrationNumber: registrationNumber },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -177,9 +177,9 @@ export class CompanyService {
       throw new NotFoundException('User not found');
     }
 
-    if (newId.joinedCompanies.includes(addUserDto.currentCompany)) {
-      throw new ConflictException('User is already a member');
-    }
+    // if (newId.joinedCompanies.includes(addUserDto.currentCompany)) {
+    //   throw new ConflictException('User is already a member');
+    // }
     //
     const resultOfUpdate = await this.companyModel.findByIdAndUpdate(
       { _id: addUserDto.currentCompany },
@@ -206,7 +206,7 @@ export class CompanyService {
     return `This action updates a #${id} company`;
   }
 
-  remove(id: number) {
+  async remove(id: string) {
     return `This action removes a #${id} company`;
   }
 }

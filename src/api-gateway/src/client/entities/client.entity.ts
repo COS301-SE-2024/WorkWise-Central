@@ -80,7 +80,7 @@ export class Client {
       email: createClientDto.email,
       address: createClientDto.address,
     };
-    this.created_at = new Date();
+    this.createdAt = new Date();
   }
   //Company-specific traits
   @ApiProperty()
@@ -113,15 +113,15 @@ export class Client {
 
   @ApiProperty()
   @Prop({ required: false, default: new Date() })
-  public created_at: Date;
+  public createdAt: Date;
 
   @ApiProperty()
   @Prop({ required: false })
-  public updated_at: Date;
+  public updatedAt: Date;
 
   @ApiProperty()
   @Prop({ required: false })
-  public deleted_at: Date;
+  public deletedAt: Date;
 }
 
 export const ClientSchema = SchemaFactory.createForClass(Client);

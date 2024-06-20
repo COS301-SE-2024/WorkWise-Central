@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClientService } from './client.service';
-import { getModelToken } from '@nestjs/mongoose';
 import { userStub } from '../../test/stubs/user.stub';
 
 describe('ClientService', () => {
@@ -19,7 +18,7 @@ describe('ClientService', () => {
       providers: [
         ClientService,
         {
-          provide: getModelToken('client'),
+          provide: 'ClientModel',
           useValue: mockClientModel,
         },
       ],

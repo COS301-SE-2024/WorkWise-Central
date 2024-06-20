@@ -1,15 +1,33 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Global,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { UserConfirmation } from '../users/entities/user-confirmation.entity';
 
+@Global()
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
     private jwtService: JwtService,
+    @InjectModel(UserConfirmation.name)
+    private userConfirmationModel: Model<UserConfirmation>,
+    //private mailService: EmailService,
   ) {}
+
+  /*  async signUp(user: User) {
+    const token = Math.floor(1000 + Math.random() * 9000).toString();
+    await this.mailService.sendUserConfirmation(user, token);
+  }*/
 
   async signIn(
     userIdentifier: string,
@@ -29,5 +47,22 @@ export class AuthService {
       id: user._id,
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async verifyEmail(email: string, token: string) {
+    const userExists = await this.userConfirmationModel.findOne({
+      email: email,
+      key: token,
+    });
+    if (!userExists) {
+      return false;
+    }
+
+    if (await this.usersService.verifyUser(email)) {
+      this.userConfirmationModel.deleteOne({ email: email });
+      return true;
+    }
+
+    return false;
   }
 }

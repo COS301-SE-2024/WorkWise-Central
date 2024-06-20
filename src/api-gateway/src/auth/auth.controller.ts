@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpException,
   HttpStatus,
   Post,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in-dto.dto';
@@ -25,7 +27,7 @@ export class AuthController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
   })
   @HttpCode(HttpStatus.OK)
-  @Post('login')
+  @Post('/login')
   async signIn(@Body() signInDTO: SignInDto) {
     try {
       const result: SignInResponseDto = await this.authService.signIn(
@@ -36,5 +38,15 @@ export class AuthController {
     } catch (Error) {
       throw new HttpException('Invalid Login', HttpStatus.NOT_FOUND);
     }
+  }
+
+  @Get('/verify')
+  async verifyEmail(
+    @Query('email') email: string,
+    @Query('token') token: string,
+  ) {
+    const userIsVerified = await this.authService.verifyEmail(email, token);
+    const status: string = userIsVerified ? 'successful' : 'failed';
+    return { message: `Email verification ${status}` };
   }
 }
