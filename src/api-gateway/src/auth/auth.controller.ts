@@ -27,7 +27,7 @@ export class AuthController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
   })
   @HttpCode(HttpStatus.OK)
-  @Post('login')
+  @Post('/login')
   async signIn(@Body() signInDTO: SignInDto) {
     try {
       const result: SignInResponseDto = await this.authService.signIn(
@@ -40,10 +40,13 @@ export class AuthController {
     }
   }
 
-  @Get('verify')
-  verifyEmail(@Query('email') email: string, @Query('token') token: string) {
-    const verified = this.authService.verifyEmail(email, token);
-    const status: string = verified ? 'successful' : 'failed';
+  @Get('/verify')
+  async verifyEmail(
+    @Query('email') email: string,
+    @Query('token') token: string,
+  ) {
+    const userIsVerified = await this.authService.verifyEmail(email, token);
+    const status: string = userIsVerified ? 'successful' : 'failed';
     return { message: `Email verification ${status}` };
   }
 }

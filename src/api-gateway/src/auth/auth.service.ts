@@ -57,8 +57,12 @@ export class AuthService {
     if (!userExists) {
       return false;
     }
+
     if (await this.usersService.verifyUser(email)) {
       this.userConfirmationModel.deleteOne({ email: email });
+      return true;
     }
+
+    return false;
   }
 }

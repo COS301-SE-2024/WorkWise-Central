@@ -29,11 +29,25 @@ export class NotificationController {
     status: HttpStatus.CONFLICT,
   })
   @Get('/employee')
-  async getAllNotifications(@Query('empId') id: string) {
+  async getAllEmployeeNotifications(@Query('empId') id: string) {
     this.validateObjectId(id);
     const employeeId = new Types.ObjectId(id);
     try {
       return await this.notificationService.findAllWithEmployeeId(employeeId);
+    } catch (e) {
+      throw new HttpException(
+        'internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Get('/employee')
+  async getAllUserNotifications(@Query('userId') id: string) {
+    this.validateObjectId(id);
+    const userId = new Types.ObjectId(id);
+    try {
+      return await this.notificationService.findAllWithUserId(userId);
     } catch (e) {
       throw new HttpException(
         'internal server error',

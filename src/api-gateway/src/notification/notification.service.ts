@@ -55,7 +55,19 @@ export class NotificationService implements OnModuleInit {
   async findAllWithEmployeeId(id: Types.ObjectId) {
     try {
       const result =
-        await this.notificationRepository.findAllWithEmployeeId(id);
+        await this.notificationRepository.findAllWithRecipientId(id);
+      console.log(result);
+      return result;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async findAllWithUserId(id: Types.ObjectId) {
+    //logic will change later
+    try {
+      const result =
+        await this.notificationRepository.findAllWithRecipientId(id);
       console.log(result);
       return result;
     } catch (error) {

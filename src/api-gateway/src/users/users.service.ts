@@ -41,7 +41,7 @@ export class UsersService {
     const newUserObj = new User(createUserDto);
     const newUser = new this.userModel(newUserObj);
     const result = await newUser.save();
-    await this.createUserConfirmation(newUserObj);
+    this.createUserConfirmation(newUserObj); //sends email
 
     const jwt: { access_token: string; id: Types.ObjectId } =
       await this.authService.signIn(
@@ -58,8 +58,8 @@ export class UsersService {
       email: newUser.personalInfo.contactInfo.email,
       key: randomStringGenerator(),
     };
-    const result = await this.userConfirmationModel.create(userConfirmation);
-    console.log(result);
+    await this.userConfirmationModel.create(userConfirmation);
+    //console.log(result);
     await this.emailService.sendUserConfirmation(userConfirmation);
   }
 
