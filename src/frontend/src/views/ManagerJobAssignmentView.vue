@@ -5,8 +5,7 @@ import JobAssignTable from '../components/JobAssignmentTable.vue'
 
 <template>
     <v-app>
-      <NavigationBar/>
-      <JobAssignTable/>
+      <NavigationBar :component="JobAssignTable"/>
     </v-app>
 </template>
 
