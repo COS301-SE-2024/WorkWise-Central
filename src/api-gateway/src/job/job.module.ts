@@ -6,6 +6,7 @@ import { Job, JobSchema } from './entities/job.entity';
 import { UsersModule } from '../users/users.module';
 import { CompanyModule } from '../company/company.module';
 import { ClientModule } from '../client/client.module';
+import { JobRepository } from './job.repository';
 
 @Module({
   imports: [
@@ -15,6 +16,6 @@ import { ClientModule } from '../client/client.module';
     ClientModule,
   ],
   controllers: [JobController],
-  providers: [JobService],
+  providers: [JobService, JobRepository],
 })
 export class JobModule {}

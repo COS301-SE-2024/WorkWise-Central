@@ -13,6 +13,7 @@ import { Job } from './entities/job.entity';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
 import { ClientService } from '../client/client.service';
+import { JobRepository } from './job.repository';
 
 @Injectable()
 export class JobService {
@@ -21,6 +22,7 @@ export class JobService {
   constructor(
     @InjectModel(Job.name)
     private readonly jobModel: Model<Job>,
+    private readonly jobRepository: JobRepository,
     private readonly usersService: UsersService,
     private readonly companyService: CompanyService,
     private readonly clientService: ClientService,
@@ -81,16 +83,7 @@ export class JobService {
     identifier: string,
   ): Promise<FlattenMaps<Job> & { _id: Types.ObjectId }> {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
-      await this.jobModel
-        .findOne({
-          $and: [
-            { _id: identifier },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
+      await this.jobRepository.findById(identifier);
 
     if (result == null) {
       throw new NotFoundException('Job not found');
@@ -101,25 +94,16 @@ export class JobService {
 
   async findAllJobs() {
     try {
-      return this.jobModel.find().exec();
+      return this.jobRepository.findAll();
     } catch (error) {
       console.log(error);
-      throw new ServiceUnavailableException('Jobs could not be retrieved');
+      throw new ServiceUnavailableException(error);
     }
   }
 
   async jobExists(id: string): Promise<boolean> {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
-      await this.jobModel
-        .findOne({
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
+      await this.jobRepository.exists(id);
 
     console.log('jobExists -> ', result);
     return result == null;
@@ -131,21 +115,10 @@ export class JobService {
   }
 
   async softDelete(id: string): Promise<boolean> {
-    const result: Document<unknown, NonNullable<unknown>, Job> &
-      Job & { _id: Types.ObjectId } = await this.jobModel.findOneAndUpdate(
-      {
-        $and: [
-          { _id: id },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      },
-      { $set: { deletedAt: new Date() } },
-    );
-
-    if (result == null) {
-      throw new InternalServerErrorException('Internal server Error');
+    try {
+      await this.jobRepository.delete(id);
+    } catch (e) {
+      throw e;
     }
     return true;
   }

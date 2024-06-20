@@ -58,7 +58,7 @@ export class Details {
 }
 
 export class InventoryUsed {
-  @Prop({ type: Types.ObjectId, required: true })
+  @Prop({ type: Types.ObjectId, required: true /*, ref: 'Inventory' */ })
   inventoryItemId: Types.ObjectId;
   @Prop({ type: String, required: true })
   inventoryItemName: string;
