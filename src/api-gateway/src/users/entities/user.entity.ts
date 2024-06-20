@@ -27,12 +27,10 @@ export class Address {
   @Prop({ type: String, required: true })
   city: string;
   @Prop({ type: String, required: true })
-  province: string;
-  @Prop({ type: String, required: true })
   postalCode: string;
-  @Prop({ type: String, required: false })
+  @Prop({ type: String, required: true })
   complex: string;
-  @Prop({ type: String, required: false })
+  @Prop({ type: String, required: true })
   houseNumber: string;
 }
 
