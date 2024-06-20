@@ -19,7 +19,7 @@ describe('ClientService', () => {
       providers: [
         ClientService,
         {
-          provide: getModelToken('client'),
+          provide: 'ClientModel',
           useValue: mockClientModel,
         },
       ],
