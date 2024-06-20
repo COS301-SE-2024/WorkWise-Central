@@ -6,7 +6,6 @@
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         variant="elevated"
-        color="#5A82AF"
         v-bind="activatorProps"
       >
         View Client Details
@@ -28,6 +27,7 @@
         <v-divider></v-divider>
         <v-col>
           <v-col
+            ><label> First Name</label><v-spacer></v-spacer
             ><small
               class="text-caption"
               :style="
@@ -37,8 +37,10 @@
             ></v-col
           >
         </v-col>
+        <v-divider></v-divider>
         <v-col>
           <v-col
+            ><label> Surname</label><v-spacer></v-spacer
             ><small
               class="text-caption"
               :style="
@@ -48,8 +50,10 @@
             ></v-col
           >
         </v-col>
+        <v-divider></v-divider>
         <v-col>
           <v-col
+            ><label>Phone Number</label><v-spacer></v-spacer
             ><small
               class="text-caption"
               :style="
@@ -59,8 +63,10 @@
             ></v-col
           >
         </v-col>
+        <v-divider></v-divider>
         <v-col>
           <v-col
+            ><label> Email</label><v-spacer></v-spacer
             ><small
               class="text-caption"
               :style="
@@ -70,8 +76,10 @@
             ></v-col
           >
         </v-col>
+        <v-divider></v-divider>
         <v-col>
           <v-col
+            ><label> Address</label><v-spacer></v-spacer
             ><small
               class="text-caption"
               :style="
@@ -117,16 +125,20 @@
             ></v-col
           >
         </v-col>
+        <v-divider></v-divider>
         <v-col>
           <v-col
-            ><small
-              class="text-caption"
-              :style="
-                isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
-              "
-              >{{
-                ClientDetails.preferred_Language ? ClientDetails.preferred_Language : 'None'
-              }}</small
+            ><label> Preferred Languages</label><v-spacer></v-spacer>
+            <v-chip color="red"
+              ><small
+                class="text-caption"
+                :style="
+                  isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
+                "
+                >{{
+                  ClientDetails.preferred_Language ? ClientDetails.preferred_Language : 'None'
+                }}</small
+              ></v-chip
             ></v-col
           >
         </v-col>

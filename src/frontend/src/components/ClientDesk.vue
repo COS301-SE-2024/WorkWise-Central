@@ -1,45 +1,43 @@
 <template>
-  <v-app :style="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color">
-    <v-container fluid fill-height class="pa-16 ma-auto pt-5 fixed-container">
-      <v-row justify="center" xs="4" sm="4" md="12">
-        <v-col cols="12">
-          <v-row justify="center">
-            <v-col cols="12" xs="4" sm="4" md="12" offset="3">
-              <v-card
-                flat
-                :height="auto"
-                :width="1500"
-                class="pa-11 ma-10"
-                rounded="xl"
-                elevation-2
-                :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
-                border="md"
-              >
-                <v-card-title class="d-flex align-center pe-2">
-                  <v-icon icon="mdi-account"></v-icon> &nbsp; Client Details
+  <v-container fluid fill-height class="pa-16 ma-auto pt-5 fixed-container">
+    <v-row justify="center" xs="6" sm="6" md="12">
+      <v-col cols="12">
+        <v-row justify="center">
+          <v-col cols="12" xs="12" sm="12" md="12" offset="3">
+            <v-card
+              flat
+              :height="auto"
+              :max-width="1500"
+              class="pa-11 ma-10"
+              rounded="xl"
+              elevation-2
+              :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+              border="md"
+            >
+              <v-card-title class="d-flex align-center pe-2">
+                <v-icon icon="mdi-account"></v-icon> &nbsp; Client Details
 
-                  <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
 
-                  <v-text-field
-                    v-model="search"
-                    density="compact"
-                    label="Search"
-                    prepend-inner-icon="mdi-magnify"
-                    variant="solo-filled"
-                    flat
-                    hide-details
-                    :bg-color="
-                      isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color
-                    "
-                    single-line
-                  ></v-text-field>
-                  <v-spacer></v-spacer>
-                  <ClientDetails v-model="clientDialog" @close="clientDialog = false" />
-                </v-card-title>
+                <v-text-field
+                  v-model="search"
+                  density="compact"
+                  label="Search"
+                  prepend-inner-icon="mdi-magnify"
+                  variant="solo-filled"
+                  flat
+                  hide-details
+                  :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  single-line
+                ></v-text-field>
+                <v-spacer></v-spacer>
+                <ClientDetails v-model="clientDialog" @close="clientDialog = false" />
+              </v-card-title>
 
-                <v-divider></v-divider>
-
+              <v-divider></v-divider>
+              <v-col cols="12" xs="12" sm="12" md="12" >
                 <div style="height: 700px; overflow-y: auto">
+                  <v-col cols="12" xs="12" sm="12" md="12">
                   <v-data-table
                     :headers="headers"
                     :items="clientDetails"
@@ -72,7 +70,7 @@
                     </template>
                     <!-- Actions slot -->
                     <template v-slot:[`item.actions`]="{ item }">
-                      <v-col cols="12">
+                      <v-col cols="12" xs="12" sm="12" md="12">
                         <v-btn
                           icon
                           size="small"
@@ -82,7 +80,7 @@
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
                       </v-col>
-                      <v-col cols="12">
+                      <v-col cols="12" xs="12" sm="12" md="12" >
                         <v-btn
                           icon
                           size="small"
@@ -94,17 +92,18 @@
                       </v-col>
                     </template>
                   </v-data-table>
+                  </v-col>
                 </div>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-col></v-row
-      >
+              </v-col>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col></v-row
+    >
 
-      <v-col> <DeleteClient v-model="deleteDialog" :details="selectedItem"/></v-col>
-      <v-col> <EditClient v-model="editDialog" /></v-col>
-    </v-container>
-  </v-app>
+    <v-col> <DeleteClient v-model="deleteDialog" :details="selectedItem" /></v-col>
+    <v-col> <EditClient v-model="editDialog" /></v-col>
+  </v-container>
 </template>
 
 <script>
@@ -112,8 +111,9 @@ import DeleteClient from './DeleteClient.vue'
 import EditClient from './EditClient.vue'
 import ClientDetails from './AddClient.vue'
 import axios from 'axios'
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   name: 'ClientDesk',
 
   props: {
@@ -242,7 +242,7 @@ export default {
       return index % 2 === 0 ? 'row-color' : 'second-row-color'
     }
   }
-}
+})
 </script>
 
 <style>

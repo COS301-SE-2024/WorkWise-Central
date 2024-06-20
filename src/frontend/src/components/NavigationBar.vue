@@ -21,6 +21,7 @@ const onEllipsisClick = () => {
 <script lang="ts">
 import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
+import ProfileEmployee from '@/components/ProfileEmployee.vue'
 
 export default defineComponent({
   name: 'NavigationBar',
@@ -28,6 +29,9 @@ export default defineComponent({
     component: {
       type: Object as PropType<any>
     }
+  },
+  components: {
+    ProfileEmployee
   }
 })
 </script>
@@ -249,6 +253,7 @@ export default defineComponent({
       </v-main>
     </v-app>
   </v-card>
+  <v-col></v-col>
 </template>
 
 <style scoped></style>

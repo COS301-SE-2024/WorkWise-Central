@@ -10,9 +10,10 @@ import AddJob from '@/components/AddJob.vue'
 import Modals from '@/views/Modals.vue'
 import Calendar from '@/components/Calendar.vue'
 import Client from '@/components/ClientDesk.vue'
-import ClientEmployee from '@/components/ClientEmployeeView.vue'
+import ClientView from '@/views/ClientEmployee.vue'
+import ClientEmployeeView from '@/views/EmployeeDesk.vue'
+import ClientEmployee from '../components/ClientEmployeeView.vue'
 import Kanban from '@/components/Kanban.vue'
-import ClientDesk from '@/views/ClientDesk.vue'
 import ManagerView from '@/views/ManagerView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -100,8 +101,13 @@ const router = createRouter({
     },
     {
       path: '/client-desk-view',
-      name: 'clientdesk',
-      component: ClientDesk
+      name: 'client-desk-view',
+      component: ClientEmployeeView
+    },
+    {
+      path: '/client-employee-view',
+      name: 'client-employee-view',
+      component: ClientView
     }
   ]
 })
