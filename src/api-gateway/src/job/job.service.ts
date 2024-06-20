@@ -3,7 +3,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
   ServiceUnavailableException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
@@ -20,7 +19,8 @@ export class JobService {
   private authorisedList: string[] = ['owner', 'manager'];
 
   constructor(
-    @InjectModel('job') private readonly jobModel: Model<Job>,
+    @InjectModel(Job.name)
+    private readonly jobModel: Model<Job>,
     private readonly usersService: UsersService,
     private readonly companyService: CompanyService,
     private readonly clientService: ClientService,
@@ -52,21 +52,21 @@ export class JobService {
   }
 
   async authorisedToAssign(userId: Types.ObjectId, companyId: Types.ObjectId) {
-    const user = await this.usersService.findUserById(userId);
-    if (!user.joinedCompanies.includes(companyId))
+    //const user = await this.usersService.findUserById(userId);
+    /*    if (!user.joinedCompanies.includes(companyId))
       throw new NotFoundException(
         'User does is not an employee of the company',
-      );
-    const validRolesInCompany = user.roles.filter(
+      );*/
+    /*    const validRolesInCompany = user.roles.filter(
       (role) =>
         role.companyId == companyId && this.authorisedList.includes(role.role),
-    );
+    );*/
 
-    if (validRolesInCompany.length == 0) {
+    /*    if (validRolesInCompany.length == 0) {
       throw new UnauthorizedException(
         'User does not have an appropriate role in the company',
       );
-    }
+    }*/
 
     const result = await this.companyService.findById(companyId);
     return result.employees.includes(userId);
@@ -86,7 +86,7 @@ export class JobService {
           $and: [
             { _id: identifier },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -115,7 +115,7 @@ export class JobService {
           $and: [
             { _id: id },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -137,11 +137,11 @@ export class JobService {
         $and: [
           { _id: id },
           {
-            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
         ],
       },
-      { $set: { deleted_at: new Date() } },
+      { $set: { deletedAt: new Date() } },
     );
 
     if (result == null) {
