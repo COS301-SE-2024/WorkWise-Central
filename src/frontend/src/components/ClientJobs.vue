@@ -1,12 +1,12 @@
 <template>
-  <v-dialog v-model="clientDialog" max-width="500" height="800">
+  <v-dialog v-model="clientDialog" max-width="500" height="auto">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         variant="elevated"
-        color="#5A82AF"
+        
         v-bind="activatorProps"
       >
         View Jobs
@@ -17,7 +17,7 @@
       elevation="14"
       rounded="xl"
       width="500"
-      height="800"
+      height="auto"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
       <v-col>
@@ -28,55 +28,39 @@
         <v-divider></v-divider>
         <v-col>
           <v-col
-            ><small
-              class="text-caption"
-              :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-              >Type of Job</small
-            ></v-col
-          >
+            ><label>Most Recent Job</label><v-spacer></v-spacer
+            ><v-chip color="green"
+              ><small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                >Plumbing</small
+              ></v-chip
+            >
+            <v-chip color="green"
+              ><small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                >Water Storage Installation
+              </small></v-chip
+            >
+            <v-chip color="green"
+              ><small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                >Drainage Repairs
+              </small></v-chip
+            >
+          </v-col>
         </v-col>
         <v-col>
           <v-col
-            ><small
-              class="text-caption"
-              :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-              >Surname</small
-            ></v-col
-          >
-        </v-col>
-        <v-col>
-          <v-col
-            ><small
-              class="text-caption"
-              :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-              >Phone Number</small
-            ></v-col
-          >
-        </v-col>
-        <v-col>
-          <v-col
-            ><small
-              class="text-caption"
-              :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-              >Email</small
-            ></v-col
-          >
-        </v-col>
-        <v-col>
-          <v-col
-            ><small
-              class="text-caption"
-              :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-              >Address</small
-            ></v-col
-          >
-        </v-col>
-        <v-col>
-          <v-col
-            ><small
-              class="text-caption"
-              :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-              >Preferred Languages</small
+            ><label>Current Job in Progress</label><v-spacer></v-spacer>
+            <v-chip color="red"
+              ><small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                >None</small
+              ></v-chip
             ></v-col
           >
         </v-col>
