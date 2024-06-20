@@ -84,7 +84,9 @@ export default defineComponent({
                                     {{ 'example@gamil.com' }}
                                   </p>
                                   <v-divider class="my-3"></v-divider>
-                                  <v-btn variant="text" rounded> Edit Account </v-btn>
+                                  <v-btn variant="text" @click="EditAccountClick" rounded>
+                                    Edit Account
+                                  </v-btn>
                                   <v-divider class="my-3"></v-divider>
                                   <v-btn variant="text" rounded> Remove Account </v-btn>
                                 </div>

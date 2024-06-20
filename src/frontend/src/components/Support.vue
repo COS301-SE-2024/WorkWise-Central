@@ -3,22 +3,41 @@
     <v-row>
       <v-col>
         <v-col :cols="12">
-          <h4 class="text-center" style="font-size: 25px; font-weight: lighter">FAQ</h4></v-col
+          <h4 class="text-center" style="font-size: 25px; font-weight: lighter">SUPPORT</h4></v-col
         >
       </v-col>
       <v-col :cols="12">
-        <v-sheet rounded class="h-lg-screen w-lg-screen" color="red">
-          <div>
-            <v-expansion-panels class="my-4" variant="inset" color="blue">
-              <v-expansion-panel
-                v-for="i in 14"
-                :key="i"
-                :text="faqs[i].answer"
-                :title="faqs[i].question"
-              ></v-expansion-panel>
-            </v-expansion-panels>
-          </div>
-        </v-sheet>
+        <v-card>
+          <v-tabs v-model="tab" align-tabs="center" color="deep-purple-accent-4">
+            <v-tab :value="1">FAQ</v-tab>
+            <v-tab :value="2">TUTORIAL</v-tab>
+            <v-tab :value="3">CONTACT</v-tab>
+          </v-tabs>
+          <v-tabs-window v-model="tab">
+            <v-tabs-window-item :value="1">
+              <v-col :cols="12">
+                <v-sheet rounded class="h-lg-screen w-lg-screen">
+                  <div>
+                    <v-expansion-panels class="my-4" variant="inset" color="blue">
+                      <v-expansion-panel
+                        v-for="i in 14"
+                        :key="i"
+                        :text="faqs[i].answer"
+                        :title="faqs[i].question"
+                      ></v-expansion-panel>
+                    </v-expansion-panels>
+                  </div>
+                </v-sheet>
+              </v-col>
+            </v-tabs-window-item>
+            <v-tabs-window-item :value="2">
+              <v-col :cols="12"> </v-col>
+            </v-tabs-window-item>
+            <v-tabs-window-item :value="3">
+              <v-col :cols="12"> </v-col>
+            </v-tabs-window-item>
+          </v-tabs-window>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -31,6 +50,7 @@ export default defineComponent({
   name: 'SupportComponent',
   data() {
     return {
+      tab: null,
       faqs: [
         {
           question: 'What is the purpose of this app?',

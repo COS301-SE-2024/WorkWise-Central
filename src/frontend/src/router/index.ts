@@ -89,6 +89,11 @@ const router = createRouter({
       component: () => import('@/views/ManagerEmployeesView.vue')
     },
     {
+      path: '/manager-employees-t',
+      name: 'manageremployees',
+      component: () => import('@/views/ManageEmployeesT.vue')
+    },
+    {
       path: '/support',
       name: 'support',
       component: () => import('@/views/Support.vue')
