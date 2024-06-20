@@ -1,23 +1,22 @@
 import {
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Document, FlattenMaps, Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 //import { User } from '../users/entities/user.entity';
 import { Job } from './entities/job.entity';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
-import { ClientService } from '../client/client.service';
+//import { ClientService } from '../client/client.service';
 import { JobRepository } from './job.repository';
 
 @Injectable()
 export class JobService {
-  private authorisedList: string[] = ['owner', 'manager'];
+  //private authorisedList: string[] = ['owner', 'manager'];
 
   constructor(
     @InjectModel(Job.name)
@@ -25,7 +24,7 @@ export class JobService {
     private readonly jobRepository: JobRepository,
     private readonly usersService: UsersService,
     private readonly companyService: CompanyService,
-    private readonly clientService: ClientService,
+    //private readonly clientService: ClientService,
     //@InjectModel('user') private readonly userModel: Model<User>, //Will be used later
   ) {}
 
