@@ -109,7 +109,6 @@
 </template>
 
 <script>
-import NavigationBar from './NavigationBar.vue'
 import axios from 'axios'
 import ClientDetails from './ClientDetails.vue'
 import ClientJobs from './ClientJobs.vue'
@@ -119,7 +118,6 @@ export default {
     isDarkMode: Boolean
   },
   components: {
-    NavigationBar,
     ClientDetails,
     ClientJobs
   },

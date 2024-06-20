@@ -14,7 +14,6 @@ import ClientView from '@/views/ClientEmployee.vue'
 import ClientEmployeeView from '@/views/EmployeeDesk.vue'
 import ClientEmployee from '../components/ClientEmployeeView.vue'
 import Kanban from '@/components/Kanban.vue'
-import ClientDesk from '@/views/ClientDesk.vue'
 import ManagerView from '@/views/ManagerView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
