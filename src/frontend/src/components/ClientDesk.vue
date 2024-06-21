@@ -9,7 +9,7 @@
               :height="auto"
               :max-width="1500"
               class="pa-11 ma-10"
-              rounded="xl"
+              rounded="md"
               elevation-2
               :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
               border="md"

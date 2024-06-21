@@ -1049,7 +1049,7 @@ export default defineComponent({
 }
 
 .background-image {
-  background-image: url('/img/splash2.png');
+  background-image: url('/img/WorkWiseLogo.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

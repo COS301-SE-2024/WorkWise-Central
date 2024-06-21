@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-height="800" max-width="600">
+  <v-dialog max-height="800" max-width="600" scrollable>
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -16,6 +16,7 @@
       elevation="14"
       rounded="xl"
       max-height="800"
+      overflow-y="auto"
       max-width="600"
     >
       <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
