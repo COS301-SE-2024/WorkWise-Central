@@ -7,6 +7,7 @@ import { UsersModule } from '../users/users.module';
 import { CompanyModule } from '../company/company.module';
 import { ClientModule } from '../client/client.module';
 import { JobRepository } from './job.repository';
+import { EmployeeModule } from '../employee/employee.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { JobRepository } from './job.repository';
     UsersModule,
     CompanyModule,
     ClientModule,
+    EmployeeModule,
   ],
   controllers: [JobController],
   providers: [JobService, JobRepository],

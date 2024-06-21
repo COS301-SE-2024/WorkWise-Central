@@ -3,7 +3,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { CreateJobDto } from '../dto/create-job.dto';
 import { Client } from '../../client/entities/client.entity';
-import { Company } from '../../company/entities/company.entity';
 
 export class Address {
   //They are optional for flexibility
@@ -124,7 +123,7 @@ export class Job {
   }
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: true, ref: Company.name })
+  @Prop({ type: Types.ObjectId, required: true, ref: 'Company' })
   companyId: Types.ObjectId;
 
   @ApiProperty()
