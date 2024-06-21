@@ -7,40 +7,40 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { EmployeeService } from './team.service';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { TeamService } from './team.service';
+import { CreateTeamDto } from './dto/create-team.dto';
+import { UpdateTeamDto } from './dto/update-team.dto';
 import { IsObjectId } from 'class-validator-mongo-object-id';
 
 @Controller('employee')
-export class EmployeeController {
-  constructor(private readonly employeeService: EmployeeService) {}
+export class TeamController {
+  constructor(private readonly TeamService: TeamService) {}
 
   @Post()
-  create(@Body() createEmployeeDto: CreateEmployeeDto) {
-    return this.employeeService.create(createEmployeeDto);
+  create(@Body() createTeamDto: CreateTeamDto) {
+    return this.TeamService.create(createTeamDto);
   }
 
   @Get()
   findAll() {
-    return this.employeeService.findAll();
+    return this.TeamService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.employeeService.findOne(id);
+    return this.TeamService.findOne(id);
   }
 
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateEmployeeDto: UpdateEmployeeDto,
+    @Body() updateTeamDto: UpdateTeamDto,
   ) {
-    return this.employeeService.update(+id, updateEmployeeDto);
+    return this.TeamService.update(+id, updateTeamDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.employeeService.remove(id);
+    return this.TeamService.remove(id);
   }
 }

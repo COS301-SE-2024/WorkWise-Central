@@ -1,21 +1,21 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { EmployeeService } from './employee.service';
-import { EmployeeController } from './role.controller';
+import { TeamService } from './team.service';
+import { TeamController } from './team.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Employee, EmployeeSchema } from './entities/employee.entity';
+import { Team, TeamSchema } from './entities/team.entity';
 import { UsersModule } from '../users/users.module';
 import { CompanyModule } from '../company/company.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: Employee.name, schema: EmployeeSchema },
+      { name: Team.name, schema: TeamSchema },
     ]),
     forwardRef(() => UsersModule),
     CompanyModule,
   ],
-  controllers: [EmployeeController],
-  providers: [EmployeeService],
-  exports: [EmployeeService, MongooseModule],
+  controllers: [TeamController],
+  providers: [TeamService],
+  exports: [TeamService, MongooseModule],
 })
 export class EmployeeModule {}
