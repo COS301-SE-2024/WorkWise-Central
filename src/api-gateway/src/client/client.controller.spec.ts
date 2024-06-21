@@ -16,6 +16,12 @@ describe('ClientController', () => {
     findAll: jest.fn(),
   };
 
+  const clientModelMock = {
+    find: jest.fn(),
+    create: jest.fn(),
+    // ...other methods...
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ClientController],
@@ -28,6 +34,7 @@ describe('ClientController', () => {
           provide: JwtService,
           useValue: mockJwtService,
         },
+        { provide: 'ClientModel', useValue: clientModelMock },
       ],
     }).compile();
 

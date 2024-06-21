@@ -4,9 +4,9 @@ import JobAssignTable from '../components/JobAssignmentTable.vue'
 </script>
 
 <template>
-    <v-app>
-      <NavigationBar :component="JobAssignTable"/>
-    </v-app>
+  <v-app>
+    <NavigationBar :component="JobAssignTable" />
+  </v-app>
 </template>
 
 <style>

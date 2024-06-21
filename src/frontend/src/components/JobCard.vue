@@ -4,12 +4,7 @@
       <v-card-title>
         <h2>{{ jobTitle }}</h2>
       </v-card-title>
-      <v-textarea
-          label="Job Description"
-          v-model="jobDescription"
-          rows="10"
-          outlined
-      ></v-textarea>
+      <v-textarea label="Job Description" v-model="jobDescription" rows="10" outlined></v-textarea>
       <v-btn class="mt-4" color="primary">View All Notifications</v-btn>
     </v-card>
 
@@ -18,11 +13,11 @@
         <v-btn class="mb-2" color="success">Save</v-btn>
         <v-btn class="mb-4" color="error">Cancel</v-btn>
         <v-textarea
-            label="Add Comment"
-            v-model="comment"
-            rows="4"
-            outlined
-            class="mb-4"
+          label="Add Comment"
+          v-model="comment"
+          rows="4"
+          outlined
+          class="mb-4"
         ></v-textarea>
         <v-btn class="mb-2" outlined>Team Member List</v-btn>
         <v-btn class="mb-2" outlined>Labels</v-btn>
@@ -35,11 +30,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
-const jobTitle = ref('Job Heading');
-const jobDescription = ref('');
-const comment = ref('');
+const jobTitle = ref('Job Heading')
+const jobDescription = ref('')
+const comment = ref('')
 </script>
 
 <style scoped>

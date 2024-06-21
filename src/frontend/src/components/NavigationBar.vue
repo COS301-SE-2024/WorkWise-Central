@@ -5,7 +5,7 @@ const isVisible = ref(false)
 const drawer = ref(true)
 import { useRouter } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
 const onProfileClick = () => {
   console.log('Profile icon clicked')
 }
@@ -14,49 +14,49 @@ const onEllipsisClick = () => {
   console.log('Ellipsis icon clicked')
 }
 
-const open = ref(['Dashboard']);
+const open = ref(['Dashboard'])
 
 const dashboardSubItems = ref([
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
-]);
+])
 
 const clientSubItems = ref([
   { title: 'Management', icon: 'mdi-account-group-outline', routeName: 'clientdesk' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
-]);
+])
 
 const employeeSubItems = ref([
   { title: 'Management', icon: 'mdi-account-tie', routeName: 'manageremployees' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
-]);
+])
 
 const jobSubItems = ref([
   { title: 'Management', icon: 'mdi-briefcase', routeName: 'jobAssignmentView' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
-]);
+])
 
 const inventorySubItems = ref([
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
-
-]);
+])
 
 const inboxSubItems = ref([
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
-]);
+])
 </script>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
+import ProfileEmployee from '@/components/ProfileEmployee.vue'
 
 export default defineComponent({
   name: 'NavigationBar',
@@ -64,6 +64,9 @@ export default defineComponent({
     component: {
       type: Object as PropType<any>
     }
+  },
+  components: {
+    ProfileEmployee
   }
 })
 </script>
@@ -87,25 +90,58 @@ export default defineComponent({
         <v-list v-model:open="open">
           <v-list-group value="Dashboard">
             <template v-slot:activator="{ props }">
-              <v-list-item v-bind="props" prepend-icon="mdi-view-dashboard" title="Dashboard"></v-list-item>
+              <v-list-item
+                v-bind="props"
+                prepend-icon="mdi-view-dashboard"
+                title="Dashboard"
+              ></v-list-item>
             </template>
-            <v-list-item v-for="(item, i) in dashboardSubItems" :key="i" :to="{name: item.routeName}" :prepend-icon="item.icon" :title="item.title" :value="item.title"></v-list-item>
+            <v-list-item
+              v-for="(item, i) in dashboardSubItems"
+              :key="i"
+              :to="{ name: item.routeName }"
+              :prepend-icon="item.icon"
+              :title="item.title"
+              :value="item.title"
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
           <v-list-group value="Clients">
             <template v-slot:activator="{ props }">
-              <v-list-item v-bind="props" prepend-icon="mdi-account-group" title="Clients"></v-list-item>
+              <v-list-item
+                v-bind="props"
+                prepend-icon="mdi-account-group"
+                title="Clients"
+              ></v-list-item>
             </template>
-            <v-list-item v-for="(item, i) in clientSubItems" :key="i" :to="{name: item.routeName}" :prepend-icon="item.icon" :title="item.title" :value="item.title"></v-list-item>
+            <v-list-item
+              v-for="(item, i) in clientSubItems"
+              :key="i"
+              :to="{ name: item.routeName }"
+              :prepend-icon="item.icon"
+              :title="item.title"
+              :value="item.title"
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
           <v-list-group value="Employees">
             <template v-slot:activator="{ props }">
-              <v-list-item v-bind="props" prepend-icon="mdi-account-multiple" title="Employees"></v-list-item>
+              <v-list-item
+                v-bind="props"
+                prepend-icon="mdi-account-multiple"
+                title="Employees"
+              ></v-list-item>
             </template>
-            <v-list-item v-for="(item, i) in employeeSubItems" :key="i" :to="{name: item.routeName}" :prepend-icon="item.icon" :title="item.title" :value="item.title"></v-list-item>
+            <v-list-item
+              v-for="(item, i) in employeeSubItems"
+              :key="i"
+              :to="{ name: item.routeName }"
+              :prepend-icon="item.icon"
+              :title="item.title"
+              :value="item.title"
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
@@ -113,15 +149,33 @@ export default defineComponent({
             <template v-slot:activator="{ props }">
               <v-list-item v-bind="props" prepend-icon="mdi-briefcase" title="Jobs"></v-list-item>
             </template>
-            <v-list-item v-for="(item, i) in jobSubItems" :key="i" :to="{name: item.routeName}" :prepend-icon="item.icon" :title="item.title" :value="item.title"></v-list-item>
+            <v-list-item
+              v-for="(item, i) in jobSubItems"
+              :key="i"
+              :to="{ name: item.routeName }"
+              :prepend-icon="item.icon"
+              :title="item.title"
+              :value="item.title"
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
           <v-list-group value="Inventory">
             <template v-slot:activator="{ props }">
-              <v-list-item v-bind="props" prepend-icon="mdi-warehouse" title="Inventory"></v-list-item>
+              <v-list-item
+                v-bind="props"
+                prepend-icon="mdi-warehouse"
+                title="Inventory"
+              ></v-list-item>
             </template>
-            <v-list-item v-for="(item, i) in inventorySubItems" :key="i" :to="{name: item.routeName}" :prepend-icon="item.icon" :title="item.title" :value="item.title"></v-list-item>
+            <v-list-item
+              v-for="(item, i) in inventorySubItems"
+              :key="i"
+              :to="{ name: item.routeName }"
+              :prepend-icon="item.icon"
+              :title="item.title"
+              :value="item.title"
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
@@ -129,7 +183,14 @@ export default defineComponent({
             <template v-slot:activator="{ props }">
               <v-list-item v-bind="props" prepend-icon="mdi-inbox" title="Inbox"></v-list-item>
             </template>
-            <v-list-item v-for="(item, i) in inboxSubItems" :key="i" :to="{name: item.routeName}" :prepend-icon="item.icon" :title="item.title" :value="item.title"></v-list-item>
+            <v-list-item
+              v-for="(item, i) in inboxSubItems"
+              :key="i"
+              :to="{ name: item.routeName }"
+              :prepend-icon="item.icon"
+              :title="item.title"
+              :value="item.title"
+            ></v-list-item>
           </v-list-group>
         </v-list>
       </v-navigation-drawer>
@@ -138,6 +199,7 @@ export default defineComponent({
       </v-main>
     </v-app>
   </v-card>
+  <v-col></v-col>
 </template>
 
 <style scoped></style>

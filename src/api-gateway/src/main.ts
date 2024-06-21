@@ -8,7 +8,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('API-GATEWAY')
     .setDescription('Documentation of the WorkWise API-GATEWAY')
-    .setVersion('1.0')
+    .setVersion('1.2')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('documentation', app, document);

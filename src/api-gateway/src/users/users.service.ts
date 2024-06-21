@@ -1,5 +1,7 @@
 import {
   ConflictException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -10,10 +12,24 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
+import { AuthService } from '../auth/auth.service';
+import { EmployeeService } from '../employee/employee.service';
+import { UserConfirmation } from './entities/user-confirmation.entity';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('user') private readonly userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectModel(UserConfirmation.name)
+    private readonly userConfirmationModel: Model<UserConfirmation>,
+    @Inject(forwardRef(() => AuthService))
+    private authService: AuthService,
+    @Inject(forwardRef(() => EmployeeService))
+    private employeeService: EmployeeService,
+    private emailService: EmailService,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     if (await this.usernameExists(createUserDto.username)) {
@@ -25,10 +41,38 @@ export class UsersService {
     const newUserObj = new User(createUserDto);
     const newUser = new this.userModel(newUserObj);
     const result = await newUser.save();
+    this.createUserConfirmation(newUserObj); //sends email
 
-    return new createUserResponseDto(
-      `${result.personalInfo.firstName} ${result.personalInfo.surname}'s account has been created`,
+    const jwt: { access_token: string; id: Types.ObjectId } =
+      await this.authService.signIn(
+        result.systemDetails.username,
+        result.systemDetails.password,
+      );
+    return new createUserResponseDto(jwt);
+  }
+
+  async createUserConfirmation(newUser: User) {
+    const userConfirmation: UserConfirmation = {
+      name: newUser.personalInfo.firstName,
+      surname: newUser.personalInfo.surname,
+      email: newUser.personalInfo.contactInfo.email,
+      key: randomStringGenerator(),
+    };
+    await this.userConfirmationModel.create(userConfirmation);
+    //console.log(result);
+    await this.emailService.sendUserConfirmation(userConfirmation);
+  }
+
+  async verifyUser(email: string) {
+    const result = await this.userModel.findOneAndUpdate(
+      {
+        'personalInfo.contactInfo.email': email,
+      },
+      { $set: { isValidated: true } },
+      { new: true },
     );
+    console.log(result);
+    return true;
   }
 
   async findAllUsers() {
@@ -47,7 +91,7 @@ export class UsersService {
           $and: [
             { 'systemDetails.username': identifier },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -57,14 +101,14 @@ export class UsersService {
     return result != null;
   }
 
-  async userIdExists(id: string): Promise<boolean> {
+  async userIdExists(id: string | Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<User> & { _id: Types.ObjectId } =
       await this.userModel
         .findOne({
           $and: [
             { _id: id },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -83,7 +127,7 @@ export class UsersService {
           $and: [
             { _id: identifier },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -107,7 +151,7 @@ export class UsersService {
           $and: [
             { 'systemDetails.username': identifier },
             {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
@@ -126,7 +170,7 @@ export class UsersService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
-    /*    updateUserDto.updated_at = new Date();
+    /*    updateUserDto.updatedAt = new Date();
     console.log('updateUserDto');
     console.log(updateUserDto);*/
 
@@ -137,11 +181,11 @@ export class UsersService {
             $and: [
               { _id: id },
               {
-                $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+                $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
               },
             ],
           },
-          { $set: { ...updateUserDto }, updated_at: new Date() },
+          { $set: { ...updateUserDto }, updatedAt: new Date() },
         )
         .lean();
     if (previousObject == null) {
@@ -159,16 +203,18 @@ export class UsersService {
             $or: [{ _id: id }, { 'systemDetails.username': id }],
           },
           {
-            $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
         ],
       },
-      { $set: { deleted_at: new Date() } },
+      { $set: { deletedAt: new Date() } },
     );
-
     if (result == null) {
       throw new InternalServerErrorException('Internal server Error');
     }
+
+    const deleteRelatedEmployees = await this.employeeService.remove(result.id);
+    console.log(deleteRelatedEmployees);
     return true;
   }
 }

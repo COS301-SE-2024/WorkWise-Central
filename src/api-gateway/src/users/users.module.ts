@@ -1,13 +1,27 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserSchema } from './entities/user.entity';
+import { User, UserSchema } from './entities/user.entity';
 import { UsersController } from './users.controller';
+import { AuthModule } from '../auth/auth.module';
+import { EmployeeModule } from '../employee/employee.module';
+import {
+  UserConfirmation,
+  UserConfirmationScheme,
+} from './entities/user-confirmation.entity';
+import { EmailService } from '../email/email.service';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'user', schema: UserSchema }])], //'user' is the collection name
+  imports: [
+    forwardRef(() => AuthModule),
+    forwardRef(() => EmployeeModule),
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: UserConfirmation.name, schema: UserConfirmationScheme },
+    ]),
+  ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, EmailService],
   exports: [UsersService, MongooseModule],
 })
 export class UsersModule {}
