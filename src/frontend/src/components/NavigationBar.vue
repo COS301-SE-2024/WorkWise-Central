@@ -3,9 +3,7 @@ import { ref } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
 const isVisible = ref(false)
 const drawer = ref(true)
-import { useRouter } from 'vue-router'
 
-const router = useRouter()
 const onProfileClick = () => {
   console.log('Profile icon clicked')
 }
@@ -23,7 +21,7 @@ const dashboardSubItems = ref([
 ])
 
 const clientSubItems = ref([
-  { title: 'Management', icon: 'mdi-account-group-outline', routeName: 'clientdesk' },
+  { title: 'Management', icon: 'mdi-account-group-outline', routeName: 'client-desk-view' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
 ])
