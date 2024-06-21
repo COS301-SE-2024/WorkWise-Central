@@ -3,6 +3,8 @@ import * as bcrypt from 'bcryptjs';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { Company } from '../../company/entities/company.entity';
+import { Employee } from '../../employee/entities/employee.entity';
 
 export class SystemDetails {
   @Prop({ required: true, unique: true })
@@ -77,8 +79,11 @@ export class Profile {
 }
 
 export class JoinedCompany {
+  @Prop({ type: Types.ObjectId, ref: Employee.name })
   employeeId: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: Company.name })
   companyId: Types.ObjectId;
+  @Prop({ type: String })
   companyName: string;
 }
 
@@ -165,6 +170,22 @@ export class User {
   @Prop({ type: Date, required: false })
   public deletedAt?: Date;
 }
+
+export const userEmployeeFields: string[] = ['employeeIds', 'currentEmployee'];
+
+export const userJoinedCompaniesField = {
+  path: 'joinedCompanies',
+  populate: [
+    {
+      path: 'employeeId',
+      model: Employee.name,
+    },
+    {
+      path: 'companyId',
+      model: Company.name,
+    },
+  ],
+};
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
