@@ -15,7 +15,7 @@
       <v-col>
         <v-row class="pa-2" align="center">
           <!-- Add padding for spacing and align items center -->
-        
+
           <!-- Label in the middle -->
           <v-col cols="10">
             <h4 class="text-center" style="font-size: 25px; font-weight: lighter">Labels</h4>
@@ -73,7 +73,10 @@
                 <!-- Button on the right -->
                 <v-col cols="1">
                   <!-- Adjust the cols as needed for your design -->
-                  <v-btn variant="plain" @click="(editLabelDialog = true), (jobDialog = false)">
+                  <v-btn
+                    variant="plain"
+                    @click="(editLabelDialog = true), (jobDialog = false), currentLabel(label)"
+                  >
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
                 </v-col>
@@ -124,7 +127,7 @@
         <v-spacer></v-spacer>
 
         <v-text-field
-          v-model="title"
+          v-model="newLabelItemTitle"
           variant="outlined"
           hide-details
           width="100%"
@@ -135,9 +138,12 @@
       <div>
         <v-col cols="12">
           <v-label>Select a color</v-label>
-          <v-color-picker v-model="c2" show-swatches></v-color-picker>
+          <v-color-picker v-model="newLabelItemColor"></v-color-picker>
         </v-col>
       </div>
+      <v-col cols="12">
+        <v-btn color="primary" @click="addNewLabel">Create Label</v-btn>
+      </v-col>
     </v-sheet>
   </v-dialog>
 
@@ -172,7 +178,7 @@
         <v-spacer></v-spacer>
 
         <v-text-field
-          v-model="title"
+          v-model="currentLabel.title"
           variant="outlined"
           hide-details
           width="100%"
@@ -183,13 +189,13 @@
       <div>
         <v-col cols="12">
           <v-label>Select a color</v-label>
-          <v-color-picker v-model="c2"></v-color-picker>
+          <v-color-picker v-model="currentLabel.color"></v-color-picker>
           <!-- Add this line -->
         </v-col>
       </div>
       <div>
         <v-row align="center">
-          <v-btn @click="c2 = ''" variant="plain"
+          <v-btn @click="currentLabel.color = ''" variant="plain"
             ><v-icon>mdi-close</v-icon>Remove Color</v-btn
           ></v-row
         >
@@ -197,9 +203,11 @@
       <v-divider></v-divider>
       <div>
         <v-row class="pa-2" align="center">
-          <v-col cols="6"> <v-btn variant="plain">Save Changes</v-btn></v-col>
+          <v-col cols="6"> <v-btn @click="saveChanges" variant="plain">Save Changes</v-btn></v-col>
           <v-col cols="6"
-            ><v-btn @click="editLabelDialog = false" variant="plain">Delete Label</v-btn></v-col
+            ><v-btn @click="(editLabelDialog = false), deleteLabel" variant="plain"
+              >Delete Label</v-btn
+            ></v-col
           ></v-row
         >
       </div>
@@ -218,30 +226,31 @@ export default defineComponent({
     jobDialog: false,
     createLabelDialog: false,
     search: '',
+    newLabelItemTitle: '',
+    newLabelItemColor: '',
+    currentLabel: {
+      id: 0,
+      title: '',
+      color: ''
+    },
     jobLabels: [
       {
         id: 1,
         color: 'red', // Example color
         isSelected: false,
-        title: ''
+        title: 'Frontend'
       },
       {
         id: 2,
-        color: 'blue', // Example color
+        color: 'orange', // Example color
         isSelected: false,
-        title: ''
+        title: 'Backend'
       },
       {
         id: 3,
-        color: 'green', // Example color
-        isSelected: false,
-        title: ''
-      },
-      {
-        id: 4,
         color: 'yellow', // Example color
         isSelected: false,
-        title: ''
+        title: 'Services'
       }
     ],
     selectedLabels: [],
@@ -250,6 +259,38 @@ export default defineComponent({
   methods: {
     toggleSelection() {
       this.isSelected = !this.isSelected
+    },
+    addNewLabel() {
+      if (this.newLabelItemTitle && this.newLabelItemColor) {
+        const item = {
+          id: this.jobLabels.length + 1,
+          color: this.newLabelItemColor,
+          isSelected: false,
+          title: this.newLabelItemTitle
+        }
+        this.jobLabels.push(item)
+        console.log(this.jobLabels)
+      }
+    },
+    addSelectedLabels() {
+      this.selectedLabels = this.jobLabels.filter((label) => label.isSelected)
+    },
+    saveChanges() {
+      const index = this.jobLabels.findIndex((label) => label.id === this.currentLabel.id)
+      if (index !== -1) {
+        this.jobLabels.splice(index, 1, { ...this.currentLabel })
+      }
+      this.editLabelDialog = false
+    },
+    deleteLabel() {
+      const index = this.jobLabels.findIndex((label) => label.id === this.currentLabel.id)
+      if (index !== -1) {
+        this.jobLabels.splice(index, 1)
+      }
+      this.editLabelDialog = false
+    },
+    setCurrentLabel(label) {
+      this.currentLabel = { ...label }
     }
   }
 })

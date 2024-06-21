@@ -4,7 +4,7 @@
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        prepend-icon="mdi-label"
+        prepend-icon="mdi-list-box"
         variant="elevated"
         v-bind="activatorProps"
       >
@@ -33,8 +33,8 @@
         <v-col cols="12"
           ><v-label>Title</v-label>
           <v-text-field
-            v-model="checklist"
-            :label="checklist ? checklist : 'Checklist'"
+            v-model="newChecklistItemTitle"
+            :label="newChecklistItemTitle ? newChecklistItemTitle : 'Checklist'"
             variant="outlined"
             hide-details
             width="95%"
@@ -42,7 +42,22 @@
             density="compact"
           ></v-text-field> </v-col
         ><v-spacer></v-spacer>
-        <v-col cols="12"><v-btn variant="elevated" color="blue">Add</v-btn></v-col>
+
+        <v-col cols="12" v-for="item in checklist" :key="item.id">
+          <v-row>
+            <v-col cols="10">
+              <v-label>{{ item.title }}</v-label>
+            </v-col>
+            <v-col cols="2">
+              <v-btn color="red" @click="removeChecklistItem(item.id)" variant="plain"
+                >Remove</v-btn
+              >
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="12"
+          ><v-btn variant="elevated" color="blue" @click="addChecklist">Add</v-btn></v-col
+        >
       </v-col>
     </v-sheet>
   </v-dialog>
@@ -55,7 +70,23 @@ export default defineComponent({
   name: 'JobChecklist',
   data: () => ({
     checklistDialog: false,
-    checklist: ''
-  })
+    newChecklistItemTitle: '',
+    checklist: []
+  }),
+  methods: {
+    addChecklist() {
+      if (this.newChecklistItemTitle.trim() !== '') {
+        const newItem = {
+          id: Date.now(), // Simple way to generate a unique id
+          title: this.newChecklistItemTitle
+        }
+        this.checklist.push(newItem)
+        this.newChecklistItemTitle = '' // Reset input field after adding
+      }
+    },
+    removeChecklistItem(itemId) {
+      this.checklist = this.checklist.filter((item) => item.id !== itemId)
+    }
+  }
 })
 </script>
