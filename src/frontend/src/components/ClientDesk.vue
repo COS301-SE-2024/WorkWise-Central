@@ -35,63 +35,63 @@
               </v-card-title>
 
               <v-divider></v-divider>
-              <v-col cols="12" xs="12" sm="12" md="12" >
+              <v-col cols="12" xs="12" sm="12" md="12">
                 <div style="height: 700px; overflow-y: auto">
                   <v-col cols="12" xs="12" sm="12" md="12">
-                  <v-data-table
-                    :headers="headers"
-                    :items="clientDetails"
-                    :search="search"
-                    :single-expand="true"
-                    v-model:expanded="expanded"
-                    show-expand
-                    rounded="xl"
-                    :item-class="getRowClass"
-                  >
-                    <template v-slot:[`item.firstName`]="{ value }">
-                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
-                    </template>
-                    <template v-slot:[`item.clientInfo.phoneNumber`]="{ value }">
-                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-phone</v-icon></v-chip>
-                    </template>
-                    <template v-slot:[`item.mostRecentJob`]="{ value }">
-                      <v-chip :color="getColor(value)">
-                        {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
-                      >
-                    </template>
-                    <template v-slot:[`item.clientInfo.address.street`]="{ value }">
-                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-map-marker</v-icon></v-chip>
-                    </template>
-                    <!-- Expanded content slot -->
-                    <template v-slot:expanded-row="{ columns, item }">
-                      <tr>
-                        <td :colspan="columns.length">More info about {{ item.name }}</td>
-                      </tr>
-                    </template>
-                    <!-- Actions slot -->
-                    <template v-slot:[`item.actions`]="{ item }">
-                      <v-col cols="12" xs="12" sm="12" md="12">
-                        <v-btn
-                          icon
-                          size="small"
-                          @click="editClient(item), (editDialog = true)"
-                          color="#5A82AF"
+                    <v-data-table
+                      :headers="headers"
+                      :items="clientDetails"
+                      :search="search"
+                      :single-expand="true"
+                      v-model:expanded="expanded"
+                      show-expand
+                      rounded="xl"
+                      :item-class="getRowClass"
+                    >
+                      <template v-slot:[`item.firstName`]="{ value }">
+                        <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
+                      </template>
+                      <template v-slot:[`item.clientInfo.phoneNumber`]="{ value }">
+                        <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-phone</v-icon></v-chip>
+                      </template>
+                      <template v-slot:[`item.mostRecentJob`]="{ value }">
+                        <v-chip :color="getColor(value)">
+                          {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
                         >
-                          <v-icon>mdi-pencil</v-icon>
-                        </v-btn>
-                      </v-col>
-                      <v-col cols="12" xs="12" sm="12" md="12" >
-                        <v-btn
-                          icon
-                          size="small"
-                          @click="deleteClient(item), (deleteDialog = true)"
-                          color="#5A82AF"
-                        >
-                          <v-icon>mdi-delete</v-icon>
-                        </v-btn>
-                      </v-col>
-                    </template>
-                  </v-data-table>
+                      </template>
+                      <template v-slot:[`item.clientInfo.address.street`]="{ value }">
+                        <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-map-marker</v-icon></v-chip>
+                      </template>
+                      <!-- Expanded content slot -->
+                      <template v-slot:expanded-row="{ columns, item }">
+                        <tr>
+                          <td :colspan="columns.length">More info about {{ item.name }}</td>
+                        </tr>
+                      </template>
+                      <!-- Actions slot -->
+                      <template v-slot:[`item.actions`]="{ item }">
+                        <v-col cols="12" xs="12" sm="12" md="12">
+                          <v-btn
+                            icon
+                            size="small"
+                            @click="editClient(item), (editDialog = true)"
+                            color="#5A82AF"
+                          >
+                            <v-icon>mdi-pencil</v-icon>
+                          </v-btn>
+                        </v-col>
+                        <v-col cols="12" xs="12" sm="12" md="12">
+                          <v-btn
+                            icon
+                            size="small"
+                            @click="deleteClient(item), (deleteDialog = true)"
+                            color="#5A82AF"
+                          >
+                            <v-icon>mdi-delete</v-icon>
+                          </v-btn>
+                        </v-col>
+                      </template>
+                    </v-data-table>
                   </v-col>
                 </div>
               </v-col>

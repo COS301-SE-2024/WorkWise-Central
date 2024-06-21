@@ -1,29 +1,30 @@
 import {
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Document, FlattenMaps, Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 //import { User } from '../users/entities/user.entity';
 import { Job } from './entities/job.entity';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
-import { ClientService } from '../client/client.service';
+//import { ClientService } from '../client/client.service';
+import { JobRepository } from './job.repository';
 
 @Injectable()
 export class JobService {
-  private authorisedList: string[] = ['owner', 'manager'];
+  //private authorisedList: string[] = ['owner', 'manager'];
 
   constructor(
     @InjectModel(Job.name)
     private readonly jobModel: Model<Job>,
+    private readonly jobRepository: JobRepository,
     private readonly usersService: UsersService,
     private readonly companyService: CompanyService,
-    private readonly clientService: ClientService,
+    //private readonly clientService: ClientService,
     //@InjectModel('user') private readonly userModel: Model<User>, //Will be used later
   ) {}
 
@@ -81,16 +82,7 @@ export class JobService {
     identifier: string,
   ): Promise<FlattenMaps<Job> & { _id: Types.ObjectId }> {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
-      await this.jobModel
-        .findOne({
-          $and: [
-            { _id: identifier },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
+      await this.jobRepository.findById(identifier);
 
     if (result == null) {
       throw new NotFoundException('Job not found');
@@ -101,25 +93,16 @@ export class JobService {
 
   async findAllJobs() {
     try {
-      return this.jobModel.find().exec();
+      return this.jobRepository.findAll();
     } catch (error) {
       console.log(error);
-      throw new ServiceUnavailableException('Jobs could not be retrieved');
+      throw new ServiceUnavailableException(error);
     }
   }
 
   async jobExists(id: string): Promise<boolean> {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
-      await this.jobModel
-        .findOne({
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
+      await this.jobRepository.exists(id);
 
     console.log('jobExists -> ', result);
     return result == null;
@@ -131,21 +114,10 @@ export class JobService {
   }
 
   async softDelete(id: string): Promise<boolean> {
-    const result: Document<unknown, NonNullable<unknown>, Job> &
-      Job & { _id: Types.ObjectId } = await this.jobModel.findOneAndUpdate(
-      {
-        $and: [
-          { _id: id },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      },
-      { $set: { deletedAt: new Date() } },
-    );
-
-    if (result == null) {
-      throw new InternalServerErrorException('Internal server Error');
+    try {
+      await this.jobRepository.delete(id);
+    } catch (e) {
+      throw e;
     }
     return true;
   }

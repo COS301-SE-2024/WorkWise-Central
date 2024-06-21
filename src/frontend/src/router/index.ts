@@ -106,6 +106,16 @@ const router = createRouter({
       component: ClientEmployeeView
     },
     {
+      path: '/jobAssignmentView',
+      name: 'jobAssignmentView',
+      component: () => import('@/views/ManagerJobAssignmentView.vue')
+    },
+    {
+      path: '/404',
+      name: '404',
+      component: () => import('@/views/404Page.vue')
+    },
+    {
       path: '/client-employee-view',
       name: 'client-employee-view',
       component: ClientView
