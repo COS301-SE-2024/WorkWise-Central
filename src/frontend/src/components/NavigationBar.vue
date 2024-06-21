@@ -1,19 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
-// import { useStore } from 'vuex'
-// import { computed } from 'vue';
-
-// const store = useStore()
-// const expanded = computed(() => store.state.expanded)
 const isVisible = ref(false)
-
 const drawer = ref(true)
-const dashboardActive = ref(false)
+import { useRouter } from 'vue-router'
 
-const toggleDashboard = () => {
-  dashboardActive.value = !dashboardActive.value
-}
+const router = useRouter();
 const onProfileClick = () => {
   console.log('Profile icon clicked')
 }
@@ -21,6 +13,45 @@ const onProfileClick = () => {
 const onEllipsisClick = () => {
   console.log('Ellipsis icon clicked')
 }
+
+const open = ref(['Dashboard']);
+
+const dashboardSubItems = ref([
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
+]);
+
+const clientSubItems = ref([
+  { title: 'Management', icon: 'mdi-account-group-outline', routeName: 'clientdesk' },
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
+]);
+
+const employeeSubItems = ref([
+  { title: 'Management', icon: 'mdi-account-tie', routeName: 'manageremployees' },
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
+]);
+
+const jobSubItems = ref([
+  { title: 'Management', icon: 'mdi-briefcase', routeName: 'jobAssignmentView' },
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
+]);
+
+const inventorySubItems = ref([
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
+
+]);
+
+const inboxSubItems = ref([
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
+]);
 </script>
 
 <script lang="ts">
@@ -53,202 +84,55 @@ export default defineComponent({
       <v-navigation-drawer app v-model="drawer" :rail="isVisible">
         <v-list-item title="Company Name"></v-list-item>
         <v-divider></v-divider>
-
-        <v-list>
-          <v-list-group v-model="dashboardActive">
-            <template v-slot:activator>
-              <v-list-item link @click="toggleDashboard">
-                <template v-slot:prepend>
-                  <v-icon>mdi-view-dashboard</v-icon>
-                </template>
-                <span>Dashboard</span>
-              </v-list-item>
+        <v-list v-model:open="open">
+          <v-list-group value="Dashboard">
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props" prepend-icon="mdi-view-dashboard" title="Dashboard"></v-list-item>
             </template>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 1</span>
-            </v-list-item>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 2</span>
-            </v-list-item>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 3</span>
-            </v-list-item>
+            <v-list-item v-for="(item, i) in dashboardSubItems" :key="i" :to="{name: item.routeName}" :prepend-icon="item.icon" :title="item.title" :value="item.title"></v-list-item>
           </v-list-group>
-
-          <v-list-group>
-            <template v-slot:activator>
-              <v-list-item link>
-                <template v-slot:prepend>
-                  <v-icon>mdi-briefcase</v-icon>
-                </template>
-                <span>Jobs</span>
-              </v-list-item>
+        </v-list>
+        <v-list v-model:open="open">
+          <v-list-group value="Clients">
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props" prepend-icon="mdi-account-group" title="Clients"></v-list-item>
             </template>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 1</span>
-            </v-list-item>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 2</span>
-            </v-list-item>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 3</span>
-            </v-list-item>
+            <v-list-item v-for="(item, i) in clientSubItems" :key="i" :to="{name: item.routeName}" :prepend-icon="item.icon" :title="item.title" :value="item.title"></v-list-item>
           </v-list-group>
-
-          <v-list-group>
-            <template v-slot:activator>
-              <v-list-item link>
-                <template v-slot:prepend>
-                  <v-icon>mdi-account-group</v-icon>
-                </template>
-                <span>Clients</span>
-              </v-list-item>
+        </v-list>
+        <v-list v-model:open="open">
+          <v-list-group value="Employees">
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props" prepend-icon="mdi-account-multiple" title="Employees"></v-list-item>
             </template>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 1</span>
-            </v-list-item>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 2</span>
-            </v-list-item>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 3</span>
-            </v-list-item>
+            <v-list-item v-for="(item, i) in employeeSubItems" :key="i" :to="{name: item.routeName}" :prepend-icon="item.icon" :title="item.title" :value="item.title"></v-list-item>
           </v-list-group>
-
-          <v-list-group>
-            <template v-slot:activator>
-              <v-list-item link>
-                <template v-slot:prepend>
-                  <v-icon>mdi-account-multiple</v-icon>
-                </template>
-                <span>Employees</span>
-              </v-list-item>
+        </v-list>
+        <v-list v-model:open="open">
+          <v-list-group value="Jobs">
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props" prepend-icon="mdi-briefcase" title="Jobs"></v-list-item>
             </template>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 1</span>
-            </v-list-item>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 2</span>
-            </v-list-item>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 3</span>
-            </v-list-item>
+            <v-list-item v-for="(item, i) in jobSubItems" :key="i" :to="{name: item.routeName}" :prepend-icon="item.icon" :title="item.title" :value="item.title"></v-list-item>
           </v-list-group>
-
-          <v-list-group>
-            <template v-slot:activator>
-              <v-list-item link>
-                <template v-slot:prepend>
-                  <v-icon>mdi-warehouse</v-icon>
-                </template>
-                <span>Inventory</span>
-              </v-list-item>
+        </v-list>
+        <v-list v-model:open="open">
+          <v-list-group value="Inventory">
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props" prepend-icon="mdi-warehouse" title="Inventory"></v-list-item>
             </template>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 1</span>
-            </v-list-item>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 2</span>
-            </v-list-item>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 3</span>
-            </v-list-item>
+            <v-list-item v-for="(item, i) in inventorySubItems" :key="i" :to="{name: item.routeName}" :prepend-icon="item.icon" :title="item.title" :value="item.title"></v-list-item>
           </v-list-group>
-
-          <v-list-group>
-            <template v-slot:activator>
-              <v-list-item link>
-                <template v-slot:prepend>
-                  <v-icon> mdi-inbox</v-icon>
-                </template>
-                <span>Inbox</span>
-              </v-list-item>
+        </v-list>
+        <v-list v-model:open="open">
+          <v-list-group value="Inbox">
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props" prepend-icon="mdi-inbox" title="Inbox"></v-list-item>
             </template>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 1</span>
-            </v-list-item>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 2</span>
-            </v-list-item>
-
-            <v-list-item link>
-              <template v-slot:prepend>
-                <v-icon>mdi-subdirectory-arrow-right</v-icon>
-              </template>
-              <span>Sub-item 3</span>
-            </v-list-item>
+            <v-list-item v-for="(item, i) in inboxSubItems" :key="i" :to="{name: item.routeName}" :prepend-icon="item.icon" :title="item.title" :value="item.title"></v-list-item>
           </v-list-group>
         </v-list>
       </v-navigation-drawer>
-
       <v-main>
         <component :is="component" />
       </v-main>
