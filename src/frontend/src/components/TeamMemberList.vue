@@ -61,7 +61,7 @@
         <div>
           <v-row>
             <v-col cols="12" v-for="member in sections.teamMembers" :key="member.id">
-              <v-card @click="moveToCardMembers(member)" >
+              <v-card @click="moveToCardMembers(member)">
                 <v-card-title>{{ member.name }}</v-card-title>
                 <v-card-subtitle>{{ member.role }}</v-card-subtitle>
                 <v-avatar>
