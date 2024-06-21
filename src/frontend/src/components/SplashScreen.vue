@@ -872,7 +872,7 @@ export default defineComponent({
             this.alertLoginFailure = false
             this.alertLogin = true
             this.resetForm()
-            this.$router.push('/modals')
+            this.$router.push('/dashboard')
           })
           .catch((error) => {
             console.log(error.response.data.message)
