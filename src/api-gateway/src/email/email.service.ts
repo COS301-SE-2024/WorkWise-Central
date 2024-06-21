@@ -8,6 +8,7 @@ export class EmailService {
   constructor(private readonly mailerService: MailerService) {}
 
   async sendUserConfirmation(userConfirmation: UserConfirmation) {
+    console.log('sendUserConfirmation', userConfirmation);
     const tempUrl = 'localhost:3000'; //TODO: Change to deployed url later
     const url = `${tempUrl}/auth/verify?email=${encodeURIComponent(userConfirmation.email)}&token=${userConfirmation.key}`;
 
