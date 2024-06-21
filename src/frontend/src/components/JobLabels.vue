@@ -1,4 +1,5 @@
 <template>
+  <!-- Labels Dialog Box -->
   <v-dialog v-model="jobDialog" max-width="500" height="auto">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
@@ -59,10 +60,10 @@
                 <!-- Card in the middle -->
                 <v-col cols="10">
                   <!-- Adjust the cols as needed for your design -->
+                  <v-chip :color="label.color"></v-chip>
                   <v-card
                     @click="toggleSelection"
                     :class="{ selected: label.isSelected }"
-                    :style="{ backgroundColor: label.color }"
                     height="40px"
                   >
                     <v-card-title>{{ label.title }}</v-card-title>
@@ -75,7 +76,7 @@
                   <!-- Adjust the cols as needed for your design -->
                   <v-btn
                     variant="plain"
-                    @click="(editLabelDialog = true), (jobDialog = false), currentLabel(label)"
+                    @click="(editLabelDialog = true), (jobDialog = false), setCurrentLabel(label)"
                   >
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
@@ -95,9 +96,9 @@
       </v-col>
     </v-sheet>
   </v-dialog>
-
-  <v-dialog v-model="createLabelDialog" max-width="500" height="auto">
-    <v-sheet elevation="14" rounded="xl" width="500" height="auto">
+  <!-- Create Label Dialog Box -->
+  <v-dialog v-model="createLabelDialog" height="auto">
+    <v-sheet elevation="14" rounded="xl" height="auto">
       <v-col cols="12">
         <v-row class="pa-2" align="center">
           <!-- Add padding for spacing and align items center -->
@@ -146,7 +147,7 @@
       </v-col>
     </v-sheet>
   </v-dialog>
-
+  <!-- Edit Label Dialog Box -->
   <v-dialog v-model="editLabelDialog" max-width="500" height="auto">
     <v-sheet elevation="14" rounded="xl" width="500" height="auto">
       <v-col cols="12">
@@ -187,20 +188,13 @@
         ></v-text-field>
       </v-col>
       <div>
-        <v-col cols="12">
+        <v-col cols="12" offset="2">
           <v-label>Select a color</v-label>
           <v-color-picker v-model="currentLabel.color"></v-color-picker>
           <!-- Add this line -->
         </v-col>
       </div>
-      <div>
-        <v-row align="center">
-          <v-btn @click="currentLabel.color = ''" variant="plain"
-            ><v-icon>mdi-close</v-icon>Remove Color</v-btn
-          ></v-row
-        >
-      </div>
-      <v-divider></v-divider>
+
       <div>
         <v-row class="pa-2" align="center">
           <v-col cols="6"> <v-btn @click="saveChanges" variant="plain">Save Changes</v-btn></v-col>
@@ -270,6 +264,10 @@ export default defineComponent({
         }
         this.jobLabels.push(item)
         console.log(this.jobLabels)
+        this.newLabelItemTitle = ''
+        this.newLabelItemColor = ''
+        this.createLabelDialog = false
+        this.jobDialog = true
       }
     },
     addSelectedLabels() {
