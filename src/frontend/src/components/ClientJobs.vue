@@ -6,7 +6,6 @@
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         variant="elevated"
-        
         v-bind="activatorProps"
       >
         View Jobs
