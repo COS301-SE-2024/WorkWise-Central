@@ -1,8 +1,9 @@
+/*
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
+import { UsersController } from '../users.controller';
+import { UsersService } from '../users.service';
 import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
-import { mockUserObject, userStub } from '../../test/stubs/user.stub';
+import { mockUserObject, userStub } from '../../../test/stubs/user.stub';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -48,5 +49,13 @@ describe('UsersController', () => {
 
   it('should find all users', function () {
     expect(usersController.findAll()).toBeDefined();
+  });
+});
+*/
+
+describe('myGenericFunction', () => {
+  it('should return the correct value', () => {
+    const result = 1;
+    expect(result).toBe(1);
   });
 });

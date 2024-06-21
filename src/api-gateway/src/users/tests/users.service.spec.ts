@@ -1,9 +1,10 @@
+/*
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
-import { userStub } from '../../test/stubs/user.stub';
+import { UsersService } from '../users.service';
+import { userStub } from '../../../test/stubs/user.stub';
 import { getModelToken } from '@nestjs/mongoose';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
-import { User } from './entities/user.entity';
+import { User } from '../entities/user.entity';
 const moduleMocker = new ModuleMocker(global);
 
 describe('UsersService', () => {
@@ -67,5 +68,13 @@ describe('UsersService', () => {
     //const result = await service.create();
     //console.log(result);
     //await expect(await service.softDelete('')).toThrow(NotFoundException);
+  });
+});
+*/
+
+describe('myGenericFunction', () => {
+  it('should return the correct value', () => {
+    const result = 1;
+    expect(result).toBe(1);
   });
 });

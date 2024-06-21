@@ -4,11 +4,19 @@ import { EmployeeService } from './employee.service';
 
 describe('EmployeeController', () => {
   let controller: EmployeeController;
+  let employeeServiceMock: Partial<EmployeeService>;
+  // let employeeModelMock: Partial<Model<Employee>>; // Create a partial mock
 
   beforeEach(async () => {
+    /*    employeeModelMock = {
+      find: jest.fn(),
+      create: jest.fn(),
+      // ...other methods...
+    };*/
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [EmployeeController],
-      providers: [EmployeeService],
+      providers: [{ provide: EmployeeService, useValue: employeeServiceMock }],
     }).compile();
 
     controller = module.get<EmployeeController>(EmployeeController);

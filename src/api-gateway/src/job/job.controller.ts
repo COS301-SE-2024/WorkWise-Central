@@ -56,11 +56,11 @@ export class JobController {
     this.validateObjectId(createJobDto.companyId, 'Company');
 
     if (
-      createJobDto.inventoryUsed != undefined &&
-      createJobDto.inventoryUsed.length > 0
+      createJobDto.recordedDetails.inventoryUsed != undefined &&
+      createJobDto.recordedDetails.inventoryUsed.length > 0
     )
-      for (const item of createJobDto.inventoryUsed) {
-        this.validateObjectId(item, 'inventoryUsed');
+      for (const item of createJobDto.recordedDetails.inventoryUsed) {
+        this.validateObjectId(item.inventoryItemId, 'inventoryUsed');
       }
 
     try {
