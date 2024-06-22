@@ -86,7 +86,7 @@ export class ClientService {
     return result;
   }
 
-  async clientExists(id: string): Promise<boolean> {
+  async clientExists(id: string | Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<Client> & { _id: Types.ObjectId } =
       await this.clientModel
         .findOne({

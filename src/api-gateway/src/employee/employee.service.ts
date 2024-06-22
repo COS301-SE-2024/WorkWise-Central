@@ -117,4 +117,9 @@ export class EmployeeService {
     }
     return true;
   }
+
+  async employeeExists(assignedBy: Types.ObjectId) {
+    console.log(assignedBy);
+    return true; //TODO:Remove
+  }
 }
