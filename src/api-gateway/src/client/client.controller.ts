@@ -65,7 +65,7 @@ export class ClientController {
   @Get('all')
   async findAll() {
     try {
-      return { data: await this.clientService.findAllClients() };
+      return { data: await this.clientService.getAllClients() };
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
@@ -100,7 +100,7 @@ export class ClientController {
     const companyId = new mongoose.Types.ObjectId(compId);
     try {
       return {
-        data: await this.clientService.findByEmailOrName(companyId, str),
+        data: await this.clientService.getByEmailOrName(companyId, str),
       };
     } catch (e) {
       console.log(e);

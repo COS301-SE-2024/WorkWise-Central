@@ -1,115 +1,85 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
-import { CreateClientDto } from '../dto/create-client.dto';
-import { Transform } from 'class-transformer';
-import { IsString } from 'class-validator';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
+import { CreateClientDto } from '../dto/create-client.dto';
 
-export class address {
-  @ApiProperty()
+export class Address {
   @Prop({ type: String, required: true })
   street: string;
-  @ApiProperty()
   @Prop({ type: String, required: true })
   suburb: string;
-  @ApiProperty()
   @Prop({ type: String, required: true })
   city: string;
-  @ApiProperty()
   @Prop({ type: String, required: true })
   postalCode: string;
-  @ApiProperty()
-  @Prop({ type: String, required: true })
-  complex: string;
-  @ApiProperty()
-  @Prop({ type: String, required: true })
-  houseNumber: string;
+  @Prop({ type: String, required: false })
+  complex?: string;
+  @Prop({ type: String, required: false })
+  houseNumber?: string;
 }
 
-export class clientInfo {
-  @ApiProperty()
+export class ContactInfo {
   @Prop({ type: String, required: true })
   phoneNumber: string;
 
-  @ApiProperty()
-  @IsString()
-  @Transform(({ value }) => value.toLowerCase())
+  @Prop({ type: String, unique: true, required: true, lowercase: true })
   email: string;
-
-  @ApiProperty()
-  @Prop({ type: address, required: false })
-  address: address;
 }
 
-export class details {
+export class ClientDetails {
   @ApiProperty()
-  @Prop({ required: true })
-  firstName: string;
+  @Prop({ type: String, required: false })
+  name?: string;
+
+  @Prop({ type: String, required: false, default: 'English' })
+  @ApiProperty()
+  preferredLanguage?: string;
+
+  @ApiHideProperty()
+  @Prop({ type: ContactInfo, required: false })
+  contactInfo: ContactInfo;
+
+  @ApiHideProperty()
+  @Prop({ type: Address, required: false })
+  address?: Address;
 
   @ApiProperty()
-  @Prop({ required: true })
-  surname: string;
+  @Prop({ type: String, required: false })
+  vatNumber?: string;
 
-  @Prop({ required: true })
   @ApiProperty()
-  clientInfo: clientInfo;
+  @Prop({ type: Types.ObjectId, required: false, ref: 'Company' })
+  companyId?: Types.ObjectId;
 
-  @Prop({ required: false })
   @ApiProperty()
-  preferred_Language: string;
+  @Prop({ type: String, required: false })
+  idNumber?: string;
+
+  @ApiProperty()
+  @Prop({ type: String, required: false })
+  type?: string;
 }
 
 @Schema()
 export class Client {
   constructor(createClientDto: CreateClientDto) {
-    this.details = new details();
-    this.details.firstName = createClientDto.firstName;
-    this.details.surname = createClientDto.surname;
+    this.details = createClientDto.details;
+    this.clientUsername = createClientDto.clientUsername;
     this.registrationNumber = createClientDto.registrationNumber;
-    if (createClientDto.clientUsername)
-      this.clientUsername = createClientDto.clientUsername;
-    this.companyId = new Types.ObjectId(createClientDto.companyId);
-    this.name = createClientDto.name;
-    this.type = createClientDto.type;
-    this.vatNumber = createClientDto.vatNumber;
-
-    if (createClientDto.preferred_Language !== undefined)
-      this.details.preferred_Language = createClientDto.preferred_Language;
-    this.details.clientInfo = {
-      phoneNumber: createClientDto.phoneNumber,
-      email: createClientDto.email,
-      address: createClientDto.address,
-    };
     this.createdAt = new Date();
   }
-  //Company-specific traits
+
   @ApiProperty()
-  @Prop({ required: false })
+  @Prop({ type: String, required: false })
   registrationNumber?: string;
 
   @ApiProperty()
-  @Prop({ required: false, default: 'none' })
+  @Prop({ type: String, required: false, default: 'none' })
   clientUsername?: string;
 
   @ApiProperty()
   @Prop({ required: true })
-  companyId: Types.ObjectId;
-
-  @ApiProperty()
-  @Prop({ required: false })
-  name?: string;
-
-  @ApiProperty()
-  @Prop({ required: false })
-  type?: string;
-
-  @ApiProperty()
-  @Prop({ required: false })
-  vatNumber?: string;
-
-  @ApiProperty()
-  @Prop({ required: true })
-  details: details;
+  details: ClientDetails;
 
   @ApiProperty()
   @Prop({ required: false, default: new Date() })
