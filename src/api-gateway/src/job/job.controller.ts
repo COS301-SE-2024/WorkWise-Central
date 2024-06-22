@@ -53,14 +53,14 @@ export class JobController {
     @Body() createJobDto: CreateJobDto,
   ): Promise<{ message: { id: Types.ObjectId; message: string } }> {
     this.validateObjectId(createJobDto.assignedBy, 'assignedBy');
-    this.validateObjectId(createJobDto.companyId, 'company');
+    this.validateObjectId(createJobDto.companyId, 'Company');
 
     if (
-      createJobDto.inventoryUsed != undefined &&
-      createJobDto.inventoryUsed.length > 0
+      createJobDto.recordedDetails.inventoryUsed != undefined &&
+      createJobDto.recordedDetails.inventoryUsed.length > 0
     )
-      for (const item of createJobDto.inventoryUsed) {
-        this.validateObjectId(item, 'inventoryUsed');
+      for (const item of createJobDto.recordedDetails.inventoryUsed) {
+        this.validateObjectId(item.inventoryItemId, 'inventoryUsed');
       }
 
     try {
@@ -99,7 +99,7 @@ export class JobController {
     return this.jobService.update(+id, updateJobDto);
   }
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Delete()
   remove(@Param('id') id: string, @Body() pass: { pass: string }) {
     console.log(pass); //Will be implemented later
