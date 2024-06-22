@@ -9,7 +9,7 @@
     >
       <e-columns>
         <e-column keyField="No Status" headerText="No Status"></e-column>
-        <e-column keyField="To Do" headerText="To Do" :minCount="1" :maxCount="2"></e-column>
+        <e-column keyField="To Do" headerText="To Do" :minCount="0" :maxCount="5"></e-column>
         <e-column keyField="In Progress" headerText="In Progress"></e-column>
         <e-column keyField="Done" headerText="Done"></e-column>
         <e-column keyField="Stuck" headerText="Stuck"></e-column>
@@ -31,9 +31,9 @@
               <tr>
                 <td ><span class="bolded">Date: </span>{{ data.Date }}</td>
               </tr>
-<!--              <tr>-->
-<!--                <td ><span class="bolded">Address: </span>{{ data.Address }}</td>-->
-<!--              </tr>-->
+              <tr>
+                <td ><span class="bolded">Priority: </span>{{ data.Priority }}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -279,7 +279,7 @@ export default {
 .CardHeader{
   text-align: center;
   font-size: 20px;
-  color: blue;
+  color: #5A82AF;
 }
 .card-template-wrap{
   width: 100%;

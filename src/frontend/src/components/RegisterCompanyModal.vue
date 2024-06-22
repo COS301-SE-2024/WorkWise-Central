@@ -371,6 +371,7 @@ export default {
       ],
 
       req_obj: {
+        access_token: sessionStorage['access_token'],
         name: '',
         type: '',
         registrationNumber: '',
