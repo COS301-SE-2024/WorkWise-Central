@@ -13,12 +13,10 @@ import { CompanyService } from '../company/company.service';
 import { ClientService } from '../client/client.service';
 import { JobRepository } from './job.repository';
 import { EmployeeService } from '../employee/employee.service';
-import { validationResult } from '../auth/entities/validationResult.entity';
+import { ValidationResult } from '../auth/entities/validationResult.entity';
 
 @Injectable()
 export class JobService {
-  //private authorisedList: string[] = ['owner', 'manager'];
-
   constructor(
     @InjectModel(Job.name)
     private readonly jobModel: Model<Job>,
@@ -27,7 +25,6 @@ export class JobService {
     private readonly companyService: CompanyService,
     private readonly employeeService: EmployeeService,
     private readonly clientService: ClientService,
-    //@InjectModel('user') private readonly userModel: Model<User>, //Will be used later
   ) {}
 
   async create(createJobDto: CreateJobDto) {
@@ -48,7 +45,7 @@ export class JobService {
   }
 
   async authorisedToAssign(userId: Types.ObjectId, companyId: Types.ObjectId) {
-    //const user = await this.usersService.findUserById(userId);
+    //const user = await this.usersService.getUserById(userId);
     /*    if (!user.joinedCompanies.includes(companyId))
       throw new NotFoundException(
         'User does is not an employee of the company',
@@ -128,18 +125,18 @@ export class JobService {
 
   async jobIsValid(
     job: Job | CreateJobDto | UpdateJobDto,
-  ): Promise<validationResult> {
+  ): Promise<ValidationResult> {
     if (job.assignedBy) {
       const exists = await this.employeeService.employeeExists(job.assignedBy);
       if (!exists) {
-        return new validationResult(false, 'Assigned By is invalid');
+        return new ValidationResult(false, 'Assigned By is invalid');
       }
     }
     if (job.assignedEmployees) {
       for (const employee of job.assignedEmployees.employeeIds) {
         const exists = await this.employeeService.employeeExists(employee);
         if (!exists) {
-          return new validationResult(false, `Employee: ${employee} Not found`);
+          return new ValidationResult(false, `Employee: ${employee} Not found`);
         }
       }
     }
@@ -147,20 +144,20 @@ export class JobService {
     if (job.clientId) {
       const exists = await this.clientService.clientExists(job.clientId);
       if (!exists) {
-        return new validationResult(false, 'Client does not exist');
+        return new ValidationResult(false, 'Client does not exist');
       }
     }
 
     if (job.companyId) {
       const exists = await this.companyService.companyIdExists(job.companyId);
       if (!exists) {
-        return new validationResult(
+        return new ValidationResult(
           false,
           `Company: ${job.companyId} Not found`,
         );
       }
     }
 
-    return new validationResult(true);
+    return new ValidationResult(true);
   }
 }

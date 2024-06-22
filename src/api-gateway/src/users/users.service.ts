@@ -5,17 +5,12 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  ServiceUnavailableException,
 } from '@nestjs/common';
 import { CreateUserDto, createUserResponseDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Document, FlattenMaps, Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import {
-  User,
-  userEmployeeFields,
-  userJoinedCompaniesField,
-} from './entities/user.entity';
+import { User } from './entities/user.entity';
 import { AuthService } from '../auth/auth.service';
 import { EmployeeService } from '../employee/employee.service';
 import { UserConfirmation } from './entities/user-confirmation.entity';
@@ -27,7 +22,9 @@ import { ValidationResult } from '../auth/entities/validationResult.entity';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectModel(User.name)
+    private readonly userModel: Model<User>,
+    private readonly userRepository: UsersRepository,
     @InjectModel(UserConfirmation.name)
     private readonly userConfirmationModel: Model<UserConfirmation>,
     @Inject(forwardRef(() => AuthService))
@@ -71,79 +68,34 @@ export class UsersService {
   }
 
   async verifyUser(email: string) {
-    const result = await this.userModel.findOneAndUpdate(
-      {
-        'personalInfo.contactInfo.email': email,
-      },
-      { $set: { isValidated: true } },
-      { new: true },
-    );
-    console.log(`verified user with email: ${email}`);
-    console.log(result);
-    return true;
+    return this.userRepository.verifyUser(email);
   }
 
-  async findAllUsers() {
-    try {
-      return this.userModel
-        .find()
-        .populate(userEmployeeFields)
-        .populate(userJoinedCompaniesField)
-        .exec();
-    } catch (error) {
-      console.log(error);
-      throw new ServiceUnavailableException('Users could not be retrieved');
-    }
+  async getAllUsers(): Promise<User[]> {
+    return this.userRepository.findAll();
   }
 
   async usernameExists(identifier: string): Promise<boolean> {
-    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
-      await this.userModel
-        .findOne({
-          $and: [
-            { 'systemDetails.username': identifier },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
-
-    console.log('usernameExists -> ', result);
-    return result != null;
+    return this.userRepository.exists(identifier);
   }
 
   async userIdExists(id: string | Types.ObjectId): Promise<boolean> {
-    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
-      await this.userModel
-        .findOne({
-          $and: [
-            { id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
-
-    console.log('userIdExists -> ', result);
-    return result == null;
+    return this.userRepository.userIdExists(id);
   }
 
-  async findUserById(
-    identifier: string | Types.ObjectId,
-  ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
-    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
-      await this.userModel
-        .findOne({
-          $and: [
-            { _id: identifier },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
+  async getUserById(identifier: string | Types.ObjectId): Promise<User> {
+    const result: User = await this.userRepository.findById(identifier);
+
+    if (result == null) {
+      throw new NotFoundException(
+        'Error: User not found, please verify your username and password',
+      );
+    }
+    return result;
+  }
+
+  async getUserByUsername(identifier: string) {
+    const result = this.userRepository.findById(identifier);
 
     if (result == null) {
       throw new NotFoundException(
@@ -154,31 +106,7 @@ export class UsersService {
     return result;
   }
 
-  async findUserByUsername(
-    identifier: string,
-  ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
-    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
-      await this.userModel
-        .findOne({
-          $and: [
-            { 'systemDetails.username': identifier },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
-
-    if (result == null) {
-      throw new NotFoundException(
-        'Error: User not found, please verify your username and password',
-      );
-    }
-
-    return result;
-  }
-
-  async update(
+  async updateUser(
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
@@ -187,47 +115,29 @@ export class UsersService {
       throw new NotFoundException(inputValidated.message);
     }
 
-    const previousObject: FlattenMaps<User> & { _id: Types.ObjectId } =
-      await this.userModel
-        .findOneAndUpdate(
-          {
-            $and: [
-              { _id: id },
-              {
-                $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-              },
-            ],
-          },
-          { $set: { ...updateUserDto }, updatedAt: new Date() },
-        )
-        .lean();
-    if (previousObject == null) {
+    const updatedUser: FlattenMaps<User> & { _id: Types.ObjectId } =
+      await this.userRepository.update(id, updateUserDto);
+    if (updatedUser == null) {
       throw new NotFoundException('failed to update user');
     }
-    return previousObject;
+    return updatedUser;
   }
 
   async softDelete(id: string): Promise<boolean> {
-    const result: Document<unknown, NonNullable<unknown>, User> &
-      User & { _id: Types.ObjectId } = await this.userModel.findOneAndUpdate(
-      {
-        $and: [
-          {
-            $or: [{ _id: id }, { 'systemDetails.username': id }],
-          },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      },
-      { $set: { deletedAt: new Date() } },
-    );
+    const userToDelete = await this.userRepository.findById(id);
+    if (!userToDelete) {
+      throw new NotFoundException(
+        'Error: User not found, please verify your user',
+      );
+    }
+    const result = await this.userRepository.delete(id);
     if (result == null) {
       throw new InternalServerErrorException('Internal server Error');
     }
 
-    const deleteRelatedEmployees = await this.employeeService.remove(result.id);
-    console.log(deleteRelatedEmployees);
+    /*    const deleteRelatedEmployees = await this.employeeService.remove(result.id);
+    console.log(deleteRelatedEmployees);*/
+    //TODO:Relinquish ownership of company to someone else
     return true;
   }
 
