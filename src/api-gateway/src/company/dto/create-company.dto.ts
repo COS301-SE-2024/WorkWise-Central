@@ -7,7 +7,7 @@ import {
   IsNotEmpty,
   IsNumberString,
   IsOptional,
-  IsPhoneNumber,
+  //IsPhoneNumber,
   IsString,
   MaxLength,
   ValidateNested,
@@ -21,7 +21,7 @@ export class ContactDetails {
   @Transform(({ value }) =>
     value.startsWith('0') ? `+27${value.slice(1)}` : value,
   )
-  @IsPhoneNumber(null)
+  //@IsPhoneNumber(null)
   phoneNumber: string;
 
   @IsNotEmpty()

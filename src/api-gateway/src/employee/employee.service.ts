@@ -35,7 +35,7 @@ export class EmployeeService {
     }
 
     const user = await this.usersService.getUserById(createEmployeeDto.userId);
-    const company = await this.companyService.findById(
+    const company = await this.companyService.getCompanyById(
       createEmployeeDto.companyId,
     );
 
@@ -46,7 +46,7 @@ export class EmployeeService {
 
     newEmployee.userId = createEmployeeDto.userId;
     newEmployee.role = createEmployeeDto.role;
-    const companyObject = await this.companyService.findById(
+    const companyObject = await this.companyService.getCompanyById(
       createEmployeeDto.companyId,
     );
     newEmployee.company = {

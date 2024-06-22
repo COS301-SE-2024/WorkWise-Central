@@ -18,6 +18,7 @@ import { randomStringGenerator } from '@nestjs/common/utils/random-string-genera
 import { EmailService } from '../email/email.service';
 import { UsersRepository } from './users.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
+import { isPhoneNumber } from 'class-validator';
 
 @Injectable()
 export class UsersService {
@@ -77,6 +78,10 @@ export class UsersService {
 
   async usernameExists(identifier: string): Promise<boolean> {
     return this.userRepository.exists(identifier);
+  }
+
+  isValidPhoneNumber(phoneNum: string) {
+    return isPhoneNumber(phoneNum, null);
   }
 
   async userIdExists(id: string | Types.ObjectId): Promise<boolean> {
