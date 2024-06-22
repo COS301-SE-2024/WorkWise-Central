@@ -35,22 +35,8 @@
             class="mb-4"
         ></v-textarea>
       </div>
-      <div v-if="dateChips.length">
-        <h4 class="flex-grow-1"> Job Dates:</h4>
-        <v-chip
-            v-for="(chip, index) in dateChips"
-            :key="index"
-            class="ma-2"
-            color="primary"
-            outlined
-            @click:close="removeDate(chip, index)"
-            close
-        >
-          {{ chip.type }}: {{ formatDate(chip.date) }}
-        </v-chip>
-      </div>
       <div v-if="clientChips.length" class="chip-container">
-        <h4 class="flex-grow-1">Attached clients:</h4>
+        <h4 class="flex-grow-1">Selected Client:</h4>
         <div class="chip-wrapper">
           <v-chip
               v-for="(chip, index) in clientChips"
@@ -58,10 +44,10 @@
               class="ma-2"
               color="primary"
               outlined
-              @click:close="removeFile(chip, index)"
+              @click:close="removeClient(chip, index)"
               close
           >
-            {{ chip.name }} ({{ (chip.size / 1024).toFixed(2) }} KB)
+            {{ chip.name }}
           </v-chip>
         </div>
       </div>
@@ -80,6 +66,20 @@
             {{ chip.name }} ({{ (chip.size / 1024).toFixed(2) }} KB)
           </v-chip>
         </div>
+      </div>
+      <div v-if="dateChips.length">
+        <h4 class="flex-grow-1"> Job Dates:</h4>
+        <v-chip
+            v-for="(chip, index) in dateChips"
+            :key="index"
+            class="ma-2"
+            color="primary"
+            outlined
+            @click:close="removeDate(chip, index)"
+            close
+        >
+          {{ chip.type }}: {{ formatDate(chip.date) }}
+        </v-chip>
       </div>
       <v-card-actions class="d-flex flex-column">
         <v-btn class="mb-2" color="blue darken-1" @click="saveJob">Save</v-btn>
@@ -234,8 +234,9 @@ import { VBtn, VDialog, VCard, VCardTitle, VCardText, VCardActions, VFileInput, 
 //For change client
 const clientDialog = ref(false);
 const selectedClient = ref(null);
+const clientChips = ref([]);
 
-// api call to get clients
+// api call to get clients and stores them here
 const clients = [
   { id: 1, name: 'John Doe' },
   { id: 2, name: 'Jane Smith' },
@@ -244,11 +245,14 @@ const clients = [
 
 const saveClient = () => {
   // Save functionality here
+  if (selectedClient.value) {
+    clientChips.value.push(selectedClient.value);
+  }
   clientDialog.value = false;
-  // add a client chip here
 };
 
 // For File attachments
+
 const dialog = ref(false);
 const files = ref([]);
 const rules = ref([
@@ -270,6 +274,7 @@ const insertFiles = () => {
 };
 
 // For Due Date Dialog
+
 const dueDateDialog = ref(false);
 const currentDate = ref(null);
 const startDate = ref(null);
