@@ -305,9 +305,10 @@ export default defineComponent({
     },
     handleSubmission() {
       console.log(JSON.stringify(this.req_obj))
+      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
 
       axios
-        .post('http://localhost:3000/client/create', this.req_obj)
+        .post('http://localhost:3000/company/add', this.req_obj, config)
         .then((res) => {
           alert('Client created successfully')
           console.log(res)
