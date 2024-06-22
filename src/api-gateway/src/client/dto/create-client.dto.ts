@@ -8,8 +8,9 @@ import {
   IsPhoneNumber,
   IsString,
   MaxLength,
+  ValidateNested,
 } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { Client } from '../entities/client.entity';
 import { Types } from 'mongoose';
 
@@ -79,10 +80,14 @@ export class ClientDetails {
   preferredLanguage?: string;
 
   @ApiProperty()
+  @ValidateNested()
+  @Type(() => ContactInfo)
   contactInfo: ContactInfo;
 
   @ApiProperty()
   @IsOptional()
+  @ValidateNested()
+  @Type(() => Address)
   address?: Address;
 
   @ApiProperty()
@@ -119,6 +124,8 @@ export class CreateClientDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => ClientDetails)
   details: ClientDetails;
 }
 
