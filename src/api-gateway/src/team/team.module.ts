@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Team, TeamSchema } from './entities/team.entity';
 import { UsersModule } from '../users/users.module';
 import { CompanyModule } from '../company/company.module';
+import { EmployeeModule } from '../employee/employee.module';
 
 @Module({
   imports: [
@@ -13,9 +14,10 @@ import { CompanyModule } from '../company/company.module';
     ]),
     forwardRef(() => UsersModule),
     CompanyModule,
+    forwardRef(() => EmployeeModule), 
   ],
   controllers: [TeamController],
   providers: [TeamService],
   exports: [TeamService, MongooseModule],
 })
-export class EmployeeModule {}
+export class TeamModule {}

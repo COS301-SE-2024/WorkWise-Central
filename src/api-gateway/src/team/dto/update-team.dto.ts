@@ -12,30 +12,20 @@ export class UpdateTeamDto {
   @ApiProperty()
   teamName: string;
 
-  @IsMongoId()
-  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
   @ApiProperty()
-  addTeamMember: Types.ObjectId;
-
-  @IsMongoId()
-  @IsOptional()
-  @ApiProperty()
-  removeTeamMember: Types.ObjectId;
+  teamMembers: Types.ObjectId[];
    
   @IsMongoId()
   @IsOptional()
   @ApiProperty()
   teamLeaderId: Types.ObjectId;
 
-  @IsMongoId()
-  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
   @ApiProperty()
-  addJob: Types.ObjectId;
-
-  @IsMongoId()
-  @IsOptional()
-  @ApiProperty()
-  removeJob: Types.ObjectId;
+  currentJobAssignments: Types.ObjectId[];
 }
 
 export class updateTeamResponseDto{

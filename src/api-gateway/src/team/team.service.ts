@@ -15,6 +15,7 @@ import { Team } from './entities/team.entity';
 import { EmployeeService } from '../employee/employee.service';
 import { CompanyService } from '../company/company.service';
 import { User } from '../users/entities/user.entity';
+import { JobService } from 'src/job/job.service';
 
 @Injectable()
 export class TeamService {
@@ -24,20 +25,43 @@ export class TeamService {
     @Inject(forwardRef(() => EmployeeService))
     private employeeService: EmployeeService,
     private companyService: CompanyService,
+    @Inject(forwardRef(() => JobService))
+    private jobService: JobService,
   ) {}
 
-  async create(createTeamDto: CreateTeamDto) {
-    if (!(await this.companyService.companyIdExists(createTeamDto.companyId))) {
-      throw new ConflictException('Company not found');
-    }
-    if (!(await this.employeeService.findById(createTeamDto.teamLeaderId))) {
-      throw new ConflictException('Employee not found');
-    }
-    for (const employee of createTeamDto.teamMembers) {
-      if (!(await this.employeeService.findById(employee))) {
-        throw new ConflictException('Employee not found');
+  async validateTeam(team: Team | CreateTeamDto | UpdateTeamDto) {
+    if ('companyId' in team && team.companyId)
+    {
+      if (!(await this.companyService.companyExists(team.companyId.toString()))) {
+        throw new ConflictException('Company not found');
       }
     }
+  
+  if ('teamMembers' in team && team.teamMembers) {
+    for (const memberId of team.teamMembers) {
+      if (!(await this.employeeService.employeeExists(memberId.toString()))) {
+        throw new ConflictException(`Team member ${memberId.toString()} not found`);
+      }
+    }
+  }
+
+  if ('teamLeaderId' in team && team.teamLeaderId) {
+    if (!(await this.employeeService.employeeExists(team.teamLeaderId.toString()))) {
+      throw new ConflictException('Team leader not found');
+    }
+  }
+
+  if ('currentJobAssignments' in team && team.currentJobAssignments) {
+    for (const jobId of team.currentJobAssignments) {
+      if (!(await this.jobService.jobExists(jobId.toString()))) {
+        throw new ConflictException(`Job assignment ${jobId.toString()} not found`);
+      }
+    }
+  }
+}
+
+  async create(createTeamDto: CreateTeamDto) {
+    await this.validateTeam(createTeamDto)
 
     const company = await this.companyService.findById(createTeamDto.companyId,);
     const teamLeader = await this.employeeService.findById(createTeamDto.teamLeaderId);
@@ -110,12 +134,7 @@ export class TeamService {
   }
 
   async update(id: number, updateTeamDto: UpdateTeamDto) {
-    const teamName = updateTeamDto.teamName;
-    const addTeamMember = updateTeamDto.addTeamMember;
-    const removeTeamMember = updateTeamDto.removeTeamMember;
-    const teamLeaderId = updateTeamDto.teamLeaderId;
-    const addJob = updateTeamDto.addJob;
-    const removeJob = updateTeamDto.removeJob;
+    await this.validateTeam(updateTeamDto)
 
     const previousObject: FlattenMaps<Team> & { _id: Types.ObjectId } =
       await this.teamModel
@@ -131,50 +150,6 @@ export class TeamService {
           { $set: { ...updateTeamDto }, updatedAt: new Date() },
         )
         .lean();
-    
-    if (teamName) {
-      await this.teamModel.updateOne(
-        { _id: id },
-        { $set: { teamName: teamName } }
-      );
-    }
-
-    if (teamLeaderId) {
-      await this.teamModel.updateOne(
-        { _id: id },
-        { $set: { teamLeaderId: teamLeaderId } }
-      );
-    }
-
-    if (addTeamMember) {
-      await this.teamModel.updateOne(
-        { _id: id },
-        { $addToSet: { teamMembers: { $each: addTeamMember } } }
-      );
-    }
-
-    if (removeTeamMember) {
-      await this.teamModel.updateOne(
-        { _id: id },
-        { $pull: { teamMembers: { $in: removeTeamMember } } }
-      );
-    }
-
-    if (addJob) {
-      await this.teamModel.updateOne(
-        { _id: id },
-        { $addToSet: { jobs: { $each: addJob } } }
-      );
-    }
-
-    if (removeJob) {
-      await this.teamModel.updateOne(
-        { _id: id },
-        { $pull: { jobs: { $in: removeJob } } }
-      );
-    }
-    
-    
     return previousObject;
   }
 
