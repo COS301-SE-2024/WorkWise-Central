@@ -6,6 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { Job } from './entities/job.entity';
+import { UpdateJobDto } from './dto/update-job.dto';
 
 @Injectable()
 export class JobRepository {
@@ -57,6 +58,23 @@ export class JobRepository {
         ],
       })
       .lean();
+  }
+
+  async update(id: string | Types.ObjectId, updateJobDto: UpdateJobDto) {
+    const result: Document<unknown, NonNullable<unknown>, Job> &
+      Job & { _id: Types.ObjectId } = await this.jobModel.findOneAndUpdate(
+      {
+        $and: [
+          { _id: id },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      },
+      { $set: { ...updateJobDto }, updatedAt: new Date() },
+      { new: true },
+    );
+    return result;
   }
 
   async delete(id: string): Promise<boolean> {
