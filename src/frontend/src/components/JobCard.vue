@@ -49,7 +49,10 @@
             {{ chip.name }}
           </v-chip>
         </div>
-
+        <div v-if="status">
+          <h4 class="flex-grow-1">Status</h4>
+          <v-chip class="ma-2" :color="status.color" outlined close>{{ status.title }}</v-chip>
+        </div>
         <div v-if="checklistChips.length">
           <h4 class="flex-grow-1">Checklist:</h4>
           <v-chip
@@ -120,7 +123,8 @@
           <!-- Team Member List -->
           <TeamMemberList
             :teamList="teamMemberChips"
-            :selectedMembers="selectedMemberChips"
+            @update:selectedMembers="selectedMemberChips = $event"
+            @addMemberToCard="handleAddMemberToCard"
           ></TeamMemberList>
           <!-- Change Client -->
           <v-btn class="mb-2" outlined @click="clientDialog = true">Change Client</v-btn>
@@ -154,14 +158,14 @@
             </v-card>
           </v-dialog>
           <!-- Job Labels -->
-          <JobLabels></JobLabels>
+          <JobLabels @update:status="status = $event" />
           <!-- Job Checklist -->
-          <JobChecklist></JobChecklist>
+          <JobChecklist @itemAdded:checklistProp="addItemToChecklist"></JobChecklist>
 
           <v-btn class="mb-2" outlined @click="dialog = true">File Attachments</v-btn>
           <!-- File Attachments -->
           <v-dialog v-model="dialog" max-width="600px">
-            <v-card>
+            <v-card rounded="md">
               <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
                 Attach a file from your computer
               </v-card-title>
@@ -348,7 +352,6 @@ const toggleEndDate = () => {
   endDate.value = null
 }
 
-const statusChip = ref(null)
 const teamMemberChips = ref([
   { id: 0, name: 'John Doe', selected: false, role: 'Software Engineer' },
   { id: 1, name: 'Jane Smith', selected: false, role: 'Software Engineer' },
@@ -356,6 +359,7 @@ const teamMemberChips = ref([
 ])
 const selectedMemberChips = ref([])
 const checklistChips = ref([])
+const status = ref(null)
 
 const dateChips = ref([])
 const formatDate = (date) => {
@@ -366,7 +370,14 @@ const formatDate = (date) => {
   const dd = String(d.getDate()).padStart(2, '0')
   return `${yyyy}-${mm}-${dd}`
 }
-
+const addItemToChecklist = (item) => {
+  checklistChips.value.push(item)
+}
+const handleAddMemberToCard = (member) => {
+  // Assuming cardMembers is a data property of the parent component
+  selectedMemberChips.value = member
+  // Make sure to update the parent state in a way that Vue can react to
+}
 const formattedStartDate = computed(() => formatDate(startDate.value))
 const formattedEndDate = computed(() => formatDate(endDate.value))
 

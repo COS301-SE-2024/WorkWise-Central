@@ -23,7 +23,7 @@
                 Name
               </small>
               <v-text-field
-                v-model="editedItem.firstName"
+                v-model="localEditedItem.firstName"
                 :rules="nameRules"
                 variant="solo"
                 rounded="md"
@@ -38,7 +38,7 @@
                 Surname
               </small>
               <v-text-field
-                v-model="editedItem.surname"
+                v-model="localEditedItem.surname"
                 :rules="surnameRules"
                 variant="solo"
                 rounded="md"
@@ -53,7 +53,7 @@
                 Phone Number
               </small>
               <v-text-field
-                v-model="editedItem.clientInfo.phoneNumber"
+                v-model="localEditedItem.clientInfo.phoneNumber"
                 :rules="phoneRules"
                 variant="solo"
                 rounded="md"
@@ -68,7 +68,7 @@
                 Email
               </small>
               <v-text-field
-                v-model="editedItem.clientInfo.email"
+                v-model="localEditedItem.clientInfo.email"
                 variant="solo"
                 :rules="emailRules"
                 rounded="md"
@@ -83,7 +83,7 @@
                 Address
               </small>
               <v-text-field
-                v-model="editedItem.clientInfo.address"
+                v-model="localEditedItem.clientInfo.address"
                 variant="solo"
                 rounded="md"
               ></v-text-field>
@@ -150,6 +150,7 @@ export default {
   },
   data() {
     return {
+      localEditedItem: this.editedItem,
       clientDialog: false,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
@@ -179,22 +180,23 @@ export default {
       ]
     }
   },
+  watch: {
+    // Step 2: Watch the prop for changes
+    editedItem(newVal) {
+      this.localEditedItem = newVal
+    }
+  },
   methods: {
     close() {
       this.clientDialog = false
     },
-    saveChanges() {
-      const updatedItem = {
-        name: this.editedItem.name,
-        email: this.editedItem.email,
-        phone: this.editedItem.phone,
-        address: this.editedItem.address,
-        jobRequired: this.editedItem.jobRequired
-      }
-      if (true) {
-        alert('Changes saved')
-      }
+    updateItem() {
+      // Logic to update the item, then emit an event with the updated value
+      // Step 3: Emit an event for updates
+      this.$emit('update:item', this.localEditedItem)
+      alert('Item updated')
     },
+
     async update() {
       await axios
         .post('http://localhost:8000/api/clients/', this.editedItem)

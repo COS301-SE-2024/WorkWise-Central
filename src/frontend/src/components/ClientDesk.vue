@@ -8,7 +8,7 @@
               flat
               :height="auto"
               class="pa-11 ma-10"
-              rounded="md"
+              rounded="xl"
               elevation-2
               :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
               border="md"
@@ -16,7 +16,7 @@
               <v-card-title
                 class="d-flex align-center pe-2"
                 :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
-                style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter;"
+                style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
               >
                 <v-icon icon="mdi-account"></v-icon> &nbsp; Client Details
 
@@ -29,7 +29,7 @@
                   prepend-inner-icon="mdi-magnify"
                   variant="outlined"
                   flat
-                  style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter;"
+                  style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
                   hide-details
                   :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
                   single-line
@@ -49,6 +49,7 @@
                       :single-expand="true"
                       v-model:expanded="expanded"
                       show-expand
+                      height="auto"
                       rounded="xl"
                       :item-class="getRowClass"
                       @click:row="toggleExpand"
@@ -123,7 +124,9 @@
     >
 
     <v-col> <DeleteClient v-model="deleteDialog" :details="selectedItem" /></v-col>
-    <v-col> <EditClient v-model="editDialog" :editedItem="selectedItem" /></v-col>
+    <v-col>
+      <EditClient v-model="editDialog" @update:selectedItem="handleSelectedItemUpdate"
+    /></v-col>
   </v-container>
 </template>
 
@@ -233,6 +236,11 @@ export default defineComponent({
         this.expanded = [item]
         console.log(this.expanded)
       }
+    },
+    handleSelectedItemUpdate(updatedItem) {
+      // Handle the updated item here
+      console.log('Updated item:', updatedItem)
+      // Perform actions based on the updated item, such as updating data or UI elements
     },
     async getClients() {
       const config = {

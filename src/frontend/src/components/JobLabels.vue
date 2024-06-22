@@ -4,7 +4,7 @@
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
-       class="mb-2"
+        class="mb-2"
         prepend-icon="mdi-label"
         variant="elevated"
         v-bind="activatorProps"
@@ -74,7 +74,8 @@ export default defineComponent({
   name: 'JobLabels',
   props: {
     isDarkMode: Boolean,
-    colors: Object
+    colors: Object,
+    Status: Object
   },
   data: () => ({
     jobDialog: false,
@@ -108,19 +109,24 @@ export default defineComponent({
       }
     ],
     selectedLabels: [],
-    isSelected: false
+    isSelected: false,
+    status: ''
   }),
   methods: {
     toggleSelection(selectedLabel) {
-      // Check if the selected label is already selected
       if (selectedLabel.isSelected) {
-        // Deselect it
         selectedLabel.isSelected = false
       } else {
-        // Proceed to deselect all and select the new one
         this.jobLabels.forEach((label) => {
           label.isSelected = label === selectedLabel
         })
+        // Emit an event instead of modifying the prop directly
+        if(selectedLabel.isSelected){
+        this.$emit('update:status', selectedLabel)
+        }else{
+          this.$emit('update:status', '')
+        
+        }
       }
       console.log(selectedLabel.isSelected) // Logs the current state of the selected/deselected label
     },

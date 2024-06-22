@@ -11,10 +11,16 @@
         Members
       </v-btn>
     </template>
-    <v-sheet elevation="14" rounded="xl" height="auto">
+    <v-sheet elevation="14" rounded="md" height="auto">
       <v-col cols="12"
         ><v-col cols="12">
-          <h4 class="text-center" style="font-size: 30px; font-weight: lighter">Members</h4>
+          <v-card variant="">
+            <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+              <v-icon left class="mr-2">mdi-account</v-icon>
+              <span class="title">Team Members</span>
+              <v-spacer></v-spacer>
+            </v-card-title>
+          </v-card>
         </v-col>
 
         <v-spacer></v-spacer>
@@ -56,7 +62,7 @@
               <v-row align="center" justify="space-between"
                 ><v-col>
                   <v-card
-                    @click="moveToCardMembers(member)"
+                    @click="moveToCardMembers(member), $emit('update:isDarkMode', value)"
                     rounded="md"
                     variant="plain"
                     color="red"
@@ -79,7 +85,6 @@
 </template>
 
 <script>
-import { select } from '@syncfusion/ej2-base'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -100,14 +105,35 @@ export default defineComponent({
   }),
   methods: {
     moveToCardMembers(member) {
-      this.sections.cardMembers.push(member)
+      // Emit an event to notify the parent component to add the member to the cardMembers prop
+      this.$emit('addMemberToCard', member)
+
+      // Filter the member out from teamMembers
       this.sections.teamMembers = this.sections.teamMembers.filter((m) => m.id !== member.id)
+
+      // Set the member as selected
       member.selected = true
-      this.selectedMembers.push(member)
+      this.sections.cardMembers.push(member)
+      // Emit an event with the updated member
+      this.$emit('update:selectedMembers', member)
     },
     moveToTeamMembers(member) {
       this.sections.teamMembers.push(member)
       this.sections.cardMembers = this.sections.cardMembers.filter((m) => m.id !== member.id)
+      member.selected = false
+      this.$emit('update:selectedMembers', member)
+    },
+    updateDarkMode(value) {
+      // Emit an event to notify the parent component
+      this.$emit('update:isDarkMode', value)
+    },
+    updateTeamList(value) {
+      // Emit an event to notify the parent component
+      this.$emit('update:teamList', value)
+    },
+    updateSelectedMembers(value) {
+      // Emit an event to notify the parent component
+      this.$emit('update:selectedMembers', value)
     }
   },
   mounted() {
