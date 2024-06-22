@@ -95,7 +95,7 @@ export class UsersService {
   }
 
   async getUserByUsername(identifier: string) {
-    const result = this.userRepository.findById(identifier);
+    const result = this.userRepository.findByUsername(identifier);
 
     if (result == null) {
       throw new NotFoundException(

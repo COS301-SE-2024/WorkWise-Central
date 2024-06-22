@@ -30,10 +30,10 @@ export class Address {
   city: string;
   @Prop({ type: String, required: true })
   postalCode: string;
-  @Prop({ type: String, required: true })
-  complex: string;
-  @Prop({ type: String, required: true })
-  houseNumber: string;
+  @Prop({ type: String, required: false })
+  complex?: string;
+  @Prop({ type: String, required: false })
+  houseNumber?: string;
 }
 
 export class PersonalInfo {

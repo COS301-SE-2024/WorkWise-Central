@@ -4,7 +4,6 @@ import {
   IsArray,
   IsDateString,
   IsEmail,
-  IsMongoId,
   IsNotEmpty,
   IsNumberString,
   IsObject,
@@ -59,16 +58,16 @@ class Address {
   postalCode: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(255)
-  complex: string;
+  complex?: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumberString()
   @MaxLength(255)
-  houseNumber: string;
+  houseNumber?: string;
 }
 
 class PersonalInfo {
