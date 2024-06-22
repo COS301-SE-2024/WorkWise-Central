@@ -21,12 +21,12 @@ export class RoleController {
     return this.RoleService.create(createRoleDto);
   }
 
-  @Get()
+  @Get('/all')
   findAll() {
     return this.RoleService.findAll();
   }
 
-  @Get(':id')
+  @Get('id/:id')
   findOne(@Param('id') id: string) {
     return this.RoleService.findOne(id);
   }
