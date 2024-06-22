@@ -49,7 +49,7 @@ export class ClientRepository {
   }
 
   async exists(id: string | Types.ObjectId) {
-    const result = this.clientModel
+    const result = await this.clientModel
       .findOne({
         $and: [
           { _id: id },

@@ -9,7 +9,7 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
+  //UseGuards,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
 import {
@@ -24,7 +24,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import mongoose, { FlattenMaps, Types } from 'mongoose';
-import { AuthGuard } from '../auth/auth.guard';
+// import { AuthGuard } from '../auth/auth.guard';
 import { Client } from './entities/client.entity';
 
 @ApiTags('Client')
@@ -61,7 +61,7 @@ export class ClientController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   @Get('all')
   async findAll() {
     try {
@@ -75,9 +75,7 @@ export class ClientController {
   }
 
   @Get('id/:id')
-  async findOne(
-    @Param('id') id: string,
-  ): Promise<{ data: FlattenMaps<Client> & { _id: Types.ObjectId } }> {
+  async findOne(@Param('id') id: string) {
     this.validateObjectId(id);
     try {
       return { data: await this.clientService.findClientById(id) };
@@ -116,7 +114,7 @@ export class ClientController {
     return { data: this.clientService.update(+id, updateClientDto) };
   }
 
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   @Delete()
   remove(@Param('id') id: string, @Body() pass: { pass: string }) {
     console.log(pass); //Will be implemented later
