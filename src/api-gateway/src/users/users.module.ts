@@ -10,6 +10,7 @@ import {
   UserConfirmationScheme,
 } from './entities/user-confirmation.entity';
 import { EmailService } from '../email/email.service';
+import { UsersRepository } from './users.repository';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { EmailService } from '../email/email.service';
     ]),
   ],
   controllers: [UsersController],
-  providers: [UsersService, EmailService],
+  providers: [UsersService, UsersRepository, EmailService],
   exports: [UsersService, MongooseModule],
 })
 export class UsersModule {}
