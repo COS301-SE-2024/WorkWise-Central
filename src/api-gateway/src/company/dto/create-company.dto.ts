@@ -1,132 +1,113 @@
 import { ApiProperty } from '@nestjs/swagger';
-import mongoose, { Types } from 'mongoose';
+import { Types } from 'mongoose';
 import {
-  IsArray,
   IsBoolean,
   IsEmail,
   IsMongoId,
   IsNotEmpty,
   IsNumberString,
-  IsObject,
   IsOptional,
-  IsPhoneNumber,
+  //IsPhoneNumber,
   IsString,
+  MaxLength,
+  ValidateNested,
 } from 'class-validator';
-import { Transform } from 'class-transformer';
-import { IsObjectId } from 'class-validator-mongo-object-id';
+import { Transform, Type } from 'class-transformer';
 import { Company } from '../entities/company.entity';
 
-/*export class CreateCompanyDto extends OmitType(Company, [
-  'updatedAt',
-  'deletedAt',
-] as const) {
-  creatorId: Types.ObjectId;
-}*/
-
-export class contactDetails {
-  @ApiProperty()
+export class ContactDetails {
   @IsNotEmpty()
-  @IsPhoneNumber()
-  public phoneNumber: string;
+  @IsString()
+  @Transform(({ value }) =>
+    value.startsWith('0') ? `+27${value.slice(1)}` : value,
+  )
+  //@IsPhoneNumber(null)
+  phoneNumber: string;
 
-  @ApiProperty()
   @IsNotEmpty()
+  @IsString()
   @IsEmail()
-  @Transform(({ value }) => value.toLowerCase())
-  public email: string;
+  email: string;
 }
 
-class address {
+class Address {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   street: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   suburb: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   city: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumberString()
+  @MaxLength(20)
   postalCode: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  complex: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsNumberString()
-  houseNumber: string;
 }
 
 export class CreateCompanyDto {
   @ApiProperty()
-  @IsNotEmpty()
-  @IsObjectId()
-  creatorId: Types.ObjectId;
-
-  @ApiProperty()
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   registrationNumber: string;
 
   @ApiProperty()
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   vatNumber: string;
 
   @ApiProperty()
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   name: string;
 
   @ApiProperty()
-  @IsOptional()
-  @IsNotEmpty()
   @IsString()
-  type: string;
+  type?: string;
 
   @ApiProperty()
-  @IsOptional()
-  @IsNotEmpty()
   @IsString()
-  logo: string;
+  logo?: string =
+    'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsObject()
-  contactDetails: contactDetails;
+  @ValidateNested()
+  @Type(() => ContactDetails)
+  contactDetails: ContactDetails;
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsObject()
-  address: address;
+  @ValidateNested()
+  @Type(() => Address)
+  address: Address;
+
+  @ApiProperty()
+  @IsString()
+  @IsMongoId({ each: true })
+  @IsOptional()
+  employees?: Types.ObjectId[] = [];
 
   @ApiProperty()
   @IsOptional()
-  @IsArray()
   @IsMongoId({ each: true })
-  employees: mongoose.Types.ObjectId[];
-
-  @ApiProperty()
-  @IsOptional()
-  @IsArray()
-  @IsMongoId({ each: true })
-  inventoryItems: mongoose.Types.ObjectId[];
+  inventoryItems?: Types.ObjectId[] = [];
 
   @ApiProperty()
   @IsOptional()
   @IsBoolean()
-  private: boolean;
+  private?: boolean = false;
 }
 
 export class findCompanyResponseDto {

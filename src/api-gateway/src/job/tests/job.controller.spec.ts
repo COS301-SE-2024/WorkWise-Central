@@ -10,17 +10,17 @@ describe('JobController', () => {
 
   const mockJobService = {
     create: jest.fn(),
-    findAll: jest.fn(),
+    findAllCompanies: jest.fn(),
   };
 
   const mockClientService = {
     create: jest.fn(),
-    findAll: jest.fn(),
+    findAllCompanies: jest.fn(),
   };
 
   const mockJwtService = {
     create: jest.fn(),
-    findAll: jest.fn(),
+    findAllCompanies: jest.fn(),
   };
 
   beforeEach(async () => {

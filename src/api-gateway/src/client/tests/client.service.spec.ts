@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ClientService } from './client.service';
-import { userStub } from '../../test/stubs/user.stub';
+import { ClientService } from '../client.service';
+import { userStub } from '../../../test/stubs/user.stub';
+import { ClientRepository } from '../client.repository';
 
 describe('ClientService', () => {
   let service: ClientService;
@@ -19,6 +20,10 @@ describe('ClientService', () => {
         ClientService,
         {
           provide: 'ClientModel',
+          useValue: mockClientModel,
+        },
+        {
+          provide: ClientRepository,
           useValue: mockClientModel,
         },
       ],
