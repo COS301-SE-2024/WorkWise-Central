@@ -3,7 +3,7 @@
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
-        class="text-none font-weight-regular hello"
+        class="mb-2"
         prepend-icon="mdi-list-box"
         variant="elevated"
         v-bind="activatorProps"
@@ -56,7 +56,9 @@
           </v-row>
         </v-col>
         <v-col cols="auto"
-          ><v-btn variant="elevated" size="large" color="blue" @click="addChecklist">Add</v-btn></v-col
+          ><v-btn variant="elevated" size="large" color="blue" @click="addChecklist"
+            >Add</v-btn
+          ></v-col
         >
       </v-col>
     </v-sheet>
@@ -67,6 +69,9 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
+  props: {
+    checklistProp: Array
+  },
   name: 'JobChecklist',
   data: () => ({
     checklistDialog: false,
@@ -81,11 +86,13 @@ export default defineComponent({
           title: this.newChecklistItemTitle
         }
         this.checklist.push(newItem)
+        this.checklistProp.push(newItem)
         this.newChecklistItemTitle = '' // Reset input field after adding
       }
     },
     removeChecklistItem(itemId) {
       this.checklist = this.checklist.filter((item) => item.id !== itemId)
+      this.checklistProp = this.checklistProp.filter((item) => item.id !== itemId)
     }
   }
 })

@@ -3,7 +3,7 @@
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
-        class="text-none font-weight-regular hello"
+        class="mb-2"
         prepend-icon="mdi-account"
         variant="elevated"
         v-bind="activatorProps"
@@ -79,52 +79,22 @@
 </template>
 
 <script>
+import { select } from '@syncfusion/ej2-base'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'TeamMemberList',
+  props: {
+    isDarkMode: Boolean,
+    teamList: Array,
+    selectedMembers: Array
+  },
   components: {},
   data: () => ({
     teamDialog: false,
     sections: {
       cardMembers: [],
-      teamMembers: [
-        {
-          id: 1,
-          name: 'John Doe',
-          role: 'Software Engineer',
-          avatar: 'https://randomuser.me/api/port',
-          status: 'active'
-        },
-        {
-          id: 2,
-          name: 'Jane Doe',
-          role: 'Software Engineer',
-          avatar: 'https://randomuser.me/api/port',
-          status: 'active'
-        },
-        {
-          id: 3,
-          name: 'John Doe',
-          role: 'Software Engineer',
-          avatar: 'https://randomuser.me/api/port',
-          status: 'active'
-        },
-        {
-          id: 4,
-          name: 'Jane Doe',
-          role: 'Software Engineer',
-          avatar: 'https://randomuser.me/api/port',
-          status: 'active'
-        },
-        {
-          id: 5,
-          name: 'John Doe',
-          role: 'Software Engineer',
-          avatar: 'https://randomuser.me/api/port',
-          status: 'active'
-        }
-      ]
+      teamMembers: []
     },
     search: ''
   }),
@@ -132,11 +102,16 @@ export default defineComponent({
     moveToCardMembers(member) {
       this.sections.cardMembers.push(member)
       this.sections.teamMembers = this.sections.teamMembers.filter((m) => m.id !== member.id)
+      member.selected = true
+      this.selectedMembers.push(member)
     },
     moveToTeamMembers(member) {
       this.sections.teamMembers.push(member)
       this.sections.cardMembers = this.sections.cardMembers.filter((m) => m.id !== member.id)
     }
+  },
+  mounted() {
+    this.sections.teamMembers = this.teamList
   }
 })
 </script>

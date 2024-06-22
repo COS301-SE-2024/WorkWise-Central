@@ -4,7 +4,7 @@
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
-        class="text-none font-weight-regular hello"
+       class="mb-2"
         prepend-icon="mdi-label"
         variant="elevated"
         v-bind="activatorProps"
