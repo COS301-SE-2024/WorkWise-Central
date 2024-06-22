@@ -1,7 +1,9 @@
 import {
+  Inject,
   Injectable,
   NotFoundException,
   ServiceUnavailableException,
+  forwardRef,
 } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
@@ -22,7 +24,8 @@ export class JobService {
     @InjectModel(Job.name)
     private readonly jobModel: Model<Job>,
     private readonly jobRepository: JobRepository,
-    private readonly usersService: UsersService,
+    @Inject(forwardRef(() => UsersService))
+    private usersService: UsersService,
     private readonly companyService: CompanyService,
     //private readonly clientService: ClientService,
     //@InjectModel('user') private readonly userModel: Model<User>, //Will be used later
