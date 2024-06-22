@@ -70,9 +70,9 @@ export default {
     AddJob
   },
   methods: {
-    loadItems({ page, itemsPerPage, sortBy }) {},
-    editJob(item) {},
-    deleteJob(item) {}
+    // loadItems({ page, itemsPerPage, sortBy }) {},
+    // editJob(item) {},
+    // deleteJob(item) {}
   },
   created() {}
 }
@@ -130,7 +130,7 @@ export default {
               </th>
             </tr>
           </template>
-          <template v-slot:item.actions="{ item }">
+          <template v-slot:[`item.actions`]="{ item }">
             <v-btn icon @click="editJob(item)">
               <v-icon>mdi-pencil</v-icon>
             </v-btn>

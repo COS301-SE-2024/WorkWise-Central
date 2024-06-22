@@ -1,14 +1,7 @@
 <template>
   <v-container>
     <v-row>
-      <v-col
-        v-for="(employee, index) in employees"
-        :key="employee.id"
-        cols="12"
-        sm="6"
-        md="4"
-        lg="3"
-      >
+      <v-col v-for="employee in employees" :key="employee.id" cols="12" sm="6" md="4" lg="3">
         <v-card>
           <v-card-text>
             <v-list two-line>
