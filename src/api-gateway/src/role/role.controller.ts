@@ -14,29 +14,34 @@ import { IsObjectId } from 'class-validator-mongo-object-id';
 
 @Controller('role')
 export class RoleController {
-  constructor(private readonly RoleService: RoleService) {}
+  constructor(private readonly RoleService: RoleService) { }
+  
+  @Get()
+  hello() {
+    return { message: 'Refer to /documentation for details on the API' };
+  }
 
-  @Post()
+  @Post('/create')
   create(@Body() createRoleDto: CreateRoleDto) {
     return this.RoleService.create(createRoleDto);
   }
 
   @Get('/all')
-  findAll() {
-    return this.RoleService.findAll();
+  async findAll() {
+    return await this.RoleService.findAll();
   }
 
   @Get('id/:id')
-  findOne(@Param('id') id: string) {
-    return this.RoleService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.RoleService.findOne(id);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateRoleDto: UpdateRoleDto,
   ) {
-    return this.RoleService.update(+id, updateRoleDto);
+    return await this.RoleService.update(id, updateRoleDto);
   }
 
   @Delete(':id')

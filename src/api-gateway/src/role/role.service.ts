@@ -29,19 +29,19 @@ export class RoleService {
     this.permissionsArray.push("view all employees")
     this.permissionsArray.push("edit employees")
     this.permissionsArray.push("add new employees")
-    this.permissionsArray.push("view all job")
+    this.permissionsArray.push("view all jobs")
     this.permissionsArray.push("view all jobs under me")
-    this.permissionsArray.push("view all jobs assigned to me.")
+    this.permissionsArray.push("view all jobs assigned to me")
     this.permissionsArray.push("edit all jobs")
     this.permissionsArray.push("edit jobs that are under me")
     this.permissionsArray.push("edit jobs that are assigned to me")
     this.permissionsArray.push("add a new job")
     this.permissionsArray.push("view all clients")
-    this.permissionsArray.push("view all client under me")
-    this.permissionsArray.push("view all client that are assigned to me")
+    this.permissionsArray.push("view all clients under me")
+    this.permissionsArray.push("view all clients that are assigned to me")
     this.permissionsArray.push("edit all clients")
-    this.permissionsArray.push("edit all client that are under me")
-    this.permissionsArray.push("edit all client that assigned to me")
+    this.permissionsArray.push("edit all clients that are under me")
+    this.permissionsArray.push("edit all clients that are assigned to me")
     this.permissionsArray.push("view all inventory")
     this.permissionsArray.push("edit all inventory")
     this.permissionsArray.push("add a new inventory item")
@@ -52,24 +52,37 @@ export class RoleService {
 
     if ('permissionSuite' in role && role.permissionSuite) {
       for (const permission of role.permissionSuite) {
-        if (!this.permissionsArray.includes(permission)) {
-          throw new ConflictException('Permission not found');
+        if (!this.permissionsArray.includes(permission.toString())) {
+          throw new ConflictException('Invalid permission');
         }
       }
     }
-      
     if ('companyId' in role && role.companyId) {
       if (!(await this.companyService.companyExists(role.companyId.toString()))) {
         throw new ConflictException('Company not found');
+      }
+      if ('roleName' in role && role.roleName) {
+        if (await this.findOneInCompany(role.roleName, role.companyId.toString())) {
+          throw new ConflictException('Role already exists');
+        }
+      }
+    }
+    if('roleId' in role && role.roleId){
+      if(!(await this.roleExists(role.roleId.toString()))){
+        throw new ConflictException('Role not found');
       }
     }
   }
 
   async create(createRoleDto: CreateRoleDto) {
-    this.validateRole(createRoleDto)
-
+    try {
+      await this.validateRole(createRoleDto)
+    }
+    catch (error) { 
+      return `${error}`;
+    }
+    
     const newRole = new Role(createRoleDto);
-
     newRole.roleName = createRoleDto.roleName;
     newRole.companyId = createRoleDto.companyId;
     newRole.permissionSuite = createRoleDto.permissionSuite;
@@ -92,8 +105,17 @@ export class RoleService {
     return this.roleModel.findById(id);
   }
 
-  async update(id: number, updateRoleDto: UpdateRoleDto) {
-    this.validateRole(updateRoleDto);
+  async findOneInCompany(name: string, companyId: string) {
+    return this.roleModel.findOne({ roleName: name, companyId: companyId });
+  }
+
+  async update(id: string, updateRoleDto: UpdateRoleDto) {
+    try {
+      await this.validateRole(updateRoleDto)
+    }
+    catch (error) { 
+      return `${error}`;
+    }
 
     const previousObject: FlattenMaps<Role> & { _id: Types.ObjectId } =
       await this.roleModel
@@ -107,6 +129,7 @@ export class RoleService {
             ],
           },
           { $set: { ...updateRoleDto }, updatedAt: new Date() },
+          { new: true }
         )
         .lean();
 
