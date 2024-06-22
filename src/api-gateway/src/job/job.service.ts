@@ -61,12 +61,12 @@ export class JobService {
       );
     }*/
 
-    const result = await this.companyService.findById(companyId);
+    const result = await this.companyService.getCompanyById(companyId);
     return result.employees.includes(userId);
   }
 
   async isMember(userId: Types.ObjectId, companyId: Types.ObjectId) {
-    const result = await this.companyService.findById(companyId);
+    const result = await this.companyService.getCompanyById(companyId);
     return result.employees.includes(userId);
   }
 
@@ -115,11 +115,7 @@ export class JobService {
   }
 
   async softDelete(id: string): Promise<boolean> {
-    try {
-      await this.jobRepository.delete(id);
-    } catch (e) {
-      throw e;
-    }
+    await this.jobRepository.delete(id);
     return true;
   }
 
