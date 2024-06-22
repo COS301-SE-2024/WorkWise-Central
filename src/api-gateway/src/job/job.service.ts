@@ -7,12 +7,13 @@ import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
-//import { User } from '../users/entities/user.entity';
 import { Job } from './entities/job.entity';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
-//import { ClientService } from '../client/client.service';
+import { ClientService } from '../client/client.service';
 import { JobRepository } from './job.repository';
+import { EmployeeService } from '../employee/employee.service';
+import { validationResult } from '../auth/entities/validationResult.entity';
 
 @Injectable()
 export class JobService {
@@ -24,23 +25,17 @@ export class JobService {
     private readonly jobRepository: JobRepository,
     private readonly usersService: UsersService,
     private readonly companyService: CompanyService,
-    //private readonly clientService: ClientService,
+    private readonly employeeService: EmployeeService,
+    private readonly clientService: ClientService,
     //@InjectModel('user') private readonly userModel: Model<User>, //Will be used later
   ) {}
 
   async create(createJobDto: CreateJobDto) {
-    const assigner = createJobDto.assignedBy;
-    if (await this.usersService.userIdExists(assigner))
-      console.log('assignBy is valid');
+    const inputValidated = await this.jobIsValid(createJobDto);
+    if (!inputValidated.isValid) {
+      throw new NotFoundException(inputValidated.message);
+    }
 
-    if (
-      await this.companyService.companyIdExists(
-        new Types.ObjectId(createJobDto.companyId),
-      )
-    )
-      console.log('companyId is valid');
-
-    //console.log('done');
     const createdJob = new Job(createJobDto);
     console.log('createdJob', createdJob);
     const newJob = new this.jobModel(createdJob);
@@ -104,13 +99,22 @@ export class JobService {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
       await this.jobRepository.exists(id);
 
-    console.log('jobExists -> ', result);
+    //console.log('jobExists -> ', result);
     return result == null;
   }
 
-  update(id: number, updateJobDto: UpdateJobDto) {
-    console.log(updateJobDto);
-    return `This action updates a #${id} job`;
+  async update(id: string | Types.ObjectId, updateJobDto: UpdateJobDto) {
+    const inputValidated = await this.jobIsValid(updateJobDto);
+    if (!inputValidated.isValid)
+      throw new NotFoundException(inputValidated.message);
+
+    try {
+      const updated = this.jobRepository.update(id, updateJobDto);
+      console.log('updatedJob', updated);
+      return true;
+    } catch (e) {
+      throw new Error(e);
+    }
   }
 
   async softDelete(id: string): Promise<boolean> {
@@ -120,5 +124,43 @@ export class JobService {
       throw e;
     }
     return true;
+  }
+
+  async jobIsValid(
+    job: Job | CreateJobDto | UpdateJobDto,
+  ): Promise<validationResult> {
+    if (job.assignedBy) {
+      const exists = await this.employeeService.employeeExists(job.assignedBy);
+      if (!exists) {
+        return new validationResult(false, 'Assigned By is invalid');
+      }
+    }
+    if (job.assignedEmployees) {
+      for (const employee of job.assignedEmployees.employeeIds) {
+        const exists = await this.employeeService.employeeExists(employee);
+        if (!exists) {
+          return new validationResult(false, `Employee: ${employee} Not found`);
+        }
+      }
+    }
+
+    if (job.clientId) {
+      const exists = await this.clientService.clientExists(job.clientId);
+      if (!exists) {
+        return new validationResult(false, 'Client does not exist');
+      }
+    }
+
+    if (job.companyId) {
+      const exists = await this.companyService.companyIdExists(job.companyId);
+      if (!exists) {
+        return new validationResult(
+          false,
+          `Company: ${job.companyId} Not found`,
+        );
+      }
+    }
+
+    return new validationResult(true);
   }
 }

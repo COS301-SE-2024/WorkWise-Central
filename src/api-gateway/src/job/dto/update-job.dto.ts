@@ -84,3 +84,12 @@ export class UpdateJobDto {
   @IsOptional()
   comments?: UpdateComment[];
 }
+
+export class UpdateDtoResponse {
+  success: boolean;
+  message?: string;
+  constructor(success: boolean, message?: string) {
+    this.success = success;
+    if (message) this.message = message;
+  }
+}
