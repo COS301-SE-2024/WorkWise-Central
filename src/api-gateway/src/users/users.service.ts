@@ -21,6 +21,8 @@ import { EmployeeService } from '../employee/employee.service';
 import { UserConfirmation } from './entities/user-confirmation.entity';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { EmailService } from '../email/email.service';
+import { UsersRepository } from './users.repository';
+import { ValidationResult } from '../auth/entities/validationResult.entity';
 
 @Injectable()
 export class UsersService {
@@ -180,9 +182,10 @@ export class UsersService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
-    /*    updateUserDto.updatedAt = new Date();
-    console.log('updateUserDto');
-    console.log(updateUserDto);*/
+    const inputValidated = await this.userIsValid(updateUserDto);
+    if (!inputValidated.isValid) {
+      throw new NotFoundException(inputValidated.message);
+    }
 
     const previousObject: FlattenMaps<User> & { _id: Types.ObjectId } =
       await this.userModel
@@ -226,5 +229,28 @@ export class UsersService {
     const deleteRelatedEmployees = await this.employeeService.remove(result.id);
     console.log(deleteRelatedEmployees);
     return true;
+  }
+
+  async userIsValid(user: User | UpdateUserDto): Promise<ValidationResult> {
+    if (user.employeeIds) {
+      for (const employee of user.employeeIds) {
+        const exists = await this.employeeService.employeeExists(employee);
+        if (!exists)
+          return new ValidationResult(
+            false,
+            `Invalid Employee ID: ${employee}`,
+          );
+      }
+    }
+    if (user.currentEmployee) {
+      const exists = await this.employeeService.employeeExists(
+        user.currentEmployee,
+      );
+      if (!exists)
+        return new ValidationResult(
+          false,
+          `Invalid currentEmployee: ${user.currentEmployee}`,
+        );
+    }
   }
 }
