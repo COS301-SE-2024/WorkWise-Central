@@ -196,7 +196,7 @@
                 color="grey-lighten-4"
                 label="Enter the language preferred by the client"
                 rounded="xl"
-                v-model="req_obj.preferredLanguage"
+                v-model="req_obj.preferred_Language"
                 variant="solo"
                 :items="[
                   'English',
@@ -269,7 +269,6 @@ export default defineComponent({
       surname: '',
       phoneNumber: '',
       email: '',
-      preferredLanguage: '',
       companyId: sessionStorage['currentCompany'],
       address: {
         street: '',
@@ -278,7 +277,8 @@ export default defineComponent({
         postalCode: '',
         complex: '',
         houseNumber: ''
-      }
+      },
+      preferred_Language: ''
     }
   }),
   methods: {

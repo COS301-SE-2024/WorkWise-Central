@@ -34,7 +34,29 @@
               <v-col :cols="12"> </v-col>
             </v-tabs-window-item>
             <v-tabs-window-item :value="3">
-              <v-col :cols="12"> </v-col>
+              <v-col :cols="12"
+                ><v-card>
+                  <v-card-title>
+                    <v-avatar size="40" class="mr-4">
+                      <img
+                        src="https://github.com/COS301-SE-2024/WorkWise-Central/blob/develop/res/img/team%20photos/Bob.jpg"
+                        alt="Avatar"
+                      />
+                    </v-avatar>
+                    Tinashe Fadza
+                  </v-card-title>
+                  <v-card-subtitle>Software Engineer</v-card-subtitle>
+                  <v-card-text>
+                    <div><strong>Email:</strong> ttfadzai@example.com</div>
+                    <div><strong>Phone:</strong> +27 73 441 4451</div>
+                    <div><strong>Address:</strong> 1234 Lunnon Street, Hatcrest, PTA</div>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn color="primary" @click="sendEmail">Email</v-btn>
+                    <v-btn color="secondary" @click="callPhone">Call</v-btn>
+                  </v-card-actions>
+                </v-card></v-col
+              >
             </v-tabs-window-item>
           </v-tabs-window>
         </v-card>
@@ -128,6 +150,14 @@ export default defineComponent({
             "Yes, you can view all tasks assigned to you by clicking on the 'My Tasks' section from the dashboard. This view consolidates tasks from all projects, making it easier for you to manage your workload."
         }
       ]
+    }
+  },
+  methods: {
+    sendEmail() {
+      window.location.href = 'mailto:johndoe@example.com'
+    },
+    callPhone() {
+      window.location.href = 'tel:+27734414451'
     }
   }
 })

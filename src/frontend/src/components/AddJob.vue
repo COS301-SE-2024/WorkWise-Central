@@ -18,7 +18,7 @@
       max-width="900"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
-      <v-form ref="form" v-model="valid" @submit="handleSubmission">
+      <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
         <v-col>
           <v-col>
             <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -239,9 +239,8 @@
 </template>
 
 <script lang="ts">
-// import { RouterLink, RouterView } from 'vue-router'
 import { defineComponent } from 'vue'
-// import axios from "axios";
+import axios from 'axios'
 export default defineComponent({
   name: 'JobDetailsList',
   props: ['isdarkmode'],
@@ -290,15 +289,18 @@ export default defineComponent({
   },
   methods: {
     handleSubmission() {
-      alert('Job Successfully added')
-      // axios
-      //     .post('http://localhost:3000/client/create', this.req_obj)
-      //     .then((res) => {
-      //       console.log(res)
-      //     })
-      //     .catch((res) => {
-      //       console.log(res)
-      //     })
+      console.log(JSON.stringify(this.req_obj))
+      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      axios
+        .post('http://localhost:3000/job/create', this.req_obj, config)
+        .then((res) => {
+          alert('Job Added Successfully added')
+          console.log(res)
+        })
+        .catch((res) => {
+          alert('Job NOT Added Successfully added')
+          console.log(res)
+        })
     },
     inputshow() {
       console.log(this.req_obj.scheduledDateTime)
@@ -318,11 +320,39 @@ export default defineComponent({
         console.log(date)
 
         // Format the date to ISO 8601 format
-        this.req_obj.scheduledDateTime = date.toISOString()
+
+        // this.req_obj.scheduledDateTime = date.toISOString()
+        this.req_obj.scheduledDateTime = toIsoString(date)
         console.log(this.req_obj.scheduledDateTime)
       }
     }
   }
 })
+
+function toIsoString(date: Date) {
+  var tzo = -date.getTimezoneOffset(),
+    dif = tzo >= 0 ? '+' : '-',
+    pad = function (num: number) {
+      return (num < 10 ? '0' : '') + num
+    }
+
+  return (
+    date.getFullYear() +
+    '-' +
+    pad(date.getMonth() + 1) +
+    '-' +
+    pad(date.getDate()) +
+    'T' +
+    pad(date.getHours()) +
+    ':' +
+    pad(date.getMinutes()) +
+    ':' +
+    pad(date.getSeconds()) +
+    dif +
+    pad(Math.floor(Math.abs(tzo) / 60)) +
+    ':' +
+    pad(Math.abs(tzo) % 60)
+  )
+}
 </script>
 <style></style>
