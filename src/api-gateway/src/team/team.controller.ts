@@ -21,12 +21,12 @@ export class TeamController {
     return this.TeamService.create(createTeamDto);
   }
 
-  @Get()
+  @Get('/all')
   findAll() {
     return this.TeamService.findAll();
   }
 
-  @Get(':id')
+  @Get('id/:id')
   findOne(@Param('id') id: string) {
     return this.TeamService.findOne(id);
   }
