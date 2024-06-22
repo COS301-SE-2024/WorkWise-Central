@@ -49,6 +49,22 @@
           {{ chip.type }}: {{ formatDate(chip.date) }}
         </v-chip>
       </div>
+      <div v-if="clientChips.length" class="chip-container">
+        <h4 class="flex-grow-1">Attached clients:</h4>
+        <div class="chip-wrapper">
+          <v-chip
+              v-for="(chip, index) in clientChips"
+              :key="index"
+              class="ma-2"
+              color="primary"
+              outlined
+              @click:close="removeFile(chip, index)"
+              close
+          >
+            {{ chip.name }} ({{ (chip.size / 1024).toFixed(2) }} KB)
+          </v-chip>
+        </div>
+      </div>
       <div v-if="fileChips.length" class="chip-container">
         <h4 class="flex-grow-1">Attached files:</h4>
         <div class="chip-wrapper">
@@ -76,12 +92,43 @@
       <div class="d-flex flex-column">
 
         <v-btn class="mb-2" outlined>Team Member List</v-btn>
+
+        <v-btn class="mb-2" outlined @click="clientDialog = true">Change Client</v-btn>
+        <v-dialog v-model="clientDialog" max-width="600px">
+          <v-card>
+            <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+              Change the client for this job
+            </v-card-title>
+
+            <v-card-text>
+              <div class="text-caption pa-3">Select a client</div>
+
+              <v-autocomplete
+                  v-model="selectedClient"
+                  hint="Click the field to select a client"
+                  :items="clients"
+                  item-text="name"
+                  item-value="id"
+                  label="Select Client"
+                  prepend-icon="mdi-account"
+                  persistent-hint
+              >
+              </v-autocomplete>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="saveClient" >Save</v-btn>
+              <v-btn color="blue darken-1" text @click="clientDialog=false">Cancel</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <v-btn class="mb-2" outlined>Labels</v-btn>
         <v-btn class="mb-2" outlined>Checklist</v-btn>
         <v-btn class="mb-2" outlined @click="dialog = true">File Attachments</v-btn>
         <v-dialog v-model="dialog" max-width="600px">
           <v-card>
-            <v-card-title>
+            <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
               Attach a file from your computer
             </v-card-title>
             <v-card-text>
@@ -118,9 +165,10 @@
         <v-btn class="mb-2" outlined @click="dueDateDialog = true">Due Date</v-btn>
         <v-dialog v-model="dueDateDialog" max-width="600px">
           <v-card>
-            <v-card-title>
+            <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
               Enter the due date for this job
             </v-card-title>
+
             <v-card-text>
               <v-container>
                 <v-row justify="space-around">
@@ -182,6 +230,23 @@
 import { ref } from 'vue'
 import { computed } from 'vue'
 import { VBtn, VDialog, VCard, VCardTitle, VCardText, VCardActions, VFileInput, VChip, VSpacer, VAlert } from 'vuetify/components';
+
+//For change client
+const clientDialog = ref(false);
+const selectedClient = ref(null);
+
+// api call to get clients
+const clients = [
+  { id: 1, name: 'John Doe' },
+  { id: 2, name: 'Jane Smith' },
+  { id: 3, name: 'Alice Johnson' },
+];
+
+const saveClient = () => {
+  // Save functionality here
+  clientDialog.value = false;
+  // add a client chip here
+};
 
 // For File attachments
 const dialog = ref(false);
