@@ -5,6 +5,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Employee, EmployeeSchema } from './entities/employee.entity';
 import { UsersModule } from '../users/users.module';
 import { CompanyModule } from '../company/company.module';
+import { RoleModule } from '../role/role.module';
+import { JobModule } from '../job/job.module';
+import { TeamModule } from '../team/team.module';
+import { JobService } from '../job/job.service';
+
 
 @Module({
   imports: [
@@ -13,9 +18,12 @@ import { CompanyModule } from '../company/company.module';
     ]),
     forwardRef(() => UsersModule),
     CompanyModule,
+    RoleModule,
+    forwardRef(() => JobModule),
+    TeamModule,
   ],
   controllers: [EmployeeController],
-  providers: [EmployeeService],
+  providers: [EmployeeService, JobService],
   exports: [EmployeeService, MongooseModule],
 })
 export class EmployeeModule {}

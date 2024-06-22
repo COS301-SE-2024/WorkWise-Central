@@ -7,7 +7,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { CreateEmployeeDto, createEmployeeResponseDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Document, Model, Types, FlattenMaps } from 'mongoose';
@@ -28,34 +28,65 @@ export class EmployeeService {
     private usersService: UsersService,
     private companyService: CompanyService,
     private roleService: RoleService,
+    @Inject(forwardRef(() => JobService)) 
     private jobService: JobService,
     private teamService: TeamService,
   ) {}
 
-  async create(createEmployeeDto: CreateEmployeeDto) {
-    if (
-      !(await this.usersService.userIdExists(
-        createEmployeeDto.userId.toString(),
-      ))
-    ) {
-      throw new ConflictException('User not found');
-    }
-
-    if (
-      !(await this.companyService.companyExists(
-        createEmployeeDto.companyId.toString(),
-      ))
-    ) {
-      throw new ConflictException('Company not found');
-    }
-
-    if (
-      !(await this.roleService.roleExists(
-        createEmployeeDto.roleId.toString(),
-      ))
-    ) {
+  async validateEmployee(employee: Employee | CreateEmployeeDto | UpdateEmployeeDto) {
+  if (employee.roleId) {
+    if (!(await this.roleService.roleExists(employee.roleId.toString()))) {
       throw new ConflictException('Role not found');
     }
+  }
+
+  if (employee.superiorId) {
+    if (!(await this.employeeExists(employee.superiorId.toString()))) {
+      throw new ConflictException('Superior not found');
+    }
+  }
+
+  if ('companyId' in employee && employee.companyId) {
+    if (!(await this.companyService.companyExists(employee.companyId.toString()))) {
+      throw new ConflictException('Company not found');
+    }
+  }
+
+  if ('currentJobAssignments' in employee && employee.currentJobAssignments) {
+    for (const jobId of employee.currentJobAssignments) {
+      if (!(await this.jobService.jobExists(jobId.toString()))) {
+        throw new ConflictException(`Job assignment ${jobId.toString()} not found`);
+      }
+    }
+  }
+
+  if ('subordinates' in employee && employee.subordinates) {
+    for (const subordinateId of employee.subordinates) {
+      if (!(await this.employeeExists(subordinateId.toString()))) {
+        throw new ConflictException(`Subordinate ${subordinateId.toString()} not found`);
+      }
+    }
+  }
+
+  if ('subordinateTeams' in employee && employee.subordinateTeams) {
+    for (const teamId of employee.subordinateTeams) {
+      if (!(await this.teamService.teamExists(teamId.toString()))) {
+        throw new ConflictException(`Subordinate team ${teamId.toString()} not found`);
+      }
+    }
+  }
+
+  if ('userId' in employee && employee.userId) {
+    if (!(await this.usersService.userIdExists(employee.userId.toString()))) {
+      throw new ConflictException('User not found');
+    }
+  }
+}
+  
+
+  async create(createEmployeeDto: CreateEmployeeDto) {
+
+    await this.validateEmployee(createEmployeeDto);
 
     const user = await this.usersService.findUserById(createEmployeeDto.userId);
     const company = await this.companyService.findById(createEmployeeDto.companyId,);
@@ -105,44 +136,7 @@ export class EmployeeService {
   }
 
   async update(id: string, updateEmployeeDto: UpdateEmployeeDto): Promise<FlattenMaps<Employee> & { _id: Types.ObjectId }> {
-    if (!(await this.roleService.roleExists(updateEmployeeDto.roleId.toString(),))){
-      throw new ConflictException('Role not found');
-    }
-    if (!(await this.employeeExists(updateEmployeeDto.superiorId.toString(),))){
-      throw new ConflictException('Employee not found');
-    }
-    if (!(await this.jobService.jobExists(updateEmployeeDto.addJobId.toString(),))){
-      throw new ConflictException('Job not found');
-    }
-    if (!(await this.employeeExists(updateEmployeeDto.addSubordinateId.toString(),))){
-      throw new ConflictException('Employee not found');
-    }
-    if (!(await this.teamService.teamExists(updateEmployeeDto.addTeamId.toString(),))){
-      throw new ConflictException('Team not found');
-    }
-    if (!(await this.jobService.jobExists(updateEmployeeDto.removeJobId.toString(),))){
-      throw new ConflictException('Job not found');
-    }
-    if (!(await this.employeeExists(updateEmployeeDto.removeSubordinateId.toString(),))){
-      throw new ConflictException('Employee not found');
-    }
-    if (!(await this.teamService.teamExists(updateEmployeeDto.removeTeamId.toString(),))){
-      throw new ConflictException('Team not found');
-    }
-
-    const role = await this.roleService.findById(updateEmployeeDto.roleId);
-    const superior = await this.employeeModel.findById(updateEmployeeDto.superiorId);
-    const addJob = await this.jobService.findJobById(updateEmployeeDto.addJobId.toString());
-    const addSubordinate = await this.employeeModel.findById(updateEmployeeDto.addSubordinateId);
-    const addTeam = await this.teamService.findById(updateEmployeeDto.addTeamId);
-    const removeJob = await this.jobService.findJobById(updateEmployeeDto.removeJobId.toString());
-    const removeSubordinate = await this.employeeModel.findById(updateEmployeeDto.removeSubordinateId);
-    const removeTeam = await this.teamService.findById(updateEmployeeDto.removeTeamId);
-
-    if (!role || !superior || !addJob || !addSubordinate || !addTeam || !removeJob || !removeSubordinate || !removeTeam) {
-      throw new ConflictException('Invalid ID given');
-    }
-
+    await this.validateEmployee(updateEmployeeDto);
     const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } =
       await this.employeeModel
         .findOneAndUpdate(
@@ -157,51 +151,6 @@ export class EmployeeService {
           { $set: { ...updateEmployeeDto }, updatedAt: new Date() },
         )
         .lean();
-    
-    if (addJob) {
-      await this.employeeModel.updateOne(
-        { _id: id },
-        { $addToSet: { jobs: addJob._id } }
-      );
-    }
-    if (addSubordinate) {
-      await this.employeeModel.updateOne(
-        { _id: id },
-        { $addToSet: { subordinates: addSubordinate._id } }
-      );
-      await this.employeeModel.updateOne(
-        { _id: addSubordinate._id },
-        { $set: { superior: id } }
-      );
-    }
-    if (addTeam) {
-      await this.employeeModel.updateOne(
-        { _id: id },
-        { $addToSet: { teams: addTeam._id } }
-      );
-    }
-    if (removeJob) {
-      await this.employeeModel.updateOne(
-        { _id: id },
-        { $pull: { jobs: removeJob._id } }
-      );
-    }
-    if (removeSubordinate) {
-      await this.employeeModel.updateOne(
-        { _id: id },
-        { $pull: { subordinates: removeSubordinate._id } }
-      );
-      await this.employeeModel.updateOne(
-        { _id: removeSubordinate._id },
-        { $unset: { superior: "" } }
-      );
-    }
-    if (removeTeam) {
-      await this.employeeModel.updateOne(
-        { _id: id },
-        { $pull: { teams: removeTeam._id } }
-      );
-    }
     
     return previousObject;
   }
@@ -272,4 +221,7 @@ export class EmployeeService {
 
     return result;
   }
+
+  
+
 }

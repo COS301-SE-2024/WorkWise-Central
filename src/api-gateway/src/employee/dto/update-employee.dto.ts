@@ -12,40 +12,28 @@ export class UpdateEmployeeDto {
   @IsMongoId({ each: true })
   @IsOptional()
   @ApiProperty()
-  roleId: Types.ObjectId;
-   
+  roleId?: Types.ObjectId;
+
+  @IsArray()
+  @IsMongoId({ each: true })
+  @ApiProperty()
+  currentJobAssignments?: Types.ObjectId[];
+
   @IsMongoId()
   @IsOptional()
   @ApiProperty()
-  superiorId: Types.ObjectId;
+  superiorId?: Types.ObjectId;
 
-  @IsMongoId({ each: true })
-  @ApiProperty()
-  addJobId: Types.ObjectId;
-
+  @IsArray()
   @IsMongoId({ each: true })
   @IsOptional()
   @ApiProperty()
-  addSubordinateId: Types.ObjectId;
+  subordinates?: Types.ObjectId[];
 
-  @IsMongoId({ each: true })
-  @IsOptional()
-  @ApiProperty()
-  addTeamId: Types.ObjectId;
-
+  @IsArray()
   @IsMongoId({ each: true })
   @ApiProperty()
-  removeJobId: Types.ObjectId;
-
-  @IsMongoId({ each: true })
-  @IsOptional()
-  @ApiProperty()
-  removeSubordinateId: Types.ObjectId;
-
-  @IsMongoId({ each: true })
-  @IsOptional()
-  @ApiProperty()
-  removeTeamId: Types.ObjectId;
+  subordinateTeams?: Types.ObjectId[];
 
 }
 
