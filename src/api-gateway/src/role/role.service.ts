@@ -101,6 +101,16 @@ export class RoleService {
     }
   }
 
+  async findAllInCompany(companyId: string) {
+    try {
+    const filter = companyId ? { companyId: companyId } : {};
+    return await this.roleModel.find(filter).exec();
+  } catch (error) {
+    console.log(error);
+    throw new ServiceUnavailableException('Roles could not be retrieved');
+  }
+  }
+
   async findOne(id: string) {
     return this.roleModel.findById(id);
   }
@@ -167,7 +177,7 @@ export class RoleService {
         .lean();
 
     if (result == null) {
-      throw new NotFoundException('Company not found');
+      throw new NotFoundException('Role not found');
     }
 
     return result;

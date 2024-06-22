@@ -31,6 +31,11 @@ export class RoleController {
     return await this.RoleService.findAll();
   }
 
+  @Get('/all/:id')
+  async findAllInCompany(@Param('id') id: string) {
+    return await this.RoleService.findAllInCompany(id);
+  }
+
   @Get('id/:id')
   async findOne(@Param('id') id: string) {
     return await this.RoleService.findOne(id);
