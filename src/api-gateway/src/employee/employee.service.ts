@@ -34,7 +34,7 @@ export class EmployeeService {
       throw new ConflictException('User not found');
     }
 
-    const user = await this.usersService.findUserById(createEmployeeDto.userId);
+    const user = await this.usersService.getUserById(createEmployeeDto.userId);
     const company = await this.companyService.findById(
       createEmployeeDto.companyId,
     );

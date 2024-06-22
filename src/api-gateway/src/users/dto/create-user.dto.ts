@@ -146,9 +146,9 @@ export class CreateUserDto {
   @Type(() => String)
   skills?: string[] = [];
 
-  @IsOptional()
+  /*  @IsOptional()
   @IsMongoId()
-  public currentCompany?: Types.ObjectId;
+  public currentEmployee?: Types.ObjectId;*/
 }
 
 export class createUserResponseDto {

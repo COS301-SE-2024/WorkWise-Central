@@ -1,4 +1,4 @@
-export class validationResult {
+export class ValidationResult {
   public _isValid: boolean;
   public _message?: string;
 
