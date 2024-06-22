@@ -194,7 +194,7 @@
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                label="Enter the language preferred by the client"
+                placeholder="Enter the language preferred by the client"
                 rounded="xl"
                 v-model="req_obj.preferred_Language"
                 variant="solo"
@@ -282,7 +282,30 @@ export default defineComponent({
     }
   }),
   methods: {
+    phhoneNumberCheck() {
+      if (this.req_obj.phoneNumber != '') {
+        axios
+          .get('http://localhost:3000/client/checkPhoneNumber', {
+            params: {
+              phoneNumber: this.req_obj.phoneNumber
+            }
+          })
+          .then((res) => {
+            if (res.data == 'Phone number already exists') {
+              alert('Phone number already exists')
+              this.click_create_client = true
+            } else {
+              this.click_create_client = false
+            }
+          })
+          .catch((res) => {
+            console.log(res)
+          })
+      }
+    },
     handleSubmission() {
+      console.log(JSON.stringify(this.req_obj))
+
       axios
         .post('http://localhost:3000/client/create', this.req_obj)
         .then((res) => {
