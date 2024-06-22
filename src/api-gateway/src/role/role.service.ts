@@ -161,6 +161,25 @@ export class RoleService {
     return result != null;
   }
 
+  async roleExistsInCompany(id: string, companyId: string): Promise<boolean> {
+    const result: FlattenMaps<Role> & { _id: Types.ObjectId } =
+      await this.roleModel
+        .findOne({
+          $and: [
+            { _id: id },            
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+    if (result != null && result.companyId.toString() == companyId) 
+      return true;
+
+    return false;
+
+  }
+
   async findById(
     identifier: string | Types.ObjectId,
   ): Promise<FlattenMaps<Role> & { _id: Types.ObjectId }> {

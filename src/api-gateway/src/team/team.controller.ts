@@ -12,9 +12,14 @@ import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { IsObjectId } from 'class-validator-mongo-object-id';
 
-@Controller('employee')
+@Controller('team')
 export class TeamController {
-  constructor(private readonly TeamService: TeamService) {}
+  constructor(private readonly TeamService: TeamService) { }
+  
+  @Get()
+  hello() {
+    return { message: 'Refer to /documentation for details on the API' };
+  }
 
   @Post()
   create(@Body() createTeamDto: CreateTeamDto) {

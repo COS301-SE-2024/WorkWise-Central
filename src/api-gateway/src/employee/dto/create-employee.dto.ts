@@ -8,33 +8,15 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateEmployeeDto {
-  @IsArray()
-  @IsMongoId({ each: true })
+  @IsMongoId()
   @IsOptional()
   @ApiProperty()
   roleId: Types.ObjectId;
-
-  // @IsArray()
-  // @IsMongoId({ each: true })
-  // @ApiProperty()
-  // currentJobAssignments: Types.ObjectId[];
    
   @IsMongoId()
   @IsOptional()
   @ApiProperty()
   superiorId: Types.ObjectId;
-
-  // @IsArray()
-  // @IsMongoId({ each: true })
-  // @IsOptional()
-  // @ApiProperty()
-  // subordinates: Types.ObjectId[];
-
-  // @IsArray()
-  // @IsMongoId({ each: true })
-  // @IsOptional()
-  // @ApiProperty()
-  // subordinateTeams: Types.ObjectId[];
 
   @IsNotEmpty()
   @IsMongoId()

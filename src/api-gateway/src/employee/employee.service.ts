@@ -33,73 +33,120 @@ export class EmployeeService {
     private teamService: TeamService,
   ) {}
 
-  async validateEmployee(employee: Employee | CreateEmployeeDto | UpdateEmployeeDto) {
-  if (employee.roleId) {
-    if (!(await this.roleService.roleExists(employee.roleId.toString()))) {
-      throw new ConflictException('Role not found');
-    }
-  }
+  async validateEmployee(employee: Employee | CreateEmployeeDto | UpdateEmployeeDto, companyId?: string) {
+    if (!companyId && !('companyId' in employee))
+    {
+      if (employee.roleId) {
+        if (!(await this.roleService.roleExists(employee.roleId.toString()))) {
+          throw new ConflictException('Role not found');
+        }
+      }
 
-  if (employee.superiorId) {
-    if (!(await this.employeeExists(employee.superiorId.toString()))) {
-      throw new ConflictException('Superior not found');
-    }
-  }
+      if (employee.superiorId) {
+        if (!(await this.employeeExists(employee.superiorId.toString()))) {
+          throw new ConflictException('Superior not found');
+        }
+      }
 
-  if ('companyId' in employee && employee.companyId) {
-    if (!(await this.companyService.companyExists(employee.companyId.toString()))) {
-      throw new ConflictException('Company not found');
-    }
-  }
+      if ('currentJobAssignments' in employee && employee.currentJobAssignments) {
+        for (const jobId of employee.currentJobAssignments) {
+          if (!(await this.jobService.jobExists(jobId.toString()))) {
+            throw new ConflictException(`Job assignment ${jobId.toString()} not found`);
+          }
+        }
+      }
 
-  if ('currentJobAssignments' in employee && employee.currentJobAssignments) {
-    for (const jobId of employee.currentJobAssignments) {
-      if (!(await this.jobService.jobExists(jobId.toString()))) {
-        throw new ConflictException(`Job assignment ${jobId.toString()} not found`);
+      if ('subordinates' in employee && employee.subordinates) {
+        for (const subordinateId of employee.subordinates) {
+          if (!(await this.employeeExists(subordinateId.toString()))) {
+            throw new ConflictException(`Subordinate ${subordinateId.toString()} not found`);
+          }
+        }
+      }
+
+      if ('subordinateTeams' in employee && employee.subordinateTeams) {
+        for (const teamId of employee.subordinateTeams) {
+          if (!(await this.teamService.teamExists(teamId.toString()))) {
+              throw new ConflictException(`Subordinate team ${teamId.toString()} not found`);
+            }
+          }
       }
     }
-  }
+    else
+    {
+      if (!companyId && 'companyId' in employee && employee.companyId)
+      {
+        companyId = employee.companyId.toString();
+      }
 
-  if ('subordinates' in employee && employee.subordinates) {
-    for (const subordinateId of employee.subordinates) {
-      if (!(await this.employeeExists(subordinateId.toString()))) {
-        throw new ConflictException(`Subordinate ${subordinateId.toString()} not found`);
+      console.log('Company ID: ' + companyId);
+      
+      if (employee.roleId) {
+        if (!(await this.roleService.roleExistsInCompany(employee.roleId.toString(), companyId))) {
+          throw new ConflictException('Role not found');
+        }
+      }
+
+      if (employee.superiorId) {
+        if (!(await this.employeeExistsForCompany(employee.superiorId.toString(), companyId))) {
+          throw new ConflictException('Superior not found');
+        }
+      }
+
+      if ('currentJobAssignments' in employee && employee.currentJobAssignments) {
+        for (const jobId of employee.currentJobAssignments) {
+          if (!(await this.jobService.jobExistsInCompany(jobId.toString(), companyId))) {
+            throw new ConflictException(`Job assignment ${jobId.toString()} not found`);
+          }
+        }
+      }
+
+      if ('subordinates' in employee && employee.subordinates) {
+        for (const subordinateId of employee.subordinates) {
+          if (!(await this.employeeExistsForCompany(subordinateId.toString(), companyId))) {
+            throw new ConflictException(`Subordinate ${subordinateId.toString()} not found`);
+          }
+        }
+      }
+
+      if ('subordinateTeams' in employee && employee.subordinateTeams) {
+        for (const teamId of employee.subordinateTeams) {
+          if (!(await this.teamService.teamExistsInCompany(teamId.toString(), companyId))) {
+            throw new ConflictException(`Subordinate team ${teamId.toString()} not found`);
+          }
+        }
       }
     }
-  }
 
-  if ('subordinateTeams' in employee && employee.subordinateTeams) {
-    for (const teamId of employee.subordinateTeams) {
-      if (!(await this.teamService.teamExists(teamId.toString()))) {
-        throw new ConflictException(`Subordinate team ${teamId.toString()} not found`);
-      }
+    if ('userId' in employee && employee.userId) {
+        if (!(await this.usersService.userIdExists(employee.userId.toString()))) {
+          throw new ConflictException('User not found');
+        }
     }
   }
-
-  if ('userId' in employee && employee.userId) {
-    if (!(await this.usersService.userIdExists(employee.userId.toString()))) {
-      throw new ConflictException('User not found');
-    }
-  }
-}
   
-
   async create(createEmployeeDto: CreateEmployeeDto) {
-
-    await this.validateEmployee(createEmployeeDto);
-
-    const user = await this.usersService.findUserById(createEmployeeDto.userId);
-    const company = await this.companyService.findById(createEmployeeDto.companyId,);
-    const role = await this.roleService.findById(createEmployeeDto.roleId);
-
-    if (!user || !company || !role) {
-      throw new ConflictException('Invalid ID given');
+    console.log('create function');
+    try {
+      await this.validateEmployee(createEmployeeDto)
+    }
+    catch (error) { 
+      console.log('error -> ', error);
+      return `${error}`;
     }
 
     const newEmployee = new Employee(createEmployeeDto);
     newEmployee.userId = createEmployeeDto.userId;
-    newEmployee.roleId = createEmployeeDto.roleId;
-
+    newEmployee.companyId = createEmployeeDto.companyId;
+    if (createEmployeeDto.roleId)
+    {
+      newEmployee.roleId = createEmployeeDto.roleId;
+    }
+    if (createEmployeeDto.superiorId)
+    {
+      newEmployee.superiorId = createEmployeeDto.superiorId;
+    }
+    
     const model = new this.employeeModel(newEmployee);
     const result = await model.save();
     return `${result}`;
@@ -135,8 +182,34 @@ export class EmployeeService {
     return result == null;
   }
 
-  async update(id: string, updateEmployeeDto: UpdateEmployeeDto): Promise<FlattenMaps<Employee> & { _id: Types.ObjectId }> {
-    await this.validateEmployee(updateEmployeeDto);
+  async employeeExistsForCompany(id: string, companyId: string): Promise<boolean> {
+    const result: FlattenMaps<Employee> & { _id: Types.ObjectId } =
+      await this.employeeModel
+        .findOne({
+          $and: [
+            { _id: new Types.ObjectId(id) },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+    if (result != null && result.companyId.toString() == companyId)
+      return true;
+    return false;  
+  }
+
+  async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
+    console.log('update function');
+    try {
+      const companyId = await this.getCompanyIdFromEmployee(id);
+      await this.validateEmployee(updateEmployeeDto, companyId.toString())
+    }
+    catch (error) { 
+      console.log('error -> ', error);
+      return `${error}`;
+    }
+
     const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } =
       await this.employeeModel
         .findOneAndUpdate(
@@ -154,6 +227,17 @@ export class EmployeeService {
     
     return previousObject;
   }
+
+  async getCompanyIdFromEmployee(employeeId: string){
+  const result = await this.employeeModel
+    .findOne(
+      { _id: new Types.ObjectId(employeeId) },
+      { companyId: 1, _id: 0 }
+    )
+    .lean();
+
+  return result ? result.companyId : null;
+}
 
   async remove(id: string): Promise<boolean> {
     const employeeToDelete = await this.findOne(id);

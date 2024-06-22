@@ -8,14 +8,14 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateEmployeeDto {
-  @IsArray()
-  @IsMongoId({ each: true })
+  @IsMongoId()
   @IsOptional()
   @ApiProperty()
   roleId?: Types.ObjectId;
 
   @IsArray()
   @IsMongoId({ each: true })
+  @IsOptional()
   @ApiProperty()
   currentJobAssignments?: Types.ObjectId[];
 
@@ -32,6 +32,7 @@ export class UpdateEmployeeDto {
 
   @IsArray()
   @IsMongoId({ each: true })
+  @IsOptional()
   @ApiProperty()
   subordinateTeams?: Types.ObjectId[];
 

@@ -111,6 +111,26 @@ export class TeamService {
     return result != null;
   }
 
+  async teamExistsInCompany(id: string, companyId: string): Promise<boolean> {
+    const result: FlattenMaps<Team> & { _id: Types.ObjectId } =
+      await this.teamModel
+        .findOne({
+          $and: [
+            { _id: id },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+    
+    if (result != null && result.companyId.toString() == companyId) 
+    {
+      return true;
+    }
+    return false;
+  }
+
   async findById(
     identifier: string | Types.ObjectId,
   ): Promise<FlattenMaps<Team> & { _id: Types.ObjectId }> {
