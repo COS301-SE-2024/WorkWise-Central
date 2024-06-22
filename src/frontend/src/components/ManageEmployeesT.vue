@@ -8,7 +8,7 @@
               <v-card
                 flat
                 :height="auto"
-                :width="1500"
+                :max-width="1500"
                 class="pa-11 ma-10"
                 rounded="xl"
                 elevation-2
