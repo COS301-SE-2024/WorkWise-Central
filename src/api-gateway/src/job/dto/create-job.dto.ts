@@ -189,9 +189,9 @@ export class CreateJobDto {
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsMongoId()
-  clientId: Types.ObjectId;
+  clientId?: Types.ObjectId;
 
   @ApiProperty()
   @IsOptional()

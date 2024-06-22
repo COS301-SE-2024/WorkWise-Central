@@ -16,21 +16,21 @@ describe('JobService', () => {
 
   const mockJobModel = {
     create: jest.fn().mockReturnValue(userStub()),
-    findAll: jest.fn().mockReturnValue(userStub()),
+    findAllCompanies: jest.fn().mockReturnValue(userStub()),
     findUser: jest.fn().mockReturnValue(userStub()),
     update: jest.fn().mockReturnValue(userStub()),
     remove: jest.fn().mockReturnValue(userStub()),
   };
   const mockUsersModel = {
     create: jest.fn().mockReturnValue(userStub()),
-    findAll: jest.fn().mockReturnValue(userStub()),
+    findAllCompanies: jest.fn().mockReturnValue(userStub()),
     findUser: jest.fn().mockReturnValue(userStub()),
     update: jest.fn().mockReturnValue(userStub()),
     remove: jest.fn().mockReturnValue(userStub()),
   };
   const mockCompanyModel = {
     create: jest.fn().mockReturnValue(userStub()),
-    findAll: jest.fn().mockReturnValue(userStub()),
+    findAllCompanies: jest.fn().mockReturnValue(userStub()),
     findUser: jest.fn().mockReturnValue(userStub()),
     update: jest.fn().mockReturnValue(userStub()),
     remove: jest.fn().mockReturnValue(userStub()),
@@ -38,7 +38,7 @@ describe('JobService', () => {
 
   const mockClientModel = {
     create: jest.fn().mockReturnValue(userStub()),
-    findAll: jest.fn().mockReturnValue(userStub()),
+    findAllCompanies: jest.fn().mockReturnValue(userStub()),
     findUser: jest.fn().mockReturnValue(userStub()),
     update: jest.fn().mockReturnValue(userStub()),
     remove: jest.fn().mockReturnValue(userStub()),

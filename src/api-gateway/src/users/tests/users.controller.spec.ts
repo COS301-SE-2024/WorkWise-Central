@@ -48,7 +48,7 @@ describe('UsersController', () => {
   });
 
   it('should find all users', function () {
-    expect(usersController.findAll()).toBeDefined();
+    expect(usersController.findAllCompanies()).toBeDefined();
   });
 });
 */
