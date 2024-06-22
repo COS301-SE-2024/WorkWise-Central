@@ -16,7 +16,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="grey darken-1" text @click="close">Cancel</v-btn>
+        <v-btn color="grey darken-1" text @click="clientDialog = false">Cancel</v-btn>
         <v-btn color="red darken-2" text :loading="isDeleting" @click="deleteClient">Delete</v-btn>
       </v-card-actions>
     </v-card>
@@ -31,7 +31,7 @@ export default {
   },
   data() {
     return {
-      clientDialog: this.opened,
+      clientDialog: false,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false
     }
@@ -39,7 +39,6 @@ export default {
   methods: {
     close() {
       this.clientDialog = false
-      this.$emit('updated_opened', false)
     }
     // async deleteClient() {
     //   this.isDeleting = true

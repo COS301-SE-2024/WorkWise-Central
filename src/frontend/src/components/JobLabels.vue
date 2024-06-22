@@ -29,23 +29,9 @@
             </v-btn>
           </v-col>
         </v-row>
-        <v-spacer></v-spacer>
-        <v-col cols="12">
-          <v-text-field
-            v-model="search"
-            :label="search ? search : 'Search labels...'"
-            variant="outlined"
-            hide-details
-            width="95%"
-            border="md"
-            density="compact"
-          ></v-text-field
-        ></v-col>
 
         <v-spacer></v-spacer>
-        <v-col>
-          <h4 style="font-size: 15px; font-weight: lighter">Labels</h4>
-        </v-col>
+
         <div>
           <v-row>
             <v-col cols="11" v-for="label in jobLabels" :key="label.id">
@@ -60,10 +46,11 @@
                 <!-- Card in the middle -->
                 <v-col cols="10">
                   <!-- Adjust the cols as needed for your design -->
-                  <v-chip :color="label.color"></v-chip>
+                  
                   <v-card
                     @click="toggleSelection"
                     :class="{ selected: label.isSelected }"
+                    :color="label.color"
                     height="40px"
                   >
                     <v-card-title>{{ label.title }}</v-card-title>
@@ -84,14 +71,6 @@
               </v-row>
             </v-col>
           </v-row>
-          <v-col cols="8" offset="3" align="center">
-            <v-row align="center">
-              <v-btn variant="plain" @click="(createLabelDialog = true), (jobDialog = false)">
-                <v-icon>mdi-plus</v-icon>
-                Create a new Label
-              </v-btn>
-            </v-row></v-col
-          >
         </div>
       </v-col>
     </v-sheet>
@@ -232,19 +211,19 @@ export default defineComponent({
         id: 1,
         color: 'red', // Example color
         isSelected: false,
-        title: 'Frontend'
+        title: 'Not Started'
       },
       {
         id: 2,
         color: 'orange', // Example color
         isSelected: false,
-        title: 'Backend'
+        title: 'In Progress'
       },
       {
         id: 3,
-        color: 'yellow', // Example color
+        color: 'green', // Example color
         isSelected: false,
-        title: 'Services'
+        title: 'Completed'
       }
     ],
     selectedLabels: [],

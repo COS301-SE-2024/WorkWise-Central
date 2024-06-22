@@ -14,7 +14,7 @@
     <v-sheet
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
       elevation="14"
-      rounded="xl"
+      rounded="md"
       max-height="800"
       overflow-y="auto"
       max-width="600"
@@ -23,7 +23,7 @@
         <v-col>
           <v-col>
             <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-              Client Details
+              Create a Client
             </h4></v-col
           >
           <v-spacer></v-spacer>
@@ -41,7 +41,7 @@
                 color="grey-lighten-4"
                 placeholder="Enter the first name of the client"
                 v-model="req_obj.firstName"
-                rounded="xl"
+                rounded="md"
                 variant="solo"
                 required
                 :rules="first_name_rules"
@@ -60,7 +60,7 @@
                 color="grey-lighten-4"
                 placeholder="Enter the Surname name of the client"
                 v-model="req_obj.surname"
-                rounded="xl"
+                rounded="md"
                 variant="solo"
                 required
                 :rules="surname_rules"
@@ -80,7 +80,7 @@
                 v-model="req_obj.email"
                 :rules="email_rules"
                 type="email"
-                rounded="xl"
+                rounded="md"
                 variant="solo"
                 required
               ></v-text-field
@@ -97,7 +97,7 @@
                 color="grey-lighten-4"
                 placeholder="Enter the client's phone number"
                 v-model="req_obj.phoneNumber"
-                rounded="xl"
+                rounded="md"
                 variant="solo"
                 required
               ></v-text-field
@@ -115,7 +115,7 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Street"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.address.street"
                   variant="solo"
                   required
@@ -127,7 +127,7 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Suburb"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.address.suburb"
                   variant="solo"
                   required
@@ -140,7 +140,7 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="City"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.address.city"
                   variant="solo"
                   required
@@ -152,7 +152,7 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Zip Code"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.address.postalCode"
                   variant="solo"
                   required
@@ -165,7 +165,7 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Complex"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.address.complex"
                   variant="solo"
                   required
@@ -177,7 +177,7 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="House number"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.address.houseNumber"
                   variant="solo"
                   required
@@ -196,7 +196,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 label="Enter the language preferred by the client"
-                rounded="xl"
+                rounded="md"
                 v-model="req_obj.preferredLanguage"
                 variant="solo"
                 :items="[
@@ -217,7 +217,7 @@
           </v-col>
           <v-col cols="8" offset="2" align="center">
             <v-btn
-              rounded="xl"
+              rounded="md"
               boarder="xl"
               width="80%"
               height="35"

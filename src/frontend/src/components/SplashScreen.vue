@@ -6,7 +6,7 @@
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
       dark
     >
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+     
       <v-app-bar-title>
         <span class="colorAccent toolbar-text">Work</span>
         <span class="colorAccent2 toolbar-text">Wise</span>

@@ -16,22 +16,11 @@
         ><v-col>
           <h4 class="text-center" style="font-size: 25px; font-weight: lighter">Members</h4>
         </v-col>
-        <v-spacer></v-spacer>
-        <v-col cols="12">
-          <v-text-field
-            v-model="search"
-            :label="search ? search : 'Search Members'"
-            variant="outlined"
-            hide-details
-            width="95%"
-            border="md"
-            density="compact"
-          ></v-text-field
-        ></v-col>
+        
 
         <v-spacer></v-spacer>
         <v-col v-if="sections.cardMembers && Object.keys(sections.cardMembers).length > 0">
-          <h4 style="font-size: 15px; font-weight: lighter">Card Members</h4>
+          <h4 style="font-size: 15px; font-weight: lighter">Assigned Members</h4>
         </v-col>
 
         <div>
@@ -56,7 +45,7 @@
         </div>
         <v-spacer></v-spacer>
         <v-col v-if="sections.teamMembers && Object.keys(sections.teamMembers).length > 0">
-          <h4 style="font-size: 15px; font-weight: lighter">Team Members</h4>
+          <h4 style="font-size: 15px; font-weight: lighter">Unassigned Members</h4>
         </v-col>
         <div>
           <v-row>
