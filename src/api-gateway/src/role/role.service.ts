@@ -14,25 +14,59 @@ import { Document, Model, Types, FlattenMaps } from 'mongoose';
 import { Role } from './entity/role.entity';
 import { CompanyService } from '../company/company.service';
 import { User } from '../users/entities/user.entity';
+import { validate } from 'class-validator';
 
 @Injectable()
 export class RoleService {
+  private permissionsArray: string[]
+
   constructor(
     @InjectModel(Role.name)
     private readonly roleModel: Model<Role>,
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
-  ) {}
+  ) {
+    this.permissionsArray.push("view all employees")
+    this.permissionsArray.push("edit employees")
+    this.permissionsArray.push("add new employees")
+    this.permissionsArray.push("view all job")
+    this.permissionsArray.push("view all jobs under me")
+    this.permissionsArray.push("view all jobs assigned to me.")
+    this.permissionsArray.push("edit all jobs")
+    this.permissionsArray.push("edit jobs that are under me")
+    this.permissionsArray.push("edit jobs that are assigned to me")
+    this.permissionsArray.push("add a new job")
+    this.permissionsArray.push("view all clients")
+    this.permissionsArray.push("view all client under me")
+    this.permissionsArray.push("view all client that are assigned to me")
+    this.permissionsArray.push("edit all clients")
+    this.permissionsArray.push("edit all client that are under me")
+    this.permissionsArray.push("edit all client that assigned to me")
+    this.permissionsArray.push("view all inventory")
+    this.permissionsArray.push("edit all inventory")
+    this.permissionsArray.push("add a new inventory item")
+    this.permissionsArray.push("record inventory use")
+  }
+
+  async validateRole(role: Role | CreateRoleDto | UpdateRoleDto) { 
+
+    if ('permissionSuite' in role && role.permissionSuite) {
+      for (const permission of role.permissionSuite) {
+        if (!this.permissionsArray.includes(permission)) {
+          throw new ConflictException('Permission not found');
+        }
+      }
+    }
+      
+    if ('companyId' in role && role.companyId) {
+      if (!(await this.companyService.companyExists(role.companyId.toString()))) {
+        throw new ConflictException('Company not found');
+      }
+    }
+  }
 
   async create(createRoleDto: CreateRoleDto) {
-    if (!(await this.companyService.companyIdExists(createRoleDto.companyId))) {
-      throw new ConflictException('User not found');
-    }
-
-    const company = await this.companyService.findById(createRoleDto.companyId,);
-    if (!company) {
-      throw new ConflictException('Invalid ID given');
-    }
+    this.validateRole(createRoleDto)
 
     const newRole = new Role(createRoleDto);
 
@@ -59,9 +93,7 @@ export class RoleService {
   }
 
   async update(id: number, updateRoleDto: UpdateRoleDto) {
-    const addPermission = updateRoleDto.addPermission;
-    const removePermission = updateRoleDto.removePermission;
-    const roleName = updateRoleDto.roleName;
+    this.validateRole(updateRoleDto);
 
     const previousObject: FlattenMaps<Role> & { _id: Types.ObjectId } =
       await this.roleModel
@@ -77,25 +109,7 @@ export class RoleService {
           { $set: { ...updateRoleDto }, updatedAt: new Date() },
         )
         .lean();
-    
-    if (addPermission) {
-      await this.roleModel.updateOne(
-        { _id: id },
-        { $addToSet: { permissionSuite: { $each: addPermission } } }
-      );
-    }
-    if (removePermission) {
-      await this.roleModel.updateOne(
-        { _id: id },
-        { $pull: { permissionSuite: { $in: removePermission } } }
-      );
-    }
-    if (roleName) {
-      await this.roleModel.updateOne(
-        { _id: id },
-        { $set: { roleName: roleName } }
-      );
-    }
+
     return previousObject;
   }
 

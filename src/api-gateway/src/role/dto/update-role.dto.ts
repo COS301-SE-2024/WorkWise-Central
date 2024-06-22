@@ -8,15 +8,12 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateRoleDto {
-  @IsOptional()
+  @IsArray()
+  @IsNotEmpty()
   @ApiProperty()
-  addPermission: string;
-
-  @IsOptional()
-  @ApiProperty()
-  removePermission: string;
+  permissionSuite: string[];
    
-  @IsOptional()
+  @IsNotEmpty()
   @ApiProperty()
   roleName: string;
 }
