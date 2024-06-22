@@ -136,7 +136,12 @@ export class User {
   profile: Profile;
 
   @ApiProperty()
-  @Prop({ type: [JoinedCompany], required: false, default: [] })
+  @Prop({
+    type: [JoinedCompany],
+    required: false,
+    ref: 'Company',
+    default: [],
+  })
   joinedCompanies?: JoinedCompany[] = [];
 
   @ApiProperty()
