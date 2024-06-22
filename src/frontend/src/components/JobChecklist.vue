@@ -23,7 +23,7 @@
 
           <!-- Close button on the right -->
           <v-col cols="2">
-            <v-btn @click="editLabelDialog = false" variant="plain">
+            <v-btn @click="checklistDialog = false" variant="plain">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-col>
@@ -55,8 +55,8 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-col cols="12"
-          ><v-btn variant="elevated" color="blue" @click="addChecklist">Add</v-btn></v-col
+        <v-col cols="auto"
+          ><v-btn variant="elevated" size="large" color="blue" @click="addChecklist">Add</v-btn></v-col
         >
       </v-col>
     </v-sheet>
