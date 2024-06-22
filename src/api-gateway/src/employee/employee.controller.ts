@@ -20,12 +20,12 @@ export class EmployeeController {
     return this.employeeService.create(createEmployeeDto);
   }
 
-  @Get()
+  @Get('/all')
   findAll() {
     return this.employeeService.findAll();
   }
 
-  @Get(':id')
+  @Get('id/:id')
   findOne(@Param('id') id: string) {
     return this.employeeService.findOne(id);
   }
