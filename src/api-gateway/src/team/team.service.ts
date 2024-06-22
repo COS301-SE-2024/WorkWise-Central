@@ -15,7 +15,7 @@ import { Team } from './entities/team.entity';
 import { EmployeeService } from '../employee/employee.service';
 import { CompanyService } from '../company/company.service';
 import { User } from '../users/entities/user.entity';
-import { JobService } from 'src/job/job.service';
+import { JobService } from '../job/job.service';
 
 @Injectable()
 export class TeamService {

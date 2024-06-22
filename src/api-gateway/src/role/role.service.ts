@@ -18,7 +18,7 @@ import { validate } from 'class-validator';
 
 @Injectable()
 export class RoleService {
-  private permissionsArray: string[]
+  private permissionsArray: string[] = [];
 
   constructor(
     @InjectModel(Role.name)

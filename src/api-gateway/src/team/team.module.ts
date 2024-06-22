@@ -6,6 +6,7 @@ import { Team, TeamSchema } from './entities/team.entity';
 import { UsersModule } from '../users/users.module';
 import { CompanyModule } from '../company/company.module';
 import { EmployeeModule } from '../employee/employee.module';
+import { JobModule } from '../job/job.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { EmployeeModule } from '../employee/employee.module';
     forwardRef(() => UsersModule),
     CompanyModule,
     forwardRef(() => EmployeeModule), 
+    forwardRef(() => JobModule), 
   ],
   controllers: [TeamController],
   providers: [TeamService],
