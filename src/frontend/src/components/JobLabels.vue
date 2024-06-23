@@ -1,216 +1,71 @@
 <template>
+  <!-- Labels Dialog Box -->
   <v-dialog v-model="jobDialog" max-width="500" height="auto">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-        rounded="md"
-        class="text-none font-weight-regular hello"
-        prepend-icon="mdi-label"
-        variant="elevated"
-        v-bind="activatorProps"
+          rounded="md"
+          class="mb-2"
+          prepend-icon="mdi-label"
+          variant="elevated"
+          v-bind="activatorProps"
       >
-        Labels
+        Status
       </v-btn>
     </template>
-    <v-sheet elevation="14" rounded="xl" width="500" height="auto">
-      <v-col>
-        <v-row class="pa-2" align="center">
-          <!-- Add padding for spacing and align items center -->
-
-          <!-- Label in the middle -->
-          <v-col cols="10">
-            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">Labels</h4>
-          </v-col>
-
-          <!-- Close button on the right -->
-          <v-col cols="2">
-            <v-btn @click="editLabelDialog = false" variant="plain">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-        <v-spacer></v-spacer>
+    <v-sheet elevation="14" rounded="md" height="auto">
+      <v-col cols="12">
         <v-col cols="12">
-          <v-text-field
-            v-model="search"
-            :label="search ? search : 'Search labels...'"
-            variant="outlined"
-            hide-details
-            width="95%"
-            border="md"
-            density="compact"
-          ></v-text-field
-        ></v-col>
+          <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+            <v-icon left class="mr-2">mdi-label</v-icon>
+            <span class="title">Status of the Job</span>
+            <v-spacer></v-spacer>
+          </v-card-title>
+        </v-col>
 
         <v-spacer></v-spacer>
-        <v-col>
-          <h4 style="font-size: 15px; font-weight: lighter">Labels</h4>
-        </v-col>
         <div>
           <v-row>
-            <v-col cols="11" v-for="label in jobLabels" :key="label.id">
+            <v-col cols="12" v-for="label in jobLabels" :key="label.id">
               <v-row align="center">
                 <!-- Add padding for spacing and align items center -->
                 <!-- Checkbox on the left -->
-                <v-col cols="1">
-                  <!-- Adjust the cols as needed for your design -->
-                  <v-checkbox v-model="label.isSelected"></v-checkbox>
-                </v-col>
 
                 <!-- Card in the middle -->
-                <v-col cols="10">
+                <v-col cols="9" offset="2">
                   <!-- Adjust the cols as needed for your design -->
                   <v-card
-                    @click="toggleSelection"
-                    :class="{ selected: label.isSelected }"
-                    :style="{ backgroundColor: label.color }"
-                    height="40px"
+                      @click="toggleSelection(label)"
+                      :class="{ selected: label.isSelected }"
+                      :color="label.color"
+                      variant="outlined"
+                      height="40px"
+                      rounded="xl"
+                      width="90%"
                   >
                     <v-card-title>{{ label.title }}</v-card-title>
                     <!-- Your card content here -->
+                    <v-card-actions>
+                      <!-- Your card actions here -->
+                      <v-btn
+                          @click="(jobDialog = false), setCurrentLabel(label)"
+                          variant="text"
+                          color="primary"
+                          size="large"
+                      >Save</v-btn
+                      >
+
+                      <v-btn @click="jobDialog = false" variant="text" color="red" size="large"
+                      >Cancel</v-btn
+                      >
+                    </v-card-actions>
                   </v-card>
                 </v-col>
-
-                <!-- Button on the right -->
-                <v-col cols="1">
-                  <!-- Adjust the cols as needed for your design -->
-                  <v-btn
-                    variant="plain"
-                    @click="(editLabelDialog = true), (jobDialog = false), currentLabel(label)"
-                  >
-                    <v-icon>mdi-pencil</v-icon>
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-col>
+              </v-row> </v-col
+            ><v-spacer></v-spacer>
           </v-row>
-          <v-col cols="8" offset="3" align="center">
-            <v-row align="center">
-              <v-btn variant="plain" @click="(createLabelDialog = true), (jobDialog = false)">
-                <v-icon>mdi-plus</v-icon>
-                Create a new Label
-              </v-btn>
-            </v-row></v-col
-          >
         </div>
-      </v-col>
-    </v-sheet>
-  </v-dialog>
-
-  <v-dialog v-model="createLabelDialog" max-width="500" height="auto">
-    <v-sheet elevation="14" rounded="xl" width="500" height="auto">
-      <v-col cols="12">
-        <v-row class="pa-2" align="center">
-          <!-- Add padding for spacing and align items center -->
-          <!-- Back button on the left -->
-          <v-col cols="2">
-            <v-btn @click="(jobDialog = true), (createLabelDialog = false)" variant="plain">
-              <v-icon>mdi-arrow-left</v-icon>
-            </v-btn>
-          </v-col>
-
-          <!-- Label in the middle -->
-          <v-col cols="8">
-            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">Create label</h4>
-          </v-col>
-
-          <!-- Close button on the right -->
-          <v-col cols="2">
-            <v-btn @click="createLabelDialog = false" variant="plain">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-col>
-      <v-spacer></v-spacer>
-      <v-col cols="12">
-        <v-label>Title</v-label>
         <v-spacer></v-spacer>
-
-        <v-text-field
-          v-model="newLabelItemTitle"
-          variant="outlined"
-          hide-details
-          width="100%"
-          border="md"
-          density="compact"
-        ></v-text-field>
       </v-col>
-      <div>
-        <v-col cols="12">
-          <v-label>Select a color</v-label>
-          <v-color-picker v-model="newLabelItemColor"></v-color-picker>
-        </v-col>
-      </div>
-      <v-col cols="12">
-        <v-btn color="primary" @click="addNewLabel">Create Label</v-btn>
-      </v-col>
-    </v-sheet>
-  </v-dialog>
-
-  <v-dialog v-model="editLabelDialog" max-width="500" height="auto">
-    <v-sheet elevation="14" rounded="xl" width="500" height="auto">
-      <v-col cols="12">
-        <v-row class="pa-2" align="center">
-          <!-- Add padding for spacing and align items center -->
-          <!-- Back button on the left -->
-          <v-col cols="2">
-            <v-btn @click="(jobDialog = true), (editLabelDialog = false)" variant="plain">
-              <v-icon>mdi-arrow-left</v-icon>
-            </v-btn>
-          </v-col>
-
-          <!-- Label in the middle -->
-          <v-col cols="8">
-            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">Edit label</h4>
-          </v-col>
-
-          <!-- Close button on the right -->
-          <v-col cols="2">
-            <v-btn @click="editLabelDialog = false" variant="plain">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-col>
-      <v-spacer></v-spacer>
-      <v-col cols="12">
-        <v-label>Title</v-label>
-        <v-spacer></v-spacer>
-
-        <v-text-field
-          v-model="currentLabel.title"
-          variant="outlined"
-          hide-details
-          width="100%"
-          border="md"
-          density="compact"
-        ></v-text-field>
-      </v-col>
-      <div>
-        <v-col cols="12">
-          <v-label>Select a color</v-label>
-          <v-color-picker v-model="currentLabel.color"></v-color-picker>
-          <!-- Add this line -->
-        </v-col>
-      </div>
-      <div>
-        <v-row align="center">
-          <v-btn @click="currentLabel.color = ''" variant="plain"
-            ><v-icon>mdi-close</v-icon>Remove Color</v-btn
-          ></v-row
-        >
-      </div>
-      <v-divider></v-divider>
-      <div>
-        <v-row class="pa-2" align="center">
-          <v-col cols="6"> <v-btn @click="saveChanges" variant="plain">Save Changes</v-btn></v-col>
-          <v-col cols="6"
-            ><v-btn @click="(editLabelDialog = false), deleteLabel" variant="plain"
-              >Delete Label</v-btn
-            ></v-col
-          ></v-row
-        >
-      </div>
     </v-sheet>
   </v-dialog>
 </template>
@@ -220,7 +75,8 @@ export default defineComponent({
   name: 'JobLabels',
   props: {
     isDarkMode: Boolean,
-    colors: Object
+    colors: Object,
+    Status: Object
   },
   data: () => ({
     jobDialog: false,
@@ -238,27 +94,42 @@ export default defineComponent({
         id: 1,
         color: 'red', // Example color
         isSelected: false,
-        title: 'Frontend'
+        title: 'Not Started'
       },
       {
         id: 2,
         color: 'orange', // Example color
         isSelected: false,
-        title: 'Backend'
+        title: 'In Progress'
       },
       {
         id: 3,
-        color: 'yellow', // Example color
+        color: 'green', // Example color
         isSelected: false,
-        title: 'Services'
+        title: 'Completed'
       }
     ],
     selectedLabels: [],
-    isSelected: false
+    isSelected: false,
+    status: ''
   }),
   methods: {
-    toggleSelection() {
-      this.isSelected = !this.isSelected
+    toggleSelection(selectedLabel) {
+      if (selectedLabel.isSelected) {
+        selectedLabel.isSelected = false
+      } else {
+        this.jobLabels.forEach((label) => {
+          label.isSelected = label === selectedLabel
+        })
+        // Emit an event instead of modifying the prop directly
+        if (selectedLabel.isSelected) {
+          this.$emit('update:status', selectedLabel)
+          this.$emit('add:status', selectedLabel)
+        } else {
+          this.$emit('update:status', '')
+        }
+      }
+      console.log(selectedLabel.isSelected) // Logs the current state of the selected/deselected label
     },
     addNewLabel() {
       if (this.newLabelItemTitle && this.newLabelItemColor) {
@@ -270,6 +141,10 @@ export default defineComponent({
         }
         this.jobLabels.push(item)
         console.log(this.jobLabels)
+        this.newLabelItemTitle = ''
+        this.newLabelItemColor = ''
+        this.createLabelDialog = false
+        this.jobDialog = true
       }
     },
     addSelectedLabels() {
@@ -295,3 +170,9 @@ export default defineComponent({
   }
 })
 </script>
+<style scoped>
+.selected {
+  border: 2px solid #42b983; /* Example highlight color */
+  box-shadow: 0 0 8px #42b983; /* Adds a shadow for more emphasis */
+}
+</style>

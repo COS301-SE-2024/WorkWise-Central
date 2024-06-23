@@ -1,8 +1,8 @@
 <template>
   <v-card class="d-flex">
-    <v-card class="flex-grow-1 pa-4, text-center" >
+    <v-card class="flex-grow-1 pa-4, text-center">
       <v-card-title class="d-flex align-items-center">
-        <h2 class="flex-grow-1" >{{ jobTitle }}</h2>
+        <h2 class="flex-grow-1">{{ jobTitle }}</h2>
       </v-card-title>
       <div>
         <v-row align="center" justify="space-between">
@@ -49,6 +49,37 @@
             {{ chip.name }}
           </v-chip>
         </div>
+        F
+      </div>
+      <div v-if="selectedMemberChips.length">
+        <h4 class="flex-grow-1">Team Members Selected:</h4>
+        <v-chip
+            v-for="(chip, index) in selectedMemberChips"
+            :key="index"
+            class="ma-2"
+            color="primary"
+            outlined
+            close
+        >
+          {{ chip.name }}
+        </v-chip>
+      </div>
+      <div v-if="status">
+        <h4 class="flex-grow-1">Status</h4>
+        <v-chip class="ma-2" :color="status.color" outlined close>{{ status.title }}</v-chip>
+      </div>
+      <div v-if="checklistChips.length">
+        <h4 class="flex-grow-1">Checklist:</h4>
+        <v-chip
+            v-for="(chip, index) in checklistChips"
+            :key="index"
+            class="ma-2"
+            color="primary"
+            outlined
+            close
+        >
+          {{ chip.title }}
+        </v-chip>
       </div>
       <div v-if="fileChips.length" class="chip-container">
         <h4 class="flex-grow-1">Attached files:</h4>
@@ -90,10 +121,15 @@
     <v-card flat class="pa-4" max-width="300">
       <div class="d-flex flex-column">
 
-        <v-btn class="mb-2" outlined>Team Member List</v-btn>
+        <TeamMemberList
+            :teamList="teamMemberChips"
+            @update:selectedMembers="selectedMemberChips = $event"
+            @addMemberToCard="handleAddMemberToCard"
+        ></TeamMemberList>
 
         <v-btn class="mb-2" outlined @click="openClientDialogAndFetchClients">
-          <v-icon left>mdi-account-switch</v-icon> Change Client
+          <v-icon left>mdi-account-switch</v-icon>
+          Change Client
         </v-btn>
         <v-dialog v-model="clientDialog" max-width="600px">
           <v-card>
@@ -117,15 +153,20 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="saveClient" >Save</v-btn>
+              <v-btn color="blue darken-1" text @click="saveClient">Save</v-btn>
               <v-btn color="blue darken-1" text @click="clientDialog=false">Cancel</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-btn class="mb-2" outlined>Labels</v-btn>
-        <v-btn class="mb-2" outlined>Checklist</v-btn>
+        <JobLabels @update:status="status = $event" @add:status="updateStatus = $event"/>
+        <!-- Job Checklist -->
+        <JobChecklist
+            @itemAdded:checklistProp="checklistChips = $event"
+            @addItemToList="addItemToChecklist"
+        ></JobChecklist>
         <v-btn class="mb-2" outlined @click="dialog = true">
-          <v-icon left>mdi-paperclip</v-icon> File Attachments
+          <v-icon left>mdi-paperclip</v-icon>
+          File Attachments
         </v-btn>
         <v-dialog v-model="dialog" max-width="600px">
           <v-card>
@@ -155,16 +196,17 @@
                   </template>
                 </template>
               </v-file-input>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="insertFiles">Insert</v-btn>
-                <v-btn color="blue darken-1" text @click="dialog = false">Cancel</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="insertFiles">Insert</v-btn>
+              <v-btn color="blue darken-1" text @click="dialog = false">Cancel</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <v-btn class="mb-2" outlined @click="dueDateDialog = true">
-          <v-icon left>mdi-calendar-clock</v-icon> Due Date
+          <v-icon left>mdi-calendar-clock</v-icon>
+          Due Date
         </v-btn>
         <v-dialog v-model="dueDateDialog" max-width="600px">
           <v-card>
@@ -191,7 +233,7 @@
                     <v-row>
                       <v-checkbox
                           v-model="isStartDatePicked"
-                          @click = "toggleStartDate"
+                          @click="toggleStartDate"
                       ></v-checkbox>
                       <v-text-field
                           v-model="formattedStartDate"
@@ -204,7 +246,7 @@
                     <v-row>
                       <v-checkbox
                           v-model="isEndDatePicked"
-                          @click = "toggleEndDate"
+                          @click="toggleEndDate"
                       ></v-checkbox>
                       <v-text-field
                           v-model="formattedEndDate"
@@ -218,7 +260,8 @@
             </v-card-text>
             <v-card-actions>
               <v-btn color="blue darken-1"
-                     text @click="saveDate">Save</v-btn>
+                     text @click="saveDate">Save
+              </v-btn>
               <v-btn color="blue darken-1" text @click="removeDates">Remove</v-btn>
               <v-btn color="blue darken-1" text @click="dueDateDialog = false">Cancel</v-btn>
             </v-card-actions>
@@ -230,13 +273,24 @@
 </template>
 
 <script setup>
-import { watch, ref } from 'vue'
+import {watch, ref} from 'vue'
 import axios from 'axios'
-import { computed } from 'vue'
-import { VBtn, VDialog, VCard, VCardTitle, VCardText, VCardActions, VFileInput, VChip, VSpacer, VAlert } from 'vuetify/components';
-const props = defineProps({
-  jobID: String,
-});
+import {computed} from 'vue'
+import {
+  VBtn,
+  VDialog,
+  VCard,
+  VCardTitle,
+  VCardText,
+  VCardActions,
+  VFileInput,
+  VChip,
+  VSpacer,
+  VAlert
+} from 'vuetify/components';
+import TeamMemberList from './TeamMemberList.vue'
+import JobLabels from './JobLabels.vue'
+import JobChecklist from './JobChecklist.vue'
 //For change client
 const clientDialog = ref(false);
 const selectedClient = ref(null);
@@ -291,12 +345,55 @@ const fetchClients = async () => {
 
 const saveClient = () => {
   if (selectedClientName.value) {
-    clientChips.value.push({ name: selectedClientName });
+    clientChips.value.push({name: selectedClientName});
     console.log('Client chips:', clientChips.value);
   }
   clientDialog.value = false;
 };
+const updateStatus = async (status) => {
+  await axios.patch(`http://localhost:3000/job/${job_ID.value}`, {
+    status: status
+  })
+};
+const selectedMemberChips = ref([])
+const checklistChips = ref([])
+const status = ref(null)
 
+// const dateChips = ref([])
+// const formatDate = (date) => {
+//   if (!date) return ''
+//   const d = new Date(date)
+//   const yyyy = d.getFullYear()
+//   const mm = String(d.getMonth() + 1).padStart(2, '0')
+//   const dd = String(d.getDate()).padStart(2, '0')
+//   return ${yyyy}-${mm}-${dd}
+// };
+//Define props
+const props = defineProps({
+  job_ID: String
+})
+
+// If you need to make job_ID reactive and use it within your setup
+const job_ID = ref(props.job_ID)
+const teamMemberChips = ref([
+  {id: 0, name: 'John Doe', selected: false, role: 'Software Engineer'},
+  {id: 1, name: 'Jane Smith', selected: false, role: 'Software Engineer'},
+  {id: 2, name: 'Alice Johnson', selected: false, role: 'Software Engineer'}
+])
+
+const addItemToChecklist = (item) => {
+  checklistChips.value = item
+}
+const handleAddMemberToCard = async (member) => {
+  // Assuming cardMembers is a data property of the parent component
+  selectedMemberChips.value = member
+  await axios.patch(`http://localhost:3000/job/${job_ID.value}`, {
+    assignEmployees: {
+      employeeIds: [member.id]
+    }
+  })
+// Make sure to update the parent state in a way that Vue can react to
+}
 // the id of the selected client is stored in selectedClient
 
 // For File attachments
@@ -345,8 +442,7 @@ const setDates = (value) => {
     startDate.value = value; // stores the updated start date
     isStartDatePicked.value = true;
     currentDate.value = null;
-  }
-  else if (!isEndDatePicked.value) {
+  } else if (!isEndDatePicked.value) {
     if (isStartDatePicked.value && value < startDate.value) {
       errorMessage.value = 'End date can not come before start date.';
       return;
@@ -432,9 +528,6 @@ const jobTitle = ref('Job Heading')
 const jobComment = ref('')
 
 
-
-
-
 </script>
 
 <style scoped>
@@ -442,6 +535,7 @@ const jobComment = ref('')
   border: 1px solid #e0e0e0;
   border-radius: 8px;
 }
+
 .mt-4 {
   margin-top: 1.5rem;
 }
