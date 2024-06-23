@@ -18,7 +18,7 @@
               <v-col :cols="12">
                 <v-sheet rounded class="h-lg-screen w-lg-screen">
                   <div>
-                    <v-expansion-panels class="my-4" variant="inset" color="blue">
+                    <v-expansion-panels class="my-4" variant="inset">
                       <v-expansion-panel
                         v-for="i in 14"
                         :key="i"
@@ -77,7 +77,7 @@ export default defineComponent({
         {
           question: 'What is the purpose of this app?',
           answer:
-            'Our app is designed to help labor-intensive teams and other specialized teams, such as those in network setup and IT technician spaces, manage their projects efficiently. It offers features similar to Monday.com and Trello, enabling teams to track progress, assign tasks, collaborate, and streamline workflows.'
+            'Our app is designed to help service delivery companies and other specialized teams, such as those in network setup and IT technician spaces with git, manage their jobs efficiently. It offers features similar to Monday.com and Trello, enabling teams to track progress, assign jobs, collaborate, and streamline workflows.'
         },
         {
           question: 'How do I create a new project in the app?',

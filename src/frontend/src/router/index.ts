@@ -109,7 +109,7 @@ const router = createRouter({
       name: 'managereditemployee',
       component: () => import('@/views/ManagerEditEmployee.vue')
     },
-      {
+    {
       path: '/client-desk-view',
       name: 'client-desk-view',
       component: ClientEmployeeView
@@ -128,6 +128,11 @@ const router = createRouter({
       path: '/client-employee-view',
       name: 'client-employee-view',
       component: ClientView
+    },
+    {
+      path: '/email-confirmation',
+      name: 'email-confirm',
+      component: () => import('@/views/EmailConfirmation.vue')
     }
   ]
 })
