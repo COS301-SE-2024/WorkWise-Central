@@ -8,14 +8,14 @@ import { EmailModule } from '../email/email.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
   UserConfirmation,
-  UserConfirmationScheme,
+  UserConfirmationSchema,
 } from '../users/entities/user-confirmation.entity';
 
 @Global()
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: UserConfirmation.name, schema: UserConfirmationScheme },
+      { name: UserConfirmation.name, schema: UserConfirmationSchema },
     ]),
     forwardRef(() => UsersModule),
     JwtModule.register({

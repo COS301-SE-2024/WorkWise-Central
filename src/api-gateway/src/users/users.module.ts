@@ -7,7 +7,7 @@ import { AuthModule } from '../auth/auth.module';
 import { EmployeeModule } from '../employee/employee.module';
 import {
   UserConfirmation,
-  UserConfirmationScheme,
+  UserConfirmationSchema,
 } from './entities/user-confirmation.entity';
 import { EmailService } from '../email/email.service';
 import { UsersRepository } from './users.repository';
@@ -18,7 +18,7 @@ import { UsersRepository } from './users.repository';
     forwardRef(() => EmployeeModule),
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
-      { name: UserConfirmation.name, schema: UserConfirmationScheme },
+      { name: UserConfirmation.name, schema: UserConfirmationSchema },
     ]),
   ],
   controllers: [UsersController],

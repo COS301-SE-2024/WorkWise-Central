@@ -63,7 +63,7 @@ class Address {
 
   @ApiProperty()
   @IsOptional()
-  @IsNumberString()
+  @IsString()
   @MaxLength(255)
   houseNumber?: string;
 }
