@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { Client } from './entities/client.entity';
+import { UpdateClientDto } from './dto/update-client.dto';
 
 @Injectable()
 export class ClientRepository {
@@ -36,8 +37,8 @@ export class ClientRepository {
           {
             $or: [
               { 'clientInfo.email': { $regex: searchTerm } },
-              { 'details.firstName': { $regex: searchTerm } },
-              { 'details.surname': { $regex: searchTerm } },
+              { 'details.name': { $regex: searchTerm } },
+              // { 'details.surname': { $regex: searchTerm } },
             ],
           },
           {
@@ -60,6 +61,23 @@ export class ClientRepository {
       })
       .lean();
     return result != null;
+  }
+
+  async update(id: string | Types.ObjectId, updateClientDto: UpdateClientDto) {
+    return this.clientModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            { _id: id },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        { $set: { ...updateClientDto }, updatedAt: new Date() },
+        { new: true },
+      )
+      .lean();
   }
 
   async delete(id: string | Types.ObjectId) {
