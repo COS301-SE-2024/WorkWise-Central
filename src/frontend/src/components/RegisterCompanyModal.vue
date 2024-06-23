@@ -387,7 +387,8 @@ export default {
           postalCode: '',
           complex: '',
           houseNumber: ''
-        }
+        },
+        employees: sessionStorage['id']
       }
     }
   },
@@ -402,8 +403,9 @@ export default {
         .post('http://localhost:3000/company/create', this.req_obj)
         .then((res) => {
           alert('The Company was registered successfully')
-          sessionStorage['currentCompany'] = res.data.id
-          router.push('/modals')
+          sessionStorage['currentCompany'] = res.data.data.id
+          console.log(res.data)
+          this.$router.push('/dashboard')
         })
         .catch((res) => {
           alert('The Company was not registered successfully')
