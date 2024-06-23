@@ -1,4 +1,6 @@
 import {
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -10,12 +12,16 @@ import { FlattenMaps, Model, Types } from 'mongoose';
 import { Client } from './entities/client.entity';
 import { CreateClientDto } from './dto/create-client.dto';
 import { ClientRepository } from './client.repository';
+import { ValidationResult } from '../auth/entities/validationResult.entity';
+import { CompanyService } from '../company/company.service';
 
 @Injectable()
 export class ClientService {
   constructor(
     @InjectModel(Client.name) private readonly clientModel: Model<Client>,
     private readonly clientRepository: ClientRepository,
+    @Inject(forwardRef(() => CompanyService))
+    private readonly companyService: CompanyService,
   ) {}
 
   async create(createClientDto: CreateClientDto) {
@@ -36,7 +42,7 @@ export class ClientService {
     }
   }
 
-  async findClientById(
+  async getClientById(
     //TODO:Add role enforcement later
     identifier: string,
   ): Promise<FlattenMaps<Client>> {
@@ -66,9 +72,15 @@ export class ClientService {
     return await this.clientRepository.exists(id);
   }
 
-  update(id: number, updateClientDto: UpdateClientDto) {
-    console.log(updateClientDto);
-    return `This action updates a #${id} client`;
+  async updateClient(id: Types.ObjectId, updateClientDto: UpdateClientDto) {
+    const inputValidated = await this.clientIsValid(updateClientDto);
+    if (!inputValidated.isValid) {
+      throw new NotFoundException(inputValidated.message);
+    }
+
+    const result = await this.clientRepository.update(id, updateClientDto);
+    console.log('updatedClient', result);
+    return result;
   }
 
   async softDelete(id: string): Promise<boolean> {
@@ -78,5 +90,24 @@ export class ClientService {
       throw new InternalServerErrorException('Internal server Error');
     }
     return true;
+  }
+
+  async clientIsValid(
+    client: Client | CreateClientDto | UpdateClientDto,
+  ): Promise<ValidationResult> {
+    if (client.details) {
+      if (client.details.companyId) {
+        const exists = await this.companyService.companyIdExists(
+          client.details.companyId,
+        );
+        if (!exists)
+          return new ValidationResult(
+            false,
+            `Invalid Company ID: ${client.details.companyId}`,
+          );
+      }
+    }
+
+    return new ValidationResult(true);
   }
 }

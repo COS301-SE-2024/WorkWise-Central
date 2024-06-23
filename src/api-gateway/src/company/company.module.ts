@@ -38,6 +38,6 @@ import { ClientModule } from '../client/client.module';
     JobService,
     TeamService,
   ],
-  exports: [CompanyService],
+  exports: [CompanyService, CompanyRepository, MongooseModule],
 })
 export class CompanyModule {}

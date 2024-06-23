@@ -61,8 +61,8 @@ describe('JobService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         JobService,
-        CompanyService,
-        ClientService,
+        { provide: CompanyService, useClass: MockJobModel },
+        { provide: ClientService, useClass: MockJobModel },
         { provide: JobRepository, useClass: MockJobModel },
         {
           provide: getModelToken(Job.name),
@@ -84,6 +84,24 @@ describe('JobService', () => {
     })
       .useMocker((token) => {
         if (token === UsersService) {
+          return {
+            create: jest.fn().mockReturnValue(userStub()),
+            findAllUsers: jest.fn().mockReturnValue(userStub()),
+            findUser: jest.fn().mockReturnValue(userStub()),
+            update: jest.fn().mockReturnValue(userStub()),
+            remove: jest.fn().mockReturnValue(userStub()),
+          };
+        }
+        if (token === CompanyService) {
+          return {
+            create: jest.fn().mockReturnValue(userStub()),
+            findAllUsers: jest.fn().mockReturnValue(userStub()),
+            findUser: jest.fn().mockReturnValue(userStub()),
+            update: jest.fn().mockReturnValue(userStub()),
+            remove: jest.fn().mockReturnValue(userStub()),
+          };
+        }
+        if (token === ClientService) {
           return {
             create: jest.fn().mockReturnValue(userStub()),
             findAllUsers: jest.fn().mockReturnValue(userStub()),
