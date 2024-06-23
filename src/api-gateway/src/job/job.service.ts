@@ -26,6 +26,7 @@ export class JobService {
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
     private readonly companyService: CompanyService,
+    @Inject(forwardRef(() => EmployeeService))
     private readonly employeeService: EmployeeService,
     private readonly clientService: ClientService,
   ) {}

@@ -9,7 +9,7 @@ import { RoleModule } from '../role/role.module';
 import { JobModule } from '../job/job.module';
 import { TeamModule } from '../team/team.module';
 import { JobService } from '../job/job.service';
-
+import { ClientModule } from '../client/client.module';
 
 @Module({
   imports: [
@@ -17,10 +17,11 @@ import { JobService } from '../job/job.service';
       { name: Employee.name, schema: EmployeeSchema },
     ]),
     forwardRef(() => UsersModule),
-    CompanyModule,
-    RoleModule,
+    forwardRef(() => CompanyModule),
+    forwardRef(() => RoleModule),
     forwardRef(() => JobModule),
-    TeamModule,
+    forwardRef(() => TeamModule),
+    forwardRef(() => ClientModule),
   ],
   controllers: [EmployeeController],
   providers: [EmployeeService, JobService],

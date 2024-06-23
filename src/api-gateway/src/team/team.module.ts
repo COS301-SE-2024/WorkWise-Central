@@ -7,19 +7,21 @@ import { UsersModule } from '../users/users.module';
 import { CompanyModule } from '../company/company.module';
 import { EmployeeModule } from '../employee/employee.module';
 import { JobModule } from '../job/job.module';
+import { JobService } from '../job/job.service';
+import { JobRepository } from '../job/job.repository';
+import { ClientModule } from '../client/client.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: Team.name, schema: TeamSchema },
-    ]),
+    MongooseModule.forFeature([{ name: Team.name, schema: TeamSchema }]),
     forwardRef(() => UsersModule),
-    CompanyModule,
-    forwardRef(() => EmployeeModule), 
-    forwardRef(() => JobModule), 
+    forwardRef(() => CompanyModule),
+    forwardRef(() => EmployeeModule),
+    forwardRef(() => JobModule),
+    forwardRef(() => ClientModule),
   ],
   controllers: [TeamController],
-  providers: [TeamService],
+  providers: [TeamService, JobService, JobRepository],
   exports: [TeamService, MongooseModule],
 })
 export class TeamModule {}

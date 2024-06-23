@@ -30,42 +30,55 @@ export class TeamService {
   ) {}
 
   async validateTeam(team: Team | CreateTeamDto | UpdateTeamDto) {
-    if ('companyId' in team && team.companyId)
-    {
-      if (!(await this.companyService.companyExists(team.companyId.toString()))) {
+    if ('companyId' in team && team.companyId) {
+      if (!(await this.companyService.companyIdExists(team.companyId))) {
         throw new ConflictException('Company not found');
       }
     }
-  
-  if ('teamMembers' in team && team.teamMembers) {
-    for (const memberId of team.teamMembers) {
-      if (!(await this.employeeService.employeeExists(memberId.toString()))) {
-        throw new ConflictException(`Team member ${memberId.toString()} not found`);
+
+    if ('teamMembers' in team && team.teamMembers) {
+      for (const memberId of team.teamMembers) {
+        if (!(await this.employeeService.employeeExists(memberId.toString()))) {
+          throw new ConflictException(
+            `Team member ${memberId.toString()} not found`,
+          );
+        }
+      }
+    }
+
+    if ('teamLeaderId' in team && team.teamLeaderId) {
+      if (
+        !(await this.employeeService.employeeExists(
+          team.teamLeaderId.toString(),
+        ))
+      ) {
+        throw new ConflictException('Team leader not found');
+      }
+    }
+
+    if ('currentJobAssignments' in team && team.currentJobAssignments) {
+      for (const jobId of team.currentJobAssignments) {
+        if (!(await this.jobService.jobExists(jobId.toString()))) {
+          throw new ConflictException(
+            `Job assignment ${jobId.toString()} not found`,
+          );
+        }
       }
     }
   }
-
-  if ('teamLeaderId' in team && team.teamLeaderId) {
-    if (!(await this.employeeService.employeeExists(team.teamLeaderId.toString()))) {
-      throw new ConflictException('Team leader not found');
-    }
-  }
-
-  if ('currentJobAssignments' in team && team.currentJobAssignments) {
-    for (const jobId of team.currentJobAssignments) {
-      if (!(await this.jobService.jobExists(jobId.toString()))) {
-        throw new ConflictException(`Job assignment ${jobId.toString()} not found`);
-      }
-    }
-  }
-}
 
   async create(createTeamDto: CreateTeamDto) {
-    await this.validateTeam(createTeamDto)
+    await this.validateTeam(createTeamDto);
 
-    const company = await this.companyService.findById(createTeamDto.companyId,);
-    const teamLeader = await this.employeeService.findById(createTeamDto.teamLeaderId);
-    const teamMembers = await this.employeeService.findByIds(createTeamDto.teamMembers);
+    const company = await this.companyService.getCompanyById(
+      createTeamDto.companyId,
+    );
+    const teamLeader = await this.employeeService.findById(
+      createTeamDto.teamLeaderId,
+    );
+    const teamMembers = await this.employeeService.findByIds(
+      createTeamDto.teamMembers,
+    );
 
     if (!company || !teamLeader || !teamMembers) {
       throw new ConflictException('Invalid ID given');
@@ -123,9 +136,8 @@ export class TeamService {
           ],
         })
         .lean();
-    
-    if (result != null && result.companyId.toString() == companyId) 
-    {
+
+    if (result != null && result.companyId.toString() == companyId) {
       return true;
     }
     return false;
@@ -154,7 +166,7 @@ export class TeamService {
   }
 
   async update(id: number, updateTeamDto: UpdateTeamDto) {
-    await this.validateTeam(updateTeamDto)
+    await this.validateTeam(updateTeamDto);
 
     const previousObject: FlattenMaps<Team> & { _id: Types.ObjectId } =
       await this.teamModel
@@ -175,20 +187,19 @@ export class TeamService {
 
   async remove(id: string): Promise<boolean> {
     const TeamToDelete = await this.findOne(id);
-    
+
     const result: Document<unknown, NonNullable<unknown>, User> &
-      User & { _id: Types.ObjectId } =
-      await this.teamModel.findOneAndUpdate(
-        {
-          $and: [
-            { _id: TeamToDelete._id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        },
-        { $set: { deletedAt: new Date() } },
-      );
+      User & { _id: Types.ObjectId } = await this.teamModel.findOneAndUpdate(
+      {
+        $and: [
+          { _id: TeamToDelete._id },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      },
+      { $set: { deletedAt: new Date() } },
+    );
 
     if (result == null) {
       throw new InternalServerErrorException('Internal server Error');

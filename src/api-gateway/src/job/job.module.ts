@@ -9,6 +9,8 @@ import { ClientModule } from '../client/client.module';
 import { JobRepository } from './job.repository';
 import { EmployeeModule } from '../employee/employee.module';
 import { EmployeeService } from '../employee/employee.service';
+import { TeamModule } from '../team/team.module';
+import { RoleModule } from '../role/role.module';
 
 @Module({
   imports: [
@@ -17,10 +19,11 @@ import { EmployeeService } from '../employee/employee.service';
     forwardRef(() => CompanyModule),
     forwardRef(() => ClientModule),
     forwardRef(() => EmployeeModule),
+    forwardRef(() => RoleModule),
+    forwardRef(() => TeamModule),
   ],
-  controllers: [JobController],
-  providers: [JobService, JobRepository],
-  exports: [JobService, MongooseModule, JobRepository],
   providers: [JobService, JobRepository, EmployeeService],
+  controllers: [JobController],
+  exports: [JobService, MongooseModule, JobRepository],
 })
 export class JobModule {}

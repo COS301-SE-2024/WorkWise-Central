@@ -27,6 +27,7 @@ export class EmployeeService {
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
     private companyService: CompanyService,
+    @Inject(forwardRef(() => RoleService))
     private roleService: RoleService,
     @Inject(forwardRef(() => JobService))
     private jobService: JobService,
@@ -215,7 +216,7 @@ export class EmployeeService {
     return this.employeeModel.findById(id);
   }
 
-  async employeeExists(id: string): Promise<boolean> {
+  async employeeExists(id: string | Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<Employee> & { _id: Types.ObjectId } =
       await this.employeeModel
         .findOne({

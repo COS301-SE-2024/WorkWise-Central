@@ -10,9 +10,9 @@ export class Role {
     this.companyId = createRoleDto.companyId;
     this.createdAt = new Date();
   }
-  
+
   @ApiProperty()
-  @Prop({ required: true})
+  @Prop({ required: true })
   roleName: string;
 
   @ApiProperty()
