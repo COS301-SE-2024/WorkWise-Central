@@ -4,96 +4,91 @@ import {
   IsMongoId,
   IsNotEmpty,
   IsNumberString,
-  IsObject,
   IsOptional,
-  IsPhoneNumber,
+  //IsPhoneNumber,
   IsString,
+  MaxLength,
+  ValidateNested,
 } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { Client } from '../entities/client.entity';
+import { Types } from 'mongoose';
 
-class address {
+class ContactInfo {
+  @ApiProperty()
+  @IsString()
+  @Transform(({ value }) =>
+    value.startsWith('0') ? `+27${value.slice(1)}` : value,
+  )
+  //@IsPhoneNumber(null)
+  phoneNumber: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsEmail()
+  @Transform(({ value }) => value.toLowerCase())
+  email: string;
+}
+
+class Address {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   street: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   suburb: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   city: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumberString()
+  @MaxLength(20)
   postalCode: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  complex: string;
+  @MaxLength(255)
+  complex?: string;
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsNumberString()
-  houseNumber: string;
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  houseNumber?: string;
 }
 
-export class CreateClientDto {
+export class ClientDetails {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  public firstName: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  public surname: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsPhoneNumber()
-  public phoneNumber: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsEmail()
-  @Transform(({ value }) => value.toLowerCase())
-  public email: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsObject()
-  public address: address;
+  name: string;
 
   @ApiProperty()
   @IsOptional()
   @IsString()
-  clientUsername?: string;
+  preferredLanguage?: string;
 
   @ApiProperty()
-  @IsMongoId()
-  companyId: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  registrationNumber?: string;
+  @ValidateNested()
+  @Type(() => ContactInfo)
+  contactInfo: ContactInfo;
 
   @ApiProperty()
   @IsOptional()
-  @IsString()
-  name?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  type?: string;
+  @ValidateNested()
+  @Type(() => Address)
+  address?: Address;
 
   @ApiProperty()
   @IsOptional()
@@ -102,8 +97,36 @@ export class CreateClientDto {
 
   @ApiProperty()
   @IsOptional()
+  @IsMongoId()
+  companyId?: Types.ObjectId;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumberString()
+  idNumber?: string;
+
+  @ApiProperty()
+  @IsOptional()
   @IsString()
-  preferred_Language: string;
+  type?: string;
+}
+
+export class CreateClientDto {
+  @ApiProperty()
+  @IsOptional()
+  @IsMongoId()
+  registrationNumber?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  clientUsername?: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => ClientDetails)
+  details: ClientDetails;
 }
 
 export class findClientResponseDto {

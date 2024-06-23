@@ -49,7 +49,7 @@ class Address {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsNumberString()
+  @IsString()
   @MaxLength(255)
   houseNumber: string;
 }
@@ -189,9 +189,9 @@ export class CreateJobDto {
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsMongoId()
-  clientId: Types.ObjectId;
+  clientId?: Types.ObjectId;
 
   @ApiProperty()
   @IsOptional()
