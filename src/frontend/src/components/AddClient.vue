@@ -31,40 +31,40 @@
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 class="text-caption white--text"
-                >First name of client*</small
+                >Name of client*</small
               >
 
               <v-text-field
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                placeholder="Enter the first name of the client"
-                v-model="req_obj.firstName"
+                placeholder="Enter the name of the client"
+                v-model="req_obj.details.name"
                 rounded="xl"
                 variant="solo"
                 required
                 :rules="first_name_rules"
               ></v-text-field
             ></v-col>
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption white--text"
-                >Surname name of client*</small
-              >
+            <!--            <v-col>-->
+            <!--              <small-->
+            <!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
+            <!--                class="text-caption white&#45;&#45;text"-->
+            <!--                >Surname name of client*</small-->
+            <!--              >-->
 
-              <v-text-field
-                density="compact"
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                color="grey-lighten-4"
-                placeholder="Enter the Surname name of the client"
-                v-model="req_obj.surname"
-                rounded="xl"
-                variant="solo"
-                required
-                :rules="surname_rules"
-              ></v-text-field
-            ></v-col>
+            <!--              <v-text-field-->
+            <!--                density="compact"-->
+            <!--                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
+            <!--                color="grey-lighten-4"-->
+            <!--                placeholder="Enter the Surname name of the client"-->
+            <!--                v-model="surName"-->
+            <!--                rounded="xl"-->
+            <!--                variant="solo"-->
+            <!--                required-->
+            <!--                :rules="surname_rules"-->
+            <!--              ></v-text-field-->
+            <!--            ></v-col>-->
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
@@ -76,7 +76,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 placeholder="Enter the client's email address"
-                v-model="req_obj.email"
+                v-model="req_obj.details.contactInfo.email"
                 :rules="email_rules"
                 type="email"
                 rounded="xl"
@@ -95,7 +95,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 placeholder="Enter the client's phone number"
-                v-model="req_obj.phoneNumber"
+                v-model="req_obj.details.contactInfo.phoneNumber"
                 rounded="xl"
                 variant="solo"
                 required
@@ -115,7 +115,7 @@
                   color="grey-lighten-4"
                   placeholder="Street"
                   rounded="xl"
-                  v-model="req_obj.address.street"
+                  v-model="req_obj.details.address.street"
                   variant="solo"
                   required
                 ></v-text-field
@@ -127,7 +127,7 @@
                   color="grey-lighten-4"
                   placeholder="Suburb"
                   rounded="xl"
-                  v-model="req_obj.address.suburb"
+                  v-model="req_obj.details.address.suburb"
                   variant="solo"
                   required
                 ></v-text-field
@@ -140,7 +140,7 @@
                   color="grey-lighten-4"
                   placeholder="City"
                   rounded="xl"
-                  v-model="req_obj.address.city"
+                  v-model="req_obj.details.address.city"
                   variant="solo"
                   required
                 ></v-text-field
@@ -152,7 +152,7 @@
                   color="grey-lighten-4"
                   placeholder="Zip Code"
                   rounded="xl"
-                  v-model="req_obj.address.postalCode"
+                  v-model="req_obj.details.address.postalCode"
                   variant="solo"
                   required
                 ></v-text-field
@@ -165,7 +165,7 @@
                   color="grey-lighten-4"
                   placeholder="Complex"
                   rounded="xl"
-                  v-model="req_obj.address.complex"
+                  v-model="req_obj.details.address.complex"
                   variant="solo"
                   required
                 ></v-text-field
@@ -177,7 +177,7 @@
                   color="grey-lighten-4"
                   placeholder="House number"
                   rounded="xl"
-                  v-model="req_obj.address.houseNumber"
+                  v-model="req_obj.details.address.houseNumber"
                   variant="solo"
                   required
                 ></v-text-field
@@ -196,7 +196,7 @@
                 color="grey-lighten-4"
                 placeholder="Enter the language preferred by the client"
                 rounded="xl"
-                v-model="req_obj.preferred_Language"
+                v-model="req_obj.details.preferredLanguage"
                 variant="solo"
                 :items="[
                   'English',
@@ -264,30 +264,34 @@ export default defineComponent({
       (v: string) => /^(\+27\d{9})$/.test(v) || 'Phone number must be a valid South African number'
     ],
 
+    firstName: '',
+    surName: '',
     req_obj: {
-      firstName: '',
-      surname: '',
-      phoneNumber: '',
-      email: '',
-      companyId: sessionStorage['currentCompany'],
-      address: {
-        street: '',
-        suburb: '',
-        city: '',
-        postalCode: '',
-        complex: '',
-        houseNumber: ''
-      },
-      preferred_Language: ''
+      details: {
+        name: '',
+        preferredLanguage: '',
+        contactInfo: {
+          email: '',
+          phoneNumber: ''
+        },
+        address: {
+          street: '',
+          suburb: '',
+          city: '',
+          postalCode: '',
+          complex: '',
+          houseNumber: ''
+        }
+      }
     }
   }),
   methods: {
     phhoneNumberCheck() {
-      if (this.req_obj.phoneNumber != '') {
+      if (this.req_obj.details.contactInfo.phoneNumber != '') {
         axios
           .get('http://localhost:3000/client/checkPhoneNumber', {
             params: {
-              phoneNumber: this.req_obj.phoneNumber
+              phoneNumber: this.req_obj.details.contactInfo.phoneNumber
             }
           })
           .then((res) => {
@@ -308,13 +312,13 @@ export default defineComponent({
       const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
 
       axios
-        .post('http://localhost:3000/company/add', this.req_obj, config)
+        .post('http://localhost:3000/client/create', this.req_obj, config)
         .then((res) => {
-          alert('Client created successfully')
+          console.log('Client created successfully')
           console.log(res)
         })
         .catch((res) => {
-          alert('Client creation failed')
+          console.log('Client creation failed')
           console.log(res)
         })
     }
