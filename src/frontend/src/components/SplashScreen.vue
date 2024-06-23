@@ -732,6 +732,9 @@ export default defineComponent({
     complex: '',
     houseNumber: '',
     phone_number: '',
+    skills: [],
+    currentCompany: {},
+    profilePicture: '',
     usernameList: [],
     resetForm() {
       this.$refs.form.reset()
@@ -887,22 +890,33 @@ export default defineComponent({
       this.birthDateFormatter(this.birthDate)
       await axios
         .post('http://localhost:3000/users/create', {
-          systemDetails: { email: this.email, password: this.password, username: this.username },
+          username: this.username,
+          password: this.password,
           personalInfo: {
             firstName: this.name,
             surname: this.surname,
-            dateOfBirth: this.date
+            dateOfBirth: this.date,
+            gender: this.gender,
+            preferredLanguage: this.language
           },
-          profile: { displayName: this.username },
           address: {
             street: this.street,
-            city: this.city,
             suburb: this.suburb,
+            city: this.city,
             postalCode: this.postal_code,
-            complex: 'none',
-            houseNumber: 12
+            complex: this.complex,
+            houseNumber: this.houseNumber
           },
-          contactInfo: { phoneNumber: this.phone_number, email: this.email }
+          contactInfo: {
+            phoneNumber: this.phone_number,
+            email: this.email
+          },
+          profile: {
+            displayName: this.name + ' ' + this.surname,
+            displayImage: this.profilePicture
+          },
+          skills: this.skills,
+          currentCompany: this.company
         })
         .then((response) => {
           console.log(response)
@@ -920,7 +934,6 @@ export default defineComponent({
       if (this.$refs.form.validate()) {
         this.signupDialog = false
         this.signup1Dialog = true
-        this.resetForm()
       }
     },
     nextFlow2() {
@@ -933,15 +946,11 @@ export default defineComponent({
     nextFlowUsername() {
       this.signupUsernameDialog = false
       this.signup2Dialog = true
-      if (this.$refs.form.validate()) {
-        this.resetForm()
-      }
     },
     nextFlow3() {
       if (this.$refs.form.validate()) {
         this.signup2Dialog = false
         this.signupAddressDialog = true
-        this.resetForm()
       }
     },
     nextFlowAddress() {
@@ -949,7 +958,6 @@ export default defineComponent({
         this.signupAddressDialog = false
         this.signup3Dialog = true
         this.signup()
-        this.resetForm()
       }
     },
     registerOpen() {
