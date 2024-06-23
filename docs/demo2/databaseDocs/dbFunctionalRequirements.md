@@ -8,7 +8,7 @@
 - **Password Management**: Ability for users to change passwords, recover forgotten passwords, and ensure password security.
 - **Role-Based Access Control**: Implementing different access levels based on user roles (e.g., admin, employee, client).
 
-### User/Employee Management
+### Employee Management
 
 - **User Profile Management**: Allow users to create, update, and delete their profiles.
 - **Role and Permission Management**: Assign roles and manage permissions for different users.

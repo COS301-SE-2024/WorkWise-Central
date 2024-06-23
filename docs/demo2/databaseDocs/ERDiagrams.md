@@ -1,3 +1,3 @@
 # Entity Relationship Diagram 
 
-![ER Diagram](/ERDiagram.jpg)
+![ER Diagram](/WorkwiseDatabaseModel.png)

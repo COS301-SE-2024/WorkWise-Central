@@ -6,7 +6,7 @@
 <li><strong>Password Management</strong>: Ability for users to change passwords, recover forgotten passwords, and ensure password security.</li>
 <li><strong>Role-Based Access Control</strong>: Implementing different access levels based on user roles (e.g., admin, employee, client).</li>
 </ul>
-<h3 id="user-employee-management" tabindex="-1"><a class="header-anchor" href="#user-employee-management"><span>User/Employee Management</span></a></h3>
+<h3 id="employee-management" tabindex="-1"><a class="header-anchor" href="#employee-management"><span>Employee Management</span></a></h3>
 <ul>
 <li><strong>User Profile Management</strong>: Allow users to create, update, and delete their profiles.</li>
 <li><strong>Role and Permission Management</strong>: Assign roles and manage permissions for different users.</li>
