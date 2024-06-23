@@ -24,10 +24,12 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'DeleteClient',
   props: {
-    opened: Boolean
+    opened: Boolean,
+    client_id: Number
   },
   data() {
     return {
@@ -39,21 +41,27 @@ export default {
   methods: {
     close() {
       this.clientDialog = false
+    },
+    async deleteClient() {
+      this.isDeleting = true // Indicate the start of the deletion process
+      axios
+        .delete(`http://localhost:3000/client/`, { id: this.client_id })
+        .then((response) => {
+          console.log(response)
+          alert('Client deleted')
+          this.clientDialog = false
+          this.$emit('clientDeleted')
+          // Consider using a more SPA-friendly way of updating the view instead of reloading
+        })
+        .catch((error) => {
+          console.log(error)
+          alert('Error deleting client')
+        })
+        .finally(() => {
+          this.isDeleting = false // Reset the deletion indicator
+          window.location.reload() // Consider removing this for SPA behavior
+        })
     }
-    // async deleteClient() {
-    //   this.isDeleting = true
-    //   try {
-    //     // Your delete logic here, e.g., an API call
-    //     await this.deleteClientApi(this.clientName)
-    //     this.$emit('clientDeleted')
-    //     this.close()
-    //   } catch (error) {
-    //     console.error('Failed to delete client:', error)
-    //     // Handle error, e.g., show a notification
-    //   } finally {
-    //     this.isDeleting = false
-    //   }
-    // }
   }
 }
 </script>

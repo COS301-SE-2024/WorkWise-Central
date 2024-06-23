@@ -268,6 +268,7 @@ import { computed } from 'vue'
 import TeamMemberList from './TeamMemberList.vue'
 import JobLabels from './JobLabels.vue'
 import JobChecklist from './JobChecklist.vue'
+import axios from 'axios'
 
 //For change client
 const clientDialog = ref(false)
@@ -360,6 +361,29 @@ const teamMemberChips = ref([
   { id: 1, name: 'Jane Smith', selected: false, role: 'Software Engineer' },
   { id: 2, name: 'Alice Johnson', selected: false, role: 'Software Engineer' }
 ])
+
+const fetchTeam = () => {
+  axios
+    .get('http://localhost:3000/team')
+    .then((res) => {
+      teamMemberChips.value = res.data
+    })
+    .catch((res) => {
+      console.log(res)
+    })
+}
+const updateStatus = (status) => {
+  axios
+    .post('http://localhost:3000/job/', {
+      status: status
+    })
+    .then((res) => {
+      console.log(res)
+    })
+    .catch((res) => {
+      console.log(res)
+    })
+}
 const selectedMemberChips = ref([])
 const checklistChips = ref([])
 const status = ref(null)
@@ -427,16 +451,15 @@ const editMode = ref(false)
 
 // Adjust the number of rows based on the content
 const descriptionRows = computed(() => {
-  const lineCount = jobDescription.value.split(/\r\n|\r|\n/).length;
-  return Math.max(4, lineCount); // Minimum of 4 rows
-});
+  const lineCount = jobDescription.value.split(/\r\n|\r|\n/).length
+  return Math.max(4, lineCount) // Minimum of 4 rows
+})
 
 // const saveDescription = () => {
 //   // Save logic here
 //   console.log('Saving description:', jobDescription.value);
 //   editMode.value = false;
 // };
-
 
 // const cancelEdit = () => {
 //   // Cancel editing, revert changes if needed
