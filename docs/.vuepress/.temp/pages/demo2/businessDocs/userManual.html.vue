@@ -7,25 +7,29 @@
 <li>
 <p><strong>Navigate to the Clients Page</strong></p>
 <ul>
-<li>From the main dashboard, click on the &quot;Clients&quot; tab in the navigation menu.</li>
+<li>From the main dashboard, click on the &quot;Clients&quot; tab in the navigation menu.
+<img src="/clientTab.png" alt=" "></li>
 </ul>
 </li>
 <li>
 <p><strong>Click &quot;Add Client&quot;</strong></p>
 <ul>
-<li>Locate and click the &quot;Add Client&quot; button. This will open the Add Client form.</li>
+<li>Locate and click the &quot;Add Client&quot; button. This will open the Add Client form.
+<img src="/addClient.png" alt=" "></li>
 </ul>
 </li>
 <li>
 <p><strong>Fill Out Client Information</strong></p>
 <ul>
-<li>Enter the necessary client information such as name, contact details, address, and any other relevant details.</li>
+<li>Enter the necessary client information such as name, contact details, address, and any other relevant details.
+<img src="/clientInfo.png" alt=" "></li>
 </ul>
 </li>
 <li>
 <p><strong>Submit the Form</strong></p>
 <ul>
-<li>Once all the information is filled out, click the &quot;Save&quot; or &quot;Submit&quot; button to add the client to the system.</li>
+<li>Once all the information is filled out, click the &quot;Save&quot; or &quot;Submit&quot; button to add the client to the system.
+<img src="/clientInfoSave.png" alt=" "></li>
 </ul>
 </li>
 </ol>
@@ -34,25 +38,22 @@
 <li>
 <p><strong>Navigate to the Clients Page</strong></p>
 <ul>
-<li>From the main dashboard, click on the &quot;Clients&quot; tab in the navigation menu.</li>
+<li>From the main dashboard, click on the &quot;Clients&quot; tab in the navigation menu.
+<img src="/clientInfo.png" alt=" "></li>
 </ul>
 </li>
 <li>
 <p><strong>Select a Client to Edit</strong></p>
 <ul>
-<li>Browse the list of clients and click the &quot;Edit&quot; button next to the client you wish to modify.</li>
-</ul>
-</li>
-<li>
-<p><strong>Update Client Information</strong></p>
-<ul>
-<li>Modify the client's information as needed in the form that appears.</li>
+<li>Browse the list of clients and click the &quot;Edit&quot; button next to the client you wish to modify.
+<img src="/selectClient.png" alt=" "></li>
 </ul>
 </li>
 <li>
 <p><strong>Submit the Changes</strong></p>
 <ul>
-<li>Click the &quot;Save&quot; or &quot;Update&quot; button to save the changes.</li>
+<li>Click the &quot;Save&quot; or &quot;Update&quot; button to save the changes.
+<img src="/clientInfoSave.png" alt=" "></li>
 </ul>
 </li>
 </ol>
@@ -61,41 +62,47 @@
 <li>
 <p><strong>Navigate to the Clients Page</strong></p>
 <ul>
-<li>From the main dashboard, click on the &quot;Clients&quot; tab in the navigation menu.</li>
+<li>From the main dashboard, click on the &quot;Clients&quot; tab in the navigation menu.
+<img src="/clientTab.png" alt=" "></li>
 </ul>
 </li>
 <li>
 <p><strong>Select a Client to Delete</strong></p>
 <ul>
-<li>Browse the list of clients and click the &quot;Delete&quot; button next to the client you wish to remove.</li>
+<li>Browse the list of clients and click the &quot;Delete&quot; button next to the client you wish to remove.
+<img src="/deleteClient.png" alt=" "></li>
 </ul>
 </li>
 <li>
 <p><strong>Confirm Deletion</strong></p>
 <ul>
-<li>Confirm the deletion action when prompted to permanently remove the client from the system.</li>
+<li>Confirm the deletion action when prompted to permanently remove the client from the system.
+<img src="/confirmDeleteClient.png" alt=" "></li>
 </ul>
 </li>
 </ol>
 <h2 id="jobs" tabindex="-1"><a class="header-anchor" href="#jobs"><span>Jobs</span></a></h2>
-<h3 id="add-a-job" tabindex="-1"><a class="header-anchor" href="#add-a-job"><span>Add a Job</span></a></h3>
+<h3 id="create-a-job" tabindex="-1"><a class="header-anchor" href="#create-a-job"><span>Create a Job</span></a></h3>
 <ol>
 <li>
 <p><strong>Navigate to the Jobs Page</strong></p>
 <ul>
-<li>From the main dashboard, click on the &quot;Jobs&quot; tab in the navigation menu.</li>
+<li>From the main dashboard, click on the &quot;Jobs&quot; tab in the navigation menu.
+<img src="/jobsTab.png" alt=" "></li>
 </ul>
 </li>
 <li>
-<p><strong>Click &quot;Add Job&quot;</strong></p>
+<p><strong>Click &quot;Create Job&quot;</strong></p>
 <ul>
-<li>Locate and click the &quot;Add Job&quot; button. This will open the Add Job form.</li>
+<li>Locate and click the &quot;create Job&quot; button. This will open the Add Job form.
+<img src="/createJob.png" alt=" "></li>
 </ul>
 </li>
 <li>
 <p><strong>Fill Out Job Information</strong></p>
 <ul>
-<li>Enter the necessary job details such as job title, description, assigned client, and scheduled date.</li>
+<li>Enter the necessary job details such as job title, description, assigned client, and scheduled date.
+<img src="/jobDetails.png" alt=" "></li>
 </ul>
 </li>
 <li>
@@ -110,19 +117,22 @@
 <li>
 <p><strong>Navigate to the Jobs Page</strong></p>
 <ul>
-<li>From the main dashboard, click on the &quot;Jobs&quot; tab in the navigation menu.</li>
+<li>From the main dashboard, click on the &quot;Jobs&quot; tab in the navigation menu.
+<img src="/jobsTab.png" alt=" "></li>
 </ul>
 </li>
 <li>
 <p><strong>Select a Job to Edit</strong></p>
 <ul>
-<li>Browse the list of jobs and click the &quot;Edit&quot; button next to the job you wish to modify.</li>
+<li>Browse the list of jobs and click the &quot;Edit&quot; button next to the job you wish to modify.
+<img src="/editJob.png" alt=" "></li>
 </ul>
 </li>
 <li>
 <p><strong>Update Job Information</strong></p>
 <ul>
-<li>Modify the job details as needed in the form that appears.</li>
+<li>Modify the job details as needed in the form that appears.
+<img src="/jobDetails.png" alt=" "></li>
 </ul>
 </li>
 <li>
@@ -137,19 +147,22 @@
 <li>
 <p><strong>Navigate to the Jobs Page</strong></p>
 <ul>
-<li>From the main dashboard, click on the &quot;Jobs&quot; tab in the navigation menu.</li>
+<li>From the main dashboard, click on the &quot;Jobs&quot; tab in the navigation menu.
+<img src="/jobsTab.png" alt=" "></li>
 </ul>
 </li>
 <li>
 <p><strong>Select a Job to Delete</strong></p>
 <ul>
-<li>Browse the list of jobs and click the &quot;Delete&quot; button next to the job you wish to remove.</li>
+<li>Browse the list of jobs and click the &quot;Delete&quot; button next to the job you wish to remove.
+<img src="/deleteJob.png" alt=" "></li>
 </ul>
 </li>
 <li>
 <p><strong>Confirm Deletion</strong></p>
 <ul>
-<li>Confirm the deletion action when prompted to permanently remove the job from the system.</li>
+<li>Confirm the deletion action when prompted to permanently remove the job from the system.
+<img src="/deleteJobConfirm.png" alt=" "></li>
 </ul>
 </li>
 </ol>
@@ -159,13 +172,15 @@
 <li>
 <p><strong>Navigate to the Employees Page</strong></p>
 <ul>
-<li>From the main dashboard, click on the &quot;Employees&quot; tab in the navigation menu.</li>
+<li>From the main dashboard, click on the &quot;Employees&quot; tab in the navigation menu.
+<img src="/employeeTab.png" alt=" "></li>
 </ul>
 </li>
 <li>
 <p><strong>Click &quot;Add Employee&quot;</strong></p>
 <ul>
-<li>Locate and click the &quot;Add Employee&quot; button. This will open the Add Employee form.</li>
+<li>Locate and click the &quot;Add Employee&quot; button. This will open the Add Employee form.
+<img src="/addEmployee.png" alt=" "></li>
 </ul>
 </li>
 <li>
@@ -177,7 +192,8 @@
 <li>
 <p><strong>Submit the Form</strong></p>
 <ul>
-<li>Once all the information is filled out, click the &quot;Save&quot; or &quot;Submit&quot; button to add the employee to the system.</li>
+<li>Once all the information is filled out, click the &quot;Save&quot; or &quot;Submit&quot; button to add the employee to the system.
+<img src="/addEmployeeConfirm.png" alt=" "></li>
 </ul>
 </li>
 </ol>
@@ -186,13 +202,15 @@
 <li>
 <p><strong>Navigate to the Employees Page</strong></p>
 <ul>
-<li>From the main dashboard, click on the &quot;Employees&quot; tab in the navigation menu.</li>
+<li>From the main dashboard, click on the &quot;Employees&quot; tab in the navigation menu.
+<img src="/employeeTab.png" alt=" "></li>
 </ul>
 </li>
 <li>
 <p><strong>Select an Employee to Edit</strong></p>
 <ul>
-<li>Browse the list of employees and click the &quot;Edit&quot; button next to the employee you wish to modify.</li>
+<li>Browse the list of employees and click the &quot;Edit&quot; button next to the employee you wish to modify.
+<img src="/editEmployee.png" alt=" "></li>
 </ul>
 </li>
 <li>
@@ -204,7 +222,8 @@
 <li>
 <p><strong>Submit the Changes</strong></p>
 <ul>
-<li>Click the &quot;Save&quot; or &quot;Update&quot; button to save the changes.</li>
+<li>Click the &quot;Save&quot; or &quot;Update&quot; button to save the changes.
+<img src="/addEmployeeConfirm.png" alt=" "></li>
 </ul>
 </li>
 </ol>
@@ -213,13 +232,15 @@
 <li>
 <p><strong>Navigate to the Employees Page</strong></p>
 <ul>
-<li>From the main dashboard, click on the &quot;Employees&quot; tab in the navigation menu.</li>
+<li>From the main dashboard, click on the &quot;Employees&quot; tab in the navigation menu.
+<img src="/employeeTab.png" alt=" "></li>
 </ul>
 </li>
 <li>
 <p><strong>Select an Employee to Delete</strong></p>
 <ul>
-<li>Browse the list of employees and click the &quot;Delete&quot; button next to the employee you wish to remove.</li>
+<li>Browse the list of employees and click the &quot;Delete&quot; button next to the employee you wish to remove.
+<img src="/deleteEmployee.png" alt=" "></li>
 </ul>
 </li>
 <li>
