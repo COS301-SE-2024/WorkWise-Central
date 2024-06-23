@@ -196,4 +196,12 @@ export class CompanyService {
       }
     }
   }
+
+  async getAllEmployees(companyId: Types.ObjectId) {
+    try {
+      return this.employeeService.findAllInCompany(companyId);
+    } catch (e) {
+      throw e;
+    }
+  }
 }
