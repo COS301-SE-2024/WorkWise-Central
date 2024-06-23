@@ -18,5 +18,4 @@ it('click create client button', () => {
       plugins: [vuetify]
     }
   })
-
 })

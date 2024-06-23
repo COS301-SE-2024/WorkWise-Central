@@ -83,28 +83,13 @@
                 Address
               </small>
               <v-text-field
-                v-model="localEditedItem.clientInfo.address"
+                v-model="localEditedItem.clientInfo.address.street"
                 variant="solo"
                 rounded="md"
               ></v-text-field>
             </v-col>
             <v-divider></v-divider>
-            <v-col>
-              <small
-                class="text-caption"
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-              >
-                Job Required
-              </small>
-              <v-text-field
-                v-model="job_required"
-                :label="job_required ? job_required : 'Job Required'"
-                variant="solo"
-                rounded="md"
-                value=""
-              ></v-text-field>
-            </v-col>
-            <v-divider></v-divider>
+
             <v-col align-self="center"
               ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
                 <v-btn
@@ -114,7 +99,7 @@
                   width="85%"
                   height="35"
                   variant="elevated"
-                  @click="saveChanges"
+                  @click="update"
                 >
                   SAVE
                 </v-btn>
@@ -146,7 +131,9 @@ export default {
   props: {
     isDarkMode: Boolean,
     colors: Object,
-    editedItem: Object
+    editedItem: Object,
+    item: Object,
+    _clientID: String
   },
   data() {
     return {
@@ -154,13 +141,7 @@ export default {
       clientDialog: false,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
-      Name: '',
-      Surname: '',
-      phone_number: '',
-      email: '',
-      address: '',
-      job_required: '',
-      details: {},
+
       nameRules: [
         (v) => !!v || 'Name is required',
         (v) => (v && v.length >= 2) || 'Name must be at least 2 characters'
@@ -196,10 +177,12 @@ export default {
       this.$emit('update:item', this.localEditedItem)
       alert('Item updated')
     },
-
+    savechnages() {
+      this.update()
+    },
     async update() {
       await axios
-        .post('http://localhost:8000/api/clients/', this.editedItem)
+        .patch(`http://localhost:3000/client/${this._clientID}`)
         .then((response) => {
           console.log(response)
           return true

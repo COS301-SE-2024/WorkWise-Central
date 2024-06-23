@@ -158,7 +158,7 @@
             </v-card>
           </v-dialog>
           <!-- Job Labels -->
-          <JobLabels @update:status="status = $event" />
+          <JobLabels @update:status="status = $event" @add:status="updateStatus = $event" />
           <!-- Job Checklist -->
           <JobChecklist
             @itemAdded:checklistProp="checklistChips = $event"
@@ -268,6 +268,15 @@ import { computed } from 'vue'
 import TeamMemberList from './TeamMemberList.vue'
 import JobLabels from './JobLabels.vue'
 import JobChecklist from './JobChecklist.vue'
+import axios from 'axios'
+
+//Define props
+const props = defineProps({
+  job_ID: String
+})
+
+// If you need to make job_ID reactive and use it within your setup
+const job_ID = ref(props.job_ID)
 
 //For change client
 const clientDialog = ref(false)
@@ -360,6 +369,22 @@ const teamMemberChips = ref([
   { id: 1, name: 'Jane Smith', selected: false, role: 'Software Engineer' },
   { id: 2, name: 'Alice Johnson', selected: false, role: 'Software Engineer' }
 ])
+
+// const fetchTeam = () => {
+//   axios
+//     .get('http://localhost:3000/team')
+//     .then((res) => {
+//       teamMemberChips.value = res.data
+//     })
+//     .catch((res) => {
+//       console.log(res)
+//     })
+// }
+const updateStatus = async (status) => {
+  await axios.patch(`http://localhost:3000/job/${job_ID.value}`, {
+    status: status
+  })
+}
 const selectedMemberChips = ref([])
 const checklistChips = ref([])
 const status = ref(null)
@@ -376,9 +401,14 @@ const formatDate = (date) => {
 const addItemToChecklist = (item) => {
   checklistChips.value = item
 }
-const handleAddMemberToCard = (member) => {
+const handleAddMemberToCard = async (member) => {
   // Assuming cardMembers is a data property of the parent component
   selectedMemberChips.value = member
+  await axios.patch(`http://localhost:3000/job/${job_ID.value}`, {
+    assignEmployees: {
+      employeeIds: [member.id]
+    }
+  })
   // Make sure to update the parent state in a way that Vue can react to
 }
 const formattedStartDate = computed(() => formatDate(startDate.value))
@@ -427,16 +457,15 @@ const editMode = ref(false)
 
 // Adjust the number of rows based on the content
 const descriptionRows = computed(() => {
-  const lineCount = jobDescription.value.split(/\r\n|\r|\n/).length;
-  return Math.max(4, lineCount); // Minimum of 4 rows
-});
+  const lineCount = jobDescription.value.split(/\r\n|\r|\n/).length
+  return Math.max(4, lineCount) // Minimum of 4 rows
+})
 
 // const saveDescription = () => {
 //   // Save logic here
 //   console.log('Saving description:', jobDescription.value);
 //   editMode.value = false;
 // };
-
 
 // const cancelEdit = () => {
 //   // Cancel editing, revert changes if needed
