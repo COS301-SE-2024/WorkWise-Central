@@ -36,7 +36,7 @@
               <v-text-field
                 density="compact"
                 color="grey-lighten-4"
-                label="Enter the company's name"
+                placeholder="Enter the company's name"
                 v-model="req_obj.name"
                 :rules="company_name_rules"
                 rounded="xl"
@@ -55,7 +55,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Select Job Type"
+                placeholder="Select Job Type"
                 v-model="req_obj.type"
                 rounded="xl"
                 variant="solo"
@@ -145,7 +145,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Enter the company's email adress"
+                placeholder="Enter the company's email adress"
                 type="email"
                 :rules="email_rules"
                 v-model="req_obj.contactDetails.email"
@@ -164,7 +164,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Enter the company's phone number"
+                placeholder="Enter the company's phone number"
                 rounded="xl"
                 variant="solo"
                 v-model="req_obj.contactDetails.phoneNumber"
@@ -181,7 +181,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Enter the company's registration number"
+                placeholder="Enter the company's registration number"
                 v-model="req_obj.registrationNumber"
                 rounded="xl"
                 variant="solo"
@@ -199,7 +199,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 density="compact"
                 color="grey-lighten-4"
-                label="Enter the company's VAT number"
+                placeholder="Enter the company's VAT number"
                 :rules="vat_number_rules"
                 rounded="xl"
                 v-model="req_obj.vatNumber"
@@ -218,7 +218,7 @@
             <!--                variant="solo"-->
             <!--                accept="image/*"-->
             <!--                width="100%"-->
-            <!--                label="Company Logo"-->
+            <!--                placeholder="Company Logo"-->
             <!--                @change="companyLogoHandler"-->
             <!--                color="black"-->
             <!--                rounded="xl"-->
@@ -235,7 +235,7 @@
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
                   color="grey-lighten-4"
-                  label="Street"
+                  placeholder="Street"
                   rounded="xl"
                   v-model="req_obj.address.street"
                   variant="solo"
@@ -247,7 +247,7 @@
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
                   color="grey-lighten-4"
-                  label="Suburb"
+                  placeholder="Suburb"
                   rounded="xl"
                   v-model="req_obj.address.suburb"
                   variant="solo"
@@ -259,7 +259,7 @@
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
                   color="grey-lighten-4"
-                  label="City"
+                  placeholder="City"
                   rounded="xl"
                   v-model="req_obj.address.city"
                   variant="solo"
@@ -271,7 +271,7 @@
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
                   color="grey-lighten-4"
-                  label="Zip Code"
+                  placeholder="Zip Code"
                   rounded="xl"
                   v-model="req_obj.address.postalCode"
                   variant="solo"
@@ -285,7 +285,7 @@
             <!--                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
             <!--                  density="compact"-->
             <!--                  color="grey-lighten-4"-->
-            <!--                  label="Complex"-->
+            <!--                  placeholder="Complex"-->
             <!--                  rounded="xl"-->
             <!--                  v-model="req_obj.address.complex"-->
             <!--                  variant="solo"-->
@@ -297,7 +297,7 @@
             <!--                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
             <!--                  density="compact"-->
             <!--                  color="grey-lighten-4"-->
-            <!--                  label="House number"-->
+            <!--                  placeholder="House number"-->
             <!--                  rounded="xl"-->
             <!--                  v-model="req_obj.address.houseNumber"-->
             <!--                  variant="solo"-->
@@ -371,7 +371,7 @@ export default {
       ],
 
       req_obj: {
-        creatorId: sessionStorage['Id'],
+        creatorId: sessionStorage['id'],
         name: '',
         type: '',
         registrationNumber: '',
@@ -397,6 +397,7 @@ export default {
     },
     registrationHandler() {
       console.log(JSON.stringify(this.req_obj))
+      console.log(this.req_obj)
       axios
         .post('http://localhost:3000/company/create', this.req_obj)
         .then((res) => {
