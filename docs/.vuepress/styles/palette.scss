@@ -1,47 +1,45 @@
-.theme-container.functionalDoc{
-    ul 
-    {
-        list-style: none;
-        counter-reset: list;
-    }
+/* docs/.vuepress/styles/index.css */
+.functional-doc ul {
+    list-style: none;
+    counter-reset: list;
+}
 
-    ul li {
-        list-style-type: "R" counter(list) ". ";
-        counter-increment: list;
-    }
+.functional-doc ul li {
+    list-style-type: "R" counter(list) ". ";
+    counter-increment: list;
+}
 
-    ul li:before {
-        content: "R" counter(list) ". ";
+.functional-doc ul li:before {
+    content: "R" counter(list) ". ";
+}
 
-    }
+.functional-doc ul ul {
+    list-style: none;
+    counter-reset: sublist;
+}
 
-    ul ul {
-        list-style: none;
-        counter-reset: sublist;
-    }
+.functional-doc ul ul li {
+    counter-increment: sublist;
+}
 
-    ul ul li {
-        counter-increment: sublist;
-    }
+.functional-doc ul ul li:before {
+    content: "R" counter(list) "." counter(sublist) ". ";
+}
 
-    ul ul li:before {
-        content: "R" counter(list) "." counter(sublist) ". ";
-    }
-    ul ul ul {
-        list-style: none;
-        counter-reset: subsublist;
-    }
+.functional-doc ul ul ul {
+    list-style: none;
+    counter-reset: subsublist;
+}
 
-    ul ul ul li {
-        counter-increment: subsublist;
-        margin-bottom: 5px;
-    }
+.functional-doc ul ul ul li {
+    counter-increment: subsublist;
+    margin-bottom: 5px;
+}
 
-    ul ul ul li:before {
-        content: "R" counter(list) "." counter(sublist) "." counter(subsublist) ". ";
-    }
+.functional-doc ul ul ul li:before {
+    content: "R" counter(list) "." counter(sublist) "." counter(subsublist) ". ";
+}
 
-    p{
-        display: inline;
-    }    
+.functional-doc p {
+    display: inline;
 }
