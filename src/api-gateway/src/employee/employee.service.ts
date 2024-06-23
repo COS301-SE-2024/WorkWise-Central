@@ -202,7 +202,7 @@ export class EmployeeService {
     }
   }
 
-  async findAllInCompany(companyId: string) {
+  async findAllInCompany(companyId: string | Types.ObjectId) {
     try {
       const filter = companyId ? { companyId: companyId } : {};
       return this.employeeModel.find(filter).exec();
@@ -230,7 +230,7 @@ export class EmployeeService {
         .lean();
 
     console.log('employeeExists -> ', result);
-    return result == null;
+    return result != null;
   }
 
   async employeeExistsForCompany(

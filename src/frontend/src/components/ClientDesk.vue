@@ -1,20 +1,23 @@
 <template>
-  <v-container fluid fill-height class="pa-16 ma-auto pt-5 fixed-container">
+  <v-container fluid fill-height class="pa-16 ma-auto pt-5">
     <v-row justify="center" xs="6" sm="6" md="12">
       <v-col cols="12">
         <v-row justify="center">
-          <v-col cols="12" xs="12" sm="12" md="12" offset="3">
+          <v-col cols="12" xs="12" sm="12" md="12">
             <v-card
               flat
               :height="auto"
-              :max-width="1500"
               class="pa-11 ma-10"
               rounded="xl"
               elevation-2
               :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
               border="md"
             >
-              <v-card-title class="d-flex align-center pe-2">
+              <v-card-title
+                class="d-flex align-center pe-2"
+                :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+                style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
+              >
                 <v-icon icon="mdi-account"></v-icon> &nbsp; Client Details
 
                 <v-spacer></v-spacer>
@@ -24,8 +27,9 @@
                   density="compact"
                   label="Search"
                   prepend-inner-icon="mdi-magnify"
-                  variant="solo-filled"
+                  variant="outlined"
                   flat
+                  style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
                   hide-details
                   :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
                   single-line
@@ -45,8 +49,11 @@
                       :single-expand="true"
                       v-model:expanded="expanded"
                       show-expand
+                      height="auto"
                       rounded="xl"
                       :item-class="getRowClass"
+                      @click:row="toggleExpand"
+                      class="font-lato"
                     >
                       <template v-slot:[`item.firstName`]="{ value }">
                         <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
@@ -65,7 +72,22 @@
                       <!-- Expanded content slot -->
                       <template v-slot:expanded-row="{ columns, item }">
                         <tr>
-                          <td :colspan="columns.length">More info about {{ item.name }}</td>
+                          <td :colspan="columns.length">
+                            Full Address: {{ item.clientInfo.address.street }},
+                            {{ item.clientInfo.address.suburb }},
+                            {{ item.clientInfo.address.city }},
+                            {{ item.clientInfo.address.postalCode }},
+                            {{ item.clientInfo.address.complex }},
+                            {{ item.clientInfo.address.houseNumber }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td :colspan="columns.length">VAT Number:{{ item.vatNumber }}</td>
+                        </tr>
+                        <tr>
+                          <td :colspan="columns.length">
+                            Languages Spoken: {{ item.preferred_Language }}
+                          </td>
                         </tr>
                       </template>
                       <!-- Actions slot -->
@@ -101,8 +123,18 @@
       </v-col></v-row
     >
 
-    <v-col> <DeleteClient v-model="deleteDialog" :details="selectedItem" /></v-col>
-    <v-col> <EditClient v-model="editDialog" /></v-col>
+    <v-col>
+      <DeleteClient v-model="deleteDialog" :details="selectedItem" :client_id="selectedItemId"
+    /></v-col>
+    <v-col>
+      <EditClient
+        v-model="editDialog"
+        @update:item="selectedItem = $event"
+        :editedItem="selectedItem"
+        :_clientID="selectedItemId"
+      />
+      /</v-col
+    >
   </v-container>
 </template>
 
@@ -157,9 +189,11 @@ export default defineComponent({
       { title: 'Actions', value: 'actions', key: 'actions', sortable: false }
     ],
     search: '',
-    expanded: [], // This will hold the currently expanded item
     clients: [],
-    clientDetails: []
+    clientDetails: [],
+    clientIds: [],
+    expanded: [],
+    selectedItemId: ''
   }),
   components: {
     ClientDetails,
@@ -190,11 +224,23 @@ export default defineComponent({
       console.log('Searching client')
     },
     editClient(item) {
+      console.log(item)
       this.selectedItem = item
+      for (let i = 0; i < this.clientDetails.length; i++) {
+        if (this.clientDetails[i] === item) {
+          this.selectedItemId = this.clientIds[i]
+        }
+      }
       console.log('Editing client')
+      console.log(this.selectedItem)
     },
     deleteClient(item) {
       this.selectedItem = item
+      for (let i = 0; i < this.clientDetails.length; i++) {
+        if (this.clientDetails[i] === item) {
+          this.selectedItemId = this.clientIds[i]
+        }
+      }
       console.log('Deleting client')
     },
     openAddClient() {
@@ -202,6 +248,21 @@ export default defineComponent({
     },
     updatedEditedItem(newItem) {
       this.selectedItem = newItem
+    },
+    toggleExpand(item) {
+      // Check if the item is already expanded
+      const isExpanded = this.expanded.includes(item)
+      if (isExpanded) {
+        this.expanded = []
+      } else {
+        this.expanded = [item]
+        console.log(this.expanded)
+      }
+    },
+    handleSelectedItemUpdate(updatedItem) {
+      // Handle the updated item here
+      console.log('Updated item:', updatedItem)
+      // Perform actions based on the updated item, such as updating data or UI elements
     },
     async getClients() {
       const config = {
@@ -216,6 +277,8 @@ export default defineComponent({
           console.log(response.data)
           this.clients = response.data.data
           for (let i = 0; i < this.clients.length; i++) {
+            this.clientIds[i] = this.clients[i]._id
+            console.log(this.clientIds[i])
             this.clientDetails[i] = this.clients[i].details
           }
         })
@@ -259,5 +322,9 @@ export default defineComponent({
 
 .second-row-color {
   background-color: #e8f5e9; /* Light green background */
+}
+.font-lato {
+  font-family: 'Lato', sans-serif;
+  font-weight: bold;
 }
 </style>

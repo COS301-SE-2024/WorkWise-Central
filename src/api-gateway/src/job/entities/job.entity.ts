@@ -142,8 +142,8 @@ export class Job {
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: true, ref: Client.name })
-  clientId: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, required: false, ref: Client.name })
+  clientId?: Types.ObjectId;
 
   @ApiProperty()
   @Prop({ required: false, default: `Client-${Date.now()}` })
