@@ -36,7 +36,7 @@
                 <div style="height: 700px; overflow-y: auto">
                   <v-data-table
                       :headers="headers"
-                      :items="jobDetails"
+                      :items="mockData"
                       :search="search"
                       :single-expand="true"
                       v-model:expanded="expanded"
@@ -100,6 +100,7 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import AddJob from './AddJob.vue'
+import JobCard from './JobCard.vue'
 
 const search = ref('');
 const expanded = ref([]);
@@ -119,6 +120,40 @@ const headers = [
   { title: 'Start Date', key: 'startDate', align: 'start', value: 'startDate' },
   { title: 'End Date', key: 'endDate', align: 'start', value: 'endDate' },
   { title: 'Actions', key: 'actions', align: 'start', sortable: false, value: 'actions' }
+];
+
+const mockData = [
+  {
+    jobTitle: 'Bathroom Tiling',
+    client: 'Siphele Bob',
+    jobDescription: "Tiling Siphele Bob's bathroom according to specifications.",
+    status: 'In Progress',
+    assignedTeam: 'Team A',
+    startDate: '2024-07-01',
+    endDate: '2024-07-07',
+    actions: ['Edit', 'Delete']
+  },
+  {
+    jobTitle: 'Kitchen Renovation',
+    client: 'Heaven Gates',
+    jobDescription: "Renovating Heaven Gates' kitchen with new cabinets and countertops.",
+    status: 'Pending',
+    assignedTeam: 'Team B',
+    startDate: '2024-07-10',
+    endDate: '2024-07-20',
+    actions: ['Edit', 'Delete']
+  },
+  {
+    jobTitle: 'Roof Repairs',
+    client: 'Steven',
+    jobDescription: "Repairing the roof for Steven's house due to storm damage.",
+    status: 'Completed',
+    assignedTeam: 'Team C',
+    startDate: '2024-06-25',
+    endDate: '2024-06-30',
+    actions: ['Edit', 'Delete']
+  },
+  // Add more mock data entries as needed
 ];
 
 const fetchJobData = async () => {

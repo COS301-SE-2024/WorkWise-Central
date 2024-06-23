@@ -17,7 +17,6 @@
             :rows="descriptionRows"
             outlined
             auto-grow
-            :readonly="!editMode"
         ></v-textarea>
       </div>
       <div>
@@ -29,7 +28,7 @@
         </v-row>
         <v-textarea
             label="Add Comment"
-            v-model="comment"
+            v-model="jobComment"
             rows="2"
             outlined
             class="mb-4"
@@ -93,7 +92,7 @@
 
         <v-btn class="mb-2" outlined>Team Member List</v-btn>
 
-        <v-btn class="mb-2" outlined @click="clientDialog = true">
+        <v-btn class="mb-2" outlined @click="openClientDialogAndFetchClients">
           <v-icon left>mdi-account-switch</v-icon> Change Client
         </v-btn>
         <v-dialog v-model="clientDialog" max-width="600px">
@@ -106,11 +105,9 @@
               <div class="text-caption pa-3">Select a client</div>
 
               <v-autocomplete
-                  v-model="selectedClient"
+                  v-model="selectedClientName"
                   hint="Click the field to select a client"
-                  :items="clients"
-                  item-text="name"
-                  item-value="id"
+                  :items="clientNames"
                   label="Select Client"
                   prepend-icon="mdi-account"
                   persistent-hint
@@ -233,34 +230,79 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { watch, ref } from 'vue'
+import axios from 'axios'
 import { computed } from 'vue'
 import { VBtn, VDialog, VCard, VCardTitle, VCardText, VCardActions, VFileInput, VChip, VSpacer, VAlert } from 'vuetify/components';
-
+const props = defineProps({
+  jobID: String,
+});
 //For change client
 const clientDialog = ref(false);
 const selectedClient = ref(null);
 const clientChips = ref([]);
+const clients = ref([]);
+const selectedClientName = ref(null);
+const clientNames = ref([])
+
+const openClientDialogAndFetchClients = async () => {
+  clientDialog.value = true;
+  await fetchClients();
+};
 
 // api call to get clients and stores them here
-const clients = [
-  { id: 1, name: 'John Doe' },
-  { id: 2, name: 'Jane Smith' },
-  { id: 3, name: 'Alice Johnson' },
-];
+const fetchClients = async () => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+    }
+  };
+  try {
+    const response = await axios.get('http://localhost:3000/client/all', config);
+    console.log(response.data);
+    clients.value = response.data.data.map(client => ({
+      ...client,
+      fullName: `${client.details.firstName ?? ''} ${client.details.surname ?? ''}`.trim()
+    }));
+
+    // Populate clientNames array with just the names
+    clientNames.value = clients.value.map(client => {
+      return client.details.firstName && client.details.surname
+          ? `${client.details.firstName} ${client.details.surname}`
+          : client.details.name ?? 'Unknown Name';
+    });
+
+    // @BOB get rid of this part
+    // Watch for changes in selectedClientName and update selectedClient
+    watch(() => selectedClientName.value, (newVal) => {
+      const selected = clients.value.find(client => {
+        const fullName = client.details.firstName && client.details.surname
+            ? `${client.details.firstName} ${client.details.surname}`
+            : client.details.name ?? 'Unknown Name';
+        return fullName === newVal;
+      });
+      selectedClient.value = selected?._id ?? null;
+    })
+  } catch (error) {
+    console.error('Failed to fetch clients:', error);
+  }
+};
 
 const saveClient = () => {
-  // Save functionality here
-  if (selectedClient.value) {
-    clientChips.value.push(selectedClient.value);
+  if (selectedClientName.value) {
+    clientChips.value.push({ name: selectedClientName });
+    console.log('Client chips:', clientChips.value);
   }
   clientDialog.value = false;
 };
 
+// the id of the selected client is stored in selectedClient
+
 // For File attachments
 
 const dialog = ref(false);
-const files = ref([]);
+const files = ref([]); // stores all the selected files that will be pushed to the db
 const rules = ref([
   value => {
     return !value || !value.length || value[0].size < 2000000 || 'Avatar size should be less than 2 MB!';
@@ -300,7 +342,7 @@ const setDates = (value) => {
       return;
     }
     errorMessage.value = null;
-    startDate.value = value;
+    startDate.value = value; // stores the updated start date
     isStartDatePicked.value = true;
     currentDate.value = null;
   }
@@ -310,7 +352,7 @@ const setDates = (value) => {
       return;
     }
     errorMessage.value = null;
-    endDate.value = value;
+    endDate.value = value; // stores the updated end date
     isEndDatePicked.value = true;
     currentDate.value = null;
   }
@@ -377,8 +419,7 @@ const removeDates = () => {
 
 // For description
 
-const jobDescription = ref('');
-const editMode = ref(false);
+const jobDescription = ref(''); // will store the changed description
 
 // Adjust the number of rows based on the content
 const descriptionRows = computed(() => {
@@ -386,25 +427,14 @@ const descriptionRows = computed(() => {
   return Math.max(4, lineCount); // Minimum of 4 rows
 });
 
-const saveDescription = () => {
-  // Save logic here
-  console.log('Saving description:', jobDescription.value);
-  editMode.value = false;
-};
-
-
-const cancelEdit = () => {
-  // Cancel editing, revert changes if needed
-  editMode.value = false;
-  // Optionally revert changes if needed
-};
-
-const toggleEditMode = () => {
-  editMode.value = !editMode.value;
-};
 
 const jobTitle = ref('Job Heading')
-const comment = ref('')
+const jobComment = ref('')
+
+
+
+
+
 </script>
 
 <style scoped>
