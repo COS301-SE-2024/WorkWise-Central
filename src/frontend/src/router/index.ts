@@ -128,6 +128,11 @@ const router = createRouter({
       path: '/client-employee-view',
       name: 'client-employee-view',
       component: ClientView
+    },
+    {
+      path: '/jobCard',
+      name: 'jobCard',
+      component:() => import('@/components/JobCard.vue')
     }
   ]
 })

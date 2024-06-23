@@ -93,7 +93,9 @@
 
         <v-btn class="mb-2" outlined>Team Member List</v-btn>
 
-        <v-btn class="mb-2" outlined @click="clientDialog = true">Change Client</v-btn>
+        <v-btn class="mb-2" outlined @click="clientDialog = true">
+          <v-icon left>mdi-account-switch</v-icon> Change Client
+        </v-btn>
         <v-dialog v-model="clientDialog" max-width="600px">
           <v-card>
             <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
@@ -125,7 +127,9 @@
         </v-dialog>
         <v-btn class="mb-2" outlined>Labels</v-btn>
         <v-btn class="mb-2" outlined>Checklist</v-btn>
-        <v-btn class="mb-2" outlined @click="dialog = true">File Attachments</v-btn>
+        <v-btn class="mb-2" outlined @click="dialog = true">
+          <v-icon left>mdi-paperclip</v-icon> File Attachments
+        </v-btn>
         <v-dialog v-model="dialog" max-width="600px">
           <v-card>
             <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
@@ -162,7 +166,9 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-        <v-btn class="mb-2" outlined @click="dueDateDialog = true">Due Date</v-btn>
+        <v-btn class="mb-2" outlined @click="dueDateDialog = true">
+          <v-icon left>mdi-calendar-clock</v-icon> Due Date
+        </v-btn>
         <v-dialog v-model="dueDateDialog" max-width="600px">
           <v-card>
             <v-card-title class="text-h5 font-weight-regular bg-blue-grey">

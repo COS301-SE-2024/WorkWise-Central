@@ -1,147 +1,171 @@
-<script>
-import AddJob from '../components/AddJob.vue'
-
-// const FakeAPI = {
-//   async fetch({ page, itemsPerPage, sortBy }) {
-//     return new Promise((resolve) => {
-//       setTimeout(() => {
-//         const start = (page - 1) * itemsPerPage;
-//         const end = start + itemsPerPage;
-//         const items = desserts.slice();
-//
-//         if (sortBy.length) {
-//           const sortKey = sortBy[0].key;
-//           const sortOrder = sortBy[0].order;
-//           items.sort((a, b) => {
-//             const aValue = a[sortKey];
-//             const bValue = b[sortKey];
-//             return sortOrder === 'desc' ? bValue - aValue : aValue - bValue;
-//           });
-//         }
-//         const paginated = items.slice(start, end);
-//         resolve({ items: paginated, total: items.length });
-//       }, 500);
-//     });
-//   },
-// };
-
-const mockData = [
-  {
-    jobTitle: 'Software Engineer',
-    client: 'Tech Corp',
-    jobDescription: 'Develop and maintain software applications',
-    status: 'Active',
-    assignedTeam: 'Team Alpha',
-    startDate: '2022-01-01',
-    endDate: '2022-12-31',
-    actions: 'Edit/Delete'
-  },
-  {
-    jobTitle: 'Project Manager',
-    client: 'Business Inc',
-    jobDescription: 'Manage software development projects',
-    status: 'Inactive',
-    assignedTeam: 'Team Beta',
-    startDate: '2022-02-01',
-    endDate: '2022-11-30',
-    actions: 'Edit/Delete'
-  }
-]
-
-export default {
-  data: () => ({
-    itemsPerPage: 20,
-    headers: [
-      { text: 'Job Title', value: 'jobTitle', align: 'start' },
-      { text: 'Client', value: 'client', align: 'start' },
-      { text: 'Job Description', value: 'jobDescription', align: 'start' },
-      { text: 'Status', value: 'status', align: 'start' },
-      { text: 'Assigned Team', value: 'assignedTeam', align: 'start' },
-      { text: 'Start Date', value: 'startDate', align: 'start' },
-      { text: 'End Date', value: 'endDate', align: 'start' },
-      { text: 'Actions', value: 'actions', align: 'start', sortable: false }
-    ],
-    search: '',
-    serverItems: mockData,
-    loading: false,
-    totalItems: mockData.length
-  }),
-  components: {
-    AddJob
-  },
-  methods: {
-    // loadItems({ page, itemsPerPage, sortBy }) {},
-    // editJob(item) {},
-    // deleteJob(item) {}
-  },
-  created() {}
-}
-</script>
-
 <template>
-  <v-container fluid>
-    <v-row justify="center">
-      <v-col cols="12">
-        <v-card-title class="d-flex align-center pe-2">
-          <v-icon left class="mr-2">mdi-briefcase</v-icon>
-          <span class="title">Your Jobs</span>
-          <v-spacer></v-spacer>
-        </v-card-title>
-
-        <v-divider></v-divider>
-
-        <v-row class="d-flex justify-space-between mb-4">
-          <v-col cols="4">
-            <v-spacer></v-spacer>
-            <AddJob class="job-details-list" />
-          </v-col>
-          <v-col cols="4" class="d-flex justify-center">
-            <v-text-field
-              v-model="search"
-              label="Search"
-              prepend-inner-icon="mdi-magnify"
-              variant="outlined"
-              hide-details
-              single-line
-              class="search-bar"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="4">
-            <v-spacer></v-spacer>
-          </v-col>
-        </v-row>
-
-        <v-data-table-server
-          :search="search"
-          :headers="headers"
-          :items-per-page="itemsPerPage"
-          :items="serverItems"
-          :items-length="totalItems"
-          :loading="loading"
-          item-value="name"
-          @update:options="loadItems"
-          class="elevation-1 custom-table"
-          flat
-        >
-          <template v-slot:headers>
-            <tr>
-              <th v-for="header in headers" :key="header.text">
-                {{ header.text }}
-              </th>
-            </tr>
-          </template>
-          <template v-slot:[`item.actions`]="{ item }">
-            <v-btn icon @click="editJob(item)">
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn icon @click="deleteJob(item)">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </template>
-        </v-data-table-server>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-app :style="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color">
+    <v-container fluid fill-height class="pa-16 ma-auto pt-5 fixed-container">
+      <v-row justify="center" xs="4" sm="4" md="12">
+        <v-col cols="12">
+          <v-row justify="center">
+            <v-col cols="12" xs="4" sm="4" md="12" offset="3">
+              <v-card
+                  flat
+                  :height="auto"
+                  :width="1500"
+                  class="pa-11 ma-10"
+                  rounded="xl"
+                  elevation-2
+                  :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  border="md"
+              >
+                <v-card-title class="d-flex align-center pe-2">
+                  <v-icon icon="mdi-briefcase"></v-icon> &nbsp; Job Details
+                  <v-spacer></v-spacer>
+                  <v-text-field
+                      v-model="search"
+                      density="compact"
+                      label="Search"
+                      prepend-inner-icon="mdi-magnify"
+                      variant="solo-filled"
+                      flat
+                      hide-details
+                      :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                      single-line
+                  ></v-text-field>
+                  <v-spacer></v-spacer>
+                  <AddJob />
+                </v-card-title>
+                <v-divider></v-divider>
+                <div style="height: 700px; overflow-y: auto">
+                  <v-data-table
+                      :headers="headers"
+                      :items="jobDetails"
+                      :search="search"
+                      :single-expand="true"
+                      v-model:expanded="expanded"
+                      show-expand
+                      rounded="xl"
+                      :item-class="getRowClass"
+                  >
+                    <template v-slot:[`item.jobTitle`]="{ value }">
+                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip>
+                    </template>
+                    <template v-slot:[`item.client`]="{ value }">
+                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
+                    </template>
+                    <template v-slot:[`item.jobDescription`]="{ value }">
+                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-text-box-outline</v-icon></v-chip>
+                    </template>
+                    <template v-slot:[`item.status`]="{ value }">
+                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-checkbox-marked-circle-outline</v-icon></v-chip>
+                    </template>
+                    <template v-slot:[`item.assignedTeam`]="{ value }">
+                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account-group</v-icon></v-chip>
+                    </template>
+                    <template v-slot:[`item.startDate`]="{ value }">
+                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-calendar-start</v-icon></v-chip>
+                    </template>
+                    <template v-slot:[`item.endDate`]="{ value }">
+                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-calendar-end</v-icon></v-chip>
+                    </template>
+                    <!-- Expanded content slot -->
+                    <template v-slot:expanded-row="{ columns, item }">
+                      <tr>
+                        <td :colspan="columns.length">More info about {{ item.jobTitle }}</td>
+                      </tr>
+                    </template>
+                    <!-- Actions slot -->
+                    <template v-slot:[`item.actions`]="{ item }">
+                      <v-col cols="12">
+                        <v-btn icon size="small" @click="openJobCard(item)" color="#5A82AF">
+                          <v-icon>mdi-pencil</v-icon>
+                        </v-btn>
+                      </v-col>
+                      <v-col cols="12">
+                        <v-btn icon size="small" @click="deleteClient(item)" color="#5A82AF">
+                          <v-icon>mdi-delete</v-icon>
+                        </v-btn>
+                      </v-col>
+                    </template>
+                  </v-data-table>
+                </div>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-col> <DeleteClient v-model="deleteDialog" :details="selectedItem" /></v-col>
+    </v-container>
+  </v-app>
 </template>
 
-<style scoped></style>
+<script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import AddJob from './AddJob.vue'
+
+const search = ref('');
+const expanded = ref([]);
+const jobDetails = ref([]);
+const isDarkMode = ref(false);
+const modal_dark_theme_color = "#333";
+const modal_light_theme_color = "#fff";
+const deleteDialog = ref(false);
+const selectedItem = ref(null);
+
+const headers = [
+  { title: 'Job Title', key: 'jobTitle', align: 'start', value: 'jobTitle' },
+  { title: 'Client', key: 'client', align: 'start', value: 'client' },
+  { title: 'Job Description', key: 'jobDescription', align: 'start', value: 'jobDescription' },
+  { title: 'Status', key: 'status', align: 'start', value: 'status' },
+  { title: 'Assigned Team', key: 'assignedTeam', align: 'start', value: 'assignedTeam' },
+  { title: 'Start Date', key: 'startDate', align: 'start', value: 'startDate' },
+  { title: 'End Date', key: 'endDate', align: 'start', value: 'endDate' },
+  { title: 'Actions', key: 'actions', align: 'start', sortable: false, value: 'actions' }
+];
+
+const fetchJobData = async () => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+    }
+  };
+
+  try {
+    const response = await axios.get('http://localhost:3000/job/all', config);
+    const jobData = response.data;
+
+    jobDetails.value = jobData.map(job => ({
+      jobTitle: job.details.heading,
+      client: job.clientId,
+      jobDescription: job.details.description,
+      status: job.status,
+      assignedTeam: job.assignedEmployees.join(', '),
+      startDate: new Date(job.scheduledDateTime).toLocaleString(),
+      endDate: 'N/A',
+      actions: 'View/Edit/Delete'
+    }));
+
+    console.log('Job details constructed successfully:', jobDetails.value);
+    console.log('Full response:', response);
+  } catch (error) {
+    console.error('Error fetching job data:', error);
+  }
+};
+
+const openJobCard = (item) => {
+  console.log('Open job card for:', item);
+};
+
+const deleteClient = (item) => {
+  console.log('Delete client:', item);
+  selectedItem.value = item;
+  deleteDialog.value = true;
+};
+
+const getRowClass = () => {
+  // Define your row class logic here
+};
+
+onMounted(() => {
+  fetchJobData();
+});
+</script>
