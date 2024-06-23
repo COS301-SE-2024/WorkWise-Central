@@ -20,6 +20,7 @@ import {
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiInternalServerErrorResponse,
   ApiResponse,
