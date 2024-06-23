@@ -16,18 +16,19 @@ import { Company } from './entities/company.entity';
 import { User } from '../users/entities/user.entity';
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
 import { CompanyRepository } from './company.repository';
-import { RoleService } from '../role/role.service';
+import { ValidationResult } from '../auth/entities/validationResult.entity';
+import { EmployeeService } from '../employee/employee.service';
 
 @Injectable()
 export class CompanyService {
   constructor(
     @InjectModel(Company.name)
     private readonly companyModel: Model<Company>,
-    private readonly companyRepository: CompanyRepository,
-    @Inject(forwardRef(() => RoleService))
-    private readonly roleService: RoleService,
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
+    private readonly companyRepository: CompanyRepository,
+    @Inject(forwardRef(() => EmployeeService))
+    private readonly employeeService: EmployeeService,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto) {
@@ -139,14 +140,54 @@ export class CompanyService {
     return `${updateUser.systemDetails.username} added to successfully`;
   }
 
-  update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
-    const updatedCompany = this.companyRepository.update(id, updateCompanyDto);
+  async update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
+    const inputValidated = await this.companyIsValid(updateCompanyDto);
+    if (!inputValidated.isValid) {
+      throw new NotFoundException(inputValidated.message);
+    }
+
+    const updatedCompany = await this.companyRepository.update(
+      id,
+      updateCompanyDto,
+    );
     console.log(updatedCompany);
-    return true;
+    return updatedCompany;
   }
 
   async deleteCompany(id: string): Promise<boolean> {
     await this.companyRepository.delete(id);
     return true;
+  }
+
+  async companyIsValid(company: Company | CreateCompanyDto | UpdateCompanyDto) {
+    if (!company) return new ValidationResult(false, `Company is null`);
+    if (company.inventoryItems) {
+      for (const item of company.inventoryItems) {
+        //TODO: When inventory is done//
+
+        /* const exists = await this.InventoryService.employeeExists(item);
+        if (!exists)
+          return new ValidationResult(
+            false,
+            `Invalid Inventory ID: ${item}`,
+          );*/
+        if (!Types.ObjectId.isValid(item)) {
+          return new ValidationResult(false, 'Invalid ObjectId in Inventory');
+        }
+      }
+    }
+    if (company.employees) {
+      for (const employee of company.employees) {
+        if (!Types.ObjectId.isValid(employee))
+          return new ValidationResult(false, 'Employee ID is invalid');
+
+        if (!(await this.employeeService.employeeExists(employee))) {
+          return new ValidationResult(
+            false,
+            'Employee ID Not Found in Company',
+          );
+        }
+      }
+    }
   }
 }

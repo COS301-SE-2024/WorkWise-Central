@@ -14,7 +14,7 @@ import { Transform, Type } from 'class-transformer';
 import { Client } from '../entities/client.entity';
 import { Types } from 'mongoose';
 
-class ContactInfo {
+export class ContactInfo {
   @ApiProperty()
   @IsString()
   @Transform(({ value }) =>
@@ -30,7 +30,7 @@ class ContactInfo {
   email: string;
 }
 
-class Address {
+export class Address {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -114,7 +114,7 @@ export class ClientDetails {
 export class CreateClientDto {
   @ApiProperty()
   @IsOptional()
-  @IsMongoId()
+  @IsString()
   registrationNumber?: string;
 
   @ApiProperty()
