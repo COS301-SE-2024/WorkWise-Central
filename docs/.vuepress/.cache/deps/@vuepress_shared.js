@@ -5,8 +5,7 @@ var isLinkExternal = (link, base = "/") => isLinkWithProtocol(link) || // absolu
 link.startsWith("/") && !link.startsWith(base) && !markdownLinkRegexp.test(link);
 var isLinkHttp = (link) => /^(https?:)?\/\//.test(link);
 var inferRoutePath = (path) => {
-  if (!path || path.endsWith("/"))
-    return path;
+  if (!path || path.endsWith("/")) return path;
   let routePath = path.replace(/(^|\/)README.md$/i, "$1index.html");
   if (routePath.endsWith(".md")) {
     routePath = routePath.substring(0, routePath.length - 3) + ".html";
