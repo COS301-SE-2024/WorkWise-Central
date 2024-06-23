@@ -14,6 +14,13 @@ export class UsersRepository {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
+  async save(newUserObj: User) {
+    const newUser = new this.userModel(newUserObj);
+    const result = await newUser.save();
+    console.log('Save new user:', result);
+    return result;
+  }
+
   async findAll(): Promise<User[]> {
     const result = await this.userModel
       .find()

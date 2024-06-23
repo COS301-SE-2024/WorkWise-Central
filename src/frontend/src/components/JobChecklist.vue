@@ -3,7 +3,7 @@
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
-        class="text-none font-weight-regular hello"
+        class="mb-2"
         prepend-icon="mdi-list-box"
         variant="elevated"
         v-bind="activatorProps"
@@ -11,22 +11,20 @@
         Checklist
       </v-btn>
     </template>
-    <v-sheet elevation="14" rounded="xl" width="500" height="auto">
-      <v-col>
+    <v-sheet elevation="14" rounded="md" width="500" height="auto">
+      <v-col cols="12">
         <v-row class="pa-2" align="center">
-          <!-- Add padding for spacing and align items center -->
-
-          <!-- Label in the middle -->
-          <v-col cols="10">
-            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">Add Checklist</h4>
+          <v-col cols="12">
+            <v-card variant="">
+              <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+                <v-icon left class="mr-2">mdi-list-box</v-icon>
+                <span class="title"> Checklist</span>
+                <v-spacer></v-spacer>
+              </v-card-title>
+            </v-card>
           </v-col>
 
           <!-- Close button on the right -->
-          <v-col cols="2">
-            <v-btn @click="editLabelDialog = false" variant="plain">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-col>
         </v-row>
         <v-spacer></v-spacer>
 
@@ -55,8 +53,12 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-col cols="12"
-          ><v-btn variant="elevated" color="blue" @click="addChecklist">Add</v-btn></v-col
+        <v-row align="center">
+          <v-col cols="auto" justify="center"
+            ><v-btn variant="plain" size="large" color="blue" @click="addChecklist"
+              >Add</v-btn
+            ></v-col
+          ></v-row
         >
       </v-col>
     </v-sheet>
@@ -67,6 +69,9 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
+  props: {
+    checklistProp: Array
+  },
   name: 'JobChecklist',
   data: () => ({
     checklistDialog: false,
@@ -80,12 +85,17 @@ export default defineComponent({
           id: Date.now(), // Simple way to generate a unique id
           title: this.newChecklistItemTitle
         }
+
+        this.$emit('addItemToList', newItem) // Emit an event with the new item
         this.checklist.push(newItem)
+
         this.newChecklistItemTitle = '' // Reset input field after adding
+        this.$emit('itemAdded', this.checklist) // Emit an event with the new item
       }
     },
     removeChecklistItem(itemId) {
       this.checklist = this.checklist.filter((item) => item.id !== itemId)
+      this.$emit('itemRemoved', itemId) // Emit an event with the removed item id
     }
   }
 })

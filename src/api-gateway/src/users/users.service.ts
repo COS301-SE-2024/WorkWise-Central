@@ -23,8 +23,8 @@ import { isPhoneNumber } from 'class-validator';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name)
-    private readonly userModel: Model<User>,
+    /*    @InjectModel(User.name)
+    private readonly userModel: Model<User>,*/
     private readonly userRepository: UsersRepository,
     @InjectModel(UserConfirmation.name)
     private readonly userConfirmationModel: Model<UserConfirmation>,
@@ -43,8 +43,7 @@ export class UsersService {
     }
 
     const newUserObj = new User(createUserDto);
-    const newUser = new this.userModel(newUserObj);
-    const result = await newUser.save();
+    const result = await this.userRepository.save(newUserObj);
     await this.createUserConfirmation(newUserObj); //sends email
 
     const jwt: { access_token: string; id: Types.ObjectId } =

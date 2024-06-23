@@ -15,7 +15,7 @@ const onEllipsisClick = () => {
 const open = ref(['Dashboard'])
 
 const dashboardSubItems = ref([
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
+  { title: 'Home', icon: 'mdi-home', routeName: 'dashboard' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
 ])

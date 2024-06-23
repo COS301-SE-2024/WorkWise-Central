@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-height="800" max-width="600">
+  <v-dialog max-height="800" max-width="600" scrollable>
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -14,15 +14,16 @@
     <v-sheet
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
       elevation="14"
-      rounded="xl"
+      rounded="md"
       max-height="800"
+      overflow-y="auto"
       max-width="600"
     >
       <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
         <v-col>
           <v-col>
             <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-              Client Details
+              Create a Client
             </h4></v-col
           >
           <v-spacer></v-spacer>
@@ -52,7 +53,6 @@
             <!--                class="text-caption white&#45;&#45;text"-->
             <!--                >Surname name of client*</small-->
             <!--              >-->
-
             <!--              <v-text-field-->
             <!--                density="compact"-->
             <!--                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
@@ -79,7 +79,7 @@
                 v-model="req_obj.details.contactInfo.email"
                 :rules="email_rules"
                 type="email"
-                rounded="xl"
+                rounded="md"
                 variant="solo"
                 required
               ></v-text-field
@@ -216,7 +216,7 @@
           </v-col>
           <v-col cols="8" offset="2" align="center">
             <v-btn
-              rounded="xl"
+              rounded="md"
               boarder="xl"
               width="80%"
               height="35"

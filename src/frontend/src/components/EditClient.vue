@@ -2,7 +2,7 @@
   <v-dialog v-model="clientDialog" max-width="500" height="800">
     <v-sheet
       elevation="14"
-      rounded="xl"
+      rounded="md"
       width="500"
       height="800"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
@@ -22,7 +22,12 @@
               >
                 Name
               </small>
-              <v-text-field v-model="Name" label="Name" variant="solo" rounded="xl"></v-text-field>
+              <v-text-field
+                v-model="localEditedItem.firstName"
+                :rules="nameRules"
+                variant="solo"
+                rounded="md"
+              ></v-text-field>
             </v-col>
             <v-divider></v-divider>
             <v-col>
@@ -33,10 +38,10 @@
                 Surname
               </small>
               <v-text-field
-                v-model="Surname"
-                :label="Surname ? Surname : 'Surname'"
+                v-model="localEditedItem.surname"
+                :rules="surnameRules"
                 variant="solo"
-                rounded="xl"
+                rounded="md"
               ></v-text-field>
             </v-col>
             <v-divider></v-divider>
@@ -48,10 +53,10 @@
                 Phone Number
               </small>
               <v-text-field
-                v-model="phone_number"
-                :label="phone_number ? phone_number : 'Phone Number'"
+                v-model="localEditedItem.clientInfo.phoneNumber"
+                :rules="phoneRules"
                 variant="solo"
-                rounded="xl"
+                rounded="md"
               ></v-text-field>
             </v-col>
             <v-divider></v-divider>
@@ -63,10 +68,10 @@
                 Email
               </small>
               <v-text-field
-                v-model="email"
-                :label="email ? email : 'Email'"
+                v-model="localEditedItem.clientInfo.email"
                 variant="solo"
-                rounded="xl"
+                :rules="emailRules"
+                rounded="md"
               ></v-text-field>
             </v-col>
             <v-divider></v-divider>
@@ -78,10 +83,9 @@
                 Address
               </small>
               <v-text-field
-                v-model="address"
-                :label="address ? address : 'Address'"
+                v-model="localEditedItem.clientInfo.address"
                 variant="solo"
-                rounded="xl"
+                rounded="md"
               ></v-text-field>
             </v-col>
             <v-divider></v-divider>
@@ -96,7 +100,8 @@
                 v-model="job_required"
                 :label="job_required ? job_required : 'Job Required'"
                 variant="solo"
-                rounded="xl"
+                rounded="md"
+                value=""
               ></v-text-field>
             </v-col>
             <v-divider></v-divider>
@@ -104,11 +109,12 @@
               ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
                 <v-btn
                   color="#5A82AF"
-                  rounded="xl"
+                  rounded="md"
                   border="md"
                   width="85%"
                   height="35"
                   variant="elevated"
+                  @click="saveChanges"
                 >
                   SAVE
                 </v-btn>
@@ -116,7 +122,7 @@
               <v-col cols="12" md="12" xs="3" sm="6" offset="1">
                 <v-btn
                   color="#5A82AF"
-                  rounded="xl"
+                  rounded="md"
                   border="md"
                   width="85%"
                   height="35"
@@ -137,9 +143,14 @@
 import axios from 'axios'
 export default {
   name: 'EditClient',
-
+  props: {
+    isDarkMode: Boolean,
+    colors: Object,
+    editedItem: Object
+  },
   data() {
     return {
+      localEditedItem: this.editedItem,
       clientDialog: false,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
@@ -148,31 +159,54 @@ export default {
       phone_number: '',
       email: '',
       address: '',
-      job_required: ''
+      job_required: '',
+      details: {},
+      nameRules: [
+        (v) => !!v || 'Name is required',
+        (v) => (v && v.length >= 2) || 'Name must be at least 2 characters'
+      ],
+      surnameRules: [
+        (v) => !!v || 'Surname is required',
+        (v) => (v && v.length >= 2) || 'Surname must be at least 2 characters'
+      ],
+      emailRules: [
+        (v) => !!v || 'E-mail is required',
+        (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+      ],
+      phoneRules: [
+        (v) => !!v || 'Phone number is required',
+        (v) => (v && v.length >= 10) || 'Phone number must be at least 10 digits'
+        // Add more specific validation for phone number format if needed
+      ]
+    }
+  },
+  watch: {
+    // Step 2: Watch the prop for changes
+    editedItem(newVal) {
+      this.localEditedItem = newVal
     }
   },
   methods: {
     close() {
       this.clientDialog = false
     },
-    saveChanges() {
-      const updatedItem = {
-        name: this.editedItem.name,
-        email: this.editedItem.email,
-        phone: this.editedItem.phone,
-        address: this.editedItem.address,
-        jobRequired: this.editedItem.jobRequired
-      }
-      this.$emit('save', updatedItem)
+    updateItem() {
+      // Logic to update the item, then emit an event with the updated value
+      // Step 3: Emit an event for updates
+      this.$emit('update:item', this.localEditedItem)
+      alert('Item updated')
     },
+
     async update() {
-      axios
+      await axios
         .post('http://localhost:8000/api/clients/', this.editedItem)
         .then((response) => {
           console.log(response)
+          return true
         })
         .catch((error) => {
           console.log(error)
+          return false
         })
     }
   }

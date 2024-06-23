@@ -1,5 +1,7 @@
 import {
   ConflictException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -14,6 +16,7 @@ import { Company } from './entities/company.entity';
 import { User } from '../users/entities/user.entity';
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
 import { CompanyRepository } from './company.repository';
+import { RoleService } from '../role/role.service';
 
 @Injectable()
 export class CompanyService {
@@ -21,7 +24,8 @@ export class CompanyService {
     @InjectModel(Company.name)
     private readonly companyModel: Model<Company>,
     private readonly companyRepository: CompanyRepository,
-
+    @Inject(forwardRef(() => RoleService))
+    private readonly roleService: RoleService,
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
   ) {}

@@ -63,9 +63,11 @@ export class ClientDetails {
 @Schema()
 export class Client {
   constructor(createClientDto: CreateClientDto) {
-    this.details = createClientDto.details;
-    this.clientUsername = createClientDto.clientUsername;
-    this.registrationNumber = createClientDto.registrationNumber;
+    if (createClientDto.details) this.details = createClientDto.details;
+    if (createClientDto.clientUsername)
+      this.clientUsername = createClientDto.clientUsername;
+    if (createClientDto.registrationNumber)
+      this.registrationNumber = createClientDto.registrationNumber;
     this.createdAt = new Date();
   }
 
