@@ -11,6 +11,10 @@
 <p>To counteract the potential security issues that may arise with a shared communication channel, message channels will be restricted by a security policy to prevent eavesdropping by unauthorized users or applications.</p>
 <h2 id="service-oriented-architecture" tabindex="-1"><a class="header-anchor" href="#service-oriented-architecture"><span>Service-Oriented Architecture</span></a></h2>
 <p>Service-Oriented Architecture (SOA) is an architectural style that promotes the design of software systems as a collection of loosely coupled, independently deployable services. Each service represents a specific business capability and communicates with other services through well-defined interfaces.</p>
+<h1 id="gatekeeper-pattern" tabindex="-1"><a class="header-anchor" href="#gatekeeper-pattern"><span>Gatekeeper pattern</span></a></h1>
+<p>We plan to use the Gatekeeper pattern to prevent malicious requests from entering the controllers in the backend.
+The gatekeeper validates all requests, and rejects requests that don't meet validation requirements. It provides an additional layer of security and limit the system's attack surface.
+In order to alleviate the weakness of having a single point of failure, we chose to couple the gatekeeper from the trusted host.</p>
 </div></template>
 
 

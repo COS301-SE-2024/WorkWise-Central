@@ -19,3 +19,8 @@ Thus, the API-Gateway will use the Publisher-Subscriber pattern to facilitate co
 To counteract the potential security issues that may arise with a shared communication channel, message channels will be restricted by a security policy to prevent eavesdropping by unauthorized users or applications.
 ## Service-Oriented Architecture
 Service-Oriented Architecture (SOA) is an architectural style that promotes the design of software systems as a collection of loosely coupled, independently deployable services. Each service represents a specific business capability and communicates with other services through well-defined interfaces.
+
+# Gatekeeper pattern
+We plan to use the Gatekeeper pattern to prevent malicious requests from entering the controllers in the backend.
+The gatekeeper validates all requests, and rejects requests that don't meet validation requirements. It provides an additional layer of security and limit the system's attack surface.
+In order to alleviate the weakness of having a single point of failure, we chose to couple the gatekeeper from the trusted host.
