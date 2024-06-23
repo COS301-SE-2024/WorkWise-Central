@@ -84,6 +84,10 @@ export class CompanyService {
     return result;
   }
 
+  async employeeIsInCompany(compId: Types.ObjectId, empId: Types.ObjectId) {
+    return await this.companyRepository.employeeExists(compId, empId);
+  }
+
   async getCompanyByRegNumber(
     registrationNumber: string,
   ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {

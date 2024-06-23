@@ -88,7 +88,7 @@ export class ClientController {
   @ApiResponse({
     type: findClientResponseDto,
   })
-  @Get('search?')
+  @Get('/search')
   async findByEmailOrName(
     @Query('compId')
     compId: string,
@@ -106,7 +106,7 @@ export class ClientController {
     }
   }
 
-  @Patch('update/:id')
+  @Patch('/:id')
   async update(
     @Param('id') id: string,
     @Body() updateClientDto: UpdateClientDto,
@@ -122,9 +122,9 @@ export class ClientController {
   }
 
   //@UseGuards(AuthGuard)
-  @Delete()
-  remove(@Param('id') id: string, @Body() pass: { pass: string }) {
-    console.log(pass); //Will be implemented later
+  @Delete('/delete/:id')
+  remove(@Param('id') id: string /*, @Body() pass: { pass: string }*/) {
+    //console.log(pass); //Will be implemented later
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
     }

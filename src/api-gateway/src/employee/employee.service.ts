@@ -230,7 +230,7 @@ export class EmployeeService {
         .lean();
 
     console.log('employeeExists -> ', result);
-    return result == null;
+    return result != null;
   }
 
   async employeeExistsForCompany(
