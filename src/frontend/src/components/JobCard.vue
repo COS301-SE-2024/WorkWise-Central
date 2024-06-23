@@ -273,8 +273,8 @@ import axios from 'axios'
 //Define props
 const props = defineProps({
   job_ID: {
-    type: [String, Number], // Assuming job_ID can be a string or a number
-    default: null
+    type: [String], // Assuming job_ID can be a string or a number
+    default: String
   }
 })
 
