@@ -427,15 +427,16 @@ const editMode = ref(false)
 
 // Adjust the number of rows based on the content
 const descriptionRows = computed(() => {
-  const lineCount = jobDescription.value.split(/\r\n|\r|\n/).length
-  return Math.max(4, lineCount) // Minimum of 4 rows
-})
+  const lineCount = jobDescription.value.split(/\r\n|\r|\n/).length;
+  return Math.max(4, lineCount); // Minimum of 4 rows
+});
 
 // const saveDescription = () => {
 //   // Save logic here
 //   console.log('Saving description:', jobDescription.value);
 //   editMode.value = false;
 // };
+
 
 // const cancelEdit = () => {
 //   // Cancel editing, revert changes if needed
