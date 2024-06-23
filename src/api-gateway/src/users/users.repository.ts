@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import {
   User,
-  userEmployeeFields,
-  userJoinedCompaniesField,
+  /*  userEmployeeFields,
+  userJoinedCompaniesField,*/
 } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -24,8 +24,8 @@ export class UsersRepository {
   async findAll(): Promise<User[]> {
     const result = await this.userModel
       .find()
-      .populate(userEmployeeFields)
-      .populate(userJoinedCompaniesField)
+      /*      .populate(userEmployeeFields)
+      .populate(userJoinedCompaniesField)*/
       .exec();
     console.log(`Retrieving All users` /*, result*/);
     return result;

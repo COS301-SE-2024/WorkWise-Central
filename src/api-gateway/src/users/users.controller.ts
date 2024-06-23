@@ -65,7 +65,7 @@ export class UsersController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get all users' }) // Add summary here
   @ApiResponse({
     status: 200,
