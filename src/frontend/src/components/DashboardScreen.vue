@@ -6,12 +6,11 @@
           <v-col cols="12" xs="12" sm="12" md="12" offset="3">
             <v-card
               flat
-              :height="auto"
+              height="auto"
               :max-width="1500"
               class="pa-11 ma-10"
               rounded="xl"
               elevation-2
-              :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
               border="md"
             >
             </v-card>
