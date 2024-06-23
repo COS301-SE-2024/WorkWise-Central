@@ -272,10 +272,7 @@ import axios from 'axios'
 
 //Define props
 const props = defineProps({
-  job_ID: {
-    type: [String], // Assuming job_ID can be a string or a number
-    default: String
-  }
+  job_ID: String
 })
 
 // If you need to make job_ID reactive and use it within your setup
