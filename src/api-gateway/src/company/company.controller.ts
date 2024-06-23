@@ -40,7 +40,7 @@ export class CompanyController {
     return true;
   }
 
-  // @UseGuards(AuthGuard) //Need to add authorization
+  @UseGuards(AuthGuard) //Need to add authorization
   @Get()
   hello() {
     return { message: 'Refer to /documentation for details on the API' };
@@ -71,7 +71,7 @@ export class CompanyController {
     }
   }
 
-  // @UseGuards(AuthGuard) //Need to add authorization
+  @UseGuards(AuthGuard) //Need to add authorization
   @Get('/all')
   async findAll() {
     try {
@@ -110,7 +110,7 @@ export class CompanyController {
     }
   }
 
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @ApiBody({ type: [UpdateCompanyDto] })
   @Patch(':id')
   async update(
@@ -134,7 +134,7 @@ export class CompanyController {
     }
   }
 
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {

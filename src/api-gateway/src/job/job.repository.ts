@@ -68,21 +68,18 @@ export class JobRepository {
 
   async existsInCompany(id: string, companyId: string) {
     const result: Document<unknown, NonNullable<unknown>, Job> &
-      Job & { _id: Types.ObjectId } = await this.jobModel.findOne(
-      {
-        $and: [
-          { _id: id },
-          { companyId: new Types.ObjectId(companyId) },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      }
-      );
+      Job & { _id: Types.ObjectId } = await this.jobModel.findOne({
+      $and: [
+        { _id: id },
+        { companyId: new Types.ObjectId(companyId) },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    });
     if (result != null && result.companyId.toString() == companyId) {
       return result;
-    }
-    else {
+    } else {
       return null;
     }
   }

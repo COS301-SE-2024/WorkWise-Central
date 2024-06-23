@@ -20,7 +20,7 @@ export class Employee {
   @ApiProperty()
   @Prop({ type: [Types.ObjectId], required: true, default: [] })
   currentJobAssignments: Types.ObjectId[];
-   
+
   @ApiProperty()
   @Prop({ required: false })
   superiorId: Types.ObjectId;

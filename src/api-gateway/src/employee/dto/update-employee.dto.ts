@@ -1,10 +1,5 @@
 import { Types } from 'mongoose';
-import {
-  IsArray,
-  IsMongoId,
-  IsNotEmpty,
-  IsOptional,
-} from 'class-validator';
+import { IsArray, IsMongoId, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateEmployeeDto {
@@ -35,10 +30,9 @@ export class UpdateEmployeeDto {
   @IsOptional()
   @ApiProperty()
   subordinateTeams?: Types.ObjectId[];
-
 }
 
-export class updateEmployeeResponseDto{
+export class updateEmployeeResponseDto {
   response: { access_token: string; id: Types.ObjectId };
   constructor(message: { access_token: string; id: Types.ObjectId }) {
     this.response = message;

@@ -10,12 +10,11 @@ import {
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { IsObjectId } from 'class-validator-mongo-object-id';
 
 @Controller('role')
 export class RoleController {
-  constructor(private readonly RoleService: RoleService) { }
-  
+  constructor(private readonly roleService: RoleService) {}
+
   @Get()
   hello() {
     return { message: 'Refer to /documentation for details on the API' };
@@ -23,34 +22,31 @@ export class RoleController {
 
   @Post('/create')
   create(@Body() createRoleDto: CreateRoleDto) {
-    return this.RoleService.create(createRoleDto);
+    return this.roleService.create(createRoleDto);
   }
 
   @Get('/all')
   async findAll() {
-    return await this.RoleService.findAll();
+    return await this.roleService.findAll();
   }
 
   @Get('/all/:id')
   async findAllInCompany(@Param('id') id: string) {
-    return await this.RoleService.findAllInCompany(id);
+    return await this.roleService.findAllInCompany(id);
   }
 
   @Get('id/:id')
   async findOne(@Param('id') id: string) {
-    return await this.RoleService.findOne(id);
+    return await this.roleService.findOne(id);
   }
 
   @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateRoleDto: UpdateRoleDto,
-  ) {
-    return await this.RoleService.update(id, updateRoleDto);
+  async update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
+    return await this.roleService.update(id, updateRoleDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.RoleService.remove(id);
+    return this.roleService.remove(id);
   }
 }

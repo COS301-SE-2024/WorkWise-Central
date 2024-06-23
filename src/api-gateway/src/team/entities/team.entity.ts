@@ -23,7 +23,7 @@ export class Team {
   @ApiProperty()
   @Prop({ type: [Types.ObjectId], required: false, default: [] })
   teamMembers: Types.ObjectId[];
-   
+
   @ApiProperty()
   @Prop({ required: false })
   teamLeaderId: Types.ObjectId;
