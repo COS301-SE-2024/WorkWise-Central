@@ -105,7 +105,7 @@ export class JobController {
     }
   }
 
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @Delete()
   remove(@Param('id') id: string, @Body() pass: { pass: string }) {
     console.log(pass); //Will be implemented later
