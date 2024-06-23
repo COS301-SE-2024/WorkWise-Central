@@ -1,6 +1,6 @@
 # User Stories
 
-### User story: Help desk
+#### User story: Help desk
 As a general user user,
 I want to have access to a help desk,
 so that I may sort out any issue I encounter when using the system
@@ -10,13 +10,20 @@ Acceptance criteria:
 -Given a general user, they must be able to access a help menu that contains FAQ's
 -Given a general user, they must be able to access a help menu that contains a user manual that will guide them on how to use the system
 
-### User story: Manager view of client
+#### User story: Manager view of client
 As a managerial user,
-I want to be able to view all the clientsin the system,
-so that I can manage them effectively
+I want to be able to access all the clients of the business,
+so that I may manage the clients the business has effectively
+
+Acceptance criteria:
+
+-Given a user with the relevant permissions, they must be given a view of all the clients of the business.
+-They must be able to sort, search and filter all the clients
+-They must be able to edit the information of a given client
+-They must be able to add a new client to the system
 
 
-#### User story: Add Client
+##### User story: Add Client
 As a managerial user,
 I want to be able to add clients to the system,
 so that I can keep track of all the clients and their jobs
@@ -28,10 +35,10 @@ Acceptance criteria:
 -The user must be able to input the clients details
 -The details must be saved to the database
 
-#### User story: Edit Client
+##### User story: Edit Client
 As a managerial user,
 I want to be able to edit clients that already exist in the system,
-so that I make neccesary changes to their info
+so that I make necessary changes to their info
 
 Acceptance criteria:
 
@@ -40,7 +47,7 @@ Acceptance criteria:
 -The user must be able update the clients details
 -The details must be updated in the database
 
-#### User story: Delete Client
+##### User story: Delete Client
 As a managerial user,
 I want to be able to delete clients from the system,
 so that I may remove any clients that should no longer be in the companies system
@@ -51,7 +58,7 @@ Acceptance criteria:
 -The user must be click on a delete button
 -The client must be flagged for deletion on the database
 
-### User story: Manager view of employees
+#### User story: Manager view of employees
 As a managerial user,
 I want to be able to view the employees in the system
 so that I can manage them effectively
@@ -62,7 +69,7 @@ Acceptance criteria:
 -The view must show all the information pertaining to the employee
 -The view must allow for searching sorting and filtering
 
-#### User story: Add employee
+##### User story: Add employee
 As a managerial user,
 I want to be able to add employees to the system,
 so that I can manage them effectively
@@ -74,18 +81,18 @@ Acceptance criteria:
 -A managerial employee must be able to add employees by sending the employee the company's Id
 -A managerial employee must be able to add employees by sending the peron a dynamic link.
 
-#### User story: edit employee
+##### User story: edit employee
 As a managerial user,
 I want to be able to edit employees of the company,
 so that I can make any necessary changes
 
 Acceptance criteria:
 
--This must only be available to users with associated permissions
--A managerial employee must be able to edit any of the details relating to the employee 
--The updated information must be saved to the database
+-The user should only be able to edit jobs if they have the appropriate permissions.
+-The user must be able to edit all the information pertaining to the job.
+-The updated information for the job needs to be saved to the database
 
-#### User story: delete employee
+##### User story: delete employee
 As a managerial user,
 I want to be able to delete employees from the system,
 so that I can remove any employee that is not part of the company anymore
@@ -96,7 +103,7 @@ Acceptance criteria:
 -A managerial employee must be able to delete any employee in the system
 -The deleted employee must then be flagged for deletion in the database
 
-### User story: Manger view of jobs
+#### User story: Manger view of jobs
 As a managerial user,
 I want to be able to view all the jobs of the company 
 so that I may manage them effectively
@@ -107,7 +114,7 @@ Acceptance criteria:
 -The user must be shown all the information pertaining to a job for all the jobs in the system.
 -The user must be able to search, sort and filter the jobs
 
-#### User story: Add job
+##### User story: Add job
 As a managerial user,
 I want to be able to add jobs to the system
 so that I may manage the jobs the company has at the moment.
@@ -119,7 +126,7 @@ Acceptance criteria:
 -If the job is for a new client the user must be able to add the new clients details first and then add the information for the job
 -The information for the job needs to be saved to the database
 
-#### User story: edit job
+##### User story: edit job
 As a managerial user,
 I want to be able to edit the jobs of the company
 so that I may make any necessary changes to a job
@@ -130,7 +137,7 @@ Acceptance criteria:
 -The user must be able to edit all the information pertaining to the job.
 -The updated information for the job needs to be saved to the database.
 
-#### User story: delete job
+##### User story: delete job
 As a managerial user,
 I want to be able to delete a jobs from the system
 so that I may remove any job that should not be in the system any more.
@@ -141,7 +148,7 @@ Acceptance criteria:
 -The deleted job must be flagged for deletion in the database
 
 
-#### User story: Sign up
+##### User story: Sign up
 As a new user,
 I want to be able to create an account using my email address,
 so that I can access the system.
@@ -155,7 +162,7 @@ Acceptance criteria:
  After the user has entered their details, they should be able to click on a "sign-up" button that takes them to the sign-up flow page.
  A verification email must also be sent out to the user.
 
-#### User story: Log in 
+##### User story: Log in 
 As a registered user,
 I want to be able to log in using my email,
 so that I can access my account
@@ -169,7 +176,7 @@ Acceptance criteria:
  If they entered the wrong information, an error message must be displayed.
  Otherwise they must be redirected to their homepage.
 
- #### User story: Sign-up flow
+ ##### User story: Sign-up flow
  
 As a new user,
 I want be taken through a sign up flow,
@@ -182,7 +189,7 @@ Acceptance criteria:
  The user should be redirected to their dashboard when they are done.
  Al the data entered should be sent to the database
 
- #### User story: Register company 
+ ##### User story: Register company 
  As a new or general user,
 I want to be able to register my company
 so that my company may use the system for its management
@@ -196,7 +203,7 @@ Acceptance criteria:
  The user that registered the company must automatically be a part of the company
  The user that registered the company must automatically be a owner of the company
 
- #### User story: Join company
+ ##### User story: Join company
  As a new or general user,
 I want to be able to join a company that has already been register,
 so that I may use the system for all the companies I work for
@@ -206,7 +213,7 @@ Acceptance criteria:
  Given a new user has gone through sign-up flow, they must be able to join a company using the company ID or searching for the company by name or by clicking a link sent by the company.
  Given a user that is already part of another company, they must be able to join company using the company ID or searching for the company by name or by clicking a link sent by the company.
 
- #### User story: settings - profile
+ ##### User story: settings - profile
  As a signed in user,
 I want to be able to view and edit my profile information,
 so that I may ensure their correctness
@@ -218,7 +225,7 @@ Acceptance criteria:
  All changes must be sent to the database
  They must then see an updated version of their details
 
- #### User story: settings
+ ##### User story: settings
  As a logged in user,
 I want to view and edit my account settings
 so that I can change my preferences
@@ -230,7 +237,7 @@ Acceptance criteria:
  They must be able to save those changes. I.e. it needs to go to the database.
  They must be shown an updated view of their settings.
 
- #### User story: themes
+ ##### User story: themes
  As a logged in user,
 I want to change my theme
 so that it suites my preferences
@@ -240,7 +247,7 @@ Acceptance criteria:
  On the splash page, the user must be able to change which mode is selected (light or dark)
  Once they choose a different mode the system must update accordingly.
 
- #### User story: permissions
+ ##### User story: permissions
  As a managerial user,
 I want to be provided with a set of permissions for the system,
 so that I may assign appropriate permission to employees
@@ -252,7 +259,7 @@ Acceptance criteria:
  The parts of the system that are available to the employee mut depend on the permissions of the user
  The permissions of a user must be changeable. (i.e. the system must provide settings for the users permissions). This must not be available to they user themselves. Rather a higher up employee must be able to change this (only a user that has permission to edit the employee's information)
 
- #### User story: Default roles 
+ ##### User story: Default roles 
  As a managerial user,
 I want to be provided with a set roles ,
 so that I can quickly add a set of permissions to an employee
@@ -261,7 +268,7 @@ Acceptance criteria:
 
  The system must provide a set of default role that comprise of a list of permissions (listed below) when a employee signs up to the company or when an employee is added to the company
 
- #### User story: Edit roles 
+ ##### User story: Edit roles 
  As a managerial user,
 I want to be able to edit the roles available to me,
 so that I can customise the roles to the needs of the business
@@ -273,7 +280,7 @@ Acceptance criteria:
  The names for each role needs to be changeable
  The permissions associated with the roles need to be changeable
 
- #### User story: Employee - multiple companies
+ ##### User story: Employee - multiple companies
  As a general user,
 I want to be able to join multiple companies,
 so that I may use the system for all the companies I work for.
