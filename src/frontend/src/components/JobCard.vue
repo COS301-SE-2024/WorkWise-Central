@@ -158,7 +158,7 @@
             </v-card>
           </v-dialog>
           <!-- Job Labels -->
-          <JobLabels @update:status="status = $event" />
+          <JobLabels @update:status="status = $event" @add:status="updateStatus = $event" />
           <!-- Job Checklist -->
           <JobChecklist
             @itemAdded:checklistProp="checklistChips = $event"
@@ -270,6 +270,17 @@ import JobLabels from './JobLabels.vue'
 import JobChecklist from './JobChecklist.vue'
 import axios from 'axios'
 
+//Define props
+const props = defineProps({
+  job_ID: {
+    type: [String, Number], // Assuming job_ID can be a string or a number
+    default: null
+  }
+})
+
+// If you need to make job_ID reactive and use it within your setup
+const job_ID = ref(props.job_ID)
+
 //For change client
 const clientDialog = ref(false)
 const selectedClient = ref(null)
@@ -362,27 +373,20 @@ const teamMemberChips = ref([
   { id: 2, name: 'Alice Johnson', selected: false, role: 'Software Engineer' }
 ])
 
-const fetchTeam = () => {
-  axios
-    .get('http://localhost:3000/team')
-    .then((res) => {
-      teamMemberChips.value = res.data
-    })
-    .catch((res) => {
-      console.log(res)
-    })
-}
-const updateStatus = (status) => {
-  axios
-    .post('http://localhost:3000/job/', {
-      status: status
-    })
-    .then((res) => {
-      console.log(res)
-    })
-    .catch((res) => {
-      console.log(res)
-    })
+// const fetchTeam = () => {
+//   axios
+//     .get('http://localhost:3000/team')
+//     .then((res) => {
+//       teamMemberChips.value = res.data
+//     })
+//     .catch((res) => {
+//       console.log(res)
+//     })
+// }
+const updateStatus = async (status) => {
+  await axios.patch(`http://localhost:3000/job/${job_ID.value}`, {
+    status: status
+  })
 }
 const selectedMemberChips = ref([])
 const checklistChips = ref([])
@@ -400,9 +404,14 @@ const formatDate = (date) => {
 const addItemToChecklist = (item) => {
   checklistChips.value = item
 }
-const handleAddMemberToCard = (member) => {
+const handleAddMemberToCard = async (member) => {
   // Assuming cardMembers is a data property of the parent component
   selectedMemberChips.value = member
+  await axios.patch(`http://localhost:3000/job/${job_ID.value}`, {
+    assignEmployees: {
+      employeeIds: [member.id]
+    }
+  })
   // Make sure to update the parent state in a way that Vue can react to
 }
 const formattedStartDate = computed(() => formatDate(startDate.value))

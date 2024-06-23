@@ -124,6 +124,7 @@ export default defineComponent({
         // Emit an event instead of modifying the prop directly
         if (selectedLabel.isSelected) {
           this.$emit('update:status', selectedLabel)
+          this.$emit('add:status', selectedLabel)
         } else {
           this.$emit('update:status', '')
         }
