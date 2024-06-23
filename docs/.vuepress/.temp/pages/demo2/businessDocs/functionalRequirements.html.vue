@@ -1,165 +1,59 @@
-<template><div><h1 id="functional-requirements" tabindex="-1"><a class="header-anchor" href="#functional-requirements"><span>Functional Requirements</span></a></h1>
-<h3 id="authorization-and-authentication-subsystem" tabindex="-1"><a class="header-anchor" href="#authorization-and-authentication-subsystem"><span>Authorization and Authentication Subsystem</span></a></h3>
-<ul>
-<li>
-<p>The system must allow a new user to sign up.</p>
-<ul>
-<li>The system must allow the user to sign up using their email address.</li>
-<li>The system must allow the user to input their personal details.</li>
-<li>The system must then allow the user to either join an existing company or to create a company.
-<ul>
-<li>The user must be able to search for a company to join by name.</li>
-<li>The user must be able to join a company using their company ID.</li>
-</ul>
-</li>
-<li>When creating a company, the system must allow the user to enter all the information related to that company.</li>
-</ul>
-</li>
-<li>
-<p>The system must allow a user to log in to an existing account.</p>
-<ul>
-<li>The system must allow a user to log in using their username and password.</li>
-</ul>
-</li>
-</ul>
-<h3 id="roles-and-permissions" tabindex="-1"><a class="header-anchor" href="#roles-and-permissions"><span>Roles and Permissions</span></a></h3>
-<p>Roles are commonly used groupings of permissions that can be assigned to a user.</p>
-<ul>
-<li>The system must provide the following permissions:
-<ul>
-<li>Allow the user to view all employees.</li>
-<li>Allow the user to edit employees.</li>
-<li>Allow the user to add new employees.</li>
-<li>Allow the user to view all job.</li>
-<li>Allow the user to view all jobs that are assigned to employees that work under the user.</li>
-<li>Allow the user to view all jobs assigned to the current user.</li>
-<li>Allow the user to edit all jobs.</li>
-<li>Allow the user to edit jobs that are assigned to employees that work under the user.</li>
-<li>Allow the user to edit jobs that are assigned to them.</li>
-<li>Allow the user to add a new job.</li>
-<li>Allow the user to view all clients.</li>
-<li>Allow the user to view all client that are associated with a job that is assigned to a employee that works under the user.</li>
-<li>Allow the user to view all client that are associated with a job that is assigned to the user.</li>
-<li>Allow the user to edit all clients.</li>
-<li>Allow the user to edit all client that are associated with a job that is assigned to a employee that works under the user.</li>
-<li>Allow the user to edit all client that are associated with a job that is assigned to the user.</li>
-<li>Allow the user to view all inventory.</li>
-<li>Allow the user to edit all inventory.</li>
-<li>Allow the user to add a new inventory item.</li>
-<li>The system must allow all employees that have been allocated to a job, to record the inventory they have used and thus change the amount of a certain item(/s) in the inventory.</li>
-</ul>
-</li>
-<li>The system must provide a super user, which represents the owner of the company. This user must have full permissions by default.</li>
-<li>The system must protect the permissions of the owner such that no-one can change their permissions.</li>
-<li>The system must assign the user who registered the company as the owner.</li>
-<li>The system must provide a set of default roles:
-<ul>
-<li>The system must provide an admin role and by default the role must have full permissions.</li>
-<li>The system must provide a supervisor role and provide the following default permissions:
-<ul>
-<li>View all jobs under the user.</li>
-<li>Edit all jobs under the user.</li>
-<li>View all employees under the user.</li>
-<li>Edit all employees under the user.</li>
-<li>View client for all the jobs under the user.</li>
-<li>Edit all clients for jobs under the user.</li>
-</ul>
-</li>
-<li>Team leader. Must have the following permissions:
-<ul>
-<li>View all jobs under the user.</li>
-<li>Edit all jobs under the user.</li>
-<li>View all employees under the user.</li>
-<li>Edit all employees under the user.</li>
-<li>View client for all the jobs under the user.</li>
-<li>Edit all clients for jobs under the user.</li>
-</ul>
-</li>
-<li>Worker. Must have the following permissions:
-<ul>
-<li>View all the jobs the user has been assigned to.</li>
-<li>View client who are associated with a job the user has been assigned to.</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>The roles of a given company must be able to change (refer to the company setting subsystem
-above)</li>
-</ul>
-<h3 id="employee-subsystem" tabindex="-1"><a class="header-anchor" href="#employee-subsystem"><span>Employee Subsystem</span></a></h3>
+<template><div><div class="functional-doc">
+<h1 id="functional-requirements" tabindex="-1"><a class="header-anchor" href="#functional-requirements"><span>Functional Requirements</span></a></h1>
+<h2 id="employee-subsystem" tabindex="-1"><a class="header-anchor" href="#employee-subsystem"><span>Employee Subsystem</span></a></h2>
 <p>All users (except owners) are employees of companies. Each employee has information associated with them.</p>
 <ul>
 <li>The system must ensure that a user (employee) is part of at least one company.</li>
 <li>The system must store all information associated with an employee.</li>
 <li>The system must allow the users to be allocated roles in the company.</li>
-<li>For employees with view permissions, the system must show the following:
+</ul>
+<h4 id="view-employees-subsystem" tabindex="-1"><a class="header-anchor" href="#view-employees-subsystem"><span>View Employees Subsystem</span></a></h4>
 <ul>
-<li>The system must display all the current employees of the company.</li>
+<li>The system must only allow employees to view the employees beneath them.</li>
+<li>The system must display all the information of an employee.</li>
 <li>The user must be able to search for a specific employee.</li>
 <li>The user must be able to sort the list of employees.</li>
 <li>The user must be able to filter the list of employees.</li>
 </ul>
-</li>
-<li>For employees with edit permissions, the system must show the following:
+<h4 id="edit-employees-subsystem" tabindex="-1"><a class="header-anchor" href="#edit-employees-subsystem"><span>Edit Employees Subsystem</span></a></h4>
 <ul>
-<li>The system must display everything that a user with view permission can see.</li>
-<li>The system must show the number of jobs the employee has assigned to them.</li>
-<li>The system must show each of the jobs assigned to a specific employee.</li>
-<li>The system must allow the user to assign jobs to a particular employee.</li>
+<li>The system must only allow employees with edit permission to access this sub system.</li>
+<li>The system must allow the user to edit any of the details pertaining to an employee.</li>
+<li>The system must save the updated details to the database.</li>
 </ul>
-</li>
+<h4 id="delete-employees-subsystem" tabindex="-1"><a class="header-anchor" href="#delete-employees-subsystem"><span>Delete Employees Subsystem</span></a></h4>
+<ul>
+<li>The system must only allow employees with delete permission to access this sub system.</li>
+<li>The system must allow the user to delete any of the employees that they can view.</li>
+<li>Once a a user deleted an employee the system must set the deleted flag for that employee (soft delete).</li>
 </ul>
-<h3 id="settings-subsystem" tabindex="-1"><a class="header-anchor" href="#settings-subsystem"><span>Settings Subsystem</span></a></h3>
-<h4 id="account-and-profile-settings-subsystem" tabindex="-1"><a class="header-anchor" href="#account-and-profile-settings-subsystem"><span>Account and Profile Settings Subsystem</span></a></h4>
+<h2 id="client-subsystem" tabindex="-1"><a class="header-anchor" href="#client-subsystem"><span>Client Subsystem</span></a></h2>
+<p>The system must allow data pertaining to a client to be stored.</p>
+<h4 id="view-client-subsystem" tabindex="-1"><a class="header-anchor" href="#view-client-subsystem"><span>View Client Subsystem</span></a></h4>
 <ul>
-<li>The system must allow the user to view their personal information.</li>
-<li>The system must allow the user to edit their personal information.</li>
-<li>The system must allow the user to log out of their account.</li>
-<li>The system must allow the user to delete their account.</li>
-<li>The system must allow the user to leave a company.</li>
-<li>The system must allow the user to join a company.</li>
-<li>The system must allow the user to edit their preferences:
+<li>The system must display all the clients the user has permission to view.
 <ul>
-<li>They must be able to change their themes.</li>
-<li>They must be able to change their preferred language.</li>
-<li>They must be able to change their notification settings.</li>
-<li>They must be able to change their default home page.</li>
+<li>The user must be able to sort the list of clients.</li>
+<li>The user must be able to filter the list of clients.</li>
+<li>The employee must be able to search for a particular client.</li>
 </ul>
 </li>
+<li>The system must display all the jobs of a particular client.</li>
 </ul>
-<h4 id="company-settings-subsystem" tabindex="-1"><a class="header-anchor" href="#company-settings-subsystem"><span>Company Settings Subsystem</span></a></h4>
+<h4 id="edit-client-subsystem" tabindex="-1"><a class="header-anchor" href="#edit-client-subsystem"><span>Edit Client Subsystem</span></a></h4>
 <ul>
-<li>The system must allow the user to view all the settings for the company if they have permission.</li>
-<li>The system must allow the roles in the company to be changed.
+<li>The system must only allow employees with edit permission to access this sub system.</li>
+<li>This subsystem must include everything available in the View Client Subsystem.</li>
+<li>The system must allow the user to create new clients.</li>
+<li>The user must be able to edit any of the information pertaining to a client that they have permission to edit.</li>
+</ul>
+<h4 id="delete-client-subsystem" tabindex="-1"><a class="header-anchor" href="#delete-client-subsystem"><span>Delete Client Subsystem</span></a></h4>
 <ul>
-<li>The system must allow the number of roles to be increased or decreased.</li>
-<li>The system must allow the labels for each role to be altered.</li>
-<li>The system must allow the permissions associated with a role to be changed.</li>
+<li>The system must only allow employees with delete permission to access this sub system.</li>
+<li>The system must allow the user to delete any of the client that they can view.</li>
+<li>Once a a user deleted an client the system must set the deleted flag for that client (soft delete).</li>
 </ul>
-</li>
-<li>The system must allow the statuses available for the jobs to change.
-<ul>
-<li>The system must allow the labels for each status to be changed.</li>
-</ul>
-</li>
-<li>The system must display all the information of to the company.</li>
-<li>The user (if given permission) must be able to edit the information pertaining to the company.</li>
-</ul>
-<h3 id="company-subsystem" tabindex="-1"><a class="header-anchor" href="#company-subsystem"><span>Company Subsystem</span></a></h3>
-<ul>
-<li>A user must be able to register a company on the system.</li>
-<li>The registration process needs to prompt the user to enter the business details.</li>
-<li>The user that registered the company should automatically be a part of the company.</li>
-<li>A user must be able to join a company.
-<ul>
-<li>They must be able to join using the company name.</li>
-<li>They must be able to join using the company ID.</li>
-<li>They must be able to join by using a dynamic link for joining that company.</li>
-</ul>
-</li>
-<li>The system must allow the user to change for which company they are using the system (if they are part of multiple companies).</li>
-</ul>
-<h3 id="job-subsystem" tabindex="-1"><a class="header-anchor" href="#job-subsystem"><span>Job Subsystem</span></a></h3>
+<h2 id="job-subsystem" tabindex="-1"><a class="header-anchor" href="#job-subsystem"><span>Job Subsystem</span></a></h2>
 <ul>
 <li>The system must be able to store information pertaining to a job.</li>
 <li>The system must allow a job to have a status.</li>
@@ -247,28 +141,150 @@ above)</li>
 </li>
 <li>The system must allow the user to assign any jobs that have not been assigned when they were created.</li>
 </ul>
-<h3 id="client-subsystem" tabindex="-1"><a class="header-anchor" href="#client-subsystem"><span>Client Subsystem</span></a></h3>
+<h4 id="delete-job-subsystem" tabindex="-1"><a class="header-anchor" href="#delete-job-subsystem"><span>Delete Job Subsystem</span></a></h4>
 <ul>
-<li>The system must allow data pertaining to the user to be stored.</li>
+<li>The system must only allow employees with delete permission to access this sub system.</li>
+<li>The system must allow the user to delete any of the jobs that they can view.</li>
+<li>Once a a user deleted a job the system must set the deleted flag for that job (soft delete).</li>
 </ul>
-<h4 id="view-client-subsystem" tabindex="-1"><a class="header-anchor" href="#view-client-subsystem"><span>View Client Subsystem</span></a></h4>
+<h2 id="authorization-and-authentication-subsystem" tabindex="-1"><a class="header-anchor" href="#authorization-and-authentication-subsystem"><span>Authorization and Authentication Subsystem</span></a></h2>
 <ul>
-<li>The system must display all the clients the user has permission to view.
+<li>
+<p>The system must allow a new user to sign up.</p>
 <ul>
-<li>The user must be able to sort the list of clients.</li>
-<li>The user must be able to filter the list of clients.</li>
-<li>The employee must be able to search for a particular client.</li>
+<li>The system must allow the user to sign up using their email address.</li>
+<li>The system must allow the user to input their personal details.</li>
+<li>The system must then allow the user to either join an existing company or to create a company.
+<ul>
+<li>The user must be able to search for a company to join by name.</li>
+<li>The user must be able to join a company using their company ID.</li>
 </ul>
 </li>
-<li>The system must display all the jobs of a particular client that the user has permission to view.</li>
+<li>When creating a company, the system must allow the user to enter all the information related to that company.</li>
 </ul>
-<h4 id="edit-client-subsystem" tabindex="-1"><a class="header-anchor" href="#edit-client-subsystem"><span>Edit Client Subsystem</span></a></h4>
+</li>
+<li>
+<p>The system must allow a user to log in to an existing account.</p>
 <ul>
-<li>This subsystem must include everything available in the View Client Subsystem.</li>
-<li>The system must allow the user to create new clients.</li>
-<li>The user must be able to edit any of the information pertaining to a client that they have permission to edit.</li>
+<li>The system must allow a user to log in using their username and password.</li>
 </ul>
-<h3 id="inventory-subsystem" tabindex="-1"><a class="header-anchor" href="#inventory-subsystem"><span>Inventory Subsystem</span></a></h3>
+</li>
+</ul>
+<h2 id="roles-and-permissions" tabindex="-1"><a class="header-anchor" href="#roles-and-permissions"><span>Roles and Permissions</span></a></h2>
+<p>Roles are commonly used groupings of permissions that can be assigned to a user.</p>
+<ul>
+<li>The system must provide the following permissions:
+<ul>
+<li>Allow the user to view all employees.</li>
+<li>Allow the user to edit employees.</li>
+<li>Allow the user to add new employees.</li>
+<li>Allow the user to view all job.</li>
+<li>Allow the user to view all jobs that are assigned to employees that work under the user.</li>
+<li>Allow the user to view all jobs assigned to the current user.</li>
+<li>Allow the user to edit all jobs.</li>
+<li>Allow the user to edit jobs that are assigned to employees that work under the user.</li>
+<li>Allow the user to edit jobs that are assigned to them.</li>
+<li>Allow the user to add a new job.</li>
+<li>Allow the user to view all clients.</li>
+<li>Allow the user to view all client that are associated with a job that is assigned to a employee that works under the user.</li>
+<li>Allow the user to view all client that are associated with a job that is assigned to the user.</li>
+<li>Allow the user to edit all clients.</li>
+<li>Allow the user to edit all client that are associated with a job that is assigned to a employee that works under the user.</li>
+<li>Allow the user to edit all client that are associated with a job that is assigned to the user.</li>
+<li>Allow the user to view all inventory.</li>
+<li>Allow the user to edit all inventory.</li>
+<li>Allow the user to add a new inventory item.</li>
+<li>The system must allow all employees that have been allocated to a job, to record the inventory they have used and thus change the amount of a certain item(/s) in the inventory.</li>
+</ul>
+</li>
+<li>The system must provide a super user, which represents the owner of the company. This user must have full permissions by default.</li>
+<li>The system must protect the permissions of the owner such that no-one can change their permissions.</li>
+<li>The system must assign the user who registered the company as the owner.</li>
+<li>The system must provide a set of default roles:
+<ul>
+<li>The system must provide an admin role and by default the role must have full permissions.</li>
+<li>The system must provide a supervisor role and provide the following default permissions:
+<ul>
+<li>View all jobs under the user.</li>
+<li>Edit all jobs under the user.</li>
+<li>View all employees under the user.</li>
+<li>Edit all employees under the user.</li>
+<li>View client for all the jobs under the user.</li>
+<li>Edit all clients for jobs under the user.</li>
+</ul>
+</li>
+<li>Team leader. Must have the following permissions:
+<ul>
+<li>View all jobs under the user.</li>
+<li>Edit all jobs under the user.</li>
+<li>View all employees under the user.</li>
+<li>Edit all employees under the user.</li>
+<li>View client for all the jobs under the user.</li>
+<li>Edit all clients for jobs under the user.</li>
+</ul>
+</li>
+<li>Worker. Must have the following permissions:
+<ul>
+<li>View all the jobs the user has been assigned to.</li>
+<li>View client who are associated with a job the user has been assigned to.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>The roles of a given company must be able to change (refer to the company setting subsystem
+above)</li>
+</ul>
+<h2 id="settings-subsystem" tabindex="-1"><a class="header-anchor" href="#settings-subsystem"><span>Settings Subsystem</span></a></h2>
+<h4 id="account-and-profile-settings-subsystem" tabindex="-1"><a class="header-anchor" href="#account-and-profile-settings-subsystem"><span>Account and Profile Settings Subsystem</span></a></h4>
+<ul>
+<li>The system must allow the user to view their personal information.</li>
+<li>The system must allow the user to edit their personal information.</li>
+<li>The system must allow the user to log out of their account.</li>
+<li>The system must allow the user to delete their account.</li>
+<li>The system must allow the user to leave a company.</li>
+<li>The system must allow the user to join a company.</li>
+<li>The system must allow the user to edit their preferences:
+<ul>
+<li>They must be able to change their themes.</li>
+<li>They must be able to change their preferred language.</li>
+<li>They must be able to change their notification settings.</li>
+<li>They must be able to change their default home page.</li>
+</ul>
+</li>
+</ul>
+<h4 id="company-settings-subsystem" tabindex="-1"><a class="header-anchor" href="#company-settings-subsystem"><span>Company Settings Subsystem</span></a></h4>
+<ul>
+<li>The system must allow the user to view all the settings for the company if they have permission.</li>
+<li>The system must allow the roles in the company to be changed.
+<ul>
+<li>The system must allow the number of roles to be increased or decreased.</li>
+<li>The system must allow the labels for each role to be altered.</li>
+<li>The system must allow the permissions associated with a role to be changed.</li>
+</ul>
+</li>
+<li>The system must allow the statuses available for the jobs to change.
+<ul>
+<li>The system must allow the labels for each status to be changed.</li>
+</ul>
+</li>
+<li>The system must display all the information of to the company.</li>
+<li>The user (if given permission) must be able to edit the information pertaining to the company.</li>
+</ul>
+<h2 id="company-subsystem" tabindex="-1"><a class="header-anchor" href="#company-subsystem"><span>Company Subsystem</span></a></h2>
+<ul>
+<li>A user must be able to register a company on the system.</li>
+<li>The registration process needs to prompt the user to enter the business details.</li>
+<li>The user that registered the company should automatically be a part of the company.</li>
+<li>A user must be able to join a company.
+<ul>
+<li>They must be able to join using the company name.</li>
+<li>They must be able to join using the company ID.</li>
+<li>They must be able to join by using a dynamic link for joining that company.</li>
+</ul>
+</li>
+<li>The system must allow the user to change for which company they are using the system (if they are part of multiple companies).</li>
+</ul>
+<h2 id="inventory-subsystem" tabindex="-1"><a class="header-anchor" href="#inventory-subsystem"><span>Inventory Subsystem</span></a></h2>
 <h4 id="on-the-job-inventory-subsystem" tabindex="-1"><a class="header-anchor" href="#on-the-job-inventory-subsystem"><span>On The Job Inventory Subsystem</span></a></h4>
 <p>This is how anyone on site will be able to track the inventory they used.</p>
 <ul>
@@ -306,7 +322,7 @@ above)</li>
 </ul>
 </li>
 </ul>
-<h3 id="communication-and-notification-subsystem" tabindex="-1"><a class="header-anchor" href="#communication-and-notification-subsystem"><span>Communication and Notification Subsystem</span></a></h3>
+<h2 id="communication-and-notification-subsystem" tabindex="-1"><a class="header-anchor" href="#communication-and-notification-subsystem"><span>Communication and Notification Subsystem</span></a></h2>
 <h4 id="push-notifications" tabindex="-1"><a class="header-anchor" href="#push-notifications"><span>Push Notifications</span></a></h4>
 <ul>
 <li>All users of the system should receive push notifications regarding any important changes in the system that involve them.</li>
@@ -327,7 +343,7 @@ above)</li>
 <li>The system should send an email to clients with a link to be able to fill in a feedback form.</li>
 <li>The settings for emails must be changeable.</li>
 </ul>
-<h3 id="reporting-subsystem" tabindex="-1"><a class="header-anchor" href="#reporting-subsystem"><span>Reporting Subsystem</span></a></h3>
+<h2 id="reporting-subsystem" tabindex="-1"><a class="header-anchor" href="#reporting-subsystem"><span>Reporting Subsystem</span></a></h2>
 <ul>
 <li>The system should be able to generate analytics:
 <ul>
@@ -344,17 +360,18 @@ above)</li>
 </li>
 <li>The system must be able to automatically generate a report of those analytics.</li>
 </ul>
-<h3 id="feedback-subsystem" tabindex="-1"><a class="header-anchor" href="#feedback-subsystem"><span>Feedback Subsystem</span></a></h3>
+<h2 id="feedback-subsystem" tabindex="-1"><a class="header-anchor" href="#feedback-subsystem"><span>Feedback Subsystem</span></a></h2>
 <ul>
 <li>This system is intended to gather feedback from clients.</li>
 <li>The system must provide a feedback form for each client for each job that has been completed.</li>
 </ul>
-<h3 id="automated-job-assignment-subsystem" tabindex="-1"><a class="header-anchor" href="#automated-job-assignment-subsystem"><span>Automated Job Assignment Subsystem</span></a></h3>
+<h2 id="automated-job-assignment-subsystem" tabindex="-1"><a class="header-anchor" href="#automated-job-assignment-subsystem"><span>Automated Job Assignment Subsystem</span></a></h2>
 <p>This is added as a potential wow factor.</p>
 <ul>
 <li>This subsystem should automatically suggest an employee to which the job should be assigned when the job is being created.</li>
 <li>The system should make these recommendations based on the availability of the employees, spread of jobs amongst all employees, skill level of an employee, and location of the job.</li>
 </ul>
+</div>
 </div></template>
 
 

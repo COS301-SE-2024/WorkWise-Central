@@ -1,6 +1,7 @@
 ---
-pageClass: functionalDoc
+pageClass: functionalDocDemo1
 ---
+<div class="functional-doc">
 
 # Functional Requirements
 
@@ -259,4 +260,4 @@ This is added as a potential wow factor.
 - This subsystem should automatically suggest an employee to which the job should be assigned when the job is being created.
 - The system should make these recommendations based on the availability of the employees, spread of jobs amongst all employees, skill level of an employee, and location of the job.
 
-
+</div>

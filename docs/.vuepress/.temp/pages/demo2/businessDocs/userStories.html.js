@@ -1,5 +1,5 @@
 import comp from "/home/jessica/University/WorkWise-Central/docs/.vuepress/.temp/pages/demo2/businessDocs/userStories.html.vue"
-const data = JSON.parse("{\"path\":\"/demo2/businessDocs/userStories.html\",\"title\":\"User Stories\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":1719159966000,\"contributors\":[{\"name\":\"JessicaBloem\",\"email\":\"jessicabloem8@gmail.com\",\"commits\":2}]},\"filePathRelative\":\"demo2/businessDocs/userStories.md\"}")
+const data = JSON.parse("{\"path\":\"/demo2/businessDocs/userStories.html\",\"title\":\"User Stories\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":1719162849000,\"contributors\":[{\"name\":\"JessicaBloem\",\"email\":\"jessicabloem8@gmail.com\",\"commits\":3}]},\"filePathRelative\":\"demo2/businessDocs/userStories.md\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {

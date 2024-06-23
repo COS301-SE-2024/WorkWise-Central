@@ -1,4 +1,5 @@
-<template><div><h1 id="functional-requirements" tabindex="-1"><a class="header-anchor" href="#functional-requirements"><span>Functional Requirements</span></a></h1>
+<template><div><div class="functional-doc">
+<h1 id="functional-requirements" tabindex="-1"><a class="header-anchor" href="#functional-requirements"><span>Functional Requirements</span></a></h1>
 <h3 id="authorization-and-authentication-subsystem" tabindex="-1"><a class="header-anchor" href="#authorization-and-authentication-subsystem"><span>Authorization and Authentication Subsystem</span></a></h3>
 <ul>
 <li>
@@ -355,6 +356,7 @@ above)</li>
 <li>This subsystem should automatically suggest an employee to which the job should be assigned when the job is being created.</li>
 <li>The system should make these recommendations based on the availability of the employees, spread of jobs amongst all employees, skill level of an employee, and location of the job.</li>
 </ul>
+</div>
 </div></template>
 
 

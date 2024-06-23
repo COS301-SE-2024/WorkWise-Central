@@ -2,6 +2,7 @@ import { viteBundler } from '@vuepress/bundler-vite'
 import { defaultTheme } from '@vuepress/theme-default'
 import { defineUserConfig } from 'vuepress'
 
+  
 const isDemo1 = (path) => path.startsWith('/demo1');
 const isDemo2 = (path) => path.startsWith('/demo2');
 
