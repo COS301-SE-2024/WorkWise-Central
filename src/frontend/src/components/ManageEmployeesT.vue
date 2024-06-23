@@ -157,6 +157,7 @@ export default {
     search: '',
     expanded: [], // This will hold the currently expanded item
     clients: [],
+    clientDetails2: [],
     clientDetails: [
       {
         firstName: 'Michael',
@@ -335,12 +336,19 @@ export default {
         }
       }
       axios
-        .get('http://localhost:3000/client/all', config)
+        .get('http://localhost:3000/employee/all', config)
         .then((response) => {
           console.log(response.data)
           this.clients = response.data.data
-          for (let i = 0; i < this.clients.length; i++) {
-            this.clientDetails[i] = this.clients[i].details
+          for (let i = 0; i < response.data.length; i++) {
+            axios
+              .get(`http://localhost:3000/users/${this.clients[i].systemDetails._id}`, config)
+              .then((res) => {
+                this.clientDetails[i] = this.clients[i].details
+              })
+              .catch((error) => {
+                console.log('Failed to fetch clients:', error)
+              })
           }
         })
         .catch((error) => {
