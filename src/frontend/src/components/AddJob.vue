@@ -105,14 +105,15 @@
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 class="text-caption"
-                >Notes</small
+                >Comment</small
               >
               <v-textarea
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                placeholder="Enter any additional notes here"
+                placeholder="Enter any additional comments here"
                 rounded="xl"
                 variant="solo"
-                v-model="req_obj.details.notes"
+                v-model="req_obj.comments"
+                @update:focused="commentUpdate"
                 required
               >
               </v-textarea>
@@ -121,21 +122,33 @@
             <v-row>
               <v-col align="center" cols="12" md="6">
                 <v-date-picker
-                  title="SELECT DATE"
-                  header="Date of job"
+                  title="SELECT START DATE"
+                  header="Start date of job"
                   border="md"
                   width="unset"
                   max-width="350"
-                  v-model="date"
+                  v-model="startDate"
                   :color="isdarkmode === false ? '#5A82AF' : 'none'"
                   elevation="5"
                   required
-                  @update:modelValue="combineDateTime"
+                  @update:modelValue="updateDates"
                   :theme="isdarkmode ? 'dark' : 'light'"
                 ></v-date-picker>
               </v-col>
               <v-col align="center" cols="12" md="6">
-                <v-time-picker v-model="time" @update:hour="combineDateTime"></v-time-picker>
+                <v-date-picker
+                  title="SELECT END DATE"
+                  header="End date of job"
+                  border="md"
+                  width="unset"
+                  max-width="350"
+                  v-model="endDate"
+                  :color="isdarkmode === false ? '#5A82AF' : 'none'"
+                  elevation="5"
+                  required
+                  @update:modelValue="updateDates"
+                  :theme="isdarkmode ? 'dark' : 'light'"
+                ></v-date-picker>
               </v-col>
             </v-row>
 
@@ -241,6 +254,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+
+type CommentType = {
+  date: string
+  employeeId: string
+  comment: string
+}
 export default defineComponent({
   name: 'JobDetailsList',
   props: ['isdarkmode'],
@@ -258,13 +277,14 @@ export default defineComponent({
           /^[A-Za-z\s]+$/.test(v) || 'Job title must be alphabetic characters and spaces only'
       ],
       time: '',
-      date: null,
+      startDate: null,
+      endDate: null,
+      comment: '',
       req_obj: {
-        assignedBy: sessionStorage['id'],
         companyId: sessionStorage['currentCompany'],
-        scheduledDateTime: '',
         status: 'No Status',
         client_name: '',
+        assignedBy: sessionStorage['id'],
         details: {
           heading: '',
           description: '',
@@ -276,19 +296,33 @@ export default defineComponent({
             postalCode: '',
             complex: '',
             houseNumber: ''
-          }
+          },
+          startDate: '',
+          endDate: ''
         },
         clientFeedback: {
           jobRating: 0,
           customerServiceRating: 0,
           comments: ''
         },
-        imagesTaken: []
+        comments: [] as CommentType[]
       }
     }
   },
   methods: {
+    commentUpdate() {
+      let comment = {
+        employeeId: sessionStorage['Id'],
+        comment: this.comment,
+        date: toIsoString(new Date())
+      }
+      this.req_obj.comments.push(comment)
+    },
     handleSubmission() {
+      if (this.startDate === null && this.endDate === null) {
+        alert('start Date or end date is NULL')
+        return
+      }
       console.log(JSON.stringify(this.req_obj))
       const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
       axios
@@ -302,35 +336,20 @@ export default defineComponent({
           console.log(res)
         })
     },
-    inputshow() {
-      console.log(this.req_obj.scheduledDateTime)
-      console.log(this.time)
-    },
-    combineDateTime() {
-      if (this.date && this.time) {
-        // Split the time into hours and minutes
-        const [hours, minutes] = this.time.split(':')
+    updateDates() {
+      if (this.endDate && this.startDate) {
+        this.req_obj.details.startDate = toIsoString(this.startDate)
+        this.req_obj.details.endDate = toIsoString(this.endDate)
 
-        // Create a new Date object with the selected date
-        const date = new Date(this.date)
-
-        // Set the hours and minutes from the selected time
-        date.setHours(Number(hours))
-        date.setMinutes(Number(minutes))
-        console.log(date)
-
-        // Format the date to ISO 8601 format
-
-        // this.req_obj.scheduledDateTime = date.toISOString()
-        this.req_obj.scheduledDateTime = toIsoString(date)
-        console.log(this.req_obj.scheduledDateTime)
+        console.log(this.req_obj.details.startDate)
+        console.log(this.req_obj.details.endDate)
       }
     }
   }
 })
 
 function toIsoString(date: Date) {
-  var tzo = -date.getTimezoneOffset(),
+  let tzo = -date.getTimezoneOffset(),
     dif = tzo >= 0 ? '+' : '-',
     pad = function (num: number) {
       return (num < 10 ? '0' : '') + num
@@ -348,6 +367,9 @@ function toIsoString(date: Date) {
     pad(date.getMinutes()) +
     ':' +
     pad(date.getSeconds()) +
+    '.' +
+    (date.getMilliseconds() < 100 ? '0' : '') +
+    pad(date.getMilliseconds()) +
     dif +
     pad(Math.floor(Math.abs(tzo) / 60)) +
     ':' +

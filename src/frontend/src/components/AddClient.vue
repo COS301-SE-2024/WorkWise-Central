@@ -32,40 +32,39 @@
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 class="text-caption white--text"
-                >First name of client*</small
+                >Name of client*</small
               >
 
               <v-text-field
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                placeholder="Enter the first name of the client"
-                v-model="req_obj.firstName"
-                rounded="md"
+                placeholder="Enter the name of the client"
+                v-model="req_obj.details.name"
+                rounded="xl"
                 variant="solo"
                 required
                 :rules="first_name_rules"
               ></v-text-field
             ></v-col>
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption white--text"
-                >Surname name of client*</small
-              >
-
-              <v-text-field
-                density="compact"
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                color="grey-lighten-4"
-                placeholder="Enter the Surname name of the client"
-                v-model="req_obj.surname"
-                rounded="md"
-                variant="solo"
-                required
-                :rules="surname_rules"
-              ></v-text-field
-            ></v-col>
+            <!--            <v-col>-->
+            <!--              <small-->
+            <!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
+            <!--                class="text-caption white&#45;&#45;text"-->
+            <!--                >Surname name of client*</small-->
+            <!--              >-->
+            <!--              <v-text-field-->
+            <!--                density="compact"-->
+            <!--                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
+            <!--                color="grey-lighten-4"-->
+            <!--                placeholder="Enter the Surname name of the client"-->
+            <!--                v-model="surName"-->
+            <!--                rounded="xl"-->
+            <!--                variant="solo"-->
+            <!--                required-->
+            <!--                :rules="surname_rules"-->
+            <!--              ></v-text-field-->
+            <!--            ></v-col>-->
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
@@ -77,7 +76,7 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 placeholder="Enter the client's email address"
-                v-model="req_obj.email"
+                v-model="req_obj.details.contactInfo.email"
                 :rules="email_rules"
                 type="email"
                 rounded="md"
@@ -96,8 +95,8 @@
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 placeholder="Enter the client's phone number"
-                v-model="req_obj.phoneNumber"
-                rounded="md"
+                v-model="req_obj.details.contactInfo.phoneNumber"
+                rounded="xl"
                 variant="solo"
                 required
               ></v-text-field
@@ -115,8 +114,8 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Street"
-                  rounded="md"
-                  v-model="req_obj.address.street"
+                  rounded="xl"
+                  v-model="req_obj.details.address.street"
                   variant="solo"
                   required
                 ></v-text-field
@@ -127,8 +126,8 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Suburb"
-                  rounded="md"
-                  v-model="req_obj.address.suburb"
+                  rounded="xl"
+                  v-model="req_obj.details.address.suburb"
                   variant="solo"
                   required
                 ></v-text-field
@@ -140,8 +139,8 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="City"
-                  rounded="md"
-                  v-model="req_obj.address.city"
+                  rounded="xl"
+                  v-model="req_obj.details.address.city"
                   variant="solo"
                   required
                 ></v-text-field
@@ -152,8 +151,8 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Zip Code"
-                  rounded="md"
-                  v-model="req_obj.address.postalCode"
+                  rounded="xl"
+                  v-model="req_obj.details.address.postalCode"
                   variant="solo"
                   required
                 ></v-text-field
@@ -165,8 +164,8 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Complex"
-                  rounded="md"
-                  v-model="req_obj.address.complex"
+                  rounded="xl"
+                  v-model="req_obj.details.address.complex"
                   variant="solo"
                   required
                 ></v-text-field
@@ -177,8 +176,8 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="House number"
-                  rounded="md"
-                  v-model="req_obj.address.houseNumber"
+                  rounded="xl"
+                  v-model="req_obj.details.address.houseNumber"
                   variant="solo"
                   required
                 ></v-text-field
@@ -195,9 +194,9 @@
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
-                label="Enter the language preferred by the client"
+                placeholder="Enter the language preferred by the client"
                 rounded="xl"
-                v-model="req_obj.preferred_Language"
+                v-model="req_obj.details.preferredLanguage"
                 variant="solo"
                 :items="[
                   'English',
@@ -265,33 +264,61 @@ export default defineComponent({
       (v: string) => /^(\+27\d{9})$/.test(v) || 'Phone number must be a valid South African number'
     ],
 
+    firstName: '',
+    surName: '',
     req_obj: {
-      firstName: '',
-      surname: '',
-      phoneNumber: '',
-      email: '',
-      companyId: sessionStorage['currentCompany'],
-      address: {
-        street: '',
-        suburb: '',
-        city: '',
-        postalCode: '',
-        complex: '',
-        houseNumber: ''
-      },
-      preferred_Language: ''
+      details: {
+        name: '',
+        preferredLanguage: '',
+        contactInfo: {
+          email: '',
+          phoneNumber: ''
+        },
+        address: {
+          street: '',
+          suburb: '',
+          city: '',
+          postalCode: '',
+          complex: '',
+          houseNumber: ''
+        }
+      }
     }
   }),
   methods: {
+    phhoneNumberCheck() {
+      if (this.req_obj.details.contactInfo.phoneNumber != '') {
+        axios
+          .get('http://localhost:3000/client/checkPhoneNumber', {
+            params: {
+              phoneNumber: this.req_obj.details.contactInfo.phoneNumber
+            }
+          })
+          .then((res) => {
+            if (res.data == 'Phone number already exists') {
+              alert('Phone number already exists')
+              this.click_create_client = true
+            } else {
+              this.click_create_client = false
+            }
+          })
+          .catch((res) => {
+            console.log(res)
+          })
+      }
+    },
     handleSubmission() {
+      console.log(JSON.stringify(this.req_obj))
+      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+
       axios
-        .post('http://localhost:3000/client/create', this.req_obj)
+        .post('http://localhost:3000/client/create', this.req_obj, config)
         .then((res) => {
-          alert('Client created successfully')
+          console.log('Client created successfully')
           console.log(res)
         })
         .catch((res) => {
-          alert('Client creation failed')
+          console.log('Client creation failed')
           console.log(res)
         })
     }

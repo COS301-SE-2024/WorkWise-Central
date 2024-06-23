@@ -44,49 +44,49 @@
                 variant="solo"
               ></v-text-field
             ></v-col>
-            <v-container>
-              <v-row align="center" justify="center"
-                ><h2 style="font-weight: lighter">OR</h2></v-row
-              >
-            </v-container>
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Send the employee the company ID to join the company
-              </small>
-              <v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                density="compact"
-                color="grey-lighten-4"
-                v-model="req_obj.compid_for_emp"
-                label="################"
-                rounded="xl"
-                variant="solo"
-              ></v-text-field
-            ></v-col>
-            <v-container>
-              <v-row align="center" justify="center"
-                ><h2 style="font-weight: lighter">OR</h2></v-row
-              >
-            </v-container>
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Send the employee this link</small
-              >
-              <v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                density="compact"
-                v-model="req_obj.link_for_emp"
-                color="grey-lighten-4"
-                label="################"
-                rounded="xl"
-                variant="solo"
-                required
-              ></v-text-field
-            ></v-col>
+            <!--            <v-container>-->
+            <!--              <v-row align="center" justify="center">-->
+            <!--                <h2 style="font-weight: lighter">OR</h2></v-row-->
+            <!--              >-->
+            <!--            </v-container>-->
+            <!--            <v-col>-->
+            <!--              <small-->
+            <!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
+            <!--                class="text-caption"-->
+            <!--                >Send the employee the company ID to join the company-->
+            <!--              </small>-->
+            <!--              <v-text-field-->
+            <!--                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
+            <!--                density="compact"-->
+            <!--                color="grey-lighten-4"-->
+            <!--                v-model="req_obj.compid_for_emp"-->
+            <!--                label="################"-->
+            <!--                rounded="xl"-->
+            <!--                variant="solo"-->
+            <!--              ></v-text-field-->
+            <!--            ></v-col>-->
+            <!--            <v-container>-->
+            <!--              <v-row align="center" justify="center"-->
+            <!--                ><h2 style="font-weight: lighter">OR</h2></v-row-->
+            <!--              >-->
+            <!--            </v-container>-->
+            <!--            <v-col>-->
+            <!--              <small-->
+            <!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
+            <!--                class="text-caption"-->
+            <!--                >Send the employee this link</small-->
+            <!--              >-->
+            <!--              <v-text-field-->
+            <!--                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
+            <!--                density="compact"-->
+            <!--                v-model="req_obj.link_for_emp"-->
+            <!--                color="grey-lighten-4"-->
+            <!--                label="################"-->
+            <!--                rounded="xl"-->
+            <!--                variant="solo"-->
+            <!--                required-->
+            <!--              ></v-text-field-->
+            <!--            ></v-col>-->
           </v-col>
           <v-col cols="8" offset="2" align="center">
             <v-btn
@@ -125,17 +125,15 @@ export default defineComponent({
     req_obj: {
       adminId: sessionStorage['id'],
       currentCompany: sessionStorage['currentCompany'],
-      newEmployeeUsername: '',
-      compid_for_emp: '',
-      link_for_emp: ''
+      newEmployeeUsername: ''
     }
   }),
   methods: {
     handleSubmit() {
       alert('Employee added successfully')
-
+      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
       axios
-        .post('http://localhost:3000/company/add', this.req_obj)
+        .post('http://localhost:3000/employee', this.req_obj, config)
         .then((res) => {
           console.log(res)
         })

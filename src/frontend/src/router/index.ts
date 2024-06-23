@@ -140,6 +140,11 @@ const router = createRouter({
       path: '/job-card',
       name: 'job-card',
       component: JobCard
+    },
+    {
+      path: '/email-confirmation',
+      name: 'email-confirm',
+      component: () => import('@/views/EmailConfirmation.vue')
     }
   ]
 })

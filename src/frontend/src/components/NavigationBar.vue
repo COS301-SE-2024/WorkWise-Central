@@ -49,6 +49,8 @@ const inboxSubItems = ref([
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
   { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
 ])
+
+const supportSubItems = ref([{ title: 'Support', icon: 'mdi-star', routeName: 'support' }])
 </script>
 
 <script lang="ts">
@@ -183,6 +185,21 @@ export default defineComponent({
             </template>
             <v-list-item
               v-for="(item, i) in inboxSubItems"
+              :key="i"
+              :to="{ name: item.routeName }"
+              :prepend-icon="item.icon"
+              :title="item.title"
+              :value="item.title"
+            ></v-list-item>
+          </v-list-group>
+        </v-list>
+        <v-list v-model:open="open">
+          <v-list-group value="Help">
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props" prepend-icon="mdi-information" title="Help"></v-list-item>
+            </template>
+            <v-list-item
+              v-for="(item, i) in supportSubItems"
               :key="i"
               :to="{ name: item.routeName }"
               :prepend-icon="item.icon"
