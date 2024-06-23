@@ -12,11 +12,9 @@ import Calendar from '@/components/Calendar.vue'
 import Client from '@/components/ClientDesk.vue'
 import ClientView from '@/views/ClientEmployee.vue'
 import ClientEmployeeView from '@/views/EmployeeDesk.vue'
-import ClientEmployee from '@/components/ClientEmployeeView.vue'
-import Dashboard from '@/views/DashboardView.vue'
+import ClientEmployee from '../components/ClientEmployeeView.vue'
 import Kanban from '@/components/Kanban.vue'
 import ManagerView from '@/views/ManagerView.vue'
-import JobCard from '@/components/JobCard.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -111,7 +109,7 @@ const router = createRouter({
       name: 'managereditemployee',
       component: () => import('@/views/ManagerEditEmployee.vue')
     },
-    {
+      {
       path: '/client-desk-view',
       name: 'client-desk-view',
       component: ClientEmployeeView
@@ -132,19 +130,9 @@ const router = createRouter({
       component: ClientView
     },
     {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: Dashboard
-    },
-    {
-      path: '/job-card',
-      name: 'job-card',
-      component: JobCard
-    },
-    {
-      path: '/email-confirmation',
-      name: 'email-confirm',
-      component: () => import('@/views/EmailConfirmation.vue')
+      path: '/jobCard',
+      name: 'jobCard',
+      component:() => import('@/components/JobCard.vue')
     }
   ]
 })
