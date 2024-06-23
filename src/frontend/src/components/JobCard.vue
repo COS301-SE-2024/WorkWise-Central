@@ -63,7 +63,7 @@
             outlined
             close
           >
-            {{ chip }}
+            {{ chip.title }}
           </v-chip>
         </div>
         <div v-if="dateChips.length">
@@ -160,7 +160,10 @@
           <!-- Job Labels -->
           <JobLabels @update:status="status = $event" />
           <!-- Job Checklist -->
-          <JobChecklist @itemAdded:checklistProp="addItemToChecklist"></JobChecklist>
+          <JobChecklist
+            @itemAdded:checklistProp="checklistChips = $event"
+            @addItemToList="addItemToChecklist"
+          ></JobChecklist>
 
           <v-btn class="mb-2" outlined @click="dialog = true">File Attachments</v-btn>
           <!-- File Attachments -->
@@ -371,7 +374,7 @@ const formatDate = (date) => {
   return `${yyyy}-${mm}-${dd}`
 }
 const addItemToChecklist = (item) => {
-  checklistChips.value.push(item)
+  checklistChips.value = item
 }
 const handleAddMemberToCard = (member) => {
   // Assuming cardMembers is a data property of the parent component

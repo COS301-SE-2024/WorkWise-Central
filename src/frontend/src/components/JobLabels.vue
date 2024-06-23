@@ -12,16 +12,17 @@
         Status
       </v-btn>
     </template>
-    <v-sheet elevation="14" rounded="xl" height="auto">
+    <v-sheet elevation="14" rounded="md" height="auto">
       <v-col cols="12">
-        <v-row class="pa-2" align="center">
-          <v-col cols="12">
-            <h4 class="text-center" style="font-size: 40px; font-weight: lighter"></h4>
-          </v-col>
-        </v-row>
+        <v-col cols="12">
+          <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+            <v-icon left class="mr-2">mdi-label</v-icon>
+            <span class="title">Status of the Job</span>
+            <v-spacer></v-spacer>
+          </v-card-title>
+        </v-col>
 
         <v-spacer></v-spacer>
-
         <div>
           <v-row>
             <v-col cols="12" v-for="label in jobLabels" :key="label.id">
@@ -43,6 +44,20 @@
                   >
                     <v-card-title>{{ label.title }}</v-card-title>
                     <!-- Your card content here -->
+                    <v-card-actions>
+                      <!-- Your card actions here -->
+                      <v-btn
+                        @click="(jobDialog = false), setCurrentLabel(label)"
+                        variant="text"
+                        color="primary"
+                        size="large"
+                        >Save</v-btn
+                      >
+
+                      <v-btn @click="jobDialog = false" variant="text" color="red" size="large"
+                        >Cancel</v-btn
+                      >
+                    </v-card-actions>
                   </v-card>
                 </v-col>
               </v-row> </v-col
@@ -50,20 +65,6 @@
           </v-row>
         </div>
         <v-spacer></v-spacer>
-
-        <v-row align="center">
-          <v-col cols="8" offset="3">
-            <v-btn
-              @click="(jobDialog = false), setCurrentLabel(label)"
-              variant="text"
-              color="primary"
-              size="large"
-              >Save</v-btn
-            >
-
-            <v-btn @click="jobDialog = false" variant="text" color="red" size="large">Cancel</v-btn>
-          </v-col>
-        </v-row>
       </v-col>
     </v-sheet>
   </v-dialog>
@@ -121,11 +122,10 @@ export default defineComponent({
           label.isSelected = label === selectedLabel
         })
         // Emit an event instead of modifying the prop directly
-        if(selectedLabel.isSelected){
-        this.$emit('update:status', selectedLabel)
-        }else{
+        if (selectedLabel.isSelected) {
+          this.$emit('update:status', selectedLabel)
+        } else {
           this.$emit('update:status', '')
-        
         }
       }
       console.log(selectedLabel.isSelected) // Logs the current state of the selected/deselected label

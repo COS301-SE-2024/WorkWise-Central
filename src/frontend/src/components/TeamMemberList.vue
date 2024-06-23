@@ -62,7 +62,7 @@
               <v-row align="center" justify="space-between"
                 ><v-col>
                   <v-card
-                    @click="moveToCardMembers(member), $emit('update:isDarkMode', value)"
+                    @click="moveToCardMembers(member)"
                     rounded="md"
                     variant="plain"
                     color="red"
@@ -85,6 +85,7 @@
 </template>
 
 <script>
+
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -115,7 +116,12 @@ export default defineComponent({
       member.selected = true
       this.sections.cardMembers.push(member)
       // Emit an event with the updated member
-      this.$emit('update:selectedMembers', member)
+      this.$emit('update:selectedMembers', this.sections.cardMembers)
+    },
+    updateAndEmitSelectedMembers(updatedArray) {
+      // Emit an event to notify the parent component
+      this.sections.cardMembers = updatedArray
+      this.$emit('update:selectedMembers', this.teamList)
     },
     moveToTeamMembers(member) {
       this.sections.teamMembers.push(member)

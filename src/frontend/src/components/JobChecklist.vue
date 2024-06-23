@@ -85,10 +85,12 @@ export default defineComponent({
           id: Date.now(), // Simple way to generate a unique id
           title: this.newChecklistItemTitle
         }
+
+        this.$emit('addItemToList', newItem) // Emit an event with the new item
         this.checklist.push(newItem)
 
         this.newChecklistItemTitle = '' // Reset input field after adding
-        this.$emit('itemAdded', newItem) // Emit an event with the new item
+        this.$emit('itemAdded', this.checklist) // Emit an event with the new item
       }
     },
     removeChecklistItem(itemId) {

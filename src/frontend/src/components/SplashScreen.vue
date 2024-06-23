@@ -6,7 +6,6 @@
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
       dark
     >
-     
       <v-app-bar-title>
         <span class="colorAccent toolbar-text">Work</span>
         <span class="colorAccent2 toolbar-text">Wise</span>
@@ -882,8 +881,7 @@ export default defineComponent({
       }
     },
     birthDateFormatter(date) {
-      const options = { day: 'numeric', month: 'long', year: 'numeric' }
-      this.date = new Date(date).toLocaleDateString(undefined, options)
+      this.date = new Date(date).toISOString()
     },
     async signup() {
       this.birthDateFormatter(this.birthDate)
