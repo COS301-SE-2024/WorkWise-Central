@@ -1,4 +1,3 @@
-/*
 import { Test, TestingModule } from '@nestjs/testing';
 import { JobController } from '../job.controller';
 import { JobService } from '../job.service';
@@ -10,17 +9,17 @@ describe('JobController', () => {
 
   const mockJobService = {
     create: jest.fn(),
-    findAll: jest.fn(),
+    findAllCompanies: jest.fn(),
   };
 
   const mockClientService = {
     create: jest.fn(),
-    findAll: jest.fn(),
+    findAllCompanies: jest.fn(),
   };
 
   const mockJwtService = {
     create: jest.fn(),
-    findAll: jest.fn(),
+    findAllCompanies: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -47,13 +46,5 @@ describe('JobController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
-  });
-});
-*/
-
-describe('myGenericFunction', () => {
-  it('should return the correct value', () => {
-    const result = 1;
-    expect(result).toBe(1);
   });
 });

@@ -118,7 +118,22 @@ export class Comment {
 @Schema()
 export class Job {
   constructor(createJobDto: CreateJobDto) {
-    Object.assign(this, createJobDto);
+    //Object.assign(this, createJobDto);
+    if (createJobDto.companyId) this.companyId = createJobDto.companyId;
+    if (createJobDto.clientId) this.clientId = createJobDto.clientId;
+    if (createJobDto.clientUsername)
+      this.clientUsername = createJobDto.clientUsername;
+    if (createJobDto.assignedBy) this.assignedBy = createJobDto.assignedBy;
+    if (createJobDto.assignedEmployees)
+      this.assignedEmployees = createJobDto.assignedEmployees;
+    if (createJobDto.status) this.status = createJobDto.status;
+    if (createJobDto.details) this.details = createJobDto.details;
+    if (createJobDto.recordedDetails)
+      this.recordedDetails = createJobDto.recordedDetails;
+    if (createJobDto.clientFeedback)
+      this.clientFeedback = createJobDto.clientFeedback;
+    if (createJobDto.taskList) this.taskList = createJobDto.taskList;
+    if (createJobDto.comments) this.comments = createJobDto.comments;
     this.createdAt = new Date();
   }
 

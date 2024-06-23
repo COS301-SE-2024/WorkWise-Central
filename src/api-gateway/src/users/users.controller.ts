@@ -68,7 +68,7 @@ export class UsersController {
   @Get('all')
   findAll() {
     try {
-      return this.usersService.findAllUsers();
+      return this.usersService.getAllUsers();
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
@@ -81,7 +81,7 @@ export class UsersController {
   async findOne(@Param('id') identifier: string) {
     this.validateObjectId(identifier);
     try {
-      return await this.usersService.findUserById(identifier);
+      return await this.usersService.getUserById(identifier);
     } catch (e) {
       console.log(e);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
@@ -110,7 +110,7 @@ export class UsersController {
     const id = req.user.sub; //This attribute is retrieved in the JWT
     console.log(id);
     try {
-      return await this.usersService.update(id, updateUserDto);
+      return await this.usersService.updateUser(id, updateUserDto);
     } catch (e) {
       throw new HttpException(
         'internal server error',

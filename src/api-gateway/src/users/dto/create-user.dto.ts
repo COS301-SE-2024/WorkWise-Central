@@ -4,12 +4,11 @@ import {
   IsArray,
   IsDateString,
   IsEmail,
-  IsMongoId,
   IsNotEmpty,
   IsNumberString,
   IsObject,
   IsOptional,
-  IsPhoneNumber,
+  //IsPhoneNumber,
   IsString,
   MaxLength,
   ValidateNested,
@@ -23,7 +22,7 @@ class ContactInfo {
   @Transform(({ value }) =>
     value.startsWith('0') ? `+27${value.slice(1)}` : value,
   )
-  @IsPhoneNumber(null)
+  //@IsPhoneNumber(null)
   phoneNumber: string;
 
   @ApiProperty()
@@ -59,16 +58,16 @@ class Address {
   postalCode: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(255)
-  complex: string;
+  complex?: string;
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsNumberString()
+  @IsOptional()
+  @IsString()
   @MaxLength(255)
-  houseNumber: string;
+  houseNumber?: string;
 }
 
 class PersonalInfo {
@@ -146,9 +145,9 @@ export class CreateUserDto {
   @Type(() => String)
   skills?: string[] = [];
 
-  @IsOptional()
+  /*  @IsOptional()
   @IsMongoId()
-  public currentCompany?: Types.ObjectId;
+  public currentEmployee?: Types.ObjectId;*/
 }
 
 export class createUserResponseDto {

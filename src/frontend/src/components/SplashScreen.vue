@@ -936,7 +936,7 @@ export default defineComponent({
       this.signupUsernameDialog = false
       this.signup2Dialog = true
       if (this.$refs.form.validate()) {
-        this.resetForm
+        this.resetForm()
       }
     },
     nextFlow3() {
@@ -950,6 +950,7 @@ export default defineComponent({
       if (this.$refs.form.validate()) {
         this.signupAddressDialog = false
         this.signup3Dialog = true
+        this.signup()
         this.resetForm()
       }
     },

@@ -1,14 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CompanyService } from './company.service';
-import { UsersService } from '../users/users.service';
-import { userStub } from '../../test/stubs/user.stub';
+import { CompanyController } from '../company.controller';
+import { UsersService } from '../../users/users.service';
+import { userStub } from '../../../test/stubs/user.stub';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
-import { CompanyController } from './company.controller';
 
 const moduleMocker = new ModuleMocker(global);
 
-describe('CompanyService', () => {
-  let service: CompanyService;
+describe('CompanyController', () => {
+  let controller: CompanyController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -34,10 +33,10 @@ describe('CompanyService', () => {
       })
       .compile();
 
-    service = module.get<CompanyService>(CompanyService);
+    controller = module.get<CompanyController>(CompanyController);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(controller).toBeDefined();
   });
 });
