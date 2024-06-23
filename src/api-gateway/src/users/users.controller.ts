@@ -22,6 +22,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiBody,
   ApiInternalServerErrorResponse,
+  ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -52,7 +53,7 @@ export class UsersController {
     type: HttpException,
     status: HttpStatus.CONFLICT,
   })
-  @ApiBody({ type: [CreateUserDto] })
+  @ApiBody({ type: [CreateUserDto], description: 'Create new user' })
   @Post('/create')
   async create(
     @Body() createUserDto: CreateUserDto,
@@ -64,7 +65,12 @@ export class UsersController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Get all users' }) // Add summary here
+  @ApiResponse({
+    status: 200,
+    description: 'Users retrieved successfully',
+  })
   @Get('all')
   findAll() {
     try {

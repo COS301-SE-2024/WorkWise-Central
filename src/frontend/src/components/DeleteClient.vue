@@ -16,7 +16,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="grey darken-1" text @click="close">Cancel</v-btn>
+        <v-btn color="grey darken-1" text @click="clientDialog = false">Cancel</v-btn>
         <v-btn color="red darken-2" text :loading="isDeleting" @click="deleteClient">Delete</v-btn>
       </v-card-actions>
     </v-card>
@@ -24,14 +24,16 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'DeleteClient',
   props: {
-    opened: Boolean
+    opened: Boolean,
+    client_id: Number
   },
   data() {
     return {
-      clientDialog: this.opened,
+      clientDialog: false,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false
     }
@@ -39,22 +41,27 @@ export default {
   methods: {
     close() {
       this.clientDialog = false
-      this.$emit('updated_opened', false)
+    },
+    async deleteClient() {
+      this.isDeleting = true // Indicate the start of the deletion process
+      axios
+        .delete('http://localhost:3000/client/', { data: { id: this.client_id } })
+        .then((response) => {
+          console.log(response)
+          alert('Client deleted')
+          this.clientDialog = false
+          this.$emit('clientDeleted')
+          // Consider using a more SPA-friendly way of updating the view instead of reloading
+        })
+        .catch((error) => {
+          console.log(error)
+          alert('Error deleting client')
+        })
+        .finally(() => {
+          this.isDeleting = false // Reset the deletion indicator
+          window.location.reload() // Consider removing this for SPA behavior
+        })
     }
-    // async deleteClient() {
-    //   this.isDeleting = true
-    //   try {
-    //     // Your delete logic here, e.g., an API call
-    //     await this.deleteClientApi(this.clientName)
-    //     this.$emit('clientDeleted')
-    //     this.close()
-    //   } catch (error) {
-    //     console.error('Failed to delete client:', error)
-    //     // Handle error, e.g., show a notification
-    //   } finally {
-    //     this.isDeleting = false
-    //   }
-    // }
   }
 }
 </script>

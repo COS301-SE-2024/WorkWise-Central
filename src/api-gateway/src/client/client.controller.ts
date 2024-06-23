@@ -78,7 +78,7 @@ export class ClientController {
   async findOne(@Param('id') id: string) {
     this.validateObjectId(id);
     try {
-      return { data: await this.clientService.findClientById(id) };
+      return { data: await this.clientService.getClientById(id) };
     } catch (e) {
       console.log(e);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
@@ -88,7 +88,7 @@ export class ClientController {
   @ApiResponse({
     type: findClientResponseDto,
   })
-  @Get('search?')
+  @Get('/search')
   async findByEmailOrName(
     @Query('compId')
     compId: string,
@@ -106,18 +106,25 @@ export class ClientController {
     }
   }
 
-  @Patch(':id')
-  update(
+  @Patch('/:id')
+  async update(
     @Param('id') id: string,
     @Body() updateClientDto: UpdateClientDto,
-  ): { data: string } {
-    return { data: this.clientService.update(+id, updateClientDto) };
+  ) {
+    this.validateObjectId(id);
+    const objectId = new Types.ObjectId(id);
+    try {
+      return await this.clientService.updateClient(objectId, updateClientDto);
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(e, HttpStatus.CONFLICT);
+    }
   }
 
   //@UseGuards(AuthGuard)
-  @Delete()
-  remove(@Param('id') id: string, @Body() pass: { pass: string }) {
-    console.log(pass); //Will be implemented later
+  @Delete('/delete/:id')
+  remove(@Param('id') id: string /*, @Body() pass: { pass: string }*/) {
+    //console.log(pass); //Will be implemented later
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
     }
