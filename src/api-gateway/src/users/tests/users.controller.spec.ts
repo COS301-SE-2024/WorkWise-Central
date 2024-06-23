@@ -1,9 +1,9 @@
-/*
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from '../users.controller';
 import { UsersService } from '../users.service';
 import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
 import { mockUserObject, userStub } from '../../../test/stubs/user.stub';
+import { Types } from 'mongoose';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -17,10 +17,10 @@ describe('UsersController', () => {
         if (token === UsersService) {
           return {
             create: jest.fn().mockReturnValue(userStub()),
-            findAllUsers: jest.fn().mockReturnValue(userStub()),
+            getAllUsers: jest.fn().mockReturnValue([userStub(), userStub()]),
             findUser: jest.fn().mockReturnValue(userStub()),
             update: jest.fn().mockReturnValue(userStub()),
-            remove: jest.fn().mockReturnValue(userStub()),
+            softDelete: jest.fn().mockReturnValue([]),
           };
         }
         if (typeof token === 'function') {
@@ -33,7 +33,7 @@ describe('UsersController', () => {
       })
       .compile();
 
-    usersController = module.get(UsersController);
+    usersController = module.get<UsersController>(UsersController);
     jest.clearAllMocks();
   });
 
@@ -47,15 +47,25 @@ describe('UsersController', () => {
     expect(result).toStrictEqual(mockUserObject);
   });
 
-  it('should find all users', function () {
-    expect(usersController.findAll()).toBeDefined();
+  it('should find all users', async function () {
+    const allUsers = await usersController.findAll();
+    expect(allUsers.length).toBe(2);
   });
-});
-*/
 
-describe('myGenericFunction', () => {
-  it('should return the correct value', () => {
-    const result = 1;
-    expect(result).toBe(1);
+  it('should remove users', function () {
+    expect(
+      usersController.remove(new Types.ObjectId().toString()),
+    ).toStrictEqual([]);
+  });
+
+  it('should Point you to the docs', function () {
+    expect(usersController.lookAtDocumentation()).toStrictEqual({
+      message: 'Refer to /documentation for details on the API',
+    });
+  });
+
+  it('should verify that objectIds are legit', function () {
+    //expect(usersController.validateObjectId('a')).toThrow('Invalid ID');
+    expect(usersController.validateObjectId(new Types.ObjectId())).toBe(true);
   });
 });

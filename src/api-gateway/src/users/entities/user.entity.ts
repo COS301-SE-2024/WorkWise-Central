@@ -29,13 +29,11 @@ export class Address {
   @Prop({ type: String, required: true })
   city: string;
   @Prop({ type: String, required: true })
-  province: string;
-  @Prop({ type: String, required: true })
   postalCode: string;
   @Prop({ type: String, required: false })
-  complex: string;
+  complex?: string;
   @Prop({ type: String, required: false })
-  houseNumber: string;
+  houseNumber?: string;
 }
 
 export class PersonalInfo {
@@ -138,7 +136,12 @@ export class User {
   profile: Profile;
 
   @ApiProperty()
-  @Prop({ type: [JoinedCompany], required: false, default: [] })
+  @Prop({
+    type: [JoinedCompany],
+    required: false,
+    ref: 'Company',
+    default: [],
+  })
   joinedCompanies?: JoinedCompany[] = [];
 
   @ApiProperty()

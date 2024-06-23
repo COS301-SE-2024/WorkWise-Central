@@ -73,9 +73,9 @@ export class CompanyController {
 
   // @UseGuards(AuthGuard) //Need to add authorization
   @Get('/all')
-  findAll() {
+  async findAll() {
     try {
-      return { data: this.companyService.findAll() };
+      return { data: await this.companyService.findAllCompanies() };
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
@@ -87,7 +87,7 @@ export class CompanyController {
   @Get('id/:id')
   findOne(@Param('id') id: string) {
     try {
-      return { data: this.companyService.findById(id) };
+      return { data: this.companyService.getCompanyById(id) };
     } catch (e) {
       throw new HttpException(e, HttpStatus.NOT_FOUND);
     }
@@ -102,7 +102,7 @@ export class CompanyController {
   ): Promise<{ data: (FlattenMaps<Company> & { _id: Types.ObjectId })[] }> {
     try {
       return {
-        data: await this.companyService.findByEmailOrName(str),
+        data: await this.companyService.getByEmailOrName(str),
       };
     } catch (e) {
       console.log(e);
@@ -113,9 +113,19 @@ export class CompanyController {
   // @UseGuards(AuthGuard)
   @ApiBody({ type: [UpdateCompanyDto] })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+  ) {
     try {
-      return { data: this.companyService.update(+id, updateCompanyDto) };
+      const objectId = new Types.ObjectId(id);
+      const updatedCompany = this.companyService.update(
+        objectId,
+        updateCompanyDto,
+      );
+      return {
+        data: updatedCompany,
+      };
     } catch (e) {
       throw new HttpException(
         'internal server error',
@@ -126,9 +136,10 @@ export class CompanyController {
 
   // @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     try {
-      return { data: this.companyService.remove(id) };
+      await this.companyService.deleteCompany(id);
+      return { data: true };
     } catch (e) {
       throw new HttpException(
         'Internal Server Error',
