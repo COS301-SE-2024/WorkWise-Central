@@ -119,7 +119,8 @@ export default defineUserConfig({
           text: 'Architectural Documentation',
           children: [
             { text: 'Quality Requirements', link: '/demo2/architeturalDocs/qualityRequirements.md' },
-            { text: 'Architectural Patterns and Design Patterns', link: '/demo2/architeturalDocs/architecturalPatterns.md' },
+            { text: 'Architectural Patterns', link: '/demo2/architeturalDocs/architecturalPatterns.md' },
+            { text: 'Design Patterns', link: '/demo2/architeturalDocs/designPatterns.md' },
             { text: 'Constraints', link: '/demo2/architeturalDocs/constraints.md' },
             { text: 'Technology Requirements', link: '/demo2/architeturalDocs/techSpec.md' },
           ],

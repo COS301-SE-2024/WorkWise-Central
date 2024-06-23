@@ -32,7 +32,7 @@
 </ol>
 <p>In the frontend, we may use server-side rendering (SSR) if performance is found to be suboptimal. Although it would increase the load on the server, the improvement to the user experience may warrant this change.</p>
 <p>In the backend, the seamless integration with WebSockets and microservices provided by Nest.js allow a high throughput. The use of asynchronous responses allows the services to run concurrently, and prevents delayed responses.</p>
-<h1 id="maintainability" tabindex="-1"><a class="header-anchor" href="#maintainability"><span>Maintainability</span></a></h1>
+<h2 id="maintainability" tabindex="-1"><a class="header-anchor" href="#maintainability"><span>Maintainability</span></a></h2>
 <p>The client also identified maintainability as a core requirement. The modular architecture that is present in the API-Gateway allows us to break down the application into smaller, reusable modules. Additionally, the use of services provides a good separation of concerns.</p>
 <p>Our coding standards ensure that all code is uniform and readable. The use of the Model-View-Controller (MVC) pattern decouples the business logic from the view, which further makes it more maintainable.</p>
 </div></template>
