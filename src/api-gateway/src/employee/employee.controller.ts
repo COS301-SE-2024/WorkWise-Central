@@ -15,17 +15,27 @@ import { UpdateEmployeeDto } from './dto/update-employee.dto';
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
-  @Post()
+  @Get()
+  hello() {
+    return { message: 'Refer to /documentation for details on the API' };
+  }
+
+  @Post('/create')
   create(@Body() createEmployeeDto: CreateEmployeeDto) {
     return this.employeeService.create(createEmployeeDto);
   }
 
-  @Get()
+  @Get('/all')
   findAll() {
     return this.employeeService.findAll();
   }
 
-  @Get(':id')
+  @Get('/all/:id')
+  findAllInCompany(@Param('id') id: string) {
+    return this.employeeService.findAllInCompany(id);
+  }
+
+  @Get('id/:id')
   findOne(@Param('id') id: string) {
     return this.employeeService.findOne(id);
   }
@@ -35,7 +45,7 @@ export class EmployeeController {
     @Param('id') id: string,
     @Body() updateEmployeeDto: UpdateEmployeeDto,
   ) {
-    return this.employeeService.update(+id, updateEmployeeDto);
+    return this.employeeService.update(id, updateEmployeeDto);
   }
 
   @Delete(':id')

@@ -1,22 +1,16 @@
 import { Types } from 'mongoose';
-import { IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateEmployeeDto {
-  @IsMongoId()
-  @IsOptional()
+export class CreateRoleDto {
+  @IsArray()
+  @IsNotEmpty()
   @ApiProperty()
-  roleId: Types.ObjectId;
-
-  @IsMongoId()
-  @IsOptional()
-  @ApiProperty()
-  superiorId: Types.ObjectId;
+  permissionSuite: string[];
 
   @IsNotEmpty()
-  @IsMongoId()
   @ApiProperty()
-  userId: Types.ObjectId;
+  roleName: string;
 
   @IsNotEmpty()
   @IsMongoId()
@@ -24,7 +18,7 @@ export class CreateEmployeeDto {
   companyId: Types.ObjectId;
 }
 
-export class createEmployeeResponseDto {
+export class createRoleResponseDto {
   response: { access_token: string; id: Types.ObjectId };
   constructor(message: { access_token: string; id: Types.ObjectId }) {
     this.response = message;

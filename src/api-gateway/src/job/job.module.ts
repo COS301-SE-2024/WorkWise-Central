@@ -9,16 +9,21 @@ import { ClientModule } from '../client/client.module';
 import { JobRepository } from './job.repository';
 import { EmployeeModule } from '../employee/employee.module';
 import { EmployeeService } from '../employee/employee.service';
+import { TeamModule } from '../team/team.module';
+import { RoleModule } from '../role/role.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Job.name, schema: JobSchema }]),
-    UsersModule,
-    CompanyModule,
-    ClientModule,
+    forwardRef(() => UsersModule),
+    forwardRef(() => CompanyModule),
+    forwardRef(() => ClientModule),
     forwardRef(() => EmployeeModule),
+    forwardRef(() => RoleModule),
+    forwardRef(() => TeamModule),
   ],
-  controllers: [JobController],
   providers: [JobService, JobRepository, EmployeeService],
+  controllers: [JobController],
+  exports: [JobService, MongooseModule, JobRepository],
 })
 export class JobModule {}
