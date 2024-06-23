@@ -63,7 +63,7 @@ export class ClientRepository {
     return result != null;
   }
 
-  async update(id: string | Types.ObjectId, updateClientDto: UpdateClientDto) {
+  async update(id: Types.ObjectId, updateClientDto: UpdateClientDto) {
     return this.clientModel
       .findOneAndUpdate(
         {

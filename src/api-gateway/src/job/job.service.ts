@@ -135,9 +135,23 @@ export class JobService {
     job: Job | CreateJobDto | UpdateJobDto,
   ): Promise<ValidationResult> {
     if (job.assignedBy) {
+      if (!job.companyId || !job.assignedBy) {
+        return new ValidationResult(
+          false,
+          'CompanyId or assignedBy is invalid',
+        );
+      }
+
       const exists = await this.employeeService.employeeExists(job.assignedBy);
-      if (!exists) {
-        return new ValidationResult(false, 'Assigned By is invalid');
+      const isInCompany = await this.companyService.employeeIsInCompany(
+        job.companyId,
+        job.assignedBy,
+      );
+      if (!exists || !isInCompany) {
+        return new ValidationResult(
+          false,
+          'Assigned By is invalid or Employee is not in company',
+        );
       }
     }
     if (job.assignedEmployees) {

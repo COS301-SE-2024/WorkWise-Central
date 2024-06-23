@@ -84,6 +84,21 @@ export class CompanyController {
     }
   }
 
+  //@UseGuards(AuthGuard) //Need to add authorization
+  @Get('/company/employees/:cid')
+  async getAllInCompany(@Param('cid') cid: string) {
+    this.validateObjectId(cid);
+    const objId = new Types.ObjectId(cid);
+    try {
+      return { data: await this.companyService.getAllEmployees(objId) };
+    } catch (Error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   @Get('id/:id')
   findOne(@Param('id') id: string) {
     try {

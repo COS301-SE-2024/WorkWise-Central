@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Document, FlattenMaps, Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
-import { User } from '../users/entities/user.entity';
-import { Job } from '../job/entities/job.entity';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 
 @Injectable()
@@ -71,34 +69,51 @@ export class CompanyRepository {
   }
 
   async registrationNumberExists(id: string): Promise<boolean> {
-    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
-      await this.companyModel
-        .findOne({
-          $and: [
-            { registrationNumber: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
+    const result = await this.companyModel
+      .findOne({
+        $and: [
+          { registrationNumber: id },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
 
-    return result == null;
+    return result != null;
   }
 
   async idExists(id: Types.ObjectId): Promise<boolean> {
-    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
-      await this.companyModel
-        .findOne({
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
-    return result == null;
+    const result = await this.companyModel
+      .findOne({
+        $and: [
+          { _id: id },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+    return result != null;
+  }
+
+  async employeeExists(
+    compId: Types.ObjectId,
+    empId: Types.ObjectId,
+  ): Promise<boolean> {
+    const result = await this.companyModel
+      .findOne({
+        $and: [
+          { _id: compId },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+    if (result == null) return false;
+
+    return result.employees.includes(empId);
   }
 
   async nameTaken(name: string) {
@@ -131,8 +146,7 @@ export class CompanyRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const result: Document<unknown, NonNullable<unknown>, Job> &
-      Job & { _id: Types.ObjectId } = await this.companyModel.findOneAndUpdate(
+    const result = await this.companyModel.findOneAndUpdate(
       {
         $and: [
           { _id: id },
