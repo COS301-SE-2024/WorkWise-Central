@@ -33,7 +33,7 @@ export class AuthService {
     userIdentifier: string,
     pass: string,
   ): Promise<{ access_token: string; id: Types.ObjectId }> {
-    const user = await this.usersService.findUserByUsername(userIdentifier);
+    const user = await this.usersService.getUserByUsername(userIdentifier);
     if (!user) {
       throw new NotFoundException('Incorrect login details');
     }

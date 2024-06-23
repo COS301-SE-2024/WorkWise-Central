@@ -34,8 +34,8 @@ export class EmployeeService {
       throw new ConflictException('User not found');
     }
 
-    const user = await this.usersService.findUserById(createEmployeeDto.userId);
-    const company = await this.companyService.findById(
+    const user = await this.usersService.getUserById(createEmployeeDto.userId);
+    const company = await this.companyService.getCompanyById(
       createEmployeeDto.companyId,
     );
 
@@ -46,7 +46,7 @@ export class EmployeeService {
 
     newEmployee.userId = createEmployeeDto.userId;
     newEmployee.role = createEmployeeDto.role;
-    const companyObject = await this.companyService.findById(
+    const companyObject = await this.companyService.getCompanyById(
       createEmployeeDto.companyId,
     );
     newEmployee.company = {
@@ -116,5 +116,10 @@ export class EmployeeService {
       throw new InternalServerErrorException('Internal server Error');
     }
     return true;
+  }
+
+  async employeeExists(assignedBy: Types.ObjectId) {
+    console.log(assignedBy);
+    return true; //TODO:Remove
   }
 }

@@ -17,7 +17,7 @@ describe('UsersController', () => {
         if (token === UsersService) {
           return {
             create: jest.fn().mockReturnValue(userStub()),
-            findAllUsers: jest.fn().mockReturnValue(userStub()),
+            getAllUsers: jest.fn().mockReturnValue(userStub()),
             findUser: jest.fn().mockReturnValue(userStub()),
             update: jest.fn().mockReturnValue(userStub()),
             remove: jest.fn().mockReturnValue(userStub()),
@@ -48,7 +48,7 @@ describe('UsersController', () => {
   });
 
   it('should find all users', function () {
-    expect(usersController.findAll()).toBeDefined();
+    expect(usersController.findAllCompanies()).toBeDefined();
   });
 });
 */

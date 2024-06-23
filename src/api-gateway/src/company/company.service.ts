@@ -2,7 +2,6 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
-  ServiceUnavailableException,
 } from '@nestjs/common';
 import {
   CreateCompanyDto,
@@ -14,12 +13,14 @@ import { FlattenMaps, Model, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
 import { User } from '../users/entities/user.entity';
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
+import { CompanyRepository } from './company.repository';
 
 @Injectable()
 export class CompanyService {
   constructor(
     @InjectModel(Company.name)
     private readonly companyModel: Model<Company>,
+    private readonly companyRepository: CompanyRepository,
 
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
@@ -27,7 +28,9 @@ export class CompanyService {
 
   async create(createCompanyDto: CreateCompanyDto) {
     if (
-      (await this.companyExists(createCompanyDto.registrationNumber)) == false
+      (await this.companyRepository.registrationNumberExists(
+        createCompanyDto.registrationNumber,
+      )) == false
     ) {
       throw new ConflictException(
         `Company with ${createCompanyDto.registrationNumber} already
@@ -41,63 +44,23 @@ export class CompanyService {
     return new CreateCompanyResponseDto(`${result.id}`);
   }
 
-  async companyExists(id: string): Promise<boolean> {
-    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
-      await this.companyModel
-        .findOne({
-          $and: [
-            { registrationNumber: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
-
-    //console.log('companyExists -> ', result);
-    return result == null;
+  async companyRegNumberExists(id: string): Promise<boolean> {
+    return this.companyRepository.registrationNumberExists(id);
   }
 
   async companyIdExists(id: Types.ObjectId): Promise<boolean> {
-    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
-      await this.companyModel
-        .findOne({
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
-
-    //console.log('companyExists -> ', result);
-    return result == null;
+    return this.companyRepository.idExists(id);
   }
 
-  findAll() {
-    try {
-      return this.companyModel.find().lean().exec();
-    } catch (error) {
-      console.log(error);
-      throw new ServiceUnavailableException('Users could not be retrieved');
-    }
+  findAllCompanies() {
+    return this.companyRepository.findAll();
   }
 
-  async findById(
+  async getCompanyById(
     identifier: string | Types.ObjectId,
   ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
     const result: FlattenMaps<Company> & { _id: Types.ObjectId } =
-      await this.companyModel
-        .findOne({
-          $and: [
-            { _id: identifier },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
+      await this.companyRepository.findById(identifier);
 
     if (result == null) {
       throw new NotFoundException('Company not found');
@@ -106,28 +69,8 @@ export class CompanyService {
     return result;
   }
 
-  async findByEmailOrName(identifier: string) {
-    const regex = `*${identifier}*`;
-    const searchTerm = new RegExp(regex, 'i');
-
-    const result = await this.companyModel
-      .find({
-        $and: [
-          {
-            $or: [{ private: false }, { private: { $exists: false } }],
-          },
-          {
-            $or: [
-              { name: { $regex: searchTerm } },
-              { 'contactDetails.email': { $regex: searchTerm } },
-            ],
-          },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      })
-      .lean();
+  async getByEmailOrName(identifier: string) {
+    const result = await this.companyRepository.findByEmailOrName(identifier);
 
     if (result == null) {
       throw new NotFoundException('Client not found');
@@ -136,20 +79,11 @@ export class CompanyService {
     return result;
   }
 
-  async findByRegistrationNumber(
+  async getCompanyByRegNumber(
     registrationNumber: string,
   ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
-    const result: FlattenMaps<Company> & { _id: Types.ObjectId } =
-      await this.companyModel
-        .findOne({
-          $and: [
-            { registrationNumber: registrationNumber },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
+    const result =
+      await this.companyRepository.findByRegistrationNumber(registrationNumber);
 
     if (result == null) {
       throw new NotFoundException('Company not found');
@@ -160,7 +94,7 @@ export class CompanyService {
 
   //TODO:Add authorization for endpoint
   //For now, I assume the person is authorised
-  async addEmployee(addUserDto: AddUserToCompanyDto) {
+  async addEmployee(addUserDto: AddUserToCompanyDto): Promise<string> {
     //Add validation
     if (await this.companyIdExists(addUserDto.currentCompany)) {
       throw new NotFoundException(`Company not found`);
@@ -201,12 +135,14 @@ export class CompanyService {
     return `${updateUser.systemDetails.username} added to successfully`;
   }
 
-  update(id: number, updateCompanyDto: UpdateCompanyDto) {
-    console.log(updateCompanyDto);
-    return `This action updates a #${id} company`;
+  update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
+    const updatedCompany = this.companyRepository.update(id, updateCompanyDto);
+    console.log(updatedCompany);
+    return true;
   }
 
-  async remove(id: string) {
-    return `This action removes a #${id} company`;
+  async deleteCompany(id: string): Promise<boolean> {
+    await this.companyRepository.delete(id);
+    return true;
   }
 }

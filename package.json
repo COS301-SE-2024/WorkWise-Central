@@ -1,11 +1,19 @@
 {
+  "author": {
+    "name": "Boolean Hooligans"
+  },
+  "version": "0.2",
+  "description": "WorkWise Central is a service-management tool designed for service-based industries. It is engineered to streamline operations, maximize resource efficiency, and elevate customer experiences.",
+  "homepage": "https://tuksui.sharpsoftwaresolutions.net/",
   "devDependencies": {
     "@vuepress/bundler-vite": "^2.0.0-rc.13",
     "@vuepress/theme-default": "^2.0.0-rc.33",
+    "concurrently": "^8.2.2",
     "vuepress": "^2.0.0-rc.13"
   },
   "scripts": {
     "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
+    "docs:build": "vuepress build docs",
+    "start:dev": "concurrently \"cd src/frontend && npm run dev\" \"cd src/api-gateway && npm run start:dev\""
   }
 }
