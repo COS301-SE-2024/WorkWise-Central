@@ -101,6 +101,17 @@ export class CompanyRepository {
     return result == null;
   }
 
+  async nameTaken(name: string) {
+    return this.companyModel.findOne({
+      $and: [
+        { name: name },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    });
+  }
+
   async update(
     id: string | Types.ObjectId,
     updateCompanyDto: UpdateCompanyDto,
