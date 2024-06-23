@@ -1,5 +1,5 @@
 import comp from "/home/jessica/University/WorkWise-Central/docs/.vuepress/.temp/pages/demo1/designDocs/classDiagrams.html.vue"
-const data = JSON.parse("{\"path\":\"/demo1/designDocs/classDiagrams.html\",\"title\":\"Class Diagram\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":null,\"contributors\":[]},\"filePathRelative\":\"demo1/designDocs/classDiagrams.md\"}")
+const data = JSON.parse("{\"path\":\"/demo1/designDocs/classDiagrams.html\",\"title\":\"Class Diagram\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":1719147791000,\"contributors\":[{\"name\":\"JessicaBloem\",\"email\":\"jessicabloem8@gmail.com\",\"commits\":1}]},\"filePathRelative\":\"demo1/designDocs/classDiagrams.md\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {

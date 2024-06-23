@@ -111,6 +111,7 @@ export default defineUserConfig({
             { text: 'Functional requirement specifications', link: '/demo2/businessDocs/functionalRequirements.md' },
             { text: 'Service contract', link: '/demo2/businessDocs/serviceContract.md' },
             { text: 'Market Research', link: '/demo2/businessDocs/marketResearch.md' },
+            { text: 'User Manual', link: '/demo2/businessDocs/userManual.md' },
           ],
         },
         {
@@ -136,6 +137,7 @@ export default defineUserConfig({
         {
           text: 'DevOps',
           children: [
+            { text: 'Coding Standards', link: '/demo2/devOps/codingStandards.md' },
             { text: 'Git originisation and management', link: '/demo2/devOps/gitOrgMan.md' },
             { text: 'Branching Strategy', link: '/demo2/devOps/branching.md' },
             { text: 'CI/CD', link: '/demo2/devOps/cicd.md' },
