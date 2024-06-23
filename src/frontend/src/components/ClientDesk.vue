@@ -123,10 +123,18 @@
       </v-col></v-row
     >
 
-    <v-col> <DeleteClient v-model="deleteDialog" :details="selectedItem" /></v-col>
     <v-col>
-      <EditClient v-model="editDialog" @update:selectedItem="handleSelectedItemUpdate"
+      <DeleteClient v-model="deleteDialog" :details="selectedItem" :client_id="selectedItemId"
     /></v-col>
+    <v-col>
+      <EditClient
+        v-model="editDialog"
+        @update:item="selectedItem = $event"
+        :editedItem="selectedItem"
+        :_clientID="selectedItemId"
+      />
+      /</v-col
+    >
   </v-container>
 </template>
 
@@ -183,7 +191,9 @@ export default defineComponent({
     search: '',
     clients: [],
     clientDetails: [],
-    expanded: []
+    clientIds: [],
+    expanded: [],
+    selectedItemId: ''
   }),
   components: {
     ClientDetails,
@@ -214,11 +224,23 @@ export default defineComponent({
       console.log('Searching client')
     },
     editClient(item) {
+      console.log(item)
       this.selectedItem = item
+      for (let i = 0; i < this.clientDetails.length; i++) {
+        if (this.clientDetails[i] === item) {
+          this.selectedItemId = this.clientIds[i]
+        }
+      }
       console.log('Editing client')
+      console.log(this.selectedItem)
     },
     deleteClient(item) {
       this.selectedItem = item
+      for (let i = 0; i < this.clientDetails.length; i++) {
+        if (this.clientDetails[i] === item) {
+          this.selectedItemId = this.clientIds[i]
+        }
+      }
       console.log('Deleting client')
     },
     openAddClient() {
@@ -255,6 +277,8 @@ export default defineComponent({
           console.log(response.data)
           this.clients = response.data.data
           for (let i = 0; i < this.clients.length; i++) {
+            this.clientIds[i] = this.clients[i]._id
+            console.log(this.clientIds[i])
             this.clientDetails[i] = this.clients[i].details
           }
         })

@@ -58,7 +58,11 @@
                   <v-card class="pa-4" height="auto">
                     <v-card-title>Calendar</v-card-title>
                     <v-card-text>
-                      <v-calendar ref="calendar" color="primary" :weekdays="['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']"></v-calendar>
+                      <v-calendar
+                        ref="calendar"
+                        color="primary"
+                        :weekdays="['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']"
+                      ></v-calendar>
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -69,7 +73,10 @@
                     <v-card-title>Upcoming Appointments</v-card-title>
                     <v-card-text>
                       <v-list>
-                        <v-list-item v-for="(appointment, index) in upcomingAppointments" :key="index">
+                        <v-list-item
+                          v-for="(appointment, index) in upcomingAppointments"
+                          :key="index"
+                        >
                           <v-list-item-content>{{ appointment.title }}</v-list-item-content>
                           <v-list-item-subtitle>{{ appointment.date }}</v-list-item-subtitle>
                         </v-list-item>
@@ -108,32 +115,31 @@ export default {
       recentJobs: [
         { title: 'Job 1', date: '2024-06-21' },
         { title: 'Job 2', date: '2024-06-20' },
-        { title: 'Job 3', date: '2024-06-19' },
+        { title: 'Job 3', date: '2024-06-19' }
       ],
       activeEmployees: [
         { name: 'Alice', activityLevel: 'High' },
         { name: 'Bob', activityLevel: 'Medium' },
-        { name: 'Charlie', activityLevel: 'Low' },
+        { name: 'Charlie', activityLevel: 'Low' }
       ],
       hoursWorked: [
         { name: 'Alice', hours: 40 },
         { name: 'Bob', hours: 35 },
-        { name: 'Charlie', hours: 30 },
+        { name: 'Charlie', hours: 30 }
       ],
       upcomingAppointments: [
         { title: 'Meeting with Client A', date: '2024-06-24' },
         { title: 'Team Sync', date: '2024-06-25' },
-        { title: 'Project Deadline', date: '2024-06-26' },
+        { title: 'Project Deadline', date: '2024-06-26' }
       ],
       teams: [
         { name: 'Development Team', members: 10 },
         { name: 'Marketing Team', members: 8 },
-        { name: 'Support Team', members: 6 },
-      ],
-    };
-    
-  },
-};
+        { name: 'Support Team', members: 6 }
+      ]
+    }
+  }
+}
 </script>
 
 <style scoped>
