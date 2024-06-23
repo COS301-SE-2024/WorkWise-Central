@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Document, FlattenMaps, Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
-import { User } from '../users/entities/user.entity';
-import { Job } from '../job/entities/job.entity';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 
 @Injectable()
