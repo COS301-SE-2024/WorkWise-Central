@@ -89,8 +89,7 @@
       "**/*.(t|j)s",
       "!**/*.repository.(t|j)s",
       "!**/*.module.(t|j)s",
-      "!**/*.guard.(t|j)s",
-      "!**/*.gateway.(t|j)s"
+      "!**/*.guard.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
