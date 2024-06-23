@@ -108,7 +108,15 @@ export class JobService {
       await this.jobRepository.exists(id);
 
     console.log('jobExists -> ', result);
-    return result == null;
+    return result != null;
+  }
+
+  async jobExistsInCompany(id: string, companyId: string): Promise<boolean> {
+    const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
+      await this.jobRepository.existsInCompany(id, companyId);
+
+    console.log('jobExists -> ', result);
+    return result != null;
   }
 
   update(id: number, updateJobDto: UpdateJobDto) {

@@ -30,6 +30,11 @@ export class EmployeeController {
     return this.employeeService.findAll();
   }
 
+  @Get('/all/:id')
+  findAllInCompany(@Param('id') id: string) {
+    return this.employeeService.findAllInCompany(id);
+  }
+
   @Get('id/:id')
   findOne(@Param('id') id: string) {
     return this.employeeService.findOne(id);

@@ -34,7 +34,7 @@ export class EmployeeService {
   ) {}
 
   async validateEmployee(employee: Employee | CreateEmployeeDto | UpdateEmployeeDto, companyId?: string) {
-    if (!companyId && !('companyId' in employee))
+    if (!companyId && !('companyId' in employee)) //Potentially not neccesarry
     {
       if (employee.roleId) {
         if (!(await this.roleService.roleExists(employee.roleId.toString()))) {
@@ -80,7 +80,7 @@ export class EmployeeService {
       }
 
       console.log('Company ID: ' + companyId);
-      
+
       if (employee.roleId) {
         if (!(await this.roleService.roleExistsInCompany(employee.roleId.toString(), companyId))) {
           throw new ConflictException('Role not found');
@@ -155,6 +155,16 @@ export class EmployeeService {
   async findAll() {
     try {
       return this.employeeModel.find().exec();
+    } catch (error) {
+      console.log(error);
+      throw new ServiceUnavailableException('Employees could not be retrieved');
+    }
+  }
+
+  async findAllInCompany(companyId: string) {
+    try {
+      const filter = companyId ? { companyId: companyId } : {};
+      return this.employeeModel.find(filter).exec();
     } catch (error) {
       console.log(error);
       throw new ServiceUnavailableException('Employees could not be retrieved');
