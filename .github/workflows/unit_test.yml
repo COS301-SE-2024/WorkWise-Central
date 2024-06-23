@@ -29,12 +29,6 @@ jobs:
         run: npm install && npm run test:cov
         working-directory: src/api-gateway/
 
-      - name: Filter coverage files
-        run: |
-          # Filter coverage files to include only .entity.ts files
-          find . -type f -name "*.entity.ts" > coverage-files.txt
-        working-directory: ${{ github.workspace }}
-
       - name: Upload filtered coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
