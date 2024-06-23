@@ -131,7 +131,9 @@ export class CompanyService {
 
     const updateUser = await this.userModel.findByIdAndUpdate(
       { _id: newId._id },
-      { $push: { joinedCompanies: currentCompanyId } },
+      {
+        $push: { joinedCompanies: currentCompanyId, employeeIds: newId._id },
+      },
     );
 
     console.log(resultOfUpdate);
