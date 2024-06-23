@@ -238,6 +238,7 @@ import axios from 'axios'
 
 const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
 import { defineComponent } from 'vue'
+import router from '@/router'
 
 export default defineComponent({
   name: 'RegisterCompanyModal ',
@@ -316,6 +317,8 @@ export default defineComponent({
         .then((res) => {
           console.log('Client created successfully')
           console.log(res)
+          alert('Client created successfully')
+          router.push('/client-desk-view')
         })
         .catch((res) => {
           console.log('Client creation failed')
