@@ -1,30 +1,29 @@
 import { Types } from 'mongoose';
-import { IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateEmployeeDto {
+export class CreateTeamDto {
   @IsMongoId()
-  @IsOptional()
-  @ApiProperty()
-  roleId: Types.ObjectId;
-
-  @IsMongoId()
-  @IsOptional()
-  @ApiProperty()
-  superiorId: Types.ObjectId;
-
   @IsNotEmpty()
-  @IsMongoId()
-  @ApiProperty()
-  userId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
   @ApiProperty()
   companyId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  teamName: string;
+
+  @IsArray()
+  @IsMongoId({ each: true })
+  @ApiProperty()
+  teamMembers: Types.ObjectId[];
+
+  @IsMongoId()
+  @IsOptional()
+  @ApiProperty()
+  teamLeaderId: Types.ObjectId;
 }
 
-export class createEmployeeResponseDto {
+export class createTeamResponseDto {
   response: { access_token: string; id: Types.ObjectId };
   constructor(message: { access_token: string; id: Types.ObjectId }) {
     this.response = message;

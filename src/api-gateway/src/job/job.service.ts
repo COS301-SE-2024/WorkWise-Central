@@ -2,6 +2,8 @@ import {
   Injectable,
   NotFoundException,
   ServiceUnavailableException,
+  forwardRef,
+  Inject,
 } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
@@ -21,8 +23,10 @@ export class JobService {
     @InjectModel(Job.name)
     private readonly jobModel: Model<Job>,
     private readonly jobRepository: JobRepository,
-    private readonly usersService: UsersService,
+    @Inject(forwardRef(() => UsersService))
+    private usersService: UsersService,
     private readonly companyService: CompanyService,
+    @Inject(forwardRef(() => EmployeeService))
     private readonly employeeService: EmployeeService,
     private readonly clientService: ClientService,
   ) {}
@@ -96,8 +100,16 @@ export class JobService {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
       await this.jobRepository.exists(id);
 
-    //console.log('jobExists -> ', result);
-    return result == null;
+    console.log('jobExists -> ', result);
+    return result != null;
+  }
+
+  async jobExistsInCompany(id: string, companyId: string): Promise<boolean> {
+    const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
+      await this.jobRepository.existsInCompany(id, companyId);
+
+    console.log('jobExists -> ', result);
+    return result != null;
   }
 
   async update(id: string | Types.ObjectId, updateJobDto: UpdateJobDto) {
