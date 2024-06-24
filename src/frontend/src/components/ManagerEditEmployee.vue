@@ -193,7 +193,7 @@ export default defineComponent({
           block
           @click="rolebtnclick"
           :disabled="!role_change"
-          >Button</v-btn
+          >Apply</v-btn
         >
       </v-col>
     </v-row>
