@@ -1,18 +1,34 @@
-// import Vue from 'vue'
-// import Vuex from 'vuex'
+// import { createApp } from 'vue'
+// import { createStore, StoreOptions } from 'vuex'
 
-// Vue.useAttrs(Vuex)
-// export default new Vuex.Store({
-//   state: {
-//     user: null,
-//     token: null
+// // Define the state type
+// interface State {
+//   count: number
+//   expanded: boolean
+// }
+
+// // Create a new store instance with typed State
+// const storeOptions: StoreOptions<State> = {
+//   state() {
+//     return {
+//       count: 0
+//     }
 //   },
 //   mutations: {
-//     setUser(state: any, user: any) {
-//       state.user = user
+//     increment(state: State) {
+//       state.count++
 //     },
-//     setToken(state: any, token: any) {
-//       state.token = token
+//     expand(value: boolean, state: State) {
+//       state.expanded = value
 //     }
 //   }
+// }
+
+// const store = createStore<State>(storeOptions)
+
+// const app = createApp({
+//   /* your root component */
 // })
+
+// // Install the store instance as a plugin
+// app.use(store)

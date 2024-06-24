@@ -19,12 +19,12 @@ it('shows the register company modal', () => {
   cy.contains('Company address')
 })
 
-it("click register company", () => {
-    const vuetify = createVuetify();
-    mount(RegisterCompany, {
-        global: {
-        plugins: [vuetify]
-        }
-    })
+it('click register company', () => {
+  const vuetify = createVuetify()
+  mount(RegisterCompany, {
+    global: {
+      plugins: [vuetify]
+    }
+  })
   cy.contains('CONTINUE').click()
-});
+})

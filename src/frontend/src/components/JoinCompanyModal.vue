@@ -2,13 +2,12 @@
   <v-dialog max-width="500" height="800">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-          base-color="red"
-          rounded="xl"
+        rounded="xl"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
-        color="white"
         text="JOIN COMPANY"
-        variant="tonal"
+        variant="elevated"
+        color="#5A82AF"
         v-bind="activatorProps"
       ></v-btn>
     </template>
@@ -68,7 +67,7 @@
           </v-col>
           <v-col cols="8" offset="2" align="center">
             <v-btn
-                color="#5A82AF"
+              color="#5A82AF"
               rounded="xl"
               boarder="xl"
               width="85%"
@@ -89,12 +88,10 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'RegisterCompanyModal',
 
-  props: [],
-
+  props: ['isdarkmode'],
   data: () => ({
     dialog: false,
     valid: false,
-    isdarkmode: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
@@ -109,17 +106,11 @@ export default defineComponent({
   }),
 
   methods: {
-    handlesubmission(){
-      alert("Added employee successfully")
+    handlesubmission() {
+      alert('Added employee successfully')
     }
   }
 })
 </script>
 
-<style scope>
-.hello
-{
-  color:white;
-  background-color: #5A82AF;
-}
-</style>
+<style></style>

@@ -1,4 +1,6 @@
 import {
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -6,14 +8,20 @@ import {
 } from '@nestjs/common';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Document, FlattenMaps, Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Client } from './entities/client.entity';
 import { CreateClientDto } from './dto/create-client.dto';
+import { ClientRepository } from './client.repository';
+import { ValidationResult } from '../auth/entities/validationResult.entity';
+import { CompanyService } from '../company/company.service';
 
 @Injectable()
 export class ClientService {
   constructor(
-    @InjectModel('client') private readonly clientModel: Model<Client>,
+    @InjectModel(Client.name) private readonly clientModel: Model<Client>,
+    private readonly clientRepository: ClientRepository,
+    @Inject(forwardRef(() => CompanyService))
+    private readonly companyService: CompanyService,
   ) {}
 
   async create(createClientDto: CreateClientDto) {
@@ -21,83 +29,85 @@ export class ClientService {
     const createdClient = new Client(createClientDto);
     const newClient = new this.clientModel(createdClient);
     const result = await newClient.save();
-
-    return {
-      message: `Client: "${result.details.firstName} ${result.details.surname}" has been created`,
-    };
+    console.log(result);
+    return `Client: "${result.details.name}" has been created`;
   }
 
-  async findAllClients() {
+  async getAllClients() {
     try {
-      return this.clientModel.find().exec();
+      return this.clientModel.find().lean().exec();
     } catch (error) {
       console.log(error);
       throw new ServiceUnavailableException('Clients could not be retrieved');
     }
   }
 
-  async findClientById(
+  async getClientById(
+    //TODO:Add role enforcement later
     identifier: string,
-  ): Promise<FlattenMaps<Client> & { _id: Types.ObjectId }> {
-    const result: FlattenMaps<Client> & { _id: Types.ObjectId } =
-      await this.clientModel
-        .findOne({
-          $and: [
-            { _id: identifier },
-            {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
+  ): Promise<FlattenMaps<Client>> {
+    const result: FlattenMaps<Client> =
+      await this.clientRepository.findClientById(identifier);
 
     if (result == null) {
       throw new NotFoundException('Client not found');
     }
-
     return result;
   }
 
-  async clientExists(id: string): Promise<boolean> {
-    const result: FlattenMaps<Client> & { _id: Types.ObjectId } =
-      await this.clientModel
-        .findOne({
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
+  async getByEmailOrName(companyId: Types.ObjectId, identifier: string) {
+    const result = await this.clientRepository.findByEmailOrName(
+      companyId,
+      identifier,
+    );
 
-    console.log('clientExists -> ', result);
-    return result == null;
+    if (result == null) {
+      throw new NotFoundException('Client not found');
+    }
+    console.log(result);
+    return result;
   }
 
-  update(id: number, updateClientDto: UpdateClientDto) {
-    console.log(updateClientDto);
-    return `This action updates a #${id} client`;
+  async clientExists(id: string | Types.ObjectId): Promise<boolean> {
+    return await this.clientRepository.exists(id);
+  }
+
+  async updateClient(id: Types.ObjectId, updateClientDto: UpdateClientDto) {
+    const inputValidated = await this.clientIsValid(updateClientDto);
+    if (!inputValidated.isValid) {
+      throw new NotFoundException(inputValidated.message);
+    }
+
+    const result = await this.clientRepository.update(id, updateClientDto);
+    console.log('updatedClient', result);
+    return result;
   }
 
   async softDelete(id: string): Promise<boolean> {
-    const result: Document<unknown, NonNullable<unknown>, Client> &
-      Client & { _id: Types.ObjectId } =
-      await this.clientModel.findOneAndUpdate(
-        {
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deleted_at: null }, { deleted_at: { $exists: false } }],
-            },
-          ],
-        },
-        { $set: { deleted_at: new Date() } },
-      );
+    const result = await this.clientRepository.delete(id);
 
     if (result == null) {
       throw new InternalServerErrorException('Internal server Error');
     }
     return true;
+  }
+
+  async clientIsValid(
+    client: Client | CreateClientDto | UpdateClientDto,
+  ): Promise<ValidationResult> {
+    if (client.details) {
+      if (client.details.companyId) {
+        const exists = await this.companyService.companyIdExists(
+          client.details.companyId,
+        );
+        if (!exists)
+          return new ValidationResult(
+            false,
+            `Invalid Company ID: ${client.details.companyId}`,
+          );
+      }
+    }
+
+    return new ValidationResult(true);
   }
 }

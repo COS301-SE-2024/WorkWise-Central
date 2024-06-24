@@ -2,7 +2,6 @@ import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
 import SplashScreen from '../components/SplashScreen.vue'
 
-
 it('shows the splash screen', () => {
   const vuetify = createVuetify()
   mount(SplashScreen, {
@@ -25,7 +24,7 @@ it('performs login', () => {
 
   cy.get('input[name="username"]').type('test')
   cy.get('input[name="password"]').type('test')
- // cy.contains('button', 'LOGIN').click() // Clicks the button containing the text 'Log in'
+  // cy.contains('button', 'LOGIN').click() // Clicks the button containing the text 'Log in'
 })
 
 it('performs register', () => {
@@ -39,17 +38,14 @@ it('performs register', () => {
   cy.get('input[type="email"]').type('test@test.com')
   cy.get('input[name="password"]').type('Test123#')
   cy.get('input[name="confirm_password"]').type('Test123#')
-
 })
 
-it('performs theme change',()=>{
-    const vuetify = createVuetify()
-    mount(SplashScreen, {
-        global: {
-        plugins: [vuetify]
-        }
-    })
-    cy.contains('button', 'Theme').click() // Clicks the button containing the text 'Change Theme'
-    
-   
+it('performs theme change', () => {
+  const vuetify = createVuetify()
+  mount(SplashScreen, {
+    global: {
+      plugins: [vuetify]
+    }
+  })
+  cy.contains('button', 'Theme').click() // Clicks the button containing the text 'Change Theme'
 })

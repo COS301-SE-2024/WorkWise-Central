@@ -1,91 +1,99 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 import { CreateClientDto } from '../dto/create-client.dto';
 
-export class address {
-  @ApiProperty()
+export class Address {
   @Prop({ type: String, required: true })
   street: string;
-  @ApiProperty()
   @Prop({ type: String, required: true })
   suburb: string;
-  @ApiProperty()
   @Prop({ type: String, required: true })
   city: string;
-  @ApiProperty()
   @Prop({ type: String, required: true })
   postalCode: string;
-  @ApiProperty()
-  @Prop({ type: String, required: true })
-  complex: string;
-  @ApiProperty()
-  @Prop({ type: String, required: true })
-  houseNumber: string;
+  @Prop({ type: String, required: false })
+  complex?: string;
+  @Prop({ type: String, required: false })
+  houseNumber?: string;
 }
 
-export class clientInfo {
-  @ApiProperty()
+export class ContactInfo {
   @Prop({ type: String, required: true })
   phoneNumber: string;
 
-  @ApiProperty()
-  @Prop({ type: String, required: true, lowercase: true })
+  @Prop({ type: String, unique: true, required: true, lowercase: true })
   email: string;
-
-  @ApiProperty()
-  @Prop({ type: address, required: false })
-  address: address;
 }
 
-export class details {
+export class ClientDetails {
   @ApiProperty()
-  @Prop({ required: true })
-  firstName: string;
+  @Prop({ type: String, required: false })
+  name?: string;
+
+  @Prop({ type: String, required: false, default: 'English' })
+  @ApiProperty()
+  preferredLanguage?: string;
+
+  @ApiHideProperty()
+  @Prop({ type: ContactInfo, required: false })
+  contactInfo: ContactInfo;
+
+  @ApiHideProperty()
+  @Prop({ type: Address, required: false })
+  address?: Address;
 
   @ApiProperty()
-  @Prop({ required: true })
-  surname: string;
+  @Prop({ type: String, required: false })
+  vatNumber?: string;
 
-  @Prop({ required: true })
   @ApiProperty()
-  clientInfo: clientInfo;
+  @Prop({ type: Types.ObjectId, required: false, ref: 'Company' })
+  companyId?: Types.ObjectId;
 
-  @Prop({ required: false })
   @ApiProperty()
-  preferred_Language: string;
+  @Prop({ type: String, required: false })
+  idNumber?: string;
+
+  @ApiProperty()
+  @Prop({ type: String, required: false })
+  type?: string;
 }
 
 @Schema()
 export class Client {
   constructor(createClientDto: CreateClientDto) {
-    this.details = new details();
-    this.details.firstName = createClientDto.firstName;
-    this.details.surname = createClientDto.surname;
-    if (createClientDto.preferred_Language !== undefined)
-      this.details.preferred_Language = createClientDto.preferred_Language;
-    this.details.clientInfo = {
-      phoneNumber: createClientDto.phoneNumber,
-      email: createClientDto.email,
-      address: createClientDto.address,
-    };
-    this.created_at = new Date();
+    if (createClientDto.details) this.details = createClientDto.details;
+    if (createClientDto.clientUsername)
+      this.clientUsername = createClientDto.clientUsername;
+    if (createClientDto.registrationNumber)
+      this.registrationNumber = createClientDto.registrationNumber;
+    this.createdAt = new Date();
   }
 
   @ApiProperty()
+  @Prop({ type: String, required: false })
+  registrationNumber?: string;
+
+  @ApiProperty()
+  @Prop({ type: String, required: false, default: 'none' })
+  clientUsername?: string;
+
+  @ApiProperty()
   @Prop({ required: true })
-  details: details;
+  details: ClientDetails;
 
   @ApiProperty()
   @Prop({ required: false, default: new Date() })
-  public created_at: Date;
+  public createdAt: Date;
 
   @ApiProperty()
   @Prop({ required: false })
-  public updated_at: Date;
+  public updatedAt: Date;
 
   @ApiProperty()
   @Prop({ required: false })
-  public deleted_at: Date;
+  public deletedAt: Date;
 }
 
 export const ClientSchema = SchemaFactory.createForClass(Client);

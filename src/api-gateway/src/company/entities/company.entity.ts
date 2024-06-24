@@ -1,46 +1,59 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import mongoose from 'mongoose';
+import { CreateCompanyDto } from '../dto/create-company.dto';
 
-@Schema()
-export class contactDetails {
-  @ApiProperty()
-  @Prop({ type: String, required: true })
+export class ContactDetails {
+  @Prop({ type: String, required: true, trim: true })
   phoneNumber: string;
 
-  @ApiProperty()
-  @Prop({ type: String, required: true, lowercase: true })
+  @Prop({ type: String, unique: true, required: true, lowercase: true })
   email: string;
 }
 
-export class address {
-  @ApiProperty()
-  @Prop({ type: String, required: false })
+export class Address {
+  @Prop({ type: String, required: true })
   street: string;
-
-  @ApiProperty()
-  @Prop({ type: String, required: false })
+  @Prop({ type: String, required: true })
   suburb: string;
-
-  @ApiProperty()
-  @Prop({ type: String, required: false })
+  @Prop({ type: String, required: true })
   city: string;
-
-  @ApiProperty()
-  @Prop({ type: String, required: false })
+  @Prop({ type: String, required: true })
   postalCode: string;
-
-  @ApiProperty()
-  @Prop({ type: String, required: false })
-  complex: string;
-
-  @ApiProperty()
-  @Prop({ type: String, required: false })
-  houseNumber: string;
 }
 
 @Schema()
 export class Company {
+  constructor(createCompanyDto: CreateCompanyDto) {
+    if (createCompanyDto.name) this.name = createCompanyDto.name;
+
+    if (createCompanyDto.registrationNumber)
+      this.registrationNumber = createCompanyDto.registrationNumber;
+
+    if (createCompanyDto.vatNumber) this.vatNumber = createCompanyDto.vatNumber;
+    if (createCompanyDto.type) this.type = createCompanyDto.type;
+    if (createCompanyDto.logo) this.logo = createCompanyDto.logo;
+
+    if (createCompanyDto.contactDetails)
+      this.contactDetails = createCompanyDto.contactDetails;
+
+    if (createCompanyDto.address) this.address = createCompanyDto.address;
+    if (createCompanyDto.employees) this.employees = createCompanyDto.employees;
+
+    if (createCompanyDto.inventoryItems)
+      this.inventoryItems = createCompanyDto.inventoryItems;
+
+    this.createdAt = new Date();
+  }
+
+  /*  mapFromDto(dto: CreateCompanyDto) {
+    for (const key in dto) {
+      if (Object.prototype.hasOwnProperty.call(dto, key)) {
+        this[key] = dto[key];
+      }
+    }
+  }*/
+
   @ApiProperty()
   @Prop({ required: true, unique: true })
   registrationNumber: string;
@@ -50,12 +63,12 @@ export class Company {
   vatNumber: string;
 
   @ApiProperty()
-  @Prop({ required: false })
+  @Prop({ required: true })
   name: string;
 
   @ApiProperty()
   @Prop({ required: false })
-  type: string;
+  type?: string;
 
   @ApiProperty()
   @Prop({
@@ -63,15 +76,16 @@ export class Company {
     default:
       'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
   })
-  logo: string;
+  logo?: string =
+    'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
 
   @ApiProperty()
   @Prop({ required: true })
-  contactDetails: contactDetails;
+  contactDetails: ContactDetails;
 
   @ApiProperty()
   @Prop({ required: true })
-  address: address;
+  address: Address;
 
   @ApiProperty()
   @Prop({ type: [mongoose.Types.ObjectId], required: true, default: [] })
@@ -81,17 +95,21 @@ export class Company {
   @Prop({ type: [mongoose.Types.ObjectId], required: true, default: [] })
   inventoryItems: mongoose.Types.ObjectId[];
 
+  @ApiProperty()
+  @Prop({ required: false, default: false })
+  private: boolean;
+
   @ApiHideProperty()
   @Prop({ required: false, default: new Date() })
-  public created_at: Date;
+  public createdAt: Date;
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public updated_at: Date;
+  public updatedAt: Date;
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public deleted_at: Date;
+  public deletedAt: Date;
 }
 
 export const CompanySchema = SchemaFactory.createForClass(Company);

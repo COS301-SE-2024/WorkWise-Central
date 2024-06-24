@@ -9,18 +9,25 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
-import { CreateCompanyDto } from './dto/create-company.dto';
+import {
+  CreateCompanyDto,
+  CreateCompanyResponseDto,
+  findCompanyResponseDto,
+} from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiBody,
   ApiInternalServerErrorResponse,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
-import mongoose, { Types } from 'mongoose';
+import mongoose, { FlattenMaps, Types } from 'mongoose';
+import { Company } from './entities/company.entity';
 
 @ApiTags('Company')
 @Controller('company')
@@ -45,8 +52,10 @@ export class CompanyController {
   })
   @ApiBody({ type: [CreateCompanyDto] })
   @Post('/create')
-  create(@Body() createCompanyDto: CreateCompanyDto) {
-    return this.companyService.create(createCompanyDto);
+  async create(
+    @Body() createCompanyDto: CreateCompanyDto,
+  ): Promise<{ data: CreateCompanyResponseDto }> {
+    return { data: await this.companyService.create(createCompanyDto) };
   }
 
   @ApiBody({ type: AddUserToCompanyDto })
@@ -56,7 +65,7 @@ export class CompanyController {
     this.validateObjectId(addUserDto.currentCompany);
 
     try {
-      return await this.companyService.addEmployee(addUserDto);
+      return { data: await this.companyService.addEmployee(addUserDto) };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
@@ -64,9 +73,24 @@ export class CompanyController {
 
   @UseGuards(AuthGuard) //Need to add authorization
   @Get('/all')
-  findAll() {
+  async findAll() {
     try {
-      return this.companyService.findAll();
+      return { data: await this.companyService.findAllCompanies() };
+    } catch (Error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  //@UseGuards(AuthGuard) //Need to add authorization
+  @Get('/company/employees/:cid')
+  async getAllInCompany(@Param('cid') cid: string) {
+    this.validateObjectId(cid);
+    const objId = new Types.ObjectId(cid);
+    try {
+      return { data: await this.companyService.getAllEmployees(objId) };
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
@@ -78,18 +102,45 @@ export class CompanyController {
   @Get('id/:id')
   findOne(@Param('id') id: string) {
     try {
-      return this.companyService.findById(id);
+      return { data: this.companyService.getCompanyById(id) };
     } catch (e) {
       throw new HttpException(e, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @ApiResponse({
+    type: findCompanyResponseDto,
+  })
+  @Get('search?')
+  async findByEmailOrName(
+    @Query('str') str: string,
+  ): Promise<{ data: (FlattenMaps<Company> & { _id: Types.ObjectId })[] }> {
+    try {
+      return {
+        data: await this.companyService.getByEmailOrName(str),
+      };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
   }
 
   @UseGuards(AuthGuard)
   @ApiBody({ type: [UpdateCompanyDto] })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+  ) {
     try {
-      return this.companyService.update(+id, updateCompanyDto);
+      const objectId = new Types.ObjectId(id);
+      const updatedCompany = this.companyService.update(
+        objectId,
+        updateCompanyDto,
+      );
+      return {
+        data: updatedCompany,
+      };
     } catch (e) {
       throw new HttpException(
         'internal server error',
@@ -100,9 +151,10 @@ export class CompanyController {
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     try {
-      return this.companyService.remove(+id);
+      await this.companyService.deleteCompany(id);
+      return { data: true };
     } catch (e) {
       throw new HttpException(
         'Internal Server Error',

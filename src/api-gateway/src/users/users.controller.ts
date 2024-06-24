@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Request,
   HttpException,
   HttpStatus,
   Param,
@@ -11,12 +12,18 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, createUserResponseDto } from './dto/create-user.dto';
+import {
+  CreateUserDto,
+  createUserResponseDto,
+  UserExistsResponseDto,
+} from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiBody,
   ApiInternalServerErrorResponse,
+  ApiOperation,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import mongoose, { Types } from 'mongoose';
@@ -46,7 +53,7 @@ export class UsersController {
     type: HttpException,
     status: HttpStatus.CONFLICT,
   })
-  @ApiBody({ type: [CreateUserDto] })
+  @ApiBody({ type: [CreateUserDto], description: 'Create new user' })
   @Post('/create')
   async create(
     @Body() createUserDto: CreateUserDto,
@@ -58,11 +65,16 @@ export class UsersController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Get all users' }) // Add summary here
+  @ApiResponse({
+    status: 200,
+    description: 'Users retrieved successfully',
+  })
   @Get('all')
   findAll() {
     try {
-      return this.usersService.findAllUsers();
+      return this.usersService.getAllUsers();
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
@@ -71,18 +83,19 @@ export class UsersController {
     }
   }
 
-  @Get('id/:identifier')
-  async findOne(@Param('identifier') identifier: string) {
+  @Get('id/:id')
+  async findOne(@Param('id') identifier: string) {
     this.validateObjectId(identifier);
     try {
-      return await this.usersService.findUserById(identifier);
+      return await this.usersService.getUserById(identifier);
     } catch (e) {
       console.log(e);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
   }
 
-  @Post('exists')
+  @ApiResponse({ type: [UserExistsResponseDto] })
+  @Post('/exists')
   async usernameAvailable(@Body('username') username: string) {
     try {
       return { response: !(await this.usersService.usernameExists(username)) };
@@ -94,12 +107,16 @@ export class UsersController {
 
   @UseGuards(AuthGuard)
   @ApiBody({ type: [UpdateUserDto] })
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    this.validateObjectId(id);
-
+  @Patch('/update')
+  async update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+    /*
+    console.log('Update');
+    console.log(req);
+    */
+    const id = req.user.sub; //This attribute is retrieved in the JWT
+    console.log(id);
     try {
-      return this.usersService.update(id, updateUserDto);
+      return await this.usersService.updateUser(id, updateUserDto);
     } catch (e) {
       throw new HttpException(
         'internal server error',

@@ -5,7 +5,7 @@
 ![WorkWise Central Logo](/res/img/logo/WorkWiseLogo.png)
 
 [![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)&ensp;
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/WorkWise-Central/unit_test.yml)&ensp;
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/WorkWise-Central/build.yml)&ensp;
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/COS301-SE-2024/WorkWise-Central)&ensp;
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/COS301-SE-2024/WorkWise-Central)&ensp;
 ![Uptime Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m796617525-da8bacd4b5ef756cceb20b0e?logo=GitHub)
@@ -48,6 +48,8 @@ By harnessing modern technology, WorkWise Central transforms business operations
 ## Demo Video
 
 [Watch our demo video - Boolean Hooligans Demo1](https://drive.google.com/drive/folders/1Cqqlc6tD-U0kXEPxzeeYuRkkoLvfFiU9)
+
+[Watch our demo video - Boolean Hooligans Demo2](https://drive.google.com/file/d/1z4bgTkJ-NSnSJUdBeRTijx4pgcQHyxTD/view?usp=drive_link)
 
 ## Functional Requirements (SRS)
 

@@ -9,15 +9,12 @@ import {
   HttpException,
   HttpStatus,
   UseGuards,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { JobService } from './job.service';
 import { CreateJobDto } from './dto/create-job.dto';
-import { UpdateJobDto } from './dto/update-job.dto';
-import {
-  ApiBody,
-  ApiInternalServerErrorResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { UpdateDtoResponse, UpdateJobDto } from './dto/update-job.dto';
+import { ApiInternalServerErrorResponse, ApiTags } from '@nestjs/swagger';
 import mongoose, { Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
 
@@ -47,21 +44,19 @@ export class JobController {
     type: HttpException,
     status: HttpStatus.CONFLICT,
   })
-  @ApiBody({ type: [CreateJobDto] })
   @Post('/create')
   async create(
     @Body() createJobDto: CreateJobDto,
   ): Promise<{ message: { id: Types.ObjectId; message: string } }> {
-    this.validateObjectId(createJobDto.clientId, 'client');
     this.validateObjectId(createJobDto.assignedBy, 'assignedBy');
-    this.validateObjectId(createJobDto.companyId, 'company');
+    this.validateObjectId(createJobDto.companyId, 'Company');
 
     if (
-      createJobDto.inventoryUsed != undefined &&
-      createJobDto.inventoryUsed.length > 0
+      createJobDto.recordedDetails.inventoryUsed != undefined &&
+      createJobDto.recordedDetails.inventoryUsed.length > 0
     )
-      for (const item of createJobDto.inventoryUsed) {
-        this.validateObjectId(item, 'inventoryUsed');
+      for (const item of createJobDto.recordedDetails.inventoryUsed) {
+        this.validateObjectId(item.inventoryItemId, 'inventoryUsed');
       }
 
     try {
@@ -95,9 +90,19 @@ export class JobController {
     }
   }
 
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.CONFLICT,
+    description: 'Update failed',
+  })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
-    return this.jobService.update(+id, updateJobDto);
+  async update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
+    try {
+      const success = await this.jobService.update(id, updateJobDto);
+      return new UpdateDtoResponse(success);
+    } catch (e) {
+      throw new InternalServerErrorException(`User could not be updated`);
+    }
   }
 
   @UseGuards(AuthGuard)

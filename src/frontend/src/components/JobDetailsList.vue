@@ -2,8 +2,8 @@
   <v-dialog max-width="500" height="800">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-          base-color="red"
-          rounded="xl"
+        base-color="red"
+        rounded="xl"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         color="white"
@@ -19,16 +19,15 @@
       height="800"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
-      <v-form ref="form" v-model="valid"  @submit="handleSubmission">
-
-      <v-col>
+      <v-form ref="form" v-model="valid" @submit="handleSubmission">
         <v-col>
-          <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-            Job Details
-          </h4></v-col
-        >
-        <v-spacer></v-spacer>
-        <v-col>
+          <v-col>
+            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
+              Job Details
+            </h4></v-col
+          >
+          <v-spacer></v-spacer>
+          <v-col>
             <v-col>
               <small
                 :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
@@ -85,21 +84,21 @@
               >
               </v-textarea>
             </v-col>
-              <v-col>
-                <small
-                    :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
-                    class="text-caption"
+            <v-col>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
+                class="text-caption"
                 >Notes</small
-                >
-                <v-textarea
-                    :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                    label="Note taking"
-                    rounded="xl"
-                    variant="solo"
-                    v-model="req_obj.details.notes"
-                    required
-                >
-                </v-textarea>
+              >
+              <v-textarea
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                label="Note taking"
+                rounded="xl"
+                variant="solo"
+                v-model="req_obj.details.notes"
+                required
+              >
+              </v-textarea>
             </v-col>
             <v-col align="center">
               <v-date-picker
@@ -114,95 +113,94 @@
               ></v-date-picker>
             </v-col>
 
-          <small
+            <small
               :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
               class="text-caption"
-          >Company address</small
-          >
-          <v-row>
-            <v-col
-            ><v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                density="compact"
-                color="grey-lighten-4"
-                label="Street"
-                rounded="xl"
-                v-model="req_obj.details.address.street"
-                variant="solo"
-                required
-            ></v-text-field
-            ></v-col>
-            <v-col
-            ><v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                density="compact"
-                color="grey-lighten-4"
-                label="Suburb"
-                rounded="xl"
-                v-model="req_obj.details.address.suburb"
-                variant="solo"
-                required
-            ></v-text-field
-            ></v-col>
-          </v-row>
-          <v-row>
-            <v-col
-            ><v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                density="compact"
-                color="grey-lighten-4"
-                label="City"
-                rounded="xl"
-                v-model="req_obj.details.address.city"
-                variant="solo"
-                required
-            ></v-text-field
-            ></v-col>
-            <v-col
-            ><v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                density="compact"
-                color="grey-lighten-4"
-                label="Zip Code"
-                rounded="xl"
-                v-model="req_obj.details.address.postalCode"
-                variant="solo"
-                required
-            ></v-text-field
-            ></v-col>
-          </v-row>
-          <v-row>
-            <v-col
-            ><v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                density="compact"
-                color="grey-lighten-4"
-                label="Complex"
-                rounded="xl"
-                v-model="req_obj.details.address.complex"
-                variant="solo"
-                required
-            ></v-text-field
-            ></v-col>
-            <v-col
-            ><v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                density="compact"
-                color="grey-lighten-4"
-                label="House number"
-                rounded="xl"
-                v-model="req_obj.details.address.houseNumber"
-                variant="solo"
-                required
-            ></v-text-field
-            ></v-col>
-          </v-row>
-        </v-col>
-
+              >Company address</small
+            >
+            <v-row>
+              <v-col
+                ><v-text-field
+                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  density="compact"
+                  color="grey-lighten-4"
+                  label="Street"
+                  rounded="xl"
+                  v-model="req_obj.details.address.street"
+                  variant="solo"
+                  required
+                ></v-text-field
+              ></v-col>
+              <v-col
+                ><v-text-field
+                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  density="compact"
+                  color="grey-lighten-4"
+                  label="Suburb"
+                  rounded="xl"
+                  v-model="req_obj.details.address.suburb"
+                  variant="solo"
+                  required
+                ></v-text-field
+              ></v-col>
+            </v-row>
+            <v-row>
+              <v-col
+                ><v-text-field
+                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  density="compact"
+                  color="grey-lighten-4"
+                  label="City"
+                  rounded="xl"
+                  v-model="req_obj.details.address.city"
+                  variant="solo"
+                  required
+                ></v-text-field
+              ></v-col>
+              <v-col
+                ><v-text-field
+                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  density="compact"
+                  color="grey-lighten-4"
+                  label="Zip Code"
+                  rounded="xl"
+                  v-model="req_obj.details.address.postalCode"
+                  variant="solo"
+                  required
+                ></v-text-field
+              ></v-col>
+            </v-row>
+            <v-row>
+              <v-col
+                ><v-text-field
+                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  density="compact"
+                  color="grey-lighten-4"
+                  label="Complex"
+                  rounded="xl"
+                  v-model="req_obj.details.address.complex"
+                  variant="solo"
+                  required
+                ></v-text-field
+              ></v-col>
+              <v-col
+                ><v-text-field
+                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  density="compact"
+                  color="grey-lighten-4"
+                  label="House number"
+                  rounded="xl"
+                  v-model="req_obj.details.address.houseNumber"
+                  variant="solo"
+                  required
+                ></v-text-field
+              ></v-col>
+            </v-row>
+          </v-col>
         </v-col>
         <v-col cols="8" offset="2" align="center">
           <v-btn
-              color="#5A82AF"
+            color="#5A82AF"
             rounded="xl"
             type="submit"
             boarder="xl"
@@ -235,16 +233,16 @@ export default defineComponent({
       modal_light_theme_color: '#FFFFFF',
 
       req_obj: {
-        clientId:'665b4cc2f3031b71eb6f2d0a',
-        assignedBy:sessionStorage['id'],
-        companyId:sessionStorage['currentCompany'],
+        clientId: '665b4cc2f3031b71eb6f2d0a',
+        assignedBy: sessionStorage['id'],
+        companyId: sessionStorage['currentCompany'],
         scheduledDateTime: '',
-        status:'Not Started',
+        status: 'Not Started',
         client_name: '',
-        details:{
-          heading:'',
-          description:'',
-          notes:'',
+        details: {
+          heading: '',
+          description: '',
+          notes: '',
           address: {
             street: '',
             suburb: '',
@@ -259,7 +257,7 @@ export default defineComponent({
   },
   methods: {
     handleSubmission() {
-      alert("Job Successfully added")
+      alert('Job Successfully added')
       // axios
       //     .post('http://localhost:3000/client/create', this.req_obj)
       //     .then((res) => {
@@ -273,9 +271,8 @@ export default defineComponent({
 })
 </script>
 <style scope>
-.hello
-{
-  color:white;
-  background-color: #5A82AF;
+.hello {
+  color: white;
+  background-color: #5a82af;
 }
 </style>
