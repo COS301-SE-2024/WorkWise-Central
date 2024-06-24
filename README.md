@@ -49,6 +49,8 @@ By harnessing modern technology, WorkWise Central transforms business operations
 
 [Watch our demo video - Boolean Hooligans Demo1](https://drive.google.com/drive/folders/1Cqqlc6tD-U0kXEPxzeeYuRkkoLvfFiU9)
 
+[Watch our demo video - Boolean Hooligans Demo2](https://drive.google.com/file/d/1z4bgTkJ-NSnSJUdBeRTijx4pgcQHyxTD/view?usp=drive_link)
+
 ## Functional Requirements (SRS)
 
 [Read the full Functional Requirements (SRS) document](https://work-wise-central-1.vercel.app/)
