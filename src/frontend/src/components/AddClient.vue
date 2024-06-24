@@ -316,6 +316,8 @@ export default defineComponent({
         .then((res) => {
           console.log('Client created successfully')
           console.log(res)
+          alert('Client created successfully')
+          this.$router.push('/client-desk-view')
         })
         .catch((res) => {
           console.log('Client creation failed')
