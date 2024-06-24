@@ -2,26 +2,26 @@
   <v-dialog v-model="teamDialog" max-width="500" height="auto">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-        rounded="md"
-        class="mb-2"
-        prepend-icon="mdi-account"
-        variant="elevated"
-        v-bind="activatorProps"
+          rounded="md"
+          class="mb-2"
+          prepend-icon="mdi-account"
+          variant="elevated"
+          v-bind="activatorProps"
       >
         Members
       </v-btn>
     </template>
     <v-sheet elevation="14" rounded="md" height="auto">
       <v-col cols="12"
-        ><v-col cols="12">
-          <v-card variant="">
-            <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
-              <v-icon left class="mr-2">mdi-account</v-icon>
-              <span class="title">Team Members</span>
-              <v-spacer></v-spacer>
-            </v-card-title>
-          </v-card>
-        </v-col>
+      ><v-col cols="12">
+        <v-card variant="">
+          <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+            <v-icon left class="mr-2">mdi-account</v-icon>
+            <span class="title">Team Members</span>
+            <v-spacer></v-spacer>
+          </v-card-title>
+        </v-card>
+      </v-col>
 
         <v-spacer></v-spacer>
         <v-col v-if="sections.cardMembers && Object.keys(sections.cardMembers).length > 0">
@@ -39,10 +39,10 @@
                   </v-col>
                   <v-col cols="2">
                     <v-btn
-                      icon
-                      @click.stop="moveToTeamMembers(member)"
-                      variant="plain"
-                      color="black"
+                        icon
+                        @click.stop="moveToTeamMembers(member)"
+                        variant="plain"
+                        color="black"
                     >
                       <v-icon>mdi-close</v-icon>
                     </v-btn>
@@ -60,19 +60,19 @@
           <v-row>
             <v-col cols="12" v-for="member in sections.teamMembers" :key="member.id">
               <v-row align="center" justify="space-between"
-                ><v-col>
-                  <v-card
+              ><v-col>
+                <v-card
                     @click="moveToCardMembers(member)"
                     rounded="md"
                     variant="plain"
                     color="red"
                     width="90%"
-                  >
-                    <v-card-title>{{ member.name }}</v-card-title>
-                    <v-card-subtitle>{{ member.role }}</v-card-subtitle>
-                    <v-avatar>
-                      <v-img :src="member.avatar"></v-img>
-                    </v-avatar> </v-card></v-col
+                >
+                  <v-card-title>{{ member.name }}</v-card-title>
+                  <v-card-subtitle>{{ member.role }}</v-card-subtitle>
+                  <v-avatar>
+                    <v-img :src="member.avatar"></v-img>
+                  </v-avatar> </v-card></v-col
               ></v-row>
               <v-divider></v-divider>
               <v-spacer></v-spacer>

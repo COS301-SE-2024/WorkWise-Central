@@ -73,7 +73,13 @@
                     <!-- Actions slot -->
                     <template v-slot:[`item.actions`]="{ item }">
                       <v-col cols="12">
-                        <v-btn icon size="small" @click="EditAccountClick" color="#5A82AF">
+                        <v-btn
+                          icon
+                          size="small"
+                          @click="EditAccountClick"
+                          color="#5A82AF"
+                          :id="item.id"
+                        >
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
                       </v-col>
@@ -81,8 +87,9 @@
                         <v-btn
                           icon
                           size="small"
-                          @click="deleteClient(item), (deleteDialog = true)"
+                          @click="removeClient"
                           color="#5A82AF"
+                          :id="item.id"
                         >
                           <v-icon>mdi-delete</v-icon>
                         </v-btn>
@@ -101,7 +108,7 @@
   </v-app>
 </template>
 
-<script>
+<script lang="js">
 import DeleteClient from './DeleteClient.vue'
 import AddEmployee from './AddEmployee.vue'
 
@@ -157,8 +164,10 @@ export default {
     search: '',
     expanded: [], // This will hold the currently expanded item
     clients: [],
+    clientDetails2: [],
     clientDetails: [
       {
+        id: 59,
         firstName: 'Michael',
         surname: 'Brown',
         clientInfo: {
@@ -175,6 +184,7 @@ export default {
         }
       },
       {
+        id: 87,
         firstName: 'Emily',
         surname: 'Clark',
         clientInfo: {
@@ -192,6 +202,7 @@ export default {
         preferred_Language: 'Italian'
       },
       {
+        id: 63,
         firstName: 'David',
         surname: 'White',
         clientInfo: {
@@ -210,6 +221,7 @@ export default {
         role: 'Data Analyst'
       },
       {
+        id: 34,
         firstName: 'Laura',
         surname: 'Davis',
         clientInfo: {
@@ -228,6 +240,7 @@ export default {
         role: 'HR Manager'
       },
       {
+        id: 41,
         firstName: 'Sarah',
         surname: 'Miller',
         clientInfo: {
@@ -246,6 +259,7 @@ export default {
         role: 'Marketing Specialist'
       },
       {
+        id: 12,
         firstName: 'James',
         surname: 'Jones',
         clientInfo: {
@@ -264,6 +278,7 @@ export default {
         role: 'Finance Manager'
       },
       {
+        id: 441,
         firstName: 'Amelia',
         surname: 'Taylor',
         clientInfo: {
@@ -301,7 +316,9 @@ export default {
     this.getClients()
   },
   methods: {
-    EditAccountClick() {
+    EditAccountClick(e) {
+      console.log(e.currentTarget.id)
+      localStorage['edit_roles_id'] = e.currentTarget.id
       router.push('/manager-edit-employee')
     },
     onProfileClick() {
@@ -321,6 +338,17 @@ export default {
       this.selectedItem = item
       console.log('Deleting client')
     },
+    removeClient(e) {
+      let id = e.currentTarget.id
+
+      console.log(id)
+      for (let i = 0; i < this.clientDetails.length; i++) {
+        if (this.clientDetails[i].id === Number(id)) {
+          this.clientDetails.splice(i, 1)
+        }
+      }
+      router.push('/manager-employees-t')
+    },
     openAddClient() {
       this.clientDialog = true
     },
@@ -335,16 +363,29 @@ export default {
         }
       }
       axios
-        .get('http://localhost:3000/client/all', config)
+        .get('http://localhost:3000/employee/all', config)
         .then((response) => {
           console.log(response.data)
-          this.clients = response.data.data
-          for (let i = 0; i < this.clients.length; i++) {
-            this.clientDetails[i] = this.clients[i].details
+          this.clients = response.data
+          for (let i = 0; i < response.data.length; i++) {
+            // console.log(this.clients[i].userId)
+            axios
+              .get(`http://localhost:3000/users/id/${this.clients[i].userId}`, config)
+              .then((res) => {
+                // console.log(res.data.personalInfo)
+                let eish = res.data.personalInfo
+                eish.id = res.data._id
+                this.clientDetails2.push(eish)
+              })
+              .catch((error) => {
+                console.log('Failed to fetch users:', error)
+              })
           }
+          console.log('hello')
+          console.log(this.clientDetails2)
         })
         .catch((error) => {
-          console.error('Failed to fetch clients:', error)
+          console.log('Failed to fetch clients:', error)
         })
     },
     toggleDarkMode() {

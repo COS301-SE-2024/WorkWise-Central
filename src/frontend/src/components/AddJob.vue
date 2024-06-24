@@ -8,7 +8,7 @@
         variant="elevated"
         color="#5A82AF"
         v-bind="activatorProps"
-        height="60px"
+        rounded="xl"
       ></v-btn>
     </template>
     <v-sheet
@@ -59,22 +59,7 @@
                 rounded="xl"
                 variant="solo"
                 v-model="req_obj.client_name"
-                :items="[
-                  'Josh Smith',
-                  'Taylor Williams',
-                  'Tom Hanks',
-                  'Jennifer Lawrence',
-                  'Brad Pitt',
-                  'Scarlett Johansson',
-                  'Leonardo DiCaprio',
-                  'Emma Stone',
-                  'Johnny Depp',
-                  'Angelina Jolie',
-                  'Robert Downey Jr.',
-                  'Penélope Cruz',
-                  'Chadwick Boseman',
-                  'Kristen Bell'
-                ]"
+                :items="clientsArray"
                 required
               ></v-autocomplete>
 
@@ -112,8 +97,8 @@
                 placeholder="Enter any additional comments here"
                 rounded="xl"
                 variant="solo"
-                v-model="req_obj.comments"
-                @update:focused="commentUpdate"
+                v-model="comment"
+                @input="commentUpdate"
                 required
               >
               </v-textarea>
@@ -276,6 +261,7 @@ export default defineComponent({
         (v: string) =>
           /^[A-Za-z\s]+$/.test(v) || 'Job title must be alphabetic characters and spaces only'
       ],
+      clientsArray: [] as string[],
       time: '',
       startDate: null,
       endDate: null,
@@ -288,7 +274,6 @@ export default defineComponent({
         details: {
           heading: '',
           description: '',
-          notes: '',
           address: {
             street: '',
             suburb: '',
@@ -300,11 +285,16 @@ export default defineComponent({
           startDate: '',
           endDate: ''
         },
+        recordedDetails: {
+          imagesTaken: [],
+          inventoryUsed: []
+        },
         clientFeedback: {
           jobRating: 0,
           customerServiceRating: 0,
           comments: ''
         },
+        taskList: [],
         comments: [] as CommentType[]
       }
     }
@@ -312,11 +302,12 @@ export default defineComponent({
   methods: {
     commentUpdate() {
       let comment = {
-        employeeId: sessionStorage['Id'],
+        employeeId: sessionStorage['id'],
         comment: this.comment,
         date: toIsoString(new Date())
       }
-      this.req_obj.comments.push(comment)
+      console.log(this.comment)
+      this.req_obj.comments[0] = comment
     },
     handleSubmission() {
       if (this.startDate === null && this.endDate === null) {
@@ -344,7 +335,30 @@ export default defineComponent({
         console.log(this.req_obj.details.startDate)
         console.log(this.req_obj.details.endDate)
       }
+    },
+    loadClients() {
+      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      axios
+        .get('http://localhost:3000/client/all', config)
+        .then((res) => {
+          console.log(res)
+
+          res.data.data
+          for (let i = 0; i < res.data.data.length; i++) {
+            this.clientsArray.push(
+              res.data.data[i].details.firstName && res.data.data[i].details.surname
+                ? res.data.data[i].details.firstName + ' ' + res.data.data[i].details.surname
+                : res.data.data[i].details.name ?? 'Unknown Name'
+            )
+          }
+        })
+        .catch((res) => {
+          console.log(res)
+        })
     }
+  },
+  mounted: function () {
+    this.loadClients()
   }
 })
 
