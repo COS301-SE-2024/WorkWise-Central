@@ -297,7 +297,10 @@ const selectedClient = ref(null);
 const clientChips = ref([]);
 const clients = ref([]);
 const selectedClientName = ref(null);
-const clientNames = ref([])
+const clientNames = ref([]);
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const openClientDialogAndFetchClients = async () => {
   clientDialog.value = true;
@@ -359,15 +362,6 @@ const selectedMemberChips = ref([])
 const checklistChips = ref([])
 const status = ref(null)
 
-// const dateChips = ref([])
-// const formatDate = (date) => {
-//   if (!date) return ''
-//   const d = new Date(date)
-//   const yyyy = d.getFullYear()
-//   const mm = String(d.getMonth() + 1).padStart(2, '0')
-//   const dd = String(d.getDate()).padStart(2, '0')
-//   return ${yyyy}-${mm}-${dd}
-// };
 //Define props
 const props = defineProps({
   job_ID: String
@@ -524,10 +518,30 @@ const descriptionRows = computed(() => {
 });
 
 
-const jobTitle = ref('Job Heading')
+const jobTitle = ref('Tiling Siphele Bob\'s bathroom')
 const jobComment = ref('')
 
+const saveJob = () => {
+  // Perform save operation if needed
 
+  // For demonstration purposes, simulate a successful save
+  // Replace this with actual save logic
+  // For example:
+  // saveJobToBackend();
+
+  // Show alert indicating successful save
+  window.alert('Job saved successfully!');
+
+  // Navigate to /jobAssignmentView
+  router.push('/jobAssignmentView');
+};
+
+const cancelJob = () => {
+  // Perform cancel operation if needed
+
+  // Navigate to /jobAssignmentView without any alert
+  router.push('/jobAssignmentView');
+};
 </script>
 
 <style scoped>
