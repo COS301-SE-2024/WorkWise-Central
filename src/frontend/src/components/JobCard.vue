@@ -17,6 +17,7 @@
             :rows="descriptionRows"
             outlined
             auto-grow
+
         ></v-textarea>
       </div>
       <div>
@@ -27,6 +28,7 @@
           </v-col>
         </v-row>
         <v-textarea
+
             label="Add Comment"
             v-model="jobComment"
             rows="2"
@@ -45,21 +47,26 @@
               outlined
               @click:close="removeClient(chip, index)"
               close
+
           >
-            {{ chip.name }}
+            {{ chip.name }} ({{ (chip.size / 1024).toFixed(2) }} KB)
           </v-chip>
         </div>
+
         F
       </div>
       <div v-if="selectedMemberChips.length">
         <h4 class="flex-grow-1">Team Members Selected:</h4>
         <v-chip
             v-for="(chip, index) in selectedMemberChips"
+
             :key="index"
             class="ma-2"
             color="primary"
             outlined
+            @click:close="removeFile(chip, index)"
             close
+
         >
           {{ chip.name }}
         </v-chip>
@@ -92,11 +99,13 @@
               outlined
               @click:close="removeFile(chip, index)"
               close
+
           >
             {{ chip.name }} ({{ (chip.size / 1024).toFixed(2) }} KB)
           </v-chip>
         </div>
       </div>
+
       <div v-if="dateChips.length">
         <h4 class="flex-grow-1"> Job Dates:</h4>
         <v-chip
@@ -111,11 +120,13 @@
           {{ chip.type }}: {{ formatDate(chip.date) }}
         </v-chip>
       </div>
+
       <v-card-actions class="d-flex flex-column">
         <v-btn class="mb-2" color="blue darken-1" @click="saveJob">Save</v-btn>
         <v-btn class="mb-4" color="blue darken-1" @click="cancelJob">Cancel</v-btn>
       </v-card-actions>
     </v-card>
+
 
 
     <v-card flat class="pa-4" max-width="300">
@@ -131,6 +142,7 @@
           <v-icon left>mdi-account-switch</v-icon>
           Change Client
         </v-btn>
+
         <v-dialog v-model="clientDialog" max-width="600px">
           <v-card>
             <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
@@ -141,12 +153,14 @@
               <div class="text-caption pa-3">Select a client</div>
 
               <v-autocomplete
+
                   v-model="selectedClientName"
                   hint="Click the field to select a client"
                   :items="clientNames"
                   label="Select Client"
                   prepend-icon="mdi-account"
                   persistent-hint
+
               >
               </v-autocomplete>
             </v-card-text>
@@ -154,6 +168,7 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="saveClient">Save</v-btn>
+
               <v-btn color="blue darken-1" text @click="clientDialog=false">Cancel</v-btn>
             </v-card-actions>
           </v-card>
@@ -175,6 +190,7 @@
             </v-card-title>
             <v-card-text>
               <v-file-input
+
                   v-model="files"
                   :rules="rules"
                   accept="image/png, image/jpeg, image/bmp"
@@ -191,6 +207,7 @@
                         size="small"
                         label
                     >
+
                       {{ fileName }}
                     </v-chip>
                   </template>
@@ -204,10 +221,12 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+
         <v-btn class="mb-2" outlined @click="dueDateDialog = true">
           <v-icon left>mdi-calendar-clock</v-icon>
           Due Date
         </v-btn>
+
         <v-dialog v-model="dueDateDialog" max-width="600px">
           <v-card>
             <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
@@ -218,9 +237,11 @@
               <v-container>
                 <v-row justify="space-around">
                   <v-date-picker
+
                       v-model="currentDate"
                       color="primary"
                       @update:modelValue="updateDates"
+
                   ></v-date-picker>
                 </v-row>
                 <v-row v-if="errorMessage" class="mt-4">
@@ -231,6 +252,7 @@
                 <v-row class="mt-4" align="center">
                   <v-col cols="12" md="6">
                     <v-row>
+
                       <v-checkbox
                           v-model="isStartDatePicked"
                           @click="toggleStartDate"
@@ -239,11 +261,13 @@
                           v-model="formattedStartDate"
                           label="Start Date"
                           readonly
+
                       ></v-text-field>
                     </v-row>
                   </v-col>
                   <v-col cols="12" md="6">
                     <v-row>
+
                       <v-checkbox
                           v-model="isEndDatePicked"
                           @click="toggleEndDate"
@@ -252,6 +276,7 @@
                           v-model="formattedEndDate"
                           label="End Date"
                           readonly
+
                       ></v-text-field>
                     </v-row>
                   </v-col>
@@ -259,9 +284,11 @@
               </v-container>
             </v-card-text>
             <v-card-actions>
+
               <v-btn color="blue darken-1"
                      text @click="saveDate">Save
               </v-btn>
+
               <v-btn color="blue darken-1" text @click="removeDates">Remove</v-btn>
               <v-btn color="blue darken-1" text @click="dueDateDialog = false">Cancel</v-btn>
             </v-card-actions>
@@ -362,6 +389,7 @@ const selectedMemberChips = ref([])
 const checklistChips = ref([])
 const status = ref(null)
 
+
 //Define props
 const props = defineProps({
   job_ID: String
@@ -454,12 +482,15 @@ const toggleStartDate = () => {
 };
 
 const toggleEndDate = () => {
+
   isEndDatePicked.value = !isEndDatePicked.value;
   endDate.value = null;
 };
 
+
 const dateChips = ref([]);
 const formatDate = (date) => {
+
   if (!date) return '';
   const d = new Date(date);
   const yyyy = d.getFullYear();
@@ -470,6 +501,7 @@ const formatDate = (date) => {
 
 const formattedStartDate = computed(() => formatDate(startDate.value));
 const formattedEndDate = computed(() => formatDate(endDate.value));
+
 
 const saveDate = () => {
   dueDateDialog.value = false;
