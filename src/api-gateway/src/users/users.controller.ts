@@ -22,11 +22,14 @@ import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiBody,
   ApiInternalServerErrorResponse,
+  ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import mongoose, { Types } from 'mongoose';
+import { UserApiObject } from './entities/user.entity';
 
 const className = 'User';
 
@@ -46,6 +49,7 @@ export class UsersController {
     return true;
   }
 
+  @ApiOperation({ summary: 'Refer to the Documentation' })
   @Get()
   lookAtDocumentation() {
     return { message: 'Refer to /documentation for details on the API' };
@@ -62,7 +66,10 @@ export class UsersController {
   })
   @ApiBody({ type: [CreateUserDto] })
   @ApiResponse({
-    description: `description goes here`,
+    status: 201,
+    type: createUserResponseDto,
+    description: `The access token and ${className}'s Id used for querying. 
+    currentCompany Will also be added soon*`,
   })
   @Post('/create')
   async create(
@@ -76,15 +83,18 @@ export class UsersController {
   }
 
   //@UseGuards(AuthGuard)
-  @ApiOperation({ summary: `Get all ${className}s` }) // Add summary here
-  @ApiResponse({
-    status: 200,
-    description: `The mongodb ${className} objects in an array, with _id attribute included`,
+  @ApiOperation({
+    summary: `Get all ${className}s`,
+  })
+  @ApiOkResponse({
+    isArray: true,
+    type: UserApiObject,
+    description: `The mongodb object of the ${className}, with an _id attribute`,
   })
   @Get('all')
-  findAll() {
+  async findAll() {
     try {
-      return this.usersService.getAllUsers();
+      return await this.usersService.getAllUsers();
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
@@ -94,8 +104,13 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: `Find a specific ${className}` })
-  @ApiResponse({
+  @ApiOkResponse({
+    type: UserApiObject,
     description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className}`,
   })
   @Get('id/:id')
   async findOne(@Param('id') identifier: string) {
@@ -109,9 +124,9 @@ export class UsersController {
   }
 
   @ApiOperation({
-    summary: `Returns Boolean showing whether a ${className} exists or not`,
+    summary: `${className} exists or not`,
   })
-  @ApiResponse({
+  @ApiOkResponse({
     type: [UserExistsResponseDto],
     description: 'Response is a Boolean value',
   })
@@ -128,10 +143,13 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary: `Change the attributes of a ${className}`,
-    description: `You may send the entire ${className} object that was sent to you, in your request body`,
+    description: `
+    You may send the entire ${className} object that was sent to you, in your request body.\r\n
+    You may also send a singular attribute `,
     security: [],
   })
-  @ApiResponse({
+  @ApiOkResponse({
+    type: UserApiObject,
     description: `The updated ${className} object`,
   })
   @ApiBody({ type: [UpdateUserDto] })
@@ -156,15 +174,18 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary: `Delete a ${className}`,
-    description: `You send the ${className} ObjectId, and then they get deleted if the id is valid. 
+    description: `You send the ${className} ObjectId, and then they get deleted if the id is valid.\n 
     There will be rules on deletion later.`,
     security: [],
   })
-  @ApiResponse({
+  @ApiOkResponse({
     description: `A boolean value indicating whether or not the deletion was a success`,
   })
-  @ApiBody({ type: [UpdateUserDto] })
-  @Delete()
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className}`,
+  })
+  @Delete('/delete/:id')
   remove(@Param('id') id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
