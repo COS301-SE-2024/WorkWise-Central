@@ -152,8 +152,8 @@ export class CreateUserDto {
 
 export class createUserResponseDto {
   response: { access_token: string; id: Types.ObjectId };
-  constructor(message: { access_token: string; id: Types.ObjectId }) {
-    this.response = message;
+  constructor(response: { access_token: string; id: Types.ObjectId }) {
+    this.response = response;
   }
 }
 

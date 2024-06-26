@@ -28,6 +28,8 @@ import {
 } from '@nestjs/swagger';
 import mongoose, { Types } from 'mongoose';
 
+const className = 'User';
+
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
@@ -53,7 +55,15 @@ export class UsersController {
     type: HttpException,
     status: HttpStatus.CONFLICT,
   })
-  @ApiBody({ type: [CreateUserDto], description: 'Create new user' })
+  @ApiOperation({
+    summary: `Create a new ${className}`,
+    description: 'Further details',
+    security: [],
+  })
+  @ApiBody({ type: [CreateUserDto] })
+  @ApiResponse({
+    description: `description goes here`,
+  })
   @Post('/create')
   async create(
     @Body() createUserDto: CreateUserDto,
@@ -66,10 +76,10 @@ export class UsersController {
   }
 
   //@UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Get all users' }) // Add summary here
+  @ApiOperation({ summary: `Get all ${className}s` }) // Add summary here
   @ApiResponse({
     status: 200,
-    description: 'Users retrieved successfully',
+    description: `The mongodb ${className} objects in an array, with _id attribute included`,
   })
   @Get('all')
   findAll() {
@@ -83,6 +93,10 @@ export class UsersController {
     }
   }
 
+  @ApiOperation({ summary: `Find a specific ${className}` })
+  @ApiResponse({
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
   @Get('id/:id')
   async findOne(@Param('id') identifier: string) {
     this.validateObjectId(identifier);
@@ -94,7 +108,13 @@ export class UsersController {
     }
   }
 
-  @ApiResponse({ type: [UserExistsResponseDto] })
+  @ApiOperation({
+    summary: `Returns Boolean showing whether a ${className} exists or not`,
+  })
+  @ApiResponse({
+    type: [UserExistsResponseDto],
+    description: 'Response is a Boolean value',
+  })
   @Post('/exists')
   async usernameAvailable(@Body('username') username: string) {
     try {
@@ -106,6 +126,14 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Change the attributes of a ${className}`,
+    description: `You may send the entire ${className} object that was sent to you, in your request body`,
+    security: [],
+  })
+  @ApiResponse({
+    description: `The updated ${className} object`,
+  })
   @ApiBody({ type: [UpdateUserDto] })
   @Patch('/update')
   async update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
@@ -126,6 +154,16 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Delete a ${className}`,
+    description: `You send the ${className} ObjectId, and then they get deleted if the id is valid. 
+    There will be rules on deletion later.`,
+    security: [],
+  })
+  @ApiResponse({
+    description: `A boolean value indicating whether or not the deletion was a success`,
+  })
+  @ApiBody({ type: [UpdateUserDto] })
   @Delete()
   remove(@Param('id') id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
