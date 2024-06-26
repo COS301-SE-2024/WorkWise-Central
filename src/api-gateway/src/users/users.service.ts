@@ -43,7 +43,10 @@ export class UsersService {
     }
 
     const newUserObj = new User(createUserDto);
+    console.log('newUserobj', newUserObj);
     const result = await this.userRepository.save(newUserObj);
+    console.log('result', result);
+
     await this.createUserConfirmation(newUserObj); //sends email
 
     const jwt: { access_token: string; id: Types.ObjectId } =
@@ -71,7 +74,9 @@ export class UsersService {
     return this.userRepository.verifyUser(email);
   }
 
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<
+    (FlattenMaps<User> & { _id: Types.ObjectId })[]
+  > {
     return this.userRepository.findAll();
   }
 
