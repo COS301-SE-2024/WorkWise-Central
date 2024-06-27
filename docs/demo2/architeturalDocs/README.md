@@ -6,7 +6,8 @@ The primary purpose of this documentation is to provide a clear and concise desc
 
 ## System overview
 Our system consists of a frontend client, an API-gateway, and a MongoDB database. The system is designed to be a Progressive Web Application (PWA) with extensibility in mind.
-## Design Strategy
+
+<!-- ## Design Strategy
 The architectural design strategy for this software engineering project is primarily based on **elicitation from non-functional requirements**. These requirements were established through communication with the client and within our team.
 
-The strategy involves identifying the key quality requirements for the system, and designing to meet those requirements. It ensures that the system will be highly usable, secure and reliable.
+The strategy involves identifying the key quality requirements for the system, and designing to meet those requirements. It ensures that the system will be highly usable, secure and reliable. -->

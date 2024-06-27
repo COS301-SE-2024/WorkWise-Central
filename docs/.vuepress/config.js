@@ -46,6 +46,7 @@ export default defineUserConfig({
         },
         {
           text: 'Design Documentation',
+          link: '/demo1/designDocs/',
           children: [
             { text: 'Wireframes', link: '/demo1/designDocs/wireframes.md' },
             { text: 'Class diagrams', link: '/demo1/designDocs/classDiagrams.md' },
@@ -53,6 +54,7 @@ export default defineUserConfig({
         },
         {
           text: 'Business Documentation',
+          link: '/demo1/businessDocs/',
           children: [
             { text: 'User characteristics', link: '/demo1/businessDocs/userCharacteristics.md' },
             { text: 'User stories', link: '/demo1/businessDocs/userStories.md' },
@@ -64,6 +66,7 @@ export default defineUserConfig({
         },
         {
           text: 'Architectural Documentation',
+          link: '/demo1/architeturalDocs/',
           children: [
             { text: 'Quality Requirements', link: '/demo1/architeturalDocs/qualityRequirements.md' },
             { text: 'Architectural Patterns and Design Patterns', link: '/demo1/architeturalDocs/architecturalPatterns.md' },
@@ -73,6 +76,7 @@ export default defineUserConfig({
         },
         {
           text: 'Database Documentation',
+          link: '/demo1/databaseDocs/',
           children: [
             { text: 'Database functional requirements', link: '/demo1/databaseDocs/dbFunctionalRequirements.md' },
             { text: 'Database non-functional requirements', link: '/demo1/databaseDocs/dbNonFunctionalRequirements.md' },
@@ -84,6 +88,7 @@ export default defineUserConfig({
         },
         {
           text: 'DevOps',
+          link: '/demo1/devOps/',
           children: [
             { text: 'Git originisation and management', link: '/demo1/devOps/gitOrgMan.md' },
             { text: 'Branching Strategy', link: '/demo1/devOps/branching.md' },
@@ -98,6 +103,7 @@ export default defineUserConfig({
         },
         {
           text: 'Design Documentation',
+          link: '/demo2/designDocs/',
           children: [
             { text: 'Wireframes', link: '/demo2/designDocs/wireframes.md' },
             { text: 'Class diagrams', link: '/demo2/designDocs/classDiagrams.md' },
@@ -105,6 +111,7 @@ export default defineUserConfig({
         },
         {
           text: 'Business Documentation',
+          link: '/demo2/businessDocs/',
           children: [
             { text: 'User characteristics', link: '/demo2/businessDocs/userCharacteristics.md' },
             { text: 'User stories', link: '/demo2/businessDocs/userStories.md' },
@@ -117,16 +124,19 @@ export default defineUserConfig({
         },
         {
           text: 'Architectural Documentation',
+          link: '/demo2/architeturalDocs/',
           children: [
-            { text: 'Quality Requirements', link: '/demo2/architeturalDocs/qualityRequirements.md' },
-            { text: 'Architectural Patterns', link: '/demo2/architeturalDocs/architecturalPatterns.md' },
-            { text: 'Design Patterns', link: '/demo2/architeturalDocs/designPatterns.md' },
-            { text: 'Constraints', link: '/demo2/architeturalDocs/constraints.md' },
-            { text: 'Technology Requirements', link: '/demo2/architeturalDocs/techSpec.md' },
+            { text: 'Architectural Design Strategy', link: '/demo2/architeturalDocs/designStrategy.md' },
+            { text: 'Architectural Styles', link: '/demo2/architeturalDocs/styles.md' },
+            { text: 'Architectural Quality Requirements', link: '/demo2/architeturalDocs/qualityRequirements.md' },
+            { text: 'Architectural Design & Patterns', link: '/demo2/architeturalDocs/architecturalDesignPattern.md' },
+            { text: 'Architectural Constraints', link: '/demo2/architeturalDocs/constraints.md' },
+            { text: 'Technology Choices', link: '/demo2/architeturalDocs/techSpec.md' },
           ],
         },
         {
           text: 'Database Documentation',
+          link: '/demo2/databaseDocs/',
           children: [
             { text: 'Database functional requirements', link: '/demo2/databaseDocs/dbFunctionalRequirements.md' },
             { text: 'Database non-functional requirements', link: '/demo2/databaseDocs/dbNonFunctionalRequirements.md' },
@@ -138,6 +148,7 @@ export default defineUserConfig({
         },
         {
           text: 'DevOps',
+          link: '/demo2/devOps/',
           children: [
             { text: 'Coding Standards', link: '/demo2/devOps/codingStandards.md' },
             { text: 'Git originisation and management', link: '/demo2/devOps/gitOrgMan.md' },
