@@ -20,12 +20,23 @@ import { UpdateClientDto } from './dto/update-client.dto';
 import {
   ApiBody,
   ApiInternalServerErrorResponse,
+  ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import mongoose, { FlattenMaps, Types } from 'mongoose';
 // import { AuthGuard } from '../auth/auth.guard';
-import { Client } from './entities/client.entity';
+import {
+  ApiResponseDto,
+  Client,
+  ClientApiObject,
+  CreateClientResponseDto,
+} from './entities/client.entity';
+import { UpdateUserDto } from '../users/dto/update-user.dto';
+import { AuthGuard } from '../auth/auth.guard';
+
+const className = 'Client';
 
 @ApiTags('Client')
 @Controller('client')
@@ -38,6 +49,7 @@ export class ClientController {
     return true;
   }
 
+  @ApiOperation({ summary: 'Refer to the Documentation' })
   @Get()
   lookAtDocumentation() {
     return { message: 'Refer to /documentation for details on the API' };
@@ -47,21 +59,37 @@ export class ClientController {
     type: HttpException,
     status: HttpStatus.CONFLICT,
   })
+  @ApiOperation({
+    summary: `Create a new ${className}`,
+    description: 'Further details',
+    security: [],
+  })
   @ApiBody({ type: [CreateClientDto] })
+  @ApiResponse({
+    type: CreateClientResponseDto,
+    description: `The access token and ${className}'s Id used for querying. 
+    currentCompany Will also be added soon*`,
+  })
   @Post('/create')
   async create(
     @Body() createClientDto: CreateClientDto,
-  ): Promise<{ data: string }> {
+  ): Promise<CreateClientResponseDto> {
     try {
-      return {
-        data: await this.clientService.create(createClientDto),
-      };
+      const result = await this.clientService.create(createClientDto);
+      return new CreateClientResponseDto(result);
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
   }
 
   //@UseGuards(AuthGuard)
+  @ApiOperation({ summary: `Get all ${className}s` }) // Add summary here
+  @ApiResponse({
+    isArray: true,
+    type: ClientApiObject,
+    status: 200,
+    description: `The mongodb ${className} objects in an array, with _id attribute included`,
+  })
   @Get('all')
   async findAll() {
     try {
@@ -74,11 +102,20 @@ export class ClientController {
     }
   }
 
+  @ApiOperation({ summary: `Find a specific ${className}` })
+  @ApiResponse({
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className}`,
+  })
   @Get('id/:id')
   async findOne(@Param('id') id: string) {
     this.validateObjectId(id);
     try {
-      return { data: await this.clientService.getClientById(id) };
+      const temp = await this.clientService.getClientById(id);
+      return new ApiResponseDto(temp);
     } catch (e) {
       console.log(e);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
@@ -87,7 +124,9 @@ export class ClientController {
 
   @ApiResponse({
     type: findClientResponseDto,
+    description: `The mongodb object of the ${className}, with an _id attribute`,
   })
+  @ApiOperation({ summary: `Find a specific ${className}` })
   @Get('/search')
   async findByEmailOrName(
     @Query('compId')
@@ -106,6 +145,20 @@ export class ClientController {
     }
   }
 
+  @ApiOperation({
+    summary: `Change the attributes of a ${className}`,
+    description: `You may send the entire ${className} object that was sent to you, in your request body`,
+    security: [],
+  })
+  @ApiResponse({
+    description: `The updated ${className} object`,
+  })
+  @ApiBody({ type: [UpdateUserDto] })
+  //@ApiQuery({})
+  @ApiParam({
+    name: 'id',
+    description: `${className} objectId for ${className} that you wish to delete`,
+  })
   @Patch('/:id')
   async update(
     @Param('id') id: string,
@@ -121,7 +174,16 @@ export class ClientController {
     }
   }
 
-  //@UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Delete a ${className}`,
+    description: `You send the ${className} ObjectId, and then they get deleted if the id is valid. 
+    There will be rules on deletion later.`,
+    security: [],
+  })
+  @ApiResponse({
+    description: `A boolean value indicating whether or not the deletion was a success`,
+  })
   @Delete('/delete/:id')
   remove(@Param('id') id: string /*, @Body() pass: { pass: string }*/) {
     //console.log(pass); //Will be implemented later
