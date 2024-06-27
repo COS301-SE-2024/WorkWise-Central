@@ -6,11 +6,11 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto, createUserResponseDto } from './dto/create-user.dto';
+import { CreateUserDto, CreateUserResponseDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './entities/user.entity';
+import { SignInUserDto, User } from './entities/user.entity';
 import { AuthService } from '../auth/auth.service';
 import { EmployeeService } from '../employee/employee.service';
 import { UserConfirmation } from './entities/user-confirmation.entity';
@@ -49,12 +49,11 @@ export class UsersService {
 
     await this.createUserConfirmation(newUserObj); //sends email
 
-    const jwt: { access_token: string; id: Types.ObjectId } =
-      await this.authService.signIn(
-        result.systemDetails.username,
-        createUserDto.password,
-      );
-    return new createUserResponseDto(jwt);
+    const jwt: SignInUserDto = await this.authService.signIn(
+      result.systemDetails.username,
+      createUserDto.password,
+    );
+    return new CreateUserResponseDto(jwt);
   }
 
   async createUserConfirmation(newUser: User) {
