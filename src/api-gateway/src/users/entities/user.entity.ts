@@ -141,11 +141,11 @@ export class User {
   @ApiProperty()
   @Prop({
     type: [JoinedCompany],
-    required: false,
+    required: true,
     ref: 'Company',
     default: [],
   })
-  joinedCompanies?: JoinedCompany[] = [];
+  joinedCompanies: JoinedCompany[] = [];
 
   @ApiProperty()
   @Prop({ type: [String], required: false, default: [] })
@@ -218,11 +218,11 @@ export class UserApiObject {
 
   @ApiProperty()
   @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
-  public currentEmployee: Types.ObjectId;
+  public currentEmployee?: Types.ObjectId;
 
   @ApiProperty()
   @Prop({ type: Boolean, required: false, default: false })
-  public isValidated: boolean = false;
+  public isValidated?: boolean = false;
 
   @ApiHideProperty()
   @Prop({ type: Date, required: true, default: new Date() })
@@ -235,6 +235,36 @@ export class UserApiObject {
   @ApiHideProperty()
   @Prop({ type: Date, required: false })
   public deletedAt?: Date;
+}
+
+export class SignInUserDto {
+  constructor(
+    access_token: string,
+    id: Types.ObjectId,
+    user: UserApiObject = null,
+  ) {
+    this.access_token = access_token;
+    this.id = id;
+    this.user = user;
+  }
+
+  access_token: string;
+  id: Types.ObjectId;
+  user?: UserApiObject;
+}
+
+export class UserResponseDto {
+  constructor(response: UserApiObject) {
+    this.response = response;
+  }
+  response: UserApiObject;
+}
+
+export class UserAllResponseDto {
+  constructor(response: UserApiObject[]) {
+    this.response = response;
+  }
+  response: UserApiObject[];
 }
 
 export const userEmployeeFields: string[] = ['employeeIds', 'currentEmployee'];
