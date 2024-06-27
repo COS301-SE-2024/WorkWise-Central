@@ -3,19 +3,19 @@ import {
   Controller,
   Delete,
   Get,
-  Request,
   HttpException,
   HttpStatus,
   Param,
   Patch,
   Post,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
   CreateUserDto,
-  createUserResponseDto,
-  UserExistsResponseDto,
+  CreateUserResponseDto,
+  BooleanResponseDto,
 } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
@@ -29,7 +29,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import mongoose, { Types } from 'mongoose';
-import { UserApiObject } from './entities/user.entity';
+import { UserAllResponseDto, UserResponseDto } from './entities/user.entity';
 
 const className = 'User';
 
@@ -67,14 +67,14 @@ export class UsersController {
   @ApiBody({ type: [CreateUserDto] })
   @ApiResponse({
     status: 201,
-    type: createUserResponseDto,
+    type: CreateUserResponseDto,
     description: `The access token and ${className}'s Id used for querying. 
     currentCompany Will also be added soon*`,
   })
   @Post('/create')
   async create(
     @Body() createUserDto: CreateUserDto,
-  ): Promise<createUserResponseDto> {
+  ): Promise<CreateUserResponseDto> {
     try {
       return await this.usersService.create(createUserDto);
     } catch (Error) {
@@ -87,9 +87,8 @@ export class UsersController {
     summary: `Get all ${className}s`,
   })
   @ApiOkResponse({
-    isArray: true,
-    type: UserApiObject,
-    description: `The mongodb object of the ${className}, with an _id attribute`,
+    type: UserAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class`,
   })
   @Get('all')
   async findAll() {
@@ -105,7 +104,7 @@ export class UsersController {
 
   @ApiOperation({ summary: `Find a specific ${className}` })
   @ApiOkResponse({
-    type: UserApiObject,
+    type: UserResponseDto,
     description: `The mongodb object of the ${className}, with an _id attribute`,
   })
   @ApiParam({
@@ -116,7 +115,9 @@ export class UsersController {
   async findOne(@Param('id') identifier: string) {
     this.validateObjectId(identifier);
     try {
-      return await this.usersService.getUserById(identifier);
+      return {
+        response: await this.usersService.getUserById(identifier),
+      };
     } catch (e) {
       console.log(e);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
@@ -127,7 +128,7 @@ export class UsersController {
     summary: `${className} exists or not`,
   })
   @ApiOkResponse({
-    type: [UserExistsResponseDto],
+    type: BooleanResponseDto,
     description: 'Response is a Boolean value',
   })
   @Post('/exists')
@@ -146,13 +147,13 @@ export class UsersController {
     description: `
     You may send the entire ${className} object that was sent to you, in your request body.\r\n
     You may also send a singular attribute `,
-    security: [],
+    // /security: [],
   })
   @ApiOkResponse({
-    type: UserApiObject,
+    type: UserResponseDto,
     description: `The updated ${className} object`,
   })
-  @ApiBody({ type: [UpdateUserDto] })
+  @ApiBody({ type: UpdateUserDto })
   @Patch('/update')
   async update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
     /*
@@ -162,7 +163,9 @@ export class UsersController {
     const id = req.user.sub; //This attribute is retrieved in the JWT
     console.log(id);
     try {
-      return await this.usersService.updateUser(id, updateUserDto);
+      return {
+        response: await this.usersService.updateUser(id, updateUserDto),
+      };
     } catch (e) {
       throw new HttpException(
         'internal server error',
@@ -179,6 +182,7 @@ export class UsersController {
     security: [],
   })
   @ApiOkResponse({
+    type: BooleanResponseDto,
     description: `A boolean value indicating whether or not the deletion was a success`,
   })
   @ApiParam({
