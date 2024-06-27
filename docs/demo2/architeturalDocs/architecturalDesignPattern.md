@@ -4,13 +4,13 @@
 
 ## Model-View-Controller (MVC)
 
-The MVC pattern was chosen because it emphasizes a separation of the system's business logic and user interfaces. This separation of concerns allows for a better division of labour and improves the maintainability of the system. The three components of play the following roles:
+The MVC pattern was chosen because it emphasizes a separation of the system's business logic and user interfaces. This separation of concerns allows for a better division of labour and improves the maintainability of the system. The three components of MVC play the following roles:
 
-**Model:** The **model** in our system is the Nest.js backend, which encapsulates the business logic and communicates with the database. It comprises of all the services that control all business logic, and uses the specific repository classes to query the database.
+**Model:** The model in our system is the Nest.js backend, which encapsulates the business logic and communicates with the database. It comprises of all the services that control all business logic, and uses the specific repository classes to query the database.
 
-**View:** The **view** component in represents the user interface (UI) and how data is presented to the user. It’s responsible for rendering data from the **model** and handling user interactions. When important events like being assigned a job take place, users' views change accordingly.
+**View:** The view component in MVC represents the user interface (UI) and how data is presented to the user. It’s responsible for rendering data from the model and handling user interactions. When important events like being assigned a job take place, users' views change accordingly.
 
-**Controller:** The Controller acts as an intermediary between the **model** and the **view**. It handles user input, processes requests, and communicates with the various services in the backend.
+**Controller:** The Controller acts as an intermediary between the model and the view. It handles user input, processes requests, and communicates with the various services in the backend.
 
 ## Publisher-Subscriber
 
