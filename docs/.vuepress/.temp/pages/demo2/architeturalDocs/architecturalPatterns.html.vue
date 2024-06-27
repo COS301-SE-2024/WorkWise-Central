@@ -11,10 +11,15 @@
 <p>To counteract the potential security issues that may arise with a shared communication channel, message channels will be restricted by a security policy to prevent eavesdropping by unauthorized users or applications.</p>
 <h2 id="service-oriented-architecture" tabindex="-1"><a class="header-anchor" href="#service-oriented-architecture"><span>Service-Oriented Architecture</span></a></h2>
 <p>Service-Oriented Architecture (SOA) is an architectural style that promotes the design of software systems as a collection of loosely coupled, independently deployable services. Each service represents a specific business capability and communicates with other services through well-defined interfaces.</p>
-<h1 id="gatekeeper-pattern" tabindex="-1"><a class="header-anchor" href="#gatekeeper-pattern"><span>Gatekeeper pattern</span></a></h1>
+<h2 id="gatekeeper-pattern" tabindex="-1"><a class="header-anchor" href="#gatekeeper-pattern"><span>Gatekeeper pattern</span></a></h2>
 <p>We plan to use the Gatekeeper pattern to prevent malicious requests from entering the controllers in the backend.
 The gatekeeper validates all requests, and rejects requests that don't meet validation requirements. It provides an additional layer of security and limit the system's attack surface.
 In order to alleviate the weakness of having a single point of failure, we chose to couple the gatekeeper from the trusted host.</p>
+<h1 id="design-patterns" tabindex="-1"><a class="header-anchor" href="#design-patterns"><span>Design Patterns</span></a></h1>
+<h2 id="the-repository-pattern" tabindex="-1"><a class="header-anchor" href="#the-repository-pattern"><span>The Repository Pattern</span></a></h2>
+<p>Repositories are bridges between data and operations that are in different domains. We leveraged this to maximise the effectiveness of our automated unit tests.</p>
+<p>This pattern allows us to separate business logic, within our service, from the database layer. Using the repository pattern reduces code duplication, reduces the likelihood of programmer error and allows us to centralise data-related policies such as caching.</p>
+<p>Using the repository pattern also improves the maintainability and readability of the code by separating the services and limiting access to specific MongoDB collections.</p>
 </div></template>
 
 
