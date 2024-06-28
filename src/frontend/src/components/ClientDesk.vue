@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid fill-height class="pa-16 ma-auto pt-5">
+  <v-container fluid fill-height>
     <v-row justify="center" xs="6" sm="6" md="12">
       <v-col cols="12">
         <v-row justify="center">
@@ -7,8 +7,9 @@
             <v-card
               flat
               :height="auto"
-              class="pa-11 ma-10"
-              rounded="xl"
+              :max-height="auto"
+              class="pa-11 ma-0"
+              rounded="md"
               elevation-2
               :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
               border="md"
@@ -56,29 +57,34 @@
                       class="font-lato"
                     >
                       <template v-slot:[`item.name`]="{ value }">
-                        <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
+                        <v-chip color="#5A82AF"> <v-icon>mdi-account</v-icon>{{ value }}</v-chip>
                       </template>
                       <template v-slot:[`item.phoneNumber`]="{ value }">
-                        <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-phone</v-icon></v-chip>
+                        <v-chip @click="callPhone" color="#5A82AF"
+                          ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
+                        >
                       </template>
                       <template v-slot:[`item.mostRecentJob`]="{ value }">
                         <v-chip :color="getColor(value)">
                           {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
                         >
                       </template>
+                      <template v-slot:[`item.surname`]="{ value }">
+                        <v-chip color="#5A82AF"> {{ value }}</v-chip>
+                      </template>
+                      <template v-slot:[`item.email`]="{ value }">
+                        <v-chip @click="sendEmail" color="#5A82AF">
+                          <v-icon>mdi-email</v-icon>{{ value }}</v-chip
+                        >
+                      </template>
                       <template v-slot:[`item.address`]="{ value }">
-                        <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-map-marker</v-icon></v-chip>
+                        <v-chip color="#5A82AF"> <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip>
                       </template>
                       <!-- Expanded content slot -->
                       <template v-slot:expanded-row="{ columns, item }">
                         <tr>
                           <td :colspan="columns.length">
-                            Full Address: {{ item.contactInfo.address.street }},
-                            {{ item.contactInfo.address.suburb }},
-                            {{ item.contactInfo.address.city }},
-                            {{ item.contactInfo.address.postalCode }},
-                            {{ item.contactInfo.address.complex }},
-                            {{ item.contactInfo.address.houseNumber }}
+                            Full Address: {{ item.name }}, {{ item.surname }}
                           </td>
                         </tr>
                         <tr>
@@ -89,29 +95,17 @@
                             Languages Spoken: {{ item.preferred_Language }}
                           </td>
                         </tr>
+
                       </template>
                       <!-- Actions slot -->
-                      <template v-slot:[`item.actions`]="{ item }">
-                        <v-col cols="12" xs="12" sm="12" md="12">
-                          <v-btn
-                            icon
-                            size="small"
-                            @click="editClient(item), (editDialog = true)"
-                            color="#5A82AF"
-                          >
-                            <v-icon>mdi-pencil</v-icon>
-                          </v-btn>
-                        </v-col>
-                        <v-col cols="12" xs="12" sm="12" md="12">
-                          <v-btn
-                            icon
-                            size="small"
-                            @click="deleteClient(item), (deleteDialog = true)"
-                            color="#5A82AF"
-                          >
-                            <v-icon>mdi-delete</v-icon>
-                          </v-btn>
-                        </v-col>
+                      <template v-slot:[`item.actions`]="{ value }">
+                        <v-btn
+                          rounded="xl"
+                          variant="plain"
+                          style="transform: rotate(90deg) dots"
+                          @click="editClient(value)"
+                          ><v-icon>mdi-dots-horizontal</v-icon></v-btn
+                        >
                       </template>
                     </v-data-table>
                   </v-col>
@@ -133,8 +127,7 @@
         :editedItem="selectedItem"
         :_clientID="selectedItemId"
       />
-      /</v-col
-    >
+    </v-col>
   </v-container>
 </template>
 
@@ -186,13 +179,13 @@ export default defineComponent({
       { title: 'Phone', value: 'phoneNumber', key: 'phoneNumber' },
       { title: 'Email', value: 'email', key: 'email' },
       { title: 'Address', value: 'address', key: 'address' },
-      { title: 'Actions', value: 'actions', key: 'actions', sortable: false }
+      { title: '', value: 'actions', key: 'actions', sortable: false }
     ],
     search: '',
     clientDetails2: [
       {
-        id:1,
-        name: 'John',
+        id: 1,
+        name: 'Kumbirai',
         surname: 'Doe',
         phoneNumber: '123-456-7890',
         email: 'john.doe@example.com',
@@ -200,7 +193,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:2,
+        id: 2,
         name: 'Jane',
         surname: 'Doe',
         phoneNumber: '098-765-4321',
@@ -209,7 +202,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:3,
+        id: 3,
         name: 'Michael',
         surname: 'Smith',
         phoneNumber: '555-123-4567',
@@ -218,7 +211,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:4,
+        id: 4,
         name: 'Emily',
         surname: 'Johnson',
         phoneNumber: '555-987-6543',
@@ -227,7 +220,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:5,
+        id: 5,
         name: 'David',
         surname: 'Williams',
         phoneNumber: '555-678-1234',
@@ -236,7 +229,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:6,
+        id: 6,
         name: 'Jessica',
         surname: 'Brown',
         phoneNumber: '555-345-6789',
@@ -245,7 +238,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:7,
+        id: 7,
         name: 'Daniel',
         surname: 'Jones',
         phoneNumber: '555-456-7890',
@@ -254,7 +247,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:8,
+        id: 8,
         name: 'Sarah',
         surname: 'Miller',
         phoneNumber: '555-567-8901',
@@ -263,7 +256,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:9,
+        id: 9,
         name: 'Matthew',
         surname: 'Wilson',
         phoneNumber: '555-678-9012',
@@ -272,7 +265,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:10,
+        id: 10,
         name: 'Ashley',
         surname: 'Moore',
         phoneNumber: '555-789-0123',
@@ -281,7 +274,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:11,
+        id: 11,
         name: 'Christopher',
         surname: 'Taylor',
         phoneNumber: '555-890-1234',
@@ -290,7 +283,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:12,
+        id: 12,
         name: 'Amanda',
         surname: 'Anderson',
         phoneNumber: '555-901-2345',
@@ -299,7 +292,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:13,
+        id: 13,
         name: 'Joshua',
         surname: 'Thomas',
         phoneNumber: '555-012-3456',
@@ -308,7 +301,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:14,
+        id: 14,
         name: 'Nicole',
         surname: 'Harris',
         phoneNumber: '555-123-4560',
@@ -317,7 +310,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:15,
+        id: 15,
         name: 'Ryan',
         surname: 'Martin',
         phoneNumber: '555-234-5671',
@@ -326,7 +319,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:16,
+        id: 16,
         name: 'Heather',
         surname: 'Garcia',
         phoneNumber: '555-345-6782',
@@ -335,7 +328,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:17,
+        id: 17,
         name: 'Brandon',
         surname: 'Robinson',
         phoneNumber: '555-456-7893',
@@ -344,7 +337,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:18,
+        id: 18,
         name: 'Elizabeth',
         surname: 'Clark',
         phoneNumber: '555-567-8904',
@@ -353,7 +346,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:19,
+        id: 19,
         name: 'Adam',
         surname: 'Lewis',
         phoneNumber: '555-678-9015',
@@ -362,7 +355,7 @@ export default defineComponent({
         actions: ''
       },
       {
-        id:20,
+        id: 20,
         name: 'Megan',
         surname: 'Walker',
         phoneNumber: '555-789-0126',
@@ -415,6 +408,12 @@ export default defineComponent({
       }
       console.log('Editing client')
       console.log(this.selectedItem)
+    },
+    sendEmail(item) {
+      window.location.href = 'mailto:' + item.email
+    },
+    callPhone(item) {
+      window.location.href = 'tel:' + item.phoneNumber
     },
     deleteClient(item) {
       this.selectedItem = item
@@ -510,5 +509,17 @@ export default defineComponent({
 .font-lato {
   font-family: 'Lato', sans-serif;
   font-weight: bold;
+}
+.vertical-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Adjust the space between buttons */
+}
+.dots {
+  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; /* The Arial font appears to have "square" dots */
+  font-size: 36px; /* The size of the dots */
+  line-height: 0; /* helps vertically position the dots */
+  margin-top: -10px; /* helps "raise" the dots higher */
+  letter-spacing: -2px; /* "squeezes" the dots closer together */
 }
 </style>
