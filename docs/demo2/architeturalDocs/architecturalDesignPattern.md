@@ -22,7 +22,16 @@ To counteract the potential security issues that may arise with a shared communi
 
 ## Service-Oriented Architecture
 
-Service-Oriented Architecture (SOA) is an architectural style that promotes the design of software systems as a collection of loosely coupled, independently deployable services. Each service represents a specific business capability and communicates with other services through well-defined interfaces.
+Service-Oriented Architecture (SOA) is an architectural style that promotes the design of software systems as a collection of loosely coupled, independently deployable services.
+
+Each service represents a specific business capability and communicates with other services through well-defined interfaces. For instance, a request passed to the Company Controller may call a method within the Company Service, which then uses values retrieved through the Job/Employee services to return a result.
+
+The main benefit of using SOA is that there is less code duplication and loose coupling between subsystems within the backend; this increases the reusability of various classes. SOA also makes the application more maintainable and scalable, due to the ease of adding/removing services.## Service-Oriented Architecture
+Service-Oriented Architecture (SOA) is an architectural style that promotes the design of software systems as a collection of loosely coupled, independently deployable services.
+
+Each service represents a specific business capability and communicates with other services through well-defined interfaces. For instance, a request passed to the Company Controller may call a method within the Company Service, which then uses values retrieved through the Job/Employee services to return a result.
+
+The main benefit of using SOA is that there is less code duplication and loose coupling between subsystems within the backend; this increases the reusability of various classes. SOA also makes the application more maintainable and scalable, due to the ease of adding/removing services.
 
 ## Gatekeeper pattern
 
