@@ -21,11 +21,12 @@ export class UsersRepository {
     return result;
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
     const result = await this.userModel
       .find()
       /*      .populate(userEmployeeFields)
       .populate(userJoinedCompaniesField)*/
+      .lean()
       .exec();
     console.log(`Retrieving All users` /*, result*/);
     return result;

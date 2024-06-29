@@ -206,6 +206,87 @@ export class Job {
   public deletedAt: Date;
 }
 
+export class JobApiObject {
+  @ApiProperty()
+  @Prop({ type: Types.ObjectId })
+  _id: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: Types.ObjectId, required: true, ref: 'Company' })
+  companyId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: Types.ObjectId, required: false, ref: Client.name })
+  clientId?: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ required: false, default: `Client-${Date.now()}` })
+  clientUsername?: string;
+
+  @ApiProperty()
+  @Prop({ type: Types.ObjectId, required: true, ref: 'Employee' })
+  assignedBy: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({
+    type: AssignedEmployees,
+    required: false,
+    default: new AssignedEmployees(), //Will this work?💀
+  })
+  assignedEmployees?: AssignedEmployees;
+
+  /*  @ApiProperty()
+  @Prop({ type: [Types.ObjectId], required: true })
+  assignedEmployees: Types.ObjectId[];*/
+
+  @ApiProperty()
+  @Prop({ type: String, required: true, default: 'To do' })
+  status: string = 'To do';
+
+  @ApiProperty()
+  @Prop({ type: Details, required: true })
+  details: Details;
+
+  @ApiProperty()
+  @Prop({
+    type: RecordedDetails,
+    required: false,
+    default: new RecordedDetails(), //Again, will this work?💀
+  })
+  recordedDetails?: RecordedDetails;
+
+  @ApiProperty()
+  @Prop({ type: ClientFeedback, required: false })
+  clientFeedback?: ClientFeedback;
+
+  @ApiProperty()
+  @Prop({ type: [Task], required: false })
+  taskList?: Task[];
+
+  @ApiProperty()
+  @Prop({ type: [Comment], required: false })
+  comments?: Comment[];
+
+  @ApiProperty()
+  @Prop({ required: false, default: new Date() })
+  public createdAt: Date;
+
+  @ApiProperty()
+  @Prop({ required: false })
+  public updatedAt: Date;
+
+  @ApiProperty()
+  @Prop({ required: false })
+  public deletedAt: Date;
+}
+
+export class JobResponseDto {
+  constructor(response: JobApiObject) {
+    this.response = response;
+  }
+  response: JobApiObject;
+}
+
 export const JobSchema = SchemaFactory.createForClass(Job);
 
 //export const JobModel = getModelForClass(Job);
