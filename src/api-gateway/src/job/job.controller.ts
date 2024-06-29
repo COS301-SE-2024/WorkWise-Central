@@ -12,11 +12,27 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { JobService } from './job.service';
-import { CreateJobDto } from './dto/create-job.dto';
+import {
+  CreateJobDto,
+  CreateJobResponseDto,
+  JobAllResponseDto,
+} from './dto/create-job.dto';
 import { UpdateDtoResponse, UpdateJobDto } from './dto/update-job.dto';
-import { ApiInternalServerErrorResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import mongoose, { Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
+import { BooleanResponseDto } from '../users/dto/create-user.dto';
+import { JobResponseDto } from './entities/job.entity';
+
+const className = 'Job';
 
 @ApiTags('Job')
 @Controller('job')
@@ -33,6 +49,7 @@ export class JobController {
     return true;
   }
 
+  @ApiOperation({ summary: 'Refer to the Documentation' })
   @Get()
   lookAtDocumentation() {
     return {
@@ -44,10 +61,22 @@ export class JobController {
     type: HttpException,
     status: HttpStatus.CONFLICT,
   })
+  @ApiOperation({
+    summary: `Create a new ${className}`,
+    description:
+      'Jobs relate to one or more employees in a company, they may be scheduled and' +
+      ' are also linked to clients',
+  })
+  @ApiBody({ type: CreateJobDto })
+  @ApiResponse({
+    status: 201,
+    type: CreateJobResponseDto,
+    description: `The ${className}'s Object of the created job`,
+  })
   @Post('/create')
   async create(
     @Body() createJobDto: CreateJobDto,
-  ): Promise<{ message: { id: Types.ObjectId; message: string } }> {
+  ): Promise<CreateJobResponseDto> {
     this.validateObjectId(createJobDto.assignedBy, 'assignedBy');
     this.validateObjectId(createJobDto.companyId, 'Company');
 
@@ -60,17 +89,24 @@ export class JobController {
       }
 
     try {
-      return { message: await this.jobService.create(createJobDto) };
+      return await this.jobService.create(createJobDto);
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
   }
 
   @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Get all ${className}s`,
+  })
+  @ApiOkResponse({
+    type: JobAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class`,
+  })
   @Get('all')
-  findAll() {
+  async findAll() {
     try {
-      return this.jobService.findAllJobs();
+      return { response: await this.jobService.findAllJobs() };
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
@@ -79,22 +115,44 @@ export class JobController {
     }
   }
 
+  @ApiOperation({ summary: `Find a specific ${className}` })
+  @ApiOkResponse({
+    type: JobResponseDto,
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className}`,
+  })
   @Get('id/:id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     this.validateObjectId(id);
     try {
-      return this.jobService.findJobById(id);
+      return { response: await this.jobService.findJobById(id) };
     } catch (e) {
       console.log(e);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
   }
 
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Change the attributes of a ${className}`,
+    description: `
+    You may send the entire ${className} object that was sent to you, in your request body.\r\n
+    You may also send a singular attribute `,
+    // /security: [],
+  })
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.CONFLICT,
     description: 'Update failed',
   })
+  @ApiOkResponse({
+    type: JobResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @ApiBody({ type: UpdateJobDto })
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
     try {
@@ -106,6 +164,19 @@ export class JobController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Delete a ${className}`,
+    description: `You send the ${className} ObjectId, and then they get deleted if the id is valid.\n 
+    There will be rules on deletion later.`,
+  })
+  @ApiOkResponse({
+    type: BooleanResponseDto,
+    description: `A boolean value indicating whether or not the deletion was a success`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className}`,
+  })
   @Delete()
   remove(@Param('id') id: string, @Body() pass: { pass: string }) {
     console.log(pass); //Will be implemented later

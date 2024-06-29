@@ -64,7 +64,7 @@ export class UsersController {
     description: 'Further details',
     security: [],
   })
-  @ApiBody({ type: [CreateUserDto] })
+  @ApiBody({ type: CreateUserDto })
   @ApiResponse({
     status: 201,
     type: CreateUserResponseDto,
@@ -93,7 +93,7 @@ export class UsersController {
   @Get('all')
   async findAll() {
     try {
-      return await this.usersService.getAllUsers();
+      return { response: await this.usersService.getAllUsers() };
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
