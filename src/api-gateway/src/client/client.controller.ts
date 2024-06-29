@@ -9,7 +9,7 @@ import {
   Patch,
   Post,
   Query,
-  //UseGuards,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
 import {
