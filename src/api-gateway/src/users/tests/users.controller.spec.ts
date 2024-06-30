@@ -4,6 +4,7 @@ import { UsersService } from '../users.service';
 import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
 import { mockUserObject, userStub } from '../../../test/stubs/user.stub';
 import { Types } from 'mongoose';
+import { UserApiObject } from '../entities/user.entity';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -43,6 +44,12 @@ describe('UsersController', () => {
 
   it('should not create a user when null is input', async function () {
     const result = await usersController.create(null);
+    const temp1 = new UserApiObject();
+    console.log(temp1);
+    const temp2 = new UserApiObject();
+    console.log(temp2);
+    const temp3 = new UserApiObject();
+    console.log(temp3);
     //console.log(result);
     expect(result).toStrictEqual(mockUserObject);
   });
