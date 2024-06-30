@@ -39,12 +39,12 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   validateObjectId(id: string | Types.ObjectId, entity: string = ''): boolean {
-    let response: string;
-    if (entity === '') response = `Invalid ID`;
-    else response = `Invalid ${entity} ID`;
+    let data: string;
+    if (entity === '') data = `Invalid ID`;
+    else data = `Invalid ${entity} ID`;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new HttpException(response, HttpStatus.BAD_REQUEST);
+      throw new HttpException(data, HttpStatus.BAD_REQUEST);
     }
     return true;
   }
@@ -93,7 +93,7 @@ export class UsersController {
   @Get('all')
   async findAll() {
     try {
-      return { response: await this.usersService.getAllUsers() };
+      return { data: await this.usersService.getAllUsers() };
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
@@ -116,7 +116,7 @@ export class UsersController {
     this.validateObjectId(identifier);
     try {
       return {
-        response: await this.usersService.getUserById(identifier),
+        data: await this.usersService.getUserById(identifier),
       };
     } catch (e) {
       console.log(e);
@@ -134,7 +134,24 @@ export class UsersController {
   @Post('/exists')
   async usernameAvailable(@Body('username') username: string) {
     try {
-      return { response: !(await this.usersService.usernameExists(username)) };
+      return { data: !(await this.usersService.usernameExists(username)) };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException('Username Taken', HttpStatus.CONFLICT);
+    }
+  }
+
+  @ApiOperation({
+    summary: `Confirms whether a phone number is or not`,
+  })
+  @ApiOkResponse({
+    type: BooleanResponseDto,
+    description: 'Response is a Boolean value',
+  })
+  @Get('/phone')
+  async isValidPhoneNumber(@Param('phoneNum') phoneNum: string) {
+    try {
+      return { data: this.usersService.isValidPhoneNumber(phoneNum) };
     } catch (e) {
       console.log(e);
       throw new HttpException('Username Taken', HttpStatus.CONFLICT);
@@ -160,11 +177,11 @@ export class UsersController {
     console.log('Update');
     console.log(req);
     */
-    const id = req.user.sub; //This attribute is retrieved in the JWT
+    const id: Types.ObjectId = req.user.sub; //This attribute is retrieved in the JWT
     console.log(id);
     try {
       return {
-        response: await this.usersService.updateUser(id, updateUserDto),
+        data: await this.usersService.updateUser(id, updateUserDto),
       };
     } catch (e) {
       throw new HttpException(
