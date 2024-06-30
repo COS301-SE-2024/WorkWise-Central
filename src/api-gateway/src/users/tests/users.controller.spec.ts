@@ -56,7 +56,7 @@ describe('UsersController', () => {
 
   it('should find all users', async function () {
     const allUsers = await usersController.findAll();
-    expect(allUsers.response.length).toBe(2);
+    expect(allUsers.data.length).toBe(2);
   });
 
   it('should remove users', function () {
