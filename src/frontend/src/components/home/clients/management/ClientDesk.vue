@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid fill-height class="pa-16 ma-auto pt-5">
+  <v-container fluid fill-height>
     <v-row justify="center" xs="6" sm="6" md="12">
       <v-col cols="12">
         <v-row justify="center">
@@ -7,8 +7,9 @@
             <v-card
               flat
               :height="auto"
-              class="pa-11 ma-10"
-              rounded="xl"
+              :max-height="auto"
+              class="pa-11 ma-0"
+              rounded="md"
               elevation-2
               :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
               border="md"
@@ -44,7 +45,7 @@
                   <v-col cols="12" xs="12" sm="12" md="12">
                     <v-data-table
                       :headers="headers"
-                      :items="clientDetails"
+                      :items="clientDetails2"
                       :search="search"
                       :single-expand="true"
                       v-model:expanded="expanded"
@@ -55,30 +56,35 @@
                       @click:row="toggleExpand"
                       class="font-lato"
                     >
-                      <template v-slot:[`item.firstName`]="{ value }">
-                        <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
+                      <template v-slot:[`item.name`]="{ value }">
+                        <v-chip color="#5A82AF"> <v-icon>mdi-account</v-icon>{{ value }}</v-chip>
                       </template>
-                      <template v-slot:[`item.clientInfo.phoneNumber`]="{ value }">
-                        <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-phone</v-icon></v-chip>
+                      <template v-slot:[`item.phoneNumber`]="{ value }">
+                        <v-chip @click="callPhone" color="#5A82AF"
+                          ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
+                        >
                       </template>
                       <template v-slot:[`item.mostRecentJob`]="{ value }">
                         <v-chip :color="getColor(value)">
                           {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
                         >
                       </template>
-                      <template v-slot:[`item.clientInfo.address.street`]="{ value }">
-                        <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-map-marker</v-icon></v-chip>
+                      <template v-slot:[`item.surname`]="{ value }">
+                        <v-chip color="#5A82AF"> {{ value }}</v-chip>
+                      </template>
+                      <template v-slot:[`item.email`]="{ value }">
+                        <v-chip @click="sendEmail" color="#5A82AF">
+                          <v-icon>mdi-email</v-icon>{{ value }}</v-chip
+                        >
+                      </template>
+                      <template v-slot:[`item.address`]="{ value }">
+                        <v-chip color="#5A82AF"> <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip>
                       </template>
                       <!-- Expanded content slot -->
                       <template v-slot:expanded-row="{ columns, item }">
                         <tr>
                           <td :colspan="columns.length">
-                            Full Address: {{ item.clientInfo.address.street }},
-                            {{ item.clientInfo.address.suburb }},
-                            {{ item.clientInfo.address.city }},
-                            {{ item.clientInfo.address.postalCode }},
-                            {{ item.clientInfo.address.complex }},
-                            {{ item.clientInfo.address.houseNumber }}
+                            Full Address: {{ item.name }}, {{ item.surname }}
                           </td>
                         </tr>
                         <tr>
@@ -89,29 +95,17 @@
                             Languages Spoken: {{ item.preferred_Language }}
                           </td>
                         </tr>
+
                       </template>
                       <!-- Actions slot -->
-                      <template v-slot:[`item.actions`]="{ item }">
-                        <v-col cols="12" xs="12" sm="12" md="12">
-                          <v-btn
-                            icon
-                            size="small"
-                            @click="editClient(item), (editDialog = true)"
-                            color="#5A82AF"
-                          >
-                            <v-icon>mdi-pencil</v-icon>
-                          </v-btn>
-                        </v-col>
-                        <v-col cols="12" xs="12" sm="12" md="12">
-                          <v-btn
-                            icon
-                            size="small"
-                            @click="deleteClient(item), (deleteDialog = true)"
-                            color="#5A82AF"
-                          >
-                            <v-icon>mdi-delete</v-icon>
-                          </v-btn>
-                        </v-col>
+                      <template v-slot:[`item.actions`]="{ value }">
+                        <v-btn
+                          rounded="xl"
+                          variant="plain"
+                          style="transform: rotate(90deg) dots"
+                          @click="editClient(value)"
+                          ><v-icon>mdi-dots-horizontal</v-icon></v-btn
+                        >
                       </template>
                     </v-data-table>
                   </v-col>
@@ -133,8 +127,7 @@
         :editedItem="selectedItem"
         :_clientID="selectedItemId"
       />
-      /</v-col
-    >
+    </v-col>
   </v-container>
 </template>
 
@@ -173,8 +166,8 @@ export default defineComponent({
         title: 'First Name',
         align: 'start',
         sortable: true,
-        value: 'firstName',
-        key: 'firstName'
+        value: 'name',
+        key: 'name'
       },
       {
         title: 'Surname',
@@ -183,12 +176,194 @@ export default defineComponent({
         value: 'surname',
         key: 'surname'
       },
-      { title: 'Phone', value: 'clientInfo.phoneNumber', key: 'clientInfo.phoneNumber' },
-      { title: 'Email', value: 'clientInfo.email', key: 'clientInfo.email' },
-      { title: 'Address', value: 'clientInfo.address.street', key: 'clientInfo.address.street' },
-      { title: 'Actions', value: 'actions', key: 'actions', sortable: false }
+      { title: 'Phone', value: 'phoneNumber', key: 'phoneNumber' },
+      { title: 'Email', value: 'email', key: 'email' },
+      { title: 'Address', value: 'address', key: 'address' },
+      { title: '', value: 'actions', key: 'actions', sortable: false }
     ],
     search: '',
+    clientDetails2: [
+      {
+        id: 1,
+        name: 'Kumbirai',
+        surname: 'Doe',
+        phoneNumber: '123-456-7890',
+        email: 'john.doe@example.com',
+        address: '123 Elm Street',
+        actions: ''
+      },
+      {
+        id: 2,
+        name: 'Jane',
+        surname: 'Doe',
+        phoneNumber: '098-765-4321',
+        email: 'jane.doe@example.com',
+        address: '456 Oak Street',
+        actions: ''
+      },
+      {
+        id: 3,
+        name: 'Michael',
+        surname: 'Smith',
+        phoneNumber: '555-123-4567',
+        email: 'michael.smith@example.com',
+        address: '789 Pine Street',
+        actions: ''
+      },
+      {
+        id: 4,
+        name: 'Emily',
+        surname: 'Johnson',
+        phoneNumber: '555-987-6543',
+        email: 'emily.johnson@example.com',
+        address: '321 Maple Street',
+        actions: ''
+      },
+      {
+        id: 5,
+        name: 'David',
+        surname: 'Williams',
+        phoneNumber: '555-678-1234',
+        email: 'david.williams@example.com',
+        address: '654 Willow Street',
+        actions: ''
+      },
+      {
+        id: 6,
+        name: 'Jessica',
+        surname: 'Brown',
+        phoneNumber: '555-345-6789',
+        email: 'jessica.brown@example.com',
+        address: '987 Cedar Street',
+        actions: ''
+      },
+      {
+        id: 7,
+        name: 'Daniel',
+        surname: 'Jones',
+        phoneNumber: '555-456-7890',
+        email: 'daniel.jones@example.com',
+        address: '654 Spruce Street',
+        actions: ''
+      },
+      {
+        id: 8,
+        name: 'Sarah',
+        surname: 'Miller',
+        phoneNumber: '555-567-8901',
+        email: 'sarah.miller@example.com',
+        address: '321 Birch Street',
+        actions: ''
+      },
+      {
+        id: 9,
+        name: 'Matthew',
+        surname: 'Wilson',
+        phoneNumber: '555-678-9012',
+        email: 'matthew.wilson@example.com',
+        address: '123 Cherry Street',
+        actions: ''
+      },
+      {
+        id: 10,
+        name: 'Ashley',
+        surname: 'Moore',
+        phoneNumber: '555-789-0123',
+        email: 'ashley.moore@example.com',
+        address: '456 Redwood Street',
+        actions: ''
+      },
+      {
+        id: 11,
+        name: 'Christopher',
+        surname: 'Taylor',
+        phoneNumber: '555-890-1234',
+        email: 'christopher.taylor@example.com',
+        address: '789 Birchwood Street',
+        actions: ''
+      },
+      {
+        id: 12,
+        name: 'Amanda',
+        surname: 'Anderson',
+        phoneNumber: '555-901-2345',
+        email: 'amanda.anderson@example.com',
+        address: '321 Cedarwood Street',
+        actions: ''
+      },
+      {
+        id: 13,
+        name: 'Joshua',
+        surname: 'Thomas',
+        phoneNumber: '555-012-3456',
+        email: 'joshua.thomas@example.com',
+        address: '654 Oakwood Street',
+        actions: ''
+      },
+      {
+        id: 14,
+        name: 'Nicole',
+        surname: 'Harris',
+        phoneNumber: '555-123-4560',
+        email: 'nicole.harris@example.com',
+        address: '987 Pinewood Street',
+        actions: ''
+      },
+      {
+        id: 15,
+        name: 'Ryan',
+        surname: 'Martin',
+        phoneNumber: '555-234-5671',
+        email: 'ryan.martin@example.com',
+        address: '321 Elmwood Street',
+        actions: ''
+      },
+      {
+        id: 16,
+        name: 'Heather',
+        surname: 'Garcia',
+        phoneNumber: '555-345-6782',
+        email: 'heather.garcia@example.com',
+        address: '654 Palm Street',
+        actions: ''
+      },
+      {
+        id: 17,
+        name: 'Brandon',
+        surname: 'Robinson',
+        phoneNumber: '555-456-7893',
+        email: 'brandon.robinson@example.com',
+        address: '321 Pinecone Street',
+        actions: ''
+      },
+      {
+        id: 18,
+        name: 'Elizabeth',
+        surname: 'Clark',
+        phoneNumber: '555-567-8904',
+        email: 'elizabeth.clark@example.com',
+        address: '654 Fir Street',
+        actions: ''
+      },
+      {
+        id: 19,
+        name: 'Adam',
+        surname: 'Lewis',
+        phoneNumber: '555-678-9015',
+        email: 'adam.lewis@example.com',
+        address: '321 Redwood Lane',
+        actions: ''
+      },
+      {
+        id: 20,
+        name: 'Megan',
+        surname: 'Walker',
+        phoneNumber: '555-789-0126',
+        email: 'megan.walker@example.com',
+        address: '456 Cedar Lane',
+        actions: ''
+      }
+    ],
     clients: [],
     clientDetails: [],
     clientIds: [],
@@ -226,13 +401,19 @@ export default defineComponent({
     editClient(item) {
       console.log(item)
       this.selectedItem = item
-      for (let i = 0; i < this.clientDetails.length; i++) {
-        if (this.clientDetails[i] === item) {
-          this.selectedItemId = this.clientIds[i]
+      for (let i = 0; i < this.clientDetails2.length; i++) {
+        if (this.clientDetails2[i] === item) {
+          this.selectedItemId = this.clientDetails2[i].id
         }
       }
       console.log('Editing client')
       console.log(this.selectedItem)
+    },
+    sendEmail(item) {
+      window.location.href = 'mailto:' + item.email
+    },
+    callPhone(item) {
+      window.location.href = 'tel:' + item.phoneNumber
     },
     deleteClient(item) {
       this.selectedItem = item
@@ -276,10 +457,12 @@ export default defineComponent({
         .then((response) => {
           console.log(response.data)
           this.clients = response.data.data
+          console.log(this.clients)
           for (let i = 0; i < this.clients.length; i++) {
             this.clientIds[i] = this.clients[i]._id
             console.log(this.clientIds[i])
             this.clientDetails[i] = this.clients[i].details
+            console.log(this.clientDetails[i])
           }
         })
         .catch((error) => {
@@ -326,5 +509,17 @@ export default defineComponent({
 .font-lato {
   font-family: 'Lato', sans-serif;
   font-weight: bold;
+}
+.vertical-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Adjust the space between buttons */
+}
+.dots {
+  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; /* The Arial font appears to have "square" dots */
+  font-size: 36px; /* The size of the dots */
+  line-height: 0; /* helps vertically position the dots */
+  margin-top: -10px; /* helps "raise" the dots higher */
+  letter-spacing: -2px; /* "squeezes" the dots closer together */
 }
 </style>

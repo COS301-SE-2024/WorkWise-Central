@@ -123,6 +123,67 @@ export class User {
     //this.deletedAt = new Date(); //logically deleted until confirmed
   }
 
+  /*  @Prop({ type: Types.ObjectId })
+  _id: Types.ObjectId;*/
+
+  @ApiProperty()
+  @Prop({ required: true })
+  systemDetails: SystemDetails;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  personalInfo: PersonalInfo;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  profile: Profile;
+
+  @ApiProperty()
+  @Prop({
+    type: [JoinedCompany],
+    required: true,
+    ref: 'Company',
+    default: [],
+  })
+  joinedCompanies: JoinedCompany[] = [];
+
+  @ApiProperty()
+  @Prop({ type: [String], required: false, default: [] })
+  skills: string[] = [];
+
+  @ApiProperty()
+  @Prop({
+    type: [{ type: Types.ObjectId, required: true, ref: 'Employee' }],
+    default: [],
+  })
+  public employeeIds: Types.ObjectId[] = [];
+
+  @ApiProperty()
+  @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
+  public currentEmployee?: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: Boolean, required: false, default: false })
+  public isValidated?: boolean = false;
+
+  @ApiHideProperty()
+  @Prop({ type: Date, required: true, default: new Date() })
+  public createdAt: Date = new Date();
+
+  @ApiHideProperty()
+  @Prop({ type: Date, required: false })
+  public updatedAt?: Date;
+
+  @ApiHideProperty()
+  @Prop({ type: Date, required: false })
+  public deletedAt?: Date;
+}
+
+export class UserApiObject {
+  @ApiProperty()
+  @Prop({ type: Types.ObjectId })
+  _id: Types.ObjectId;
+
   @ApiProperty()
   @Prop({ required: true })
   systemDetails: SystemDetails;
@@ -142,24 +203,24 @@ export class User {
     ref: 'Company',
     default: [],
   })
-  joinedCompanies?: JoinedCompany[] = [];
+  joinedCompanies: JoinedCompany[] = [];
 
   @ApiProperty()
   @Prop({ type: [String], required: false, default: [] })
   skills: string[] = [];
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({
     type: [{ type: Types.ObjectId, required: true, ref: 'Employee' }],
     default: [],
   })
   public employeeIds: Types.ObjectId[] = [];
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
   public currentEmployee?: Types.ObjectId;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: Boolean, required: false, default: false })
   public isValidated?: boolean = false;
 
@@ -174,6 +235,36 @@ export class User {
   @ApiHideProperty()
   @Prop({ type: Date, required: false })
   public deletedAt?: Date;
+}
+
+export class SignInUserDto {
+  constructor(
+    access_token: string,
+    id: Types.ObjectId,
+    user: UserApiObject = null,
+  ) {
+    this.access_token = access_token;
+    this.id = id;
+    this.user = user;
+  }
+
+  access_token: string;
+  id: Types.ObjectId;
+  user?: UserApiObject;
+}
+
+export class UserResponseDto {
+  constructor(response: UserApiObject) {
+    this.response = response;
+  }
+  response: UserApiObject;
+}
+
+export class UserAllResponseDto {
+  constructor(response: UserApiObject[]) {
+    this.response = response;
+  }
+  response: UserApiObject[];
 }
 
 export const userEmployeeFields: string[] = ['employeeIds', 'currentEmployee'];

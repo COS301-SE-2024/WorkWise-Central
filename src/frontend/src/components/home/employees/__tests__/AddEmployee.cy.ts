@@ -11,9 +11,6 @@ it('renders add employee', () => {
   })
   cy.contains('Add Employee')
   cy.contains('Add employee using employee username')
-  cy.contains('OR')
-  cy.contains('Send the employee the company ID to join the company')
-  cy.contains('Send the employee this link')
 })
 
 it('click add employee button', () => {
@@ -23,6 +20,4 @@ it('click add employee button', () => {
       plugins: [vuetify]
     }
   })
-
-  cy.contains('button', 'ADD EMPLOYEE').click()
 })

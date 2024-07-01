@@ -30,7 +30,7 @@ export class ClientService {
     const newClient = new this.clientModel(createdClient);
     const result = await newClient.save();
     console.log(result);
-    return `Client: "${result.details.name}" has been created`;
+    return result;
   }
 
   async getAllClients() {

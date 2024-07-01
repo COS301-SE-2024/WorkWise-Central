@@ -96,4 +96,49 @@ export class Client {
   public deletedAt: Date;
 }
 
+export class ClientApiObject {
+  @ApiProperty()
+  @Prop({ type: String, required: false })
+  _id?: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: String, required: false })
+  registrationNumber?: string;
+
+  @ApiProperty()
+  @Prop({ type: String, required: false, default: 'none' })
+  clientUsername?: string;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  details: ClientDetails;
+
+  @ApiProperty()
+  @Prop({ required: false, default: new Date() })
+  public createdAt: Date;
+
+  @ApiProperty()
+  @Prop({ required: false })
+  public updatedAt: Date;
+
+  @ApiProperty()
+  @Prop({ required: false })
+  public deletedAt: Date;
+}
+
 export const ClientSchema = SchemaFactory.createForClass(Client);
+
+export class CreateClientResponseDto {
+  response: ClientApiObject;
+
+  constructor(response: ClientApiObject) {
+    this.response = response;
+  }
+}
+
+export class ApiResponseDto<Type> {
+  response: Type;
+  constructor(response: Type) {
+    this.response = response;
+  }
+}

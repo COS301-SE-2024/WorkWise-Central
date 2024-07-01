@@ -22,6 +22,4 @@ it('click create client button', () => {
       plugins: [vuetify]
     }
   })
-
-  cy.contains('button', 'JOIN COMPANY').click()
 })

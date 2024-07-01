@@ -15,6 +15,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { JobApiObject } from '../entities/job.entity';
 
 class Address {
   @ApiProperty()
@@ -242,4 +243,18 @@ export class CreateJobDto {
   @Type(() => Comment)
   @IsOptional()
   comments?: Comment[];
+}
+
+export class CreateJobResponseDto {
+  response: JobApiObject;
+  constructor(response: JobApiObject) {
+    this.response = response;
+  }
+}
+
+export class JobAllResponseDto {
+  constructor(response: JobApiObject[]) {
+    this.response = response;
+  }
+  response: JobApiObject[];
 }
