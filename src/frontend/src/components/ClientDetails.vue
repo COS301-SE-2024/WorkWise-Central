@@ -4,11 +4,11 @@
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        prepend-icon="mdi-account"
-        variant="elevated"
+        color="primary"
+        variant="text"
         v-bind="activatorProps"
       >
-        View Client Details
+        View
       </v-btn>
     </template>
 

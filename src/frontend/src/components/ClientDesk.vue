@@ -36,7 +36,7 @@
                   single-line
                 ></v-text-field>
                 <v-spacer></v-spacer>
-                <ClientDetails v-model="clientDialog" @close="clientDialog = false" />
+                <AddClient v-model="addClientDialog" @close="addClientDialog = false" />
               </v-card-title>
 
               <v-divider></v-divider>
@@ -102,7 +102,7 @@
                           rounded="xl"
                           variant="plain"
                           style="transform: rotate(90deg) dots"
-                          @click="editClient(value)"
+                          @click="(actionsDialog = true), (dummy = value)"
                           ><v-icon>mdi-dots-horizontal</v-icon></v-btn
                         >
                       </template>
@@ -115,25 +115,36 @@
         </v-row>
       </v-col></v-row
     >
-
     <v-col>
-      <DeleteClient v-model="deleteDialog" :details="selectedItem" :client_id="selectedItemId"
-    /></v-col>
-    <v-col>
-      <EditClient
-        v-model="editDialog"
-        @update:item="selectedItem = $event"
-        :editedItem="selectedItem"
-        :_clientID="selectedItemId"
-      />
+      <v-card> </v-card>
     </v-col>
+
+    <v-dialog v-model="actionsDialog" max-width="500px">
+      <v-card>
+        <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+          {{ +selectedItemName + ' ' + selectedItemSurname }}
+        </v-card-title>
+        <v-card-text> What would you like to do with this job? </v-card-text>
+        <v-card-actions>
+          <ClientDetails v-model="clientDialog" @close="clientDialog = false" />
+          <EditClient
+            @update:item="selectedItem = $event"
+            :editedItem="selectedItem"
+            :_clientID="selectedItemId"
+          /><DeleteClient :details="selectedItem" :client_id="selectedItemId" />
+          <v-spacer></v-spacer>
+          <v-btn @click="actionsDialog = false">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import DeleteClient from './DeleteClient.vue'
 import EditClient from './EditClient.vue'
-import ClientDetails from './AddClient.vue'
+import AddClient from './AddClient.vue'
+import ClientDetails from './ClientDetails.vue'
 import axios from 'axios'
 import { defineComponent } from 'vue'
 
@@ -144,11 +155,16 @@ export default defineComponent({
     isDarkMode: Boolean
   },
   data: () => ({
+    dummy: '',
     selectedItem: {},
+    selectedName: '',
+    selectedSurname: '',
     isdarkmode: false,
     clientDialog: false,
     deleteDialog: false,
     editDialog: false,
+    addClientDialog: false,
+    actionsDialog: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
@@ -372,7 +388,8 @@ export default defineComponent({
   components: {
     ClientDetails,
     DeleteClient,
-    EditClient
+    EditClient,
+    AddClient
   },
   computed: {
     filteredClients() {
