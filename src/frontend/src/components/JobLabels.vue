@@ -12,61 +12,48 @@
         Status
       </v-btn>
     </template>
-    <v-sheet elevation="14" rounded="md" height="auto">
-      <v-col cols="12">
-        <v-col cols="12">
-          <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
-            <v-icon left class="mr-2">mdi-label</v-icon>
-            <span class="title">Status of the Job</span>
-            <v-spacer></v-spacer>
-          </v-card-title>
-        </v-col>
 
+    <v-col cols="12">
+      <v-card
+        ><v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+          <v-icon left class="mr-2">mdi-label</v-icon>
+          <span class="title">Select a Job Status</span>
+          <v-spacer></v-spacer>
+        </v-card-title>
         <v-spacer></v-spacer>
-        <div>
-          <v-row>
-            <v-col cols="12" v-for="label in jobLabels" :key="label.id">
-              <v-row align="center">
-                <!-- Add padding for spacing and align items center -->
-                <!-- Checkbox on the left -->
-
-                <!-- Card in the middle -->
-                <v-col cols="9" offset="2">
-                  <!-- Adjust the cols as needed for your design -->
-                  <v-card
-                    @click="toggleSelection(label)"
-                    :class="{ selected: label.isSelected }"
-                    :color="label.color"
-                    variant="outlined"
-                    height="40px"
-                    rounded="xl"
-                    width="90%"
-                  >
-                    <v-card-title>{{ label.title }}</v-card-title>
-                    <!-- Your card content here -->
-                    <v-card-actions>
-                      <!-- Your card actions here -->
-                      <v-btn
-                        @click="(jobDialog = false), setCurrentLabel(label)"
-                        variant="text"
-                        color="primary"
-                        size="large"
-                        >Save</v-btn
-                      >
-
-                      <v-btn @click="jobDialog = false" variant="text" color="red" size="large"
-                        >Cancel</v-btn
-                      >
-                    </v-card-actions>
-                  </v-card>
-                </v-col>
-              </v-row> </v-col
-            ><v-spacer></v-spacer>
-          </v-row>
-        </div>
-        <v-spacer></v-spacer>
-      </v-col>
-    </v-sheet>
+        <v-card-text
+          ><v-spacer></v-spacer>
+          <div>
+            <v-row>
+              <v-col cols="12">
+                <v-row align="center">
+                  <v-radio-group v-model="selectedRadio">
+                    <v-radio
+                      v-for="label in jobLabels"
+                      :key="label.id"
+                      :label="label.title"
+                      :value="label.id"
+                      :color="label.color"
+                      @click="toggleSelection(label)"
+                      variant="outlined"
+                      height="40px"
+                      rounded="xl"
+                      width="90%"
+                     
+                    >
+                    </v-radio>
+                  </v-radio-group>
+                </v-row> </v-col
+              ><v-spacer></v-spacer>
+            </v-row>
+          </div>
+          <v-spacer></v-spacer> </v-card-text
+        ><v-card-actions>
+          <v-btn variant="text" size="large" color="primary" @click="addSelectedLabels">Add</v-btn>
+          <v-btn variant="text" size="large" color="error" @click="jobDialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-col>
   </v-dialog>
 </template>
 <script>
@@ -92,19 +79,19 @@ export default defineComponent({
     jobLabels: [
       {
         id: 1,
-        color: 'red', // Example color
+        color: 'error', // Example color
         isSelected: false,
         title: 'Not Started'
       },
       {
         id: 2,
-        color: 'orange', // Example color
+        color: 'warning', // Example color
         isSelected: false,
         title: 'In Progress'
       },
       {
         id: 3,
-        color: 'green', // Example color
+        color: 'success', // Example color
         isSelected: false,
         title: 'Completed'
       }
@@ -175,4 +162,5 @@ export default defineComponent({
   border: 2px solid #42b983; /* Example highlight color */
   box-shadow: 0 0 8px #42b983; /* Adds a shadow for more emphasis */
 }
+
 </style>
