@@ -1,6 +1,6 @@
 import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
-import JobCard from './JobCard.vue'
+import JobCard from '../management/JobCard.vue'
 
 it('renders client desk', () => {
   const vuetify = createVuetify()

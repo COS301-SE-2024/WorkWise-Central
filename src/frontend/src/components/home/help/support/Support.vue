@@ -87,7 +87,7 @@ export default defineComponent({
         {
           question: 'Can I integrate this app with other tools we use?',
           answer:
-            "Yes, our app supports integration with various tools commonly used in project management, such as Slack, Google Drive, and Microsoft Teams. You can find these integration options in the 'Settings' menu under 'Integrations.'"
+            "Yes, our app supports integration with various tools commonly used in project support, such as Slack, Google Drive, and Microsoft Teams. You can find these integration options in the 'Settings' menu under 'Integrations.'"
         },
         {
           question: 'How do I assign tasks to team members?',
@@ -117,7 +117,7 @@ export default defineComponent({
         {
           question: 'What should I do if I encounter a technical issue?',
           answer:
-            "If you experience any technical issues, please contact our support team through the 'Help' section in the app. You can submit a ticket detailing your problem, and our support staff will assist you as soon as possible."
+            "If you experience any technical issues, please contact our support team through the 'help' section in the app. You can submit a ticket detailing your problem, and our support staff will assist you as soon as possible."
         },
         {
           question: 'How secure is our data in this app?',

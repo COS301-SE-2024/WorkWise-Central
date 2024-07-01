@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import NavigationBar from '../components/NavigationBar.vue'
-import TeamMemberList from '@/components/TeamMemberList.vue'
-import JobLabels from '@/components/JobLabels.vue'
-import JobChecklist from '@/components/JobChecklist.vue'
+import NavigationBar from '../components/home/NavigationBar.vue'
+import TeamMemberList from '@/components/home/jobs/management/TeamMemberList.vue'
+import JobLabels from '@/components/home/jobs/management/JobLabels.vue'
+import JobChecklist from '@/components/home/jobs/management/JobChecklist.vue'
 </script>
 
 <template>

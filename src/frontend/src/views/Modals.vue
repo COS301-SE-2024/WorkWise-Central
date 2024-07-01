@@ -15,11 +15,11 @@
 </template>
 
 <script>
-import AddEmployee from '../components/AddEmployee.vue'
-import ClientDetails from '../components/AddClient.vue'
-import JobDetailsList from '../components/AddJob.vue'
+import AddEmployee from '../components/home/employees/management/AddEmployee.vue'
+import ClientDetails from '../components/home/clients/management/AddClient.vue'
+import JobDetailsList from '../components/home/jobs/management/AddJob.vue'
 // import JoinCompanyModal from '../components/JoinCompanyModal.vue'
-import RegisterCompanyModal from '../components/RegisterCompanyModal.vue'
+import RegisterCompanyModal from '../components/signup/RegisterCompanyModal.vue'
 import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'ModaLs',

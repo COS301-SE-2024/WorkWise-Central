@@ -5,7 +5,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import ManagerViewBody from '@/components/ManagerViewBody.vue'
-import NavigationBar from '@/components/NavigationBar.vue'
+import NavigationBar from '@/components/home/NavigationBar.vue'
 export default defineComponent({
   name: 'ManagerEmployeesView',
   computed: {

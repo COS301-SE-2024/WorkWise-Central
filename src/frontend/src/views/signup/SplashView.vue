@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import SplashVue from '../components/SplashScreen.vue'
+import SplashVue from '../../components/signup/SplashScreen.vue'
 
 export default {
   components: {

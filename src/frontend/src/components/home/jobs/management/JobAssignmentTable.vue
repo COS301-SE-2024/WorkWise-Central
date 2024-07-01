@@ -1,5 +1,5 @@
 <script>
-import AddJob from '../components/AddJob.vue'
+import AddJob from './AddJob.vue'
 
 // const FakeAPI = {
 //   async fetch({ page, itemsPerPage, sortBy }) {

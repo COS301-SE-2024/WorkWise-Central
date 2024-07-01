@@ -142,7 +142,7 @@ export default defineUserConfig({
         link: '/devOps/',
         children: [
         {
-            text: 'Git originisation and management',
+            text: 'Git originisation and support',
             link: '/devOps/gitOrgMan.md',
           },
           {

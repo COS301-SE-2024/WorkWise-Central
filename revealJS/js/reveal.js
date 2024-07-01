@@ -2944,7 +2944,7 @@ export default function( revealElement, options ) {
 		startEmbeddedContent: () => slideContent.startEmbeddedContent( currentSlide ),
 		stopEmbeddedContent: () => slideContent.stopEmbeddedContent( currentSlide, { unloadIframes: false } ),
 
-		// Preview management
+		// Preview support
 		showPreview,
 		hidePreview: closeOverlay,
 

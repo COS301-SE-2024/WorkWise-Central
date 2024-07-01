@@ -109,11 +109,11 @@
 </template>
 
 <script lang="js">
-import DeleteClient from './DeleteClient.vue'
+import DeleteClient from '../../clients/management/DeleteClient.vue'
 import AddEmployee from './AddEmployee.vue'
 
 import axios from 'axios'
-import router from '@/router'
+import router from '@/router/index.ts'
 
 export default {
   name: 'ClientDesk',

@@ -1,6 +1,6 @@
 import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
-import AddEmployee from './AddEmployee.vue'
+import AddEmployee from '../management/AddEmployee.vue'
 
 it('renders add employee', () => {
   const vuetify = createVuetify()

@@ -1,6 +1,6 @@
 import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
-import SplashScreen from '../components/SplashScreen.vue'
+import SplashScreen from '../SplashScreen.vue'
 
 it('shows the splash screen', () => {
   const vuetify = createVuetify()

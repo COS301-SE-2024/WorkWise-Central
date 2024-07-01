@@ -4,8 +4,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import ClientDesk from '@/components/ClientDesk.vue'
-import NavigationBar from '@/components/NavigationBar.vue'
+import ClientDesk from '@/components/home/clients/management/ClientDesk.vue'
+import NavigationBar from '@/components/home/NavigationBar.vue'
 export default defineComponent({
   name: 'ClientDeskView',
   computed: {

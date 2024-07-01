@@ -1,6 +1,6 @@
 import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
-import RegisterCompany from '../components/RegisterCompanyModal.vue'
+import RegisterCompany from '../RegisterCompanyModal.vue'
 
 it('shows the register company modal', () => {
   const vuetify = createVuetify()

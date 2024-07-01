@@ -24,7 +24,7 @@ export class AuthService {
     //private mailService: EmailService,
   ) {}
 
-  /*  async signUp(user: User) {
+  /*  async signup(user: User) {
     const token = Math.floor(1000 + Math.random() * 9000).toString();
     await this.mailService.sendUserConfirmation(user, token);
   }*/

@@ -1,22 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import SplashView from '@/views/SplashView.vue'
+import SplashView from '@/views/signup/SplashView.vue'
 
-import RegisterCompanyModal from '@/components/RegisterCompanyModal.vue'
-import JoinCompanyModal from '@/components/JoinCompanyModal.vue'
-import AddClient from '@/components/AddClient.vue'
-import AddEmployee from '@/components/AddEmployee.vue'
+import RegisterCompanyModal from '@/components/signup/RegisterCompanyModal.vue'
+import JoinCompanyModal from '@/components/signup/JoinCompanyModal.vue'
+import AddClient from '@/components/home/clients/management/AddClient.vue'
+import AddEmployee from '@/components/home/employees/management/AddEmployee.vue'
 import JobDetailsModal from '@/components/JobDetailsModal.vue'
-import AddJob from '@/components/AddJob.vue'
+import AddJob from '@/components/home/jobs/management/AddJob.vue'
 import Modals from '@/views/Modals.vue'
-import Calendar from '@/components/Calendar.vue'
-import Client from '@/components/ClientDesk.vue'
+import Calendar from '@/components/home/dashboard/home/Calendar.vue'
+import Client from '@/components/home/clients/management/ClientDesk.vue'
 import ClientView from '@/views/ClientEmployee.vue'
 import ClientEmployeeView from '@/views/EmployeeDesk.vue'
 import ClientEmployee from '@/components/ClientEmployeeView.vue'
-import Dashboard from '@/views/DashboardView.vue'
-import Kanban from '@/components/Kanban.vue'
+import Dashboard from '@/views/home/dashboard/DashboardView.vue'
+import Kanban from '@/components/home/jobs/Kanban.vue'
 import ManagerView from '@/views/ManagerView.vue'
-import JobCard from '@/components/JobCard.vue'
+import JobCard from '@/components/home/jobs/management/JobCard.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -94,12 +94,12 @@ const router = createRouter({
     {
       path: '/manager-employees-t',
       name: 'manageremployees',
-      component: () => import('@/views/ManageEmployeesT.vue')
+      component: () => import('@/views/home/employees/ManageEmployeesT.vue')
     },
     {
       path: '/support',
       name: 'support',
-      component: () => import('@/views/Support.vue')
+      component: () => import('@/views/home/help/Support.vue')
     },
     {
       path: '/manager',
@@ -109,7 +109,7 @@ const router = createRouter({
     {
       path: '/manager-edit-employee',
       name: 'managereditemployee',
-      component: () => import('@/views/ManagerEditEmployee.vue')
+      component: () => import('@/views/home/employees/ManagerEditEmployee.vue')
     },
     {
       path: '/client-desk-view',
@@ -124,7 +124,7 @@ const router = createRouter({
     {
       path: '/404',
       name: '404',
-      component: () => import('@/views/404Page.vue')
+      component: () => import('@/views/error/404Page.vue')
     },
     {
       path: '/client-employee-view',
@@ -144,7 +144,7 @@ const router = createRouter({
     {
       path: '/email-confirmation',
       name: 'email-confirm',
-      component: () => import('@/views/EmailConfirmation.vue')
+      component: () => import('@/views/emailConfirmation/EmailConfirmation.vue')
     }
   ]
 })
