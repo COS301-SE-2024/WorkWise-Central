@@ -5,7 +5,7 @@ import {
   forwardRef,
   Inject,
 } from '@nestjs/common';
-import { CreateJobDto } from './dto/create-job.dto';
+import { CreateJobDto, CreateJobResponseDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
@@ -42,10 +42,12 @@ export class JobService {
     const newJob = new this.jobModel(createdJob);
     const result = await newJob.save();
 
-    return {
+    return new CreateJobResponseDto(result);
+
+    /*    return {
       id: result._id,
       message: `Job: "${result.details.heading}", by "${result.assignedBy} has been created`,
-    };
+    };*/
   }
 
   async authorisedToAssign(userId: Types.ObjectId, companyId: Types.ObjectId) {

@@ -1,4 +1,3 @@
-import { Types } from 'mongoose';
 import { Prop } from '@nestjs/mongoose';
 import {
   IsArray,
@@ -15,6 +14,7 @@ import {
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { SignInUserDto } from '../entities/user.entity';
 
 class ContactInfo {
   @ApiProperty()
@@ -150,13 +150,13 @@ export class CreateUserDto {
   public currentEmployee?: Types.ObjectId;*/
 }
 
-export class createUserResponseDto {
-  response: { access_token: string; id: Types.ObjectId };
-  constructor(message: { access_token: string; id: Types.ObjectId }) {
-    this.response = message;
+export class CreateUserResponseDto {
+  response: SignInUserDto;
+  constructor(response: SignInUserDto) {
+    this.response = response;
   }
 }
 
-export class UserExistsResponseDto {
+export class BooleanResponseDto {
   response: boolean;
 }

@@ -56,7 +56,7 @@ const supportSubItems = ref([{ title: 'Support', icon: 'mdi-star', routeName: 's
 <script lang="ts">
 import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
-import ProfileEmployee from '@/components/ProfileEmployee.vue'
+import ProfileEmployee from './ProfileEmployee.vue'
 
 export default defineComponent({
   name: 'NavigationBar',
@@ -85,7 +85,7 @@ export default defineComponent({
       </v-app-bar>
 
       <v-navigation-drawer app v-model="drawer" :rail="isVisible">
-        <v-list-item title="Company Name"></v-list-item>
+        <v-list-item></v-list-item>
         <v-divider></v-divider>
         <v-list v-model:open="open">
           <v-list-group value="Dashboard">

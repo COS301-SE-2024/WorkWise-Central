@@ -23,7 +23,7 @@
                 Name
               </small>
               <v-text-field
-                v-model="localEditedItem.firstName"
+                v-model="localEditedItem.name"
                 :rules="nameRules"
                 variant="solo"
                 rounded="md"
@@ -53,7 +53,7 @@
                 Phone Number
               </small>
               <v-text-field
-                v-model="localEditedItem.clientInfo.phoneNumber"
+                v-model="localEditedItem.phoneNumber"
                 :rules="phoneRules"
                 variant="solo"
                 rounded="md"
@@ -68,7 +68,7 @@
                 Email
               </small>
               <v-text-field
-                v-model="localEditedItem.clientInfo.email"
+                v-model="localEditedItem.email"
                 variant="solo"
                 :rules="emailRules"
                 rounded="md"
@@ -83,7 +83,7 @@
                 Address
               </small>
               <v-text-field
-                v-model="localEditedItem.clientInfo.address.street"
+                v-model="localEditedItem.address"
                 variant="solo"
                 rounded="md"
               ></v-text-field>
@@ -99,7 +99,7 @@
                   width="85%"
                   height="35"
                   variant="elevated"
-                  @click="update"
+                  @click="savechnages"
                 >
                   SAVE
                 </v-btn>
@@ -112,6 +112,7 @@
                   width="85%"
                   height="35"
                   variant="elevated"
+                  @click="close"
                 >
                   CANCEL
                 </v-btn>
@@ -178,18 +179,24 @@ export default {
       alert('Item updated')
     },
     savechnages() {
-      this.update()
+      alert('Client updated')
+      this.clientDialog = false
     },
     async update() {
       await axios
         .patch(`http://localhost:3000/client/${this._clientID}`)
         .then((response) => {
           console.log(response)
+          alert('Client updated')
           return true
         })
         .catch((error) => {
           console.log(error)
+          alert('Error updating client')
           return false
+        })
+        .finally(() => {
+          this.clientDialog = false
         })
     }
   }
