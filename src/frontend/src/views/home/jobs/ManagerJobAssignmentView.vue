@@ -1,6 +1,6 @@
 <script setup>
-import NavigationBar from '../components/home/NavigationBar.vue'
-import JobAssignTable from '../components/home/jobs/management/JobAssignmentTable.vue'
+import NavigationBar from '../../../components/home/NavigationBar.vue'
+import JobAssignTable from '../../../components/home/jobs/management/JobAssignmentTable.vue'
 </script>
 
 <template>

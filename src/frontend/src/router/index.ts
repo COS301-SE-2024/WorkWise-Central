@@ -11,7 +11,7 @@ import Modals from '@/views/Modals.vue'
 import Calendar from '@/components/home/dashboard/home/Calendar.vue'
 import Client from '@/components/home/clients/management/ClientDesk.vue'
 import ClientView from '@/views/ClientEmployee.vue'
-import ClientEmployeeView from '@/views/EmployeeDesk.vue'
+import ClientEmployeeView from '@/views/home/employees/EmployeeDesk.vue'
 import ClientEmployee from '@/components/ClientEmployeeView.vue'
 import Dashboard from '@/views/home/dashboard/DashboardView.vue'
 import Kanban from '@/components/home/jobs/Kanban.vue'
@@ -119,7 +119,7 @@ const router = createRouter({
     {
       path: '/jobAssignmentView',
       name: 'jobAssignmentView',
-      component: () => import('@/views/ManagerJobAssignmentView.vue')
+      component: () => import('@/views/home/jobs/ManagerJobAssignmentView.vue')
     },
     {
       path: '/404',
