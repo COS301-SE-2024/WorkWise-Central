@@ -12,7 +12,7 @@
           </v-col>
         </v-row>
 
-        <div v-if="isEditing">
+        <div v-if="isEditingDescription">
           <v-textarea
             label="Enter the job description here"
             v-model="tempJobDescription"
@@ -38,16 +38,31 @@
         </div>
       </div>
 
-      <div class="mx-6 py-6">
+      <div class="mx-10 py-4">
         <v-row align="center" justify="space-between">
           <v-col cols="auto">
-            <!--            <v-icon left>mdi-text-short</v-icon>-->
-            <!--            <v-label class="py-3">Comment</v-label>-->
+            <v-icon left>mdi-text-short</v-icon>
+            <v-label class="py-3">Comment</v-label>
           </v-col>
         </v-row>
-        <v-text-field label="Write a comment..." variant="solo" clearable> </v-text-field>
         <v-row>
-          <v-btn variant="tonal" class="mx-3"> Save </v-btn>
+          <v-avatar image="https://img.taste.com.au/SDLWyAtG/w720-h480-cfill-q80/taste/2022/08/cheese-180717-1.jpg" size="53" class="mx-1"></v-avatar>
+          <v-col>
+            <v-text-field
+                v-model="comment"
+                :readonly="!isEditingComments"
+                label="Write a comment..."
+                variant="solo"
+                clearable
+            ></v-text-field>
+            <div v-if="!isEditingComments" style="display: flex; gap: 10px; margin-top: 5px;">
+              <a href="#" @click.prevent="editComment">Edit</a>
+              <a href="#" @click.prevent="deleteComment">Delete</a>
+            </div>
+          </v-col>
+        </v-row>
+        <v-row v-if="isEditingComments">
+          <v-btn @click="saveComment" variant="tonal" class="mx-15">Save</v-btn>
         </v-row>
       </div>
 
@@ -305,22 +320,39 @@ import { useRouter } from 'vue-router'
 
 const jobDescription = ref('Initial job description text')
 const tempJobDescription = ref('')
-const isEditing = ref(false)
+const isEditingDescription = ref(false)
 // const descriptionRows = ref(5);
 
 const saveDescription = () => {
   jobDescription.value = tempJobDescription.value
-  isEditing.value = false
+  isEditingDescription.value = false
 }
 
 const cancelEdit = () => {
-  isEditing.value = false
+  isEditingDescription.value = false
 }
 
 const editDescription = () => {
   tempJobDescription.value = jobDescription.value
-  isEditing.value = true
+  isEditingDescription.value = true
 }
+
+// For comment box affects
+
+const comment = ref('');
+const isEditingComments = ref(false);
+
+const editComment = () => {
+  isEditingComments.value = true;
+};
+
+const saveComment = () => {
+  isEditingComments.value = false;
+};
+
+const deleteComment = () => {
+  comment.value = '';
+};
 
 //For change client
 const clientDialog = ref(false)
