@@ -56,7 +56,7 @@ const supportSubItems = ref([{ title: 'Support', icon: 'mdi-star', routeName: 's
 <script lang="ts">
 import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
-import ProfileEmployee from '../ProfileEmployee.vue'
+import ProfileEmployee from './setting/profile/ProfileEmployee.vue'
 
 export default defineComponent({
   name: 'NavigationBar',
