@@ -2422,7 +2422,7 @@ export default function( revealElement, options ) {
 			// 1. Current fragment's data-autoslide
 			// 2. Current slide's data-autoslide
 			// 3. Parent slide's data-autoslide
-			// 4. Global autoSlide setting
+			// 4. Global autoSlide settings
 			if( fragmentAutoSlide ) {
 				autoSlide = parseInt( fragmentAutoSlide, 10 );
 			}
