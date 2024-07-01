@@ -116,14 +116,15 @@
 
                       </template>
                       <!-- Actions slot -->
-                      <template v-slot:[`item.actions`]="{ value }">
+                      <template v-slot:[`item.actions`]="{ item }">
                         <v-btn
                             rounded="xl"
                             variant="plain"
-                            style="transform: rotate(90deg) dots"
-                            @click="editClient(value)"
-                        ><v-icon>mdi-dots-horizontal</v-icon></v-btn
+                            style="transform: rotate(0deg)"
+                            @click="openDialog(item)"
                         >
+                          <v-icon>mdi-dots-horizontal</v-icon>
+                        </v-btn>
                       </template>
                     </v-data-table>
                   </v-col>
@@ -134,18 +135,22 @@
         </v-row>
       </v-col></v-row
     >
-
-    <v-col>
-      <DeleteClient v-model="deleteDialog" :details="selectedItem" :client_id="selectedItemId"
-      /></v-col>
-    <v-col>
-      <EditClient
-          v-model="editDialog"
-          @update:item="selectedItem = $event"
-          :editedItem="selectedItem"
-          :_clientID="selectedItemId"
-      />
-    </v-col>
+    <v-dialog v-model="dialog" max-width="500px">
+      <v-card>
+        <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+          {{ selectedJob?.jobTitle }}
+        </v-card-title>
+        <v-card-text>
+          What would you like to do with this job?
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" @click="editJob">Edit</v-btn>
+          <v-btn color="error" @click="deleteJob">Delete</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn @click="closeDialog">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -337,6 +342,31 @@ const mockData = [
   // Add more mock data entries as needed
 ];
 
+// Actions
+
+const dialog = ref(false)
+const selectedJob = ref(null)
+
+const openDialog = (item) => {
+  selectedJob.value = item
+  dialog.value = true
+}
+
+const closeDialog = () => {
+  dialog.value = false
+  selectedJob.value = null
+}
+
+const editJob = () => {
+  console.log('Edit job:', selectedJob.value)
+  closeDialog()
+}
+
+const deleteJob = () => {
+  console.log('Delete job:', selectedJob.value)
+  closeDialog()
+}
+
 // Job Status colours
 const getStatusColor = (status) => {
   switch (status.toLowerCase()) {
@@ -418,3 +448,5 @@ onMounted(() => {
   fetchJobData();
 });
 </script>
+
+

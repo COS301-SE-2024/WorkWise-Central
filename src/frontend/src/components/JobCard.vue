@@ -4,38 +4,66 @@
       <v-card-title class="d-flex align-items-center">
         <h2 class="flex-grow-1">{{ jobTitle }}</h2>
       </v-card-title>
-      <div>
+      <div class="mx-6 py-4">
         <v-row align="center" justify="space-between">
           <v-col cols="auto">
-            <v-icon left>mdi-text</v-icon>
-            <v-label>Description</v-label>
+            <v-icon>mdi-text</v-icon>
+            <v-label class="py-3">Description</v-label>
           </v-col>
         </v-row>
-        <v-textarea
-            label="Enter the job description here"
-            v-model="jobDescription"
-            :rows="descriptionRows"
-            outlined
-            auto-grow
 
-        ></v-textarea>
+        <div v-if="isEditing">
+          <v-textarea
+              label="Enter the job description here"
+              v-model="tempJobDescription"
+              :rows="descriptionRows"
+              variant="solo-filled"
+              clearable
+              outlined
+              auto-grow
+          ></v-textarea>
+
+          <v-row>
+            <v-btn variant="tonal" class="mx-3" @click="saveDescription">
+              Save
+            </v-btn>
+            <v-btn variant="tonal" class="mx-2" @click="cancelEdit">
+              Cancel
+            </v-btn>
+          </v-row>
+        </div>
+
+        <div v-else>
+          <v-row>
+            <p class="mx-4">{{ jobDescription }}</p>
+            <v-spacer></v-spacer>
+            <v-btn variant="tonal" class="mx-3" @click="editDescription">
+              Edit
+            </v-btn>
+          </v-row>
+        </div>
       </div>
-      <div>
+
+      <div class="mx-6 py-6">
         <v-row align="center" justify="space-between">
           <v-col cols="auto">
-            <v-icon left>mdi-text-short</v-icon>
-            <v-label>Comment</v-label>
+<!--            <v-icon left>mdi-text-short</v-icon>-->
+<!--            <v-label class="py-3">Comment</v-label>-->
           </v-col>
         </v-row>
-        <v-textarea
-
-            label="Add Comment"
-            v-model="jobComment"
-            rows="2"
-            outlined
-            class="mb-4"
-        ></v-textarea>
+        <v-text-field
+            label="Write a comment..."
+            variant="solo"
+            clearable
+        >
+        </v-text-field>
+        <v-row>
+          <v-btn variant="tonal" class="mx-3">
+            Save
+          </v-btn>
+        </v-row>
       </div>
+
       <div v-if="clientChips.length" class="chip-container">
         <h4 class="flex-grow-1">Selected Client:</h4>
         <div class="chip-wrapper">
@@ -52,8 +80,6 @@
             {{ chip.name }} ({{ (chip.size / 1024).toFixed(2) }} KB)
           </v-chip>
         </div>
-
-        F
       </div>
       <div v-if="selectedMemberChips.length">
         <h4 class="flex-grow-1">Team Members Selected:</h4>
@@ -105,7 +131,6 @@
           </v-chip>
         </div>
       </div>
-
       <div v-if="dateChips.length">
         <h4 class="flex-grow-1"> Job Dates:</h4>
         <v-chip
@@ -318,6 +343,30 @@ import {
 import TeamMemberList from './TeamMemberList.vue'
 import JobLabels from './JobLabels.vue'
 import JobChecklist from './JobChecklist.vue'
+import { useRouter } from 'vue-router';
+
+
+// For description and comment box affects
+
+const jobDescription = ref("Initial job description text");
+const tempJobDescription = ref("");
+const isEditing = ref(false);
+// const descriptionRows = ref(5);
+
+const saveDescription = () => {
+  jobDescription.value = tempJobDescription.value;
+  isEditing.value = false;
+};
+
+const cancelEdit = () => {
+  isEditing.value = false;
+};
+
+const editDescription = () => {
+  tempJobDescription.value = jobDescription.value;
+  isEditing.value = true;
+};
+
 //For change client
 const clientDialog = ref(false);
 const selectedClient = ref(null);
@@ -325,7 +374,6 @@ const clientChips = ref([]);
 const clients = ref([]);
 const selectedClientName = ref(null);
 const clientNames = ref([]);
-import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
@@ -541,7 +589,7 @@ const removeDates = () => {
 
 // For description
 
-const jobDescription = ref(''); // will store the changed description
+// const jobDescription = ref(''); // will store the changed description
 
 // Adjust the number of rows based on the content
 const descriptionRows = computed(() => {
@@ -594,5 +642,10 @@ const cancelJob = () => {
 .chip-wrapper {
   display: flex;
   flex-wrap: wrap;
+}
+
+.rounded-img {
+  border-radius: 50%;
+  overflow: hidden;
 }
 </style>
