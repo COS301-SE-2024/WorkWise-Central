@@ -1,141 +1,171 @@
 <template>
-  <v-app :style="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color">
-    <v-container fluid fill-height class="pa-16 ma-auto pt-5 fixed-container">
-      <v-row justify="center" xs="4" sm="4" md="12">
-        <v-col cols="12">
-          <v-row justify="center">
-            <v-col cols="12" xs="4" sm="4" md="12" offset="3">
-              <v-card
-                  flat
-                  :height="auto"
-                  :width="1500"
-                  class="pa-11 ma-10"
-                  rounded="xl"
-                  elevation-2
-                  :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
-                  border="md"
+  <v-container fluid fill-height>
+    <v-row justify="center" xs="6" sm="6" md="12">
+      <v-col cols="12">
+        <v-row justify="center">
+          <v-col cols="12" xs="12" sm="12" md="12">
+            <v-card
+              flat
+              :height="auto"
+              :max-height="auto"
+              class="pa-11 ma-0"
+              rounded="md"
+              elevation-2
+              :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+              border="md"
+            >
+              <v-card-title
+                class="d-flex align-center pe-2"
+                :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+                style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
               >
-                <v-card-title class="d-flex align-center pe-2">
-                  <v-icon icon="mdi-briefcase"></v-icon> &nbsp; Job Details
-                  <v-spacer></v-spacer>
-                  <v-text-field
-                      v-model="search"
-                      density="compact"
-                      label="Search"
-                      prepend-inner-icon="mdi-magnify"
-                      variant="solo-filled"
-                      flat
-                      hide-details
-                      :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
-                      single-line
-                  ></v-text-field>
-                  <v-spacer></v-spacer>
-                  <AddJob />
-                </v-card-title>
-                <v-divider></v-divider>
+                <v-icon icon="mdi-account"></v-icon> &nbsp;Job Details
+
+                <v-spacer></v-spacer>
+
+                <v-text-field
+                  v-model="search"
+                  density="compact"
+                  label="Search"
+                  prepend-inner-icon="mdi-magnify"
+                  variant="outlined"
+                  flat
+                  style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+                  hide-details
+                  :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  single-line
+                ></v-text-field>
+                <v-spacer></v-spacer>
+                <AddJob />
+              </v-card-title>
+
+              <v-divider></v-divider>
+              <v-col cols="12" xs="12" sm="12" md="12">
                 <div style="height: 700px; overflow-y: auto">
-                  <v-data-table
+                  <v-col cols="12" xs="12" sm="12" md="12">
+                    <v-data-table
                       :headers="headers"
                       :items="mockData"
                       :search="search"
                       :single-expand="true"
                       v-model:expanded="expanded"
                       show-expand
+                      height="auto"
                       rounded="xl"
                       :item-class="getRowClass"
-                  >
-                    <template v-slot:[`item.jobTitle`]="{ value }">
-                      <span class="font-weight-bold">{{ value }}</span>
-                    </template>
-                    <template v-slot:[`item.client`]="{ value }">
-                      <v-chip color="#5A82AF">
-                        <v-icon left>mdi-account</v-icon>
-                        {{ value }}
-                      </v-chip>
-                    </template>
-                    <template v-slot:[`item.jobDescription`]="{ value }">
-                      <span class="font-weight-bold">{{ value }}</span>
-                    </template>
-                    <template v-slot:[`item.status`]="{ value }">
-                      <v-chip color="#5A82AF">
-                        <v-icon left>mdi-checkbox-marked-circle-outline</v-icon>
-                        {{ value }}
-                      </v-chip>
-                    </template>
-                    <template v-slot:[`item.assignedTeam`]="{ value }">
-                      <span class="font-weight-bold">{{ value }}</span>
-                    </template>
-                    <template v-slot:[`item.startDate`]="{ value }">
-                      <v-chip color="#5A82AF">
-                        <v-icon left>mdi-calendar-start</v-icon>
-                        {{ value }}
-                      </v-chip>
-                    </template>
-                    <template v-slot:[`item.endDate`]="{ value }">
-                      <span class="font-weight-bold">{{ value }}</span>
-                    </template>
-                    <!-- Expanded content slot -->
-                    <template v-slot:expanded-row="{ columns, item }">
-                      <tr>
-                        <td :colspan="columns.length">More info about {{ item.jobTitle }}</td>
-                      </tr>
-                    </template>
-                    <!-- Actions slot -->
-                    <template v-slot:[`item.actions`]="{ item }">
-                      <v-col cols="12">
-                        <v-btn icon size="small" @click="openJobCard(item)" color="#5A82AF">
-                          <v-icon>mdi-pencil</v-icon>
+                      @click:row="toggleExpand"
+                      class="font-lato"
+                    >
+                      <template v-slot:[`item.jobTitle`]="{ value }">
+                        <v-chip color="#5A82AF"> <v-icon>mdi-briefcase</v-icon>{{ value }} </v-chip>
+                      </template>
+
+                      <template v-slot:[`item.client`]="{ value }">
+                        <v-chip color="#5A82AF"> <v-icon>mdi-phone</v-icon>{{ value }} </v-chip>
+                      </template>
+
+                      <template v-slot:[`item.jobDescription`]="{ value }">
+                        <v-chip color="#5A82AF">
+                          {{ value }}
+                        </v-chip>
+                      </template>
+
+                      <template v-slot:[`item.status`]="{ value }">
+                        <v-chip :color="getStatusColor(value)">
+                          <v-icon>mdi-progress-clock</v-icon>{{ value }}
+                        </v-chip>
+                      </template>
+
+                      <template v-slot:[`item.assignedTeam`]="{ value }">
+                        <v-chip @click="sendEmail" color="#5A82AF">
+                          <v-icon>mdi-email</v-icon>{{ value }}
+                        </v-chip>
+                      </template>
+
+                      <template v-slot:[`item.startDate`]="{ value }">
+                        <v-chip color="#5A82AF">
+                          <v-icon>mdi-calendar-start</v-icon>{{ value }}
+                        </v-chip>
+                      </template>
+
+                      <template v-slot:[`item.endDate`]="{ value }">
+                        <v-chip color="#5A82AF">
+                          <v-icon>mdi-calendar-end</v-icon>{{ value }}
+                        </v-chip>
+                      </template>
+
+                      <!-- Expanded content slot -->
+                      <template v-slot:expanded-row="{ columns, item }">
+                        <tr>
+                          <td :colspan="columns.length">
+                            Full Address: {{ item.name }}, {{ item.surname }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td :colspan="columns.length">VAT Number:{{ item.vatNumber }}</td>
+                        </tr>
+                        <tr>
+                          <td :colspan="columns.length">
+                            Languages Spoken: {{ item.preferred_Language }}
+                          </td>
+                        </tr>
+                      </template>
+                      <!-- Actions slot -->
+                      <template v-slot:[`item.actions`]="{ item }">
+                        <v-btn
+                          rounded="xl"
+                          variant="plain"
+                          style="transform: rotate(0deg)"
+                          @click="openDialog(item)"
+                        >
+                          <v-icon>mdi-dots-horizontal</v-icon>
                         </v-btn>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-btn icon size="small" @click="confirmDeleteItem(item)" color="#5A82AF">
-                          <v-icon>mdi-delete</v-icon>
-                        </v-btn>
-                      </v-col>
-                    </template>
-                  </v-data-table>
-                  <v-dialog v-model="confirmDelete" max-width="400px">
-                    <v-card>
-                      <v-card-title class="headline">Confirm Delete</v-card-title>
-                      <v-card-text>
-                        Are you sure you want to delete this item?
-                      </v-card-text>
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" text @click="cancelDelete">Cancel</v-btn>
-                        <v-btn color="blue darken-1" text @click="deleteConfirmed">Delete</v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
+                      </template>
+                    </v-data-table>
+                  </v-col>
                 </div>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-      <v-col> <DeleteClient v-model="deleteDialog" :details="selectedItem" /></v-col>
-    </v-container>
-  </v-app>
+              </v-col>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col></v-row
+    >
+    <v-dialog v-model="dialog" max-width="500px">
+      <v-card>
+        <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+          {{ selectedJob?.jobTitle }}
+        </v-card-title>
+        <v-card-text> What would you like to do with this job? </v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" @click="editJob">Edit</v-btn>
+          <v-btn color="error" @click="deleteJob">Delete</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn @click="closeDialog">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-container>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 import AddJob from './AddJob.vue'
-import JobCard from './JobCard.vue'
-import { useRouter } from 'vue-router';
+// import JobCard from './JobCard.vue'
+// import { useRouter } from 'vue-router'
+// import ClientDetails from '@/components/AddClient.vue'
+// import DeleteClient from '@/components/DeleteClient.vue'
+// import EditClient from '@/components/EditClient.vue'
 
-const router = useRouter();
-const search = ref('');
-const expanded = ref([]);
-const jobDetails = ref([]);
-const isDarkMode = ref(false);
-const modal_dark_theme_color = "#333";
-const modal_light_theme_color = "#fff";
-const deleteDialog = ref(false);
-const selectedItem = ref(null);
-
-
+// const router = useRouter()
+const search = ref('')
+const expanded = ref([])
+const jobDetails = ref([])
+const isDarkMode = ref(false)
+const modal_dark_theme_color = '#333'
+const modal_light_theme_color = '#fff'
+// const deleteDialog = ref(false)
+// const selectedItem = ref(null)
 
 const headers = [
   { title: 'Job Title', key: 'jobTitle', align: 'start', value: 'jobTitle' },
@@ -146,7 +176,7 @@ const headers = [
   { title: 'Start Date', key: 'startDate', align: 'start', value: 'startDate' },
   { title: 'End Date', key: 'endDate', align: 'start', value: 'endDate' },
   { title: 'Actions', key: 'actions', align: 'start', sortable: false, value: 'actions' }
-];
+]
 
 const mockData = [
   {
@@ -163,7 +193,7 @@ const mockData = [
     jobTitle: 'Kitchen Renovation',
     client: 'Heaven Gates',
     jobDescription: "Renovating Heaven Gates' kitchen with new cabinets and countertops.",
-    status: 'Pending',
+    status: 'Not Started',
     assignedTeam: 'Team B',
     startDate: '2024-07-10',
     endDate: '2024-07-20',
@@ -193,7 +223,7 @@ const mockData = [
     jobTitle: 'Office Painting',
     client: 'Tony Stark',
     jobDescription: "Painting Tony Stark's office in modern colors.",
-    status: 'Pending',
+    status: 'Not Started',
     assignedTeam: 'Team E',
     startDate: '2024-07-15',
     endDate: '2024-07-18',
@@ -223,7 +253,7 @@ const mockData = [
     jobTitle: 'Window Replacement',
     client: 'Peter Parker',
     jobDescription: "Replacing windows in Peter Parker's apartment.",
-    status: 'Pending',
+    status: 'Not Started',
     assignedTeam: 'Team H',
     startDate: '2024-07-08',
     endDate: '2024-07-10',
@@ -253,7 +283,7 @@ const mockData = [
     jobTitle: 'Flooring Replacement',
     client: 'Hal Jordan',
     jobDescription: "Replacing the flooring in Hal Jordan's house.",
-    status: 'Pending',
+    status: 'Not Started',
     assignedTeam: 'Team K',
     startDate: '2024-07-12',
     endDate: '2024-07-14',
@@ -283,7 +313,7 @@ const mockData = [
     jobTitle: 'Pool Cleaning',
     client: 'Wally West',
     jobDescription: "Cleaning Wally West's pool and performing maintenance.",
-    status: 'Pending',
+    status: 'Not Started',
     assignedTeam: 'Team N',
     startDate: '2024-07-13',
     endDate: '2024-07-15',
@@ -301,7 +331,46 @@ const mockData = [
   }
 
   // Add more mock data entries as needed
-];
+]
+
+// Actions
+
+const dialog = ref(false)
+const selectedJob = ref(null)
+
+const openDialog = (item) => {
+  selectedJob.value = item
+  dialog.value = true
+}
+
+const closeDialog = () => {
+  dialog.value = false
+  selectedJob.value = null
+}
+
+const editJob = () => {
+  console.log('Edit job:', selectedJob.value)
+  closeDialog()
+}
+
+const deleteJob = () => {
+  console.log('Delete job:', selectedJob.value)
+  closeDialog()
+}
+
+// Job Status colours
+const getStatusColor = (status) => {
+  switch (status.toLowerCase()) {
+    case 'completed':
+      return 'green'
+    case 'in progress':
+      return 'orange'
+    case 'not started':
+      return 'red'
+    default:
+      return '#5A82AF' // Default color
+  }
+}
 
 const fetchJobData = async () => {
   const config = {
@@ -309,13 +378,13 @@ const fetchJobData = async () => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
     }
-  };
+  }
 
   try {
-    const response = await axios.get('http://localhost:3000/job/all', config);
-    const jobData = response.data;
+    const response = await axios.get('http://localhost:3000/job/all', config)
+    const jobData = response.data
 
-    jobDetails.value = jobData.map(job => ({
+    jobDetails.value = jobData.map((job) => ({
       jobTitle: job.details.heading,
       client: job.clientId,
       jobDescription: job.details.description,
@@ -324,49 +393,49 @@ const fetchJobData = async () => {
       startDate: new Date(job.scheduledDateTime).toLocaleString(),
       endDate: 'N/A',
       actions: 'View/Edit/Delete'
-    }));
+    }))
 
-    console.log('Job details constructed successfully:', jobDetails.value);
-    console.log('Full response:', response);
+    console.log('Job details constructed successfully:', jobDetails.value)
+    console.log('Full response:', response)
   } catch (error) {
-    console.error('Error fetching job data:', error);
+    console.error('Error fetching job data:', error)
   }
-};
+}
+//
+// const openJobCard = (item) => {
+//   router.push('/jobCard')
+//   console.log('Open job card for:', item)
+// }
+//
+// const confirmDelete = ref(false)
+// const items = ref([
+//   // Your list of items
+// ])
+// let currentItemToDelete = null
 
-const openJobCard = (item) => {
-  router.push('/jobCard');
-  console.log('Open job card for:', item);
-};
+// const confirmDeleteItem = (item) => {
+//   currentItemToDelete = item
+//   confirmDelete.value = true
+// }
+//
+// const deleteConfirmed = () => {
+//   const index = items.value.findIndex((i) => i === currentItemToDelete)
+//   if (index !== -1) {
+//     items.value.splice(index, 1)
+//   }
+//   cancelDelete()
+// }
 
-const confirmDelete = ref(false);
-const items = ref([
-  // Your list of items
-]);
-let currentItemToDelete = null;
-
-const confirmDeleteItem = (item) => {
-  currentItemToDelete = item;
-  confirmDelete.value = true;
-};
-
-const deleteConfirmed = () => {
-  const index = items.value.findIndex(i => i === currentItemToDelete);
-  if (index !== -1) {
-    items.value.splice(index, 1);
-  }
-  cancelDelete();
-};
-
-const cancelDelete = () => {
-  confirmDelete.value = false;
-  currentItemToDelete = null;
-};
+// const cancelDelete = () => {
+//   confirmDelete.value = false
+//   currentItemToDelete = null
+// }
 
 const getRowClass = () => {
   // Define your row class logic here
-};
+}
 
 onMounted(() => {
-  fetchJobData();
-});
+  fetchJobData()
+})
 </script>

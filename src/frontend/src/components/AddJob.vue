@@ -2,13 +2,13 @@
   <v-dialog max-height="800" max-width="900">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
+        rounded="md"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-briefcase"
-        text="Create Job"
+        text="Add Job"
         variant="elevated"
         color="#5A82AF"
         v-bind="activatorProps"
-        rounded="xl"
       ></v-btn>
     </template>
     <v-sheet
