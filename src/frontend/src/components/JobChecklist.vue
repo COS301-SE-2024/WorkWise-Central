@@ -2,11 +2,11 @@
   <v-dialog v-model="checklistDialog" max-width="500" height="auto">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-          rounded="md"
-          class="mb-2"
-          prepend-icon="mdi-list-box"
-          variant="elevated"
-          v-bind="activatorProps"
+        rounded="md"
+        class="mb-2"
+        prepend-icon="mdi-list-box"
+        variant="elevated"
+        v-bind="activatorProps"
       >
         Checklist
       </v-btn>
@@ -29,15 +29,15 @@
         <v-spacer></v-spacer>
 
         <v-col cols="12"
-        ><v-label>Title</v-label>
+          ><v-label>Title</v-label>
           <v-text-field
-              v-model="newChecklistItemTitle"
-              :label="newChecklistItemTitle ? newChecklistItemTitle : 'Checklist'"
-              variant="outlined"
-              hide-details
-              width="95%"
-              border="md"
-              density="compact"
+            v-model="newChecklistItemTitle"
+            :label="newChecklistItemTitle ? newChecklistItemTitle : 'Checklist'"
+            variant="outlined"
+            hide-details
+            width="95%"
+            border="md"
+            density="compact"
           ></v-text-field> </v-col
         ><v-spacer></v-spacer>
 
@@ -48,16 +48,16 @@
             </v-col>
             <v-col cols="2">
               <v-btn color="red" @click="removeChecklistItem(item.id)" variant="plain"
-              >Remove</v-btn
+                >Remove</v-btn
               >
             </v-col>
           </v-row>
         </v-col>
         <v-row align="center">
           <v-col cols="auto" justify="center"
-          ><v-btn variant="plain" size="large" color="blue" @click="addChecklist"
-          >Add</v-btn
-          ></v-col
+            ><v-btn variant="plain" size="large" color="blue" @click="addChecklist"
+              >Add</v-btn
+            ></v-col
           ></v-row
         >
       </v-col>

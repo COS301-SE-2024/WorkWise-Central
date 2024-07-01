@@ -7,10 +7,10 @@ import JobCard from '@/components/JobCard.vue'
 </script>
 
 <template>
-<!--  <NavigationBar />-->
-<!--  <TeamMemberList />-->
-<!--  <JobLabels />-->
-<!--  <JobChecklist />-->
+  <!--  <NavigationBar />-->
+  <!--  <TeamMemberList />-->
+  <!--  <JobLabels />-->
+  <!--  <JobChecklist />-->
   <JobCard />
 </template>
 

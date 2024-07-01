@@ -95,7 +95,6 @@
                             Languages Spoken: {{ item.preferred_Language }}
                           </td>
                         </tr>
-
                       </template>
                       <!-- Actions slot -->
                       <template v-slot:[`item.actions`]="{ value }">

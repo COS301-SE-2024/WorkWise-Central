@@ -109,7 +109,7 @@ const router = createRouter({
       name: 'managereditemployee',
       component: () => import('@/views/ManagerEditEmployee.vue')
     },
-      {
+    {
       path: '/client-desk-view',
       name: 'client-desk-view',
       component: ClientEmployeeView
@@ -132,12 +132,12 @@ const router = createRouter({
     {
       path: '/jobCard',
       name: 'jobCard',
-      component:() => import('@/components/JobCard.vue')
+      component: () => import('@/components/JobCard.vue')
     },
     {
       path: '/dashboard',
       name: 'dashboard',
-      component:() => import('@/views/DashboardView.vue')
+      component: () => import('@/views/DashboardView.vue')
     }
   ]
 })

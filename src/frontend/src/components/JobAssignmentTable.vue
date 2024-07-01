@@ -5,38 +5,38 @@
         <v-row justify="center">
           <v-col cols="12" xs="12" sm="12" md="12">
             <v-card
-                flat
-                :height="auto"
-                :max-height="auto"
-                class="pa-11 ma-0"
-                rounded="md"
-                elevation-2
-                :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
-                border="md"
+              flat
+              :height="auto"
+              :max-height="auto"
+              class="pa-11 ma-0"
+              rounded="md"
+              elevation-2
+              :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+              border="md"
             >
               <v-card-title
-                  class="d-flex align-center pe-2"
-                  :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
-                  style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
+                class="d-flex align-center pe-2"
+                :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+                style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
               >
                 <v-icon icon="mdi-account"></v-icon> &nbsp;Job Details
 
                 <v-spacer></v-spacer>
 
                 <v-text-field
-                    v-model="search"
-                    density="compact"
-                    label="Search"
-                    prepend-inner-icon="mdi-magnify"
-                    variant="outlined"
-                    flat
-                    style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
-                    hide-details
-                    :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
-                    single-line
+                  v-model="search"
+                  density="compact"
+                  label="Search"
+                  prepend-inner-icon="mdi-magnify"
+                  variant="outlined"
+                  flat
+                  style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+                  hide-details
+                  :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  single-line
                 ></v-text-field>
                 <v-spacer></v-spacer>
-                <AddJob/>
+                <AddJob />
               </v-card-title>
 
               <v-divider></v-divider>
@@ -44,28 +44,24 @@
                 <div style="height: 700px; overflow-y: auto">
                   <v-col cols="12" xs="12" sm="12" md="12">
                     <v-data-table
-                        :headers="headers"
-                        :items="mockData"
-                        :search="search"
-                        :single-expand="true"
-                        v-model:expanded="expanded"
-                        show-expand
-                        height="auto"
-                        rounded="xl"
-                        :item-class="getRowClass"
-                        @click:row="toggleExpand"
-                        class="font-lato"
+                      :headers="headers"
+                      :items="mockData"
+                      :search="search"
+                      :single-expand="true"
+                      v-model:expanded="expanded"
+                      show-expand
+                      height="auto"
+                      rounded="xl"
+                      :item-class="getRowClass"
+                      @click:row="toggleExpand"
+                      class="font-lato"
                     >
                       <template v-slot:[`item.jobTitle`]="{ value }">
-                        <v-chip color="#5A82AF">
-                          <v-icon>mdi-briefcase</v-icon>{{ value }}
-                        </v-chip>
+                        <v-chip color="#5A82AF"> <v-icon>mdi-briefcase</v-icon>{{ value }} </v-chip>
                       </template>
 
                       <template v-slot:[`item.client`]="{ value }">
-                        <v-chip color="#5A82AF">
-                          <v-icon>mdi-phone</v-icon>{{ value }}
-                        </v-chip>
+                        <v-chip color="#5A82AF"> <v-icon>mdi-phone</v-icon>{{ value }} </v-chip>
                       </template>
 
                       <template v-slot:[`item.jobDescription`]="{ value }">
@@ -113,15 +109,14 @@
                             Languages Spoken: {{ item.preferred_Language }}
                           </td>
                         </tr>
-
                       </template>
                       <!-- Actions slot -->
                       <template v-slot:[`item.actions`]="{ item }">
                         <v-btn
-                            rounded="xl"
-                            variant="plain"
-                            style="transform: rotate(0deg)"
-                            @click="openDialog(item)"
+                          rounded="xl"
+                          variant="plain"
+                          style="transform: rotate(0deg)"
+                          @click="openDialog(item)"
                         >
                           <v-icon>mdi-dots-horizontal</v-icon>
                         </v-btn>
@@ -140,9 +135,7 @@
         <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
           {{ selectedJob?.jobTitle }}
         </v-card-title>
-        <v-card-text>
-          What would you like to do with this job?
-        </v-card-text>
+        <v-card-text> What would you like to do with this job? </v-card-text>
         <v-card-actions>
           <v-btn color="primary" @click="editJob">Edit</v-btn>
           <v-btn color="error" @click="deleteJob">Delete</v-btn>
@@ -155,26 +148,24 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 import AddJob from './AddJob.vue'
-import JobCard from './JobCard.vue'
-import { useRouter } from 'vue-router';
-import ClientDetails from "@/components/AddClient.vue";
-import DeleteClient from "@/components/DeleteClient.vue";
-import EditClient from "@/components/EditClient.vue";
+// import JobCard from './JobCard.vue'
+// import { useRouter } from 'vue-router'
+// import ClientDetails from '@/components/AddClient.vue'
+// import DeleteClient from '@/components/DeleteClient.vue'
+// import EditClient from '@/components/EditClient.vue'
 
-const router = useRouter();
-const search = ref('');
-const expanded = ref([]);
-const jobDetails = ref([]);
-const isDarkMode = ref(false);
-const modal_dark_theme_color = "#333";
-const modal_light_theme_color = "#fff";
-const deleteDialog = ref(false);
-const selectedItem = ref(null);
-
-
+// const router = useRouter()
+const search = ref('')
+const expanded = ref([])
+const jobDetails = ref([])
+const isDarkMode = ref(false)
+const modal_dark_theme_color = '#333'
+const modal_light_theme_color = '#fff'
+// const deleteDialog = ref(false)
+// const selectedItem = ref(null)
 
 const headers = [
   { title: 'Job Title', key: 'jobTitle', align: 'start', value: 'jobTitle' },
@@ -185,7 +176,7 @@ const headers = [
   { title: 'Start Date', key: 'startDate', align: 'start', value: 'startDate' },
   { title: 'End Date', key: 'endDate', align: 'start', value: 'endDate' },
   { title: 'Actions', key: 'actions', align: 'start', sortable: false, value: 'actions' }
-];
+]
 
 const mockData = [
   {
@@ -340,7 +331,7 @@ const mockData = [
   }
 
   // Add more mock data entries as needed
-];
+]
 
 // Actions
 
@@ -387,13 +378,13 @@ const fetchJobData = async () => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
     }
-  };
+  }
 
   try {
-    const response = await axios.get('http://localhost:3000/job/all', config);
-    const jobData = response.data;
+    const response = await axios.get('http://localhost:3000/job/all', config)
+    const jobData = response.data
 
-    jobDetails.value = jobData.map(job => ({
+    jobDetails.value = jobData.map((job) => ({
       jobTitle: job.details.heading,
       client: job.clientId,
       jobDescription: job.details.description,
@@ -402,51 +393,49 @@ const fetchJobData = async () => {
       startDate: new Date(job.scheduledDateTime).toLocaleString(),
       endDate: 'N/A',
       actions: 'View/Edit/Delete'
-    }));
+    }))
 
-    console.log('Job details constructed successfully:', jobDetails.value);
-    console.log('Full response:', response);
+    console.log('Job details constructed successfully:', jobDetails.value)
+    console.log('Full response:', response)
   } catch (error) {
-    console.error('Error fetching job data:', error);
+    console.error('Error fetching job data:', error)
   }
-};
+}
+//
+// const openJobCard = (item) => {
+//   router.push('/jobCard')
+//   console.log('Open job card for:', item)
+// }
+//
+// const confirmDelete = ref(false)
+// const items = ref([
+//   // Your list of items
+// ])
+// let currentItemToDelete = null
 
-const openJobCard = (item) => {
-  router.push('/jobCard');
-  console.log('Open job card for:', item);
-};
+// const confirmDeleteItem = (item) => {
+//   currentItemToDelete = item
+//   confirmDelete.value = true
+// }
+//
+// const deleteConfirmed = () => {
+//   const index = items.value.findIndex((i) => i === currentItemToDelete)
+//   if (index !== -1) {
+//     items.value.splice(index, 1)
+//   }
+//   cancelDelete()
+// }
 
-const confirmDelete = ref(false);
-const items = ref([
-  // Your list of items
-]);
-let currentItemToDelete = null;
-
-const confirmDeleteItem = (item) => {
-  currentItemToDelete = item;
-  confirmDelete.value = true;
-};
-
-const deleteConfirmed = () => {
-  const index = items.value.findIndex(i => i === currentItemToDelete);
-  if (index !== -1) {
-    items.value.splice(index, 1);
-  }
-  cancelDelete();
-};
-
-const cancelDelete = () => {
-  confirmDelete.value = false;
-  currentItemToDelete = null;
-};
+// const cancelDelete = () => {
+//   confirmDelete.value = false
+//   currentItemToDelete = null
+// }
 
 const getRowClass = () => {
   // Define your row class logic here
-};
+}
 
 onMounted(() => {
-  fetchJobData();
-});
+  fetchJobData()
+})
 </script>
-
-
