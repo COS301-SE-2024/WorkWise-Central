@@ -19,6 +19,8 @@ import { EmailService } from '../email/email.service';
 import { UsersRepository } from './users.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { isPhoneNumber } from 'class-validator';
+import { UserRequestToJoin } from '../company/entities/request-to-join.entity';
+import { CreateUserRequestDto } from './dto/create-user-request.dto';
 
 @Injectable()
 export class UsersService {
@@ -28,6 +30,8 @@ export class UsersService {
     private readonly userRepository: UsersRepository,
     @InjectModel(UserConfirmation.name)
     private readonly userConfirmationModel: Model<UserConfirmation>,
+    @InjectModel(UserRequestToJoin.name)
+    private readonly userRequestToJoinModel: Model<UserRequestToJoin>,
     @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
     @Inject(forwardRef(() => EmployeeService))
@@ -53,6 +57,14 @@ export class UsersService {
       createUserDto.password,
     );
     return new CreateUserResponseDto(jwt);
+  }
+
+  async createUserRequest(createUserRequestDto: CreateUserRequestDto) {
+    const userRequest = new UserRequestToJoin(createUserRequestDto);
+    const confirmation = await this.userConfirmationModel.create(userRequest);
+    await confirmation.save();
+    //console.log(result);
+    await this.emailService.sendRequestEmail(null); //TODO: Fix
   }
 
   async createUserConfirmation(newUser: User) {

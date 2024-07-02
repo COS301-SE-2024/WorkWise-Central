@@ -11,6 +11,10 @@ import {
 } from './entities/user-confirmation.entity';
 import { EmailService } from '../email/email.service';
 import { UsersRepository } from './users.repository';
+import {
+  UserRequestToJoin,
+  UserRequestToJoinSchema,
+} from '../company/entities/request-to-join.entity';
 
 @Module({
   imports: [
@@ -19,6 +23,7 @@ import { UsersRepository } from './users.repository';
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: UserConfirmation.name, schema: UserConfirmationSchema },
+      { name: UserRequestToJoin.name, schema: UserRequestToJoinSchema },
     ]),
   ],
   controllers: [UsersController],

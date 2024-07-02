@@ -239,9 +239,9 @@ export class CreateJobDto {
   taskList?: Task[];
 
   @ApiProperty()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => Comment)
-  @IsOptional()
   comments?: Comment[];
 }
 
