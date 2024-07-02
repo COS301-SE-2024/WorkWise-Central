@@ -11,76 +11,99 @@
         Members
       </v-btn>
     </template>
-    <v-sheet elevation="14" rounded="md" height="auto">
-      <v-col cols="12"
-        ><v-col cols="12">
-          <v-card variant="">
-            <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
-              <v-icon left class="mr-2">mdi-account</v-icon>
-              <span class="title">Team Members</span>
-              <v-spacer></v-spacer>
-            </v-card-title>
-          </v-card>
-        </v-col>
+    <v-col cols="12">
+      <v-card>
+        <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+          <v-icon left class="mr-2">mdi-account</v-icon>
+          <span class="title">Team Members</span>
+          <v-spacer></v-spacer> </v-card-title
+        ><v-spacer></v-spacer>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col v-if="sections.cardMembers && Object.keys(sections.cardMembers).length > 0">
+                <h4 style="font-size: 20px; font-weight: lighter">Assigned Members</h4>
+              </v-col></v-row
+            >
 
-        <v-spacer></v-spacer>
-        <v-col v-if="sections.cardMembers && Object.keys(sections.cardMembers).length > 0">
-          <h4 style="font-size: 20px; font-weight: lighter">Assigned Members</h4>
-        </v-col>
+            <v-row align="center">
+              <v-col cols="12" v-for="member in sections.cardMembers" :key="member.id">
+                <v-card rounded="md" variant="outlined" color="success">
+                  <v-row align="center" justify="space-between">
+                    <v-col>
+                      <v-card-title>{{ member.name }}</v-card-title>
+                      <v-card-subtitle>{{ member.role }}</v-card-subtitle>
+                    </v-col>
+                    <v-col cols="2">
+                      <v-btn
+                        icon
+                        @click.stop="moveToTeamMembers(member)"
+                        variant="plain"
+                        color="black"
+                      >
+                        <v-icon>mdi-close</v-icon>
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+                </v-card>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col v-if="sections.teamMembers && Object.keys(sections.teamMembers).length > 0">
+                <h4 style="font-size: 20px; font-weight: lighter">Unassigned Members</h4>
+              </v-col>
+            </v-row>
 
-        <div>
-          <v-row>
-            <v-col cols="12" v-for="member in sections.cardMembers" :key="member.id">
-              <v-card rounded="md" variant="outlined" color="primary" width="90%">
-                <v-row align="center" justify="space-between">
-                  <v-col>
-                    <v-card-title>{{ member.name }}</v-card-title>
-                    <v-card-subtitle>{{ member.role }}</v-card-subtitle>
-                  </v-col>
-                  <v-col cols="2">
-                    <v-btn
-                      icon
-                      @click.stop="moveToTeamMembers(member)"
-                      variant="plain"
-                      color="black"
+            <v-row align="center">
+              <v-col cols="12" v-for="member in sections.teamMembers" :key="member.id">
+                <v-row align="center" justify="space-between"
+                  ><v-col>
+                    <v-card
+                      @click="moveToCardMembers(member)"
+                      rounded="md"
+                      variant="outlined"
+                      color="error"
                     >
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </v-card>
-            </v-col>
-          </v-row>
-        </div>
+                      <v-card-title>{{ member.name }}</v-card-title>
+                      <v-card-subtitle>{{ member.role }}</v-card-subtitle>
+                    </v-card></v-col
+                  ></v-row
+                >
+                <v-divider></v-divider>
+                <v-spacer></v-spacer>
+              </v-col> </v-row></v-container
+        ></v-card-text>
 
-        <v-col v-if="sections.teamMembers && Object.keys(sections.teamMembers).length > 0">
-          <h4 style="font-size: 20px; font-weight: lighter">Unassigned Members</h4>
-        </v-col>
-        <div>
-          <v-row>
-            <v-col cols="12" v-for="member in sections.teamMembers" :key="member.id">
-              <v-row align="center" justify="space-between"
-                ><v-col>
-                  <v-card
-                    @click="moveToCardMembers(member)"
-                    rounded="md"
-                    variant="plain"
-                    color="red"
-                    width="90%"
-                  >
-                    <v-card-title>{{ member.name }}</v-card-title>
-                    <v-card-subtitle>{{ member.role }}</v-card-subtitle>
-                    <v-avatar>
-                      <v-img :src="member.avatar"></v-img>
-                    </v-avatar> </v-card></v-col
-              ></v-row>
-              <v-divider></v-divider>
-              <v-spacer></v-spacer>
-            </v-col>
-          </v-row>
-        </div>
-      </v-col>
-    </v-sheet>
+        <v-card-actions>
+          <v-col>
+            <v-btn
+              color="primary"
+              rounded="xl"
+              boarder="xl"
+              width="85%"
+              height="35"
+              variant="text"
+              @click="teamDialog = false"
+            >
+              Apply
+            </v-btn></v-col
+          >
+          <v-col>
+            <v-btn
+              color="error"
+              rounded="xl"
+              boarder="xl"
+              width="85%"
+              height="35"
+              variant="text"
+              @click="teamDialog = false"
+            >
+              Close
+            </v-btn></v-col
+          >
+        </v-card-actions>
+      </v-card>
+    </v-col>
   </v-dialog>
 </template>
 

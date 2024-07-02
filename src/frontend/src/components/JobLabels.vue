@@ -23,34 +23,57 @@
         <v-spacer></v-spacer>
         <v-card-text
           ><v-spacer></v-spacer>
-          <div>
-            <v-row>
-              <v-col cols="12">
-                <v-row align="center">
-                  <v-radio-group v-model="selectedRadio">
-                    <v-radio
-                      v-for="label in jobLabels"
-                      :key="label.id"
-                      :label="label.title"
-                      :value="label.id"
-                      :color="label.color"
-                      @click="toggleSelection(label)"
-                      variant="outlined"
-                      height="40px"
-                      rounded="xl"
-                      width="90%"
-                     
-                    >
-                    </v-radio>
-                  </v-radio-group>
-                </v-row> </v-col
-              ><v-spacer></v-spacer>
-            </v-row>
-          </div>
+
+          <v-row>
+            <v-col cols="12">
+              <v-row>
+                <v-radio-group v-model="selectedRadio">
+                  <v-radio
+                    v-for="label in jobLabels"
+                    :key="label.id"
+                    :label="label.title"
+                    :value="label.id"
+                    :color="label.color"
+                    @click="toggleSelection(label)"
+                    variant="outlined"
+                    height="40px"
+                    rounded="xl"
+                    width="90%"
+                  >
+                  </v-radio>
+                </v-radio-group>
+              </v-row> </v-col
+            ><v-spacer></v-spacer>
+          </v-row>
+
           <v-spacer></v-spacer> </v-card-text
         ><v-card-actions>
-          <v-btn variant="text" size="large" color="primary" @click="addSelectedLabels">Add</v-btn>
-          <v-btn variant="text" size="large" color="error" @click="jobDialog = false">Close</v-btn>
+          <v-card-actions>
+            <v-col>
+              <v-btn
+                color="primary"
+                rounded="xl"
+                boarder="xl"
+                width="85%"
+                height="35"
+                variant="text"
+                @click="addSelectedLabels"
+                >Add</v-btn
+              ></v-col
+            >
+            <v-col
+              ><v-btn
+                color="error"
+                rounded="xl"
+                boarder="xl"
+                width="85%"
+                height="35"
+                variant="text"
+                @click="jobDialog = false"
+                >Close</v-btn
+              ></v-col
+            >
+          </v-card-actions>
         </v-card-actions>
       </v-card>
     </v-col>
@@ -162,5 +185,4 @@ export default defineComponent({
   border: 2px solid #42b983; /* Example highlight color */
   box-shadow: 0 0 8px #42b983; /* Adds a shadow for more emphasis */
 }
-
 </style>

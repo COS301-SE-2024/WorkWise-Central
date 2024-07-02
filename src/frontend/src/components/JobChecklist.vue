@@ -45,13 +45,34 @@
                 </v-col>
               </v-row>
             </v-col>
-            <v-spacer></v-spacer> </v-card-text
-          ><v-card-actions>
-            <v-btn variant="text" size="large" color="primary" @click="addChecklist">Add</v-btn>
-            <v-btn variant="text" size="large" color="error" @click="checklistDialog = false"
-              >Close</v-btn
-            ></v-card-actions
-          >
+            <v-spacer></v-spacer>
+          </v-card-text>
+          <v-card-actions>
+            <v-col>
+              <v-btn
+                color="primary"
+                rounded="xl"
+                boarder="xl"
+                width="85%"
+                height="35"
+                variant="text"
+                @click="addChecklist"
+                >Add</v-btn
+              ></v-col
+            >
+            <v-col
+              ><v-btn
+                color="error"
+                rounded="xl"
+                boarder="xl"
+                width="85%"
+                height="35"
+                variant="text"
+                @click="checklistDialog = false"
+                >Close</v-btn
+              ></v-col
+            >
+          </v-card-actions>
         </v-card>
       </v-col>
 

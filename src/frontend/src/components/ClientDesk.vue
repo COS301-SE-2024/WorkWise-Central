@@ -115,9 +115,6 @@
         </v-row>
       </v-col></v-row
     >
-    <v-col>
-      <v-card> </v-card>
-    </v-col>
 
     <v-dialog v-model="actionsDialog" max-width="500px">
       <v-card>

@@ -11,7 +11,7 @@
         <span class="colorAccent2 toolbar-text">Wise</span>
       </v-app-bar-title>
       <v-spacer></v-spacer>
-      <v-btn @click="toggleDarkMode">Theme change</v-btn>
+      <v-btn @click="toggleDarkMode"><v-icon>mdi-globe-light-outline</v-icon></v-btn>
     </v-app-bar>
     <!-- Main Content -->
     <v-main :class="{ 'modal-dark-theme': isdarkmode, 'modal-light-theme': !isdarkmode }">
