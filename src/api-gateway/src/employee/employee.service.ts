@@ -190,6 +190,14 @@ export class EmployeeService {
 
     const model = new this.employeeModel(newEmployee);
     const result = await model.save();
+
+    //Adding Employee to User
+    const relatedUser = await this.usersService.getUserById(newEmployee.userId);
+    relatedUser.employeeIds.push(result._id);
+    await this.usersService.updateUser(newEmployee.userId, {
+      employeeIds: relatedUser.employeeIds,
+    });
+    //
     return `${result}`;
   }
 

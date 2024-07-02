@@ -129,16 +129,16 @@ export class ClientApiObject {
 export const ClientSchema = SchemaFactory.createForClass(Client);
 
 export class CreateClientResponseDto {
-  response: ClientApiObject;
+  data: ClientApiObject;
 
-  constructor(response: ClientApiObject) {
-    this.response = response;
+  constructor(data: ClientApiObject) {
+    this.data = data;
   }
 }
 
 export class ApiResponseDto<Type> {
-  response: Type;
-  constructor(response: Type) {
-    this.response = response;
+  data: Type;
+  constructor(data: Type) {
+    this.data = data;
   }
 }
