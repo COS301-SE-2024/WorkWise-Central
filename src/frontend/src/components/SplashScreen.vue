@@ -362,13 +362,11 @@
                       <v-row
                         ><v-col align-self="center"
                           ><label style="font-size: 14px; font-weight: lighter">Username</label>
-                          <v-select
+                          <v-combobox
                             :bg-color="
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
                             "
                             :label="username ? '' : 'Select your username'"
-                            :disabled="!valid"
-                            type="input"
                             v-model="username"
                             :items="usernameList"
                             :rules="usernameRules"
@@ -376,7 +374,8 @@
                             variant="solo"
                             clearable
                             required
-                          ></v-select></v-col
+                            @update:modalValue="usernameExist"
+                          ></v-combobox></v-col
                       ></v-row>
                     </v-form>
                   </v-col>
@@ -418,15 +417,12 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Date of Birth</label
                           ><VueDatePicker
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
                             :label="birthDate ? '' : 'Select your date of birth'"
                             v-model="birthDate"
                             :rules="date_rules"
-                            rounded="xl"
-                            variant="solo"
+                            :format="format"
                             required
+                            :flow="flow"
                           ></VueDatePicker
                         ></v-col>
                       </v-row>
@@ -640,11 +636,20 @@
               <!-- <v-sheet
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
               > -->
-              <v-col cols="8" offset="2">
-                <RegisterCompanyModal v-model="registerDialog" @close="registerDialog = false" />
-                <!-- Join Company Model --><br />
-                <JoinCompanyModal v-model="joinDialog" @close="joinDialog = false"
-              /></v-col>
+              <v-card
+                class="mx-auto"
+                width="400"
+                :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+              >
+                <template v-slot:title>
+                  <span class="font-weight-light">Please select one of the two options</span>
+                </template>
+                <v-card-actions>
+                  <v-col cols="6"> <RegisterCompanyModal :isdarkmode="isdarkmode" /> </v-col
+                  ><v-col cols="6"> <JoinCompanyModal :isdarkmode="isdarkmode" /></v-col
+                ></v-card-actions>
+              </v-card>
+
               <!-- </v-sheet> -->
             </v-dialog>
 
@@ -709,11 +714,44 @@ export default defineComponent({
     exists: false,
     signupAddressDialog: false,
     genderList: ['Male', 'Female', 'Other'],
-    languageList: ['English', 'Afrikaans'],
-    cityList: ['Johannesburg', 'Cape Town', 'Durban', 'Pretoria', 'Bloemfontein'],
-
+    languageList: [
+      'English',
+      'Afrikaans',
+      'isiNdebele',
+      'isiXhosa',
+      'isiZulu',
+      'Sesotho',
+      'Setswana',
+      'Sepedi',
+      'Siswati',
+      'Tshivenda',
+      'Xitsonga'
+    ],
+    cityList: [
+      'Johannesburg',
+      'Cape Town',
+      'Durban',
+      'Pretoria',
+      'Bloemfontein',
+      'Port Elizabeth',
+      'East London',
+      'Kimberley',
+      'Polokwane',
+      'Nelspruit',
+      'Pietermaritzburg',
+      'George',
+      'Rustenburg',
+      'Stellenbosch',
+      'Grahamstown (now Makhanda)',
+      'Vereeniging',
+      'Tzaneen',
+      'Upington',
+      'Richards Bay',
+      'Potchefstroom'
+    ],
     randomNumber: 0,
     email: '',
+    flow: ['year', 'month', 'calendar'],
     access_token: '',
     password: '',
     confirm_password: '',
@@ -739,7 +777,16 @@ export default defineComponent({
     resetForm() {
       this.$refs.form.reset()
     },
-
+    validateForm() {
+      console.log(this.$refs.form)
+      if (this.$refs.form.validate()) {
+        console.log('Valid form')
+        return true
+      } else {
+        console.log('Invalid form')
+        return false
+      }
+    },
     req_obj1: {
       name: '',
       type: '',
@@ -851,6 +898,13 @@ export default defineComponent({
         }
       }
     },
+    format(date) {
+      const day = date.getDate()
+      const month = date.getMonth() + 1
+      const year = date.getFullYear()
+
+      return `Selected date is ${day}/${month}/${year}`
+    },
     mounted() {
       setTimeout(() => {
         this.loading = false
@@ -933,34 +987,30 @@ export default defineComponent({
         })
     },
     nextFlow1() {
-      if (this.$refs.form.validate()) {
-        this.signupDialog = false
-        this.signup1Dialog = true
-      }
+      this.signupDialog = false
+      this.signup1Dialog = true
     },
     nextFlow2() {
-      if (this.$refs.form.validate()) {
-        this.signup1Dialog = false
-        this.signupUsernameDialog = true
-        this.populateUsernameList()
-      }
+      this.signup1Dialog = false
+      this.signupUsernameDialog = true
+      this.populateUsernameList()
     },
     nextFlowUsername() {
-      this.signupUsernameDialog = false
-      this.signup2Dialog = true
+      if (this.usernameExist() === false) {
+        alert('Username already exists')
+      } else {
+        this.signupUsernameDialog = false
+        this.signup2Dialog = true
+      }
     },
     nextFlow3() {
-      if (this.$refs.form.validate()) {
-        this.signup2Dialog = false
-        this.signupAddressDialog = true
-      }
+      this.signup2Dialog = false
+      this.signupAddressDialog = true
     },
     nextFlowAddress() {
-      if (this.$refs.form.validate()) {
-        this.signupAddressDialog = false
-        this.signup3Dialog = true
-        this.signup()
-      }
+      this.signupAddressDialog = false
+      this.signup3Dialog = true
+      this.signup()
     },
     registerOpen() {
       this.registerDialog = true
@@ -970,7 +1020,6 @@ export default defineComponent({
       this.signup3Dialog = false
       this.joinDialog = true
       this.signup()
-      this.resetForm()
     },
     usernameExist() {
       axios

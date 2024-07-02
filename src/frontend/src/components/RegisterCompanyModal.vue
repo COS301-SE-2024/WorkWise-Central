@@ -5,11 +5,10 @@
         rounded="xl"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
-        text="REGISTER COMPANY"
         variant="elevated"
         color="#5A82AF"
         v-bind="activatorProps"
-      ></v-btn>
+      >Register Company</v-btn>
     </template>
     <v-sheet
       elevation="14"
