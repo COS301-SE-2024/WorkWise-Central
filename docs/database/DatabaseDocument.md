@@ -410,17 +410,6 @@ The Employee entity stores information for employees.
     - **Reasoning:** Stores a reference to the employeeId in the Employee collection
 - **Example:** "subordinatesTeams": ["60d21b4667d0d8992e610c87"...]
 
-#### availability
-
-- **Data Type:** Object
-- **Attributes:**
-  - **status:** string
-    - **Reasoning:** Current availability status of the user.
-    - **Example:** "Available"
-  - **schedule:** Object
-    - **Reasoning:** Weekly schedule for the user.
-    - **Example:** {"Monday": "9:00-17:00", "Tuesday": "9:00-17:00"} 
-
 #### createdAt
 
 - **Data Type:** Date (in string format)
