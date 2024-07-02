@@ -5,7 +5,7 @@
         rounded="md"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
-        text="NEW CLIENT"
+        text="Add Client"
         variant="elevated"
         color="#5A82AF"
         v-bind="activatorProps"

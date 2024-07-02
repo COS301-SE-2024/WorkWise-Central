@@ -281,10 +281,10 @@ export class JobApiObject {
 }
 
 export class JobResponseDto {
-  constructor(response: JobApiObject) {
-    this.response = response;
+  constructor(data: JobApiObject) {
+    this.data = data;
   }
-  response: JobApiObject;
+  data: JobApiObject;
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);

@@ -3,11 +3,11 @@
   <v-dialog v-model="jobDialog" max-width="500" height="auto">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-          rounded="md"
-          class="mb-2"
-          prepend-icon="mdi-label"
-          variant="elevated"
-          v-bind="activatorProps"
+        rounded="md"
+        class="mb-2"
+        prepend-icon="mdi-label"
+        variant="elevated"
+        v-bind="activatorProps"
       >
         Status
       </v-btn>
@@ -34,28 +34,28 @@
                 <v-col cols="9" offset="2">
                   <!-- Adjust the cols as needed for your design -->
                   <v-card
-                      @click="toggleSelection(label)"
-                      :class="{ selected: label.isSelected }"
-                      :color="label.color"
-                      variant="outlined"
-                      height="40px"
-                      rounded="xl"
-                      width="90%"
+                    @click="toggleSelection(label)"
+                    :class="{ selected: label.isSelected }"
+                    :color="label.color"
+                    variant="outlined"
+                    height="40px"
+                    rounded="xl"
+                    width="90%"
                   >
                     <v-card-title>{{ label.title }}</v-card-title>
                     <!-- Your card content here -->
                     <v-card-actions>
                       <!-- Your card actions here -->
                       <v-btn
-                          @click="(jobDialog = false), setCurrentLabel(label)"
-                          variant="text"
-                          color="primary"
-                          size="large"
-                      >Save</v-btn
+                        @click="(jobDialog = false), setCurrentLabel(label)"
+                        variant="text"
+                        color="primary"
+                        size="large"
+                        >Save</v-btn
                       >
 
                       <v-btn @click="jobDialog = false" variant="text" color="red" size="large"
-                      >Cancel</v-btn
+                        >Cancel</v-btn
                       >
                     </v-card-actions>
                   </v-card>
