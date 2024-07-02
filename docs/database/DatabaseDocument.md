@@ -338,6 +338,12 @@ The Employee entity stores information for users.
 - **Reasoning:** Unique identifier the current employee the user is logged in as.
 - **Example:** "currentEmployeeId": "60d21b4667d0d8992e610c85"
 
+### isValidated
+
+- **Data Type:** boolean
+- **Reasoning:** Validates whether a user has been enter into the system.
+- **Example:** "isValidated": true
+
 ### Employee
 
 The Employee entity stores information for employees.
@@ -352,13 +358,16 @@ The Employee entity stores information for employees.
 
 - **Data Type:** Objects
 - **Attributes:**
-  - **role:** string
-    - **Reasoning:** Defines the user's role (e.g., admin, employee).
-    - **Example:**"admin"
-  - **permissions:** Array
+  - **roleId:** ObjectId
+    - **Reasoning:** Uniquely identifies a role.
+    - **Example:** "roleId": "60d21b4667d0d8992e610c86"
+  - **roleName:** string
+    - **Reasoning:** Gives the given role a name.
+    - **Example:** "roleName": "admin"
+  - **permissionSuite:** Array
     - **Reasoning:** Permissions associated with the role.
     - **Example:** ["read", "write", "delete"]
-- **Example:** "role": {"role":"admin","permissions":["read","write","delete"]}
+- **Example:** "role": {"roleId": "60d21b4667d0d8992e610c86", "roleName": "admin", "permissionSuite": ["read", "write", "delete"]}
 
 #### availability
 
@@ -384,14 +393,14 @@ The Employee entity stores information for employees.
 - **Reasoning:** References jobs the employee is currently assigned to.
 - **Example:** ["60d21b4667d0d8992e610c87"...]
   
-#### superior 
+#### superiorId 
 
 - **Data Type:** ObjectId
 - **Reasoning:** References the employee's superior.
 - **Attributes:**
   - **employeeId:** ObjectId
     - **Reasoning:** Stores a reference to the employeeId in the Employee collection
-- **Example:** "superior": "60d21b4667d0d8992e610c87"
+- **Example:** "superiorId": "60d21b4667d0d8992e610c87"
 
 #### subordinates
 
@@ -401,6 +410,15 @@ The Employee entity stores information for employees.
   - **employeeId:** ObjectId
     - **Reasoning:** Stores a reference to the employeeId in the Employee collection
 - **Example:** "subordinates": ["60d21b4667d0d8992e610c87"...]
+
+#### subordinateTeams
+
+- **Data Type:** Array of Object ids
+- **Reasoning:** References the teams under the employee.
+- **Attributes:**
+  - **employeeId:** ObjectId
+    - **Reasoning:** Stores a reference to the employeeId in the Employee collection
+- **Example:** "subordinatesTeams": ["60d21b4667d0d8992e610c87"...]
 
 #### createdAt
 
@@ -454,7 +472,7 @@ The Employee entity stores information for employees.
 
 - **Data Type:** ObjectId
 - **Reasoning:** References the employeeId in the employee collection.
-- **Example:** "_id": "60d21b4667d0d8992e610c85"
+- **Example:** "teamLeaderId": "60d21b4667d0d8992e610c85"
 - 
 #### assignedJobs
 
@@ -617,25 +635,25 @@ The Client entity stores information about clients who have jobs or appointments
     - **email:** string
       - **Reasoning:** Email for contact.
       - **Example:** "jane.smith@example.com"
-    - **address:** Object
-      - **street:** string
-        - **Reasoning:** Street address for mailing purposes.
-        - **Example:** "789 Client Rd"
-      - **suburb:** string
-        - **Reasoning:** Suburb for geographical information.
-        - **Example:** "Eastside"
-      - **city:** string
-        - **Reasoning:** City for geographical information.
-        - **Example:** "Metropolis"
-      - **postalCode:** string
-        - **Reasoning:** Postal code for mailing purposes.
-        - **Example:** "12345"
-      - **complex:** string
-        - **Reasoning:** Complex name if applicable.
-        - **Example:** "Client Apartments"
-      - **houseNumber:** string
-        - **Reasoning:** House number for precise address.
-        - **Example:** "3A"
+  - **address:** Object
+    - **street:** string
+      - **Reasoning:** Street address for mailing purposes.
+      - **Example:** "789 Client Rd"
+    - **suburb:** string
+      - **Reasoning:** Suburb for geographical information.
+      - **Example:** "Eastside"
+    - **city:** string
+      - **Reasoning:** City for geographical information.
+      - **Example:** "Metropolis"
+    - **postalCode:** string
+      - **Reasoning:** Postal code for mailing purposes.
+      - **Example:** "12345"
+    - **complex:** string
+      - **Reasoning:** Complex name if applicable.
+      - **Example:** "Client Apartments"
+    - **houseNumber:** string
+      - **Reasoning:** House number for precise address.
+      - **Example:** "3A"
 - **Example:** "personalInfo": {"firstName":"Jane","surname":"Smith","preferredLanguage":"English","dateOfBirth":{"phone":"+1234567890"},"contactInfo":{"email":"jane.smith@example.com","address":{"street":"789 Client Rd","suburb":"Eastside","city":"Metropolis","postalCode":"12345","complex":"Client Apartments","houseNumber":"3A"}}}
 
 #### createdAt
