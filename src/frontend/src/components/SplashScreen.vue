@@ -52,7 +52,7 @@
               ></v-row
             >
 
-            <v-dialog v-model="loginDialog" max-width="400" min-height="500">
+            <v-dialog v-model="loginDialog" max-width="400">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -164,7 +164,7 @@
             >
 
             <!-- Flow 1 -->
-            <v-dialog v-model="signupDialog" max-width="400" min-height="700">
+            <v-dialog v-model="signupDialog" max-width="400" >
               <v-sheet
                 elevation="14"
                 rounded="xl"
@@ -263,7 +263,7 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 2 -->
-            <v-dialog v-model="signup1Dialog" max-width="400" min-height="700">
+            <v-dialog v-model="signup1Dialog" max-width="400" >
               <v-sheet
                 width="auto"
                 height="auto"
@@ -344,10 +344,10 @@
               </v-sheet>
             </v-dialog>
             <v-col xs="3" align-self="center">
-              <v-dialog v-model="signupUsernameDialog" max-width="400" min-height="700">
+              <v-dialog v-model="signupUsernameDialog" max-width="400" >
                 <v-sheet
                   width="auto"
-                  height="700"
+                  height="auto"
                   border="md"
                   rounded="xl"
                   :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
@@ -396,7 +396,7 @@
               </v-dialog>
             </v-col>
             <!-- Flow 3 -->
-            <v-dialog v-model="signup2Dialog" max-width="400" min-height="800">
+            <v-dialog v-model="signup2Dialog" max-width="400">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -498,7 +498,7 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 4 -->
-            <v-dialog v-model="signupAddressDialog" max-width="1000" min-height="900">
+            <v-dialog v-model="signupAddressDialog" max-width="1000" >
               <v-sheet
                 width="auto"
                 height="auto"
