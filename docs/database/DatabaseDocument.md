@@ -254,18 +254,6 @@ The Employee entity stores information for users.
     - **Example:** "user123"
 - **Example:** "systemDetails": {"username":"thando", "password":"hashed password"}
 
-#### profile
-
-- **Data Type:** Object
-- **Attributes:**
-  - **displayImage:** string
-    - **Reasoning:** URL or base64 image string for profile picture.
-    - **Example:** "data:image/png;base64,iVBORw0KGgoAAAANS..."
-  - **displayName:** string
-    - **Reasoning:** Display name for user profile.
-    - **Example:** "JohnDoe"
-- **Example:** "profile": {"displayName":"thando", "displayImage":"base64 image"}
-
 #### personalInfo
 
 - **Data Type:** Object
@@ -312,6 +300,18 @@ The Employee entity stores information for users.
       - **Example:** "10B"
 - **Example:**: "personalInfo":{"firstName":"John","surname":"Doe","dateOfBirth":"1990-01-01","gender":"Male","preferredLanguage":"English","contactInfo":{"phone":"+1234567890","email":"contact@example.com"},"address":{"street":"123 Main St","suburb":"Central","city":"Metropolis","postalCode":"12345","complex":"Sunny Apartments","houseNumber":"10B"}}
 
+#### profile
+
+- **Data Type:** Object
+- **Attributes:**
+  - **displayImage:** string
+    - **Reasoning:** URL or base64 image string for profile picture.
+    - **Example:** "data:image/png;base64,iVBORw0KGgoAAAANS..."
+  - **displayName:** string
+    - **Reasoning:** Display name for user profile.
+    - **Example:** "JohnDoe"
+- **Example:** "profile": {"displayName":"thando", "displayImage":"base64 image"}
+
 #### joinedCompanies
 
 - **Data Type:** Array of Objects
@@ -331,6 +331,11 @@ The Employee entity stores information for users.
   - **skillName:** string
     - **Reasoning:** List of skills the user possesses.
 - **Example:** "skills": ["JavaScript", "Python"]
+
+#### employeeIds
+- **Data Type:** Array of ObjectIds
+- **Reasoning:** References the employeeIds in the Employee collection
+- **Example:** "employeeIds": ["60d21b4667d0d8992e610c85",...]
 
 #### currentEmployeeId
 
@@ -354,46 +359,25 @@ The Employee entity stores information for employees.
 - **Reasoning:** Unique identifier for each employee.
 - **Example:** "_id": "60d21b4667d0d8992e610c85"
 
-#### role
+#### roleId
 
-- **Data Type:** Objects
-- **Attributes:**
-  - **roleId:** ObjectId
-    - **Reasoning:** Uniquely identifies a role.
-    - **Example:** "roleId": "60d21b4667d0d8992e610c86"
-  - **roleName:** string
-    - **Reasoning:** Gives the given role a name.
-    - **Example:** "roleName": "admin"
-  - **permissionSuite:** Array
-    - **Reasoning:** Permissions associated with the role.
-    - **Example:** ["read", "write", "delete"]
-- **Example:** "role": {"roleId": "60d21b4667d0d8992e610c86", "roleName": "admin", "permissionSuite": ["read", "write", "delete"]}
+- **Data Type:** ObjectId
+- **Reasoning:** Uniquely identifies a role.
+- **Example:** "roleId": "60d21b4667d0d8992e610c86"
 
-#### availability
+#### userId
 
-- **Data Type:** Object
-- **Attributes:**
-  - **status:** string
-    - **Reasoning:** Current availability status of the user.
-    - **Example:** "Available"
-  - **schedule:** Object
-    - **Reasoning:** Weekly schedule for the user.
-    - **Example:** {"Monday": "9:00-17:00", "Tuesday": "9:00-17:00"} 
+- **Data Type:** ObjectId
+- **Reasoning:** References the userId in the User collection.
+- **Example:** "userId": "60d21b4667d0d8992e610c85"
 
-#### skills
-- **Data Type:** Array
-- **Attributes:**
-  - **skillName:** string
-    - **Reasoning:** List of skills the user possesses.
-    - **Example:** ["JavaScript", "Python"]
+#### companyId
 
-#### currentJobAssignments
+- **Data Type:** ObjectId
+- **Reasoning:** References the company the employee is associated with.
+- **Example:** "companyId": "60d21b4667d0d8992e610c87"
 
-- **Data Type:** Array of Object ids
-- **Reasoning:** References jobs the employee is currently assigned to.
-- **Example:** ["60d21b4667d0d8992e610c87"...]
-  
-#### superiorId 
+#### superiorId
 
 - **Data Type:** ObjectId
 - **Reasoning:** References the employee's superior.
@@ -402,11 +386,17 @@ The Employee entity stores information for employees.
     - **Reasoning:** Stores a reference to the employeeId in the Employee collection
 - **Example:** "superiorId": "60d21b4667d0d8992e610c87"
 
+#### currentJobAssignments
+
+- **Data Type:** Array of Object ids
+- **Reasoning:** References jobs the employee is currently assigned to.
+- **Example:** ["60d21b4667d0d8992e610c87"...]
+
 #### subordinates
 
 - **Data Type:** Array of Object ids
 - **Reasoning:** References the employees under the employee.
-- **Attributes:** 
+- **Attributes:**
   - **employeeId:** ObjectId
     - **Reasoning:** Stores a reference to the employeeId in the Employee collection
 - **Example:** "subordinates": ["60d21b4667d0d8992e610c87"...]
@@ -419,6 +409,17 @@ The Employee entity stores information for employees.
   - **employeeId:** ObjectId
     - **Reasoning:** Stores a reference to the employeeId in the Employee collection
 - **Example:** "subordinatesTeams": ["60d21b4667d0d8992e610c87"...]
+
+#### availability
+
+- **Data Type:** Object
+- **Attributes:**
+  - **status:** string
+    - **Reasoning:** Current availability status of the user.
+    - **Example:** "Available"
+  - **schedule:** Object
+    - **Reasoning:** Weekly schedule for the user.
+    - **Example:** {"Monday": "9:00-17:00", "Tuesday": "9:00-17:00"} 
 
 #### createdAt
 
@@ -444,13 +445,6 @@ The Employee entity stores information for employees.
 
 - **Data Type:** ObjectId
 - **Reasoning:** Unique identifier for each team.
-- **Example:** "_id": "60d21b4667d0d8992e610c85"
-
-#### teamName
-
-- **Data Type:** string
-- **Reasoning:** Use of string is logical.
-- **Example:** "teamName": "Boolean Hooligans"
 
 #### companyId
 
@@ -459,12 +453,18 @@ The Employee entity stores information for employees.
 - **Reasoning:** Associates the job with a specific company.
 - **Example:** "companyId": "60d21b4667d0d8992e610c8c"
 
+#### teamName
+
+- **Data Type:** string
+- **Reasoning:** Use of string is logical.
+- **Example:** "teamName": "Boolean Hooligans"
+
 #### teamMembers
 
 - **Data Type:** Array of Objects ids
 - **Reasoning:** Stores employeeIds
 - **Attributes:**
-  - **employeeId:** ObjectId
+    - **employeeId:** ObjectId
     - **Reasoning:** Stores the reference to the employee in the Employee collection
 - **Example:** "teamMembers": ["60d21b4667d0d8992e610c87"...]
 
@@ -508,23 +508,17 @@ The Company entity stores information about companies associated with users and 
 - **Reasoning:** Unique identifier for each company.
 - **Example:** "_id": "60d21b4667d0d8992e610c89"
 
-#### registrationNumber
-
-- **Data Type:** string
-- **Reasoning:** Unique registration number for the company.
-- **Example:** "registrationNumber": "REG123456"
-
 #### name
 
 - **Data Type:** string
 - **Reasoning:** Name of the company.
 - **Example:** "name": "Tech Solutions Inc."
 
-#### type
+#### registrationNumber
 
 - **Data Type:** string
-- **Reasoning:** Type or industry of the company.
-- **Example:** "type": "IT Services"
+- **Reasoning:** Unique registration number for the company.
+- **Example:** "registrationNumber": "REG123456"
 
 #### vatNumber
 
@@ -537,6 +531,12 @@ The Company entity stores information about companies associated with users and 
 - **Data Type:** string
 - **Reasoning:** URL or base64 image string for the company logo.
 - **Example:** "logo": "data:image/png;base64,iVBORw0KGgoAAAANS..."
+
+#### type
+
+- **Data Type:** string
+- **Reasoning:** Type or industry of the company.
+- **Example:** "type": "IT Services"
 
 #### contactDetails
 
@@ -577,14 +577,14 @@ The Company entity stores information about companies associated with users and 
     - **Reasoning:** Stores a reference to the employeeId in the Employee collection
 - **Example:** "employees": ["60d21b4667d0d8992e610c85",...]
 
-#### inventoryItems
+#### inventory
 
 - **Data Type:** Array of Object ids
 - **Reasoning:** References inventory items owned by the company to track and manage stock efficiently.
 - **Attributes:**
   - **inventoryItemId:** ObjectId
     - **Reasoning:** Unique identifier for each inventory item to ensure accurate tracking and referencing.
-- **Example:** "inventoryItems": ["60d21b4667d0d8992e610c8a",...]
+- **Example:** "inventory": ["60d21b4667d0d8992e610c8a",...]
 
 #### createdAt
 
@@ -656,6 +656,12 @@ The Client entity stores information about clients who have jobs or appointments
       - **Example:** "3A"
 - **Example:** "personalInfo": {"firstName":"Jane","surname":"Smith","preferredLanguage":"English","dateOfBirth":{"phone":"+1234567890"},"contactInfo":{"email":"jane.smith@example.com","address":{"street":"789 Client Rd","suburb":"Eastside","city":"Metropolis","postalCode":"12345","complex":"Client Apartments","houseNumber":"3A"}}}
 
+#### jobs
+
+- **Data Type:** Array of Object ids
+- **Reasoning:** References jobs associated with the client.
+- **Example:** "jobs": ["60d21b4667d0d8992e610c8a",...]
+
 #### createdAt
 
 - **Data Type:** Date (in string format)
@@ -697,40 +703,6 @@ The Job entity stores information about jobs assigned to employees and clients.
 - **Reasoning:** Associates the job with a specific client.
 - **Example:** "clientId": "60d21b4667d0d8992e610c8c"
 
-#### assignedEmployees
-
-- **Data Type:** Object of Employee ids and Team id
-- **Relationship:** References employees and teams
-- **Reasoning:** Employees and team assigned to the job.
-- **Example:** "assignedEmployees": {"employeesIds": ["60d21b4667d0d8992e610c85",...], "teamId": "60d21b4667d0d8992e610c85"} 
-
-#### assignedBy (@Jess may you please add this field to er diagram)
-
-- **Data Type:** Object id
-- **Relationship:** References Employees table
-- **Reasoning:** Assignee of a job.
-- **Example:** "assignedBy": "60d21b4667d0d8992e610c85" 
-
-#### status (@Jess may you please add this field to er diagram, I've just made status it's own attribute)
-
-- **Data Type:** string
-- **Reasoning:** stores the status of the job
-- **Example:** "status": "complete"
-
-#### recordedDetails
-
-- **Data Type:** Object
-- **Attributes:** 
-  - **imagesTaken** 
-    - **Data Type**: Array of strings (base64 images)
-    - **Reasoning:** Images related to the job.
-    - **Example:** ["data:image/png;base64,iVBORw0KGgoAAAANS...", "data:image/png;base64,iVBORw0KGgoAAAANS..."] 
-  - **inventoryUsed**
-    - **Data Type:** Array of Object
-    - **Reasoning:** Inventory items used for the job.
-    - **Example:** [{ "InventoryItem": "60d21b4667d0d8992e610c8a", "QuantityUsed": 2 }]
-- **Example:** "recordedDetails": {"imagesTaken":["data:image/png;base64,iVBORw0KGgoAAAANS...","data:image/png;base64,iVBORw0KGgoAAAANS..."],"inventoryUsed":[{"InventoryItem":"60d21b4667d0d8992e610c8a","QuantityUsed":2}]}
-
 #### jobDetails
 
 - **Data Type:** Object
@@ -767,6 +739,40 @@ The Job entity stores information about jobs assigned to employees and clients.
       - **Reasoning:** House number for the job location.
       - **Example:** "5C"
 - **Example:** "jobDetails": {"jobDescription": "Fixing plumbing issues.","jobStartDate":"2024-06-01","jobEndDate": "2024-06-05","status": "pending","jobAddress": {"street": "123 Job St","suburb": "Westside","city": "Metropolis","postalCode": "67890","complex": "Workplace Plaza","houseNumber": "5C"} }
+
+#### assignedEmployees
+
+- **Data Type:** Object of Employee ids and Team id
+- **Relationship:** References employees and teams
+- **Reasoning:** Employees and team assigned to the job.
+- **Example:** "assignedEmployees": [{"employeesIds": ["60d21b4667d0d8992e610c85",...], "teamId": "60d21b4667d0d8992e610c85"}...] 
+
+#### recordedDetails
+
+- **Data Type:** Object
+- **Attributes:**
+  - **imagesTaken**
+    - **Data Type**: Array of strings (base64 images)
+    - **Reasoning:** Images related to the job.
+    - **Example:** ["data:image/png;base64,iVBORw0KGgoAAAANS...", "data:image/png;base64,iVBORw0KGgoAAAANS..."]
+  - **inventoryUsed**
+    - **Data Type:** Array of Object
+    - **Reasoning:** Inventory items used for the job.
+    - **Example:** [{ "InventoryItem": "60d21b4667d0d8992e610c8a", "QuantityUsed": 2 }]
+- **Example:** "recordedDetails": {"imagesTaken":["data:image/png;base64,iVBORw0KGgoAAAANS...","data:image/png;base64,iVBORw0KGgoAAAANS..."],"inventoryUsed":[{"InventoryItem":"60d21b4667d0d8992e610c8a","QuantityUsed":2}]}
+
+#### assignedBy (@Jess may you please add this field to er diagram)
+
+- **Data Type:** Object id
+- **Relationship:** References Employees table
+- **Reasoning:** Assignee of a job.
+- **Example:** "assignedBy": "60d21b4667d0d8992e610c85" 
+
+#### status 
+
+- **Data Type:** string
+- **Reasoning:** stores the status of the job
+- **Example:** "status": "complete"
 
 #### clientFeedback
 
@@ -938,3 +944,48 @@ The InventoryItem entity stores information about items in the company's invento
 - **Data Type:** Date (in string format)
 - **Reasoning:** Timestamp of when the document was deleted.
 - **Example:** "deletedAt": "2024-06-01T10:00:00Z"
+
+### Roles
+
+#### _id
+
+- **Data Type:** ObjectId
+- **Reasoning:** Unique identifier for each role.
+- **Example:** "_id": "60d21b4667d0d8992e610c8g"
+
+#### roleName
+
+- **Data Type:** string
+- **Reasoning:** Name of the role.
+- **Example:** "roleName": "Admin"
+
+#### permissionSuite
+
+- **Data Type:** Array of strings
+- **Reasoning:** List of permissions associated with the role.
+- **Example:** "permissionSuite": ["create", "read", "update", "delete"]
+
+#### companyId
+
+- **Data Type:** ObjectId
+- **Reasoning:** References the company the role is associated with.
+- **Example:** "companyId": "60d21b466
+
+#### createdAt
+
+- **Data Type:** Date (in string format)
+- **Reasoning:** Timestamp of when the document was created.
+- **Example:** "createdAt": "2024-06-01T10:00:00Z"
+
+#### updatedAt
+
+- **Data Type:** Date (in string format)
+- **Reasoning:** Timestamp of when the document was updated.
+- **Example:** "updatedAt": "2024-06-01T10:00:00Z"
+
+#### deletedAt
+
+- **Data Type:** Date (in string format)
+- **Reasoning:** Timestamp of when the document was deleted.
+- **Example:** "deletedAt": "2024-06-01T10:00:00Z"
+
