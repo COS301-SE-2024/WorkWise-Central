@@ -112,10 +112,10 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 export default defineComponent({
   name: 'RegisterCompanyModal',
-  props: ['isdarkmode'],
   data: () => ({
     valid: false,
     dialog: false,
+    isdarkmode: localStorage['theme'] !== 'false',
     click_create_client: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',

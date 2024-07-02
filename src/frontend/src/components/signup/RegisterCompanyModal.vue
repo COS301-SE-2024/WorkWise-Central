@@ -60,77 +60,76 @@
                 rounded="xl"
                 variant="solo"
                 :items="[
-                  'Construction Work',
-                  'Landscaping',
-                  'Lawn Care',
-                  'Gardening',
-                  'Tree Trimming',
-                  'Roofing',
-                  'Painting',
-                  'Plumbing',
-                  'Electrical Work',
-                  'Carpentry',
-                  'Masonry',
-                  'Welding',
-                  'HVAC Installation and Repair',
-                  'Window Cleaning',
-                  'Janitorial Services',
-                  'Carpet Cleaning',
-                  'Moving Services',
-                  'Packing and Unpacking Services',
-                  'Furniture Assembly',
-                  'Pest Control',
-                  'Extermination Services',
-                  'Pool Cleaning',
-                  'Snow Removal',
-                  'Demolition Services',
-                  'Flooring Installation',
-                  'Tile Installation',
-                  'Drywall Installation and Repair',
-                  'Insulation Installation',
-                  'Gutter Cleaning',
-                  'Pressure Washing',
+                  'Agricultural Labor',
                   'Automotive Repair',
                   'Auto Detailing',
                   'Boat Cleaning',
-                  'Farm Work',
-                  'Harvesting',
-                  'Fishing Services',
-                  'Forestry Work',
-                  'Mining Services',
-                  'Oil and Gas Extraction',
-                  'Construction Site Cleanup',
-                  'Warehouse Labor',
-                  'Loading and Unloading Services',
-                  'Recycling Services',
-                  'Scrap Metal Collection',
-                  'Junk Removal',
-                  'Waste Management',
-                  'Event Setup and Teardown',
-                  'Concert Setup and Teardown',
-                  'Trade Show Setup and Teardown',
-                  'Exhibit Installation',
-                  'Rigging Services',
-                  'Scaffolding Services',
-                  'General Handyman Services',
-                  'Home Renovation',
-                  'Exterior Home Cleaning',
-                  'Agricultural Labor',
-                  'Livestock Care',
-                  'Equestrian Services',
-                  'Dog Walking',
-                  'Pet Grooming',
-                  'House Cleaning',
-                  'Maid Services',
-                  'Home Health Aide',
-                  'Personal Care Assistant',
+                  'Carpentry',
+                  'Carpet Cleaning',
                   'Childcare Services',
-                  'Elderly Care Services',
+                  'Concert Setup and Teardown',
+                  'Construction Site Cleanup',
+                  'Construction Work',
+                  'Demolition Services',
                   'Disaster Cleanup',
-                  'Restoration Services',
+                  'Dog Walking',
+                  'Drywall Installation and Repair',
+                  'Electrical Work',
+                  'Elderly Care Services',
+                  'Equestrian Services',
+                  'Event Setup and Teardown',
+                  'Exhibit Installation',
+                  'Extermination Services',
+                  'Exterior Home Cleaning',
+                  'Farm Work',
                   'Fire Damage Cleanup',
+                  'Fishing Services',
+                  'Flooring Installation',
+                  'Forestry Work',
+                  'Furniture Assembly',
+                  'Gardening',
+                  'General Handyman Services',
+                  'Gutter Cleaning',
+                  'Harvesting',
+                  'Home Health Aide',
+                  'Home Renovation',
+                  'HVAC Installation and Repair',
+                  'Insulation Installation',
+                  'Janitorial Services',
+                  'Junk Removal',
+                  'Landscaping',
+                  'Lawn Care',
+                  'Livestock Care',
+                  'Loading and Unloading Services',
+                  'Maid Services',
+                  'Masonry',
+                  'Mining Services',
+                  'Mold Remediation',
+                  'Moving Services',
+                  'Oil and Gas Extraction',
+                  'Packing and Unpacking Services',
+                  'Painting',
+                  'Personal Care Assistant',
+                  'Pest Control',
+                  'Pet Grooming',
+                  'Plumbing',
+                  'Pool Cleaning',
+                  'Pressure Washing',
+                  'Recycling Services',
+                  'Restoration Services',
+                  'Rigging Services',
+                  'Roofing',
+                  'Scrap Metal Collection',
+                  'Scaffolding Services',
+                  'Snow Removal',
+                  'Tile Installation',
+                  'Trade Show Setup and Teardown',
+                  'Tree Trimming',
+                  'Warehouse Labor',
+                  'Waste Management',
                   'Water Damage Cleanup',
-                  'Mold Remediation'
+                  'Welding',
+                  'Window Cleaning'
                 ]"
               ></v-autocomplete>
             </v-col>
@@ -183,6 +182,7 @@
                 color="grey-lighten-4"
                 placeholder="Enter the company's registration number"
                 v-model="req_obj.registrationNumber"
+                :rules="company_registration_number_rules"
                 rounded="xl"
                 variant="solo"
                 required
@@ -230,7 +230,11 @@
               >Company address</small
             >
             <v-row class="d-flex flex-wrap">
-              <v-col sm="6" cols="12"
+              <v-col sm="6" cols="12">
+                <small
+                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                  class="text-caption"
+                  >Street</small
                 ><v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
@@ -242,7 +246,11 @@
                   required
                 ></v-text-field
               ></v-col>
-              <v-col sm="6" cols="12"
+              <v-col sm="6" cols="12">
+                <small
+                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                  class="text-caption"
+                  >Suburb</small
                 ><v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
@@ -254,7 +262,11 @@
                   required
                 ></v-text-field
               ></v-col>
-              <v-col sm="6" cols="12"
+              <v-col sm="6" cols="12">
+                <small
+                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                  class="text-caption"
+                  >City</small
                 ><v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
@@ -266,7 +278,11 @@
                   required
                 ></v-text-field
               ></v-col>
-              <v-col sm="6" cols="12"
+              <v-col sm="6" cols="12">
+                <small
+                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                  class="text-caption"
+                  >Zip Code</small
                 ><v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
@@ -335,10 +351,10 @@ import axios from 'axios'
 
 export default {
   name: 'RegisterCompanyModal',
-  props: ['isdarkmode'],
   data() {
     return {
       dialog: false,
+      isdarkmode: localStorage['theme'] !== 'false',
       click_create_client: false,
       valid: true,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
@@ -367,6 +383,11 @@ export default {
       vat_number_rules: [
         (v: string) => !!v || 'VAT number is required',
         (v: string) => /^\d{10}$/.test(v) || 'VAT number must be a valid South African VAT number'
+      ],
+      company_registration_number_rules: [
+        (v: string) => !!v || 'Company registration number is required',
+        (v: string) =>
+          /^(\d{14})$/.test(v) || 'Company registration number must be a valid South African number'
       ],
 
       req_obj: {
