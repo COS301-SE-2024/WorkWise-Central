@@ -1,15 +1,15 @@
 <template>
-    <main>
-        <SplashVue/>
-    </main>
+  <main>
+    <SplashVue />
+  </main>
 </template>
 
 <script lang="ts">
-import SplashVue from '../components/SplashScreen.vue';
+import SplashVue from '../components/SplashScreen.vue'
 
 export default {
-    components: {
-        SplashVue
-    }
+  components: {
+    SplashVue
+  }
 }
 </script>

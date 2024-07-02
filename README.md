@@ -2,11 +2,10 @@
 
 # Boolean Hooligans - WorkWise Central
 
-![WorkWise Central Logo](logo.png)
-
+![WorkWise Central Logo](/res/img/logo/WorkWiseLogo.png)
 
 [![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)&ensp;
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/WorkWise-Central/unit_test.yml)&ensp;
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/WorkWise-Central/build.yml)&ensp;
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/COS301-SE-2024/WorkWise-Central)&ensp;
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/COS301-SE-2024/WorkWise-Central)&ensp;
 ![Uptime Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m796617525-da8bacd4b5ef756cceb20b0e?logo=GitHub)
@@ -32,8 +31,6 @@
 
 ## Project Description
 
-
-
 **Boolean Hooligans - WorkWise Central - Project Description**:
 
 WorkWise Central is a cutting-edge Progressive Web App (PWA) designed to revolutionize service-based industries like building, plumbing, electrical, and installation services. Built on a robust technology stack including Vuejs, NestJS, Node.js, Typecript, OAuth, MongoDB and Docker. WorkWise Central empowers companies to streamline operations, optimize resource utilization, and enhance customer satisfaction.
@@ -48,10 +45,11 @@ Key features include:
 
 By harnessing modern technology, WorkWise Central transforms business operations, ensuring exceptional service and exceeding customer expectations. Join us in revolutionizing the future of service-based industries with WorkWise Central.
 
-
 ## Demo Video
 
-[Watch our demo video - Boolean Hooligans Demo1](#)
+[Watch our demo video - Boolean Hooligans Demo1](https://drive.google.com/drive/folders/1Cqqlc6tD-U0kXEPxzeeYuRkkoLvfFiU9)
+
+[Watch our demo video - Boolean Hooligans Demo2](https://drive.google.com/file/d/1z4bgTkJ-NSnSJUdBeRTijx4pgcQHyxTD/view?usp=drive_link)
 
 ## Functional Requirements (SRS)
 
