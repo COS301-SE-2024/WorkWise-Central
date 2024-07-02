@@ -61,6 +61,7 @@
                 v-model="req_obj.client_name"
                 :items="clientsArray"
                 required
+                :rules="clients_rules"
               ></v-autocomplete>
 
               <small
@@ -82,27 +83,28 @@
                 rounded="xl"
                 variant="solo"
                 v-model="req_obj.details.description"
+                :rules="description_rules"
                 required
               >
               </v-textarea>
             </v-col>
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Comment</small
-              >
-              <v-textarea
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                placeholder="Enter any additional comments here"
-                rounded="xl"
-                variant="solo"
-                v-model="comment"
-                @input="commentUpdate"
-                required
-              >
-              </v-textarea>
-            </v-col>
+            <!--            <v-col>-->
+            <!--              <small-->
+            <!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
+            <!--                class="text-caption"-->
+            <!--                >Comment</small-->
+            <!--              >-->
+            <!--              <v-textarea-->
+            <!--                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
+            <!--                placeholder="Enter any additional comments here"-->
+            <!--                rounded="xl"-->
+            <!--                variant="solo"-->
+            <!--                v-model="comment"-->
+            <!--                @input="commentUpdate"-->
+            <!--                required-->
+            <!--              >-->
+            <!--              </v-textarea>-->
+            <!--            </v-col>-->
 
             <v-row>
               <v-col align="center" cols="12" md="6">
@@ -140,10 +142,14 @@
             <small
               :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
               class="text-caption"
-              >Client address</small
+              >Job address</small
             >
             <v-row>
               <v-col cols="12" sm="6"
+                ><small
+                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                  class="text-caption"
+                  >Street</small
                 ><v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
@@ -156,6 +162,10 @@
                 ></v-text-field
               ></v-col>
               <v-col cols="12" sm="6"
+                ><small
+                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                  class="text-caption"
+                  >Suburb</small
                 ><v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
@@ -168,6 +178,10 @@
                 ></v-text-field
               ></v-col>
               <v-col cols="12" sm="6"
+                ><small
+                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                  class="text-caption"
+                  >City</small
                 ><v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
@@ -180,6 +194,10 @@
                 ></v-text-field
               ></v-col>
               <v-col cols="12" sm="6"
+                ><small
+                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                  class="text-caption"
+                  >Zip Code</small
                 ><v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
@@ -193,6 +211,10 @@
               ></v-col>
 
               <v-col cols="12" sm="6"
+                ><small
+                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                  class="text-caption"
+                  >Complex</small
                 ><v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
@@ -205,6 +227,10 @@
                 ></v-text-field
               ></v-col>
               <v-col cols="12" sm="6"
+                ><small
+                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                  class="text-caption"
+                  >House Number</small
                 ><v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
@@ -247,11 +273,11 @@ type CommentType = {
 }
 export default defineComponent({
   name: 'JobDetailsList',
-  props: ['isdarkmode'],
   data() {
     return {
       click_create_client: false,
       valid: false,
+      isdarkmode: localStorage['theme'] !== 'false',
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
@@ -261,6 +287,9 @@ export default defineComponent({
         (v: string) =>
           /^[A-Za-z\s]+$/.test(v) || 'Job title must be alphabetic characters and spaces only'
       ],
+      clients_rules: [(v: string) => !!v || 'Client is required'],
+      description_rules: [(v: string) => !!v || 'Description is required'],
+
       clientsArray: [] as string[],
       time: '',
       startDate: null,
