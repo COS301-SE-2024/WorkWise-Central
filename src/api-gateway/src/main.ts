@@ -9,7 +9,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('API-GATEWAY')
     .setDescription('Documentation of the WorkWise API-GATEWAY')
-    .setVersion('1.2')
+    .setVersion('1.3')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   const theme = new SwaggerTheme();
@@ -18,7 +18,13 @@ async function bootstrap() {
     customCss: theme.getBuffer(SwaggerThemeNameEnum.ONE_DARK),
   };
   SwaggerModule.setup('documentation', app, document, options);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      //stopAtFirstError: true,
+      //transform: true,
+      whitelist: true,
+    }),
+  );
   app.enableCors();
   await app.listen(3000);
 }
