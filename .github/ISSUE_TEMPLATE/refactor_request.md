@@ -15,7 +15,7 @@ assignees: ''
 
 ## Deliverables
 
--[] [List everything that needs to be refactored]
+- [ ] [List everything that needs to be refactored]
 
 ## Additional Information
 
