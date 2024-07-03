@@ -69,7 +69,12 @@ class ClientDetails {
   @ApiProperty()
   @IsOptional()
   @IsString()
-  name?: string;
+  firstName?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  lastName?: string;
 
   @ApiProperty()
   @IsOptional()

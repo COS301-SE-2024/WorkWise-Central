@@ -28,8 +28,12 @@ export class ContactInfo {
 
 export class ClientDetails {
   @ApiProperty()
-  @Prop({ type: String, required: false })
-  name?: string;
+  @Prop({ type: String, required: true })
+  firstName: string;
+
+  @ApiProperty()
+  @Prop({ type: String, required: true })
+  lastName: string;
 
   @Prop({ type: String, required: false, default: 'English' })
   @ApiProperty()
