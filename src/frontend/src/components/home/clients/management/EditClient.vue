@@ -1,5 +1,15 @@
 <template>
   <v-dialog v-model="clientDialog" max-width="500" height="800">
+    <template v-slot:activator="{ props: activatorProps }">
+      <v-btn
+        rounded="md"
+        class="text-none font-weight-regular hello"
+        color="secondary"
+        variant="text"
+        v-bind="activatorProps"
+        >Edit</v-btn
+      >
+    </template>
     <v-sheet
       elevation="14"
       rounded="md"

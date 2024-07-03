@@ -1,5 +1,15 @@
 <template>
   <v-dialog v-model="clientDialog" max-width="500px">
+    <template v-slot:activator="{ props: activatorProps }">
+      <v-btn
+        rounded="md"
+        class="text-none font-weight-regular hello"
+        color="error"
+        variant="text"
+        v-bind="activatorProps"
+        >Delete</v-btn
+      >
+    </template>
     <v-card>
       <v-card-title>
         <span class="headline">Delete Client</span>

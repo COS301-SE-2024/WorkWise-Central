@@ -36,7 +36,7 @@
                   single-line
                 ></v-text-field>
                 <v-spacer></v-spacer>
-                <ClientDetails v-model="clientDialog" @close="clientDialog = false" />
+                <AddClient v-model="addClientDialog" @close="addClientDialog = false" />
               </v-card-title>
 
               <v-divider></v-divider>
@@ -53,7 +53,6 @@
                       height="auto"
                       rounded="xl"
                       :item-class="getRowClass"
-                      @click:row="toggleExpand"
                       class="font-lato"
                     >
                       <template v-slot:[`item.name`]="{ value }">
@@ -77,7 +76,7 @@
                           <v-icon>mdi-email</v-icon>{{ value }}</v-chip
                         >
                       </template>
-                      <template v-slot:[`item.address`]="{ value }">
+                      <template v-slot:[`item.address.street`]="{ value }">
                         <v-chip color="#5A82AF"> <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip>
                       </template>
                       <!-- Expanded content slot -->
@@ -97,14 +96,15 @@
                         </tr>
                       </template>
                       <!-- Actions slot -->
-                      <template v-slot:[`item.actions`]="{ value }">
+                      <template v-slot:[`item.actions`]="{ item }">
                         <v-btn
                           rounded="xl"
                           variant="plain"
                           style="transform: rotate(90deg) dots"
-                          @click="editClient(value)"
-                          ><v-icon>mdi-dots-horizontal</v-icon></v-btn
+                          @click="(actionsDialog = true), selectItem(item)"
                         >
+                          <v-icon>mdi-dots-horizontal</v-icon>
+                        </v-btn>
                       </template>
                     </v-data-table>
                   </v-col>
@@ -116,24 +116,32 @@
       </v-col></v-row
     >
 
-    <v-col>
-      <DeleteClient v-model="deleteDialog" :details="selectedItem" :client_id="selectedItemId"
-    /></v-col>
-    <v-col>
-      <EditClient
-        v-model="editDialog"
-        @update:item="selectedItem = $event"
-        :editedItem="selectedItem"
-        :_clientID="selectedItemId"
-      />
-    </v-col>
+    <v-dialog v-model="actionsDialog" max-width="500px">
+      <v-card>
+        <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+          {{ selectedItemName + ' ' + selectedItemSurname }}
+        </v-card-title>
+        <v-card-text> What would you like to do with this job? </v-card-text>
+        <v-card-actions>
+          <ClientDetails v-model="clientDialog" :colors="colors" :ClientDetails="selectedItem" />
+          <EditClient
+            @update:item="selectedItem = $event"
+            :editedItem="selectedItem"
+            :_clientID="selectedItemId"
+          /><DeleteClient :details="selectedItem" :client_id="selectedItemId" />
+          <v-spacer></v-spacer>
+          <v-btn @click="actionsDialog = false">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import DeleteClient from './DeleteClient.vue'
 import EditClient from './EditClient.vue'
-import ClientDetails from './AddClient.vue'
+import AddClient from './AddClient.vue'
+import ClientDetails from './ClientDetails.vue'
 import axios from 'axios'
 import { defineComponent } from 'vue'
 
@@ -144,11 +152,22 @@ export default defineComponent({
     isDarkMode: Boolean
   },
   data: () => ({
+    dummy: '',
     selectedItem: {},
+    selectedItemName: '',
+    selectedItemSurname: '',
     isdarkmode: false,
     clientDialog: false,
     deleteDialog: false,
     editDialog: false,
+    addClientDialog: false,
+    actionsDialog: false,
+    colors: {
+      light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
+      dark_theme_text_color: 'color: #DCDBDB',
+      modal_dark_theme_color: '#2b2b2b',
+      modal_light_theme_color: '#FFFFFF'
+    },
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
@@ -157,7 +176,7 @@ export default defineComponent({
       { key: 'name', order: 'asc' },
       { key: 'email', order: 'asc' },
       { key: 'phone', order: 'asc' },
-      { key: 'address', order: 'asc' },
+      { key: 'address.street', order: 'asc' },
       { key: 'jobRequired', order: 'asc' }
     ],
     headers: [
@@ -177,7 +196,7 @@ export default defineComponent({
       },
       { title: 'Phone', value: 'phoneNumber', key: 'phoneNumber' },
       { title: 'Email', value: 'email', key: 'email' },
-      { title: 'Address', value: 'address', key: 'address' },
+      { title: 'Address', value: 'address.street', key: 'address.street' },
       { title: '', value: 'actions', key: 'actions', sortable: false }
     ],
     search: '',
@@ -188,8 +207,16 @@ export default defineComponent({
         surname: 'Doe',
         phoneNumber: '123-456-7890',
         email: 'john.doe@example.com',
-        address: '123 Elm Street',
-        actions: ''
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        actions: '',
+        preferredLanguage: 'English'
       },
       {
         id: 2,
@@ -197,8 +224,16 @@ export default defineComponent({
         surname: 'Doe',
         phoneNumber: '098-765-4321',
         email: 'jane.doe@example.com',
-        address: '456 Oak Street',
-        actions: ''
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        actions: '',
+        preferredLanguage: 'English'
       },
       {
         id: 3,
@@ -206,8 +241,16 @@ export default defineComponent({
         surname: 'Smith',
         phoneNumber: '555-123-4567',
         email: 'michael.smith@example.com',
-        address: '789 Pine Street',
-        actions: ''
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        actions: '',
+        preferredLanguage: 'English'
       },
       {
         id: 4,
@@ -215,8 +258,16 @@ export default defineComponent({
         surname: 'Johnson',
         phoneNumber: '555-987-6543',
         email: 'emily.johnson@example.com',
-        address: '321 Maple Street',
-        actions: ''
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        actions: '',
+        preferredLanguage: 'English'
       },
       {
         id: 5,
@@ -224,8 +275,16 @@ export default defineComponent({
         surname: 'Williams',
         phoneNumber: '555-678-1234',
         email: 'david.williams@example.com',
-        address: '654 Willow Street',
-        actions: ''
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        actions: '',
+        preferredLanguage: 'English'
       },
       {
         id: 6,
@@ -233,8 +292,16 @@ export default defineComponent({
         surname: 'Brown',
         phoneNumber: '555-345-6789',
         email: 'jessica.brown@example.com',
-        address: '987 Cedar Street',
-        actions: ''
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        actions: '',
+        preferredLanguage: 'English'
       },
       {
         id: 7,
@@ -242,8 +309,16 @@ export default defineComponent({
         surname: 'Jones',
         phoneNumber: '555-456-7890',
         email: 'daniel.jones@example.com',
-        address: '654 Spruce Street',
-        actions: ''
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        actions: '',
+        preferredLanguage: 'English'
       },
       {
         id: 8,
@@ -251,8 +326,16 @@ export default defineComponent({
         surname: 'Miller',
         phoneNumber: '555-567-8901',
         email: 'sarah.miller@example.com',
-        address: '321 Birch Street',
-        actions: ''
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        actions: '',
+        preferredLanguage: 'English'
       },
       {
         id: 9,
@@ -260,7 +343,15 @@ export default defineComponent({
         surname: 'Wilson',
         phoneNumber: '555-678-9012',
         email: 'matthew.wilson@example.com',
-        address: '123 Cherry Street',
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        preferredLanguage: 'English',
         actions: ''
       },
       {
@@ -269,7 +360,15 @@ export default defineComponent({
         surname: 'Moore',
         phoneNumber: '555-789-0123',
         email: 'ashley.moore@example.com',
-        address: '456 Redwood Street',
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        preferredLanguage: 'English',
         actions: ''
       },
       {
@@ -278,7 +377,15 @@ export default defineComponent({
         surname: 'Taylor',
         phoneNumber: '555-890-1234',
         email: 'christopher.taylor@example.com',
-        address: '789 Birchwood Street',
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        preferredLanguage: 'English',
         actions: ''
       },
       {
@@ -287,7 +394,15 @@ export default defineComponent({
         surname: 'Anderson',
         phoneNumber: '555-901-2345',
         email: 'amanda.anderson@example.com',
-        address: '321 Cedarwood Street',
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        preferredLanguage: 'English',
         actions: ''
       },
       {
@@ -296,7 +411,15 @@ export default defineComponent({
         surname: 'Thomas',
         phoneNumber: '555-012-3456',
         email: 'joshua.thomas@example.com',
-        address: '654 Oakwood Street',
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        preferredLanguage: 'English',
         actions: ''
       },
       {
@@ -305,7 +428,15 @@ export default defineComponent({
         surname: 'Harris',
         phoneNumber: '555-123-4560',
         email: 'nicole.harris@example.com',
-        address: '987 Pinewood Street',
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        preferredLanguage: 'English',
         actions: ''
       },
       {
@@ -314,7 +445,15 @@ export default defineComponent({
         surname: 'Martin',
         phoneNumber: '555-234-5671',
         email: 'ryan.martin@example.com',
-        address: '321 Elmwood Street',
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        preferredLanguage: 'English',
         actions: ''
       },
       {
@@ -323,7 +462,15 @@ export default defineComponent({
         surname: 'Garcia',
         phoneNumber: '555-345-6782',
         email: 'heather.garcia@example.com',
-        address: '654 Palm Street',
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        preferredLanguage: 'English',
         actions: ''
       },
       {
@@ -332,7 +479,15 @@ export default defineComponent({
         surname: 'Robinson',
         phoneNumber: '555-456-7893',
         email: 'brandon.robinson@example.com',
-        address: '321 Pinecone Street',
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        preferredLanguage: 'English',
         actions: ''
       },
       {
@@ -341,7 +496,15 @@ export default defineComponent({
         surname: 'Clark',
         phoneNumber: '555-567-8904',
         email: 'elizabeth.clark@example.com',
-        address: '654 Fir Street',
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        preferredLanguage: 'English',
         actions: ''
       },
       {
@@ -350,7 +513,15 @@ export default defineComponent({
         surname: 'Lewis',
         phoneNumber: '555-678-9015',
         email: 'adam.lewis@example.com',
-        address: '321 Redwood Lane',
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        preferredLanguage: 'English',
         actions: ''
       },
       {
@@ -359,7 +530,15 @@ export default defineComponent({
         surname: 'Walker',
         phoneNumber: '555-789-0126',
         email: 'megan.walker@example.com',
-        address: '456 Cedar Lane',
+        address: {
+          street: '654 Oak Street',
+          city: 'Springfield',
+          suburb: 'IL',
+          postalCode: '62701',
+          complex: 'Apt 123',
+          houseNumber: '123'
+        },
+        preferredLanguage: 'English',
         actions: ''
       }
     ],
@@ -372,7 +551,8 @@ export default defineComponent({
   components: {
     ClientDetails,
     DeleteClient,
-    EditClient
+    EditClient,
+    AddClient
   },
   computed: {
     filteredClients() {
@@ -388,14 +568,12 @@ export default defineComponent({
     this.getClients()
   },
   methods: {
-    onProfileClick() {
-      console.log('Profile icon clicked')
-    },
-    onEllipsisClick() {
-      console.log('Ellipsis icon clicked')
-    },
-    searchClient() {
-      console.log('Searching client')
+    selectItem(item) {
+      this.selectedItem = item
+      this.selectedItemName = item.name
+      console.log(this.selectedItemName)
+      this.selectedItemSurname = item.surname
+      console.log('Selected item:', this.selectedItem) // Corrected console.log
     },
     editClient(item) {
       console.log(item)
@@ -423,6 +601,11 @@ export default defineComponent({
       }
       console.log('Deleting client')
     },
+    viewClientDetails(item) {
+      console.log('Viewing client details')
+      console.log(this.selectedItem)
+    },
+
     openAddClient() {
       this.clientDialog = true
     },
