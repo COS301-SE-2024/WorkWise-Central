@@ -68,11 +68,26 @@ export class CompanyRepository {
     return this.companyModel.find().lean().exec();
   }
 
-  async registrationNumberExists(id: string): Promise<boolean> {
+  async registrationNumberExists(registrationNumber: string): Promise<boolean> {
     const result = await this.companyModel
       .findOne({
         $and: [
-          { registrationNumber: id },
+          { registrationNumber: registrationNumber },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+
+    return result != null;
+  }
+
+  async VatNumberExists(vatNumber: string): Promise<boolean> {
+    const result = await this.companyModel
+      .findOne({
+        $and: [
+          { vatNumber: vatNumber },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
@@ -111,9 +126,17 @@ export class CompanyRepository {
         ],
       })
       .lean();
-    if (result == null) return false;
+    if (!result) return false;
 
-    return result.employees.includes(empId);
+    console.log('employeeExists');
+    console.log(result);
+    for (const employee of result.employees) {
+      if (employee.toString() == empId.toString()) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   async nameTaken(name: string) {
