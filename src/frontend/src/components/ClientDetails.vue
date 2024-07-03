@@ -33,7 +33,7 @@
               :style="
                 isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
               "
-              >{{ ClientDetails.firstName }}</small
+              >{{ ClientDetails.name }}</small
             ></v-col
           >
         </v-col>
@@ -59,7 +59,7 @@
               :style="
                 isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
               "
-              >{{ ClientDetails.clientInfo.phoneNumber }}</small
+              >{{ ClientDetails.phoneNumber }}</small
             ></v-col
           >
         </v-col>
@@ -72,7 +72,7 @@
               :style="
                 isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
               "
-              >{{ ClientDetails.clientInfo.email }}</small
+              >{{ ClientDetails.email }}</small
             ></v-col
           >
         </v-col>
@@ -85,7 +85,7 @@
               :style="
                 isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
               "
-              >{{ ClientDetails.clientInfo.address.street }}</small
+              >{{ ClientDetails.address.street }}</small
             >
             <br />
             <small
@@ -93,35 +93,35 @@
               :style="
                 isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
               "
-              >{{ ClientDetails.clientInfo.address.suburb }}</small
+              >{{ ClientDetails.address.suburb }}</small
             >
             <br /><small
               class="text-caption"
               :style="
                 isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
               "
-              >{{ ClientDetails.clientInfo.address.city }}</small
+              >{{ ClientDetails.address.city }}</small
             >
             <br /><small
               class="text-caption"
               :style="
                 isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
               "
-              >{{ ClientDetails.clientInfo.address.postalCode }}</small
+              >{{ ClientDetails.address.postalCode }}</small
             >
             <br /><small
               class="text-caption"
               :style="
                 isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
               "
-              >{{ ClientDetails.clientInfo.address.complex }}</small
+              >{{ ClientDetails.address.complex }}</small
             >
             <br /><small
               class="text-caption"
               :style="
                 isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
               "
-              >{{ ClientDetails.clientInfo.address.houseNumber }}</small
+              >{{ ClientDetails.address.houseNumber }}</small
             ></v-col
           >
         </v-col>

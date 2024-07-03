@@ -117,6 +117,7 @@
                       :disabled="!valid"
                       text
                       @click="login"
+                      @keypress.enter="login"
                       rounded="xl"
                       size="large"
                       color="#5A82AF"
@@ -164,7 +165,7 @@
             >
 
             <!-- Flow 1 -->
-            <v-dialog v-model="signupDialog" max-width="400" >
+            <v-dialog v-model="signupDialog" max-width="400">
               <v-sheet
                 elevation="14"
                 rounded="xl"
@@ -263,7 +264,7 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 2 -->
-            <v-dialog v-model="signup1Dialog" max-width="400" >
+            <v-dialog v-model="signup1Dialog" max-width="400">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -344,7 +345,7 @@
               </v-sheet>
             </v-dialog>
             <v-col xs="3" align-self="center">
-              <v-dialog v-model="signupUsernameDialog" max-width="400" >
+              <v-dialog v-model="signupUsernameDialog" max-width="400">
                 <v-sheet
                   width="auto"
                   height="auto"
@@ -498,7 +499,7 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 4 -->
-            <v-dialog v-model="signupAddressDialog" max-width="1000" >
+            <v-dialog v-model="signupAddressDialog" max-width="1000">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -886,8 +887,18 @@ export default defineComponent({
       (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers'
     ]
   }),
-
+  mounted() {
+    docuument.addEventListener('keypress', this.handleKeypress)
+  },
+  beforeDestroy() {
+    document.removeEventListener('keypress', this.handleKeypress)
+  },
   methods: {
+    handleKeypress(e) {
+      if (e.key === 'Enter') {
+        this.login()
+      }
+    },
     populateUsernameList() {
       while (this.usernameList.length < 10) {
         this.randomNumber = Math.floor(Math.random() * 1000)
