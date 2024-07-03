@@ -1,21 +1,25 @@
 <template>
   <v-app :style="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color">
-    <v-container fluid fill-height class="pa-16 ma-auto pt-5 fixed-container">
-      <v-row justify="center" xs="4" sm="4" md="12">
+    <v-container fluid fill-height>
+      <v-row justify="center" xs="6" sm="6" md="12">
         <v-col cols="12">
           <v-row justify="center">
-            <v-col cols="12" xs="4" sm="4" md="12" offset="3">
+            <v-col cols="12" xs="12" sm="12" md="12">
               <v-card
                 flat
                 :height="auto"
-                :max-width="1500"
-                class="pa-11 ma-10"
-                rounded="xl"
+                :max-height="auto"
+                class="pa-11 ma-0"
+                rounded="md"
                 elevation-2
                 :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
                 border="md"
               >
-                <v-card-title class="d-flex align-center pe-2">
+                <v-card-title
+                  class="d-flex align-center pe-2"
+                  :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+                  style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
+                >
                   <v-icon icon="mdi-account"></v-icon> &nbsp; Employee Details
 
                   <v-spacer></v-spacer>
@@ -25,8 +29,9 @@
                     density="compact"
                     label="Search"
                     prepend-inner-icon="mdi-magnify"
-                    variant="solo-filled"
+                    variant="outlined"
                     flat
+                    style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
                     hide-details
                     :bg-color="
                       isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -39,64 +44,73 @@
 
                 <v-divider></v-divider>
 
-                <div style="height: 700px; overflow-y: auto">
-                  <v-data-table
-                    :headers="headers"
-                    :items="clientDetails"
-                    :search="search"
-                    :single-expand="true"
-                    v-model:expanded="expanded"
-                    show-expand
-                    rounded="xl"
-                    :item-class="getRowClass"
-                  >
-                    <template v-slot:[`item.details.firstName`]="{ value }">
-                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
-                    </template>
-                    <template v-slot:[`item.clientInfo.phoneNumber`]="{ value }">
-                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-phone</v-icon></v-chip>
-                    </template>
-                    <template v-slot:[`item.mostRecentJob`]="{ value }">
-                      <v-chip :color="getColor(value)">
-                        {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
+                <v-col cols="12" xs="12" sm="12" md="12">
+                  <div style="height: 700px; overflow-y: auto">
+                    <v-col cols="12" xs="12" sm="12" md="12">
+                      <v-data-table
+                        :headers="headers"
+                        :items="clientDetails"
+                        :search="search"
+                        :single-expand="true"
+                        v-model:expanded="expanded"
+                        show-expand
+                        height="auto"
+                        rounded="xl"
+                        :item-class="getRowClass"
+                        @click:row="toggleExpand"
+                        class="font-lato"
                       >
-                    </template>
-                    <template v-slot:[`item.clientInfo.address.street`]="{ value }">
-                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-map-marker</v-icon></v-chip>
-                    </template>
-                    <!-- Expanded content slot -->
-                    <template v-slot:expanded-row="{ columns, item }">
-                      <tr>
-                        <td :colspan="columns.length">More info about {{ item.name }}</td>
-                      </tr>
-                    </template>
-                    <!-- Actions slot -->
-                    <template v-slot:[`item.actions`]="{ item }">
-                      <v-col cols="12">
-                        <v-btn
-                          icon
-                          size="small"
-                          @click="EditAccountClick"
-                          color="#5A82AF"
-                          :id="item.id"
-                        >
-                          <v-icon>mdi-pencil</v-icon>
-                        </v-btn>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-btn
-                          icon
-                          size="small"
-                          @click="removeClient"
-                          color="#5A82AF"
-                          :id="item.id"
-                        >
-                          <v-icon>mdi-delete</v-icon>
-                        </v-btn>
-                      </v-col>
-                    </template>
-                  </v-data-table>
-                </div>
+                        <template v-slot:[`item.details.firstName`]="{ value }">
+                          <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
+                        </template>
+                        <template v-slot:[`item.clientInfo.phoneNumber`]="{ value }">
+                          <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-phone</v-icon></v-chip>
+                        </template>
+                        <template v-slot:[`item.mostRecentJob`]="{ value }">
+                          <v-chip :color="getColor(value)">
+                            {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
+                          >
+                        </template>
+                        <template v-slot:[`item.clientInfo.address.street`]="{ value }">
+                          <v-chip color="#5A82AF">
+                            {{ value }}<v-icon>mdi-map-marker</v-icon></v-chip
+                          >
+                        </template>
+                        <!-- Expanded content slot -->
+                        <template v-slot:expanded-row="{ columns, item }">
+                          <tr>
+                            <td :colspan="columns.length">More info about {{ item.name }}</td>
+                          </tr>
+                        </template>
+                        <!-- Actions slot -->
+                        <template v-slot:[`item.actions`]="{ item }">
+                          <v-col cols="12">
+                            <v-btn
+                              icon
+                              size="small"
+                              @click="EditAccountClick"
+                              color="#5A82AF"
+                              :id="item.id"
+                            >
+                              <v-icon>mdi-pencil</v-icon>
+                            </v-btn>
+                          </v-col>
+                          <v-col cols="12">
+                            <v-btn
+                              icon
+                              size="small"
+                              @click="removeClient"
+                              color="#5A82AF"
+                              :id="item.id"
+                            >
+                              <v-icon>mdi-delete</v-icon>
+                            </v-btn>
+                          </v-col>
+                        </template>
+                      </v-data-table>
+                    </v-col>
+                  </div>
+                </v-col>
               </v-card>
             </v-col>
           </v-row>
@@ -387,6 +401,16 @@ export default {
         .catch((error) => {
           console.log('Failed to fetch clients:', error)
         })
+    },
+    toggleExpand(item) {
+      // Check if the item is already expanded
+      const isExpanded = this.expanded.includes(item)
+      if (isExpanded) {
+        this.expanded = []
+      } else {
+        this.expanded = [item]
+        console.log(this.expanded)
+      }
     },
     toggleDarkMode() {
       console.log(this.isdarkmode)
