@@ -890,7 +890,7 @@ export default defineComponent({
   mounted() {
     docuument.addEventListener('keypress', this.handleKeypress)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     document.removeEventListener('keypress', this.handleKeypress)
   },
   methods: {

@@ -8,7 +8,8 @@
         variant="elevated"
         color="#5A82AF"
         v-bind="activatorProps"
-      >Register Company</v-btn>
+        >Register Company</v-btn
+      >
     </template>
     <v-sheet
       elevation="14"

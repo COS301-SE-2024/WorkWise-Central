@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="clientDialog" max-width="500" height="800">
+  <v-dialog v-model="clientDialog" max-width="500">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -14,7 +14,7 @@
 
     <v-sheet
       elevation="14"
-      rounded="xl"
+      rounded="md"
       width="500"
       height="800"
       :color="isdarkmode === true ? colors.modal_dark_theme_color : colors.modal_light_theme_color"
@@ -142,6 +142,20 @@
             ></v-col
           >
         </v-col>
+        <v-divider></v-divider>
+        <v-col>
+          <v-btn
+            color="error"
+            rounded="md"
+            border="md"
+            width="100%"
+            height="35"
+            variant="elevated"
+            @click="close"
+          >
+            Close
+          </v-btn>
+        </v-col>
       </v-col>
     </v-sheet>
   </v-dialog>
@@ -158,6 +172,11 @@ export default defineComponent({
   data() {
     return {
       clientDialog: false
+    }
+  },
+  methods: {
+    close() {
+      this.clientDialog = false
     }
   }
 })

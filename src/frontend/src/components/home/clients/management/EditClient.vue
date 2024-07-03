@@ -116,7 +116,7 @@
               </v-col>
               <v-col cols="12" md="12" xs="3" sm="6" offset="1">
                 <v-btn
-                  color="#5A82AF"
+                  color="error"
                   rounded="md"
                   border="md"
                   width="85%"

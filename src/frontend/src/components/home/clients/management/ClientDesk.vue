@@ -56,10 +56,10 @@
                       class="font-lato"
                     >
                       <template v-slot:[`item.name`]="{ value }">
-                        <v-chip color="#5A82AF"> <v-icon>mdi-account</v-icon>{{ value }}</v-chip>
+                        <v-chip variant="text" color="black"> <v-icon>mdi-account</v-icon>{{ value }}</v-chip>
                       </template>
                       <template v-slot:[`item.phoneNumber`]="{ value }">
-                        <v-chip @click="callPhone" color="#5A82AF"
+                        <v-chip variant="text" @click="callPhone" color="#5A82AF"
                           ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
                         >
                       </template>
@@ -72,7 +72,7 @@
                         <v-chip color="#5A82AF"> {{ value }}</v-chip>
                       </template>
                       <template v-slot:[`item.email`]="{ value }">
-                        <v-chip @click="sendEmail" color="#5A82AF">
+                        <v-chip variant="text" @click="sendEmail" color="#5A82AF">
                           <v-icon>mdi-email</v-icon>{{ value }}</v-chip
                         >
                       </template>
@@ -123,7 +123,7 @@
         </v-card-title>
         <v-card-text> What would you like to do with this job? </v-card-text>
         <v-card-actions>
-          <ClientDetails v-model="clientDialog" :colors="colors" :ClientDetails="selectedItem" />
+          <ClientDetails :colors="colors" :ClientDetails="selectedItem" />
           <EditClient
             @update:item="selectedItem = $event"
             :editedItem="selectedItem"
@@ -601,7 +601,7 @@ export default defineComponent({
       }
       console.log('Deleting client')
     },
-    viewClientDetails(item) {
+    viewClientDetails() {
       console.log('Viewing client details')
       console.log(this.selectedItem)
     },
