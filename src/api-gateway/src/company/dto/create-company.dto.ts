@@ -99,9 +99,8 @@ export class CreateCompanyDto {
   address: Address;
 
   @ApiProperty()
-  @IsString()
-  @IsMongoId({ each: true })
   @IsOptional()
+  @IsMongoId({ each: true })
   employees?: Types.ObjectId[] = [];
 
   @ApiProperty()

@@ -98,10 +98,9 @@ class Details {
   startDate: Date;
 
   @ApiProperty()
-  @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsDateString()
-  endDate: Date;
+  endDate?: Date;
 }
 
 class InventoryUsed {
@@ -129,10 +128,9 @@ class RecordedDetails {
   imagesTaken?: string[] = [];
 
   @ApiProperty()
-  @IsArray()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => InventoryUsed)
-  @IsOptional()
   inventoryUsed?: InventoryUsed[] = [];
 }
 
@@ -210,38 +208,38 @@ export class CreateJobDto {
   assignedEmployees?: AssignedEmployees;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  status: string = 'To do';
+  status?: string = 'To do';
 
   @ApiProperty()
+  @IsNotEmpty()
   @ValidateNested()
   @Type(() => Details)
-  @IsNotEmpty()
   details: Details;
 
   @ApiProperty()
+  @IsOptional()
   @ValidateNested()
   @Type(() => RecordedDetails)
-  @IsOptional()
   recordedDetails?: RecordedDetails;
 
   @ApiProperty()
+  @IsOptional()
   @ValidateNested()
   @Type(() => ClientFeedback)
-  @IsOptional()
   clientFeedback?: ClientFeedback;
 
   @ApiProperty()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => Task)
-  @IsOptional()
   taskList?: Task[];
 
   @ApiProperty()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => Comment)
-  @IsOptional()
   comments?: Comment[];
 }
 

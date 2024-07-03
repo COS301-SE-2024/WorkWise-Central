@@ -52,8 +52,8 @@ export class Details {
   startDate: Date;
 
   @ApiProperty()
-  @Prop({ required: true })
-  endDate: Date;
+  @Prop({ required: false })
+  endDate?: Date;
 }
 
 export class InventoryUsed {
