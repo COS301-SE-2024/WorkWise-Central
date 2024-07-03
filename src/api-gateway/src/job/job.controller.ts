@@ -80,14 +80,6 @@ export class JobController {
     this.validateObjectId(createJobDto.assignedBy, 'assignedBy');
     this.validateObjectId(createJobDto.companyId, 'Company');
 
-    if (
-      createJobDto.recordedDetails.inventoryUsed != undefined &&
-      createJobDto.recordedDetails.inventoryUsed.length > 0
-    )
-      for (const item of createJobDto.recordedDetails.inventoryUsed) {
-        this.validateObjectId(item.inventoryItemId, 'inventoryUsed');
-      }
-
     try {
       return await this.jobService.create(createJobDto);
     } catch (Error) {

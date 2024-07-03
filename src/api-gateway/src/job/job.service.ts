@@ -32,7 +32,7 @@ export class JobService {
   ) {}
 
   async create(createJobDto: CreateJobDto) {
-    const inputValidated = await this.jobIsValid(createJobDto);
+    const inputValidated = await this.jobCreateIsValid(createJobDto);
     if (!inputValidated.isValid) {
       throw new NotFoundException(inputValidated.message);
     }
@@ -115,7 +115,7 @@ export class JobService {
   }
 
   async update(id: string | Types.ObjectId, updateJobDto: UpdateJobDto) {
-    const inputValidated = await this.jobIsValid(updateJobDto);
+    const inputValidated = await this.jobUpdateIsValid(updateJobDto);
     if (!inputValidated.isValid)
       throw new NotFoundException(inputValidated.message);
 
@@ -133,29 +133,136 @@ export class JobService {
     return true;
   }
 
-  async jobIsValid(
-    job: Job | CreateJobDto | UpdateJobDto,
-  ): Promise<ValidationResult> {
-    if (job.assignedBy) {
-      if (!job.companyId || !job.assignedBy) {
-        return new ValidationResult(
-          false,
-          'CompanyId or assignedBy is invalid',
-        );
-      }
+  async jobIsValid(job: Job): Promise<ValidationResult> {
+    if (!job) {
+      return new ValidationResult(false, 'Job is null');
+    }
 
-      const exists = await this.employeeService.employeeExists(job.assignedBy);
-      const isInCompany = await this.companyService.employeeIsInCompany(
-        job.companyId,
-        job.assignedBy,
+    if (!job.companyId || !job.assignedBy) {
+      return new ValidationResult(false, 'CompanyId or assignedBy is invalid');
+    }
+
+    if (!job.companyId || !job.assignedBy) {
+      return new ValidationResult(false, 'CompanyId or assignedBy is invalid');
+    }
+
+    const exists = await this.employeeService.employeeExists(job.assignedBy);
+    const isInCompany = await this.companyService.employeeIsInCompany(
+      job.companyId,
+      job.assignedBy,
+    );
+    if (!exists || !isInCompany) {
+      return new ValidationResult(
+        false,
+        'Assigned By is invalid or Employee is not in company',
       );
-      if (!exists || !isInCompany) {
+    }
+
+    if (job.assignedEmployees) {
+      for (const employee of job.assignedEmployees.employeeIds) {
+        const exists = await this.employeeService.employeeExists(employee);
+        if (!exists) {
+          return new ValidationResult(false, `Employee: ${employee} Not found`);
+        }
+      }
+    }
+
+    if (job.clientId) {
+      const exists = await this.clientService.clientExists(job.clientId);
+      if (!exists) {
+        return new ValidationResult(false, 'Client does not exist');
+      }
+    }
+
+    if (job.companyId) {
+      const exists = await this.companyService.companyIdExists(job.companyId);
+      if (!exists) {
         return new ValidationResult(
           false,
-          'Assigned By is invalid or Employee is not in company',
+          `Company: ${job.companyId} Not found`,
         );
       }
     }
+
+    return new ValidationResult(true);
+  }
+
+  async jobCreateIsValid(job: CreateJobDto): Promise<ValidationResult> {
+    if (!job) {
+      return new ValidationResult(false, 'Job is null');
+    }
+
+    if (!job.companyId || !job.assignedBy) {
+      return new ValidationResult(false, 'CompanyId or assignedBy is invalid');
+    }
+
+    const exists = await this.employeeService.employeeExists(job.assignedBy);
+    const isInCompany = await this.companyService.employeeIsInCompany(
+      job.companyId,
+      job.assignedBy,
+    );
+    if (!isInCompany) {
+      return new ValidationResult(false, 'AssignedBy is not in company');
+    }
+
+    if (!exists) {
+      return new ValidationResult(false, 'Employee is not in company');
+    }
+
+    if (job.assignedEmployees) {
+      for (const employee of job.assignedEmployees.employeeIds) {
+        const exists = await this.employeeService.employeeExists(employee);
+        if (!exists) {
+          return new ValidationResult(false, `Employee: ${employee} Not found`);
+        }
+      }
+    }
+
+    if (job.clientId) {
+      const exists = await this.clientService.clientExists(job.clientId);
+      if (!exists) {
+        return new ValidationResult(false, 'Client does not exist');
+      }
+    }
+
+    if (job.companyId) {
+      const exists = await this.companyService.companyIdExists(job.companyId);
+      if (!exists) {
+        return new ValidationResult(
+          false,
+          `Company: ${job.companyId} Not found`,
+        );
+      }
+    }
+
+    return new ValidationResult(true);
+  }
+
+  async jobUpdateIsValid(job: UpdateJobDto): Promise<ValidationResult> {
+    if (!job) {
+      return new ValidationResult(false, 'Job is null');
+    }
+
+    if (!job.companyId || !job.assignedBy) {
+      return new ValidationResult(false, 'CompanyId or assignedBy is invalid');
+    }
+
+    if (!job.companyId || !job.assignedBy) {
+      return new ValidationResult(false, 'CompanyId or assignedBy is invalid');
+    }
+
+    const exists = await this.employeeService.employeeExists(job.assignedBy);
+    const isInCompany = await this.companyService.employeeIsInCompany(
+      job.companyId,
+      job.assignedBy,
+    );
+    if (!exists || !isInCompany) {
+      return new ValidationResult(
+        false,
+        'Assigned By is invalid or Employee is not in company',
+      );
+    }
+
     if (job.assignedEmployees) {
       for (const employee of job.assignedEmployees.employeeIds) {
         const exists = await this.employeeService.employeeExists(employee);
