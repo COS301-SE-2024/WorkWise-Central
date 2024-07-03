@@ -22,17 +22,30 @@ import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiBody,
   ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
 import mongoose, { FlattenMaps, Types } from 'mongoose';
-import { Company } from './entities/company.entity';
+import {
+  Company,
+  CompanyAllResponseDto,
+  CompanyEmployeesResponseDto,
+  CompanyResponseDto,
+} from './entities/company.entity';
+import { BooleanResponseDto } from '../users/dto/create-user.dto';
+
+const className = 'Company';
 
 @ApiTags('Company')
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
+
   validateObjectId(id: string | Types.ObjectId): boolean {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
@@ -50,7 +63,16 @@ export class CompanyController {
     type: HttpException,
     status: HttpStatus.CONFLICT,
   })
-  @ApiBody({ type: [CreateCompanyDto] })
+  @ApiOperation({
+    summary: `Create a new ${className}`,
+    description: 'Further details',
+  })
+  @ApiBody({ type: CreateCompanyDto })
+  @ApiResponse({
+    status: 201,
+    type: CreateCompanyResponseDto,
+    description: `The access token and ${className}'s Id used for querying.`,
+  })
   @Post('/create')
   async create(
     @Body() createCompanyDto: CreateCompanyDto,
@@ -59,6 +81,7 @@ export class CompanyController {
   }
 
   @ApiBody({ type: AddUserToCompanyDto })
+  @ApiOkResponse({ type: BooleanResponseDto })
   @Post('/add')
   async addEmployee(@Body() addUserDto: AddUserToCompanyDto) {
     this.validateObjectId(addUserDto.adminId);
@@ -72,6 +95,13 @@ export class CompanyController {
   }
 
   @UseGuards(AuthGuard) //Need to add authorization
+  @ApiOperation({
+    summary: `Get all ${className} instances`,
+  })
+  @ApiOkResponse({
+    type: CompanyAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class`,
+  })
   @Get('/all')
   async findAll() {
     try {
@@ -85,6 +115,15 @@ export class CompanyController {
   }
 
   //@UseGuards(AuthGuard) //Need to add authorization
+  @ApiOperation({ summary: `Get all employees in ${className}` })
+  @ApiOkResponse({
+    type: CompanyEmployeesResponseDto,
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'cid',
+    description: `The _id attribute of the ${className}`,
+  })
   @Get('/company/employees/:cid')
   async getAllInCompany(@Param('cid') cid: string) {
     this.validateObjectId(cid);
@@ -99,6 +138,15 @@ export class CompanyController {
     }
   }
 
+  @ApiOperation({ summary: `Find a ${className}` })
+  @ApiOkResponse({
+    type: CompanyResponseDto,
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'cid',
+    description: `The _id attribute of the ${className}`,
+  })
   @Get('id/:id')
   findOne(@Param('id') id: string) {
     try {
@@ -111,6 +159,7 @@ export class CompanyController {
   @ApiResponse({
     type: findCompanyResponseDto,
   })
+  @ApiQuery({ name: 'str', description: 'An email or name of company' })
   @Get('search?')
   async findByEmailOrName(
     @Query('str') str: string,
@@ -125,8 +174,12 @@ export class CompanyController {
     }
   }
 
-  @UseGuards(AuthGuard)
-  @ApiBody({ type: [UpdateCompanyDto] })
+  //@UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: CompanyResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @ApiBody({ type: UpdateCompanyDto })
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -150,6 +203,20 @@ export class CompanyController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Delete a ${className}`,
+    description: `You send the ${className} ObjectId, and then they get deleted if the id is valid.\n 
+    There will be rules on deletion later.`,
+    security: [],
+  })
+  @ApiOkResponse({
+    type: BooleanResponseDto,
+    description: `A boolean value indicating whether or not the deletion was a success`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className}`,
+  })
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {

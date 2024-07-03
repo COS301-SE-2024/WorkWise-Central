@@ -18,6 +18,7 @@ import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
 import { CompanyRepository } from './company.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { EmployeeService } from '../employee/employee.service';
+import { RoleService } from '../role/role.service';
 
 @Injectable()
 export class CompanyService {
@@ -29,11 +30,13 @@ export class CompanyService {
     private readonly companyRepository: CompanyRepository,
     @Inject(forwardRef(() => EmployeeService))
     private readonly employeeService: EmployeeService,
+    @Inject(forwardRef(() => RoleService))
+    private readonly roleService: RoleService,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto) {
     if (
-      (await this.companyRepository.registrationNumberExists(
+      (await this.companyRegNumberExists(
         createCompanyDto.registrationNumber,
       )) == false
     ) {
@@ -45,8 +48,26 @@ export class CompanyService {
     // createCompanyDto.createdAt = new Date();
     const newCompany = new Company(createCompanyDto);
     const newCompanyModel = new this.companyModel(newCompany);
+
+    //Create first role in company
+    const allPermissions = this.roleService.getPermissionsArray();
+
+    const createdRole = await this.roleService.create({
+      companyId: newCompanyModel._id,
+      roleName: 'owner',
+      permissionSuite: allPermissions,
+    });
+
     const result = await newCompanyModel.save();
-    return new CreateCompanyResponseDto(`${result.id}`);
+
+    await this.employeeService.create({
+      userId: createCompanyDto.userId,
+      companyId: result._id,
+      superiorId: null,
+      roleId: createdRole._id,
+    });
+
+    return new CreateCompanyResponseDto(result);
   }
 
   async companyRegNumberExists(id: string): Promise<boolean> {
@@ -103,7 +124,7 @@ export class CompanyService {
 
   //TODO:Add authorization for endpoint
   //For now, I assume the person is authorised
-  async addEmployee(addUserDto: AddUserToCompanyDto): Promise<string> {
+  async addEmployee(addUserDto: AddUserToCompanyDto) {
     //Add validation
     if (await this.companyIdExists(addUserDto.currentCompany)) {
       throw new NotFoundException(`Company not found`);
@@ -120,16 +141,14 @@ export class CompanyService {
       throw new NotFoundException('User not found');
     }
 
-    // if (newId.joinedCompanies.includes(addUserDto.currentCompany)) {
-    //   throw new ConflictException('User is already a member');
-    // }
-    //
-    const resultOfUpdate = await this.companyModel.findByIdAndUpdate(
-      { _id: addUserDto.currentCompany },
-      {
-        $push: { employees: newId._id },
-      },
-    );
+    const resultOfUpdate = await this.companyModel
+      .findByIdAndUpdate(
+        { _id: addUserDto.currentCompany },
+        {
+          $push: { employees: newId._id },
+        },
+      )
+      .lean();
 
     const currentCompanyId = new Types.ObjectId(addUserDto.currentCompany);
 
@@ -143,7 +162,7 @@ export class CompanyService {
     console.log(resultOfUpdate);
     console.log(updateUser);
 
-    return `${updateUser.systemDetails.username} added to successfully`;
+    return resultOfUpdate != null;
   }
 
   async update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {

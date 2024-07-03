@@ -246,15 +246,15 @@ export class CreateJobDto {
 }
 
 export class CreateJobResponseDto {
-  response: JobApiObject;
-  constructor(response: JobApiObject) {
-    this.response = response;
+  data: JobApiObject;
+  constructor(data: JobApiObject) {
+    this.data = data;
   }
 }
 
 export class JobAllResponseDto {
-  constructor(response: JobApiObject[]) {
-    this.response = response;
+  constructor(data: JobApiObject[]) {
+    this.data = data;
   }
-  response: JobApiObject[];
+  data: JobApiObject[];
 }
