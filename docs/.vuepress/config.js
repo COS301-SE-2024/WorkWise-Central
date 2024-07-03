@@ -32,6 +32,10 @@ export default defineUserConfig({
           {
             text: 'Demo 2',
             link: '/demo2/guide/'
+          },
+          {
+            text: 'Demo 3',
+            link: '/demo3/guide/'
           }
         ],
       },
@@ -117,6 +121,7 @@ export default defineUserConfig({
             { text: 'User stories', link: '/demo2/businessDocs/userStories.md' },
             { text: 'Use case diagrams', link: '/demo2/businessDocs/usecaseDiagrams.md' },
             { text: 'Functional requirement specifications', link: '/demo2/businessDocs/functionalRequirements.md' },
+            { text: 'Class diagrams', link: '/demo2/businessDocs/classDiagrams.md' },
             { text: 'Service contract', link: '/demo2/businessDocs/serviceContract.md' },
             { text: 'Market Research', link: '/demo2/businessDocs/marketResearch.md' },
             { text: 'User Manual', link: '/demo2/businessDocs/userManual.md' },
@@ -154,6 +159,67 @@ export default defineUserConfig({
             { text: 'Git originisation and management', link: '/demo2/devOps/gitOrgMan.md' },
             { text: 'Branching Strategy', link: '/demo2/devOps/branching.md' },
             { text: 'CI/CD', link: '/demo2/devOps/cicd.md' },
+          ],
+        },
+      ],
+      '/demo3/': [
+        {
+          text: 'Introduction',
+          link: '/demo3/guide/',
+        },
+        {
+          text: 'Design Documentation',
+          link: '/demo3/designDocs/',
+          children: [
+            { text: 'Wireframes', link: '/demo3/designDocs/wireframes.md' },
+            { text: 'Style document', link: '/demo3/designDocs/styles.md' },
+          ],
+        },
+        {
+          text: 'Business Documentation',
+          link: '/demo3/businessDocs/',
+          children: [
+            { text: 'User characteristics', link: '/demo3/businessDocs/userCharacteristics.md' },
+            { text: 'User stories', link: '/demo3/businessDocs/userStories.md' },
+            { text: 'Use case diagrams', link: '/demo3/businessDocs/usecaseDiagrams.md' },
+            { text: 'Functional requirement specifications', link: '/demo3/businessDocs/functionalRequirements.md' },
+            { text: 'Service contract', link: '/demo3/businessDocs/serviceContract.md' },
+            { text: 'Market Research', link: '/demo3/businessDocs/marketResearch.md' },
+            { text: 'User Manual', link: '/demo3/businessDocs/userManual.md' },
+          ],
+        },
+        {
+          text: 'Architectural Documentation',
+          link: '/demo3/architeturalDocs/',
+          children: [
+            { text: 'Architectural Design Strategy', link: '/demo3/architeturalDocs/designStrategy.md' },
+            { text: 'Architectural Styles', link: '/demo3/architeturalDocs/styles.md' },
+            { text: 'Architectural Quality Requirements', link: '/demo3/architeturalDocs/qualityRequirements.md' },
+            { text: 'Architectural Design & Patterns', link: '/demo3/architeturalDocs/architecturalDesignPattern.md' },
+            { text: 'Architectural Constraints', link: '/demo3/architeturalDocs/constraints.md' },
+            { text: 'Technology Choices', link: '/demo3/architeturalDocs/techSpec.md' },
+          ],
+        },
+        {
+          text: 'Database Documentation',
+          link: '/demo3/databaseDocs/',
+          children: [
+            { text: 'Database functional requirements', link: '/demo3/databaseDocs/dbFunctionalRequirements.md' },
+            { text: 'Database non-functional requirements', link: '/demo3/databaseDocs/dbNonFunctionalRequirements.md' },
+            { text: 'Constraints', link: '/demo3/databaseDocs/constraints.md' },
+            { text: 'Data Model', link: '/demo3/databaseDocs/dataModel.md' },
+            { text: 'ER Diagram', link: '/demo3/databaseDocs/ERDiagrams.md' },
+            { text: 'Database Schema', link: '/demo3/databaseDocs/dbSchema.md' },
+          ],
+        },
+        {
+          text: 'DevOps',
+          link: '/demo3/devOps/',
+          children: [
+            { text: 'Coding Standards', link: '/demo3/devOps/codingStandards.md' },
+            { text: 'Git originisation and management', link: '/demo3/devOps/gitOrgMan.md' },
+            { text: 'Branching Strategy', link: '/demo3/devOps/branching.md' },
+            { text: 'CI/CD', link: '/demo3/devOps/cicd.md' },
           ],
         },
       ],
