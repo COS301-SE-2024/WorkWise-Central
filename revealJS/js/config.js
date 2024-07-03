@@ -18,7 +18,7 @@ export default {
 	// Display presentation control arrows
 	controls: true,
 
-	// Help the user learn the controls by providing hints, for example by
+	// help the user learn the controls by providing hints, for example by
 	// bouncing the down arrow when they first encounter a vertical slide
 	controlsTutorial: true,
 
@@ -154,8 +154,8 @@ export default {
 
 	// Global override for autoplaying embedded media (video/audio/iframe)
 	// - null:   Media will only autoplay if data-autoplay is present
-	// - true:   All media will autoplay, regardless of individual setting
-	// - false:  No media will autoplay, regardless of individual setting
+	// - true:   All media will autoplay, regardless of individual settings
+	// - false:  No media will autoplay, regardless of individual settings
 	autoPlayMedia: null,
 
 	// Global override for preloading lazy-loaded iframes
