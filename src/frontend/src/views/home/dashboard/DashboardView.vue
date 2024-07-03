@@ -1,16 +1,16 @@
 <template>
-  <v-app> <NavigationBar :component="ClientDesk" /></v-app>
+  <NavigationBar :component="DashboardScreen" />
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from 'vue'
+import DashboardScreen from '@/components/home/dashboard/home/DashboardScreen.vue'
 import NavigationBar from '@/components/home/NavigationBar.vue'
-import ClientDesk from '@/components/ClientEmployeeView.vue'
 export default defineComponent({
-  name: 'EmployeeDesk',
+  name: 'DashboardView',
   computed: {
-    ClientDesk() {
-      return ClientDesk
+    DashboardScreen() {
+      return DashboardScreen
     }
   },
   components: {
@@ -18,5 +18,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style></style>

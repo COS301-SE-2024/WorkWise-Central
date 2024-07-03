@@ -29,11 +29,11 @@ export default class SlideContent {
 			return true;
 		}
 
-		// Prefer an explicit global preload setting
+		// Prefer an explicit global preload settings
 		let preload = this.Reveal.getConfig().preloadIframes;
 
-		// If no global setting is available, fall back on the element's
-		// own preload setting
+		// If no global settings is available, fall back on the element's
+		// own preload settings
 		if( typeof preload !== 'boolean' ) {
 			preload = element.hasAttribute( 'data-preload' );
 		}
@@ -295,11 +295,11 @@ export default class SlideContent {
 					return;
 				}
 
-				// Prefer an explicit global autoplay setting
+				// Prefer an explicit global autoplay settings
 				let autoplay = this.Reveal.getConfig().autoPlayMedia;
 
-				// If no global setting is available, fall back on the element's
-				// own autoplay setting
+				// If no global settings is available, fall back on the element's
+				// own autoplay settings
 				if( typeof autoplay !== 'boolean' ) {
 					autoplay = el.hasAttribute( 'data-autoplay' ) || !!closest( el, '.slide-background' );
 				}
@@ -403,11 +403,11 @@ export default class SlideContent {
 
 			if( isAttachedToDOM && isVisible ) {
 
-				// Prefer an explicit global autoplay setting
+				// Prefer an explicit global autoplay settings
 				let autoplay = this.Reveal.getConfig().autoPlayMedia;
 
-				// If no global setting is available, fall back on the element's
-				// own autoplay setting
+				// If no global settings is available, fall back on the element's
+				// own autoplay settings
 				if( typeof autoplay !== 'boolean' ) {
 					autoplay = iframe.hasAttribute( 'data-autoplay' ) || !!closest( iframe, '.slide-background' );
 				}

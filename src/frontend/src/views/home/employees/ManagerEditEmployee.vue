@@ -1,16 +1,16 @@
 <template>
-  <v-app> <NavigationBar :component="ClientDesk" /></v-app>
+  <NavigationBar :component="ManagerEditEmployee" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import ManagerEditEmployee from '@/components/home/employees/management/ManagerEditEmployee.vue'
 import NavigationBar from '@/components/home/NavigationBar.vue'
-import ClientDesk from '@/components/ClientEmployeeView.vue'
 export default defineComponent({
-  name: 'EmployeeDesk',
+  name: 'ManagerEditEmployeeView',
   computed: {
-    ClientDesk() {
-      return ClientDesk
+    ManagerEditEmployee() {
+      return ManagerEditEmployee
     }
   },
   components: {
