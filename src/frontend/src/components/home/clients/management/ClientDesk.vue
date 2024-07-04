@@ -1,122 +1,121 @@
 <template>
   <v-container fluid fill-height>
-    <v-row justify="center" xs="6" sm="6" md="12">
-      <v-col cols="12">
-        <v-row justify="center">
-          <v-col cols="12" xs="12" sm="12" md="12">
-            <v-card
-              flat
-              :height="auto"
-              :max-height="auto"
-              class="pa-11 ma-0"
-              rounded="md"
-              elevation-2
-              :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
-              border="md"
-            >
-              <v-card-title
-                class="d-flex align-center pe-2"
-                :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
-                style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
+    <v-col>
+      <v-card
+        flat
+        :height="auto"
+        class="pa-11 ma-0"
+        rounded="md"
+        elevation-2
+        :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+        border="md"
+      >
+        <v-card-title
+          class="d-flex align-center pe-2"
+          :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+          style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
+        >
+          <v-icon icon="mdi-account"></v-icon> &nbsp; Client Details
+
+          <v-spacer></v-spacer>
+
+          <v-text-field
+            v-model="search"
+            density="compact"
+            label="Search"
+            prepend-inner-icon="mdi-magnify"
+            variant="outlined"
+            flat
+            style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+            hide-details
+            :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+            single-line
+          ></v-text-field>
+          <v-spacer></v-spacer>
+          <AddClient
+            v-model="addClientDialog"
+            @close="addClientDialog = false"
+            :isDarkMode="isDarkMode"
+          />
+        </v-card-title>
+
+        <v-divider></v-divider>
+        <v-col cols="12" xs="12" sm="12" md="12">
+          <div style="height: 700px; overflow-y: auto">
+            <v-col cols="12" xs="12" sm="12" md="12">
+              <v-data-table
+                :headers="headers"
+                :items="clientDetails2"
+                :search="search"
+                :single-expand="true"
+                v-model:expanded="expanded"
+                show-expand
+                height="auto"
+                rounded="xl"
+                :item-class="getRowClass"
+                class="font-lato"
               >
-                <v-icon icon="mdi-account"></v-icon> &nbsp; Client Details
-
-                <v-spacer></v-spacer>
-
-                <v-text-field
-                  v-model="search"
-                  density="compact"
-                  label="Search"
-                  prepend-inner-icon="mdi-magnify"
-                  variant="outlined"
-                  flat
-                  style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
-                  hide-details
-                  :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
-                  single-line
-                ></v-text-field>
-                <v-spacer></v-spacer>
-                <AddClient v-model="addClientDialog" @close="addClientDialog = false" :isDarkMode="isDarkMode" />
-              </v-card-title>
-
-              <v-divider></v-divider>
-              <v-col cols="12" xs="12" sm="12" md="12">
-                <div style="height: 700px; overflow-y: auto">
-                  <v-col cols="12" xs="12" sm="12" md="12">
-                    <v-data-table
-                      :headers="headers"
-                      :items="clientDetails2"
-                      :search="search"
-                      :single-expand="true"
-                      v-model:expanded="expanded"
-                      show-expand
-                      height="auto"
-                      rounded="xl"
-                      :item-class="getRowClass"
-                      class="font-lato"
-                    >
-                      <template v-slot:[`item.name`]="{ value }">
-                        <v-chip variant="text" color="black">
-                          <v-icon>mdi-account</v-icon>{{ value }}</v-chip
-                        >
-                      </template>
-                      <template v-slot:[`item.phoneNumber`]="{ value }">
-                        <v-chip variant="text" @click="callPhone" color="#5A82AF"
-                          ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
-                        >
-                      </template>
-                      <template v-slot:[`item.mostRecentJob`]="{ value }">
-                        <v-chip :color="getColor(value)">
-                          {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
-                        >
-                      </template>
-                      <template v-slot:[`item.surname`]="{ value }">
-                        <v-chip variant="text" color="black"> {{ value }}</v-chip>
-                      </template>
-                      <template v-slot:[`item.email`]="{ value }">
-                        <v-chip variant="text" @click="sendEmail" color="#5A82AF">
-                          <v-icon>mdi-email</v-icon>{{ value }}</v-chip
-                        >
-                      </template>
-                      <template v-slot:[`item.address.street`]="{ value }">
-                        <v-chip variant="text" color="black"> <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip>
-                      </template>
-                      <!-- Expanded content slot -->
-                      <template v-slot:expanded-row="{ columns, item }">
-                        <tr>
-                          <td :colspan="columns.length">
-                            Full Address: {{ item.name }}, {{ item.surname }}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td :colspan="columns.length">VAT Number:{{ item.vatNumber }}</td>
-                        </tr>
-                        <tr>
-                          <td :colspan="columns.length">
-                            Languages Spoken: {{ item.preferred_Language }}
-                          </td>
-                        </tr>
-                      </template>
-                      <!-- Actions slot -->
-                      <template v-slot:[`item.actions`]="{ item }">
-                        <v-btn
-                          rounded="xl"
-                          variant="plain"
-                          style="transform: rotate(90deg) dots"
-                          @click="(actionsDialog = true), selectItem(item)"
-                        >
-                          <v-icon>mdi-dots-horizontal</v-icon>
-                        </v-btn>
-                      </template>
-                    </v-data-table>
-                  </v-col>
-                </div>
-              </v-col>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-col></v-row
-    >
+                <template v-slot:[`item.name`]="{ value }">
+                  <v-chip variant="text" color="black">
+                    <v-icon>mdi-account</v-icon>{{ value }}</v-chip
+                  >
+                </template>
+                <template v-slot:[`item.phoneNumber`]="{ value }">
+                  <v-chip variant="text" @click="callPhone" color="#5A82AF"
+                    ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
+                  >
+                </template>
+                <template v-slot:[`item.mostRecentJob`]="{ value }">
+                  <v-chip :color="getColor(value)">
+                    {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
+                  >
+                </template>
+                <template v-slot:[`item.surname`]="{ value }">
+                  <v-chip variant="text" color="black"> {{ value }}</v-chip>
+                </template>
+                <template v-slot:[`item.email`]="{ value }">
+                  <v-chip variant="text" @click="sendEmail" color="#5A82AF">
+                    <v-icon>mdi-email</v-icon>{{ value }}</v-chip
+                  >
+                </template>
+                <template v-slot:[`item.address.street`]="{ value }">
+                  <v-chip variant="text" color="black">
+                    <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip
+                  >
+                </template>
+                <!-- Expanded content slot -->
+                <template v-slot:expanded-row="{ columns, item }">
+                  <tr>
+                    <td :colspan="columns.length">
+                      Full Address: {{ item.name }}, {{ item.surname }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td :colspan="columns.length">VAT Number:{{ item.vatNumber }}</td>
+                  </tr>
+                  <tr>
+                    <td :colspan="columns.length">
+                      Languages Spoken: {{ item.preferred_Language }}
+                    </td>
+                  </tr>
+                </template>
+                <!-- Actions slot -->
+                <template v-slot:[`item.actions`]="{ item }">
+                  <v-btn
+                    rounded="xl"
+                    variant="plain"
+                    style="transform: rotate(90deg) dots"
+                    @click="(actionsDialog = true), selectItem(item)"
+                  >
+                    <v-icon>mdi-dots-horizontal</v-icon>
+                  </v-btn>
+                </template>
+              </v-data-table>
+            </v-col>
+          </div>
+        </v-col>
+      </v-card>
+    </v-col>
 
     <v-dialog v-model="actionsDialog" max-width="500px">
       <v-card>
