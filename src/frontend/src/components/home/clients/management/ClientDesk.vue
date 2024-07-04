@@ -36,7 +36,7 @@
                   single-line
                 ></v-text-field>
                 <v-spacer></v-spacer>
-                <AddClient v-model="addClientDialog" @close="addClientDialog = false" />
+                <AddClient v-model="addClientDialog" @close="addClientDialog = false" :isDarkMode="isDarkMode" />
               </v-card-title>
 
               <v-divider></v-divider>
@@ -56,10 +56,12 @@
                       class="font-lato"
                     >
                       <template v-slot:[`item.name`]="{ value }">
-                        <v-chip color="#5A82AF"> <v-icon>mdi-account</v-icon>{{ value }}</v-chip>
+                        <v-chip variant="text" color="black">
+                          <v-icon>mdi-account</v-icon>{{ value }}</v-chip
+                        >
                       </template>
                       <template v-slot:[`item.phoneNumber`]="{ value }">
-                        <v-chip @click="callPhone" color="#5A82AF"
+                        <v-chip variant="text" @click="callPhone" color="#5A82AF"
                           ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
                         >
                       </template>
@@ -69,15 +71,15 @@
                         >
                       </template>
                       <template v-slot:[`item.surname`]="{ value }">
-                        <v-chip color="#5A82AF"> {{ value }}</v-chip>
+                        <v-chip variant="text" color="black"> {{ value }}</v-chip>
                       </template>
                       <template v-slot:[`item.email`]="{ value }">
-                        <v-chip @click="sendEmail" color="#5A82AF">
+                        <v-chip variant="text" @click="sendEmail" color="#5A82AF">
                           <v-icon>mdi-email</v-icon>{{ value }}</v-chip
                         >
                       </template>
                       <template v-slot:[`item.address.street`]="{ value }">
-                        <v-chip color="#5A82AF"> <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip>
+                        <v-chip variant="text" color="black"> <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip>
                       </template>
                       <!-- Expanded content slot -->
                       <template v-slot:expanded-row="{ columns, item }">
@@ -123,14 +125,14 @@
         </v-card-title>
         <v-card-text> What would you like to do with this job? </v-card-text>
         <v-card-actions>
-          <ClientDetails v-model="clientDialog" :colors="colors" :ClientDetails="selectedItem" />
+          <ClientDetails :colors="colors" :ClientDetails="selectedItem" />
           <EditClient
             @update:item="selectedItem = $event"
             :editedItem="selectedItem"
             :_clientID="selectedItemId"
           /><DeleteClient :details="selectedItem" :client_id="selectedItemId" />
           <v-spacer></v-spacer>
-          <v-btn @click="actionsDialog = false">Cancel</v-btn>
+          <v-btn @click="actionsDialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -601,7 +603,7 @@ export default defineComponent({
       }
       console.log('Deleting client')
     },
-    viewClientDetails(item) {
+    viewClientDetails() {
       console.log('Viewing client details')
       console.log(this.selectedItem)
     },

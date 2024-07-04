@@ -26,8 +26,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="grey darken-1" text @click="clientDialog = false">Cancel</v-btn>
         <v-btn color="red darken-2" text :loading="isDeleting" @click="Delete">Delete</v-btn>
+        <v-btn color="grey darken-1" text @click="clientDialog = false">Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -59,7 +59,7 @@ export default {
     async deleteClient() {
       this.isDeleting = true // Indicate the start of the deletion process
       axios
-        .delete('http://localhost:3000/client/', { data: { id: this.client_id } })
+        .delete('http://localhost:3000/client/delete', { data: { id: this.client_id } })
         .then((response) => {
           console.log(response)
           alert('Client deleted')
