@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="clientDialog" max-width="500" height="800">
+  <v-dialog v-model="clientDialog" max-width="500" >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -10,11 +10,10 @@
         >Edit</v-btn
       >
     </template>
-    <v-sheet
+    <v-card
       elevation="14"
       rounded="md"
-      width="500"
-      height="800"
+      height="auto"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
       <v-form>
@@ -24,8 +23,8 @@
           </v-col>
           <v-spacer></v-spacer>
           <v-divider></v-divider>
-          <v-col>
-            <v-col>
+          <v-row>
+            <v-col cols="6">
               <small
                 class="text-caption"
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
@@ -39,8 +38,7 @@
                 rounded="md"
               ></v-text-field>
             </v-col>
-            <v-divider></v-divider>
-            <v-col>
+            <v-col cols="6">
               <small
                 class="text-caption"
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
@@ -52,10 +50,11 @@
                 :rules="surnameRules"
                 variant="solo"
                 rounded="md"
-              ></v-text-field>
-            </v-col>
-            <v-divider></v-divider>
-            <v-col>
+              ></v-text-field> </v-col
+          ></v-row>
+          <v-divider></v-divider>
+          <v-row>
+            <v-col cols="6">
               <small
                 class="text-caption"
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
@@ -69,8 +68,7 @@
                 rounded="md"
               ></v-text-field>
             </v-col>
-            <v-divider></v-divider>
-            <v-col>
+            <v-col cols="6">
               <small
                 class="text-caption"
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
@@ -82,56 +80,124 @@
                 variant="solo"
                 :rules="emailRules"
                 rounded="md"
-              ></v-text-field>
-            </v-col>
-            <v-divider></v-divider>
-            <v-col>
+              ></v-text-field> </v-col
+          ></v-row>
+          <v-divider></v-divider>
+          <v-row>
+            <v-col cols="6"
+              ><small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Street
+              </small>
+              <v-text-field
+                v-model="localEditedItem.address.street"
+                variant="solo"
+                rounded="md"
+              ></v-text-field
+            ></v-col>
+            <v-col cols="6">
               <small
                 class="text-caption"
                 :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
               >
-                Address
+                Suburb
               </small>
               <v-text-field
-                v-model="localEditedItem.address"
+                v-model="localEditedItem.address.suburb"
+                variant="solo"
+                rounded="md"
+              ></v-text-field> </v-col
+          ></v-row>
+          <v-divider></v-divider>
+          <v-row>
+            <v-col cols="6">
+              <small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                City
+              </small>
+              <v-text-field
+                v-model="localEditedItem.address.city"
                 variant="solo"
                 rounded="md"
               ></v-text-field>
             </v-col>
-            <v-divider></v-divider>
-
-            <v-col align-self="center"
-              ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
-                <v-btn
-                  color="#5A82AF"
-                  rounded="md"
-                  border="md"
-                  width="85%"
-                  height="35"
-                  variant="elevated"
-                  @click="savechnages"
-                >
-                  SAVE
-                </v-btn>
-              </v-col>
-              <v-col cols="12" md="12" xs="3" sm="6" offset="1">
-                <v-btn
-                  color="error"
-                  rounded="md"
-                  border="md"
-                  width="85%"
-                  height="35"
-                  variant="elevated"
-                  @click="close"
-                >
-                  CANCEL
-                </v-btn>
-              </v-col></v-col
-            >
-          </v-col>
+            <v-col cols="6">
+              <small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Postal Code
+              </small>
+              <v-text-field
+                v-model="localEditedItem.address.postalCode"
+                variant="solo"
+                rounded="md"
+              ></v-text-field></v-col
+          ></v-row>
+          <v-divider></v-divider>
+          <v-row
+            ><v-col cols="6">
+              <small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Complex
+              </small>
+              <v-text-field
+                v-model="localEditedItem.address.complex"
+                variant="solo"
+                rounded="md"
+              ></v-text-field
+            ></v-col>
+            <v-col cols="6">
+              <small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                House Number
+              </small>
+              <v-text-field
+                v-model="localEditedItem.address.houseNumber"
+                variant="solo"
+                rounded="md"
+              ></v-text-field></v-col
+          ></v-row>
+          <v-divider></v-divider>
+          <v-col align-self="center"
+            ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
+              <v-btn
+                color="#5A82AF"
+                rounded="md"
+                border="md"
+                width="85%"
+                height="35"
+                variant="elevated"
+                @click="savechnages"
+              >
+                SAVE
+              </v-btn>
+            </v-col>
+            <v-col cols="12" md="12" xs="3" sm="6" offset="1">
+              <v-btn
+                color="error"
+                rounded="md"
+                border="md"
+                width="85%"
+                height="35"
+                variant="elevated"
+                @click="close"
+              >
+                CANCEL
+              </v-btn>
+            </v-col></v-col
+          >
         </v-col>
       </v-form>
-    </v-sheet>
+    </v-card>
   </v-dialog>
 </template>
 

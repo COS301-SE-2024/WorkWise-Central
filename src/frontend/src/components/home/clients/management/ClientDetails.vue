@@ -12,22 +12,20 @@
       </v-btn>
     </template>
 
-    <v-sheet
+    <v-card
       elevation="14"
       rounded="md"
-      width="500"
-      height="800"
+      height="auto"
       :color="isdarkmode === true ? colors.modal_dark_theme_color : colors.modal_light_theme_color"
     >
       <v-col>
         <v-col>
           <h4 class="text-center" style="font-size: 25px; font-weight: lighter">Client Details</h4>
         </v-col>
-        <v-spacer></v-spacer>
         <v-divider></v-divider>
-        <v-col>
-          <v-col
-            ><label> First Name</label><v-spacer></v-spacer
+        <v-row
+          ><v-col cols="6">
+            <label> First Name</label><v-spacer></v-spacer
             ><small
               class="text-caption"
               :style="
@@ -36,11 +34,8 @@
               >{{ ClientDetails.name }}</small
             ></v-col
           >
-        </v-col>
-        <v-divider></v-divider>
-        <v-col>
-          <v-col
-            ><label> Surname</label><v-spacer></v-spacer
+          <v-col cols="6">
+            <label> Surname</label><v-spacer></v-spacer
             ><small
               class="text-caption"
               :style="
@@ -49,11 +44,12 @@
               >{{ ClientDetails.surname }}</small
             ></v-col
           >
-        </v-col>
+        </v-row>
+
         <v-divider></v-divider>
-        <v-col>
-          <v-col
-            ><label>Phone Number</label><v-spacer></v-spacer
+        <v-row>
+          <v-col cols="6">
+            <label>Phone Number</label><v-spacer></v-spacer
             ><small
               class="text-caption"
               :style="
@@ -62,11 +58,8 @@
               >{{ ClientDetails.phoneNumber }}</small
             ></v-col
           >
-        </v-col>
-        <v-divider></v-divider>
-        <v-col>
-          <v-col
-            ><label> Email</label><v-spacer></v-spacer
+          <v-col cols="6">
+            <label> Email</label><v-spacer></v-spacer
             ><small
               class="text-caption"
               :style="
@@ -75,11 +68,11 @@
               >{{ ClientDetails.email }}</small
             ></v-col
           >
-        </v-col>
+        </v-row>
         <v-divider></v-divider>
-        <v-col>
-          <v-col
-            ><label> Address</label><v-spacer></v-spacer
+        <v-row>
+          <v-col cols="6">
+            <label> Address</label><v-spacer></v-spacer
             ><small
               class="text-caption"
               :style="
@@ -124,31 +117,30 @@
               >{{ ClientDetails.address.houseNumber }}</small
             ></v-col
           >
-        </v-col>
+        </v-row>
         <v-divider></v-divider>
-        <v-col>
-          <v-col
-            ><label> Preferred Languages</label><v-spacer></v-spacer>
-            <v-chip color="red"
-              ><small
-                class="text-caption"
-                :style="
-                  isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
-                "
-                >{{
-                  ClientDetails.preferred_Language ? ClientDetails.preferred_Language : 'None'
-                }}</small
-              ></v-chip
-            ></v-col
-          >
-        </v-col>
+        <v-col
+          ><label> Preferred Languages</label><v-spacer></v-spacer>
+          <v-chip color="red"
+            ><small
+              class="text-caption"
+              :style="
+                isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
+              "
+              >{{
+                ClientDetails.preferred_Language ? ClientDetails.preferred_Language : 'None'
+              }}</small
+            ></v-chip
+          ></v-col
+        >
+
         <v-divider></v-divider>
-        <v-col>
+        <v-col cols="12" md="12" xs="3" sm="6" offset="1">
           <v-btn
             color="error"
             rounded="md"
             border="md"
-            width="100%"
+            width="80%"
             height="35"
             variant="elevated"
             @click="close"
@@ -157,7 +149,7 @@
           </v-btn>
         </v-col>
       </v-col>
-    </v-sheet>
+    </v-card>
   </v-dialog>
 </template>
 

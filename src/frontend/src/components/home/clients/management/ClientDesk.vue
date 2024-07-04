@@ -56,7 +56,9 @@
                       class="font-lato"
                     >
                       <template v-slot:[`item.name`]="{ value }">
-                        <v-chip variant="text" color="black"> <v-icon>mdi-account</v-icon>{{ value }}</v-chip>
+                        <v-chip variant="text" color="black">
+                          <v-icon>mdi-account</v-icon>{{ value }}</v-chip
+                        >
                       </template>
                       <template v-slot:[`item.phoneNumber`]="{ value }">
                         <v-chip variant="text" @click="callPhone" color="#5A82AF"
@@ -69,7 +71,7 @@
                         >
                       </template>
                       <template v-slot:[`item.surname`]="{ value }">
-                        <v-chip color="#5A82AF"> {{ value }}</v-chip>
+                        <v-chip variant="text" color="black"> {{ value }}</v-chip>
                       </template>
                       <template v-slot:[`item.email`]="{ value }">
                         <v-chip variant="text" @click="sendEmail" color="#5A82AF">
@@ -77,7 +79,7 @@
                         >
                       </template>
                       <template v-slot:[`item.address.street`]="{ value }">
-                        <v-chip color="#5A82AF"> <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip>
+                        <v-chip variant="text" color="black"> <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip>
                       </template>
                       <!-- Expanded content slot -->
                       <template v-slot:expanded-row="{ columns, item }">
@@ -130,7 +132,7 @@
             :_clientID="selectedItemId"
           /><DeleteClient :details="selectedItem" :client_id="selectedItemId" />
           <v-spacer></v-spacer>
-          <v-btn @click="actionsDialog = false">Cancel</v-btn>
+          <v-btn @click="actionsDialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

@@ -59,7 +59,7 @@ export default {
     async deleteClient() {
       this.isDeleting = true // Indicate the start of the deletion process
       axios
-        .delete('http://localhost:3000/client/', { data: { id: this.client_id } })
+        .delete('http://localhost:3000/client/delete', { data: { id: this.client_id } })
         .then((response) => {
           console.log(response)
           alert('Client deleted')
