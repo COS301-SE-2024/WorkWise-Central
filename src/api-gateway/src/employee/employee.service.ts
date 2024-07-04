@@ -175,7 +175,7 @@ export class EmployeeService {
       await this.validateEmployee(createEmployeeDto);
     } catch (error) {
       console.log('error -> ', error);
-      return `${error}`;
+      throw new InternalServerErrorException(error);
     }
 
     const newEmployee = new Employee(createEmployeeDto);
@@ -198,7 +198,7 @@ export class EmployeeService {
       employeeIds: relatedUser.employeeIds,
     });
     //
-    return `${result}`;
+    return result;
   }
 
   async findAll() {
