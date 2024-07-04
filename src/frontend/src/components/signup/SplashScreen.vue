@@ -887,12 +887,6 @@ export default defineComponent({
       (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers'
     ]
   }),
-  mounted() {
-    docuument.addEventListener('keypress', this.handleKeypress)
-  },
-  beforeUnmount() {
-    document.removeEventListener('keypress', this.handleKeypress)
-  },
   methods: {
     handleKeypress(e) {
       if (e.key === 'Enter') {
