@@ -5,11 +5,10 @@
         rounded="xl"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
-        text="JOIN COMPANY"
         variant="elevated"
         color="#5A82AF"
         v-bind="activatorProps"
-      ></v-btn>
+      >Join Company</v-btn>
     </template>
     <v-sheet
       elevation="14"

@@ -11,7 +11,7 @@
         <span class="colorAccent2 toolbar-text">Wise</span>
       </v-app-bar-title>
       <v-spacer></v-spacer>
-      <v-btn @click="toggleDarkMode">Theme change</v-btn>
+      <v-btn @click="toggleDarkMode"><v-icon>mdi-globe-light-outline</v-icon></v-btn>
     </v-app-bar>
     <!-- Main Content -->
     <v-main :class="{ 'modal-dark-theme': isdarkmode, 'modal-light-theme': !isdarkmode }">
@@ -52,7 +52,7 @@
               ></v-row
             >
 
-            <v-dialog v-model="loginDialog" max-width="400" min-height="500">
+            <v-dialog v-model="loginDialog" max-width="400">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -117,6 +117,7 @@
                       :disabled="!valid"
                       text
                       @click="login"
+                      @keypress.enter="login"
                       rounded="xl"
                       size="large"
                       color="#5A82AF"
@@ -164,7 +165,7 @@
             >
 
             <!-- Flow 1 -->
-            <v-dialog v-model="signupDialog" max-width="400" min-height="700">
+            <v-dialog v-model="signupDialog" max-width="400">
               <v-sheet
                 elevation="14"
                 rounded="xl"
@@ -263,7 +264,7 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 2 -->
-            <v-dialog v-model="signup1Dialog" max-width="400" min-height="700">
+            <v-dialog v-model="signup1Dialog" max-width="400">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -344,10 +345,10 @@
               </v-sheet>
             </v-dialog>
             <v-col xs="3" align-self="center">
-              <v-dialog v-model="signupUsernameDialog" max-width="400" min-height="700">
+              <v-dialog v-model="signupUsernameDialog" max-width="400">
                 <v-sheet
                   width="auto"
-                  height="700"
+                  height="auto"
                   border="md"
                   rounded="xl"
                   :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
@@ -362,13 +363,11 @@
                       <v-row
                         ><v-col align-self="center"
                           ><label style="font-size: 14px; font-weight: lighter">Username</label>
-                          <v-select
+                          <v-combobox
                             :bg-color="
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
                             "
                             :label="username ? '' : 'Select your username'"
-                            :disabled="!valid"
-                            type="input"
                             v-model="username"
                             :items="usernameList"
                             :rules="usernameRules"
@@ -376,7 +375,8 @@
                             variant="solo"
                             clearable
                             required
-                          ></v-select></v-col
+                            @update:modalValue="usernameExist"
+                          ></v-combobox></v-col
                       ></v-row>
                     </v-form>
                   </v-col>
@@ -397,7 +397,7 @@
               </v-dialog>
             </v-col>
             <!-- Flow 3 -->
-            <v-dialog v-model="signup2Dialog" max-width="400" min-height="800">
+            <v-dialog v-model="signup2Dialog" max-width="400">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -418,15 +418,12 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Date of Birth</label
                           ><VueDatePicker
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
                             :label="birthDate ? '' : 'Select your date of birth'"
                             v-model="birthDate"
                             :rules="date_rules"
-                            rounded="xl"
-                            variant="solo"
+                            :format="format"
                             required
+                            :flow="flow"
                           ></VueDatePicker
                         ></v-col>
                       </v-row>
@@ -502,7 +499,7 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 4 -->
-            <v-dialog v-model="signupAddressDialog" max-width="1000" min-height="900">
+            <v-dialog v-model="signupAddressDialog" max-width="1000">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -640,11 +637,20 @@
               <!-- <v-sheet
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
               > -->
-              <v-col cols="8" offset="2">
-                <RegisterCompanyModal v-model="registerDialog" @close="registerDialog = false" />
-                <!-- Join Company Model --><br />
-                <JoinCompanyModal v-model="joinDialog" @close="joinDialog = false"
-              /></v-col>
+              <v-card
+                class="mx-auto"
+                width="400"
+                :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+              >
+                <template v-slot:title>
+                  <span class="font-weight-light">Please select one of the two options</span>
+                </template>
+                <v-card-actions>
+                  <v-col cols="6"> <RegisterCompanyModal :isdarkmode="isdarkmode" /> </v-col
+                  ><v-col cols="6"> <JoinCompanyModal :isdarkmode="isdarkmode" /></v-col
+                ></v-card-actions>
+              </v-card>
+
               <!-- </v-sheet> -->
             </v-dialog>
 
@@ -709,11 +715,44 @@ export default defineComponent({
     exists: false,
     signupAddressDialog: false,
     genderList: ['Male', 'Female', 'Other'],
-    languageList: ['English', 'Afrikaans'],
-    cityList: ['Johannesburg', 'Cape Town', 'Durban', 'Pretoria', 'Bloemfontein'],
-
+    languageList: [
+      'English',
+      'Afrikaans',
+      'isiNdebele',
+      'isiXhosa',
+      'isiZulu',
+      'Sesotho',
+      'Setswana',
+      'Sepedi',
+      'Siswati',
+      'Tshivenda',
+      'Xitsonga'
+    ],
+    cityList: [
+      'Johannesburg',
+      'Cape Town',
+      'Durban',
+      'Pretoria',
+      'Bloemfontein',
+      'Port Elizabeth',
+      'East London',
+      'Kimberley',
+      'Polokwane',
+      'Nelspruit',
+      'Pietermaritzburg',
+      'George',
+      'Rustenburg',
+      'Stellenbosch',
+      'Grahamstown (now Makhanda)',
+      'Vereeniging',
+      'Tzaneen',
+      'Upington',
+      'Richards Bay',
+      'Potchefstroom'
+    ],
     randomNumber: 0,
     email: '',
+    flow: ['year', 'month', 'calendar'],
     access_token: '',
     password: '',
     confirm_password: '',
@@ -739,7 +778,16 @@ export default defineComponent({
     resetForm() {
       this.$refs.form.reset()
     },
-
+    validateForm() {
+      console.log(this.$refs.form)
+      if (this.$refs.form.validate()) {
+        console.log('Valid form')
+        return true
+      } else {
+        console.log('Invalid form')
+        return false
+      }
+    },
     req_obj1: {
       name: '',
       type: '',
@@ -839,8 +887,13 @@ export default defineComponent({
       (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers'
     ]
   }),
-
+ 
   methods: {
+    handleKeypress(e) {
+      if (e.key === 'Enter') {
+        this.login()
+      }
+    },
     populateUsernameList() {
       while (this.usernameList.length < 10) {
         this.randomNumber = Math.floor(Math.random() * 1000)
@@ -850,6 +903,13 @@ export default defineComponent({
           this.usernameList.push(this.username)
         }
       }
+    },
+    format(date) {
+      const day = date.getDate()
+      const month = date.getMonth() + 1
+      const year = date.getFullYear()
+
+      return `Selected date is ${day}/${month}/${year}`
     },
     mounted() {
       setTimeout(() => {
@@ -933,34 +993,30 @@ export default defineComponent({
         })
     },
     nextFlow1() {
-      if (this.$refs.form.validate()) {
-        this.signupDialog = false
-        this.signup1Dialog = true
-      }
+      this.signupDialog = false
+      this.signup1Dialog = true
     },
     nextFlow2() {
-      if (this.$refs.form.validate()) {
-        this.signup1Dialog = false
-        this.signupUsernameDialog = true
-        this.populateUsernameList()
-      }
+      this.signup1Dialog = false
+      this.signupUsernameDialog = true
+      this.populateUsernameList()
     },
     nextFlowUsername() {
-      this.signupUsernameDialog = false
-      this.signup2Dialog = true
+      if (this.usernameExist() === false) {
+        alert('Username already exists')
+      } else {
+        this.signupUsernameDialog = false
+        this.signup2Dialog = true
+      }
     },
     nextFlow3() {
-      if (this.$refs.form.validate()) {
-        this.signup2Dialog = false
-        this.signupAddressDialog = true
-      }
+      this.signup2Dialog = false
+      this.signupAddressDialog = true
     },
     nextFlowAddress() {
-      if (this.$refs.form.validate()) {
-        this.signupAddressDialog = false
-        this.signup3Dialog = true
-        this.signup()
-      }
+      this.signupAddressDialog = false
+      this.signup3Dialog = true
+      this.signup()
     },
     registerOpen() {
       this.registerDialog = true
@@ -970,7 +1026,6 @@ export default defineComponent({
       this.signup3Dialog = false
       this.joinDialog = true
       this.signup()
-      this.resetForm()
     },
     usernameExist() {
       axios

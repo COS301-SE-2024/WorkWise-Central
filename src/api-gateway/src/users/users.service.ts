@@ -92,8 +92,8 @@ export class UsersService {
     return this.userRepository.userIdExists(id);
   }
 
-  async getUserById(identifier: string | Types.ObjectId): Promise<User> {
-    const result: User = await this.userRepository.findById(identifier);
+  async getUserById(identifier: string | Types.ObjectId) {
+    const result = await this.userRepository.findById(identifier);
 
     if (result == null) {
       throw new NotFoundException(
