@@ -36,7 +36,7 @@
                   single-line
                 ></v-text-field>
                 <v-spacer></v-spacer>
-                <AddClient v-model="addClientDialog" @close="addClientDialog = false" />
+                <AddClient v-model="addClientDialog" @close="addClientDialog = false" :isDarkMode="isDarkMode" />
               </v-card-title>
 
               <v-divider></v-divider>
