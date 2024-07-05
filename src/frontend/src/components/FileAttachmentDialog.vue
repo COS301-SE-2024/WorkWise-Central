@@ -10,13 +10,13 @@
       </v-card-title>
       <v-card-text>
         <v-file-input
-            v-model="files"
-            :rules="rules"
-            accept="image/png, image/jpeg, image/bmp"
-            label="Choose your job images"
-            placeholder="Pick an avatar"
-            prepend-icon="mdi-camera"
-            multiple
+          v-model="files"
+          :rules="rules"
+          accept="image/png, image/jpeg, image/bmp"
+          label="Choose your job images"
+          placeholder="Pick an avatar"
+          prepend-icon="mdi-camera"
+          multiple
         >
           <template v-slot:selection="{ fileNames }">
             <template v-for="fileName in fileNames" :key="fileName">
@@ -44,10 +44,7 @@ const files = ref([])
 const rules = ref([
   (value) => {
     return (
-        !value ||
-        !value.length ||
-        value[0].size < 2000000 ||
-        'Avatar size should be less than 2 MB!'
+      !value || !value.length || value[0].size < 2000000 || 'Avatar size should be less than 2 MB!'
     )
   }
 ])

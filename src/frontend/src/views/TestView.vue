@@ -10,8 +10,7 @@ import FileAttachment from '@/components/FileAttachmentDialog.vue'
 
 <template>
   <!--  <JobChecklist />-->
-  <ClientChange/>
-
+  <ClientChange />
 </template>
 
 <style scoped>

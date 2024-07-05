@@ -57,17 +57,15 @@
                       class="font-lato"
                     >
                       <template v-slot:[`item.jobTitle`]="{ value }">
-                         {{ value }}
+                        {{ value }}
                       </template>
 
                       <template v-slot:[`item.client`]="{ value }">
-                        <v-chip color="#5A82AF">
-                          <v-icon  >mdi-phone</v-icon>{{ value }}
-                        </v-chip>
+                        <v-chip color="#5A82AF"> <v-icon>mdi-phone</v-icon>{{ value }} </v-chip>
                       </template>
 
                       <template v-slot:[`item.jobDescription`]="{ value }">
-                          {{ value }}
+                        {{ value }}
                       </template>
 
                       <template v-slot:[`item.status`]="{ value }">
@@ -83,11 +81,11 @@
                       </template>
 
                       <template v-slot:[`item.startDate`]="{ value }">
-                          {{ value }}
+                        {{ value }}
                       </template>
 
                       <template v-slot:[`item.endDate`]="{ value }">
-                          {{ value }}
+                        {{ value }}
                       </template>
 
                       <!-- Expanded content slot -->
@@ -134,8 +132,11 @@
         <v-card-text> What would you like to do with this job? </v-card-text>
         <v-card-actions>
           <v-btn color="primary" @click="editJobCardDialog(selectedJob)">Edit</v-btn>
-          <v-dialog v-model="managerJobCardDialog" max-width="1000px">
-            <ManagerJobCard :job="selectedJob" @close="managerJobCardDialog= false"></ManagerJobCard>
+          <v-dialog v-model="managerJobCardDialog" max-width="2000px">
+            <ManagerJobCard
+              :job="selectedJob"
+              @close="managerJobCardDialog = false"
+            ></ManagerJobCard>
           </v-dialog>
           <v-btn color="error" @click="deleteJob">Delete</v-btn>
           <v-spacer></v-spacer>
@@ -144,7 +145,6 @@
       </v-card>
     </v-dialog>
   </v-container>
-
 </template>
 
 <script setup>
@@ -442,4 +442,3 @@ onMounted(() => {
   fetchJobData()
 })
 </script>
-

@@ -16,12 +16,12 @@
         <div class="text-caption pa-3">Select a client</div>
 
         <v-autocomplete
-            v-model="selectedClientName"
-            hint="Click the field to select a client"
-            :items="clientNames"
-            label="Select Client"
-            prepend-icon="mdi-account"
-            persistent-hint
+          v-model="selectedClientName"
+          hint="Click the field to select a client"
+          :items="clientNames"
+          label="Select Client"
+          prepend-icon="mdi-account"
+          persistent-hint
         ></v-autocomplete>
       </v-card-text>
 
@@ -40,15 +40,15 @@ import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 interface ClientDetails {
-  firstName?: string;
-  surname?: string;
-  name?: string;
+  firstName?: string
+  surname?: string
+  name?: string
 }
 
 interface Client {
-  details: ClientDetails;
-  _id: string;
-  fullName?: string;
+  details: ClientDetails
+  _id: string
+  fullName?: string
 }
 
 // For change client
@@ -70,22 +70,22 @@ const fetchClients = async () => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${sessionStorage.getItem('access_token')}`,
-    },
+      Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+    }
   }
   try {
     const response = await axios.get('http://localhost:3000/client/all', config)
     console.log(response.data)
     clients.value = response.data.data.map((client: Client) => ({
       ...client,
-      fullName: `${client.details.firstName ?? ''} ${client.details.surname ?? ''}`.trim(),
+      fullName: `${client.details.firstName ?? ''} ${client.details.surname ?? ''}`.trim()
     }))
 
     // Populate clientNames array with just the names
     clientNames.value = clients.value.map((client: Client) =>
-        client.details.firstName && client.details.surname
-            ? `${client.details.firstName} ${client.details.surname}`
-            : client.details.name ?? 'Unknown Name'
+      client.details.firstName && client.details.surname
+        ? `${client.details.firstName} ${client.details.surname}`
+        : client.details.name ?? 'Unknown Name'
     )
   } catch (error) {
     console.error('Failed to fetch clients:', error)
@@ -94,17 +94,17 @@ const fetchClients = async () => {
 
 // Watch for changes in selectedClientName and update selectedClient
 watch(
-    () => selectedClientName.value,
-    (newVal) => {
-      const selected = clients.value.find((client: Client) => {
-        const fullName =
-            client.details.firstName && client.details.surname
-                ? `${client.details.firstName} ${client.details.surname}`
-                : client.details.name ?? 'Unknown Name'
-        return fullName === newVal
-      })
-      selectedClient.value = selected?._id ?? null
-    }
+  () => selectedClientName.value,
+  (newVal) => {
+    const selected = clients.value.find((client: Client) => {
+      const fullName =
+        client.details.firstName && client.details.surname
+          ? `${client.details.firstName} ${client.details.surname}`
+          : client.details.name ?? 'Unknown Name'
+      return fullName === newVal
+    })
+    selectedClient.value = selected?._id ?? null
+  }
 )
 
 const saveClient = () => {

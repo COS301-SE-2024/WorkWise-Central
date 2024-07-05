@@ -1,495 +1,530 @@
 <template>
-  <v-card class="d-flex">
-    <v-card class="flex-grow-1 pa-4 text-center">
-      <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-        <h2 class="flex-grow-1">{{ jobTitle }}</h2>
-      </v-card-title>
+  <v-card>
+    <v-row>
+      <v-col xs="12" sm="9" md="9" lg="9" xl="9">
+        <v-card class="pa-4 text-center no outline">
+          <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
+            <h2 class="flex-grow-1">{{ jobTitle }}</h2>
+          </v-card-title>
 
-      <v-card-text>
-        <v-list>
-          <!-- Job Details -->
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>Job Name</v-list-item-title>
-              <v-list-item-subtitle>{{ jobDetails.jobName }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+          <v-card-text>
+            <v-list>
+              <!-- Job Details -->
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Job Name</v-list-item-title>
+                  <v-list-item-subtitle>{{ jobDetails.jobName }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>Job Description</v-list-item-title>
-              <v-list-item-subtitle>{{ jobDetails.jobDescription }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Job Description</v-list-item-title>
+                  <v-list-item-subtitle>{{ jobDetails.jobDescription }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>Start Date</v-list-item-title>
-              <v-list-item-subtitle>{{ jobDetails.jobStartDate }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Start Date</v-list-item-title>
+                  <v-list-item-subtitle>{{ jobDetails.jobStartDate }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>End Date</v-list-item-title>
-              <v-list-item-subtitle>{{ jobDetails.jobEndDate }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>End Date</v-list-item-title>
+                  <v-list-item-subtitle>{{ jobDetails.jobEndDate }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-          <!-- Job Address -->
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>Address</v-list-item-title>
-              <v-list-item-subtitle>{{ jobDetails.jobAddress.street }}, {{ jobDetails.jobAddress.suburb }}, {{ jobDetails.jobAddress.city }}, {{ jobDetails.jobAddress.postalCode }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+              <!-- Job Address -->
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Address</v-list-item-title>
+                  <v-list-item-subtitle
+                    >{{ jobDetails.jobAddress.street }}, {{ jobDetails.jobAddress.suburb }},
+                    {{ jobDetails.jobAddress.city }},
+                    {{ jobDetails.jobAddress.postalCode }}</v-list-item-subtitle
+                  >
+                </v-list-item-content>
+              </v-list-item>
 
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>Complex</v-list-item-title>
-              <v-list-item-subtitle>{{ jobDetails.jobAddress.complex }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Complex</v-list-item-title>
+                  <v-list-item-subtitle>{{ jobDetails.jobAddress.complex }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>House Number</v-list-item-title>
-              <v-list-item-subtitle>{{ jobDetails.jobAddress.houseNumber }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>House Number</v-list-item-title>
+                  <v-list-item-subtitle>{{
+                    jobDetails.jobAddress.houseNumber
+                  }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-          <!-- Assigned Employees -->
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>Assigned Employees</v-list-item-title>
-              <v-list-item-subtitle>
-                <span v-for="employeeId in assignedEmployees.employeesIds" :key="employeeId">{{ employeeId }}</span>
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+              <!-- Assigned Employees -->
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Assigned Employees</v-list-item-title>
+                  <v-list-item-subtitle>
+                    <span v-for="employeeId in assignedEmployees.employeesIds" :key="employeeId">{{
+                      employeeId
+                    }}</span>
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-          <!-- Recorded Details -->
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>Images Taken</v-list-item-title>
-              <v-list-item-subtitle>
-                <img v-for="image in recordedDetails.imagesTaken" :key="image" :src="image" alt="Job Image" class="ma-2" width="50" />
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+              <!-- Recorded Details -->
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Images Taken</v-list-item-title>
+                  <v-list-item-subtitle>
+                    <img
+                      v-for="image in recordedDetails.imagesTaken"
+                      :key="image"
+                      :src="image"
+                      alt="Job Image"
+                      class="ma-2"
+                      width="50"
+                    />
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>Inventory Used</v-list-item-title>
-              <v-list-item-subtitle>
-                <div v-for="item in recordedDetails.inventoryUsed" :key="item.InventoryItem">{{ item.InventoryItem }} - Quantity: {{ item.QuantityUsed }}</div>
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Inventory Used</v-list-item-title>
+                  <v-list-item-subtitle>
+                    <div v-for="item in recordedDetails.inventoryUsed" :key="item.InventoryItem">
+                      {{ item.InventoryItem }} - Quantity: {{ item.QuantityUsed }}
+                    </div>
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-          <!-- Status -->
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>Status</v-list-item-title>
-              <v-list-item-subtitle>{{ status }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+              <!-- Status -->
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Status</v-list-item-title>
+                  <v-list-item-subtitle>{{ status }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-          <!-- Task List -->
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>Task List</v-list-item-title>
-              <v-list-item-subtitle>
-                <div v-for="task in taskList" :key="task.task.taskName">
-                  {{ task.task.taskName }} - Status: {{ task.task.status }} - Assigned Employees: {{ task.task.assignedEmployees.join(', ') }}
-                </div>
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+              <!-- Task List -->
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Task List</v-list-item-title>
+                  <v-list-item-subtitle>
+                    <div v-for="task in taskList" :key="task.task.taskName">
+                      {{ task.task.taskName }} - Status: {{ task.task.status }} - Assigned
+                      Employees: {{ task.task.assignedEmployees.join(', ') }}
+                    </div>
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-          <!-- Comments -->
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>Comments</v-list-item-title>
-              <v-list-item-subtitle>
-                <div v-for="comment in comments" :key="comment.commentItem.commentDate">
-                  {{ comment.commentItem.comment }} - By: {{ comment.commentItem.employeeId }} on {{ comment.commentItem.commentDate }}
-                </div>
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-card-text>
+              <!-- Comments -->
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Comments</v-list-item-title>
+                  <v-list-item-subtitle>
+                    <div v-for="comment in comments" :key="comment.commentItem.commentDate">
+                      {{ comment.commentItem.comment }} - By:
+                      {{ comment.commentItem.employeeId }} on {{ comment.commentItem.commentDate }}
+                    </div>
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col xs="12" sm="3" md="3" lg="3" xl="3">
+        <v-card flat class="pa-4 no outline">
+          <div class="d-flex flex-column">
+            <!--Job details and description Model Edit -->
 
-      <v-card-actions class="d-flex flex-column">
-        <v-btn class="mb-2" color="blue darken-1" @click="saveJob">Save</v-btn>
-        <v-btn class="mb-4" color="blue darken-1" @click="cancelJob">Cancel</v-btn>
-      </v-card-actions>
-    </v-card>
+            <v-btn class="mb-2" outlined @click="detailsDialog = true">
+              <v-icon left>mdi-card-account-details-outline</v-icon>
+              Edit Details
+            </v-btn>
 
-    <v-card flat class="pa-4" max-width="300">
-      <div class="d-flex flex-column">
-
-        <!--Job details and description Model Edit -->
-
-        <v-btn class="mb-2" outlined @click="detailsDialog = true">
-          <v-icon left>mdi-card-account-details-outline</v-icon>
-          Edit Details
-        </v-btn>
-
-        <v-dialog v-model="detailsDialog" max-width="600px">
-          <v-card>
-            <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center text-center">
-              Edit The Job Details
-            </v-card-title>
-            <v-card-text>
-              <v-form ref="jobForm">
-                <v-label>Job Name</v-label>
-                <v-text-field
-                    v-model="job.jobName"
-                    label="Job Name"
-                    variant="solo"
-                    density="compact"
-                    color="grey-lighten-4"
-                    rounded="l"
-                    required
-                ></v-text-field>
-                <v-label>Job Description</v-label>
-                <v-textarea
-                    v-model="job.jobDescription"
-                    clearable
-                    label="Job Description"
-                    variant="solo"
-                    density="compact"
-                    color="grey-lighten-4"
-                    rounded="l"
-                    required
-                ></v-textarea>
-                <v-row>
-                  <v-col cols="6">
-                    <v-label>Street</v-label>
+            <v-dialog v-model="detailsDialog" max-width="600px">
+              <v-card>
+                <v-card-title
+                  class="text-h5 font-weight-regular bg-blue-grey text-center text-center"
+                >
+                  Edit The Job Details
+                </v-card-title>
+                <v-card-text>
+                  <v-form ref="jobForm">
+                    <v-label>Job Name</v-label>
                     <v-text-field
-                        v-model="job.jobAddress.street"
-                        label="Street"
-                        variant="solo"
-                        density="compact"
-                        color="grey-lighten-4"
-                        rounded="l"
-                        required
+                      v-model="job.jobName"
+                      label="Job Name"
+                      variant="solo"
+                      density="compact"
+                      color="grey-lighten-4"
+                      rounded="l"
+                      required
                     ></v-text-field>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-label>Suburb</v-label>
-                    <v-text-field
-                        v-model="job.jobAddress.suburb"
-                        label="Suburb"
-                        variant="solo"
-                        density="compact"
-                        color="grey-lighten-4"
-                        rounded="l"
-                        required
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+                    <v-label>Job Description</v-label>
+                    <v-textarea
+                      v-model="job.jobDescription"
+                      clearable
+                      label="Job Description"
+                      variant="solo"
+                      density="compact"
+                      color="grey-lighten-4"
+                      rounded="l"
+                      required
+                    ></v-textarea>
+                    <v-row>
+                      <v-col cols="6">
+                        <v-label>Street</v-label>
+                        <v-text-field
+                          v-model="job.jobAddress.street"
+                          label="Street"
+                          variant="solo"
+                          density="compact"
+                          color="grey-lighten-4"
+                          rounded="l"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="6">
+                        <v-label>Suburb</v-label>
+                        <v-text-field
+                          v-model="job.jobAddress.suburb"
+                          label="Suburb"
+                          variant="solo"
+                          density="compact"
+                          color="grey-lighten-4"
+                          rounded="l"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
 
-                <v-row>
-                  <v-col cols="6">
-                    <v-label>City</v-label>
-                    <v-text-field
-                        v-model="job.jobAddress.city"
-                        label="City"
-                        variant="solo"
-                        density="compact"
-                        color="grey-lighten-4"
-                        rounded="l"
-                        required
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-label>Postal Code</v-label>
-                    <v-text-field
-                        v-model="job.jobAddress.postalCode"
-                        label="Postal Code"
-                        variant="solo"
-                        density="compact"
-                        color="grey-lighten-4"
-                        rounded="l"
-                        required
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+                    <v-row>
+                      <v-col cols="6">
+                        <v-label>City</v-label>
+                        <v-text-field
+                          v-model="job.jobAddress.city"
+                          label="City"
+                          variant="solo"
+                          density="compact"
+                          color="grey-lighten-4"
+                          rounded="l"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="6">
+                        <v-label>Postal Code</v-label>
+                        <v-text-field
+                          v-model="job.jobAddress.postalCode"
+                          label="Postal Code"
+                          variant="solo"
+                          density="compact"
+                          color="grey-lighten-4"
+                          rounded="l"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
 
-                <v-row>
-                  <v-col cols="6">
-                    <v-label>Complex</v-label>
-                    <v-text-field
-                        v-model="job.jobAddress.complex"
-                        label="Complex"
-                        variant="solo"
-                        density="compact"
-                        color="grey-lighten-4"
-                        rounded="l"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-label>House Number</v-label>
-                    <v-text-field
-                        v-model="job.jobAddress.houseNumber"
-                        label="House Number"
-                        variant="solo"
-                        density="compact"
-                        color="grey-lighten-4"
-                        rounded="l"
-                        required
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+                    <v-row>
+                      <v-col cols="6">
+                        <v-label>Complex</v-label>
+                        <v-text-field
+                          v-model="job.jobAddress.complex"
+                          label="Complex"
+                          variant="solo"
+                          density="compact"
+                          color="grey-lighten-4"
+                          rounded="l"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="6">
+                        <v-label>House Number</v-label>
+                        <v-text-field
+                          v-model="job.jobAddress.houseNumber"
+                          label="House Number"
+                          variant="solo"
+                          density="compact"
+                          color="grey-lighten-4"
+                          rounded="l"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-form>
+                </v-card-text>
 
-              </v-form>
-            </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="saveJobDetails"> Save </v-btn>
+                  <v-btn color="blue darken-1" text @click="detailsDialog = false"> Cancel </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                  color="blue darken-1" text @click="saveJobDetails">
-                Save
-              </v-btn>
-              <v-btn color="blue darken-1" text @click="detailsDialog = false">
-                Cancel
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+            <!-- For client change -->
 
-        <!-- For client change -->
+            <v-btn class="mb-2" outlined @click="openClientDialogAndFetchClients">
+              <v-icon left>mdi-account-switch</v-icon>
+              Change Client
+            </v-btn>
 
-        <v-btn class="mb-2" outlined @click="openClientDialogAndFetchClients">
-          <v-icon left>mdi-account-switch</v-icon>
-          Change Client
-        </v-btn>
+            <v-dialog v-model="clientDialog" max-width="600px">
+              <v-card>
+                <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
+                  Change the client for this job
+                </v-card-title>
 
-        <v-dialog v-model="clientDialog" max-width="600px">
-          <v-card>
-            <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-              Change the client for this job
-            </v-card-title>
+                <v-card-text>
+                  <div class="text-caption pa-3">Select a client</div>
 
-            <v-card-text>
-              <div class="text-caption pa-3">Select a client</div>
-
-              <v-autocomplete
-                  v-model="selectedClientName"
-                  hint="Click the field to select a client"
-                  :items="clientNames"
-                  label="Select Client"
-                  prepend-icon="mdi-account"
-                  persistent-hint
-                  outlined
-                  dense
-                  class="my-custom-autocomplete"
-                  color="primary"
-                  background-color="#f5f5f5"
-                  rounded="l"
-                  variant="solo"
-              >
-              </v-autocomplete>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="saveClient">Save</v-btn>
-
-              <v-btn color="blue darken-1" text @click="clientDialog = false">Cancel</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-
-        <!-- Mutli-member select -->
-
-        <v-btn class="mb-2" outlined @click="membersDialog = true">
-          <v-icon left>mdi-card-account-details-outline</v-icon>
-          Select Members
-        </v-btn>
-
-        <v-dialog v-model="membersDialog" max-width="600px">
-          <v-card>
-            <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-              Select Team Members
-            </v-card-title>
-            <v-card-text>
-              <v-select
-                  v-model="favorites"
-                  :items="states"
-                  hint="Pick your favorite states"
-                  label="Select"
-                  multiple
-                  persistent-hint
-              ></v-select>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="saveSelection">
-                Save
-              </v-btn>
-              <v-btn color="blue darken-1" text @click="membersDialog = false">
-                Cancel
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-
-        <v-btn class="mb-2" outlined @click="statusDialog = true">
-          <v-icon left>mdi-warehouse</v-icon>
-          Update Status
-        </v-btn>
-
-        <v-dialog v-model="statusDialog" max-width="600px">
-          <v-card>
-            <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-              Update Job Status
-            </v-card-title>
-            <v-card-text>
-              <v-radio-group
-                  v-model="selectedState"
-                  column
-                  class="my-custom-radio-group"
-                  row
-                  background-color="#f5f5f5"
-              >
-                <v-radio label="Todo" value="todo" :color="colors.todo"></v-radio>
-                <v-radio label="In progress" value="inProgress" :color="colors.inProgress"></v-radio>
-                <v-radio label="Awaiting Invoice" value="awaitingInvoice" :color="colors.awaitingInvoice"></v-radio>
-                <v-radio label="Awaiting payment" value="awaitingPayment" :color="colors.awaitingPayment"></v-radio>
-                <v-radio label="Awaiting sign off" value="awaitingSignOff" :color="colors.awaitingSignOff"></v-radio>
-              </v-radio-group>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="saveStatus">
-                Save
-              </v-btn>
-              <v-btn color="blue darken-1" text @click="dialog = false">
-                Cancel
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-
-
-<!--        <v-btn class="mb-2" outlined @click="dialog = true">-->
-<!--          <v-icon left>mdi-warehouse</v-icon>-->
-<!--          Record details-->
-<!--        </v-btn>-->
-
-<!--        <v-btn class="mb-2" outlined @click="dialog = true">-->
-<!--          <v-icon left>mdi-paperclip</v-icon>-->
-<!--          File Attachments-->
-<!--        </v-btn>-->
-
-<!--        <v-dialog v-model="dialog" max-width="600px">-->
-<!--          <v-card>-->
-<!--            <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">-->
-<!--              Attach a file from your computer-->
-<!--            </v-card-title>-->
-<!--            <v-card-text>-->
-<!--              <v-file-input-->
-<!--                v-model="files"-->
-<!--                :rules="rules"-->
-<!--                accept="image/png, image/jpeg, image/bmp"-->
-<!--                label="Choose your job images"-->
-<!--                placeholder="Pick an avatar"-->
-<!--                prepend-icon="mdi-camera"-->
-<!--                multiple-->
-<!--              >-->
-<!--                <template v-slot:selection="{ fileNames }">-->
-<!--                  <template v-for="fileName in fileNames" :key="fileName">-->
-<!--                    <v-chip class="me-2" color="primary" size="small" label>-->
-<!--                      {{ fileName }}-->
-<!--                    </v-chip>-->
-<!--                  </template>-->
-<!--                </template>-->
-<!--              </v-file-input>-->
-<!--            </v-card-text>-->
-<!--            <v-card-actions>-->
-<!--              <v-spacer></v-spacer>-->
-<!--              <v-btn color="blue darken-1" text @click="insertFiles">Insert</v-btn>-->
-<!--              <v-btn color="blue darken-1" text @click="dialog = false">Cancel</v-btn>-->
-<!--            </v-card-actions>-->
-<!--          </v-card>-->
-<!--        </v-dialog>-->
-
-        <v-btn class="mb-2" outlined @click="dueDateDialog = true">
-          <v-icon left>mdi-calendar-clock</v-icon>
-          Change Due Date
-        </v-btn>
-
-        <v-dialog v-model="dueDateDialog" max-width="600px">
-          <v-card>
-            <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-              Enter the due date for this job
-            </v-card-title>
-
-            <v-card-text>
-              <v-container>
-                <v-row justify="space-around">
-                  <v-date-picker
-                    v-model="currentDate"
+                  <v-autocomplete
+                    v-model="selectedClientName"
+                    hint="Click the field to select a client"
+                    :items="clientNames"
+                    label="Select Client"
+                    prepend-icon="mdi-account"
+                    persistent-hint
+                    outlined
+                    dense
+                    class="my-custom-autocomplete"
                     color="primary"
-                    @update:modelValue="updateDates"
-                  ></v-date-picker>
-                </v-row>
-                <v-row v-if="errorMessage" class="mt-4">
-                  <v-col cols="12">
-                    <v-alert type="error">{{ errorMessage }}</v-alert>
-                  </v-col>
-                </v-row>
-                <v-row class="mt-4" align="center">
-                  <v-col cols="12" md="6">
-                    <v-row>
-                      <v-checkbox v-model="isStartDatePicked" @click="toggleStartDate"></v-checkbox>
-                      <v-text-field
-                        v-model="formattedStartDate"
-                        label="Start Date"
-                        readonly
-                        variant="solo"
-                        density="compact"
-                        color="grey-lighten-4"
-                        rounded="l"
-                      ></v-text-field>
-                    </v-row>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-row>
-                      <v-checkbox v-model="isEndDatePicked" @click="toggleEndDate"></v-checkbox>
-                      <v-text-field
-                        v-model="formattedEndDate"
-                        label="End Date"
-                        readonly
-                        variant="solo"
-                        density="compact"
-                        color="grey-lighten-4"
-                        rounded="l"
-                      ></v-text-field>
-                    </v-row>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-            <v-card-actions>
-              <v-btn color="blue darken-1" text @click="saveDate">Save </v-btn>
+                    background-color="#f5f5f5"
+                    rounded="l"
+                    variant="solo"
+                  >
+                  </v-autocomplete>
+                </v-card-text>
 
-              <v-btn color="blue darken-1" text @click="removeDates">Remove</v-btn>
-              <v-btn color="blue darken-1" text @click="dueDateDialog = false">Cancel</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </div>
-    </v-card>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="saveClient">Save</v-btn>
+
+                  <v-btn color="blue darken-1" text @click="clientDialog = false">Cancel</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+
+            <!-- Mutli-member select -->
+
+            <v-btn class="mb-2" outlined @click="membersDialog = true">
+              <v-icon left>mdi-card-account-details-outline</v-icon>
+              Select Members
+            </v-btn>
+
+            <v-dialog v-model="membersDialog" max-width="600px">
+              <v-card>
+                <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
+                  Select Team Members
+                </v-card-title>
+                <v-card-text>
+                  <div class="text-caption pa-3">Select Team Members</div>
+                  <v-select
+                    v-model="favorites"
+                    :items="states"
+                    hint="Pick your favorite states"
+                    label="Select Team Members"
+                    prepend-icon="mdi-account-multiple"
+                    multiple
+                    persistent-hint
+                    outlined
+                    dense
+                    class="my-custom-autocomplete"
+                    background-color="#f5f5f5"
+                    rounded="l"
+                    variant="solo"
+                  ></v-select>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="saveSelection"> Save </v-btn>
+                  <v-btn color="blue darken-1" text @click="membersDialog = false"> Cancel </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+
+            <v-btn class="mb-2" outlined @click="statusDialog = true">
+              <v-icon left>mdi-warehouse</v-icon>
+              Update Status
+            </v-btn>
+
+            <v-dialog v-model="statusDialog" max-width="600px">
+              <v-card>
+                <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
+                  Update Job Status
+                </v-card-title>
+                <v-card-text>
+                  <v-radio-group
+                    v-model="selectedState"
+                    column
+                    class="my-custom-radio-group"
+                    row
+                    background-color="#f5f5f5"
+                  >
+                    <v-radio label="Todo" value="todo" :color="colors.todo"></v-radio>
+                    <v-radio
+                      label="In progress"
+                      value="inProgress"
+                      :color="colors.inProgress"
+                    ></v-radio>
+                    <v-radio
+                      label="Awaiting Invoice"
+                      value="awaitingInvoice"
+                      :color="colors.awaitingInvoice"
+                    ></v-radio>
+                    <v-radio
+                      label="Awaiting payment"
+                      value="awaitingPayment"
+                      :color="colors.awaitingPayment"
+                    ></v-radio>
+                    <v-radio
+                      label="Awaiting sign off"
+                      value="awaitingSignOff"
+                      :color="colors.awaitingSignOff"
+                    ></v-radio>
+                  </v-radio-group>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="saveStatus"> Save </v-btn>
+                  <v-btn color="blue darken-1" text @click="statusDialog = false"> Cancel </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+
+            <!--        <v-btn class="mb-2" outlined @click="dialog = true">-->
+            <!--          <v-icon left>mdi-warehouse</v-icon>-->
+            <!--          Record details-->
+            <!--        </v-btn>-->
+
+            <!--        <v-btn class="mb-2" outlined @click="dialog = true">-->
+            <!--          <v-icon left>mdi-paperclip</v-icon>-->
+            <!--          File Attachments-->
+            <!--        </v-btn>-->
+
+            <!--        <v-dialog v-model="dialog" max-width="600px">-->
+            <!--          <v-card>-->
+            <!--            <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">-->
+            <!--              Attach a file from your computer-->
+            <!--            </v-card-title>-->
+            <!--            <v-card-text>-->
+            <!--              <v-file-input-->
+            <!--                v-model="files"-->
+            <!--                :rules="rules"-->
+            <!--                accept="image/png, image/jpeg, image/bmp"-->
+            <!--                label="Choose your job images"-->
+            <!--                placeholder="Pick an avatar"-->
+            <!--                prepend-icon="mdi-camera"-->
+            <!--                multiple-->
+            <!--              >-->
+            <!--                <template v-slot:selection="{ fileNames }">-->
+            <!--                  <template v-for="fileName in fileNames" :key="fileName">-->
+            <!--                    <v-chip class="me-2" color="primary" size="small" label>-->
+            <!--                      {{ fileName }}-->
+            <!--                    </v-chip>-->
+            <!--                  </template>-->
+            <!--                </template>-->
+            <!--              </v-file-input>-->
+            <!--            </v-card-text>-->
+            <!--            <v-card-actions>-->
+            <!--              <v-spacer></v-spacer>-->
+            <!--              <v-btn color="blue darken-1" text @click="insertFiles">Insert</v-btn>-->
+            <!--              <v-btn color="blue darken-1" text @click="dialog = false">Cancel</v-btn>-->
+            <!--            </v-card-actions>-->
+            <!--          </v-card>-->
+            <!--        </v-dialog>-->
+
+            <v-btn class="mb-2" outlined @click="dueDateDialog = true">
+              <v-icon left>mdi-calendar-clock</v-icon>
+              Change Due Date
+            </v-btn>
+
+            <v-dialog v-model="dueDateDialog" max-width="600px">
+              <v-card>
+                <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
+                  Enter the due date for this job
+                </v-card-title>
+
+                <v-card-text>
+                  <v-container>
+                    <v-row justify="space-around">
+                      <v-date-picker
+                        v-model="currentDate"
+                        color="primary"
+                        @update:modelValue="updateDates"
+                      ></v-date-picker>
+                    </v-row>
+                    <v-row v-if="errorMessage" class="mt-4">
+                      <v-col cols="12">
+                        <v-alert type="error">{{ errorMessage }}</v-alert>
+                      </v-col>
+                    </v-row>
+                    <v-row class="mt-4" align="center">
+                      <v-col cols="12" md="6">
+                        <v-row>
+                          <v-checkbox
+                            v-model="isStartDatePicked"
+                            @click="toggleStartDate"
+                          ></v-checkbox>
+                          <v-text-field
+                            v-model="formattedStartDate"
+                            label="Start Date"
+                            readonly
+                            variant="solo"
+                            density="compact"
+                            color="grey-lighten-4"
+                            rounded="l"
+                          ></v-text-field>
+                        </v-row>
+                      </v-col>
+                      <v-col cols="12" md="6">
+                        <v-row>
+                          <v-checkbox v-model="isEndDatePicked" @click="toggleEndDate"></v-checkbox>
+                          <v-text-field
+                            v-model="formattedEndDate"
+                            label="End Date"
+                            readonly
+                            variant="solo"
+                            density="compact"
+                            color="grey-lighten-4"
+                            rounded="l"
+                          ></v-text-field>
+                        </v-row>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn color="blue darken-1" text @click="saveDate">Save </v-btn>
+
+                  <v-btn color="blue darken-1" text @click="removeDates">Remove</v-btn>
+                  <v-btn color="blue darken-1" text @click="dueDateDialog = false">Cancel</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </div>
+          <v-card-actions class="d-flex flex-column">
+            <v-btn class="mb-2" color="blue darken-1" @click="saveJob">Save</v-btn>
+            <v-btn class="mb-4" color="blue darken-1" @click="cancelJob">Cancel</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-card>
 </template>
 
 <script setup>
-
 import { watch, ref } from 'vue'
 import axios from 'axios'
 import { computed } from 'vue'
@@ -501,7 +536,6 @@ import { defineProps } from 'vue'
 // const props = defineProps ({
 //   job: Object
 // })
-
 
 // const jobTitle = ref('Job Title')
 const jobDetails = ref({
@@ -523,25 +557,31 @@ const assignedEmployees = ref({
   teamId: '60d21b4667d0d8992e610c85'
 })
 const recordedDetails = ref({
-  imagesTaken: ['data:image/png;base64,iVBORw0KGgoAAAANS...', 'data:image/png;base64,iVBORw0KGgoAAAANS...'],
+  imagesTaken: [
+    'data:image/png;base64,iVBORw0KGgoAAAANS...',
+    'data:image/png;base64,iVBORw0KGgoAAAANS...'
+  ],
   inventoryUsed: [{ InventoryItem: '60d21b4667d0d8992e610c8a', QuantityUsed: 2 }]
 })
 const status = ref('complete')
-const taskList = ref([{
-  task: {
-    taskName: 'Paint north facing wall',
-    status: 'complete',
-    assignedEmployees: ['60d21b4667d0d8992e610c8a']
+const taskList = ref([
+  {
+    task: {
+      taskName: 'Paint north facing wall',
+      status: 'complete',
+      assignedEmployees: ['60d21b4667d0d8992e610c8a']
+    }
   }
-}])
-const comments = ref([{
-  commentItem: {
-    comment: 'Roofing needs adjusting',
-    employeeId: '60d21b4667d0d8992e610c8a',
-    commentDate: '2024-06-12'
+])
+const comments = ref([
+  {
+    commentItem: {
+      comment: 'Roofing needs adjusting',
+      employeeId: '60d21b4667d0d8992e610c8a',
+      commentDate: '2024-06-12'
+    }
   }
-}])
-
+])
 
 // Editing the job details dialog
 
@@ -558,8 +598,8 @@ const job = ref({
     city: '',
     postalCode: '',
     complex: '',
-    houseNumber: '',
-  },
+    houseNumber: ''
+  }
 })
 
 const saveJobDetails = () => {
@@ -665,7 +705,6 @@ const saveClient = () => {
   clientDialog.value = false
 }
 
-
 // @Kumbi: this is for the employee jobCard File attachments
 //
 // const dialog = ref(false)
@@ -689,7 +728,6 @@ const saveClient = () => {
 //   })
 //   console.log('Files:', fileChips.value)
 // }
-
 
 // For Due Date Dialog
 
@@ -825,8 +863,8 @@ const cancelJob = () => {
   overflow: hidden;
 }
 
- .my-custom-radio-group {
-   padding: 16px;
-   border-radius: 8px;
- }
+.my-custom-radio-group {
+  padding: 16px;
+  border-radius: 8px;
+}
 </style>

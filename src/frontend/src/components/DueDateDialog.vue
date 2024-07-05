@@ -17,9 +17,9 @@
         <v-container>
           <v-row justify="space-around">
             <v-date-picker
-                v-model="currentDate"
-                color="primary"
-                @update:modelValue="updateDates"
+              v-model="currentDate"
+              color="primary"
+              @update:modelValue="updateDates"
             ></v-date-picker>
           </v-row>
           <v-row v-if="errorMessage" class="mt-4">
@@ -32,20 +32,16 @@
               <v-row>
                 <v-checkbox v-model="isStartDatePicked" @click="toggleStartDate"></v-checkbox>
                 <v-text-field
-                    v-model="formattedStartDate"
-                    label="Start Date"
-                    readonly
+                  v-model="formattedStartDate"
+                  label="Start Date"
+                  readonly
                 ></v-text-field>
               </v-row>
             </v-col>
             <v-col cols="12" md="6">
               <v-row>
                 <v-checkbox v-model="isEndDatePicked" @click="toggleEndDate"></v-checkbox>
-                <v-text-field
-                    v-model="formattedEndDate"
-                    label="End Date"
-                    readonly
-                ></v-text-field>
+                <v-text-field v-model="formattedEndDate" label="End Date" readonly></v-text-field>
               </v-row>
             </v-col>
           </v-row>

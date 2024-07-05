@@ -142,7 +142,7 @@ const router = createRouter({
     {
       path: '/managerJobCard',
       name: 'managerJobCard',
-        component: () => import('@/components/ManagerJobCard.vue')
+      component: () => import('@/components/ManagerJobCard.vue')
     },
     {
       path: '/dashboard',
