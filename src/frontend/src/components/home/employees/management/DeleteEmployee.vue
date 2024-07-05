@@ -2,10 +2,12 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'DeleteEmployee'
+  name: 'EmployeeDetails'
 })
 </script>
 
-<template></template>
+<template>
+  <div></div>
+</template>
 
 <style scoped></style>
