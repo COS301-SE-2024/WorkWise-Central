@@ -102,6 +102,25 @@
           </v-row>
         </v-col></v-row
       >
+
+      <v-dialog v-model="actionsDialog" max-width="500px">
+        <v-card>
+          <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+            {{ selectedItemName + ' ' + selectedItemSurname }}
+          </v-card-title>
+          <v-card-text> What would you like to do with this account? </v-card-text>
+          <v-card-actions>
+            <ClientDetails v-model="clientDialog" :colors="colors" :ClientDetails="selectedItem" />
+            <EditClient
+              @update:item="selectedItem = $event"
+              :editedItem="selectedItem"
+              :_clientID="selectedItemId"
+            /><DeleteClient :details="selectedItem" :client_id="selectedItemId" />
+            <v-spacer></v-spacer>
+            <v-btn @click="actionsDialog = false">Cancel</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-container>
   </v-app>
 </template>
@@ -112,6 +131,9 @@ import AddEmployee from './AddEmployee.vue'
 
 import axios from 'axios'
 import router from '@/router/index.ts'
+import EditClient from '@/components/home/clients/management/EditClient.vue'
+import DeleteClient from '@/components/home/clients/management/DeleteClient.vue'
+import ClientDetails from '@/components/home/clients/management/ClientDetails.vue'
 
 export default {
   name: 'ClientDesk',
@@ -128,6 +150,7 @@ export default {
     clientDialog: false,
     deleteDialog: false,
     editDialog: false,
+    actionsDialog: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
@@ -297,6 +320,9 @@ export default {
     ]
   }),
   components: {
+    ClientDetails,
+    DeleteClient,
+    EditClient,
     // DeleteClient,
     AddEmployee
   },
@@ -314,6 +340,13 @@ export default {
     this.getClients()
   },
   methods: {
+    selectItem(item) {
+      this.selectedItem = item
+      this.selectedItemName = item.firstName
+      console.log(this.selectedItemName)
+      this.selectedItemSurname = item.surname
+      console.log('Selected item:', this.selectedItem) // Corrected console.log
+    },
     EditAccountClick(e) {
       console.log(e.currentTarget.id)
       localStorage['edit_roles_id'] = e.currentTarget.id
