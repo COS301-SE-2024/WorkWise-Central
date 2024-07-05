@@ -8,7 +8,8 @@
         variant="elevated"
         color="#5A82AF"
         v-bind="activatorProps"
-      >Register Company</v-btn>
+        >Register Company</v-btn
+      >
     </template>
     <v-sheet
       elevation="14"
@@ -390,7 +391,7 @@ export default {
       ],
 
       req_obj: {
-        creatorId: sessionStorage['id'],
+        userId: sessionStorage['id'],
         name: '',
         type: '',
         registrationNumber: '',
@@ -407,7 +408,9 @@ export default {
           complex: '',
           houseNumber: ''
         },
-        employees: sessionStorage['id']
+        employees: [],
+        inventoryItems: [],
+        private: false
       }
     }
   },
@@ -424,6 +427,9 @@ export default {
           alert('The Company was registered successfully')
           sessionStorage['currentCompany'] = res.data.data.id
           console.log(res.data)
+
+          axios.post('http://localhost:3000/company/create')
+
           this.$router.push('/dashboard')
         })
         .catch((res) => {
