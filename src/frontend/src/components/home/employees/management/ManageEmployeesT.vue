@@ -107,7 +107,7 @@
 </template>
 
 <script lang="js">
-import DeleteClient from '../../clients/management/DeleteClient.vue'
+// import DeleteClient from '../../clients/management/DeleteClient.vue'
 import AddEmployee from './AddEmployee.vue'
 
 import axios from 'axios'
@@ -297,7 +297,7 @@ export default {
     ]
   }),
   components: {
-    DeleteClient,
+    // DeleteClient,
     AddEmployee
   },
   computed: {
@@ -364,7 +364,6 @@ export default {
         .get('http://localhost:3000/employee/all', config)
         .then((response) => {
           this.clients = response.data
-          let arr = []
           for (let i = 0; i < response.data.length; i++) {
             axios
               .get(`http://localhost:3000/users/id/${this.clients[i].userId}`, config)
