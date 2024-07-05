@@ -49,7 +49,7 @@
                     <v-col cols="12" xs="12" sm="12" md="12">
                       <v-data-table
                         :headers="headers"
-                        :items="clientDetails"
+                        :items="clientDetails2"
                         :search="search"
                         :single-expand="true"
                         v-model:expanded="expanded"
@@ -63,17 +63,15 @@
                         <template v-slot:[`item.details.firstName`]="{ value }">
                           <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
                         </template>
-                        <template v-slot:[`item.clientInfo.phoneNumber`]="{ value }">
-                          <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-phone</v-icon></v-chip>
+                        <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
+                          <v-chip color="#5A82AF"><v-icon>mdi-phone</v-icon> {{ value }}</v-chip>
+                        </template>
+                        <template v-slot:[`item.contactInfo.email`]="{ value }">
+                          <v-chip color="#5A82AF"> {{ value }}</v-chip>
                         </template>
                         <template v-slot:[`item.mostRecentJob`]="{ value }">
                           <v-chip :color="getColor(value)">
                             {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
-                          >
-                        </template>
-                        <template v-slot:[`item.clientInfo.address.street`]="{ value }">
-                          <v-chip color="#5A82AF">
-                            {{ value }}<v-icon>mdi-map-marker</v-icon></v-chip
                           >
                         </template>
                         <!-- Expanded content slot -->
@@ -83,29 +81,17 @@
                           </tr>
                         </template>
                         <!-- Actions slot -->
+
                         <template v-slot:[`item.actions`]="{ item }">
-                          <v-col cols="12">
-                            <v-btn
-                              icon
-                              size="small"
-                              @click="EditAccountClick"
-                              color="#5A82AF"
-                              :id="item.id"
-                            >
-                              <v-icon>mdi-pencil</v-icon>
-                            </v-btn>
-                          </v-col>
-                          <v-col cols="12">
-                            <v-btn
-                              icon
-                              size="small"
-                              @click="removeClient"
-                              color="#5A82AF"
-                              :id="item.id"
-                            >
-                              <v-icon>mdi-delete</v-icon>
-                            </v-btn>
-                          </v-col>
+                          <v-btn
+                            v-bind="props"
+                            rounded="xl"
+                            variant="plain"
+                            style="transform: rotate(90deg) dots"
+                            @click="(actionsDialog = true), selectItem(item)"
+                          >
+                            <v-icon>mdi-dots-horizontal</v-icon>
+                          </v-btn>
                         </template>
                       </v-data-table>
                     </v-col>
@@ -116,8 +102,6 @@
           </v-row>
         </v-col></v-row
       >
-
-      <v-col> <DeleteClient v-model="deleteDialog" :details="selectedItem" /></v-col>
     </v-container>
   </v-app>
 </template>
@@ -170,9 +154,9 @@ export default {
         value: 'surname',
         key: 'surname'
       },
-      { title: 'Phone', value: 'clientInfo.phoneNumber', key: 'clientInfo.phoneNumber' },
-      { title: 'Email', value: 'clientInfo.email', key: 'clientInfo.email' },
-      { title: 'Address', value: 'clientInfo.address.street', key: 'clientInfo.address.street' },
+      { title: 'Phone', value: 'contactInfo.phoneNumber', key: 'contactInfo.phoneNumber' },
+      { title: 'Email', value: 'contactInfo.email', key: 'contactInfo.email' },
+      { title: 'Role', value: 'roleName', key: 'roleName' },
       { title: 'Actions', value: 'actions', key: 'actions', sortable: false }
     ],
     search: '',
@@ -379,17 +363,27 @@ export default {
       axios
         .get('http://localhost:3000/employee/all', config)
         .then((response) => {
-          console.log(response.data)
           this.clients = response.data
+          let arr = []
           for (let i = 0; i < response.data.length; i++) {
-            // console.log(this.clients[i].userId)
             axios
               .get(`http://localhost:3000/users/id/${this.clients[i].userId}`, config)
               .then((res) => {
-                // console.log(res.data.personalInfo)
-                let eish = res.data.personalInfo
-                eish.id = res.data._id
-                this.clientDetails2.push(eish)
+                let eish = res.data.data.personalInfo
+                eish.id = res.data.data._id
+                eish.roleId = this.clients[i].roleId
+
+                axios
+                  .get(`http://localhost:3000/role/id/${eish.roleId}`, config)
+                  .then((res) => {
+                    console.log(res.data.roleName)
+                    eish.roleName = res.data.roleName
+                    this.clientDetails2.push(eish)
+                  })
+                  .catch((error) => {
+                    console.log('Failed to fetch Role:', error)
+                  })
+                console.log(eish)
               })
               .catch((error) => {
                 console.log('Failed to fetch users:', error)
