@@ -134,7 +134,7 @@ import AddEmployee from './AddEmployee.vue'
 
 import axios from 'axios'
 import router from '@/router/index.ts'
-import EditEmployee from '@/components/home/clients/management/EditEmployee.vue'
+import EditEmployee from '@/components/home/employees/management/EditEmployee.vue'
 import DeleteClient from '@/components/home/clients/management/DeleteClient.vue'
 import EmployeeDetails from '@/components/home/employees/management/EmployeeDetails.vue'
 
