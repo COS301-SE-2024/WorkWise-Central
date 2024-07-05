@@ -19,35 +19,51 @@
     >
       <v-form>
         <v-col>
-          <v-divider></v-divider>
-          <v-col align-self="center"
-            ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
-              <v-btn
-                color="#5A82AF"
-                rounded="md"
-                border="md"
-                width="85%"
-                height="35"
-                variant="elevated"
-                @click="savechnages"
+          <v-col>
+            <v-col>
+              <small
+                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
               >
-                SAVE
-              </v-btn>
+                Address
+              </small>
+              <v-text-field
+                v-model="localEditedItem.address"
+                variant="solo"
+                rounded="md"
+              ></v-text-field>
             </v-col>
-            <v-col cols="12" md="12" xs="3" sm="6" offset="1">
-              <v-btn
-                color="#5A82AF"
-                rounded="md"
-                border="md"
-                width="85%"
-                height="35"
-                variant="elevated"
-                @click="close"
-              >
-                CANCEL
-              </v-btn>
-            </v-col></v-col
-          >
+            <v-divider></v-divider>
+
+            <v-col align-self="center"
+              ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
+                <v-btn
+                  color="#5A82AF"
+                  rounded="md"
+                  border="md"
+                  width="85%"
+                  height="35"
+                  variant="elevated"
+                  @click="savechnages"
+                >
+                  SAVE
+                </v-btn>
+              </v-col>
+              <v-col cols="12" md="12" xs="3" sm="6" offset="1">
+                <v-btn
+                  color="#5A82AF"
+                  rounded="md"
+                  border="md"
+                  width="85%"
+                  height="35"
+                  variant="elevated"
+                  @click="close"
+                >
+                  CANCEL
+                </v-btn>
+              </v-col></v-col
+            >
+          </v-col>
         </v-col>
       </v-form>
     </v-sheet>
