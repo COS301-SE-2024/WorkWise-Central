@@ -128,12 +128,12 @@ const router = createRouter({
     {
       path: '/employeeJobCard',
       name: 'employeeJobCard',
-      component: () => import('@/components/EmployeeJobCard.vue')
+      component: () => import('@/components/home/jobs/management/EmployeeJobCard.vue')
     },
     {
       path: '/managerJobCard',
       name: 'managerJobCard',
-      component: () => import('@/components/ManagerJobCard.vue')
+      component: () => import('../components/home/jobs/management/ManagerJobCard.vue')
     },
     {
       path: '/dashboard',
