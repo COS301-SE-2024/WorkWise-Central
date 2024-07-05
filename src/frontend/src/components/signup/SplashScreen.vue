@@ -41,7 +41,7 @@
                   color="#5A82AF"
                   dark
                   @click="loginDialog = true"
-                  rounded="xl"
+                  rounded="md"
                   align-center
                   justify-center
                   class="my-3 button-width button-height text-center"
@@ -58,7 +58,7 @@
                 height="auto"
                 border="md"
                 :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                rounded="xl"
+                rounded="md"
               >
                 <v-col>
                   <v-col>
@@ -84,7 +84,7 @@
                             name="username"
                             v-model="username"
                             :rules="usernameRules"
-                            rounded="xl"
+                            rounded="md"
                             variant="solo"
                             required
                           ></v-text-field
@@ -100,11 +100,13 @@
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
                             "
                             :label="password ? '' : 'Enter your password'"
-                            type="password"
+                            :type="showPassword ? 'text' : 'password'"
                             name="password"
                             v-model="password"
                             :rules="passwordRules"
-                            rounded="xl"
+                            :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                            @click:append="toggleShowPassword"
+                            rounded="md"
                             variant="solo"
                             required
                           ></v-text-field></v-col
@@ -118,7 +120,7 @@
                       text
                       @click="login"
                       @keypress.enter="login"
-                      rounded="xl"
+                      rounded="md"
                       size="large"
                       color="#5A82AF"
                       variant="elevated"
@@ -130,7 +132,7 @@
                     <v-btn
                       text
                       @click="(signupDialog = true)((loginDialog = false))"
-                      rounded="xl"
+                      rounded="md"
                       color="blue-grey-darken-1"
                       size="large"
                       variant="elevated"
@@ -154,7 +156,7 @@
                   color="blue-grey-darken-1"
                   dark
                   @click="signupDialog = true"
-                  rounded="xl"
+                  rounded="md"
                   align-center
                   class="my-3 button-width button-height text-center"
                   size="large"
@@ -168,7 +170,7 @@
             <v-dialog v-model="signupDialog" max-width="400">
               <v-sheet
                 elevation="14"
-                rounded="xl"
+                rounded="md"
                 width="auto"
                 height="auto"
                 :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
@@ -194,7 +196,7 @@
                             type="email"
                             v-model="email"
                             :rules="emailRules"
-                            rounded="xl"
+                            rounded="md"
                             variant="solo"
                             required
                           ></v-text-field></v-col
@@ -207,12 +209,15 @@
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
                             "
                             :label="password ? '' : 'Enter your password'"
-                            type="password"
+                            :type="showPassword ? 'text' : 'password'"
                             name="password"
                             v-model="password"
                             :rules="passwordRules"
-                            rounded="xl"
+                            :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                            @click:append="toggleShowPassword"
+                            rounded="md"
                             variant="solo"
+                            required
                             aria-placeholder="Enter your password"
                           ></v-text-field></v-col
                       ></v-row>
@@ -225,11 +230,13 @@
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
                             "
                             :label="confirm_password ? '' : 'Confirm your password'"
-                            type="password"
+                            :type="showPassword ? 'text' : 'password'"
+                            :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                            @click:append="toggleShowPassword"
                             name="confirm_password"
                             v-model="confirm_password"
                             :rules="[(v) => v === password || 'Passwords do not match']"
-                            rounded="xl"
+                            rounded="md"
                             variant="solo"
                             required
                           ></v-text-field></v-col
@@ -241,7 +248,7 @@
                       :disabled="!valid"
                       text
                       @click="nextFlow1"
-                      rounded="xl"
+                      rounded="md"
                       boarder="xl"
                       width="100%"
                       size="large"
@@ -252,7 +259,7 @@
                   ><v-col cols="8" offset="2">
                     <v-btn
                       @click="(loginDialog = true), (signupDialog = false)"
-                      rounded="xl"
+                      rounded="md"
                       width="100%"
                       size="large"
                       variant="elevated"
@@ -269,7 +276,7 @@
                 width="auto"
                 height="auto"
                 border="md"
-                rounded="xl"
+                rounded="md"
                 :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
               >
                 <v-col>
@@ -292,7 +299,7 @@
                             type="input"
                             v-model="name"
                             :rules="nameRules"
-                            rounded="xl"
+                            rounded="md"
                             variant="solo"
                             required
                           ></v-text-field
@@ -309,7 +316,7 @@
                             type="input"
                             v-model="surname"
                             :rules="surnameRules"
-                            rounded="xl"
+                            rounded="md"
                             variant="solo"
                             required
                             aria-placeholder="Enter your password"
@@ -322,7 +329,7 @@
                       :disabled="!valid"
                       text
                       @click="nextFlow2"
-                      rounded="xl"
+                      rounded="md"
                       size="large"
                       color="#5A82AF"
                       variant="elevated"
@@ -333,7 +340,7 @@
                   <v-col cols="8" offset="2">
                     <v-btn
                       @click="(signupDialog = true)((signup1Dialog = false))"
-                      rounded="xl"
+                      rounded="md"
                       color="blue-grey-darken-1"
                       size="large"
                       variant="elevated"
@@ -350,7 +357,7 @@
                   width="auto"
                   height="auto"
                   border="md"
-                  rounded="xl"
+                  rounded="md"
                   :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 >
                   <v-col>
@@ -371,7 +378,7 @@
                             v-model="username"
                             :items="usernameList"
                             :rules="usernameRules"
-                            rounded="xl"
+                            rounded="md"
                             variant="solo"
                             clearable
                             required
@@ -385,7 +392,7 @@
                       :disabled="!valid"
                       text
                       @click="nextFlowUsername"
-                      rounded="xl"
+                      rounded="md"
                       size="large"
                       color="#5A82AF"
                       variant="elevated"
@@ -402,7 +409,7 @@
                 width="auto"
                 height="auto"
                 border="md"
-                rounded="xl"
+                rounded="md"
                 :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
               >
                 <v-col>
@@ -436,7 +443,7 @@
                             :items="genderList"
                             :rules="gender_rules"
                             v-model="gender"
-                            rounded="xl"
+                            rounded="md"
                             variant="solo"
                             clearable
                             required
@@ -448,7 +455,7 @@
                       ></v-row>
                       <v-row
                         ><v-col
-                          ><label style="font-size: 14px; font-weight: lighter"
+                          ><label style="font-size: 14px; font-weight: lmighter"
                             >Preferred Language</label
                           >
                           <v-select
@@ -458,7 +465,7 @@
                             :items="languageList"
                             :rules="language_rules"
                             v-model="language"
-                            rounded="xl"
+                            rounded="md"
                             variant="solo"
                             clearable
                             required
@@ -476,7 +483,7 @@
                       :disabled="!valid"
                       text
                       @click="nextFlow3"
-                      rounded="xl"
+                      rounded="xmdl"
                       size="large"
                       color="#5A82AF"
                       variant="elevated"
@@ -487,7 +494,7 @@
                   <v-col cols="8" offset="2">
                     <v-btn
                       @click="(signup1Dialog = true)((signup2Dialog = false))"
-                      rounded="xl"
+                      rounded="md"
                       color="blue-grey-darken-1"
                       size="large"
                       variant="elevated"
@@ -504,7 +511,7 @@
                 width="auto"
                 height="auto"
                 border="md"
-                rounded="xl"
+                rounded="md"
                 :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
               >
                 <v-col>
@@ -527,7 +534,7 @@
                             type="input"
                             v-model="street"
                             :rules="streetRules"
-                            rounded="xl"
+                            rounded="md"
                             variant="solo"
                             required
                           >
@@ -545,7 +552,7 @@
                             type="input"
                             v-model="suburb"
                             :rules="suburbRules"
-                            rounded="xl"
+                            rounded="md"
                             variant="solo"
                             required
                           >
@@ -562,7 +569,7 @@
                               isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
                             "
                             :rules="cityRules"
-                            rounded="xl"
+                            rounded="md"
                             variant="solo"
                             :items="cityList"
                             required
@@ -579,7 +586,7 @@
                             type="input"
                             v-model="postal_code"
                             :rules="postalCodeRules"
-                            rounded="xl"
+                            rounded="md"
                             variant="solo"
                             required
                           >
@@ -596,7 +603,7 @@
                             type="input"
                             v-model="phone_number"
                             :rules="phoneNumberRules"
-                            rounded="xl"
+                            rounded="md"
                             variant="solo"
                             required
                           >
@@ -610,7 +617,7 @@
                       :disabled="!valid"
                       text
                       @click="nextFlowAddress"
-                      rounded="xl"
+                      rounded="md"
                       size="large"
                       color="#5A82AF"
                       variant="elevated"
@@ -621,7 +628,7 @@
                   <v-col cols="8" offset="2">
                     <v-btn
                       @click="(signup2Dialog = true)((signupAddressDialog = false))"
-                      rounded="xl"
+                      rounded="md"
                       color="blue-grey-darken-1"
                       size="large"
                       variant="elevated"
@@ -756,6 +763,7 @@ export default defineComponent({
     access_token: '',
     password: '',
     confirm_password: '',
+    showPassword: false,
     date: '',
     name: '',
     surname: '',
@@ -810,7 +818,7 @@ export default defineComponent({
     roles: '',
     url: 'http://localhost:3000/users',
     valid: true,
-    isdarkmode: true,
+    isdarkmode: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
@@ -887,12 +895,15 @@ export default defineComponent({
       (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers'
     ]
   }),
- 
+
   methods: {
     handleKeypress(e) {
       if (e.key === 'Enter') {
         this.login()
       }
+    },
+    toggleShowPassword() {
+      this.showPassword = !this.showPassword
     },
     populateUsernameList() {
       while (this.usernameList.length < 10) {
@@ -915,6 +926,7 @@ export default defineComponent({
       setTimeout(() => {
         this.loading = false
       }, 3000)
+      isdarkmode = sessionStorage.getItem('theme')
     },
     companyLogoHandler() {
       console.log('')
@@ -1056,6 +1068,7 @@ export default defineComponent({
         this.isdarkmode = true
         console.log(this.isdarkmode)
       }
+      sessionStorage.setItem('theme', this.isdarkmode) // save the theme to session storage
     }
   }
 })

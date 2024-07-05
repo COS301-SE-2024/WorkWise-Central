@@ -3,7 +3,8 @@ import { ref } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
 const isVisible = ref(false)
 const drawer = ref(true)
-
+const modal_dark_theme_color = '#2b2b2b'
+const modal_light_theme_color = '#FFFFFF'
 const onProfileClick = () => {
   console.log('Profile icon clicked')
 }
@@ -56,7 +57,6 @@ const supportSubItems = ref([{ title: 'Support', icon: 'mdi-star', routeName: 's
 <script lang="ts">
 import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
-import ProfileEmployee from '@/components/home/settings/profile/ProfileEmployee.vue'
 
 export default defineComponent({
   name: 'NavigationBar',
@@ -65,26 +65,50 @@ export default defineComponent({
       type: Object as PropType<any>
     }
   },
-  components: {
-    ProfileEmployee
+  data: () => ({
+    isdarkmode: sessionStorage.getItem('theme') || false
+  }),
+  methods: {
+    toggleDarkMode() {
+      console.log(this.isdarkmode)
+      if (this.isdarkmode === true) {
+        this.isdarkmode = false
+        console.log(this.isdarkmode)
+      } else {
+        this.isdarkmode = true
+        console.log(this.isdarkmode)
+      }
+      sessionStorage.setItem('theme', this.isdarkmode.toString()) // save the theme to session storage
+    }
   }
 })
 </script>
 
 <template>
   <v-card>
-    <v-app>
-      <v-app-bar app>
+    <v-app :style="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color">
+      <v-app-bar
+       :theme="isdarkmode ? 'dark' : 'light'"
+        app
+      >
         <v-app-bar-nav-icon @click="isVisible = !isVisible">
           <v-icon>{{ isVisible ? 'mdi-close' : 'mdi-menu' }}</v-icon>
         </v-app-bar-nav-icon>
         <v-spacer></v-spacer>
-        <v-toolbar-title>WorkWise</v-toolbar-title>
+        <v-toolbar-title
+          ><span class="colorAccent toolbar-text">Work</span>
+          <span class="colorAccent2 toolbar-text">Wise</span></v-toolbar-title
+        >
         <v-icon @click="onProfileClick">mdi-account-circle</v-icon>
-        <v-icon @click="onEllipsisClick">mdi-dots-vertical</v-icon>
+        <v-icon @click="toggleDarkMode">mdi-brightness-4</v-icon>
       </v-app-bar>
 
-      <v-navigation-drawer app v-model="drawer" :rail="isVisible">
+      <v-navigation-drawer
+        app
+        v-model="drawer"
+        :rail="isVisible"
+       :theme="isdarkmode ? 'dark' : 'light'"
+      >
         <v-list-item></v-list-item>
         <v-divider></v-divider>
         <v-list v-model:open="open">
@@ -217,4 +241,15 @@ export default defineComponent({
   <v-col></v-col>
 </template>
 
-<style scoped></style>
+<style scoped>
+.colorAccent {
+  color: #6a99ce;
+}
+.colorAccent2 {
+  color: #879898;
+}
+.toolbar-text {
+  font-size: 36px;
+  font-display: 'Lato';
+}
+</style>
