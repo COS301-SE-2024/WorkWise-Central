@@ -1,11 +1,7 @@
 <template>
-  <v-app :style="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color">
+  <v-app :theme="isdarkmode ? 'dark' : 'light'">
     <!-- Toolbar -->
-    <v-app-bar
-      app
-      :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-      dark
-    >
+    <v-app-bar  :theme="isdarkmode ? 'dark' : 'light'" dark>
       <v-app-bar-title>
         <span class="colorAccent toolbar-text">Work</span>
         <span class="colorAccent2 toolbar-text">Wise</span>
@@ -14,7 +10,7 @@
       <v-btn @click="toggleDarkMode"><v-icon>mdi-globe-light-outline</v-icon></v-btn>
     </v-app-bar>
     <!-- Main Content -->
-    <v-main :class="{ 'modal-dark-theme': isdarkmode, 'modal-light-theme': !isdarkmode }">
+    <v-main :theme="isdarkmode ? 'dark' : 'light'">
       <v-row style="height: 1000px; width: 2000px" no-gutters>
         <!-- Left Half -->
         <v-col cols="6" sm="3" md="6" align-self="center">
@@ -57,7 +53,7 @@
                 width="auto"
                 height="auto"
                 border="md"
-                :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :theme="isdarkmode ? 'dark' : 'light'"
                 rounded="md"
               >
                 <v-col>
@@ -76,9 +72,7 @@
                           >
 
                           <v-text-field
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
+                            :theme="isdarkmode ? 'dark' : 'light'"
                             :label="username ? '' : 'Enter your username'"
                             type="username"
                             name="username"
@@ -96,9 +90,7 @@
                             >Password</label
                           >
                           <v-text-field
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
+                            :theme="isdarkmode ? 'dark' : 'light'"
                             :label="password ? '' : 'Enter your password'"
                             :type="showPassword ? 'text' : 'password'"
                             name="password"
@@ -173,7 +165,7 @@
                 rounded="md"
                 width="auto"
                 height="auto"
-                :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :theme="isdarkmode ? 'dark' : 'light'"
               >
                 <v-col>
                   <v-col>
@@ -189,9 +181,7 @@
                         ><v-col>
                           <label style="font-size: 14px; font-weight: lighter">Email</label>
                           <v-text-field
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
+                            :theme="isdarkmode ? 'dark' : 'light'"
                             :label="email ? '' : 'Enter your email'"
                             type="email"
                             v-model="email"
@@ -205,9 +195,7 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Password</label>
                           <v-text-field
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
+                            :theme="isdarkmode ? 'dark' : 'light'"
                             :label="password ? '' : 'Enter your password'"
                             :type="showPassword ? 'text' : 'password'"
                             name="password"
@@ -226,9 +214,7 @@
                           ><label style="font-size: 14px; font-weight: lighter"
                             >Confirm Password</label
                           ><v-text-field
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
+                            :theme="isdarkmode ? 'dark' : 'light'"
                             :label="confirm_password ? '' : 'Confirm your password'"
                             :type="showPassword ? 'text' : 'password'"
                             :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
@@ -277,7 +263,7 @@
                 height="auto"
                 border="md"
                 rounded="md"
-                :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :theme="isdarkmode ? 'dark' : 'light'"
               >
                 <v-col>
                   <v-col>
@@ -292,9 +278,7 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Name</label>
                           <v-text-field
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
+                            :theme="isdarkmode ? 'dark' : 'light'"
                             :label="name ? '' : 'Enter your name'"
                             type="input"
                             v-model="name"
@@ -309,9 +293,7 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Surname</label
                           ><v-text-field
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
+                            :theme="isdarkmode ? 'dark' : 'light'"
                             :label="surname ? '' : 'Enter your surname'"
                             type="input"
                             v-model="surname"
@@ -358,7 +340,7 @@
                   height="auto"
                   border="md"
                   rounded="md"
-                  :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                 :theme="isdarkmode ? 'dark' : 'light'"
                 >
                   <v-col>
                     <v-col>
@@ -371,9 +353,7 @@
                         ><v-col align-self="center"
                           ><label style="font-size: 14px; font-weight: lighter">Username</label>
                           <v-combobox
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
+                            :theme="isdarkmode ? 'dark' : 'light'"
                             :label="username ? '' : 'Select your username'"
                             v-model="username"
                             :items="usernameList"
@@ -410,8 +390,7 @@
                 height="auto"
                 border="md"
                 rounded="md"
-                :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-              >
+               :theme="isdarkmode ? 'dark' : 'light'">
                 <v-col>
                   <v-col>
                     <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
@@ -447,9 +426,7 @@
                             variant="solo"
                             clearable
                             required
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
+                            :theme="isdarkmode ? 'dark' : 'light'"
                           >
                           </v-select></v-col
                       ></v-row>
@@ -469,9 +446,7 @@
                             variant="solo"
                             clearable
                             required
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
+                            :theme="isdarkmode ? 'dark' : 'light'"
                           >
                           </v-select></v-col
                       ></v-row>
@@ -512,7 +487,7 @@
                 height="auto"
                 border="md"
                 rounded="md"
-                :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :theme="isdarkmode ? 'dark' : 'light'"
               >
                 <v-col>
                   <v-col>
@@ -527,9 +502,7 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Street</label
                           ><v-text-field
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
+                            :theme="isdarkmode ? 'dark' : 'light'"
                             :label="street ? '' : 'Enter your street name'"
                             type="input"
                             v-model="street"
@@ -545,9 +518,7 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Suburb</label
                           ><v-text-field
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
+                            :theme="isdarkmode ? 'dark' : 'light'"
                             :label="suburb ? '' : 'Enter your suburb name'"
                             type="input"
                             v-model="suburb"
@@ -565,9 +536,7 @@
                             :label="city ? '' : 'Select your city'"
                             type="input"
                             v-model="city"
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
+                            :theme="isdarkmode ? 'dark' : 'light'"
                             :rules="cityRules"
                             rounded="md"
                             variant="solo"
@@ -579,9 +548,7 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Postal Code</label
                           ><v-text-field
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
+                            :theme="isdarkmode ? 'dark' : 'light'"
                             :label="postal_code ? '' : 'Enter your postal code'"
                             type="input"
                             v-model="postal_code"
@@ -596,9 +563,7 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Phone Number</label
                           ><v-text-field
-                            :bg-color="
-                              isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                            "
+                            :theme="isdarkmode ? 'dark' : 'light'"
                             :label="phone_number ? '' : 'Enter your phone number'"
                             type="input"
                             v-model="phone_number"
@@ -647,7 +612,7 @@
               <v-card
                 class="mx-auto"
                 width="400"
-                :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :theme="isdarkmode ? 'dark' : 'light'"
               >
                 <template v-slot:title>
                   <span class="font-weight-light">Please select one of the two options</span>
@@ -665,7 +630,7 @@
 
             <p
               class="text-center"
-              :class="{ 'light-theme-text': !isdarkmode, 'dark-theme-text': isdarkmode }"
+              :theme="isdarkmode ? 'dark' : 'light'"
             >
               By clicking Continue to join or sign in, you agree to WorkWise Central's User
               Agreement, Privacy Policy, and Cookie Policy
@@ -678,7 +643,7 @@
           <div class="w-full h-full background-image"></div>
         </v-col>
       </v-row>
-      <v-footer :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color">
+      <v-footer :theme="isdarkmode ? 'dark' : 'light'">
         <v-container>
           <v-row justify="space-between">
             <v-col cols="12" sm="6">
