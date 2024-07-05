@@ -4,98 +4,9 @@
       <v-card-title class="d-flex align-items-center">
         <h2 class="flex-grow-1">{{ jobTitle }}</h2>
       </v-card-title>
-      <div class="mx-6 py-4">
-        <v-row align="center" justify="space-between">
-          <v-col cols="auto">
-            <v-icon>mdi-text</v-icon>
-            <v-label class="py-3">Description</v-label>
-          </v-col>
-        </v-row>
 
-        <div v-if="isEditingDescription">
-          <v-textarea
-            label="Enter the job description here"
-            v-model="tempJobDescription"
-            :rows="descriptionRows"
-            variant="solo-filled"
-            clearable
-            outlined
-            auto-grow
-          ></v-textarea>
-
-          <v-row>
-            <v-btn variant="tonal" class="mx-3" @click="saveDescription"> Save </v-btn>
-            <v-btn variant="tonal" class="mx-2" @click="cancelEdit"> Cancel </v-btn>
-          </v-row>
-        </div>
-
-        <div v-else>
-          <v-row>
-            <p class="mx-4">{{ jobDescription }}</p>
-            <v-spacer></v-spacer>
-            <v-btn variant="tonal" class="mx-3" @click="editDescription"> Edit </v-btn>
-          </v-row>
-        </div>
-      </div>
-
-      <div class="mx-10 py-4">
-        <v-row align="center" justify="space-between">
-          <v-col cols="auto">
-            <v-icon left>mdi-text-short</v-icon>
-            <v-label class="py-3">Comment</v-label>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-avatar image="https://img.taste.com.au/SDLWyAtG/w720-h480-cfill-q80/taste/2022/08/cheese-180717-1.jpg" size="53" class="mx-1"></v-avatar>
-          <v-col>
-            <v-text-field
-                v-model="comment"
-                :readonly="!isEditingComments"
-                label="Write a comment..."
-                variant="solo"
-                clearable
-            ></v-text-field>
-            <div v-if="!isEditingComments" style="display: flex; gap: 10px; margin-top: 5px;">
-              <a href="#" @click.prevent="editComment">Edit</a>
-              <a href="#" @click.prevent="deleteComment">Delete</a>
-            </div>
-          </v-col>
-        </v-row>
-        <v-row v-if="isEditingComments">
-          <v-btn @click="saveComment" variant="tonal" class="mx-15">Save</v-btn>
-        </v-row>
-      </div>
-
-      <div v-if="clientChips.length" class="chip-container">
-        <h4 class="flex-grow-1">Selected Client:</h4>
-        <div class="chip-wrapper">
-          <v-chip
-            v-for="(chip, index) in clientChips"
-            :key="index"
-            class="ma-2"
-            color="primary"
-            outlined
-            @click:close="removeClient(chip, index)"
-            close
-          >
-            {{ chip.name }} ({{ (chip.size / 1024).toFixed(2) }} KB)
-          </v-chip>
-        </div>
-      </div>
-      <div v-if="selectedMemberChips.length">
-        <h4 class="flex-grow-1">Team Members Selected:</h4>
-        <v-chip
-          v-for="(chip, index) in selectedMemberChips"
-          :key="index"
-          class="ma-2"
-          color="primary"
-          outlined
-          @click:close="removeFile(chip, index)"
-          close
-        >
-          {{ chip.name }}
-        </v-chip>
-      </div>
+      <!-- Chips go hear      -->
+      <!-- Job Status Chips -->
       <div v-if="status">
         <h4 class="flex-grow-1">Status</h4>
         <v-chip class="ma-2" :color="status.color" outlined close>{{ status.title }}</v-chip>
@@ -103,46 +14,37 @@
       <div v-if="checklistChips.length">
         <h4 class="flex-grow-1">Checklist:</h4>
         <v-chip
-          v-for="(chip, index) in checklistChips"
-          :key="index"
-          class="ma-2"
-          color="primary"
-          outlined
-          close
-        >
-          {{ chip.title }}
-        </v-chip>
-      </div>
-      <div v-if="fileChips.length" class="chip-container">
-        <h4 class="flex-grow-1">Attached files:</h4>
-        <div class="chip-wrapper">
-          <v-chip
-            v-for="(chip, index) in fileChips"
+            v-for="(chip, index) in checklistChips"
             :key="index"
             class="ma-2"
             color="primary"
             outlined
-            @click:close="removeFile(chip, index)"
             close
+        >
+          {{ chip.title }}
+        </v-chip>
+      </div>
+
+      <!-- File attachment Chips -->
+
+      <div v-if="fileChips.length" class="chip-container">
+        <h4 class="flex-grow-1">Attached files:</h4>
+        <div class="chip-wrapper">
+          <v-chip
+              v-for="(chip, index) in fileChips"
+              :key="index"
+              class="ma-2"
+              color="primary"
+              outlined
+              @click:close="removeFile(chip, index)"
+              close
           >
             {{ chip.name }} ({{ (chip.size / 1024).toFixed(2) }} KB)
           </v-chip>
         </div>
       </div>
-      <div v-if="dateChips.length">
-        <h4 class="flex-grow-1">Job Dates:</h4>
-        <v-chip
-          v-for="(chip, index) in dateChips"
-          :key="index"
-          class="ma-2"
-          color="primary"
-          outlined
-          @click:close="removeDate(chip, index)"
-          close
-        >
-          {{ chip.type }}: {{ formatDate(chip.date) }}
-        </v-chip>
-      </div>
+
+      <!-- Save and Cancel buttons -->
 
       <v-card-actions class="d-flex flex-column">
         <v-btn class="mb-2" color="blue darken-1" @click="saveJob">Save</v-btn>
@@ -153,9 +55,9 @@
     <v-card flat class="pa-4" max-width="300">
       <div class="d-flex flex-column">
         <TeamMemberList
-          :teamList="teamMemberChips"
-          @update:selectedMembers="selectedMemberChips = $event"
-          @addMemberToCard="handleAddMemberToCard"
+            :teamList="teamMemberChips"
+            @update:selectedMembers="selectedMemberChips = $event"
+            @addMemberToCard="handleAddMemberToCard"
         ></TeamMemberList>
 
         <v-btn class="mb-2" outlined @click="openClientDialogAndFetchClients">
@@ -173,12 +75,12 @@
               <div class="text-caption pa-3">Select a client</div>
 
               <v-autocomplete
-                v-model="selectedClientName"
-                hint="Click the field to select a client"
-                :items="clientNames"
-                label="Select Client"
-                prepend-icon="mdi-account"
-                persistent-hint
+                  v-model="selectedClientName"
+                  hint="Click the field to select a client"
+                  :items="clientNames"
+                  label="Select Client"
+                  prepend-icon="mdi-account"
+                  persistent-hint
               >
               </v-autocomplete>
             </v-card-text>
@@ -192,11 +94,13 @@
           </v-card>
         </v-dialog>
         <JobLabels @update:status="status = $event" @add:status="updateStatus = $event" />
+
         <!-- Job Checklist -->
         <JobChecklist
-          @itemAdded:checklistProp="checklistChips = $event"
-          @addItemToList="addItemToChecklist"
+            @itemAdded:checklistProp="checklistChips = $event"
+            @addItemToList="addItemToChecklist"
         ></JobChecklist>
+
         <v-btn class="mb-2" outlined @click="dialog = true">
           <v-icon left>mdi-paperclip</v-icon>
           File Attachments
@@ -208,13 +112,13 @@
             </v-card-title>
             <v-card-text>
               <v-file-input
-                v-model="files"
-                :rules="rules"
-                accept="image/png, image/jpeg, image/bmp"
-                label="Choose your job images"
-                placeholder="Pick an avatar"
-                prepend-icon="mdi-camera"
-                multiple
+                  v-model="files"
+                  :rules="rules"
+                  accept="image/png, image/jpeg, image/bmp"
+                  label="Choose your job images"
+                  placeholder="Pick an avatar"
+                  prepend-icon="mdi-camera"
+                  multiple
               >
                 <template v-slot:selection="{ fileNames }">
                   <template v-for="fileName in fileNames" :key="fileName">
@@ -248,9 +152,9 @@
               <v-container>
                 <v-row justify="space-around">
                   <v-date-picker
-                    v-model="currentDate"
-                    color="primary"
-                    @update:modelValue="updateDates"
+                      v-model="currentDate"
+                      color="primary"
+                      @update:modelValue="updateDates"
                   ></v-date-picker>
                 </v-row>
                 <v-row v-if="errorMessage" class="mt-4">
@@ -263,9 +167,9 @@
                     <v-row>
                       <v-checkbox v-model="isStartDatePicked" @click="toggleStartDate"></v-checkbox>
                       <v-text-field
-                        v-model="formattedStartDate"
-                        label="Start Date"
-                        readonly
+                          v-model="formattedStartDate"
+                          label="Start Date"
+                          readonly
                       ></v-text-field>
                     </v-row>
                   </v-col>
@@ -273,9 +177,9 @@
                     <v-row>
                       <v-checkbox v-model="isEndDatePicked" @click="toggleEndDate"></v-checkbox>
                       <v-text-field
-                        v-model="formattedEndDate"
-                        label="End Date"
-                        readonly
+                          v-model="formattedEndDate"
+                          label="End Date"
+                          readonly
                       ></v-text-field>
                     </v-row>
                   </v-col>
@@ -290,6 +194,18 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+        <v-btn class="mb-2" outlined @click="dialog = true">
+          <v-icon left>mdi-card-account-details-outline</v-icon>
+          Edit Details
+        </v-btn>
+        <v-btn class="mb-2" outlined @click="dialog = true">
+          <v-icon left>mdi-warehouse</v-icon>
+          Log Inventory
+        </v-btn>
+        <v-btn class="mb-2" outlined @click="dialog = true">
+          <v-icon left>mdi-mailbox</v-icon>
+          Request Client Feedback
+        </v-btn>
       </div>
     </v-card>
   </v-card>
@@ -299,18 +215,6 @@
 import { watch, ref } from 'vue'
 import axios from 'axios'
 import { computed } from 'vue'
-import {
-  VBtn,
-  VDialog,
-  VCard,
-  VCardTitle,
-  VCardText,
-  VCardActions,
-  VFileInput,
-  VChip,
-  VSpacer,
-  VAlert
-} from 'vuetify/components'
 import TeamMemberList from './TeamMemberList.vue'
 import JobLabels from './JobLabels.vue'
 import JobChecklist from './JobChecklist.vue'
@@ -336,23 +240,6 @@ const editDescription = () => {
   tempJobDescription.value = jobDescription.value
   isEditingDescription.value = true
 }
-
-// For comment box affects
-
-const comment = ref('');
-const isEditingComments = ref(false);
-
-const editComment = () => {
-  isEditingComments.value = true;
-};
-
-const saveComment = () => {
-  isEditingComments.value = false;
-};
-
-const deleteComment = () => {
-  comment.value = '';
-};
 
 //For change client
 const clientDialog = ref(false)
@@ -388,24 +275,24 @@ const fetchClients = async () => {
     // Populate clientNames array with just the names
     clientNames.value = clients.value.map((client) => {
       return client.details.firstName && client.details.surname
-        ? `${client.details.firstName} ${client.details.surname}`
-        : client.details.name ?? 'Unknown Name'
+          ? `${client.details.firstName} ${client.details.surname}`
+          : client.details.name ?? 'Unknown Name'
     })
 
     // @BOB get rid of this part
     // Watch for changes in selectedClientName and update selectedClient
     watch(
-      () => selectedClientName.value,
-      (newVal) => {
-        const selected = clients.value.find((client) => {
-          const fullName =
-            client.details.firstName && client.details.surname
-              ? `${client.details.firstName} ${client.details.surname}`
-              : client.details.name ?? 'Unknown Name'
-          return fullName === newVal
-        })
-        selectedClient.value = selected?._id ?? null
-      }
+        () => selectedClientName.value,
+        (newVal) => {
+          const selected = clients.value.find((client) => {
+            const fullName =
+                client.details.firstName && client.details.surname
+                    ? `${client.details.firstName} ${client.details.surname}`
+                    : client.details.name ?? 'Unknown Name'
+            return fullName === newVal
+          })
+          selectedClient.value = selected?._id ?? null
+        }
     )
   } catch (error) {
     console.error('Failed to fetch clients:', error)
@@ -463,7 +350,7 @@ const files = ref([]) // stores all the selected files that will be pushed to th
 const rules = ref([
   (value) => {
     return (
-      !value || !value.length || value[0].size < 2000000 || 'Avatar size should be less than 2 MB!'
+        !value || !value.length || value[0].size < 2000000 || 'Avatar size should be less than 2 MB!'
     )
   }
 ])

@@ -57,17 +57,17 @@
                       class="font-lato"
                     >
                       <template v-slot:[`item.jobTitle`]="{ value }">
-                        <v-chip color="#5A82AF"> <v-icon>mdi-briefcase</v-icon>{{ value }} </v-chip>
+                         {{ value }}
                       </template>
 
                       <template v-slot:[`item.client`]="{ value }">
-                        <v-chip color="#5A82AF"> <v-icon>mdi-phone</v-icon>{{ value }} </v-chip>
+                        <v-chip color="#5A82AF">
+                          <v-icon  >mdi-phone</v-icon>{{ value }}
+                        </v-chip>
                       </template>
 
                       <template v-slot:[`item.jobDescription`]="{ value }">
-                        <v-chip color="#5A82AF">
                           {{ value }}
-                        </v-chip>
                       </template>
 
                       <template v-slot:[`item.status`]="{ value }">
@@ -83,15 +83,11 @@
                       </template>
 
                       <template v-slot:[`item.startDate`]="{ value }">
-                        <v-chip color="#5A82AF">
-                          <v-icon>mdi-calendar-start</v-icon>{{ value }}
-                        </v-chip>
+                          {{ value }}
                       </template>
 
                       <template v-slot:[`item.endDate`]="{ value }">
-                        <v-chip color="#5A82AF">
-                          <v-icon>mdi-calendar-end</v-icon>{{ value }}
-                        </v-chip>
+                          {{ value }}
                       </template>
 
                       <!-- Expanded content slot -->
@@ -137,7 +133,10 @@
         </v-card-title>
         <v-card-text> What would you like to do with this job? </v-card-text>
         <v-card-actions>
-          <v-btn color="primary" @click="editJob">Edit</v-btn>
+          <v-btn color="primary" @click="editJobCardDialog(selectedJob)">Edit</v-btn>
+          <v-dialog v-model="managerJobCardDialog" max-width="1000px">
+            <ManagerJobCard :job="selectedJob" @close="managerJobCardDialog= false"></ManagerJobCard>
+          </v-dialog>
           <v-btn color="error" @click="deleteJob">Delete</v-btn>
           <v-spacer></v-spacer>
           <v-btn @click="closeDialog">Cancel</v-btn>
@@ -145,6 +144,7 @@
       </v-card>
     </v-dialog>
   </v-container>
+
 </template>
 
 <script setup>
@@ -156,6 +156,7 @@ import AddJob from './AddJob.vue'
 // import ClientDetails from '@/components/AddClient.vue'
 // import DeleteClient from '@/components/DeleteClient.vue'
 // import EditClient from '@/components/EditClient.vue'
+import ManagerJobCard from './ManagerJobCard.vue'
 
 // const router = useRouter()
 const search = ref('')
@@ -337,6 +338,7 @@ const mockData = [
 
 const dialog = ref(false)
 const selectedJob = ref(null)
+const managerJobCardDialog = ref(false)
 
 const openDialog = (item) => {
   selectedJob.value = item
@@ -348,14 +350,15 @@ const closeDialog = () => {
   selectedJob.value = null
 }
 
-const editJob = () => {
-  console.log('Edit job:', selectedJob.value)
-  closeDialog()
-}
-
 const deleteJob = () => {
   console.log('Delete job:', selectedJob.value)
   closeDialog()
+}
+
+// managers the managerJobCard state
+
+const editJobCardDialog = (job) => {
+  managerJobCardDialog.value = true
 }
 
 // Job Status colours
@@ -439,3 +442,4 @@ onMounted(() => {
   fetchJobData()
 })
 </script>
+

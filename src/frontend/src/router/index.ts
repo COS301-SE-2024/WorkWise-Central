@@ -129,10 +129,20 @@ const router = createRouter({
       name: 'client-employee-view',
       component: ClientView
     },
+    // {
+    //   path: '/jobCard',
+    //   name: 'jobCard',
+    //   component: () => import('../components/ManagerJobCard.vue')
+    // },
     {
-      path: '/jobCard',
-      name: 'jobCard',
-      component: () => import('@/components/JobCard.vue')
+      path: '/employeeJobCard',
+      name: 'employeeJobCard',
+      component: () => import('@/components/EmployeeJobCard.vue')
+    },
+    {
+      path: '/managerJobCard',
+      name: 'managerJobCard',
+        component: () => import('@/components/ManagerJobCard.vue')
     },
     {
       path: '/dashboard',

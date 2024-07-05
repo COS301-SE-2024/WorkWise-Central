@@ -3,15 +3,15 @@
 // import TeamMemberList from '@/components/TeamMemberList.vue'
 // import JobLabels from '@/components/JobLabels.vue'
 // import JobChecklist from '@/components/JobChecklist.vue'
-import JobCard from '@/components/JobCard.vue'
+
+import ClientChange from '@/components/ClientChangeDialog.vue'
+import FileAttachment from '@/components/FileAttachmentDialog.vue'
 </script>
 
 <template>
-  <!--  <NavigationBar />-->
-  <!--  <TeamMemberList />-->
-  <!--  <JobLabels />-->
   <!--  <JobChecklist />-->
-  <JobCard />
+  <ClientChange/>
+
 </template>
 
 <style scoped>
