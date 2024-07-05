@@ -84,10 +84,9 @@
 
                         <template v-slot:[`item.actions`]="{ item }">
                           <v-btn
-                            v-bind="props"
                             rounded="xl"
                             variant="plain"
-                            style="transform: rotate(90deg) dots"
+                            style="transform: rotate(90deg)"
                             @click="(actionsDialog = true), selectItem(item)"
                           >
                             <v-icon>mdi-dots-horizontal</v-icon>
@@ -115,7 +114,7 @@
               :colors="colors"
               :EmployeeDetails="selectedItem"
             />
-            <EditClient
+            <EditEmployee
               @update:item="selectedItem = $event"
               :editedItem="selectedItem"
               :_clientID="selectedItemId"
@@ -135,7 +134,7 @@ import AddEmployee from './AddEmployee.vue'
 
 import axios from 'axios'
 import router from '@/router/index.ts'
-import EditClient from '@/components/home/clients/management/EditClient.vue'
+import EditEmployee from '@/components/home/clients/management/EditEmployee.vue'
 import DeleteClient from '@/components/home/clients/management/DeleteClient.vue'
 import EmployeeDetails from '@/components/home/employees/management/EmployeeDetails.vue'
 
@@ -326,7 +325,7 @@ export default {
   components: {
     EmployeeDetails,
     DeleteClient,
-    EditClient,
+    EditEmployee,
     // DeleteClient,
     AddEmployee
   },
@@ -365,7 +364,7 @@ export default {
     searchClient() {
       console.log('Searching client')
     },
-    editClient(item) {
+    editEmployee(item) {
       this.selectedItem = item
       console.log('Editing client')
     },
