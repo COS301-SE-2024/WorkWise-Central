@@ -49,7 +49,7 @@
                     <v-col cols="12" xs="12" sm="12" md="12">
                       <v-data-table
                         :headers="headers"
-                        :items="clientDetails2"
+                        :items="EmployeeDetails2"
                         :search="search"
                         :single-expand="true"
                         v-model:expanded="expanded"
@@ -67,7 +67,7 @@
                           <v-chip color="#5A82AF"><v-icon>mdi-phone</v-icon> {{ value }}</v-chip>
                         </template>
                         <template v-slot:[`item.contactInfo.email`]="{ value }">
-                          <v-chip color="#5A82AF"> {{ value }}</v-chip>
+                          <v-chip color="#5A82AF"> <v-icon>mdi-email</v-icon> {{ value }}</v-chip>
                         </template>
                         <template v-slot:[`item.mostRecentJob`]="{ value }">
                           <v-chip :color="getColor(value)">
@@ -110,7 +110,11 @@
           </v-card-title>
           <v-card-text> What would you like to do with this account? </v-card-text>
           <v-card-actions>
-            <ClientDetails v-model="clientDialog" :colors="colors" :ClientDetails="selectedItem" />
+            <EmployeeDetails
+              v-model="clientDialog"
+              :colors="colors"
+              :EmployeeDetails="selectedItem"
+            />
             <EditClient
               @update:item="selectedItem = $event"
               :editedItem="selectedItem"
@@ -133,7 +137,7 @@ import axios from 'axios'
 import router from '@/router/index.ts'
 import EditClient from '@/components/home/clients/management/EditClient.vue'
 import DeleteClient from '@/components/home/clients/management/DeleteClient.vue'
-import ClientDetails from '@/components/home/clients/management/ClientDetails.vue'
+import EmployeeDetails from '@/components/home/employees/management/EmployeeDetails.vue'
 
 export default {
   name: 'ClientDesk',
@@ -180,13 +184,13 @@ export default {
       { title: 'Phone', value: 'contactInfo.phoneNumber', key: 'contactInfo.phoneNumber' },
       { title: 'Email', value: 'contactInfo.email', key: 'contactInfo.email' },
       { title: 'Role', value: 'roleName', key: 'roleName' },
-      { title: 'Actions', value: 'actions', key: 'actions', sortable: false }
+      { title: '', value: 'actions', key: 'actions', sortable: false }
     ],
     search: '',
     expanded: [], // This will hold the currently expanded item
     clients: [],
-    clientDetails2: [],
-    clientDetails: [
+    EmployeeDetails2: [],
+    EmployeeDetails: [
       {
         id: 59,
         firstName: 'Michael',
@@ -320,7 +324,7 @@ export default {
     ]
   }),
   components: {
-    ClientDetails,
+    EmployeeDetails,
     DeleteClient,
     EditClient,
     // DeleteClient,
@@ -373,9 +377,9 @@ export default {
       let id = e.currentTarget.id
 
       console.log(id)
-      for (let i = 0; i < this.clientDetails.length; i++) {
-        if (this.clientDetails[i].id === Number(id)) {
-          this.clientDetails.splice(i, 1)
+      for (let i = 0; i < this.EmployeeDetails.length; i++) {
+        if (this.EmployeeDetails[i].id === Number(id)) {
+          this.EmployeeDetails.splice(i, 1)
         }
       }
       router.push('/manager-employees-t')
@@ -410,7 +414,8 @@ export default {
                   .then((res) => {
                     console.log(res.data.roleName)
                     eish.roleName = res.data.roleName
-                    this.clientDetails2.push(eish)
+                    this.EmployeeDetails2.push(eish)
+                    console.log(eish)
                   })
                   .catch((error) => {
                     console.log('Failed to fetch Role:', error)
@@ -422,7 +427,7 @@ export default {
               })
           }
           console.log('hello')
-          console.log(this.clientDetails2)
+          console.log(this.EmployeeDetails2)
         })
         .catch((error) => {
           console.log('Failed to fetch clients:', error)
