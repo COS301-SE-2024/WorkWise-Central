@@ -2,7 +2,7 @@
   <v-card>
     <v-row>
       <v-col xs="12" sm="9" md="9" lg="9" xl="9">
-        <v-card class="pa-4 text-center no outline">
+        <v-card class="text-center">
           <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
             <h2 class="flex-grow-1">{{ jobTitle }}</h2>
           </v-card-title>
@@ -144,7 +144,7 @@
         </v-card>
       </v-col>
       <v-col xs="12" sm="3" md="3" lg="3" xl="3">
-        <v-card flat class="pa-4 no outline">
+        <v-card flat class="pa-2">
           <div class="d-flex flex-column">
             <!--Job details and description Model Edit -->
 
@@ -839,28 +839,9 @@ const cancelJob = () => {
 </script>
 
 <style scoped>
-.v-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-}
 
 .mt-4 {
   margin-top: 1.5rem;
-}
-
-.chip-container {
-  max-width: 100%;
-  overflow-x: auto;
-}
-
-.chip-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.rounded-img {
-  border-radius: 50%;
-  overflow: hidden;
 }
 
 .my-custom-radio-group {
