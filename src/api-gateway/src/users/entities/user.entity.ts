@@ -79,6 +79,16 @@ export class Profile {
 }
 
 export class JoinedCompany {
+  constructor(
+    employeeId: Types.ObjectId,
+    companyId: Types.ObjectId,
+    companyName: string,
+  ) {
+    this.employeeId = employeeId;
+    this.companyId = companyId;
+    this.companyName = companyName;
+  }
+
   @Prop({ type: Types.ObjectId, ref: Employee.name })
   employeeId: Types.ObjectId;
   @Prop({ type: Types.ObjectId, ref: Company.name })

@@ -110,7 +110,7 @@
 
 <script>
 import axios from 'axios'
-import ClientDetails from './ClientDetails.vue'
+import ClientDetails from './home/clients/management/ClientDetails.vue'
 import ClientJobs from './ClientJobs.vue'
 export default {
   name: 'ClientEmployeeView',

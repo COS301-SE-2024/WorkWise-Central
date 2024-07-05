@@ -11,11 +11,14 @@ import {
 } from './entities/user-confirmation.entity';
 import { EmailService } from '../email/email.service';
 import { UsersRepository } from './users.repository';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
     forwardRef(() => AuthModule),
     forwardRef(() => EmployeeModule),
+    forwardRef(() => EmailModule),
+
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: UserConfirmation.name, schema: UserConfirmationSchema },
@@ -23,6 +26,6 @@ import { UsersRepository } from './users.repository';
   ],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository, EmailService],
-  exports: [UsersService, MongooseModule],
+  exports: [UsersService, UsersRepository, MongooseModule],
 })
 export class UsersModule {}
