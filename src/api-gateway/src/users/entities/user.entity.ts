@@ -264,17 +264,17 @@ export class SignInUserDto {
 }
 
 export class UserResponseDto {
-  constructor(data: UserApiObject) {
-    this.data = data;
+  constructor(response: UserApiObject) {
+    this.response = response;
   }
-  data: UserApiObject;
+  response: UserApiObject;
 }
 
 export class UserAllResponseDto {
-  constructor(data: UserApiObject[]) {
-    this.data = data;
+  constructor(response: UserApiObject[]) {
+    this.response = response;
   }
-  data: UserApiObject[];
+  response: UserApiObject[];
 }
 
 export const userEmployeeFields: string[] = ['employeeIds', 'currentEmployee'];

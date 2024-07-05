@@ -11,12 +11,10 @@ import {
   IsString,
   MaxLength,
   ValidateNested,
-  //Validator,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { SignInUserDto } from '../entities/user.entity';
-//import { PasswordRules } from '../../utils/Custom Decorators/PasswordRules';
 
 class ContactInfo {
   @ApiProperty()
@@ -84,13 +82,6 @@ class PersonalInfo {
   surname: string;
 
   @IsDateString()
-  /*  @MaxDate(() => new Date(), {
-    message: () =>
-      `maximal allowed date for date of birth is ${new Date().toDateString()}`,
-  })*/ //TODO: Fix conversion issue
-  /*  @Validate(PasswordRules, {
-    message: 'Passwords does not meet security standards',
-  })*/
   @Prop({ type: Date, required: true })
   dateOfBirth: Date;
 
@@ -160,12 +151,12 @@ export class CreateUserDto {
 }
 
 export class CreateUserResponseDto {
-  data: SignInUserDto;
-  constructor(data: SignInUserDto) {
-    this.data = data;
+  response: SignInUserDto;
+  constructor(response: SignInUserDto) {
+    this.response = response;
   }
 }
 
 export class BooleanResponseDto {
-  data: boolean;
+  response: boolean;
 }

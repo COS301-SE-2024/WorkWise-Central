@@ -39,12 +39,12 @@ const className = 'Job';
 export class JobController {
   constructor(private readonly jobService: JobService) {}
   validateObjectId(id: string | Types.ObjectId, entity: string = ''): boolean {
-    let data: string;
-    if (entity === '') data = `Invalid ID`;
-    else data = `Invalid ${entity} ID`;
+    let response: string;
+    if (entity === '') response = `Invalid ID`;
+    else response = `Invalid ${entity} ID`;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new HttpException(data, HttpStatus.BAD_REQUEST);
+      throw new HttpException(response, HttpStatus.BAD_REQUEST);
     }
     return true;
   }
@@ -98,7 +98,7 @@ export class JobController {
   @Get('all')
   async findAll() {
     try {
-      return { data: await this.jobService.findAllJobs() };
+      return { response: await this.jobService.findAllJobs() };
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
@@ -120,7 +120,7 @@ export class JobController {
   async findOne(@Param('id') id: string) {
     this.validateObjectId(id);
     try {
-      return { data: await this.jobService.findJobById(id) };
+      return { response: await this.jobService.findJobById(id) };
     } catch (e) {
       console.log(e);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);

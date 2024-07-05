@@ -10,7 +10,7 @@ import {
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Document, FlattenMaps, Model, Types } from 'mongoose';
+import { Document, Model, Types, FlattenMaps } from 'mongoose';
 import { Role } from './entity/role.entity';
 import { CompanyService } from '../company/company.service';
 import { User } from '../users/entities/user.entity';
@@ -81,7 +81,7 @@ export class RoleService {
     try {
       await this.validateRole(createRoleDto);
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      return `${error}`;
     }
 
     const newRole = new Role(createRoleDto);
@@ -90,7 +90,8 @@ export class RoleService {
     newRole.permissionSuite = createRoleDto.permissionSuite;
 
     const model = new this.roleModel(newRole);
-    return await model.save();
+    const result = await model.save();
+    return `${result}`;
   }
 
   async findAll() {
@@ -100,10 +101,6 @@ export class RoleService {
       console.log(error);
       throw new ServiceUnavailableException('Roles could not be retrieved');
     }
-  }
-
-  getPermissionsArray(): string[] {
-    return this.permissionsArray;
   }
 
   async findAllInCompany(companyId: string) {

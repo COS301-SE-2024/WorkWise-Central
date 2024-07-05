@@ -104,7 +104,7 @@ export class UsersRepository {
       .exec();
   }
 
-  async update(id: Types.ObjectId, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     return this.userModel
       .findOneAndUpdate(
         {

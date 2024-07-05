@@ -1,6 +1,5 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, SchemaFactory } from '@nestjs/mongoose';
 
-@Schema()
 export class UserConfirmation {
   @Prop({ required: true, type: String })
   name: string;

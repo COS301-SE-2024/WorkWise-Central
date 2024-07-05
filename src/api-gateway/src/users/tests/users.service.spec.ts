@@ -110,7 +110,7 @@ describe('UsersService', () => {
     a.skills = ['JavaScript', 'TypeScript', 'NestJS', 'Vue.js'];
 
     //expect(usersService.create(a)).toBeDefined();
-    //expect(await usersService.userIsValid(a)).toBe(undefined);
+    expect(await usersService.userIsValid(a)).toBe(undefined);
   });
 
   it('should be able to verify and email', async function () {

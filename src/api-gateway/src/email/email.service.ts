@@ -9,18 +9,18 @@ export class EmailService {
 
   async sendUserConfirmation(userConfirmation: UserConfirmation) {
     console.log('sendUserConfirmation', userConfirmation);
-    const tempUrl = 'http://localhost:3000'; //TODO: Change to deployed url later
+    const tempUrl = 'localhost:3000'; //TODO: Change to deployed url later
     const url = `${tempUrl}/auth/verify?email=${encodeURIComponent(userConfirmation.email)}&token=${userConfirmation.key}`;
 
     await this.mailerService.sendMail({
       to: userConfirmation.email,
       from: '"Support Team" <support@workwise.com>',
-      subject: 'Welcome to WorkWise Central! Confirm your Email',
+      subject: 'Welcome to Nice App! Confirm your Email',
       template: './confirmation',
       context: {
         name: userConfirmation.name,
         surname: userConfirmation.surname,
-        url: url,
+        url,
       },
     });
     // console.log('sendUserConfirmation');

@@ -57,11 +57,6 @@ class Address {
 }
 
 export class CreateCompanyDto {
-  @IsNotEmpty()
-  @IsMongoId()
-  @ApiProperty()
-  userId: Types.ObjectId;
-
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -115,13 +110,13 @@ export class CreateCompanyDto {
 }
 
 export class findCompanyResponseDto {
-  data: Company & { _id: Types.ObjectId }[];
+  data: Company[];
 }
 
 export class CreateCompanyResponseDto {
-  id: Company & { _id: Types.ObjectId };
+  id: string;
 
-  constructor(message: Company & { _id: Types.ObjectId }) {
+  constructor(message: string) {
     this.id = message;
   }
 }
