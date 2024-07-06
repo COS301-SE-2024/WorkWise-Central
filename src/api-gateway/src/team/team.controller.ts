@@ -33,8 +33,8 @@ export class TeamController {
   }
 
   @Get('id/:id')
-  findOne(@Param('id') id: string) {
-    return this.teamService.findOne(id);
+  findById(@Param('id') id: string) {
+    return this.teamService.findById(id);
   }
 
   @Patch(':id')

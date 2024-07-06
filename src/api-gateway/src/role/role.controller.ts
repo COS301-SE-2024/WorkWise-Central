@@ -38,8 +38,8 @@ export class RoleController {
   }
 
   @Get('id/:id')
-  async findOne(@Param('id') id: string) {
-    return await this.roleService.findOne(id);
+  async findById(@Param('id') id: string) {
+    return await this.roleService.findById(id);
   }
 
   @Patch(':id')

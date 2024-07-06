@@ -17,12 +17,19 @@ import { RoleService } from '../role/role.service';
 import { JobService } from '../job/job.service';
 import { TeamService } from '../team/team.service';
 import { EmployeeRepository } from './employee.repository';
+// import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class EmployeeService {
   constructor(
     @InjectModel(Employee.name)
     private readonly employeeModel: Model<Employee>,
+
+    // @InjectModel(User.name)
+    // private readonly userModel: Model<User>,
+
+    @Inject(forwardRef(() => EmployeeRepository))
+    private readonly employeeRepository: EmployeeRepository,
 
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
@@ -36,7 +43,6 @@ export class EmployeeService {
     private readonly jobService: JobService,
 
     private teamService: TeamService,
-    private readonly employeeRepository: EmployeeRepository,
   ) {}
 
   async validateEmployee(

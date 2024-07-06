@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FlattenMaps, Model, Types } from 'mongoose';
+import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { Employee } from './entities/employee.entity';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { User } from 'src/users/entities/user.entity';
