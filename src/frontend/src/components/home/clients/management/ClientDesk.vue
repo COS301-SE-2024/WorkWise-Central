@@ -45,7 +45,7 @@
             <v-col cols="12" xs="12" sm="12" md="12">
               <v-data-table
                 :headers="headers"
-                :items="clientDetails2"
+                :items="clientDetails"
                 :search="search"
                 :single-expand="true"
                 v-model:expanded="expanded"
@@ -61,7 +61,7 @@
                     <v-icon>mdi-account</v-icon>{{ value }}</v-chip
                   >
                 </template>
-                <template v-slot:[`item.phoneNumber`]="{ value }">
+                <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
                   <v-chip variant="text" @click="callPhone" color="#5A82AF"
                     ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
                   >
@@ -74,7 +74,7 @@
                 <template v-slot:[`item.surname`]="{ value }">
                   <v-chip variant="text" :color="isdarkmode ? 'white' : 'black'"> {{ value }}</v-chip>
                 </template>
-                <template v-slot:[`item.email`]="{ value }">
+                <template v-slot:[`item.contactInfo.email`]="{ value }">
                   <v-chip variant="text" @click="sendEmail" color="#5A82AF">
                     <v-icon>mdi-email</v-icon>{{ value }}</v-chip
                   >
@@ -190,8 +190,8 @@ export default defineComponent({
         value: 'surname',
         key: 'surname'
       },
-      { title: 'Phone', value: 'phoneNumber', key: 'phoneNumber' },
-      { title: 'Email', value: 'email', key: 'email' },
+      { title: 'Phone', value: 'contactInfo.phoneNumber', key: 'contactInfo.phoneNumber' },
+      { title: 'Email', value: 'contactInfo.email', key: 'contactInfo.email' },
       { title: 'Address', value: 'address.street', key: 'address.street' },
       { title: '', value: 'actions', key: 'actions', sortable: false }
     ],

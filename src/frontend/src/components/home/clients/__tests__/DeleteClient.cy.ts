@@ -1,10 +1,10 @@
 import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
-import ClientDesk from '../management/ClientDesk.vue'
+import DeleteClient from '../management/DeleteClient.vue'
 
-it('renders client desk', () => {
+it('renders delete client form', () => {
   const vuetify = createVuetify()
-  mount(ClientDesk, {
+  mount(DeleteClient, {
     global: {
       plugins: [vuetify]
     }
