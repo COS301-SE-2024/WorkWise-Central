@@ -100,8 +100,7 @@ export class UsersRepository {
           },
         ],
       })
-      .lean()
-      .exec();
+      .lean();
   }
 
   async update(id: Types.ObjectId, updateUserDto: UpdateUserDto) {
