@@ -1,26 +1,27 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import * as mongoose from 'mongoose';
 import { Types } from 'mongoose';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { Company } from '../../company/entities/company.entity';
+import { Employee } from '../../employee/entities/employee.entity';
 
-@Schema()
-export class systemDetails {
+export class SystemDetails {
   @Prop({ required: true, unique: true })
   username: string;
   @Prop({ required: true, unique: false })
   password: string;
 }
-@Schema()
-export class contactInfo {
+
+export class ContactInfo {
   @Prop({ type: String, required: true })
   phoneNumber: string;
 
-  @Prop({ type: String, required: true, lowercase: true })
+  @Prop({ type: String, unique: true, required: true, lowercase: true })
   email: string;
 }
-@Schema()
-export class address {
+
+export class Address {
   @Prop({ type: String, required: true })
   street: string;
   @Prop({ type: String, required: true })
@@ -29,17 +30,17 @@ export class address {
   city: string;
   @Prop({ type: String, required: true })
   postalCode: string;
-  @Prop({ type: String, required: true })
-  complex: string;
-  @Prop({ type: String, required: true })
-  houseNumber: string;
+  @Prop({ type: String, required: false })
+  complex?: string;
+  @Prop({ type: String, required: false })
+  houseNumber?: string;
 }
-@Schema()
-export class personalInfo {
-  @Prop({ required: true })
+
+export class PersonalInfo {
+  @Prop({ type: String, required: true })
   firstName: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   surname: string;
 
   @ApiHideProperty()
@@ -47,103 +48,240 @@ export class personalInfo {
   dateOfBirth: Date;
 
   @ApiHideProperty()
-  @Prop({ required: true, default: 'Rather Not Say' })
-  gender: string;
+  @Prop({ type: String, required: true, default: 'Rather Not Say' })
+  gender: string = 'Rather Not Say';
 
   @ApiHideProperty()
-  @Prop({ required: true, default: 'English' })
-  preferred_Language: string;
+  @Prop({ type: String, required: true, default: 'English' })
+  preferredLanguage: string;
 
   @ApiHideProperty()
-  @Prop({ type: contactInfo, required: false })
-  contactInfo: contactInfo;
+  @Prop({ type: ContactInfo, required: false })
+  contactInfo: ContactInfo;
 
   @ApiHideProperty()
-  @Prop({ type: address, required: false })
-  address: address;
+  @Prop({ type: Address, required: false })
+  address: Address;
 }
 
-@Schema()
-export class profile {
+export class Profile {
   @Prop({ type: String, required: true })
   displayName: string;
-  @ApiHideProperty()
+
   @Prop({
+    type: String,
     required: false,
     default:
       'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
   })
-  displayImage: string;
+  displayImage?: string =
+    'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
 }
 
-@Schema()
-export class roles {
-  @Prop({ required: true })
+export class JoinedCompany {
+  @Prop({ type: Types.ObjectId, ref: Employee.name })
+  employeeId: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: Company.name })
   companyId: Types.ObjectId;
-
-  @Prop({ type: String, required: true })
-  role: string;
-
-  @Prop({ type: [String], required: true, default: ['read'] })
-  permissions: string[];
-}
-
-export class day {
-  @Prop({ required: false })
-  dayOfWeek: string;
-
-  @Prop({ required: false })
-  hours: string;
-}
-
-@Schema()
-export class availability {
-  @Prop({ required: false })
-  schedule: day[];
+  @Prop({ type: String })
+  companyName: string;
 }
 
 @Schema()
 export class User {
-  @ApiProperty()
-  @Prop({ required: true })
-  systemDetails: systemDetails;
+  constructor(createUserDto: CreateUserDto) {
+    this.systemDetails = {
+      username: createUserDto.username,
+      password: createUserDto.password,
+    };
+    this.personalInfo = {
+      address: createUserDto.address,
+      contactInfo: createUserDto.contactInfo,
+      firstName: createUserDto.personalInfo.firstName,
+      surname: createUserDto.personalInfo.surname,
+      preferredLanguage: createUserDto.personalInfo.preferredLanguage,
+      dateOfBirth: createUserDto.personalInfo.dateOfBirth,
+      gender: createUserDto.personalInfo.gender,
+    };
+
+    if (createUserDto.profile.displayImage != null) {
+      this.profile = {
+        displayName: createUserDto.profile.displayImage,
+        displayImage: createUserDto.profile.displayImage,
+      };
+    } else {
+      this.profile = {
+        displayName: createUserDto.profile.displayImage,
+        displayImage:
+          'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
+      };
+    }
+
+    this.profile.displayName = createUserDto.profile.displayName;
+    this.skills = createUserDto.skills;
+    this.createdAt = new Date();
+    //this.deletedAt = new Date(); //logically deleted until confirmed
+  }
+
+  /*  @Prop({ type: Types.ObjectId })
+  _id: Types.ObjectId;*/
 
   @ApiProperty()
   @Prop({ required: true })
-  personalInfo: personalInfo;
+  systemDetails: SystemDetails;
 
   @ApiProperty()
   @Prop({ required: true })
-  profile: profile;
+  personalInfo: PersonalInfo;
 
   @ApiProperty()
-  @Prop({ required: false })
-  roles: roles[];
+  @Prop({ required: true })
+  profile: Profile;
 
   @ApiProperty()
-  @Prop({ type: [mongoose.Types.ObjectId], required: true, default: [] })
-  joinedCompanies: mongoose.Types.ObjectId[];
+  @Prop({
+    type: [JoinedCompany],
+    required: true,
+    ref: 'Company',
+    default: [],
+  })
+  joinedCompanies: JoinedCompany[] = [];
 
   @ApiProperty()
-  @Prop({ type: [String], required: false })
-  skills: string[];
+  @Prop({ type: [String], required: false, default: [] })
+  skills: string[] = [];
 
   @ApiProperty()
-  @Prop({ required: false })
-  availability: availability;
+  @Prop({
+    type: [{ type: Types.ObjectId, required: true, ref: 'Employee' }],
+    default: [],
+  })
+  public employeeIds: Types.ObjectId[] = [];
+
+  @ApiProperty()
+  @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
+  public currentEmployee?: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: Boolean, required: false, default: false })
+  public isValidated?: boolean = false;
 
   @ApiHideProperty()
-  @Prop({ required: false, default: new Date() })
-  public created_at: Date;
+  @Prop({ type: Date, required: true, default: new Date() })
+  public createdAt: Date = new Date();
 
   @ApiHideProperty()
-  @Prop({ required: false })
-  public updated_at: Date;
+  @Prop({ type: Date, required: false })
+  public updatedAt?: Date;
 
   @ApiHideProperty()
-  @Prop({ required: false })
-  public deleted_at: Date;
+  @Prop({ type: Date, required: false })
+  public deletedAt?: Date;
 }
+
+export class UserApiObject {
+  @ApiProperty()
+  @Prop({ type: Types.ObjectId })
+  _id: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  systemDetails: SystemDetails;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  personalInfo: PersonalInfo;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  profile: Profile;
+
+  @ApiProperty()
+  @Prop({
+    type: [JoinedCompany],
+    required: false,
+    ref: 'Company',
+    default: [],
+  })
+  joinedCompanies: JoinedCompany[] = [];
+
+  @ApiProperty()
+  @Prop({ type: [String], required: false, default: [] })
+  skills: string[] = [];
+
+  @ApiProperty()
+  @Prop({
+    type: [{ type: Types.ObjectId, required: true, ref: 'Employee' }],
+    default: [],
+  })
+  public employeeIds: Types.ObjectId[] = [];
+
+  @ApiProperty()
+  @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
+  public currentEmployee?: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: Boolean, required: false, default: false })
+  public isValidated?: boolean = false;
+
+  @ApiHideProperty()
+  @Prop({ type: Date, required: true, default: new Date() })
+  public createdAt: Date = new Date();
+
+  @ApiHideProperty()
+  @Prop({ type: Date, required: false })
+  public updatedAt?: Date;
+
+  @ApiHideProperty()
+  @Prop({ type: Date, required: false })
+  public deletedAt?: Date;
+}
+
+export class SignInUserDto {
+  constructor(
+    access_token: string,
+    id: Types.ObjectId,
+    user: UserApiObject = null,
+  ) {
+    this.access_token = access_token;
+    this.id = id;
+    this.user = user;
+  }
+
+  access_token: string;
+  id: Types.ObjectId;
+  user?: UserApiObject;
+}
+
+export class UserResponseDto {
+  constructor(data: UserApiObject) {
+    this.data = data;
+  }
+  data: UserApiObject;
+}
+
+export class UserAllResponseDto {
+  constructor(data: UserApiObject[]) {
+    this.data = data;
+  }
+  data: UserApiObject[];
+}
+
+export const userEmployeeFields: string[] = ['employeeIds', 'currentEmployee'];
+
+export const userJoinedCompaniesField = {
+  path: 'joinedCompanies',
+  populate: [
+    {
+      path: 'employeeId',
+      model: Employee.name,
+    },
+    {
+      path: 'companyId',
+      model: Company.name,
+    },
+  ],
+};
 
 export const UserSchema = SchemaFactory.createForClass(User);
 

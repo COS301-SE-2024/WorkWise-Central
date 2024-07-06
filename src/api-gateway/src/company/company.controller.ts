@@ -9,23 +9,43 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
-import { CreateCompanyDto } from './dto/create-company.dto';
+import {
+  CreateCompanyDto,
+  CreateCompanyResponseDto,
+  findCompanyResponseDto,
+} from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiBody,
   ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
-import mongoose, { Types } from 'mongoose';
+import mongoose, { FlattenMaps, Types } from 'mongoose';
+import {
+  Company,
+  CompanyAllResponseDto,
+  CompanyEmployeesResponseDto,
+  CompanyResponseDto,
+} from './entities/company.entity';
+import { BooleanResponseDto } from '../users/dto/create-user.dto';
+
+const className = 'Company';
 
 @ApiTags('Company')
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
+
   validateObjectId(id: string | Types.ObjectId): boolean {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
@@ -43,30 +63,49 @@ export class CompanyController {
     type: HttpException,
     status: HttpStatus.CONFLICT,
   })
-  @ApiBody({ type: [CreateCompanyDto] })
+  @ApiOperation({
+    summary: `Create a new ${className}`,
+    description: 'Further details',
+  })
+  @ApiBody({ type: CreateCompanyDto })
+  @ApiResponse({
+    status: 201,
+    type: CreateCompanyResponseDto,
+    description: `The access token and ${className}'s Id used for querying.`,
+  })
   @Post('/create')
-  create(@Body() createCompanyDto: CreateCompanyDto) {
-    return this.companyService.create(createCompanyDto);
+  async create(
+    @Body() createCompanyDto: CreateCompanyDto,
+  ): Promise<{ data: CreateCompanyResponseDto }> {
+    return { data: await this.companyService.create(createCompanyDto) };
   }
 
   @ApiBody({ type: AddUserToCompanyDto })
+  @ApiOkResponse({ type: BooleanResponseDto })
   @Post('/add')
   async addEmployee(@Body() addUserDto: AddUserToCompanyDto) {
     this.validateObjectId(addUserDto.adminId);
     this.validateObjectId(addUserDto.currentCompany);
 
     try {
-      return await this.companyService.addEmployee(addUserDto);
+      return { data: await this.companyService.addEmployee(addUserDto) };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
   }
 
   @UseGuards(AuthGuard) //Need to add authorization
+  @ApiOperation({
+    summary: `Get all ${className} instances`,
+  })
+  @ApiOkResponse({
+    type: CompanyAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class`,
+  })
   @Get('/all')
-  findAll() {
+  async findAll() {
     try {
-      return this.companyService.findAll();
+      return { data: await this.companyService.findAllCompanies() };
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
@@ -75,21 +114,86 @@ export class CompanyController {
     }
   }
 
+  //@UseGuards(AuthGuard) //Need to add authorization
+  @ApiOperation({ summary: `Get all employees in ${className}` })
+  @ApiOkResponse({
+    type: CompanyEmployeesResponseDto,
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'cid',
+    description: `The _id attribute of the ${className}`,
+  })
+  @Get('/company/employees/:cid')
+  async getAllInCompany(@Param('cid') cid: string) {
+    this.validateObjectId(cid);
+    const objId = new Types.ObjectId(cid);
+    try {
+      return { data: await this.companyService.getAllEmployees(objId) };
+    } catch (Error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @ApiOperation({ summary: `Find a ${className}` })
+  @ApiOkResponse({
+    type: CompanyResponseDto,
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'cid',
+    description: `The _id attribute of the ${className}`,
+  })
   @Get('id/:id')
   findOne(@Param('id') id: string) {
     try {
-      return this.companyService.findById(id);
+      return { data: this.companyService.getCompanyById(id) };
     } catch (e) {
       throw new HttpException(e, HttpStatus.NOT_FOUND);
     }
   }
 
-  @UseGuards(AuthGuard)
-  @ApiBody({ type: [UpdateCompanyDto] })
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
+  @ApiResponse({
+    type: findCompanyResponseDto,
+  })
+  @ApiQuery({ name: 'str', description: 'An email or name of company' })
+  @Get('search?')
+  async findByEmailOrName(
+    @Query('str') str: string,
+  ): Promise<{ data: (FlattenMaps<Company> & { _id: Types.ObjectId })[] }> {
     try {
-      return this.companyService.update(+id, updateCompanyDto);
+      return {
+        data: await this.companyService.getByEmailOrName(str),
+      };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+  }
+
+  //@UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: CompanyResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @ApiBody({ type: UpdateCompanyDto })
+  @Patch(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+  ) {
+    try {
+      const objectId = new Types.ObjectId(id);
+      const updatedCompany = this.companyService.update(
+        objectId,
+        updateCompanyDto,
+      );
+      return {
+        data: updatedCompany,
+      };
     } catch (e) {
       throw new HttpException(
         'internal server error',
@@ -99,10 +203,25 @@ export class CompanyController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Delete a ${className}`,
+    description: `You send the ${className} ObjectId, and then they get deleted if the id is valid.\n 
+    There will be rules on deletion later.`,
+    security: [],
+  })
+  @ApiOkResponse({
+    type: BooleanResponseDto,
+    description: `A boolean value indicating whether or not the deletion was a success`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className}`,
+  })
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     try {
-      return this.companyService.remove(+id);
+      await this.companyService.deleteCompany(id);
+      return { data: true };
     } catch (e) {
       throw new HttpException(
         'Internal Server Error',

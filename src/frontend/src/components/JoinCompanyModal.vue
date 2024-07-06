@@ -2,11 +2,12 @@
   <v-dialog max-width="500" height="800">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-        class="text-none font-weight-regular"
+        rounded="xl"
+        class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
-        color="black"
         text="JOIN COMPANY"
-        variant="tonal"
+        variant="elevated"
+        color="#5A82AF"
         v-bind="activatorProps"
       ></v-btn>
     </template>
@@ -17,7 +18,7 @@
       height="800"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
-      <v-form ref="form" v-model="valid">
+      <v-form ref="form" v-model="valid" @submit.prevent="handlesubmission">
         <v-col>
           <v-col>
             <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -66,12 +67,12 @@
           </v-col>
           <v-col cols="8" offset="2" align="center">
             <v-btn
+              color="#5A82AF"
               rounded="xl"
               boarder="xl"
               width="85%"
               height="35"
               variant="elevated"
-              color="blue-accent-2"
               :disabled="req_obj.company_name === '' && req_obj.companyID === ''"
               >JOIN COMPANY</v-btn
             >
@@ -87,12 +88,10 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'RegisterCompanyModal',
 
-  props: [],
-
+  props: ['isdarkmode'],
   data: () => ({
     dialog: false,
     valid: false,
-    isdarkmode: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
@@ -106,13 +105,12 @@ export default defineComponent({
     }
   }),
 
-  methods: {}
+  methods: {
+    handlesubmission() {
+      alert('Added employee successfully')
+    }
+  }
 })
 </script>
 
-<style scope>
-.text-none {
-  color: red;
-  background-color: blue;
-}
-</style>
+<style></style>

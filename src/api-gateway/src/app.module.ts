@@ -8,16 +8,22 @@ import { AuthModule } from './auth/auth.module';
 import { CompanyModule } from './company/company.module';
 import { ClientModule } from './client/client.module';
 import { JobModule } from './job/job.module';
+import { EmployeeModule } from './employee/employee.module';
+import { NotificationModule } from './notification/notification.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ envFilePath: `.env` }),
+    ConfigModule.forRoot({ envFilePath: [`../.env`, `.env`], isGlobal: true }),
     MongooseModule.forRoot(`${process.env.SERVER_LOGIN}`),
     UsersModule,
     AuthModule,
     CompanyModule,
     ClientModule,
     JobModule,
+    EmployeeModule,
+    NotificationModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
