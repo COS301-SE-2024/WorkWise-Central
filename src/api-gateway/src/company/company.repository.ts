@@ -159,7 +159,7 @@ export class CompanyRepository {
     );
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: Types.ObjectId): Promise<boolean> {
     const result = await this.companyModel.findOneAndUpdate(
       {
         $and: [
