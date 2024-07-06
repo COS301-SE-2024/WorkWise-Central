@@ -80,6 +80,12 @@ export class UsersService {
     return this.userRepository.findAll();
   }
 
+  async getAllUsersInCompany(
+    companyId: Types.ObjectId,
+  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+    return this.userRepository.findAllInCompany(companyId);
+  }
+
   async usernameExists(identifier: string): Promise<boolean> {
     return this.userRepository.exists(identifier);
   }

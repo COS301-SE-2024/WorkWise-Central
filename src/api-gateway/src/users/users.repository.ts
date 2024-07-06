@@ -32,6 +32,22 @@ export class UsersRepository {
     return result;
   }
 
+  async findAllInCompany(
+    companyId: Types.ObjectId,
+  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+    const filter = {
+      $and: [
+        { 'joinedCompanies.companyId': companyId },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    };
+    const result = await this.userModel.find(filter).lean().exec();
+    console.log(`Retrieving All users` /*, result*/);
+    return result;
+  }
+
   async exists(identifier: string): Promise<boolean> {
     const result: FlattenMaps<User> & { _id: Types.ObjectId } =
       await this.userModel
