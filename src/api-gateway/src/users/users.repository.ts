@@ -23,7 +23,7 @@ export class UsersRepository {
 
   async findAll(): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
     const result = await this.userModel
-      .find()
+      .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
       /*      .populate(userEmployeeFields)
       .populate(userJoinedCompaniesField)*/
       .lean()

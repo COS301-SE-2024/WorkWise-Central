@@ -11,7 +11,9 @@ export class ClientRepository {
   ) {}
 
   async findAll() {
-    return this.clientModel.find().lean().exec();
+    return this.clientModel
+      .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
+      .lean();
   }
 
   async findClientById(identifier: string): Promise<FlattenMaps<Client>> {

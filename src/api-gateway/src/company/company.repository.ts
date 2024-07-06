@@ -65,7 +65,9 @@ export class CompanyRepository {
   }
 
   async findAll() {
-    return this.companyModel.find().lean().exec();
+    return this.companyModel
+      .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
+      .lean();
   }
 
   async registrationNumberExists(registrationNumber: string): Promise<boolean> {
