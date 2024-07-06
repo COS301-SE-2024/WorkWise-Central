@@ -76,8 +76,8 @@ export class CompanyController {
   @Post('/create')
   async create(
     @Body() createCompanyDto: CreateCompanyDto,
-  ): Promise<{ data: CreateCompanyResponseDto }> {
-    return { data: await this.companyService.create(createCompanyDto) };
+  ): Promise<CreateCompanyResponseDto> {
+    return await this.companyService.create(createCompanyDto);
   }
 
   @ApiBody({ type: AddUserToCompanyDto })
@@ -94,7 +94,7 @@ export class CompanyController {
     }
   }
 
-  @UseGuards(AuthGuard) //Need to add authorization
+  //@UseGuards(AuthGuard) //Need to add authorization
   @ApiOperation({
     summary: `Get all ${className} instances`,
   })
@@ -163,8 +163,9 @@ export class CompanyController {
   @Get('search?')
   async findByEmailOrName(
     @Query('str') str: string,
-  ): Promise<{ data: (FlattenMaps<Company> & { _id: Types.ObjectId })[] }> {
+  ): Promise<{ data: FlattenMaps<Company> & { _id: Types.ObjectId } }> {
     try {
+      str = decodeURIComponent(str);
       return {
         data: await this.companyService.getByEmailOrName(str),
       };

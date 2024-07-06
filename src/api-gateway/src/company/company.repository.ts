@@ -40,10 +40,10 @@ export class CompanyRepository {
       .lean();
   }
 
-  async findByEmailOrName(identifier: string) {
-    const regex = `*${identifier}*`;
-    const searchTerm = new RegExp(regex, 'i');
-
+  async findByEmailOrName(
+    identifier: string,
+  ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+    const regex = `${identifier}`;
     return this.companyModel
       .find({
         $and: [
@@ -52,8 +52,8 @@ export class CompanyRepository {
           },
           {
             $or: [
-              { name: { $regex: searchTerm } },
-              { 'contactDetails.email': { $regex: searchTerm } },
+              { name: { $regex: regex, $options: 'i' } },
+              { 'contactDetails.email': { $regex: regex, $options: 'i' } },
             ],
           },
           {
@@ -137,17 +137,6 @@ export class CompanyRepository {
     }
 
     return false;
-  }
-
-  async nameTaken(name: string) {
-    return this.companyModel.findOne({
-      $and: [
-        { name: name },
-        {
-          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-        },
-      ],
-    });
   }
 
   async update(
