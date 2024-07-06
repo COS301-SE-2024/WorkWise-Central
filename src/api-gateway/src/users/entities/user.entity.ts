@@ -162,13 +162,6 @@ export class User {
   skills: string[] = [];
 
   @ApiProperty()
-  @Prop({
-    type: [{ type: Types.ObjectId, required: true, ref: 'Employee' }],
-    default: [],
-  })
-  public employeeIds: Types.ObjectId[] = [];
-
-  @ApiProperty()
   @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
   public currentEmployee?: Types.ObjectId;
 
@@ -218,13 +211,6 @@ export class UserApiObject {
   @ApiProperty()
   @Prop({ type: [String], required: false, default: [] })
   skills: string[] = [];
-
-  @ApiProperty()
-  @Prop({
-    type: [{ type: Types.ObjectId, required: true, ref: 'Employee' }],
-    default: [],
-  })
-  public employeeIds: Types.ObjectId[] = [];
 
   @ApiProperty()
   @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
@@ -277,7 +263,7 @@ export class UserAllResponseDto {
   data: UserApiObject[];
 }
 
-export const userEmployeeFields: string[] = ['employeeIds', 'currentEmployee'];
+export const userEmployeeFields: string[] = ['currentEmployee'];
 
 export const userJoinedCompaniesField = {
   path: 'joinedCompanies',
