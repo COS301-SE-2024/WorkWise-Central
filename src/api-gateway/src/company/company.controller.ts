@@ -81,13 +81,16 @@ export class CompanyController {
     return await this.companyService.create(createCompanyDto);
   }
 
+  @ApiOperation({
+    summary: `Add an employee to a company`,
+    description: 'Further details',
+  })
   @ApiBody({ type: AddUserToCompanyDto })
   @ApiOkResponse({ type: BooleanResponseDto })
   @Post('/add')
   async addEmployee(@Body() addUserDto: AddUserToCompanyDto) {
     this.validateObjectId(addUserDto.adminId);
     this.validateObjectId(addUserDto.currentCompany);
-
     try {
       return { data: await this.companyService.addEmployee(addUserDto) };
     } catch (Error) {
@@ -125,7 +128,7 @@ export class CompanyController {
     name: 'cid',
     description: `The _id attribute of the ${className}`,
   })
-  @Get('/company/employees/:cid')
+  @Get('/employees/:cid')
   async getAllInCompany(@Param('cid') cid: string) {
     this.validateObjectId(cid);
     const objId = new Types.ObjectId(cid);
@@ -144,10 +147,6 @@ export class CompanyController {
     type: CompanyResponseDto,
     description: `The mongodb object of the ${className}, with an _id attribute`,
   })
-  @ApiParam({
-    name: 'cid',
-    description: `The _id attribute of the ${className}`,
-  })
   @Get('id/:id')
   findOne(@Param('id') id: string) {
     try {
@@ -158,6 +157,10 @@ export class CompanyController {
     }
   }
 
+  @ApiOperation({
+    summary: `Search for a company using Email or Company Name`,
+    description: '\nurlencode the search parameter!',
+  })
   @ApiResponse({
     type: findCompanyResponseDto,
   })
@@ -178,6 +181,10 @@ export class CompanyController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Update a company`,
+    description: '',
+  })
   @ApiOkResponse({
     type: CompanyResponseDto,
     description: `The updated ${className} object`,
