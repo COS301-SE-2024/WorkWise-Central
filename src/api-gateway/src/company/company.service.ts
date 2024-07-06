@@ -1,8 +1,8 @@
 import {
+  ConflictException,
   forwardRef,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import {
   CreateCompanyDto,
@@ -40,10 +40,9 @@ export class CompanyService {
   async create(createCompanyDto: CreateCompanyDto) {
     const inputValidated = await this.companyCreateIsValid(createCompanyDto);
     if (!inputValidated.isValid) {
-      throw new NotFoundException(inputValidated.message);
+      throw new ConflictException(inputValidated.message);
     }
 
-    // createCompanyDto.createdAt = new Date();
     const newCompany = new Company(createCompanyDto);
     const newCompanyModel = new this.companyModel(newCompany);
 
@@ -106,7 +105,7 @@ export class CompanyService {
       await this.companyRepository.findById(identifier);
 
     if (result == null) {
-      throw new NotFoundException('Company not found');
+      throw new ConflictException('Company not found');
     }
 
     return result;
@@ -116,7 +115,7 @@ export class CompanyService {
     const result = await this.companyRepository.findByEmailOrName(identifier);
 
     if (result == null) {
-      throw new NotFoundException('Client not found');
+      throw new ConflictException('Client not found');
     }
     console.log(result);
     return result;
@@ -133,7 +132,7 @@ export class CompanyService {
       await this.companyRepository.findByRegistrationNumber(registrationNumber);
 
     if (result == null) {
-      throw new NotFoundException('Company not found');
+      throw new ConflictException('Company not found');
     }
 
     return result;
@@ -145,7 +144,7 @@ export class CompanyService {
     //Add validation
     const inputValidated = await this.addUserValidation(addUserDto); //TODO: Add more validation later
     if (!inputValidated.isValid) {
-      throw new NotFoundException(inputValidated.message);
+      throw new ConflictException(inputValidated.message);
     }
 
     const companyName = (await this.getCompanyById(addUserDto.currentCompany))
@@ -177,7 +176,7 @@ export class CompanyService {
   async update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
     const inputValidated = await this.companyUpdateIsValid(updateCompanyDto);
     if (!inputValidated.isValid) {
-      throw new NotFoundException(inputValidated.message);
+      throw new ConflictException(inputValidated.message);
     }
 
     const updatedCompany = await this.companyRepository.update(
@@ -195,14 +194,16 @@ export class CompanyService {
 
   async addUserValidation(addUserToCompanyDto: AddUserToCompanyDto) {
     if (addUserToCompanyDto.currentCompany) {
-      const idExists = this.companyIdExists(addUserToCompanyDto.currentCompany);
+      const idExists = await this.companyIdExists(
+        addUserToCompanyDto.currentCompany,
+      );
       if (!idExists) {
         return new ValidationResult(false, 'Company not found');
       }
     }
 
     if (addUserToCompanyDto.adminId) {
-      const isAllowedToAssign = this.employeeIsInCompany(
+      const isAllowedToAssign = await this.employeeIsInCompany(
         addUserToCompanyDto.currentCompany,
         addUserToCompanyDto.currentCompany,
       );
@@ -212,7 +213,7 @@ export class CompanyService {
     }
 
     if (addUserToCompanyDto.newUserUsername) {
-      const usernameExists = this.usersService.usernameExists(
+      const usernameExists = await this.usersService.usernameExists(
         addUserToCompanyDto.newUserUsername,
       );
       if (!usernameExists) {
@@ -273,7 +274,7 @@ export class CompanyService {
   async companyCreateIsValid(company: CreateCompanyDto) {
     if (!company) return new ValidationResult(false, `Company is null`);
 
-    if (!this.usersService.userIdExists(company.userId)) {
+    if (!(await this.usersService.userIdExists(company.userId))) {
       return new ValidationResult(false, `User not found`);
     }
 
