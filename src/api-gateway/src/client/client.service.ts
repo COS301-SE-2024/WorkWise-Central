@@ -12,7 +12,10 @@ import { FlattenMaps, Model, Types } from 'mongoose';
 import { Client } from './entities/client.entity';
 import { CreateClientDto } from './dto/create-client.dto';
 import { ClientRepository } from './client.repository';
-import { ValidationResult } from '../auth/entities/validationResult.entity';
+import {
+  ValidationResult,
+  ValidationResultWithException,
+} from '../auth/entities/validationResult.entity';
 import { CompanyService } from '../company/company.service';
 
 @Injectable()
@@ -74,7 +77,7 @@ export class ClientService {
   async updateClient(id: Types.ObjectId, updateClientDto: UpdateClientDto) {
     const inputValidated = await this.clientUpdateIsValid(updateClientDto);
     if (!inputValidated.isValid) {
-      throw new ConflictException(inputValidated.message);
+      throw inputValidated.exception;
     }
     const result = await this.clientRepository.update(id, updateClientDto);
     console.log('updatedClient', result);
@@ -91,9 +94,12 @@ export class ClientService {
 
   async clientUpdateIsValid(
     client: UpdateClientDto,
-  ): Promise<ValidationResult> {
+  ): Promise<ValidationResultWithException> {
     if (!client) {
-      return new ValidationResult(false, 'Null Reference');
+      return new ValidationResultWithException(
+        false,
+        new NotFoundException('Null Reference'),
+      );
     }
 
     if (client.details) {
@@ -103,7 +109,11 @@ export class ClientService {
             client.details.companyId,
             client.details.contactInfo.email,
           );
-          if (!exists) return new ValidationResult(false, 'Client not found');
+          if (!exists)
+            return new ValidationResultWithException(
+              false,
+              new NotFoundException('Client not found'),
+            );
         }
 
         if (client.details.companyId) {
@@ -111,14 +121,16 @@ export class ClientService {
             client.details.companyId,
           );
           if (!exists)
-            return new ValidationResult(
+            return new ValidationResultWithException(
               false,
-              `Invalid Company ID: ${client.details.companyId}`,
+              new ConflictException(
+                `Invalid Company ID: ${client.details.companyId}`,
+              ),
             );
         }
       }
     }
-    return new ValidationResult(true);
+    return new ValidationResultWithException(true);
   }
 
   async clientIsValid(
