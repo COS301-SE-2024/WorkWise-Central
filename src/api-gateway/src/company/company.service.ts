@@ -19,6 +19,7 @@ import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { EmployeeService } from '../employee/employee.service';
 import { RoleService } from '../role/role.service';
 import { UsersService } from '../users/users.service';
+import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
 
 @Injectable()
 export class CompanyService {
@@ -94,15 +95,22 @@ export class CompanyService {
     return this.companyRepository.idExists(id);
   }
 
-  findAllCompanies() {
+  getAllCompanies() {
     return this.companyRepository.findAll();
+  }
+
+  async getAllEmployees(companyId: Types.ObjectId) {
+    try {
+      return this.employeeService.findAllInCompany(companyId);
+    } catch (e) {
+      throw e;
+    }
   }
 
   async getCompanyById(
     identifier: string | Types.ObjectId,
   ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
-    const result: FlattenMaps<Company> & { _id: Types.ObjectId } =
-      await this.companyRepository.findById(identifier);
+    const result = await this.companyRepository.findById(identifier);
 
     if (result == null) {
       throw new ConflictException('Company not found');
@@ -111,7 +119,9 @@ export class CompanyService {
     return result;
   }
 
-  async getByEmailOrName(identifier: string) {
+  async getByEmailOrName(
+    identifier: string,
+  ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
     const result = await this.companyRepository.findByEmailOrName(identifier);
 
     if (result == null) {
@@ -187,7 +197,27 @@ export class CompanyService {
     return updatedCompany;
   }
 
-  async deleteCompany(id: string): Promise<boolean> {
+  async deleteCompany(id: Types.ObjectId): Promise<boolean> {
+    const usersInCompany = await this.usersService.getAllUsersInCompany(id);
+
+    for (const user of usersInCompany) {
+      const newJoinedCompanies: JoinedCompany[] = [];
+
+      for (const joinedCompany of user.joinedCompanies) {
+        if (joinedCompany.companyId !== id) {
+          //Create new list, without company
+          newJoinedCompanies.push(joinedCompany);
+        } else {
+          //Delete the employee in Employee Table
+          await this.employeeService.remove(
+            joinedCompany.employeeId.toString(),
+          );
+        }
+      }
+      await this.usersService.updateUser(user._id, {
+        joinedCompanies: newJoinedCompanies,
+      });
+    }
     await this.companyRepository.delete(id);
     return true;
   }
@@ -366,11 +396,43 @@ export class CompanyService {
     return new ValidationResult(true);
   }
 
-  async getAllEmployees(companyId: Types.ObjectId) {
-    try {
-      return this.employeeService.findAllInCompany(companyId);
-    } catch (e) {
-      throw e;
+  async companyDeleteIsValid(deleteEmployeeDto: DeleteEmployeeFromCompanyDto) {
+    let valid = await this.employeeService.employeeExistsForCompany(
+      deleteEmployeeDto.employeeToDeleteId.toString(),
+      deleteEmployeeDto.companyId.toString(),
+    );
+    if (!valid) return new ValidationResult(false, 'Employee ID is invalid');
+
+    valid = await this.employeeService.employeeExistsForCompany(
+      deleteEmployeeDto.adminId.toString(),
+      deleteEmployeeDto.companyId.toString(),
+    );
+    if (!valid) return new ValidationResult(false, 'Admin ID is invalid');
+
+    valid = await this.companyIdExists(deleteEmployeeDto.companyId);
+    if (!valid) return new ValidationResult(false, 'Company ID is invalid');
+
+    return new ValidationResult(true);
+  }
+
+  async deleteEmployee(deleteEmployee: DeleteEmployeeFromCompanyDto) {
+    const valid = await this.companyDeleteIsValid(deleteEmployee);
+    const deletedEmployee = await this.employeeService.findOne(
+      deleteEmployee.employeeToDeleteId.toString(),
+    );
+
+    if (!valid) {
+      throw new ConflictException(valid.message);
     }
+    await this.employeeService.remove(
+      deleteEmployee.employeeToDeleteId.toString(),
+    );
+
+    const user = await this.usersService.getUserById(deletedEmployee.userId);
+    user.joinedCompanies.filter((x) => x.employeeId !== deletedEmployee._id);
+    const update = { joinedCompanies: user.joinedCompanies };
+    await this.usersService.updateUser(user._id, update);
+
+    return true;
   }
 }
