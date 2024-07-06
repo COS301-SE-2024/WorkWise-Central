@@ -10,6 +10,11 @@ export class ClientRepository {
     @InjectModel('Client') private readonly clientModel: Model<Client>,
   ) {}
 
+  async saveClient(client: Client) {
+    const newClient = new this.clientModel(client);
+    return await newClient.save();
+  }
+
   async findAll() {
     return this.clientModel
       .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
@@ -29,18 +34,17 @@ export class ClientRepository {
       .lean();
   }
 
-  async findByEmailOrName(companyId: Types.ObjectId, identifier: string) {
-    const regex = `*${identifier}*`;
-    const searchTerm = new RegExp(regex, 'i');
+  async findClientByEmailOrName(companyId: Types.ObjectId, identifier: string) {
+    const regex = `${identifier}`;
     return this.clientModel
       .find({
         $and: [
           { companyId: companyId },
           {
             $or: [
-              { 'clientInfo.email': { $regex: searchTerm } },
-              { 'details.name': { $regex: searchTerm } },
-              // { 'details.surname': { $regex: searchTerm } },
+              { 'clientInfo.email': { $regex: regex, $options: 'i' } },
+              { 'details.firstName': { $regex: regex, $options: 'i' } },
+              { 'details.lastName': { $regex: regex, $options: 'i' } },
             ],
           },
           {
