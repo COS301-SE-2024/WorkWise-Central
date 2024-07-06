@@ -38,8 +38,8 @@ export class EmployeeController {
   }
 
   @Get('id/:id')
-  findOne(@Param('id') id: string) {
-    return this.employeeService.findOne(id);
+  findBytId(@Param('id') id: string) {
+    return this.employeeService.findById(id);
   }
 
   @Patch(':id')
