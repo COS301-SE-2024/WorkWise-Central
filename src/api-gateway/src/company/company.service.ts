@@ -12,7 +12,7 @@ import { UpdateCompanyDto } from './dto/update-company.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
-import { JoinedCompany, User } from '../users/entities/user.entity';
+import { JoinedCompany } from '../users/entities/user.entity';
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
 import { CompanyRepository } from './company.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
@@ -25,8 +25,6 @@ export class CompanyService {
   constructor(
     @InjectModel(Company.name)
     private readonly companyModel: Model<Company>,
-    @InjectModel(User.name)
-    private readonly userModel: Model<User>,
 
     private readonly companyRepository: CompanyRepository,
     @Inject(forwardRef(() => EmployeeService))
@@ -145,43 +143,35 @@ export class CompanyService {
   //For now, I assume the person is authorised
   async addEmployee(addUserDto: AddUserToCompanyDto) {
     //Add validation
-    if (await this.companyIdExists(addUserDto.currentCompany)) {
-      throw new NotFoundException(`Company not found`);
+    const inputValidated = await this.addUserValidation(addUserDto); //TODO: Add more validation later
+    if (!inputValidated.isValid) {
+      throw new NotFoundException(inputValidated.message);
     }
 
-    const newId = await this.userModel
-      .findOne({
-        'systemDetails.username': addUserDto.newEmployeeUsername,
-      })
-      .select('_id joinedCompanies');
+    const companyName = (await this.getCompanyById(addUserDto.currentCompany))
+      .name;
 
-    console.log(newId);
-    if (newId == null) {
-      throw new NotFoundException('User not found');
-    }
-
-    const resultOfUpdate = await this.companyModel
-      .findByIdAndUpdate(
-        { _id: addUserDto.currentCompany },
-        {
-          $push: { employees: newId._id },
-        },
-      )
-      .lean();
-
-    const currentCompanyId = new Types.ObjectId(addUserDto.currentCompany);
-
-    const updateUser = await this.userModel.findByIdAndUpdate(
-      { _id: newId._id },
-      {
-        $push: { joinedCompanies: currentCompanyId, employeeIds: newId._id },
-      },
+    const user = await this.usersService.getUserByUsername(
+      addUserDto.newUserUsername,
     );
+    //CreateEmployee and link them to the company
+    const newEmployeeId = (
+      await this.employeeService.create({
+        companyId: addUserDto.currentCompany,
+        userId: user._id,
+      })
+    )._id;
 
-    console.log(resultOfUpdate);
-    console.log(updateUser);
+    const joinedCompany: JoinedCompany = {
+      companyId: addUserDto.currentCompany,
+      employeeId: newEmployeeId,
+      companyName: companyName,
+    };
+    user.joinedCompanies.push(joinedCompany);
 
-    return resultOfUpdate != null;
+    const updatedUser = await this.usersService.updateUser(user._id, user);
+    console.log(updatedUser);
+    return joinedCompany;
   }
 
   async update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
@@ -201,6 +191,48 @@ export class CompanyService {
   async deleteCompany(id: string): Promise<boolean> {
     await this.companyRepository.delete(id);
     return true;
+  }
+
+  async addUserValidation(addUserToCompanyDto: AddUserToCompanyDto) {
+    if (addUserToCompanyDto.currentCompany) {
+      const idExists = this.companyIdExists(addUserToCompanyDto.currentCompany);
+      if (!idExists) {
+        return new ValidationResult(false, 'Company not found');
+      }
+    }
+
+    if (addUserToCompanyDto.adminId) {
+      const isAllowedToAssign = this.employeeIsInCompany(
+        addUserToCompanyDto.currentCompany,
+        addUserToCompanyDto.currentCompany,
+      );
+      if (!isAllowedToAssign) {
+        return new ValidationResult(false, 'User not allowed to assign');
+      }
+    }
+
+    if (addUserToCompanyDto.newUserUsername) {
+      const usernameExists = this.usersService.usernameExists(
+        addUserToCompanyDto.newUserUsername,
+      );
+      if (!usernameExists) {
+        return new ValidationResult(false, 'Username not found');
+      }
+
+      const userJoinedCompanies = (
+        await this.usersService.getUserByUsername(
+          addUserToCompanyDto.newUserUsername,
+        )
+      ).joinedCompanies;
+
+      for (const userJoinedCompany of userJoinedCompanies) {
+        if (userJoinedCompany.companyId == addUserToCompanyDto.currentCompany) {
+          return new ValidationResult(false, 'User already in Company');
+        }
+      }
+    }
+
+    return new ValidationResult(true);
   }
 
   async companyIsValid(company: Company) {
