@@ -1,7 +1,7 @@
 <template>
   <v-app :theme="isdarkmode ? 'dark' : 'light'">
     <!-- Toolbar -->
-    <v-app-bar  :theme="isdarkmode ? 'dark' : 'light'" dark>
+    <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" dark>
       <v-app-bar-title>
         <span class="colorAccent toolbar-text">Work</span>
         <span class="colorAccent2 toolbar-text">Wise</span>
@@ -340,7 +340,7 @@
                   height="auto"
                   border="md"
                   rounded="md"
-                 :theme="isdarkmode ? 'dark' : 'light'"
+                  :theme="isdarkmode ? 'dark' : 'light'"
                 >
                   <v-col>
                     <v-col>
@@ -390,7 +390,8 @@
                 height="auto"
                 border="md"
                 rounded="md"
-               :theme="isdarkmode ? 'dark' : 'light'">
+                :theme="isdarkmode ? 'dark' : 'light'"
+              >
                 <v-col>
                   <v-col>
                     <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
@@ -609,11 +610,7 @@
               <!-- <v-sheet
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
               > -->
-              <v-card
-                class="mx-auto"
-                width="400"
-                :theme="isdarkmode ? 'dark' : 'light'"
-              >
+              <v-card class="mx-auto" width="400" :theme="isdarkmode ? 'dark' : 'light'">
                 <template v-slot:title>
                   <span class="font-weight-light">Please select one of the two options</span>
                 </template>
@@ -628,10 +625,7 @@
 
             <!-- Register Company Modal -->
 
-            <p
-              class="text-center"
-              :theme="isdarkmode ? 'dark' : 'light'"
-            >
+            <p class="text-center" :theme="isdarkmode ? 'dark' : 'light'">
               By clicking Continue to join or sign in, you agree to WorkWise Central's User
               Agreement, Privacy Policy, and Cookie Policy
             </p>
