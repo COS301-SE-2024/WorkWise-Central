@@ -4,7 +4,7 @@
       <v-col xs="12" sm="9" md="9" lg="9" xl="9">
         <v-card class="text-center">
           <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-            <h2 class="flex-grow-1">{{ jobTitle }}</h2>
+            <h2 class="flex-grow-1">{{ passedInJob.heading }}</h2>
           </v-card-title>
 
           <v-card-text>
@@ -13,28 +13,28 @@
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-title>Job Name</v-list-item-title>
-                  <v-list-item-subtitle>{{ jobDetails.jobName }}</v-list-item-subtitle>
+                  <v-list-item-subtitle>{{ passedInJob.heading || 'Job name is empty' }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-title>Job Description</v-list-item-title>
-                  <v-list-item-subtitle>{{ jobDetails.jobDescription }}</v-list-item-subtitle>
+                  <v-list-item-subtitle>{{ passedInJob.jobDescription || 'Job description is empty' }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-title>Start Date</v-list-item-title>
-                  <v-list-item-subtitle>{{ jobDetails.jobStartDate }}</v-list-item-subtitle>
+                  <v-list-item-subtitle>{{ passedInJob.startDate || 'Start date is empty' }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-title>End Date</v-list-item-title>
-                  <v-list-item-subtitle>{{ jobDetails.jobEndDate }}</v-list-item-subtitle>
+                  <v-list-item-subtitle>{{ passedInJob.endDate || 'End date is empty' }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
@@ -42,27 +42,26 @@
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-title>Address</v-list-item-title>
-                  <v-list-item-subtitle
-                    >{{ jobDetails.jobAddress.street }}, {{ jobDetails.jobAddress.suburb }},
-                    {{ jobDetails.jobAddress.city }},
-                    {{ jobDetails.jobAddress.postalCode }}</v-list-item-subtitle
-                  >
+                  <v-list-item-subtitle>
+                    {{ passedInJob.street || 'Street is empty' }},
+                    {{ passedInJob.suburb || 'Suburb is empty' }},
+                    {{ passedInJob.city || 'City is empty' }},
+                    {{ passedInJob.postalCode || 'Postal code is empty' }}
+                  </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-title>Complex</v-list-item-title>
-                  <v-list-item-subtitle>{{ jobDetails.jobAddress.complex }}</v-list-item-subtitle>
+                  <v-list-item-subtitle>{{ passedInJob.complex || 'Complex is empty' }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-title>House Number</v-list-item-title>
-                  <v-list-item-subtitle>{{
-                    jobDetails.jobAddress.houseNumber
-                  }}</v-list-item-subtitle>
+                  <v-list-item-subtitle>{{ passedInJob.houseNumber || 'House number is empty' }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
@@ -71,74 +70,77 @@
                 <v-list-item-content>
                   <v-list-item-title>Assigned Employees</v-list-item-title>
                   <v-list-item-subtitle>
-                    <span v-for="employeeId in assignedEmployees.employeesIds" :key="employeeId">{{
-                      employeeId
-                    }}</span>
+          <span v-for="employeeId in assignedEmployees" :key="employeeId">
+            {{ employeeId || 'Employee ID is empty' }}
+          </span>
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
               <!-- Recorded Details -->
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title>Images Taken</v-list-item-title>
-                  <v-list-item-subtitle>
-                    <img
-                      v-for="image in recordedDetails.imagesTaken"
-                      :key="image"
-                      :src="image"
-                      alt="Job Image"
-                      class="ma-2"
-                      width="50"
-                    />
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
+<!--              <v-list-item>-->
+<!--                <v-list-item-content>-->
+<!--                  <v-list-item-title>Images Taken</v-list-item-title>-->
+<!--                  <v-list-item-subtitle>-->
+<!--                    <img-->
+<!--                        v-for="image in imagesTaken"-->
+<!--                        :key="image"-->
+<!--                        :src="image"-->
+<!--                        alt="Job Image"-->
+<!--                        class="ma-2"-->
+<!--                        width="50"-->
+<!--                        v-if="image"-->
+<!--                    />-->
+<!--                    <span v-if="imagesTaken.length === 0">No images taken</span>-->
+<!--                  </v-list-item-subtitle>-->
+<!--                </v-list-item-content>-->
+<!--              </v-list-item>-->
 
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title>Inventory Used</v-list-item-title>
-                  <v-list-item-subtitle>
-                    <div v-for="item in recordedDetails.inventoryUsed" :key="item.InventoryItem">
-                      {{ item.InventoryItem }} - Quantity: {{ item.QuantityUsed }}
-                    </div>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
+<!--              <v-list-item>-->
+<!--                <v-list-item-content>-->
+<!--                  <v-list-item-title>Inventory Used</v-list-item-title>-->
+<!--                  <v-list-item-subtitle>-->
+<!--                    <div v-for="item in inventoryUsed" :key="item.InventoryItem">-->
+<!--                      {{ item.InventoryItem || 'Inventory item is empty' }} - Quantity: {{ item.QuantityUsed || 'Quantity is empty' }}-->
+<!--                    </div>-->
+<!--                    <span v-if="inventoryUsed.length === 0">No inventory used</span>-->
+<!--                  </v-list-item-subtitle>-->
+<!--                </v-list-item-content>-->
+<!--              </v-list-item>-->
 
               <!-- Status -->
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-title>Status</v-list-item-title>
-                  <v-list-item-subtitle>{{ status }}</v-list-item-subtitle>
+                  <v-list-item-subtitle>{{ passedInJob.status || 'Status is empty' }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
               <!-- Task List -->
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title>Task List</v-list-item-title>
-                  <v-list-item-subtitle>
-                    <div v-for="task in taskList" :key="task.task.taskName">
-                      {{ task.task.taskName }} - Status: {{ task.task.status }} - Assigned
-                      Employees: {{ task.task.assignedEmployees.join(', ') }}
-                    </div>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
+<!--              <v-list-item>-->
+<!--                <v-list-item-content>-->
+<!--                  <v-list-item-title>Task List</v-list-item-title>-->
+<!--                  <v-list-item-subtitle>-->
+<!--                    <div v-for="task in taskList" :key="task.taskName">-->
+<!--                      {{ task.taskName || 'Task name is empty' }} - Status: {{ task.status || 'Task status is empty' }} - Assigned Employees: {{ task.assignedEmployees.join(', ') || 'No assigned employees' }}-->
+<!--                    </div>-->
+<!--                    <span v-if="taskList.length === 0">No tasks available</span>-->
+<!--                  </v-list-item-subtitle>-->
+<!--                </v-list-item-content>-->
+<!--              </v-list-item>-->
 
-              <!-- Comments -->
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title>Comments</v-list-item-title>
-                  <v-list-item-subtitle>
-                    <div v-for="comment in comments" :key="comment.commentItem.commentDate">
-                      {{ comment.commentItem.comment }} - By:
-                      {{ comment.commentItem.employeeId }} on {{ comment.commentItem.commentDate }}
-                    </div>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
+<!--              &lt;!&ndash; Comments &ndash;&gt;-->
+<!--              <v-list-item>-->
+<!--                <v-list-item-content>-->
+<!--                  <v-list-item-title>Comments</v-list-item-title>-->
+<!--                  <v-list-item-subtitle>-->
+<!--                    <div v-for="comment in comments" :key="comment.commentDate">-->
+<!--                      {{ comment.comment || 'Comment is empty' }} - By: {{ comment.employeeId || 'Employee ID is empty' }} on {{ comment.commentDate || 'Comment date is empty' }}-->
+<!--                    </div>-->
+<!--                    <span v-if="comments.length === 0">No comments available</span>-->
+<!--                  </v-list-item-subtitle>-->
+<!--                </v-list-item-content>-->
+<!--              </v-list-item>-->
             </v-list>
           </v-card-text>
         </v-card>
@@ -533,55 +535,55 @@ import { defineProps } from 'vue'
 
 // This passes in the selected job as a prop that the manager job component accepts
 
-// const props = defineProps ({
-//   job: Object
-// })
+const props = defineProps ({
+  passedInJob: Object
+})
 
 // const jobTitle = ref('Job Title')
-const jobDetails = ref({
-  jobName: 'UP Merensky library revamp',
-  jobDescription: 'Fixing plumbing issues.',
-  jobStartDate: '2024-06-01',
-  jobEndDate: '2024-06-05',
-  jobAddress: {
-    street: '123 Job St',
-    suburb: 'Westside',
-    city: 'Metropolis',
-    postalCode: '67890',
-    complex: 'Workplace Plaza',
-    houseNumber: '5C'
-  }
-})
-const assignedEmployees = ref({
-  employeesIds: ['60d21b4667d0d8992e610c85', '60d21b4667d0d8992e610c86'],
-  teamId: '60d21b4667d0d8992e610c85'
-})
-const recordedDetails = ref({
-  imagesTaken: [
-    'data:image/png;base64,iVBORw0KGgoAAAANS...',
-    'data:image/png;base64,iVBORw0KGgoAAAANS...'
-  ],
-  inventoryUsed: [{ InventoryItem: '60d21b4667d0d8992e610c8a', QuantityUsed: 2 }]
-})
-const status = ref('complete')
-const taskList = ref([
-  {
-    task: {
-      taskName: 'Paint north facing wall',
-      status: 'complete',
-      assignedEmployees: ['60d21b4667d0d8992e610c8a']
-    }
-  }
-])
-const comments = ref([
-  {
-    commentItem: {
-      comment: 'Roofing needs adjusting',
-      employeeId: '60d21b4667d0d8992e610c8a',
-      commentDate: '2024-06-12'
-    }
-  }
-])
+// const passedInJob = ref({
+//   jobName: 'UP Merensky library revamp',
+//   jobDescription: 'Fixing plumbing issues.',
+//   jobStartDate: '2024-06-01',
+//   jobEndDate: '2024-06-05',
+//   jobAddress: {
+//     street: '123 Job St',
+//     suburb: 'Westside',
+//     city: 'Metropolis',
+//     postalCode: '67890',
+//     complex: 'Workplace Plaza',
+//     houseNumber: '5C'
+//   }
+// })
+// const assignedEmployees = ref({
+//   employeesIds: ['60d21b4667d0d8992e610c85', '60d21b4667d0d8992e610c86'],
+//   teamId: '60d21b4667d0d8992e610c85'
+// })
+// const recordedDetails = ref({
+//   imagesTaken: [
+//     'data:image/png;base64,iVBORw0KGgoAAAANS...',
+//     'data:image/png;base64,iVBORw0KGgoAAAANS...'
+//   ],
+//   inventoryUsed: [{ InventoryItem: '60d21b4667d0d8992e610c8a', QuantityUsed: 2 }]
+// })
+// const status = ref('complete')
+// const taskList = ref([
+//   {
+//     task: {
+//       taskName: 'Paint north facing wall',
+//       status: 'complete',
+//       assignedEmployees: ['60d21b4667d0d8992e610c8a']
+//     }
+//   }
+// ])
+// const comments = ref([
+//   {
+//     commentItem: {
+//       comment: 'Roofing needs adjusting',
+//       employeeId: '60d21b4667d0d8992e610c8a',
+//       commentDate: '2024-06-12'
+//     }
+//   }
+// ])
 
 // Editing the job details dialog
 
