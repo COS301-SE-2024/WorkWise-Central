@@ -887,7 +887,7 @@ export default defineComponent({
       (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers'
     ]
   }),
- 
+
   methods: {
     handleKeypress(e) {
       if (e.key === 'Enter') {
@@ -982,8 +982,8 @@ export default defineComponent({
           console.log(response)
           this.alertSignUpFailure = false
           this.alertSignUp = true
-          sessionStorage.setItem('access_token', response.data.access_token)
-          sessionStorage.setItem('id', response.data.id)
+          sessionStorage.setItem('access_token', response.data.data.access_token)
+          sessionStorage.setItem('id', response.data.data.id)
           this.resetForm()
         })
         .catch((error) => {
