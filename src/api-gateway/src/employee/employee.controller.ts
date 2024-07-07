@@ -115,6 +115,28 @@ export class EmployeeController {
   }
 
   @ApiOperation({
+    summary: `Find the list of all the employees in the company except the given employee and their subordinates and superiors.`,
+    description: `Returns the ${className} instance with the given id.`,
+  })
+  @ApiOkResponse({
+    type: EmployeeListResponseDto,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className}.`,
+  })
+  @ApiParam({
+    name: 'companyId',
+    description: `The _id attribute of the Company.`,
+  })
+  @Get('/:id/company/:companyId')
+  async getOtherEmployees(id: Types.ObjectId, companyId: Types.ObjectId) {
+    return {
+      data: await this.employeeService.getListOfOtherEmployees(id, companyId),
+    };
+  }
+
+  @ApiOperation({
     summary: `Update an ${className} instances`,
     description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
   })

@@ -264,4 +264,40 @@ export class EmployeeService {
     }
     return result;
   }
+
+  async getSuperior(id: Types.ObjectId) {
+    const employee = await this.findById(id);
+    if (employee.superiorId) {
+      return this.findById(employee.superiorId);
+    }
+    return null;
+  }
+
+  async getSubordinates(id: Types.ObjectId) {
+    const employee = await this.findById(id);
+    if (employee.subordinates) {
+      return this.findByIds(employee.subordinates);
+    }
+    return [];
+  }
+
+  async getListOfOtherEmployees(id: Types.ObjectId, companyId: Types.ObjectId) {
+    //Return a list of all the employees in the company that is not a superior or subordinate of the employee with the given id
+    const currentSuperior = await this.getSuperior(id);
+    const currentSubordinates = await this.getSubordinates(id);
+    const allEmployees = await this.findAllInCompany(companyId);
+
+    // Creating a list of all employees that does not contain the current superior or current subordinates
+    const potentialSuperiors = allEmployees.filter(
+      (employee) =>
+        employee._id.toString() !== id.toString() &&
+        employee._id.toString() !== currentSuperior._id.toString() &&
+        !currentSubordinates.some(
+          (subordinate) =>
+            subordinate._id.toString() !== employee._id.toString(),
+        ),
+    );
+
+    return potentialSuperiors;
+  }
 }

@@ -94,7 +94,7 @@ export class RoleService {
     return await model.save();
   }
 
-  async createDefualtRoles(companyId: Types.ObjectId) {
+  async createDefaultRoles(companyId: Types.ObjectId) {
     // Owner role
     const ownerRoleDto = new CreateRoleDto();
     ownerRoleDto.companyId = companyId;
