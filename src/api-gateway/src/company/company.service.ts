@@ -77,8 +77,10 @@ export class CompanyService {
       currentEmployee: employee._id,
     });
 
-    newCompany.employees.push(employee._id);
-    await newCompanyModel.save();
+    createdCompany.employees.push(employee._id);
+    await this.update(createdCompany.id, {
+      employees: createdCompany.employees,
+    });
 
     return new CreateCompanyResponseDto(createdCompany);
   }
@@ -357,11 +359,13 @@ export class CompanyService {
   async companyUpdateIsValid(company: UpdateCompanyDto) {
     if (!company) return new ValidationResult(false, `Company is null`);
 
-    if (!(await this.companyRegNumberExists(company.registrationNumber))) {
-      return new ValidationResult(
-        false,
-        `Company with ${company.registrationNumber} does not exist`,
-      );
+    if (company.registrationNumber) {
+      if (!(await this.companyRegNumberExists(company.registrationNumber))) {
+        return new ValidationResult(
+          false,
+          `Company with ${company.registrationNumber} does not exist`,
+        );
+      }
     }
 
     if (company.inventoryItems) {
