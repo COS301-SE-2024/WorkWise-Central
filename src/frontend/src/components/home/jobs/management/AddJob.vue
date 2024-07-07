@@ -13,7 +13,7 @@
     </template>
     <v-sheet
       elevation="14"
-      rounded="xl"
+      rounded="md"
       max-height="800"
       max-width="900"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
@@ -39,7 +39,7 @@
                 color="grey-lighten-4"
                 label="Enter the title of the job"
                 v-model="req_obj.details.heading"
-                rounded="xl"
+                rounded="md"
                 variant="solo"
                 :rules="job_title_rules"
                 required
@@ -56,9 +56,9 @@
                 color="grey-lighten-4"
                 label="Choose the client for whom the job must be complete"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                rounded="xl"
+                rounded="md"
                 variant="solo"
-                v-model="req_obj.client_name"
+                v-model="req_obj.clientUsername"
                 :items="clientsArray"
                 required
                 :rules="clients_rules"
@@ -80,7 +80,7 @@
               <v-textarea
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 placeholder="Enter the details of the job"
-                rounded="xl"
+                rounded="md"
                 variant="solo"
                 v-model="req_obj.details.description"
                 :rules="description_rules"
@@ -97,7 +97,7 @@
             <!--              <v-textarea-->
             <!--                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
             <!--                placeholder="Enter any additional comments here"-->
-            <!--                rounded="xl"-->
+            <!--                rounded="md"-->
             <!--                variant="solo"-->
             <!--                v-model="comment"-->
             <!--                @input="commentUpdate"-->
@@ -155,7 +155,7 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Street"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.details.address.street"
                   variant="solo"
                   required
@@ -171,7 +171,7 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Suburb"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.details.address.suburb"
                   variant="solo"
                   required
@@ -187,7 +187,7 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="City"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.details.address.city"
                   variant="solo"
                   required
@@ -203,7 +203,7 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Zip Code"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.details.address.postalCode"
                   variant="solo"
                   required
@@ -220,7 +220,7 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Complex"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.details.address.complex"
                   variant="solo"
                   required
@@ -236,7 +236,7 @@
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="House number"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.details.address.houseNumber"
                   variant="solo"
                   required
@@ -248,9 +248,9 @@
         <v-col cols="8" offset="2" align="center">
           <v-btn
             color="#5A82AF"
-            rounded="xl"
+            rounded="md"
             type="submit"
-            boarder="xl"
+            boarder="md"
             width="60%"
             height="35"
             variant="elevated"
@@ -297,8 +297,8 @@ export default defineComponent({
       comment: '',
       req_obj: {
         companyId: sessionStorage['currentCompany'],
-        status: 'No Status',
-        client_name: '',
+        status: 'Todo',
+        clientUsername: '',
         assignedBy: sessionStorage['id'],
         details: {
           heading: '',

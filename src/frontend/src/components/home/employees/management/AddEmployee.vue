@@ -2,7 +2,7 @@
   <v-dialog max-height="800" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-        rounded="xl"
+        rounded="md"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         text="ADD EMPLOYEE"
@@ -14,7 +14,7 @@
     <v-sheet
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
       elevation="14"
-      rounded="xl"
+      rounded="md"
       max-height="800"
       max-width="600"
     >
@@ -39,8 +39,8 @@
                 density="compact"
                 color="grey-lighten-4"
                 v-model="req_obj.newEmployeeUsername"
-                label="######################"
-                rounded="xl"
+                placeholder="Employee Username"
+                rounded="md"
                 variant="solo"
               ></v-text-field
             ></v-col>
@@ -61,7 +61,7 @@
             <!--                color="grey-lighten-4"-->
             <!--                v-model="req_obj.compid_for_emp"-->
             <!--                label="################"-->
-            <!--                rounded="xl"-->
+            <!--                rounded="md"-->
             <!--                variant="solo"-->
             <!--              ></v-text-field-->
             <!--            ></v-col>-->
@@ -82,7 +82,7 @@
             <!--                v-model="req_obj.link_for_emp"-->
             <!--                color="grey-lighten-4"-->
             <!--                label="################"-->
-            <!--                rounded="xl"-->
+            <!--                rounded="md"-->
             <!--                variant="solo"-->
             <!--                required-->
             <!--              ></v-text-field-->
@@ -91,8 +91,8 @@
           <v-col cols="8" offset="2" align="center">
             <v-btn
               color="#5A82AF"
-              rounded="xl"
-              boarder="xl"
+              rounded="md"
+              boarder="md"
               type="submit"
               width="80%"
               height="35"
