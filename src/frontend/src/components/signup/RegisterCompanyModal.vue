@@ -361,6 +361,8 @@ export default {
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
       modal_light_theme_color: '#FFFFFF',
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       company_name_rules: [
         (v: string) => !!v || 'Company name is required',
         (v: string) => /^[A-Z]/.test(v) || 'Company name must start with a capital letter',
@@ -418,25 +420,40 @@ export default {
     companyLogoHandler() {
       console.log('')
     },
-    registrationHandler() {
+    async registrationHandler() {
       console.log(JSON.stringify(this.req_obj))
       console.log(this.req_obj)
+      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
       axios
-        .post('http://localhost:3000/company/create', this.req_obj)
+        .post(apiURL + 'company/create', this.req_obj, config)
         .then((res) => {
+          console.log(res.data.data.id)
           alert('The Company was registered successfully')
-          sessionStorage['currentCompany'] = res.data.data.id
+          sessionStorage['currentCompany'] = res.data.data.id._id
           console.log(res.data)
-
-          axios.post('http://localhost:3000/company/create')
-
           this.$router.push('/dashboard')
         })
         .catch((res) => {
           alert('The Company was not registered successfully')
           console.log(res)
         })
+    },
+
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
+
     // base64image() {
     //   let read = new FileReader()
     //   read.readAsDataURL(this.req_obj.image)
