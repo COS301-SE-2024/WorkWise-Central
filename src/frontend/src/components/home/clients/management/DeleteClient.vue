@@ -26,8 +26,12 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="red darken-2" text :loading="isDeleting" @click="Delete">Delete</v-btn>
-        <v-btn color="grey darken-1" text @click="clientDialog = false">Cancel</v-btn>
+        <v-btn label="Delete" color="red darken-2" text :loading="isDeleting" @click="Delete"
+          >Delete</v-btn
+        >
+        <v-btn label="Cancel" color="grey darken-1" text @click="clientDialog = false"
+          >Cancel</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
