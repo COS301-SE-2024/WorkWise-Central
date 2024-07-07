@@ -69,7 +69,7 @@ export default defineComponent({
     ProfilePage
   },
   data: () => ({
-    isdarkmode: sessionStorage.getItem('theme') || false
+    isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false
   }),
   methods: {
     toggleDarkMode() {

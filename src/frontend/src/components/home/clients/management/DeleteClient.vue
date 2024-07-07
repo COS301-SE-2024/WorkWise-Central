@@ -11,13 +11,13 @@
       >
     </template>
     <v-card :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color">
-      <v-card-title>
-        <span class="headline">Delete Client</span>
+      <v-card-title class="text-h5 font-weight-regular bg-primary">
+        <span class="headline">Delete {{ client.name + ' ' + client.surname }}</span>
       </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
-            <p>
+            <p class="font-weight-regular">
               Are you sure you want to delete <strong>{{ clientName }}</strong
               >? This action cannot be reversed.
             </p>
@@ -29,9 +29,7 @@
         <v-btn label="Delete" color="error" text :loading="isDeleting" @click="deleteClient"
           >Delete</v-btn
         >
-        <v-btn label="Cancel" color="secondary" text @click="clientDialog = false"
-          >Cancel</v-btn
-        >
+        <v-btn label="Cancel" color="secondary" text @click="clientDialog = false">Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -43,7 +41,8 @@ export default {
   name: 'DeleteClient',
   props: {
     opened: Boolean,
-    client_id: Number
+    client_id: Number,
+    client: Object
   },
   data() {
     return {

@@ -1,6 +1,6 @@
 <template>
   <v-container fluid fill-height>
-    <v-sheet
+    <v-card
       height="auto"
       class="pa-11 ma-0"
       rounded="md"
@@ -8,40 +8,39 @@
       border="md"
     >
       <v-card-title
-        class="d-flex align-center pe-2"
+        class="d-flex align-center pe-2 text-h5 font-weight-regular"
         :style="
           (isdarkmode === true ? dark_theme_text_color : light_theme_text_color,
           'font-family: Lato, sans-serif; font-size: 25px; font-weight: lighter')
         "
       >
-        <v-icon icon="mdi-account"></v-icon> &nbsp; Client Details
+        <v-col cols="12" md="4" sm="4" xs="1">
+          <v-icon color="secondary" text="Client Details" icon="mdi-account"></v-icon>
+          <label color="secondary">Client Details</label></v-col
+        >
 
+        <v-col cols="12" md="4" sm="4" xs="1"
+          ><v-text-field
+            v-model="search"
+            density="compact"
+            label="Search"
+            prepend-inner-icon="mdi-magnify"
+            variant="outlined"
+            flat
+            width="100%"
+            style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+            hide-details
+            :theme="isdarkmode ? 'dark' : 'light'"
+            single-line
+          ></v-text-field
+        ></v-col>
         <v-spacer></v-spacer>
-
-        <v-text-field
-          v-model="search"
-          density="compact"
-          label="Search"
-          prepend-inner-icon="mdi-magnify"
-          variant="outlined"
-          flat
-          style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
-          hide-details
-          :theme="isdarkmode ? 'dark' : 'light'"
-          single-line
-        ></v-text-field>
-        <v-spacer></v-spacer>
-        <AddClient
-          v-model="addClientDialog"
-          @close="addClientDialog = false"
-          :isDarkMode="isDarkMode"
-        />
+        <AddClient />
       </v-card-title>
-
-      <v-divider></v-divider>
-      <v-col cols="12" xs="12" sm="12" md="12">
-        <div style="height: auto; overflow-y: auto">
-          <v-col cols="12" xs="12" sm="12" md="12">
+      <v-card-text>
+        <v-divider></v-divider>
+        <v-col cols="12" xs="12" sm="12" md="12">
+          <div style="height: auto; overflow-y: auto">
             <v-data-table
               :headers="headers"
               :items="clientDetails"
@@ -54,12 +53,12 @@
               :theme="isdarkmode ? 'dark' : 'light'"
             >
               <template v-slot:[`item.name`]="{ value }">
-                <v-chip variant="text" :color="isdarkmode ? 'white' : 'black'">
+                <v-chip variant="text" color="secondary">
                   <v-icon>mdi-account</v-icon>{{ value }}</v-chip
                 >
               </template>
               <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                <v-chip variant="text" @click="callPhone" color="#5A82AF"
+                <v-chip variant="text" @click="callPhone" color="primary"
                   ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
                 >
               </template>
@@ -67,15 +66,15 @@
                 <v-chip :color="getColor(value)"> {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip>
               </template>
               <template v-slot:[`item.surname`]="{ value }">
-                <v-chip variant="text" :color="isdarkmode ? 'white' : 'black'"> {{ value }}</v-chip>
+                <v-chip variant="text" color="secondary"> {{ value }}</v-chip>
               </template>
               <template v-slot:[`item.contactInfo.email`]="{ value }">
-                <v-chip variant="text" @click="sendEmail" color="#5A82AF">
+                <v-chip variant="text" @click="sendEmail" color="primary">
                   <v-icon>mdi-email</v-icon>{{ value }}</v-chip
                 >
               </template>
               <template v-slot:[`item.address.street`]="{ value }">
-                <v-chip variant="text" :color="isdarkmode ? 'white' : 'black'">
+                <v-chip variant="text" color="secondary">
                   <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip
                 >
               </template>
@@ -111,25 +110,28 @@
                 </v-tooltip>
               </template>
             </v-data-table>
-          </v-col>
-        </div>
-      </v-col>
-    </v-sheet>
-
+          </div>
+        </v-col>
+      </v-card-text>
+    </v-card>
 
     <v-dialog v-model="actionsDialog" max-width="500px">
       <v-card>
         <v-card-title class="text-h5 font-weight-regular bg-primary">
           {{ selectedItemName + ' ' + selectedItemSurname }}
         </v-card-title>
-        <v-card-text> What would you like to do with this job? </v-card-text>
+        <v-card-text> What would you like to do with this client? </v-card-text>
         <v-card-actions>
           <ClientDetails :colors="colors" :ClientDetails="selectedItem" />
           <EditClient
             @update:item="selectedItem = $event"
             :editedItem="selectedItem"
             :_clientID="selectedItemId"
-          /><DeleteClient :details="selectedItem" :client_id="selectedItemId" />
+          /><DeleteClient
+            :details="selectedItem"
+            :client_id="selectedItemId"
+            :client="selectedItem"
+          />
           <v-spacer></v-spacer>
           <v-btn @click="actionsDialog = false">Close</v-btn>
         </v-card-actions>
@@ -223,6 +225,9 @@ export default defineComponent({
     this.isdarkmode = sessionStorage.getItem('theme') === 'true' ? true : false
   },
   methods: {
+    getRowClass(index) {
+      return index % 2 === 0 ? 'primary-row' : 'secondary-row'
+    },
     selectItem(item) {
       this.selectedItem = item
       this.selectedItemName = item.name
@@ -336,12 +341,11 @@ export default defineComponent({
   width: 100%; /* Adjust width as necessary */
   z-index: 1; /* Ensure this is below your navbar if it's fixed as well */
 }
-.row-color {
-  background-color: #e0f7fa; /* Light blue background */
+.primary-row {
+  background-color: #e0f7fa; /* Example primary color */
 }
-
-.second-row-color {
-  background-color: #e8f5e9; /* Light green background */
+.secondary-row {
+  background-color: #fce4ec; /* Example secondary color */
 }
 .font-lato {
   font-family: 'Lato', sans-serif;

@@ -16,7 +16,7 @@
       height="auto"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
-      <v-card-title class="justify-center">
+      <v-card-title class="text-h5 font-weight-regular bg-primary justify-center">
         <span class="headline">Edit Client</span>
       </v-card-title>
       <v-divider></v-divider>
@@ -26,7 +26,7 @@
             <v-row>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Name
@@ -40,7 +40,7 @@
               </v-col>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Surname
@@ -56,7 +56,7 @@
             <v-row>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Phone Number
@@ -70,7 +70,7 @@
               </v-col>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                 class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Email
@@ -86,7 +86,7 @@
             <v-row>
               <v-col cols="6"
                 ><small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Street
@@ -99,7 +99,7 @@
               ></v-col>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Suburb
@@ -114,7 +114,7 @@
             <v-row>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                 class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   City
@@ -127,7 +127,7 @@
               </v-col>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                 class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Postal Code
@@ -141,8 +141,8 @@
 
             <v-row
               ><v-col cols="6">
-                <small
-                  class="text-caption"
+                <small 
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Complex
@@ -155,7 +155,7 @@
               ></v-col>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   House Number
@@ -246,45 +246,48 @@ export default {
     },
     async update() {
       await axios
-  .patch(`http://localhost:3000/client/${this._clientID}`, {
-    systemDetails: {
-      username: "string",
-      password: "string"
-    },
-    personalInfo: {
-      firstName: "string",
-      surname: "string"
-    },
-    profile: {
-      displayName: "string",
-      displayImage: "https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp"
-    },
-    joinedCompanies: [
-      {
-        employeeId: {},
-        companyId: {},
-        companyName: "string"
-      }
-    ],
-    skills: [
-      "string"
-    ],
-    currentEmployee: {}
-  })
-  .then((response) => {
-    console.log(response);
-    alert('Client updated');
-    return true;
-  })
-  .catch((error) => {
-    console.log(error);
-    alert('Error updating client');
-    return false;
-  })
-  .finally(() => {
-    this.clientDialog = false;
-  });
+        .patch(`http://localhost:3000/client/${this._clientID}`, {
+          systemDetails: {
+            username: 'string',
+            password: 'string'
+          },
+          personalInfo: {
+            firstName: 'string',
+            surname: 'string'
+          },
+          profile: {
+            displayName: 'string',
+            displayImage: 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp'
+          },
+          joinedCompanies: [
+            {
+              employeeId: {},
+              companyId: {},
+              companyName: 'string'
+            }
+          ],
+          skills: ['string'],
+          currentEmployee: {}
+        })
+        .then((response) => {
+          console.log(response)
+          alert('Client updated')
+          return true
+        })
+        .catch((error) => {
+          console.log(error)
+          alert('Error updating client')
+          return false
+        })
+        .finally(() => {
+          this.clientDialog = false
+        })
     }
   }
 }
 </script>
+<style scoped>
+.text-font {
+  font-size: 30px;
+}
+</style>
