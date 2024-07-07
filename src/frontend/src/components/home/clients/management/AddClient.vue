@@ -1,18 +1,18 @@
 <template>
-  <v-dialog max-height="800" max-width="600" scrollable>
+  <v-dialog v-model="addDialog" max-height="800" max-width="600" scrollable>
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
-        class="text-none font-weight-regular hello"
+        class="text-none font-weight-regular "
         style="font-size: 20px"
         text="Add Client"
         variant="elevated"
-        color="#5A82AF"
+        color="primary"
         v-bind="activatorProps"
       ></v-btn>
     </template>
     <v-sheet
-      :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+      :theme="isdarkmode === true ? 'dark' : 'light'"
       elevation="14"
       rounded="md"
       max-height="800"
@@ -30,14 +30,14 @@
           <v-col>
             <v-col>
               <small
-                :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+                :theme="isdarkmode === true ? 'dark' : 'light'"
                 class="text-caption white--text"
                 >Firstname of client*</small
               >
 
               <v-text-field
                 density="compact"
-                :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :theme="isdarkmode === true ? 'dark' : 'light'"
                 color="grey-lighten-4"
                 placeholder="Enter the firstname of the client"
                 v-model="req_obj.details.firstName"
@@ -49,13 +49,13 @@
             ></v-col>
             <v-col>
               <small
-                :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+                :theme="isdarkmode === true ? 'dark' : 'light'"
                 class="text-caption white--text"
                 >Surname of client*</small
               >
               <v-text-field
                 density="compact"
-                :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :theme="isdarkmode === true ? 'dark' : 'light'"
                 color="grey-lighten-4"
                 placeholder="Enter the surname name of the client"
                 v-model="req_obj.details.lastName"
@@ -67,13 +67,13 @@
             ></v-col>
             <v-col>
               <small
-                :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 class="text-caption white--text"
                 >ID of client*</small
               >
               <v-text-field
                 density="compact"
-                :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 placeholder="Enter the ID number of the client"
                 v-model="req_obj.idNumber"
@@ -85,14 +85,14 @@
             ></v-col>
             <v-col>
               <small
-                :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 class="text-caption white--text"
                 >Username of client*</small
               >
 
               <v-text-field
                 density="compact"
-                :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 placeholder="Enter the username of the client"
                 v-model="req_obj.clientUsername"
@@ -104,13 +104,48 @@
             ></v-col>
             <v-col>
               <small
-                :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption white--text"
+                >ID of client*</small
+              >
+              <v-text-field
+                density="compact"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                color="grey-lighten-4"
+                placeholder="Enter the ID number of the client"
+                v-model="req_obj.idNumber"
+                rounded="md"
+                variant="underlined"
+                required
+                :rules="id_number_rules"
+              ></v-text-field
+            ></v-col>
+            <v-col>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption white--text"
+                >Username of client*</small
+              >
+
+              <v-text-field
+                density="compact"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                color="grey-lighten-4"
+                placeholder="Enter the username of the client"
+                v-model="req_obj.clientUsername"
+                rounded="md"
+                variant="underlined"
+                required
+                :rules="username_rules"
+              ></v-text-field
+            ></v-col>
+            <v-col>
+              <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
                 >Client email address*</small
               >
               <v-text-field
                 density="compact"
-                :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :theme="isdarkmode === true ? 'dark' : 'light'"
                 color="grey-lighten-4"
                 placeholder="Enter the client's email address"
                 v-model="req_obj.details.contactInfo.email"
@@ -122,14 +157,12 @@
               ></v-text-field
             ></v-col>
             <v-col>
-              <small
-                :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
+              <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
                 >Client phone number*</small
               >
               <v-text-field
                 density="compact"
-                :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :theme="isdarkmode === true ? 'dark' : 'light'"
                 color="grey-lighten-4"
                 placeholder="Enter the client's phone number"
                 v-model="req_obj.details.contactInfo.phoneNumber"
@@ -142,18 +175,18 @@
             ></v-col>
 
             <small
-              :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+              :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
               class="text-caption"
               >Client address</small
             >
             <v-row>
               <v-col sm="6" cols="12"
                 ><small
-                  :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                   class="text-caption"
                   >Street</small
                 ><v-text-field
-                  :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Street"
@@ -166,11 +199,11 @@
               ></v-col>
               <v-col sm="6" cols="12"
                 ><small
-                  :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                   class="text-caption"
                   >Suburb</small
                 ><v-text-field
-                  :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Suburb"
@@ -183,12 +216,10 @@
               ></v-col>
 
               <v-col sm="6" cols="12">
-                <small
-                  :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
-                  class="text-caption"
+                <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
                   >City</small
                 ><v-text-field
-                  :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="City"
@@ -200,12 +231,10 @@
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12"
-                ><small
-                  :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
-                  class="text-caption"
+                ><small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
                   >Zip Code</small
                 ><v-text-field
-                  :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Zip Code"
@@ -218,12 +247,10 @@
               ></v-col>
 
               <v-col sm="6" cols="12"
-                ><small
-                  :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
-                  class="text-caption"
+                ><small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
                   >Complex</small
                 ><v-text-field
-                  :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Complex"
@@ -235,12 +262,10 @@
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
-                <small
-                  :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
-                  class="text-caption"
+                <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
                   >House number</small
                 ><v-text-field
-                  :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="House number"
@@ -255,13 +280,13 @@
 
             <v-col>
               <small
-                :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 class="text-caption"
                 >Preferred language</small
               >
               <v-autocomplete
                 density="compact"
-                :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 color="grey-lighten-4"
                 placeholder="Enter the language preferred by the client"
                 v-model="req_obj.details.preferredLanguage"
@@ -293,10 +318,15 @@
               height="35"
               type="submit"
               variant="text"
-              color="#5A82AF"
+              color="success"
               :disabled="click_create_client"
-              >CREATE CLIENT</v-btn
+              >Create Client</v-btn
             >
+          </v-col>
+          <v-col cols="8" offset="2" align="center">
+            <v-btn color="error" width="85%" height="35" variant="text" @click="close">
+              CANCEL
+            </v-btn>
           </v-col>
         </v-col>
       </v-form>
@@ -312,15 +342,13 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'RegisterCompanyModal ',
-  props: {
-    isDarkMode: Boolean
-  },
+
   data: () => ({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     valid: false,
-    dialog: false,
-    isdarkmode: localStorage['theme'] !== 'false',
+    addDialog: false,
+    isdarkmode: sessionStorage.getItem('isdarkmode') === 'true' ? true : false,
     click_create_client: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
@@ -443,6 +471,10 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    close() {
+      console.log(this.addDialog)
+      this.addDialog = false
     }
   }
 })
