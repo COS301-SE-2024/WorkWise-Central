@@ -9,8 +9,11 @@ it('shows the splash screen', () => {
       plugins: [vuetify]
     }
   })
-  cy.contains('WorkWise')
-  cy.contains('Welcome To WorkWise Central')
+  cy.contains('WorkWise').should('exist')
+  cy.contains('Welcome To WorkWise Central').should('exist')
+  cy.contains('button', 'Log in').should('exist')
+  cy.contains('button', 'Sign up').should('exist')
+  
 })
 
 it('performs login', () => {
@@ -22,9 +25,9 @@ it('performs login', () => {
   })
   cy.contains('button', 'Log in').click() // Clicks the button containing the text 'Log in'
 
-  cy.get('input[name="username"]').type('test')
-  cy.get('input[name="password"]').type('test')
-  // cy.contains('button', 'LOGIN').click() // Clicks the button containing the text 'Log in'
+  cy.get('input[name="username"]').type('kkkkk')
+  cy.get('input[name="password"]').type('Rosex123#')
+  //cy.contains('button', 'Login').click() // Clicks the button containing the text 'Log in'
 })
 
 it('performs register', () => {

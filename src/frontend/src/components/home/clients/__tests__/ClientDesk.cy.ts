@@ -10,4 +10,6 @@ it('renders client desk', () => {
       plugins: [vuetify]
     }
   })
+  cy.contains('.v-text-field', 'Search').should('exist')
+  cy.contains('.v-btn', 'Add Client').should('exist')
 })

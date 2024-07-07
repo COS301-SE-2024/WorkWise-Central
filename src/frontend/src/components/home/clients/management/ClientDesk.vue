@@ -46,6 +46,7 @@
               :headers="headers"
               :items="clientDetails"
               :search="search"
+              label="Clients"
               height="auto"
               rounded="xl"
               :item-class="getRowClass"

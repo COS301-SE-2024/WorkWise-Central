@@ -2,7 +2,7 @@ import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
 import 'vuetify/styles'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
-import '@mdi/font/css/materialdesignicons.css'
+import 'mdi/css/materialdesignicons.css'
 
 const vuetify = createVuetify({
   icons: {
