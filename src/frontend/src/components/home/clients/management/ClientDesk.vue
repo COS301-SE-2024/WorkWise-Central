@@ -115,6 +115,7 @@
       </v-col>
     </v-sheet>
 
+
     <v-dialog v-model="actionsDialog" max-width="500px">
       <v-card>
         <v-card-title class="text-h5 font-weight-regular bg-blue-grey">

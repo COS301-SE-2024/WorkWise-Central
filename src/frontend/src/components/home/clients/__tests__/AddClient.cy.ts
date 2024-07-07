@@ -11,7 +11,6 @@ it('renders add client form on a laptop viewport', () => {
       plugins: [vuetify]
     }
   })
-
   cy.contains('button', 'Add Client').click() // Clicks the button containing the text 'Add Client'
   cy.get('input[type="name"]').type('Test')
   cy.get('input[type="surname"]').type('Running')
@@ -23,3 +22,4 @@ it('renders add client form on a laptop viewport', () => {
   cy.get('input[type="complex"]').type('Test Complex')
   cy.get('input[type="houseNumber"]').type('0000')
 })
+
