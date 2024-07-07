@@ -352,7 +352,7 @@ export default defineComponent({
       clientUsername: '',
       details: {
         firstName: '',
-        surName: '',
+        lastName: '',
         preferredLanguage: '',
         contactInfo: {
           email: '',
@@ -407,7 +407,7 @@ export default defineComponent({
           })
       }
     },
-    handleSubmission() {
+    async handleSubmission() {
       console.log(JSON.stringify(this.req_obj))
       const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
