@@ -66,15 +66,13 @@ export class RoleService {
         throw new ConflictException('Company not found');
       }
       if ('roleName' in role && role.roleName) {
-        if (
-          await this.findOneInCompany(role.roleName, role.companyId.toString())
-        ) {
+        if (await this.findOneInCompany(role.roleName, role.companyId)) {
           throw new ConflictException('Role already exists');
         }
       }
     }
     if ('roleId' in role && role.roleId) {
-      if (!(await this.roleExists(role.roleId.toString()))) {
+      if (!(await this.roleExists(role.roleId as Types.ObjectId))) {
         throw new ConflictException('Role not found');
       }
     }
@@ -219,11 +217,11 @@ export class RoleService {
     return this.permissionsArray;
   }
 
-  async findAllInCompany(companyId: string) {
+  async findAllInCompany(companyId: Types.ObjectId) {
     return this.roleRepository.findAllInCompany(companyId);
   }
 
-  async findOneInCompany(name: string, companyId: string) {
+  async findOneInCompany(name: string, companyId: Types.ObjectId) {
     const result = await this.roleModel.findOne({
       roleName: name,
       companyId: companyId,
@@ -244,7 +242,7 @@ export class RoleService {
     return result;
   }
 
-  async update(id: string, updateRoleDto: UpdateRoleDto) {
+  async update(id: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
     try {
       await this.validateRole(updateRoleDto);
     } catch (error) {
@@ -253,15 +251,18 @@ export class RoleService {
     return this.roleRepository.update(id, updateRoleDto);
   }
 
-  async roleExists(id: string): Promise<boolean> {
+  async roleExists(id: Types.ObjectId): Promise<boolean> {
     return await this.roleRepository.roleExists(id);
   }
 
-  async roleExistsInCompany(id: string, companyId: string): Promise<boolean> {
+  async roleExistsInCompany(
+    id: Types.ObjectId,
+    companyId: string,
+  ): Promise<boolean> {
     return await this.roleRepository.roleExistsInCompany(id, companyId);
   }
 
-  async remove(id: string): Promise<boolean> {
+  async remove(id: Types.ObjectId): Promise<boolean> {
     return this.roleRepository.remove(id);
   }
 }

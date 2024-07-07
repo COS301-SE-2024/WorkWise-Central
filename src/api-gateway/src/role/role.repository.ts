@@ -14,7 +14,7 @@ export class RoleRepository {
     return this.roleModel.find().exec();
   }
 
-  async findAllInCompany(companyId: string) {
+  async findAllInCompany(companyId: Types.ObjectId) {
     const filter = companyId ? { companyId: companyId } : {};
     return await this.roleModel.find(filter).exec();
   }
@@ -36,7 +36,7 @@ export class RoleRepository {
     return result;
   }
 
-  async update(id: string, updateRoleDto: UpdateRoleDto) {
+  async update(id: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
     const previousObject: FlattenMaps<Role> & { _id: Types.ObjectId } =
       await this.roleModel
         .findOneAndUpdate(
@@ -56,7 +56,7 @@ export class RoleRepository {
     return previousObject;
   }
 
-  async roleExists(id: string): Promise<boolean> {
+  async roleExists(id: Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<Role> & { _id: Types.ObjectId } =
       await this.roleModel
         .findOne({
@@ -71,7 +71,10 @@ export class RoleRepository {
     return result != null;
   }
 
-  async roleExistsInCompany(id: string, companyId: string): Promise<boolean> {
+  async roleExistsInCompany(
+    id: Types.ObjectId,
+    companyId: string,
+  ): Promise<boolean> {
     const result: FlattenMaps<Role> & { _id: Types.ObjectId } =
       await this.roleModel
         .findOne({
@@ -88,7 +91,7 @@ export class RoleRepository {
     return false;
   }
 
-  async remove(id: string): Promise<boolean> {
+  async remove(id: Types.ObjectId): Promise<boolean> {
     const RoleToDelete = await this.findById(id);
     const result: Document<unknown, NonNullable<unknown>, User> &
       User & { _id: Types.ObjectId } = await this.roleModel.findOneAndUpdate(

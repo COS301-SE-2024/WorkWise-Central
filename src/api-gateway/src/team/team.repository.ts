@@ -33,7 +33,7 @@ export class TeamRepository {
     return result;
   }
 
-  async teamExists(id: string): Promise<boolean> {
+  async teamExists(id: Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<Team> & { _id: Types.ObjectId } =
       await this.teamModel
         .findOne({
@@ -48,7 +48,10 @@ export class TeamRepository {
     return result != null;
   }
 
-  async teamExistsInCompany(id: string, companyId: string): Promise<boolean> {
+  async teamExistsInCompany(
+    id: Types.ObjectId,
+    companyId: string,
+  ): Promise<boolean> {
     const result: FlattenMaps<Team> & { _id: Types.ObjectId } =
       await this.teamModel
         .findOne({
@@ -67,7 +70,7 @@ export class TeamRepository {
     return false;
   }
 
-  async update(id: number, updateTeamDto: UpdateTeamDto) {
+  async update(id: Types.ObjectId, updateTeamDto: UpdateTeamDto) {
     const previousObject: FlattenMaps<Team> & { _id: Types.ObjectId } =
       await this.teamModel
         .findOneAndUpdate(
@@ -85,7 +88,7 @@ export class TeamRepository {
     return previousObject;
   }
 
-  async remove(id: string): Promise<boolean> {
+  async remove(id: Types.ObjectId): Promise<boolean> {
     const TeamToDelete = await this.findById(id);
 
     const result: Document<unknown, NonNullable<unknown>, User> &

@@ -52,13 +52,13 @@ export class EmployeeService {
     if (!companyId && !('companyId' in employee)) {
       //Potentially not necessary
       if (employee.roleId) {
-        if (!(await this.roleService.roleExists(employee.roleId.toString()))) {
+        if (!(await this.roleService.roleExists(employee.roleId))) {
           throw new ConflictException('Role not found');
         }
       }
 
       if (employee.superiorId) {
-        if (!(await this.employeeExists(employee.superiorId.toString()))) {
+        if (!(await this.employeeExists(employee.superiorId))) {
           throw new ConflictException('Superior not found');
         }
       }
@@ -78,9 +78,9 @@ export class EmployeeService {
 
       if ('subordinates' in employee && employee.subordinates) {
         for (const subordinateId of employee.subordinates) {
-          if (!(await this.employeeExists(subordinateId.toString()))) {
+          if (!(await this.employeeExists(subordinateId))) {
             throw new ConflictException(
-              `Subordinate ${subordinateId.toString()} not found`,
+              `Subordinate ${subordinateId} not found`,
             );
           }
         }
@@ -88,10 +88,8 @@ export class EmployeeService {
 
       if ('subordinateTeams' in employee && employee.subordinateTeams) {
         for (const teamId of employee.subordinateTeams) {
-          if (!(await this.teamService.teamExists(teamId.toString()))) {
-            throw new ConflictException(
-              `Subordinate team ${teamId.toString()} not found`,
-            );
+          if (!(await this.teamService.teamExists(teamId))) {
+            throw new ConflictException(`Subordinate team ${teamId} not found`);
           }
         }
       }
@@ -105,7 +103,7 @@ export class EmployeeService {
       if (employee.roleId) {
         if (
           !(await this.roleService.roleExistsInCompany(
-            employee.roleId.toString(),
+            employee.roleId,
             companyId,
           ))
         ) {
@@ -160,10 +158,7 @@ export class EmployeeService {
       if ('subordinateTeams' in employee && employee.subordinateTeams) {
         for (const teamId of employee.subordinateTeams) {
           if (
-            !(await this.teamService.teamExistsInCompany(
-              teamId.toString(),
-              companyId,
-            ))
+            !(await this.teamService.teamExistsInCompany(teamId, companyId))
           ) {
             throw new ConflictException(
               `Subordinate team ${teamId.toString()} not found`,
@@ -216,11 +211,11 @@ export class EmployeeService {
     return this.employeeRepository.findAll();
   }
 
-  async findAllInCompany(companyId: string | Types.ObjectId) {
+  async findAllInCompany(companyId: Types.ObjectId) {
     return this.employeeRepository.findAllInCompany(companyId);
   }
 
-  async employeeExists(id: string | Types.ObjectId): Promise<boolean> {
+  async employeeExists(id: Types.ObjectId): Promise<boolean> {
     return this.employeeRepository.employeeExists(id);
   }
 

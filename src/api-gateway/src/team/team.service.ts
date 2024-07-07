@@ -38,7 +38,7 @@ export class TeamService {
 
     if ('teamMembers' in team && team.teamMembers) {
       for (const memberId of team.teamMembers) {
-        if (!(await this.employeeService.employeeExists(memberId.toString()))) {
+        if (!(await this.employeeService.employeeExists(memberId))) {
           throw new ConflictException(
             `Team member ${memberId.toString()} not found`,
           );
@@ -47,11 +47,7 @@ export class TeamService {
     }
 
     if ('teamLeaderId' in team && team.teamLeaderId) {
-      if (
-        !(await this.employeeService.employeeExists(
-          team.teamLeaderId.toString(),
-        ))
-      ) {
+      if (!(await this.employeeService.employeeExists(team.teamLeaderId))) {
         throw new ConflictException('Team leader not found');
       }
     }
@@ -108,20 +104,23 @@ export class TeamService {
     return result;
   }
 
-  async teamExists(id: string): Promise<boolean> {
+  async teamExists(id: Types.ObjectId): Promise<boolean> {
     return await this.teamRepository.teamExists(id);
   }
 
-  async teamExistsInCompany(id: string, companyId: string): Promise<boolean> {
+  async teamExistsInCompany(
+    id: Types.ObjectId,
+    companyId: string,
+  ): Promise<boolean> {
     return this.teamRepository.teamExistsInCompany(id, companyId);
   }
 
-  async update(id: number, updateTeamDto: UpdateTeamDto) {
+  async update(id: Types.ObjectId, updateTeamDto: UpdateTeamDto) {
     await this.validateTeam(updateTeamDto);
     return this.teamRepository.update(id, updateTeamDto);
   }
 
-  async remove(id: string): Promise<boolean> {
+  async remove(id: Types.ObjectId): Promise<boolean> {
     return this.teamRepository.remove(id);
   }
 }
