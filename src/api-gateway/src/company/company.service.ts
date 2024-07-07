@@ -237,7 +237,7 @@ export class CompanyService {
     if (addUserToCompanyDto.adminId) {
       const isAllowedToAssign = await this.employeeIsInCompany(
         addUserToCompanyDto.currentCompany,
-        addUserToCompanyDto.currentCompany,
+        addUserToCompanyDto.adminId,
       );
       if (!isAllowedToAssign) {
         return new ValidationResult(false, 'User not allowed to assign');
