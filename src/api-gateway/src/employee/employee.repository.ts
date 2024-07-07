@@ -15,13 +15,13 @@ export class EmployeeRepository {
     return this.employeeModel.find().lean().exec();
   }
 
-  async findAllInCompany(companyId: string | Types.ObjectId) {
+  async findAllInCompany(companyId: Types.ObjectId) {
     const filter = companyId ? { companyId: companyId } : {};
     return this.employeeModel.find(filter).exec();
   }
 
   async findById(
-    identifier: string | Types.ObjectId,
+    identifier: Types.ObjectId,
   ): Promise<FlattenMaps<Employee> & { _id: Types.ObjectId }> {
     const result: FlattenMaps<Employee> & { _id: Types.ObjectId } =
       await this.employeeModel
@@ -38,7 +38,7 @@ export class EmployeeRepository {
   }
 
   async findByIds(
-    identifiers: (string | Types.ObjectId)[],
+    identifiers: Types.ObjectId[],
   ): Promise<(FlattenMaps<Employee> & { _id: Types.ObjectId })[]> {
     const ids = identifiers.map((id) => new Types.ObjectId(id));
 
@@ -56,7 +56,7 @@ export class EmployeeRepository {
     return result;
   }
 
-  async employeeExists(id: string | Types.ObjectId): Promise<boolean> {
+  async employeeExists(id: Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<Employee> & { _id: Types.ObjectId } =
       await this.employeeModel
         .findOne({
@@ -74,7 +74,7 @@ export class EmployeeRepository {
   }
 
   async employeeExistsForCompany(
-    id: string,
+    id: Types.ObjectId,
     companyId: string,
   ): Promise<boolean> {
     const result: FlattenMaps<Employee> & { _id: Types.ObjectId } =
@@ -92,7 +92,7 @@ export class EmployeeRepository {
     return false;
   }
 
-  async getCompanyIdFromEmployee(employeeId: string) {
+  async getCompanyIdFromEmployee(employeeId: Types.ObjectId) {
     const result = await this.employeeModel
       .findOne(
         { _id: new Types.ObjectId(employeeId) },
@@ -103,7 +103,7 @@ export class EmployeeRepository {
     return result ? result.companyId : null;
   }
 
-  async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
+  async update(id: Types.ObjectId, updateEmployeeDto: UpdateEmployeeDto) {
     const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } =
       await this.employeeModel
         .findOneAndUpdate(
@@ -122,7 +122,7 @@ export class EmployeeRepository {
     return previousObject;
   }
 
-  async remove(id: string): Promise<boolean> {
+  async remove(id: Types.ObjectId): Promise<boolean> {
     const employeeToDelete = await this.findById(id);
 
     const result: Document<unknown, NonNullable<unknown>, User> &

@@ -113,10 +113,7 @@ export class EmployeeService {
 
       if (employee.superiorId) {
         if (
-          !(await this.employeeExistsForCompany(
-            employee.superiorId.toString(),
-            companyId,
-          ))
+          !(await this.employeeExistsForCompany(employee.superiorId, companyId))
         ) {
           throw new ConflictException('Superior not found');
         }
@@ -143,10 +140,7 @@ export class EmployeeService {
       if ('subordinates' in employee && employee.subordinates) {
         for (const subordinateId of employee.subordinates) {
           if (
-            !(await this.employeeExistsForCompany(
-              subordinateId.toString(),
-              companyId,
-            ))
+            !(await this.employeeExistsForCompany(subordinateId, companyId))
           ) {
             throw new ConflictException(
               `Subordinate ${subordinateId.toString()} not found`,
@@ -220,13 +214,13 @@ export class EmployeeService {
   }
 
   async employeeExistsForCompany(
-    id: string,
+    id: Types.ObjectId,
     companyId: string,
   ): Promise<boolean> {
     return this.employeeRepository.employeeExistsForCompany(id, companyId);
   }
 
-  async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
+  async update(id: Types.ObjectId, updateEmployeeDto: UpdateEmployeeDto) {
     console.log('update function');
     try {
       const companyId = await this.getCompanyIdFromEmployee(id);
@@ -242,19 +236,19 @@ export class EmployeeService {
     return previousObject;
   }
 
-  async getCompanyIdFromEmployee(employeeId: string) {
+  async getCompanyIdFromEmployee(employeeId: Types.ObjectId) {
     return this.employeeRepository.getCompanyIdFromEmployee(employeeId);
   }
 
-  async remove(id: string): Promise<boolean> {
+  async remove(id: Types.ObjectId): Promise<boolean> {
     const result = this.employeeRepository.remove(id);
     return result;
   }
 
   async findById(
-    identifier: string | Types.ObjectId,
+    id: Types.ObjectId,
   ): Promise<FlattenMaps<Employee> & { _id: Types.ObjectId }> {
-    const result = await this.employeeRepository.findById(identifier);
+    const result = await this.employeeRepository.findById(id);
     if (result == null) {
       throw new NotFoundException('Employee not found');
     }
@@ -262,9 +256,9 @@ export class EmployeeService {
   }
 
   async findByIds(
-    identifiers: (string | Types.ObjectId)[],
+    ids: Types.ObjectId[],
   ): Promise<(FlattenMaps<Employee> & { _id: Types.ObjectId })[]> {
-    const result = await this.employeeRepository.findByIds(identifiers);
+    const result = await this.employeeRepository.findByIds(ids);
     if (result.length === 0) {
       throw new NotFoundException('Employees not found');
     }

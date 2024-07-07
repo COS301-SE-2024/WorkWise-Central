@@ -29,6 +29,7 @@ import {
   EmployeeListResponseDto,
   EmployeeResponseDto,
 } from './entities/employee.entity';
+import { Types } from 'mongoose';
 
 const className = 'Employee';
 
@@ -75,8 +76,8 @@ export class EmployeeController {
     description: `An array of mongodb objects of the ${className} class.`,
   })
   @Get('/all')
-  findAll() {
-    return this.employeeService.findAll();
+  async findAll() {
+    return { data: await this.employeeService.findAll() };
   }
 
   @ApiOperation({
@@ -92,8 +93,8 @@ export class EmployeeController {
     description: `The _id attribute of the Company for which to get all ${className} instances.`,
   })
   @Get('/all/:id')
-  findAllInCompany(id: string) {
-    return this.employeeService.findAllInCompany(id);
+  findAllInCompany(id: Types.ObjectId) {
+    return { data: this.employeeService.findAllInCompany(id) };
   }
 
   @ApiOperation({
@@ -109,8 +110,8 @@ export class EmployeeController {
     description: `The _id attribute of the ${className} to be retrieved.`,
   })
   @Get('id/:id')
-  findBytId(id: string) {
-    return this.employeeService.findById(id);
+  async findBytId(id: Types.ObjectId) {
+    return { data: await this.employeeService.findById(id) };
   }
 
   @ApiOperation({
@@ -127,8 +128,11 @@ export class EmployeeController {
   })
   @ApiBody({ type: UpdateEmployeeDto })
   @Patch(':id')
-  update(id: string, @Body() updateEmployeeDto: UpdateEmployeeDto) {
-    return this.employeeService.update(id, updateEmployeeDto);
+  async update(
+    id: Types.ObjectId,
+    @Body() updateEmployeeDto: UpdateEmployeeDto,
+  ) {
+    return { data: await this.employeeService.update(id, updateEmployeeDto) };
   }
 
   @ApiOperation({
@@ -145,7 +149,7 @@ export class EmployeeController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.employeeService.remove(id);
+  async remove(@Param('id') id: Types.ObjectId) {
+    return { data: await this.employeeService.remove(id) };
   }
 }
