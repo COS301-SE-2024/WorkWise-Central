@@ -1,9 +1,10 @@
 import {
   Injectable,
-  NotFoundException,
   ServiceUnavailableException,
   forwardRef,
   Inject,
+  ConflictException,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateJobDto, CreateJobResponseDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
@@ -34,20 +35,12 @@ export class JobService {
   async create(createJobDto: CreateJobDto) {
     const inputValidated = await this.jobCreateIsValid(createJobDto);
     if (!inputValidated.isValid) {
-      throw new NotFoundException(inputValidated.message);
+      throw new ConflictException(inputValidated.message);
     }
-
     const createdJob = new Job(createJobDto);
-    console.log('createdJob', createdJob);
-    const newJob = new this.jobModel(createdJob);
-    const result = await newJob.save();
-
+    //console.log('createdJob', createdJob);
+    const result = await this.jobRepository.save(createdJob);
     return new CreateJobResponseDto(result);
-
-    /*    return {
-      id: result._id,
-      message: `Job: "${result.details.heading}", by "${result.assignedBy} has been created`,
-    };*/
   }
 
   async authorisedToAssign(userId: Types.ObjectId, companyId: Types.ObjectId) {
@@ -73,7 +66,13 @@ export class JobService {
 
   async isMember(userId: Types.ObjectId, companyId: Types.ObjectId) {
     const result = await this.companyService.getCompanyById(companyId);
-    return result.employees.includes(userId);
+    if (!result) throw new ConflictException();
+
+    const employees: string[] = [];
+    for (const employee of result.employees) {
+      employees.push(employee.toString());
+    }
+    return employees.includes(userId.toString());
   }
 
   async findJobById(
@@ -85,13 +84,12 @@ export class JobService {
     if (result == null) {
       throw new NotFoundException('Job not found');
     }
-
     return result;
   }
 
   async findAllJobs() {
     try {
-      return this.jobRepository.findAll();
+      return await this.jobRepository.findAll();
     } catch (error) {
       console.log(error);
       throw new ServiceUnavailableException(error);
@@ -101,8 +99,7 @@ export class JobService {
   async jobExists(id: string): Promise<boolean> {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
       await this.jobRepository.exists(id);
-
-    console.log('jobExists -> ', result);
+    //console.log('jobExists -> ', result);
     return result != null;
   }
 
@@ -117,10 +114,10 @@ export class JobService {
   async update(id: string | Types.ObjectId, updateJobDto: UpdateJobDto) {
     const inputValidated = await this.jobUpdateIsValid(updateJobDto);
     if (!inputValidated.isValid)
-      throw new NotFoundException(inputValidated.message);
+      throw new ConflictException(inputValidated.message);
 
     try {
-      const updated = this.jobRepository.update(id, updateJobDto);
+      const updated = await this.jobRepository.update(id, updateJobDto);
       console.log('updatedJob', updated);
       return true;
     } catch (e) {

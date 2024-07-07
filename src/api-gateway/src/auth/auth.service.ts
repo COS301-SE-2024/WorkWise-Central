@@ -8,9 +8,10 @@ import {
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserConfirmation } from '../users/entities/user-confirmation.entity';
+import { SignInUserDto } from '../users/entities/user.entity';
 
 @Global()
 @Injectable()
@@ -24,15 +25,7 @@ export class AuthService {
     //private mailService: EmailService,
   ) {}
 
-  /*  async signup(user: User) {
-    const token = Math.floor(1000 + Math.random() * 9000).toString();
-    await this.mailService.sendUserConfirmation(user, token);
-  }*/
-
-  async signIn(
-    userIdentifier: string,
-    pass: string,
-  ): Promise<{ access_token: string; id: Types.ObjectId }> {
+  async signIn(userIdentifier: string, pass: string): Promise<SignInUserDto> {
     const user = await this.usersService.getUserByUsername(userIdentifier);
     if (!user) {
       throw new NotFoundException('Incorrect login details');
@@ -43,10 +36,11 @@ export class AuthService {
     }
 
     const payload = { sub: user._id, username: user.systemDetails.username };
-    return {
-      id: user._id,
-      access_token: await this.jwtService.signAsync(payload),
-    };
+    return new SignInUserDto(
+      await this.jwtService.signAsync(payload),
+      user._id,
+      user,
+    );
   }
 
   async verifyEmail(email: string, token: string) {
