@@ -65,9 +65,16 @@ export default {
       window.location.reload() // Consider removing this for SPA behavior
     },
     async deleteClient() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+        }
+      }
+      console.log(this.client_id)
       this.isDeleting = true // Indicate the start of the deletion process
       axios
-        .delete('http://localhost:3000/client/delete', { data: { id: this.client_id } })
+        .delete(`http://localhost:3000/client/delete/${this.client_id}`, config)
         .then((response) => {
           console.log(response)
           alert('Client deleted')

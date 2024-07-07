@@ -94,20 +94,13 @@
               </template>
               <!-- Actions slot -->
               <template v-slot:[`item.actions`]="{ item }">
-                <v-tooltip location="end" v-modal="show">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      rounded="xl"
-                      variant="plain"
-                      v-bind="attrs"
-                      v-on="on"
-                      @click="(actionsDialog = true), selectItem(item)"
-                    >
-                      <v-icon>mdi-dots-horizontal</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>More Actions</span>
-                </v-tooltip>
+                <v-btn
+                  rounded="xl"
+                  variant="plain"
+                  @click="(actionsDialog = true), selectItem(item)"
+                >
+                  <v-icon>mdi-dots-horizontal</v-icon>
+                </v-btn>
               </template>
             </v-data-table>
           </div>
@@ -233,14 +226,20 @@ export default defineComponent({
       this.selectedItemName = item.name
       console.log(this.selectedItemName)
       this.selectedItemSurname = item.surname
+      for (let i = 0; i < this.clientDetails.length; i++) {
+        if (this.clientDetails[i] === item) {
+          this.selectedItemId = this.clientIds[i]
+        }
+      }
+      console.log('Deleting client' + this.selectedItemId)
       console.log('Selected item:', this.selectedItem) // Corrected console.log
     },
     editClient(item) {
       console.log(item)
       this.selectedItem = item
-      for (let i = 0; i < this.clientDetails2.length; i++) {
-        if (this.clientDetails2[i] === item) {
-          this.selectedItemId = this.clientDetails2[i].id
+      for (let i = 0; i < this.clientDetails.length; i++) {
+        if (this.clientDetails[i] === item) {
+          this.selectedItemId = this.clientDetails[i].id
         }
       }
       console.log('Editing client')
@@ -259,7 +258,7 @@ export default defineComponent({
           this.selectedItemId = this.clientIds[i]
         }
       }
-      console.log('Deleting client')
+      console.log('Deleting client' + this.selectedItemId)
     },
     viewClientDetails() {
       console.log('Viewing client details')
@@ -324,10 +323,6 @@ export default defineComponent({
     getColor(value) {
       if (value == '') return 'red'
       else return 'green'
-    },
-    getRowClass(item) {
-      const index = this.clients.indexOf(item)
-      return index % 2 === 0 ? 'row-color' : 'second-row-color'
     }
   }
 })

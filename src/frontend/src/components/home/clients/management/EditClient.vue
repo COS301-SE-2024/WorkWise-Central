@@ -70,7 +70,7 @@
               </v-col>
               <v-col cols="6">
                 <small
-                 class="text-caption font-weight-bold"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Email
@@ -114,7 +114,7 @@
             <v-row>
               <v-col cols="6">
                 <small
-                 class="text-caption font-weight-bold"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   City
@@ -127,7 +127,7 @@
               </v-col>
               <v-col cols="6">
                 <small
-                 class="text-caption font-weight-bold"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Postal Code
@@ -141,7 +141,7 @@
 
             <v-row
               ><v-col cols="6">
-                <small 
+                <small
                   class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
@@ -245,29 +245,33 @@ export default {
       this.clientDialog = false
     },
     async update() {
+      console.log(this.localEditedItem.name)
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+        }
+      }
       await axios
         .patch(`http://localhost:3000/client/${this._clientID}`, {
-          systemDetails: {
-            username: 'string',
-            password: 'string'
-          },
-          personalInfo: {
-            firstName: 'string',
-            surname: 'string'
-          },
-          profile: {
-            displayName: 'string',
-            displayImage: 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp'
-          },
-          joinedCompanies: [
-            {
-              employeeId: {},
-              companyId: {},
-              companyName: 'string'
+          config,
+
+          details: {
+            name: this.localEditedItem.name,
+            preferred_Language: this.localEditedItem.preferred_Language,
+            contactInfo: {
+              phoneNumber: this.localEditedItem.contactInfo.phoneNumber,
+              email: this.editedItem.contactInfo.email
+            },
+            address: {
+              street: this.localEditedItem.address.street,
+              suburb: this.localEditedItem.address.suburb,
+              city: this.localEditedItem.address.city,
+              postalCode: this.localEditedItem.address.postalCode,
+              complex: this.localEditedItem.address.complex,
+              houseNumber: this.localEditedItem.address.houseNumber
             }
-          ],
-          skills: ['string'],
-          currentEmployee: {}
+          }
         })
         .then((response) => {
           console.log(response)
