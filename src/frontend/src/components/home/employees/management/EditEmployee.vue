@@ -129,6 +129,7 @@ export default {
       console.log(apiURL)
       try {
         let role = await axios.get(apiURL + `roles/all/${sessionStorage['currentCompany']}`, config)
+        console.log(role)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
