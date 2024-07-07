@@ -45,17 +45,15 @@
                 <v-divider></v-divider>
 
                 <v-col cols="12" xs="12" sm="12" md="12">
-                  <div style="height: 700px; overflow-y: auto">
+                  <div style="height: auto; overflow-y: auto">
                     <v-col cols="12" xs="12" sm="12" md="12">
                       <v-data-table
                         :headers="headers"
                         :items="EmployeeDetails2"
                         :search="search"
-                        :single-expand="true"
                         v-model:expanded="expanded"
-                        show-expand
                         height="auto"
-                        rounded="xl"
+                        rounded="md"
                         :item-class="getRowClass"
                         @click:row="toggleExpand"
                         class="font-lato"
@@ -64,10 +62,14 @@
                           <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
                         </template>
                         <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                          <v-chip color="#5A82AF"><v-icon>mdi-phone</v-icon> {{ value }}</v-chip>
+                          <v-chip color="#5A82AF" @click="callPhone"
+                            ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
+                          >
                         </template>
                         <template v-slot:[`item.contactInfo.email`]="{ value }">
-                          <v-chip color="#5A82AF"> <v-icon>mdi-email</v-icon> {{ value }}</v-chip>
+                          <v-chip color="#5A82AF" @click="callPhone">
+                            <v-icon>mdi-email</v-icon> {{ value }}</v-chip
+                          >
                         </template>
                         <template v-slot:[`item.mostRecentJob`]="{ value }">
                           <v-chip :color="getColor(value)">
@@ -164,14 +166,14 @@ type Person = {
   roleName: string
 }
 
-// type SystemDetails = {
-//   email: string
-//   password: string
-//   username: string
-//   _id: string
-// }
+type SystemDetails = {
+  email: string
+  password: string
+  username: string
+  _id: string
+}
 
-type PersonalInfoEish = {
+type EmployeeOfCurrentCompany = {
   firstName: string
   surname: string
   dateOfBirth: string // ISO 8601 date string
@@ -182,44 +184,46 @@ type PersonalInfoEish = {
   roleId: string
   roleName: string
 }
-//
-// type PersonalInfo = {
-//   firstName: string
-//   surname: string
-//   dateOfBirth: string // ISO 8601 date string
-//   gender: string
-//   preferred_Language: string
-//   _id: string
-// }
 
-// type Profile = {
-//   displayName: string
-//   displayImage: string
-//   _id: string
-// }
-//
-// type Roles = {
-//   role: string
-//   permissions: string[]
-//   _id: string
-// }
+type PersonalInfo = {
+  firstName: string
+  surname: string
+  dateOfBirth: string // ISO 8601 date string
+  gender: string
+  preferred_Language: string
+  _id: string
+}
 
-// type JoinedCompany = {
-//   // Define properties for joined companies if there are any; currently it's an empty object
-//   // e.g., companyName?: string;
-// }
+type Profile = {
+  displayName: string
+  displayImage: string
+  _id: string
+}
 
-// type User = {
-//   _id: string
-//   systemDetails: SystemDetails
-//   personalInfo: PersonalInfo
-//   profile: Profile
-//   roles: Roles
-//   joinedCompanies: JoinedCompany[]
-//   skills: string[]
-//   created_at: string // ISO 8601 date string
-//   __v: number
-// }
+type Roles = {
+  role: string
+  permissions: string[]
+  _id: string
+}
+
+type JoinedCompany = {
+  // Define properties for joined companies if there are any; currently it's an empty object
+  // e.g., companyName?: string;
+}
+
+type User = {
+  data: {
+    _id: string
+    systemDetails: SystemDetails
+    personalInfo: PersonalInfo
+    profile: Profile
+    roles: Roles
+    joinedCompanies: JoinedCompany[]
+    skills: string[]
+    created_at: string // ISO 8601 date string
+    __v: number
+  }
+}
 
 type JobAssignment = {
   // Define properties for job assignments if there are any
@@ -240,10 +244,10 @@ type Employee = {
   subordinateTeams: SubordinateTeam[]
   userId: string
   companyId: string
-  createdAt: string // ISO 8601 date string
+  createdAt: string
   __v: number
   roleId: string
-  updatedAt: string // ISO 8601 date string
+  updatedAt: string
   superiorId: string
 }
 
@@ -255,6 +259,8 @@ export default {
       details: {}
     },
     selectedItemName: '',
+    localUrl: 'http://localhost:3000/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     selectedItemSurname: '',
     selectedItem: {},
     isdarkmode: localStorage['theme'] !== 'false',
@@ -296,7 +302,7 @@ export default {
     search: '',
     expanded: [], // This will hold the currently expanded item
     clients: [] as Employee[],
-    EmployeeDetails2: [] as PersonalInfoEish[],
+    EmployeeDetails2: [] as EmployeeOfCurrentCompany[],
     EmployeeDetails: [
       {
         id: 59,
@@ -497,6 +503,12 @@ export default {
     updatedEditedItem(newItem: Person) {
       this.selectedItem = newItem
     },
+    sendEmail(item: any) {
+      window.location.href = 'mailto:' + item.email
+    },
+    callPhone(item: any) {
+      window.location.href = 'tel:' + item.phoneNumber
+    },
     async getEmployees() {
       const config = {
         headers: {
@@ -504,20 +516,77 @@ export default {
           Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
         }
       }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const employee_response = await axios.get(apiURL + 'employee/all', config)
+        let employee_all_data: Employee[] = employee_response.data
+
+        for (let i = 0; i < employee_all_data.length; i++) {
+          console.log(employee_all_data[i].roleId)
+        }
+        let company_employee_arr: EmployeeOfCurrentCompany[] = []
+        for (let i = 0; i < employee_all_data.length; i++) {
+          let users_response = await axios.get(
+            apiURL + `users/id/${employee_all_data[i].userId}`,
+            config
+          )
+
+          const user_data: User = users_response.data
+
+          if (employee_all_data[i].roleId !== undefined) {
+            let role = await axios.get(apiURL + `role/id/${employee_all_data[i].roleId}`, config)
+
+            console.log('hello')
+            if (role.status < 300 && role.status > 199) {
+              let company_employee: EmployeeOfCurrentCompany = {
+                firstName: user_data.data.personalInfo.firstName,
+                surname: user_data.data.personalInfo.surname,
+                dateOfBirth: user_data.data.personalInfo.dateOfBirth,
+                gender: user_data.data.personalInfo.gender,
+                preferred_Language: user_data.data.personalInfo.preferred_Language,
+                _id: user_data.data._id,
+                id: user_data.data._id,
+                roleId: employee_all_data[i].roleId,
+                roleName: role.data.roleName
+              }
+              company_employee_arr.push(company_employee)
+            } else {
+              console.log('And unsuccessfull requets was made')
+            }
+          } else {
+            let company_employee: EmployeeOfCurrentCompany = {
+              firstName: user_data.data.personalInfo.firstName,
+              surname: user_data.data.personalInfo.surname,
+              dateOfBirth: user_data.data.personalInfo.dateOfBirth,
+              gender: user_data.data.personalInfo.gender,
+              preferred_Language: user_data.data.personalInfo.preferred_Language,
+              _id: user_data.data._id,
+              id: user_data.data._id,
+              roleId: '',
+              roleName: ''
+            }
+            company_employee_arr.push(company_employee)
+          }
+        }
+        console.log(company_employee_arr)
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
+
       axios
-        .get('http://localhost:3000/employee/all', config)
+        .get(apiURL + 'employee/all', config)
         .then((response) => {
           this.clients = response.data
           for (let i = 0; i < response.data.length; i++) {
             axios
-              .get(`http://localhost:3000/users/id/${this.clients[i].userId}`, config)
+              .get(apiURL + `users/id/${this.clients[i].userId}`, config)
               .then((res) => {
-                let eish: PersonalInfoEish = res.data.data.personalInfo
+                let eish: EmployeeOfCurrentCompany = res.data.data.personalInfo
                 eish.id = res.data.data._id
                 eish.roleId = this.clients[i].roleId
 
                 axios
-                  .get(`http://localhost:3000/role/id/${eish.roleId}`, config)
+                  .get(apiURL + `role/id/${eish.roleId}`, config)
                   .then((res) => {
                     // console.log(res.data.roleName)
                     eish.roleName = res.data.roleName
@@ -567,6 +636,18 @@ export default {
     getRowClass(item: any) {
       const index = this.clients.indexOf(item)
       return index % 2 === 0 ? 'row-color' : 'second-row-color'
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
   }
 }
