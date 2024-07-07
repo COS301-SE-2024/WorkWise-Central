@@ -130,6 +130,7 @@ export class RoleService {
     adminRoleDto.permissionSuite.push(
       'edit all clients that are assigned to me',
     );
+    adminRoleDto.permissionSuite.push('view all inventory');
     adminRoleDto.permissionSuite.push('record inventory use');
 
     await this.create(adminRoleDto);
@@ -139,26 +140,21 @@ export class RoleService {
     foremanRoleDto.companyId = companyId;
     foremanRoleDto.roleName = 'Foreman';
     adminRoleDto.permissionSuite.push('view all employees under me');
-    foremanRoleDto.permissionSuite.push('view all jobs');
     foremanRoleDto.permissionSuite.push('view all jobs under me');
     foremanRoleDto.permissionSuite.push('view all jobs assigned to me');
     foremanRoleDto.permissionSuite.push('edit all jobs');
     foremanRoleDto.permissionSuite.push('edit jobs that are under me');
     foremanRoleDto.permissionSuite.push('edit jobs that are assigned to me');
     foremanRoleDto.permissionSuite.push('add a new job');
-    foremanRoleDto.permissionSuite.push('view all clients');
     foremanRoleDto.permissionSuite.push('view all clients under me');
     foremanRoleDto.permissionSuite.push(
       'view all clients that are assigned to me',
     );
-    foremanRoleDto.permissionSuite.push('edit all clients');
     foremanRoleDto.permissionSuite.push('edit all clients that are under me');
     foremanRoleDto.permissionSuite.push(
       'edit all clients that are assigned to me',
     );
     foremanRoleDto.permissionSuite.push('view all inventory');
-    foremanRoleDto.permissionSuite.push('edit all inventory');
-    foremanRoleDto.permissionSuite.push('add a new inventory item');
     foremanRoleDto.permissionSuite.push('record inventory use');
 
     await this.create(foremanRoleDto);
@@ -167,29 +163,19 @@ export class RoleService {
     const teamRoleDto = new CreateRoleDto();
     teamRoleDto.companyId = companyId;
     teamRoleDto.roleName = 'Team leader';
-    teamRoleDto.permissionSuite.push('view all employees');
     teamRoleDto.permissionSuite.push('edit employees');
-    teamRoleDto.permissionSuite.push('add new employees');
-    teamRoleDto.permissionSuite.push('view all jobs');
-    teamRoleDto.permissionSuite.push('view all jobs under me');
     teamRoleDto.permissionSuite.push('view all jobs assigned to me');
     teamRoleDto.permissionSuite.push('edit all jobs');
-    teamRoleDto.permissionSuite.push('edit jobs that are under me');
     teamRoleDto.permissionSuite.push('edit jobs that are assigned to me');
-    teamRoleDto.permissionSuite.push('add a new job');
     teamRoleDto.permissionSuite.push('view all clients');
-    teamRoleDto.permissionSuite.push('view all clients under me');
     teamRoleDto.permissionSuite.push(
       'view all clients that are assigned to me',
     );
     teamRoleDto.permissionSuite.push('edit all clients');
-    teamRoleDto.permissionSuite.push('edit all clients that are under me');
     teamRoleDto.permissionSuite.push(
       'edit all clients that are assigned to me',
     );
     teamRoleDto.permissionSuite.push('view all inventory');
-    teamRoleDto.permissionSuite.push('edit all inventory');
-    teamRoleDto.permissionSuite.push('add a new inventory item');
     teamRoleDto.permissionSuite.push('record inventory use');
 
     await this.create(teamRoleDto);
@@ -198,26 +184,6 @@ export class RoleService {
     const inventoryRoleDto = new CreateRoleDto();
     inventoryRoleDto.companyId = companyId;
     inventoryRoleDto.roleName = 'Inventory manager';
-    inventoryRoleDto.permissionSuite.push('view all employees');
-    inventoryRoleDto.permissionSuite.push('edit employees');
-    inventoryRoleDto.permissionSuite.push('add new employees');
-    inventoryRoleDto.permissionSuite.push('view all jobs');
-    inventoryRoleDto.permissionSuite.push('view all jobs under me');
-    inventoryRoleDto.permissionSuite.push('view all jobs assigned to me');
-    inventoryRoleDto.permissionSuite.push('edit all jobs');
-    inventoryRoleDto.permissionSuite.push('edit jobs that are under me');
-    inventoryRoleDto.permissionSuite.push('edit jobs that are assigned to me');
-    inventoryRoleDto.permissionSuite.push('add a new job');
-    inventoryRoleDto.permissionSuite.push('view all clients');
-    inventoryRoleDto.permissionSuite.push('view all clients under me');
-    inventoryRoleDto.permissionSuite.push(
-      'view all clients that are assigned to me',
-    );
-    inventoryRoleDto.permissionSuite.push('edit all clients');
-    inventoryRoleDto.permissionSuite.push('edit all clients that are under me');
-    inventoryRoleDto.permissionSuite.push(
-      'edit all clients that are assigned to me',
-    );
     inventoryRoleDto.permissionSuite.push('view all inventory');
     inventoryRoleDto.permissionSuite.push('edit all inventory');
     inventoryRoleDto.permissionSuite.push('add a new inventory item');
@@ -229,18 +195,8 @@ export class RoleService {
     const workerRoleDto = new CreateRoleDto();
     workerRoleDto.companyId = companyId;
     workerRoleDto.roleName = 'Worker';
-    workerRoleDto.permissionSuite.push('view all employees');
-    workerRoleDto.permissionSuite.push('edit employees');
-    workerRoleDto.permissionSuite.push('add new employees');
-    workerRoleDto.permissionSuite.push('view all jobs');
-    workerRoleDto.permissionSuite.push('view all jobs under me');
     workerRoleDto.permissionSuite.push('view all jobs assigned to me');
-    workerRoleDto.permissionSuite.push('edit all jobs');
-    workerRoleDto.permissionSuite.push('edit jobs that are under me');
     workerRoleDto.permissionSuite.push('edit jobs that are assigned to me');
-    workerRoleDto.permissionSuite.push('add a new job');
-    workerRoleDto.permissionSuite.push('view all clients');
-    workerRoleDto.permissionSuite.push('view all clients under me');
     workerRoleDto.permissionSuite.push(
       'view all clients that are assigned to me',
     );
@@ -250,8 +206,6 @@ export class RoleService {
       'edit all clients that are assigned to me',
     );
     workerRoleDto.permissionSuite.push('view all inventory');
-    workerRoleDto.permissionSuite.push('edit all inventory');
-    workerRoleDto.permissionSuite.push('add a new inventory item');
     workerRoleDto.permissionSuite.push('record inventory use');
 
     await this.create(workerRoleDto);
