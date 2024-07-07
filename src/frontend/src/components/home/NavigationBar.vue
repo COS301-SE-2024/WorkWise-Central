@@ -57,6 +57,8 @@ import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
 import ProfilePage from './settings/profile/ProfilePage.vue'
+import DarkModeToggleVue from './settings/DarkModeToggle.vue'
+import { mapGetters } from 'vuex'
 
 export default defineComponent({
   name: 'NavigationBar',
@@ -66,11 +68,15 @@ export default defineComponent({
     }
   },
   components: {
-    ProfilePage
+    ProfilePage,
+    DarkModeToggleVue
   },
   data: () => ({
     isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false
   }),
+  computed: {
+    ...mapGetters(['isDarkMode'])
+  },
   methods: {
     toggleDarkMode() {
       console.log(this.isdarkmode)
