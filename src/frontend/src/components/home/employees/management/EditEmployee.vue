@@ -21,18 +21,38 @@
         <v-col>
           <v-col>
             <v-col>
-              <small
-                class="text-caption"
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-              >
-                Role
-              </small>
-              <v-text-field
-                :v-model="localEditedItem === undefined ? null : localEditedItem.roleName"
-                variant="solo"
-                rounded="md"
-              ></v-text-field>
+              <v-col :cols="12">
+                <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
+                  {{ localEditedItem.firstName }} {{ localEditedItem.surname }}
+                </h4>
+                <h3 class="text-center">Role: {{ localEditedItem.roleName }}</h3>
+              </v-col>
+              <v-spacer></v-spacer>
             </v-col>
+            <!--            <v-col>-->
+            <!--              <small-->
+            <!--                class="text-caption"-->
+            <!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
+            <!--              >-->
+            <!--                Role-->
+            <!--              </small>-->
+            <!--              <v-text-field-->
+            <!--                :v-model="localEditedItem === undefined ? null : localEditedItem.roleName"-->
+            <!--                variant="solo"-->
+            <!--                rounded="md"-->
+            <!--              ></v-text-field>-->
+            <!--            </v-col>-->
+            <v-col :cols="12">
+              <v-select
+                clearable
+                label="Company Role"
+                @update:modelValue="change_roles"
+                :items="['Administrator', 'Manager', 'Technician']"
+              ></v-select>
+            </v-col>
+
+            <v-divider></v-divider>
+
             <v-divider></v-divider>
 
             <v-col align-self="center"
