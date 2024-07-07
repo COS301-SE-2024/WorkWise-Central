@@ -47,10 +47,10 @@ export default {
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
       isdarkmode: false,
-    light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
-    dark_theme_text_color: 'color: #DCDBDB',
-    modal_dark_theme_color: '#2b2b2b',
-    modal_light_theme_color: '#FFFFFF',
+      light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
+      dark_theme_text_color: 'color: #DCDBDB',
+      modal_dark_theme_color: '#2b2b2b',
+      modal_light_theme_color: '#FFFFFF'
     }
   },
   methods: {

@@ -72,7 +72,9 @@
                   >
                 </template>
                 <template v-slot:[`item.surname`]="{ value }">
-                  <v-chip variant="text" :color="isdarkmode ? 'white' : 'black'"> {{ value }}</v-chip>
+                  <v-chip variant="text" :color="isdarkmode ? 'white' : 'black'">
+                    {{ value }}</v-chip
+                  >
                 </template>
                 <template v-slot:[`item.contactInfo.email`]="{ value }">
                   <v-chip variant="text" @click="sendEmail" color="#5A82AF">

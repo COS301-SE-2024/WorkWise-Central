@@ -43,7 +43,7 @@
                 <v-list-item-content>
                   <v-list-item-title>Address</v-list-item-title>
                   <v-list-item-subtitle
-                  >{{ jobDetails.jobAddress.street }}, {{ jobDetails.jobAddress.suburb }},
+                    >{{ jobDetails.jobAddress.street }}, {{ jobDetails.jobAddress.suburb }},
                     {{ jobDetails.jobAddress.city }},
                     {{ jobDetails.jobAddress.postalCode }}</v-list-item-subtitle
                   >
@@ -61,8 +61,8 @@
                 <v-list-item-content>
                   <v-list-item-title>House Number</v-list-item-title>
                   <v-list-item-subtitle>{{
-                      jobDetails.jobAddress.houseNumber
-                    }}</v-list-item-subtitle>
+                    jobDetails.jobAddress.houseNumber
+                  }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
@@ -72,8 +72,8 @@
                   <v-list-item-title>Assigned Employees</v-list-item-title>
                   <v-list-item-subtitle>
                     <span v-for="employeeId in assignedEmployees.employeesIds" :key="employeeId">{{
-                        employeeId
-                      }}</span>
+                      employeeId
+                    }}</span>
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
@@ -84,12 +84,12 @@
                   <v-list-item-title>Images Taken</v-list-item-title>
                   <v-list-item-subtitle>
                     <img
-                        v-for="image in recordedDetails.imagesTaken"
-                        :key="image"
-                        :src="image"
-                        alt="Job Image"
-                        class="ma-2"
-                        width="50"
+                      v-for="image in recordedDetails.imagesTaken"
+                      :key="image"
+                      :src="image"
+                      alt="Job Image"
+                      class="ma-2"
+                      width="50"
                     />
                   </v-list-item-subtitle>
                 </v-list-item-content>
@@ -156,7 +156,7 @@
             <v-dialog v-model="detailsDialog" max-width="600px">
               <v-card>
                 <v-card-title
-                    class="text-h5 font-weight-regular bg-blue-grey text-center text-center"
+                  class="text-h5 font-weight-regular bg-blue-grey text-center text-center"
                 >
                   Edit The Job Details
                 </v-card-title>
@@ -164,48 +164,48 @@
                   <v-form ref="jobForm">
                     <v-label>Job Name</v-label>
                     <v-text-field
-                        v-model="job.jobName"
-                        label="Job Name"
-                        variant="solo"
-                        density="compact"
-                        color="grey-lighten-4"
-                        rounded="l"
-                        required
+                      v-model="job.jobName"
+                      label="Job Name"
+                      variant="solo"
+                      density="compact"
+                      color="grey-lighten-4"
+                      rounded="l"
+                      required
                     ></v-text-field>
                     <v-label>Job Description</v-label>
                     <v-textarea
-                        v-model="job.jobDescription"
-                        clearable
-                        label="Job Description"
-                        variant="solo"
-                        density="compact"
-                        color="grey-lighten-4"
-                        rounded="l"
-                        required
+                      v-model="job.jobDescription"
+                      clearable
+                      label="Job Description"
+                      variant="solo"
+                      density="compact"
+                      color="grey-lighten-4"
+                      rounded="l"
+                      required
                     ></v-textarea>
                     <v-row>
                       <v-col cols="6">
                         <v-label>Street</v-label>
                         <v-text-field
-                            v-model="job.jobAddress.street"
-                            label="Street"
-                            variant="solo"
-                            density="compact"
-                            color="grey-lighten-4"
-                            rounded="l"
-                            required
+                          v-model="job.jobAddress.street"
+                          label="Street"
+                          variant="solo"
+                          density="compact"
+                          color="grey-lighten-4"
+                          rounded="l"
+                          required
                         ></v-text-field>
                       </v-col>
                       <v-col cols="6">
                         <v-label>Suburb</v-label>
                         <v-text-field
-                            v-model="job.jobAddress.suburb"
-                            label="Suburb"
-                            variant="solo"
-                            density="compact"
-                            color="grey-lighten-4"
-                            rounded="l"
-                            required
+                          v-model="job.jobAddress.suburb"
+                          label="Suburb"
+                          variant="solo"
+                          density="compact"
+                          color="grey-lighten-4"
+                          rounded="l"
+                          required
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -214,25 +214,25 @@
                       <v-col cols="6">
                         <v-label>City</v-label>
                         <v-text-field
-                            v-model="job.jobAddress.city"
-                            label="City"
-                            variant="solo"
-                            density="compact"
-                            color="grey-lighten-4"
-                            rounded="l"
-                            required
+                          v-model="job.jobAddress.city"
+                          label="City"
+                          variant="solo"
+                          density="compact"
+                          color="grey-lighten-4"
+                          rounded="l"
+                          required
                         ></v-text-field>
                       </v-col>
                       <v-col cols="6">
                         <v-label>Postal Code</v-label>
                         <v-text-field
-                            v-model="job.jobAddress.postalCode"
-                            label="Postal Code"
-                            variant="solo"
-                            density="compact"
-                            color="grey-lighten-4"
-                            rounded="l"
-                            required
+                          v-model="job.jobAddress.postalCode"
+                          label="Postal Code"
+                          variant="solo"
+                          density="compact"
+                          color="grey-lighten-4"
+                          rounded="l"
+                          required
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -241,24 +241,24 @@
                       <v-col cols="6">
                         <v-label>Complex</v-label>
                         <v-text-field
-                            v-model="job.jobAddress.complex"
-                            label="Complex"
-                            variant="solo"
-                            density="compact"
-                            color="grey-lighten-4"
-                            rounded="l"
+                          v-model="job.jobAddress.complex"
+                          label="Complex"
+                          variant="solo"
+                          density="compact"
+                          color="grey-lighten-4"
+                          rounded="l"
                         ></v-text-field>
                       </v-col>
                       <v-col cols="6">
                         <v-label>House Number</v-label>
                         <v-text-field
-                            v-model="job.jobAddress.houseNumber"
-                            label="House Number"
-                            variant="solo"
-                            density="compact"
-                            color="grey-lighten-4"
-                            rounded="l"
-                            required
+                          v-model="job.jobAddress.houseNumber"
+                          label="House Number"
+                          variant="solo"
+                          density="compact"
+                          color="grey-lighten-4"
+                          rounded="l"
+                          required
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -290,19 +290,19 @@
                   <div class="text-caption pa-3">Select a client</div>
 
                   <v-autocomplete
-                      v-model="selectedClientName"
-                      hint="Click the field to select a client"
-                      :items="clientNames"
-                      label="Select Client"
-                      prepend-icon="mdi-account"
-                      persistent-hint
-                      outlined
-                      dense
-                      class="my-custom-autocomplete"
-                      color="primary"
-                      background-color="#f5f5f5"
-                      rounded="l"
-                      variant="solo"
+                    v-model="selectedClientName"
+                    hint="Click the field to select a client"
+                    :items="clientNames"
+                    label="Select Client"
+                    prepend-icon="mdi-account"
+                    persistent-hint
+                    outlined
+                    dense
+                    class="my-custom-autocomplete"
+                    color="primary"
+                    background-color="#f5f5f5"
+                    rounded="l"
+                    variant="solo"
                   >
                   </v-autocomplete>
                 </v-card-text>
@@ -331,19 +331,19 @@
                 <v-card-text>
                   <div class="text-caption pa-3">Select Team Members</div>
                   <v-select
-                      v-model="favorites"
-                      :items="states"
-                      hint="Pick your favorite states"
-                      label="Select Team Members"
-                      prepend-icon="mdi-account-multiple"
-                      multiple
-                      persistent-hint
-                      outlined
-                      dense
-                      class="my-custom-autocomplete"
-                      background-color="#f5f5f5"
-                      rounded="l"
-                      variant="solo"
+                    v-model="favorites"
+                    :items="states"
+                    hint="Pick your favorite states"
+                    label="Select Team Members"
+                    prepend-icon="mdi-account-multiple"
+                    multiple
+                    persistent-hint
+                    outlined
+                    dense
+                    class="my-custom-autocomplete"
+                    background-color="#f5f5f5"
+                    rounded="l"
+                    variant="solo"
                   ></v-select>
                 </v-card-text>
                 <v-card-actions>
@@ -366,32 +366,32 @@
                 </v-card-title>
                 <v-card-text>
                   <v-radio-group
-                      v-model="selectedState"
-                      column
-                      class="my-custom-radio-group"
-                      row
-                      background-color="#f5f5f5"
+                    v-model="selectedState"
+                    column
+                    class="my-custom-radio-group"
+                    row
+                    background-color="#f5f5f5"
                   >
                     <v-radio label="Todo" value="todo" :color="colors.todo"></v-radio>
                     <v-radio
-                        label="In progress"
-                        value="inProgress"
-                        :color="colors.inProgress"
+                      label="In progress"
+                      value="inProgress"
+                      :color="colors.inProgress"
                     ></v-radio>
                     <v-radio
-                        label="Awaiting Invoice"
-                        value="awaitingInvoice"
-                        :color="colors.awaitingInvoice"
+                      label="Awaiting Invoice"
+                      value="awaitingInvoice"
+                      :color="colors.awaitingInvoice"
                     ></v-radio>
                     <v-radio
-                        label="Awaiting payment"
-                        value="awaitingPayment"
-                        :color="colors.awaitingPayment"
+                      label="Awaiting payment"
+                      value="awaitingPayment"
+                      :color="colors.awaitingPayment"
                     ></v-radio>
                     <v-radio
-                        label="Awaiting sign off"
-                        value="awaitingSignOff"
-                        :color="colors.awaitingSignOff"
+                      label="Awaiting sign off"
+                      value="awaitingSignOff"
+                      :color="colors.awaitingSignOff"
                     ></v-radio>
                   </v-radio-group>
                 </v-card-text>
@@ -460,9 +460,9 @@
                   <v-container>
                     <v-row justify="space-around">
                       <v-date-picker
-                          v-model="currentDate"
-                          color="primary"
-                          @update:modelValue="updateDates"
+                        v-model="currentDate"
+                        color="primary"
+                        @update:modelValue="updateDates"
                       ></v-date-picker>
                     </v-row>
                     <v-row v-if="errorMessage" class="mt-4">
@@ -474,17 +474,17 @@
                       <v-col cols="12" md="6">
                         <v-row>
                           <v-checkbox
-                              v-model="isStartDatePicked"
-                              @click="toggleStartDate"
+                            v-model="isStartDatePicked"
+                            @click="toggleStartDate"
                           ></v-checkbox>
                           <v-text-field
-                              v-model="formattedStartDate"
-                              label="Start Date"
-                              readonly
-                              variant="solo"
-                              density="compact"
-                              color="grey-lighten-4"
-                              rounded="l"
+                            v-model="formattedStartDate"
+                            label="Start Date"
+                            readonly
+                            variant="solo"
+                            density="compact"
+                            color="grey-lighten-4"
+                            rounded="l"
                           ></v-text-field>
                         </v-row>
                       </v-col>
@@ -492,13 +492,13 @@
                         <v-row>
                           <v-checkbox v-model="isEndDatePicked" @click="toggleEndDate"></v-checkbox>
                           <v-text-field
-                              v-model="formattedEndDate"
-                              label="End Date"
-                              readonly
-                              variant="solo"
-                              density="compact"
-                              color="grey-lighten-4"
-                              rounded="l"
+                            v-model="formattedEndDate"
+                            label="End Date"
+                            readonly
+                            variant="solo"
+                            density="compact"
+                            color="grey-lighten-4"
+                            rounded="l"
                           ></v-text-field>
                         </v-row>
                       </v-col>
@@ -673,24 +673,24 @@ const fetchClients = async () => {
     // Populate clientNames array with just the names
     clientNames.value = clients.value.map((client) => {
       return client.details.firstName && client.details.surname
-          ? `${client.details.firstName} ${client.details.surname}`
-          : client.details.name ?? 'Unknown Name'
+        ? `${client.details.firstName} ${client.details.surname}`
+        : client.details.name ?? 'Unknown Name'
     })
 
     // @BOB get rid of this part
     // Watch for changes in selectedClientName and update selectedClient
     watch(
-        () => selectedClientName.value,
-        (newVal) => {
-          const selected = clients.value.find((client) => {
-            const fullName =
-                client.details.firstName && client.details.surname
-                    ? `${client.details.firstName} ${client.details.surname}`
-                    : client.details.name ?? 'Unknown Name'
-            return fullName === newVal
-          })
-          selectedClient.value = selected?._id ?? null
-        }
+      () => selectedClientName.value,
+      (newVal) => {
+        const selected = clients.value.find((client) => {
+          const fullName =
+            client.details.firstName && client.details.surname
+              ? `${client.details.firstName} ${client.details.surname}`
+              : client.details.name ?? 'Unknown Name'
+          return fullName === newVal
+        })
+        selectedClient.value = selected?._id ?? null
+      }
     )
   } catch (error) {
     console.error('Failed to fetch clients:', error)
@@ -839,7 +839,6 @@ const cancelJob = () => {
 </script>
 
 <style scoped>
-
 .mt-4 {
   margin-top: 1.5rem;
 }

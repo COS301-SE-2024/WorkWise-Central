@@ -5,35 +5,35 @@
         <v-row justify="center">
           <v-col cols="12" xs="12" sm="12" md="12">
             <v-card
-                flat
-                :height="auto"
-                :max-height="auto"
-                class="pa-11 ma-0"
-                rounded="md"
-                elevation-2
-                :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
-                border="md"
+              flat
+              :height="auto"
+              :max-height="auto"
+              class="pa-11 ma-0"
+              rounded="md"
+              elevation-2
+              :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+              border="md"
             >
               <v-card-title
-                  class="d-flex align-center pe-2"
-                  :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
-                  style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
+                class="d-flex align-center pe-2"
+                :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+                style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
               >
                 <v-icon icon="mdi-account"></v-icon> &nbsp;Job Details
 
                 <v-spacer></v-spacer>
 
                 <v-text-field
-                    v-model="search"
-                    density="compact"
-                    label="Search"
-                    prepend-inner-icon="mdi-magnify"
-                    variant="outlined"
-                    flat
-                    style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
-                    hide-details
-                    :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
-                    single-line
+                  v-model="search"
+                  density="compact"
+                  label="Search"
+                  prepend-inner-icon="mdi-magnify"
+                  variant="outlined"
+                  flat
+                  style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+                  hide-details
+                  :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  single-line
                 ></v-text-field>
                 <v-spacer></v-spacer>
                 <AddJob />
@@ -44,17 +44,17 @@
                 <div style="height: 700px; overflow-y: auto">
                   <v-col cols="12" xs="12" sm="12" md="12">
                     <v-data-table
-                        :headers="headers"
-                        :items="mockData"
-                        :search="search"
-                        :single-expand="true"
-                        v-model:expanded="expanded"
-                        show-expand
-                        height="auto"
-                        rounded="xl"
-                        :item-class="getRowClass"
-                        @click:row="toggleExpand"
-                        class="font-lato"
+                      :headers="headers"
+                      :items="mockData"
+                      :search="search"
+                      :single-expand="true"
+                      v-model:expanded="expanded"
+                      show-expand
+                      height="auto"
+                      rounded="xl"
+                      :item-class="getRowClass"
+                      @click:row="toggleExpand"
+                      class="font-lato"
                     >
                       <template v-slot:[`item.jobTitle`]="{ value }">
                         {{ value }}
@@ -107,10 +107,10 @@
                       <!-- Actions slot -->
                       <template v-slot:[`item.actions`]="{ item }">
                         <v-btn
-                            rounded="xl"
-                            variant="plain"
-                            style="transform: rotate(0deg)"
-                            @click="openDialog(item)"
+                          rounded="xl"
+                          variant="plain"
+                          style="transform: rotate(0deg)"
+                          @click="openDialog(item)"
                         >
                           <v-icon>mdi-dots-horizontal</v-icon>
                         </v-btn>
@@ -134,8 +134,8 @@
           <v-btn color="primary" @click="editJobCardDialog(selectedJob)">Edit</v-btn>
           <v-dialog v-model="managerJobCardDialog" max-width="2000px">
             <ManagerJobCard
-                :job="selectedJob"
-                @close="managerJobCardDialog = false"
+              :job="selectedJob"
+              @close="managerJobCardDialog = false"
             ></ManagerJobCard>
           </v-dialog>
           <v-btn color="error" @click="deleteJob">Delete</v-btn>
