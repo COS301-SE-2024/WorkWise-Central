@@ -26,10 +26,10 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn label="Delete" color="red darken-2" text :loading="isDeleting" @click="Delete"
+        <v-btn label="Delete" color="error" text :loading="isDeleting" @click="deleteClient"
           >Delete</v-btn
         >
-        <v-btn label="Cancel" color="grey darken-1" text @click="clientDialog = false"
+        <v-btn label="Cancel" color="secondary" text @click="clientDialog = false"
           >Cancel</v-btn
         >
       </v-card-actions>
@@ -50,7 +50,7 @@ export default {
       clientDialog: false,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
-      isdarkmode: false,
+      isdarkmode: sessionStorage.getItem('isdarkmode') === 'true' ? true : false,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',

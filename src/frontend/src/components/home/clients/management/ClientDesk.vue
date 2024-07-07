@@ -119,7 +119,7 @@
 
     <v-dialog v-model="actionsDialog" max-width="500px">
       <v-card>
-        <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+        <v-card-title class="text-h5 font-weight-regular bg-primary">
           {{ selectedItemName + ' ' + selectedItemSurname }}
         </v-card-title>
         <v-card-text> What would you like to do with this job? </v-card-text>
