@@ -208,7 +208,7 @@ type Roles = {
 
 type JoinedCompany = {
   // Define properties for joined companies if there are any; currently it's an empty object
-  // e.g., companyName?: string;
+  // e.g., companyName?: string
 }
 
 type User = {
@@ -249,6 +249,28 @@ type Employee = {
   roleId: string
   updatedAt: string
   superiorId: string
+}
+
+type EmployeePersonalInfo = {
+  address: {
+    street: string
+    suburb: string
+    city: string
+    postalCode: string
+    complex: string
+    houseNumber: string
+  }
+  contactInfo: {
+    phoneNumber: string
+    email: string
+  }
+  firstName: string
+  surname: string
+  preferredLanguage: string
+  dateOfBirth: string
+  gender: string
+  roleId: string
+  roleName: string
 }
 
 export default {
@@ -518,13 +540,13 @@ export default {
       }
       const apiURL = await this.getRequestUrl()
       try {
-        const employee_response = await axios.get(apiURL + 'employee/all', config)
+        const employee_response = await axios.get(
+          apiURL + `employee/all/${sessionStorage['currentCompany']}`,
+          config
+        )
         let employee_all_data: Employee[] = employee_response.data
 
-        for (let i = 0; i < employee_all_data.length; i++) {
-          console.log(employee_all_data[i].roleId)
-        }
-        let company_employee_arr: EmployeeOfCurrentCompany[] = []
+        let company_employee_arr: EmployeePersonalInfo[] = []
         for (let i = 0; i < employee_all_data.length; i++) {
           let users_response = await axios.get(
             apiURL + `users/id/${employee_all_data[i].userId}`,
@@ -536,78 +558,85 @@ export default {
           if (employee_all_data[i].roleId !== undefined) {
             let role = await axios.get(apiURL + `role/id/${employee_all_data[i].roleId}`, config)
 
-            console.log('hello')
+            // console.log('hello')
             if (role.status < 300 && role.status > 199) {
-              let company_employee: EmployeeOfCurrentCompany = {
-                firstName: user_data.data.personalInfo.firstName,
-                surname: user_data.data.personalInfo.surname,
-                dateOfBirth: user_data.data.personalInfo.dateOfBirth,
-                gender: user_data.data.personalInfo.gender,
-                preferred_Language: user_data.data.personalInfo.preferred_Language,
-                _id: user_data.data._id,
-                id: user_data.data._id,
-                roleId: employee_all_data[i].roleId,
-                roleName: role.data.roleName
-              }
+              let company_employee: EmployeePersonalInfo = user_data.data.personalInfo
+              company_employee.roleId = employee_all_data[i].roleId
+              company_employee.roleName = role.data.roleName
+              // let company_employee: EmployeePersonalInfo = {
+              //   firstName: user_data.data.personalInfo.firstName,
+              //   surname: user_data.data.personalInfo.surname,
+              //   dateOfBirth: user_data.data.personalInfo.dateOfBirth,
+              //   gender: user_data.data.personalInfo.gender,
+              //   preferred_Language: user_data.data.personalInfo.preferred_Language,
+              //   _id: user_data.data._id,
+              //   id: user_data.data._id,
+              //   roleId: employee_all_data[i].roleId,
+              //   roleName: role.data.roleName
+              // }
               company_employee_arr.push(company_employee)
             } else {
               console.log('And unsuccessfull requets was made')
             }
           } else {
-            let company_employee: EmployeeOfCurrentCompany = {
-              firstName: user_data.data.personalInfo.firstName,
-              surname: user_data.data.personalInfo.surname,
-              dateOfBirth: user_data.data.personalInfo.dateOfBirth,
-              gender: user_data.data.personalInfo.gender,
-              preferred_Language: user_data.data.personalInfo.preferred_Language,
-              _id: user_data.data._id,
-              id: user_data.data._id,
-              roleId: '',
-              roleName: ''
-            }
+            let company_employee: EmployeePersonalInfo = user_data.data.personalInfo
+            company_employee.roleId = ''
+            company_employee.roleName = ''
+            // let company_employee: EmployeeOfCurrentCompany = {
+            //   firstName: user_data.data.personalInfo.firstName,
+            //   surname: user_data.data.personalInfo.surname,
+            //   dateOfBirth: user_data.data.personalInfo.dateOfBirth,
+            //   gender: user_data.data.personalInfo.gender,
+            //   preferred_Language: user_data.data.personalInfo.preferred_Language,
+            //   _id: user_data.data._id,
+            //   id: user_data.data._id,
+            //   roleId: '',
+            //   roleName: ''
+            // }
             company_employee_arr.push(company_employee)
           }
         }
         console.log(company_employee_arr)
+        this.EmployeeDetails2 = company_employee_arr
       } catch (error) {
         console.log('Error fetching data:', error)
       }
 
-      axios
-        .get(apiURL + 'employee/all', config)
-        .then((response) => {
-          this.clients = response.data
-          for (let i = 0; i < response.data.length; i++) {
-            axios
-              .get(apiURL + `users/id/${this.clients[i].userId}`, config)
-              .then((res) => {
-                let eish: EmployeeOfCurrentCompany = res.data.data.personalInfo
-                eish.id = res.data.data._id
-                eish.roleId = this.clients[i].roleId
-
-                axios
-                  .get(apiURL + `role/id/${eish.roleId}`, config)
-                  .then((res) => {
-                    // console.log(res.data.roleName)
-                    eish.roleName = res.data.roleName
-                    this.EmployeeDetails2.push(eish)
-                    // console.log(eish)
-                  })
-                  .catch((error) => {
-                    console.log('Failed to fetch Role:', error)
-                  })
-                // console.log(eish)
-              })
-              .catch((error) => {
-                console.log('Failed to fetch users:', error)
-              })
-          }
-          // console.log('hello')
-          // console.log(this.EmployeeDetails2)
-        })
-        .catch((error) => {
-          console.log('Failed to fetch clients:', error)
-        })
+      // axios
+      //   .get(apiURL + 'employee/all', config)
+      //   .then((response) => {
+      //     this.clients = response.data
+      //     for (let i = 0; i < response.data.length; i++) {
+      //       axios
+      //         .get(apiURL + `users/id/${this.clients[i].userId}`, config)
+      //         .then((res) => {
+      //           let eish: EmployeeOfCurrentCompany = res.data.data.personalInfo
+      //           eish.id = res.data.data._id
+      //           eish.roleId = this.clients[i].roleId
+      //
+      //           axios
+      //             .get(apiURL + `role/id/${eish.roleId}`, config)
+      //             .then((res) => {
+      //               // console.log(res.data.roleName)
+      //               eish.roleName = res.data.roleName
+      //               this.EmployeeDetails2.push(eish)
+      //               // console.log(eish)
+      //             })
+      //             .catch((error) => {
+      //               console.log('Failed to fetch Role:', error)
+      //             })
+      //           // console.log(eish)
+      //         })
+      //         .catch((error) => {
+      //           console.log('Failed to fetch users:', error)
+      //         })
+      //     }
+      //     // console.log('hello')
+      //     console.log(this.EmployeeDetails2)
+      //   })
+      //   .catch((error) => {
+      //     console.log('Failed to fetch clients:', error)
+      //   })
     },
     toggleExpand(item: never) {
       // Check if the item is already expanded
