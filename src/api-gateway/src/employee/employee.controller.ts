@@ -37,13 +37,13 @@ const className = 'Employee';
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
-  // @ApiOperation({
-  //   summary: `Refer to Documentation`,
-  // })
-  // @Get()
-  // hello() {
-  //   return { message: 'Refer to /documentation for details on the API' };
-  // }
+  @ApiOperation({
+    summary: `Refer to Documentation`,
+  })
+  @Get()
+  hello() {
+    return { message: 'Refer to /documentation for details on the API' };
+  }
 
   // @ApiInternalServerErrorResponse({
   //   type: HttpException,
@@ -58,7 +58,6 @@ export class EmployeeController {
   // @ApiResponse({
   //   status: 201,
   //   type: CreateEmployeeResponseDto,
-  //   description: `The access token and ${className}'s Id used for querying.`,
   // })
   // @Post('/create')
   // async create(

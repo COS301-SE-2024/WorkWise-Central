@@ -4,7 +4,6 @@ import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { Role } from './entity/role.entity';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { User } from 'src/users/entities/user.entity';
-
 @Injectable()
 export class RoleRepository {
   constructor(

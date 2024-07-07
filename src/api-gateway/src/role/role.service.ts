@@ -30,7 +30,9 @@ export class RoleService {
     private roleRepository: RoleRepository,
   ) {
     this.permissionsArray.push('view all employees');
-    this.permissionsArray.push('edit employees');
+    this.permissionsArray.push('view employees under me');
+    this.permissionsArray.push('edit all employees');
+    this.permissionsArray.push('edit employees under me');
     this.permissionsArray.push('add new employees');
     this.permissionsArray.push('view all jobs');
     this.permissionsArray.push('view all jobs under me');
@@ -92,6 +94,167 @@ export class RoleService {
 
     const model = new this.roleModel(newRole);
     return await model.save();
+  }
+
+  async createDefualtRoles(companyId: Types.ObjectId) {
+    // Owner role
+    const ownerRoleDto = new CreateRoleDto();
+    ownerRoleDto.companyId = companyId;
+    ownerRoleDto.roleName = 'Owner';
+    ownerRoleDto.permissionSuite = this.permissionsArray; //Full permissions
+
+    await this.create(ownerRoleDto);
+
+    // Admin role
+    const adminRoleDto = new CreateRoleDto();
+    adminRoleDto.companyId = companyId;
+    adminRoleDto.roleName = 'Admin';
+    adminRoleDto.permissionSuite.push('view all employees');
+    adminRoleDto.permissionSuite.push('view employees under me');
+    adminRoleDto.permissionSuite.push('edit all employees');
+    adminRoleDto.permissionSuite.push('edit employees under me');
+    adminRoleDto.permissionSuite.push('view all jobs');
+    adminRoleDto.permissionSuite.push('view all jobs under me');
+    adminRoleDto.permissionSuite.push('view all jobs assigned to me');
+    adminRoleDto.permissionSuite.push('edit all jobs');
+    adminRoleDto.permissionSuite.push('edit jobs that are under me');
+    adminRoleDto.permissionSuite.push('edit jobs that are assigned to me');
+    adminRoleDto.permissionSuite.push('add a new job');
+    adminRoleDto.permissionSuite.push('view all clients');
+    adminRoleDto.permissionSuite.push('view all clients under me');
+    adminRoleDto.permissionSuite.push(
+      'view all clients that are assigned to me',
+    );
+    adminRoleDto.permissionSuite.push('edit all clients');
+    adminRoleDto.permissionSuite.push('edit all clients that are under me');
+    adminRoleDto.permissionSuite.push(
+      'edit all clients that are assigned to me',
+    );
+    adminRoleDto.permissionSuite.push('record inventory use');
+
+    await this.create(adminRoleDto);
+
+    // Foreman
+    const foremanRoleDto = new CreateRoleDto();
+    foremanRoleDto.companyId = companyId;
+    foremanRoleDto.roleName = 'Foreman';
+    adminRoleDto.permissionSuite.push('view all employees under me');
+    foremanRoleDto.permissionSuite.push('view all jobs');
+    foremanRoleDto.permissionSuite.push('view all jobs under me');
+    foremanRoleDto.permissionSuite.push('view all jobs assigned to me');
+    foremanRoleDto.permissionSuite.push('edit all jobs');
+    foremanRoleDto.permissionSuite.push('edit jobs that are under me');
+    foremanRoleDto.permissionSuite.push('edit jobs that are assigned to me');
+    foremanRoleDto.permissionSuite.push('add a new job');
+    foremanRoleDto.permissionSuite.push('view all clients');
+    foremanRoleDto.permissionSuite.push('view all clients under me');
+    foremanRoleDto.permissionSuite.push(
+      'view all clients that are assigned to me',
+    );
+    foremanRoleDto.permissionSuite.push('edit all clients');
+    foremanRoleDto.permissionSuite.push('edit all clients that are under me');
+    foremanRoleDto.permissionSuite.push(
+      'edit all clients that are assigned to me',
+    );
+    foremanRoleDto.permissionSuite.push('view all inventory');
+    foremanRoleDto.permissionSuite.push('edit all inventory');
+    foremanRoleDto.permissionSuite.push('add a new inventory item');
+    foremanRoleDto.permissionSuite.push('record inventory use');
+
+    await this.create(foremanRoleDto);
+
+    // Team Leader
+    const teamRoleDto = new CreateRoleDto();
+    teamRoleDto.companyId = companyId;
+    teamRoleDto.roleName = 'Team leader';
+    teamRoleDto.permissionSuite.push('view all employees');
+    teamRoleDto.permissionSuite.push('edit employees');
+    teamRoleDto.permissionSuite.push('add new employees');
+    teamRoleDto.permissionSuite.push('view all jobs');
+    teamRoleDto.permissionSuite.push('view all jobs under me');
+    teamRoleDto.permissionSuite.push('view all jobs assigned to me');
+    teamRoleDto.permissionSuite.push('edit all jobs');
+    teamRoleDto.permissionSuite.push('edit jobs that are under me');
+    teamRoleDto.permissionSuite.push('edit jobs that are assigned to me');
+    teamRoleDto.permissionSuite.push('add a new job');
+    teamRoleDto.permissionSuite.push('view all clients');
+    teamRoleDto.permissionSuite.push('view all clients under me');
+    teamRoleDto.permissionSuite.push(
+      'view all clients that are assigned to me',
+    );
+    teamRoleDto.permissionSuite.push('edit all clients');
+    teamRoleDto.permissionSuite.push('edit all clients that are under me');
+    teamRoleDto.permissionSuite.push(
+      'edit all clients that are assigned to me',
+    );
+    teamRoleDto.permissionSuite.push('view all inventory');
+    teamRoleDto.permissionSuite.push('edit all inventory');
+    teamRoleDto.permissionSuite.push('add a new inventory item');
+    teamRoleDto.permissionSuite.push('record inventory use');
+
+    await this.create(teamRoleDto);
+
+    // Inventory manager
+    const inventoryRoleDto = new CreateRoleDto();
+    inventoryRoleDto.companyId = companyId;
+    inventoryRoleDto.roleName = 'Inventory manager';
+    inventoryRoleDto.permissionSuite.push('view all employees');
+    inventoryRoleDto.permissionSuite.push('edit employees');
+    inventoryRoleDto.permissionSuite.push('add new employees');
+    inventoryRoleDto.permissionSuite.push('view all jobs');
+    inventoryRoleDto.permissionSuite.push('view all jobs under me');
+    inventoryRoleDto.permissionSuite.push('view all jobs assigned to me');
+    inventoryRoleDto.permissionSuite.push('edit all jobs');
+    inventoryRoleDto.permissionSuite.push('edit jobs that are under me');
+    inventoryRoleDto.permissionSuite.push('edit jobs that are assigned to me');
+    inventoryRoleDto.permissionSuite.push('add a new job');
+    inventoryRoleDto.permissionSuite.push('view all clients');
+    inventoryRoleDto.permissionSuite.push('view all clients under me');
+    inventoryRoleDto.permissionSuite.push(
+      'view all clients that are assigned to me',
+    );
+    inventoryRoleDto.permissionSuite.push('edit all clients');
+    inventoryRoleDto.permissionSuite.push('edit all clients that are under me');
+    inventoryRoleDto.permissionSuite.push(
+      'edit all clients that are assigned to me',
+    );
+    inventoryRoleDto.permissionSuite.push('view all inventory');
+    inventoryRoleDto.permissionSuite.push('edit all inventory');
+    inventoryRoleDto.permissionSuite.push('add a new inventory item');
+    inventoryRoleDto.permissionSuite.push('record inventory use');
+
+    await this.create(inventoryRoleDto);
+
+    // Worker
+    const workerRoleDto = new CreateRoleDto();
+    workerRoleDto.companyId = companyId;
+    workerRoleDto.roleName = 'Worker';
+    workerRoleDto.permissionSuite.push('view all employees');
+    workerRoleDto.permissionSuite.push('edit employees');
+    workerRoleDto.permissionSuite.push('add new employees');
+    workerRoleDto.permissionSuite.push('view all jobs');
+    workerRoleDto.permissionSuite.push('view all jobs under me');
+    workerRoleDto.permissionSuite.push('view all jobs assigned to me');
+    workerRoleDto.permissionSuite.push('edit all jobs');
+    workerRoleDto.permissionSuite.push('edit jobs that are under me');
+    workerRoleDto.permissionSuite.push('edit jobs that are assigned to me');
+    workerRoleDto.permissionSuite.push('add a new job');
+    workerRoleDto.permissionSuite.push('view all clients');
+    workerRoleDto.permissionSuite.push('view all clients under me');
+    workerRoleDto.permissionSuite.push(
+      'view all clients that are assigned to me',
+    );
+    workerRoleDto.permissionSuite.push('edit all clients');
+    workerRoleDto.permissionSuite.push('edit all clients that are under me');
+    workerRoleDto.permissionSuite.push(
+      'edit all clients that are assigned to me',
+    );
+    workerRoleDto.permissionSuite.push('view all inventory');
+    workerRoleDto.permissionSuite.push('edit all inventory');
+    workerRoleDto.permissionSuite.push('add a new inventory item');
+    workerRoleDto.permissionSuite.push('record inventory use');
+
+    await this.create(workerRoleDto);
   }
 
   async findAll() {
