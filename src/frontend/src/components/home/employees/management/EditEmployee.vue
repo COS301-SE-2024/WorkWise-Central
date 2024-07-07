@@ -209,7 +209,11 @@ export default {
       }
       let config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
       let apiURL = this.getRequestUrl()
-      axios.patch(apiURL + `employee/${this.localEditedItem._id}`, this.localEditedItem, config)
+      axios.patch(
+        apiURL + `employee/${this.localEditedItem !== undefined ? this.localEditedItem._id : null}`,
+        this.localEditedItem,
+        config
+      )
     },
     // async update() {
     //   await axios
