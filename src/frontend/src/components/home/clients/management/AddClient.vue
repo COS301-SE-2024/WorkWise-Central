@@ -4,9 +4,9 @@
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        prepend-icon="mdi-account"
+        style="font-size: 20px"
         text="Add Client"
-        variant="text"
+        variant="elevated"
         color="#5A82AF"
         v-bind="activatorProps"
       ></v-btn>
@@ -41,7 +41,7 @@
                 color="grey-lighten-4"
                 placeholder="Enter the name of the client"
                 v-model="req_obj.details.name"
-                rounded="md"
+                rounded="l"
                 variant="underlined"
                 required
                 :rules="first_name_rules"

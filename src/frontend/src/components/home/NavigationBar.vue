@@ -3,8 +3,6 @@ import { ref } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
 const isVisible = ref(false)
 const drawer = ref(true)
-const modal_dark_theme_color = '#2b2b2b'
-const modal_light_theme_color = '#FFFFFF'
 const onProfileClick = () => {
   console.log('Profile icon clicked')
 }
@@ -241,7 +239,6 @@ export default defineComponent({
       </v-app>
     </v-card>
   </v-app>
-  <v-col></v-col>
 </template>
 
 <style scoped>
