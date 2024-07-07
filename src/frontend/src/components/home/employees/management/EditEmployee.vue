@@ -50,7 +50,8 @@
                 clearable
                 label="Company Role"
                 @update:modelValue="change_roles"
-                :items="['Administrator', 'Manager', 'Technician']"
+                :items="roleItemNames"
+                :v-model="selectedRole"
               ></v-select>
             </v-col>
 
@@ -67,7 +68,7 @@
                   width="85%"
                   height="35"
                   variant="elevated"
-                  @click="savechnages"
+                  @click="savechanges"
                 >
                   SAVE
                 </v-btn>
@@ -95,6 +96,18 @@
 
 <script lang="ts">
 import axios from 'axios'
+import { select } from '@syncfusion/ej2-base'
+
+type Role = {
+  _id: string
+  roleName: string
+  permissionSuite: string[]
+  companyId: string
+  createdAt: string // ISO 8601 date string
+  __v: number
+  updatedAt: string // ISO 8601 date string
+}
+
 export default {
   name: 'EditClient',
   props: {
@@ -106,10 +119,13 @@ export default {
   },
   data() {
     return {
+      selectedRole: '',
       localEditedItem: this.editedItem,
       isdarkmode: localStorage['theme'] !== 'false',
       role_change: false,
       employeeDialog: false,
+      roleItemNames: [] as string[],
+      roleItems: [] as Role[],
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
@@ -138,6 +154,7 @@ export default {
     }
   },
   methods: {
+    select,
     change_roles() {
       console.log('hello')
       this.role_change = true
@@ -149,9 +166,19 @@ export default {
       const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       console.log(apiURL)
+      let rolesNames_arr: string[] = []
       try {
-        let role = await axios.get(apiURL + `roles/all/${sessionStorage['currentCompany']}`, config)
-        console.log(role)
+        let roles_response = await axios.get(
+          apiURL + `role/all/${sessionStorage['currentCompany']}`,
+          config
+        )
+        let roles_data: Role[] = roles_response.data
+        for (let i = 0; i < roles_data.length; i++) {
+          rolesNames_arr.push(roles_data[i].roleName)
+        }
+        this.roleItemNames = rolesNames_arr
+        this.roleItems = roles_data
+        console.log(roles_data)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
@@ -165,9 +192,24 @@ export default {
       this.$emit('update:item', this.localEditedItem)
       alert('Item updated')
     },
-    savechnages() {
-      alert('Client updated')
+    savechanges() {
+      alert('Employee updated')
       this.employeeDialog = false
+      let employee_req_obj = {
+        roleId: '',
+        currentJobAssignments: [],
+        superiorId: '',
+        subordinates: [],
+        subordinateTeams: []
+      }
+      for (let i = 0; i < this.roleItems.length; i++) {
+        if (this.roleItems[i].roleName === this.selectedRole) {
+          employee_req_obj.roleId = this.roleItems[i]._id
+        }
+      }
+      let config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      let apiURL = this.getRequestUrl()
+      axios.patch(apiURL + `employee/${this.localEditedItem._id}`, this.localEditedItem, config)
     },
     // async update() {
     //   await axios
@@ -201,6 +243,7 @@ export default {
   },
   mounted() {
     this.showlcalvalues()
+    this.loadRoles()
   }
 }
 </script>
