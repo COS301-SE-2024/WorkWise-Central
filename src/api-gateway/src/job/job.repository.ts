@@ -35,7 +35,9 @@ export class JobRepository {
   }
 
   async findAll() {
-    return this.jobModel.find().lean().exec();
+    return this.jobModel
+      .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
+      .lean();
   }
 
   async exists(id: string) {

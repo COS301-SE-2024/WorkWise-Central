@@ -80,6 +80,12 @@ export class UsersService {
     return this.userRepository.findAll();
   }
 
+  async getAllUsersInCompany(
+    companyId: Types.ObjectId,
+  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+    return this.userRepository.findAllInCompany(companyId);
+  }
+
   async usernameExists(identifier: string): Promise<boolean> {
     return this.userRepository.exists(identifier);
   }
@@ -168,13 +174,15 @@ export class UsersService {
   }
 
   async userIsValid(user: User): Promise<ValidationResult> {
-    if (user.employeeIds) {
-      for (const employee of user.employeeIds) {
-        const exists = await this.employeeService.employeeExists(employee);
+    if (user.joinedCompanies) {
+      for (const joinedCompany of user.joinedCompanies) {
+        const exists = await this.employeeService.employeeExists(
+          joinedCompany.employeeId,
+        );
         if (!exists)
           return new ValidationResult(
             false,
-            `Invalid Employee ID: ${employee}`,
+            `Invalid Employee ID: ${joinedCompany.employeeId}`,
           );
       }
     }
@@ -202,13 +210,15 @@ export class UsersService {
       return new ValidationResult(false, `User cannot be found with id ${id}`);
     }
 
-    if (user.employeeIds) {
-      for (const employee of user.employeeIds) {
-        const exists = await this.employeeService.employeeExists(employee);
+    if (user.joinedCompanies) {
+      for (const joinedCompany of user.joinedCompanies) {
+        const exists = await this.employeeService.employeeExists(
+          joinedCompany.employeeId,
+        );
         if (!exists)
           return new ValidationResult(
             false,
-            `Invalid Employee ID: ${employee}`,
+            `Invalid Employee ID: ${joinedCompany.employeeId}`,
           );
       }
     }

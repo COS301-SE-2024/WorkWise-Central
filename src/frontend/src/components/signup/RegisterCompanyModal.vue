@@ -2,7 +2,7 @@
   <v-dialog max-height="800" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-        rounded="xl"
+        rounded="md"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         variant="elevated"

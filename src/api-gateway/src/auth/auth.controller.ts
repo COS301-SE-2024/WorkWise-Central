@@ -13,6 +13,7 @@ import { SignInDto } from './dto/sign-in-dto.dto';
 import {
   ApiInternalServerErrorResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { SignInResponseDto } from './dto/sign-in-response.dto';
@@ -21,6 +22,10 @@ import { SignInResponseDto } from './dto/sign-in-response.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @ApiOperation({
+    summary: `Used to login a user`,
+    description: 'Further details',
+  })
   @ApiOkResponse({ type: SignInResponseDto })
   @ApiInternalServerErrorResponse({
     type: HttpException,
@@ -41,6 +46,10 @@ export class AuthController {
   }
 
   @Get('/verify')
+  @ApiOperation({
+    summary: `Verify a user using their email`,
+    description: '',
+  })
   async verifyEmail(
     @Query('email') email: string,
     @Query('token') token: string,

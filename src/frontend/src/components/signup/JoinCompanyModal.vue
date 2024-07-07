@@ -2,13 +2,14 @@
   <v-dialog max-width="500" height="800">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-        rounded="xl"
+        rounded="md"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         variant="elevated"
         color="#5A82AF"
         v-bind="activatorProps"
-      >Join Company</v-btn>
+        >Join Company</v-btn
+      >
     </template>
     <v-sheet
       elevation="14"
