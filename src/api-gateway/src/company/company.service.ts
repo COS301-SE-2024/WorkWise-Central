@@ -159,8 +159,8 @@ export class CompanyService {
       throw new ConflictException(inputValidated.message);
     }
 
-    const companyName = (await this.getCompanyById(addUserDto.currentCompany))
-      .name;
+    const company = await this.getCompanyById(addUserDto.currentCompany);
+    const companyName = company.name;
 
     const user = await this.usersService.getUserByUsername(
       addUserDto.newUserUsername,
@@ -180,7 +180,13 @@ export class CompanyService {
     };
     user.joinedCompanies.push(joinedCompany);
 
-    const updatedUser = await this.usersService.updateUser(user._id, user);
+    const updatedUser = await this.usersService.updateUser(user._id, {
+      joinedCompanies: user.joinedCompanies,
+    });
+
+    company.employees.push(newEmployeeId);
+    await this.update(company._id, { employees: company.employees });
+
     console.log(updatedUser);
     return joinedCompany;
   }
