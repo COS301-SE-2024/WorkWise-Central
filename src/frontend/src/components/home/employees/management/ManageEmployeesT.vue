@@ -1,5 +1,5 @@
 <template>
-  <v-app :style="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color">
+  <v-app :style="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color">
     <v-container fluid fill-height>
       <v-row justify="center" xs="6" sm="6" md="12">
         <v-col cols="12">
@@ -7,17 +7,17 @@
             <v-col cols="12" xs="12" sm="12" md="12">
               <v-card
                 flat
-                :height="auto"
-                :max-height="auto"
+                height="auto"
+                max-height="auto"
                 class="pa-11 ma-0"
                 rounded="md"
                 elevation-2
-                :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                 border="md"
               >
                 <v-card-title
                   class="d-flex align-center pe-2"
-                  :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+                  :color="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                   style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
                 >
                   <v-icon icon="mdi-account"></v-icon> &nbsp; Employee Details
@@ -34,7 +34,7 @@
                     style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
                     hide-details
                     :bg-color="
-                      isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color
+                      isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
                     "
                     single-line
                   ></v-text-field>
@@ -86,7 +86,7 @@
                           <v-btn
                             rounded="xl"
                             variant="plain"
-                            style="transform: rotate(90deg)"
+                            :style="'transform: rotate(90deg) dots'"
                             @click="(actionsDialog = true), selectItem(item)"
                           >
                             <v-icon>mdi-dots-horizontal</v-icon>
@@ -111,14 +111,13 @@
           <v-card-actions>
             <EmployeeDetails
               v-model="clientDialog"
-              :colors="colors"
+              colors="colors"
               :EmployeeDetails="selectedItem"
             />
             <EditEmployee
               @update:item="selectedItem = $event"
               :editedItem="selectedItem"
-              :_clientID="selectedItemId"
-            /><DeleteClient :details="selectedItem" :client_id="selectedItemId" />
+            /><DeleteClient :details="selectedItem" />
             <v-spacer></v-spacer>
             <v-btn @click="actionsDialog = false">Cancel</v-btn>
           </v-card-actions>
@@ -128,28 +127,137 @@
   </v-app>
 </template>
 
-<script lang="js">
+<script lang="ts">
 // import DeleteClient from '../../clients/management/DeleteClient.vue'
 import AddEmployee from './AddEmployee.vue'
 
 import axios from 'axios'
-import router from '@/router/index.ts'
+import router from '@/router/index'
 import EditEmployee from '@/components/home/employees/management/EditEmployee.vue'
 import DeleteClient from '@/components/home/clients/management/DeleteClient.vue'
 import EmployeeDetails from '@/components/home/employees/management/EmployeeDetails.vue'
 
+type Address = {
+  street: string
+  suburb: string
+  city: string
+  postalCode: string
+  complex: string
+  houseNumber: string
+}
+
+type ContactInfo = {
+  phoneNumber: string
+  email: string
+}
+
+type Person = {
+  address: Address
+  contactInfo: ContactInfo
+  firstName: string
+  surname: string
+  preferredLanguage: string
+  dateOfBirth: string // ISO 8601 date string
+  gender: string
+  id: string // Assuming this is a MongoDB ObjectId in string format
+  roleId: string // Assuming this is a MongoDB ObjectId in string format
+  roleName: string
+}
+
+type SystemDetails = {
+  email: string
+  password: string
+  username: string
+  _id: string
+}
+
+type PersonalInfoEish = {
+  firstName: string
+  surname: string
+  dateOfBirth: string // ISO 8601 date string
+  gender: string
+  preferred_Language: string
+  _id: string
+  id: string
+  roleId: string
+  roleName: string
+}
+
+type PersonalInfo = {
+  firstName: string
+  surname: string
+  dateOfBirth: string // ISO 8601 date string
+  gender: string
+  preferred_Language: string
+  _id: string
+}
+
+type Profile = {
+  displayName: string
+  displayImage: string
+  _id: string
+}
+
+type Roles = {
+  role: string
+  permissions: string[]
+  _id: string
+}
+
+type JoinedCompany = {
+  // Define properties for joined companies if there are any; currently it's an empty object
+  // e.g., companyName?: string;
+}
+
+type User = {
+  _id: string
+  systemDetails: SystemDetails
+  personalInfo: PersonalInfo
+  profile: Profile
+  roles: Roles
+  joinedCompanies: JoinedCompany[]
+  skills: string[]
+  created_at: string // ISO 8601 date string
+  __v: number
+}
+
+type JobAssignment = {
+  // Define properties for job assignments if there are any
+}
+
+type Subordinate = {
+  // Define properties for subordinates if there are any
+}
+
+type SubordinateTeam = {
+  // Define properties for subordinate teams if there are any
+}
+
+type Employee = {
+  _id: string
+  currentJobAssignments: JobAssignment[]
+  subordinates: Subordinate[]
+  subordinateTeams: SubordinateTeam[]
+  userId: string
+  companyId: string
+  createdAt: string // ISO 8601 date string
+  __v: number
+  roleId: string
+  updatedAt: string // ISO 8601 date string
+  superiorId: string
+}
+
 export default {
   name: 'ClientDesk',
 
-  props: {
-    isDarkMode: Boolean
-  },
   data: () => ({
     data: {
       details: {}
     },
+    selectedItemName: '',
+    selectedItemSurname: '',
     selectedItem: {},
-    isdarkmode: false,
+    isdarkmode: localStorage['theme'] !== 'false',
     clientDialog: false,
     deleteDialog: false,
     editDialog: false,
@@ -187,8 +295,8 @@ export default {
     ],
     search: '',
     expanded: [], // This will hold the currently expanded item
-    clients: [],
-    EmployeeDetails2: [],
+    clients: [] as Employee[],
+    EmployeeDetails2: [] as PersonalInfoEish[],
     EmployeeDetails: [
       {
         id: 59,
@@ -333,26 +441,26 @@ export default {
     filteredClients() {
       if (!this.search) return this.clients
       return this.clients.filter((client) => {
-        return Object.values(client).some((value) =>
+        return Object.values(client).some((value: any) =>
           value.toString().toLowerCase().includes(this.search.toLowerCase())
         )
       })
     }
   },
   mounted() {
-    this.getClients()
+    this.getEmployees()
   },
   methods: {
-    selectItem(item) {
+    selectItem(item: Person) {
       this.selectedItem = item
       this.selectedItemName = item.firstName
       console.log(this.selectedItemName)
       this.selectedItemSurname = item.surname
       console.log('Selected item:', this.selectedItem) // Corrected console.log
     },
-    EditAccountClick(e) {
-      console.log(e.currentTarget.id)
-      localStorage['edit_roles_id'] = e.currentTarget.id
+    EditAccountClick(e: MouseEvent) {
+      const t = e.currentTarget as HTMLButtonElement
+      localStorage['edit_roles_id'] = t.id
       router.push('/manager-edit-employee')
     },
     onProfileClick() {
@@ -364,17 +472,17 @@ export default {
     searchClient() {
       console.log('Searching client')
     },
-    editEmployee(item) {
+    editEmployee(item: Person) {
       this.selectedItem = item
       console.log('Editing client')
     },
-    deleteClient(item) {
+    deleteClient(item: Person) {
       this.selectedItem = item
       console.log('Deleting client')
     },
-    removeClient(e) {
-      let id = e.currentTarget.id
-
+    removeClient(e: MouseEvent) {
+      let event = e.currentTarget as HTMLButtonElement
+      let id = event.id
       console.log(id)
       for (let i = 0; i < this.EmployeeDetails.length; i++) {
         if (this.EmployeeDetails[i].id === Number(id)) {
@@ -386,10 +494,10 @@ export default {
     openAddClient() {
       this.clientDialog = true
     },
-    updatedEditedItem(newItem) {
+    updatedEditedItem(newItem: Person) {
       this.selectedItem = newItem
     },
-    async getClients() {
+    async getEmployees() {
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -404,35 +512,35 @@ export default {
             axios
               .get(`http://localhost:3000/users/id/${this.clients[i].userId}`, config)
               .then((res) => {
-                let eish = res.data.data.personalInfo
+                let eish: PersonalInfoEish = res.data.data.personalInfo
                 eish.id = res.data.data._id
                 eish.roleId = this.clients[i].roleId
 
                 axios
                   .get(`http://localhost:3000/role/id/${eish.roleId}`, config)
                   .then((res) => {
-                    console.log(res.data.roleName)
+                    // console.log(res.data.roleName)
                     eish.roleName = res.data.roleName
                     this.EmployeeDetails2.push(eish)
-                    console.log(eish)
+                    // console.log(eish)
                   })
                   .catch((error) => {
-                    console.log('Failed to fetch Role:', error)
+                    // console.log('Failed to fetch Role:', error)
                   })
-                console.log(eish)
+                // console.log(eish)
               })
               .catch((error) => {
                 console.log('Failed to fetch users:', error)
               })
           }
-          console.log('hello')
-          console.log(this.EmployeeDetails2)
+          // console.log('hello')
+          // console.log(this.EmployeeDetails2)
         })
         .catch((error) => {
           console.log('Failed to fetch clients:', error)
         })
     },
-    toggleExpand(item) {
+    toggleExpand(item: never) {
       // Check if the item is already expanded
       const isExpanded = this.expanded.includes(item)
       if (isExpanded) {
@@ -452,11 +560,11 @@ export default {
         console.log(this.isdarkmode)
       }
     },
-    getColor(value) {
+    getColor(value: string) {
       if (value == '') return 'red'
       else return 'green'
     },
-    getRowClass(item) {
+    getRowClass(item: any) {
       const index = this.clients.indexOf(item)
       return index % 2 === 0 ? 'row-color' : 'second-row-color'
     }
