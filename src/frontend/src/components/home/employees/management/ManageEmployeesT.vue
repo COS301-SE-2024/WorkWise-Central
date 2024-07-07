@@ -173,27 +173,6 @@ type SystemDetails = {
   _id: string
 }
 
-type EmployeeOfCurrentCompany = {
-  firstName: string
-  surname: string
-  dateOfBirth: string // ISO 8601 date string
-  gender: string
-  preferred_Language: string
-  _id: string
-  id: string
-  roleId: string
-  roleName: string
-}
-
-type PersonalInfo = {
-  firstName: string
-  surname: string
-  dateOfBirth: string // ISO 8601 date string
-  gender: string
-  preferred_Language: string
-  _id: string
-}
-
 type Profile = {
   displayName: string
   displayImage: string
