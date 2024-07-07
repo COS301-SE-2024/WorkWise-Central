@@ -164,12 +164,12 @@ type Person = {
   roleName: string
 }
 
-type SystemDetails = {
-  email: string
-  password: string
-  username: string
-  _id: string
-}
+// type SystemDetails = {
+//   email: string
+//   password: string
+//   username: string
+//   _id: string
+// }
 
 type PersonalInfoEish = {
   firstName: string
@@ -182,44 +182,44 @@ type PersonalInfoEish = {
   roleId: string
   roleName: string
 }
+//
+// type PersonalInfo = {
+//   firstName: string
+//   surname: string
+//   dateOfBirth: string // ISO 8601 date string
+//   gender: string
+//   preferred_Language: string
+//   _id: string
+// }
 
-type PersonalInfo = {
-  firstName: string
-  surname: string
-  dateOfBirth: string // ISO 8601 date string
-  gender: string
-  preferred_Language: string
-  _id: string
-}
+// type Profile = {
+//   displayName: string
+//   displayImage: string
+//   _id: string
+// }
+//
+// type Roles = {
+//   role: string
+//   permissions: string[]
+//   _id: string
+// }
 
-type Profile = {
-  displayName: string
-  displayImage: string
-  _id: string
-}
+// type JoinedCompany = {
+//   // Define properties for joined companies if there are any; currently it's an empty object
+//   // e.g., companyName?: string;
+// }
 
-type Roles = {
-  role: string
-  permissions: string[]
-  _id: string
-}
-
-type JoinedCompany = {
-  // Define properties for joined companies if there are any; currently it's an empty object
-  // e.g., companyName?: string;
-}
-
-type User = {
-  _id: string
-  systemDetails: SystemDetails
-  personalInfo: PersonalInfo
-  profile: Profile
-  roles: Roles
-  joinedCompanies: JoinedCompany[]
-  skills: string[]
-  created_at: string // ISO 8601 date string
-  __v: number
-}
+// type User = {
+//   _id: string
+//   systemDetails: SystemDetails
+//   personalInfo: PersonalInfo
+//   profile: Profile
+//   roles: Roles
+//   joinedCompanies: JoinedCompany[]
+//   skills: string[]
+//   created_at: string // ISO 8601 date string
+//   __v: number
+// }
 
 type JobAssignment = {
   // Define properties for job assignments if there are any
@@ -525,7 +525,7 @@ export default {
                     // console.log(eish)
                   })
                   .catch((error) => {
-                    // console.log('Failed to fetch Role:', error)
+                    console.log('Failed to fetch Role:', error)
                   })
                 // console.log(eish)
               })
