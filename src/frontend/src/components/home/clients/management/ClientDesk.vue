@@ -1,128 +1,125 @@
 <template>
   <v-container fluid fill-height>
-    <v-col>
-      <v-sheet
-        :height="auto"
-        class="pa-11 ma-0"
-        rounded="md"
-        :theme="isdarkmode ? 'dark' : 'light'"
-        border="md"
+    <v-sheet
+      height="auto"
+      class="pa-11 ma-0"
+      rounded="md"
+      :theme="isdarkmode ? 'dark' : 'light'"
+      border="md"
+    >
+      <v-card-title
+        class="d-flex align-center pe-2"
+        :style="
+          (isdarkmode === true ? dark_theme_text_color : light_theme_text_color,
+          'font-family: Lato, sans-serif; font-size: 25px; font-weight: lighter')
+        "
       >
-        <v-card-title
-          class="d-flex align-center pe-2"
-          :style="
-            (isdarkmode === true ? dark_theme_text_color : light_theme_text_color,
-            'font-family: Lato, sans-serif; font-size: 25px; font-weight: lighter')
-          "
-        >
-          <v-icon icon="mdi-account"></v-icon> &nbsp; Client Details
+        <v-icon icon="mdi-account"></v-icon> &nbsp; Client Details
 
-          <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
 
-          <v-text-field
-            v-model="search"
-            density="compact"
-            label="Search"
-            prepend-inner-icon="mdi-magnify"
-            variant="outlined"
-            flat
-            style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
-            hide-details
-            :theme="isdarkmode ? 'dark' : 'light'"
-            single-line
-          ></v-text-field>
-          <v-spacer></v-spacer>
-          <AddClient
-            v-model="addClientDialog"
-            @close="addClientDialog = false"
-            :isDarkMode="isDarkMode"
-          />
-        </v-card-title>
+        <v-text-field
+          v-model="search"
+          density="compact"
+          label="Search"
+          prepend-inner-icon="mdi-magnify"
+          variant="outlined"
+          flat
+          style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+          hide-details
+          :theme="isdarkmode ? 'dark' : 'light'"
+          single-line
+        ></v-text-field>
+        <v-spacer></v-spacer>
+        <AddClient
+          v-model="addClientDialog"
+          @close="addClientDialog = false"
+          :isDarkMode="isDarkMode"
+        />
+      </v-card-title>
 
-        <v-divider></v-divider>
-        <v-col cols="12" xs="12" sm="12" md="12">
-          <div style="height: 700px; overflow-y: auto">
-            <v-col cols="12" xs="12" sm="12" md="12">
-              <v-data-table
-                :headers="headers"
-                :items="clientDetails"
-                :search="search"
-                :single-expand="true"
-                v-model:expanded="expanded"
-                show-expand
-                height="auto"
-                rounded="xl"
-                :item-class="getRowClass"
-                class="font-lato"
-                :theme="isdarkmode ? 'dark' : 'light'"
-              >
-                <template v-slot:[`item.name`]="{ value }">
-                  <v-chip variant="text" :color="isdarkmode ? 'white' : 'black'">
-                    <v-icon>mdi-account</v-icon>{{ value }}</v-chip
-                  >
-                </template>
-                <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                  <v-chip variant="text" @click="callPhone" color="#5A82AF"
-                    ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
-                  >
-                </template>
-                <template v-slot:[`item.mostRecentJob`]="{ value }">
-                  <v-chip :color="getColor(value)">
-                    {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
-                  >
-                </template>
-                <template v-slot:[`item.surname`]="{ value }">
-                  <v-chip variant="text" :color="isdarkmode ? 'white' : 'black'">
-                    {{ value }}</v-chip
-                  >
-                </template>
-                <template v-slot:[`item.contactInfo.email`]="{ value }">
-                  <v-chip variant="text" @click="sendEmail" color="#5A82AF">
-                    <v-icon>mdi-email</v-icon>{{ value }}</v-chip
-                  >
-                </template>
-                <template v-slot:[`item.address.street`]="{ value }">
-                  <v-chip variant="text" :color="isdarkmode ? 'white' : 'black'">
-                    <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip
-                  >
-                </template>
-                <!-- Expanded content slot -->
-                <template v-slot:expanded-row="{ columns, item }">
-                  <tr>
-                    <td :colspan="columns.length">
-                      Full Address: {{ item.name }}, {{ item.surname }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td :colspan="columns.length">VAT Number:{{ item.vatNumber }}</td>
-                  </tr>
-                  <tr>
-                    <td :colspan="columns.length">
-                      Languages Spoken: {{ item.preferred_Language }}
-                    </td>
-                  </tr>
-                </template>
-                <!-- Actions slot -->
-                <template v-slot:[`item.actions`]="{ item }">
-                  <v-btn
-                    rounded="xl"
-                    variant="plain"
-                    style="transform: rotate(90deg) dots"
-                    @click="(actionsDialog = true), selectItem(item)"
-                  >
-                    <v-icon>mdi-dots-horizontal</v-icon>
-                  </v-btn>
-                </template>
-              </v-data-table>
-            </v-col>
-          </div>
-        </v-col>
-      </v-sheet>
-    </v-col>
+      <v-divider></v-divider>
+      <v-col cols="12" xs="12" sm="12" md="12">
+        <div style="height: auto; overflow-y: auto">
+          <v-col cols="12" xs="12" sm="12" md="12">
+            <v-data-table
+              :headers="headers"
+              :items="clientDetails"
+              :search="search"
+              label="Clients"
+              height="auto"
+              rounded="xl"
+              :item-class="getRowClass"
+              class="font-lato"
+              :theme="isdarkmode ? 'dark' : 'light'"
+            >
+              <template v-slot:[`item.name`]="{ value }">
+                <v-chip variant="text" :color="isdarkmode ? 'white' : 'black'">
+                  <v-icon>mdi-account</v-icon>{{ value }}</v-chip
+                >
+              </template>
+              <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
+                <v-chip variant="text" @click="callPhone" color="#5A82AF"
+                  ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
+                >
+              </template>
+              <template v-slot:[`item.mostRecentJob`]="{ value }">
+                <v-chip :color="getColor(value)"> {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip>
+              </template>
+              <template v-slot:[`item.surname`]="{ value }">
+                <v-chip variant="text" :color="isdarkmode ? 'white' : 'black'"> {{ value }}</v-chip>
+              </template>
+              <template v-slot:[`item.contactInfo.email`]="{ value }">
+                <v-chip variant="text" @click="sendEmail" color="#5A82AF">
+                  <v-icon>mdi-email</v-icon>{{ value }}</v-chip
+                >
+              </template>
+              <template v-slot:[`item.address.street`]="{ value }">
+                <v-chip variant="text" :color="isdarkmode ? 'white' : 'black'">
+                  <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip
+                >
+              </template>
+              <!-- Expanded content slot -->
+              <template v-slot:expanded-row="{ columns, item }">
+                <tr>
+                  <td :colspan="columns.length">
+                    Full Address: {{ item.name }}, {{ item.surname }}
+                  </td>
+                </tr>
+                <tr>
+                  <td :colspan="columns.length">VAT Number:{{ item.vatNumber }}</td>
+                </tr>
+                <tr>
+                  <td :colspan="columns.length">Languages Spoken: {{ item.preferred_Language }}</td>
+                </tr>
+              </template>
+              <!-- Actions slot -->
+              <template v-slot:[`item.actions`]="{ item }">
+                <v-tooltip location="end" v-modal="show">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      rounded="xl"
+                      variant="plain"
+                      v-bind="attrs"
+                      v-on="on"
+                      @click="(actionsDialog = true), selectItem(item)"
+                    >
+                      <v-icon>mdi-dots-horizontal</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>More Actions</span>
+                </v-tooltip>
+              </template>
+            </v-data-table>
+          </v-col>
+        </div>
+      </v-col>
+    </v-sheet>
+
 
     <v-dialog v-model="actionsDialog" max-width="500px">
       <v-card>
-        <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+        <v-card-title class="text-h5 font-weight-regular bg-primary">
           {{ selectedItemName + ' ' + selectedItemSurname }}
         </v-card-title>
         <v-card-text> What would you like to do with this job? </v-card-text>
@@ -166,6 +163,7 @@ export default defineComponent({
     editDialog: false,
     addClientDialog: false,
     actionsDialog: false,
+    show: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
@@ -198,348 +196,6 @@ export default defineComponent({
       { title: '', value: 'actions', key: 'actions', sortable: false }
     ],
     search: '',
-    clientDetails2: [
-      {
-        id: 1,
-        name: 'Kumbirai',
-        surname: 'Doe',
-        phoneNumber: '123-456-7890',
-        email: 'john.doe@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        actions: '',
-        preferredLanguage: 'English'
-      },
-      {
-        id: 2,
-        name: 'Jane',
-        surname: 'Doe',
-        phoneNumber: '098-765-4321',
-        email: 'jane.doe@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        actions: '',
-        preferredLanguage: 'English'
-      },
-      {
-        id: 3,
-        name: 'Michael',
-        surname: 'Smith',
-        phoneNumber: '555-123-4567',
-        email: 'michael.smith@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        actions: '',
-        preferredLanguage: 'English'
-      },
-      {
-        id: 4,
-        name: 'Emily',
-        surname: 'Johnson',
-        phoneNumber: '555-987-6543',
-        email: 'emily.johnson@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        actions: '',
-        preferredLanguage: 'English'
-      },
-      {
-        id: 5,
-        name: 'David',
-        surname: 'Williams',
-        phoneNumber: '555-678-1234',
-        email: 'david.williams@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        actions: '',
-        preferredLanguage: 'English'
-      },
-      {
-        id: 6,
-        name: 'Jessica',
-        surname: 'Brown',
-        phoneNumber: '555-345-6789',
-        email: 'jessica.brown@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        actions: '',
-        preferredLanguage: 'English'
-      },
-      {
-        id: 7,
-        name: 'Daniel',
-        surname: 'Jones',
-        phoneNumber: '555-456-7890',
-        email: 'daniel.jones@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        actions: '',
-        preferredLanguage: 'English'
-      },
-      {
-        id: 8,
-        name: 'Sarah',
-        surname: 'Miller',
-        phoneNumber: '555-567-8901',
-        email: 'sarah.miller@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        actions: '',
-        preferredLanguage: 'English'
-      },
-      {
-        id: 9,
-        name: 'Matthew',
-        surname: 'Wilson',
-        phoneNumber: '555-678-9012',
-        email: 'matthew.wilson@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        preferredLanguage: 'English',
-        actions: ''
-      },
-      {
-        id: 10,
-        name: 'Ashley',
-        surname: 'Moore',
-        phoneNumber: '555-789-0123',
-        email: 'ashley.moore@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        preferredLanguage: 'English',
-        actions: ''
-      },
-      {
-        id: 11,
-        name: 'Christopher',
-        surname: 'Taylor',
-        phoneNumber: '555-890-1234',
-        email: 'christopher.taylor@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        preferredLanguage: 'English',
-        actions: ''
-      },
-      {
-        id: 12,
-        name: 'Amanda',
-        surname: 'Anderson',
-        phoneNumber: '555-901-2345',
-        email: 'amanda.anderson@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        preferredLanguage: 'English',
-        actions: ''
-      },
-      {
-        id: 13,
-        name: 'Joshua',
-        surname: 'Thomas',
-        phoneNumber: '555-012-3456',
-        email: 'joshua.thomas@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        preferredLanguage: 'English',
-        actions: ''
-      },
-      {
-        id: 14,
-        name: 'Nicole',
-        surname: 'Harris',
-        phoneNumber: '555-123-4560',
-        email: 'nicole.harris@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        preferredLanguage: 'English',
-        actions: ''
-      },
-      {
-        id: 15,
-        name: 'Ryan',
-        surname: 'Martin',
-        phoneNumber: '555-234-5671',
-        email: 'ryan.martin@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        preferredLanguage: 'English',
-        actions: ''
-      },
-      {
-        id: 16,
-        name: 'Heather',
-        surname: 'Garcia',
-        phoneNumber: '555-345-6782',
-        email: 'heather.garcia@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        preferredLanguage: 'English',
-        actions: ''
-      },
-      {
-        id: 17,
-        name: 'Brandon',
-        surname: 'Robinson',
-        phoneNumber: '555-456-7893',
-        email: 'brandon.robinson@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        preferredLanguage: 'English',
-        actions: ''
-      },
-      {
-        id: 18,
-        name: 'Elizabeth',
-        surname: 'Clark',
-        phoneNumber: '555-567-8904',
-        email: 'elizabeth.clark@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        preferredLanguage: 'English',
-        actions: ''
-      },
-      {
-        id: 19,
-        name: 'Adam',
-        surname: 'Lewis',
-        phoneNumber: '555-678-9015',
-        email: 'adam.lewis@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        preferredLanguage: 'English',
-        actions: ''
-      },
-      {
-        id: 20,
-        name: 'Megan',
-        surname: 'Walker',
-        phoneNumber: '555-789-0126',
-        email: 'megan.walker@example.com',
-        address: {
-          street: '654 Oak Street',
-          city: 'Springfield',
-          suburb: 'IL',
-          postalCode: '62701',
-          complex: 'Apt 123',
-          houseNumber: '123'
-        },
-        preferredLanguage: 'English',
-        actions: ''
-      }
-    ],
     clients: [],
     clientDetails: [],
     clientIds: [],

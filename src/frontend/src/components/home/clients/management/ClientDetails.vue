@@ -12,7 +12,7 @@
       </v-btn>
     </template>
 
-    <v-card
+    <v-sheet
       elevation="14"
       rounded="md"
       height="auto"
@@ -98,7 +98,7 @@
           </v-btn>
         </v-col></v-card-actions
       >
-    </v-card>
+    </v-sheet>
   </v-dialog>
 </template>
 
@@ -106,13 +106,12 @@
 import { defineComponent } from 'vue'
 export default defineComponent({
   props: {
-    isdarkmode: Boolean,
-
     ClientDetails: Array
   },
   data() {
     return {
-      clientDialog: false
+      clientDialog: false,
+      isdarkmode: sessionStorage.getItem('isdarkmode') === 'true' ? true : false
     }
   },
   methods: {
