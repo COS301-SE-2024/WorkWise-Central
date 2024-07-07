@@ -15,6 +15,9 @@ import { JobModule } from '../job/job.module';
 import { TeamModule } from '../team/team.module';
 import { TeamService } from '../team/team.service';
 import { ClientModule } from '../client/client.module';
+import { RoleModule } from '../role/role.module';
+import { UsersService } from '../users/users.service';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
@@ -28,6 +31,8 @@ import { ClientModule } from '../client/client.module';
     forwardRef(() => JobModule),
     forwardRef(() => TeamModule),
     forwardRef(() => ClientModule),
+    forwardRef(() => RoleModule),
+    forwardRef(() => EmailModule),
   ],
   controllers: [CompanyController],
   providers: [
@@ -37,6 +42,7 @@ import { ClientModule } from '../client/client.module';
     EmployeeService,
     JobService,
     TeamService,
+    UsersService,
   ],
   exports: [CompanyService, CompanyRepository, MongooseModule],
 })

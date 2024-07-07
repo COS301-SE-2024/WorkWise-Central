@@ -22,17 +22,31 @@ import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiBody,
   ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
 import mongoose, { FlattenMaps, Types } from 'mongoose';
-import { Company } from './entities/company.entity';
+import {
+  Company,
+  CompanyAllResponseDto,
+  CompanyEmployeesResponseDto,
+  CompanyResponseDto,
+} from './entities/company.entity';
+import { BooleanResponseDto } from '../users/dto/create-user.dto';
+import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
+
+const className = 'Company';
 
 @ApiTags('Company')
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
+
   validateObjectId(id: string | Types.ObjectId): boolean {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
@@ -50,20 +64,33 @@ export class CompanyController {
     type: HttpException,
     status: HttpStatus.CONFLICT,
   })
-  @ApiBody({ type: [CreateCompanyDto] })
+  @ApiOperation({
+    summary: `Create a new ${className}`,
+    description: 'Further details',
+  })
+  @ApiBody({ type: CreateCompanyDto })
+  @ApiResponse({
+    status: 201,
+    type: CreateCompanyResponseDto,
+    description: `The access token and ${className}'s Id used for querying.`,
+  })
   @Post('/create')
   async create(
     @Body() createCompanyDto: CreateCompanyDto,
-  ): Promise<{ data: CreateCompanyResponseDto }> {
-    return { data: await this.companyService.create(createCompanyDto) };
+  ): Promise<CreateCompanyResponseDto> {
+    return await this.companyService.create(createCompanyDto);
   }
 
+  @ApiOperation({
+    summary: `Add an employee to a company`,
+    description: 'Further details',
+  })
   @ApiBody({ type: AddUserToCompanyDto })
+  @ApiOkResponse({ type: BooleanResponseDto })
   @Post('/add')
   async addEmployee(@Body() addUserDto: AddUserToCompanyDto) {
     this.validateObjectId(addUserDto.adminId);
     this.validateObjectId(addUserDto.currentCompany);
-
     try {
       return { data: await this.companyService.addEmployee(addUserDto) };
     } catch (Error) {
@@ -72,10 +99,17 @@ export class CompanyController {
   }
 
   @UseGuards(AuthGuard) //Need to add authorization
+  @ApiOperation({
+    summary: `Get all ${className} instances`,
+  })
+  @ApiOkResponse({
+    type: CompanyAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class`,
+  })
   @Get('/all')
   async findAll() {
     try {
-      return { data: await this.companyService.findAllCompanies() };
+      return { data: await this.companyService.getAllCompanies() };
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
@@ -84,8 +118,17 @@ export class CompanyController {
     }
   }
 
-  //@UseGuards(AuthGuard) //Need to add authorization
-  @Get('/company/employees/:cid')
+  @UseGuards(AuthGuard) //Need to add authorization
+  @ApiOperation({ summary: `Get all employees in ${className}` })
+  @ApiOkResponse({
+    type: CompanyEmployeesResponseDto,
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'cid',
+    description: `The _id attribute of the ${className}`,
+  })
+  @Get('/employees/:cid')
   async getAllInCompany(@Param('cid') cid: string) {
     this.validateObjectId(cid);
     const objId = new Types.ObjectId(cid);
@@ -99,23 +142,35 @@ export class CompanyController {
     }
   }
 
+  @ApiOperation({ summary: `Find a ${className}` })
+  @ApiOkResponse({
+    type: CompanyResponseDto,
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
   @Get('id/:id')
   findOne(@Param('id') id: string) {
     try {
+      this.validateObjectId(id);
       return { data: this.companyService.getCompanyById(id) };
     } catch (e) {
       throw new HttpException(e, HttpStatus.NOT_FOUND);
     }
   }
 
+  @ApiOperation({
+    summary: `Search for a company using Email or Company Name`,
+    description: '\nurlencode the search parameter!',
+  })
   @ApiResponse({
     type: findCompanyResponseDto,
   })
+  @ApiQuery({ name: 'str', description: 'An email or name of company' })
   @Get('search?')
   async findByEmailOrName(
     @Query('str') str: string,
-  ): Promise<{ data: (FlattenMaps<Company> & { _id: Types.ObjectId })[] }> {
+  ): Promise<{ data: FlattenMaps<Company> & { _id: Types.ObjectId } }> {
     try {
+      str = decodeURIComponent(str);
       return {
         data: await this.companyService.getByEmailOrName(str),
       };
@@ -126,15 +181,24 @@ export class CompanyController {
   }
 
   @UseGuards(AuthGuard)
-  @ApiBody({ type: [UpdateCompanyDto] })
+  @ApiOperation({
+    summary: `Update a company`,
+    description: '',
+  })
+  @ApiOkResponse({
+    type: CompanyResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @ApiBody({ type: UpdateCompanyDto })
   @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() updateCompanyDto: UpdateCompanyDto,
   ) {
     try {
+      this.validateObjectId(id);
       const objectId = new Types.ObjectId(id);
-      const updatedCompany = this.companyService.update(
+      const updatedCompany = await this.companyService.update(
         objectId,
         updateCompanyDto,
       );
@@ -150,10 +214,55 @@ export class CompanyController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Delete a ${className}`,
+    description: `You send the ${className} ObjectId, and then they get deleted if the id is valid.\n 
+    There will be rules on deletion later.`,
+    security: [],
+  })
+  @ApiOkResponse({
+    type: BooleanResponseDto,
+    description: `A boolean value indicating whether or not the deletion was a success`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className}`,
+  })
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {
-      await this.companyService.deleteCompany(id);
+      this.validateObjectId(id);
+      const objectId = new Types.ObjectId(id);
+      await this.companyService.deleteCompany(objectId);
+      return { data: true };
+    } catch (e) {
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.SERVICE_UNAVAILABLE,
+      );
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Delete an Employee from a company using their 'Id'`,
+    description: `You send the Employee _id, and then they get deleted if the id is valid.`,
+    security: [],
+  })
+  @ApiOkResponse({
+    type: BooleanResponseDto,
+    description: `A boolean value indicating whether or not the deletion was a success`,
+  })
+  @ApiBody({
+    type: DeleteEmployeeFromCompanyDto,
+    description: '',
+  })
+  @Delete('/emp')
+  async removeEmployee(
+    @Body() deleteEmployeeDto: DeleteEmployeeFromCompanyDto,
+  ) {
+    try {
+      await this.companyService.deleteEmployee(deleteEmployeeDto);
       return { data: true };
     } catch (e) {
       throw new HttpException(

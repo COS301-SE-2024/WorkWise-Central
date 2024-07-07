@@ -36,10 +36,9 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    if (await this.usernameExists(createUserDto.username)) {
-      throw new ConflictException(
-        'Username already exists, please use another one',
-      );
+    const inputValidated = await this.createUserValid(createUserDto);
+    if (!inputValidated.isValid) {
+      throw new ConflictException(inputValidated.message);
     }
 
     const newUserObj = new User(createUserDto);
@@ -64,7 +63,9 @@ export class UsersService {
       email: newUser.personalInfo.contactInfo.email,
       key: randomStringGenerator(),
     };
-    await this.userConfirmationModel.create(userConfirmation);
+    const confirmation =
+      await this.userConfirmationModel.create(userConfirmation);
+    await confirmation.save();
     //console.log(result);
     await this.emailService.sendUserConfirmation(userConfirmation);
   }
@@ -77,6 +78,12 @@ export class UsersService {
     (FlattenMaps<User> & { _id: Types.ObjectId })[]
   > {
     return this.userRepository.findAll();
+  }
+
+  async getAllUsersInCompany(
+    companyId: Types.ObjectId,
+  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+    return this.userRepository.findAllInCompany(companyId);
   }
 
   async usernameExists(identifier: string): Promise<boolean> {
@@ -115,10 +122,10 @@ export class UsersService {
   }
 
   async updateUser(
-    id: string,
+    id: Types.ObjectId,
     updateUserDto: UpdateUserDto,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
-    const inputValidated = await this.userIsValid(updateUserDto);
+    const inputValidated = await this.updateUserValid(id, updateUserDto);
     if (!inputValidated.isValid) {
       throw new NotFoundException(inputValidated.message);
     }
@@ -149,14 +156,33 @@ export class UsersService {
     return true;
   }
 
-  async userIsValid(user: User | UpdateUserDto): Promise<ValidationResult> {
-    if (user.employeeIds) {
-      for (const employee of user.employeeIds) {
-        const exists = await this.employeeService.employeeExists(employee);
+  async createUserValid(
+    createUserDto: CreateUserDto,
+  ): Promise<ValidationResult> {
+    if ((await this.usernameExists(createUserDto.username)) == true) {
+      return new ValidationResult(
+        false,
+        `Username "${createUserDto.username}" already exists, please use another one`,
+      );
+
+      /*      throw new ConflictException(
+        'Username already exists, please use another one',
+      );*/
+    }
+
+    return new ValidationResult(true);
+  }
+
+  async userIsValid(user: User): Promise<ValidationResult> {
+    if (user.joinedCompanies) {
+      for (const joinedCompany of user.joinedCompanies) {
+        const exists = await this.employeeService.employeeExists(
+          joinedCompany.employeeId,
+        );
         if (!exists)
           return new ValidationResult(
             false,
-            `Invalid Employee ID: ${employee}`,
+            `Invalid Employee ID: ${joinedCompany.employeeId}`,
           );
       }
     }
@@ -170,5 +196,44 @@ export class UsersService {
           `Invalid currentEmployee: ${user.currentEmployee}`,
         );
     }
+  }
+
+  async updateUserValid(
+    id: Types.ObjectId,
+    user: UpdateUserDto,
+  ): Promise<ValidationResult> {
+    if (!user) {
+      return new ValidationResult(false, `user cannot be undefined`);
+    }
+
+    if (!(await this.userIdExists(id))) {
+      return new ValidationResult(false, `User cannot be found with id ${id}`);
+    }
+
+    if (user.joinedCompanies) {
+      for (const joinedCompany of user.joinedCompanies) {
+        const exists = await this.employeeService.employeeExists(
+          joinedCompany.employeeId,
+        );
+        if (!exists)
+          return new ValidationResult(
+            false,
+            `Invalid Employee ID: ${joinedCompany.employeeId}`,
+          );
+      }
+    }
+
+    if (user.currentEmployee) {
+      const exists = await this.employeeService.employeeExists(
+        user.currentEmployee,
+      );
+      if (!exists)
+        return new ValidationResult(
+          false,
+          `Invalid currentEmployee: ${user.currentEmployee}`,
+        );
+    }
+
+    return new ValidationResult(true);
   }
 }

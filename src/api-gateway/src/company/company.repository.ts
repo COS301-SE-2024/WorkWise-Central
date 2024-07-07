@@ -40,10 +40,10 @@ export class CompanyRepository {
       .lean();
   }
 
-  async findByEmailOrName(identifier: string) {
-    const regex = `*${identifier}*`;
-    const searchTerm = new RegExp(regex, 'i');
-
+  async findByEmailOrName(
+    identifier: string,
+  ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+    const regex = `${identifier}`;
     return this.companyModel
       .find({
         $and: [
@@ -52,8 +52,8 @@ export class CompanyRepository {
           },
           {
             $or: [
-              { name: { $regex: searchTerm } },
-              { 'contactDetails.email': { $regex: searchTerm } },
+              { name: { $regex: regex, $options: 'i' } },
+              { 'contactDetails.email': { $regex: regex, $options: 'i' } },
             ],
           },
           {
@@ -65,7 +65,9 @@ export class CompanyRepository {
   }
 
   async findAll() {
-    return this.companyModel.find().lean().exec();
+    return this.companyModel
+      .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
+      .lean();
   }
 
   async registrationNumberExists(registrationNumber: string): Promise<boolean> {
@@ -139,17 +141,6 @@ export class CompanyRepository {
     return false;
   }
 
-  async nameTaken(name: string) {
-    return this.companyModel.findOne({
-      $and: [
-        { name: name },
-        {
-          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-        },
-      ],
-    });
-  }
-
   async update(
     id: string | Types.ObjectId,
     updateCompanyDto: UpdateCompanyDto,
@@ -168,7 +159,7 @@ export class CompanyRepository {
     );
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: Types.ObjectId): Promise<boolean> {
     const result = await this.companyModel.findOneAndUpdate(
       {
         $and: [

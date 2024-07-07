@@ -1,21 +1,25 @@
 <template>
   <v-app :style="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color">
-    <v-container fluid fill-height class="pa-16 ma-auto pt-5 fixed-container">
-      <v-row justify="center" xs="4" sm="4" md="12">
+    <v-container fluid fill-height>
+      <v-row justify="center" xs="6" sm="6" md="12">
         <v-col cols="12">
           <v-row justify="center">
-            <v-col cols="12" xs="4" sm="4" md="12" offset="3">
+            <v-col cols="12" xs="12" sm="12" md="12">
               <v-card
                 flat
                 :height="auto"
-                :max-width="1500"
-                class="pa-11 ma-10"
-                rounded="xl"
+                :max-height="auto"
+                class="pa-11 ma-0"
+                rounded="md"
                 elevation-2
                 :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
                 border="md"
               >
-                <v-card-title class="d-flex align-center pe-2">
+                <v-card-title
+                  class="d-flex align-center pe-2"
+                  :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
+                  style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
+                >
                   <v-icon icon="mdi-account"></v-icon> &nbsp; Employee Details
 
                   <v-spacer></v-spacer>
@@ -25,8 +29,9 @@
                     density="compact"
                     label="Search"
                     prepend-inner-icon="mdi-magnify"
-                    variant="solo-filled"
+                    variant="outlined"
                     flat
+                    style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
                     hide-details
                     :bg-color="
                       isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color
@@ -39,81 +44,99 @@
 
                 <v-divider></v-divider>
 
-                <div style="height: 700px; overflow-y: auto">
-                  <v-data-table
-                    :headers="headers"
-                    :items="clientDetails"
-                    :search="search"
-                    :single-expand="true"
-                    v-model:expanded="expanded"
-                    show-expand
-                    rounded="xl"
-                    :item-class="getRowClass"
-                  >
-                    <template v-slot:[`item.details.firstName`]="{ value }">
-                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
-                    </template>
-                    <template v-slot:[`item.clientInfo.phoneNumber`]="{ value }">
-                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-phone</v-icon></v-chip>
-                    </template>
-                    <template v-slot:[`item.mostRecentJob`]="{ value }">
-                      <v-chip :color="getColor(value)">
-                        {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
+                <v-col cols="12" xs="12" sm="12" md="12">
+                  <div style="height: 700px; overflow-y: auto">
+                    <v-col cols="12" xs="12" sm="12" md="12">
+                      <v-data-table
+                        :headers="headers"
+                        :items="EmployeeDetails2"
+                        :search="search"
+                        :single-expand="true"
+                        v-model:expanded="expanded"
+                        show-expand
+                        height="auto"
+                        rounded="xl"
+                        :item-class="getRowClass"
+                        @click:row="toggleExpand"
+                        class="font-lato"
                       >
-                    </template>
-                    <template v-slot:[`item.clientInfo.address.street`]="{ value }">
-                      <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-map-marker</v-icon></v-chip>
-                    </template>
-                    <!-- Expanded content slot -->
-                    <template v-slot:expanded-row="{ columns, item }">
-                      <tr>
-                        <td :colspan="columns.length">More info about {{ item.name }}</td>
-                      </tr>
-                    </template>
-                    <!-- Actions slot -->
-                    <template v-slot:[`item.actions`]="{ item }">
-                      <v-col cols="12">
-                        <v-btn
-                          icon
-                          size="small"
-                          @click="EditAccountClick"
-                          color="#5A82AF"
-                          :id="item.id"
-                        >
-                          <v-icon>mdi-pencil</v-icon>
-                        </v-btn>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-btn
-                          icon
-                          size="small"
-                          @click="removeClient"
-                          color="#5A82AF"
-                          :id="item.id"
-                        >
-                          <v-icon>mdi-delete</v-icon>
-                        </v-btn>
-                      </v-col>
-                    </template>
-                  </v-data-table>
-                </div>
+                        <template v-slot:[`item.details.firstName`]="{ value }">
+                          <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
+                        </template>
+                        <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
+                          <v-chip color="#5A82AF"><v-icon>mdi-phone</v-icon> {{ value }}</v-chip>
+                        </template>
+                        <template v-slot:[`item.contactInfo.email`]="{ value }">
+                          <v-chip color="#5A82AF"> <v-icon>mdi-email</v-icon> {{ value }}</v-chip>
+                        </template>
+                        <template v-slot:[`item.mostRecentJob`]="{ value }">
+                          <v-chip :color="getColor(value)">
+                            {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
+                          >
+                        </template>
+                        <!-- Expanded content slot -->
+                        <template v-slot:expanded-row="{ columns, item }">
+                          <tr>
+                            <td :colspan="columns.length">More info about {{ item.name }}</td>
+                          </tr>
+                        </template>
+                        <!-- Actions slot -->
+
+                        <template v-slot:[`item.actions`]="{ item }">
+                          <v-btn
+                            rounded="xl"
+                            variant="plain"
+                            style="transform: rotate(90deg)"
+                            @click="(actionsDialog = true), selectItem(item)"
+                          >
+                            <v-icon>mdi-dots-horizontal</v-icon>
+                          </v-btn>
+                        </template>
+                      </v-data-table>
+                    </v-col>
+                  </div>
+                </v-col>
               </v-card>
             </v-col>
           </v-row>
         </v-col></v-row
       >
 
-      <v-col> <DeleteClient v-model="deleteDialog" :details="selectedItem" /></v-col>
+      <v-dialog v-model="actionsDialog" max-width="500px">
+        <v-card>
+          <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+            {{ selectedItemName + ' ' + selectedItemSurname }}
+          </v-card-title>
+          <v-card-text> What would you like to do with this account? </v-card-text>
+          <v-card-actions>
+            <EmployeeDetails
+              v-model="clientDialog"
+              :colors="colors"
+              :EmployeeDetails="selectedItem"
+            />
+            <EditEmployee
+              @update:item="selectedItem = $event"
+              :editedItem="selectedItem"
+              :_clientID="selectedItemId"
+            /><DeleteClient :details="selectedItem" :client_id="selectedItemId" />
+            <v-spacer></v-spacer>
+            <v-btn @click="actionsDialog = false">Cancel</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-container>
   </v-app>
 </template>
 
 <script lang="js">
-import DeleteClient from '../../clients/management/DeleteClient.vue'
+// import DeleteClient from '../../clients/management/DeleteClient.vue'
 import AddEmployee from './AddEmployee.vue'
 
 import axios from 'axios'
 import router from '@/router/index.ts'
+import EditEmployee from '@/components/home/employees/management/EditEmployee.vue'
+import DeleteClient from '@/components/home/clients/management/DeleteClient.vue'
+import EmployeeDetails from '@/components/home/employees/management/EmployeeDetails.vue'
 
 export default {
   name: 'ClientDesk',
@@ -130,6 +153,7 @@ export default {
     clientDialog: false,
     deleteDialog: false,
     editDialog: false,
+    actionsDialog: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
@@ -156,16 +180,16 @@ export default {
         value: 'surname',
         key: 'surname'
       },
-      { title: 'Phone', value: 'clientInfo.phoneNumber', key: 'clientInfo.phoneNumber' },
-      { title: 'Email', value: 'clientInfo.email', key: 'clientInfo.email' },
-      { title: 'Address', value: 'clientInfo.address.street', key: 'clientInfo.address.street' },
-      { title: 'Actions', value: 'actions', key: 'actions', sortable: false }
+      { title: 'Phone', value: 'contactInfo.phoneNumber', key: 'contactInfo.phoneNumber' },
+      { title: 'Email', value: 'contactInfo.email', key: 'contactInfo.email' },
+      { title: 'Role', value: 'roleName', key: 'roleName' },
+      { title: '', value: 'actions', key: 'actions', sortable: false }
     ],
     search: '',
     expanded: [], // This will hold the currently expanded item
     clients: [],
-    clientDetails2: [],
-    clientDetails: [
+    EmployeeDetails2: [],
+    EmployeeDetails: [
       {
         id: 59,
         firstName: 'Michael',
@@ -299,7 +323,10 @@ export default {
     ]
   }),
   components: {
+    EmployeeDetails,
     DeleteClient,
+    EditEmployee,
+    // DeleteClient,
     AddEmployee
   },
   computed: {
@@ -316,6 +343,13 @@ export default {
     this.getClients()
   },
   methods: {
+    selectItem(item) {
+      this.selectedItem = item
+      this.selectedItemName = item.firstName
+      console.log(this.selectedItemName)
+      this.selectedItemSurname = item.surname
+      console.log('Selected item:', this.selectedItem) // Corrected console.log
+    },
     EditAccountClick(e) {
       console.log(e.currentTarget.id)
       localStorage['edit_roles_id'] = e.currentTarget.id
@@ -330,7 +364,7 @@ export default {
     searchClient() {
       console.log('Searching client')
     },
-    editClient(item) {
+    editEmployee(item) {
       this.selectedItem = item
       console.log('Editing client')
     },
@@ -342,9 +376,9 @@ export default {
       let id = e.currentTarget.id
 
       console.log(id)
-      for (let i = 0; i < this.clientDetails.length; i++) {
-        if (this.clientDetails[i].id === Number(id)) {
-          this.clientDetails.splice(i, 1)
+      for (let i = 0; i < this.EmployeeDetails.length; i++) {
+        if (this.EmployeeDetails[i].id === Number(id)) {
+          this.EmployeeDetails.splice(i, 1)
         }
       }
       router.push('/manager-employees-t')
@@ -365,28 +399,48 @@ export default {
       axios
         .get('http://localhost:3000/employee/all', config)
         .then((response) => {
-          console.log(response.data)
           this.clients = response.data
           for (let i = 0; i < response.data.length; i++) {
-            // console.log(this.clients[i].userId)
             axios
               .get(`http://localhost:3000/users/id/${this.clients[i].userId}`, config)
               .then((res) => {
-                // console.log(res.data.personalInfo)
-                let eish = res.data.personalInfo
-                eish.id = res.data._id
-                this.clientDetails2.push(eish)
+                let eish = res.data.data.personalInfo
+                eish.id = res.data.data._id
+                eish.roleId = this.clients[i].roleId
+
+                axios
+                  .get(`http://localhost:3000/role/id/${eish.roleId}`, config)
+                  .then((res) => {
+                    console.log(res.data.roleName)
+                    eish.roleName = res.data.roleName
+                    this.EmployeeDetails2.push(eish)
+                    console.log(eish)
+                  })
+                  .catch((error) => {
+                    console.log('Failed to fetch Role:', error)
+                  })
+                console.log(eish)
               })
               .catch((error) => {
                 console.log('Failed to fetch users:', error)
               })
           }
           console.log('hello')
-          console.log(this.clientDetails2)
+          console.log(this.EmployeeDetails2)
         })
         .catch((error) => {
           console.log('Failed to fetch clients:', error)
         })
+    },
+    toggleExpand(item) {
+      // Check if the item is already expanded
+      const isExpanded = this.expanded.includes(item)
+      if (isExpanded) {
+        this.expanded = []
+      } else {
+        this.expanded = [item]
+        console.log(this.expanded)
+      }
     },
     toggleDarkMode() {
       console.log(this.isdarkmode)
