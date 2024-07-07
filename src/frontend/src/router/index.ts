@@ -16,7 +16,6 @@ import ClientEmployee from '@/components/ClientEmployeeView.vue'
 import Dashboard from '@/views/home/dashboard/DashboardView.vue'
 import Kanban from '@/components/home/jobs/Kanban.vue'
 import ManagerView from '@/views/ManagerView.vue'
-import JobCard from '@/components/home/jobs/management/JobCard.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -127,14 +126,14 @@ const router = createRouter({
       component: ClientView
     },
     {
+      path: '/managerJobCard',
+      name: 'managerJobCard',
+      component: () => import('../components/home/jobs/management/ManagerJobCard.vue')
+    },
+    {
       path: '/dashboard',
       name: 'dashboard',
       component: Dashboard
-    },
-    {
-      path: '/job-card',
-      name: 'job-card',
-      component: JobCard
     },
     {
       path: '/email-confirmation',
