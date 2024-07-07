@@ -47,10 +47,10 @@ export class UpdateCompanyDto {
   @Type(() => UpdateAddress)
   address?: UpdateAddress;
 
-  @ApiProperty({ type: [String] })
+  @ApiProperty({ type: [Types.ObjectId] })
   @IsOptional()
-  @IsString({ each: true })
-  employees?: string[];
+  @IsMongoId({ each: true })
+  employees?: Types.ObjectId[];
 
   @IsOptional()
   @IsMongoId({ each: true })
