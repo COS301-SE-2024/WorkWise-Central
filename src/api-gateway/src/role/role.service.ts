@@ -218,7 +218,11 @@ export class RoleService {
   }
 
   async findAllInCompany(companyId: Types.ObjectId) {
-    return this.roleRepository.findAllInCompany(companyId);
+    const result = await this.roleRepository.findAllInCompany(companyId);
+    if (result == null) {
+      throw new NotFoundException('The company does not have any roles');
+    }
+    return result;
   }
 
   async findOneInCompany(name: string, companyId: Types.ObjectId) {
@@ -233,7 +237,7 @@ export class RoleService {
   }
 
   async findById(
-    identifier: string | Types.ObjectId,
+    identifier: Types.ObjectId,
   ): Promise<FlattenMaps<Role> & { _id: Types.ObjectId }> {
     const result = await this.roleRepository.findById(identifier);
     if (result == null) {

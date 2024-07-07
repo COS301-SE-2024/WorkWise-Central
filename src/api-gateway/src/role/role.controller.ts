@@ -22,6 +22,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { EmployeeListResponseDto } from 'src/employee/entities/employee.entity';
+import { Types } from 'mongoose';
 import { BooleanResponseDto, RoleResponseDto } from './entity/role.entity';
 // import { CreateEmployeeDto, CreateEmployeeResponseDto } from 'src/employee/dto/create-employee.dto';
 
@@ -55,8 +56,8 @@ export class RoleController {
     type: createRoleResponseDto,
   })
   @Post('/create')
-  create(@Body() createRoleDto: CreateRoleDto) {
-    return this.roleService.create(createRoleDto);
+  async create(@Body() createRoleDto: CreateRoleDto) {
+    return { data: await this.roleService.create(createRoleDto) };
   }
 
   @ApiOperation({
@@ -69,7 +70,7 @@ export class RoleController {
   })
   @Get('/all')
   async findAll() {
-    return await this.roleService.findAll();
+    return { data: await this.roleService.findAll() };
   }
 
   @ApiOperation({
@@ -85,8 +86,8 @@ export class RoleController {
     description: `The _id attribute of the Company for which to get all ${className} instances.`,
   })
   @Get('/all/:id')
-  async findAllInCompany(@Param('id') id: string) {
-    return await this.roleService.findAllInCompany(id);
+  async findAllInCompany(@Param('id') id: Types.ObjectId) {
+    return { data: await this.roleService.findAllInCompany(id) };
   }
 
   @ApiOperation({
@@ -102,8 +103,8 @@ export class RoleController {
     description: `The _id attribute of the ${className} to be retrieved.`,
   })
   @Get('id/:id')
-  async findById(@Param('id') id: string) {
-    return await this.roleService.findById(id);
+  async findById(@Param('id') id: Types.ObjectId) {
+    return { data: await this.roleService.findById(id) };
   }
 
   @ApiOperation({
@@ -116,7 +117,7 @@ export class RoleController {
   })
   @Get('/allPermissions')
   async getPermissionsArray() {
-    return await this.roleService.getPermissionsArray();
+    return { data: await this.roleService.getPermissionsArray() };
   }
 
   @ApiOperation({
@@ -133,8 +134,11 @@ export class RoleController {
   })
   @ApiBody({ type: UpdateRoleDto })
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    return await this.roleService.update(id, updateRoleDto);
+  async update(
+    @Param('id') id: Types.ObjectId,
+    @Body() updateRoleDto: UpdateRoleDto,
+  ) {
+    return { data: await this.roleService.update(id, updateRoleDto) };
   }
 
   @ApiOperation({
@@ -151,7 +155,7 @@ export class RoleController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.roleService.remove(id);
+  async remove(@Param('id') id: Types.ObjectId) {
+    return { data: await this.roleService.remove(id) };
   }
 }
