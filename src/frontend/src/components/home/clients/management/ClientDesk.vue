@@ -79,19 +79,7 @@
                 >
               </template>
               <!-- Expanded content slot -->
-              <template v-slot:expanded-row="{ columns, item }">
-                <tr>
-                  <td :colspan="columns.length">
-                    Full Address: {{ item.name }}, {{ item.surname }}
-                  </td>
-                </tr>
-                <tr>
-                  <td :colspan="columns.length">VAT Number:{{ item.vatNumber }}</td>
-                </tr>
-                <tr>
-                  <td :colspan="columns.length">Languages Spoken: {{ item.preferred_Language }}</td>
-                </tr>
-              </template>
+
               <!-- Actions slot -->
               <template v-slot:[`item.actions`]="{ item }">
                 <v-btn
