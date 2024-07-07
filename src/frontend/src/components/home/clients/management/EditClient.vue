@@ -62,7 +62,7 @@
                   Phone Number
                 </small>
                 <v-text-field
-                  v-model="localEditedItem.phoneNumber"
+                  v-model="localEditedItem.contactInfo.phoneNumber"
                   :rules="phoneRules"
                   variant="underlined"
                   rounded="md"
@@ -76,7 +76,7 @@
                   Email
                 </small>
                 <v-text-field
-                  v-model="localEditedItem.email"
+                  v-model="localEditedItem.contactInfo.email"
                   variant="underlined"
                   :rules="emailRules"
                   rounded="md"
@@ -172,7 +172,7 @@
       <v-card-actions
         ><v-col align-self="center"
           ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
-            <v-btn color="#5A82AF" width="85%" height="35" variant="text" @click="savechnages">
+            <v-btn color="success" width="85%" height="35" variant="text" @click="update">
               SAVE
             </v-btn>
           </v-col>
@@ -246,20 +246,44 @@ export default {
     },
     async update() {
       await axios
-        .patch(`http://localhost:3000/client/${this._clientID}`)
-        .then((response) => {
-          console.log(response)
-          alert('Client updated')
-          return true
-        })
-        .catch((error) => {
-          console.log(error)
-          alert('Error updating client')
-          return false
-        })
-        .finally(() => {
-          this.clientDialog = false
-        })
+  .patch(`http://localhost:3000/client/${this._clientID}`, {
+    systemDetails: {
+      username: "string",
+      password: "string"
+    },
+    personalInfo: {
+      firstName: "string",
+      surname: "string"
+    },
+    profile: {
+      displayName: "string",
+      displayImage: "https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp"
+    },
+    joinedCompanies: [
+      {
+        employeeId: {},
+        companyId: {},
+        companyName: "string"
+      }
+    ],
+    skills: [
+      "string"
+    ],
+    currentEmployee: {}
+  })
+  .then((response) => {
+    console.log(response);
+    alert('Client updated');
+    return true;
+  })
+  .catch((error) => {
+    console.log(error);
+    alert('Error updating client');
+    return false;
+  })
+  .finally(() => {
+    this.clientDialog = false;
+  });
     }
   }
 }

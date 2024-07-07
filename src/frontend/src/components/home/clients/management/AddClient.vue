@@ -4,9 +4,9 @@
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        prepend-icon="mdi-account"
+        style="font-size: 20px"
         text="Add Client"
-        variant="text"
+        variant="elevated"
         color="#5A82AF"
         v-bind="activatorProps"
       ></v-btn>
@@ -134,6 +134,7 @@
                 placeholder="Enter the client's phone number"
                 v-model="req_obj.details.contactInfo.phoneNumber"
                 rounded="md"
+                type="number"
                 variant="underlined"
                 :rules="phone_number_rules"
                 required
@@ -159,6 +160,7 @@
                   v-model="req_obj.details.address.street"
                   rounded="md"
                   variant="underlined"
+                  type="street"
                   required
                 ></v-text-field
               ></v-col>
@@ -175,6 +177,7 @@
                   v-model="req_obj.details.address.suburb"
                   rounded="md"
                   variant="underlined"
+                  type="suburb"
                   required
                 ></v-text-field
               ></v-col>
@@ -192,6 +195,7 @@
                   v-model="req_obj.details.address.city"
                   rounded="md"
                   variant="underlined"
+                  type="city"
                   required
                 ></v-text-field
               ></v-col>
@@ -207,6 +211,7 @@
                   placeholder="Zip Code"
                   v-model="req_obj.details.address.postalCode"
                   rounded="md"
+                  type="postalCode"
                   variant="underlined"
                   required
                 ></v-text-field
@@ -224,6 +229,7 @@
                   placeholder="Complex"
                   v-model="req_obj.details.address.complex"
                   rounded="md"
+                  type="complex"
                   variant="underlined"
                   required
                 ></v-text-field
@@ -240,6 +246,7 @@
                   placeholder="House number"
                   v-model="req_obj.details.address.houseNumber"
                   rounded="md"
+                  type="houseNumber"
                   variant="underlined"
                   required
                 ></v-text-field
@@ -259,6 +266,7 @@
                 placeholder="Enter the language preferred by the client"
                 v-model="req_obj.details.preferredLanguage"
                 rounded="md"
+                type="preferredLanguage"
                 variant="underlined"
                 :rules="prefered_languages_rules"
                 :items="[

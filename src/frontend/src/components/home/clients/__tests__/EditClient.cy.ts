@@ -1,10 +1,11 @@
 import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
-import JobCard from '../management/JobCard.vue'
+import EditClient from '../management/EditClient.vue'
 
-it('renders client desk', () => {
+it('renders edit client form', () => {
+  cy.viewport(1920, 1080)
   const vuetify = createVuetify()
-  mount(JobCard, {
+  mount(EditClient, {
     global: {
       plugins: [vuetify]
     }

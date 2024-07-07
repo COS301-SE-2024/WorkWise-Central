@@ -77,8 +77,10 @@ export class CompanyService {
       currentEmployee: employee._id,
     });
 
-    newCompany.employees.push(employee._id);
-    await newCompanyModel.save();
+    createdCompany.employees.push(employee._id);
+    await this.update(createdCompany.id, {
+      employees: createdCompany.employees,
+    });
 
     return new CreateCompanyResponseDto(createdCompany);
   }
@@ -157,8 +159,8 @@ export class CompanyService {
       throw new ConflictException(inputValidated.message);
     }
 
-    const companyName = (await this.getCompanyById(addUserDto.currentCompany))
-      .name;
+    const company = await this.getCompanyById(addUserDto.currentCompany);
+    const companyName = company.name;
 
     const user = await this.usersService.getUserByUsername(
       addUserDto.newUserUsername,
@@ -178,7 +180,13 @@ export class CompanyService {
     };
     user.joinedCompanies.push(joinedCompany);
 
-    const updatedUser = await this.usersService.updateUser(user._id, user);
+    const updatedUser = await this.usersService.updateUser(user._id, {
+      joinedCompanies: user.joinedCompanies,
+    });
+
+    company.employees.push(newEmployeeId);
+    await this.update(company._id, { employees: company.employees });
+
     console.log(updatedUser);
     return joinedCompany;
   }
@@ -235,7 +243,7 @@ export class CompanyService {
     if (addUserToCompanyDto.adminId) {
       const isAllowedToAssign = await this.employeeIsInCompany(
         addUserToCompanyDto.currentCompany,
-        addUserToCompanyDto.currentCompany,
+        addUserToCompanyDto.adminId,
       );
       if (!isAllowedToAssign) {
         return new ValidationResult(false, 'User not allowed to assign');
@@ -357,11 +365,13 @@ export class CompanyService {
   async companyUpdateIsValid(company: UpdateCompanyDto) {
     if (!company) return new ValidationResult(false, `Company is null`);
 
-    if (!(await this.companyRegNumberExists(company.registrationNumber))) {
-      return new ValidationResult(
-        false,
-        `Company with ${company.registrationNumber} does not exist`,
-      );
+    if (company.registrationNumber) {
+      if (!(await this.companyRegNumberExists(company.registrationNumber))) {
+        return new ValidationResult(
+          false,
+          `Company with ${company.registrationNumber} does not exist`,
+        );
+      }
     }
 
     if (company.inventoryItems) {
