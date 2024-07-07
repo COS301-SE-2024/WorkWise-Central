@@ -1,27 +1,27 @@
 import {
   Controller,
   Get,
-  Post,
+  // Post,
   Body,
   Patch,
   Param,
   Delete,
-  HttpException,
-  HttpStatus,
+  // HttpException,
+  // HttpStatus,
 } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
-import {
-  CreateEmployeeDto,
-  CreateEmployeeResponseDto,
-} from './dto/create-employee.dto';
+// import {
+//   CreateEmployeeDto,
+//   CreateEmployeeResponseDto,
+// } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import {
   ApiBody,
-  ApiInternalServerErrorResponse,
+  // ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiResponse,
+  // ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import {
@@ -37,32 +37,35 @@ const className = 'Employee';
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
-  @Get()
-  hello() {
-    return { message: 'Refer to /documentation for details on the API' };
-  }
+  // @ApiOperation({
+  //   summary: `Refer to Documentation`,
+  // })
+  // @Get()
+  // hello() {
+  //   return { message: 'Refer to /documentation for details on the API' };
+  // }
 
-  @ApiInternalServerErrorResponse({
-    type: HttpException,
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
-  })
-  @ApiOperation({
-    summary: `Create a new ${className}`,
-    description:
-      'Call to create a new employee. The userId and companyId are required. The roleId and superiorId are optional. It returns the access token and the employee Id.',
-  })
-  @ApiBody({ type: CreateEmployeeDto })
-  @ApiResponse({
-    status: 201,
-    type: CreateEmployeeResponseDto,
-    description: `The access token and ${className}'s Id used for querying.`,
-  })
-  @Post('/create')
-  async create(
-    @Body() createEmployeeDto: CreateEmployeeDto,
-  ): Promise<{ data: CreateEmployeeDto }> {
-    return { data: await this.employeeService.create(createEmployeeDto) };
-  }
+  // @ApiInternalServerErrorResponse({
+  //   type: HttpException,
+  //   status: HttpStatus.INTERNAL_SERVER_ERROR,
+  // })
+  // @ApiOperation({
+  //   summary: `Create a new ${className}`,
+  //   description:
+  //     'Call to create a new employee. The userId and companyId are required. The roleId and superiorId are optional. It returns the access token and the employee Id.',
+  // })
+  // @ApiBody({ type: CreateEmployeeDto })
+  // @ApiResponse({
+  //   status: 201,
+  //   type: CreateEmployeeResponseDto,
+  //   description: `The access token and ${className}'s Id used for querying.`,
+  // })
+  // @Post('/create')
+  // async create(
+  //   @Body() createEmployeeDto: CreateEmployeeDto,
+  // ): Promise<{ data: CreateEmployeeDto }> {
+  //   return { data: await this.employeeService.create(createEmployeeDto) };
+  // }
 
   @ApiOperation({
     summary: `Get all ${className} instances`,
