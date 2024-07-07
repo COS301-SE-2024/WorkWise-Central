@@ -119,9 +119,9 @@ export class findCompanyResponseDto {
 }
 
 export class CreateCompanyResponseDto {
-  id: Company & { _id: Types.ObjectId };
+  data: Company & { _id: Types.ObjectId };
 
-  constructor(message: Company & { _id: Types.ObjectId }) {
-    this.id = message;
+  constructor(data: Company & { _id: Types.ObjectId }) {
+    this.data = data;
   }
 }

@@ -132,9 +132,9 @@ export class UsersController {
     description: 'Response is a Boolean value',
   })
   @Post('/exists')
-  async usernameAvailable(@Body('username') username: string) {
+  async usernameExists(@Body('username') username: string) {
     try {
-      return { data: !(await this.usersService.usernameExists(username)) };
+      return { data: await this.usersService.usernameExists(username) };
     } catch (e) {
       console.log(e);
       throw new HttpException('Username Taken', HttpStatus.CONFLICT);

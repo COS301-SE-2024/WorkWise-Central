@@ -23,11 +23,27 @@ export class UsersRepository {
 
   async findAll(): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
     const result = await this.userModel
-      .find()
+      .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
       /*      .populate(userEmployeeFields)
       .populate(userJoinedCompaniesField)*/
       .lean()
       .exec();
+    console.log(`Retrieving All users` /*, result*/);
+    return result;
+  }
+
+  async findAllInCompany(
+    companyId: Types.ObjectId,
+  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+    const filter = {
+      $and: [
+        { 'joinedCompanies.companyId': companyId },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    };
+    const result = await this.userModel.find(filter).lean().exec();
     console.log(`Retrieving All users` /*, result*/);
     return result;
   }
@@ -100,8 +116,7 @@ export class UsersRepository {
           },
         ],
       })
-      .lean()
-      .exec();
+      .lean();
   }
 
   async update(id: Types.ObjectId, updateUserDto: UpdateUserDto) {
