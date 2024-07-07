@@ -23,9 +23,12 @@
             <v-col>
               <v-col :cols="12">
                 <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-                  {{ localEditedItem.firstName }} {{ localEditedItem.surname }}
+                  {{ localEditedItem !== undefined ? localEditedItem.firstName : null }}
+                  {{ localEditedItem !== undefined ? localEditedItem.surname : null }}
                 </h4>
-                <h3 class="text-center">Role: {{ localEditedItem.roleName }}</h3>
+                <h3 class="text-center">
+                  Role: {{ localEditedItem !== undefined ? localEditedItem.roleName : null }}
+                </h3>
               </v-col>
               <v-spacer></v-spacer>
             </v-col>
@@ -103,8 +106,9 @@ export default {
   },
   data() {
     return {
-      isdarkmode: localStorage['theme'] !== 'false',
       localEditedItem: this.editedItem,
+      isdarkmode: localStorage['theme'] !== 'false',
+      role_change: false,
       employeeDialog: false,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
@@ -133,13 +137,11 @@ export default {
       ]
     }
   },
-  watch: {
-    // Step 2: Watch the prop for changes
-    editedItem(newVal) {
-      this.localEditedItem = newVal
-    }
-  },
   methods: {
+    change_roles() {
+      console.log('hello')
+      this.role_change = true
+    },
     showlcalvalues() {
       console.log(this.localEditedItem)
     },
