@@ -23,18 +23,16 @@ export class EmployeeRepository {
   async findById(
     identifier: Types.ObjectId,
   ): Promise<FlattenMaps<Employee> & { _id: Types.ObjectId }> {
-    const result: FlattenMaps<Employee> & { _id: Types.ObjectId } =
-      await this.employeeModel
-        .findOne({
-          $and: [
-            { _id: identifier },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
-    return result;
+    return this.employeeModel
+      .findOne({
+        $and: [
+          { _id: identifier },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
   }
 
   async findByIds(
@@ -124,6 +122,8 @@ export class EmployeeRepository {
 
   async remove(id: Types.ObjectId): Promise<boolean> {
     const employeeToDelete = await this.findById(id);
+
+    if (employeeToDelete == null) return false;
 
     const result: Document<unknown, NonNullable<unknown>, User> &
       User & { _id: Types.ObjectId } =

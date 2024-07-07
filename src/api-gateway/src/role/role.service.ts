@@ -54,34 +54,53 @@ export class RoleService {
   }
 
   async validateRole(role: Role | CreateRoleDto | UpdateRoleDto) {
+    console.log('role -> ', role);
+
     if ('permissionSuite' in role && role.permissionSuite) {
       for (const permission of role.permissionSuite) {
         if (!this.permissionsArray.includes(permission.toString())) {
+          console.log('one');
           throw new ConflictException('Invalid permission');
         }
       }
     }
+    console.log('a');
     if ('companyId' in role && role.companyId) {
+      console.log('CompanyID is set');
       if (!(await this.companyService.companyIdExists(role.companyId))) {
+        console.log('two');
         throw new ConflictException('Company not found');
       }
+      console.log('a.b');
       if ('roleName' in role && role.roleName) {
-        if (await this.findOneInCompany(role.roleName, role.companyId)) {
-          throw new ConflictException('Role already exists');
-        }
+        console.log('roleName is set');
+        try {
+          if (await this.findOneInCompany(role.roleName, role.companyId)) {
+            console.log('three');
+            throw new ConflictException('Role already exists');
+          }
+        } catch (error) {}
       }
+      console.log('if is done');
     }
+
+    console.log('b');
     if ('roleId' in role && role.roleId) {
-      if (!(await this.roleExists(role.roleId as Types.ObjectId))) {
+      console.log('roleid is set');
+      const flag = await this.roleExists(role.roleId as Types.ObjectId);
+      if (!flag) {
+        console.log('four');
         throw new ConflictException('Role not found');
       }
     }
+    console.log('Validate finished');
   }
 
   async create(createRoleDto: CreateRoleDto) {
     try {
       await this.validateRole(createRoleDto);
     } catch (error) {
+      console.log('Throwing error');
       throw new InternalServerErrorException(error);
     }
 

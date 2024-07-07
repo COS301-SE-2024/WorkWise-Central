@@ -93,8 +93,8 @@ export class EmployeeController {
     description: `The _id attribute of the Company for which to get all ${className} instances.`,
   })
   @Get('/all/:id')
-  findAllInCompany(id: Types.ObjectId) {
-    return { data: this.employeeService.findAllInCompany(id) };
+  async findAllInCompany(@Param('id') id: Types.ObjectId) {
+    return { data: await this.employeeService.findAllInCompany(id) };
   }
 
   @ApiOperation({
@@ -110,7 +110,7 @@ export class EmployeeController {
     description: `The _id attribute of the ${className} to be retrieved.`,
   })
   @Get('id/:id')
-  async findBytId(id: Types.ObjectId) {
+  async findBytId(@Param('id') id: Types.ObjectId) {
     return { data: await this.employeeService.findById(id) };
   }
 
@@ -151,7 +151,7 @@ export class EmployeeController {
   @ApiBody({ type: UpdateEmployeeDto })
   @Patch(':id')
   async update(
-    id: Types.ObjectId,
+    @Param('id') id: Types.ObjectId,
     @Body() updateEmployeeDto: UpdateEmployeeDto,
   ) {
     return { data: await this.employeeService.update(id, updateEmployeeDto) };
