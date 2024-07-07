@@ -62,7 +62,7 @@
                   Phone Number
                 </small>
                 <v-text-field
-                  v-model="localEditedItem.phoneNumber"
+                  v-model="localEditedItem.contactInfo.phoneNumber"
                   :rules="phoneRules"
                   variant="underlined"
                   rounded="md"
@@ -76,7 +76,7 @@
                   Email
                 </small>
                 <v-text-field
-                  v-model="localEditedItem.email"
+                  v-model="localEditedItem.contactInfo.email"
                   variant="underlined"
                   :rules="emailRules"
                   rounded="md"
@@ -172,7 +172,7 @@
       <v-card-actions
         ><v-col align-self="center"
           ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
-            <v-btn color="#5A82AF" width="85%" height="35" variant="text" @click="savechnages">
+            <v-btn color="#5A82AF" width="85%" height="35" variant="text" @click="update">
               SAVE
             </v-btn>
           </v-col>

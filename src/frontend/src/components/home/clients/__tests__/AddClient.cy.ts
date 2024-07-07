@@ -1,10 +1,10 @@
 import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
-import JobCard from '../management/JobCard.vue'
+import AddClient from '../management/AddClient.vue'
 
-it('renders client desk', () => {
+it('renders add client form', () => {
   const vuetify = createVuetify()
-  mount(JobCard, {
+  mount(AddClient, {
     global: {
       plugins: [vuetify]
     }
