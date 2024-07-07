@@ -1,10 +1,10 @@
 import {
+  ConflictException,
   forwardRef,
   Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  ServiceUnavailableException,
 } from '@nestjs/common';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -12,7 +12,10 @@ import { FlattenMaps, Model, Types } from 'mongoose';
 import { Client } from './entities/client.entity';
 import { CreateClientDto } from './dto/create-client.dto';
 import { ClientRepository } from './client.repository';
-import { ValidationResult } from '../auth/entities/validationResult.entity';
+import {
+  ValidationResult,
+  ValidationResultWithException,
+} from '../auth/entities/validationResult.entity';
 import { CompanyService } from '../company/company.service';
 
 @Injectable()
@@ -24,21 +27,20 @@ export class ClientService {
     private readonly companyService: CompanyService,
   ) {}
 
-  async create(createClientDto: CreateClientDto) {
+  async create(
+    createClientDto: CreateClientDto,
+  ): Promise<Client & { _id: Types.ObjectId }> {
     console.log('createClientDto', createClientDto);
     const createdClient = new Client(createClientDto);
-    const newClient = new this.clientModel(createdClient);
-    const result = await newClient.save();
-    console.log(result);
-    return result;
+    return await this.clientRepository.saveClient(createdClient);
   }
 
   async getAllClients() {
     try {
-      return this.clientModel.find().lean().exec();
+      return this.clientRepository.findAll();
     } catch (error) {
       console.log(error);
-      throw new ServiceUnavailableException('Clients could not be retrieved');
+      throw new InternalServerErrorException('Clients could not be retrieved');
     }
   }
 
@@ -56,7 +58,7 @@ export class ClientService {
   }
 
   async getByEmailOrName(companyId: Types.ObjectId, identifier: string) {
-    const result = await this.clientRepository.findByEmailOrName(
+    const result = await this.clientRepository.findClientByEmailOrName(
       companyId,
       identifier,
     );
@@ -73,11 +75,10 @@ export class ClientService {
   }
 
   async updateClient(id: Types.ObjectId, updateClientDto: UpdateClientDto) {
-    const inputValidated = await this.clientIsValid(updateClientDto);
+    const inputValidated = await this.clientUpdateIsValid(updateClientDto);
     if (!inputValidated.isValid) {
-      throw new NotFoundException(inputValidated.message);
+      throw inputValidated.exception;
     }
-
     const result = await this.clientRepository.update(id, updateClientDto);
     console.log('updatedClient', result);
     return result;
@@ -85,15 +86,56 @@ export class ClientService {
 
   async softDelete(id: string): Promise<boolean> {
     const result = await this.clientRepository.delete(id);
-
     if (result == null) {
       throw new InternalServerErrorException('Internal server Error');
     }
     return true;
   }
 
+  async clientUpdateIsValid(
+    client: UpdateClientDto,
+  ): Promise<ValidationResultWithException> {
+    if (!client) {
+      return new ValidationResultWithException(
+        false,
+        new NotFoundException('Null Reference'),
+      );
+    }
+
+    if (client.details) {
+      if (client.details) {
+        if (client.details.contactInfo.email && client.details.companyId) {
+          const exists = await this.clientRepository.findClientByEmailOrName(
+            client.details.companyId,
+            client.details.contactInfo.email,
+          );
+          if (!exists)
+            return new ValidationResultWithException(
+              false,
+              new NotFoundException('Client not found'),
+            );
+        }
+
+        if (client.details.companyId) {
+          const exists = await this.companyService.companyIdExists(
+            client.details.companyId,
+          );
+          if (!exists)
+            return new ValidationResultWithException(
+              false,
+              new ConflictException(
+                `Invalid Company ID: ${client.details.companyId}`,
+              ),
+            );
+        }
+      }
+    }
+    return new ValidationResultWithException(true);
+  }
+
   async clientIsValid(
-    client: Client | CreateClientDto | UpdateClientDto,
+    //Will have to check this
+    client: Client | CreateClientDto,
   ): Promise<ValidationResult> {
     if (client.details) {
       if (client.details.companyId) {

@@ -151,7 +151,6 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import AddJob from './AddJob.vue'
-// import JobCard from './JobCard.vue'
 // import { useRouter } from 'vue-router'
 // import ClientDetails from '@/components/AddClient.vue'
 // import DeleteClient from '@/components/DeleteClient.vue'

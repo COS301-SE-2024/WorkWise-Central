@@ -2,7 +2,7 @@
   <v-dialog max-height="800" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-        rounded="xl"
+        rounded="md"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         variant="elevated"
@@ -391,7 +391,7 @@ export default {
       ],
 
       req_obj: {
-        creatorId: sessionStorage['id'],
+        userId: sessionStorage['id'],
         name: '',
         type: '',
         registrationNumber: '',
@@ -408,7 +408,9 @@ export default {
           complex: '',
           houseNumber: ''
         },
-        employees: sessionStorage['id']
+        employees: [],
+        inventoryItems: [],
+        private: false
       }
     }
   },
@@ -425,6 +427,9 @@ export default {
           alert('The Company was registered successfully')
           sessionStorage['currentCompany'] = res.data.data.id
           console.log(res.data)
+
+          axios.post('http://localhost:3000/company/create')
+
           this.$router.push('/dashboard')
         })
         .catch((res) => {

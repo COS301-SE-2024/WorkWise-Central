@@ -138,7 +138,12 @@ const router = createRouter({
     {
       path: '/dashboard',
       name: 'dashboard',
-      component: () => import('@/views/home/dashboard/DashboardView.vue')
+      component: Dashboard
+    },
+    {
+      path: '/email-confirmation',
+      name: 'email-confirm',
+      component: () => import('@/views/emailConfirmation/EmailConfirmation.vue')
     }
   ]
 })

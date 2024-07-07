@@ -6,12 +6,12 @@ export class CreateEmployeeDto {
   @IsMongoId()
   @IsOptional()
   @ApiProperty()
-  roleId: Types.ObjectId;
+  roleId?: Types.ObjectId;
 
   @IsMongoId()
   @IsOptional()
   @ApiProperty()
-  superiorId: Types.ObjectId;
+  superiorId?: Types.ObjectId;
 
   @IsNotEmpty()
   @IsMongoId()

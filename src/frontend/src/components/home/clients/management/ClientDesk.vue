@@ -1,19 +1,19 @@
 <template>
   <v-container fluid fill-height>
     <v-col>
-      <v-card
-        flat
+      <v-sheet
         :height="auto"
         class="pa-11 ma-0"
         rounded="md"
-        elevation-2
-        :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+        :theme="isdarkmode ? 'dark' : 'light'"
         border="md"
       >
         <v-card-title
           class="d-flex align-center pe-2"
-          :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
-          style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
+          :style="
+            (isdarkmode === true ? dark_theme_text_color : light_theme_text_color,
+            'font-family: Lato, sans-serif; font-size: 25px; font-weight: lighter')
+          "
         >
           <v-icon icon="mdi-account"></v-icon> &nbsp; Client Details
 
@@ -28,7 +28,7 @@
             flat
             style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
             hide-details
-            :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+            :theme="isdarkmode ? 'dark' : 'light'"
             single-line
           ></v-text-field>
           <v-spacer></v-spacer>
@@ -45,7 +45,7 @@
             <v-col cols="12" xs="12" sm="12" md="12">
               <v-data-table
                 :headers="headers"
-                :items="clientDetails2"
+                :items="clientDetails"
                 :search="search"
                 :single-expand="true"
                 v-model:expanded="expanded"
@@ -54,13 +54,14 @@
                 rounded="xl"
                 :item-class="getRowClass"
                 class="font-lato"
+                :theme="isdarkmode ? 'dark' : 'light'"
               >
                 <template v-slot:[`item.name`]="{ value }">
-                  <v-chip variant="text" color="black">
+                  <v-chip variant="text" :color="isdarkmode ? 'white' : 'black'">
                     <v-icon>mdi-account</v-icon>{{ value }}</v-chip
                   >
                 </template>
-                <template v-slot:[`item.phoneNumber`]="{ value }">
+                <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
                   <v-chip variant="text" @click="callPhone" color="#5A82AF"
                     ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
                   >
@@ -71,15 +72,15 @@
                   >
                 </template>
                 <template v-slot:[`item.surname`]="{ value }">
-                  <v-chip variant="text" color="black"> {{ value }}</v-chip>
+                  <v-chip variant="text" :color="isdarkmode ? 'white' : 'black'"> {{ value }}</v-chip>
                 </template>
-                <template v-slot:[`item.email`]="{ value }">
+                <template v-slot:[`item.contactInfo.email`]="{ value }">
                   <v-chip variant="text" @click="sendEmail" color="#5A82AF">
                     <v-icon>mdi-email</v-icon>{{ value }}</v-chip
                   >
                 </template>
                 <template v-slot:[`item.address.street`]="{ value }">
-                  <v-chip variant="text" color="black">
+                  <v-chip variant="text" :color="isdarkmode ? 'white' : 'black'">
                     <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip
                   >
                 </template>
@@ -114,7 +115,7 @@
             </v-col>
           </div>
         </v-col>
-      </v-card>
+      </v-sheet>
     </v-col>
 
     <v-dialog v-model="actionsDialog" max-width="500px">
@@ -157,18 +158,12 @@ export default defineComponent({
     selectedItem: {},
     selectedItemName: '',
     selectedItemSurname: '',
-    isdarkmode: false,
+    isdarkmode: true,
     clientDialog: false,
     deleteDialog: false,
     editDialog: false,
     addClientDialog: false,
     actionsDialog: false,
-    colors: {
-      light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
-      dark_theme_text_color: 'color: #DCDBDB',
-      modal_dark_theme_color: '#2b2b2b',
-      modal_light_theme_color: '#FFFFFF'
-    },
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
@@ -195,8 +190,8 @@ export default defineComponent({
         value: 'surname',
         key: 'surname'
       },
-      { title: 'Phone', value: 'phoneNumber', key: 'phoneNumber' },
-      { title: 'Email', value: 'email', key: 'email' },
+      { title: 'Phone', value: 'contactInfo.phoneNumber', key: 'contactInfo.phoneNumber' },
+      { title: 'Email', value: 'contactInfo.email', key: 'contactInfo.email' },
       { title: 'Address', value: 'address.street', key: 'address.street' },
       { title: '', value: 'actions', key: 'actions', sortable: false }
     ],
@@ -567,6 +562,7 @@ export default defineComponent({
   },
   mounted() {
     this.getClients()
+    this.isdarkmode = sessionStorage.getItem('theme') === 'true' ? true : false
   },
   methods: {
     selectItem(item) {
@@ -704,5 +700,20 @@ export default defineComponent({
   line-height: 0; /* helps vertically position the dots */
   margin-top: -10px; /* helps "raise" the dots higher */
   letter-spacing: -2px; /* "squeezes" the dots closer together */
+}
+.modal-dark-theme {
+  background-color: #2b2b2b;
+}
+
+.modal-light-theme {
+  background-color: #ffffff;
+}
+.light-theme-text {
+  color: rgb(0, 0, 0);
+  opacity: 65%;
+}
+
+.dark-theme-text {
+  color: #dcdbdb;
 }
 </style>

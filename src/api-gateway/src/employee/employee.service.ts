@@ -175,7 +175,7 @@ export class EmployeeService {
       await this.validateEmployee(createEmployeeDto);
     } catch (error) {
       console.log('error -> ', error);
-      return `${error}`;
+      throw new InternalServerErrorException(error);
     }
 
     const newEmployee = new Employee(createEmployeeDto);
@@ -190,7 +190,8 @@ export class EmployeeService {
 
     const model = new this.employeeModel(newEmployee);
     const result = await model.save();
-    return `${result}`;
+
+    return result;
   }
 
   async findAll() {

@@ -3,7 +3,8 @@ import { ref } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
 const isVisible = ref(false)
 const drawer = ref(true)
-
+const modal_dark_theme_color = '#2b2b2b'
+const modal_light_theme_color = '#FFFFFF'
 const onProfileClick = () => {
   console.log('Profile icon clicked')
 }
@@ -56,7 +57,6 @@ const supportSubItems = ref([{ title: 'Support', icon: 'mdi-star', routeName: 's
 <script lang="ts">
 import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
-import ProfileEmployee from '@/components/home/settings/profile/ProfileEmployee.vue'
 
 export default defineComponent({
   name: 'NavigationBar',
@@ -65,156 +65,197 @@ export default defineComponent({
       type: Object as PropType<any>
     }
   },
-  components: {
-    ProfileEmployee
+  data: () => ({
+    isdarkmode: sessionStorage.getItem('theme') || false
+  }),
+  methods: {
+    toggleDarkMode() {
+      console.log(this.isdarkmode)
+      if (this.isdarkmode === true) {
+        this.isdarkmode = false
+        console.log(this.isdarkmode)
+      } else {
+        this.isdarkmode = true
+        console.log(this.isdarkmode)
+      }
+      sessionStorage.setItem('theme', this.isdarkmode.toString()) // save the theme to session storage
+    }
   }
 })
 </script>
 
 <template>
-  <v-card>
-    <v-app>
-      <v-app-bar app>
-        <v-app-bar-nav-icon @click="isVisible = !isVisible">
-          <v-icon>{{ isVisible ? 'mdi-close' : 'mdi-menu' }}</v-icon>
-        </v-app-bar-nav-icon>
-        <v-spacer></v-spacer>
-        <v-toolbar-title>WorkWise</v-toolbar-title>
-        <v-icon @click="onProfileClick">mdi-account-circle</v-icon>
-        <v-icon @click="onEllipsisClick">mdi-dots-vertical</v-icon>
-      </v-app-bar>
+  <v-app :theme="isdarkmode ? 'dark' : 'light'">
+    <v-card>
+      <v-app :theme="isdarkmode ? 'dark' : 'light'">
+        <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app>
+          <v-app-bar-nav-icon @click="isVisible = !isVisible">
+            <v-icon>{{ isVisible ? 'mdi-close' : 'mdi-menu' }}</v-icon>
+          </v-app-bar-nav-icon>
+          <v-spacer></v-spacer>
+          <v-toolbar-title
+            ><span class="colorAccent toolbar-text">Work</span>
+            <span class="colorAccent2 toolbar-text">Wise</span></v-toolbar-title
+          >
+          <v-icon class="icon-padding" @click="onProfileClick">mdi-account-circle</v-icon>
+          <v-icon class="icon-padding" @click="toggleDarkMode">mdi-brightness-4</v-icon>
+        </v-app-bar>
 
-      <v-navigation-drawer app v-model="drawer" :rail="isVisible">
-        <v-list-item></v-list-item>
-        <v-divider></v-divider>
-        <v-list v-model:open="open">
-          <v-list-group value="Dashboard">
-            <template v-slot:activator="{ props }">
+        <v-navigation-drawer
+          app
+          v-model="drawer"
+          :rail="isVisible"
+          :theme="isdarkmode ? 'dark' : 'light'"
+        >
+          <v-list-item></v-list-item>
+          <v-divider></v-divider>
+          <v-list v-model:open="open">
+            <v-list-group value="Dashboard">
+              <template v-slot:activator="{ props }">
+                <v-list-item
+                  v-bind="props"
+                  prepend-icon="mdi-view-dashboard"
+                  title="Dashboard"
+                ></v-list-item>
+              </template>
               <v-list-item
-                v-bind="props"
-                prepend-icon="mdi-view-dashboard"
-                title="Dashboard"
+                v-for="(item, i) in dashboardSubItems"
+                :key="i"
+                :to="{ name: item.routeName }"
+                :prepend-icon="item.icon"
+                :title="item.title"
+                :value="item.title"
               ></v-list-item>
-            </template>
-            <v-list-item
-              v-for="(item, i) in dashboardSubItems"
-              :key="i"
-              :to="{ name: item.routeName }"
-              :prepend-icon="item.icon"
-              :title="item.title"
-              :value="item.title"
-            ></v-list-item>
-          </v-list-group>
-        </v-list>
-        <v-list v-model:open="open">
-          <v-list-group value="Clients">
-            <template v-slot:activator="{ props }">
+            </v-list-group>
+          </v-list>
+          <v-list v-model:open="open">
+            <v-list-group value="Clients">
+              <template v-slot:activator="{ props }">
+                <v-list-item
+                  v-bind="props"
+                  prepend-icon="mdi-account-group"
+                  title="Clients"
+                ></v-list-item>
+              </template>
               <v-list-item
-                v-bind="props"
-                prepend-icon="mdi-account-group"
-                title="Clients"
+                v-for="(item, i) in clientSubItems"
+                :key="i"
+                :to="{ name: item.routeName }"
+                :prepend-icon="item.icon"
+                :title="item.title"
+                :value="item.title"
               ></v-list-item>
-            </template>
-            <v-list-item
-              v-for="(item, i) in clientSubItems"
-              :key="i"
-              :to="{ name: item.routeName }"
-              :prepend-icon="item.icon"
-              :title="item.title"
-              :value="item.title"
-            ></v-list-item>
-          </v-list-group>
-        </v-list>
-        <v-list v-model:open="open">
-          <v-list-group value="Employees">
-            <template v-slot:activator="{ props }">
+            </v-list-group>
+          </v-list>
+          <v-list v-model:open="open">
+            <v-list-group value="Employees">
+              <template v-slot:activator="{ props }">
+                <v-list-item
+                  v-bind="props"
+                  prepend-icon="mdi-account-multiple"
+                  title="Employees"
+                ></v-list-item>
+              </template>
               <v-list-item
-                v-bind="props"
-                prepend-icon="mdi-account-multiple"
-                title="Employees"
+                v-for="(item, i) in employeeSubItems"
+                :key="i"
+                :to="{ name: item.routeName }"
+                :prepend-icon="item.icon"
+                :title="item.title"
+                :value="item.title"
               ></v-list-item>
-            </template>
-            <v-list-item
-              v-for="(item, i) in employeeSubItems"
-              :key="i"
-              :to="{ name: item.routeName }"
-              :prepend-icon="item.icon"
-              :title="item.title"
-              :value="item.title"
-            ></v-list-item>
-          </v-list-group>
-        </v-list>
-        <v-list v-model:open="open">
-          <v-list-group value="Jobs">
-            <template v-slot:activator="{ props }">
-              <v-list-item v-bind="props" prepend-icon="mdi-briefcase" title="Jobs"></v-list-item>
-            </template>
-            <v-list-item
-              v-for="(item, i) in jobSubItems"
-              :key="i"
-              :to="{ name: item.routeName }"
-              :prepend-icon="item.icon"
-              :title="item.title"
-              :value="item.title"
-            ></v-list-item>
-          </v-list-group>
-        </v-list>
-        <v-list v-model:open="open">
-          <v-list-group value="Inventory">
-            <template v-slot:activator="{ props }">
+            </v-list-group>
+          </v-list>
+          <v-list v-model:open="open">
+            <v-list-group value="Jobs">
+              <template v-slot:activator="{ props }">
+                <v-list-item v-bind="props" prepend-icon="mdi-briefcase" title="Jobs"></v-list-item>
+              </template>
               <v-list-item
-                v-bind="props"
-                prepend-icon="mdi-warehouse"
-                title="Inventory"
+                v-for="(item, i) in jobSubItems"
+                :key="i"
+                :to="{ name: item.routeName }"
+                :prepend-icon="item.icon"
+                :title="item.title"
+                :value="item.title"
               ></v-list-item>
-            </template>
-            <v-list-item
-              v-for="(item, i) in inventorySubItems"
-              :key="i"
-              :to="{ name: item.routeName }"
-              :prepend-icon="item.icon"
-              :title="item.title"
-              :value="item.title"
-            ></v-list-item>
-          </v-list-group>
-        </v-list>
-        <v-list v-model:open="open">
-          <v-list-group value="Inbox">
-            <template v-slot:activator="{ props }">
-              <v-list-item v-bind="props" prepend-icon="mdi-inbox" title="Inbox"></v-list-item>
-            </template>
-            <v-list-item
-              v-for="(item, i) in inboxSubItems"
-              :key="i"
-              :to="{ name: item.routeName }"
-              :prepend-icon="item.icon"
-              :title="item.title"
-              :value="item.title"
-            ></v-list-item>
-          </v-list-group>
-        </v-list>
-        <v-list v-model:open="open">
-          <v-list-group value="Help">
-            <template v-slot:activator="{ props }">
-              <v-list-item v-bind="props" prepend-icon="mdi-information" title="Help"></v-list-item>
-            </template>
-            <v-list-item
-              v-for="(item, i) in supportSubItems"
-              :key="i"
-              :to="{ name: item.routeName }"
-              :prepend-icon="item.icon"
-              :title="item.title"
-              :value="item.title"
-            ></v-list-item>
-          </v-list-group>
-        </v-list>
-      </v-navigation-drawer>
-      <v-main>
-        <component :is="component" />
-      </v-main>
-    </v-app>
-  </v-card>
+            </v-list-group>
+          </v-list>
+          <v-list v-model:open="open">
+            <v-list-group value="Inventory">
+              <template v-slot:activator="{ props }">
+                <v-list-item
+                  v-bind="props"
+                  prepend-icon="mdi-warehouse"
+                  title="Inventory"
+                ></v-list-item>
+              </template>
+              <v-list-item
+                v-for="(item, i) in inventorySubItems"
+                :key="i"
+                :to="{ name: item.routeName }"
+                :prepend-icon="item.icon"
+                :title="item.title"
+                :value="item.title"
+              ></v-list-item>
+            </v-list-group>
+          </v-list>
+          <v-list v-model:open="open">
+            <v-list-group value="Inbox">
+              <template v-slot:activator="{ props }">
+                <v-list-item v-bind="props" prepend-icon="mdi-inbox" title="Inbox"></v-list-item>
+              </template>
+              <v-list-item
+                v-for="(item, i) in inboxSubItems"
+                :key="i"
+                :to="{ name: item.routeName }"
+                :prepend-icon="item.icon"
+                :title="item.title"
+                :value="item.title"
+              ></v-list-item>
+            </v-list-group>
+          </v-list>
+          <v-list v-model:open="open">
+            <v-list-group value="Help">
+              <template v-slot:activator="{ props }">
+                <v-list-item
+                  v-bind="props"
+                  prepend-icon="mdi-information"
+                  title="Help"
+                ></v-list-item>
+              </template>
+              <v-list-item
+                v-for="(item, i) in supportSubItems"
+                :key="i"
+                :to="{ name: item.routeName }"
+                :prepend-icon="item.icon"
+                :title="item.title"
+                :value="item.title"
+              ></v-list-item>
+            </v-list-group>
+          </v-list>
+        </v-navigation-drawer>
+        <v-main>
+          <component :is="component" />
+        </v-main>
+      </v-app>
+    </v-card>
+  </v-app>
   <v-col></v-col>
 </template>
 
-<style scoped></style>
+<style scoped>
+.colorAccent {
+  color: #6a99ce;
+}
+.colorAccent2 {
+  color: #879898;
+}
+.toolbar-text {
+  font-size: 36px;
+  font-display: 'Lato';
+}
+.icon-padding {
+  padding: 8px; /* Adjust the padding value as needed */
+}
+</style>
