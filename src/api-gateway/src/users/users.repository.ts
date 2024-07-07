@@ -119,7 +119,7 @@ export class UsersRepository {
       .lean();
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: Types.ObjectId, updateUserDto: UpdateUserDto) {
     return this.userModel
       .findOneAndUpdate(
         {

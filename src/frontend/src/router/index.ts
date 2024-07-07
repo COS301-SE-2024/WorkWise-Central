@@ -126,11 +126,6 @@ const router = createRouter({
       component: ClientView
     },
     {
-      path: '/employeeJobCard',
-      name: 'employeeJobCard',
-      component: () => import('@/components/home/jobs/management/EmployeeJobCard.vue')
-    },
-    {
       path: '/managerJobCard',
       name: 'managerJobCard',
       component: () => import('../components/home/jobs/management/ManagerJobCard.vue')
