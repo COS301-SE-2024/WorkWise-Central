@@ -1,13 +1,86 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'EmployeeDetails'
-})
-</script>
-
 <template>
-  <div></div>
+  <v-dialog v-model="clientDialog" max-width="500px">
+    <template v-slot:activator="{ props: activatorProps }">
+      <v-btn
+        rounded="md"
+        class="text-none font-weight-regular hello"
+        color="error"
+        variant="text"
+        v-bind="activatorProps"
+        >Delete</v-btn
+      >
+    </template>
+    <v-card :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color">
+      <v-card-title>
+        <span class="headline">Delete Client</span>
+      </v-card-title>
+      <v-card-text>
+        <v-container>
+          <v-row>
+            <p>
+              Are you sure you want to delete <strong>{{ clientName }}</strong
+              >? This action cannot be reversed.
+            </p>
+          </v-row>
+        </v-container>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="red darken-2" text :loading="isDeleting" @click="Delete">Delete</v-btn>
+        <v-btn color="grey darken-1" text @click="clientDialog = false">Cancel</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
-<style scoped></style>
+<script>
+import axios from 'axios'
+export default {
+  name: 'DeleteClient',
+  props: {
+    opened: Boolean,
+    client_id: Number
+  },
+  data() {
+    return {
+      clientDialog: false,
+      clientName: '',
+      isDeleting: false,
+      isdarkmode: false,
+      light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
+      dark_theme_text_color: 'color: #DCDBDB',
+      modal_dark_theme_color: '#2b2b2b',
+      modal_light_theme_color: '#FFFFFF'
+    }
+  },
+  methods: {
+    close() {
+      this.clientDialog = false
+    },
+    Delete() {
+      alert('Client deleted')
+      window.location.reload() // Consider removing this for SPA behavior
+    },
+    async deleteClient() {
+      this.isDeleting = true // Indicate the start of the deletion process
+      axios
+        .delete('http://localhost:3000/client/delete', { data: { id: this.client_id } })
+        .then((response) => {
+          console.log(response)
+          alert('Client deleted')
+          this.clientDialog = false
+          this.$emit('clientDeleted')
+          // Consider using a more SPA-friendly way of updating the view instead of reloading
+        })
+        .catch((error) => {
+          console.log(error)
+          alert('Error deleting client')
+        })
+        .finally(() => {
+          this.isDeleting = false // Reset the deletion indicator
+          window.location.reload() // Consider removing this for SPA behavior
+        })
+    }
+  }
+}
+</script>

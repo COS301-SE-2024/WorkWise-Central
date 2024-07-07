@@ -39,10 +39,9 @@
                 density="compact"
                 :theme="isdarkmode === true ? 'dark' : 'light'"
                 color="grey-lighten-4"
-                placeholder="Enter the name of the client"
-                v-model="req_obj.details.name"
-                rounded="l"
-                type="name"
+                placeholder="Enter the firstname of the client"
+                v-model="req_obj.details.firstName"
+                rounded="md"
                 variant="underlined"
                 required
                 :rules="first_name_rules"
@@ -52,19 +51,92 @@
               <small
                 :theme="isdarkmode === true ? 'dark' : 'light'"
                 class="text-caption white--text"
-                >Surname name of client*</small
+                >Surname of client*</small
               >
               <v-text-field
                 density="compact"
                 :theme="isdarkmode === true ? 'dark' : 'light'"
                 color="grey-lighten-4"
-                placeholder="Enter the Surname name of the client"
-                v-model="surName"
-                type="surname"
+                placeholder="Enter the surname name of the client"
+                v-model="req_obj.details.lastName"
                 rounded="md"
                 variant="underlined"
                 required
                 :rules="surname_rules"
+              ></v-text-field
+            ></v-col>
+            <v-col>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption white--text"
+                >ID of client*</small
+              >
+              <v-text-field
+                density="compact"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                color="grey-lighten-4"
+                placeholder="Enter the ID number of the client"
+                v-model="req_obj.idNumber"
+                rounded="md"
+                variant="underlined"
+                required
+                :rules="id_number_rules"
+              ></v-text-field
+            ></v-col>
+            <v-col>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption white--text"
+                >Username of client*</small
+              >
+
+              <v-text-field
+                density="compact"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                color="grey-lighten-4"
+                placeholder="Enter the username of the client"
+                v-model="req_obj.clientUsername"
+                rounded="md"
+                variant="underlined"
+                required
+                :rules="username_rules"
+              ></v-text-field
+            ></v-col>
+            <v-col>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption white--text"
+                >ID of client*</small
+              >
+              <v-text-field
+                density="compact"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                color="grey-lighten-4"
+                placeholder="Enter the ID number of the client"
+                v-model="req_obj.idNumber"
+                rounded="md"
+                variant="underlined"
+                required
+                :rules="id_number_rules"
+              ></v-text-field
+            ></v-col>
+            <v-col>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption white--text"
+                >Username of client*</small
+              >
+
+              <v-text-field
+                density="compact"
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                color="grey-lighten-4"
+                placeholder="Enter the username of the client"
+                v-model="req_obj.clientUsername"
+                rounded="md"
+                variant="underlined"
+                required
+                :rules="username_rules"
               ></v-text-field
             ></v-col>
             <v-col>
@@ -272,6 +344,8 @@ export default defineComponent({
   name: 'RegisterCompanyModal ',
 
   data: () => ({
+    localUrl: 'http://localhost:3000/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     valid: false,
     addDialog: false,
     isdarkmode: sessionStorage.getItem('isdarkmode') === 'true' ? true : false,
@@ -294,12 +368,27 @@ export default defineComponent({
       (v: string) => /^0\d{9}$/.test(v) || 'Phone number must be a valid South African number'
     ],
     prefered_languages_rules: [(v: string) => !!v || 'Preferred language is required'],
+    id_number_rules: [
+      (v: string) => !!v || 'ID number is required'
+      // (v:string) => (v && v.length === 13) || 'ID number must be 13 digits',
+      // (v:string) =>
+      //   /^(\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{4}\d{1}0\d{1})$/.test(v) ||
+      //   'ID number must be a valid South African ID number',
+      // (v:string) => this.luhnCheck(v) || 'ID number must be a valid South African ID number'
+    ],
+    username_rules: [
+      (v: string) => !!v || 'Username is required',
+      (v: string) => (v && v.length >= 3) || 'Username must be at least 3 characters',
+      (v: string) => (v && v.length <= 30) || 'Username must be less than 30 characters',
+      (v: string) =>
+        /^[A-Za-z0-9_]+$/.test(v) || 'Username must be alphanumeric characters and underscores only'
+    ],
 
-    firstName: '',
-    surName: '',
     req_obj: {
+      clientUsername: '',
       details: {
-        name: '',
+        firstName: '',
+        lastName: '',
         preferredLanguage: '',
         contactInfo: {
           email: '',
@@ -313,10 +402,26 @@ export default defineComponent({
           complex: '',
           houseNumber: ''
         }
-      }
+      },
+      companyId: sessionStorage['currentCompany'],
+      idNumber: ''
     }
   }),
   methods: {
+    luhnCheck(val: string) {
+      let sum = 0
+      for (let i = 0; i < val.length; i++) {
+        let intVal = parseInt(val.substr(i, 1))
+        if (i % 2 == 0) {
+          intVal *= 2
+          if (intVal > 9) {
+            intVal = 1 + (intVal % 10)
+          }
+        }
+        sum += intVal
+      }
+      return sum % 10 == 0
+    },
     phhoneNumberCheck() {
       if (this.req_obj.details.contactInfo.phoneNumber != '') {
         axios
@@ -338,12 +443,12 @@ export default defineComponent({
           })
       }
     },
-    handleSubmission() {
+    async handleSubmission() {
       console.log(JSON.stringify(this.req_obj))
       const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
-
+      const apiURL = await this.getRequestUrl()
       axios
-        .post('http://localhost:3000/client/create', this.req_obj, config)
+        .post(apiURL + 'client/create', this.req_obj, config)
         .then((res) => {
           console.log('Client created successfully')
           console.log(res)
@@ -354,6 +459,18 @@ export default defineComponent({
           console.log('Client creation failed')
           console.log(res)
         })
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     },
     close() {
       console.log(this.addDialog)
