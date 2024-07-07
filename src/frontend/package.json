@@ -15,6 +15,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@cypress/vue": "^6.0.1",
+    "@cypress/webpack-dev-server": "^3.10.0",
     "@mdi/font": "^7.4.47",
     "@syncfusion/ej2-base": "^25.2.7",
     "@syncfusion/ej2-vue-kanban": "^25.2.6",

@@ -282,7 +282,7 @@
                           <v-text-field
                             :theme="isdarkmode ? 'dark' : 'light'"
                             :label="name ? '' : 'Enter your name'"
-                            type="input"
+                            type="name"
                             v-model="name"
                             :rules="nameRules"
                             rounded="md"
@@ -297,7 +297,7 @@
                           ><v-text-field
                             :theme="isdarkmode ? 'dark' : 'light'"
                             :label="surname ? '' : 'Enter your surname'"
-                            type="input"
+                            type="surname"
                             v-model="surname"
                             :rules="surnameRules"
                             rounded="md"

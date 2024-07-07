@@ -55,6 +55,8 @@ const supportSubItems = ref([{ title: 'Support', icon: 'mdi-star', routeName: 's
 <script lang="ts">
 import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
+import '@mdi/font/css/materialdesignicons.css' // icon import
+import ProfilePage from './settings/profile/ProfilePage.vue'
 
 export default defineComponent({
   name: 'NavigationBar',
@@ -62,6 +64,9 @@ export default defineComponent({
     component: {
       type: Object as PropType<any>
     }
+  },
+  components: {
+    ProfilePage
   },
   data: () => ({
     isdarkmode: sessionStorage.getItem('theme') || false

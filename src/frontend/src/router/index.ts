@@ -17,6 +17,7 @@ import Dashboard from '@/views/home/dashboard/DashboardView.vue'
 import Kanban from '@/components/home/jobs/Kanban.vue'
 import ManagerView from '@/views/ManagerView.vue'
 import JobCard from '@/components/home/jobs/management/JobCard.vue'
+import ProfilePage from '@/components/home/settings/profile/ProfilePage.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -140,6 +141,11 @@ const router = createRouter({
       path: '/email-confirmation',
       name: 'email-confirm',
       component: () => import('@/views/emailConfirmation/EmailConfirmation.vue')
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: ProfilePage
     }
   ]
 })
