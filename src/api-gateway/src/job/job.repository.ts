@@ -116,7 +116,7 @@ export class JobRepository {
     return await this.jobModel.find({ recipientId: id }).lean().exec();
   }
 
-  async findOne(id: Types.ObjectId): Promise<Job[]> {
-    return this.jobModel.find({ id: id }).lean().exec();
+  async findOne(id: Types.ObjectId) {
+    return this.jobModel.findOne({ _id: id }).lean().exec();
   }
 }
