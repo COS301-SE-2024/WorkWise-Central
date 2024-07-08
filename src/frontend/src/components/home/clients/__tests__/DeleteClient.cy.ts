@@ -24,7 +24,6 @@ it('delete a client', () => {
   cy.contains('button', 'Delete').should('exist').click()
   cy.contains('.v-card', 'Delete Client').should('exist')
   cy.contains('.v-btn', 'Delete').should('exist')
-
 })
 it('cancels', () => {
   cy.viewport(1920, 1080)
@@ -37,5 +36,4 @@ it('cancels', () => {
   cy.contains('button', 'Delete').should('exist').click()
   cy.contains('.v-card', 'Delete Client').should('exist')
   cy.contains('.v-btn', 'Cancel').should('exist').click()
-  
 })
