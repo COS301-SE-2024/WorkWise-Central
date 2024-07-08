@@ -11,6 +11,7 @@ import {
   UseGuards,
   InternalServerErrorException,
   Headers,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JobService } from './job.service';
 import {
@@ -20,6 +21,7 @@ import {
 } from './dto/create-job.dto';
 import { UpdateDtoResponse, UpdateJobDto } from './dto/update-job.dto';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
@@ -95,6 +97,7 @@ export class JobController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Get all ${className}s`,
   })
@@ -111,6 +114,105 @@ export class JobController {
         'Something went wrong',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all ${className}s in a specific Company`,
+  })
+  @ApiOkResponse({
+    type: JobAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class`,
+  })
+  @Get('all/company/:cid')
+  async findAllInCompany(
+    @Headers() headers: any,
+    @Param('cid') companyId: string,
+  ) {
+    this.validateObjectId(companyId);
+    const decodedJwtAccessToken = this.jwtService.decode(
+      headers.authorization.replace(/^Bearer\s+/i, ''),
+    );
+    const userId: Types.ObjectId = decodedJwtAccessToken.sub;
+    if (!userId) {
+      throw new UnauthorizedException('Unauthorized, JWT required');
+    }
+    try {
+      return {
+        data: await this.jobService.GetAllJobsInCompany(
+          userId,
+          new Types.ObjectId(companyId),
+        ),
+      };
+    } catch (Error) {
+      throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all ${className}s for a specific user`,
+  })
+  @ApiOkResponse({
+    type: JobAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class`,
+  })
+  @Get('all/user/')
+  async findAllForUser(@Headers() headers: any) {
+    const decodedJwtAccessToken = this.jwtService.decode(
+      headers.authorization.replace(/^Bearer\s+/i, ''),
+    );
+    const userId: Types.ObjectId = decodedJwtAccessToken.sub;
+    if (!userId) {
+      throw new UnauthorizedException('Unauthorized, JWT required');
+    }
+    this.validateObjectId(userId);
+
+    try {
+      return {
+        data: await this.jobService.GetAllJobsForUser(userId),
+      };
+    } catch (Error) {
+      throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all ${className}s for a specific Employee`,
+  })
+  @ApiOkResponse({
+    type: JobAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class`,
+  })
+  @Get('all/employee/:eid')
+  async findAllForEmployee(
+    @Headers() headers: any,
+    @Param('eid') empId: string,
+  ) {
+    try {
+      const decodedJwtAccessToken = this.jwtService.decode(
+        headers.authorization.replace(/^Bearer\s+/i, ''),
+      );
+      const userId: Types.ObjectId = decodedJwtAccessToken.sub;
+      if (!userId) {
+        throw new UnauthorizedException('Unauthorized, JWT required');
+      }
+      this.validateObjectId(userId);
+      this.validateObjectId(empId);
+
+      return {
+        data: await this.jobService.GetAllJobsForEmployee(
+          userId,
+          new Types.ObjectId(empId),
+        ),
+      };
+    } catch (Error) {
+      throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -135,6 +237,7 @@ export class JobController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Change the attributes of a ${className}`,
     description: `
@@ -183,6 +286,7 @@ export class JobController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Delete a ${className}`,
     description: `You send the ${className} ObjectId, and then they get deleted if the id is valid.\n 

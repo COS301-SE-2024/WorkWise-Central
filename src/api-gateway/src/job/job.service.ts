@@ -5,11 +5,11 @@ import {
   Inject,
   ConflictException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateJobDto, CreateJobResponseDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { FlattenMaps, Model, Types } from 'mongoose';
+import { FlattenMaps, Types } from 'mongoose';
 import { Job } from './entities/job.entity';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
@@ -21,8 +21,6 @@ import { ValidationResult } from '../auth/entities/validationResult.entity';
 @Injectable()
 export class JobService {
   constructor(
-    @InjectModel(Job.name)
-    private readonly jobModel: Model<Job>,
     private readonly jobRepository: JobRepository,
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
@@ -302,5 +300,49 @@ export class JobService {
     }
 
     return new ValidationResult(true);
+  }
+
+  async GetAllJobsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
+    //Basic Authentication
+    //TODO: Add role-related rules if necessary
+    if (!(await this.companyService.userIsInCompany(userId, companyId))) {
+      throw new UnauthorizedException('User not in company');
+    }
+    return await this.jobRepository.findAllInCompany(companyId);
+  }
+
+  async GetAllJobsForUser(
+    userId: Types.ObjectId,
+  ): Promise<(FlattenMaps<Job> & { _id: Types.ObjectId })[]> {
+    const user = await this.usersService.getUserById(userId);
+    if (!user) throw new NotFoundException('User not found');
+    const arrOfJobs: (FlattenMaps<Job> & { _id: Types.ObjectId })[] = [];
+    for (const joinedCompany of user.joinedCompanies) {
+      const jobsForEmployee = await this.GetAllJobsForEmployee(
+        userId,
+        joinedCompany.employeeId,
+      );
+      arrOfJobs.push.apply(jobsForEmployee);
+    }
+    return arrOfJobs; //TODO: Test
+  }
+
+  async GetAllJobsForEmployee(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+  ): Promise<(FlattenMaps<Job> & { _id: Types.ObjectId })[]> {
+    if (!(await this.usersService.userIdExists(userId))) {
+      throw new NotFoundException('User not found');
+    }
+    if (
+      !(await this.usersService.userIsInSameCompanyAsEmployee(
+        userId,
+        employeeId,
+      ))
+    ) {
+      throw new UnauthorizedException('User not in Same Company');
+    }
+
+    return this.jobRepository.findAllForEmployee(employeeId);
   }
 }

@@ -11,6 +11,10 @@ export class JobRepository {
     private jobModel: Model<Job>,
   ) {}
 
+  private isNotDeleted = {
+    $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+  };
+
   async save(job: Job) {
     const newJob = new this.jobModel(job);
     return await newJob.save();
@@ -43,6 +47,17 @@ export class JobRepository {
     return this.jobModel
       .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
       .lean();
+  }
+
+  async findAllInCompany(companyId: Types.ObjectId) {
+    const filter = {
+      $ands: [
+        { companyId: companyId },
+        { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] },
+      ],
+    };
+
+    return this.jobModel.find(filter).lean();
   }
 
   async exists(id: string) {
@@ -112,11 +127,16 @@ export class JobRepository {
     return result != null;
   }
 
-  async findAllWithRecipientId(id: Types.ObjectId): Promise<Job[]> {
-    return await this.jobModel.find({ recipientId: id }).lean().exec();
-  }
-
   async findOne(id: Types.ObjectId) {
-    return this.jobModel.findOne({ _id: id }).lean().exec();
+    return await this.jobModel.findOne({ _id: id }).lean().exec();
+  }
+  async findAllForEmployee(employeeId: Types.ObjectId) {
+    const filter = {
+      $and: [
+        { 'assignedEmployees.employeeIds': { $in: [employeeId] } },
+        this.isNotDeleted,
+      ],
+    };
+    return await this.jobModel.find(filter).lean().exec();
   }
 }
