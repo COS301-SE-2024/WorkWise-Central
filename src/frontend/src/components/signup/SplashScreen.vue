@@ -1,13 +1,16 @@
 <template>
   <v-app :theme="isdarkmode ? 'dark' : 'light'">
     <!-- Toolbar -->
-    <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" dark>
-      <v-app-bar-title>
+    <v-app-bar :theme="isdarkmode ? 'themes.dark' : 'themes.light'">
+      <v-toolbar-title class="d-flex justify-end">
         <span class="colorAccent toolbar-text">Work</span>
         <span class="colorAccent2 toolbar-text">Wise</span>
-      </v-app-bar-title>
+      </v-toolbar-title>
+
       <v-spacer></v-spacer>
-      <v-btn @click="toggleDarkMode"><v-icon>mdi-globe-light-outline</v-icon></v-btn>
+      <v-btn @click="toggleDarkMode"
+        ><v-icon :icon="isdarkmode ? ' mdi-white-balance-sunny' : 'mdi-moon-full'"></v-icon
+      ></v-btn>
     </v-app-bar>
     <!-- Main Content -->
     <v-main :theme="isdarkmode ? 'dark' : 'light'">
@@ -34,7 +37,7 @@
             <v-row justify="center">
               <v-col cols="8" offset="3"
                 ><v-btn
-                  color="#5A82AF"
+                  color="primary"
                   dark
                   @click="loginDialog = true"
                   rounded="md"
@@ -114,7 +117,7 @@
                       @keypress.enter="login"
                       rounded="md"
                       size="large"
-                      color="#5A82AF"
+                      color="primary"
                       variant="elevated"
                       width="100%"
                       >Login</v-btn
@@ -125,7 +128,7 @@
                       text
                       @click="(signupDialog = true)((loginDialog = false))"
                       rounded="md"
-                      color="blue-grey-darken-1"
+                      color="secondary"
                       size="large"
                       variant="elevated"
                       width="100%"
@@ -145,7 +148,7 @@
             <v-row justify="center"
               ><v-col cols="8" offset="3"
                 ><v-btn
-                  color="blue-grey-darken-1"
+                  color="secondary"
                   dark
                   @click="signupDialog = true"
                   rounded="md"
@@ -239,7 +242,7 @@
                       width="100%"
                       size="large"
                       variant="elevated"
-                      color="#5A82AF"
+                      color="primary"
                       >Continue</v-btn
                     > </v-col
                   ><v-col cols="8" offset="2">
@@ -249,7 +252,7 @@
                       width="100%"
                       size="large"
                       variant="elevated"
-                      color="blue-grey-darken-1"
+                      color="secondary"
                       >Log in</v-btn
                     >
                   </v-col>
@@ -280,7 +283,7 @@
                           <v-text-field
                             :theme="isdarkmode ? 'dark' : 'light'"
                             :label="name ? '' : 'Enter your name'"
-                            type="input"
+                            type="name"
                             v-model="name"
                             :rules="nameRules"
                             rounded="md"
@@ -295,7 +298,7 @@
                           ><v-text-field
                             :theme="isdarkmode ? 'dark' : 'light'"
                             :label="surname ? '' : 'Enter your surname'"
-                            type="input"
+                            type="surname"
                             v-model="surname"
                             :rules="surnameRules"
                             rounded="md"
@@ -313,7 +316,7 @@
                       @click="nextFlow2"
                       rounded="md"
                       size="large"
-                      color="#5A82AF"
+                      color="primary"
                       variant="elevated"
                       width="100%"
                       >Continue</v-btn
@@ -323,7 +326,7 @@
                     <v-btn
                       @click="(signupDialog = true)((signup1Dialog = false))"
                       rounded="md"
-                      color="blue-grey-darken-1"
+                      color="secondary"
                       size="large"
                       variant="elevated"
                       width="100%"
@@ -374,7 +377,7 @@
                       @click="nextFlowUsername"
                       rounded="md"
                       size="large"
-                      color="#5A82AF"
+                      color="primary"
                       variant="elevated"
                       width="100%"
                       >Continue</v-btn
@@ -437,7 +440,7 @@
                             >Preferred Language</label
                           >
                           <v-select
-                            color="grey-lighten-4"
+                            color="secondary"
                             :label="language ? '' : 'Select your preferred language'"
                             hint="Chose your preferred language"
                             :items="languageList"
@@ -461,7 +464,7 @@
                       @click="nextFlow3"
                       rounded="xmdl"
                       size="large"
-                      color="#5A82AF"
+                      color="primary"
                       variant="elevated"
                       width="100%"
                       >Continue</v-btn
@@ -471,7 +474,7 @@
                     <v-btn
                       @click="(signup1Dialog = true)((signup2Dialog = false))"
                       rounded="md"
-                      color="blue-grey-darken-1"
+                      color="secondary"
                       size="large"
                       variant="elevated"
                       width="100%"
@@ -585,7 +588,7 @@
                       @click="nextFlowAddress"
                       rounded="md"
                       size="large"
-                      color="#5A82AF"
+                      color="primary"
                       variant="elevated"
                       width="100%"
                       >Continue</v-btn
@@ -595,7 +598,7 @@
                     <v-btn
                       @click="(signup2Dialog = true)((signupAddressDialog = false))"
                       rounded="md"
-                      color="blue-grey-darken-1"
+                      color="secondary"
                       size="large"
                       variant="elevated"
                       width="100%"
@@ -900,8 +903,13 @@ export default defineComponent({
           .then((response) => {
             console.log(response)
             console.log(response.data.access_token)
+            console.log(response.data.user.joinedCompanies[0].companyId)
             sessionStorage.setItem('access_token', response.data.access_token)
             sessionStorage.setItem('id', response.data.id)
+            sessionStorage.setItem(
+              'currentCompany',
+              response.data.user.joinedCompanies[0].companyId
+            )
             this.alertLoginFailure = false
             this.alertLogin = true
             this.resetForm()

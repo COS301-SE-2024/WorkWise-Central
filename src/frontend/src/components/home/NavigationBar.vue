@@ -3,8 +3,6 @@ import { ref } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
 const isVisible = ref(false)
 const drawer = ref(true)
-const modal_dark_theme_color = '#2b2b2b'
-const modal_light_theme_color = '#FFFFFF'
 const onProfileClick = () => {
   console.log('Profile icon clicked')
 }
@@ -57,6 +55,10 @@ const supportSubItems = ref([{ title: 'Support', icon: 'mdi-star', routeName: 's
 <script lang="ts">
 import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
+import '@mdi/font/css/materialdesignicons.css' // icon import
+import ProfilePage from './settings/profile/ProfilePage.vue'
+import DarkModeToggleVue from './settings/DarkModeToggle.vue'
+// import { mapGetters } from 'vuex'
 
 export default defineComponent({
   name: 'NavigationBar',
@@ -65,9 +67,16 @@ export default defineComponent({
       type: Object as PropType<any>
     }
   },
+  components: {
+    ProfilePage,
+    DarkModeToggleVue
+  },
   data: () => ({
-    isdarkmode: sessionStorage.getItem('theme') || false
+    isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false
   }),
+  // computed: {
+  //   ...mapGetters(['isDarkMode'])
+  // },
   methods: {
     toggleDarkMode() {
       console.log(this.isdarkmode)
@@ -241,7 +250,6 @@ export default defineComponent({
       </v-app>
     </v-card>
   </v-app>
-  <v-col></v-col>
 </template>
 
 <style scoped>

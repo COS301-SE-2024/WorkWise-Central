@@ -1,40 +1,40 @@
 <template>
-  <main></main>
+  <v-container style="height: 300px" fluid>
+    <v-row justify="center">
+      <v-menu min-width="200px" rounded>
+        <template v-slot:activator="{ props: activatorProps }">
+          <v-btn icon v-bind="activatorProps">
+            <v-avatar color="brown" size="large">
+              <v-icon>mdi-account</v-icon>
+            </v-avatar>
+          </v-btn>
+        </template>
+        <v-card>
+          <v-card-text>
+            <div class="mx-auto text-center">
+              <v-avatar color="brown">
+                <v-icon>mdi-account</v-icon>
+              </v-avatar>
+              <h3>John Doe</h3>
+              <p class="text-caption mt-1">johndoe@icloud.com</p>
+              <v-divider class="my-3"></v-divider>
+              <v-btn variant="text" rounded> My Profile </v-btn>
+              <v-divider class="my-3"></v-divider>
+              <v-btn variant="text" rounded> Log Out </v-btn>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-menu>
+    </v-row>
+  </v-container>
 </template>
-<script lang="ts">
+<script>
 export default {
-  name: 'ProfilePage',
-  data: () => {
-    return {
-      openAddClient: false,
-      isdarkmode: false,
-      clientDialog: false,
-      light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
-      dark_theme_text_color: 'color: #DCDBDB',
-      modal_dark_theme_color: '#2b2b2b',
-      modal_light_theme_color: '#FFFFFF',
-      headers: [
-        {
-          title: 'Name',
-          align: 'start',
-          sortable: true,
-          value: 'name',
-          key: 'name'
-        },
-        { title: 'Email', value: 'email', key: 'email' },
-        { title: 'Phone', value: 'phone', key: 'phone' },
-        { title: 'Address', value: 'address', key: 'address' },
-        { title: 'Job Required', value: 'jobRequired', key: 'jobRequired' },
-        { title: 'Actions', value: 'actions', key: 'actions' }
-      ],
-      search: '',
-      clients: [
-        {
-          name: 'John Doe',
-          email: ''
-        }
-      ]
-    }
+  data: () => ({
+    isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false
+  }),
+  props: {
+    user: Object
   }
 }
 </script>

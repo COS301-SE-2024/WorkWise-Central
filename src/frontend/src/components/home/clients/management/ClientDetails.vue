@@ -12,13 +12,13 @@
       </v-btn>
     </template>
 
-    <v-card
+    <v-sheet
       elevation="14"
       rounded="md"
       height="auto"
       :theme="isdarkmode === true ? 'dark' : 'light'"
     >
-      <v-card-title class="justify-center">
+      <v-card-title class="text-h5 font-weight-regular bg-primary justify-center">
         <span class="headline">Client Details</span>
       </v-card-title>
       <v-card-text>
@@ -26,38 +26,38 @@
           ><v-col>
             <v-row
               ><v-col cols="6">
-                <label> First Name</label><v-spacer></v-spacer
+                <label class="font-weight-bold"> First Name</label><v-spacer></v-spacer
                 ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
                   ClientDetails.name
                 }}</small></v-col
               >
               <v-col cols="6">
-                <label> Surname</label><v-spacer></v-spacer
+                <label class="font-weight-bold"> Surname</label><v-spacer></v-spacer
                 ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
                   ClientDetails.surname
                 }}</small></v-col
               >
             </v-row>
 
-            <v-divider></v-divider>
+            <v-divider thickness="3"></v-divider>
             <v-row>
               <v-col cols="6">
-                <label>Phone Number</label><v-spacer></v-spacer
+                <label class="font-weight-bold">Phone Number</label><v-spacer></v-spacer
                 ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
                   ClientDetails.contactInfo.phoneNumber
                 }}</small></v-col
               >
               <v-col cols="6">
-                <label> Email</label><v-spacer></v-spacer
+                <label class="font-weight-bold"> Email</label><v-spacer></v-spacer
                 ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
                   ClientDetails.contactInfo.email
                 }}</small></v-col
               >
             </v-row>
-            <v-divider></v-divider>
+            <v-divider thickness="3"></v-divider>
             <v-row>
               <v-col cols="6">
-                <label> Address</label><v-spacer></v-spacer
+                <label class="font-weight-bold"> Address</label><v-spacer></v-spacer
                 ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
                   ClientDetails.address.street
                 }}</small>
@@ -79,16 +79,16 @@
                 }}</small></v-col
               >
             </v-row>
-            <v-divider></v-divider>
+            <v-divider thickness="3"></v-divider>
             <v-col
-              ><label> Preferred Languages</label><v-spacer></v-spacer>
+              ><label class="font-weight-bold"> Preferred Languages</label><v-spacer></v-spacer>
               <v-chip color="red"
                 ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
                   ClientDetails.preferred_Language ? ClientDetails.preferred_Language : 'None'
                 }}</small></v-chip
               ></v-col
             >
-            <v-divider></v-divider> </v-col
+            <v-divider thickness="3"></v-divider> </v-col
         ></v-container>
       </v-card-text>
       <v-card-actions>
@@ -98,7 +98,7 @@
           </v-btn>
         </v-col></v-card-actions
       >
-    </v-card>
+    </v-sheet>
   </v-dialog>
 </template>
 
@@ -106,13 +106,12 @@
 import { defineComponent } from 'vue'
 export default defineComponent({
   props: {
-    isdarkmode: Boolean,
-
     ClientDetails: Array
   },
   data() {
     return {
-      clientDialog: false
+      clientDialog: false,
+      isdarkmode: sessionStorage.getItem('isdarkmode') === 'true' ? true : false
     }
   },
   methods: {

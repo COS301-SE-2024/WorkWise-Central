@@ -12,6 +12,6 @@ export default defineConfig({
       bundler: 'vite'
     },
     viewportHeight: 1500,
-    viewportWidth: 1500
+    viewportWidth: 1080
   }
 })

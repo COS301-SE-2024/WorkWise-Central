@@ -8,17 +8,16 @@
       </v-col>
       <v-col :cols="12">
         <v-card>
-          <v-tabs v-model="tab" align-tabs="center" color="deep-purple-accent-4">
+          <v-tabs v-model="tab" align-tabs="center" color="#5A82AF">
             <v-tab :value="1">FAQ</v-tab>
             <v-tab :value="2">TUTORIAL</v-tab>
-            <v-tab :value="3">CONTACT</v-tab>
           </v-tabs>
           <v-tabs-window v-model="tab">
             <v-tabs-window-item :value="1">
               <v-col :cols="12">
                 <v-sheet rounded class="h-lg-screen w-lg-screen">
                   <div>
-                    <v-expansion-panels class="my-4" variant="inset">
+                    <v-expansion-panels class="my-4" variant="inset" :theme="isdarkmode">
                       <v-expansion-panel
                         v-for="i in 14"
                         :key="i"
@@ -72,6 +71,7 @@ export default defineComponent({
   name: 'SupportComponent',
   data() {
     return {
+      isdarkmode: sessionStorage['theme'] === 'false' ? 'light' : 'dark',
       tab: null,
       faqs: [
         {
@@ -90,29 +90,29 @@ export default defineComponent({
             "Yes, our app supports integration with various tools commonly used in project support, such as Slack, Google Drive, and Microsoft Teams. You can find these integration options in the 'Settings' menu under 'Integrations.'"
         },
         {
-          question: 'How do I assign tasks to team members?',
+          question: 'How do I assign jobs to team members?',
           answer:
-            "To assign tasks, navigate to your project, click on the 'Tasks' tab, and select 'Add Task.' Enter the task details, set the priority, and use the dropdown menu to assign the task to a specific team member. Click 'Save' to assign the task."
+            "To assign jobs, navigate to your project, click on the 'Tasks' tab, and select 'Add Task.' Enter the job details, set the priority, and use the dropdown menu to assign the job to a specific team member. Click 'Save' to assign the job."
         },
         {
-          question: 'Is there a way to track the time spent on each task?',
+          question: 'Is there a way to track the time spent on each job?',
           answer:
-            "Yes, our app includes a time-tracking feature. When you start a task, click the 'Start Timer' button. Once you finish, click 'Stop Timer.' The time spent will be logged automatically, and you can view time reports under the 'Reports' section."
+            "Yes, our app includes a time-tracking feature. When you start a job, click the 'Start Timer' button. Once you finish, click 'Stop Timer.' The time spent will be logged automatically, and you can view time reports under the 'Reports' section."
         },
         {
-          question: 'How do I add comments or updates to a task?',
+          question: 'How do I add comments or updates to a job?',
           answer:
-            "To add comments or updates, open the specific task you want to update. There is a 'Comments' section where you can type your message. Click 'Post' to add your comment. Team members assigned to the task will be notified of your update."
+            "To add comments or updates, open the specific job you want to update. There is a 'Comments' section where you can type your message. Click 'Post' to add your comment. Team members assigned to the job will be notified of your update."
         },
         {
           question: 'Can I customize the project workflow?',
           answer:
-            "Absolutely! You can customize workflows to fit your team's specific needs. Go to the 'Workflow' tab within your project, where you can add, remove, or rename stages. Drag and drop tasks between stages to reflect their progress."
+            "Absolutely! You can customize workflows to fit your team's specific needs. Go to the 'Workflow' tab within your project, where you can add, remove, or rename stages. Drag and drop jobs between stages to reflect their progress."
         },
         {
           question: 'How do I generate a project report?',
           answer:
-            "To generate a project report, navigate to the 'Reports' section from the main menu. Select the project and the type of report you need (e.g., task completion, time tracking, resource allocation). Click 'Generate Report' to download or view it online."
+            "To generate a project report, navigate to the 'Reports' section from the main menu. Select the project and the type of report you need (e.g., job completion, time tracking, resource allocation). Click 'Generate Report' to download or view it online."
         },
         {
           question: 'What should I do if I encounter a technical issue?',
@@ -125,9 +125,9 @@ export default defineComponent({
             'Data security is our top priority. Our app uses advanced encryption methods to protect your data. Regular security audits are conducted, and we comply with industry standards to ensure your information is safe and secure.'
         },
         {
-          question: 'Can I set up recurring tasks?',
+          question: 'Can I set up recurring jobs?',
           answer:
-            "Yes, you can set up recurring tasks by selecting the 'Recurring' option when creating or editing a task. Choose the frequency (daily, weekly, monthly) and the app will automatically generate the task at the specified intervals."
+            "Yes, you can set up recurring jobs by selecting the 'Recurring' option when creating or editing a job. Choose the frequency (daily, weekly, monthly) and the app will automatically generate the job at the specified intervals."
         },
         {
           question: 'How can I invite new team members to the app?',
@@ -145,9 +145,9 @@ export default defineComponent({
             "To update your account information, click on your profile icon and select 'Account Settings.' Here, you can change your personal details, update your password, and manage notification preferences."
         },
         {
-          question: 'Can I view all tasks assigned to me across different projects?',
+          question: 'Can I view all jobs assigned to me across different projects?',
           answer:
-            "Yes, you can view all tasks assigned to you by clicking on the 'My Tasks' section from the dashboard. This view consolidates tasks from all projects, making it easier for you to manage your workload."
+            "Yes, you can view all jobs assigned to you by clicking on the 'My Tasks' section from the dashboard. This view consolidates jobs from all projects, making it easier for you to manage your workload."
         }
       ]
     }
