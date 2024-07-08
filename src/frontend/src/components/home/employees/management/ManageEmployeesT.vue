@@ -1,5 +1,5 @@
 <template>
-  <v-app :style="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color">
+  <v-app :style="isdarkmode === true ? 'dark' : 'light'">
     <v-container fluid fill-height>
       <v-row justify="center" xs="6" sm="6" md="12">
         <v-col cols="12">
@@ -12,12 +12,12 @@
                 class="pa-11 ma-0"
                 rounded="md"
                 elevation-2
-                :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :color="isdarkmode === true ? 'dark' : 'light'"
                 border="md"
               >
                 <v-card-title
                   class="d-flex align-center pe-2"
-                  :color="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                  :color="isdarkmode === true ? 'dark' : 'light'"
                   style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
                 >
                   <v-icon icon="mdi-account"></v-icon> &nbsp; Employee Details
@@ -57,6 +57,7 @@
                         :item-class="getRowClass"
                         @click:row="toggleExpand"
                         class="font-lato"
+                        :color="isdarkmode === true ? 'dark' : 'light'"
                       >
                         <template v-slot:[`item.details.firstName`]="{ value }">
                           <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
@@ -519,7 +520,10 @@ export default {
       }
       const apiURL = await this.getRequestUrl()
       try {
-        const employee_response = await axios.get(apiURL + `employee/allcls`, config)
+        const employee_response = await axios.get(
+          apiURL + `employee/all/${sessionStorage['currentCompany']}`,
+          config
+        )
         let employee_all_data: Employee[] = employee_response.data
 
         let company_employee_arr: EmployeePersonalInfo[] = []
@@ -531,10 +535,13 @@ export default {
 
           const user_data: User = users_response.data
 
+          // console.log(user_data)
+
+          if (user_data.data.personalInfo.address === undefined) continue
+
           if (employee_all_data[i].roleId !== undefined) {
             let role = await axios.get(apiURL + `role/id/${employee_all_data[i].roleId}`, config)
 
-            // console.log('hello')
             if (role.status < 300 && role.status > 199) {
               let company_employee: EmployeePersonalInfo = {
                 address: {
