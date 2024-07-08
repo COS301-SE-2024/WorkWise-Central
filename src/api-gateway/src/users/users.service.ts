@@ -19,6 +19,7 @@ import { EmailService } from '../email/email.service';
 import { UsersRepository } from './users.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { isPhoneNumber } from 'class-validator';
+import { CompanyService } from '../company/company.service';
 
 @Injectable()
 export class UsersService {
@@ -32,6 +33,8 @@ export class UsersService {
     private authService: AuthService,
     @Inject(forwardRef(() => EmployeeService))
     private employeeService: EmployeeService,
+    @Inject(forwardRef(() => CompanyService))
+    private companyService: CompanyService,
     private emailService: EmailService,
   ) {}
 
@@ -235,5 +238,23 @@ export class UsersService {
     }
 
     return new ValidationResult(true);
+  }
+
+  async userIsInSameCompanyAsEmployee(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+  ) {
+    const user = await this.getUserById(userId);
+    const companyWithEmployee =
+      await this.companyService.getCompanyWithEmployee(employeeId);
+
+    if (!companyWithEmployee || !user) {
+      throw new ConflictException('User or Employee is Null');
+    }
+    for (const joinedCompany of user.joinedCompanies) {
+      if (joinedCompany.companyId.equals(companyWithEmployee._id)) return true;
+    }
+
+    return false;
   }
 }
