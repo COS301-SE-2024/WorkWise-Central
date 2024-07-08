@@ -12,37 +12,37 @@
               <!-- Job Details -->
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title>Job Name</v-list-item-title>
-                  <v-list-item-subtitle>{{ passedInJob.heading || 'Job name is empty' }}</v-list-item-subtitle>
+                  <v-list-item-title class="text-h6 font-weight-bold">Job Name</v-list-item-title>
+                  <v-list-item-subtitle class="text-body-1 font-weight-medium">{{ passedInJob.heading || 'Job name is empty' }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title>Job Description</v-list-item-title>
-                  <v-list-item-subtitle>{{ passedInJob.jobDescription || 'Job description is empty' }}</v-list-item-subtitle>
+                  <v-list-item-title class="text-h6 font-weight-bold">Job Description</v-list-item-title>
+                  <v-list-item-subtitle class="text-body-1 font-weight-medium">{{ passedInJob.jobDescription || 'Job description is empty' }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title>Start Date</v-list-item-title>
-                  <v-list-item-subtitle>{{ passedInJob.startDate || 'Start date is empty' }}</v-list-item-subtitle>
+                  <v-list-item-title class="text-h6 font-weight-bold">Start Date</v-list-item-title>
+                  <v-list-item-subtitle class="text-body-1 font-weight-medium">{{ passedInJob.startDate || 'Start date is empty' }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title>End Date</v-list-item-title>
-                  <v-list-item-subtitle>{{ passedInJob.endDate || 'End date is empty' }}</v-list-item-subtitle>
+                  <v-list-item-title class="text-h6 font-weight-bold">End Date</v-list-item-title>
+                  <v-list-item-subtitle class="text-body-1 font-weight-medium">{{ passedInJob.endDate || 'End date is empty' }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
               <!-- Job Address -->
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title>Address</v-list-item-title>
-                  <v-list-item-subtitle>
+                  <v-list-item-title class="text-h6 font-weight-bold">Address</v-list-item-title>
+                  <v-list-item-subtitle class="text-body-1 font-weight-medium">
                     {{ passedInJob.street || 'Street is empty' }},
                     {{ passedInJob.suburb || 'Suburb is empty' }},
                     {{ passedInJob.city || 'City is empty' }},
@@ -53,23 +53,23 @@
 
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title>Complex</v-list-item-title>
-                  <v-list-item-subtitle>{{ passedInJob.complex || 'Complex is empty' }}</v-list-item-subtitle>
+                  <v-list-item-title class="text-h6 font-weight-bold">Complex</v-list-item-title>
+                  <v-list-item-subtitle class="text-body-1 font-weight-medium">{{ passedInJob.complex || 'Complex is empty' }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title>House Number</v-list-item-title>
-                  <v-list-item-subtitle>{{ passedInJob.houseNumber || 'House number is empty' }}</v-list-item-subtitle>
+                  <v-list-item-title class="text-h6 font-weight-bold">House Number</v-list-item-title>
+                  <v-list-item-subtitle class="text-body-1 font-weight-medium">{{ passedInJob.houseNumber || 'House number is empty' }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
               <!-- Assigned Employees -->
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title>Assigned Employees</v-list-item-title>
-                  <v-list-item-subtitle>
+                  <v-list-item-title class="text-h6 font-weight-bold">Assigned Employees</v-list-item-title>
+                  <v-list-item-subtitle class="text-body-1 font-weight-medium">
           <span v-for="employeeId in assignedEmployees" :key="employeeId">
             {{ employeeId || 'Employee ID is empty' }}
           </span>
@@ -80,8 +80,8 @@
               <!-- Recorded Details -->
 <!--              <v-list-item>-->
 <!--                <v-list-item-content>-->
-<!--                  <v-list-item-title>Images Taken</v-list-item-title>-->
-<!--                  <v-list-item-subtitle>-->
+<!--                  <v-list-item-title class="text-h6 font-weight-bold">Images Taken</v-list-item-title>-->
+<!--                  <v-list-item-subtitle class="text-body-1 font-weight-medium">-->
 <!--                    <img-->
 <!--                        v-for="image in imagesTaken"-->
 <!--                        :key="image"-->
@@ -98,8 +98,8 @@
 
 <!--              <v-list-item>-->
 <!--                <v-list-item-content>-->
-<!--                  <v-list-item-title>Inventory Used</v-list-item-title>-->
-<!--                  <v-list-item-subtitle>-->
+<!--                  <v-list-item-title class="text-h6 font-weight-bold">Inventory Used</v-list-item-title>-->
+<!--                  <v-list-item-subtitle class="text-body-1 font-weight-medium">-->
 <!--                    <div v-for="item in inventoryUsed" :key="item.InventoryItem">-->
 <!--                      {{ item.InventoryItem || 'Inventory item is empty' }} - Quantity: {{ item.QuantityUsed || 'Quantity is empty' }}-->
 <!--                    </div>-->
@@ -111,16 +111,16 @@
               <!-- Status -->
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title>Status</v-list-item-title>
-                  <v-list-item-subtitle>{{ passedInJob.status || 'Status is empty' }}</v-list-item-subtitle>
+                  <v-list-item-title class="text-h6 font-weight-bold">Status</v-list-item-title>
+                  <v-list-item-subtitle class="text-body-1 font-weight-medium">{{ passedInJob.status || 'Status is empty' }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
 
               <!-- Task List -->
 <!--              <v-list-item>-->
 <!--                <v-list-item-content>-->
-<!--                  <v-list-item-title>Task List</v-list-item-title>-->
-<!--                  <v-list-item-subtitle>-->
+<!--                  <v-list-item-title class="text-h6 font-weight-bold">Task List</v-list-item-title>-->
+<!--                  <v-list-item-subtitle class="text-body-1 font-weight-medium">-->
 <!--                    <div v-for="task in taskList" :key="task.taskName">-->
 <!--                      {{ task.taskName || 'Task name is empty' }} - Status: {{ task.status || 'Task status is empty' }} - Assigned Employees: {{ task.assignedEmployees.join(', ') || 'No assigned employees' }}-->
 <!--                    </div>-->
@@ -132,8 +132,8 @@
 <!--              &lt;!&ndash; Comments &ndash;&gt;-->
 <!--              <v-list-item>-->
 <!--                <v-list-item-content>-->
-<!--                  <v-list-item-title>Comments</v-list-item-title>-->
-<!--                  <v-list-item-subtitle>-->
+<!--                  <v-list-item-title class="text-h6 font-weight-bold">Comments</v-list-item-title>-->
+<!--                  <v-list-item-subtitle class="text-body-1 font-weight-medium">-->
 <!--                    <div v-for="comment in comments" :key="comment.commentDate">-->
 <!--                      {{ comment.comment || 'Comment is empty' }} - By: {{ comment.employeeId || 'Employee ID is empty' }} on {{ comment.commentDate || 'Comment date is empty' }}-->
 <!--                    </div>-->
@@ -151,7 +151,7 @@
             <!--Job details and description Model Edit -->
 
             <v-btn class="mb-2" outlined @click="detailsDialog = true">
-              <v-icon left>mdi-card-account-details-outline</v-icon>
+              <v-icon class="d-none d-lg-inline-block mr-2" left>mdi-card-account-details-outline</v-icon>
               Edit Details
             </v-btn>
 
@@ -166,7 +166,7 @@
                   <v-form ref="jobForm">
                     <v-label>Job Name</v-label>
                     <v-text-field
-                      v-model="job.jobName"
+                      v-model="job.jobDetails.jobName"
                       label="Job Name"
                       variant="solo"
                       density="compact"
@@ -176,7 +176,7 @@
                     ></v-text-field>
                     <v-label>Job Description</v-label>
                     <v-textarea
-                      v-model="job.jobDescription"
+                      v-model="job.jobDetails.jobDescription"
                       clearable
                       label="Job Description"
                       variant="solo"
@@ -189,7 +189,7 @@
                       <v-col cols="6">
                         <v-label>Street</v-label>
                         <v-text-field
-                          v-model="job.jobAddress.street"
+                          v-model="job.jobDetails.jobAddress.street"
                           label="Street"
                           variant="solo"
                           density="compact"
@@ -201,7 +201,7 @@
                       <v-col cols="6">
                         <v-label>Suburb</v-label>
                         <v-text-field
-                          v-model="job.jobAddress.suburb"
+                          v-model="job.jobDetails.jobAddress.suburb"
                           label="Suburb"
                           variant="solo"
                           density="compact"
@@ -216,7 +216,7 @@
                       <v-col cols="6">
                         <v-label>City</v-label>
                         <v-text-field
-                          v-model="job.jobAddress.city"
+                          v-model="job.jobDetails.jobAddress.city"
                           label="City"
                           variant="solo"
                           density="compact"
@@ -228,7 +228,7 @@
                       <v-col cols="6">
                         <v-label>Postal Code</v-label>
                         <v-text-field
-                          v-model="job.jobAddress.postalCode"
+                          v-model="job.jobDetails.jobAddress.postalCode"
                           label="Postal Code"
                           variant="solo"
                           density="compact"
@@ -243,7 +243,7 @@
                       <v-col cols="6">
                         <v-label>Complex</v-label>
                         <v-text-field
-                          v-model="job.jobAddress.complex"
+                          v-model="job.jobDetails.jobAddress.complex"
                           label="Complex"
                           variant="solo"
                           density="compact"
@@ -254,7 +254,7 @@
                       <v-col cols="6">
                         <v-label>House Number</v-label>
                         <v-text-field
-                          v-model="job.jobAddress.houseNumber"
+                          v-model="job.jobDetails.jobAddress.houseNumber"
                           label="House Number"
                           variant="solo"
                           density="compact"
@@ -278,7 +278,7 @@
             <!-- For client change -->
 
             <v-btn class="mb-2" outlined @click="openClientDialogAndFetchClients">
-              <v-icon left>mdi-account-switch</v-icon>
+              <v-icon class="d-none d-lg-inline-block mr-2" left>mdi-account-switch</v-icon>
               Change Client
             </v-btn>
 
@@ -321,17 +321,17 @@
             <!-- Mutli-member select -->
 
             <v-btn class="mb-2" outlined @click="membersDialog = true">
-              <v-icon left>mdi-card-account-details-outline</v-icon>
-              Select Members
+              <v-icon class="d-none d-lg-inline-block mr-2" left>mdi-card-account-details-outline</v-icon>
+              Select Employees
             </v-btn>
 
             <v-dialog v-model="membersDialog" max-width="600px">
               <v-card>
                 <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-                  Select Team Members
+                  Assigned Employees
                 </v-card-title>
                 <v-card-text>
-                  <div class="text-caption pa-3">Select Team Members</div>
+                  <div class="text-caption pa-3">Select Employees</div>
                   <v-select
                     v-model="favorites"
                     :items="states"
@@ -357,7 +357,7 @@
             </v-dialog>
 
             <v-btn class="mb-2" outlined @click="statusDialog = true">
-              <v-icon left>mdi-warehouse</v-icon>
+              <v-icon class="d-none d-lg-inline-block mr-2" left>mdi-warehouse</v-icon>
               Update Status
             </v-btn>
 
@@ -368,7 +368,7 @@
                 </v-card-title>
                 <v-card-text>
                   <v-radio-group
-                    v-model="selectedState"
+                    v-model="job.status"
                     column
                     class="my-custom-radio-group"
                     row
@@ -405,50 +405,8 @@
               </v-card>
             </v-dialog>
 
-            <!--        <v-btn class="mb-2" outlined @click="dialog = true">-->
-            <!--          <v-icon left>mdi-warehouse</v-icon>-->
-            <!--          Record details-->
-            <!--        </v-btn>-->
-
-            <!--        <v-btn class="mb-2" outlined @click="dialog = true">-->
-            <!--          <v-icon left>mdi-paperclip</v-icon>-->
-            <!--          File Attachments-->
-            <!--        </v-btn>-->
-
-            <!--        <v-dialog v-model="dialog" max-width="600px">-->
-            <!--          <v-card>-->
-            <!--            <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">-->
-            <!--              Attach a file from your computer-->
-            <!--            </v-card-title>-->
-            <!--            <v-card-text>-->
-            <!--              <v-file-input-->
-            <!--                v-model="files"-->
-            <!--                :rules="rules"-->
-            <!--                accept="image/png, image/jpeg, image/bmp"-->
-            <!--                label="Choose your job images"-->
-            <!--                placeholder="Pick an avatar"-->
-            <!--                prepend-icon="mdi-camera"-->
-            <!--                multiple-->
-            <!--              >-->
-            <!--                <template v-slot:selection="{ fileNames }">-->
-            <!--                  <template v-for="fileName in fileNames" :key="fileName">-->
-            <!--                    <v-chip class="me-2" color="primary" size="small" label>-->
-            <!--                      {{ fileName }}-->
-            <!--                    </v-chip>-->
-            <!--                  </template>-->
-            <!--                </template>-->
-            <!--              </v-file-input>-->
-            <!--            </v-card-text>-->
-            <!--            <v-card-actions>-->
-            <!--              <v-spacer></v-spacer>-->
-            <!--              <v-btn color="blue darken-1" text @click="insertFiles">Insert</v-btn>-->
-            <!--              <v-btn color="blue darken-1" text @click="dialog = false">Cancel</v-btn>-->
-            <!--            </v-card-actions>-->
-            <!--          </v-card>-->
-            <!--        </v-dialog>-->
-
             <v-btn class="mb-2" outlined @click="dueDateDialog = true">
-              <v-icon left>mdi-calendar-clock</v-icon>
+              <v-icon class="d-none d-lg-inline-block mr-2" left>mdi-calendar-clock</v-icon>
               Change Due Date
             </v-btn>
 
@@ -508,10 +466,10 @@
                   </v-container>
                 </v-card-text>
                 <v-card-actions>
-                  <v-btn color="blue darken-1" text @click="saveDate">Save </v-btn>
+                  <v-btn color="blue darken-1" @click="saveDate">Save </v-btn>
 
-                  <v-btn color="blue darken-1" text @click="removeDates">Remove</v-btn>
-                  <v-btn color="blue darken-1" text @click="dueDateDialog = false">Cancel</v-btn>
+                  <v-btn color="blue darken-1" @click="removeDates">Remove</v-btn>
+                  <v-btn color="blue darken-1" @click="dueDateDialog = false">Cancel</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -539,69 +497,27 @@ const props = defineProps ({
   passedInJob: Object
 })
 
-// const jobTitle = ref('Job Title')
-// const passedInJob = ref({
-//   jobName: 'UP Merensky library revamp',
-//   jobDescription: 'Fixing plumbing issues.',
-//   jobStartDate: '2024-06-01',
-//   jobEndDate: '2024-06-05',
-//   jobAddress: {
-//     street: '123 Job St',
-//     suburb: 'Westside',
-//     city: 'Metropolis',
-//     postalCode: '67890',
-//     complex: 'Workplace Plaza',
-//     houseNumber: '5C'
-//   }
-// })
-// const assignedEmployees = ref({
-//   employeesIds: ['60d21b4667d0d8992e610c85', '60d21b4667d0d8992e610c86'],
-//   teamId: '60d21b4667d0d8992e610c85'
-// })
-// const recordedDetails = ref({
-//   imagesTaken: [
-//     'data:image/png;base64,iVBORw0KGgoAAAANS...',
-//     'data:image/png;base64,iVBORw0KGgoAAAANS...'
-//   ],
-//   inventoryUsed: [{ InventoryItem: '60d21b4667d0d8992e610c8a', QuantityUsed: 2 }]
-// })
-// const status = ref('complete')
-// const taskList = ref([
-//   {
-//     task: {
-//       taskName: 'Paint north facing wall',
-//       status: 'complete',
-//       assignedEmployees: ['60d21b4667d0d8992e610c8a']
-//     }
-//   }
-// ])
-// const comments = ref([
-//   {
-//     commentItem: {
-//       comment: 'Roofing needs adjusting',
-//       employeeId: '60d21b4667d0d8992e610c8a',
-//       commentDate: '2024-06-12'
-//     }
-//   }
-// ])
-
 // Editing the job details dialog
 
 const detailsDialog = ref(false)
 
 const job = ref({
-  jobName: '',
-  jobDescription: '',
-  jobStartDate: '',
-  jobEndDate: '',
-  jobAddress: {
-    street: '',
-    suburb: '',
-    city: '',
-    postalCode: '',
-    complex: '',
-    houseNumber: ''
-  }
+  clientId: ref(''),
+  status: ref(''),
+  jobDetails: {
+    jobName: ref(''),
+    description: ref(''),
+    jobAddress: {
+      street: ref(''),
+      suburb: ref(''),
+      city: ref(''),
+      postalCode: ref(''),
+      complex: ref(''),
+      houseNumber: ref('')
+    }
+  },
+  jobStartDate:  ref(null),
+  jobEndDate:  ref(null)
 })
 
 const saveJobDetails = () => {
@@ -615,6 +531,12 @@ const saveJobDetails = () => {
 const membersDialog = ref(false)
 const favorites = ref([])
 const states = ref(['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado'])
+
+// get all the employees
+// get all the employees users for from the userId field in the returned employee object
+// map those names to the employee ids
+// display the names in the select box
+// when the user selects a name, add the employee id to the favorites array
 
 const saveSelection = () => {
   // Save selected members logic here
@@ -636,15 +558,14 @@ const colors = {
 
 const saveStatus = () => {
   // Save job status logic here
-  dialog.value = false
-  console.log('Selected Job State:', selectedState.value)
+  statusDialog.value = false
+  console.log('Selected Job State:', job.value.status)
 }
 
 //For change client
 
 const clientDialog = ref(false)
 const selectedClient = ref(null)
-const clientChips = ref([])
 const clients = ref([])
 const selectedClientName = ref(null)
 const clientNames = ref([])
@@ -679,7 +600,6 @@ const fetchClients = async () => {
         : client.details.name ?? 'Unknown Name'
     })
 
-    // @BOB get rid of this part
     // Watch for changes in selectedClientName and update selectedClient
     watch(
       () => selectedClientName.value,
@@ -701,35 +621,12 @@ const fetchClients = async () => {
 
 const saveClient = () => {
   if (selectedClientName.value) {
-    clientChips.value.push({ name: selectedClientName })
-    console.log('Client chips:', clientChips.value)
+    // match the client name with the client id
+    // add that id to the job
   }
   clientDialog.value = false
 }
 
-// @Kumbi: this is for the employee jobCard File attachments
-//
-// const dialog = ref(false)
-// const files = ref([]) // stores all the selected files that will be pushed to the db
-// const rules = ref([
-//   (value) => {
-//     return (
-//       !value || !value.length || value[0].size < 2000000 || 'Avatar size should be less than 2 MB!'
-//     )
-//   }
-// ])
-//
-// const fileChips = ref([])
-// const insertFiles = () => {
-//   dialog.value = false
-//   files.value.forEach((file) => {
-//     fileChips.value.push({
-//       name: file.name,
-//       size: file.size
-//     })
-//   })
-//   console.log('Files:', fileChips.value)
-// }
 
 // For Due Date Dialog
 
@@ -753,6 +650,8 @@ const setDates = (value) => {
     }
     errorMessage.value = null
     startDate.value = value // stores the updated start date
+    job.value.jobStartDate = value
+    console.log(job.value)
     isStartDatePicked.value = true
     currentDate.value = null
   } else if (!isEndDatePicked.value) {
@@ -762,6 +661,7 @@ const setDates = (value) => {
     }
     errorMessage.value = null
     endDate.value = value // stores the updated end date
+    job.value.jobEndDate = value
     isEndDatePicked.value = true
     currentDate.value = null
   }
@@ -770,14 +670,15 @@ const setDates = (value) => {
 const toggleStartDate = () => {
   isStartDatePicked.value = !isStartDatePicked.value
   startDate.value = null
+  job.value.jobStartDate = null
 }
 
 const toggleEndDate = () => {
   isEndDatePicked.value = !isEndDatePicked.value
   endDate.value = null
+  job.value.jobEndDate = null
 }
 
-const dateChips = ref([])
 const formatDate = (date) => {
   if (!date) return ''
   const d = new Date(date)
@@ -792,38 +693,65 @@ const formattedEndDate = computed(() => formatDate(endDate.value))
 
 const saveDate = () => {
   dueDateDialog.value = false
-  if (startDate.value) {
-    dateChips.value.push({
-      type: 'Start Date',
-      date: startDate.value
-    })
-  }
-  if (endDate.value) {
-    dateChips.value.push({
-      type: 'End Date',
-      date: endDate.value
-    })
-  }
 }
 
 const removeDates = () => {
   currentDate.value = null
   startDate.value = null
+  job.value.jobStartDate = null
   endDate.value = null
+  job.value.jobEndDate = null
   isStartDatePicked.value = false
   isEndDatePicked.value = false
 }
 
-const jobTitle = ref("Tiling Siphele Bob's bathroom")
-// const jobComment = ref('')
+function filterNonEmptyValues(obj) {
+  return Object.fromEntries(
+      Object.entries(obj)
+          .filter(([_, v]) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0))
+          .map(([k, v]) => [k, typeof v === 'object' && !Array.isArray(v) ? filterNonEmptyValues(v) : v])
+  );
+}
 
 const saveJob = () => {
-  // Perform save operation if needed
 
-  // For demonstration purposes, simulate a successful save
-  // Replace this with actual save logic
-  // For example:
-  // saveJobToBackend();
+  const pathJob = async () => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+      }
+    };
+
+    const jobData = {
+      clientId: job.value.clientId,
+      status: job.value.status,
+      jobDetails: {
+        jobName: job.value.jobDetails.jobName,
+        description: job.value.jobDetails.description,
+        jobAddress: {
+          street: job.value.jobDetails.jobAddress.street,
+          suburb: job.value.jobDetails.jobAddress.suburb,
+          city: job.value.jobDetails.jobAddress.city,
+          postalCode: job.value.jobDetails.jobAddress.postalCode,
+          complex: job.value.jobDetails.jobAddress.complex,
+          houseNumber: job.value.jobDetails.jobAddress.houseNumber
+        }
+      },
+      jobStartDate: job.value.jobStartDate,
+      jobEndDate: job.value.jobEndDate
+    };
+
+    const filteredJobData = filterNonEmptyValues(jobData);
+
+    try {
+      const response = await axios.patch(`http://localhost:3000/job/${props.passedInJob.jobId}`, filteredJobData, config);
+      console.log('Job updated successfully:', response.data);
+    } catch (error) {
+      console.error('Error updating job:', error);
+    }
+
+  }
 
   // Show alert indicating successful save
   window.alert('Job saved successfully!')
