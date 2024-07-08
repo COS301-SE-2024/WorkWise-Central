@@ -13,7 +13,6 @@ it('shows the splash screen', () => {
   cy.contains('Welcome To WorkWise Central').should('exist')
   cy.contains('button', 'Log in').should('exist')
   cy.contains('button', 'Sign up').should('exist')
-  
 })
 
 it('performs login', () => {

@@ -84,10 +84,10 @@
                       <!-- Actions slot -->
                       <template v-slot:[`item.actions`]="{ item }">
                         <v-btn
-                            rounded="xl"
-                            variant="plain"
-                            style="transform: rotate(0deg)"
-                            @click="openDialog(item)"
+                          rounded="xl"
+                          variant="plain"
+                          style="transform: rotate(0deg)"
+                          @click="openDialog(item)"
                         >
                           <v-icon>mdi-dots-horizontal</v-icon>
                         </v-btn>
@@ -123,9 +123,7 @@
                 <v-icon color="white">mdi-alert-circle-outline</v-icon>
                 Confirm Deletion
               </v-card-title>
-              <v-card-text>
-                Are you sure you want to delete this job?
-              </v-card-text>
+              <v-card-text> Are you sure you want to delete this job? </v-card-text>
               <v-card-actions>
                 <v-btn color="error" @click="confirmDelete">Confirm</v-btn>
                 <v-btn @click="deleteDialog = false">Cancel</v-btn>
@@ -142,7 +140,7 @@
 </template>
 
 <script setup>
-import {onMounted, ref} from 'vue'
+import { onMounted, ref } from 'vue'
 import axios from 'axios'
 import AddJob from './AddJob.vue'
 import ManagerJobCard from './ManagerJobCard.vue'
@@ -163,10 +161,10 @@ const headers = [
   { title: 'Start Date', key: 'startDate', align: 'start', value: 'startDate' },
   { title: 'End Date', key: 'endDate', align: 'start', value: 'endDate' },
   { title: 'Actions', key: 'actions', align: 'start', sortable: false, value: 'actions' }
-];
+]
 
 // Reactive variable to hold job and client data
-const jobClientData = ref([]);
+const jobClientData = ref([])
 
 // Function to fetch job data
 
@@ -176,18 +174,18 @@ const fetchJobData = async () => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
     }
-  };
+  }
 
   try {
-    const response = await axios.get('http://localhost:3000/job/all', config);
-    const jobData = response.data.data;
-    console.log(response.data);
+    const response = await axios.get('http://localhost:3000/job/all', config)
+    const jobData = response.data.data
+    console.log(response.data)
 
     // Check if jobData is an array or needs conversion
-    const jobs = Array.isArray(jobData) ? jobData : [jobData];
+    const jobs = Array.isArray(jobData) ? jobData : [jobData]
 
     // Map job data to include necessary details
-    const mappedJobs = jobs.map(job => ({
+    const mappedJobs = jobs.map((job) => ({
       jobId: job._id,
       heading: job.details.heading,
       jobDescription: job.details.description,
@@ -205,16 +203,16 @@ const fetchJobData = async () => {
       inventoryUsed: job.recordedDetails.inventoryUsed, // is an array
       taskList: job.taskList, // is an array
       comments: job.comments // is an array
-    }));
+    }))
 
     // Fetch client data for each job
     // Return combined job and client data
-    return await fetchClientData(mappedJobs);
+    return await fetchClientData(mappedJobs)
   } catch (error) {
-    console.error('Error fetching job data:', error);
-    throw error; // Re-throw the error for handling elsewhere if needed
+    console.error('Error fetching job data:', error)
+    throw error // Re-throw the error for handling elsewhere if needed
   }
-};
+}
 
 // Function to fetch client data for each job
 const fetchClientData = async (jobs) => {
@@ -223,15 +221,15 @@ const fetchClientData = async (jobs) => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
     }
-  };
+  }
 
   try {
     // Fetch client data for each job asynchronously
-    const promises = jobs.map(async job => {
-       const response = await axios.get(`http://localhost:3000/client/id/${job.clientId}`, config);
-      const client = response.data.data;
+    const promises = jobs.map(async (job) => {
+      const response = await axios.get(`http://localhost:3000/client/id/${job.clientId}`, config)
+      const client = response.data.data
 
-      const clientName = `${client.details.firstName} ${client.details.lastName}`;
+      const clientName = `${client.details.firstName} ${client.details.lastName}`
 
       // Return complete job details including client name
       return {
@@ -252,27 +250,27 @@ const fetchClientData = async (jobs) => {
         inventoryUsed: job.inventoryUsed,
         taskList: job.taskList,
         comments: job.comments
-      };
-    });
+      }
+    })
 
     // Wait for all promises to resolve
-    return await Promise.all(promises);
+    return await Promise.all(promises)
   } catch (error) {
-    console.error('Error fetching client data:', error);
-    throw error; // Re-throw the error for handling elsewhere if needed
+    console.error('Error fetching client data:', error)
+    throw error // Re-throw the error for handling elsewhere if needed
   }
-};
+}
 
 // Fetch data on component mount using onMounted() hook
 onMounted(async () => {
   try {
-    jobClientData.value = await fetchJobData();
+    jobClientData.value = await fetchJobData()
     // Log job and client data for verification
-    console.log('Job and client data fetched successfully:', jobClientData.value);
+    console.log('Job and client data fetched successfully:', jobClientData.value)
   } catch (error) {
-    console.error('Error fetching job and client data:', error);
+    console.error('Error fetching job and client data:', error)
   }
-});
+})
 
 // Actions
 
@@ -292,7 +290,7 @@ const closeDialog = () => {
 
 // Deleting a job
 
-const deleteDialog = ref(false);
+const deleteDialog = ref(false)
 
 const confirmDelete = () => {
   console.log('Delete job:', selectedJob.value)

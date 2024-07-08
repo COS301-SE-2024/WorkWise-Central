@@ -17,9 +17,8 @@ it('renders add client form on a laptop viewport', () => {
   cy.get('input[type="email"]').type('testrunning@test.com')
   cy.get('input[type="number"]').type('000000000000')
   cy.get('input[type="street"]').type('Test Street')
-  cy.get('input[type="city"]').type('Test City', {force: true});
+  cy.get('input[type="city"]').type('Test City', { force: true })
   cy.get('input[type="postcode"]').type('0000')
   cy.get('input[type="complex"]').type('Test Complex')
   cy.get('input[type="houseNumber"]').type('0000')
 })
-

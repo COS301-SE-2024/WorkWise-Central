@@ -3,7 +3,7 @@
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
-        class="text-none font-weight-regular "
+        class="text-none font-weight-regular"
         style="font-size: 20px"
         text="Add Client"
         variant="elevated"
