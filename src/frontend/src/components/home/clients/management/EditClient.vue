@@ -16,7 +16,7 @@
       height="auto"
       :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
-      <v-card-title class="justify-center">
+      <v-card-title class="text-h5 font-weight-regular bg-primary justify-center">
         <span class="headline">Edit Client</span>
       </v-card-title>
       <v-divider></v-divider>
@@ -26,7 +26,7 @@
             <v-row>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Name
@@ -40,7 +40,7 @@
               </v-col>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Surname
@@ -56,7 +56,7 @@
             <v-row>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Phone Number
@@ -70,7 +70,7 @@
               </v-col>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Email
@@ -86,7 +86,7 @@
             <v-row>
               <v-col cols="6"
                 ><small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Street
@@ -99,7 +99,7 @@
               ></v-col>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Suburb
@@ -114,7 +114,7 @@
             <v-row>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   City
@@ -127,7 +127,7 @@
               </v-col>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Postal Code
@@ -142,7 +142,7 @@
             <v-row
               ><v-col cols="6">
                 <small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   Complex
@@ -155,7 +155,7 @@
               ></v-col>
               <v-col cols="6">
                 <small
-                  class="text-caption"
+                  class="text-caption font-weight-bold"
                   :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
                 >
                   House Number
@@ -172,7 +172,7 @@
       <v-card-actions
         ><v-col align-self="center"
           ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
-            <v-btn color="#5A82AF" width="85%" height="35" variant="text" @click="update">
+            <v-btn color="success" width="85%" height="35" variant="text" @click="update">
               SAVE
             </v-btn>
           </v-col>
@@ -245,8 +245,34 @@ export default {
       this.clientDialog = false
     },
     async update() {
+      console.log(this.localEditedItem.name)
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+        }
+      }
       await axios
-        .patch(`http://localhost:3000/client/${this._clientID}`)
+        .patch(`http://localhost:3000/client/${this._clientID}`, {
+          config,
+
+          details: {
+            name: this.localEditedItem.name,
+            preferred_Language: this.localEditedItem.preferred_Language,
+            contactInfo: {
+              phoneNumber: this.localEditedItem.contactInfo.phoneNumber,
+              email: this.editedItem.contactInfo.email
+            },
+            address: {
+              street: this.localEditedItem.address.street,
+              suburb: this.localEditedItem.address.suburb,
+              city: this.localEditedItem.address.city,
+              postalCode: this.localEditedItem.address.postalCode,
+              complex: this.localEditedItem.address.complex,
+              houseNumber: this.localEditedItem.address.houseNumber
+            }
+          }
+        })
         .then((response) => {
           console.log(response)
           alert('Client updated')
@@ -264,3 +290,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.text-font {
+  font-size: 30px;
+}
+</style>
