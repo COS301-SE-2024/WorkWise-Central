@@ -1,21 +1,11 @@
 <template>
   <v-dialog v-model="clientDialog" max-width="500">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn
-        rounded="md"
-        class="text-none font-weight-regular hello"
-        color="secondary"
-        variant="text"
-        v-bind="activatorProps"
+      <v-btn class="text-none font-weight-regular hello" color="secondary" v-bind="activatorProps"
         >Edit</v-btn
       >
     </template>
-    <v-card
-      elevation="14"
-      rounded="md"
-      height="auto"
-      :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-    >
+    <v-card :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color">
       <v-card-title class="text-h5 font-weight-regular bg-primary justify-center">
         <span class="headline">Edit Client</span>
       </v-card-title>
@@ -31,12 +21,7 @@
                 >
                   Name
                 </small>
-                <v-text-field
-                  v-model="localEditedItem.name"
-                  :rules="nameRules"
-                  variant="underlined"
-                  rounded="md"
-                ></v-text-field>
+                <v-text-field v-model="localEditedItem.name" :rules="nameRules"></v-text-field>
               </v-col>
               <v-col cols="6">
                 <small
@@ -48,8 +33,6 @@
                 <v-text-field
                   v-model="localEditedItem.surname"
                   :rules="surnameRules"
-                  variant="underlined"
-                  rounded="md"
                 ></v-text-field> </v-col
             ></v-row>
 
@@ -64,8 +47,6 @@
                 <v-text-field
                   v-model="localEditedItem.contactInfo.phoneNumber"
                   :rules="phoneRules"
-                  variant="underlined"
-                  rounded="md"
                 ></v-text-field>
               </v-col>
               <v-col cols="6">
@@ -77,9 +58,7 @@
                 </small>
                 <v-text-field
                   v-model="localEditedItem.contactInfo.email"
-                  variant="underlined"
                   :rules="emailRules"
-                  rounded="md"
                 ></v-text-field> </v-col
             ></v-row>
 
@@ -91,11 +70,7 @@
                 >
                   Street
                 </small>
-                <v-text-field
-                  v-model="localEditedItem.address.street"
-                  variant="underlined"
-                  rounded="md"
-                ></v-text-field
+                <v-text-field v-model="localEditedItem.address.street"></v-text-field
               ></v-col>
               <v-col cols="6">
                 <small
@@ -104,11 +79,7 @@
                 >
                   Suburb
                 </small>
-                <v-text-field
-                  v-model="localEditedItem.address.suburb"
-                  variant="underlined"
-                  rounded="md"
-                ></v-text-field> </v-col
+                <v-text-field v-model="localEditedItem.address.suburb"></v-text-field> </v-col
             ></v-row>
 
             <v-row>
@@ -119,11 +90,7 @@
                 >
                   City
                 </small>
-                <v-text-field
-                  v-model="localEditedItem.address.city"
-                  variant="underlined"
-                  rounded="md"
-                ></v-text-field>
+                <v-text-field v-model="localEditedItem.address.city"></v-text-field>
               </v-col>
               <v-col cols="6">
                 <small
@@ -132,11 +99,7 @@
                 >
                   Postal Code
                 </small>
-                <v-text-field
-                  v-model="localEditedItem.address.postalCode"
-                  variant="underlined"
-                  rounded="md"
-                ></v-text-field></v-col
+                <v-text-field v-model="localEditedItem.address.postalCode"></v-text-field></v-col
             ></v-row>
 
             <v-row
@@ -147,11 +110,7 @@
                 >
                   Complex
                 </small>
-                <v-text-field
-                  v-model="localEditedItem.address.complex"
-                  variant="underlined"
-                  rounded="md"
-                ></v-text-field
+                <v-text-field v-model="localEditedItem.address.complex"></v-text-field
               ></v-col>
               <v-col cols="6">
                 <small
@@ -160,11 +119,7 @@
                 >
                   House Number
                 </small>
-                <v-text-field
-                  v-model="localEditedItem.address.houseNumber"
-                  variant="underlined"
-                  rounded="md"
-                ></v-text-field></v-col
+                <v-text-field v-model="localEditedItem.address.houseNumber"></v-text-field></v-col
             ></v-row> </v-col
         ></v-container>
       </v-card-text>
@@ -257,7 +212,8 @@ export default {
           config,
 
           details: {
-            name: this.localEditedItem.name,
+            firstname: this.localEditedItem.name,
+            lastname: this.localEditedItem.surname,
             preferred_Language: this.localEditedItem.preferred_Language,
             contactInfo: {
               phoneNumber: this.localEditedItem.contactInfo.phoneNumber,

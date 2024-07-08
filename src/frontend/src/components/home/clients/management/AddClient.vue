@@ -4,6 +4,7 @@
       <v-btn
         rounded="md"
         class="text-none font-weight-regular"
+        
         style="font-size: 20px"
         text="Add Client"
         variant="elevated"
@@ -36,13 +37,10 @@
               >
 
               <v-text-field
-                density="compact"
                 :theme="isdarkmode === true ? 'dark' : 'light'"
-                color="grey-lighten-4"
+                color="secondary"
                 placeholder="Enter the firstname of the client"
                 v-model="req_obj.details.firstName"
-                rounded="md"
-                variant="underlined"
                 required
                 :rules="first_name_rules"
               ></v-text-field
@@ -54,13 +52,10 @@
                 >Surname of client*</small
               >
               <v-text-field
-                density="compact"
                 :theme="isdarkmode === true ? 'dark' : 'light'"
-                color="grey-lighten-4"
+                color="secondary"
                 placeholder="Enter the surname name of the client"
                 v-model="req_obj.details.lastName"
-                rounded="md"
-                variant="underlined"
                 required
                 :rules="surname_rules"
               ></v-text-field
@@ -72,9 +67,39 @@
                 >ID of client*</small
               >
               <v-text-field
-                density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                color="grey-lighten-4"
+                color="secondary"
+                placeholder="Enter the ID number of the client"
+                v-model="req_obj.idNumber"
+                required
+                :rules="id_number_rules"
+              ></v-text-field
+            ></v-col>
+            <v-col>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption white--text"
+                >Username of client*</small
+              >
+
+              <v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                color="secondary"
+                placeholder="Enter the username of the client"
+                v-model="req_obj.clientUsername"
+                required
+                :rules="username_rules"
+              ></v-text-field
+            ></v-col>
+            <v-col>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption white--text"
+                >ID of client*</small
+              >
+              <v-text-field
+                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                color="secondary"
                 placeholder="Enter the ID number of the client"
                 v-model="req_obj.idNumber"
                 rounded="md"
@@ -91,9 +116,8 @@
               >
 
               <v-text-field
-                density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                color="grey-lighten-4"
+                color="secondary"
                 placeholder="Enter the username of the client"
                 v-model="req_obj.clientUsername"
                 rounded="md"
@@ -102,21 +126,17 @@
                 :rules="username_rules"
               ></v-text-field
             ></v-col>
-
             <v-col>
               <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
                 >Client email address*</small
               >
               <v-text-field
-                density="compact"
                 :theme="isdarkmode === true ? 'dark' : 'light'"
-                color="grey-lighten-4"
+                color="secondary"
                 placeholder="Enter the client's email address"
                 v-model="req_obj.details.contactInfo.email"
                 :rules="email_rules"
                 type="email"
-                rounded="md"
-                variant="underlined"
                 required
               ></v-text-field
             ></v-col>
@@ -125,14 +145,11 @@
                 >Client phone number*</small
               >
               <v-text-field
-                density="compact"
                 :theme="isdarkmode === true ? 'dark' : 'light'"
-                color="grey-lighten-4"
+                color="secondary"
                 placeholder="Enter the client's phone number"
                 v-model="req_obj.details.contactInfo.phoneNumber"
-                rounded="md"
                 type="number"
-                variant="underlined"
                 :rules="phone_number_rules"
                 required
               ></v-text-field
@@ -151,12 +168,9 @@
                   >Street</small
                 ><v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                  density="compact"
-                  color="grey-lighten-4"
+                  color="secondary"
                   placeholder="Street"
                   v-model="req_obj.details.address.street"
-                  rounded="md"
-                  variant="underlined"
                   type="street"
                   required
                 ></v-text-field
@@ -168,12 +182,9 @@
                   >Suburb</small
                 ><v-text-field
                   :theme="isdarkmode === true ? 'dark' : 'light'"
-                  density="compact"
-                  color="grey-lighten-4"
+                  color="secondary"
                   placeholder="Suburb"
                   v-model="req_obj.details.address.suburb"
-                  rounded="md"
-                  variant="underlined"
                   type="suburb"
                   required
                 ></v-text-field
@@ -184,12 +195,9 @@
                   >City</small
                 ><v-text-field
                   :theme="isdarkmode === true ? 'dark' : 'light'"
-                  density="compact"
-                  color="grey-lighten-4"
+                  color="secondary"
                   placeholder="City"
                   v-model="req_obj.details.address.city"
-                  rounded="md"
-                  variant="underlined"
                   type="city"
                   required
                 ></v-text-field
@@ -199,13 +207,10 @@
                   >Zip Code</small
                 ><v-text-field
                   :theme="isdarkmode === true ? 'dark' : 'light'"
-                  density="compact"
-                  color="grey-lighten-4"
+                  color="secondary"
                   placeholder="Zip Code"
                   v-model="req_obj.details.address.postalCode"
-                  rounded="md"
                   type="postalCode"
-                  variant="underlined"
                   required
                 ></v-text-field
               ></v-col>
@@ -215,13 +220,10 @@
                   >Complex</small
                 ><v-text-field
                   :theme="isdarkmode === true ? 'dark' : 'light'"
-                  density="compact"
-                  color="grey-lighten-4"
+                  color="secondary"
                   placeholder="Complex"
                   v-model="req_obj.details.address.complex"
-                  rounded="md"
                   type="complex"
-                  variant="underlined"
                   required
                 ></v-text-field
               ></v-col>
@@ -230,13 +232,10 @@
                   >House number</small
                 ><v-text-field
                   :theme="isdarkmode === true ? 'dark' : 'light'"
-                  density="compact"
-                  color="grey-lighten-4"
+                  color="secondary"
                   placeholder="House number"
                   v-model="req_obj.details.address.houseNumber"
-                  rounded="md"
                   type="houseNumber"
-                  variant="underlined"
                   required
                 ></v-text-field
               ></v-col>
@@ -249,14 +248,11 @@
                 >Preferred language</small
               >
               <v-autocomplete
-                density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                color="grey-lighten-4"
+                color="secondary"
                 placeholder="Enter the language preferred by the client"
                 v-model="req_obj.details.preferredLanguage"
-                rounded="md"
                 type="preferredLanguage"
-                variant="underlined"
                 :rules="prefered_languages_rules"
                 :items="[
                   'Afrikaans',

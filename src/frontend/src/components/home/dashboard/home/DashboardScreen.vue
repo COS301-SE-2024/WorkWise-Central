@@ -2,12 +2,13 @@
   <v-container fluid fill-height>
     <v-row justify="center">
       <v-col>
-        <v-sheet
+        <v-card
           height="auto"
           class="pa-16 ma-0"
           rounded="md"
-          :theme="isdarkmode ? 'dark' : 'light'"
+          :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
           border="md"
+          elevation="2"
         >
           <v-row>
             <!-- Recent Jobs Completed Card -->
@@ -101,7 +102,7 @@
               </v-card>
             </v-col></v-row
           >
-        </v-sheet>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>

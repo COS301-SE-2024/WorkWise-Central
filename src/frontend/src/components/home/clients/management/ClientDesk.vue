@@ -2,41 +2,48 @@
   <v-container fluid fill-height>
     <v-card
       height="auto"
-      class="pa-11 ma-0"
+      class="pa-11 ma-0 bg-cardColor"
       rounded="md"
-      :theme="isdarkmode ? 'dark' : 'light'"
+      :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
       border="md"
     >
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
+        height="auto"
+        width="100%"
         :style="
           (isdarkmode === true ? dark_theme_text_color : light_theme_text_color,
           'font-family: Lato, sans-serif; font-size: 25px; font-weight: lighter')
         "
       >
-        <v-col cols="12" md="4" sm="4" xs="1">
-          <v-icon color="secondary" text="Client Details" icon="mdi-account"></v-icon>
-          <label color="secondary">Client Details</label></v-col
-        >
+        <v-row align="center" justify="space-between">
+          <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+            <v-icon color="secondary" icon="mdi-account"></v-icon>
+            <label class="ms-2" height="auto" width="auto" color="secondary">Client Details</label>
+          </v-col>
 
-        <v-col cols="12" md="4" sm="4" xs="1"
-          ><v-text-field
-            v-model="search"
-            density="compact"
-            label="Search"
-            prepend-inner-icon="mdi-magnify"
-            variant="outlined"
-            flat
-            width="100%"
-            style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
-            hide-details
-            :theme="isdarkmode ? 'dark' : 'light'"
-            single-line
-          ></v-text-field
-        ></v-col>
-        <v-spacer></v-spacer>
-        <AddClient />
+          <v-col cols="12" md="4" sm="6" xs="12">
+            <v-text-field
+              v-model="search"
+              density="compact"
+              label="Search"
+              prepend-inner-icon="mdi-magnify"
+              variant="outlined"
+              flat
+              width="100%"
+              style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+              hide-details
+              :theme="isdarkmode ? 'dark' : 'light'"
+              single-line
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
+            <AddClient />
+          </v-col>
+        </v-row>
       </v-card-title>
+
       <v-card-text>
         <v-divider></v-divider>
         <v-col cols="12" xs="12" sm="12" md="12">
@@ -49,16 +56,16 @@
               height="auto"
               rounded="xl"
               :item-class="getRowClass"
-              class="font-lato"
-              :theme="isdarkmode ? 'dark' : 'light'"
+              class="font-lato bg-cardColor"
+              :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
             >
               <template v-slot:[`item.name`]="{ value }">
-                <v-chip variant="text" color="secondary">
+                <v-chip variant="text" color="n_elementTextColor">
                   <v-icon>mdi-account</v-icon>{{ value }}</v-chip
                 >
               </template>
               <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                <v-chip variant="text" @click="callPhone" color="primary"
+                <v-chip variant="text" @click="callPhone" color="elementTextColor"
                   ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
                 >
               </template>
@@ -66,15 +73,15 @@
                 <v-chip :color="getColor(value)"> {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip>
               </template>
               <template v-slot:[`item.surname`]="{ value }">
-                <v-chip variant="text" color="secondary"> {{ value }}</v-chip>
+                <v-chip variant="text" color="n_elementTextColor"> {{ value }}</v-chip>
               </template>
               <template v-slot:[`item.contactInfo.email`]="{ value }">
-                <v-chip variant="text" @click="sendEmail" color="primary">
+                <v-chip variant="text" rounded="xl" @click="sendEmail" color="elementTextColor" border="md" class="bg-highlighter">
                   <v-icon>mdi-email</v-icon>{{ value }}</v-chip
                 >
               </template>
               <template v-slot:[`item.address.street`]="{ value }">
-                <v-chip variant="text" color="secondary">
+                <v-chip variant="text" color="n_elementTextColor">
                   <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip
                 >
               </template>
@@ -164,19 +171,36 @@ export default defineComponent({
         align: 'start',
         sortable: true,
         value: 'name',
-        key: 'name'
+        key: 'name',
+        class: 'my-header-style'
       },
       {
         title: 'Surname',
         align: 'start',
         sortable: true,
         value: 'surname',
-        key: 'surname'
+        key: 'lastName',
+        class: 'my-header-style'
       },
-      { title: 'Phone', value: 'contactInfo.phoneNumber', key: 'contactInfo.phoneNumber' },
-      { title: 'Email', value: 'contactInfo.email', key: 'contactInfo.email' },
-      { title: 'Address', value: 'address.street', key: 'address.street' },
-      { title: '', value: 'actions', key: 'actions', sortable: false }
+      {
+        title: 'Phone',
+        value: 'contactInfo.phoneNumber',
+        key: 'contactInfo.phoneNumber',
+        class: 'my-header-style'
+      },
+      {
+        title: 'Email',
+        value: 'contactInfo.email',
+        key: 'contactInfo.email',
+        class: 'my-header-style'
+      },
+      {
+        title: 'Address',
+        value: 'address.street',
+        key: 'address.street',
+        class: 'my-header-style'
+      },
+      { title: '', value: 'actions', key: 'actions', sortable: false, class: 'my-header-style' }
     ],
     search: '',
     clients: [],
@@ -360,5 +384,15 @@ export default defineComponent({
 
 .dark-theme-text {
   color: #dcdbdb;
+}
+
+.fin {
+  background-color: #38414a;
+}
+tbody tr:nth-of-type(odd) {
+  background-color: #454f59;
+}
+.my-header-style {
+  background: red;
 }
 </style>

@@ -9,7 +9,7 @@
 
       <v-spacer></v-spacer>
       <v-btn @click="toggleDarkMode"
-        ><v-icon :icon="isdarkmode ? ' mdi-white-balance-sunny' : 'mdi-moon-full'"></v-icon
+        ><v-icon :icon="isdarkmode ? ' mdi-white-balance-sunny' : 'mdi-moon-wanning-crescent'"></v-icon
       ></v-btn>
     </v-app-bar>
     <!-- Main Content -->
@@ -557,8 +557,6 @@
                             type="input"
                             v-model="postal_code"
                             :rules="postalCodeRules"
-                            rounded="md"
-                            variant="solo"
                             required
                           >
                           </v-text-field></v-col
@@ -685,17 +683,16 @@ export default defineComponent({
     signupAddressDialog: false,
     genderList: ['Male', 'Female', 'Other'],
     languageList: [
-      'English',
       'Afrikaans',
-      'isiNdebele',
-      'isiXhosa',
-      'isiZulu',
-      'Sesotho',
-      'Setswana',
-      'Sepedi',
-      'Siswati',
-      'Tshivenda',
-      'Xitsonga'
+      'English',
+      'Ndebele',
+      'Sotho',
+      'Swati',
+      'Tsonga',
+      'Tswana',
+      'Venda',
+      'Xhosa',
+      'Zulu'
     ],
     cityList: [
       'Johannesburg',
@@ -961,8 +958,8 @@ export default defineComponent({
           console.log(response)
           this.alertSignUpFailure = false
           this.alertSignUp = true
-          sessionStorage.setItem('access_token', response.data.access_token)
-          sessionStorage.setItem('id', response.data.id)
+          sessionStorage.setItem('access_token', response.data.data.access_token)
+          sessionStorage.setItem('id', response.data.data.id)
           this.resetForm()
         })
         .catch((error) => {

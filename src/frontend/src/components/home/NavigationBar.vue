@@ -101,13 +101,20 @@ export default defineComponent({
           <v-app-bar-nav-icon @click="isVisible = !isVisible">
             <v-icon>{{ isVisible ? 'mdi-close' : 'mdi-menu' }}</v-icon>
           </v-app-bar-nav-icon>
+
           <v-spacer></v-spacer>
-          <v-toolbar-title
-            ><span class="colorAccent toolbar-text">Work</span>
-            <span class="colorAccent2 toolbar-text">Wise</span></v-toolbar-title
-          >
-          <v-icon class="icon-padding" @click="onProfileClick">mdi-account-circle</v-icon>
-          <v-icon class="icon-padding" @click="toggleDarkMode">mdi-brightness-4</v-icon>
+
+          <v-toolbar-title class="d-flex align-center">
+            <span class="colorAccent toolbar-text">Work</span>
+            <span class="colorAccent2 toolbar-text ms-1">Wise</span>
+          </v-toolbar-title>
+
+          <v-spacer class="d-none d-sm-flex"></v-spacer>
+
+          <div class="d-flex align-center">
+            <v-icon class="icon-padding" @click="onProfileClick">mdi-account-circle</v-icon>
+            <v-icon class="icon-padding" @click="toggleDarkMode">mdi-brightness-4</v-icon>
+          </div>
         </v-app-bar>
 
         <v-navigation-drawer

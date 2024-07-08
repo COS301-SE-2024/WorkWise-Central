@@ -1,24 +1,11 @@
 <template>
   <v-dialog v-model="clientDialog" max-width="500">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn
-        rounded="md"
-        class="text-none font-weight-regular hello"
-        color="primary"
-        variant="text"
-        v-bind="activatorProps"
-      >
-        View
-      </v-btn>
+      <v-btn color="primary" v-bind="activatorProps"> View </v-btn>
     </template>
 
-    <v-sheet
-      elevation="14"
-      rounded="md"
-      height="auto"
-      :theme="isdarkmode === true ? 'dark' : 'light'"
-    >
-      <v-card-title class="text-h5 font-weight-regular bg-primary justify-center">
+    <v-sheet :theme="isdarkmode === true ? 'dark' : 'light'">
+      <v-card-title>
         <span class="headline">Client Details</span>
       </v-card-title>
       <v-card-text>
@@ -39,7 +26,7 @@
               >
             </v-row>
 
-            <v-divider thickness="3"></v-divider>
+            <v-divider></v-divider>
             <v-row>
               <v-col cols="6">
                 <label class="font-weight-bold">Phone Number</label><v-spacer></v-spacer
@@ -54,7 +41,7 @@
                 }}</small></v-col
               >
             </v-row>
-            <v-divider thickness="3"></v-divider>
+            <v-divider></v-divider>
             <v-row>
               <v-col cols="6">
                 <label class="font-weight-bold"> Address</label><v-spacer></v-spacer
@@ -79,7 +66,7 @@
                 }}</small></v-col
               >
             </v-row>
-            <v-divider thickness="3"></v-divider>
+            <v-divider></v-divider>
             <v-col
               ><label class="font-weight-bold"> Preferred Languages</label><v-spacer></v-spacer>
               <v-chip color="red"
@@ -88,14 +75,12 @@
                 }}</small></v-chip
               ></v-col
             >
-            <v-divider thickness="3"></v-divider> </v-col
+            <v-divider></v-divider> </v-col
         ></v-container>
       </v-card-text>
       <v-card-actions>
         <v-col>
-          <v-btn color="error" rounded="md" width="100%" height="35" variant="text" @click="close">
-            Close
-          </v-btn>
+          <v-btn color="error" width="100%" height="35" @click="close"> Close </v-btn>
         </v-col></v-card-actions
       >
     </v-sheet>
