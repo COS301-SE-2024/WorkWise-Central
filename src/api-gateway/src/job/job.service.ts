@@ -111,10 +111,31 @@ export class JobService {
     return result != null;
   }
 
-  async update(id: string | Types.ObjectId, updateJobDto: UpdateJobDto) {
-    const inputValidated = await this.jobUpdateIsValid(updateJobDto);
-    if (!inputValidated.isValid)
+  /*  async GetJobWithEmployees(jobId: Types.ObjectId) {
+    const job: Job = await this.findJobById(jobId);
+    const employees = [];
+    for (const assignedEmployee of job.assignedEmployees) {
+      employees.push(this.employeeService.findOne(assignedEmployee));
+    }
+    //Strip everything except profile details
+    //Create some Dto specifically showing Job+ Employee details array?
+    //return that dto
+  }*/
+
+  async update(
+    userId: Types.ObjectId,
+    id: Types.ObjectId,
+    updateJobDto: UpdateJobDto,
+  ) {
+    const inputValidated = await this.jobUpdateIsValid(
+      userId,
+      id,
+      updateJobDto,
+    );
+    if (!inputValidated.isValid) {
+      console.log(inputValidated.message);
       throw new ConflictException(inputValidated.message);
+    }
 
     try {
       const updated = await this.jobRepository.update(id, updateJobDto);
@@ -235,25 +256,29 @@ export class JobService {
     return new ValidationResult(true);
   }
 
-  async jobUpdateIsValid(job: UpdateJobDto): Promise<ValidationResult> {
-    if (!job) {
+  async jobUpdateIsValid(
+    userId: Types.ObjectId,
+    jobId: Types.ObjectId,
+    job: UpdateJobDto,
+  ): Promise<ValidationResult> {
+    const jobInDb = await this.jobRepository.findOne(jobId);
+    console.log(job);
+    if (!jobInDb) {
       return new ValidationResult(false, 'Job is null');
     }
 
-    if (!job.companyId || !job.assignedBy) {
-      return new ValidationResult(false, 'CompanyId or assignedBy is invalid');
+    const user = await this.usersService.getUserById(userId);
+    if (!user) return new ValidationResult(false, 'User not found');
+
+    let userCanAccessJob = false;
+    for (const joinedCompany of user.joinedCompanies) {
+      if (joinedCompany.companyId.toString() === jobInDb.companyId.toString()) {
+        userCanAccessJob = true;
+        break;
+      }
     }
 
-    if (!job.companyId || !job.assignedBy) {
-      return new ValidationResult(false, 'CompanyId or assignedBy is invalid');
-    }
-
-    const exists = await this.employeeService.employeeExists(job.assignedBy);
-    const isInCompany = await this.companyService.employeeIsInCompany(
-      job.companyId,
-      job.assignedBy,
-    );
-    if (!exists || !isInCompany) {
+    if (!userCanAccessJob) {
       return new ValidationResult(
         false,
         'Assigned By is invalid or Employee is not in company',
@@ -273,16 +298,6 @@ export class JobService {
       const exists = await this.clientService.clientExists(job.clientId);
       if (!exists) {
         return new ValidationResult(false, 'Client does not exist');
-      }
-    }
-
-    if (job.companyId) {
-      const exists = await this.companyService.companyIdExists(job.companyId);
-      if (!exists) {
-        return new ValidationResult(
-          false,
-          `Company: ${job.companyId} Not found`,
-        );
       }
     }
 
