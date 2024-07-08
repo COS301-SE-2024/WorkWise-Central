@@ -46,11 +46,6 @@ export class UpdateUserDto {
   skills?: string[];
 
   @IsOptional()
-  @IsArray()
-  @Type(() => Types.ObjectId)
-  employeeIds?: Types.ObjectId[];
-
-  @IsOptional()
   @IsMongoId()
   currentEmployee?: Types.ObjectId;
 }

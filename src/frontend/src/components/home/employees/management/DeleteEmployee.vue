@@ -11,13 +11,13 @@
       >
     </template>
     <v-card :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color">
-      <v-card-title class="text-h5 font-weight-regular bg-primary">
-        <span class="headline">Delete {{ client.name + ' ' + client.surname }}</span>
+      <v-card-title>
+        <span class="headline">Delete Client</span>
       </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
-            <p class="font-weight-regular">
+            <p>
               Are you sure you want to delete <strong>{{ clientName }}</strong
               >? This action cannot be reversed.
             </p>
@@ -26,10 +26,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn label="Delete" color="error" text :loading="isDeleting" @click="deleteClient"
-          >Delete</v-btn
-        >
-        <v-btn label="Cancel" color="secondary" text @click="clientDialog = false">Cancel</v-btn>
+        <v-btn color="red darken-2" text :loading="isDeleting" @click="Delete">Delete</v-btn>
+        <v-btn color="grey darken-1" text @click="clientDialog = false">Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -41,15 +39,14 @@ export default {
   name: 'DeleteClient',
   props: {
     opened: Boolean,
-    client_id: Number,
-    client: Object
+    client_id: Number
   },
   data() {
     return {
       clientDialog: false,
-      clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
+      clientName: '',
       isDeleting: false,
-      isdarkmode: sessionStorage.getItem('isdarkmode') === 'true' ? true : false,
+      isdarkmode: false,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
@@ -65,16 +62,9 @@ export default {
       window.location.reload() // Consider removing this for SPA behavior
     },
     async deleteClient() {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
-        }
-      }
-      console.log(this.client_id)
       this.isDeleting = true // Indicate the start of the deletion process
       axios
-        .delete(`http://localhost:3000/client/delete/${this.client_id}`, config)
+        .delete('http://localhost:3000/client/delete', { data: { id: this.client_id } })
         .then((response) => {
           console.log(response)
           alert('Client deleted')

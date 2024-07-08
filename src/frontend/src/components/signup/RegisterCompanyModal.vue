@@ -2,7 +2,7 @@
   <v-dialog max-height="800" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
-        rounded="xl"
+        rounded="md"
         class="text-none font-weight-regular hello"
         prepend-icon="mdi-account"
         variant="elevated"
@@ -13,10 +13,10 @@
     </template>
     <v-sheet
       elevation="14"
-      rounded="xl"
+      rounded="md"
       max-width="600"
       max-height="800"
-      :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+      :color="isdarkmode === true ? 'dark' : 'light'"
     >
       <v-form ref="form" v-model="valid" @submit.prevent="registrationHandler">
         <v-col>
@@ -39,8 +39,8 @@
                 placeholder="Enter the company's name"
                 v-model="req_obj.name"
                 :rules="company_name_rules"
-                rounded="xl"
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                rounded="md"
+                :bg-color="isdarkmode === true ? 'dark' : 'light'"
                 variant="solo"
                 required
               ></v-text-field
@@ -52,12 +52,12 @@
                 >Type of business*</small
               >
               <v-autocomplete
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :bg-color="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
                 color="grey-lighten-4"
                 placeholder="Select Job Type"
                 v-model="req_obj.type"
-                rounded="xl"
+                rounded="md"
                 variant="solo"
                 :items="[
                   'Agricultural Labor',
@@ -141,14 +141,14 @@
                 >Company email address</small
               >
               <v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :bg-color="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
                 color="grey-lighten-4"
                 placeholder="Enter the company's email adress"
                 type="email"
                 :rules="email_rules"
                 v-model="req_obj.contactDetails.email"
-                rounded="xl"
+                rounded="md"
                 variant="solo"
                 required
               ></v-text-field
@@ -160,11 +160,11 @@
                 >Company phone number</small
               >
               <v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :bg-color="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
                 color="grey-lighten-4"
                 placeholder="Enter the company's phone number"
-                rounded="xl"
+                rounded="md"
                 variant="solo"
                 v-model="req_obj.contactDetails.phoneNumber"
                 required
@@ -177,13 +177,13 @@
                 >Company registration number</small
               >
               <v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :bg-color="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
                 color="grey-lighten-4"
                 placeholder="Enter the company's registration number"
                 v-model="req_obj.registrationNumber"
                 :rules="company_registration_number_rules"
-                rounded="xl"
+                rounded="md"
                 variant="solo"
                 required
               ></v-text-field
@@ -196,12 +196,12 @@
                 >Company VAT number</small
               >
               <v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :bg-color="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
                 color="grey-lighten-4"
                 placeholder="Enter the company's VAT number"
                 :rules="vat_number_rules"
-                rounded="xl"
+                rounded="md"
                 v-model="req_obj.vatNumber"
                 variant="solo"
                 required
@@ -214,14 +214,14 @@
             <!--                >Company logo</small-->
             <!--              >-->
             <!--              <v-file-input-->
-            <!--                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
+            <!--                :bg-color="isdarkmode === true ? 'dark' : 'light'"-->
             <!--                variant="solo"-->
             <!--                accept="image/*"-->
             <!--                width="100%"-->
             <!--                placeholder="Company Logo"-->
             <!--                @change="companyLogoHandler"-->
             <!--                color="black"-->
-            <!--                rounded="xl"-->
+            <!--                rounded="md"-->
             <!--              ></v-file-input>-->
             <!--            </v-col>-->
             <small
@@ -236,11 +236,11 @@
                   class="text-caption"
                   >Street</small
                 ><v-text-field
-                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  :bg-color="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Street"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.address.street"
                   variant="solo"
                   required
@@ -252,11 +252,11 @@
                   class="text-caption"
                   >Suburb</small
                 ><v-text-field
-                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  :bg-color="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Suburb"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.address.suburb"
                   variant="solo"
                   required
@@ -268,11 +268,11 @@
                   class="text-caption"
                   >City</small
                 ><v-text-field
-                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  :bg-color="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="City"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.address.city"
                   variant="solo"
                   required
@@ -284,11 +284,11 @@
                   class="text-caption"
                   >Zip Code</small
                 ><v-text-field
-                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                  :bg-color="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Zip Code"
-                  rounded="xl"
+                  rounded="md"
                   v-model="req_obj.address.postalCode"
                   variant="solo"
                   required
@@ -298,11 +298,11 @@
             <!--            <v-row>-->
             <!--              <v-col-->
             <!--                ><v-text-field-->
-            <!--                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
+            <!--                  :bg-color="isdarkmode === true ? 'dark' : 'light'"-->
             <!--                  density="compact"-->
             <!--                  color="grey-lighten-4"-->
             <!--                  placeholder="Complex"-->
-            <!--                  rounded="xl"-->
+            <!--                  rounded="md"-->
             <!--                  v-model="req_obj.address.complex"-->
             <!--                  variant="solo"-->
             <!--                  required-->
@@ -310,11 +310,11 @@
             <!--              ></v-col>-->
             <!--              <v-col-->
             <!--                ><v-text-field-->
-            <!--                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
+            <!--                  :bg-color="isdarkmode === true ? 'dark' : 'light'"-->
             <!--                  density="compact"-->
             <!--                  color="grey-lighten-4"-->
             <!--                  placeholder="House number"-->
-            <!--                  rounded="xl"-->
+            <!--                  rounded="md"-->
             <!--                  v-model="req_obj.address.houseNumber"-->
             <!--                  variant="solo"-->
             <!--                  required-->
@@ -323,7 +323,7 @@
             <!--            </v-row>-->
           </v-col>
           <v-col
-            :style="isdarkmode === true ? dark_theme_text_color : modal_light_theme_color"
+            :style="isdarkmode === true ? dark_theme_text_color : 'light'"
             cols="8"
             offset="2"
             align="center"
@@ -331,8 +331,8 @@
             <v-btn
               color="#5A82AF"
               type="submit"
-              rounded="xl"
-              boarder="xl"
+              rounded="md"
+              boarder="md"
               width="60%"
               height="35"
               variant="elevated"
@@ -354,13 +354,15 @@ export default {
   data() {
     return {
       dialog: false,
-      isdarkmode: localStorage['theme'] !== 'false',
+      isdarkmode: sessionStorage['theme'] !== 'false',
       click_create_client: false,
       valid: true,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
-      modal_dark_theme_color: '#2b2b2b',
-      modal_light_theme_color: '#FFFFFF',
+      dark: '#2b2b2b',
+      light: '#FFFFFF',
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       company_name_rules: [
         (v: string) => !!v || 'Company name is required',
         (v: string) => /^[A-Z]/.test(v) || 'Company name must start with a capital letter',
@@ -391,7 +393,7 @@ export default {
       ],
 
       req_obj: {
-        creatorId: sessionStorage['id'],
+        userId: sessionStorage['id'],
         name: '',
         type: '',
         registrationNumber: '',
@@ -408,7 +410,9 @@ export default {
           complex: '',
           houseNumber: ''
         },
-        employees: sessionStorage['id']
+        employees: [],
+        inventoryItems: [],
+        private: false
       }
     }
   },
@@ -416,14 +420,18 @@ export default {
     companyLogoHandler() {
       console.log('')
     },
-    registrationHandler() {
+    async registrationHandler() {
       console.log(JSON.stringify(this.req_obj))
       console.log(this.req_obj)
+      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
       axios
-        .post('http://localhost:3000/company/create', this.req_obj)
+        .post(apiURL + 'company/create', this.req_obj, config)
         .then((res) => {
+          console.log(res.data.data.id)
           alert('The Company was registered successfully')
-          sessionStorage['currentCompany'] = res.data.data.id
+          sessionStorage['currentCompany'] = res.data.data.id._id
           console.log(res.data)
           this.$router.push('/dashboard')
         })
@@ -431,7 +439,21 @@ export default {
           alert('The Company was not registered successfully')
           console.log(res)
         })
+    },
+
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
+
     // base64image() {
     //   let read = new FileReader()
     //   read.readAsDataURL(this.req_obj.image)

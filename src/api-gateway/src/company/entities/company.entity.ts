@@ -8,7 +8,13 @@ export class ContactDetails {
   @Prop({ type: String, required: true, trim: true })
   phoneNumber: string;
 
-  @Prop({ type: String, unique: true, required: true, lowercase: true })
+  @Prop({
+    type: String,
+    unique: true,
+    index: true,
+    required: true,
+    lowercase: true,
+  })
   email: string;
 }
 
@@ -64,7 +70,7 @@ export class Company {
   vatNumber: string;
 
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   name: string;
 
   @ApiProperty()
