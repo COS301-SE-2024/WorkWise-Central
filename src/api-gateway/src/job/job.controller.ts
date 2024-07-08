@@ -10,6 +10,7 @@ import {
   HttpStatus,
   UseGuards,
   InternalServerErrorException,
+  Headers,
 } from '@nestjs/common';
 import { JobService } from './job.service';
 import {
@@ -31,13 +32,17 @@ import mongoose, { Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
 import { BooleanResponseDto } from '../users/dto/create-user.dto';
 import { JobResponseDto } from './entities/job.entity';
+import { JwtService } from '@nestjs/jwt';
 
 const className = 'Job';
 
 @ApiTags('Job')
 @Controller('job')
 export class JobController {
-  constructor(private readonly jobService: JobService) {}
+  constructor(
+    private readonly jobService: JobService,
+    private jwtService: JwtService,
+  ) {}
   validateObjectId(id: string | Types.ObjectId, entity: string = ''): boolean {
     let data: string;
     if (entity === '') data = `Invalid ID`;
@@ -46,6 +51,7 @@ export class JobController {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException(data, HttpStatus.BAD_REQUEST);
     }
+    console.log('valid');
     return true;
   }
 
@@ -78,7 +84,8 @@ export class JobController {
     @Body() createJobDto: CreateJobDto,
   ): Promise<CreateJobResponseDto> {
     this.validateObjectId(createJobDto.assignedBy, 'assignedBy');
-    this.validateObjectId(createJobDto.companyId, 'Company');
+    if (createJobDto.companyId)
+      this.validateObjectId(createJobDto.companyId, 'Company');
 
     try {
       return await this.jobService.create(createJobDto);
@@ -146,12 +153,32 @@ export class JobController {
   })
   @ApiBody({ type: UpdateJobDto })
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
+  async update(
+    @Headers() headers: any,
+    @Param('id') jobId: string,
+    @Body() updateJobDto: UpdateJobDto,
+  ) {
     try {
-      const success = await this.jobService.update(id, updateJobDto);
+      this.validateObjectId(jobId);
+      const authHeader: string = headers.authorization;
+      const decodedJwtAccessToken = this.jwtService.decode(
+        authHeader.replace(/^Bearer\s+/i, ''),
+      );
+      //console.log(decodedJwtAccessToken);
+      //this.validateObjectId(decodedJwtAccessToken);
+
+      const userId: Types.ObjectId = decodedJwtAccessToken.sub; //This attribute is retrieved in the JWT
+      // console.log(userId);
+      // console.log(new Types.ObjectId(jobId));
+      const success = await this.jobService.update(
+        userId,
+        new Types.ObjectId(jobId),
+        updateJobDto,
+      );
       return new UpdateDtoResponse(success);
     } catch (e) {
-      throw new InternalServerErrorException(`User could not be updated`);
+      console.log(e);
+      throw new InternalServerErrorException(`Job could not be updated`);
     }
   }
 

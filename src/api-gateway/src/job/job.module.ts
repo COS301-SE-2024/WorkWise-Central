@@ -11,6 +11,7 @@ import { EmployeeModule } from '../employee/employee.module';
 import { EmployeeService } from '../employee/employee.service';
 import { TeamModule } from '../team/team.module';
 import { RoleModule } from '../role/role.module';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -21,8 +22,9 @@ import { RoleModule } from '../role/role.module';
     forwardRef(() => EmployeeModule),
     forwardRef(() => RoleModule),
     forwardRef(() => TeamModule),
+    forwardRef(() => JwtModule),
   ],
-  providers: [JobService, JobRepository, EmployeeService],
+  providers: [JobService, JobRepository, EmployeeService, JwtService],
   controllers: [JobController],
   exports: [JobService, MongooseModule, JobRepository],
 })

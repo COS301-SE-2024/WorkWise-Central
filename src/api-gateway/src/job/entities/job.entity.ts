@@ -82,7 +82,7 @@ export class AssignedEmployees {
     ref: 'Employee',
     default: [],
   })
-  employeeIds?: Types.ObjectId[];
+  employeeIds?: Types.ObjectId[] = [];
   @Prop({ type: Types.ObjectId, required: false /*, ref: Team.name*/ })
   teamId?: Types.ObjectId;
 }
@@ -157,7 +157,7 @@ export class Job {
   @Prop({
     type: AssignedEmployees,
     required: false,
-    default: new AssignedEmployees(), //Will this work?💀
+    default: {}, //Will this work?💀
   })
   assignedEmployees?: AssignedEmployees;
 
