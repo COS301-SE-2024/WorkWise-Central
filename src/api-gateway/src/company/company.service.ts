@@ -272,6 +272,38 @@ export class CompanyService {
     return new ValidationResult(true);
   }
 
+  async userIsInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ): Promise<boolean> {
+    const user = await this.usersService.getUserById(userId);
+    const company = await this.getCompanyById(companyId);
+
+    if (!user) {
+      console.log('User is invalid');
+      return false;
+    }
+    if (!company) {
+      console.log('Company is invalid');
+      return false;
+    }
+
+    let userJoinedCompany: JoinedCompany = null;
+    for (const joinedCompany of user.joinedCompanies) {
+      if (joinedCompany.companyId.equals(companyId)) {
+        userJoinedCompany = joinedCompany;
+      }
+    }
+
+    if (!userJoinedCompany) return false;
+    for (const employee of company.employees) {
+      if (employee._id.equals(userJoinedCompany.employeeId)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   async companyIsValid(company: Company) {
     if (!company) return new ValidationResult(false, `Company is null`);
 
@@ -402,6 +434,10 @@ export class CompanyService {
     }
 
     return new ValidationResult(true);
+  }
+
+  async getCompanyWithEmployee(employeeId: Types.ObjectId) {
+    return this.companyRepository.findCompanyWithEmployee(employeeId);
   }
 
   async companyDeleteIsValid(deleteEmployeeDto: DeleteEmployeeFromCompanyDto) {

@@ -174,4 +174,16 @@ export class CompanyRepository {
 
     return result != null;
   }
+
+  findCompanyWithEmployee(employeeId: Types.ObjectId) {
+    const filter = {
+      $and: [
+        { employees: { $in: [employeeId] } },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    };
+    return this.companyModel.findOne(filter).lean().exec();
+  }
 }
