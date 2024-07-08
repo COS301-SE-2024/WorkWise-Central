@@ -24,7 +24,7 @@ export class CreateEmployeeDto {
   companyId: Types.ObjectId;
 }
 
-export class createEmployeeResponseDto {
+export class CreateEmployeeResponseDto {
   response: { access_token: string; id: Types.ObjectId };
   constructor(message: { access_token: string; id: Types.ObjectId }) {
     this.response = message;

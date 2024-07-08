@@ -3,19 +3,17 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
-  ServiceUnavailableException,
 } from '@nestjs/common';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Document, Model, Types, FlattenMaps } from 'mongoose';
+import { Model, Types, FlattenMaps } from 'mongoose';
 import { Team } from './entities/team.entity';
 import { EmployeeService } from '../employee/employee.service';
 import { CompanyService } from '../company/company.service';
-import { User } from '../users/entities/user.entity';
 import { JobService } from '../job/job.service';
+import { TeamRepository } from './team.repository';
 
 @Injectable()
 export class TeamService {
@@ -27,6 +25,8 @@ export class TeamService {
     private companyService: CompanyService,
     @Inject(forwardRef(() => JobService))
     private jobService: JobService,
+    @Inject(forwardRef(() => TeamRepository))
+    private teamRepository: TeamRepository,
   ) {}
 
   async validateTeam(team: Team | CreateTeamDto | UpdateTeamDto) {
@@ -38,7 +38,7 @@ export class TeamService {
 
     if ('teamMembers' in team && team.teamMembers) {
       for (const memberId of team.teamMembers) {
-        if (!(await this.employeeService.employeeExists(memberId.toString()))) {
+        if (!(await this.employeeService.employeeExists(memberId))) {
           throw new ConflictException(
             `Team member ${memberId.toString()} not found`,
           );
@@ -47,11 +47,7 @@ export class TeamService {
     }
 
     if ('teamLeaderId' in team && team.teamLeaderId) {
-      if (
-        !(await this.employeeService.employeeExists(
-          team.teamLeaderId.toString(),
-        ))
-      ) {
+      if (!(await this.employeeService.employeeExists(team.teamLeaderId))) {
         throw new ConflictException('Team leader not found');
       }
     }
@@ -83,9 +79,7 @@ export class TeamService {
     if (!company || !teamLeader || !teamMembers) {
       throw new ConflictException('Invalid ID given');
     }
-
     const newRole = new Team(createTeamDto);
-
     newRole.teamName = createTeamDto.teamName;
     newRole.companyId = createTeamDto.companyId;
     newRole.teamLeaderId = createTeamDto.teamLeaderId;
@@ -97,113 +91,36 @@ export class TeamService {
   }
 
   async findAll() {
-    try {
-      return this.teamModel.find().exec();
-    } catch (error) {
-      console.log(error);
-      throw new ServiceUnavailableException('Teams could not be retrieved');
-    }
-  }
-
-  async findOne(id: string) {
-    return this.teamModel.findById(id);
-  }
-
-  async teamExists(id: string): Promise<boolean> {
-    const result: FlattenMaps<Team> & { _id: Types.ObjectId } =
-      await this.teamModel
-        .findOne({
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
-    return result != null;
-  }
-
-  async teamExistsInCompany(id: string, companyId: string): Promise<boolean> {
-    const result: FlattenMaps<Team> & { _id: Types.ObjectId } =
-      await this.teamModel
-        .findOne({
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
-
-    if (result != null && result.companyId.toString() == companyId) {
-      return true;
-    }
-    return false;
+    return this.teamRepository.findAll();
   }
 
   async findById(
     identifier: string | Types.ObjectId,
   ): Promise<FlattenMaps<Team> & { _id: Types.ObjectId }> {
-    const result: FlattenMaps<Team> & { _id: Types.ObjectId } =
-      await this.teamModel
-        .findOne({
-          $and: [
-            { _id: identifier },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
-
+    const result = await this.teamRepository.findById(identifier);
     if (result == null) {
       throw new NotFoundException('Company not found');
     }
-
     return result;
   }
 
-  async update(id: number, updateTeamDto: UpdateTeamDto) {
-    await this.validateTeam(updateTeamDto);
-
-    const previousObject: FlattenMaps<Team> & { _id: Types.ObjectId } =
-      await this.teamModel
-        .findOneAndUpdate(
-          {
-            $and: [
-              { _id: id },
-              {
-                $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-              },
-            ],
-          },
-          { $set: { ...updateTeamDto }, updatedAt: new Date() },
-        )
-        .lean();
-    return previousObject;
+  async teamExists(id: Types.ObjectId): Promise<boolean> {
+    return await this.teamRepository.teamExists(id);
   }
 
-  async remove(id: string): Promise<boolean> {
-    const TeamToDelete = await this.findOne(id);
+  async teamExistsInCompany(
+    id: Types.ObjectId,
+    companyId: string,
+  ): Promise<boolean> {
+    return this.teamRepository.teamExistsInCompany(id, companyId);
+  }
 
-    const result: Document<unknown, NonNullable<unknown>, User> &
-      User & { _id: Types.ObjectId } = await this.teamModel.findOneAndUpdate(
-      {
-        $and: [
-          { _id: TeamToDelete._id },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      },
-      { $set: { deletedAt: new Date() } },
-    );
+  async update(id: Types.ObjectId, updateTeamDto: UpdateTeamDto) {
+    await this.validateTeam(updateTeamDto);
+    return this.teamRepository.update(id, updateTeamDto);
+  }
 
-    if (result == null) {
-      throw new InternalServerErrorException('Internal server Error');
-    }
-    return true;
+  async remove(id: Types.ObjectId): Promise<boolean> {
+    return this.teamRepository.remove(id);
   }
 }

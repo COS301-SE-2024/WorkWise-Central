@@ -36,4 +36,51 @@ export class Role {
   public deletedAt: Date;
 }
 
+export class RoleApiObject {
+  @ApiProperty()
+  @Prop({ required: true, unique: true })
+  id: Types.ObjectId;
+  @ApiProperty()
+  @Prop({ required: true })
+  roleName: string;
+
+  @ApiProperty()
+  @Prop({ type: [String], required: false, default: [] })
+  permissionSuite: string[];
+
+  @ApiProperty()
+  @Prop({ required: true })
+  companyId: Types.ObjectId;
+
+  @ApiHideProperty()
+  @Prop({ required: true, default: new Date() })
+  public createdAt: Date;
+
+  @ApiHideProperty()
+  @Prop({ required: false })
+  public updatedAt: Date;
+
+  @ApiHideProperty()
+  @Prop({ required: false })
+  public deletedAt: Date;
+}
+
 export const RoleSchema = SchemaFactory.createForClass(Role);
+
+export class RoleListResponseDto {
+  constructor(data: RoleApiObject[]) {
+    this.data = data;
+  }
+  data: RoleApiObject[];
+}
+
+export class RoleResponseDto {
+  constructor(data: RoleApiObject) {
+    this.data = data;
+  }
+  data: RoleApiObject;
+}
+
+export class BooleanResponseDto {
+  data: boolean;
+}

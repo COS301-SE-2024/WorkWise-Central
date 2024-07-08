@@ -217,9 +217,7 @@ export class CompanyService {
           newJoinedCompanies.push(joinedCompany);
         } else {
           //Delete the employee in Employee Table
-          await this.employeeService.remove(
-            joinedCompany.employeeId.toString(),
-          );
+          await this.employeeService.remove(joinedCompany.employeeId);
         }
       }
       await this.usersService.updateUser(user._id, {
@@ -408,13 +406,13 @@ export class CompanyService {
 
   async companyDeleteIsValid(deleteEmployeeDto: DeleteEmployeeFromCompanyDto) {
     let valid = await this.employeeService.employeeExistsForCompany(
-      deleteEmployeeDto.employeeToDeleteId.toString(),
+      deleteEmployeeDto.employeeToDeleteId,
       deleteEmployeeDto.companyId.toString(),
     );
     if (!valid) return new ValidationResult(false, 'Employee ID is invalid');
 
     valid = await this.employeeService.employeeExistsForCompany(
-      deleteEmployeeDto.adminId.toString(),
+      deleteEmployeeDto.adminId,
       deleteEmployeeDto.companyId.toString(),
     );
     if (!valid) return new ValidationResult(false, 'Admin ID is invalid');
@@ -427,16 +425,14 @@ export class CompanyService {
 
   async deleteEmployee(deleteEmployee: DeleteEmployeeFromCompanyDto) {
     const valid = await this.companyDeleteIsValid(deleteEmployee);
-    const deletedEmployee = await this.employeeService.findOne(
-      deleteEmployee.employeeToDeleteId.toString(),
+    const deletedEmployee = await this.employeeService.findById(
+      deleteEmployee.employeeToDeleteId,
     );
 
     if (!valid) {
       throw new ConflictException(valid.message);
     }
-    await this.employeeService.remove(
-      deleteEmployee.employeeToDeleteId.toString(),
-    );
+    await this.employeeService.remove(deleteEmployee.employeeToDeleteId);
 
     const user = await this.usersService.getUserById(deletedEmployee.userId);
     user.joinedCompanies.filter((x) => x.employeeId !== deletedEmployee._id);

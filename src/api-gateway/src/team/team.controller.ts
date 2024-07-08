@@ -11,6 +11,7 @@ import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { TeamService } from './team.service';
 import { ApiTags } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 
 @ApiTags('Team')
 @Controller('team')
@@ -33,17 +34,20 @@ export class TeamController {
   }
 
   @Get('id/:id')
-  findOne(@Param('id') id: string) {
-    return this.teamService.findOne(id);
+  findById(@Param('id') id: Types.ObjectId) {
+    return this.teamService.findById(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTeamDto: UpdateTeamDto) {
-    return this.teamService.update(+id, updateTeamDto);
+  update(
+    @Param('id') id: Types.ObjectId,
+    @Body() updateTeamDto: UpdateTeamDto,
+  ) {
+    return this.teamService.update(id, updateTeamDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: Types.ObjectId) {
     return this.teamService.remove(id);
   }
 }

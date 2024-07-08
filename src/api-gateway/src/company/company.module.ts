@@ -18,6 +18,9 @@ import { ClientModule } from '../client/client.module';
 import { RoleModule } from '../role/role.module';
 import { UsersService } from '../users/users.service';
 import { EmailModule } from '../email/email.module';
+import { RoleRepository } from 'src/role/role.repository';
+import { EmployeeRepository } from 'src/employee/employee.repository';
+import { TeamRepository } from 'src/team/team.repository';
 
 @Module({
   imports: [
@@ -39,9 +42,12 @@ import { EmailModule } from '../email/email.module';
     CompanyService,
     CompanyRepository,
     RoleService,
+    RoleRepository,
     EmployeeService,
+    EmployeeRepository,
     JobService,
     TeamService,
+    TeamRepository,
     UsersService,
   ],
   exports: [CompanyService, CompanyRepository, MongooseModule],

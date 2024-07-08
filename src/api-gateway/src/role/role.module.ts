@@ -18,6 +18,9 @@ import { JobRepository } from '../job/job.repository';
 import { JobModule } from '../job/job.module';
 import { ClientModule } from '../client/client.module';
 import { Team, TeamSchema } from '../team/entities/team.entity';
+import { RoleRepository } from './role.repository';
+import { EmployeeRepository } from 'src/employee/employee.repository';
+import { TeamRepository } from 'src/team/team.repository';
 
 @Module({
   imports: [
@@ -40,9 +43,12 @@ import { Team, TeamSchema } from '../team/entities/team.entity';
     CompanyService,
     CompanyRepository,
     EmployeeService,
+    EmployeeRepository,
     JobService,
     JobRepository,
     TeamService,
+    TeamRepository,
+    RoleRepository,
   ],
   exports: [RoleService, MongooseModule],
 })
