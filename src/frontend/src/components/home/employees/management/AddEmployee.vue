@@ -41,7 +41,7 @@
                 v-model="req_obj2.userName"
                 placeholder="Employee Username"
                 rounded="md"
-                variant="solo"
+                variant="underlined"
                 required
               ></v-text-field
             ></v-col>
@@ -89,15 +89,15 @@
             <!--              ></v-text-field-->
             <!--            ></v-col>-->
           </v-col>
-          <v-col cols="8" offset="2" align="center">
+          <v-col cols="12" md="12" xs="3" sm="6" align="center">
             <v-btn
-              color="#5A82AF"
+              color="success"
               rounded="md"
               boarder="md"
               type="submit"
               width="80%"
               height="35"
-              variant="elevated"
+              variant="text"
               :disabled="click_create_client"
               >ADD EMPLOYEE</v-btn
             >
@@ -111,7 +111,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import router from '@/router'
+// import router from '@/router'
 export default defineComponent({
   name: 'RegisterCompanyModal',
   data: () => ({
