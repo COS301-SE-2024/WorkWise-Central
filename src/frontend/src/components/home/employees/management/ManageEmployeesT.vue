@@ -120,7 +120,7 @@
             <EditEmployee
               @update:item="selectedItem = $event"
               :editedItem="selectedItem"
-            /><DeleteClient :details="selectedItem" />
+            /><DeleteEmployee :details="selectedItem" />
             <v-spacer></v-spacer>
             <v-btn @click="actionsDialog = false">Cancel</v-btn>
           </v-card-actions>
@@ -131,13 +131,12 @@
 </template>
 
 <script lang="ts">
-// import DeleteClient from '../../clients/management/DeleteClient.vue'
 import AddEmployee from './AddEmployee.vue'
 
 import axios from 'axios'
 import router from '@/router/index'
 import EditEmployee from '@/components/home/employees/management/EditEmployee.vue'
-import DeleteClient from '@/components/home/clients/management/DeleteClient.vue'
+import DeleteEmployee from '@/components/home/employees/management/DeleteEmployee.vue'
 import EmployeeDetails from '@/components/home/employees/management/EmployeeDetails.vue'
 
 type Address = {
@@ -440,9 +439,8 @@ export default {
   }),
   components: {
     EmployeeDetails,
-    DeleteClient,
+    DeleteEmployee,
     EditEmployee,
-    // DeleteClient,
     AddEmployee
   },
   computed: {
