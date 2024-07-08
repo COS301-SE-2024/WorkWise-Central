@@ -15,7 +15,7 @@
       rounded="md"
       width="500"
       height="800"
-      :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+      :color="isdarkmode === true ? 'dark' : 'light'"
     >
       <v-form>
         <v-col>
@@ -23,35 +23,21 @@
             <v-col>
               <v-col :cols="12">
                 <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-                  {{ localEditedItem !== undefined ? localEditedItem.firstName : null }}
-                  {{ localEditedItem !== undefined ? localEditedItem.surname : null }}
+                  {{ localEditedItem.firstName }}
+                  {{ localEditedItem.surname }}
                 </h4>
-                <h3 class="text-center">
-                  Role: {{ localEditedItem !== undefined ? localEditedItem.roleName : null }}
-                </h3>
+                <h3 class="text-center">Role: {{ localEditedItem.roleName }}</h3>
               </v-col>
               <v-spacer></v-spacer>
             </v-col>
-            <!--            <v-col>-->
-            <!--              <small-->
-            <!--                class="text-caption"-->
-            <!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
-            <!--              >-->
-            <!--                Role-->
-            <!--              </small>-->
-            <!--              <v-text-field-->
-            <!--                :v-model="localEditedItem === undefined ? null : localEditedItem.roleName"-->
-            <!--                variant="solo"-->
-            <!--                rounded="md"-->
-            <!--              ></v-text-field>-->
-            <!--            </v-col>-->
+
             <v-col :cols="12">
               <v-select
                 clearable
                 label="Company Role"
                 @update:modelValue="change_roles"
                 :items="roleItemNames"
-                :v-model="selectedRole"
+                v-model="selectedRole"
               ></v-select>
             </v-col>
 
@@ -62,12 +48,11 @@
             <v-col align-self="center"
               ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
                 <v-btn
-                  color="#5A82AF"
+                  color="success"
                   rounded="md"
-                  border="md"
                   width="85%"
                   height="35"
-                  variant="elevated"
+                  variant="text"
                   @click="savechanges"
                 >
                   SAVE
@@ -75,12 +60,11 @@
               </v-col>
               <v-col cols="12" md="12" xs="3" sm="6" offset="1">
                 <v-btn
-                  color="#5A82AF"
+                  color="error"
                   rounded="md"
-                  border="md"
                   width="85%"
                   height="35"
-                  variant="elevated"
+                  variant="text"
                   @click="close"
                 >
                   CANCEL
@@ -111,17 +95,16 @@ type Role = {
 export default {
   name: 'EditClient',
   props: {
-    isDarkMode: Boolean,
-    colors: Object,
-    editedItem: Object,
-    item: Object,
-    _clientID: String
+    editedItem: {
+      type: Object,
+      required: true
+    }
   },
   data() {
     return {
       selectedRole: '',
       localEditedItem: this.editedItem,
-      isdarkmode: localStorage['theme'] !== 'false',
+      isdarkmode: sessionStorage['theme'] !== 'false',
       role_change: false,
       employeeDialog: false,
       roleItemNames: [] as string[],
@@ -156,8 +139,8 @@ export default {
   methods: {
     select,
     change_roles() {
-      console.log('hello')
       this.role_change = true
+      console.log(this.selectedRole)
     },
     showlcalvalues() {
       console.log(this.localEditedItem)
@@ -174,6 +157,7 @@ export default {
         )
         let roles_data: Role[] = roles_response.data
         for (let i = 0; i < roles_data.length; i++) {
+          if (roles_data[i].roleName === this.localEditedItem.roleName) continue
           rolesNames_arr.push(roles_data[i].roleName)
         }
         this.roleItemNames = rolesNames_arr
@@ -186,34 +170,33 @@ export default {
     close() {
       this.employeeDialog = false
     },
-    updateItem() {
-      // Logic to update the item, then emit an event with the updated value
-      // Step 3: Emit an event for updates
-      this.$emit('update:item', this.localEditedItem)
-      alert('Item updated')
-    },
-    savechanges() {
-      alert('Employee updated')
-      this.employeeDialog = false
+    async savechanges() {
+      // alert('Employee updated')
       let employee_req_obj = {
-        roleId: '',
-        currentJobAssignments: [],
-        superiorId: '',
-        subordinates: [],
-        subordinateTeams: []
+        roleId: ''
       }
+      console.log(this.selectedRole)
       for (let i = 0; i < this.roleItems.length; i++) {
+        console.log(this.roleItems[i].roleName)
         if (this.roleItems[i].roleName === this.selectedRole) {
           employee_req_obj.roleId = this.roleItems[i]._id
+          break
         }
       }
+      console.log(employee_req_obj.roleId)
       let config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
-      let apiURL = this.getRequestUrl()
-      axios.patch(
-        apiURL + `employee/${this.localEditedItem !== undefined ? this.localEditedItem._id : null}`,
-        this.localEditedItem,
-        config
-      )
+      let apiURL = await this.getRequestUrl()
+      console.log(this.localEditedItem)
+      axios
+        .patch(apiURL + `employee/${this.localEditedItem.employeeId}`, employee_req_obj, config)
+        .then((res) => {
+          alert('Employee updated')
+          this.employeeDialog = false
+          window.location.reload()
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
     // async update() {
     //   await axios
