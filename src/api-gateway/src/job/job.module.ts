@@ -11,6 +11,7 @@ import { EmployeeModule } from '../employee/employee.module';
 import { EmployeeService } from '../employee/employee.service';
 import { TeamModule } from '../team/team.module';
 import { RoleModule } from '../role/role.module';
+import { EmployeeRepository } from 'src/employee/employee.repository';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { RoleModule } from '../role/role.module';
     forwardRef(() => RoleModule),
     forwardRef(() => TeamModule),
   ],
-  providers: [JobService, JobRepository, EmployeeService],
+  providers: [JobService, JobRepository, EmployeeService, EmployeeRepository],
   controllers: [JobController],
   exports: [JobService, MongooseModule, JobRepository],
 })

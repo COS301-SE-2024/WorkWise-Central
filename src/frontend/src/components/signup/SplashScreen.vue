@@ -907,7 +907,7 @@ export default defineComponent({
             sessionStorage.setItem('access_token', response.data.access_token)
             sessionStorage.setItem('id', response.data.id)
             sessionStorage.setItem(
-              'currentCompanyID',
+              'currentCompany',
               response.data.user.joinedCompanies[0].companyId
             )
             this.alertLoginFailure = false

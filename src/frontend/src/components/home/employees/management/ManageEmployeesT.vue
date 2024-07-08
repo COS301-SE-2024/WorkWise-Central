@@ -1,5 +1,5 @@
 <template>
-  <v-app :style="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color">
+  <v-app :style="isdarkmode === true ? 'dark' : 'light'">
     <v-container fluid fill-height>
       <v-row justify="center" xs="6" sm="6" md="12">
         <v-col cols="12">
@@ -12,12 +12,12 @@
                 class="pa-11 ma-0"
                 rounded="md"
                 elevation-2
-                :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :color="isdarkmode === true ? 'dark' : 'light'"
                 border="md"
               >
                 <v-card-title
                   class="d-flex align-center pe-2"
-                  :color="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                  :color="isdarkmode === true ? 'dark' : 'light'"
                   style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
                 >
                   <v-icon icon="mdi-account"></v-icon> &nbsp; Employee Details
@@ -33,9 +33,7 @@
                     flat
                     style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
                     hide-details
-                    :bg-color="
-                      isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                    "
+                    :bg-color="isdarkmode === true ? 'dark' : 'light'"
                     single-line
                   ></v-text-field>
                   <v-spacer></v-spacer>
@@ -57,6 +55,7 @@
                         :item-class="getRowClass"
                         @click:row="toggleExpand"
                         class="font-lato"
+                        :color="isdarkmode === true ? 'dark' : 'light'"
                       >
                         <template v-slot:[`item.details.firstName`]="{ value }">
                           <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
@@ -119,7 +118,7 @@
             <EditEmployee
               @update:item="selectedItem = $event"
               :editedItem="selectedItem"
-            /><DeleteClient :details="selectedItem" />
+            /><DeleteEmployee :details="selectedItem" />
             <v-spacer></v-spacer>
             <v-btn @click="actionsDialog = false">Cancel</v-btn>
           </v-card-actions>
@@ -130,13 +129,12 @@
 </template>
 
 <script lang="ts">
-// import DeleteClient from '../../clients/management/DeleteClient.vue'
 import AddEmployee from './AddEmployee.vue'
 
 import axios from 'axios'
 import router from '@/router/index'
 import EditEmployee from '@/components/home/employees/management/EditEmployee.vue'
-import DeleteClient from '@/components/home/clients/management/DeleteClient.vue'
+import DeleteEmployee from '@/components/home/employees/management/DeleteEmployee.vue'
 import EmployeeDetails from '@/components/home/employees/management/EmployeeDetails.vue'
 
 type Address = {
@@ -250,6 +248,8 @@ type EmployeePersonalInfo = {
   gender: string
   roleId: string
   roleName: string
+  employeeId: string
+  userId: string
 }
 
 export default {
@@ -439,9 +439,8 @@ export default {
   }),
   components: {
     EmployeeDetails,
-    DeleteClient,
+    DeleteEmployee,
     EditEmployee,
-    // DeleteClient,
     AddEmployee
   },
   computed: {
@@ -519,7 +518,10 @@ export default {
       }
       const apiURL = await this.getRequestUrl()
       try {
-        const employee_response = await axios.get(apiURL + `employee/allcls`, config)
+        const employee_response = await axios.get(
+          apiURL + `employee/all/${sessionStorage['currentCompany']}`,
+          config
+        )
         let employee_all_data: Employee[] = employee_response.data
 
         let company_employee_arr: EmployeePersonalInfo[] = []
@@ -531,10 +533,13 @@ export default {
 
           const user_data: User = users_response.data
 
+          // console.log(user_data)
+
+          if (user_data.data.personalInfo.address === undefined) continue
+
           if (employee_all_data[i].roleId !== undefined) {
             let role = await axios.get(apiURL + `role/id/${employee_all_data[i].roleId}`, config)
 
-            // console.log('hello')
             if (role.status < 300 && role.status > 199) {
               let company_employee: EmployeePersonalInfo = {
                 address: {
@@ -555,7 +560,9 @@ export default {
                 dateOfBirth: user_data.data.personalInfo.dateOfBirth,
                 gender: user_data.data.personalInfo.gender,
                 roleId: employee_all_data[i].roleId,
-                roleName: role.data.roleName
+                roleName: role.data.roleName,
+                employeeId: employee_all_data[i]._id,
+                userId: employee_all_data[i].userId
               }
 
               //     user_data.data.personalInfo
@@ -596,7 +603,9 @@ export default {
               dateOfBirth: user_data.data.personalInfo.dateOfBirth,
               gender: user_data.data.personalInfo.gender,
               roleId: '',
-              roleName: ''
+              roleName: '',
+              employeeId: employee_all_data[i]._id,
+              userId: employee_all_data[i].userId
             }
             // let company_employee: EmployeePersonalInfo = user_data.data.personalInfo
             // company_employee.roleId = ''

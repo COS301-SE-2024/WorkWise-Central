@@ -12,13 +12,13 @@
       ></v-btn>
     </template>
     <v-sheet
-      :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+      :color="isdarkmode === true ? 'dark' : 'light'"
       elevation="14"
       rounded="md"
       max-height="800"
       max-width="600"
     >
-      <v-form ref="form" v-model="valid" @submit="handleSubmit">
+      <v-form ref="form" v-model="valid" @submit.prevent="handleSubmit">
         <v-col>
           <v-col>
             <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -35,13 +35,14 @@
               >
 
               <v-text-field
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :bg-color="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
                 color="grey-lighten-4"
-                v-model="req_obj.newEmployeeUsername"
+                v-model="req_obj2.userName"
                 placeholder="Employee Username"
                 rounded="md"
-                variant="solo"
+                variant="underlined"
+                required
               ></v-text-field
             ></v-col>
             <!--            <v-container>-->
@@ -88,15 +89,15 @@
             <!--              ></v-text-field-->
             <!--            ></v-col>-->
           </v-col>
-          <v-col cols="8" offset="2" align="center">
+          <v-col cols="12" md="12" xs="3" sm="6" align="center">
             <v-btn
-              color="#5A82AF"
+              color="success"
               rounded="md"
               boarder="md"
               type="submit"
               width="80%"
               height="35"
-              variant="elevated"
+              variant="text"
               :disabled="click_create_client"
               >ADD EMPLOYEE</v-btn
             >
@@ -110,9 +111,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+// import router from '@/router'
 export default defineComponent({
   name: 'RegisterCompanyModal',
   data: () => ({
+    localUrl: 'http://localhost:3000/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     valid: false,
     dialog: false,
     isdarkmode: localStorage['theme'] !== 'false',
@@ -123,23 +127,51 @@ export default defineComponent({
     modal_light_theme_color: '#FFFFFF',
 
     req_obj: {
-      adminId: sessionStorage['id'],
-      currentCompany: sessionStorage['currentCompany'],
-      newEmployeeUsername: ''
+      companyId: sessionStorage['currentCompany'],
+      userId: ''
+    },
+    req_obj2: {
+      userName: '',
+      companyId: sessionStorage['currentCompany']
     }
   }),
   methods: {
-    handleSubmit() {
-      alert('Employee added successfully')
-      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
-      axios
-        .post('http://localhost:3000/employee', this.req_obj, config)
-        .then((res) => {
-          console.log(res)
-        })
-        .catch((res) => {
-          console.log(res)
-        })
+    async handleSubmit() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const employee_response = await axios.get(apiURL + `users/all`, config)
+        const emp_lst = employee_response.data.data
+        console.log(emp_lst)
+        for (let i = 0; i < emp_lst.length; i++) {
+          if (emp_lst[i].systemDetails.username === this.req_obj2.userName) {
+            this.req_obj.userId = emp_lst[i]._id
+            let response = await axios.post(apiURL + 'employee/create', this.req_obj, config)
+            console.log(response)
+            this.$router.push('/manager-employees-t')
+            break
+          }
+        }
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
   }
 })

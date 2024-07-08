@@ -15,23 +15,69 @@ export class Employee {
 
   @ApiProperty()
   @Prop({ required: false })
-  roleId: Types.ObjectId;
+  roleId?: Types.ObjectId;
 
   @ApiProperty()
   @Prop({ type: [Types.ObjectId], required: true, default: [] })
-  currentJobAssignments: Types.ObjectId[];
+  currentJobAssignments?: Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ required: false })
-  superiorId: Types.ObjectId;
+  superiorId?: Types.ObjectId;
 
   @ApiProperty()
   @Prop({ type: [Types.ObjectId], required: false, default: [] })
-  subordinates: Types.ObjectId[];
+  subordinates?: Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ type: [Types.ObjectId], required: false, default: [] })
-  subordinateTeams: Types.ObjectId[];
+  subordinateTeams?: Types.ObjectId[];
+
+  @ApiProperty()
+  @Prop({ required: true })
+  userId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  companyId: Types.ObjectId;
+
+  @ApiHideProperty()
+  @Prop({ required: true, default: new Date() })
+  public createdAt: Date;
+
+  @ApiHideProperty()
+  @Prop({ required: false })
+  public updatedAt: Date;
+
+  @ApiHideProperty()
+  @Prop({ required: false })
+  public deletedAt: Date;
+}
+
+export class EmployeeApiObject {
+  @ApiProperty()
+  @Prop({ required: true, unique: true })
+  id: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ required: false })
+  roleId?: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: [Types.ObjectId], required: true, default: [] })
+  currentJobAssignments?: Types.ObjectId[];
+
+  @ApiProperty()
+  @Prop({ required: false })
+  superiorId?: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: [Types.ObjectId], required: false, default: [] })
+  subordinates?: Types.ObjectId[];
+
+  @ApiProperty()
+  @Prop({ type: [Types.ObjectId], required: false, default: [] })
+  subordinateTeams?: Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ required: true })
@@ -55,3 +101,21 @@ export class Employee {
 }
 
 export const EmployeeSchema = SchemaFactory.createForClass(Employee);
+
+export class EmployeeListResponseDto {
+  constructor(data: EmployeeApiObject[]) {
+    this.data = data;
+  }
+  data: EmployeeApiObject[];
+}
+
+export class EmployeeResponseDto {
+  constructor(data: EmployeeApiObject) {
+    this.data = data;
+  }
+  data: EmployeeApiObject;
+}
+
+export class BooleanResponseDto {
+  data: boolean;
+}

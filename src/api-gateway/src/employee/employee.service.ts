@@ -5,32 +5,43 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  ServiceUnavailableException,
 } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Document, Model, Types, FlattenMaps } from 'mongoose';
+import { Model, Types, FlattenMaps } from 'mongoose';
 import { Employee } from './entities/employee.entity';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
 import { RoleService } from '../role/role.service';
 import { JobService } from '../job/job.service';
 import { TeamService } from '../team/team.service';
-import { User } from '../users/entities/user.entity';
+import { EmployeeRepository } from './employee.repository';
+// import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class EmployeeService {
   constructor(
     @InjectModel(Employee.name)
     private readonly employeeModel: Model<Employee>,
+
+    // @InjectModel(User.name)
+    // private readonly userModel: Model<User>,
+
+    @Inject(forwardRef(() => EmployeeRepository))
+    private readonly employeeRepository: EmployeeRepository,
+
     @Inject(forwardRef(() => UsersService))
-    private usersService: UsersService,
-    private companyService: CompanyService,
+    private readonly usersService: UsersService,
+
+    private readonly companyService: CompanyService,
+
     @Inject(forwardRef(() => RoleService))
-    private roleService: RoleService,
+    private readonly roleService: RoleService,
+
     @Inject(forwardRef(() => JobService))
-    private jobService: JobService,
+    private readonly jobService: JobService,
+
     private teamService: TeamService,
   ) {}
 
@@ -39,15 +50,15 @@ export class EmployeeService {
     companyId?: string,
   ) {
     if (!companyId && !('companyId' in employee)) {
-      //Potentially not neccesarry
+      //Potentially not necessary
       if (employee.roleId) {
-        if (!(await this.roleService.roleExists(employee.roleId.toString()))) {
+        if (!(await this.roleService.roleExists(employee.roleId))) {
           throw new ConflictException('Role not found');
         }
       }
 
       if (employee.superiorId) {
-        if (!(await this.employeeExists(employee.superiorId.toString()))) {
+        if (!(await this.employeeExists(employee.superiorId))) {
           throw new ConflictException('Superior not found');
         }
       }
@@ -67,9 +78,9 @@ export class EmployeeService {
 
       if ('subordinates' in employee && employee.subordinates) {
         for (const subordinateId of employee.subordinates) {
-          if (!(await this.employeeExists(subordinateId.toString()))) {
+          if (!(await this.employeeExists(subordinateId))) {
             throw new ConflictException(
-              `Subordinate ${subordinateId.toString()} not found`,
+              `Subordinate ${subordinateId} not found`,
             );
           }
         }
@@ -77,10 +88,8 @@ export class EmployeeService {
 
       if ('subordinateTeams' in employee && employee.subordinateTeams) {
         for (const teamId of employee.subordinateTeams) {
-          if (!(await this.teamService.teamExists(teamId.toString()))) {
-            throw new ConflictException(
-              `Subordinate team ${teamId.toString()} not found`,
-            );
+          if (!(await this.teamService.teamExists(teamId))) {
+            throw new ConflictException(`Subordinate team ${teamId} not found`);
           }
         }
       }
@@ -89,12 +98,12 @@ export class EmployeeService {
         companyId = employee.companyId.toString();
       }
 
-      console.log('Company ID: ' + companyId);
+      // console.log('Company ID: ' + companyId);
 
       if (employee.roleId) {
         if (
           !(await this.roleService.roleExistsInCompany(
-            employee.roleId.toString(),
+            employee.roleId,
             companyId,
           ))
         ) {
@@ -104,10 +113,7 @@ export class EmployeeService {
 
       if (employee.superiorId) {
         if (
-          !(await this.employeeExistsForCompany(
-            employee.superiorId.toString(),
-            companyId,
-          ))
+          !(await this.employeeExistsForCompany(employee.superiorId, companyId))
         ) {
           throw new ConflictException('Superior not found');
         }
@@ -134,10 +140,7 @@ export class EmployeeService {
       if ('subordinates' in employee && employee.subordinates) {
         for (const subordinateId of employee.subordinates) {
           if (
-            !(await this.employeeExistsForCompany(
-              subordinateId.toString(),
-              companyId,
-            ))
+            !(await this.employeeExistsForCompany(subordinateId, companyId))
           ) {
             throw new ConflictException(
               `Subordinate ${subordinateId.toString()} not found`,
@@ -149,10 +152,7 @@ export class EmployeeService {
       if ('subordinateTeams' in employee && employee.subordinateTeams) {
         for (const teamId of employee.subordinateTeams) {
           if (
-            !(await this.teamService.teamExistsInCompany(
-              teamId.toString(),
-              companyId,
-            ))
+            !(await this.teamService.teamExistsInCompany(teamId, companyId))
           ) {
             throw new ConflictException(
               `Subordinate team ${teamId.toString()} not found`,
@@ -170,13 +170,18 @@ export class EmployeeService {
   }
 
   async create(createEmployeeDto: CreateEmployeeDto) {
-    console.log('create function');
+    // console.log('create function');
     try {
       await this.validateEmployee(createEmployeeDto);
     } catch (error) {
-      console.log('error -> ', error);
+      // console.log('error -> ', error);
       throw new InternalServerErrorException(error);
     }
+
+    // checking if the user exists in the company
+    const user = await this.usersService.getUserById(createEmployeeDto.userId);
+    if (user._id == createEmployeeDto.userId)
+      throw new InternalServerErrorException('Duplicate user');
 
     const newEmployee = new Employee(createEmployeeDto);
     newEmployee.userId = createEmployeeDto.userId;
@@ -195,168 +200,105 @@ export class EmployeeService {
   }
 
   async findAll() {
-    try {
-      return this.employeeModel.find().exec();
-    } catch (error) {
-      console.log(error);
-      throw new ServiceUnavailableException('Employees could not be retrieved');
-    }
+    return await this.employeeRepository.findAll();
   }
 
-  async findAllInCompany(companyId: string | Types.ObjectId) {
-    try {
-      const filter = companyId ? { companyId: companyId } : {};
-      return this.employeeModel.find(filter).exec();
-    } catch (error) {
-      console.log(error);
-      throw new ServiceUnavailableException('Employees could not be retrieved');
-    }
+  async findAllInCompany(companyId: Types.ObjectId) {
+    return await this.employeeRepository.findAllInCompany(companyId);
   }
 
-  async findOne(id: string) {
-    return this.employeeModel.findById(id);
-  }
-
-  async employeeExists(id: string | Types.ObjectId): Promise<boolean> {
-    const result: FlattenMaps<Employee> & { _id: Types.ObjectId } =
-      await this.employeeModel
-        .findOne({
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
-
-    console.log('employeeExists -> ', result);
-    return result != null;
+  async employeeExists(id: Types.ObjectId): Promise<boolean> {
+    return await this.employeeRepository.employeeExists(id);
   }
 
   async employeeExistsForCompany(
-    id: string,
+    id: Types.ObjectId,
     companyId: string,
   ): Promise<boolean> {
-    const result: FlattenMaps<Employee> & { _id: Types.ObjectId } =
-      await this.employeeModel
-        .findOne({
-          $and: [
-            { _id: new Types.ObjectId(id) },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
-    if (result != null && result.companyId.toString() == companyId) return true;
-    return false;
+    return await this.employeeRepository.employeeExistsForCompany(
+      id,
+      companyId,
+    );
   }
 
-  async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
-    console.log('update function');
+  async update(id: Types.ObjectId, updateEmployeeDto: UpdateEmployeeDto) {
+    // console.log('update function');
     try {
       const companyId = await this.getCompanyIdFromEmployee(id);
       await this.validateEmployee(updateEmployeeDto, companyId.toString());
     } catch (error) {
-      console.log('error -> ', error);
+      // console.log('error -> ', error);
       return `${error}`;
     }
-
-    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } =
-      await this.employeeModel
-        .findOneAndUpdate(
-          {
-            $and: [
-              { _id: id },
-              {
-                $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-              },
-            ],
-          },
-          { $set: { ...updateEmployeeDto }, updatedAt: new Date() },
-        )
-        .lean();
-
+    const previousObject = this.employeeRepository.update(
+      id,
+      updateEmployeeDto,
+    );
     return previousObject;
   }
 
-  async getCompanyIdFromEmployee(employeeId: string) {
-    const result = await this.employeeModel
-      .findOne(
-        { _id: new Types.ObjectId(employeeId) },
-        { companyId: 1, _id: 0 },
-      )
-      .lean();
-
-    return result ? result.companyId : null;
+  async getCompanyIdFromEmployee(employeeId: Types.ObjectId) {
+    return this.employeeRepository.getCompanyIdFromEmployee(employeeId);
   }
 
-  async remove(id: string): Promise<boolean> {
-    const employeeToDelete = await this.findOne(id);
-
-    const result: Document<unknown, NonNullable<unknown>, User> &
-      User & { _id: Types.ObjectId } =
-      await this.employeeModel.findOneAndUpdate(
-        {
-          $and: [
-            { _id: employeeToDelete._id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        },
-        { $set: { deletedAt: new Date() } },
-      );
-
-    if (result == null) {
-      throw new InternalServerErrorException('Internal server Error');
-    }
-    return true;
+  async remove(id: Types.ObjectId): Promise<boolean> {
+    return await this.employeeRepository.remove(id);
   }
+
   async findById(
-    identifier: string | Types.ObjectId,
+    id: Types.ObjectId,
   ): Promise<FlattenMaps<Employee> & { _id: Types.ObjectId }> {
-    const result: FlattenMaps<Employee> & { _id: Types.ObjectId } =
-      await this.employeeModel
-        .findOne({
-          $and: [
-            { _id: identifier },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
+    const result = await this.employeeRepository.findById(id);
 
     if (result == null) {
-      throw new NotFoundException('Company not found');
+      throw new NotFoundException('Employee not found');
     }
-
     return result;
   }
 
   async findByIds(
-    identifiers: (string | Types.ObjectId)[],
+    ids: Types.ObjectId[],
   ): Promise<(FlattenMaps<Employee> & { _id: Types.ObjectId })[]> {
-    const ids = identifiers.map((id) => new Types.ObjectId(id));
-
-    const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] =
-      await this.employeeModel
-        .find({
-          $and: [
-            { _id: { $in: ids } },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
-
+    const result = await this.employeeRepository.findByIds(ids);
     if (result.length === 0) {
       throw new NotFoundException('Employees not found');
     }
-
     return result;
+  }
+
+  async getSuperior(id: Types.ObjectId) {
+    const employee = await this.findById(id);
+    if (employee.superiorId) {
+      return this.findById(employee.superiorId);
+    }
+    return null;
+  }
+
+  async getSubordinates(id: Types.ObjectId) {
+    const employee = await this.findById(id);
+    if (employee.subordinates) {
+      return this.findByIds(employee.subordinates);
+    }
+    return [];
+  }
+
+  async getListOfOtherEmployees(id: Types.ObjectId, companyId: Types.ObjectId) {
+    //Return a list of all the employees in the company that is not a superior or subordinate of the employee with the given id
+    const currentSuperior = await this.getSuperior(id);
+    const currentSubordinates = await this.getSubordinates(id);
+    const allEmployees = await this.findAllInCompany(companyId);
+
+    // Creating a list of all employees that does not contain the current superior or current subordinates
+    const potentialSuperiors = allEmployees.filter(
+      (employee) =>
+        employee._id.toString() !== id.toString() &&
+        employee._id.toString() !== currentSuperior._id.toString() &&
+        !currentSubordinates.some(
+          (subordinate) =>
+            subordinate._id.toString() !== employee._id.toString(),
+        ),
+    );
+
+    return potentialSuperiors;
   }
 }

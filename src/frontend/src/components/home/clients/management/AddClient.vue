@@ -19,7 +19,7 @@
       overflow-y="auto"
       max-width="600"
     >
-      <v-form ref="form" v-model="valid" @submit="handleSubmission">
+      <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
         <v-col>
           <v-col>
             <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -102,43 +102,7 @@
                 :rules="username_rules"
               ></v-text-field
             ></v-col>
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption white--text"
-                >ID of client*</small
-              >
-              <v-text-field
-                density="compact"
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                color="grey-lighten-4"
-                placeholder="Enter the ID number of the client"
-                v-model="req_obj.idNumber"
-                rounded="md"
-                variant="underlined"
-                required
-                :rules="id_number_rules"
-              ></v-text-field
-            ></v-col>
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption white--text"
-                >Username of client*</small
-              >
 
-              <v-text-field
-                density="compact"
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                color="grey-lighten-4"
-                placeholder="Enter the username of the client"
-                v-model="req_obj.clientUsername"
-                rounded="md"
-                variant="underlined"
-                required
-                :rules="username_rules"
-              ></v-text-field
-            ></v-col>
             <v-col>
               <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
                 >Client email address*</small
@@ -450,7 +414,6 @@ export default defineComponent({
       axios
         .post(apiURL + 'client/create', this.req_obj, config)
         .then((res) => {
-          console.log('Client created successfully')
           console.log(res)
           alert('Client created successfully')
           this.$router.push('/client-desk-view')
