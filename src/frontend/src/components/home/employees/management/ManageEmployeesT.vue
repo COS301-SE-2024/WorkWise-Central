@@ -33,9 +33,7 @@
                     flat
                     style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
                     hide-details
-                    :bg-color="
-                      isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color
-                    "
+                    :bg-color="isdarkmode === true ? 'dark' : 'light'"
                     single-line
                   ></v-text-field>
                   <v-spacer></v-spacer>
@@ -250,6 +248,8 @@ type EmployeePersonalInfo = {
   gender: string
   roleId: string
   roleName: string
+  employeeId: string
+  userId: string
 }
 
 export default {
@@ -560,7 +560,9 @@ export default {
                 dateOfBirth: user_data.data.personalInfo.dateOfBirth,
                 gender: user_data.data.personalInfo.gender,
                 roleId: employee_all_data[i].roleId,
-                roleName: role.data.roleName
+                roleName: role.data.roleName,
+                employeeId: employee_all_data[i]._id,
+                userId: employee_all_data[i].userId
               }
 
               //     user_data.data.personalInfo
@@ -601,7 +603,9 @@ export default {
               dateOfBirth: user_data.data.personalInfo.dateOfBirth,
               gender: user_data.data.personalInfo.gender,
               roleId: '',
-              roleName: ''
+              roleName: '',
+              employeeId: employee_all_data[i]._id,
+              userId: employee_all_data[i].userId
             }
             // let company_employee: EmployeePersonalInfo = user_data.data.personalInfo
             // company_employee.roleId = ''
