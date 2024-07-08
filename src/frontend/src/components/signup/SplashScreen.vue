@@ -903,8 +903,10 @@ export default defineComponent({
           .then((response) => {
             console.log(response)
             console.log(response.data.access_token)
+            console.log( response.data.user.joinedCompanies[0].companyId)
             sessionStorage.setItem('access_token', response.data.access_token)
             sessionStorage.setItem('id', response.data.id)
+            sessionStorage.setItem('currentCompanyID', response.data.user.joinedCompanies[0].companyId)
             this.alertLoginFailure = false
             this.alertLogin = true
             this.resetForm()
@@ -956,8 +958,8 @@ export default defineComponent({
           console.log(response)
           this.alertSignUpFailure = false
           this.alertSignUp = true
-          sessionStorage.setItem('access_token', response.data.data.access_token)
-          sessionStorage.setItem('id', response.data.data.id)
+          sessionStorage.setItem('access_token', response.data.access_token)
+          sessionStorage.setItem('id', response.data.id)
           this.resetForm()
         })
         .catch((error) => {
