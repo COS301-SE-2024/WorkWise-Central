@@ -1019,6 +1019,7 @@ export default defineComponent({
     },
     nextFlowUsername() {
       if (this.checkUsernameExist() === true) {
+        alert('Username already exists')
       } else {
         this.signupUsernameDialog = false
         this.signup2Dialog = true
