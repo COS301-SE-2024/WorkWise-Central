@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import {
+  CompanyAllNameResponseDto,
   CreateCompanyDto,
   CreateCompanyResponseDto,
   findCompanyResponseDto,
@@ -98,6 +99,26 @@ export class CompanyController {
     }
   }
 
+  @UseGuards(AuthGuard) //It may be accessed by external users
+  @ApiOperation({
+    summary: `Get all ${className} Names`,
+  })
+  @ApiOkResponse({
+    type: CompanyAllNameResponseDto,
+    description: `An array of mongodb objects of the ${className} class`,
+  })
+  @Get('/all/names')
+  async findAllNames() {
+    try {
+      return { data: await this.companyService.getAllCompanyNames() };
+    } catch (Error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   @UseGuards(AuthGuard) //Need to add authorization
   @ApiOperation({
     summary: `Get all ${className} instances`,
@@ -128,8 +149,8 @@ export class CompanyController {
     name: 'cid',
     description: `The _id attribute of the ${className}`,
   })
-  @Get('/employees/:cid')
-  async getAllInCompany(@Param('cid') cid: string) {
+  @Get('/all/employees/:cid')
+  async getAllEmployeesInCompany(@Param('cid') cid: string) {
     this.validateObjectId(cid);
     const objId = new Types.ObjectId(cid);
     try {
@@ -148,10 +169,12 @@ export class CompanyController {
     description: `The mongodb object of the ${className}, with an _id attribute`,
   })
   @Get('id/:id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     try {
       this.validateObjectId(id);
-      return { data: this.companyService.getCompanyById(id) };
+      return {
+        data: await this.companyService.getCompanyById(new Types.ObjectId(id)),
+      };
     } catch (e) {
       throw new HttpException(e, HttpStatus.NOT_FOUND);
     }

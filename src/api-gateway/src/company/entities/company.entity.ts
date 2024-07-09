@@ -115,8 +115,8 @@ export class Company {
   inventoryItems: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ required: false, default: false })
-  private: boolean;
+  @Prop({ type: Boolean, required: true, default: false })
+  private: boolean = false;
 
   @ApiHideProperty()
   @Prop({ required: false, default: new Date() })

@@ -10,19 +10,23 @@ export class CompanyRepository {
     @InjectModel(Company.name) private readonly companyModel: Model<Company>,
   ) {}
 
+  async save(company: Company) {
+    const newCompanyModel = new this.companyModel(company);
+    return await newCompanyModel.save();
+  }
+
   async findById(
-    identifier: string | Types.ObjectId,
+    identifier: Types.ObjectId,
   ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
     return this.companyModel
       .findOne({
         $and: [
           { _id: identifier },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
+          { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] },
         ],
       })
-      .lean();
+      .lean()
+      .exec();
   }
 
   async findByRegistrationNumber(
@@ -175,7 +179,7 @@ export class CompanyRepository {
     return result != null;
   }
 
-  findCompanyWithEmployee(employeeId: Types.ObjectId) {
+  async findCompanyWithEmployee(employeeId: Types.ObjectId) {
     const filter = {
       $and: [
         { employees: { $in: [employeeId] } },
@@ -184,6 +188,30 @@ export class CompanyRepository {
         },
       ],
     };
-    return this.companyModel.findOne(filter).lean().exec();
+    return await this.companyModel.findOne(filter).lean().exec();
+  }
+
+  async findAllNames() {
+    const filter = {
+      $and: [
+        { $or: [{ private: false }, { private: { $exists: false } }] },
+        { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] },
+      ],
+    };
+    return await this.companyModel
+      .find(filter)
+      .select([
+        'registrationNumber',
+        'vatNumber',
+        'name',
+        'logo',
+        'address.city',
+        'address.province',
+        'address.suburb',
+        'address.street',
+        'address.postalCode',
+      ])
+      .lean()
+      .exec();
   }
 }
