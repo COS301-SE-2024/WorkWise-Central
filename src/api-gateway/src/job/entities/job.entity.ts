@@ -1,8 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+import { Types, SchemaTypes } from 'mongoose';
 import { CreateJobDto } from '../dto/create-job.dto';
 import { Client } from '../../client/entities/client.entity';
+import { Company } from '../../company/entities/company.entity';
+import { Employee } from '../../employee/entities/employee.entity';
 
 export class Address {
   //They are optional for flexibility
@@ -57,7 +59,7 @@ export class Details {
 }
 
 export class InventoryUsed {
-  @Prop({ type: Types.ObjectId, required: true /*, ref: 'Inventory' */ })
+  @Prop({ type: SchemaTypes.ObjectId, required: true /*, ref: 'Inventory' */ })
   inventoryItemId: Types.ObjectId;
   @Prop({ type: String, required: true })
   inventoryItemName: string;
@@ -138,11 +140,15 @@ export class Job {
   }
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: true, ref: 'Company' })
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: true,
+    ref: Company.name,
+  })
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: false, ref: Client.name })
+  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Client.name })
   clientId?: Types.ObjectId;
 
   @ApiProperty()
@@ -150,7 +156,7 @@ export class Job {
   clientUsername?: string;
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: true, ref: 'Employee' })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Employee.name })
   assignedBy: Types.ObjectId;
 
   @ApiProperty()
@@ -158,8 +164,9 @@ export class Job {
     type: AssignedEmployees,
     required: false,
     default: {}, //Will this work?💀
+    ref: Employee.name,
   })
-  assignedEmployees?: AssignedEmployees;
+  assignedEmployees?: AssignedEmployees; //TODO: Check this by creating company
 
   /*  @ApiProperty()
   @Prop({ type: [Types.ObjectId], required: true })
@@ -208,76 +215,46 @@ export class Job {
 
 export class JobApiObject {
   @ApiProperty()
-  @Prop({ type: Types.ObjectId })
   _id: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: true, ref: 'Company' })
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: false, ref: Client.name })
   clientId?: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ required: false, default: `Client-${Date.now()}` })
   clientUsername?: string;
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: true, ref: 'Employee' })
   assignedBy: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({
-    type: AssignedEmployees,
-    required: false,
-    default: new AssignedEmployees(), //Will this work?💀
-  })
   assignedEmployees?: AssignedEmployees;
 
-  /*  @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: true })
-  assignedEmployees: Types.ObjectId[];*/
-
   @ApiProperty()
-  @Prop({ type: String, required: true, default: 'To do' })
   status: string = 'To do';
 
   @ApiProperty()
-  @Prop({ type: Details, required: true })
   details: Details;
 
   @ApiProperty()
-  @Prop({
-    type: RecordedDetails,
-    required: false,
-    default: new RecordedDetails(), //Again, will this work?💀
-  })
   recordedDetails?: RecordedDetails;
 
   @ApiProperty()
-  @Prop({ type: ClientFeedback, required: false })
   clientFeedback?: ClientFeedback;
 
   @ApiProperty()
-  @Prop({ type: [Task], required: false })
   taskList?: Task[];
 
   @ApiProperty()
-  @Prop({ type: [Comment], required: false })
   comments?: Comment[];
 
   @ApiProperty()
-  @Prop({ required: false, default: new Date() })
   public createdAt: Date;
 
   @ApiProperty()
-  @Prop({ required: false })
   public updatedAt: Date;
-
-  @ApiProperty()
-  @Prop({ required: false })
-  public deletedAt: Date;
 }
 
 export class JobResponseDto {

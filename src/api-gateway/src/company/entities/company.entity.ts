@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import mongoose, { Types } from 'mongoose';
+import mongoose, { SchemaTypes, Types } from 'mongoose';
 import { CreateCompanyDto } from '../dto/create-company.dto';
 import { Employee } from '../../employee/entities/employee.entity';
 
@@ -95,12 +95,22 @@ export class Company {
   address: Address;
 
   @ApiProperty()
-  @Prop({ type: [mongoose.Types.ObjectId], required: true, default: [] })
-  employees: mongoose.Types.ObjectId[];
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: true,
+    default: [],
+    ref: Employee.name,
+  })
+  employees: Types.ObjectId[];
 
   @ApiHideProperty()
-  @Prop({ type: [mongoose.Types.ObjectId], required: true, default: [] })
-  inventoryItems: mongoose.Types.ObjectId[];
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: true,
+    default: [],
+    /*    ref: Inventory.name,*/ //TODO: Add ref to Inventory
+  })
+  inventoryItems: Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ required: false, default: false })
@@ -121,64 +131,46 @@ export class Company {
 
 export class CompanyApiObject {
   @ApiProperty()
-  @Prop({ required: true, unique: true })
   id: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ required: true, unique: true })
   registrationNumber: string;
 
   @ApiProperty()
-  @Prop({ required: true, unique: true })
   vatNumber: string;
 
   @ApiProperty()
-  @Prop({ required: true })
   name: string;
 
   @ApiProperty()
-  @Prop({ required: false })
   type?: string;
 
   @ApiProperty()
-  @Prop({
-    required: false,
-    default:
-      'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
-  })
   logo?: string =
     'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
 
   @ApiProperty()
-  @Prop({ required: true })
   contactDetails: ContactDetails;
 
   @ApiProperty()
-  @Prop({ required: true })
   address: Address;
 
   @ApiProperty()
-  @Prop({ type: [mongoose.Types.ObjectId], required: true, default: [] })
   employees: mongoose.Types.ObjectId[];
 
   @ApiHideProperty()
-  @Prop({ type: [mongoose.Types.ObjectId], required: true, default: [] })
   inventoryItems: mongoose.Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ required: false, default: false })
   private: boolean;
 
   @ApiHideProperty()
-  @Prop({ required: false, default: new Date() })
   public createdAt: Date;
 
   @ApiHideProperty()
-  @Prop({ required: false })
   public updatedAt: Date;
 
   @ApiHideProperty()
-  @Prop({ required: false })
   public deletedAt: Date;
 }
 

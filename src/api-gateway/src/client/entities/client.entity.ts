@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+import { SchemaTypes, Types } from 'mongoose';
 import { CreateClientDto } from '../dto/create-client.dto';
+import { Company } from '../../company/entities/company.entity';
 
 export class Address {
   @Prop({ type: String, required: true })
@@ -52,7 +53,7 @@ export class ClientDetails {
   vatNumber?: string;
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: false, ref: 'Company' })
+  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Company.name })
   companyId?: Types.ObjectId;
 
   @ApiProperty()
@@ -102,32 +103,22 @@ export class Client {
 
 export class ClientApiObject {
   @ApiProperty()
-  @Prop({ type: String, required: false })
   _id?: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: String, required: false })
   registrationNumber?: string;
 
   @ApiProperty()
-  @Prop({ type: String, required: false, default: 'none' })
   clientUsername?: string;
 
   @ApiProperty()
-  @Prop({ required: true })
   details: ClientDetails;
 
   @ApiProperty()
-  @Prop({ required: false, default: new Date() })
   public createdAt: Date;
 
   @ApiProperty()
-  @Prop({ required: false })
   public updatedAt: Date;
-
-  @ApiProperty()
-  @Prop({ required: false })
-  public deletedAt: Date;
 }
 
 export const ClientSchema = SchemaFactory.createForClass(Client);
