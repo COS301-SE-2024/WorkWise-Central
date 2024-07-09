@@ -7,10 +7,6 @@ const onProfileClick = () => {
   console.log('Profile icon clicked')
 }
 
-const onEllipsisClick = () => {
-  console.log('Ellipsis icon clicked')
-}
-
 const open = ref(['Dashboard'])
 
 const dashboardSubItems = ref([
@@ -271,5 +267,4 @@ export default defineComponent({
 .custom-padding {
   padding-left: 0px !important;
 }
-
 </style>

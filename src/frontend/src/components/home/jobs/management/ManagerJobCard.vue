@@ -292,7 +292,7 @@
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="blue darken-1" text @click="saveJobDetails"> Save </v-btn>
-                  <v-btn color="blue darken-1" text @click=""> Cancel </v-btn>
+                  <v-btn color="blue darken-1" text @click="cancelJob"> Cancel </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -571,7 +571,6 @@ const saveSelection = () => {
 // For job status update
 
 const statusDialog = ref(false)
-const selectedState = ref('')
 const colors = {
   todo: 'red',
   inProgress: 'blue',
@@ -788,7 +787,7 @@ const saveJob = () => {
   router.push('/jobAssignmentView')
 }
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close'])
 const cancelJob = () => {
   emit('close')
 }
