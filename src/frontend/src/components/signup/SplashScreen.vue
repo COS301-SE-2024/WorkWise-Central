@@ -9,7 +9,9 @@
 
       <v-spacer></v-spacer>
       <v-btn @click="toggleDarkMode"
-        ><v-icon :icon="isdarkmode ? ' mdi-white-balance-sunny' : 'mdi-moon-wanning-crescent'"></v-icon
+        ><v-icon
+          :icon="isdarkmode ? ' mdi-white-balance-sunny' : 'mdi-moon-waning-crescent'"
+        ></v-icon
       ></v-btn>
     </v-app-bar>
     <!-- Main Content -->
@@ -41,6 +43,7 @@
                   dark
                   @click="loginDialog = true"
                   rounded="md"
+                  variant="elevated"
                   align-center
                   justify-center
                   class="my-3 button-width button-height text-center"
@@ -153,6 +156,7 @@
                   @click="signupDialog = true"
                   rounded="md"
                   align-center
+                  variant="elevated"
                   class="my-3 button-width button-height text-center"
                   size="large"
                 >
@@ -383,6 +387,18 @@
                       >Continue</v-btn
                     ></v-col
                   >
+                  <v-col clos="8" offset="2">
+                    <v-btn
+                      @click="(signup1Dialog = true)((signupUsernameDialog = false))"
+                      rounded="md"
+                      color="secondary"
+                      size="large"
+                      variant="elevated"
+                      width="100%"
+                    >
+                      Back
+                    </v-btn>
+                  </v-col>
                 </v-sheet>
               </v-dialog>
             </v-col>

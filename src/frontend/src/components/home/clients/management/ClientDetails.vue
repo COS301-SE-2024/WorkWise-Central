@@ -4,7 +4,7 @@
       <v-btn color="primary" v-bind="activatorProps"> View </v-btn>
     </template>
 
-    <v-sheet :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-sheet :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
       <v-card-title>
         <span class="headline">Client Details</span>
       </v-card-title>

@@ -22,6 +22,11 @@ const vuetify = createVuetify({
         },
         VCardText: {},
         VCardActions: {}
+      },
+      VSheet: {
+        VCardTitle: {
+          class: 'text-h5 font-weight-regular bg-primary justify-center'
+        }
       }
     },
     VTextField: {
@@ -29,6 +34,7 @@ const vuetify = createVuetify({
       rounded: 'md',
       density: 'compact'
     },
+    
     VCard: {
       elevation: 14,
       rounded: 'md',
@@ -55,6 +61,9 @@ const vuetify = createVuetify({
       density: 'compact',
       rounded: 'md',
       variant: 'solo'
+    },
+    VIcon:{
+      color:'elementTextColor'
     }
   },
   directives,
@@ -86,18 +95,19 @@ const vuetify = createVuetify({
     themes: {
       light: {
         colors: {
-          background: '#F1F2F4',
-          primary: '#0073e6',
+          background: '#F7F8F9',
+          primary: '#2C3E5D',
           secondary: '#879898',
           accent: '#82B1FF',
           error: '#e639462',
           info: '#2196F3',
           success: '#4CAF50',
           warning: '#FFC107',
-          cardColor: '#38414a',
-          elementTextColor: '#B6C2CF', // most important color for text
+          cardColor: '#F1F2F4',
+          elementTextColor: '#44546F', // most important color for text
           n_elementTextColor: '#8C9BAB', // most nonImportant color for text
-          highlighter: '#DEE4EA'
+          highlighter: '#DEE4EA',
+          tableRowColor: ''
         }
       },
       dark: {
@@ -113,7 +123,8 @@ const vuetify = createVuetify({
           cardColor: '#22272B',
           elementTextColor: '#B6C2CF',
           n_elementTextColor: '#8C9BAB', // most nonImportant color for text
-          highlighter: '#DEE4EA'
+          highlighter: '#DEE4EA',
+          tableRowColor: '#454f5'
         }
       }
     }

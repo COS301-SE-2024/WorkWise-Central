@@ -11,15 +11,19 @@
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
         height="auto"
         width="100%"
-        :style="
-          (isdarkmode === true ? dark_theme_text_color : light_theme_text_color,
-          'font-family: Lato, sans-serif; font-size: 25px; font-weight: lighter')
-        "
+        :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
+        :style="'font-family: Lato, sans-serif; font-size: 25px; font-weight: lighter'"
       >
         <v-row align="center" justify="space-between">
           <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
-            <v-icon color="secondary" icon="mdi-account"></v-icon>
-            <label class="ms-2" height="auto" width="auto" color="secondary">Client Details</label>
+            <v-icon icon="mdi-account"></v-icon>
+            <label
+              class="ms-2 text-h4 font-family-lato"
+              height="auto"
+              width="auto"
+              :style="{ color: 'secondary' }"
+              >Client Details</label
+            >
           </v-col>
 
           <v-col cols="12" md="4" sm="6" xs="12">
@@ -56,32 +60,44 @@
               height="auto"
               rounded="xl"
               :item-class="getRowClass"
-              class="font-lato bg-cardColor"
+              :class="(tableClass, 'font-lato bg-cardColor')"
+              :style="{ color: isdarkmode ? light : light_theme_text_color }"
               :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
             >
-              <template v-slot:[`item.name`]="{ value }">
-                <v-chip variant="text" color="n_elementTextColor">
+              <template v-slot:[`item.firstName`]="{ value }">
+                <v-chip variant="text" color="elementTextColor">
                   <v-icon>mdi-account</v-icon>{{ value }}</v-chip
                 >
               </template>
               <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                <v-chip variant="text" @click="callPhone" color="elementTextColor"
+                <v-chip
+                  variant="text"
+                  @click="callPhone"
+                  color="elementTextColor"
+                  border="md"
+                  rounded="xl"
                   ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
                 >
               </template>
               <template v-slot:[`item.mostRecentJob`]="{ value }">
                 <v-chip :color="getColor(value)"> {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip>
               </template>
-              <template v-slot:[`item.surname`]="{ value }">
-                <v-chip variant="text" color="n_elementTextColor"> {{ value }}</v-chip>
+              <template v-slot:[`item.lastName`]="{ value }">
+                <v-chip variant="text" color="elementTextColor"> {{ value }}</v-chip>
               </template>
               <template v-slot:[`item.contactInfo.email`]="{ value }">
-                <v-chip variant="text" rounded="xl" @click="sendEmail" color="elementTextColor" border="md" class="bg-highlighter">
+                <v-chip
+                  variant="text"
+                  rounded="xl"
+                  @click="sendEmail"
+                  color="elementTextColor"
+                  border="md"
+                >
                   <v-icon>mdi-email</v-icon>{{ value }}</v-chip
                 >
               </template>
               <template v-slot:[`item.address.street`]="{ value }">
-                <v-chip variant="text" color="n_elementTextColor">
+                <v-chip variant="text" color="elementTextColor">
                   <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip
                 >
               </template>
@@ -170,15 +186,15 @@ export default defineComponent({
         title: 'First Name',
         align: 'start',
         sortable: true,
-        value: 'name',
-        key: 'name',
+        value: 'firstName',
+        key: 'firstName',
         class: 'my-header-style'
       },
       {
         title: 'Surname',
         align: 'start',
         sortable: true,
-        value: 'surname',
+        value: 'lastName',
         key: 'lastName',
         class: 'my-header-style'
       },
@@ -223,6 +239,12 @@ export default defineComponent({
           value.toString().toLowerCase().includes(this.search.toLowerCase())
         )
       })
+    },
+    tableClass() {
+      return {
+        'dark-mode': this.isdarkmode,
+        'light-mode': !this.isdarkmode
+      }
     }
   },
   mounted() {
@@ -389,10 +411,27 @@ export default defineComponent({
 .fin {
   background-color: #38414a;
 }
+/* Dark mode */
 tbody tr:nth-of-type(odd) {
-  background-color: #454f59;
+  background-color: #454f59; /* Adjust the color as needed for dark mode #DCDFE4*/
+}
+
+/* Light mode */
+tbody tr:nth-of-type(odd) {
+  background-color: #dcdfe4; /* Adjust the color as needed for light mode */
 }
 .my-header-style {
   background: red;
+}
+.font-family-lato {
+  font-family: 'Lato', sans-serif;
+}
+
+.dark-mode tbody tr:nth-of-type(odd) {
+  background-color: #454f59; /* Dark mode odd row color */
+}
+
+.light-mode tbody tr:nth-of-type(odd) {
+  background-color: #dcdfe4; /* Light mode odd row color */
 }
 </style>
