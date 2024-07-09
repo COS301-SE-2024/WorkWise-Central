@@ -130,7 +130,6 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
-                class="custom-padding"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -258,13 +257,8 @@ export default defineComponent({
 }
 .toolbar-text {
   font-size: 36px;
-  font-display: 'Lato';
 }
 .icon-padding {
   padding: 8px; /* Adjust the padding value as needed */
-}
-
-.custom-padding {
-  padding-left: 0px !important;
 }
 </style>
