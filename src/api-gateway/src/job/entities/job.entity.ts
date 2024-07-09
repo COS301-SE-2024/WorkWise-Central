@@ -12,6 +12,8 @@ export class Address {
   @Prop({ type: String, required: false })
   street?: string;
   @Prop({ type: String, required: false })
+  province?: string;
+  @Prop({ type: String, required: false })
   suburb?: string;
   @Prop({ type: String, required: false })
   city?: string;

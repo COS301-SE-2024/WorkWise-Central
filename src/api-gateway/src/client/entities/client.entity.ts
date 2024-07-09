@@ -10,6 +10,8 @@ export class Address {
   @Prop({ type: String, required: true })
   suburb: string;
   @Prop({ type: String, required: true })
+  province: string;
+  @Prop({ type: String, required: true })
   city: string;
   @Prop({ type: String, required: true })
   postalCode: string;
@@ -82,7 +84,7 @@ export class Client {
 
   @ApiProperty()
   @Prop({ type: String, required: false, default: 'none' })
-  clientUsername?: string;
+  clientUsername?: string = 'none';
 
   @ApiProperty()
   @Prop({ required: true })

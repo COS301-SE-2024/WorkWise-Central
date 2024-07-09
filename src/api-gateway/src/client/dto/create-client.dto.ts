@@ -41,6 +41,12 @@ export class Address {
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
+  province: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(255)
   suburb: string;
 
   @ApiProperty()
