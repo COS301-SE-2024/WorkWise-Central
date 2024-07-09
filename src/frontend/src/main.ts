@@ -5,7 +5,7 @@ import vuetify from './plugins/vuetify'
 import { KanbanPlugin } from '@syncfusion/ej2-vue-kanban'
 import { registerLicense } from '@syncfusion/ej2-base'
 // import store from './store';
-
+import './assets/styles.css'
 const lice = 'ORg4AjUWIQA/Gnt2UFhhQlJBfVhdWnxLflFyVWJZdVpxfldAcC0sT3RfQFljT35bdkRgX3pYc3NURQ=='
 registerLicense(lice)
 

@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="clientDialog" max-width="500">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn class="text-none font-weight-regular hello" color="secondary" v-bind="activatorProps"
+      <v-btn class="text-none font-weight-regular hello" color="info" v-bind="activatorProps"
         >Edit</v-btn
       >
     </template>
@@ -11,113 +11,112 @@
       </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
-        <v-container
-          ><v-col>
-            <v-row>
-              <v-col cols="6">
-                <small
-                  class="text-caption font-weight-bold"
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                >
-                  Name
-                </small>
-                <v-text-field v-model="localEditedItem.name" :rules="nameRules"></v-text-field>
-              </v-col>
-              <v-col cols="6">
-                <small
-                  class="text-caption font-weight-bold"
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                >
-                  Surname
-                </small>
-                <v-text-field
-                  v-model="localEditedItem.surname"
-                  :rules="surnameRules"
-                ></v-text-field> </v-col
-            ></v-row>
+        <v-col>
+          <v-row>
+            <v-col cols="6">
+              <small
+                class="text-caption font-weight-bold"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Name
+              </small>
+              <v-text-field v-model="localEditedItem.name" :rules="nameRules"></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <small
+                class="text-caption font-weight-bold"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Surname
+              </small>
+              <v-text-field
+                v-model="localEditedItem.surname"
+                :rules="surnameRules"
+              ></v-text-field> </v-col
+          ></v-row>
 
-            <v-row>
-              <v-col cols="6">
-                <small
-                  class="text-caption font-weight-bold"
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                >
-                  Phone Number
-                </small>
-                <v-text-field
-                  v-model="localEditedItem.contactInfo.phoneNumber"
-                  :rules="phoneRules"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="6">
-                <small
-                  class="text-caption font-weight-bold"
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                >
-                  Email
-                </small>
-                <v-text-field
-                  v-model="localEditedItem.contactInfo.email"
-                  :rules="emailRules"
-                ></v-text-field> </v-col
-            ></v-row>
+          <v-row>
+            <v-col cols="6">
+              <small
+                class="text-caption font-weight-bold"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Phone Number
+              </small>
+              <v-text-field
+                v-model="localEditedItem.contactInfo.phoneNumber"
+                :rules="phoneRules"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <small
+                class="text-caption font-weight-bold"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Email
+              </small>
+              <v-text-field
+                v-model="localEditedItem.contactInfo.email"
+                :rules="emailRules"
+              ></v-text-field> </v-col
+          ></v-row>
 
-            <v-row>
-              <v-col cols="6"
-                ><small
-                  class="text-caption font-weight-bold"
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                >
-                  Street
-                </small>
-                <v-text-field v-model="localEditedItem.address.street"></v-text-field
-              ></v-col>
-              <v-col cols="6">
-                <small
-                  class="text-caption font-weight-bold"
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                >
-                  Suburb
-                </small>
-                <v-text-field v-model="localEditedItem.address.suburb"></v-text-field> </v-col
-            ></v-row>
+          <v-row>
+            <v-col cols="6"
+              ><small
+                class="text-caption font-weight-bold"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Street
+              </small>
+              <v-text-field v-model="localEditedItem.address.street"></v-text-field
+            ></v-col>
+            <v-col cols="6">
+              <small
+                class="text-caption font-weight-bold"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Suburb
+              </small>
+              <v-text-field v-model="localEditedItem.address.suburb"></v-text-field> </v-col
+          ></v-row>
 
-            <v-row>
-              <v-col cols="6">
-                <small
-                  class="text-caption font-weight-bold"
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                >
-                  City
-                </small>
-                <v-text-field v-model="localEditedItem.address.city"></v-text-field>
-              </v-col>
-              <v-col cols="6">
-                <small
-                  class="text-caption font-weight-bold"
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                >
-                  Postal Code
-                </small>
-                <v-text-field v-model="localEditedItem.address.postalCode"></v-text-field></v-col
-            ></v-row>
+          <v-row>
+            <v-col cols="6">
+              <small
+                class="text-caption font-weight-bold"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                City
+              </small>
+              <v-text-field v-model="localEditedItem.address.city"></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <small
+                class="text-caption font-weight-bold"
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+              >
+                Postal Code
+              </small>
+              <v-text-field v-model="localEditedItem.address.postalCode"></v-text-field></v-col
+          ></v-row>
 
-            <v-row
-              ><v-col cols="6">
-                <small class="text-caption font-weight-bold"> Complex </small>
-                <v-text-field v-model="localEditedItem.address.complex"></v-text-field
-              ></v-col>
-              <v-col cols="6">
-                <small class="text-caption font-weight-bold"> House Number </small>
-                <v-text-field v-model="localEditedItem.address.houseNumber"></v-text-field></v-col
-            ></v-row>
-            <v-row>
-              <v-col cols="12">
-                <small class="text-caption font-weight-bold">Preferred Language</small>
-                <v-select items="languages" v-model="localEditedItem.preferred_Language"></v-select>
-              </v-col>
-            </v-row> </v-col
-        ></v-container>
+          <v-row
+            ><v-col cols="6">
+              <small class="text-caption font-weight-bold"> Complex </small>
+              <v-text-field v-model="localEditedItem.address.complex"></v-text-field
+            ></v-col>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> House Number </small>
+              <v-text-field v-model="localEditedItem.address.houseNumber"></v-text-field></v-col
+          ></v-row>
+          <v-row>
+            <v-col cols="12">
+              <small class="text-caption font-weight-bold">Preferred Language</small>
+              <v-select items="languages" v-model="localEditedItem.preferred_Language"></v-select>
+            </v-col>
+          </v-row>
+        </v-col>
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions

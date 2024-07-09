@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="clientDialog" max-width="500">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn color="primary" v-bind="activatorProps"> View </v-btn>
+      <v-btn color="success" v-bind="activatorProps"> View </v-btn>
     </template>
 
     <v-sheet :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
@@ -9,74 +9,82 @@
         <span class="headline">Client Details</span>
       </v-card-title>
       <v-card-text>
-        <v-container
-          ><v-col>
-            <v-row
-              ><v-col cols="6">
-                <label class="font-weight-bold" style="font-size:30px;"> First Name</label><v-spacer></v-spacer
-                ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
-                  ClientDetails.name
-                }}</small></v-col
-              >
-              <v-col cols="6">
-                <label class="font-weight-bold"> Surname</label><v-spacer></v-spacer
-                ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
-                  ClientDetails.surname
-                }}</small></v-col
-              >
-            </v-row>
-
-            <v-divider></v-divider>
-            <v-row>
-              <v-col cols="6">
-                <label class="font-weight-bold">Phone Number</label><v-spacer></v-spacer
-                ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
-                  ClientDetails.contactInfo.phoneNumber
-                }}</small></v-col
-              >
-              <v-col cols="6">
-                <label class="font-weight-bold"> Email</label><v-spacer></v-spacer
-                ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
-                  ClientDetails.contactInfo.email
-                }}</small></v-col
-              >
-            </v-row>
-            <v-divider></v-divider>
-            <v-row>
-              <v-col cols="6">
-                <label class="font-weight-bold"> Address</label><v-spacer></v-spacer
-                ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
-                  ClientDetails.address.street
-                }}</small>
-                <br />
-                <small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
-                  ClientDetails.address.suburb
-                }}</small>
-                <br /><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
-                  ClientDetails.address.city
-                }}</small>
-                <br /><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
-                  ClientDetails.address.postalCode
-                }}</small>
-                <br /><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
-                  ClientDetails.address.complex
-                }}</small>
-                <br /><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
-                  ClientDetails.address.houseNumber
-                }}</small></v-col
-              >
-            </v-row>
-            <v-divider></v-divider>
-            <v-col
-              ><label class="font-weight-bold"> Preferred Languages</label><v-spacer></v-spacer>
-              <v-chip color="red"
-                ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
-                  ClientDetails.preferred_Language ? ClientDetails.preferred_Language : 'None'
-                }}</small></v-chip
+        <v-col>
+          <v-row
+            ><v-col cols="6">
+              <label class="font-weight-light" style="font-size: 20px"> First Name</label
+              ><v-spacer></v-spacer
+              ><small
+                class="text-caption"
+                style="font-size: 12px"
+                :theme="isdarkmode === true ? 'dark' : 'light'"
+                >{{ ClientDetails.firstName }}</small
               ></v-col
             >
-            <v-divider></v-divider> </v-col
-        ></v-container>
+            <v-col cols="6">
+              <label class="font-weight-light" style="font-size: 20px"> Surname</label
+              ><v-spacer></v-spacer
+              ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
+                ClientDetails.lastName
+              }}</small></v-col
+            >
+          </v-row>
+
+          <v-divider></v-divider>
+          <v-row>
+            <v-col cols="6">
+              <label class="font-weight-light" style="font-size: 20px">Phone Number</label
+              ><v-spacer></v-spacer
+              ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
+                ClientDetails.contactInfo.phoneNumber
+              }}</small></v-col
+            >
+            <v-col cols="6">
+              <label class="font-weight-light" style="font-size: 20px"> Email</label
+              ><v-spacer></v-spacer
+              ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
+                ClientDetails.contactInfo.email
+              }}</small></v-col
+            >
+          </v-row>
+          <v-divider></v-divider>
+          <v-row>
+            <v-col cols="6">
+              <label class="font-weight-light" style="font-size: 20px"> Address</label
+              ><v-spacer></v-spacer
+              ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
+                ClientDetails.address.street
+              }}</small>
+              <br />
+              <small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
+                ClientDetails.address.suburb
+              }}</small>
+              <br /><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
+                ClientDetails.address.city
+              }}</small>
+              <br /><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
+                ClientDetails.address.postalCode
+              }}</small>
+              <br /><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
+                ClientDetails.address.complex
+              }}</small>
+              <br /><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">Unit: {{
+                 ClientDetails.address.houseNumber
+              }}</small></v-col
+            >
+          </v-row>
+          <v-divider></v-divider>
+          <v-col
+            ><label class="font-weight-light" style="font-size: 20px"> Preferred Languages</label
+            ><v-spacer></v-spacer>
+            <v-chip :color="ClientDetails.preferred_Language ? 'success' : 'error'"
+              ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
+                ClientDetails.preferred_Language ? ClientDetails.preferred_Language : 'None'
+              }}</small></v-chip
+            ></v-col
+          >
+          <v-divider></v-divider>
+        </v-col>
       </v-card-text>
       <v-card-actions>
         <v-col>
@@ -96,7 +104,7 @@ export default defineComponent({
   data() {
     return {
       clientDialog: false,
-      isdarkmode: sessionStorage.getItem('isdarkmode') === 'true' ? true : false
+      isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false
     }
   },
   methods: {

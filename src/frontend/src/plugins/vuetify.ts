@@ -21,7 +21,7 @@ const vuetify = createVuetify({
           class: 'text-h5 font-weight-regular bg-primary justify-center'
         },
         VCardText: {},
-        VCardActions: {}
+        VCardActions: { class: 'text-h5 font-weight-regular  justify-center' }
       },
       VSheet: {
         VCardTitle: {
@@ -37,8 +37,11 @@ const vuetify = createVuetify({
 
     VCard: {
       elevation: 14,
-      rounded: 'md',
-      height: 'auto'
+      rounded: 'xl',
+      height: 'auto',
+      class: 'bg-cardColor ',
+      VCardTitle: { class: 'text-h5 font-weight-regular bg-primary d-flex justify-center text-blue' },
+      VCardText: { class: 'bg-cardColor', VList: { class: 'bg-cardColor' } }
     },
     VBtn: {
       rounded: 'md',
@@ -70,6 +73,17 @@ const vuetify = createVuetify({
       VTextField: {
         class: 'bg-primary'
       }
+    },
+    VRow: {
+      VCol: {
+        Label: {
+          class: 'font-weight-bold',
+          style: 'font-size: 20px'
+        }
+      }
+    },
+    VChip:{
+      rounded: 'md',
     }
   },
   directives,
@@ -114,7 +128,10 @@ const vuetify = createVuetify({
           headingTextColor: '#091E42',
           n_elementTextColor: '#8C9BAB', // most nonImportant color for text
           highlighter: '#DEE4EA',
-          tableRowColor: ''
+          tableRowColor: '',
+          firstPlace: '#FFD700',
+          secondPlace: '#C0C0C0',
+          thirdPlace: '#CD7F32',
         }
       },
       dark: {
@@ -132,7 +149,10 @@ const vuetify = createVuetify({
           headingTextColor: '#DCDFE4',
           n_elementTextColor: '#8C9BAB', // most nonImportant color for text
           highlighter: '#DEE4EA',
-          tableRowColor: '#454f5'
+          tableRowColor: '#454f5',
+          firstPlace: '#FFD700',
+          secondPlace: '#C0C0C0',
+          thirdPlace: '#CD7F32',
         }
       }
     }

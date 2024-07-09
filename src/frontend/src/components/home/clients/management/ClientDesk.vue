@@ -59,10 +59,7 @@
               label="Clients"
               height="auto"
               rounded="xl"
-              :item-class="getRowClass"
-              :class="(tableClass, 'font-lato bg-cardColor')"
-              :style="{ color: isdarkmode ? light : light_theme_text_color }"
-              :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
+              class="bg-cardColor"
             >
               <template v-slot:[`item.firstName`]="{ value }">
                 <v-chip variant="text" color="elementTextColor">
@@ -108,7 +105,6 @@
                 <v-btn
                   rounded="xl"
                   variant="plain"
-                  
                   @click="(actionsDialog = true), selectItem(item)"
                 >
                   <v-icon>mdi-dots-horizontal</v-icon>
@@ -138,7 +134,7 @@
             :client="selectedItem"
           />
           <v-spacer></v-spacer>
-          <v-btn @click="actionsDialog = false">Close</v-btn>
+          <v-btn @click="actionsDialog = false" color="error">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -258,9 +254,9 @@ export default defineComponent({
     },
     selectItem(item) {
       this.selectedItem = item
-      this.selectedItemName = item.name
+      this.selectedItemName = item.firstName
       console.log(this.selectedItemName)
-      this.selectedItemSurname = item.surname
+      this.selectedItemSurname = item.lastName
       for (let i = 0; i < this.clientDetails.length; i++) {
         if (this.clientDetails[i] === item) {
           this.selectedItemId = this.clientIds[i]
@@ -414,7 +410,7 @@ export default defineComponent({
 }
 /* Dark mode */
 tbody tr:nth-of-type(odd) {
-  background-color: #161A1D; /* Adjust the color as needed for dark mode #DCDFE4*/
+  background-color: #161a1d; /* Adjust the color as needed for dark mode #DCDFE4*/
 }
 
 /* Light mode */
