@@ -53,7 +53,7 @@
                       height="auto"
                       rounded="xl"
                       :item-class="getRowClass"
-                      class="font-lato"
+                      class=""
                     >
                       <template v-slot:[`item.heading`]="{ value }">
                         {{ value }}
@@ -89,7 +89,7 @@
                           style="transform: rotate(0deg)"
                           @click="openDialog(item)"
                         >
-                          <v-icon>mdi-dots-horizontal</v-icon>
+                          <v-icon color="#227D9B">mdi-dots-horizontal</v-icon>
                         </v-btn>
                       </template>
                     </v-data-table>
@@ -399,3 +399,9 @@ onMounted(() => {
   fetchJobData()
 })
 </script>
+
+<style scoped>
+.v-data-table-header .v-icon {
+  color: #F38A3F; /* Your desired color */
+}
+</style>
