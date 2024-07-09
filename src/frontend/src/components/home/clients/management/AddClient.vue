@@ -32,14 +32,14 @@
               <small
                 :theme="isdarkmode === true ? 'dark' : 'light'"
                 class="text-caption white--text"
-                >Firstname of client*</small
+                >First name of client*</small
               >
 
               <v-text-field
                 density="compact"
                 :theme="isdarkmode === true ? 'dark' : 'light'"
                 color="grey-lighten-4"
-                placeholder="Enter the firstname of the client"
+                placeholder="Enter the first name of the client"
                 v-model="req_obj.details.firstName"
                 rounded="md"
                 variant="underlined"
@@ -83,25 +83,25 @@
                 :rules="id_number_rules"
               ></v-text-field
             ></v-col>
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption white--text"
-                >Username of client*</small
-              >
+<!--            <v-col>-->
+<!--              <small-->
+<!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
+<!--                class="text-caption white&#45;&#45;text"-->
+<!--                >Username of client*</small-->
+<!--              >-->
 
-              <v-text-field
-                density="compact"
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                color="grey-lighten-4"
-                placeholder="Enter the username of the client"
-                v-model="req_obj.clientUsername"
-                rounded="md"
-                variant="underlined"
-                required
-                :rules="username_rules"
-              ></v-text-field
-            ></v-col>
+<!--              <v-text-field-->
+<!--                density="compact"-->
+<!--                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
+<!--                color="grey-lighten-4"-->
+<!--                placeholder="Enter the username of the client"-->
+<!--                v-model="req_obj.clientUsername"-->
+<!--                rounded="md"-->
+<!--                variant="underlined"-->
+<!--                required-->
+<!--                :rules="username_rules"-->
+<!--              ></v-text-field-->
+<!--            ></v-col>-->
 
             <v-col>
               <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
@@ -131,7 +131,7 @@
                 placeholder="Enter the client's phone number"
                 v-model="req_obj.details.contactInfo.phoneNumber"
                 rounded="md"
-                type="number"
+                type="text"
                 variant="underlined"
                 :rules="phone_number_rules"
                 required
@@ -178,7 +178,21 @@
                   required
                 ></v-text-field
               ></v-col>
-
+              <v-col sm="6" cols="12">
+                <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
+                >Province</small
+                ><v-autocomplete
+                :theme="isdarkmode === true ? 'dark' : 'light'"
+                density="compact"
+                color="grey-lighten-4"
+                placeholder="Province"
+                rounded="md"
+                type="houseNumber"
+                variant="underlined"
+                :items = "[ 'Eastern Cape', 'Free State', 'Gauteng', 'KwaZulu-Natal', 'Limpopo', 'Mpumalanga', 'North West', 'Northern Cape', 'Western Cape']"
+                required
+              ></v-autocomplete
+              ></v-col>
               <v-col sm="6" cols="12">
                 <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
                   >City</small
@@ -194,16 +208,18 @@
                   required
                 ></v-text-field
               ></v-col>
+
               <v-col sm="6" cols="12"
                 ><small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
-                  >Zip Code</small
+                  >Postal Code</small
                 ><v-text-field
                   :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
-                  placeholder="Zip Code"
+                  placeholder="Postal Code"
                   v-model="req_obj.details.address.postalCode"
                   rounded="md"
+                  :rules="postal_code_rules"
                   type="postalCode"
                   variant="underlined"
                   required
@@ -333,19 +349,17 @@ export default defineComponent({
     ],
     prefered_languages_rules: [(v: string) => !!v || 'Preferred language is required'],
     id_number_rules: [
-      (v: string) => !!v || 'ID number is required'
-      // (v:string) => (v && v.length === 13) || 'ID number must be 13 digits',
-      // (v:string) =>
-      //   /^(\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{4}\d{1}0\d{1})$/.test(v) ||
-      //   'ID number must be a valid South African ID number',
-      // (v:string) => this.luhnCheck(v) || 'ID number must be a valid South African ID number'
-    ],
+      (v: string) => !!v || 'ID number is required',
+      (v: string) => /^\d{13}$/.test(v) || 'ID number must be a valid South African ID number'],
     username_rules: [
       (v: string) => !!v || 'Username is required',
       (v: string) => (v && v.length >= 3) || 'Username must be at least 3 characters',
       (v: string) => (v && v.length <= 30) || 'Username must be less than 30 characters',
       (v: string) =>
         /^[A-Za-z0-9_]+$/.test(v) || 'Username must be alphanumeric characters and underscores only'
+    ],postal_code_rules:[
+      (v: string) => !!v || 'Postal code  is required',
+      (value:string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits',
     ],
 
     req_obj: {
@@ -359,6 +373,7 @@ export default defineComponent({
           phoneNumber: ''
         },
         address: {
+          province:'',
           street: '',
           suburb: '',
           city: '',
@@ -416,7 +431,7 @@ export default defineComponent({
         .then((res) => {
           console.log(res)
           alert('Client created successfully')
-          this.$router.push('/client-desk-view')
+          window.location.reload()
         })
         .catch((res) => {
           console.log('Client creation failed')
