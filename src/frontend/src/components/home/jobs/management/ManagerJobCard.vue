@@ -292,7 +292,7 @@
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="blue darken-1" text @click="saveJobDetails"> Save </v-btn>
-                  <v-btn color="blue darken-1" text @click="detailsDialog = false"> Cancel </v-btn>
+                  <v-btn color="blue darken-1" text @click=""> Cancel </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -788,11 +788,9 @@ const saveJob = () => {
   router.push('/jobAssignmentView')
 }
 
+const emit = defineEmits(['close']);
 const cancelJob = () => {
-  // Perform cancel operation if needed
-
-  // Navigate to /jobAssignmentView without any alert
-  router.push('/jobAssignmentView')
+  emit('close')
 }
 </script>
 

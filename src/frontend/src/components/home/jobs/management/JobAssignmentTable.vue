@@ -103,11 +103,55 @@
     >
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
-        <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+        <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
           {{ selectedJob?.heading }}
         </v-card-title>
         <v-card-text> What would you like to do with this job? </v-card-text>
         <v-card-actions>
+
+          <v-btn color="primary" @click="viewJobDialog = true">View</v-btn>
+          <!-- View Job Dialog -->
+          <v-dialog v-model="viewJobDialog" max-width="500">
+            <v-card class="elevation-12 rounded-lg mx-auto my-5" max-width="600">
+              <!-- Dialog title -->
+              <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center white--text py-4">
+                View Job Details
+              </v-card-title>
+              <!-- Dialog content -->
+              <v-card-text class="py-4 px-6 text-center">
+                <div class="mb-3">
+                  <strong>Job Title:</strong> {{ selectedJob.heading }}
+                </div>
+                <div class="mb-3">
+                  <strong>Description:</strong> {{ selectedJob.jobDescription }}
+                </div>
+                <div class="mb-3">
+                  <strong>Status:</strong>
+                  <v-chip :color="getStatusColor(selectedJob.status)" dark>{{ selectedJob.status }}</v-chip>
+                </div>
+                <div class="mb-3">
+                  <strong>Address:</strong>
+                  <div>Street: {{ selectedJob.street }}</div>
+                  <div>Suburb: {{ selectedJob.suburb }}</div>
+                  <div>City: {{ selectedJob.city }}</div>
+                  <div>Postal Code: {{ selectedJob.postalCode }}</div>
+                  <div>Complex: {{ selectedJob.complex }}</div>
+                  <div>House Number: {{ selectedJob.houseNumber }}</div>
+                </div>
+                <div class="mb-3">
+                  <strong>Start Date:</strong> {{ selectedJob.startDate }}
+                </div>
+                <div class="mb-3">
+                  <strong>End Date:</strong> {{ selectedJob.endDate }}
+                </div>
+              </v-card-text>
+              <!-- Dialog actions -->
+              <v-card-actions class="justify-center py-4">
+                <v-btn color="primary" @click="viewJobDialog = false">Close</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+
           <v-btn color="primary" @click="editJobCardDialog(selectedJob)">Edit</v-btn>
           <v-dialog v-model="managerJobCardDialog" max-width="2000px">
             <ManagerJobCard
@@ -150,7 +194,7 @@ const expanded = ref([])
 const isDarkMode = ref(false)
 const modal_dark_theme_color = '#333'
 const modal_light_theme_color = '#fff'
-
+const viewJobDialog = ref(false)
 // set the table headers
 
 const headers = [
@@ -179,6 +223,7 @@ const fetchJobData = async () => {
   try {
     const response = await axios.get('http://localhost:3000/job/all', config)
     const jobData = response.data.data
+
     console.log(response.data)
 
     // Check if jobData is an array or needs conversion

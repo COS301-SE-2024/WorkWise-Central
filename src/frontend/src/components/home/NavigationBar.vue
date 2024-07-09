@@ -119,7 +119,7 @@ export default defineComponent({
           <v-list-item></v-list-item>
           <v-divider></v-divider>
           <v-list v-model:open="open">
-            <v-list-group value="Dashboard">
+            <v-list-group fluid value="Dashboard">
               <template v-slot:activator="{ props }">
                 <v-list-item
                   v-bind="props"
@@ -134,11 +134,12 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="custom-padding"
               ></v-list-item>
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
-            <v-list-group value="Clients">
+            <v-list-group fluid value="Clients">
               <template v-slot:activator="{ props }">
                 <v-list-item
                   v-bind="props"
@@ -157,7 +158,7 @@ export default defineComponent({
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
-            <v-list-group value="Employees">
+            <v-list-group fluid value="Employees">
               <template v-slot:activator="{ props }">
                 <v-list-item
                   v-bind="props"
@@ -176,7 +177,7 @@ export default defineComponent({
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
-            <v-list-group value="Jobs">
+            <v-list-group fluid value="Jobs">
               <template v-slot:activator="{ props }">
                 <v-list-item v-bind="props" prepend-icon="mdi-briefcase" title="Jobs"></v-list-item>
               </template>
@@ -191,7 +192,7 @@ export default defineComponent({
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
-            <v-list-group value="Inventory">
+            <v-list-group fluid value="Inventory">
               <template v-slot:activator="{ props }">
                 <v-list-item
                   v-bind="props"
@@ -210,7 +211,7 @@ export default defineComponent({
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
-            <v-list-group value="Inbox">
+            <v-list-group fluid value="Inbox">
               <template v-slot:activator="{ props }">
                 <v-list-item v-bind="props" prepend-icon="mdi-inbox" title="Inbox"></v-list-item>
               </template>
@@ -225,7 +226,7 @@ export default defineComponent({
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
-            <v-list-group value="Help">
+            <v-list-group fluid value="Help">
               <template v-slot:activator="{ props }">
                 <v-list-item
                   v-bind="props"
@@ -266,4 +267,9 @@ export default defineComponent({
 .icon-padding {
   padding: 8px; /* Adjust the padding value as needed */
 }
+
+.custom-padding {
+  padding-left: 0px !important;
+}
+
 </style>
