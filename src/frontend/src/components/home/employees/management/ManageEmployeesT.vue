@@ -522,7 +522,7 @@ export default {
           apiURL + `employee/all/${sessionStorage['currentCompany']}`,
           config
         )
-        let employee_all_data: Employee[] = employee_response.data
+        let employee_all_data: Employee[] = employee_response.data.data
 
         let company_employee_arr: EmployeePersonalInfo[] = []
         for (let i = 0; i < employee_all_data.length; i++) {
@@ -533,13 +533,12 @@ export default {
 
           const user_data: User = users_response.data
 
-          // console.log(user_data)
-
           if (user_data.data.personalInfo.address === undefined) continue
 
           if (employee_all_data[i].roleId !== undefined) {
             let role = await axios.get(apiURL + `role/id/${employee_all_data[i].roleId}`, config)
 
+            console.log(role.data)
             if (role.status < 300 && role.status > 199) {
               let company_employee: EmployeePersonalInfo = {
                 address: {
@@ -560,7 +559,7 @@ export default {
                 dateOfBirth: user_data.data.personalInfo.dateOfBirth,
                 gender: user_data.data.personalInfo.gender,
                 roleId: employee_all_data[i].roleId,
-                roleName: role.data.roleName,
+                roleName: role.data.data.roleName,
                 employeeId: employee_all_data[i]._id,
                 userId: employee_all_data[i].userId
               }
