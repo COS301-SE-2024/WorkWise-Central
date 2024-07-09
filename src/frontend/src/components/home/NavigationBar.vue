@@ -105,7 +105,7 @@ export default defineComponent({
   <v-app :theme="isdarkmode ? 'dark' : 'light'">
     <v-card class="bg-cardColor">
       <v-app :theme="isdarkmode ? 'dark' : 'light'">
-        <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-cardColor">
+        <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-background">
           <v-app-bar-nav-icon @click="isVisible = !isVisible">
             <v-icon>{{ isVisible ? 'mdi-close' : 'mdi-menu' }}</v-icon>
           </v-app-bar-nav-icon>
@@ -113,8 +113,8 @@ export default defineComponent({
           <v-spacer></v-spacer>
 
           <v-toolbar-title class="d-flex align-center">
-            <span class="colorAccent toolbar-text">Work</span>
-            <span class="colorAccent2 toolbar-text ms-1">Wise</span>
+            <v-label class="toolbar-text text-primary">Work</v-label>
+            <v-label class="toolbar-text text-secondary">Wise</v-label>
           </v-toolbar-title>
 
           <v-spacer class="d-none d-sm-flex"></v-spacer>
@@ -130,7 +130,7 @@ export default defineComponent({
         </v-app-bar>
 
         <v-navigation-drawer
-          class="bg-cardColor"
+          class="bg-background"
           app
           v-model="drawer"
           :rail="isVisible"

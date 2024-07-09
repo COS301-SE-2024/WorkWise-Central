@@ -128,12 +128,12 @@
         ><v-col align-self="center"
           ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
             <v-btn color="success" width="85%" height="35" variant="text" @click="update">
-              SAVE
+              Save
             </v-btn>
           </v-col>
           <v-col cols="12" md="12" xs="3" sm="6" offset="1">
             <v-btn color="error" width="85%" height="35" variant="text" @click="close">
-              CANCEL
+              Cancel
             </v-btn>
           </v-col></v-col
         ></v-card-actions

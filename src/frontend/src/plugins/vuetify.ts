@@ -34,7 +34,7 @@ const vuetify = createVuetify({
       rounded: 'md',
       density: 'compact'
     },
-    
+
     VCard: {
       elevation: 14,
       rounded: 'md',
@@ -62,8 +62,14 @@ const vuetify = createVuetify({
       rounded: 'md',
       variant: 'solo'
     },
-    VIcon:{
-      color:'elementTextColor'
+    VIcon: {
+      color: 'elementTextColor'
+    },
+    Small: {
+      color: 'elementTextColor',
+      VTextField: {
+        class: 'bg-primary'
+      }
     }
   },
   directives,
@@ -97,14 +103,15 @@ const vuetify = createVuetify({
         colors: {
           background: '#F7F8F9',
           primary: '#2C3E5D',
-          secondary: '#879898',
+          secondary: '#626F86',
           accent: '#82B1FF',
           error: '#e639462',
           info: '#2196F3',
-          success: '#4CAF50',
+          success: '#82B536',
           warning: '#FFC107',
           cardColor: '#F1F2F4',
           elementTextColor: '#44546F', // most important color for text
+          headingTextColor: '#091E42',
           n_elementTextColor: '#8C9BAB', // most nonImportant color for text
           highlighter: '#DEE4EA',
           tableRowColor: ''
@@ -112,16 +119,17 @@ const vuetify = createVuetify({
       },
       dark: {
         colors: {
-          background: '#161A1D',
-          primary: '#8babf1', // Lighter shade of blue for better visibility in dark mode
+          background: '#131D3A',
+          primary: '#F38A3F', // Lighter shade of blue for better visibility in dark mode
           secondary: '#879898', // A medium gray, less harsh than pure black or white
           accent: '#448AFF', // A slightly brighter blue to stand out in dark mode
           error: '#E63946', // Keeping error color consistent as it needs to attract attention
           info: '#64B5F6', // A lighter blue for info to ensure readability
           success: '#81C784', // A lighter green for success messages
           warning: '#FFD54F', // A lighter yellow for warnings to ensure they stand out
-          cardColor: '#22272B',
+          cardColor: '#0C0F1C',
           elementTextColor: '#B6C2CF',
+          headingTextColor: '#DCDFE4',
           n_elementTextColor: '#8C9BAB', // most nonImportant color for text
           highlighter: '#DEE4EA',
           tableRowColor: '#454f5'

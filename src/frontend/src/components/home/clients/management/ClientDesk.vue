@@ -17,12 +17,12 @@
         <v-row align="center" justify="space-between">
           <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
             <v-icon icon="mdi-account"></v-icon>
-            <label
-              class="ms-2 text-h4 font-family-lato"
+            <v-label
+              class="ms-2 text-h4 font-family-lato text-headingTextColor"
+              style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
               height="auto"
               width="auto"
-              :style="{ color: 'secondary' }"
-              >Client Details</label
+              >Client Details</v-label
             >
           </v-col>
 
@@ -413,13 +413,15 @@ export default defineComponent({
 }
 /* Dark mode */
 tbody tr:nth-of-type(odd) {
-  background-color: #454f59; /* Adjust the color as needed for dark mode #DCDFE4*/
+  background-color: #161A1D; /* Adjust the color as needed for dark mode #DCDFE4*/
 }
 
 /* Light mode */
-tbody tr:nth-of-type(odd) {
+.something,
+.tbody tr:nth-of-type(odd) {
   background-color: #dcdfe4; /* Adjust the color as needed for light mode */
 }
+
 .my-header-style {
   background: red;
 }
