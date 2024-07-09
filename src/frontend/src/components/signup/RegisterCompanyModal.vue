@@ -167,6 +167,7 @@
                 rounded="md"
                 variant="solo"
                 v-model="req_obj.contactDetails.phoneNumber"
+                :rules="phone_number_rules"
                 required
               ></v-text-field
             ></v-col>
@@ -182,7 +183,7 @@
                 color="grey-lighten-4"
                 placeholder="Enter the company's registration number"
                 v-model="req_obj.registrationNumber"
-                :rules="company_registration_number_rules"
+                :rules="registration_number_rules"
                 rounded="md"
                 variant="solo"
                 required
@@ -377,11 +378,6 @@ export default {
         (v: string) => !!v || 'E-mail is required',
         (v: string) => /.+@.+\..+/.test(v) || 'E-mail must be valid'
       ],
-      phone_number_rules: [
-        (v: string) => !!v || 'Phone number is required',
-        (v: string) =>
-          /^(\+27\d{9})$/.test(v) || 'Phone number must be a valid South African number'
-      ],
       vat_number_rules: [
         (v: string) => !!v || 'VAT number is required',
         (v: string) => /^\d{10}$/.test(v) || 'VAT number must be a valid South African VAT number'
@@ -391,7 +387,11 @@ export default {
         (v: string) =>
           /^(\d{14})$/.test(v) || 'Company registration number must be a valid South African number'
       ],
-
+      phone_number_rules: [
+        (v: string) => !!v || 'Phone number is required',
+        (v: string) => /^0\d{9}$/.test(v) || 'Phone number must be a valid South African number'
+      ],
+    registration_number_rules:[(v:string)=>this.checkRegistrationNumber(v)],
       req_obj: {
         userId: sessionStorage['id'],
         name: '',
@@ -417,6 +417,24 @@ export default {
     }
   },
   methods: {
+    checkRegistrationNumber()
+    {
+      const reg_num_rules = [
+        (value:string) => /^\d{4}\/\d{6}\/07$/.test(value) ,
+        (value:string) => /^\d{4}\/\d{6}\/06$/.test(value) ,
+        (value:string) => /^\d{4}\/\d{6}\/08$/.test(value) ,
+        (value:string) => /^\d{4}\/\d{6}\/23$/.test(value) ,
+        (value:string) => /^\d{4}\/\d{6}\/21$/.test(value) ,
+        (value:string) => /^\d{4}\/\d{6}\/30$/.test(value) ,
+        (value:string) => /^\d{4}\/\d{6}\/10$/.test(value) ,
+        (value:string) => /^\d{4}\/\d{4}$/.test(value),
+        (value:string) => /^\d{3}\/\d{4}$/.test(value)]
+
+      const isvalid = reg_num_rules.some(rule=>rule)
+      return isvalid || 'Registration number must satisfy at least one format: (YYYY/NNNNNN/07), (YYYY/NNNNNN/06), (YYYY/NNNNNN/08), (YYYY/NNNNNN/23), (YYYY/NNNNNN/30), (YYYY/NNNNNN/10), (NNNN/YYYY), (NNN/YYYY)'
+    }
+
+    ,
     companyLogoHandler() {
       console.log('')
     },
