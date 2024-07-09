@@ -36,7 +36,7 @@ export class JobService {
       throw new ConflictException(inputValidated.message);
     }
     const createdJob = new Job(createJobDto);
-    //console.log('createdJob', createdJob);
+    console.log('createdJob', createdJob);
     const result = await this.jobRepository.save(createdJob);
     return new CreateJobResponseDto(result);
   }

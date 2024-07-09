@@ -51,13 +51,13 @@ export class JobRepository {
 
   async findAllInCompany(companyId: Types.ObjectId) {
     const filter = {
-      $ands: [
+      $and: [
         { companyId: companyId },
         { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] },
       ],
     };
 
-    return this.jobModel.find(filter).lean();
+    return this.jobModel.find(filter).lean().exec();
   }
 
   async exists(id: string) {
