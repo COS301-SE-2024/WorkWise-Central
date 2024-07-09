@@ -104,23 +104,19 @@
 
             <v-row
               ><v-col cols="6">
-                <small
-                  class="text-caption font-weight-bold"
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                >
-                  Complex
-                </small>
+                <small class="text-caption font-weight-bold"> Complex </small>
                 <v-text-field v-model="localEditedItem.address.complex"></v-text-field
               ></v-col>
               <v-col cols="6">
-                <small
-                  class="text-caption font-weight-bold"
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                >
-                  House Number
-                </small>
+                <small class="text-caption font-weight-bold"> House Number </small>
                 <v-text-field v-model="localEditedItem.address.houseNumber"></v-text-field></v-col
-            ></v-row> </v-col
+            ></v-row>
+            <v-row>
+              <v-col cols="12">
+                <small class="text-caption font-weight-bold">Preferred Language</small>
+                <v-select items="languages" v-model="localEditedItem.preferred_Language"></v-select>
+              </v-col>
+            </v-row> </v-col
         ></v-container>
       </v-card-text>
       <v-divider></v-divider>
@@ -159,7 +155,18 @@ export default {
       clientDialog: false,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
-
+      languages: [
+        'Afrikaans',
+        'English',
+        'Ndebele',
+        'Sotho',
+        'Swati',
+        'Tsonga',
+        'Tswana',
+        'Venda',
+        'Xhosa',
+        'Zulu'
+      ],
       nameRules: [
         (v) => !!v || 'Name is required',
         (v) => (v && v.length >= 2) || 'Name must be at least 2 characters'

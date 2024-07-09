@@ -3,8 +3,8 @@
     <!-- Toolbar -->
     <v-app-bar :theme="isdarkmode ? 'themes.dark' : 'themes.light'">
       <v-toolbar-title class="d-flex justify-end">
-        <span class="colorAccent toolbar-text">Work</span>
-        <span class="colorAccent2 toolbar-text">Wise</span>
+        <v-label class="toolbar-text text-primary">Work</v-label>
+        <v-label class="toolbar-text text-secondary">Wise</v-label>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -29,8 +29,8 @@
                   { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
                 ]"
               >
-                Welcome To <span class="colorAccent">Work</span>
-                <span class="colorAccent2">Wise</span> Central
+                Welcome To <span class="text-primary">Work</span>
+                <span class="text-secondary">Wise</span> Central
               </h1>
             </v-col></v-row
           >
@@ -54,8 +54,8 @@
               ></v-row
             >
 
-            <v-dialog v-model="loginDialog" max-width="400">
-              <v-sheet
+            <v-dialog v-model="loginDialog" max-width="400" @click:outside="resetFields">
+              <v-card
                 width="auto"
                 height="auto"
                 border="md"
@@ -63,90 +63,89 @@
                 rounded="md"
               >
                 <v-col>
-                  <v-col>
-                    <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
-                      Log into existing account
-                    </h4></v-col
-                  >
-                  <v-spacer></v-spacer>
-                  <v-col
-                    ><v-form ref="form" v-model="valid">
-                      <v-row align="center"
-                        ><v-col
-                          ><label for="email" style="font-size: 14px; font-weight: lighter"
-                            >Username</label
-                          >
-
-                          <v-text-field
-                            :theme="isdarkmode ? 'dark' : 'light'"
-                            :label="username ? '' : 'Enter your username'"
-                            type="username"
-                            name="username"
-                            v-model="username"
-                            :rules="usernameRules"
-                            rounded="md"
-                            variant="solo"
-                            required
-                          ></v-text-field
-                        ></v-col>
-                      </v-row>
-                      <v-row align="center"
-                        ><v-col
-                          ><label for="password" style="font-size: 14px; font-weight: lighter"
-                            >Password</label
-                          >
-                          <v-text-field
-                            :theme="isdarkmode ? 'dark' : 'light'"
-                            :label="password ? '' : 'Enter your password'"
-                            :type="showPassword ? 'text' : 'password'"
-                            name="password"
-                            v-model="password"
-                            :rules="passwordRules"
-                            :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                            @click:append="toggleShowPassword"
-                            rounded="md"
-                            variant="solo"
-                            required
-                          ></v-text-field></v-col
-                      ></v-row>
-                    </v-form>
-                  </v-col>
-
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      :disabled="!valid"
-                      text
-                      @click="login"
-                      @keypress.enter="login"
-                      rounded="md"
-                      size="large"
-                      color="primary"
-                      variant="elevated"
-                      width="100%"
-                      >Login</v-btn
-                    >
-                  </v-col>
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      text
-                      @click="(signupDialog = true)((loginDialog = false))"
-                      rounded="md"
-                      color="secondary"
-                      size="large"
-                      variant="elevated"
-                      width="100%"
-                    >
-                      Sign up</v-btn
-                    >
-                  </v-col>
+                  <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
+                    Log into existing account
+                  </h4>
                 </v-col>
+                <v-spacer></v-spacer>
+                <v-col
+                  ><v-form ref="form" v-model="valid">
+                    <v-row align="center"
+                      ><v-col
+                        ><label for="email" style="font-size: 14px; font-weight: lighter"
+                          >Username</label
+                        >
+
+                        <v-text-field
+                          :theme="isdarkmode ? 'dark' : 'light'"
+                          :label="username ? '' : 'Enter your username'"
+                          type="username"
+                          name="username"
+                          v-model="username"
+                          :rules="usernameRules"
+                          rounded="md"
+                          variant="solo"
+                          required
+                        ></v-text-field
+                      ></v-col>
+                    </v-row>
+                    <v-row align="center"
+                      ><v-col
+                        ><label for="password" style="font-size: 14px; font-weight: lighter"
+                          >Password</label
+                        >
+                        <v-text-field
+                          :theme="isdarkmode ? 'dark' : 'light'"
+                          :label="password ? '' : 'Enter your password'"
+                          :type="showPassword ? 'text' : 'password'"
+                          name="password"
+                          v-model="password"
+                          :rules="passwordRules"
+                          :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                          @click:append="toggleShowPassword"
+                          rounded="md"
+                          variant="solo"
+                          required
+                        ></v-text-field></v-col
+                    ></v-row>
+                  </v-form>
+                </v-col>
+
+                <v-col cols="8" offset="2">
+                  <v-btn
+                    :disabled="!valid"
+                    text
+                    @click="login"
+                    @keypress.enter="login"
+                    rounded="md"
+                    size="large"
+                    color="primary"
+                    variant="elevated"
+                    width="100%"
+                    >Login</v-btn
+                  >
+                </v-col>
+                <v-col cols="8" offset="2">
+                  <v-btn
+                    text
+                    @click="(signupDialog = true)((loginDialog = false))"
+                    rounded="md"
+                    color="secondary"
+                    size="large"
+                    variant="elevated"
+                    width="100%"
+                  >
+                    Sign up</v-btn
+                  >
+                </v-col>
+
                 <v-alert v-model="alertLogin" type="success">
                   You have successfully logged in!</v-alert
                 >
                 <v-alert v-model="alertLoginFailure" type="error">
                   Please enter valid credentials</v-alert
                 >
-              </v-sheet>
+              </v-card>
             </v-dialog>
             <v-row justify="center"
               ><v-col cols="8" offset="3"
@@ -166,7 +165,7 @@
             >
 
             <!-- Flow 1 -->
-            <v-dialog v-model="signupDialog" max-width="400">
+            <v-dialog v-model="signupDialog" max-width="400" @click:outside="resetFields">
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -264,7 +263,7 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 2 -->
-            <v-dialog v-model="signup1Dialog" max-width="400">
+            <v-dialog v-model="signup1Dialog" max-width="400" @click:outside="resetFields">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -341,7 +340,7 @@
               </v-sheet>
             </v-dialog>
             <v-col xs="3" align-self="center">
-              <v-dialog v-model="signupUsernameDialog" max-width="400">
+              <v-dialog v-model="signupUsernameDialog" max-width="400" @click:outside="resetFields">
                 <v-sheet
                   width="auto"
                   height="auto"
@@ -369,7 +368,6 @@
                             variant="solo"
                             clearable
                             required
-                            @update:modalValue="usernameExist"
                           ></v-combobox></v-col
                       ></v-row>
                     </v-form>
@@ -387,23 +385,24 @@
                       >Continue</v-btn
                     ></v-col
                   >
-                  <v-col clos="8" offset="2">
+                  <v-col cols="8" offset="2">
                     <v-btn
+                      :disabled="!valid"
+                      text
                       @click="(signup1Dialog = true)((signupUsernameDialog = false))"
                       rounded="md"
-                      color="secondary"
                       size="large"
+                      color="secondary"
                       variant="elevated"
                       width="100%"
-                    >
-                      Back
-                    </v-btn>
-                  </v-col>
+                      >Back</v-btn
+                    ></v-col
+                  >
                 </v-sheet>
               </v-dialog>
             </v-col>
             <!-- Flow 3 -->
-            <v-dialog v-model="signup2Dialog" max-width="400">
+            <v-dialog v-model="signup2Dialog" max-width="400" @click:outside="resetFields">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -488,7 +487,7 @@
                   </v-col>
                   <v-col cols="8" offset="2">
                     <v-btn
-                      @click="(signup1Dialog = true)((signup2Dialog = false))"
+                      @click="(signupUsernameDialog = true)((signup2Dialog = false))"
                       rounded="md"
                       color="secondary"
                       size="large"
@@ -501,7 +500,7 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 4 -->
-            <v-dialog v-model="signupAddressDialog" max-width="1000">
+            <v-dialog v-model="signupAddressDialog" max-width="1000" @click:outside="resetFields">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -623,7 +622,12 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 5 -->
-            <v-dialog v-model="signup3Dialog" max-width="700" style="height: 750px">
+            <v-dialog
+              v-model="signup3Dialog"
+              max-width="700"
+              style="height: 750px"
+              @click:outside="resetFields"
+            >
               <!-- <v-sheet
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
               > -->
@@ -866,7 +870,7 @@ export default defineComponent({
     ],
     phoneNumberRules: [
       (v) => !!v || 'Phone number is required',
-      (v) => v.length >= 10 || 'Phone number must be at least 10 characters',
+      (v) => (v.length >= 10 && v.length <= 10) || 'Phone number must be 10 characters',
       (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers'
     ]
   }),
@@ -876,6 +880,26 @@ export default defineComponent({
       if (e.key === 'Enter') {
         this.login()
       }
+    },
+    resetFields() {
+      this.date = ''
+      this.name = ''
+      this.email = ''
+      this.surname = ''
+      this.username = ''
+      this.password = ''
+      this.confirm_password = ''
+      this.gender = ''
+      this.language = ''
+      this.street = ''
+      this.city = ''
+      this.dummyUsername = ''
+      this.suburb = ''
+      this.postal_code = ''
+      this.complex = ''
+      this.houseNumber = ''
+      this.phone_number = ''
+      this.birthDate = null
     },
     toggleShowPassword() {
       this.showPassword = !this.showPassword
@@ -994,8 +1018,7 @@ export default defineComponent({
       this.populateUsernameList()
     },
     nextFlowUsername() {
-      if (this.usernameExist() === false) {
-        alert('Username already exists')
+      if (this.checkUsernameExist() === true) {
       } else {
         this.signupUsernameDialog = false
         this.signup2Dialog = true
@@ -1019,8 +1042,8 @@ export default defineComponent({
       this.joinDialog = true
       this.signup()
     },
-    usernameExist() {
-      axios
+    async usernameExist() {
+      await axios
         .post('http://localhost:3000/users/exists', {
           params: {
             username: this.username
@@ -1028,12 +1051,20 @@ export default defineComponent({
         })
         .then((response) => {
           console.log(response)
+          console.log(this.username)
           this.exists = response
         })
         .catch((error) => {
           console.log(error)
         })
-      return this.exists
+    },
+    checkUsernameExist() {
+      this.usernameExist()
+      if (this.exists === true) {
+        alert('Username already exists')
+        return true
+      }
+      return false
     },
     openDialog() {
       this.dialog = true

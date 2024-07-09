@@ -13,7 +13,7 @@
           ><v-col>
             <v-row
               ><v-col cols="6">
-                <label class="font-weight-bold"> First Name</label><v-spacer></v-spacer
+                <label class="font-weight-bold" style="font-size:30px;"> First Name</label><v-spacer></v-spacer
                 ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
                   ClientDetails.name
                 }}</small></v-col

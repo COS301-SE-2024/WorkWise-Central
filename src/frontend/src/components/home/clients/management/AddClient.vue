@@ -25,13 +25,13 @@
               <small
                 :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
                 class="text-caption white--text"
-                >Firstname of client*</small
+                >First Name of client*</small
               >
 
               <v-text-field
                 :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
                 color="secondary"
-                placeholder="Enter the firstname of the client"
+                placeholder="Enter the first name of the client"
                 v-model="req_obj.details.firstName"
                 required
                 :rules="first_name_rules"
@@ -63,7 +63,7 @@
                 placeholder="Enter the ID number of the client"
                 v-model="req_obj.idNumber"
                 required
-                :rules="id_number_rules"
+                :rules="south_africa_id_rules"
               ></v-text-field
             ></v-col>
             <v-col>
@@ -82,29 +82,7 @@
                 :rules="username_rules"
               ></v-text-field
             ></v-col>
-            <v-col>
-              <small class="text-caption white--text">ID of client*</small>
-              <v-text-field
-                color="secondary"
-                placeholder="Enter the ID number of the client"
-                v-model="req_obj.idNumber"
-                rounded="md"
-                required
-                :rules="id_number_rules"
-              ></v-text-field
-            ></v-col>
-            <v-col>
-              <small class="text-caption white--text">Username of client*</small>
 
-              <v-text-field
-                color="secondary"
-                placeholder="Enter the username of the client"
-                v-model="req_obj.clientUsername"
-                rounded="md"
-                required
-                :rules="username_rules"
-              ></v-text-field
-            ></v-col>
             <v-col>
               <small class="text-caption">Client email address*</small>
               <v-text-field
@@ -290,6 +268,37 @@ export default defineComponent({
       (v: string) => (v && v.length <= 30) || 'Username must be less than 30 characters',
       (v: string) =>
         /^[A-Za-z0-9_]+$/.test(v) || 'Username must be alphanumeric characters and underscores only'
+    ],
+    south_africa_id_rules: [
+      (v: string) => !!v || 'ID number is required',
+      (v: string) => v.length === 13 || 'ID number must be 13 digits long',
+      (v: string) => /^\d{13}$/.test(v) || 'ID number must contain only digits',
+      (v: string) => {
+        const dob = v.slice(0, 6)
+        const year = parseInt(dob.slice(0, 2), 10) + 1900
+        const month = parseInt(dob.slice(2, 4), 10) - 1 // JS months are 0-indexed
+        const day = parseInt(dob.slice(4, 6), 10)
+        const date = new Date(year, month, day)
+        return (
+          (date.getFullYear() === year && date.getMonth() === month && date.getDate() === day) ||
+          'Invalid date of birth in ID number'
+        )
+      },
+      (v: string) => ['0', '1'].includes(v[10]) || 'Invalid citizenship status digit',
+      (v: string) => {
+        // Implementing Luhn algorithm for checksum validation
+        let sum = 0
+        for (let i = 0; i < 13; i++) {
+          let digit = parseInt(v[i], 10)
+          if (i % 2 === 0) {
+            sum += digit
+          } else {
+            let doubled = digit * 2
+            sum += doubled > 9 ? doubled - 9 : doubled
+          }
+        }
+        return sum % 10 === 0 || 'Invalid ID number checksum'
+      }
     ],
 
     req_obj: {
