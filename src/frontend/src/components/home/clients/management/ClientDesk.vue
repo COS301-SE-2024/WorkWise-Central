@@ -108,6 +108,7 @@
                 <v-btn
                   rounded="xl"
                   variant="plain"
+                  
                   @click="(actionsDialog = true), selectItem(item)"
                 >
                   <v-icon>mdi-dots-horizontal</v-icon>

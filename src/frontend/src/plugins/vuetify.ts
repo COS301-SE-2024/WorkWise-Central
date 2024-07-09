@@ -102,8 +102,8 @@ const vuetify = createVuetify({
       light: {
         colors: {
           background: '#F7F8F9',
-          primary: '#2C3E5D',
-          secondary: '#626F86',
+          primary: '#F0984D',
+          secondary: '#227D9B ',
           accent: '#82B1FF',
           error: '#e639462',
           info: '#2196F3',
@@ -119,15 +119,15 @@ const vuetify = createVuetify({
       },
       dark: {
         colors: {
-          background: '#131D3A',
+          background: '#161A1D',
           primary: '#F38A3F', // Lighter shade of blue for better visibility in dark mode
-          secondary: '#879898', // A medium gray, less harsh than pure black or white
+          secondary: '#4C9FC3', // A medium gray, less harsh than pure black or white
           accent: '#448AFF', // A slightly brighter blue to stand out in dark mode
           error: '#E63946', // Keeping error color consistent as it needs to attract attention
           info: '#64B5F6', // A lighter blue for info to ensure readability
           success: '#81C784', // A lighter green for success messages
           warning: '#FFD54F', // A lighter yellow for warnings to ensure they stand out
-          cardColor: '#0C0F1C',
+          cardColor: '#22272B',
           elementTextColor: '#B6C2CF',
           headingTextColor: '#DCDFE4',
           n_elementTextColor: '#8C9BAB', // most nonImportant color for text
