@@ -9,8 +9,7 @@ import {
   CreateCompanyResponseDto,
 } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { FlattenMaps, Model, Types } from 'mongoose';
+import { FlattenMaps, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
 import { JoinedCompany } from '../users/entities/user.entity';
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
@@ -24,9 +23,6 @@ import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.d
 @Injectable()
 export class CompanyService {
   constructor(
-    @InjectModel(Company.name)
-    private readonly companyModel: Model<Company>,
-
     private readonly companyRepository: CompanyRepository,
     @Inject(forwardRef(() => EmployeeService))
     private readonly employeeService: EmployeeService,
@@ -43,26 +39,24 @@ export class CompanyService {
     if (!inputValidated.isValid) {
       throw new ConflictException(inputValidated.message);
     }
+    //Create Company
+    const createdCompany = await this.companyRepository.save(
+      new Company(createCompanyDto),
+    );
 
-    const newCompany = new Company(createCompanyDto);
-    const newCompanyModel = new this.companyModel(newCompany);
+    //Create Default role in company
+    await this.roleService.createDefaultRoles(createdCompany._id);
 
-    const createdCompany = await newCompanyModel.save();
-
-    //Create first role in company
-    const allPermissions = this.roleService.getPermissionsArray();
-
-    const createdRole = await this.roleService.create({
-      companyId: createdCompany._id,
-      roleName: 'owner',
-      permissionSuite: allPermissions,
-    });
+    //Assign Owner to user
+    const ownerRoleId = (
+      await this.roleService.findOneInCompany('Owner', createdCompany._id)
+    )._id;
 
     const employee = await this.employeeService.create({
       userId: createCompanyDto.userId,
       companyId: createdCompany._id,
       superiorId: null,
-      roleId: createdRole._id,
+      roleId: ownerRoleId,
     });
 
     const user = await this.usersService.getUserById(createCompanyDto.userId);
@@ -110,7 +104,7 @@ export class CompanyService {
   }
 
   async getCompanyById(
-    identifier: string | Types.ObjectId,
+    identifier: Types.ObjectId,
   ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
     const result = await this.companyRepository.findById(identifier);
 
@@ -476,5 +470,9 @@ export class CompanyService {
     await this.usersService.updateUser(user._id, update);
 
     return true;
+  }
+
+  async getAllCompanyNames() {
+    return await this.companyRepository.findAllNames();
   }
 }
