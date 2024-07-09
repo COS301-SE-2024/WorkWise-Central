@@ -5,6 +5,7 @@ import { CreateJobDto } from '../dto/create-job.dto';
 import { Client } from '../../client/entities/client.entity';
 import { Company } from '../../company/entities/company.entity';
 import { Employee } from '../../employee/entities/employee.entity';
+import { Team } from '../../team/entities/team.entity';
 
 export class Address {
   //They are optional for flexibility
@@ -38,23 +39,23 @@ export class ClientFeedback {
 
 export class Details {
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   heading: string;
 
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   description: string;
 
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ type: Address, required: true })
   address: Address;
 
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ type: Date, required: true })
   startDate: Date;
 
   @ApiProperty()
-  @Prop({ required: false })
+  @Prop({ type: Date, required: false })
   endDate?: Date;
 }
 
@@ -79,13 +80,13 @@ export class RecordedDetails {
 
 export class AssignedEmployees {
   @Prop({
-    type: [Types.ObjectId],
+    type: [SchemaTypes.ObjectId],
     required: false,
     ref: 'Employee',
     default: [],
   })
   employeeIds?: Types.ObjectId[] = [];
-  @Prop({ type: Types.ObjectId, required: false /*, ref: Team.name*/ })
+  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Team.name })
   teamId?: Types.ObjectId;
 }
 
@@ -99,13 +100,13 @@ export class Task {
   status: string = 'To do';
 
   @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: false, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: false, default: [] })
   assignedEmployees?: Types.ObjectId[] = [];
 }
 
 export class Comment {
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true })
   employeeId: Types.ObjectId;
 
   @ApiProperty()
@@ -113,7 +114,7 @@ export class Comment {
   comment: string;
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: false, default: new Date() })
+  @Prop({ type: Date, required: false, default: new Date() })
   date?: Date = new Date();
 }
 
@@ -163,10 +164,10 @@ export class Job {
   @Prop({
     type: AssignedEmployees,
     required: false,
-    default: {}, //Will this work?💀
+    default: new AssignedEmployees(), //Will this work?💀
     ref: Employee.name,
   })
-  assignedEmployees?: AssignedEmployees; //TODO: Check this by creating company
+  assignedEmployees?: AssignedEmployees = new AssignedEmployees();
 
   /*  @ApiProperty()
   @Prop({ type: [Types.ObjectId], required: true })
@@ -186,19 +187,19 @@ export class Job {
     required: false,
     default: new RecordedDetails(), //Again, will this work?💀
   })
-  recordedDetails?: RecordedDetails;
+  recordedDetails?: RecordedDetails = new RecordedDetails();
 
   @ApiProperty()
   @Prop({ type: ClientFeedback, required: false })
   clientFeedback?: ClientFeedback;
 
   @ApiProperty()
-  @Prop({ type: [Task], required: false })
-  taskList?: Task[];
+  @Prop({ type: [Task], required: false, default: [] })
+  taskList?: Task[] = [];
 
   @ApiProperty()
-  @Prop({ type: [Comment], required: false })
-  comments?: Comment[];
+  @Prop({ type: [Comment], required: false, default: [] })
+  comments?: Comment[] = [];
 
   @ApiProperty()
   @Prop({ required: false, default: new Date() })
@@ -265,5 +266,3 @@ export class JobResponseDto {
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);
-
-//export const JobModel = getModelForClass(Job);
