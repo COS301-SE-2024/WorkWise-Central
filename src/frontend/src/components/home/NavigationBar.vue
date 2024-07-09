@@ -113,8 +113,8 @@ export default defineComponent({
           <v-spacer></v-spacer>
 
           <v-toolbar-title class="d-flex justify-center">
-            <v-label class="toolbar-text text-primary">Work</v-label>
-            <v-label class="toolbar-text text-secondary">Wise</v-label>
+            <v-label class="text-primary">Work</v-label>
+            <v-label class="text-secondary">Wise</v-label>
           </v-toolbar-title>
 
           <v-spacer class="d-none d-sm-flex"></v-spacer>

@@ -64,7 +64,7 @@
                 <v-card-text>
                   <v-list>
                     <v-list-item v-for="(employee, index) in hoursWorked" :key="index">
-                      <v-chip :color="getColorCompetition(index)" variant="text" class="ma-2">
+                      <v-chip :color="getColorCompetition(index)" variant="tonal" class="ma-2">
                         <v-list-item-content
                           >{{ employee.name }}
                           <v-list-item-subtitle
