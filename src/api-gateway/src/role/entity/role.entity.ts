@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+import { SchemaTypes, Types } from 'mongoose';
 import { CreateRoleDto } from '../dto/create-role.dto';
 
 @Schema()
@@ -20,7 +20,7 @@ export class Role {
   permissionSuite: string[];
 
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true })
   companyId: Types.ObjectId;
 
   @ApiHideProperty()
@@ -38,7 +38,7 @@ export class Role {
 
 export class RoleApiObject {
   @ApiProperty()
-  @Prop({ required: true, unique: true })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true, unique: true })
   id: Types.ObjectId;
   @ApiProperty()
   @Prop({ required: true })
@@ -49,7 +49,7 @@ export class RoleApiObject {
   permissionSuite: string[];
 
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true })
   companyId: Types.ObjectId;
 
   @ApiHideProperty()
