@@ -68,9 +68,10 @@ export class CompanyRepository {
       .lean();
   }
 
-  async findAll() {
+  async findAll(fields?: string[]) {
     return this.companyModel
       .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
+      .populate(fields)
       .lean();
   }
 
