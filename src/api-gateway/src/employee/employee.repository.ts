@@ -87,7 +87,7 @@ export class EmployeeRepository {
 
   async employeeExistsForCompany(
     id: Types.ObjectId,
-    companyId: string,
+    companyId: Types.ObjectId,
   ): Promise<boolean> {
     const result: FlattenMaps<Employee> & { _id: Types.ObjectId } =
       await this.employeeModel
@@ -100,7 +100,7 @@ export class EmployeeRepository {
           ],
         })
         .lean();
-    if (result != null && result.companyId.toString() == companyId) return true;
+    if (result != null && result.companyId == companyId) return true;
     return false;
   }
 
