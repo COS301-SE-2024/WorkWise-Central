@@ -11,8 +11,6 @@
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
         height="auto"
         width="100%"
-        :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
-        :style="'font-family: Lato, sans-serif; font-size: 25px; font-weight: lighter'"
       >
         <v-row align="center" justify="space-between">
           <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
@@ -37,7 +35,6 @@
               width="100%"
               style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
               hide-details
-              :theme="isdarkmode ? 'dark' : 'light'"
               single-line
             ></v-text-field>
           </v-col>
@@ -67,12 +64,7 @@
                 >
               </template>
               <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                <v-chip
-                  variant="text"
-                  @click="callPhone"
-                  color="elementTextColor"
-                  border="md"
-                 
+                <v-chip variant="text" @click="callPhone" color="elementTextColor" border="md"
                   ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
                 >
               </template>
@@ -83,13 +75,7 @@
                 <v-chip variant="text" color="elementTextColor"> {{ value }}</v-chip>
               </template>
               <template v-slot:[`item.contactInfo.email`]="{ value }">
-                <v-chip
-                  variant="text"
-                 
-                  @click="sendEmail"
-                  color="elementTextColor"
-                  border="md"
-                >
+                <v-chip variant="text" @click="sendEmail" color="elementTextColor" border="md">
                   <v-icon>mdi-email</v-icon>{{ value }}</v-chip
                 >
               </template>

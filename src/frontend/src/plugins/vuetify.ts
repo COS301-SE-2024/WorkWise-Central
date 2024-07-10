@@ -20,7 +20,7 @@ const vuetify = createVuetify({
         VCardTitle: {
           class: 'text-h5 font-weight-regular bg-primary justify-end'
         },
-        VCardText: {},
+        VCardText: { class: 'text-h5 font-weight-regular justify-center bg-cardColor' },
         VCardActions: { class: 'text-h5 font-weight-regular justify-center bg-cardColor' }
       },
       VSheet: {
@@ -29,19 +29,7 @@ const vuetify = createVuetify({
         }
       }
     },
-    VMenu: {
-      VCard: {
-        rounded: 'md',
-        elevation: 2,
-        VCardTitle: {
-          class: 'text-h5 font-weight-light bg-primary justify-center'
-        },
-        VCardActions:{
-          class: 'text-h5 font-weight-regular justify-center bg-cardColor'
-        
-        }
-      }
-    },
+
     VTextField: {
       variant: 'solo',
       rounded: 'md',
@@ -83,7 +71,7 @@ const vuetify = createVuetify({
       variant: 'solo'
     },
     VIcon: {
-      color: 'elementTextColor'
+      color: 'secondary'
     },
     Small: {
       color: 'elementTextColor',
@@ -141,7 +129,7 @@ const vuetify = createVuetify({
           success: '#37471F',
           warning: '#FFC107',
           cardColor: '#F1F2F4',
-          elementTextColor: '#44546F', // most important color for text
+          elementTextColor: '#4C9FC3', // most important color for text
           headingTextColor: '#091E42',
           n_elementTextColor: '#8C9BAB', // most nonImportant color for text
           highlighter: '#DEE4EA',

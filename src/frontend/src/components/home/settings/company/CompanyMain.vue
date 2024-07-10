@@ -1,17 +1,12 @@
 <template>
-  <v-menu
-    v-model="companyDialog"
-    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
-    location="right"
-    min-width="300px"
-  >
+  <v-menu v-model="companyDialog" location="right" min-width="300px">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="secondary" v-bind="activatorProps">Company Name</v-btn>
     </template>
-    <v-card :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'" class="bg-background">
+    <v-card :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
       <v-card-title>User's Companies</v-card-title>
       <v-card-text>
-        <v-col>
+        <v-container>
           <v-row>
             <v-col>
               <v-text-field
@@ -34,14 +29,12 @@
               ></v-row
             >
           </v-col>
-        </v-col>
+        </v-container>
       </v-card-text>
       <v-actions>
+        <v-col cols="12" align-self="center"> <CompanySettings /></v-col>
         <v-col cols="12" align-self="center">
-          <v-btn color="success" width="100%" height="35" variant="outlined">Settings</v-btn></v-col
-        >
-        <v-col cols="12" align-self="center">
-          <v-btn color="error" width="100%" height="35" variant="outlined">Delete</v-btn></v-col
+          <v-btn color="error" width="100%" height="35" variant="outlined">Close</v-btn></v-col
         >
       </v-actions>
     </v-card>
@@ -50,6 +43,8 @@
 <script>
 import { defineComponent } from 'vue'
 import Popover from 'primevue/popover'
+import CompanySettings from './CompanySettings.vue'
+
 
 export default defineComponent({
   props: {
@@ -57,11 +52,14 @@ export default defineComponent({
     userDetails: Object
   },
   components: {
-    Popover
+    Popover,
+    CompanySettings,
+    VCardActions
   },
   data() {
     return {
       companyDialog: false,
+      search: '',
       isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
       companyList: [
         {
@@ -81,4 +79,3 @@ export default defineComponent({
   }
 })
 </script>
-<style scoped></style>
