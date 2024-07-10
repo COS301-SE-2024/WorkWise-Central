@@ -19,7 +19,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import { VCardActions } from 'vuetify/components'
+
 export default defineComponent({
   name: 'CompanySettings',
 
@@ -34,9 +34,7 @@ export default defineComponent({
       this.companyDialog = false
     }
   },
-  components: {
-    VCardActions
-  }
+ 
 })
 </script>
 

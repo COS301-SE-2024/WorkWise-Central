@@ -42,7 +42,7 @@
 </template>
 <script>
 import { defineComponent } from 'vue'
-import Popover from 'primevue/popover'
+
 import CompanySettings from './CompanySettings.vue'
 
 export default defineComponent({
@@ -51,7 +51,6 @@ export default defineComponent({
     userDetails: Object
   },
   components: {
-    Popover,
     CompanySettings
   },
   data() {
