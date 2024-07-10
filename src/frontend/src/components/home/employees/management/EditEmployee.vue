@@ -155,7 +155,7 @@ export default {
           apiURL + `role/all/${sessionStorage['currentCompany']}`,
           config
         )
-        let roles_data: Role[] = roles_response.data.data
+        let roles_data: Role[] = roles_response.data
         for (let i = 0; i < roles_data.length; i++) {
           if (roles_data[i].roleName === this.localEditedItem.roleName) continue
           rolesNames_arr.push(roles_data[i].roleName)
