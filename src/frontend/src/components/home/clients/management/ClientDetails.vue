@@ -1,12 +1,12 @@
 <template>
   <v-dialog v-model="clientDialog" max-width="500">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn color="success" v-bind="activatorProps"> View </v-btn>
+      <v-btn color="secondary" v-bind="activatorProps"> View </v-btn>
     </template>
 
     <v-sheet :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
       <v-card-title>
-        <span class="headline">Client Details</span>
+       Client Details
       </v-card-title>
       <v-card-text>
         <v-col>

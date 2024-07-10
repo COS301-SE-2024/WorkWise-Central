@@ -32,16 +32,18 @@ const vuetify = createVuetify({
     VTextField: {
       variant: 'solo',
       rounded: 'md',
-      density: 'compact'
+      density: 'compact',
+      clearable: true,
+      color:'cardColor'
     },
 
     VCard: {
       elevation: 14,
-      rounded: 'xl',
+      rounded: 'md',
       height: 'auto',
       class: 'bg-cardColor ',
       VCardTitle: {
-        class: 'text-h5 font-weight-regular bg-primary d-flex justify-center text-blue'
+        class: 'text-h5 font-weight-regular  d-flex justify-center text-secondary'
       },
       VCardText: { class: 'bg-cardColor', VList: { class: 'bg-cardColor' } }
     },
@@ -52,7 +54,7 @@ const vuetify = createVuetify({
       size: 'large'
     },
     VCardTitle: {
-      class: ''
+      class: 'text-h5 font-weight-regular bg-primary justify-center'
     },
     VSheet: {
       elevation: 14,
@@ -85,7 +87,8 @@ const vuetify = createVuetify({
       }
     },
     VChip: {
-      rounded: 'md'
+      rounded: 'md',
+     
     }
   },
   directives,

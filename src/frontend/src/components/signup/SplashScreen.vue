@@ -1,7 +1,7 @@
 <template>
   <v-app :theme="isdarkmode ? 'dark' : 'light'">
     <!-- Toolbar -->
-    <v-app-bar :theme="isdarkmode ? 'themes.dark' : 'themes.light'">
+    <v-app-bar :theme="isdarkmode ? 'themes.dark' : 'themes.light'" class="bg-background">
       <v-toolbar-title class="d-flex justify-end">
         <v-label class="toolbar-text text-primary">Work</v-label>
         <v-label class="toolbar-text text-secondary">Wise</v-label>

@@ -26,7 +26,6 @@
                           }}</v-list-item-subtitle></v-list-item-content
                         ></v-chip
                       >
-
                       <v-divider></v-divider>
                     </v-list-item>
                   </v-list>
@@ -49,7 +48,6 @@
                           }}</v-list-item-subtitle></v-list-item-content
                         >
                       </v-chip>
-
                       <v-divider></v-divider>
                     </v-list-item>
                   </v-list>
@@ -111,7 +109,6 @@
                           }}</v-list-item-subtitle></v-list-item-content
                         >
                       </v-chip>
-
                       <v-divider></v-divider>
                     </v-list-item>
                   </v-list>
@@ -131,7 +128,6 @@
                           >{{ team.members }} members</v-list-item-subtitle
                         ></v-list-item-content
                       >
-
                       <v-divider></v-divider>
                     </v-list-item>
                   </v-list>

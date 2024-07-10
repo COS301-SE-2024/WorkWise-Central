@@ -32,7 +32,7 @@
               density="compact"
               label="Search"
               prepend-inner-icon="mdi-magnify"
-              variant="outlined"
+              variant="solo inverted"
               flat
               width="100%"
               style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
@@ -72,7 +72,7 @@
                   @click="callPhone"
                   color="elementTextColor"
                   border="md"
-                  rounded="xl"
+                 
                   ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
                 >
               </template>
@@ -85,7 +85,7 @@
               <template v-slot:[`item.contactInfo.email`]="{ value }">
                 <v-chip
                   variant="text"
-                  rounded="xl"
+                 
                   @click="sendEmail"
                   color="elementTextColor"
                   border="md"
