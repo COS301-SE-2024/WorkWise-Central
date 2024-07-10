@@ -10,7 +10,6 @@ import {
   Param,
   Patch,
   Post,
-  Request,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -90,6 +89,7 @@ export class UsersController {
   }
 
   //@UseGuards(AuthGuard)
+  //@ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Get all ${className}s`,
   })
@@ -98,8 +98,9 @@ export class UsersController {
     description: `An array of mongodb objects of the ${className} class`,
   })
   @Get('all')
-  async findAll() {
+  async findAll(@Headers() headers: any) {
     try {
+      console.log(headers);
       return { data: await this.usersService.getAllUsers() };
     } catch (Error) {
       throw new HttpException(
@@ -146,7 +147,41 @@ export class UsersController {
       return { data: await this.usersService.usernameExists(username) };
     } catch (e) {
       console.log(e);
-      throw new HttpException('Username Taken', HttpStatus.CONFLICT);
+      throw new InternalServerErrorException('Something went wrong ');
+    }
+  }
+
+  @ApiOperation({
+    summary: `${className} Email exists or not`,
+  })
+  @ApiOkResponse({
+    type: BooleanResponseDto,
+    description: 'Response is a Boolean value',
+  })
+  @Post('/exists/email')
+  async emailExists(@Body('email') email: string) {
+    try {
+      return { data: await this.usersService.emailExists(email) };
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException('Something went wrong ');
+    }
+  }
+
+  @ApiOperation({
+    summary: `${className} Phone Number exists or not`,
+  })
+  @ApiOkResponse({
+    type: BooleanResponseDto,
+    description: 'Response is a Boolean value',
+  })
+  @Post('/exists/phone')
+  async phoneExists(@Body('phone') phone: string) {
+    try {
+      return { data: await this.usersService.phoneExists(phone) };
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException('Something went wrong ');
     }
   }
 
