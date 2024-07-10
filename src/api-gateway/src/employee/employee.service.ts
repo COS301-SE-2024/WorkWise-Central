@@ -181,7 +181,7 @@ export class EmployeeService {
     // checking if the user exists in the company
     const user = await this.usersService.getUserById(createEmployeeDto.userId);
     if (
-      await this.companyService.userIsInCompany(
+      await this.usersService.userIsInCompany(
         user._id,
         createEmployeeDto.companyId,
       )
