@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+import { SchemaTypes, Types } from 'mongoose';
+// import mongoose, { SchemaTypes, Types } from 'mongoose';
 import { CreateEmployeeDto } from '../dto/create-employee.dto';
 
 @Schema()
@@ -18,7 +19,7 @@ export class Employee {
   roleId?: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: true, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
   currentJobAssignments?: Types.ObjectId[];
 
   @ApiProperty()
@@ -26,19 +27,19 @@ export class Employee {
   superiorId?: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: false, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: false, default: [] })
   subordinates?: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: false, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: false, default: [] })
   subordinateTeams?: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true })
   userId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true })
   companyId: Types.ObjectId;
 
   @ApiHideProperty()
@@ -56,35 +57,35 @@ export class Employee {
 
 export class EmployeeApiObject {
   @ApiProperty()
-  @Prop({ required: true, unique: true })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true, unique: true })
   id: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ required: false })
+  @Prop({ type: [SchemaTypes.ObjectId], required: false })
   roleId?: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: true, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
   currentJobAssignments?: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ required: false })
+  @Prop({ type: [SchemaTypes.ObjectId], required: false })
   superiorId?: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: false, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: false, default: [] })
   subordinates?: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: false, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: false, default: [] })
   subordinateTeams?: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true })
   userId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true })
   companyId: Types.ObjectId;
 
   @ApiHideProperty()
