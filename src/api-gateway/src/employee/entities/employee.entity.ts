@@ -3,11 +3,11 @@ import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
 // import mongoose, { SchemaTypes, Types } from 'mongoose';
 import { CreateEmployeeDto } from '../dto/create-employee.dto';
-import { Role } from 'src/role/entity/role.entity';
-import { Team } from 'src/team/entities/team.entity';
-import { Job } from 'src/job/entities/job.entity';
-// import { User } from 'src/users/entities/user.entity';
-import { Company } from 'src/company/entities/company.entity';
+// import { Role } from 'src/role/entity/role.entity';
+// import { Team } from 'src/team/entities/team.entity';
+// import { Job } from 'src/job/entities/job.entity';
+// // import { User } from 'src/users/entities/user.entity';
+// import { Company } from 'src/company/entities/company.entity';
 
 @Schema()
 export class Employee {
@@ -20,7 +20,7 @@ export class Employee {
   }
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: false, ref: Role.name })
+  @Prop({ type: [SchemaTypes.ObjectId], required: false, ref: 'Role' })
   roleId?: Types.ObjectId;
 
   @ApiProperty()
@@ -28,12 +28,12 @@ export class Employee {
     type: [SchemaTypes.ObjectId],
     required: true,
     default: [],
-    ref: Job.name,
+    ref: 'Job',
   })
   currentJobAssignments?: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: false, ref: Employee.name })
+  @Prop({ type: [SchemaTypes.ObjectId], required: false, ref: 'Employee' })
   superiorId?: Types.ObjectId;
 
   @ApiProperty()
@@ -50,7 +50,7 @@ export class Employee {
     type: [SchemaTypes.ObjectId],
     required: false,
     default: [],
-    ref: Team.name,
+    ref: 'Team',
   })
   subordinateTeams?: Types.ObjectId[];
 
@@ -59,7 +59,7 @@ export class Employee {
   userId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, ref: Company.name })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true, ref: 'Company' })
   companyId: Types.ObjectId;
 
   @ApiHideProperty()
