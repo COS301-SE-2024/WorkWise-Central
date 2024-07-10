@@ -272,10 +272,22 @@ export class JobService {
   async GetAllJobsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
     //Basic Authentication
     //TODO: Add role-related rules if necessary
-    if (!(await this.companyService.userIsInCompany(userId, companyId))) {
+    if (!(await this.usersService.userIsInCompany(userId, companyId))) {
       throw new UnauthorizedException('User not in company');
     }
     return await this.jobRepository.findAllInCompany(companyId);
+  }
+
+  async GetAllDetailedJobsInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ) {
+    //Basic Authentication
+    //TODO: Add role-related rules if necessary
+    if (!(await this.usersService.userIsInCompany(userId, companyId))) {
+      throw new UnauthorizedException('User not in company');
+    }
+    return await this.jobRepository.findAllInCompanyDetailed(companyId);
   }
 
   async GetAllJobsForUser(
@@ -295,6 +307,25 @@ export class JobService {
   }
 
   async GetAllJobsForEmployee(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+  ): Promise<(FlattenMaps<Job> & { _id: Types.ObjectId })[]> {
+    if (!(await this.usersService.userIdExists(userId))) {
+      throw new NotFoundException('User not found');
+    }
+    if (
+      !(await this.usersService.userIsInSameCompanyAsEmployee(
+        userId,
+        employeeId,
+      ))
+    ) {
+      throw new UnauthorizedException('User not in Same Company');
+    }
+
+    return this.jobRepository.findAllForEmployee(employeeId);
+  }
+
+  async GetAllDetailedJobsForEmployee(
     userId: Types.ObjectId,
     employeeId: Types.ObjectId,
   ): Promise<(FlattenMaps<Job> & { _id: Types.ObjectId })[]> {

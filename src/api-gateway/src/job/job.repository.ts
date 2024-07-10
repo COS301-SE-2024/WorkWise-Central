@@ -3,6 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { Job } from './entities/job.entity';
 import { UpdateJobDto } from './dto/update-job.dto';
+import { Employee } from '../employee/entities/employee.entity';
+import { Company } from '../company/entities/company.entity';
+import { Team } from '../team/entities/team.entity';
 
 @Injectable()
 export class JobRepository {
@@ -58,6 +61,70 @@ export class JobRepository {
     };
 
     return this.jobModel.find(filter).lean().exec();
+  }
+
+  jobComments = {
+    path: 'comments',
+    populate: [
+      {
+        path: 'employeeId',
+        model: Employee.name,
+      },
+      {
+        path: 'companyId',
+        model: Company.name,
+      },
+    ],
+  };
+
+  jobTasks = {
+    path: 'taskList',
+    populate: [
+      {
+        path: 'assignedEmployees',
+        model: Employee.name,
+      },
+    ],
+  };
+
+  jobAssignedEmployees = {
+    path: 'assignedEmployees',
+    populate: [
+      {
+        path: 'employeeIds',
+        model: Employee.name,
+      },
+      {
+        path: 'teamId',
+        model: Team.name,
+      },
+    ],
+  };
+
+  async findAllInCompanyDetailed(
+    companyId: Types.ObjectId,
+    fieldsToPopulate: string[] = [
+      'assignedEmployees',
+      'assignedBy',
+      'clientId',
+      'comments',
+    ],
+  ) {
+    const filter = {
+      $and: [
+        { companyId: companyId },
+        { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] },
+      ],
+    };
+
+    return this.jobModel //TODO: Test
+      .find(filter)
+      .populate(fieldsToPopulate)
+      .populate(this.jobComments)
+      .populate(this.jobAssignedEmployees)
+      .populate(this.jobTasks)
+      .lean()
+      .exec();
   }
 
   async exists(id: string) {
@@ -138,5 +205,25 @@ export class JobRepository {
       ],
     };
     return await this.jobModel.find(filter).lean().exec();
+  }
+
+  async findAllForEmployeeDetailed(employeeId: Types.ObjectId) {
+    const fieldsToPopulate = [
+      'assignedEmployees',
+      'assignedBy',
+      'clientId',
+      'comments',
+    ];
+    const filter = {
+      $and: [
+        { 'assignedEmployees.employeeIds': { $in: [employeeId] } },
+        this.isNotDeleted,
+      ],
+    };
+    return await this.jobModel
+      .find(filter)
+      .populate(fieldsToPopulate)
+      .lean()
+      .exec();
   }
 }

@@ -154,6 +154,40 @@ export class JobController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @ApiOperation({
+    summary: `Get all ${className}s in a specific Company`,
+  })
+  @ApiOkResponse({
+    type: JobAllResponseDto, //TODO: Update to be accurate
+    description: `An array of mongodb objects of the ${className} class`,
+  })
+  @Get('all/company/:cid')
+  async findDetailedAllInCompany(
+    @Headers() headers: any,
+    @Param('cid') companyId: string,
+  ) {
+    this.validateObjectId(companyId);
+    const decodedJwtAccessToken = this.jwtService.decode(
+      headers.authorization.replace(/^Bearer\s+/i, ''),
+    );
+    const userId: Types.ObjectId = decodedJwtAccessToken.sub;
+    if (!userId) {
+      throw new UnauthorizedException('Unauthorized, JWT required');
+    }
+    try {
+      return {
+        data: await this.jobService.GetAllDetailedJobsInCompany(
+          userId,
+          new Types.ObjectId(companyId),
+        ),
+      };
+    } catch (Error) {
+      throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
     summary: `Get all ${className}s for a specific user`,
   })
   @ApiOkResponse({
@@ -216,6 +250,39 @@ export class JobController {
     }
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all ${className}s for a specific Employee, but with populated fields`,
+  })
+  @ApiOkResponse({
+    type: JobAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class`,
+  })
+  @Get('all/employee/:eid/detailed')
+  async findAllForEmployeeDetailed(
+    @Headers() headers: any,
+    @Param('eid') empId: string,
+  ) {
+    try {
+      const userId: Types.ObjectId = this.extractUserId(headers);
+      if (!userId) {
+        throw new UnauthorizedException('Unauthorized, JWT required');
+      }
+      this.validateObjectId(userId);
+      this.validateObjectId(empId);
+
+      return {
+        data: await this.jobService.GetAllDetailedJobsForEmployee(
+          userId,
+          new Types.ObjectId(empId),
+        ),
+      };
+    } catch (Error) {
+      throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   @ApiOperation({ summary: `Find a specific ${className}` })
   @ApiOkResponse({
     type: JobResponseDto,
@@ -263,14 +330,7 @@ export class JobController {
   ) {
     try {
       this.validateObjectId(jobId);
-      const authHeader: string = headers.authorization;
-      const decodedJwtAccessToken = this.jwtService.decode(
-        authHeader.replace(/^Bearer\s+/i, ''),
-      );
-      //console.log(decodedJwtAccessToken);
-      //this.validateObjectId(decodedJwtAccessToken);
-
-      const userId: Types.ObjectId = decodedJwtAccessToken.sub; //This attribute is retrieved in the JWT
+      const userId: Types.ObjectId = this.extractUserId(headers);
       // console.log(userId);
       // console.log(new Types.ObjectId(jobId));
       const success = await this.jobService.update(
@@ -314,5 +374,17 @@ export class JobController {
         HttpStatus.SERVICE_UNAVAILABLE,
       );
     }
+  }
+
+  private extractUserId(headers: any) {
+    const authHeader: string = headers.authorization;
+    const decodedJwtAccessToken = this.jwtService.decode(
+      authHeader.replace(/^Bearer\s+/i, ''),
+    );
+    if (!Types.ObjectId.isValid(decodedJwtAccessToken.sub)) {
+      throw new HttpException('Invalid User', HttpStatus.BAD_REQUEST);
+    }
+    const userId: Types.ObjectId = decodedJwtAccessToken.sub; //This attribute is retrieved in the JWT
+    return userId;
   }
 }
