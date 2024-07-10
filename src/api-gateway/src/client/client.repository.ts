@@ -21,11 +21,25 @@ export class ClientRepository {
       .lean();
   }
 
-  async findClientById(identifier: string): Promise<FlattenMaps<Client>> {
+  async findAllInCompany(companyId: Types.ObjectId) {
+    return this.clientModel
+      .find({
+        $and: [
+          { 'details.companyId': companyId },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean()
+      .exec();
+  }
+
+  async findClientById(id: Types.ObjectId): Promise<FlattenMaps<Client>> {
     return this.clientModel
       .findOne({
         $and: [
-          { _id: identifier },
+          { _id: id },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
