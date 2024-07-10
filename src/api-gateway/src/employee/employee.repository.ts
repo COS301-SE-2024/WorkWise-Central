@@ -15,14 +15,28 @@ export class EmployeeRepository {
     return this.employeeModel.find().lean().exec();
   }
 
-  async findAllInCompany(companyId: Types.ObjectId) {
-    const filter = companyId ? { companyId: companyId } : {};
-    return this.employeeModel.find(filter).exec();
+  async findAllInCompany(identifier: Types.ObjectId) {
+    const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] =
+      await this.employeeModel
+        .find({
+          $and: [
+            {
+              companyId: identifier,
+            },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+    return result;
   }
 
   async findById(
     identifier: Types.ObjectId,
   ): Promise<FlattenMaps<Employee> & { _id: Types.ObjectId }> {
+    console.log('In findById repository');
+    console.log('identifier -> ', identifier);
     return this.employeeModel
       .findOne({
         $and: [
@@ -121,9 +135,13 @@ export class EmployeeRepository {
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {
+    console.log('In remove repository');
     const employeeToDelete = await this.findById(id);
+    console.log('employeeToDelete -> ', employeeToDelete);
 
-    if (employeeToDelete == null) return false;
+    if (employeeToDelete == null) {
+      return false;
+    }
 
     const result: Document<unknown, NonNullable<unknown>, User> &
       User & { _id: Types.ObjectId } =
