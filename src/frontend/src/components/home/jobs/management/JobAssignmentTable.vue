@@ -28,12 +28,13 @@
                   density="compact"
                   label="Search"
                   prepend-inner-icon="mdi-magnify"
-                  variant="outlined"
+                  variant="solo-inverted"
                   flat
                   style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
                   hide-details
                   :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
                   single-line
+                  clearable
                 ></v-text-field>
                 <v-spacer></v-spacer>
                 <AddJob />
@@ -47,13 +48,11 @@
                       :headers="headers"
                       :items="jobClientData"
                       :search="search"
-                      :single-expand="true"
-                      v-model:expanded="expanded"
-                      show-expand
                       height="auto"
                       rounded="xl"
                       :item-class="getRowClass"
-                      class=""
+                      hover
+                      sticky
                     >
                       <template v-slot:[`item.heading`]="{ value }">
                         {{ value }}

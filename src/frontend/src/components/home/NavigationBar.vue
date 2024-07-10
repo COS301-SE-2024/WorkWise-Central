@@ -10,9 +10,9 @@ const onProfileClick = () => {
 const open = ref(['Dashboard'])
 
 const dashboardSubItems = ref([
-  { title: 'Home', icon: 'mdi-home', routeName: 'dashboard' },
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
+  { title: 'Home', icon: 'mdi-home', routeName: 'dashboard', color:'#227D9B'},
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404', color:'#227D9B' },
+  { title: 'TBD', icon: 'mdi-clock', routeName: '404', color:'#227D9B' }
 ])
 
 const clientSubItems = ref([
@@ -101,7 +101,7 @@ export default defineComponent({
   <v-app :theme="isdarkmode ? 'dark' : 'light'">
     <v-card class="bg-cardColor">
       <v-app :theme="isdarkmode ? 'dark' : 'light'">
-        <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-background">
+        <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-background" border="xs" density="comfortable" elevation="1" tile>
           <v-app-bar-nav-icon @click="isVisible = !isVisible">
             <v-icon>{{ isVisible ? 'mdi-menu' : 'mdi-close' }}</v-icon>
           </v-app-bar-nav-icon>
@@ -116,9 +116,9 @@ export default defineComponent({
           <v-spacer class="d-none d-sm-flex"></v-spacer>
 
           <div class="d-flex align-center">
-            <v-icon class="icon-padding" @click="onProfileClick">mdi-account-circle</v-icon>
+            <v-icon class="icon-padding mr-5" @click="onProfileClick">mdi-account-circle</v-icon>
             <v-icon
-              class="icon-padding"
+              class="icon-padding mr-5"
               @click="toggleDarkMode"
               :icon="isdarkmode ? ' mdi-white-balance-sunny' : 'mdi-moon-waning-crescent'"
             ></v-icon>
@@ -131,9 +131,11 @@ export default defineComponent({
           v-model="drawer"
           :rail="isVisible"
           :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
+          border="xs"
         >
           <v-list-item></v-list-item>
           <v-divider></v-divider>
+          <v-defaults-provider :defaults="{'VIcon':{'color':'secondary'}}">
           <v-list v-model:open="open">
             <v-list-group fluid value="Dashboard">
               <template v-slot:activator="{ props }">
@@ -141,16 +143,18 @@ export default defineComponent({
                   v-bind="props"
                   prepend-icon="mdi-view-dashboard"
                   title="Dashboard"
+                  class="custom-list-height-higher"
                 ></v-list-item>
               </template>
-              <v-list-item
-                v-for="(item, i) in dashboardSubItems"
-                :key="i"
-                :to="{ name: item.routeName }"
-                :prepend-icon="item.icon"
-                :title="item.title"
-                :value="item.title"
-              ></v-list-item>
+                <v-list-item
+                  v-for="(item, i) in dashboardSubItems"
+                  :key="i"
+                  :to="{ name: item.routeName }"
+                  :prepend-icon="item.icon"
+                  :title="item.title"
+                  :value="item.title"
+                  class="custom-list-height-lower colored-icon"
+                ></v-list-item>
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
@@ -160,6 +164,7 @@ export default defineComponent({
                   v-bind="props"
                   prepend-icon="mdi-account-group"
                   title="Clients"
+                  class="custom-list-height-higher"
                 ></v-list-item>
               </template>
               <v-list-item
@@ -169,6 +174,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="custom-list-height-lower"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -179,6 +185,7 @@ export default defineComponent({
                   v-bind="props"
                   prepend-icon="mdi-account-multiple"
                   title="Employees"
+                  class="custom-list-height-higher"
                 ></v-list-item>
               </template>
               <v-list-item
@@ -188,13 +195,20 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="custom-list-height-lower"
               ></v-list-item>
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
             <v-list-group fluid value="Jobs">
               <template v-slot:activator="{ props }">
-                <v-list-item v-bind="props" prepend-icon="mdi-briefcase" title="Jobs"></v-list-item>
+                <v-list-item
+                    v-bind="props"
+                    prepend-icon="mdi-briefcase"
+                    title="Jobs"
+                    class="custom-list-height-higher"
+                >
+                </v-list-item>
               </template>
               <v-list-item
                 v-for="(item, i) in jobSubItems"
@@ -203,6 +217,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="custom-list-height-lower colored-icon"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -213,6 +228,7 @@ export default defineComponent({
                   v-bind="props"
                   prepend-icon="mdi-warehouse"
                   title="Inventory"
+                  class="custom-list-height-higher"
                 ></v-list-item>
               </template>
               <v-list-item
@@ -222,13 +238,20 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="custom-list-height-lower"
               ></v-list-item>
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
             <v-list-group fluid value="Inbox">
               <template v-slot:activator="{ props }">
-                <v-list-item v-bind="props" prepend-icon="mdi-inbox" title="Inbox"></v-list-item>
+                <v-list-item
+                    v-bind="props"
+                    prepend-icon="mdi-inbox"
+                    title="Inbox"
+                    class="custom-list-height-higher"
+                >
+                </v-list-item>
               </template>
               <v-list-item
                 v-for="(item, i) in inboxSubItems"
@@ -237,6 +260,8 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="custom-list-height-lower"
+                active-color= "primary"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -247,6 +272,7 @@ export default defineComponent({
                   v-bind="props"
                   prepend-icon="mdi-information"
                   title="Help"
+                  class="custom-list-height-higher"
                 ></v-list-item>
               </template>
               <v-list-item
@@ -256,16 +282,18 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="custom-list-height-lower"
               ></v-list-item>
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
-            <v-list-group value="More">
+            <v-list-group fluid value="More">
               <template v-slot:activator="{ props }">
                 <v-list-item
                   v-bind="props"
                   prepend-icon="mdi-dots-horizontal"
                   title="More"
+                  class="custom-list-height-higher"
                 ></v-list-item>
               </template>
               <v-list-item
@@ -275,9 +303,11 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="custom-list-height-lower"
               ></v-list-item>
             </v-list-group>
           </v-list>
+          </v-defaults-provider>
         </v-navigation-drawer>
         <v-main>
           <component :is="component" />
@@ -299,5 +329,25 @@ export default defineComponent({
 }
 .icon-padding {
   padding: 8px; /* Adjust the padding value as needed */
+}
+
+.custom-list-height-lower {
+  height: 30px !important; /* Adjust to your desired height */
+}
+
+.custom-list-height-higher {
+  height: 60px !important; /* Adjust to your desired height */
+}
+
+.v-list-item:hover {
+  background-color: #F0984D !important; /* Replace with your desired hover color */
+}
+
+.v-list-item--active {
+  //background-color: grey;
+}
+
+.colored-icon .v-list-item__icon {
+  color: #227D9B; /* Replace with your color */
 }
 </style>
