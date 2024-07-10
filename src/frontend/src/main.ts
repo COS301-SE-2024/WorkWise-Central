@@ -7,7 +7,7 @@ import { registerLicense } from '@syncfusion/ej2-base'
 import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
 // import store from './store';
-
+import './assets/styles.css'
 const lice = 'ORg4AjUWIQA/Gnt2UFhhQlJBfVhdWnxLflFyVWJZdVpxfldAcC0sT3RfQFljT35bdkRgX3pYc3NURQ=='
 registerLicense(lice)
 
