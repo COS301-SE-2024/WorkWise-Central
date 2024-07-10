@@ -15,7 +15,7 @@ export class Employee {
 
   @ApiProperty()
   @Prop({ required: false })
-  roleId?: Types.ObjectId;
+  roleId?: Types.ObjectId; //TODO: Make this field required
 
   @ApiProperty()
   @Prop({ type: [Types.ObjectId], required: true, default: [] })

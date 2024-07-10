@@ -25,7 +25,7 @@ export class ContactInfo {
   @Prop({ type: String, required: true })
   phoneNumber: string;
 
-  @Prop({ type: String, unique: true, required: true, lowercase: true })
+  @Prop({ type: String, unique: true, lowercase: true, trim: true })
   email: string;
 }
 
@@ -55,8 +55,8 @@ export class ClientDetails {
   vatNumber?: string;
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Company.name })
-  companyId?: Types.ObjectId;
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Company.name })
+  companyId: Types.ObjectId;
 
   @ApiProperty()
   @Prop({ type: String, required: false })

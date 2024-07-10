@@ -107,9 +107,9 @@ export class ClientDetails {
   vatNumber?: string;
 
   @ApiProperty()
-  @IsOptional()
+  @IsNotEmpty()
   @IsMongoId()
-  companyId?: Types.ObjectId;
+  companyId: Types.ObjectId;
 
   @ApiProperty()
   @IsOptional()
