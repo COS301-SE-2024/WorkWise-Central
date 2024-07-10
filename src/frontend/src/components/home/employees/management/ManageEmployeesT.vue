@@ -136,121 +136,7 @@ import router from '@/router/index'
 import EditEmployee from '@/components/home/employees/management/EditEmployee.vue'
 import DeleteEmployee from '@/components/home/employees/management/DeleteEmployee.vue'
 import EmployeeDetails from '@/components/home/employees/management/EmployeeDetails.vue'
-
-type Address = {
-  street: string
-  suburb: string
-  city: string
-  postalCode: string
-  complex: string
-  houseNumber: string
-}
-
-type ContactInfo = {
-  phoneNumber: string
-  email: string
-}
-
-type Person = {
-  address: Address
-  contactInfo: ContactInfo
-  firstName: string
-  surname: string
-  preferredLanguage: string
-  dateOfBirth: string // ISO 8601 date string
-  gender: string
-  id: string // Assuming this is a MongoDB ObjectId in string format
-  roleId: string // Assuming this is a MongoDB ObjectId in string format
-  roleName: string
-}
-
-type SystemDetails = {
-  email: string
-  password: string
-  username: string
-  _id: string
-}
-
-type Profile = {
-  displayName: string
-  displayImage: string
-  _id: string
-}
-
-type Roles = {
-  role: string
-  permissions: string[]
-  _id: string
-}
-
-type JoinedCompany = {
-  // Define properties for joined companies if there are any; currently it's an empty object
-  // e.g., companyName?: string
-}
-
-type User = {
-  data: {
-    _id: string
-    systemDetails: SystemDetails
-    personalInfo: EmployeePersonalInfo
-    profile: Profile
-    roles: Roles
-    joinedCompanies: JoinedCompany[]
-    skills: string[]
-    created_at: string // ISO 8601 date string
-    __v: number
-  }
-}
-
-type JobAssignment = {
-  // Define properties for job assignments if there are any
-}
-
-type Subordinate = {
-  // Define properties for subordinates if there are any
-}
-
-type SubordinateTeam = {
-  // Define properties for subordinate teams if there are any
-}
-
-type Employee = {
-  _id: string
-  currentJobAssignments: JobAssignment[]
-  subordinates: Subordinate[]
-  subordinateTeams: SubordinateTeam[]
-  userId: string
-  companyId: string
-  createdAt: string
-  __v: number
-  roleId: string
-  updatedAt: string
-  superiorId: string
-}
-
-type EmployeePersonalInfo = {
-  address: {
-    street: string
-    suburb: string
-    city: string
-    postalCode: string
-    complex: string
-    houseNumber: string
-  }
-  contactInfo: {
-    phoneNumber: string
-    email: string
-  }
-  firstName: string
-  surname: string
-  preferredLanguage: string
-  dateOfBirth: string
-  gender: string
-  roleId: string
-  roleName: string
-  employeeId: string
-  userId: string
-}
+import { type Employee, type EmployeePersonalInfo, type Person, type User } from '../types'
 
 export default {
   name: 'ClientDesk',
@@ -538,7 +424,6 @@ export default {
           if (employee_all_data[i].roleId !== undefined) {
             let role = await axios.get(apiURL + `role/id/${employee_all_data[i].roleId}`, config)
 
-            console.log(role.data)
             if (role.status < 300 && role.status > 199) {
               let company_employee: EmployeePersonalInfo = {
                 address: {

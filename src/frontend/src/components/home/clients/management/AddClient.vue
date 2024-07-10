@@ -29,11 +29,7 @@
           <v-spacer></v-spacer>
           <v-col>
             <v-col>
-              <small
-                :theme="isdarkmode === true ? 'dark' : 'light'"
-                class="text-caption white--text"
-                >First name of client*</small
-              >
+              <label style="font-size: 14px; font-weight: lighter">First name of client*</label>
 
               <v-text-field
                 density="compact"
@@ -48,11 +44,8 @@
               ></v-text-field
             ></v-col>
             <v-col>
-              <small
-                :theme="isdarkmode === true ? 'dark' : 'light'"
-                class="text-caption white--text"
-                >Surname of client*</small
-              >
+              <label style="font-size: 14px; font-weight: lighter">Surname of client*</label>
+
               <v-text-field
                 density="compact"
                 :theme="isdarkmode === true ? 'dark' : 'light'"
@@ -66,11 +59,8 @@
               ></v-text-field
             ></v-col>
             <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption white--text"
-                >ID of client*</small
-              >
+              <label style="font-size: 14px; font-weight: lighter">ID of client*</label>
+
               <v-text-field
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
@@ -83,30 +73,29 @@
                 :rules="id_number_rules"
               ></v-text-field
             ></v-col>
-<!--            <v-col>-->
-<!--              <small-->
-<!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
-<!--                class="text-caption white&#45;&#45;text"-->
-<!--                >Username of client*</small-->
-<!--              >-->
+            <!--            <v-col>-->
+            <!--              <small-->
+            <!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
+            <!--                class="text-caption white&#45;&#45;text"-->
+            <!--                >Username of client*</small-->
+            <!--              >-->
 
-<!--              <v-text-field-->
-<!--                density="compact"-->
-<!--                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
-<!--                color="grey-lighten-4"-->
-<!--                placeholder="Enter the username of the client"-->
-<!--                v-model="req_obj.clientUsername"-->
-<!--                rounded="md"-->
-<!--                variant="underlined"-->
-<!--                required-->
-<!--                :rules="username_rules"-->
-<!--              ></v-text-field-->
-<!--            ></v-col>-->
+            <!--              <v-text-field-->
+            <!--                density="compact"-->
+            <!--                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
+            <!--                color="grey-lighten-4"-->
+            <!--                placeholder="Enter the username of the client"-->
+            <!--                v-model="req_obj.clientUsername"-->
+            <!--                rounded="md"-->
+            <!--                variant="underlined"-->
+            <!--                required-->
+            <!--                :rules="username_rules"-->
+            <!--              ></v-text-field-->
+            <!--            ></v-col>-->
 
             <v-col>
-              <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
-                >Client email address*</small
-              >
+              <label style="font-size: 14px; font-weight: lighter">Client email address*</label>
+
               <v-text-field
                 density="compact"
                 :theme="isdarkmode === true ? 'dark' : 'light'"
@@ -121,9 +110,8 @@
               ></v-text-field
             ></v-col>
             <v-col>
-              <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
-                >Client phone number*</small
-              >
+              <label style="font-size: 14px; font-weight: lighter">Client phone number*</label>
+
               <v-text-field
                 density="compact"
                 :theme="isdarkmode === true ? 'dark' : 'light'"
@@ -138,18 +126,12 @@
               ></v-text-field
             ></v-col>
 
-            <small
-              :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-              class="text-caption"
-              >Client address</small
-            >
+            <label style="font-size: 14px; font-weight: lighter">Client address*</label>
+
             <v-row>
-              <v-col sm="6" cols="12"
-                ><small
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                  class="text-caption"
-                  >Street</small
-                ><v-text-field
+              <v-col sm="6" cols="12">
+                <label style="font-size: 12px; font-weight: lighter">Street</label>
+                <v-text-field
                   :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
                   density="compact"
                   color="grey-lighten-4"
@@ -161,12 +143,9 @@
                   required
                 ></v-text-field
               ></v-col>
-              <v-col sm="6" cols="12"
-                ><small
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                  class="text-caption"
-                  >Suburb</small
-                ><v-text-field
+              <v-col sm="6" cols="12">
+                <label style="font-size: 12px; font-weight: lighter">Suburb</label>
+                <v-text-field
                   :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
@@ -179,24 +158,32 @@
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
-                <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
-                >Province</small
-                ><v-autocomplete
-                :theme="isdarkmode === true ? 'dark' : 'light'"
-                density="compact"
-                color="grey-lighten-4"
-                placeholder="Province"
-                rounded="md"
-                type="houseNumber"
-                variant="underlined"
-                :items = "[ 'Eastern Cape', 'Free State', 'Gauteng', 'KwaZulu-Natal', 'Limpopo', 'Mpumalanga', 'North West', 'Northern Cape', 'Western Cape']"
-                required
-              ></v-autocomplete
+                <label style="font-size: 14px; font-weight: lighter">Province</label>
+                <v-autocomplete
+                  :theme="isdarkmode === true ? 'dark' : 'light'"
+                  density="compact"
+                  color="grey-lighten-4"
+                  placeholder="Province"
+                  rounded="md"
+                  type="houseNumber"
+                  variant="underlined"
+                  :items="[
+                    'Eastern Cape',
+                    'Free State',
+                    'Gauteng',
+                    'KwaZulu-Natal',
+                    'Limpopo',
+                    'Mpumalanga',
+                    'North West',
+                    'Northern Cape',
+                    'Western Cape'
+                  ]"
+                  required
+                ></v-autocomplete
               ></v-col>
               <v-col sm="6" cols="12">
-                <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
-                  >City</small
-                ><v-text-field
+                <label style="font-size: 14px; font-weight: lighter">City</label>
+                <v-text-field
                   :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
@@ -209,10 +196,9 @@
                 ></v-text-field
               ></v-col>
 
-              <v-col sm="6" cols="12"
-                ><small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
-                  >Postal Code</small
-                ><v-text-field
+              <v-col sm="6" cols="12">
+                <label style="font-size: 14px; font-weight: lighter">Postal Code</label>
+                <v-text-field
                   :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
@@ -226,10 +212,9 @@
                 ></v-text-field
               ></v-col>
 
-              <v-col sm="6" cols="12"
-                ><small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
-                  >Complex</small
-                ><v-text-field
+              <v-col sm="6" cols="12">
+                <label style="font-size: 14px; font-weight: lighter">Complex</label>
+                <v-text-field
                   :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
@@ -242,9 +227,8 @@
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
-                <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
-                  >House number</small
-                ><v-text-field
+                <label style="font-size: 14px; font-weight: lighter">House number</label>
+                <v-text-field
                   :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
@@ -259,11 +243,8 @@
             </v-row>
 
             <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Preferred language</small
-              >
+              <label style="font-size: 14px; font-weight: lighter">Preferred Language*</label>
+
               <v-autocomplete
                 density="compact"
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
@@ -350,16 +331,18 @@ export default defineComponent({
     prefered_languages_rules: [(v: string) => !!v || 'Preferred language is required'],
     id_number_rules: [
       (v: string) => !!v || 'ID number is required',
-      (v: string) => /^\d{13}$/.test(v) || 'ID number must be a valid South African ID number'],
+      (v: string) => /^\d{13}$/.test(v) || 'ID number must be a valid South African ID number'
+    ],
     username_rules: [
       (v: string) => !!v || 'Username is required',
       (v: string) => (v && v.length >= 3) || 'Username must be at least 3 characters',
       (v: string) => (v && v.length <= 30) || 'Username must be less than 30 characters',
       (v: string) =>
         /^[A-Za-z0-9_]+$/.test(v) || 'Username must be alphanumeric characters and underscores only'
-    ],postal_code_rules:[
+    ],
+    postal_code_rules: [
       (v: string) => !!v || 'Postal code  is required',
-      (value:string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits',
+      (value: string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
     ],
 
     req_obj: {
@@ -373,7 +356,7 @@ export default defineComponent({
           phoneNumber: ''
         },
         address: {
-          province:'',
+          province: '',
           street: '',
           suburb: '',
           city: '',
