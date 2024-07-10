@@ -3,8 +3,10 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   HttpException,
   HttpStatus,
+  InternalServerErrorException,
   Param,
   Patch,
   Post,
@@ -20,6 +22,7 @@ import {
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
@@ -30,13 +33,17 @@ import {
 } from '@nestjs/swagger';
 import mongoose, { Types } from 'mongoose';
 import { UserAllResponseDto, UserResponseDto } from './entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
 
 const className = 'User';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   validateObjectId(id: string | Types.ObjectId, entity: string = ''): boolean {
     let data: string;
@@ -112,9 +119,11 @@ export class UsersController {
     description: `The _id attribute of the ${className}`,
   })
   @Get('id/:id')
-  async findOne(@Param('id') identifier: string) {
+  async findOne(@Headers() headers: any, @Param('id') identifier: string) {
     this.validateObjectId(identifier);
     try {
+      const userId = this.extractUserId(headers);
+      console.log(userId, 'is searching'); //Add Guard here as well
       return {
         data: await this.usersService.getUserById(identifier),
       };
@@ -131,7 +140,7 @@ export class UsersController {
     type: BooleanResponseDto,
     description: 'Response is a Boolean value',
   })
-  @Post('/exists')
+  @Post('/exists/username')
   async usernameExists(@Body('username') username: string) {
     try {
       return { data: await this.usersService.usernameExists(username) };
@@ -148,7 +157,7 @@ export class UsersController {
     type: BooleanResponseDto,
     description: 'Response is a Boolean value',
   })
-  @Get('/phone')
+  @Get('/phone/:phoneNum')
   async isValidPhoneNumber(@Param('phoneNum') phoneNum: string) {
     try {
       return { data: this.usersService.isValidPhoneNumber(phoneNum) };
@@ -159,6 +168,7 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Change the attributes of a ${className}`,
     description: `
@@ -172,16 +182,11 @@ export class UsersController {
   })
   @ApiBody({ type: UpdateUserDto })
   @Patch('/update')
-  async update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
-    /*
-    console.log('Update');
-    console.log(req);
-    */
-    const id: Types.ObjectId = req.user.sub; //This attribute is retrieved in the JWT
-    console.log(id);
+  async update(@Headers() headers: any, @Body() updateUserDto: UpdateUserDto) {
+    const userId = this.extractUserId(headers);
     try {
       return {
-        data: await this.usersService.updateUser(id, updateUserDto),
+        data: await this.usersService.updateUser(userId, updateUserDto),
       };
     } catch (e) {
       throw new HttpException(
@@ -192,6 +197,7 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Delete a ${className}`,
     description: `You send the ${className} ObjectId, and then they get deleted if the id is valid.\n 
@@ -207,17 +213,32 @@ export class UsersController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete('/delete/:id')
-  remove(@Param('id') id: string) {
+  remove(@Headers() headers: any, @Param('id') id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
     }
     try {
-      return this.usersService.softDelete(id);
+      const userId = this.extractUserId(headers);
+      if (userId.equals(new Types.ObjectId(id)))
+        return this.usersService.softDelete(userId);
+      else return new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
     } catch (e) {
       throw new HttpException(
         'Internal Server Error',
         HttpStatus.SERVICE_UNAVAILABLE,
       );
     }
+  }
+
+  private extractUserId(headers: any) {
+    const authHeader: string = headers.authorization;
+    const decodedJwtAccessToken = this.jwtService.decode(
+      authHeader.replace(/^Bearer\s+/i, ''),
+    );
+    if (!Types.ObjectId.isValid(decodedJwtAccessToken.sub)) {
+      throw new HttpException('Invalid User', HttpStatus.BAD_REQUEST);
+    }
+    const userId: Types.ObjectId = decodedJwtAccessToken.sub; //This attribute is retrieved in the JWT
+    return userId;
   }
 }
