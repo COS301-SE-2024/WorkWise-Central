@@ -407,13 +407,13 @@ export class CompanyService {
   async companyDeleteIsValid(deleteEmployeeDto: DeleteEmployeeFromCompanyDto) {
     let valid = await this.employeeService.employeeExistsForCompany(
       deleteEmployeeDto.employeeToDeleteId,
-      deleteEmployeeDto.companyId.toString(),
+      deleteEmployeeDto.companyId,
     );
     if (!valid) return new ValidationResult(false, 'Employee ID is invalid');
 
     valid = await this.employeeService.employeeExistsForCompany(
       deleteEmployeeDto.adminId,
-      deleteEmployeeDto.companyId.toString(),
+      deleteEmployeeDto.companyId,
     );
     if (!valid) return new ValidationResult(false, 'Admin ID is invalid');
 
