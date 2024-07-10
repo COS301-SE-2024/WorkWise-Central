@@ -73,7 +73,7 @@ export class RoleRepository {
 
   async roleExistsInCompany(
     id: Types.ObjectId,
-    companyId: string,
+    companyId: Types.ObjectId,
   ): Promise<boolean> {
     const result: FlattenMaps<Role> & { _id: Types.ObjectId } =
       await this.roleModel
@@ -86,7 +86,7 @@ export class RoleRepository {
           ],
         })
         .lean();
-    if (result != null && result.companyId.toString() == companyId) return true;
+    if (result != null && result.companyId == companyId) return true;
 
     return false;
   }

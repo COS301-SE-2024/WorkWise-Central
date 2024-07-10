@@ -47,7 +47,7 @@ export class EmployeeService {
 
   async validateEmployee(
     employee: Employee | CreateEmployeeDto | UpdateEmployeeDto,
-    companyId?: string,
+    companyId?: Types.ObjectId,
   ) {
     if (!companyId && !('companyId' in employee)) {
       //Potentially not necessary
@@ -95,7 +95,7 @@ export class EmployeeService {
       }
     } else {
       if (!companyId && 'companyId' in employee && employee.companyId) {
-        companyId = employee.companyId.toString();
+        companyId = employee.companyId;
       }
 
       // console.log('Company ID: ' + companyId);
@@ -127,7 +127,7 @@ export class EmployeeService {
           if (
             !(await this.jobService.jobExistsInCompany(
               jobId.toString(),
-              companyId,
+              companyId.toString(),
             ))
           ) {
             throw new ConflictException(
@@ -173,6 +173,7 @@ export class EmployeeService {
     // console.log('create function');
     try {
       await this.validateEmployee(createEmployeeDto);
+      //Checking if the user is in the company
     } catch (error) {
       // console.log('error -> ', error);
       throw new InternalServerErrorException(error);
@@ -213,7 +214,7 @@ export class EmployeeService {
 
   async employeeExistsForCompany(
     id: Types.ObjectId,
-    companyId: string,
+    companyId: Types.ObjectId,
   ): Promise<boolean> {
     return await this.employeeRepository.employeeExistsForCompany(
       id,
@@ -225,7 +226,7 @@ export class EmployeeService {
     // console.log('update function');
     try {
       const companyId = await this.getCompanyIdFromEmployee(id);
-      await this.validateEmployee(updateEmployeeDto, companyId.toString());
+      await this.validateEmployee(updateEmployeeDto, companyId);
     } catch (error) {
       // console.log('error -> ', error);
       return `${error}`;
