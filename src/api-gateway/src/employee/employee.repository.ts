@@ -15,7 +15,10 @@ export class EmployeeRepository {
     return this.employeeModel.find().lean().exec();
   }
 
-  async findAllInCompany(identifier: Types.ObjectId) {
+  async findAllInCompany(
+    identifier: Types.ObjectId,
+    fieldsToPopulate?: string[],
+  ) {
     const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] =
       await this.employeeModel
         .find({
@@ -28,12 +31,14 @@ export class EmployeeRepository {
             },
           ],
         })
+        .populate(fieldsToPopulate.join(' '))
         .lean();
     return result;
   }
 
   async findById(
     identifier: Types.ObjectId,
+    fieldsToPopulate?: string[],
   ): Promise<FlattenMaps<Employee> & { _id: Types.ObjectId }> {
     console.log('In findById repository');
     console.log('identifier -> ', identifier);
@@ -46,6 +51,7 @@ export class EmployeeRepository {
           },
         ],
       })
+      .populate(fieldsToPopulate)
       .lean();
   }
 
