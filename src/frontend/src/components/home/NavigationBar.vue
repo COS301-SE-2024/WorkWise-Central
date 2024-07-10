@@ -95,7 +95,7 @@ export default defineComponent({
       <v-app :theme="isdarkmode ? 'dark' : 'light'">
         <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app>
           <v-app-bar-nav-icon @click="isVisible = !isVisible">
-            <v-icon>{{ isVisible ? 'mdi-close' : 'mdi-menu' }}</v-icon>
+            <v-icon>{{ isVisible ? 'mdi-menu' : 'mdi-close' }}</v-icon>
           </v-app-bar-nav-icon>
           <v-spacer></v-spacer>
           <v-toolbar-title
