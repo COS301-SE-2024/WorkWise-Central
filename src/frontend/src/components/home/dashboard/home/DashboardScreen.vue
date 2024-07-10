@@ -4,16 +4,17 @@
       <v-col>
         <v-card
           height="auto"
-          class="pa-16 ma-0"
+          class="pa-16 ma-0 bg-background"
           rounded="md"
           :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
           border="md"
           elevation="2"
+          
         >
           <v-row>
             <!-- Recent Jobs Completed Card -->
             <v-col cols="12" md="4">
-              <v-card border="md">
+              <v-card border="md" rounded="xl">
                 <v-card-title>Recent Jobs Completed</v-card-title>
                 <v-card-text>
                   <v-list>
@@ -35,7 +36,7 @@
 
             <!-- Most Active Employees Card -->
             <v-col cols="12" md="4">
-              <v-card border="md">
+              <v-card border="md" rounded="xl">
                 <v-card-title>Most Active Employees</v-card-title>
                 <v-card-text>
                   <v-list>
@@ -57,7 +58,7 @@
 
             <!-- Hours Worked by Employees Card -->
             <v-col cols="12" md="4">
-              <v-card border="md">
+              <v-card border="md" rounded="xl">
                 <v-card-title>Hours Worked</v-card-title>
                 <v-card-text>
                   <v-list>
@@ -81,7 +82,7 @@
           <v-row>
             <!-- Calendar Card -->
             <v-col cols="12">
-              <v-card height="auto" border="md">
+              <v-card height="auto" border="md" rounded="xl">
                 <v-card-title>Calendar</v-card-title>
                 <v-card-text>
                   <v-calendar
@@ -96,7 +97,7 @@
           </v-row>
           <v-row
             ><v-col cols="12" md="6">
-              <v-card border="md">
+              <v-card border="md" rounded="xl" height="auto">
                 <v-card-title>Upcoming Appointments</v-card-title>
                 <v-card-text>
                   <v-list>
@@ -117,7 +118,7 @@
             </v-col>
             <!-- Team Breakdown Card -->
             <v-col cols="12" md="6">
-              <v-card border="md">
+              <v-card border="md" rounded="xl">
                 <v-card-title>Team Breakdown</v-card-title>
                 <v-card-text>
                   <v-list>

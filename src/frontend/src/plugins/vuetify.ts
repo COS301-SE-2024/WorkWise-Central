@@ -18,14 +18,27 @@ const vuetify = createVuetify({
     VDialog: {
       VCard: {
         VCardTitle: {
-          class: 'text-h5 font-weight-regular bg-primary justify-center'
+          class: 'text-h5 font-weight-regular bg-primary justify-end'
         },
         VCardText: {},
-        VCardActions: { class: 'text-h5 font-weight-regular justify-center' }
+        VCardActions: { class: 'text-h5 font-weight-regular justify-center bg-cardColor' }
       },
       VSheet: {
         VCardTitle: {
           class: 'text-h5 font-weight-regular bg-primary justify-center'
+        }
+      }
+    },
+    VMenu: {
+      VCard: {
+        rounded: 'md',
+        elevation: 2,
+        VCardTitle: {
+          class: 'text-h5 font-weight-light bg-primary justify-center'
+        },
+        VCardActions:{
+          class: 'text-h5 font-weight-regular justify-center bg-cardColor'
+        
         }
       }
     },
@@ -34,16 +47,16 @@ const vuetify = createVuetify({
       rounded: 'md',
       density: 'compact',
       clearable: true,
-      color:'cardColor'
+      color: 'cardColor'
     },
 
     VCard: {
       elevation: 14,
       rounded: 'md',
       height: 'auto',
-      class: 'bg-cardColor ',
+
       VCardTitle: {
-        class: 'text-h5 font-weight-regular  d-flex justify-center text-secondary'
+        class: 'text-h5 font-weight-regular  d-flex justify-center bg-cardColor text-secondary'
       },
       VCardText: { class: 'bg-cardColor', VList: { class: 'bg-cardColor' } }
     },
@@ -87,8 +100,7 @@ const vuetify = createVuetify({
       }
     },
     VChip: {
-      rounded: 'md',
-     
+      rounded: 'md'
     }
   },
   directives,

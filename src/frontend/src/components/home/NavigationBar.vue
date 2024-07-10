@@ -62,6 +62,7 @@ import type { PropType } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
 import ProfilePage from './settings/profile/ProfilePage.vue'
 import DarkModeToggleVue from './settings/DarkModeToggle.vue'
+import CompanyMain from './settings/company/CompanyMain.vue'
 // import { mapGetters } from 'vuex'
 
 export default defineComponent({
@@ -73,7 +74,8 @@ export default defineComponent({
   },
   components: {
     ProfilePage,
-    DarkModeToggleVue
+    DarkModeToggleVue,
+    CompanyMain
   },
   data: () => ({
     isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false
@@ -132,8 +134,7 @@ export default defineComponent({
           :rail="isVisible"
           :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
         >
-          <v-list-item></v-list-item>
-          <v-divider></v-divider>
+          <CompanyMain />
           <v-list v-model:open="open">
             <v-list-group fluid value="Dashboard">
               <template v-slot:activator="{ props }">
@@ -260,7 +261,7 @@ export default defineComponent({
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
-            <v-list-group value="More">
+            <v-list-group fluid value="More">
               <template v-slot:activator="{ props }">
                 <v-list-item
                   v-bind="props"
