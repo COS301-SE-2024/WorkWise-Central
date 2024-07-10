@@ -50,7 +50,7 @@ export class TeamRepository {
 
   async teamExistsInCompany(
     id: Types.ObjectId,
-    companyId: string,
+    companyId: Types.ObjectId,
   ): Promise<boolean> {
     const result: FlattenMaps<Team> & { _id: Types.ObjectId } =
       await this.teamModel
@@ -64,7 +64,7 @@ export class TeamRepository {
         })
         .lean();
 
-    if (result != null && result.companyId.toString() == companyId) {
+    if (result != null && result.companyId == companyId) {
       return true;
     }
     return false;

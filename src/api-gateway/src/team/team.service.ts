@@ -110,7 +110,7 @@ export class TeamService {
 
   async teamExistsInCompany(
     id: Types.ObjectId,
-    companyId: string,
+    companyId: Types.ObjectId,
   ): Promise<boolean> {
     return this.teamRepository.teamExistsInCompany(id, companyId);
   }
