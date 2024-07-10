@@ -46,6 +46,14 @@ const inboxSubItems = ref([
 ])
 
 const supportSubItems = ref([{ title: 'Support', icon: 'mdi-star', routeName: 'support' }])
+const moreSubItems = ref([
+  { title: 'Settings', icon: 'mdi-cog', routeName: '404' },
+  {
+    title: 'Logout',
+    icon: 'mdi-logout',
+    routeName: '404'
+  }
+])
 </script>
 
 <script lang="ts">
@@ -91,26 +99,38 @@ export default defineComponent({
 
 <template>
   <v-app :theme="isdarkmode ? 'dark' : 'light'">
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-app :theme="isdarkmode ? 'dark' : 'light'">
-        <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app>
+        <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-background">
           <v-app-bar-nav-icon @click="isVisible = !isVisible">
             <v-icon>{{ isVisible ? 'mdi-close' : 'mdi-menu' }}</v-icon>
           </v-app-bar-nav-icon>
+
           <v-spacer></v-spacer>
-          <v-toolbar-title
-            ><span class="colorAccent toolbar-text">Work</span>
-            <span class="colorAccent2 toolbar-text">Wise</span></v-toolbar-title
-          >
-          <v-icon class="icon-padding" @click="onProfileClick">mdi-account-circle</v-icon>
-          <v-icon class="icon-padding" @click="toggleDarkMode">mdi-brightness-4</v-icon>
+
+          <v-toolbar-title class="d-flex justify-center">
+            <v-label class="text-primary">Work</v-label>
+            <v-label class="text-secondary">Wise</v-label>
+          </v-toolbar-title>
+
+          <v-spacer class="d-none d-sm-flex"></v-spacer>
+
+          <div class="d-flex align-center">
+            <v-icon class="icon-padding" @click="onProfileClick">mdi-account-circle</v-icon>
+            <v-icon
+              class="icon-padding"
+              @click="toggleDarkMode"
+              :icon="isdarkmode ? ' mdi-white-balance-sunny' : 'mdi-moon-waning-crescent'"
+            ></v-icon>
+          </div>
         </v-app-bar>
 
         <v-navigation-drawer
+          class="bg-background"
           app
           v-model="drawer"
           :rail="isVisible"
-          :theme="isdarkmode ? 'dark' : 'light'"
+          :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
         >
           <v-list-item></v-list-item>
           <v-divider></v-divider>
@@ -231,6 +251,25 @@ export default defineComponent({
               </template>
               <v-list-item
                 v-for="(item, i) in supportSubItems"
+                :key="i"
+                :to="{ name: item.routeName }"
+                :prepend-icon="item.icon"
+                :title="item.title"
+                :value="item.title"
+              ></v-list-item>
+            </v-list-group>
+          </v-list>
+          <v-list v-model:open="open">
+            <v-list-group value="More">
+              <template v-slot:activator="{ props }">
+                <v-list-item
+                  v-bind="props"
+                  prepend-icon="mdi-dots-horizontal"
+                  title="More"
+                ></v-list-item>
+              </template>
+              <v-list-item
+                v-for="(item, i) in moreSubItems"
                 :key="i"
                 :to="{ name: item.routeName }"
                 :prepend-icon="item.icon"

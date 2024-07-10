@@ -11,290 +11,192 @@
         v-bind="activatorProps"
       ></v-btn>
     </template>
-    <v-sheet
-      :theme="isdarkmode === true ? 'dark' : 'light'"
-      elevation="14"
-      rounded="md"
-      max-height="800"
-      overflow-y="auto"
-      max-width="600"
-    >
-      <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
-        <v-col>
+    <v-card :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+      ><v-card-title>
+        <span class="headline text-center">Create a Client </span>
+      </v-card-title>
+      <v-card-text>
+        <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
           <v-col>
-            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-              Create a Client
-            </h4></v-col
-          >
-          <v-spacer></v-spacer>
-          <v-col>
+            <v-spacer></v-spacer>
             <v-col>
-              <small
-                :theme="isdarkmode === true ? 'dark' : 'light'"
-                class="text-caption white--text"
-                >Firstname of client*</small
-              >
+              <v-col>
+                <small class="text-caption white--text">First Name of client*</small>
 
-              <v-text-field
-                density="compact"
-                :theme="isdarkmode === true ? 'dark' : 'light'"
-                color="grey-lighten-4"
-                placeholder="Enter the firstname of the client"
-                v-model="req_obj.details.firstName"
-                rounded="md"
-                variant="underlined"
-                required
-                :rules="first_name_rules"
-              ></v-text-field
-            ></v-col>
-            <v-col>
-              <small
-                :theme="isdarkmode === true ? 'dark' : 'light'"
-                class="text-caption white--text"
-                >Surname of client*</small
-              >
-              <v-text-field
-                density="compact"
-                :theme="isdarkmode === true ? 'dark' : 'light'"
-                color="grey-lighten-4"
-                placeholder="Enter the surname name of the client"
-                v-model="req_obj.details.lastName"
-                rounded="md"
-                variant="underlined"
-                required
-                :rules="surname_rules"
-              ></v-text-field
-            ></v-col>
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption white--text"
-                >ID of client*</small
-              >
-              <v-text-field
-                density="compact"
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                color="grey-lighten-4"
-                placeholder="Enter the ID number of the client"
-                v-model="req_obj.idNumber"
-                rounded="md"
-                variant="underlined"
-                required
-                :rules="id_number_rules"
-              ></v-text-field
-            ></v-col>
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption white--text"
-                >Username of client*</small
-              >
+                <v-text-field
+                  color="secondary"
+                  placeholder="Enter the first name of the client"
+                  v-model="req_obj.details.firstName"
+                  required
+                  :rules="first_name_rules"
+                ></v-text-field
+              ></v-col>
+              <v-col>
+                <small class="text-caption white--text">Surname of client*</small>
+                <v-text-field
+                  color="secondary"
+                  placeholder="Enter the surname name of the client"
+                  v-model="req_obj.details.lastName"
+                  required
+                  :rules="surname_rules"
+                ></v-text-field
+              ></v-col>
+              <v-col>
+                <small class="text-caption white--text">ID of client*</small>
+                <v-text-field
+                  placeholder="Enter the ID number of the client"
+                  v-model="req_obj.idNumber"
+                  required
+                  :rules="south_africa_id_rules"
+                ></v-text-field
+              ></v-col>
+              <v-col>
+                <small class="text-caption white--text">Username of client*</small>
 
-              <v-text-field
-                density="compact"
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                color="grey-lighten-4"
-                placeholder="Enter the username of the client"
-                v-model="req_obj.clientUsername"
-                rounded="md"
-                variant="underlined"
-                required
-                :rules="username_rules"
-              ></v-text-field
-            ></v-col>
+                <v-text-field
+                  color="secondary"
+                  placeholder="Enter the username of the client"
+                  v-model="req_obj.clientUsername"
+                  required
+                  :rules="username_rules"
+                ></v-text-field
+              ></v-col>
 
-            <v-col>
-              <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
-                >Client email address*</small
-              >
-              <v-text-field
-                density="compact"
-                :theme="isdarkmode === true ? 'dark' : 'light'"
-                color="grey-lighten-4"
-                placeholder="Enter the client's email address"
-                v-model="req_obj.details.contactInfo.email"
-                :rules="email_rules"
-                type="email"
-                rounded="md"
-                variant="underlined"
-                required
-              ></v-text-field
-            ></v-col>
-            <v-col>
-              <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
-                >Client phone number*</small
-              >
-              <v-text-field
-                density="compact"
-                :theme="isdarkmode === true ? 'dark' : 'light'"
-                color="grey-lighten-4"
-                placeholder="Enter the client's phone number"
-                v-model="req_obj.details.contactInfo.phoneNumber"
-                rounded="md"
-                type="number"
-                variant="underlined"
-                :rules="phone_number_rules"
-                required
-              ></v-text-field
-            ></v-col>
-
-            <small
-              :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-              class="text-caption"
-              >Client address</small
-            >
-            <v-row>
-              <v-col sm="6" cols="12"
-                ><small
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                  class="text-caption"
-                  >Street</small
-                ><v-text-field
-                  :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                  density="compact"
-                  color="grey-lighten-4"
-                  placeholder="Street"
-                  v-model="req_obj.details.address.street"
-                  rounded="md"
-                  variant="underlined"
-                  type="street"
+              <v-col>
+                <small class="text-caption">Client email address*</small>
+                <v-text-field
+                  color="secondary"
+                  placeholder="Enter the client's email address"
+                  v-model="req_obj.details.contactInfo.email"
+                  :rules="email_rules"
+                  type="email"
                   required
                 ></v-text-field
               ></v-col>
-              <v-col sm="6" cols="12"
-                ><small
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                  class="text-caption"
-                  >Suburb</small
-                ><v-text-field
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
-                  density="compact"
-                  color="grey-lighten-4"
-                  placeholder="Suburb"
-                  v-model="req_obj.details.address.suburb"
-                  rounded="md"
-                  variant="underlined"
-                  type="suburb"
+              <v-col>
+                <small class="text-caption">Client phone number*</small>
+                <v-text-field
+                  color="secondary"
+                  placeholder="Enter the client's phone number"
+                  v-model="req_obj.details.contactInfo.phoneNumber"
+                  type="number"
+                  :rules="phone_number_rules"
                   required
                 ></v-text-field
               ></v-col>
 
-              <v-col sm="6" cols="12">
-                <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
-                  >City</small
-                ><v-text-field
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
-                  density="compact"
-                  color="grey-lighten-4"
-                  placeholder="City"
-                  v-model="req_obj.details.address.city"
-                  rounded="md"
-                  variant="underlined"
-                  type="city"
-                  required
-                ></v-text-field
-              ></v-col>
-              <v-col sm="6" cols="12"
-                ><small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
-                  >Zip Code</small
-                ><v-text-field
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
-                  density="compact"
-                  color="grey-lighten-4"
-                  placeholder="Zip Code"
-                  v-model="req_obj.details.address.postalCode"
-                  rounded="md"
-                  type="postalCode"
-                  variant="underlined"
-                  required
-                ></v-text-field
-              ></v-col>
+              <small class="text-caption">Client address</small>
+              <v-row>
+                <v-col sm="6" cols="12"
+                  ><small class="text-caption">Street</small
+                  ><v-text-field
+                    color="secondary"
+                    placeholder="Street"
+                    v-model="req_obj.details.address.street"
+                    type="street"
+                    required
+                  ></v-text-field
+                ></v-col>
+                <v-col sm="6" cols="12"
+                  ><small class="text-caption">Suburb</small
+                  ><v-text-field
+                    color="secondary"
+                    placeholder="Suburb"
+                    v-model="req_obj.details.address.suburb"
+                    type="suburb"
+                    required
+                  ></v-text-field
+                ></v-col>
 
-              <v-col sm="6" cols="12"
-                ><small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
-                  >Complex</small
-                ><v-text-field
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
-                  density="compact"
-                  color="grey-lighten-4"
-                  placeholder="Complex"
-                  v-model="req_obj.details.address.complex"
-                  rounded="md"
-                  type="complex"
-                  variant="underlined"
-                  required
-                ></v-text-field
-              ></v-col>
-              <v-col sm="6" cols="12">
-                <small :theme="isdarkmode === true ? 'dark' : 'light'" class="text-caption"
-                  >House number</small
-                ><v-text-field
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
-                  density="compact"
-                  color="grey-lighten-4"
-                  placeholder="House number"
-                  v-model="req_obj.details.address.houseNumber"
-                  rounded="md"
-                  type="houseNumber"
-                  variant="underlined"
-                  required
-                ></v-text-field
-              ></v-col>
-            </v-row>
+                <v-col sm="6" cols="12">
+                  <small class="text-caption">City</small
+                  ><v-text-field
+                    color="secondary"
+                    placeholder="City"
+                    v-model="req_obj.details.address.city"
+                    type="city"
+                    required
+                  ></v-text-field
+                ></v-col>
+                <v-col sm="6" cols="12"
+                  ><small class="text-caption">Zip Code</small
+                  ><v-text-field
+                    color="secondary"
+                    placeholder="Zip Code"
+                    v-model="req_obj.details.address.postalCode"
+                    type="postalCode"
+                    required
+                  ></v-text-field
+                ></v-col>
 
-            <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Preferred language</small
-              >
-              <v-autocomplete
-                density="compact"
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
-                color="grey-lighten-4"
-                placeholder="Enter the language preferred by the client"
-                v-model="req_obj.details.preferredLanguage"
+                <v-col sm="6" cols="12"
+                  ><small class="text-caption">Complex</small
+                  ><v-text-field
+                    color="secondary"
+                    placeholder="Complex"
+                    v-model="req_obj.details.address.complex"
+                    type="complex"
+                    required
+                  ></v-text-field
+                ></v-col>
+                <v-col sm="6" cols="12">
+                  <small class="text-caption">House number</small
+                  ><v-text-field
+                    color="secondary"
+                    placeholder="House number"
+                    v-model="req_obj.details.address.houseNumber"
+                    type="houseNumber"
+                    required
+                  ></v-text-field
+                ></v-col>
+              </v-row>
+
+              <v-col>
+                <small class="text-caption">Preferred language</small>
+                <v-autocomplete
+                  color="secondary"
+                  placeholder="Enter the language preferred by the client"
+                  v-model="req_obj.details.preferredLanguage"
+                  type="preferredLanguage"
+                  :rules="prefered_languages_rules"
+                  :items="[
+                    'Afrikaans',
+                    'English',
+                    'Ndebele',
+                    'Sotho',
+                    'Swati',
+                    'Tsonga',
+                    'Tswana',
+                    'Venda',
+                    'Xhosa',
+                    'Zulu'
+                  ]"
+                  required
+                ></v-autocomplete
+              ></v-col>
+            </v-col>
+            <v-col cols="8" offset="2" align="center">
+              <v-btn
                 rounded="md"
-                type="preferredLanguage"
-                variant="underlined"
-                :rules="prefered_languages_rules"
-                :items="[
-                  'Afrikaans',
-                  'English',
-                  'Ndebele',
-                  'Sotho',
-                  'Swati',
-                  'Tsonga',
-                  'Tswana',
-                  'Venda',
-                  'Xhosa',
-                  'Zulu'
-                ]"
-                required
-              ></v-autocomplete
-            ></v-col>
+                boarder="xl"
+                width="80%"
+                height="35"
+                type="submit"
+                variant="text"
+                color="success"
+                :disabled="click_create_client"
+                >Create Client</v-btn
+              >
+            </v-col>
+            <v-col cols="8" offset="2" align="center">
+              <v-btn color="error" width="85%" height="35" variant="text" @click="close">
+                Cancel
+              </v-btn>
+            </v-col>
           </v-col>
-          <v-col cols="8" offset="2" align="center">
-            <v-btn
-              rounded="md"
-              boarder="xl"
-              width="80%"
-              height="35"
-              type="submit"
-              variant="text"
-              color="success"
-              :disabled="click_create_client"
-              >Create Client</v-btn
-            >
-          </v-col>
-          <v-col cols="8" offset="2" align="center">
-            <v-btn color="error" width="85%" height="35" variant="text" @click="close">
-              CANCEL
-            </v-btn>
-          </v-col>
-        </v-col>
-      </v-form>
-    </v-sheet>
+        </v-form>
+      </v-card-text>
+    </v-card>
   </v-dialog>
 </template>
 
@@ -312,7 +214,7 @@ export default defineComponent({
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     valid: false,
     addDialog: false,
-    isdarkmode: sessionStorage.getItem('isdarkmode') === 'true' ? true : false,
+    isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
     click_create_client: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
@@ -346,6 +248,37 @@ export default defineComponent({
       (v: string) => (v && v.length <= 30) || 'Username must be less than 30 characters',
       (v: string) =>
         /^[A-Za-z0-9_]+$/.test(v) || 'Username must be alphanumeric characters and underscores only'
+    ],
+    south_africa_id_rules: [
+      (v: string) => !!v || 'ID number is required',
+      (v: string) => v.length === 13 || 'ID number must be 13 digits long',
+      (v: string) => /^\d{13}$/.test(v) || 'ID number must contain only digits',
+      (v: string) => {
+        const dob = v.slice(0, 6)
+        const year = parseInt(dob.slice(0, 2), 10) + 1900
+        const month = parseInt(dob.slice(2, 4), 10) - 1 // JS months are 0-indexed
+        const day = parseInt(dob.slice(4, 6), 10)
+        const date = new Date(year, month, day)
+        return (
+          (date.getFullYear() === year && date.getMonth() === month && date.getDate() === day) ||
+          'Invalid date of birth in ID number'
+        )
+      },
+      (v: string) => ['0', '1'].includes(v[10]) || 'Invalid citizenship status digit',
+      (v: string) => {
+        // Implementing Luhn algorithm for checksum validation
+        let sum = 0
+        for (let i = 0; i < 13; i++) {
+          let digit = parseInt(v[i], 10)
+          if (i % 2 === 0) {
+            sum += digit
+          } else {
+            let doubled = digit * 2
+            sum += doubled > 9 ? doubled - 9 : doubled
+          }
+        }
+        return sum % 10 === 0 || 'Invalid ID number checksum'
+      }
     ],
 
     req_obj: {
