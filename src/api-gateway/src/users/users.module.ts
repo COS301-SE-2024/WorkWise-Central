@@ -15,6 +15,7 @@ import { EmailModule } from '../email/email.module';
 import { CompanyModule } from '../company/company.module';
 import { CompanyService } from '../company/company.service';
 import { RoleModule } from '../role/role.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -30,7 +31,13 @@ import { RoleModule } from '../role/role.module';
     ]),
   ],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository, EmailService, CompanyService],
+  providers: [
+    UsersService,
+    UsersRepository,
+    EmailService,
+    CompanyService,
+    JwtService,
+  ],
   exports: [UsersService, UsersRepository, MongooseModule],
 })
 export class UsersModule {}
