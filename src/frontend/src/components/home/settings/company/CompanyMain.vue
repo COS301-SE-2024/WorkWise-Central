@@ -45,7 +45,6 @@ import { defineComponent } from 'vue'
 import Popover from 'primevue/popover'
 import CompanySettings from './CompanySettings.vue'
 
-
 export default defineComponent({
   props: {
     Company: Object,
@@ -53,8 +52,7 @@ export default defineComponent({
   },
   components: {
     Popover,
-    CompanySettings,
-    VCardActions
+    CompanySettings
   },
   data() {
     return {

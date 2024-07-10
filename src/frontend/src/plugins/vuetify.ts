@@ -20,8 +20,8 @@ const vuetify = createVuetify({
         VCardTitle: {
           class: 'text-h5 font-weight-regular bg-primary justify-end'
         },
-        VCardText: { class: 'text-h5 font-weight-regular justify-center bg-cardColor' },
-        VCardActions: { class: 'text-h5 font-weight-regular justify-center bg-cardColor' }
+        VCardText: { class: 'text-h7 font-weight-regular justify-center bg-cardColor' },
+        VCardActions: { class: 'text-h6 font-weight-regular justify-center bg-cardColor' }
       },
       VSheet: {
         VCardTitle: {
@@ -136,7 +136,8 @@ const vuetify = createVuetify({
           tableRowColor: '',
           firstPlace: '#E2B203',
           secondPlace: '#626F86',
-          thirdPlace: '#533F04'
+          thirdPlace: '#533F04',
+          secondRowColor: '#dcdfe4'
         }
       },
       dark: {
@@ -157,7 +158,8 @@ const vuetify = createVuetify({
           tableRowColor: '#454f5',
           firstPlace: '#FFD700',
           secondPlace: '#C0C0C0',
-          thirdPlace: '#CD7F32'
+          thirdPlace: '#CD7F32',
+          secondRowColor: '#454f59'
         }
       }
     }

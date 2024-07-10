@@ -57,6 +57,7 @@
               height="auto"
               rounded="xl"
               class="bg-cardColor"
+              :row-props="getRowProps"
             >
               <template v-slot:[`item.firstName`]="{ value }">
                 <v-chip variant="text" color="elementTextColor">
@@ -228,6 +229,12 @@ export default defineComponent({
         'dark-mode': this.isdarkmode,
         'light-mode': !this.isdarkmode
       }
+
+    }, currentTheme() {
+      return this.$theme; // Example of accessing a global property, adjust based on actual implementation
+    },
+    globalTheme() {
+      return this.$theme.global; // Adjust based on actual implementation
     }
   },
   mounted() {
@@ -340,6 +347,12 @@ export default defineComponent({
     getColor(value) {
       if (value == '') return 'red'
       else return 'green'
+    },
+    getRowProps({ index }) {
+      
+      return {
+        class: index % 2 ? 'bg-secondRowColor' : '',
+      };
     }
   }
 })
@@ -395,15 +408,10 @@ export default defineComponent({
   background-color: #38414a;
 }
 /* Dark mode */
-tbody tr:nth-of-type(odd) {
-  background-color: #161a1d; /* Adjust the color as needed for dark mode #DCDFE4*/
-}
+
 
 /* Light mode */
-.something,
-.tbody tr:nth-of-type(odd) {
-  background-color: #dcdfe4; /* Adjust the color as needed for light mode */
-}
+
 
 .my-header-style {
   background: red;
