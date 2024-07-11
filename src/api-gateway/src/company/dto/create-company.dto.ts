@@ -10,10 +10,13 @@ import {
   //IsPhoneNumber,
   IsString,
   MaxLength,
+  MinLength,
+  Validate,
   ValidateNested,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { Company } from '../entities/company.entity';
+import { RegistrationNumber } from '../../utils/Custom Validators/RegistrationNumber';
 
 export class ContactDetails {
   @IsNotEmpty()
@@ -69,13 +72,16 @@ export class CreateCompanyDto {
   userId: Types.ObjectId;
 
   @ApiProperty()
-  @IsString()
   @IsNotEmpty()
+  @IsString()
+  @Validate(RegistrationNumber)
   registrationNumber: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @MinLength(10)
+  @MaxLength(10)
   vatNumber: string;
 
   @ApiProperty()

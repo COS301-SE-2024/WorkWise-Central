@@ -4,10 +4,14 @@ import {
   IsMongoId,
   IsOptional,
   IsString,
+  MaxLength,
+  MinLength,
+  Validate,
   ValidateNested,
 } from 'class-validator';
 import { Types } from 'mongoose';
 import { Type } from 'class-transformer';
+import { RegistrationNumber } from '../../utils/Custom Validators/RegistrationNumber';
 
 class UpdateContactDetails extends PartialType(ContactDetails) {}
 class UpdateAddress extends PartialType(Address) {}
@@ -15,10 +19,13 @@ class UpdateAddress extends PartialType(Address) {}
 export class UpdateCompanyDto {
   @ApiProperty()
   @IsOptional()
+  @Validate(RegistrationNumber)
   registrationNumber?: string;
 
   @ApiProperty()
   @IsOptional()
+  @MinLength(10)
+  @MaxLength(10)
   vatNumber?: string;
 
   @ApiProperty()
