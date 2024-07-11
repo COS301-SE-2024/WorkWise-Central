@@ -1,80 +1,67 @@
 <template>
-  <v-dialog v-model="employeeDialog" max-width="500" height="800">
+  <v-dialog
+    v-model="employeeDialog"
+    max-width="500"
+    height="500"
+    :theme="isdarkmode === true ? 'dark' : 'light'"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        color="secondary"
+        color="warning"
         variant="text"
         v-bind="activatorProps"
         >Edit</v-btn
       >
     </template>
-    <v-sheet
-      elevation="14"
-      rounded="md"
-      width="500"
-      height="800"
-      :color="isdarkmode === true ? 'dark' : 'light'"
-    >
-      <v-form>
-        <v-col>
-          <v-col>
-            <v-col>
-              <v-col :cols="12">
-                <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-                  {{ localEditedItem.firstName }}
-                  {{ localEditedItem.surname }}
-                </h4>
-                <h3 class="text-center">Role: {{ localEditedItem.roleName }}</h3>
-              </v-col>
-              <v-spacer></v-spacer>
-            </v-col>
-
-            <v-col :cols="12">
-              <v-select
-                clearable
-                label="Company Role"
-                @update:modelValue="change_roles"
-                :items="roleItemNames"
-                v-model="selectedRole"
-              ></v-select>
-            </v-col>
-
-            <v-divider></v-divider>
-
-            <v-divider></v-divider>
-
-            <v-col align-self="center"
-              ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
-                <v-btn
-                  color="success"
-                  rounded="md"
-                  width="85%"
-                  height="35"
-                  variant="text"
-                  @click="savechanges"
-                >
-                  SAVE
-                </v-btn>
-              </v-col>
-              <v-col cols="12" md="12" xs="3" sm="6" offset="1">
-                <v-btn
-                  color="error"
-                  rounded="md"
-                  width="85%"
-                  height="35"
-                  variant="text"
-                  @click="close"
-                >
-                  CANCEL
-                </v-btn>
-              </v-col></v-col
+    <v-card>
+      <v-card-title class="text-center">Edit Employee</v-card-title>
+      <v-divider></v-divider>
+      <v-card-text>
+        <v-row
+          ><v-col>
+            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
+              {{ localEditedItem.firstName }}
+              {{ localEditedItem.surname }}
+            </h4>
+            <h3 class="text-center">Role: {{ localEditedItem.roleName }}</h3>
+          </v-col></v-row
+        >
+        <v-row
+          ><v-col>
+            <v-select
+              clearable
+              label="Company Role"
+              @update:modelValue="change_roles"
+              :items="roleItemNames"
+              v-model="selectedRole"
+              bg-color="background"
+            ></v-select> </v-col
+        ></v-row>
+      </v-card-text>
+      <v-card-action>
+        <v-col align-self="center"
+          ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
+            <v-btn
+              color="success"
+              rounded="md"
+              width="85%"
+              height="35"
+              variant="text"
+              @click="savechanges"
             >
+              SAVE
+            </v-btn>
           </v-col>
-        </v-col>
-      </v-form>
-    </v-sheet>
+          <v-col cols="12" md="12" xs="3" sm="6" offset="1">
+            <v-btn color="error" rounded="md" width="85%" height="35" variant="text" @click="close">
+              CANCEL
+            </v-btn>
+          </v-col></v-col
+        >
+      </v-card-action>
+    </v-card>
   </v-dialog>
 </template>
 
@@ -191,6 +178,7 @@ export default {
         .patch(apiURL + `employee/${this.localEditedItem.employeeId}`, employee_req_obj, config)
         .then((res) => {
           alert('Employee updated')
+          console.log(res)
           this.employeeDialog = false
           window.location.reload()
         })
