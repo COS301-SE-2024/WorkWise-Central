@@ -68,7 +68,7 @@ export class EmployeeService {
         employee.currentJobAssignments
       ) {
         for (const jobId of employee.currentJobAssignments) {
-          if (!(await this.jobService.jobExists(jobId.toString()))) {
+          if (!(await this.jobService.jobExists(jobId))) {
             throw new ConflictException(
               `Job assignment ${jobId.toString()} not found`,
             );
@@ -124,12 +124,7 @@ export class EmployeeService {
         employee.currentJobAssignments
       ) {
         for (const jobId of employee.currentJobAssignments) {
-          if (
-            !(await this.jobService.jobExistsInCompany(
-              jobId.toString(),
-              companyId.toString(),
-            ))
-          ) {
+          if (!(await this.jobService.jobExistsInCompany(jobId, companyId))) {
             throw new ConflictException(
               `Job assignment ${jobId.toString()} not found`,
             );

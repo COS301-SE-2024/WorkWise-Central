@@ -138,7 +138,7 @@ export class CompanyRepository {
     console.log('employeeExists');
     console.log(result);
     for (const employee of result.employees) {
-      if (employee.toString() == empId.toString()) {
+      if (employee.equals(empId)) {
         return true;
       }
     }

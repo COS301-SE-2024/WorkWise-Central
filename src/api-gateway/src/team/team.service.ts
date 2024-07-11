@@ -54,7 +54,7 @@ export class TeamService {
 
     if ('currentJobAssignments' in team && team.currentJobAssignments) {
       for (const jobId of team.currentJobAssignments) {
-        if (!(await this.jobService.jobExists(jobId.toString()))) {
+        if (!(await this.jobService.jobExists(jobId))) {
           throw new ConflictException(
             `Job assignment ${jobId.toString()} not found`,
           );

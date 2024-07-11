@@ -42,18 +42,22 @@ export class CompanyService {
       throw new ConflictException(inputValidated.message);
     }
     //Create Company
+    console.log('Create Company');
     const createdCompany = await this.companyRepository.save(
       new Company(createCompanyDto),
     );
 
     //Create Default role in company
+    console.log('Create Default Role in Company');
     await this.roleService.createDefaultRoles(createdCompany._id);
 
     //Assign Owner to user
+    console.log('Assign Owner to user');
     const ownerRoleId = (
       await this.roleService.findOneInCompany('Owner', createdCompany._id)
     )._id;
 
+    console.log('Create Employee');
     const employee = await this.employeeService.create({
       userId: createCompanyDto.userId,
       companyId: createdCompany._id,
@@ -61,6 +65,7 @@ export class CompanyService {
       roleId: ownerRoleId,
     });
 
+    console.log('Make User JoinedCompany');
     const user = await this.usersService.getUserById(createCompanyDto.userId);
     const newJoinedCompany = new JoinedCompany(
       employee._id,
@@ -68,11 +73,13 @@ export class CompanyService {
       createdCompany.name,
     );
     user.joinedCompanies.push(newJoinedCompany);
+    console.log('Perform Update');
     await this.usersService.updateUser(user._id, {
       joinedCompanies: user.joinedCompanies,
       currentEmployee: employee._id,
     });
 
+    console.log('Add employee to Company');
     createdCompany.employees.push(employee._id);
     await this.update(user._id, createdCompany.id, {
       employees: createdCompany.employees,
@@ -197,7 +204,6 @@ export class CompanyService {
 
     company.employees.push(addedEmployee._id);
     await this.update(user._id, company._id, { employees: company.employees });
-    //TODO: UPdate
     console.log(updatedUser);
     return joinedCompany;
   }
