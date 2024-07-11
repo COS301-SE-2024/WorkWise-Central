@@ -66,7 +66,7 @@ export class UsersRepository {
     const result = await this.userModel
       .findOne({
         $and: [
-          { 'contactInfo.email': email },
+          { 'personalInfo.contactInfo.email': email },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
@@ -80,7 +80,7 @@ export class UsersRepository {
     const result = await this.userModel
       .findOne({
         $and: [
-          { 'contactInfo.phone': phone },
+          { 'personalInfo.contactInfo.phone': phone },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
