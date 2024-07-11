@@ -126,7 +126,7 @@
             :client="selectedItem"
           />
           <v-spacer></v-spacer>
-          <v-btn @click="actionsDialog = false" color="secondary">Close</v-btn>
+          <v-btn @click="actionsDialog = false" color="primary">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

@@ -132,8 +132,8 @@ const vuetify = createVuetify({
           accent: '#82B1FF',
           error: '#e639462',
           info: '#2196F3',
-          success: '#37471F',
-          warning: '#FFC107',
+          success: '#1F845A',
+          warning: '#E2B203',
           cardColor: '#F1F2F4',
           elementTextColor: '#4C9FC3', // most important color for text
           headingTextColor: '#091E42',
