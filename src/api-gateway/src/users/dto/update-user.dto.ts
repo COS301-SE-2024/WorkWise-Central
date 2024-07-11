@@ -35,10 +35,10 @@ export class UpdateUserDto {
   @Type(() => UpdateProfile)
   profile?: UpdateProfile;
 
-  @IsOptional()
+  /*  @IsOptional()  //Joined Companies will have its own endpoint to enter/exit
   @ValidateNested({ each: true })
   @Type(() => UpdateJoinedCompanyDto)
-  joinedCompanies?: UpdateJoinedCompanyDto[];
+  joinedCompanies?: UpdateJoinedCompanyDto[];*/
 
   @IsOptional()
   @IsArray()
@@ -48,4 +48,10 @@ export class UpdateUserDto {
   @IsOptional()
   @IsMongoId()
   currentEmployee?: Types.ObjectId;
+}
+
+export class JoinUserDto {
+  @ValidateNested({ each: true })
+  @Type(() => UpdateJoinedCompanyDto)
+  joinedCompanies: UpdateJoinedCompanyDto[];
 }
