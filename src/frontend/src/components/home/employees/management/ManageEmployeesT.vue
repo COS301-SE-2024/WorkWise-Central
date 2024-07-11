@@ -63,7 +63,7 @@
                     <v-col cols="12" xs="12" sm="12" md="12">
                       <v-data-table
                         :headers="headers"
-                        :items="EmployeeDetails2"
+                        :items="EmployeeDetails"
                         :search="search"
                         label="Clients"
                         height="auto"
@@ -72,16 +72,27 @@
                         :row-props="getRowProps"
                       >
                         <template v-slot:[`item.details.firstName`]="{ value }">
-                          <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
+                          <v-chip variant="text" color="elementTextColor">
+                            <v-icon icon="fa:fa-solid fa-user "></v-icon>{{ value }}</v-chip
+                          >
                         </template>
                         <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                          <v-chip color="#5A82AF" @click="callPhone"
-                            ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
+                          <v-chip
+                            @click="callPhone"
+                            color="primary"
+                            text-color="elementTextColor"
+                            border="md"
+                            ><v-icon icon="fa:fa-solid fa-phone"></v-icon> {{ value }}</v-chip
                           >
                         </template>
                         <template v-slot:[`item.contactInfo.email`]="{ value }">
-                          <v-chip color="#5A82AF" @click="callPhone">
-                            <v-icon>mdi-email</v-icon> {{ value }}</v-chip
+                          <v-chip
+                            @click="sendEmail"
+                            color="primary"
+                            text-color="elementTextColor"
+                            border="md"
+                          >
+                            <v-icon icon="fa:fa-solid fa-envelope"></v-icon>{{ value }}</v-chip
                           >
                         </template>
                         <template v-slot:[`item.mostRecentJob`]="{ value }">
