@@ -588,7 +588,7 @@ export default {
       if (value == '') return 'red'
       else return 'green'
     },
-    getRowProps({ index }) {
+    getRowProps({ index } : any) {
       return {
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
