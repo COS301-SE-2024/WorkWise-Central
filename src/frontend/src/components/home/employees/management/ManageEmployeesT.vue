@@ -14,7 +14,6 @@
               >
                 <v-card-title
                   class="d-flex align-center pe-2"
-                  :color="isdarkmode === true ? 'dark' : 'light'"
                   style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
                 >
                   <v-row align="center" justify="space-between">
@@ -71,11 +70,16 @@
                         class="bg-cardColor"
                         :row-props="getRowProps"
                       >
-                        <template v-slot:[`item.details.firstName`]="{ value }">
+                        <template v-slot:[`item.firstName`]="{ value }">
                           <v-chip variant="text" color="elementTextColor">
                             <v-icon icon="fa:fa-solid fa-user "></v-icon>{{ value }}</v-chip
                           >
                         </template>
+                        <template v-slot:[`item.surname`]="{ value }"
+                          ><v-chip variant="text" color="elementTextColor">{{
+                            value
+                          }}</v-chip></template
+                        >
                         <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
                           <v-chip
                             @click="callPhone"
@@ -100,14 +104,13 @@
                             {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
                           >
                         </template>
-                        <!-- Expanded content slot -->
-                        <template v-slot:expanded-row="{ columns, item }">
-                          <tr>
-                            <td :colspan="columns.length">More info about {{ item.name }}</td>
-                          </tr>
-                        </template>
-                        <!-- Actions slot -->
 
+                        <!-- Actions slot -->
+                        <template v-slot:[`item.roleName`]="{ value }">
+                          <v-chip color="elementTextColor" variant="text">
+                            {{ value }}
+                          </v-chip>
+                        </template>
                         <template v-slot:[`item.actions`]="{ item }">
                           <v-btn
                             rounded="xl"
