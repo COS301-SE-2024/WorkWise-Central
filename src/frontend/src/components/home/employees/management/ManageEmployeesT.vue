@@ -161,7 +161,12 @@ import router from '@/router/index'
 import EditEmployee from '@/components/home/employees/management/EditEmployee.vue'
 import DeleteEmployee from '@/components/home/employees/management/DeleteEmployee.vue'
 import EmployeeDetails from '@/components/home/employees/management/EmployeeDetails.vue'
-import { type Employee, type EmployeePersonalInfo, type Person, type User } from '../types'
+import type {
+  EmployeeJoined,
+  Person,
+  Employee,
+  EmployeePersonalInfo
+} from '@/components/home/employees/types'
 
 export default {
   name: 'ClientDesk',
@@ -217,136 +222,466 @@ export default {
     EmployeeDetails2: [] as EmployeePersonalInfo[],
     EmployeeDetails: [
       {
-        id: 59,
-        firstName: 'Michael',
-        surname: 'Brown',
-        clientInfo: {
-          phoneNumber: '+1230984567',
-          email: 'michael.brown@example.com',
-          address: {
-            street: '101 Pine St',
-            suburb: 'Old Town',
-            city: 'Central City',
-            postalCode: '45678',
-            complex: 'Forest Complex',
-            houseNumber: '10D'
-          }
-        }
-      },
-      {
-        id: 87,
-        firstName: 'Emily',
-        surname: 'Clark',
-        clientInfo: {
-          phoneNumber: '+3216549870',
-          email: 'emily.clark@example.com',
-          address: {
-            street: '202 Cedar St',
-            suburb: 'Riverdale',
-            city: 'Metropolis',
-            postalCode: '98765',
-            complex: 'Lakeview Complex',
-            houseNumber: '20E'
-          }
+        address: {
+          street: '123 Elm St',
+          suburb: 'Downtown',
+          city: 'Metropolis',
+          postalCode: '12345',
+          complex: 'Central Park',
+          houseNumber: '1A'
         },
-        preferred_Language: 'Italian'
-      },
-      {
-        id: 63,
-        firstName: 'David',
-        surname: 'White',
-        clientInfo: {
-          phoneNumber: '+4567891230',
-          email: 'david.white@example.com',
-          address: {
-            street: '303 Birch St',
-            suburb: 'Southside',
-            city: 'Gotham',
-            postalCode: '87654',
-            complex: 'Mountain Complex',
-            houseNumber: '30F'
-          }
+        contactInfo: {
+          phoneNumber: '+1234567890',
+          email: 'john.doe@example.com'
         },
-        preferred_Language: 'Japanese',
-        role: 'Data Analyst'
+        firstName: 'John',
+        surname: 'Doe',
+        preferredLanguage: 'English',
+        dateOfBirth: '1985-06-15',
+        gender: 'Male',
+        roleId: 'role123',
+        roleName: 'Manager',
+        employeeId: 'emp123',
+        userId: 'user123'
       },
       {
-        id: 34,
-        firstName: 'Laura',
-        surname: 'Davis',
-        clientInfo: {
-          phoneNumber: '+5678901234',
-          email: 'laura.davis@example.com',
-          address: {
-            street: '404 Spruce St',
-            suburb: 'Westside',
-            city: 'Star City',
-            postalCode: '76543',
-            complex: 'Hilltop Complex',
-            houseNumber: '40G'
-          }
+        address: {
+          street: '456 Oak St',
+          suburb: 'Uptown',
+          city: 'Gotham',
+          postalCode: '54321',
+          complex: 'Sunset Villas',
+          houseNumber: '2B'
         },
-        preferred_Language: 'Chinese',
-        role: 'HR Manager'
-      },
-      {
-        id: 41,
-        firstName: 'Sarah',
-        surname: 'Miller',
-        clientInfo: {
-          phoneNumber: '+6789012345',
-          email: 'sarah.miller@example.com',
-          address: {
-            street: '505 Maple St',
-            suburb: 'Eastside',
-            city: 'Central City',
-            postalCode: '65432',
-            complex: 'Riverside Complex',
-            houseNumber: '50H'
-          }
+        contactInfo: {
+          phoneNumber: '+1234567891',
+          email: 'jane.smith@example.com'
         },
-        preferred_Language: 'Portuguese',
-        role: 'Marketing Specialist'
+        firstName: 'Jane',
+        surname: 'Smith',
+        preferredLanguage: 'Spanish',
+        dateOfBirth: '1990-07-20',
+        gender: 'Female',
+        roleId: 'role124',
+        roleName: 'Developer',
+        employeeId: 'emp124',
+        userId: 'user124'
       },
       {
-        id: 12,
-        firstName: 'James',
+        address: {
+          street: '789 Pine St',
+          suburb: 'Midtown',
+          city: 'Star City',
+          postalCode: '67890',
+          complex: 'Lakeside Apartments',
+          houseNumber: '3C'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567892',
+          email: 'bob.jones@example.com'
+        },
+        firstName: 'Bob',
         surname: 'Jones',
-        clientInfo: {
-          phoneNumber: '+7890123456',
-          email: 'james.jones@example.com',
-          address: {
-            street: '606 Willow St',
-            suburb: 'Northside',
-            city: 'Metropolis',
-            postalCode: '54321',
-            complex: 'Seaside Complex',
-            houseNumber: '60I'
-          }
-        },
-        preferred_Language: 'Korean',
-        role: 'Finance Manager'
+        preferredLanguage: 'French',
+        dateOfBirth: '1982-11-30',
+        gender: 'Male',
+        roleId: 'role125',
+        roleName: 'Designer',
+        employeeId: 'emp125',
+        userId: 'user125'
       },
       {
-        id: 441,
-        firstName: 'Amelia',
-        surname: 'Taylor',
-        clientInfo: {
-          phoneNumber: '+8901234567',
-          email: 'amelia.taylor@example.com',
-          address: {
-            street: '707 Cherry St',
-            suburb: 'Central Park',
-            city: 'Gotham',
-            postalCode: '43210',
-            complex: 'Parkview Complex',
-            houseNumber: '70J'
-          }
+        address: {
+          street: '101 Maple St',
+          suburb: 'Old Town',
+          city: 'Springfield',
+          postalCode: '11111',
+          complex: 'River View',
+          houseNumber: '4D'
         },
-        preferred_Language: 'Russian',
-        role: 'Operations Manager'
+        contactInfo: {
+          phoneNumber: '+1234567893',
+          email: 'alice.williams@example.com'
+        },
+        firstName: 'Alice',
+        surname: 'Williams',
+        preferredLanguage: 'German',
+        dateOfBirth: '1975-02-25',
+        gender: 'Female',
+        roleId: 'role126',
+        roleName: 'Tester',
+        employeeId: 'emp126',
+        userId: 'user126'
+      },
+      {
+        address: {
+          street: '202 Cedar St',
+          suburb: 'Downtown',
+          city: 'Metropolis',
+          postalCode: '22222',
+          complex: 'Central Park',
+          houseNumber: '5E'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567894',
+          email: 'charlie.brown@example.com'
+        },
+        firstName: 'Charlie',
+        surname: 'Brown',
+        preferredLanguage: 'Italian',
+        dateOfBirth: '1988-09-10',
+        gender: 'Male',
+        roleId: 'role127',
+        roleName: 'Analyst',
+        employeeId: 'emp127',
+        userId: 'user127'
+      },
+      {
+        address: {
+          street: '303 Birch St',
+          suburb: 'Uptown',
+          city: 'Gotham',
+          postalCode: '33333',
+          complex: 'Sunset Villas',
+          houseNumber: '6F'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567895',
+          email: 'emily.johnson@example.com'
+        },
+        firstName: 'Emily',
+        surname: 'Johnson',
+        preferredLanguage: 'Portuguese',
+        dateOfBirth: '1995-03-05',
+        gender: 'Female',
+        roleId: 'role128',
+        roleName: 'Consultant',
+        employeeId: 'emp128',
+        userId: 'user128'
+      },
+      {
+        address: {
+          street: '404 Spruce St',
+          suburb: 'Midtown',
+          city: 'Star City',
+          postalCode: '44444',
+          complex: 'Lakeside Apartments',
+          houseNumber: '7G'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567896',
+          email: 'david.miller@example.com'
+        },
+        firstName: 'David',
+        surname: 'Miller',
+        preferredLanguage: 'Russian',
+        dateOfBirth: '1978-12-22',
+        gender: 'Male',
+        roleId: 'role129',
+        roleName: 'Architect',
+        employeeId: 'emp129',
+        userId: 'user129'
+      },
+      {
+        address: {
+          street: '505 Fir St',
+          suburb: 'Old Town',
+          city: 'Springfield',
+          postalCode: '55555',
+          complex: 'River View',
+          houseNumber: '8H'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567897',
+          email: 'sophia.davis@example.com'
+        },
+        firstName: 'Sophia',
+        surname: 'Davis',
+        preferredLanguage: 'Chinese',
+        dateOfBirth: '1992-05-15',
+        gender: 'Female',
+        roleId: 'role130',
+        roleName: 'Coordinator',
+        employeeId: 'emp130',
+        userId: 'user130'
+      },
+      {
+        address: {
+          street: '606 Cherry St',
+          suburb: 'Downtown',
+          city: 'Metropolis',
+          postalCode: '66666',
+          complex: 'Central Park',
+          houseNumber: '9I'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567898',
+          email: 'james.wilson@example.com'
+        },
+        firstName: 'James',
+        surname: 'Wilson',
+        preferredLanguage: 'Japanese',
+        dateOfBirth: '1981-08-30',
+        gender: 'Male',
+        roleId: 'role131',
+        roleName: 'Specialist',
+        employeeId: 'emp131',
+        userId: 'user131'
+      },
+      {
+        address: {
+          street: '707 Redwood St',
+          suburb: 'Uptown',
+          city: 'Gotham',
+          postalCode: '77777',
+          complex: 'Sunset Villas',
+          houseNumber: '10J'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567899',
+          email: 'olivia.anderson@example.com'
+        },
+        firstName: 'Olivia',
+        surname: 'Anderson',
+        preferredLanguage: 'Korean',
+        dateOfBirth: '1984-07-12',
+        gender: 'Female',
+        roleId: 'role132',
+        roleName: 'Strategist',
+        employeeId: 'emp132',
+        userId: 'user132'
+      },
+      {
+        address: {
+          street: '808 Aspen St',
+          suburb: 'Midtown',
+          city: 'Star City',
+          postalCode: '88888',
+          complex: 'Lakeside Apartments',
+          houseNumber: '11K'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567890',
+          email: 'logan.thomas@example.com'
+        },
+        firstName: 'Logan',
+        surname: 'Thomas',
+        preferredLanguage: 'Arabic',
+        dateOfBirth: '1976-04-02',
+        gender: 'Male',
+        roleId: 'role133',
+        roleName: 'Analyst',
+        employeeId: 'emp133',
+        userId: 'user133'
+      },
+      {
+        address: {
+          street: '909 Willow St',
+          suburb: 'Old Town',
+          city: 'Springfield',
+          postalCode: '99999',
+          complex: 'River View',
+          houseNumber: '12L'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567891',
+          email: 'mia.jackson@example.com'
+        },
+        firstName: 'Mia',
+        surname: 'Jackson',
+        preferredLanguage: 'Hindi',
+        dateOfBirth: '1993-01-10',
+        gender: 'Female',
+        roleId: 'role134',
+        roleName: 'Advisor',
+        employeeId: 'emp134',
+        userId: 'user134'
+      },
+      {
+        address: {
+          street: '1010 Cypress St',
+          suburb: 'Downtown',
+          city: 'Metropolis',
+          postalCode: '10101',
+          complex: 'Central Park',
+          houseNumber: '13M'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567892',
+          email: 'lucas.moore@example.com'
+        },
+        firstName: 'Lucas',
+        surname: 'Moore',
+        preferredLanguage: 'Spanish',
+        dateOfBirth: '1987-11-20',
+        gender: 'Male',
+        roleId: 'role135',
+        roleName: 'Technician',
+        employeeId: 'emp135',
+        userId: 'user135'
+      },
+      {
+        address: {
+          street: '1111 Walnut St',
+          suburb: 'Uptown',
+          city: 'Gotham',
+          postalCode: '11112',
+          complex: 'Sunset Villas',
+          houseNumber: '14N'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567893',
+          email: 'ella.martinez@example.com'
+        },
+        firstName: 'Ella',
+        surname: 'Martinez',
+        preferredLanguage: 'French',
+        dateOfBirth: '1991-02-14',
+        gender: 'Female',
+        roleId: 'role136',
+        roleName: 'Consultant',
+        employeeId: 'emp136',
+        userId: 'user136'
+      },
+      {
+        address: {
+          street: '1212 Hickory St',
+          suburb: 'Midtown',
+          city: 'Star City',
+          postalCode: '12121',
+          complex: 'Lakeside Apartments',
+          houseNumber: '15O'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567894',
+          email: 'alexander.garcia@example.com'
+        },
+        firstName: 'Alexander',
+        surname: 'Garcia',
+        preferredLanguage: 'Italian',
+        dateOfBirth: '1983-06-25',
+        gender: 'Male',
+        roleId: 'role137',
+        roleName: 'Manager',
+        employeeId: 'emp137',
+        userId: 'user137'
+      },
+      {
+        address: {
+          street: '1313 Cedar St',
+          suburb: 'Old Town',
+          city: 'Springfield',
+          postalCode: '13131',
+          complex: 'River View',
+          houseNumber: '16P'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567895',
+          email: 'sofia.rodriguez@example.com'
+        },
+        firstName: 'Sofia',
+        surname: 'Rodriguez',
+        preferredLanguage: 'German',
+        dateOfBirth: '1989-09-18',
+        gender: 'Female',
+        roleId: 'role138',
+        roleName: 'Specialist',
+        employeeId: 'emp138',
+        userId: 'user138'
+      },
+      {
+        address: {
+          street: '1414 Sycamore St',
+          suburb: 'Downtown',
+          city: 'Metropolis',
+          postalCode: '14141',
+          complex: 'Central Park',
+          houseNumber: '17Q'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567896',
+          email: 'benjamin.lopez@example.com'
+        },
+        firstName: 'Benjamin',
+        surname: 'Lopez',
+        preferredLanguage: 'Portuguese',
+        dateOfBirth: '1986-12-03',
+        gender: 'Male',
+        roleId: 'role139',
+        roleName: 'Developer',
+        employeeId: 'emp139',
+        userId: 'user139'
+      },
+      {
+        address: {
+          street: '1515 Magnolia St',
+          suburb: 'Uptown',
+          city: 'Gotham',
+          postalCode: '15151',
+          complex: 'Sunset Villas',
+          houseNumber: '18R'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567897',
+          email: 'amelia.clark@example.com'
+        },
+        firstName: 'Amelia',
+        surname: 'Clark',
+        preferredLanguage: 'Chinese',
+        dateOfBirth: '1994-04-17',
+        gender: 'Female',
+        roleId: 'role140',
+        roleName: 'Coordinator',
+        employeeId: 'emp140',
+        userId: 'user140'
+      },
+      {
+        address: {
+          street: '1616 Oak St',
+          suburb: 'Midtown',
+          city: 'Star City',
+          postalCode: '16161',
+          complex: 'Lakeside Apartments',
+          houseNumber: '19S'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567898',
+          email: 'ethan.jones@example.com'
+        },
+        firstName: 'Ethan',
+        surname: 'Jones',
+        preferredLanguage: 'Russian',
+        dateOfBirth: '1990-10-12',
+        gender: 'Male',
+        roleId: 'role141',
+        roleName: 'Analyst',
+        employeeId: 'emp141',
+        userId: 'user141'
+      },
+      {
+        address: {
+          street: '1717 Birch St',
+          suburb: 'Old Town',
+          city: 'Springfield',
+          postalCode: '17171',
+          complex: 'River View',
+          houseNumber: '20T'
+        },
+        contactInfo: {
+          phoneNumber: '+1234567899',
+          email: 'ava.davis@example.com'
+        },
+        firstName: 'Ava',
+        surname: 'Davis',
+        preferredLanguage: 'Japanese',
+        dateOfBirth: '1996-01-05',
+        gender: 'Female',
+        roleId: 'role142',
+        roleName: 'Tester',
+        employeeId: 'emp142',
+        userId: 'user142'
       }
-    ]
+    ] as EmployeePersonalInfo[]
   }),
   components: {
     EmployeeDetails,
@@ -357,7 +692,7 @@ export default {
   computed: {
     filteredClients() {
       if (!this.search) return this.clients
-      return this.clients.filter((client) => {
+      return this.clients.filter((client: any) => {
         return Object.values(client).some((value: any) =>
           value.toString().toLowerCase().includes(this.search.toLowerCase())
         )
@@ -397,17 +732,6 @@ export default {
       this.selectedItem = item
       console.log('Deleting client')
     },
-    removeClient(e: MouseEvent) {
-      let event = e.currentTarget as HTMLButtonElement
-      let id = event.id
-      console.log(id)
-      for (let i = 0; i < this.EmployeeDetails.length; i++) {
-        if (this.EmployeeDetails[i].id === Number(id)) {
-          this.EmployeeDetails.splice(i, 1)
-        }
-      }
-      router.push('/manager-employees-t')
-    },
     openAddClient() {
       this.clientDialog = true
     },
@@ -428,108 +752,72 @@ export default {
         }
       }
       const apiURL = await this.getRequestUrl()
+
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/all/${sessionStorage['currentCompany']}`,
+          apiURL + `employee/joined/all/${sessionStorage['currentCompany']}`,
           config
         )
-        let employee_all_data: Employee[] = employee_response.data.data
+
+        let employee_all_data: EmployeeJoined[] = employee_response.data.data
+
+        console.log(employee_all_data)
 
         let company_employee_arr: EmployeePersonalInfo[] = []
+
         for (let i = 0; i < employee_all_data.length; i++) {
-          let users_response = await axios.get(
-            apiURL + `users/id/${employee_all_data[i].userId}`,
-            config
-          )
-
-          const user_data: User = users_response.data
-
-          if (user_data.data.personalInfo.address === undefined) continue
+          if (employee_all_data[i].userId[0].personalInfo.address !== undefined) continue
 
           if (employee_all_data[i].roleId !== undefined) {
-            let role = await axios.get(apiURL + `role/id/${employee_all_data[i].roleId}`, config)
-
-            if (role.status < 300 && role.status > 199) {
-              let company_employee: EmployeePersonalInfo = {
-                address: {
-                  street: user_data.data.personalInfo.address.street,
-                  suburb: user_data.data.personalInfo.address.suburb,
-                  city: user_data.data.personalInfo.address.city,
-                  postalCode: user_data.data.personalInfo.address.postalCode,
-                  complex: user_data.data.personalInfo.address.complex,
-                  houseNumber: user_data.data.personalInfo.address.houseNumber
-                },
-                contactInfo: {
-                  phoneNumber: user_data.data.personalInfo.contactInfo.phoneNumber,
-                  email: user_data.data.personalInfo.contactInfo.email
-                },
-                firstName: user_data.data.personalInfo.firstName,
-                surname: user_data.data.personalInfo.surname,
-                preferredLanguage: user_data.data.personalInfo.preferredLanguage,
-                dateOfBirth: user_data.data.personalInfo.dateOfBirth,
-                gender: user_data.data.personalInfo.gender,
-                roleId: employee_all_data[i].roleId,
-                roleName: role.data.data.roleName,
-                employeeId: employee_all_data[i]._id,
-                userId: employee_all_data[i].userId
-              }
-
-              //     user_data.data.personalInfo
-              // company_employee.roleId = employee_all_data[i].roleId
-              // company_employee.roleName = role.data.roleName
-              // let company_employee: EmployeePersonalInfo = {
-              //   firstName: user_data.data.personalInfo.firstName,
-              //   surname: user_data.data.personalInfo.surname,
-              //   dateOfBirth: user_data.data.personalInfo.dateOfBirth,
-              //   gender: user_data.data.personalInfo.gender,
-              //   preferred_Language: user_data.data.personalInfo.preferred_Language,
-              //   _id: user_data.data._id,
-              //   id: user_data.data._id,
-              //   roleId: employee_all_data[i].roleId,
-              //   roleName: role.data.roleName
-              // }
-              company_employee_arr.push(company_employee)
-            } else {
-              console.log('And unsuccessfull requets was made')
+            let company_employee: EmployeePersonalInfo = {
+              address: {
+                street: employee_all_data[i].userId[0].personalInfo.address.street,
+                suburb: employee_all_data[i].userId[0].personalInfo.address.suburb,
+                city: employee_all_data[i].userId[0].personalInfo.address.city,
+                postalCode: employee_all_data[i].userId[0].personalInfo.address.postalCode,
+                complex: employee_all_data[i].userId[0].personalInfo.address.complex,
+                houseNumber: employee_all_data[i].userId[0].personalInfo.address.houseNumber
+              },
+              contactInfo: {
+                phoneNumber: employee_all_data[i].userId[0].personalInfo.contactInfo.phoneNumber,
+                email: employee_all_data[i].userId[0].personalInfo.contactInfo.email
+              },
+              firstName: employee_all_data[i].userId[0].personalInfo.firstName,
+              surname: employee_all_data[i].userId[0].personalInfo.surname,
+              preferredLanguage: employee_all_data[i].userId[0].personalInfo.preferredLanguage,
+              dateOfBirth: employee_all_data[i].userId[0].personalInfo.dateOfBirth,
+              gender: employee_all_data[i].userId[0].personalInfo.gender,
+              roleId: employee_all_data[i].roleId[0]._id,
+              roleName: employee_all_data[i].roleId[0].roleName,
+              employeeId: employee_all_data[i]._id,
+              userId: employee_all_data[i].userId[0]._id
             }
+
+            company_employee_arr.push(company_employee)
           } else {
             let company_employee: EmployeePersonalInfo = {
               address: {
-                street: user_data.data.personalInfo.address.street,
-                suburb: user_data.data.personalInfo.address.suburb,
-                city: user_data.data.personalInfo.address.city,
-                postalCode: user_data.data.personalInfo.address.postalCode,
-                complex: user_data.data.personalInfo.address.complex,
-                houseNumber: user_data.data.personalInfo.address.houseNumber
+                street: employee_all_data[i].userId[0].personalInfo.address.street,
+                suburb: employee_all_data[i].userId[0].personalInfo.address.suburb,
+                city: employee_all_data[i].userId[0].personalInfo.address.city,
+                postalCode: employee_all_data[i].userId[0].personalInfo.address.postalCode,
+                complex: employee_all_data[i].userId[0].personalInfo.address.complex,
+                houseNumber: employee_all_data[i].userId[0].personalInfo.address.houseNumber
               },
               contactInfo: {
-                phoneNumber: user_data.data.personalInfo.contactInfo.phoneNumber,
-                email: user_data.data.personalInfo.contactInfo.email
+                phoneNumber: employee_all_data[i].userId[0].personalInfo.contactInfo.phoneNumber,
+                email: employee_all_data[i].userId[0].personalInfo.contactInfo.email
               },
-              firstName: user_data.data.personalInfo.firstName,
-              surname: user_data.data.personalInfo.surname,
-              preferredLanguage: user_data.data.personalInfo.preferredLanguage,
-              dateOfBirth: user_data.data.personalInfo.dateOfBirth,
-              gender: user_data.data.personalInfo.gender,
+              firstName: employee_all_data[i].userId[0].personalInfo.firstName,
+              surname: employee_all_data[i].userId[0].personalInfo.surname,
+              preferredLanguage: employee_all_data[i].userId[0].personalInfo.preferredLanguage,
+              dateOfBirth: employee_all_data[i].userId[0].personalInfo.dateOfBirth,
+              gender: employee_all_data[i].userId[0].personalInfo.gender,
               roleId: '',
               roleName: '',
               employeeId: employee_all_data[i]._id,
-              userId: employee_all_data[i].userId
+              userId: employee_all_data[i].userId[0]._id
             }
-            // let company_employee: EmployeePersonalInfo = user_data.data.personalInfo
-            // company_employee.roleId = ''
-            // company_employee.roleName = ''
-            // let company_employee: EmployeeOfCurrentCompany = {
-            //   firstName: user_data.data.personalInfo.firstName,
-            //   surname: user_data.data.personalInfo.surname,
-            //   dateOfBirth: user_data.data.personalInfo.dateOfBirth,
-            //   gender: user_data.data.personalInfo.gender,
-            //   preferred_Language: user_data.data.personalInfo.preferred_Language,
-            //   _id: user_data.data._id,
-            //   id: user_data.data._id,
-            //   roleId: '',
-            //   roleName: ''
-            // }
             company_employee_arr.push(company_employee)
           }
         }
@@ -539,41 +827,89 @@ export default {
         console.log('Error fetching data:', error)
       }
 
-      // axios
-      //   .get(apiURL + 'employee/all', config)
-      //   .then((response) => {
-      //     this.clients = response.data
-      //     for (let i = 0; i < response.data.length; i++) {
-      //       axios
-      //         .get(apiURL + `users/id/${this.clients[i].userId}`, config)
-      //         .then((res) => {
-      //           let eish: EmployeeOfCurrentCompany = res.data.data.personalInfo
-      //           eish.id = res.data.data._id
-      //           eish.roleId = this.clients[i].roleId
+      // try {
+      //   const employee_response = await axios.get(
+      //     apiURL + `employee/all/${sessionStorage['currentCompany']}`,
+      //     config
+      //   )
+      //   let employee_all_data: Employee[] = employee_response.data.data
       //
-      //           axios
-      //             .get(apiURL + `role/id/${eish.roleId}`, config)
-      //             .then((res) => {
-      //               // console.log(res.data.roleName)
-      //               eish.roleName = res.data.roleName
-      //               this.EmployeeDetails2.push(eish)
-      //               // console.log(eish)
-      //             })
-      //             .catch((error) => {
-      //               console.log('Failed to fetch Role:', error)
-      //             })
-      //           // console.log(eish)
-      //         })
-      //         .catch((error) => {
-      //           console.log('Failed to fetch users:', error)
-      //         })
+      //   let company_employee_arr: EmployeePersonalInfo[] = []
+      //   for (let i = 0; i < employee_all_data.length; i++) {
+      //     let users_response = await axios.get(
+      //       apiURL + `users/id/${employee_all_data[i].userId}`,
+      //       config
+      //     )
+      //
+      //     const user_data: User = users_response.data
+      //
+      //     if (user_data.data.personalInfo.address === undefined) continue
+      //
+      //     if (employee_all_data[i].roleId !== undefined) {
+      //       let role = await axios.get(apiURL + `role/id/${employee_all_data[i].roleId}`, config)
+      //
+      //       if (role.status < 300 && role.status > 199) {
+      //         let company_employee: EmployeePersonalInfo = {
+      //           address: {
+      //             street: user_data.data.personalInfo.address.street,
+      //             suburb: user_data.data.personalInfo.address.suburb,
+      //             city: user_data.data.personalInfo.address.city,
+      //             postalCode: user_data.data.personalInfo.address.postalCode,
+      //             complex: user_data.data.personalInfo.address.complex,
+      //             houseNumber: user_data.data.personalInfo.address.houseNumber
+      //           },
+      //           contactInfo: {
+      //             phoneNumber: user_data.data.personalInfo.contactInfo.phoneNumber,
+      //             email: user_data.data.personalInfo.contactInfo.email
+      //           },
+      //           firstName: user_data.data.personalInfo.firstName,
+      //           surname: user_data.data.personalInfo.surname,
+      //           preferredLanguage: user_data.data.personalInfo.preferredLanguage,
+      //           dateOfBirth: user_data.data.personalInfo.dateOfBirth,
+      //           gender: user_data.data.personalInfo.gender,
+      //           roleId: employee_all_data[i].roleId,
+      //           roleName: role.data.data.roleName,
+      //           employeeId: employee_all_data[i]._id,
+      //           userId: employee_all_data[i].userId
+      //         }
+      //
+      //         company_employee_arr.push(company_employee)
+      //       } else {
+      //         console.log('And unsuccessfull requets was made')
+      //       }
+      //     } else {
+      //       let company_employee: EmployeePersonalInfo = {
+      //         address: {
+      //           street: user_data.data.personalInfo.address.street,
+      //           suburb: user_data.data.personalInfo.address.suburb,
+      //           city: user_data.data.personalInfo.address.city,
+      //           postalCode: user_data.data.personalInfo.address.postalCode,
+      //           complex: user_data.data.personalInfo.address.complex,
+      //           houseNumber: user_data.data.personalInfo.address.houseNumber
+      //         },
+      //         contactInfo: {
+      //           phoneNumber: user_data.data.personalInfo.contactInfo.phoneNumber,
+      //           email: user_data.data.personalInfo.contactInfo.email
+      //         },
+      //         firstName: user_data.data.personalInfo.firstName,
+      //         surname: user_data.data.personalInfo.surname,
+      //         preferredLanguage: user_data.data.personalInfo.preferredLanguage,
+      //         dateOfBirth: user_data.data.personalInfo.dateOfBirth,
+      //         gender: user_data.data.personalInfo.gender,
+      //         roleId: '',
+      //         roleName: '',
+      //         employeeId: employee_all_data[i]._id,
+      //         userId: employee_all_data[i].userId
+      //       }
+
+      //       company_employee_arr.push(company_employee)
       //     }
-      //     // console.log('hello')
-      //     console.log(this.EmployeeDetails2)
-      //   })
-      //   .catch((error) => {
-      //     console.log('Failed to fetch clients:', error)
-      //   })
+      //   }
+      //   console.log(company_employee_arr)
+      //   this.EmployeeDetails2 = company_employee_arr
+      // } catch (error) {
+      //   console.log('Error fetching data:', error)
+      // }
     },
     toggleExpand(item: never) {
       // Check if the item is already expanded
