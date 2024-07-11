@@ -21,7 +21,7 @@ export class Team {
   teamName: string;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: false, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true })
   teamMembers: Types.ObjectId[];
 
   @ApiProperty()
@@ -47,7 +47,7 @@ export class Team {
 
 export class teamApiObject {
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, unique: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, unique: true })
   id: Types.ObjectId;
 
   @ApiProperty()
@@ -59,7 +59,7 @@ export class teamApiObject {
   teamName: string;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: false, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true })
   teamMembers: Types.ObjectId[];
 
   @ApiProperty()

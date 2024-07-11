@@ -46,7 +46,7 @@ export class Role {
 
 export class RoleApiObject {
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, unique: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, unique: true })
   id: Types.ObjectId;
 
   @ApiProperty()
