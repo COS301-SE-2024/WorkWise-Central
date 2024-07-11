@@ -15,7 +15,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { JobApiObject } from '../entities/job.entity';
+import { JobApiDetailedObject, JobApiObject } from '../entities/job.entity';
 
 class Address {
   @ApiProperty()
@@ -23,6 +23,12 @@ class Address {
   @IsString()
   @MaxLength(255)
   street: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(255)
+  province: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -255,4 +261,11 @@ export class JobAllResponseDto {
     this.data = data;
   }
   data: JobApiObject[];
+}
+
+export class JobAllResponseDetailedDto {
+  constructor(data: JobApiDetailedObject[]) {
+    this.data = data;
+  }
+  data: JobApiDetailedObject[];
 }

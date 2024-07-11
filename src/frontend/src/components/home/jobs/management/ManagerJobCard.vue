@@ -11,93 +11,75 @@
             <v-list>
               <!-- Job Details -->
               <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title class="text-h6 font-weight-bold">Job Name</v-list-item-title>
-                  <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
-                    passedInJob.heading || 'Job name is empty'
-                  }}</v-list-item-subtitle>
-                </v-list-item-content>
+                <v-list-item-title class="text-h6 font-weight-bold">Job Name</v-list-item-title>
+                <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
+                  passedInJob.heading || 'Job name is empty'
+                }}</v-list-item-subtitle>
               </v-list-item>
 
               <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title class="text-h6 font-weight-bold"
-                    >Job Description</v-list-item-title
-                  >
-                  <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
-                    passedInJob.jobDescription || 'Job description is empty'
-                  }}</v-list-item-subtitle>
-                </v-list-item-content>
+                <v-list-item-title class="text-h6 font-weight-bold"
+                  >Job Description</v-list-item-title
+                >
+                <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
+                  passedInJob.jobDescription || 'Job description is empty'
+                }}</v-list-item-subtitle>
               </v-list-item>
 
               <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title class="text-h6 font-weight-bold">Start Date</v-list-item-title>
-                  <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
-                    passedInJob.startDate || 'Start date is empty'
-                  }}</v-list-item-subtitle>
-                </v-list-item-content>
+                <v-list-item-title class="text-h6 font-weight-bold">Start Date</v-list-item-title>
+                <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
+                  passedInJob.startDate || 'Start date is empty'
+                }}</v-list-item-subtitle>
               </v-list-item>
 
               <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title class="text-h6 font-weight-bold">End Date</v-list-item-title>
-                  <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
-                    passedInJob.endDate || 'End date is empty'
-                  }}</v-list-item-subtitle>
-                </v-list-item-content>
+                <v-list-item-title class="text-h6 font-weight-bold">End Date</v-list-item-title>
+                <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
+                  passedInJob.endDate || 'End date is empty'
+                }}</v-list-item-subtitle>
               </v-list-item>
 
               <!-- Job Address -->
               <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title class="text-h6 font-weight-bold">Address</v-list-item-title>
-                  <v-list-item-subtitle class="text-body-1 font-weight-medium">
-                    {{ passedInJob.street || 'Street is empty' }},
-                    {{ passedInJob.suburb || 'Suburb is empty' }},
-                    {{ passedInJob.city || 'City is empty' }},
-                    {{ passedInJob.postalCode || 'Postal code is empty' }}
-                  </v-list-item-subtitle>
-                </v-list-item-content>
+                <v-list-item-title class="text-h6 font-weight-bold">Address</v-list-item-title>
+                <v-list-item-subtitle class="text-body-1 font-weight-medium">
+                  {{ passedInJob.street || 'Street is empty' }},
+                  {{ passedInJob.suburb || 'Suburb is empty' }},
+                  {{ passedInJob.city || 'City is empty' }},
+                  {{ passedInJob.postalCode || 'Postal code is empty' }}
+                </v-list-item-subtitle>
               </v-list-item>
 
               <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title class="text-h6 font-weight-bold">Complex</v-list-item-title>
-                  <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
-                    passedInJob.complex || 'Complex is empty'
-                  }}</v-list-item-subtitle>
-                </v-list-item-content>
+                <v-list-item-title class="text-h6 font-weight-bold">Complex</v-list-item-title>
+                <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
+                  passedInJob.complex || 'Complex is empty'
+                }}</v-list-item-subtitle>
               </v-list-item>
 
               <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title class="text-h6 font-weight-bold"
-                    >House Number</v-list-item-title
-                  >
-                  <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
-                    passedInJob.houseNumber || 'House number is empty'
-                  }}</v-list-item-subtitle>
-                </v-list-item-content>
+                <v-list-item-title class="text-h6 font-weight-bold">House Number</v-list-item-title>
+                <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
+                  passedInJob.houseNumber || 'House number is empty'
+                }}</v-list-item-subtitle>
               </v-list-item>
 
               <!-- Assigned Employees -->
               <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title class="text-h6 font-weight-bold"
-                    >Assigned Employees</v-list-item-title
-                  >
-                  <v-list-item-subtitle class="text-body-1 font-weight-medium">
-                    <span v-for="employeeId in assignedEmployees" :key="employeeId">
-                      {{ employeeId || 'Employee ID is empty' }}
-                    </span>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
+                <v-list-item-title class="text-h6 font-weight-bold"
+                  >Assigned Employees</v-list-item-title
+                >
+                <v-list-item-subtitle class="text-body-1 font-weight-medium">
+                  <span v-for="employeeId in assignedEmployees" :key="employeeId">
+                    {{ employeeId || 'Employee ID is empty' }}
+                  </span>
+                </v-list-item-subtitle>
               </v-list-item>
 
               <!-- Recorded Details -->
               <!--              <v-list-item>-->
-              <!--                <v-list-item-content>-->
+              <!--                -->
               <!--                  <v-list-item-title class="text-h6 font-weight-bold">Images Taken</v-list-item-title>-->
               <!--                  <v-list-item-subtitle class="text-body-1 font-weight-medium">-->
               <!--                    <img-->
@@ -111,11 +93,11 @@
               <!--                    />-->
               <!--                    <span v-if="imagesTaken.length === 0">No images taken</span>-->
               <!--                  </v-list-item-subtitle>-->
-              <!--                </v-list-item-content>-->
+              <!--                -->
               <!--              </v-list-item>-->
 
               <!--              <v-list-item>-->
-              <!--                <v-list-item-content>-->
+              <!--                -->
               <!--                  <v-list-item-title class="text-h6 font-weight-bold">Inventory Used</v-list-item-title>-->
               <!--                  <v-list-item-subtitle class="text-body-1 font-weight-medium">-->
               <!--                    <div v-for="item in inventoryUsed" :key="item.InventoryItem">-->
@@ -123,22 +105,20 @@
               <!--                    </div>-->
               <!--                    <span v-if="inventoryUsed.length === 0">No inventory used</span>-->
               <!--                  </v-list-item-subtitle>-->
-              <!--                </v-list-item-content>-->
+              <!--                -->
               <!--              </v-list-item>-->
 
               <!-- Status -->
               <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title class="text-h6 font-weight-bold">Status</v-list-item-title>
-                  <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
-                    passedInJob.status || 'Status is empty'
-                  }}</v-list-item-subtitle>
-                </v-list-item-content>
+                <v-list-item-title class="text-h6 font-weight-bold">Status</v-list-item-title>
+                <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
+                  passedInJob.status || 'Status is empty'
+                }}</v-list-item-subtitle>
               </v-list-item>
 
               <!-- Task List -->
               <!--              <v-list-item>-->
-              <!--                <v-list-item-content>-->
+              <!--                -->
               <!--                  <v-list-item-title class="text-h6 font-weight-bold">Task List</v-list-item-title>-->
               <!--                  <v-list-item-subtitle class="text-body-1 font-weight-medium">-->
               <!--                    <div v-for="task in taskList" :key="task.taskName">-->
@@ -146,12 +126,12 @@
               <!--                    </div>-->
               <!--                    <span v-if="taskList.length === 0">No tasks available</span>-->
               <!--                  </v-list-item-subtitle>-->
-              <!--                </v-list-item-content>-->
+              <!--                -->
               <!--              </v-list-item>-->
 
               <!--              &lt;!&ndash; Comments &ndash;&gt;-->
               <!--              <v-list-item>-->
-              <!--                <v-list-item-content>-->
+              <!--                -->
               <!--                  <v-list-item-title class="text-h6 font-weight-bold">Comments</v-list-item-title>-->
               <!--                  <v-list-item-subtitle class="text-body-1 font-weight-medium">-->
               <!--                    <div v-for="comment in comments" :key="comment.commentDate">-->
@@ -159,7 +139,7 @@
               <!--                    </div>-->
               <!--                    <span v-if="comments.length === 0">No comments available</span>-->
               <!--                  </v-list-item-subtitle>-->
-              <!--                </v-list-item-content>-->
+              <!--                -->
               <!--              </v-list-item>-->
             </v-list>
           </v-card-text>
@@ -291,8 +271,8 @@
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="saveJobDetails"> Save </v-btn>
-                  <v-btn color="blue darken-1" text @click="detailsDialog = false"> Cancel </v-btn>
+                  <v-btn color="blue darken-1" @click="saveJobDetails"> Save </v-btn>
+                  <v-btn color="blue darken-1" @click="cancelJob"> Cancel </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -333,9 +313,9 @@
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="saveClient">Save</v-btn>
+                  <v-btn color="blue darken-1" @click="saveClient">Save</v-btn>
 
-                  <v-btn color="blue darken-1" text @click="clientDialog = false">Cancel</v-btn>
+                  <v-btn color="blue darken-1" @click="clientDialog = false">Cancel</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -374,8 +354,8 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="saveSelection"> Save </v-btn>
-                  <v-btn color="blue darken-1" text @click="membersDialog = false"> Cancel </v-btn>
+                  <v-btn color="blue darken-1" @click="saveSelection"> Save </v-btn>
+                  <v-btn color="blue darken-1" @click="membersDialog = false"> Cancel </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -423,8 +403,8 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="saveStatus"> Save </v-btn>
-                  <v-btn color="blue darken-1" text @click="statusDialog = false"> Cancel </v-btn>
+                  <v-btn color="blue darken-1" @click="saveStatus"> Save </v-btn>
+                  <v-btn color="blue darken-1" @click="statusDialog = false"> Cancel </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -571,7 +551,6 @@ const saveSelection = () => {
 // For job status update
 
 const statusDialog = ref(false)
-const selectedState = ref('')
 const colors = {
   todo: 'red',
   inProgress: 'blue',
@@ -788,11 +767,9 @@ const saveJob = () => {
   router.push('/jobAssignmentView')
 }
 
+const emit = defineEmits(['close'])
 const cancelJob = () => {
-  // Perform cancel operation if needed
-
-  // Navigate to /jobAssignmentView without any alert
-  router.push('/jobAssignmentView')
+  emit('close')
 }
 </script>
 

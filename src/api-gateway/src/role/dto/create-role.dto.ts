@@ -6,7 +6,7 @@ export class CreateRoleDto {
   @IsArray()
   @IsNotEmpty()
   @ApiProperty()
-  permissionSuite: string[];
+  permissionSuite: string[] = [];
 
   @IsNotEmpty()
   @ApiProperty()

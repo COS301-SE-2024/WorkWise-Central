@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
+import { SchemaTypes, Types } from 'mongoose';
 
 @Schema()
 export class Notification {
@@ -13,10 +13,13 @@ export class Notification {
     this.message = message;
   }
 
-  @Prop({ type: Types.ObjectId, required: false /*, ref: Employee.name */ })
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: false /*, ref: Employee.name */,
+  })
   senderId?: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, required: true /*, ref: Employee.name*/ })
+  @Prop({ type: SchemaTypes.ObjectId, required: true /*, ref: Employee.name*/ })
   recipientId: Types.ObjectId;
 
   @Prop({ type: String, required: true })

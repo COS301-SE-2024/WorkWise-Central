@@ -7,9 +7,98 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import * as directives from 'vuetify/directives'
 import 'vuetify/dist/vuetify.min.css'
 import 'vuetify/styles'
+import { md3 } from 'vuetify/blueprints'
 
 const vuetify = createVuetify({
+  blueprint: md3,
+  locale: {
+    locale: 'en'
+  },
+  defaults: {
+    VDialog: {
+      VCard: {
+        VCardTitle: {
+          class: 'text-h5 font-weight-regular bg-primary justify-center'
+        },
+        VCardText: {},
+        VCardActions: { class: 'text-h5 font-weight-regular justify-center' }
+      },
+      VSheet: {
+        VCardTitle: {
+          class: 'text-h5 font-weight-regular bg-primary justify-center'
+        }
+      }
+    },
+    VTextField: {
+      variant: 'solo',
+      rounded: 'md',
+      density: 'compact'
+    },
+
+    VCard: {
+      elevation: 14,
+      rounded: 'xl',
+      height: 'auto',
+      class: 'bg-cardColor ',
+      VCardTitle: {
+        class: 'text-h5 font-weight-regular bg-primary d-flex justify-center text-blue'
+      },
+      VCardText: { class: 'bg-cardColor', VList: { class: 'bg-cardColor' } }
+    },
+    VBtn: {
+      rounded: 'md',
+      variant: 'text',
+      class: 'text-none font-weight-regular hello',
+      size: 'large'
+    },
+    VCardTitle: {
+      class: ''
+    },
+    VSheet: {
+      elevation: 14,
+      rounded: 'md',
+      height: 'auto'
+    },
+    VDivider: {
+      thickness: 3
+    },
+    VAutocomplete: {
+      density: 'compact',
+      rounded: 'md',
+      variant: 'solo'
+    },
+    VIcon: {
+      color: 'elementTextColor'
+    },
+    Small: {
+      color: 'elementTextColor',
+      VTextField: {
+        class: 'bg-primary'
+      }
+    },
+    VRow: {
+      VCol: {
+        Label: {
+          class: 'font-weight-bold',
+          style: 'font-size: 20px'
+        }
+      }
+    },
+    VChip: {
+      rounded: 'md'
+    }
+  },
   directives,
+  display: {
+    mobileBreakpoint: 'sm',
+    thresholds: {
+      xs: 0,
+      sm: 340,
+      md: 540,
+      lg: 800,
+      xl: 1280
+    }
+  },
   components: {
     VDateInput,
     VCalendar,
@@ -28,24 +117,44 @@ const vuetify = createVuetify({
     themes: {
       light: {
         colors: {
-          primary: '#6a99ce',
-          secondary: '#879898',
+          background: '#F7F8F9',
+          primary: '#F0984D',
+          secondary: '#227D9B ',
           accent: '#82B1FF',
           error: '#e639462',
           info: '#2196F3',
-          success: '#4CAF50',
-          warning: '#FFC107'
+          success: '#37471F',
+          warning: '#FFC107',
+          cardColor: '#F1F2F4',
+          elementTextColor: '#44546F', // most important color for text
+          headingTextColor: '#091E42',
+          n_elementTextColor: '#8C9BAB', // most nonImportant color for text
+          highlighter: '#DEE4EA',
+          tableRowColor: '',
+          firstPlace: '#E2B203',
+          secondPlace: '#626F86',
+          thirdPlace: '#533F04'
         }
       },
       dark: {
         colors: {
-          primary: '#6a99ce', // Lighter shade of blue for better visibility in dark mode
-          secondary: '#879898', // A medium gray, less harsh than pure black or white
+          background: '#161A1D',
+          primary: '#F38A3F', // Lighter shade of blue for better visibility in dark mode
+          secondary: '#4C9FC3', // A medium gray, less harsh than pure black or white
           accent: '#448AFF', // A slightly brighter blue to stand out in dark mode
           error: '#E63946', // Keeping error color consistent as it needs to attract attention
           info: '#64B5F6', // A lighter blue for info to ensure readability
           success: '#81C784', // A lighter green for success messages
-          warning: '#FFD54F' // A lighter yellow for warnings to ensure they stand out
+          warning: '#FFD54F', // A lighter yellow for warnings to ensure they stand out
+          cardColor: '#22272B',
+          elementTextColor: '#B6C2CF',
+          headingTextColor: '#DCDFE4',
+          n_elementTextColor: '#8C9BAB', // most nonImportant color for text
+          highlighter: '#DEE4EA',
+          tableRowColor: '#454f5',
+          firstPlace: '#FFD700',
+          secondPlace: '#C0C0C0',
+          thirdPlace: '#CD7F32'
         }
       }
     }

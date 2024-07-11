@@ -38,6 +38,12 @@ class Address {
   @IsOptional()
   @IsString()
   @MaxLength(255)
+  province?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
   suburb?: string;
 
   @ApiProperty()

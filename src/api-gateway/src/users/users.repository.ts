@@ -49,18 +49,44 @@ export class UsersRepository {
   }
 
   async exists(identifier: string): Promise<boolean> {
-    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
-      await this.userModel
-        .findOne({
-          $and: [
-            { 'systemDetails.username': identifier },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
-    console.log(`exists: ${result}`);
+    const result = await this.userModel
+      .findOne({
+        $and: [
+          { 'systemDetails.username': identifier },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+    return result != null;
+  }
+
+  async emailExists(email: string): Promise<boolean> {
+    const result = await this.userModel
+      .findOne({
+        $and: [
+          { 'contactInfo.email': email },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+    return result != null;
+  }
+
+  async phoneExists(phone: string): Promise<boolean> {
+    const result = await this.userModel
+      .findOne({
+        $and: [
+          { 'contactInfo.phone': phone },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
     return result != null;
   }
 

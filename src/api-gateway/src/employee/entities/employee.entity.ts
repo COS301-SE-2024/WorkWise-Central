@@ -14,8 +14,8 @@ export class Employee {
   }
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: false, ref: 'Role' })
-  roleId?: Types.ObjectId;
+  @Prop({ type: [SchemaTypes.ObjectId], required: true, ref: 'Role' })
+  roleId: Types.ObjectId;
 
   @ApiProperty()
   @Prop({
