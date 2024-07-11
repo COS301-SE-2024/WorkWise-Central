@@ -30,7 +30,7 @@
               density="compact"
               label="Search"
               prepend-inner-icon="mdi-magnify"
-              variant="solo inverted"
+              variant="solo-inverted"
               flat
               width="100%"
               style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
@@ -65,7 +65,7 @@
                 >
               </template>
               <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                <v-chip variant="text" @click="callPhone" color="elementTextColor" border="md"
+                <v-chip @click="callPhone" color="primary" text-color="elementTextColor" border="md"
                   ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
                 >
               </template>
@@ -76,7 +76,12 @@
                 <v-chip variant="text" color="elementTextColor"> {{ value }}</v-chip>
               </template>
               <template v-slot:[`item.contactInfo.email`]="{ value }">
-                <v-chip variant="text" @click="sendEmail" color="elementTextColor" border="md">
+                <v-chip
+                  @click="sendEmail"
+                  color="primary"
+                  text-color="elementTextColor"
+                  border="md"
+                >
                   <v-icon>mdi-email</v-icon>{{ value }}</v-chip
                 >
               </template>
@@ -94,7 +99,7 @@
                   variant="plain"
                   @click="(actionsDialog = true), selectItem(item)"
                 >
-                  <v-icon>mdi-dots-horizontal</v-icon>
+                  <v-icon color="primary">mdi-dots-horizontal</v-icon>
                 </v-btn>
               </template>
             </v-data-table>
@@ -105,7 +110,7 @@
 
     <v-dialog v-model="actionsDialog" max-width="500px">
       <v-card>
-        <v-card-title class="text-h5 font-weight-regular bg-primary">
+        <v-card-title class="text-h5 font-weight-regular bg-primary text-center">
           {{ selectedItemName + ' ' + selectedItemSurname }}
         </v-card-title>
         <v-card-text> What would you like to do with this client? </v-card-text>
@@ -229,12 +234,12 @@ export default defineComponent({
         'dark-mode': this.isdarkmode,
         'light-mode': !this.isdarkmode
       }
-
-    }, currentTheme() {
-      return this.$theme; // Example of accessing a global property, adjust based on actual implementation
+    },
+    currentTheme() {
+      return this.$theme // Example of accessing a global property, adjust based on actual implementation
     },
     globalTheme() {
-      return this.$theme.global; // Adjust based on actual implementation
+      return this.$theme.global // Adjust based on actual implementation
     }
   },
   mounted() {
@@ -349,10 +354,9 @@ export default defineComponent({
       else return 'green'
     },
     getRowProps({ index }) {
-      
       return {
-        class: index % 2 ? 'bg-secondRowColor' : '',
-      };
+        class: index % 2 ? 'bg-secondRowColor' : ''
+      }
     }
   }
 })
@@ -409,9 +413,7 @@ export default defineComponent({
 }
 /* Dark mode */
 
-
 /* Light mode */
-
 
 .my-header-style {
   background: red;
