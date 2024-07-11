@@ -53,54 +53,52 @@ export class RoleService {
     this.permissionsArray.push('record inventory use');
   }
 
-  async validateRole(role: Role | CreateRoleDto | UpdateRoleDto) {
-    console.log('role -> ', role);
-
-    if ('permissionSuite' in role && role.permissionSuite) {
-      for (const permission of role.permissionSuite) {
-        if (!this.permissionsArray.includes(permission.toString())) {
-          console.log('one');
-          throw new ConflictException('Invalid permission');
-        }
+  async validateCreateRole(role: CreateRoleDto) {
+    //Check if the permissions are valid
+    for (const permission of role.permissionSuite) {
+      if (!this.permissionsArray.includes(permission.toString())) {
+        throw new ConflictException('Invalid permission');
       }
-    }
-    console.log('a');
-    if ('companyId' in role && role.companyId) {
-      console.log('CompanyID is set');
-      if (!(await this.companyService.companyIdExists(role.companyId))) {
-        console.log('two');
-        throw new ConflictException('Company not found');
-      }
-      console.log('a.b');
-      if ('roleName' in role && role.roleName) {
-        console.log('roleName is set');
-        try {
-          if (await this.findOneInCompany(role.roleName, role.companyId)) {
-            console.log('three');
-            throw new ConflictException('Role already exists');
-          }
-        } catch (error) {}
-      }
-      console.log('if is done');
     }
 
-    console.log('b');
-    if ('roleId' in role && role.roleId) {
-      console.log('roleid is set');
-      const flag = await this.roleExists(role.roleId as Types.ObjectId);
-      if (!flag) {
-        console.log('four');
-        throw new ConflictException('Role not found');
+    //Check if the company exists
+    if (!(await this.companyService.companyIdExists(role.companyId))) {
+      throw new ConflictException('Company not found');
+    }
+
+    //Check if the role already exists
+    try {
+      if (await this.findOneInCompany(role.roleName, role.companyId)) {
+        throw new ConflictException('Role already exists');
+      }
+    } catch (error) {}
+  }
+
+  async validateUpdateRole(roleId: Types.ObjectId, role: UpdateRoleDto) {
+    //Check if the permissions are valid
+    for (const permission of role.permissionSuite) {
+      if (!this.permissionsArray.includes(permission.toString())) {
+        throw new ConflictException('Invalid permission');
       }
     }
-    console.log('Validate finished');
+
+    //Getting the company id from the role
+    const roleObj = await this.findById(roleId);
+    const companyId = roleObj.companyId;
+
+    //Check if the role already exists
+    try {
+      if (await this.findOneInCompany(role.roleName, companyId)) {
+        throw new ConflictException('Role already exists');
+      }
+    } catch (error) {}
   }
 
   async create(createRoleDto: CreateRoleDto) {
     try {
-      await this.validateRole(createRoleDto);
+      await this.validateCreateRole(createRoleDto);
     } catch (error) {
-      console.log('Throwing error');
+      // console.log('Throwing error');
       throw new InternalServerErrorException(error);
     }
 
@@ -111,6 +109,67 @@ export class RoleService {
 
     const model = new this.roleModel(newRole);
     return await model.save();
+  }
+
+  async findAll() {
+    return this.roleRepository.findAll();
+  }
+
+  getPermissionsArray(): string[] {
+    return this.permissionsArray;
+  }
+
+  async findAllInCompany(companyId: Types.ObjectId) {
+    const result = await this.roleRepository.findAllInCompany(companyId);
+    if (result == null) {
+      throw new NotFoundException('The company does not have any roles');
+    }
+    return result;
+  }
+
+  async findOneInCompany(name: string, companyId: Types.ObjectId) {
+    const result = await this.roleModel.findOne({
+      roleName: name,
+      companyId: companyId,
+    });
+    if (result == null) {
+      throw new NotFoundException('Role not found');
+    }
+    return result;
+  }
+
+  async findById(
+    identifier: Types.ObjectId,
+  ): Promise<FlattenMaps<Role> & { _id: Types.ObjectId }> {
+    const result = await this.roleRepository.findById(identifier);
+    if (result == null) {
+      throw new NotFoundException('Role not found');
+    }
+    return result;
+  }
+
+  async update(id: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
+    try {
+      await this.validateUpdateRole(id, updateRoleDto);
+    } catch (error) {
+      return `${error}`;
+    }
+    return this.roleRepository.update(id, updateRoleDto);
+  }
+
+  async roleExists(id: Types.ObjectId): Promise<boolean> {
+    return await this.roleRepository.roleExists(id);
+  }
+
+  async roleExistsInCompany(
+    id: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ): Promise<boolean> {
+    return await this.roleRepository.roleExistsInCompany(id, companyId);
+  }
+
+  async remove(id: Types.ObjectId): Promise<boolean> {
+    return this.roleRepository.remove(id);
   }
 
   async createDefaultRoles(companyId: Types.ObjectId) {
@@ -226,66 +285,5 @@ export class RoleService {
     workerRoleDto.permissionSuite.push('record inventory use');
 
     await this.create(workerRoleDto);
-  }
-
-  async findAll() {
-    return this.roleRepository.findAll();
-  }
-
-  getPermissionsArray(): string[] {
-    return this.permissionsArray;
-  }
-
-  async findAllInCompany(companyId: Types.ObjectId) {
-    const result = await this.roleRepository.findAllInCompany(companyId);
-    if (result == null) {
-      throw new NotFoundException('The company does not have any roles');
-    }
-    return result;
-  }
-
-  async findOneInCompany(name: string, companyId: Types.ObjectId) {
-    const result = await this.roleModel.findOne({
-      roleName: name,
-      companyId: companyId,
-    });
-    if (result == null) {
-      throw new NotFoundException('Role not found');
-    }
-    return result;
-  }
-
-  async findById(
-    identifier: Types.ObjectId,
-  ): Promise<FlattenMaps<Role> & { _id: Types.ObjectId }> {
-    const result = await this.roleRepository.findById(identifier);
-    if (result == null) {
-      throw new NotFoundException('Role not found');
-    }
-    return result;
-  }
-
-  async update(id: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
-    try {
-      await this.validateRole(updateRoleDto);
-    } catch (error) {
-      return `${error}`;
-    }
-    return this.roleRepository.update(id, updateRoleDto);
-  }
-
-  async roleExists(id: Types.ObjectId): Promise<boolean> {
-    return await this.roleRepository.roleExists(id);
-  }
-
-  async roleExistsInCompany(
-    id: Types.ObjectId,
-    companyId: Types.ObjectId,
-  ): Promise<boolean> {
-    return await this.roleRepository.roleExistsInCompany(id, companyId);
-  }
-
-  async remove(id: Types.ObjectId): Promise<boolean> {
-    return this.roleRepository.remove(id);
   }
 }
