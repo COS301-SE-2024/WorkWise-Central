@@ -61,12 +61,12 @@
             >
               <template v-slot:[`item.firstName`]="{ value }">
                 <v-chip variant="text" color="elementTextColor">
-                  <v-icon>mdi-account</v-icon>{{ value }}</v-chip
+                  <v-icon icon="fa:fa-solid fa-user "></v-icon>{{ value }}</v-chip
                 >
               </template>
               <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
                 <v-chip @click="callPhone" color="primary" text-color="elementTextColor" border="md"
-                  ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
+                  ><v-icon icon="fa:fa-solid fa-phone"></v-icon> {{ value }}</v-chip
                 >
               </template>
               <template v-slot:[`item.mostRecentJob`]="{ value }">
@@ -82,12 +82,12 @@
                   text-color="elementTextColor"
                   border="md"
                 >
-                  <v-icon>mdi-email</v-icon>{{ value }}</v-chip
+                  <v-icon icon="fa:fa-solid fa-envelope"></v-icon>{{ value }}</v-chip
                 >
               </template>
               <template v-slot:[`item.address.street`]="{ value }">
                 <v-chip variant="text" color="elementTextColor">
-                  <v-icon>mdi-map-marker</v-icon>{{ value }}</v-chip
+                  <v-icon icon="fa:fa-solid fa-location-dot"></v-icon>{{ value }}</v-chip
                 >
               </template>
               <!-- Expanded content slot -->
@@ -126,7 +126,7 @@
             :client="selectedItem"
           />
           <v-spacer></v-spacer>
-          <v-btn @click="actionsDialog = false" color="error">Close</v-btn>
+          <v-btn @click="actionsDialog = false" color="secondary">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

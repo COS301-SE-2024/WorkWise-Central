@@ -1,9 +1,14 @@
 <template>
-  <v-menu v-model="companyDialog" location="right" min-width="300px">
+  <v-menu
+    v-model="companyDialog"
+    location="right"
+    min-width="300px"
+    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="secondary" v-bind="activatorProps">Company Name</v-btn>
     </template>
-    <v-card>
+    <v-card class="bg-background">
       <v-card-title>User's Companies</v-card-title>
       <v-card-text>
         <v-container>

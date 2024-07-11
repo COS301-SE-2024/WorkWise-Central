@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="clientDialog" max-width="500">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn color="primary" v-bind="activatorProps"> View </v-btn>
+      <v-btn color="secondary" v-bind="activatorProps"> View </v-btn>
     </template>
 
     <v-card :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
