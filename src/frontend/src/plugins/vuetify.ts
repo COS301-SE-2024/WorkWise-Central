@@ -48,7 +48,15 @@ const vuetify = createVuetify({
       VCardTitle: {
         class: 'text-h5 font-weight-regular  d-flex justify-center bg-cardColor text-secondary'
       },
-      VCardText: { class: 'bg-cardColor' },
+      VCardText: {
+        class: 'bg-cardColor',
+        VList: {
+          class: 'bg-cardColor',
+          VListItem: {
+            class: 'bg-cardColor'
+          }
+        }
+      },
       VCard: {
         class: 'bg-cardColor'
       }
@@ -95,6 +103,9 @@ const vuetify = createVuetify({
     },
     VChip: {
       rounded: 'md'
+    },
+    VCalender:{
+     class: 'bg-cardColor'
     }
   },
   directives,

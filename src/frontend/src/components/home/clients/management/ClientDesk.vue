@@ -58,6 +58,7 @@
               rounded="xl"
               class="bg-cardColor"
               :row-props="getRowProps"
+              :header-props="getHeaderProps"
             >
               <template v-slot:[`item.firstName`]="{ value }">
                 <v-chip variant="text" color="elementTextColor">
@@ -357,7 +358,8 @@ export default defineComponent({
       return {
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
-    }
+    },
+   
   }
 })
 </script>

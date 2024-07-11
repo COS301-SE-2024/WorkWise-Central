@@ -15,9 +15,9 @@
             <v-col cols="12" md="4">
               <v-card border="md" rounded="xl">
                 <v-card-title>Recent Jobs Completed</v-card-title>
-                <v-card-text>
+                <v-card-text class="bg-cardColor">
                   <v-list>
-                    <v-list-item v-for="(job, index) in recentJobs" :key="index">
+                    <v-list-item v-for="(job, index) in recentJobs" :key="index" >
                       <v-chip color="success" variant="text" class="ma-2"
                         ><v-list-item-content
                           >{{ job.title
