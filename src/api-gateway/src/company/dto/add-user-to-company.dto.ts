@@ -1,15 +1,22 @@
 import { Types } from 'mongoose';
-import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class AddUserToCompanyDto {
-  //TODO: Add roleId to this Dto later
   @IsNotEmpty()
   @IsMongoId()
-  adminId: Types.ObjectId; //This must be an employeeId
+  adminId: Types.ObjectId;
 
   @IsNotEmpty()
   @IsMongoId()
   currentCompany: Types.ObjectId;
+
+  @IsOptional()
+  @IsMongoId()
+  roleId?: Types.ObjectId;
+
+  @IsOptional()
+  @IsMongoId()
+  superiorId?: Types.ObjectId; //TODO: Add check
 
   @IsNotEmpty()
   @IsString()

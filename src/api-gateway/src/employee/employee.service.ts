@@ -181,7 +181,12 @@ export class EmployeeService {
 
     // checking if the user exists in the company
     const user = await this.usersService.getUserById(createEmployeeDto.userId);
-    if (user._id == createEmployeeDto.userId)
+    if (
+      await this.usersService.userIsInCompany(
+        user._id,
+        createEmployeeDto.companyId,
+      )
+    )
       throw new InternalServerErrorException('Duplicate user');
 
     const newEmployee = new Employee(createEmployeeDto);
@@ -307,7 +312,7 @@ export class EmployeeService {
   }
 
   async getListOfOtherEmployees(id: Types.ObjectId, companyId: Types.ObjectId) {
-    //Return a list of all the employees in the company that is not a superior or subordinate of the employee with the given id
+    //Return a list of all the employees in the company that is not a superior or subordinate of the employee with the given id again
     const currentSuperior = await this.getSuperior(id);
     const currentSubordinates = await this.getSubordinates(id);
     const allEmployees = await this.findAllInCompany(companyId);

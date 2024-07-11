@@ -10,7 +10,7 @@ import { CreateUserDto, CreateUserResponseDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { SignInUserDto, User } from './entities/user.entity';
+import { JoinedCompany, SignInUserDto, User } from './entities/user.entity';
 import { AuthService } from '../auth/auth.service';
 import { EmployeeService } from '../employee/employee.service';
 import { UserConfirmation } from './entities/user-confirmation.entity';
@@ -19,12 +19,11 @@ import { EmailService } from '../email/email.service';
 import { UsersRepository } from './users.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { isPhoneNumber } from 'class-validator';
+import { CompanyService } from '../company/company.service';
 
 @Injectable()
 export class UsersService {
   constructor(
-    /*    @InjectModel(User.name)
-    private readonly userModel: Model<User>,*/
     private readonly userRepository: UsersRepository,
     @InjectModel(UserConfirmation.name)
     private readonly userConfirmationModel: Model<UserConfirmation>,
@@ -32,6 +31,8 @@ export class UsersService {
     private authService: AuthService,
     @Inject(forwardRef(() => EmployeeService))
     private employeeService: EmployeeService,
+    @Inject(forwardRef(() => CompanyService))
+    private companyService: CompanyService,
     private emailService: EmailService,
   ) {}
 
@@ -90,6 +91,14 @@ export class UsersService {
     return this.userRepository.exists(identifier);
   }
 
+  async emailExists(email: string): Promise<boolean> {
+    return this.userRepository.emailExists(email);
+  }
+
+  async phoneExists(email: string): Promise<boolean> {
+    return this.userRepository.phoneExists(email);
+  }
+
   isValidPhoneNumber(phoneNum: string) {
     return isPhoneNumber(phoneNum, null);
   }
@@ -138,7 +147,7 @@ export class UsersService {
     return updatedUser;
   }
 
-  async softDelete(id: string): Promise<boolean> {
+  async softDelete(id: Types.ObjectId): Promise<boolean> {
     const userToDelete = await this.userRepository.findById(id);
     if (!userToDelete) {
       throw new NotFoundException(
@@ -171,6 +180,38 @@ export class UsersService {
     }
 
     return new ValidationResult(true);
+  }
+
+  async userIsInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ): Promise<boolean> {
+    const user = await this.getUserById(userId);
+    const company = await this.companyService.getCompanyById(companyId);
+
+    if (!user) {
+      console.log('User is invalid');
+      return false;
+    }
+    if (!company) {
+      console.log('Company is invalid');
+      return false;
+    }
+
+    let userJoinedCompany: JoinedCompany = null;
+    for (const joinedCompany of user.joinedCompanies) {
+      if (joinedCompany.companyId.equals(companyId)) {
+        userJoinedCompany = joinedCompany;
+      }
+    }
+
+    if (!userJoinedCompany) return false;
+    for (const employee of company.employees) {
+      if (employee._id.equals(userJoinedCompany.employeeId)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   async userIsValid(user: User): Promise<ValidationResult> {
@@ -235,5 +276,23 @@ export class UsersService {
     }
 
     return new ValidationResult(true);
+  }
+
+  async userIsInSameCompanyAsEmployee(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+  ) {
+    const user = await this.getUserById(userId);
+    const companyWithEmployee =
+      await this.companyService.getCompanyWithEmployee(employeeId);
+
+    if (!companyWithEmployee || !user) {
+      throw new ConflictException('User or Employee is Null');
+    }
+    for (const joinedCompany of user.joinedCompanies) {
+      if (joinedCompany.companyId.equals(companyWithEmployee._id)) return true;
+    }
+
+    return false;
   }
 }

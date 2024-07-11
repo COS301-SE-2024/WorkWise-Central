@@ -12,12 +12,18 @@ import {
 import { EmailService } from '../email/email.service';
 import { UsersRepository } from './users.repository';
 import { EmailModule } from '../email/email.module';
+import { CompanyModule } from '../company/company.module';
+import { CompanyService } from '../company/company.service';
+import { RoleModule } from '../role/role.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
     forwardRef(() => AuthModule),
     forwardRef(() => EmployeeModule),
     forwardRef(() => EmailModule),
+    forwardRef(() => CompanyModule),
+    forwardRef(() => RoleModule),
 
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
@@ -25,7 +31,13 @@ import { EmailModule } from '../email/email.module';
     ]),
   ],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository, EmailService],
+  providers: [
+    UsersService,
+    UsersRepository,
+    EmailService,
+    CompanyService,
+    JwtService,
+  ],
   exports: [UsersService, UsersRepository, MongooseModule],
 })
 export class UsersModule {}
