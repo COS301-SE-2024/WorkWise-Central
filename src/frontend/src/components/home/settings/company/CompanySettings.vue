@@ -33,8 +33,7 @@ export default defineComponent({
     close() {
       this.companyDialog = false
     }
-  },
- 
+  }
 })
 </script>
 
