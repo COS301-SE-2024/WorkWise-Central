@@ -1,4 +1,6 @@
 import { createVuetify } from 'vuetify'
+import '@fortawesome/fontawesome-free/css/all.css'
+import { fa } from 'vuetify/iconsets/fa'
 import { VDateInput } from 'vuetify/labs/VDateInput'
 import { VCalendar } from 'vuetify/labs/VCalendar'
 import { VTimePicker } from 'vuetify/labs/VTimePicker'
@@ -18,7 +20,7 @@ const vuetify = createVuetify({
     VDialog: {
       VCard: {
         VCardTitle: {
-          class: 'text-h5 font-weight-regular bg-primary justify-end'
+          class: 'text-h5 font-weight-regular bg-primary justify-end text-center'
         },
         VCardText: { class: 'text-h7 font-weight-regular justify-center bg-cardColor' },
         VCardActions: { class: 'text-h6 font-weight-regular justify-center bg-cardColor' }
@@ -52,7 +54,8 @@ const vuetify = createVuetify({
       rounded: 'md',
       variant: 'text',
       class: 'text-none font-weight-regular hello',
-      size: 'large'
+      size: 'large',
+      color: 'primary'
     },
     VCardTitle: {
       class: 'text-h5 font-weight-regular bg-primary justify-center'
@@ -109,10 +112,10 @@ const vuetify = createVuetify({
     ...components
   },
   icons: {
-    defaultSet: 'mdi',
     aliases,
     sets: {
-      mdi
+      mdi,
+      fa
     }
   },
   theme: {
@@ -137,7 +140,8 @@ const vuetify = createVuetify({
           firstPlace: '#E2B203',
           secondPlace: '#626F86',
           thirdPlace: '#533F04',
-          secondRowColor: '#dcdfe4'
+          secondRowColor: '#dcdfe4',
+          buttonText: '#F7F8F9'
         }
       },
       dark: {
@@ -159,7 +163,8 @@ const vuetify = createVuetify({
           firstPlace: '#FFD700',
           secondPlace: '#C0C0C0',
           thirdPlace: '#CD7F32',
-          secondRowColor: '#454f59'
+          secondRowColor: '#454f59',
+          buttonText: '#F7F8F9'
         }
       }
     }

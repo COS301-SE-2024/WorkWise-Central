@@ -9,7 +9,6 @@
           :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
           border="md"
           elevation="2"
-          
         >
           <v-row>
             <!-- Recent Jobs Completed Card -->
