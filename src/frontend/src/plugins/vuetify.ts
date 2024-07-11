@@ -18,7 +18,7 @@ const vuetify = createVuetify({
     VDialog: {
       VCard: {
         VCardTitle: {
-          class: 'text-h5 font-weight-regular bg-primary justify-end'
+          class: 'text-h5 font-weight-regular bg-secondary justify-end'
         },
         VCardText: { class: 'text-h7 font-weight-regular justify-center bg-cardColor' },
         VCardActions: { class: 'text-h6 font-weight-regular justify-center bg-cardColor' }
@@ -46,7 +46,11 @@ const vuetify = createVuetify({
       VCardTitle: {
         class: 'text-h5 font-weight-regular  d-flex justify-center bg-cardColor text-secondary'
       },
-      VCardText: { class: 'bg-cardColor', VList: { class: 'bg-cardColor' } }
+      VCardText: { class: 'bg-cardColor', },
+      VCard:{
+        class: 'bg-cardColor'
+      },
+      
     },
     VBtn: {
       rounded: 'md',
@@ -55,7 +59,7 @@ const vuetify = createVuetify({
       size: 'large'
     },
     VCardTitle: {
-      class: 'text-h5 font-weight-regular bg-primary justify-center'
+      class: 'text-h5 font-weight-regular bg-secondary justify-center'
     },
     VSheet: {
       elevation: 14,

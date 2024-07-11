@@ -1,11 +1,11 @@
 <template>
   <v-dialog v-model="clientDialog" max-width="500">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn class="text-none font-weight-regular hello" color="secondary" v-bind="activatorProps"
+      <v-btn class="text-none font-weight-regular hello" color="primary" v-bind="activatorProps"
         >Edit</v-btn
       >
     </template>
-    <v-card :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color">
+    <v-card>
       <v-card-title> Edit Client </v-card-title>
       <v-divider></v-divider>
       <v-card-text>

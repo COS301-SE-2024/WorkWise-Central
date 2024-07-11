@@ -79,7 +79,7 @@
                   color="secondary"
                   placeholder="Enter the client's phone number"
                   v-model="req_obj.details.contactInfo.phoneNumber"
-                  type="number"
+                  type="text"
                   :rules="phone_number_rules"
                   required
                 ></v-text-field

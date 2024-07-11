@@ -3,7 +3,7 @@
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="secondary" v-bind="activatorProps">Company Name</v-btn>
     </template>
-    <v-card :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
+    <v-card >
       <v-card-title>User's Companies</v-card-title>
       <v-card-text>
         <v-container>
@@ -23,8 +23,8 @@
           <v-col v-for="company in companyList" :key="company.id">
             <v-row
               ><v-col
-                ><v-card height="auto" class="ma-2" outlined color="primary"
-                  ><v-card-title>{{ company.name }}</v-card-title>
+                ><v-card height="auto" class="ma-2" variant="outlined" elevation="2"
+                  ><v-card-title class="text-primary">{{ company.name }}</v-card-title>
                 </v-card></v-col
               ></v-row
             >
@@ -34,7 +34,14 @@
       <v-actions>
         <v-col cols="12" align-self="center"> <CompanySettings /></v-col>
         <v-col cols="12" align-self="center">
-          <v-btn color="error" width="100%" height="35" variant="outlined">Close</v-btn></v-col
+          <v-btn
+            color="error"
+            width="100%"
+            height="35"
+            variant="outlined"
+            @click="closeCompanyDialog"
+            >Close</v-btn
+          ></v-col
         >
       </v-actions>
     </v-card>
@@ -73,6 +80,12 @@ export default defineComponent({
         }
       ]
     }
+  },
+  methods: {
+    closeCompanyDialog() {
+      this.companyDialog = false
+    },
+    switchCompany() {}
   }
 })
 </script>
