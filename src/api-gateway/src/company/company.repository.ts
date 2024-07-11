@@ -164,6 +164,37 @@ export class CompanyRepository {
     );
   }
 
+  async addEmployee(id: Types.ObjectId, employeeId: Types.ObjectId) {
+    return this.companyModel.findOneAndUpdate(
+      {
+        $and: [
+          { _id: id },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      },
+      { $push: { employees: employeeId }, updatedAt: new Date() },
+      { new: true },
+    );
+  }
+
+  async removeEmployee(id: Types.ObjectId, employeeId: Types.ObjectId) {
+    //TODO: Test
+    return this.companyModel.findOneAndUpdate(
+      {
+        $and: [
+          { _id: id },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      },
+      { $pull: { employees: employeeId }, updatedAt: new Date() },
+      { new: true },
+    );
+  }
+
   async delete(id: Types.ObjectId): Promise<boolean> {
     const result = await this.companyModel.findOneAndUpdate(
       {

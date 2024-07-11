@@ -3,6 +3,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import {
@@ -73,19 +74,15 @@ export class CompanyService {
       createdCompany._id,
       createdCompany.name,
     );
-    user.joinedCompanies.push(newJoinedCompany);
     console.log('Perform Update');
+    await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
+
     await this.usersService.updateUser(user._id, {
-      joinedCompanies: user.joinedCompanies,
       currentEmployee: employee._id,
     });
 
     console.log('Add employee to Company');
-    createdCompany.employees.push(employee._id);
-    await this.update(user._id, createdCompany.id, {
-      employees: createdCompany.employees,
-    });
-
+    await this.addNewEmployeeId(createdCompany._id, employee._id);
     return new CreateCompanyResponseDto(createdCompany);
   }
 
@@ -159,18 +156,26 @@ export class CompanyService {
   //For now, I assume the person is authorised
   async addEmployee(addUserDto: AddUserToCompanyDto) {
     //Add validation
+    console.log('Test');
+
     const inputValidated = await this.addUserValidation(addUserDto); //TODO: Add more validation later
+    console.log('Test');
+
     if (!inputValidated.isValid) {
       throw new ConflictException(inputValidated.message);
     }
-
+    //Get company and user
     const company = await this.getCompanyById(addUserDto.currentCompany);
-    const companyName = company.name;
-
     const user = await this.usersService.getUserByUsername(
       addUserDto.newUserUsername,
     );
-    //Ask about superiorId
+    // null checks
+    if (company == null || user == null)
+      throw new NotFoundException('User or Company not found');
+
+    console.log('Test');
+
+    //TODO: Ask about superiorId
     //CreateEmployee and link them to the company
     let addedEmployee: Employee & { _id: Types.ObjectId };
     if (addUserDto.roleId) {
@@ -184,6 +189,7 @@ export class CompanyService {
         'Worker',
         addUserDto.currentCompany,
       );
+      console.log('Test');
 
       addedEmployee = await this.employeeService.create({
         companyId: addUserDto.currentCompany,
@@ -191,22 +197,32 @@ export class CompanyService {
         roleId: defaultRole._id,
       });
     }
+    console.log('Test');
 
-    const joinedCompany: JoinedCompany = {
+    const newJoinedCompany: JoinedCompany = {
       companyId: addUserDto.currentCompany,
       employeeId: addedEmployee._id,
-      companyName: companyName,
+      companyName: company.name,
     };
-    user.joinedCompanies.push(joinedCompany);
+    console.log('Test');
 
-    const updatedUser = await this.usersService.updateUser(user._id, {
-      joinedCompanies: user.joinedCompanies,
-    });
-
-    company.employees.push(addedEmployee._id);
-    await this.update(user._id, company._id, { employees: company.employees });
+    const updatedUser = await this.usersService.addJoinedCompany(
+      user._id,
+      newJoinedCompany,
+    );
+    console.log('Add New Employee ID');
+    await this.addNewEmployeeId(company._id, addedEmployee._id);
     console.log(updatedUser);
-    return joinedCompany;
+    return newJoinedCompany;
+  }
+
+  private async addNewEmployeeId(
+    companyId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+  ) {
+    if (!(await this.employeeIsInCompany(companyId, employeeId)))
+      await this.companyRepository.addEmployee(companyId, employeeId);
+    else console.log('Employee is already in company, no need to add them');
   }
 
   async update(
@@ -255,7 +271,7 @@ export class CompanyService {
       const newJoinedCompanies: JoinedCompany[] = [];
 
       for (const joinedCompany of user.joinedCompanies) {
-        if (joinedCompany.companyId !== companyId) {
+        if (!joinedCompany.companyId.equals(companyId)) {
           //Create new list, without company
           newJoinedCompanies.push(joinedCompany);
         } else {
@@ -263,7 +279,7 @@ export class CompanyService {
           await this.employeeService.remove(joinedCompany.employeeId);
         }
       }
-      await this.usersService.updateUser(user._id, {
+      await this.usersService.updateJoinedCompanies(user._id, {
         joinedCompanies: newJoinedCompanies,
       });
     }
@@ -306,7 +322,10 @@ export class CompanyService {
       ).joinedCompanies;
 
       for (const userJoinedCompany of userJoinedCompanies) {
-        if (userJoinedCompany.companyId == addUserToCompanyDto.currentCompany) {
+        if (
+          userJoinedCompany.companyId.toString() ==
+          addUserToCompanyDto.currentCompany.toString()
+        ) {
           return new ValidationResult(false, 'User already in Company');
         }
       }
@@ -505,9 +524,11 @@ export class CompanyService {
     await this.employeeService.remove(deleteEmployee.employeeToDeleteId);
 
     user = await this.usersService.getUserById(employeeToDelete.userId);
-    user.joinedCompanies.filter((x) => x.employeeId !== employeeToDelete._id);
+    user.joinedCompanies.filter(
+      (x) => x.employeeId.equals(employeeToDelete._id) == false,
+    );
     const update = { joinedCompanies: user.joinedCompanies };
-    await this.usersService.updateUser(user._id, update);
+    await this.usersService.updateJoinedCompanies(user._id, update);
 
     return true;
   }
