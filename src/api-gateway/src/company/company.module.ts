@@ -21,6 +21,7 @@ import { EmailModule } from '../email/email.module';
 import { RoleRepository } from 'src/role/role.repository';
 import { EmployeeRepository } from 'src/employee/employee.repository';
 import { TeamRepository } from 'src/team/team.repository';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { TeamRepository } from 'src/team/team.repository';
     TeamService,
     TeamRepository,
     UsersService,
+    JwtService,
   ],
   exports: [CompanyService, CompanyRepository, MongooseModule],
 })

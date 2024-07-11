@@ -10,9 +10,11 @@ import {
   HttpException,
   HttpStatus,
   Query,
+  Headers,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import {
+  CompanyAllNameResponseDto,
   CreateCompanyDto,
   CreateCompanyResponseDto,
   findCompanyResponseDto,
@@ -20,6 +22,7 @@ import {
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
@@ -39,13 +42,18 @@ import {
 } from './entities/company.entity';
 import { BooleanResponseDto } from '../users/dto/create-user.dto';
 import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
+import { validateObjectIds } from '../utils/Utils';
+import { JwtService } from '@nestjs/jwt';
 
 const className = 'Company';
 
 @ApiTags('Company')
 @Controller('company')
 export class CompanyController {
-  constructor(private readonly companyService: CompanyService) {}
+  constructor(
+    private readonly companyService: CompanyService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   validateObjectId(id: string | Types.ObjectId): boolean {
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -89,8 +97,10 @@ export class CompanyController {
   @ApiOkResponse({ type: BooleanResponseDto })
   @Post('/add')
   async addEmployee(@Body() addUserDto: AddUserToCompanyDto) {
-    this.validateObjectId(addUserDto.adminId);
-    this.validateObjectId(addUserDto.currentCompany);
+    const arr = [addUserDto.adminId, addUserDto.currentCompany];
+    if (addUserDto.roleId) arr.push(addUserDto.roleId);
+    validateObjectIds(arr);
+
     try {
       return { data: await this.companyService.addEmployee(addUserDto) };
     } catch (Error) {
@@ -98,9 +108,29 @@ export class CompanyController {
     }
   }
 
+  @UseGuards(AuthGuard) //It may be accessed by external users
+  @ApiOperation({
+    summary: `Get all ${className} Names (Except Privates ones)`,
+  })
+  @ApiOkResponse({
+    type: CompanyAllNameResponseDto,
+    description: `An array of mongodb objects of the ${className} class`,
+  })
+  @Get('/all/names')
+  async findAllNames() {
+    try {
+      return { data: await this.companyService.getAllCompanyNames() };
+    } catch (Error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   @UseGuards(AuthGuard) //Need to add authorization
   @ApiOperation({
-    summary: `Get all ${className} instances`,
+    summary: `DO NOT USE THIS ONE! Get all ${className} instances`,
   })
   @ApiOkResponse({
     type: CompanyAllResponseDto,
@@ -128,8 +158,8 @@ export class CompanyController {
     name: 'cid',
     description: `The _id attribute of the ${className}`,
   })
-  @Get('/employees/:cid')
-  async getAllInCompany(@Param('cid') cid: string) {
+  @Get('/all/employees/:cid')
+  async getAllEmployeesInCompany(@Param('cid') cid: string) {
     this.validateObjectId(cid);
     const objId = new Types.ObjectId(cid);
     try {
@@ -148,10 +178,12 @@ export class CompanyController {
     description: `The mongodb object of the ${className}, with an _id attribute`,
   })
   @Get('id/:id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     try {
       this.validateObjectId(id);
-      return { data: this.companyService.getCompanyById(id) };
+      return {
+        data: await this.companyService.getCompanyById(new Types.ObjectId(id)),
+      };
     } catch (e) {
       throw new HttpException(e, HttpStatus.NOT_FOUND);
     }
@@ -181,6 +213,7 @@ export class CompanyController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Update a company`,
     description: '',
@@ -190,16 +223,20 @@ export class CompanyController {
     description: `The updated ${className} object`,
   })
   @ApiBody({ type: UpdateCompanyDto })
-  @Patch(':id')
+  @Patch(':cid')
   async update(
-    @Param('id') id: string,
+    @Headers() headers: any,
+    @Param('cid') cid: string,
     @Body() updateCompanyDto: UpdateCompanyDto,
   ) {
     try {
-      this.validateObjectId(id);
-      const objectId = new Types.ObjectId(id);
+      this.validateObjectId(cid);
+      const userId = this.extractUserId(headers);
+
+      const companyId = new Types.ObjectId(cid);
       const updatedCompany = await this.companyService.update(
-        objectId,
+        userId,
+        companyId,
         updateCompanyDto,
       );
       return {
@@ -214,6 +251,7 @@ export class CompanyController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Delete a ${className}`,
     description: `You send the ${className} ObjectId, and then they get deleted if the id is valid.\n 
@@ -225,15 +263,16 @@ export class CompanyController {
     description: `A boolean value indicating whether or not the deletion was a success`,
   })
   @ApiParam({
-    name: 'id',
+    name: 'cid',
     description: `The _id attribute of the ${className}`,
   })
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
+  @Delete(':cid')
+  async remove(@Headers() headers: any, @Param('cid') cid: string) {
     try {
-      this.validateObjectId(id);
-      const objectId = new Types.ObjectId(id);
-      await this.companyService.deleteCompany(objectId);
+      this.validateObjectId(cid);
+      const userId = this.extractUserId(headers);
+      const objectId = new Types.ObjectId(cid);
+      await this.companyService.deleteCompany(userId, objectId);
       return { data: true };
     } catch (e) {
       throw new HttpException(
@@ -244,6 +283,7 @@ export class CompanyController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Delete an Employee from a company using their 'Id'`,
     description: `You send the Employee _id, and then they get deleted if the id is valid.`,
@@ -259,10 +299,12 @@ export class CompanyController {
   })
   @Delete('/emp')
   async removeEmployee(
+    @Headers() headers: any,
     @Body() deleteEmployeeDto: DeleteEmployeeFromCompanyDto,
   ) {
     try {
-      await this.companyService.deleteEmployee(deleteEmployeeDto);
+      const userId = this.extractUserId(headers);
+      await this.companyService.deleteEmployee(userId, deleteEmployeeDto);
       return { data: true };
     } catch (e) {
       throw new HttpException(
@@ -270,5 +312,17 @@ export class CompanyController {
         HttpStatus.SERVICE_UNAVAILABLE,
       );
     }
+  }
+
+  private extractUserId(headers: any) {
+    const authHeader: string = headers.authorization;
+    const decodedJwtAccessToken = this.jwtService.decode(
+      authHeader.replace(/^Bearer\s+/i, ''),
+    );
+    if (!Types.ObjectId.isValid(decodedJwtAccessToken.sub)) {
+      throw new HttpException('Invalid User', HttpStatus.BAD_REQUEST);
+    }
+    const userId: Types.ObjectId = decodedJwtAccessToken.sub; //This attribute is retrieved in the JWT
+    return userId;
   }
 }
