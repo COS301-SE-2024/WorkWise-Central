@@ -195,9 +195,7 @@ export class EmployeeService {
     }
 
     const model = new this.employeeModel(newEmployee);
-    const result = await model.save();
-
-    return result;
+    return await model.save();
   }
 
   async findAll() {
