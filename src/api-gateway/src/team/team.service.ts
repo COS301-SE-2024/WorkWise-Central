@@ -100,12 +100,7 @@ export class TeamService {
     // Check if the jobs exist in the company
     if ('currentJobAssignments' in team && team.currentJobAssignments) {
       for (const jobId of team.currentJobAssignments) {
-        if (
-          !(await this.jobService.jobExistsInCompany(
-            jobId.toString(),
-            companyId.toString(),
-          ))
-        ) {
+        if (!(await this.jobService.jobExistsInCompany(jobId, companyId))) {
           throw new ConflictException(
             `Job assignment ${jobId.toString()} not found`,
           );
