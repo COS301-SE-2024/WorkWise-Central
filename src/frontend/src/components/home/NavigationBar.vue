@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
+import UserAvatar from './UserAvatar.vue'
 const isVisible = ref(false)
 const drawer = ref(true)
-const onProfileClick = () => {
-  console.log('Profile icon clicked')
-}
 
 const open = ref(['Dashboard'])
 
@@ -76,7 +74,7 @@ export default defineComponent({
     CompanyMain
   },
   data: () => ({
-    isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false
+    isdarkmode: sessionStorage.getItem('theme') === 'true'
   }),
   // computed: {
   //   ...mapGetters(['isDarkMode'])
@@ -84,7 +82,7 @@ export default defineComponent({
   methods: {
     toggleDarkMode() {
       console.log(this.isdarkmode)
-      if (this.isdarkmode === true) {
+      if (this.isdarkmode) {
         this.isdarkmode = false
         console.log(this.isdarkmode)
       } else {
@@ -116,9 +114,7 @@ export default defineComponent({
           <v-spacer class="d-none d-sm-flex"></v-spacer>
 
           <div class="d-flex align-center">
-            <v-icon class="icon-padding mr-5" @click="onProfileClick">{{
-              'fa: fa-solid fa-user-circle'
-            }}</v-icon>
+            <UserAvatar/>
             <v-icon
               class="icon-padding mr-5"
               @click="toggleDarkMode"
@@ -297,15 +293,6 @@ export default defineComponent({
 </template>
 
 <style scoped>
-.colorAccent {
-  color: #6a99ce;
-}
-.colorAccent2 {
-  color: #879898;
-}
-.toolbar-text {
-  font-size: 36px;
-}
 .icon-padding {
   padding: 8px; /* Adjust the padding value as needed */
 }
