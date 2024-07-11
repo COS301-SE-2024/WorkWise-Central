@@ -136,7 +136,12 @@ import router from '@/router/index'
 import EditEmployee from '@/components/home/employees/management/EditEmployee.vue'
 import DeleteEmployee from '@/components/home/employees/management/DeleteEmployee.vue'
 import EmployeeDetails from '@/components/home/employees/management/EmployeeDetails.vue'
-import { type Employee, type EmployeePersonalInfo, type Person, type User } from '../types'
+import type {
+  EmployeeJoined,
+  Person,
+  Employee,
+  EmployeePersonalInfo
+} from '@/components/home/employees/types'
 
 export default {
   name: 'ClientDesk',
@@ -332,7 +337,7 @@ export default {
   computed: {
     filteredClients() {
       if (!this.search) return this.clients
-      return this.clients.filter((client) => {
+      return this.clients.filter((client: any) => {
         return Object.values(client).some((value: any) =>
           value.toString().toLowerCase().includes(this.search.toLowerCase())
         )
@@ -403,108 +408,72 @@ export default {
         }
       }
       const apiURL = await this.getRequestUrl()
+
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/all/${sessionStorage['currentCompany']}`,
+          apiURL + `employee/joined/all/${sessionStorage['currentCompany']}`,
           config
         )
-        let employee_all_data: Employee[] = employee_response.data.data
+
+        let employee_all_data: EmployeeJoined[] = employee_response.data.data
+
+        console.log(employee_all_data)
 
         let company_employee_arr: EmployeePersonalInfo[] = []
+
         for (let i = 0; i < employee_all_data.length; i++) {
-          let users_response = await axios.get(
-            apiURL + `users/id/${employee_all_data[i].userId}`,
-            config
-          )
-
-          const user_data: User = users_response.data
-
-          if (user_data.data.personalInfo.address === undefined) continue
+          if (employee_all_data[i].userId[0].personalInfo.address !== undefined) continue
 
           if (employee_all_data[i].roleId !== undefined) {
-            let role = await axios.get(apiURL + `role/id/${employee_all_data[i].roleId}`, config)
-
-            if (role.status < 300 && role.status > 199) {
-              let company_employee: EmployeePersonalInfo = {
-                address: {
-                  street: user_data.data.personalInfo.address.street,
-                  suburb: user_data.data.personalInfo.address.suburb,
-                  city: user_data.data.personalInfo.address.city,
-                  postalCode: user_data.data.personalInfo.address.postalCode,
-                  complex: user_data.data.personalInfo.address.complex,
-                  houseNumber: user_data.data.personalInfo.address.houseNumber
-                },
-                contactInfo: {
-                  phoneNumber: user_data.data.personalInfo.contactInfo.phoneNumber,
-                  email: user_data.data.personalInfo.contactInfo.email
-                },
-                firstName: user_data.data.personalInfo.firstName,
-                surname: user_data.data.personalInfo.surname,
-                preferredLanguage: user_data.data.personalInfo.preferredLanguage,
-                dateOfBirth: user_data.data.personalInfo.dateOfBirth,
-                gender: user_data.data.personalInfo.gender,
-                roleId: employee_all_data[i].roleId,
-                roleName: role.data.data.roleName,
-                employeeId: employee_all_data[i]._id,
-                userId: employee_all_data[i].userId
-              }
-
-              //     user_data.data.personalInfo
-              // company_employee.roleId = employee_all_data[i].roleId
-              // company_employee.roleName = role.data.roleName
-              // let company_employee: EmployeePersonalInfo = {
-              //   firstName: user_data.data.personalInfo.firstName,
-              //   surname: user_data.data.personalInfo.surname,
-              //   dateOfBirth: user_data.data.personalInfo.dateOfBirth,
-              //   gender: user_data.data.personalInfo.gender,
-              //   preferred_Language: user_data.data.personalInfo.preferred_Language,
-              //   _id: user_data.data._id,
-              //   id: user_data.data._id,
-              //   roleId: employee_all_data[i].roleId,
-              //   roleName: role.data.roleName
-              // }
-              company_employee_arr.push(company_employee)
-            } else {
-              console.log('And unsuccessfull requets was made')
+            let company_employee: EmployeePersonalInfo = {
+              address: {
+                street: employee_all_data[i].userId[0].personalInfo.address.street,
+                suburb: employee_all_data[i].userId[0].personalInfo.address.suburb,
+                city: employee_all_data[i].userId[0].personalInfo.address.city,
+                postalCode: employee_all_data[i].userId[0].personalInfo.address.postalCode,
+                complex: employee_all_data[i].userId[0].personalInfo.address.complex,
+                houseNumber: employee_all_data[i].userId[0].personalInfo.address.houseNumber
+              },
+              contactInfo: {
+                phoneNumber: employee_all_data[i].userId[0].personalInfo.contactInfo.phoneNumber,
+                email: employee_all_data[i].userId[0].personalInfo.contactInfo.email
+              },
+              firstName: employee_all_data[i].userId[0].personalInfo.firstName,
+              surname: employee_all_data[i].userId[0].personalInfo.surname,
+              preferredLanguage: employee_all_data[i].userId[0].personalInfo.preferredLanguage,
+              dateOfBirth: employee_all_data[i].userId[0].personalInfo.dateOfBirth,
+              gender: employee_all_data[i].userId[0].personalInfo.gender,
+              roleId: employee_all_data[i].roleId[0]._id,
+              roleName: employee_all_data[i].roleId[0].roleName,
+              employeeId: employee_all_data[i]._id,
+              userId: employee_all_data[i].userId[0]._id
             }
+
+            company_employee_arr.push(company_employee)
           } else {
             let company_employee: EmployeePersonalInfo = {
               address: {
-                street: user_data.data.personalInfo.address.street,
-                suburb: user_data.data.personalInfo.address.suburb,
-                city: user_data.data.personalInfo.address.city,
-                postalCode: user_data.data.personalInfo.address.postalCode,
-                complex: user_data.data.personalInfo.address.complex,
-                houseNumber: user_data.data.personalInfo.address.houseNumber
+                street: employee_all_data[i].userId[0].personalInfo.address.street,
+                suburb: employee_all_data[i].userId[0].personalInfo.address.suburb,
+                city: employee_all_data[i].userId[0].personalInfo.address.city,
+                postalCode: employee_all_data[i].userId[0].personalInfo.address.postalCode,
+                complex: employee_all_data[i].userId[0].personalInfo.address.complex,
+                houseNumber: employee_all_data[i].userId[0].personalInfo.address.houseNumber
               },
               contactInfo: {
-                phoneNumber: user_data.data.personalInfo.contactInfo.phoneNumber,
-                email: user_data.data.personalInfo.contactInfo.email
+                phoneNumber: employee_all_data[i].userId[0].personalInfo.contactInfo.phoneNumber,
+                email: employee_all_data[i].userId[0].personalInfo.contactInfo.email
               },
-              firstName: user_data.data.personalInfo.firstName,
-              surname: user_data.data.personalInfo.surname,
-              preferredLanguage: user_data.data.personalInfo.preferredLanguage,
-              dateOfBirth: user_data.data.personalInfo.dateOfBirth,
-              gender: user_data.data.personalInfo.gender,
+              firstName: employee_all_data[i].userId[0].personalInfo.firstName,
+              surname: employee_all_data[i].userId[0].personalInfo.surname,
+              preferredLanguage: employee_all_data[i].userId[0].personalInfo.preferredLanguage,
+              dateOfBirth: employee_all_data[i].userId[0].personalInfo.dateOfBirth,
+              gender: employee_all_data[i].userId[0].personalInfo.gender,
               roleId: '',
               roleName: '',
               employeeId: employee_all_data[i]._id,
-              userId: employee_all_data[i].userId
+              userId: employee_all_data[i].userId[0]._id
             }
-            // let company_employee: EmployeePersonalInfo = user_data.data.personalInfo
-            // company_employee.roleId = ''
-            // company_employee.roleName = ''
-            // let company_employee: EmployeeOfCurrentCompany = {
-            //   firstName: user_data.data.personalInfo.firstName,
-            //   surname: user_data.data.personalInfo.surname,
-            //   dateOfBirth: user_data.data.personalInfo.dateOfBirth,
-            //   gender: user_data.data.personalInfo.gender,
-            //   preferred_Language: user_data.data.personalInfo.preferred_Language,
-            //   _id: user_data.data._id,
-            //   id: user_data.data._id,
-            //   roleId: '',
-            //   roleName: ''
-            // }
             company_employee_arr.push(company_employee)
           }
         }
@@ -514,41 +483,89 @@ export default {
         console.log('Error fetching data:', error)
       }
 
-      // axios
-      //   .get(apiURL + 'employee/all', config)
-      //   .then((response) => {
-      //     this.clients = response.data
-      //     for (let i = 0; i < response.data.length; i++) {
-      //       axios
-      //         .get(apiURL + `users/id/${this.clients[i].userId}`, config)
-      //         .then((res) => {
-      //           let eish: EmployeeOfCurrentCompany = res.data.data.personalInfo
-      //           eish.id = res.data.data._id
-      //           eish.roleId = this.clients[i].roleId
+      // try {
+      //   const employee_response = await axios.get(
+      //     apiURL + `employee/all/${sessionStorage['currentCompany']}`,
+      //     config
+      //   )
+      //   let employee_all_data: Employee[] = employee_response.data.data
       //
-      //           axios
-      //             .get(apiURL + `role/id/${eish.roleId}`, config)
-      //             .then((res) => {
-      //               // console.log(res.data.roleName)
-      //               eish.roleName = res.data.roleName
-      //               this.EmployeeDetails2.push(eish)
-      //               // console.log(eish)
-      //             })
-      //             .catch((error) => {
-      //               console.log('Failed to fetch Role:', error)
-      //             })
-      //           // console.log(eish)
-      //         })
-      //         .catch((error) => {
-      //           console.log('Failed to fetch users:', error)
-      //         })
+      //   let company_employee_arr: EmployeePersonalInfo[] = []
+      //   for (let i = 0; i < employee_all_data.length; i++) {
+      //     let users_response = await axios.get(
+      //       apiURL + `users/id/${employee_all_data[i].userId}`,
+      //       config
+      //     )
+      //
+      //     const user_data: User = users_response.data
+      //
+      //     if (user_data.data.personalInfo.address === undefined) continue
+      //
+      //     if (employee_all_data[i].roleId !== undefined) {
+      //       let role = await axios.get(apiURL + `role/id/${employee_all_data[i].roleId}`, config)
+      //
+      //       if (role.status < 300 && role.status > 199) {
+      //         let company_employee: EmployeePersonalInfo = {
+      //           address: {
+      //             street: user_data.data.personalInfo.address.street,
+      //             suburb: user_data.data.personalInfo.address.suburb,
+      //             city: user_data.data.personalInfo.address.city,
+      //             postalCode: user_data.data.personalInfo.address.postalCode,
+      //             complex: user_data.data.personalInfo.address.complex,
+      //             houseNumber: user_data.data.personalInfo.address.houseNumber
+      //           },
+      //           contactInfo: {
+      //             phoneNumber: user_data.data.personalInfo.contactInfo.phoneNumber,
+      //             email: user_data.data.personalInfo.contactInfo.email
+      //           },
+      //           firstName: user_data.data.personalInfo.firstName,
+      //           surname: user_data.data.personalInfo.surname,
+      //           preferredLanguage: user_data.data.personalInfo.preferredLanguage,
+      //           dateOfBirth: user_data.data.personalInfo.dateOfBirth,
+      //           gender: user_data.data.personalInfo.gender,
+      //           roleId: employee_all_data[i].roleId,
+      //           roleName: role.data.data.roleName,
+      //           employeeId: employee_all_data[i]._id,
+      //           userId: employee_all_data[i].userId
+      //         }
+      //
+      //         company_employee_arr.push(company_employee)
+      //       } else {
+      //         console.log('And unsuccessfull requets was made')
+      //       }
+      //     } else {
+      //       let company_employee: EmployeePersonalInfo = {
+      //         address: {
+      //           street: user_data.data.personalInfo.address.street,
+      //           suburb: user_data.data.personalInfo.address.suburb,
+      //           city: user_data.data.personalInfo.address.city,
+      //           postalCode: user_data.data.personalInfo.address.postalCode,
+      //           complex: user_data.data.personalInfo.address.complex,
+      //           houseNumber: user_data.data.personalInfo.address.houseNumber
+      //         },
+      //         contactInfo: {
+      //           phoneNumber: user_data.data.personalInfo.contactInfo.phoneNumber,
+      //           email: user_data.data.personalInfo.contactInfo.email
+      //         },
+      //         firstName: user_data.data.personalInfo.firstName,
+      //         surname: user_data.data.personalInfo.surname,
+      //         preferredLanguage: user_data.data.personalInfo.preferredLanguage,
+      //         dateOfBirth: user_data.data.personalInfo.dateOfBirth,
+      //         gender: user_data.data.personalInfo.gender,
+      //         roleId: '',
+      //         roleName: '',
+      //         employeeId: employee_all_data[i]._id,
+      //         userId: employee_all_data[i].userId
+      //       }
+
+      //       company_employee_arr.push(company_employee)
       //     }
-      //     // console.log('hello')
-      //     console.log(this.EmployeeDetails2)
-      //   })
-      //   .catch((error) => {
-      //     console.log('Failed to fetch clients:', error)
-      //   })
+      //   }
+      //   console.log(company_employee_arr)
+      //   this.EmployeeDetails2 = company_employee_arr
+      // } catch (error) {
+      //   console.log('Error fetching data:', error)
+      // }
     },
     toggleExpand(item: never) {
       // Check if the item is already expanded
