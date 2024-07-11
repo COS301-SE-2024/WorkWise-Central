@@ -12,11 +12,19 @@ export class Role {
   }
 
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   roleName: string;
 
   @ApiProperty()
-  @Prop({ type: [String], required: false, default: [] })
+  @Prop({
+    type: [String],
+    required: true,
+    default: [
+      'view all jobs assigned to me',
+      'view all clients that are assigned to me',
+      'record inventory use',
+    ],
+  })
   permissionSuite: string[];
 
   @ApiProperty()
@@ -24,28 +32,37 @@ export class Role {
   companyId: Types.ObjectId;
 
   @ApiHideProperty()
-  @Prop({ required: true, default: new Date() })
+  @Prop({ type: Date, required: true, default: new Date() })
   public createdAt: Date;
 
   @ApiHideProperty()
-  @Prop({ required: false })
-  public updatedAt: Date;
+  @Prop({ type: Date, required: false })
+  public updatedAt?: Date;
 
   @ApiHideProperty()
-  @Prop({ required: false })
-  public deletedAt: Date;
+  @Prop({ type: Date, required: false })
+  public deletedAt?: Date;
 }
 
 export class RoleApiObject {
   @ApiProperty()
   @Prop({ type: [SchemaTypes.ObjectId], required: true, unique: true })
   id: Types.ObjectId;
+
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   roleName: string;
 
   @ApiProperty()
-  @Prop({ type: [String], required: false, default: [] })
+  @Prop({
+    type: [String],
+    required: true,
+    default: [
+      'view all jobs assigned to me',
+      'view all clients that are assigned to me',
+      'record inventory use',
+    ],
+  })
   permissionSuite: string[];
 
   @ApiProperty()
@@ -53,16 +70,16 @@ export class RoleApiObject {
   companyId: Types.ObjectId;
 
   @ApiHideProperty()
-  @Prop({ required: true, default: new Date() })
+  @Prop({ type: Date, required: true, default: new Date() })
   public createdAt: Date;
 
   @ApiHideProperty()
-  @Prop({ required: false })
-  public updatedAt: Date;
+  @Prop({ type: Date, required: false })
+  public updatedAt?: Date;
 
   @ApiHideProperty()
-  @Prop({ required: false })
-  public deletedAt: Date;
+  @Prop({ type: Date, required: false })
+  public deletedAt?: Date;
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);

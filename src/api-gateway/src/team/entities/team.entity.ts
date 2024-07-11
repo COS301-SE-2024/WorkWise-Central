@@ -17,7 +17,7 @@ export class Team {
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ required: false })
+  @Prop({ type: String, required: true })
   teamName: string;
 
   @ApiProperty()
@@ -26,10 +26,10 @@ export class Team {
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: false })
-  teamLeaderId: Types.ObjectId;
+  teamLeaderId?: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, default: [] })
   currentJobAssignments: Types.ObjectId[];
 
   @ApiHideProperty()
@@ -38,11 +38,11 @@ export class Team {
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public updatedAt: Date;
+  public updatedAt?: Date;
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public deletedAt: Date;
+  public deletedAt?: Date;
 }
 
 export class teamApiObject {
@@ -55,7 +55,7 @@ export class teamApiObject {
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ required: false })
+  @Prop({ type: String, required: true })
   teamName: string;
 
   @ApiProperty()
@@ -64,10 +64,10 @@ export class teamApiObject {
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: false })
-  teamLeaderId: Types.ObjectId;
+  teamLeaderId?: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, default: [] })
   currentJobAssignments: Types.ObjectId[];
 
   @ApiHideProperty()
@@ -76,11 +76,11 @@ export class teamApiObject {
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public updatedAt: Date;
+  public updatedAt?: Date;
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public deletedAt: Date;
+  public deletedAt?: Date;
 }
 
 export const TeamSchema = SchemaFactory.createForClass(Team);
