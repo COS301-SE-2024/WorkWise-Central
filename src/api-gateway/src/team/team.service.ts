@@ -64,7 +64,9 @@ export class TeamService {
   }
 
   async create(createTeamDto: CreateTeamDto) {
+    console.log('In the service \n createTeamDto: ', createTeamDto);
     await this.validateTeam(createTeamDto);
+    console.log('Validated');
 
     const company = await this.companyService.getCompanyById(
       createTeamDto.companyId,
