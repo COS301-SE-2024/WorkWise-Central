@@ -12,13 +12,12 @@
               border="md"
             >
               <v-card-title
-                class="d-flex align-center pe-2 text-h5 font-weight-regular"
                 height="auto"
                 width="100%"
               >
                 <v-row align="center" justify="space-between">
                   <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
-                    <v-icon icon="mdi-briefcase"></v-icon>
+                    <v-icon icon='fa: fa-solid fa-briefcase'></v-icon>
                     <v-label
                       class="ms-2 text-h4 font-family-lato text-headingTextColor"
                       style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
@@ -111,14 +110,12 @@
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title
-          class="text-h5 font-weight-regular bg-blue-grey text-center"
-          color="secondary"
         >
           {{ selectedJob?.heading }}
         </v-card-title>
         <v-card-text> What would you like to do with this job? </v-card-text>
         <v-card-actions>
-          <v-btn color="primary" @click="viewJobDialog = true">View</v-btn>
+          <v-btn color="success" @click="viewJobDialog = true">View</v-btn>
           <!-- View Job Dialog -->
           <v-dialog v-model="viewJobDialog" max-width="500">
             <v-card class="elevation-12 rounded-lg mx-auto my-5" max-width="600">
@@ -159,7 +156,7 @@
             </v-card>
           </v-dialog>
 
-          <v-btn color="primary" @click="editJobCardDialog()">Edit</v-btn>
+          <v-btn color="warning" @click="editJobCardDialog()">Edit</v-btn>
           <v-dialog v-model="managerJobCardDialog" max-width="1000px">
             <ManagerJobCard
               :passedInJob="selectedJob"
@@ -409,7 +406,4 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.v-data-table-header .v-icon {
-  color: #f38a3f; /* Your desired color */
-}
 </style>

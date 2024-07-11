@@ -20,7 +20,7 @@ const vuetify = createVuetify({
     VDialog: {
       VCard: {
         VCardTitle: {
-          class: 'text-h5 font-weight-regular bg-primary justify-end text-center'
+          class: 'text-h5 font-weight-regular bg-secondary justify-end text-center'
         },
         VCardText: { class: 'text-h7 font-weight-regular justify-center bg-cardColor' },
         VCardActions: { class: 'text-h6 font-weight-regular justify-center bg-cardColor' }
@@ -125,7 +125,7 @@ const vuetify = createVuetify({
         colors: {
           background: '#F7F8F9',
           primary: '#F0984D',
-          secondary: '#227D9B ',
+          secondary: '#227D9B',
           accent: '#82B1FF',
           error: '#e639462',
           info: '#2196F3',
