@@ -260,6 +260,58 @@ export class JobApiObject {
   public updatedAt: Date;
 }
 
+export class JobApiDetailedObject {
+  @ApiProperty()
+  _id: Types.ObjectId;
+
+  @ApiProperty()
+  company: Company;
+
+  @ApiProperty()
+  client?: Client;
+
+  @ApiProperty()
+  clientUsername?: string;
+
+  @ApiProperty()
+  assignedBy: Employee;
+
+  @ApiProperty()
+  assignedEmployees?: AssignedEmployees;
+
+  @ApiProperty()
+  status: string = 'To do';
+
+  @ApiProperty()
+  details: Details;
+
+  @ApiProperty()
+  recordedDetails?: RecordedDetails;
+
+  @ApiProperty()
+  clientFeedback?: ClientFeedback;
+
+  @ApiProperty()
+  taskList?: {
+    name: string;
+    status: string;
+    assignedEmployees?: Employee[];
+  };
+
+  @ApiProperty()
+  comments?: {
+    employeeId: Employee;
+    comment: string;
+    date?: Date;
+  }[];
+
+  @ApiProperty()
+  public createdAt: Date;
+
+  @ApiProperty()
+  public updatedAt: Date;
+}
+
 export class JobResponseDto {
   constructor(data: JobApiObject) {
     this.data = data;

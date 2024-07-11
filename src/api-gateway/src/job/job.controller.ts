@@ -17,6 +17,7 @@ import { JobService } from './job.service';
 import {
   CreateJobDto,
   CreateJobResponseDto,
+  JobAllResponseDetailedDto,
   JobAllResponseDto,
 } from './dto/create-job.dto';
 import { UpdateDtoResponse, UpdateJobDto } from './dto/update-job.dto';
@@ -157,7 +158,7 @@ export class JobController {
     summary: `Get all ${className}s in a specific Company`,
   })
   @ApiOkResponse({
-    type: JobAllResponseDto, //TODO: Update to be accurate
+    type: JobAllResponseDetailedDto,
     description: `An array of mongodb objects of the ${className} class`,
   })
   @Get('all/company/:cid')
@@ -310,7 +311,6 @@ export class JobController {
     description: `
     You may send the entire ${className} object that was sent to you, in your request body.\r\n
     You may also send a singular attribute `,
-    // /security: [],
   })
   @ApiInternalServerErrorResponse({
     type: HttpException,
