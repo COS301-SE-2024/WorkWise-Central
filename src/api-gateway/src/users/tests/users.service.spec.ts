@@ -90,6 +90,7 @@ describe('UsersService', () => {
       suburb: 'Suburbville',
       city: 'Citytown',
       postalCode: '12345',
+      province: 'Gauteng',
       complex: 'Apartment Complex',
       houseNumber: 'Unit 5',
     };

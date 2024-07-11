@@ -28,6 +28,8 @@ import {
   BooleanResponseDto,
   EmployeeListResponseDto,
   EmployeeResponseDto,
+  joinedEmployeeListResponseDto,
+  joinedEmployeeResponseDto,
 } from './entities/employee.entity';
 import { Types } from 'mongoose';
 
@@ -81,6 +83,26 @@ export class EmployeeController {
   }
 
   @ApiOperation({
+    summary: `Get all ${className} instances for a given company, joined with the User and Role tables`,
+    description: `Returns all ${className} instances in the database for a given Company, joined with the User and Role tables.`,
+  })
+  @ApiOkResponse({
+    type: joinedEmployeeListResponseDto,
+    description: `An array of mongodb objects of the ${className} class for a given Company, joined with the User and Role tables.`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the Company for which to get all ${className} instances.`,
+  })
+  @Get('/joined/all/:id')
+  async findAllInCompanyJoinUserRole(@Param('id') id: Types.ObjectId) {
+    const fieldsToJoin = ['userId', 'roleId'];
+    return {
+      data: await this.employeeService.findAllInCompany(id, fieldsToJoin),
+    };
+  }
+
+  @ApiOperation({
     summary: `Get all ${className} instances for a given company`,
     description: `Returns all ${className} instances in the database for a given Company.`,
   })
@@ -99,6 +121,24 @@ export class EmployeeController {
 
   @ApiOperation({
     summary: `Find an ${className}`,
+    description: `Returns the ${className} instance with the given id, joined with the User and Role tables.`,
+  })
+  @ApiOkResponse({
+    type: joinedEmployeeResponseDto,
+    description: `The mongodb object of the ${className}, with an _id attribute, joined with the User and Role tables.`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className} to be retrieved.`,
+  })
+  @Get('/joined/id/:id')
+  async findByIdJoinedUserRole(@Param('id') id: Types.ObjectId) {
+    const fieldsToJoin = ['userId', 'roleId'];
+    return { data: await this.employeeService.findById(id, fieldsToJoin) };
+  }
+
+  @ApiOperation({
+    summary: `Find an ${className}`,
     description: `Returns the ${className} instance with the given id.`,
   })
   @ApiOkResponse({
@@ -110,7 +150,7 @@ export class EmployeeController {
     description: `The _id attribute of the ${className} to be retrieved.`,
   })
   @Get('id/:id')
-  async findBytId(@Param('id') id: Types.ObjectId) {
+  async findById(@Param('id') id: Types.ObjectId) {
     return { data: await this.employeeService.findById(id) };
   }
 

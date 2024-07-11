@@ -181,7 +181,12 @@ export class EmployeeService {
 
     // checking if the user exists in the company
     const user = await this.usersService.getUserById(createEmployeeDto.userId);
-    if (user._id == createEmployeeDto.userId)
+    if (
+      await this.usersService.userIsInCompany(
+        user._id,
+        createEmployeeDto.companyId,
+      )
+    )
       throw new InternalServerErrorException('Duplicate user');
 
     const newEmployee = new Employee(createEmployeeDto);
@@ -204,8 +209,25 @@ export class EmployeeService {
     return await this.employeeRepository.findAll();
   }
 
-  async findAllInCompany(companyId: Types.ObjectId) {
-    return await this.employeeRepository.findAllInCompany(companyId);
+  async findAllInCompany(
+    companyId: Types.ObjectId,
+    fieldsToPopulate?: string[],
+  ) {
+    let result;
+    if (!(fieldsToPopulate && fieldsToPopulate.length === 0)) {
+      console.log('In the if');
+      console.log('fieldsToPopulate -> ', fieldsToPopulate);
+      result = await this.employeeRepository.findAllInCompany(
+        companyId,
+        fieldsToPopulate,
+      );
+    } else {
+      result = await this.employeeRepository.findAllInCompany(companyId);
+    }
+    if (result == null) {
+      throw new NotFoundException('Employee not found');
+    }
+    return result;
   }
 
   async employeeExists(id: Types.ObjectId): Promise<boolean> {
@@ -248,9 +270,15 @@ export class EmployeeService {
 
   async findById(
     id: Types.ObjectId,
+    fieldsToPopulate?: string[],
   ): Promise<FlattenMaps<Employee> & { _id: Types.ObjectId }> {
-    const result = await this.employeeRepository.findById(id);
-
+    let result;
+    if (!(fieldsToPopulate && fieldsToPopulate.length === 0)) {
+      console.log('In the if');
+      result = await this.employeeRepository.findById(id, fieldsToPopulate);
+    } else {
+      result = await this.employeeRepository.findById(id);
+    }
     if (result == null) {
       throw new NotFoundException('Employee not found');
     }
@@ -284,7 +312,7 @@ export class EmployeeService {
   }
 
   async getListOfOtherEmployees(id: Types.ObjectId, companyId: Types.ObjectId) {
-    //Return a list of all the employees in the company that is not a superior or subordinate of the employee with the given id
+    //Return a list of all the employees in the company that is not a superior or subordinate of the employee with the given id again
     const currentSuperior = await this.getSuperior(id);
     const currentSubordinates = await this.getSubordinates(id);
     const allEmployees = await this.findAllInCompany(companyId);

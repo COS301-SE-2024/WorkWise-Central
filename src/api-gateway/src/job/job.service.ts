@@ -5,11 +5,11 @@ import {
   Inject,
   ConflictException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateJobDto, CreateJobResponseDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { FlattenMaps, Model, Types } from 'mongoose';
+import { FlattenMaps, Types } from 'mongoose';
 import { Job } from './entities/job.entity';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
@@ -21,8 +21,6 @@ import { ValidationResult } from '../auth/entities/validationResult.entity';
 @Injectable()
 export class JobService {
   constructor(
-    @InjectModel(Job.name)
-    private readonly jobModel: Model<Job>,
     private readonly jobRepository: JobRepository,
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
@@ -38,43 +36,10 @@ export class JobService {
       throw new ConflictException(inputValidated.message);
     }
     const createdJob = new Job(createJobDto);
-    //console.log('createdJob', createdJob);
+    console.log('createdJob', createdJob);
     const result = await this.jobRepository.save(createdJob);
     return new CreateJobResponseDto(result);
   }
-
-  async authorisedToAssign(userId: Types.ObjectId, companyId: Types.ObjectId) {
-    //const user = await this.usersService.getUserById(userId);
-    /*    if (!user.joinedCompanies.includes(companyId))
-      throw new NotFoundException(
-        'User does is not an employee of the company',
-      );*/
-    /*    const validRolesInCompany = user.roles.filter(
-      (role) =>
-        role.companyId == companyId && this.authorisedList.includes(role.role),
-    );*/
-
-    /*    if (validRolesInCompany.length == 0) {
-      throw new UnauthorizedException(
-        'User does not have an appropriate role in the company',
-      );
-    }*/
-
-    const result = await this.companyService.getCompanyById(companyId);
-    return result.employees.includes(userId);
-  }
-
-  async isMember(userId: Types.ObjectId, companyId: Types.ObjectId) {
-    const result = await this.companyService.getCompanyById(companyId);
-    if (!result) throw new ConflictException();
-
-    const employees: string[] = [];
-    for (const employee of result.employees) {
-      employees.push(employee.toString());
-    }
-    return employees.includes(userId.toString());
-  }
-
   async findJobById(
     identifier: string,
   ): Promise<FlattenMaps<Job> & { _id: Types.ObjectId }> {
@@ -111,10 +76,31 @@ export class JobService {
     return result != null;
   }
 
-  async update(id: string | Types.ObjectId, updateJobDto: UpdateJobDto) {
-    const inputValidated = await this.jobUpdateIsValid(updateJobDto);
-    if (!inputValidated.isValid)
+  /*  async GetJobWithEmployees(jobId: Types.ObjectId) {
+    const job: Job = await this.findJobById(jobId);
+    const employees = [];
+    for (const assignedEmployee of job.assignedEmployees) {
+      employees.push(this.employeeService.findOne(assignedEmployee));
+    }
+    //Strip everything except profile details
+    //Create some Dto specifically showing Job+ Employee details array?
+    //return that dto
+  }*/
+
+  async update(
+    userId: Types.ObjectId,
+    id: Types.ObjectId,
+    updateJobDto: UpdateJobDto,
+  ) {
+    const inputValidated = await this.jobUpdateIsValid(
+      userId,
+      id,
+      updateJobDto,
+    );
+    if (!inputValidated.isValid) {
+      console.log(inputValidated.message);
       throw new ConflictException(inputValidated.message);
+    }
 
     try {
       const updated = await this.jobRepository.update(id, updateJobDto);
@@ -235,25 +221,29 @@ export class JobService {
     return new ValidationResult(true);
   }
 
-  async jobUpdateIsValid(job: UpdateJobDto): Promise<ValidationResult> {
-    if (!job) {
+  async jobUpdateIsValid(
+    userId: Types.ObjectId,
+    jobId: Types.ObjectId,
+    job: UpdateJobDto,
+  ): Promise<ValidationResult> {
+    const jobInDb = await this.jobRepository.findOne(jobId);
+    console.log(job);
+    if (!jobInDb) {
       return new ValidationResult(false, 'Job is null');
     }
 
-    if (!job.companyId || !job.assignedBy) {
-      return new ValidationResult(false, 'CompanyId or assignedBy is invalid');
+    const user = await this.usersService.getUserById(userId);
+    if (!user) return new ValidationResult(false, 'User not found');
+
+    let userCanAccessJob = false;
+    for (const joinedCompany of user.joinedCompanies) {
+      if (joinedCompany.companyId.toString() === jobInDb.companyId.toString()) {
+        userCanAccessJob = true;
+        break;
+      }
     }
 
-    if (!job.companyId || !job.assignedBy) {
-      return new ValidationResult(false, 'CompanyId or assignedBy is invalid');
-    }
-
-    const exists = await this.employeeService.employeeExists(job.assignedBy);
-    const isInCompany = await this.companyService.employeeIsInCompany(
-      job.companyId,
-      job.assignedBy,
-    );
-    if (!exists || !isInCompany) {
+    if (!userCanAccessJob) {
       return new ValidationResult(
         false,
         'Assigned By is invalid or Employee is not in company',
@@ -276,16 +266,81 @@ export class JobService {
       }
     }
 
-    if (job.companyId) {
-      const exists = await this.companyService.companyIdExists(job.companyId);
-      if (!exists) {
-        return new ValidationResult(
-          false,
-          `Company: ${job.companyId} Not found`,
-        );
-      }
+    return new ValidationResult(true);
+  }
+
+  async GetAllJobsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
+    //Basic Authentication
+    //TODO: Add role-related rules if necessary
+    if (!(await this.usersService.userIsInCompany(userId, companyId))) {
+      throw new UnauthorizedException('User not in company');
+    }
+    return await this.jobRepository.findAllInCompany(companyId);
+  }
+
+  async GetAllDetailedJobsInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ) {
+    //Basic Authentication
+    //TODO: Add role-related rules if necessary
+    if (!(await this.usersService.userIsInCompany(userId, companyId))) {
+      throw new UnauthorizedException('User not in company');
+    }
+    return await this.jobRepository.findAllInCompanyDetailed(companyId);
+  }
+
+  async GetAllJobsForUser(
+    userId: Types.ObjectId,
+  ): Promise<(FlattenMaps<Job> & { _id: Types.ObjectId })[]> {
+    const user = await this.usersService.getUserById(userId);
+    if (!user) throw new NotFoundException('User not found');
+    const arrOfJobs: (FlattenMaps<Job> & { _id: Types.ObjectId })[] = [];
+    for (const joinedCompany of user.joinedCompanies) {
+      const jobsForEmployee = await this.GetAllJobsForEmployee(
+        userId,
+        joinedCompany.employeeId,
+      );
+      arrOfJobs.push.apply(jobsForEmployee);
+    }
+    return arrOfJobs; //TODO: Test
+  }
+
+  async GetAllJobsForEmployee(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+  ): Promise<(FlattenMaps<Job> & { _id: Types.ObjectId })[]> {
+    if (!(await this.usersService.userIdExists(userId))) {
+      throw new NotFoundException('User not found');
+    }
+    if (
+      !(await this.usersService.userIsInSameCompanyAsEmployee(
+        userId,
+        employeeId,
+      ))
+    ) {
+      throw new UnauthorizedException('User not in Same Company');
     }
 
-    return new ValidationResult(true);
+    return this.jobRepository.findAllForEmployee(employeeId);
+  }
+
+  async GetAllDetailedJobsForEmployee(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+  ): Promise<(FlattenMaps<Job> & { _id: Types.ObjectId })[]> {
+    if (!(await this.usersService.userIdExists(userId))) {
+      throw new NotFoundException('User not found');
+    }
+    if (
+      !(await this.usersService.userIsInSameCompanyAsEmployee(
+        userId,
+        employeeId,
+      ))
+    ) {
+      throw new UnauthorizedException('User not in Same Company');
+    }
+
+    return this.jobRepository.findAllForEmployee(employeeId);
   }
 }
