@@ -15,6 +15,11 @@ export class TeamRepository {
     return this.teamModel.find().exec();
   }
 
+  async save(company: Team) {
+    const newCompanyModel = new this.teamModel(company);
+    return await newCompanyModel.save();
+  }
+
   async findById(
     identifier: string | Types.ObjectId,
   ): Promise<FlattenMaps<Team> & { _id: Types.ObjectId }> {

@@ -15,6 +15,11 @@ export class EmployeeRepository {
     return this.employeeModel.find().lean().exec();
   }
 
+  async save(company: Employee) {
+    const newCompanyModel = new this.employeeModel(company);
+    return await newCompanyModel.save();
+  }
+
   async findAllInCompany(
     identifier: Types.ObjectId,
     fieldsToPopulate?: string[],

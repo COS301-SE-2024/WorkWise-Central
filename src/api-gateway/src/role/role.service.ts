@@ -207,8 +207,7 @@ export class RoleService {
     adminRoleDto.permissionSuite.push('record inventory use');
 
     let newRole = await this.create(adminRoleDto);
-    let model = new this.roleModel(newRole);
-    await model.save();
+    await this.roleRepository.save(newRole);
 
     // Foreman
     const foremanRoleDto = new CreateRoleDto();
@@ -233,8 +232,7 @@ export class RoleService {
     foremanRoleDto.permissionSuite.push('record inventory use');
 
     newRole = await this.create(foremanRoleDto);
-    model = new this.roleModel(newRole);
-    await model.save();
+    await this.roleRepository.save(newRole);
 
     // Team Leader
     const teamRoleDto = new CreateRoleDto();
@@ -256,8 +254,7 @@ export class RoleService {
     teamRoleDto.permissionSuite.push('record inventory use');
 
     newRole = await this.create(teamRoleDto);
-    model = new this.roleModel(newRole);
-    await model.save();
+    await this.roleRepository.save(newRole);
 
     // Inventory manager
     const inventoryRoleDto = new CreateRoleDto();
@@ -269,8 +266,7 @@ export class RoleService {
     inventoryRoleDto.permissionSuite.push('record inventory use');
 
     newRole = await this.create(inventoryRoleDto);
-    model = new this.roleModel(newRole);
-    await model.save();
+    await this.roleRepository.save(newRole);
 
     // Worker
     const workerRoleDto = new CreateRoleDto();
@@ -290,7 +286,6 @@ export class RoleService {
     workerRoleDto.permissionSuite.push('record inventory use');
 
     newRole = await this.create(workerRoleDto);
-    model = new this.roleModel(newRole);
-    await model.save();
+    await this.roleRepository.save(newRole);
   }
 }
