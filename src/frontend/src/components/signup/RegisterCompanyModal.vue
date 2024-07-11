@@ -1,12 +1,16 @@
 <template>
-  <v-dialog max-height="800" max-width="600">
+  <v-dialog
+    v-model="dialog"
+    max-height="800"
+    max-width="600"
+    :theme="isdarkmode === true ? 'dark' : 'light'"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        prepend-icon="mdi-account"
         variant="elevated"
-        color="#5A82AF"
+        color="secondary"
         v-bind="activatorProps"
         >Register Company</v-btn
       >
@@ -15,10 +19,14 @@
       elevation="14"
       rounded="md"
       max-width="600"
-      max-height="800"
       :theme="isdarkmode === true ? 'dark' : 'light'"
     >
-      <v-form ref="form" v-model="valid" @submit.prevent="registrationHandler">
+      <v-form
+        ref="form"
+        v-model="valid"
+        @submit.prevent="registrationHandler"
+        class="bg-background"
+      >
         <v-col>
           <v-col>
             <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -31,12 +39,11 @@
               <label style="font-size: 14px; font-weight: lighter">Company Name</label>
               <v-text-field
                 density="compact"
-                color="grey-lighten-4"
+                color="cardColor"
                 placeholder="Enter the company's name"
                 v-model="req_obj.name"
                 :rules="company_name_rules"
                 rounded="md"
-                :theme="isdarkmode === true ? 'dark' : 'light'"
                 variant="solo"
                 required
               ></v-text-field
@@ -44,9 +51,8 @@
             <v-col>
               <label style="font-size: 14px; font-weight: lighter">Type of business*</label>
               <v-autocomplete
-                :theme="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
-                color="grey-lighten-4"
+                color="cardColor"
                 placeholder="Select Job Type"
                 v-model="req_obj.type"
                 rounded="md"
@@ -130,9 +136,8 @@
               <label style="font-size: 14px; font-weight: lighter">Company email address</label>
 
               <v-text-field
-                :theme="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
-                color="grey-lighten-4"
+                color="cardColor"
                 placeholder="Enter the company's email adress"
                 type="email"
                 :rules="email_rules"
@@ -146,9 +151,8 @@
               <label style="font-size: 14px; font-weight: lighter">Company phone number*</label>
 
               <v-text-field
-                :theme="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
-                color="grey-lighten-4"
+                color="cardColor"
                 placeholder="Enter the company's phone number"
                 rounded="md"
                 variant="solo"
@@ -163,9 +167,8 @@
               >
 
               <v-text-field
-                :theme="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
-                color="grey-lighten-4"
+                color="cardColor"
                 placeholder="Enter the company's registration number"
                 v-model="req_obj.registrationNumber"
                 :rules="company_registration_number_rules"
@@ -179,9 +182,8 @@
               <label style="font-size: 14px; font-weight: lighter">Company VAT number*</label>
 
               <v-text-field
-                :theme="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
-                color="grey-lighten-4"
+                color="cardColor"
                 placeholder="Enter the company's VAT number"
                 :rules="vat_number_rules"
                 rounded="md"
@@ -213,9 +215,8 @@
               <v-col sm="6" cols="12">
                 <label style="font-size: 11px; font-weight: lighter">Street</label>
                 <v-text-field
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
-                  color="grey-lighten-4"
+                  color="cardColor"
                   placeholder="Street"
                   rounded="md"
                   v-model="req_obj.address.street"
@@ -226,9 +227,8 @@
               <v-col sm="6" cols="12">
                 <label style="font-size: 11px; font-weight: lighter">Suburb</label>
                 <v-text-field
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
-                  color="grey-lighten-4"
+                  color="cardColor"
                   placeholder="Suburb"
                   rounded="md"
                   v-model="req_obj.address.suburb"
@@ -239,9 +239,9 @@
               <v-col sm="6" cols="12">
                 <label style="font-size: 11px; font-weight: lighter">Province</label>
                 <v-autocomplete
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   placeholder="Province"
+                  color="cardColor"
                   v-model="req_obj.address.province"
                   rounded="md"
                   type="houseNumber"
@@ -263,21 +263,20 @@
               <v-col sm="6" cols="12">
                 <label style="font-size: 11px; font-weight: lighter">City</label>
                 <v-text-field
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   placeholder="City"
                   rounded="md"
                   v-model="req_obj.address.city"
                   variant="solo"
                   required
+                  color="cardColor"
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
                 <label style="font-size: 11px; font-weight: lighter">Postal Code</label>
                 <v-text-field
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
-                  color="grey-lighten-4"
+                  color="cardColor"
                   placeholder="Postal Code"
                   rounded="md"
                   v-model="req_obj.address.postalCode"
@@ -314,14 +313,9 @@
             <!--              ></v-col>-->
             <!--            </v-row>-->
           </v-col>
-          <v-col
-            :style="isdarkmode === true ? dark_theme_text_color : 'light'"
-            cols="8"
-            offset="2"
-            align="center"
-          >
+          <v-col cols="8" offset="2" align="center">
             <v-btn
-              color="#5A82AF"
+              color="primary"
               type="submit"
               rounded="md"
               boarder="md"
@@ -330,6 +324,18 @@
               variant="elevated"
               :disabled="click_create_client"
               >Continue</v-btn
+            >
+          </v-col>
+          <v-col cols="8" offset="2" align="center">
+            <v-btn
+              color="secondary"
+              @click="close"
+              rounded="md"
+              boarder="xl"
+              width="60%"
+              height="35"
+              variant="elevated"
+              >Back</v-btn
             >
           </v-col>
         </v-col>
@@ -346,7 +352,7 @@ export default {
   data() {
     return {
       dialog: false,
-      isdarkmode: sessionStorage['theme'] !== 'false',
+      isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
       click_create_client: false,
       valid: true,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
@@ -448,6 +454,9 @@ export default {
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    close() {
+      this.dialog = false
     }
 
     // base64image() {
