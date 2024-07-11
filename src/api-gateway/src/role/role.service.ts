@@ -128,10 +128,7 @@ export class RoleService {
   }
 
   async findOneInCompany(name: string, companyId: Types.ObjectId) {
-    const result = await this.roleModel.findOne({
-      roleName: name,
-      companyId: companyId,
-    });
+    const result = await this.roleRepository.findByIdInCompany(name, companyId);
     if (result == null) {
       throw new NotFoundException('Role not found');
     }
@@ -209,7 +206,9 @@ export class RoleService {
     adminRoleDto.permissionSuite.push('view all inventory');
     adminRoleDto.permissionSuite.push('record inventory use');
 
-    await this.create(adminRoleDto);
+    let newRole = await this.create(adminRoleDto);
+    let model = new this.roleModel(newRole);
+    await model.save();
 
     // Foreman
     const foremanRoleDto = new CreateRoleDto();
@@ -233,7 +232,9 @@ export class RoleService {
     foremanRoleDto.permissionSuite.push('view all inventory');
     foremanRoleDto.permissionSuite.push('record inventory use');
 
-    await this.create(foremanRoleDto);
+    newRole = await this.create(foremanRoleDto);
+    model = new this.roleModel(newRole);
+    await model.save();
 
     // Team Leader
     const teamRoleDto = new CreateRoleDto();
@@ -254,7 +255,9 @@ export class RoleService {
     teamRoleDto.permissionSuite.push('view all inventory');
     teamRoleDto.permissionSuite.push('record inventory use');
 
-    await this.create(teamRoleDto);
+    newRole = await this.create(teamRoleDto);
+    model = new this.roleModel(newRole);
+    await model.save();
 
     // Inventory manager
     const inventoryRoleDto = new CreateRoleDto();
@@ -265,7 +268,9 @@ export class RoleService {
     inventoryRoleDto.permissionSuite.push('add a new inventory item');
     inventoryRoleDto.permissionSuite.push('record inventory use');
 
-    await this.create(inventoryRoleDto);
+    newRole = await this.create(inventoryRoleDto);
+    model = new this.roleModel(newRole);
+    await model.save();
 
     // Worker
     const workerRoleDto = new CreateRoleDto();
@@ -284,6 +289,8 @@ export class RoleService {
     workerRoleDto.permissionSuite.push('view all inventory');
     workerRoleDto.permissionSuite.push('record inventory use');
 
-    await this.create(workerRoleDto);
+    newRole = await this.create(workerRoleDto);
+    model = new this.roleModel(newRole);
+    await model.save();
   }
 }

@@ -56,6 +56,7 @@ export class CompanyService {
     const ownerRoleId = (
       await this.roleService.findOneInCompany('Owner', createdCompany._id)
     )._id;
+    console.log('ownerRoleId ', ownerRoleId);
 
     console.log('Create Employee');
     const employee = await this.employeeService.create({

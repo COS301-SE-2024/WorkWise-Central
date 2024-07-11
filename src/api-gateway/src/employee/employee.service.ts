@@ -133,12 +133,12 @@ export class EmployeeService {
   }
 
   async create(createEmployeeDto: CreateEmployeeDto) {
-    // console.log('create function');
+    console.log('create function');
     try {
       await this.validateCreateEmployee(createEmployeeDto);
       //Checking if the user is in the company
     } catch (error) {
-      // console.log('error -> ', error);
+      console.log('error -> ', error);
       throw new InternalServerErrorException(error);
     }
 
