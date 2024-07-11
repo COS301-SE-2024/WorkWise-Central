@@ -48,7 +48,18 @@ const vuetify = createVuetify({
       VCardTitle: {
         class: 'text-h5 font-weight-regular  d-flex justify-center bg-cardColor text-secondary'
       },
-      VCardText: { class: 'bg-cardColor', VList: { class: 'bg-cardColor' } }
+      VCardText: {
+        class: 'bg-cardColor',
+        VList: {
+          class: 'bg-cardColor',
+          VListItem: {
+            class: 'bg-cardColor'
+          }
+        }
+      },
+      VCard: {
+        class: 'bg-cardColor'
+      }
     },
     VBtn: {
       rounded: 'md',
@@ -58,7 +69,7 @@ const vuetify = createVuetify({
       color: 'primary'
     },
     VCardTitle: {
-      class: 'text-h5 font-weight-regular bg-primary justify-center'
+      class: 'text-h5 font-weight-regular bg-secondary justify-center'
     },
     VSheet: {
       elevation: 14,
@@ -92,6 +103,9 @@ const vuetify = createVuetify({
     },
     VChip: {
       rounded: 'md'
+    },
+    VCalender:{
+     class: 'bg-cardColor'
     }
   },
   directives,
@@ -129,8 +143,8 @@ const vuetify = createVuetify({
           accent: '#82B1FF',
           error: '#e639462',
           info: '#2196F3',
-          success: '#37471F',
-          warning: '#FFC107',
+          success: '#1F845A',
+          warning: '#E2B203',
           cardColor: '#F1F2F4',
           elementTextColor: '#4C9FC3', // most important color for text
           headingTextColor: '#091E42',
