@@ -1,12 +1,10 @@
 <template>
   <v-dialog v-model="clientDialog" max-width="500px">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn color="error" v-bind="activatorProps">Delete</v-btn>
+      <v-btn color="secondary" v-bind="activatorProps">Delete</v-btn>
     </template>
     <v-card :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
-      <v-card-title>
-        <span class="headline">Delete {{ client.name + ' ' + client.surname }}</span>
-      </v-card-title>
+      <v-card-title> Delete {{ client.name + ' ' + client.surname }} </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>

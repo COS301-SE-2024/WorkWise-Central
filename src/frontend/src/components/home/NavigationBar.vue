@@ -10,49 +10,47 @@ const onProfileClick = () => {
 const open = ref(['Dashboard'])
 
 const dashboardSubItems = ref([
-  { title: 'Home', icon: 'mdi-home', routeName: 'dashboard' },
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
+  { title: 'Home', icon: 'fa: fa-solid fa-house', routeName: 'dashboard' },
+  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
+  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
 ])
 
 const clientSubItems = ref([
-  { title: 'Management', icon: 'mdi-account-group-outline', routeName: 'client-desk-view' },
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
+  { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'client-desk-view' },
+  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
+  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
 ])
 
 const employeeSubItems = ref([
-  { title: 'Management', icon: 'mdi-account-tie', routeName: 'manageremployees' },
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
+  { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'manageremployees' },
+  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
+  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
 ])
 
 const jobSubItems = ref([
-  { title: 'Management', icon: 'mdi-briefcase', routeName: 'jobAssignmentView' },
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
+  { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'jobAssignmentView' },
+  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
+  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
 ])
 
 const inventorySubItems = ref([
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
+  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
+  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
+  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
 ])
 
 const inboxSubItems = ref([
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' },
-  { title: 'TBD', icon: 'mdi-clock', routeName: '404' }
+  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
+  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
+  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
 ])
 
-const supportSubItems = ref([{ title: 'Support', icon: 'mdi-star', routeName: 'support' }])
+const supportSubItems = ref([
+  { title: 'Support', icon: 'fa: fa-solid fa-headset', routeName: 'support' }
+])
 const moreSubItems = ref([
-  { title: 'Settings', icon: 'mdi-cog', routeName: '404' },
-  {
-    title: 'Logout',
-    icon: 'mdi-logout',
-    routeName: '404'
-  }
+  { title: 'Settings', icon: 'fa: fa-solid fa-cog', routeName: '404' },
+  { title: 'Logout', icon: 'fa: fa-solid fa-sign-out-alt', routeName: '404' }
 ])
 </script>
 
@@ -62,6 +60,7 @@ import type { PropType } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
 import ProfilePage from './settings/profile/ProfilePage.vue'
 import DarkModeToggleVue from './settings/DarkModeToggle.vue'
+import CompanyMain from './settings/company/CompanyMain.vue'
 // import { mapGetters } from 'vuex'
 
 export default defineComponent({
@@ -73,7 +72,8 @@ export default defineComponent({
   },
   components: {
     ProfilePage,
-    DarkModeToggleVue
+    DarkModeToggleVue,
+    CompanyMain
   },
   data: () => ({
     isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false
@@ -103,7 +103,7 @@ export default defineComponent({
       <v-app :theme="isdarkmode ? 'dark' : 'light'">
         <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-background">
           <v-app-bar-nav-icon @click="isVisible = !isVisible">
-            <v-icon>{{ isVisible ? 'mdi-close' : 'mdi-menu' }}</v-icon>
+            <v-icon>{{ isVisible ? 'fa: fa-solid fa-times' : 'fa: fa-solid fa-bars' }}</v-icon>
           </v-app-bar-nav-icon>
 
           <v-spacer></v-spacer>
@@ -116,11 +116,13 @@ export default defineComponent({
           <v-spacer class="d-none d-sm-flex"></v-spacer>
 
           <div class="d-flex align-center">
-            <v-icon class="icon-padding" @click="onProfileClick">mdi-account-circle</v-icon>
+            <v-icon class="icon-padding mr-5" @click="onProfileClick">{{
+              'fa: fa-solid fa-user-circle'
+            }}</v-icon>
             <v-icon
-              class="icon-padding"
+              class="icon-padding mr-5"
               @click="toggleDarkMode"
-              :icon="isdarkmode ? ' mdi-white-balance-sunny' : 'mdi-moon-waning-crescent'"
+              :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"
             ></v-icon>
           </div>
         </v-app-bar>
@@ -132,14 +134,13 @@ export default defineComponent({
           :rail="isVisible"
           :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
         >
-          <v-list-item></v-list-item>
-          <v-divider></v-divider>
+          <CompanyMain />
           <v-list v-model:open="open">
             <v-list-group fluid value="Dashboard">
               <template v-slot:activator="{ props }">
                 <v-list-item
                   v-bind="props"
-                  prepend-icon="mdi-view-dashboard"
+                  prepend-icon="fa: fa-solid fa-tachometer-alt"
                   title="Dashboard"
                 ></v-list-item>
               </template>
@@ -158,7 +159,7 @@ export default defineComponent({
               <template v-slot:activator="{ props }">
                 <v-list-item
                   v-bind="props"
-                  prepend-icon="mdi-account-group"
+                  prepend-icon="fa: fa-solid fa-handshake"
                   title="Clients"
                 ></v-list-item>
               </template>
@@ -177,7 +178,7 @@ export default defineComponent({
               <template v-slot:activator="{ props }">
                 <v-list-item
                   v-bind="props"
-                  prepend-icon="mdi-account-multiple"
+                  prepend-icon="fa: fa-solid fa-users"
                   title="Employees"
                 ></v-list-item>
               </template>
@@ -194,7 +195,11 @@ export default defineComponent({
           <v-list v-model:open="open">
             <v-list-group fluid value="Jobs">
               <template v-slot:activator="{ props }">
-                <v-list-item v-bind="props" prepend-icon="mdi-briefcase" title="Jobs"></v-list-item>
+                <v-list-item
+                  v-bind="props"
+                  prepend-icon="fa: fa-solid fa-briefcase"
+                  title="Jobs"
+                ></v-list-item>
               </template>
               <v-list-item
                 v-for="(item, i) in jobSubItems"
@@ -211,7 +216,7 @@ export default defineComponent({
               <template v-slot:activator="{ props }">
                 <v-list-item
                   v-bind="props"
-                  prepend-icon="mdi-warehouse"
+                  prepend-icon="fa: fa-solid fa-boxes"
                   title="Inventory"
                 ></v-list-item>
               </template>
@@ -228,7 +233,11 @@ export default defineComponent({
           <v-list v-model:open="open">
             <v-list-group fluid value="Inbox">
               <template v-slot:activator="{ props }">
-                <v-list-item v-bind="props" prepend-icon="mdi-inbox" title="Inbox"></v-list-item>
+                <v-list-item
+                  v-bind="props"
+                  prepend-icon="fa: fa-solid fa-envelope"
+                  title="Inbox"
+                ></v-list-item>
               </template>
               <v-list-item
                 v-for="(item, i) in inboxSubItems"
@@ -245,7 +254,7 @@ export default defineComponent({
               <template v-slot:activator="{ props }">
                 <v-list-item
                   v-bind="props"
-                  prepend-icon="mdi-information"
+                  prepend-icon="fa: fa-solid fa-life-ring"
                   title="Help"
                 ></v-list-item>
               </template>
@@ -260,11 +269,11 @@ export default defineComponent({
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
-            <v-list-group value="More">
+            <v-list-group fluid value="More">
               <template v-slot:activator="{ props }">
                 <v-list-item
                   v-bind="props"
-                  prepend-icon="mdi-dots-horizontal"
+                  prepend-icon="fa: fa-solid fa-ellipsis-h"
                   title="More"
                 ></v-list-item>
               </template>

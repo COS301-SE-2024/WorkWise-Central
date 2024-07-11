@@ -11,8 +11,6 @@
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
         height="auto"
         width="100%"
-        :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
-        :style="'font-family: Lato, sans-serif; font-size: 25px; font-weight: lighter'"
       >
         <v-row align="center" justify="space-between">
           <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
@@ -32,12 +30,11 @@
               density="compact"
               label="Search"
               prepend-inner-icon="mdi-magnify"
-              variant="outlined"
+              variant="solo-inverted"
               flat
               width="100%"
               style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
               hide-details
-              :theme="isdarkmode ? 'dark' : 'light'"
               single-line
             ></v-text-field>
           </v-col>
@@ -60,6 +57,7 @@
               height="auto"
               rounded="xl"
               class="bg-cardColor"
+              :row-props="getRowProps"
             >
               <template v-slot:[`item.firstName`]="{ value }">
                 <v-chip variant="text" color="elementTextColor">
@@ -67,12 +65,7 @@
                 >
               </template>
               <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                <v-chip
-                  variant="text"
-                  @click="callPhone"
-                  color="elementTextColor"
-                  border="md"
-                  rounded="xl"
+                <v-chip @click="callPhone" color="primary" text-color="elementTextColor" border="md"
                   ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
                 >
               </template>
@@ -84,10 +77,9 @@
               </template>
               <template v-slot:[`item.contactInfo.email`]="{ value }">
                 <v-chip
-                  variant="text"
-                  rounded="xl"
                   @click="sendEmail"
-                  color="elementTextColor"
+                  color="primary"
+                  text-color="elementTextColor"
                   border="md"
                 >
                   <v-icon>mdi-email</v-icon>{{ value }}</v-chip
@@ -107,7 +99,7 @@
                   variant="plain"
                   @click="(actionsDialog = true), selectItem(item)"
                 >
-                  <v-icon>mdi-dots-horizontal</v-icon>
+                  <v-icon color="primary">mdi-dots-horizontal</v-icon>
                 </v-btn>
               </template>
             </v-data-table>
@@ -118,7 +110,7 @@
 
     <v-dialog v-model="actionsDialog" max-width="500px">
       <v-card>
-        <v-card-title class="text-h5 font-weight-regular bg-primary">
+        <v-card-title class="text-h5 font-weight-regular bg-primary text-center">
           {{ selectedItemName + ' ' + selectedItemSurname }}
         </v-card-title>
         <v-card-text> What would you like to do with this client? </v-card-text>
@@ -242,6 +234,12 @@ export default defineComponent({
         'dark-mode': this.isdarkmode,
         'light-mode': !this.isdarkmode
       }
+    },
+    currentTheme() {
+      return this.$theme // Example of accessing a global property, adjust based on actual implementation
+    },
+    globalTheme() {
+      return this.$theme.global // Adjust based on actual implementation
     }
   },
   mounted() {
@@ -354,6 +352,11 @@ export default defineComponent({
     getColor(value) {
       if (value == '') return 'red'
       else return 'green'
+    },
+    getRowProps({ index }) {
+      return {
+        class: index % 2 ? 'bg-secondRowColor' : ''
+      }
     }
   }
 })
@@ -409,15 +412,8 @@ export default defineComponent({
   background-color: #38414a;
 }
 /* Dark mode */
-tbody tr:nth-of-type(odd) {
-  background-color: #161a1d; /* Adjust the color as needed for dark mode #DCDFE4*/
-}
 
 /* Light mode */
-.something,
-.tbody tr:nth-of-type(odd) {
-  background-color: #dcdfe4; /* Adjust the color as needed for light mode */
-}
 
 .my-header-style {
   background: red;
