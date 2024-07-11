@@ -117,9 +117,9 @@ export class TeamService {
   }
 
   async create(createTeamDto: CreateTeamDto) {
-    console.log('In the service \n createTeamDto: ', createTeamDto);
+    // console.log('In the service \n createTeamDto: ', createTeamDto);
     await this.validateCreateTeam(createTeamDto);
-    console.log('Validated');
+    // console.log('Validated');
 
     const newRole = new Team(createTeamDto);
     newRole.teamName = createTeamDto.teamName;
@@ -128,10 +128,7 @@ export class TeamService {
     newRole.teamMembers = createTeamDto.teamMembers;
     console.log('New role created');
 
-    const model = new this.teamModel(newRole);
-    const result = await model.save();
-    console.log('Model saved');
-    return `${result}`;
+    return await this.teamRepository.save(newRole);
   }
 
   async findAll() {
