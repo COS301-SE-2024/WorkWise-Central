@@ -280,7 +280,7 @@ export class RoleService {
 
   async roleExistsInCompany(
     id: Types.ObjectId,
-    companyId: string,
+    companyId: Types.ObjectId,
   ): Promise<boolean> {
     return await this.roleRepository.roleExistsInCompany(id, companyId);
   }

@@ -15,14 +15,33 @@ export class EmployeeRepository {
     return this.employeeModel.find().lean().exec();
   }
 
-  async findAllInCompany(companyId: Types.ObjectId) {
-    const filter = companyId ? { companyId: companyId } : {};
-    return this.employeeModel.find(filter).exec();
+  async findAllInCompany(
+    identifier: Types.ObjectId,
+    fieldsToPopulate?: string[],
+  ) {
+    const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] =
+      await this.employeeModel
+        .find({
+          $and: [
+            {
+              companyId: identifier,
+            },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .populate(fieldsToPopulate.join(' '))
+        .lean();
+    return result;
   }
 
   async findById(
     identifier: Types.ObjectId,
+    fieldsToPopulate?: string[],
   ): Promise<FlattenMaps<Employee> & { _id: Types.ObjectId }> {
+    console.log('In findById repository');
+    console.log('identifier -> ', identifier);
     return this.employeeModel
       .findOne({
         $and: [
@@ -32,6 +51,7 @@ export class EmployeeRepository {
           },
         ],
       })
+      .populate(fieldsToPopulate)
       .lean();
   }
 
@@ -73,7 +93,7 @@ export class EmployeeRepository {
 
   async employeeExistsForCompany(
     id: Types.ObjectId,
-    companyId: string,
+    companyId: Types.ObjectId,
   ): Promise<boolean> {
     const result: FlattenMaps<Employee> & { _id: Types.ObjectId } =
       await this.employeeModel
@@ -86,7 +106,7 @@ export class EmployeeRepository {
           ],
         })
         .lean();
-    if (result != null && result.companyId.toString() == companyId) return true;
+    if (result != null && result.companyId == companyId) return true;
     return false;
   }
 
@@ -121,9 +141,13 @@ export class EmployeeRepository {
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {
+    console.log('In remove repository');
     const employeeToDelete = await this.findById(id);
+    console.log('employeeToDelete -> ', employeeToDelete);
 
-    if (employeeToDelete == null) return false;
+    if (employeeToDelete == null) {
+      return false;
+    }
 
     const result: Document<unknown, NonNullable<unknown>, User> &
       User & { _id: Types.ObjectId } =

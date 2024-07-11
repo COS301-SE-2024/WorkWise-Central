@@ -47,7 +47,7 @@ export class EmployeeService {
 
   async validateEmployee(
     employee: Employee | CreateEmployeeDto | UpdateEmployeeDto,
-    companyId?: string,
+    companyId?: Types.ObjectId,
   ) {
     if (!companyId && !('companyId' in employee)) {
       //Potentially not necessary
@@ -95,7 +95,7 @@ export class EmployeeService {
       }
     } else {
       if (!companyId && 'companyId' in employee && employee.companyId) {
-        companyId = employee.companyId.toString();
+        companyId = employee.companyId;
       }
 
       // console.log('Company ID: ' + companyId);
@@ -127,7 +127,7 @@ export class EmployeeService {
           if (
             !(await this.jobService.jobExistsInCompany(
               jobId.toString(),
-              companyId,
+              companyId.toString(),
             ))
           ) {
             throw new ConflictException(
@@ -173,6 +173,7 @@ export class EmployeeService {
     // console.log('create function');
     try {
       await this.validateEmployee(createEmployeeDto);
+      //Checking if the user is in the company
     } catch (error) {
       // console.log('error -> ', error);
       throw new InternalServerErrorException(error);
@@ -208,8 +209,25 @@ export class EmployeeService {
     return await this.employeeRepository.findAll();
   }
 
-  async findAllInCompany(companyId: Types.ObjectId) {
-    return await this.employeeRepository.findAllInCompany(companyId);
+  async findAllInCompany(
+    companyId: Types.ObjectId,
+    fieldsToPopulate?: string[],
+  ) {
+    let result;
+    if (!(fieldsToPopulate && fieldsToPopulate.length === 0)) {
+      console.log('In the if');
+      console.log('fieldsToPopulate -> ', fieldsToPopulate);
+      result = await this.employeeRepository.findAllInCompany(
+        companyId,
+        fieldsToPopulate,
+      );
+    } else {
+      result = await this.employeeRepository.findAllInCompany(companyId);
+    }
+    if (result == null) {
+      throw new NotFoundException('Employee not found');
+    }
+    return result;
   }
 
   async employeeExists(id: Types.ObjectId): Promise<boolean> {
@@ -218,7 +236,7 @@ export class EmployeeService {
 
   async employeeExistsForCompany(
     id: Types.ObjectId,
-    companyId: string,
+    companyId: Types.ObjectId,
   ): Promise<boolean> {
     return await this.employeeRepository.employeeExistsForCompany(
       id,
@@ -230,7 +248,7 @@ export class EmployeeService {
     // console.log('update function');
     try {
       const companyId = await this.getCompanyIdFromEmployee(id);
-      await this.validateEmployee(updateEmployeeDto, companyId.toString());
+      await this.validateEmployee(updateEmployeeDto, companyId);
     } catch (error) {
       // console.log('error -> ', error);
       return `${error}`;
@@ -252,9 +270,15 @@ export class EmployeeService {
 
   async findById(
     id: Types.ObjectId,
+    fieldsToPopulate?: string[],
   ): Promise<FlattenMaps<Employee> & { _id: Types.ObjectId }> {
-    const result = await this.employeeRepository.findById(id);
-
+    let result;
+    if (!(fieldsToPopulate && fieldsToPopulate.length === 0)) {
+      console.log('In the if');
+      result = await this.employeeRepository.findById(id, fieldsToPopulate);
+    } else {
+      result = await this.employeeRepository.findById(id);
+    }
     if (result == null) {
       throw new NotFoundException('Employee not found');
     }
