@@ -406,7 +406,4 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.v-data-table-header .v-icon {
-  color: #f38a3f; /* Your desired color */
-}
 </style>
