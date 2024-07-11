@@ -4,10 +4,11 @@
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        prepend-icon="mdi-account"
-        text="ADD EMPLOYEE"
+        style="font-size: 20px"
+        prepend-icon="mdi-account-multiple-plus"
+        text="Add Employee"
         variant="elevated"
-        color="#5A82AF"
+        color="secondary"
         v-bind="activatorProps"
       ></v-btn>
     </template>

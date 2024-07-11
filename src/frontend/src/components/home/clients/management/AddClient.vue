@@ -6,8 +6,9 @@
         class="text-none font-weight-regular"
         style="font-size: 20px"
         text="Add Client"
+        prepend-icon="mdi-account-plus"
         variant="elevated"
-        color="primary"
+        color="secondary"
         v-bind="activatorProps"
       ></v-btn>
     </template>

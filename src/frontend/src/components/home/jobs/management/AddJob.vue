@@ -4,10 +4,11 @@
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        prepend-icon="mdi-briefcase"
+        style="font-size: 20px"
         text="Add Job"
+        prepend-icon="mdi-briefcase-plus"
         variant="elevated"
-        color="#5A82AF"
+        color="secondary"
         v-bind="activatorProps"
       ></v-btn>
     </template>

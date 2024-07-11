@@ -20,24 +20,43 @@
                   :color="isdarkmode === true ? 'dark' : 'light'"
                   style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
                 >
-                  <v-icon icon="mdi-account"></v-icon> &nbsp; Employee Details
-
-                  <v-spacer></v-spacer>
-
-                  <v-text-field
-                    v-model="search"
-                    density="compact"
-                    label="Search"
-                    prepend-inner-icon="mdi-magnify"
-                    variant="outlined"
-                    flat
-                    style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
-                    hide-details
-                    :bg-color="isdarkmode === true ? 'dark' : 'light'"
-                    single-line
-                  ></v-text-field>
-                  <v-spacer></v-spacer>
-                  <AddEmployee />
+                  <v-row align="center" justify="space-between">
+                    <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+                      <v-icon icon="mdi-account-hard-hat"></v-icon>
+                      <v-label
+                        class="ms-2 text-h4 font-family-lato text-headingTextColor"
+                        style="
+                          font-family: 'Lato', sans-serif;
+                          font-size: 15px;
+                          font-weight: lighter;
+                        "
+                        height="auto"
+                        width="auto"
+                        >Employee Details</v-label
+                      >&nbsp;
+                    </v-col>
+                    <v-col cols="12" md="4" sm="6" xs="12">
+                      <v-text-field
+                        v-model="search"
+                        density="compact"
+                        label="Search"
+                        prepend-inner-icon="mdi-magnify"
+                        variant="outlined"
+                        flat
+                        style="
+                          font-family: 'Lato', sans-serif;
+                          font-size: 15px;
+                          font-weight: lighter;
+                        "
+                        hide-details
+                        :bg-color="isdarkmode === true ? 'dark' : 'light'"
+                        single-line
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
+                      <AddEmployee />
+                    </v-col>
+                  </v-row>
                 </v-card-title>
 
                 <v-divider></v-divider>

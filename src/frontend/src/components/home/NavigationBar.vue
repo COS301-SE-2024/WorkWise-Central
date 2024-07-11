@@ -116,9 +116,9 @@ export default defineComponent({
           <v-spacer class="d-none d-sm-flex"></v-spacer>
 
           <div class="d-flex align-center">
-            <v-icon class="icon-padding" @click="onProfileClick">mdi-account-circle</v-icon>
+            <v-icon class="icon-padding mr-5" @click="onProfileClick">mdi-account-circle</v-icon>
             <v-icon
-              class="icon-padding"
+              class="icon-padding mr-5"
               @click="toggleDarkMode"
               :icon="isdarkmode ? ' mdi-white-balance-sunny' : 'mdi-moon-waning-crescent'"
             ></v-icon>

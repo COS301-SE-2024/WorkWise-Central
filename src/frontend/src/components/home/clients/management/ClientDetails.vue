@@ -68,9 +68,9 @@
               <br /><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
                 ClientDetails.address.complex
               }}</small>
-              <br /><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">Unit: {{
-                 ClientDetails.address.houseNumber
-              }}</small></v-col
+              <br /><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'"
+                >Unit: {{ ClientDetails.address.houseNumber }}</small
+              ></v-col
             >
           </v-row>
           <v-divider></v-divider>

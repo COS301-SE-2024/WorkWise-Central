@@ -19,24 +19,36 @@
                 :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
                 style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
               >
-                <v-icon icon="mdi-account"></v-icon> &nbsp;Job Details
+                <v-row align="center" justify="space-between">
+                  <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+                    <v-icon icon="mdi-briefcase"></v-icon>
+                    <v-label
+                      class="ms-2 text-h4 font-family-lato text-headingTextColor"
+                      style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+                      height="auto"
+                      width="auto"
+                      >Job Details</v-label
+                    >
+                  </v-col>
 
-                <v-spacer></v-spacer>
-
-                <v-text-field
-                  v-model="search"
-                  density="compact"
-                  label="Search"
-                  prepend-inner-icon="mdi-magnify"
-                  variant="outlined"
-                  flat
-                  style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
-                  hide-details
-                  :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
-                  single-line
-                ></v-text-field>
-                <v-spacer></v-spacer>
-                <AddJob />
+                  <v-col cols="12" md="4" sm="6" xs="12">
+                    <v-text-field
+                      v-model="search"
+                      density="compact"
+                      label="Search"
+                      prepend-inner-icon="mdi-magnify"
+                      variant="outlined"
+                      flat
+                      style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+                      hide-details
+                      :theme="isdarkmode ? 'dark' : 'light'"
+                      single-line
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
+                    <AddJob />
+                  </v-col>
+                </v-row>
               </v-card-title>
 
               <v-divider></v-divider>
@@ -402,6 +414,6 @@ onMounted(() => {
 
 <style scoped>
 .v-data-table-header .v-icon {
-  color: #F38A3F; /* Your desired color */
+  color: #f38a3f; /* Your desired color */
 }
 </style>
