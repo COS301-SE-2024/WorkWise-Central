@@ -282,12 +282,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import {
-  type Employee,
-  type User,
-  type EmployeeInformation,
-  type ClientInformation
-} from '../types'
+import { type EmployeeJoined, type EmployeeInformation, type ClientInformation } from '../types'
 
 export default defineComponent({
   name: 'JobDetailsList',
@@ -414,49 +409,38 @@ export default defineComponent({
       const apiURL = await this.getRequestUrl()
       try {
         const employee_response = await axios.get(
-          apiURL + `company/employees/${sessionStorage['currentCompany']}`,
+          apiURL + `employee/joined/all/${sessionStorage['currentCompany']}`,
           config
         )
-        let employee_all_data: Employee[] = employee_response.data.data
+
+        let employee_all_data: EmployeeJoined[] = employee_response.data.data
+
+        console.log(employee_all_data)
 
         let company_employee_arr: EmployeeInformation[] = []
+
         for (let i = 0; i < employee_all_data.length; i++) {
-          let users_response = await axios.get(
-            apiURL + `users/id/${employee_all_data[i].userId}`,
-            config
-          )
-
-          const user_data: User = users_response.data
-
-          console.log(user_data)
-
-          if (user_data.data.personalInfo.address === undefined) continue
+          if (employee_all_data[i].userId[0].personalInfo.address !== undefined) continue
 
           if (employee_all_data[i].roleId !== undefined) {
-            let role = await axios.get(apiURL + `role/id/${employee_all_data[i].roleId}`, config)
-
-            if (role.status < 300 && role.status > 199) {
-              let company_employee: EmployeeInformation = {
-                name:
-                  user_data.data.personalInfo.firstName +
-                  ' ' +
-                  user_data.data.personalInfo.surname +
-                  ' (' +
-                  role.data.data.roleName +
-                  ')',
-                employeeId: employee_all_data[i]._id
-              }
-
-              company_employee_arr.push(company_employee)
-            } else {
-              console.log('And unsuccessfull requets was made')
+            let company_employee: EmployeeInformation = {
+              name:
+                employee_all_data[i].userId[0].personalInfo.firstName +
+                ' ' +
+                employee_all_data[i].userId[0].personalInfo.surname +
+                ' (' +
+                employee_all_data[i].roleId[0].roleName +
+                ')',
+              employeeId: employee_all_data[i]._id
             }
+
+            company_employee_arr.push(company_employee)
           } else {
             let company_employee: EmployeeInformation = {
               name:
-                user_data.data.personalInfo.firstName +
+                employee_all_data[i].userId[0].personalInfo.firstName +
                 ' ' +
-                user_data.data.personalInfo.surname +
+                employee_all_data[i].userId[0].personalInfo.surname +
                 ' (Unassigned Role)',
               employeeId: employee_all_data[i]._id
             }
