@@ -721,17 +721,6 @@ export default {
       this.selectedItem = item
       console.log('Deleting client')
     },
-    removeClient(e: MouseEvent) {
-      let event = e.currentTarget as HTMLButtonElement
-      let id = event.id
-      console.log(id)
-      for (let i = 0; i < this.EmployeeDetails.length; i++) {
-        if (this.EmployeeDetails[i].id === Number(id)) {
-          this.EmployeeDetails.splice(i, 1)
-        }
-      }
-      router.push('/manager-employees-t')
-    },
     openAddClient() {
       this.clientDialog = true
     },
