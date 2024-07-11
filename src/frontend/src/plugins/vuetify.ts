@@ -48,11 +48,10 @@ const vuetify = createVuetify({
       VCardTitle: {
         class: 'text-h5 font-weight-regular  d-flex justify-center bg-cardColor text-secondary'
       },
-      VCardText: { class: 'bg-cardColor', },
-      VCard:{
+      VCardText: { class: 'bg-cardColor' },
+      VCard: {
         class: 'bg-cardColor'
-      },
-      
+      }
     },
     VBtn: {
       rounded: 'md',
