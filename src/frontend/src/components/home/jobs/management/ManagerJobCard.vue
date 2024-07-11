@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-row>
-      <v-col xs="12" sm="9" md="9" lg="9" xl="9">
+      <v-col xs="12" sm="9" md="9" lg="9" xl="9" class="pr-0 pb-0" cols="12">
         <v-card class="text-center">
           <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
             <h2 class="flex-grow-1">{{ passedInJob.heading }}</h2>
@@ -145,7 +145,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col xs="12" sm="3" md="3" lg="3" xl="3">
+      <v-col xs="12" sm="3" md="3" lg="3" xl="3" class="pl-0 pb-0" cols="12">
         <v-card flat class="pa-2">
           <div class="d-flex flex-column">
             <!--Job details and description Model Edit -->

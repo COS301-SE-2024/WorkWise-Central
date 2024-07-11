@@ -6,13 +6,10 @@
           <v-row justify="center">
             <v-col cols="12" xs="12" sm="12" md="12">
               <v-card
-                flat
                 height="auto"
-                max-height="auto"
-                class="pa-11 ma-0"
+                class="pa-11 ma-0 bg-cardColor"
                 rounded="md"
-                elevation-2
-                :color="isdarkmode === true ? 'dark' : 'light'"
+                :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
                 border="md"
               >
                 <v-card-title
@@ -20,24 +17,43 @@
                   :color="isdarkmode === true ? 'dark' : 'light'"
                   style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
                 >
-                  <v-icon icon="mdi-account"></v-icon> &nbsp; Employee Details
-
-                  <v-spacer></v-spacer>
-
-                  <v-text-field
-                    v-model="search"
-                    density="compact"
-                    label="Search"
-                    prepend-inner-icon="mdi-magnify"
-                    variant="outlined"
-                    flat
-                    style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
-                    hide-details
-                    :bg-color="isdarkmode === true ? 'dark' : 'light'"
-                    single-line
-                  ></v-text-field>
-                  <v-spacer></v-spacer>
-                  <AddEmployee />
+                  <v-row align="center" justify="space-between">
+                    <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+                      <v-icon icon="mdi-account-hard-hat"></v-icon>
+                      <v-label
+                        class="ms-2 text-h4 font-family-lato text-headingTextColor"
+                        style="
+                          font-family: 'Lato', sans-serif;
+                          font-size: 15px;
+                          font-weight: lighter;
+                        "
+                        height="auto"
+                        width="auto"
+                        >Employee Details</v-label
+                      >&nbsp;
+                    </v-col>
+                    <v-col cols="12" md="4" sm="6" xs="12">
+                      <v-text-field
+                        v-model="search"
+                        density="compact"
+                        label="Search"
+                        prepend-inner-icon="mdi-magnify"
+                        variant="solo-inverted"
+                        flat
+                        width="100%"
+                        style="
+                          font-family: 'Lato', sans-serif;
+                          font-size: 15px;
+                          font-weight: lighter;
+                        "
+                        hide-details
+                        single-line
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
+                      <AddEmployee />
+                    </v-col>
+                  </v-row>
                 </v-card-title>
 
                 <v-divider></v-divider>
@@ -49,13 +65,11 @@
                         :headers="headers"
                         :items="EmployeeDetails2"
                         :search="search"
-                        v-model:expanded="expanded"
+                        label="Clients"
                         height="auto"
-                        rounded="md"
-                        :item-class="getRowClass"
-                        @click:row="toggleExpand"
-                        class="font-lato"
-                        :color="isdarkmode === true ? 'dark' : 'light'"
+                        rounded="xl"
+                        class="bg-cardColor"
+                        :row-props="getRowProps"
                       >
                         <template v-slot:[`item.details.firstName`]="{ value }">
                           <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
@@ -90,7 +104,7 @@
                             :style="'transform: rotate(90deg) dots'"
                             @click="(actionsDialog = true), selectItem(item)"
                           >
-                            <v-icon>mdi-dots-horizontal</v-icon>
+                            <v-icon color="primary">mdi-dots-horizontal</v-icon>
                           </v-btn>
                         </template>
                       </v-data-table>
@@ -590,6 +604,11 @@ export default {
     getColor(value: string) {
       if (value == '') return 'red'
       else return 'green'
+    },
+    getRowProps({ index } : any) {
+      return {
+        class: index % 2 ? 'bg-secondRowColor' : ''
+      }
     },
     getRowClass(item: any) {
       const index = this.clients.indexOf(item)

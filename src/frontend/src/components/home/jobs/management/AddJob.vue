@@ -1,15 +1,18 @@
 <template>
   <v-dialog max-height="800" max-width="900">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn
-        rounded="md"
-        class="text-none font-weight-regular hello"
-        prepend-icon="mdi-briefcase"
-        text="Add Job"
-        variant="elevated"
-        color="#5A82AF"
-        v-bind="activatorProps"
-      ></v-btn>
+      <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
+        <v-btn
+          rounded="md"
+          class="text-none font-weight-regular hello"
+          style="font-size: 20px"
+          text="Add Job"
+          prepend-icon="mdi-briefcase-plus"
+          variant="elevated"
+          color="secondary"
+          v-bind="activatorProps"
+        ></v-btn>
+      </v-defaults-provider>
     </template>
     <v-sheet
       elevation="14"
