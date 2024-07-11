@@ -18,10 +18,10 @@ const vuetify = createVuetify({
     VDialog: {
       VCard: {
         VCardTitle: {
-          class: 'text-h5 font-weight-regular bg-primary justify-center'
+          class: 'text-h5 font-weight-regular bg-primary justify-end'
         },
-        VCardText: {},
-        VCardActions: { class: 'text-h5 font-weight-regular justify-center' }
+        VCardText: { class: 'text-h7 font-weight-regular justify-center bg-cardColor' },
+        VCardActions: { class: 'text-h6 font-weight-regular justify-center bg-cardColor' }
       },
       VSheet: {
         VCardTitle: {
@@ -29,19 +29,22 @@ const vuetify = createVuetify({
         }
       }
     },
+
     VTextField: {
       variant: 'solo',
       rounded: 'md',
-      density: 'compact'
+      density: 'compact',
+      clearable: true,
+      color: 'cardColor'
     },
 
     VCard: {
       elevation: 14,
-      rounded: 'xl',
+      rounded: 'md',
       height: 'auto',
-      class: 'bg-cardColor ',
+
       VCardTitle: {
-        class: 'text-h5 font-weight-regular bg-primary d-flex justify-center text-blue'
+        class: 'text-h5 font-weight-regular  d-flex justify-center bg-cardColor text-secondary'
       },
       VCardText: { class: 'bg-cardColor', VList: { class: 'bg-cardColor' } }
     },
@@ -52,7 +55,7 @@ const vuetify = createVuetify({
       size: 'large'
     },
     VCardTitle: {
-      class: ''
+      class: 'text-h5 font-weight-regular bg-primary justify-center'
     },
     VSheet: {
       elevation: 14,
@@ -68,7 +71,7 @@ const vuetify = createVuetify({
       variant: 'solo'
     },
     VIcon: {
-      color: 'elementTextColor'
+      color: 'secondary'
     },
     Small: {
       color: 'elementTextColor',
@@ -126,14 +129,15 @@ const vuetify = createVuetify({
           success: '#37471F',
           warning: '#FFC107',
           cardColor: '#F1F2F4',
-          elementTextColor: '#44546F', // most important color for text
+          elementTextColor: '#4C9FC3', // most important color for text
           headingTextColor: '#091E42',
           n_elementTextColor: '#8C9BAB', // most nonImportant color for text
           highlighter: '#DEE4EA',
           tableRowColor: '',
           firstPlace: '#E2B203',
           secondPlace: '#626F86',
-          thirdPlace: '#533F04'
+          thirdPlace: '#533F04',
+          secondRowColor: '#dcdfe4'
         }
       },
       dark: {
@@ -154,7 +158,8 @@ const vuetify = createVuetify({
           tableRowColor: '#454f5',
           firstPlace: '#FFD700',
           secondPlace: '#C0C0C0',
-          thirdPlace: '#CD7F32'
+          thirdPlace: '#CD7F32',
+          secondRowColor: '#454f59'
         }
       }
     }
