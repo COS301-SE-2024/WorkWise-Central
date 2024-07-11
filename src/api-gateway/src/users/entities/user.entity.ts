@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+import { SchemaTypes, Types } from 'mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { Company } from '../../company/entities/company.entity';
 import { Employee } from '../../employee/entities/employee.entity';
@@ -14,7 +14,7 @@ export class SystemDetails {
 }
 
 export class ContactInfo {
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: true, unique: true })
   phoneNumber: string;
 
   @Prop({ type: String, unique: true, required: true, lowercase: true })
@@ -24,6 +24,8 @@ export class ContactInfo {
 export class Address {
   @Prop({ type: String, required: true })
   street: string;
+  @Prop({ type: String, required: true })
+  province: string;
   @Prop({ type: String, required: true })
   suburb: string;
   @Prop({ type: String, required: true })
@@ -89,9 +91,9 @@ export class JoinedCompany {
     this.companyName = companyName;
   }
 
-  @Prop({ type: Types.ObjectId, ref: Employee.name })
+  @Prop({ type: SchemaTypes.ObjectId, ref: Employee.name })
   employeeId: Types.ObjectId;
-  @Prop({ type: Types.ObjectId, ref: Company.name })
+  @Prop({ type: SchemaTypes.ObjectId, ref: Company.name })
   companyId: Types.ObjectId;
   @Prop({ type: String })
   companyName: string;
@@ -152,7 +154,7 @@ export class User {
   @Prop({
     type: [JoinedCompany],
     required: true,
-    ref: 'Company',
+    ref: Company.name,
     default: [],
   })
   joinedCompanies: JoinedCompany[] = [];
@@ -162,7 +164,7 @@ export class User {
   skills: string[] = [];
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
+  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Employee.name })
   public currentEmployee?: Types.ObjectId;
 
   @ApiProperty()
@@ -184,53 +186,34 @@ export class User {
 
 export class UserApiObject {
   @ApiProperty()
-  @Prop({ type: Types.ObjectId })
   _id: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ required: true })
   systemDetails: SystemDetails;
 
   @ApiProperty()
-  @Prop({ required: true })
   personalInfo: PersonalInfo;
 
   @ApiProperty()
-  @Prop({ required: true })
   profile: Profile;
 
   @ApiProperty()
-  @Prop({
-    type: [JoinedCompany],
-    required: false,
-    ref: 'Company',
-    default: [],
-  })
   joinedCompanies: JoinedCompany[] = [];
 
   @ApiProperty()
-  @Prop({ type: [String], required: false, default: [] })
   skills: string[] = [];
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
   public currentEmployee?: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: Boolean, required: false, default: false })
   public isValidated?: boolean = false;
 
   @ApiHideProperty()
-  @Prop({ type: Date, required: true, default: new Date() })
   public createdAt: Date = new Date();
 
   @ApiHideProperty()
-  @Prop({ type: Date, required: false })
   public updatedAt?: Date;
-
-  @ApiHideProperty()
-  @Prop({ type: Date, required: false })
-  public deletedAt?: Date;
 }
 
 export class SignInUserDto {

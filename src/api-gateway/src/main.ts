@@ -14,7 +14,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   const theme = new SwaggerTheme();
   const options = {
-    explorer: true,
     customCss: theme.getBuffer(SwaggerThemeNameEnum.ONE_DARK),
   };
   SwaggerModule.setup('documentation', app, document, options);

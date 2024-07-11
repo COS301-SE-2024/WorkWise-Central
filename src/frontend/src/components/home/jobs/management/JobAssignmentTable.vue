@@ -5,54 +5,62 @@
         <v-row justify="center">
           <v-col cols="12" xs="12" sm="12" md="12">
             <v-card
-              flat
-              :height="auto"
-              :max-height="auto"
-              class="pa-11 ma-0"
+              height="auto"
+              class="pa-11 ma-0 bg-cardColor"
               rounded="md"
-              elevation-2
-              :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+              :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
               border="md"
             >
               <v-card-title
-                class="d-flex align-center pe-2"
-                :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
-                style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
+                class="d-flex align-center pe-2 text-h5 font-weight-regular"
+                height="auto"
+                width="100%"
               >
-                <v-icon icon="mdi-account"></v-icon> &nbsp;Job Details
+                <v-row align="center" justify="space-between">
+                  <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+                    <v-icon icon="mdi-briefcase"></v-icon>
+                    <v-label
+                      class="ms-2 text-h4 font-family-lato text-headingTextColor"
+                      style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+                      height="auto"
+                      width="auto"
+                      >Job Details</v-label
+                    >
+                  </v-col>
 
-                <v-spacer></v-spacer>
-
-                <v-text-field
-                  v-model="search"
-                  density="compact"
-                  label="Search"
-                  prepend-inner-icon="mdi-magnify"
-                  variant="solo-inverted"
-                  flat
-                  style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
-                  hide-details
-                  :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
-                  single-line
-                  clearable
-                ></v-text-field>
-                <v-spacer></v-spacer>
-                <AddJob />
+                  <v-col cols="12" md="4" sm="6" xs="12">
+                    <v-text-field
+                      v-model="search"
+                      density="compact"
+                      label="Search"
+                      prepend-inner-icon="mdi-magnify"
+                      variant="solo-inverted"
+                      flat
+                      width="100%"
+                      style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+                      hide-details
+                      single-line
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
+                    <AddJob />
+                  </v-col>
+                </v-row>
               </v-card-title>
 
-              <v-divider></v-divider>
-              <v-col cols="12" xs="12" sm="12" md="12">
-                <div style="height: 700px; overflow-y: auto">
-                  <v-col cols="12" xs="12" sm="12" md="12">
+              <v-card-text>
+                <v-divider></v-divider>
+                <v-col cols="12" xs="12" sm="12" md="12">
+                  <div style="height: 700px; overflow-y: auto">
                     <v-data-table
                       :headers="headers"
                       :items="jobClientData"
                       :search="search"
+                      label="Jobs"
                       height="auto"
                       rounded="xl"
-                      :item-class="getRowClass"
-                      hover
-                      sticky
+                      class="bg-cardColor"
+                      :row-props="getRowProps"
                     >
                       <template v-slot:[`item.heading`]="{ value }">
                         {{ value }}
@@ -88,13 +96,13 @@
                           style="transform: rotate(0deg)"
                           @click="openDialog(item)"
                         >
-                          <v-icon color="#227D9B">mdi-dots-horizontal</v-icon>
+                          <v-icon color="primary">mdi-dots-horizontal</v-icon>
                         </v-btn>
                       </template>
                     </v-data-table>
-                  </v-col>
-                </div>
-              </v-col>
+                  </div>
+                </v-col>
+              </v-card-text>
             </v-card>
           </v-col>
         </v-row>
@@ -102,7 +110,10 @@
     >
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
-        <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
+        <v-card-title
+          class="text-h5 font-weight-regular bg-blue-grey text-center"
+          color="secondary"
+        >
           {{ selectedJob?.heading }}
         </v-card-title>
         <v-card-text> What would you like to do with this job? </v-card-text>
@@ -149,7 +160,7 @@
           </v-dialog>
 
           <v-btn color="primary" @click="editJobCardDialog()">Edit</v-btn>
-          <v-dialog v-model="managerJobCardDialog" max-width="2000px">
+          <v-dialog v-model="managerJobCardDialog" max-width="1000px">
             <ManagerJobCard
               :passedInJob="selectedJob"
               @close="managerJobCardDialog = false"
@@ -186,10 +197,6 @@ import AddJob from './AddJob.vue'
 import ManagerJobCard from './ManagerJobCard.vue'
 
 const search = ref('')
-const expanded = ref([])
-const isDarkMode = ref(false)
-const modal_dark_theme_color = '#333'
-const modal_light_theme_color = '#fff'
 const viewJobDialog = ref(false)
 // set the table headers
 
@@ -390,8 +397,10 @@ const getStatusColor = (status) => {
 //   currentItemToDelete = null
 // }
 
-const getRowClass = () => {
-  // Define your row class logic here
+const getRowProps = ({ index }) => {
+  return {
+    class: index % 2 ? 'bg-secondRowColor' : ''
+  }
 }
 
 onMounted(() => {
@@ -401,6 +410,6 @@ onMounted(() => {
 
 <style scoped>
 .v-data-table-header .v-icon {
-  color: #F38A3F; /* Your desired color */
+  color: #f38a3f; /* Your desired color */
 }
 </style>

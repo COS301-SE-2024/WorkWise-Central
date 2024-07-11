@@ -1,8 +1,8 @@
 <template>
   <v-card>
     <v-row>
-      <v-col xs="12" sm="9" md="9" lg="9" xl="9">
-        <v-card class="text-center" elevation="0" rounded="sm" >
+      <v-col xs="12" sm="9" md="9" lg="9" xl="9" class="pr-0 pb-0" cols="12">
+        <v-card class="text-center">
           <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
             <h2 class="flex-grow-1">{{ passedInJob.heading }}</h2>
           </v-card-title>
@@ -145,8 +145,8 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col xs="12" sm="3" md="3" lg="3" xl="3">
-<!--        <v-card flat class="pa-2">-->
+      <v-col xs="12" sm="3" md="3" lg="3" xl="3" class="pl-0 pb-0" cols="12">
+        <v-card flat class="pa-2">
           <div class="d-flex flex-column">
             <!--Job details and description Model Edit -->
 
@@ -269,10 +269,10 @@
                   </v-form>
                 </v-card-text>
 
-                <v-card-actions class="d-flex flex-column">
+                <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn @click="saveJobDetails"> Save </v-btn>
-                  <v-btn @click="cancelJob"> Cancel </v-btn>
+                  <v-btn color="blue darken-1" @click="saveJobDetails"> Save </v-btn>
+                  <v-btn color="blue darken-1" @click="cancelJob"> Cancel </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -311,11 +311,11 @@
                   </v-autocomplete>
                 </v-card-text>
 
-                <v-card-actions class="d-flex flex-column">
+                <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn @click="saveClient">Save</v-btn>
+                  <v-btn color="blue darken-1" @click="saveClient">Save</v-btn>
 
-                  <v-btn @click="clientDialog = false">Cancel</v-btn>
+                  <v-btn color="blue darken-1" @click="clientDialog = false">Cancel</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -352,10 +352,10 @@
                     variant="solo"
                   ></v-select>
                 </v-card-text>
-                <v-card-actions class="d-flex flex-column">
+                <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn @click="saveSelection"> Save </v-btn>
-                  <v-btn @click="membersDialog = false"> Cancel </v-btn>
+                  <v-btn color="blue darken-1" @click="saveSelection"> Save </v-btn>
+                  <v-btn color="blue darken-1" @click="membersDialog = false"> Cancel </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -401,10 +401,10 @@
                     ></v-radio>
                   </v-radio-group>
                 </v-card-text>
-                <v-card-actions class="d-flex flex-column">
+                <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn @click="saveStatus"> Save </v-btn>
-                  <v-btn @click="statusDialog = false"> Cancel </v-btn>
+                  <v-btn color="blue darken-1" @click="saveStatus"> Save </v-btn>
+                  <v-btn color="blue darken-1" @click="statusDialog = false"> Cancel </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -434,7 +434,7 @@
                         <v-alert type="error">{{ errorMessage }}</v-alert>
                       </v-col>
                     </v-row>
-                    <v-row class="mt-4 py-4" align="center">
+                    <v-row class="mt-4" align="center">
                       <v-col cols="12" md="6">
                         <v-row>
                           <v-checkbox
@@ -469,19 +469,20 @@
                     </v-row>
                   </v-container>
                 </v-card-text>
-                <v-card-actions class="d-flex flex-column">
-                  <v-btn @click="saveDate">Save </v-btn>
-                  <v-btn @click="removeDates">Remove</v-btn>
-                  <v-btn @click="dueDateDialog = false">Cancel</v-btn>
+                <v-card-actions>
+                  <v-btn color="blue darken-1" @click="saveDate">Save </v-btn>
+
+                  <v-btn color="blue darken-1" @click="removeDates">Remove</v-btn>
+                  <v-btn color="blue darken-1" @click="dueDateDialog = false">Cancel</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
           </div>
           <v-card-actions class="d-flex flex-column">
-            <v-btn class="mb-2" @click="saveJob">Save</v-btn>
-            <v-btn class="mb-4" @click="cancelJob">Cancel</v-btn>
+            <v-btn class="mb-2" color="blue darken-1" @click="saveJob">Save</v-btn>
+            <v-btn class="mb-4" color="blue darken-1" @click="cancelJob">Cancel</v-btn>
           </v-card-actions>
-<!--        </v-card>-->
+        </v-card>
       </v-col>
     </v-row>
   </v-card>

@@ -6,13 +6,10 @@
           <v-row justify="center">
             <v-col cols="12" xs="12" sm="12" md="12">
               <v-card
-                flat
                 height="auto"
-                max-height="auto"
-                class="pa-11 ma-0"
+                class="pa-11 ma-0 bg-cardColor"
                 rounded="md"
-                elevation-2
-                :color="isdarkmode === true ? 'dark' : 'light'"
+                :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
                 border="md"
               >
                 <v-card-title
@@ -20,24 +17,43 @@
                   :color="isdarkmode === true ? 'dark' : 'light'"
                   style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
                 >
-                  <v-icon icon="mdi-account"></v-icon> &nbsp; Employee Details
-
-                  <v-spacer></v-spacer>
-
-                  <v-text-field
-                    v-model="search"
-                    density="compact"
-                    label="Search"
-                    prepend-inner-icon="mdi-magnify"
-                    variant="outlined"
-                    flat
-                    style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
-                    hide-details
-                    :bg-color="isdarkmode === true ? 'dark' : 'light'"
-                    single-line
-                  ></v-text-field>
-                  <v-spacer></v-spacer>
-                  <AddEmployee />
+                  <v-row align="center" justify="space-between">
+                    <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+                      <v-icon icon="mdi-account-hard-hat"></v-icon>
+                      <v-label
+                        class="ms-2 text-h4 font-family-lato text-headingTextColor"
+                        style="
+                          font-family: 'Lato', sans-serif;
+                          font-size: 15px;
+                          font-weight: lighter;
+                        "
+                        height="auto"
+                        width="auto"
+                        >Employee Details</v-label
+                      >&nbsp;
+                    </v-col>
+                    <v-col cols="12" md="4" sm="6" xs="12">
+                      <v-text-field
+                        v-model="search"
+                        density="compact"
+                        label="Search"
+                        prepend-inner-icon="mdi-magnify"
+                        variant="solo-inverted"
+                        flat
+                        width="100%"
+                        style="
+                          font-family: 'Lato', sans-serif;
+                          font-size: 15px;
+                          font-weight: lighter;
+                        "
+                        hide-details
+                        single-line
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
+                      <AddEmployee />
+                    </v-col>
+                  </v-row>
                 </v-card-title>
 
                 <v-divider></v-divider>
@@ -49,13 +65,11 @@
                         :headers="headers"
                         :items="EmployeeDetails2"
                         :search="search"
-                        v-model:expanded="expanded"
+                        label="Clients"
                         height="auto"
-                        rounded="md"
-                        :item-class="getRowClass"
-                        @click:row="toggleExpand"
-                        class="font-lato"
-                        :color="isdarkmode === true ? 'dark' : 'light'"
+                        rounded="xl"
+                        class="bg-cardColor"
+                        :row-props="getRowProps"
                       >
                         <template v-slot:[`item.details.firstName`]="{ value }">
                           <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
@@ -90,7 +104,7 @@
                             :style="'transform: rotate(90deg) dots'"
                             @click="(actionsDialog = true), selectItem(item)"
                           >
-                            <v-icon>mdi-dots-horizontal</v-icon>
+                            <v-icon color="primary">mdi-dots-horizontal</v-icon>
                           </v-btn>
                         </template>
                       </v-data-table>
@@ -136,121 +150,7 @@ import router from '@/router/index'
 import EditEmployee from '@/components/home/employees/management/EditEmployee.vue'
 import DeleteEmployee from '@/components/home/employees/management/DeleteEmployee.vue'
 import EmployeeDetails from '@/components/home/employees/management/EmployeeDetails.vue'
-
-type Address = {
-  street: string
-  suburb: string
-  city: string
-  postalCode: string
-  complex: string
-  houseNumber: string
-}
-
-type ContactInfo = {
-  phoneNumber: string
-  email: string
-}
-
-type Person = {
-  address: Address
-  contactInfo: ContactInfo
-  firstName: string
-  surname: string
-  preferredLanguage: string
-  dateOfBirth: string // ISO 8601 date string
-  gender: string
-  id: string // Assuming this is a MongoDB ObjectId in string format
-  roleId: string // Assuming this is a MongoDB ObjectId in string format
-  roleName: string
-}
-
-type SystemDetails = {
-  email: string
-  password: string
-  username: string
-  _id: string
-}
-
-type Profile = {
-  displayName: string
-  displayImage: string
-  _id: string
-}
-
-type Roles = {
-  role: string
-  permissions: string[]
-  _id: string
-}
-
-type JoinedCompany = {
-  // Define properties for joined companies if there are any; currently it's an empty object
-  // e.g., companyName?: string
-}
-
-type User = {
-  data: {
-    _id: string
-    systemDetails: SystemDetails
-    personalInfo: EmployeePersonalInfo
-    profile: Profile
-    roles: Roles
-    joinedCompanies: JoinedCompany[]
-    skills: string[]
-    created_at: string // ISO 8601 date string
-    __v: number
-  }
-}
-
-type JobAssignment = {
-  // Define properties for job assignments if there are any
-}
-
-type Subordinate = {
-  // Define properties for subordinates if there are any
-}
-
-type SubordinateTeam = {
-  // Define properties for subordinate teams if there are any
-}
-
-type Employee = {
-  _id: string
-  currentJobAssignments: JobAssignment[]
-  subordinates: Subordinate[]
-  subordinateTeams: SubordinateTeam[]
-  userId: string
-  companyId: string
-  createdAt: string
-  __v: number
-  roleId: string
-  updatedAt: string
-  superiorId: string
-}
-
-type EmployeePersonalInfo = {
-  address: {
-    street: string
-    suburb: string
-    city: string
-    postalCode: string
-    complex: string
-    houseNumber: string
-  }
-  contactInfo: {
-    phoneNumber: string
-    email: string
-  }
-  firstName: string
-  surname: string
-  preferredLanguage: string
-  dateOfBirth: string
-  gender: string
-  roleId: string
-  roleName: string
-  employeeId: string
-  userId: string
-}
+import { type Employee, type EmployeePersonalInfo, type Person, type User } from '../types'
 
 export default {
   name: 'ClientDesk',
@@ -522,7 +422,7 @@ export default {
           apiURL + `employee/all/${sessionStorage['currentCompany']}`,
           config
         )
-        let employee_all_data: Employee[] = employee_response.data
+        let employee_all_data: Employee[] = employee_response.data.data
 
         let company_employee_arr: EmployeePersonalInfo[] = []
         for (let i = 0; i < employee_all_data.length; i++) {
@@ -532,8 +432,6 @@ export default {
           )
 
           const user_data: User = users_response.data
-
-          // console.log(user_data)
 
           if (user_data.data.personalInfo.address === undefined) continue
 
@@ -560,7 +458,7 @@ export default {
                 dateOfBirth: user_data.data.personalInfo.dateOfBirth,
                 gender: user_data.data.personalInfo.gender,
                 roleId: employee_all_data[i].roleId,
-                roleName: role.data.roleName,
+                roleName: role.data.data.roleName,
                 employeeId: employee_all_data[i]._id,
                 userId: employee_all_data[i].userId
               }
@@ -689,6 +587,11 @@ export default {
     getColor(value: string) {
       if (value == '') return 'red'
       else return 'green'
+    },
+    getRowProps({ index } : any) {
+      return {
+        class: index % 2 ? 'bg-secondRowColor' : ''
+      }
     },
     getRowClass(item: any) {
       const index = this.clients.indexOf(item)

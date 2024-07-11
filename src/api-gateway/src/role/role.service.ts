@@ -180,7 +180,7 @@ export class RoleService {
     const teamRoleDto = new CreateRoleDto();
     teamRoleDto.companyId = companyId;
     teamRoleDto.roleName = 'Team leader';
-    teamRoleDto.permissionSuite.push('edit employees');
+    teamRoleDto.permissionSuite.push('edit all employees');
     teamRoleDto.permissionSuite.push('view all jobs assigned to me');
     teamRoleDto.permissionSuite.push('edit all jobs');
     teamRoleDto.permissionSuite.push('edit jobs that are assigned to me');

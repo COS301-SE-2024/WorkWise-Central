@@ -3,14 +3,14 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import {
   CreateCompanyDto,
   CreateCompanyResponseDto,
 } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { FlattenMaps, Model, Types } from 'mongoose';
+import { FlattenMaps, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
 import { JoinedCompany } from '../users/entities/user.entity';
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
@@ -20,13 +20,11 @@ import { EmployeeService } from '../employee/employee.service';
 import { RoleService } from '../role/role.service';
 import { UsersService } from '../users/users.service';
 import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
+import { Employee } from '../employee/entities/employee.entity';
 
 @Injectable()
 export class CompanyService {
   constructor(
-    @InjectModel(Company.name)
-    private readonly companyModel: Model<Company>,
-
     private readonly companyRepository: CompanyRepository,
     @Inject(forwardRef(() => EmployeeService))
     private readonly employeeService: EmployeeService,
@@ -43,26 +41,24 @@ export class CompanyService {
     if (!inputValidated.isValid) {
       throw new ConflictException(inputValidated.message);
     }
+    //Create Company
+    const createdCompany = await this.companyRepository.save(
+      new Company(createCompanyDto),
+    );
 
-    const newCompany = new Company(createCompanyDto);
-    const newCompanyModel = new this.companyModel(newCompany);
+    //Create Default role in company
+    await this.roleService.createDefaultRoles(createdCompany._id);
 
-    const createdCompany = await newCompanyModel.save();
-
-    //Create first role in company
-    const allPermissions = this.roleService.getPermissionsArray();
-
-    const createdRole = await this.roleService.create({
-      companyId: createdCompany._id,
-      roleName: 'owner',
-      permissionSuite: allPermissions,
-    });
+    //Assign Owner to user
+    const ownerRoleId = (
+      await this.roleService.findOneInCompany('Owner', createdCompany._id)
+    )._id;
 
     const employee = await this.employeeService.create({
       userId: createCompanyDto.userId,
       companyId: createdCompany._id,
       superiorId: null,
-      roleId: createdRole._id,
+      roleId: ownerRoleId,
     });
 
     const user = await this.usersService.getUserById(createCompanyDto.userId);
@@ -78,7 +74,7 @@ export class CompanyService {
     });
 
     createdCompany.employees.push(employee._id);
-    await this.update(createdCompany.id, {
+    await this.update(user._id, createdCompany.id, {
       employees: createdCompany.employees,
     });
 
@@ -98,7 +94,8 @@ export class CompanyService {
   }
 
   getAllCompanies() {
-    return this.companyRepository.findAll();
+    const fieldsToPopulate = ['employees'];
+    return this.companyRepository.findAll(fieldsToPopulate);
   }
 
   async getAllEmployees(companyId: Types.ObjectId) {
@@ -110,7 +107,7 @@ export class CompanyService {
   }
 
   async getCompanyById(
-    identifier: string | Types.ObjectId,
+    identifier: Types.ObjectId,
   ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
     const result = await this.companyRepository.findById(identifier);
 
@@ -165,17 +162,31 @@ export class CompanyService {
     const user = await this.usersService.getUserByUsername(
       addUserDto.newUserUsername,
     );
+    //Ask about superiorId
     //CreateEmployee and link them to the company
-    const newEmployeeId = (
-      await this.employeeService.create({
+    let addedEmployee: Employee & { _id: Types.ObjectId };
+    if (addUserDto.roleId) {
+      addedEmployee = await this.employeeService.create({
         companyId: addUserDto.currentCompany,
         userId: user._id,
-      })
-    )._id;
+        roleId: addUserDto.roleId,
+      });
+    } else {
+      const defaultRole = await this.roleService.findOneInCompany(
+        'Worker',
+        addUserDto.currentCompany,
+      );
+
+      addedEmployee = await this.employeeService.create({
+        companyId: addUserDto.currentCompany,
+        userId: user._id,
+        roleId: defaultRole._id,
+      });
+    }
 
     const joinedCompany: JoinedCompany = {
       companyId: addUserDto.currentCompany,
-      employeeId: newEmployeeId,
+      employeeId: addedEmployee._id,
       companyName: companyName,
     };
     user.joinedCompanies.push(joinedCompany);
@@ -184,35 +195,60 @@ export class CompanyService {
       joinedCompanies: user.joinedCompanies,
     });
 
-    company.employees.push(newEmployeeId);
-    await this.update(company._id, { employees: company.employees });
-
+    company.employees.push(addedEmployee._id);
+    await this.update(user._id, company._id, { employees: company.employees });
+    //TODO: UPdate
     console.log(updatedUser);
     return joinedCompany;
   }
 
-  async update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
+  async update(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+    updateCompanyDto: UpdateCompanyDto,
+  ) {
     const inputValidated = await this.companyUpdateIsValid(updateCompanyDto);
     if (!inputValidated.isValid) {
       throw new ConflictException(inputValidated.message);
     }
 
+    if (!(await this.usersService.userIsInCompany(userId, companyId)))
+      throw new UnauthorizedException('User not in company');
+
     const updatedCompany = await this.companyRepository.update(
-      id,
+      companyId,
       updateCompanyDto,
     );
     console.log(updatedCompany);
     return updatedCompany;
   }
 
-  async deleteCompany(id: Types.ObjectId): Promise<boolean> {
-    const usersInCompany = await this.usersService.getAllUsersInCompany(id);
+  async deleteCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ): Promise<boolean> {
+    const user = await this.usersService.getUserById(userId);
+    let empId: Types.ObjectId;
+    for (const joinedCompany of user.joinedCompanies) {
+      if (joinedCompany.companyId.equals(companyId)) {
+        empId = joinedCompany.employeeId;
+      }
+    }
+    const emp = await this.employeeService.findById(empId);
+    const role = await this.roleService.findById(emp.roleId);
+
+    if (role.roleName !== 'Owner') {
+      throw new UnauthorizedException('Only the owner can perform this action');
+    }
+
+    const usersInCompany =
+      await this.usersService.getAllUsersInCompany(companyId);
 
     for (const user of usersInCompany) {
       const newJoinedCompanies: JoinedCompany[] = [];
 
       for (const joinedCompany of user.joinedCompanies) {
-        if (joinedCompany.companyId !== id) {
+        if (joinedCompany.companyId !== companyId) {
           //Create new list, without company
           newJoinedCompanies.push(joinedCompany);
         } else {
@@ -224,7 +260,7 @@ export class CompanyService {
         joinedCompanies: newJoinedCompanies,
       });
     }
-    await this.companyRepository.delete(id);
+    await this.companyRepository.delete(companyId);
     return true;
   }
 
@@ -404,6 +440,10 @@ export class CompanyService {
     return new ValidationResult(true);
   }
 
+  async getCompanyWithEmployee(employeeId: Types.ObjectId) {
+    return this.companyRepository.findCompanyWithEmployee(employeeId);
+  }
+
   async companyDeleteIsValid(deleteEmployeeDto: DeleteEmployeeFromCompanyDto) {
     let valid = await this.employeeService.employeeExistsForCompany(
       deleteEmployeeDto.employeeToDeleteId,
@@ -423,22 +463,49 @@ export class CompanyService {
     return new ValidationResult(true);
   }
 
-  async deleteEmployee(deleteEmployee: DeleteEmployeeFromCompanyDto) {
+  async deleteEmployee(
+    userId: Types.ObjectId,
+    deleteEmployee: DeleteEmployeeFromCompanyDto,
+  ) {
     const valid = await this.companyDeleteIsValid(deleteEmployee);
-    const deletedEmployee = await this.employeeService.findById(
+    const employeeToDelete = await this.employeeService.findById(
       deleteEmployee.employeeToDeleteId,
     );
 
-    if (!valid) {
-      throw new ConflictException(valid.message);
+    if (!valid) throw new ConflictException(valid.message);
+
+    if (
+      !(await this.usersService.userIsInSameCompanyAsEmployee(
+        userId,
+        deleteEmployee.employeeToDeleteId,
+      ))
+    )
+      throw new UnauthorizedException('Only the owner can perform this action');
+
+    if (!userId.equals(deleteEmployee.adminId))
+      throw new UnauthorizedException('Inconsistent Admin ID is invalid');
+
+    let user = await this.usersService.getUserById(userId);
+    const emp = await this.employeeService.findById(
+      deleteEmployee.employeeToDeleteId,
+    );
+    const role = await this.roleService.findById(emp.roleId);
+
+    if (role.roleName !== 'Owner') {
+      throw new UnauthorizedException('Only the owner can perform this action');
     }
+
     await this.employeeService.remove(deleteEmployee.employeeToDeleteId);
 
-    const user = await this.usersService.getUserById(deletedEmployee.userId);
-    user.joinedCompanies.filter((x) => x.employeeId !== deletedEmployee._id);
+    user = await this.usersService.getUserById(employeeToDelete.userId);
+    user.joinedCompanies.filter((x) => x.employeeId !== employeeToDelete._id);
     const update = { joinedCompanies: user.joinedCompanies };
     await this.usersService.updateUser(user._id, update);
 
     return true;
+  }
+
+  async getAllCompanyNames() {
+    return await this.companyRepository.findAllNames();
   }
 }

@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, OmitType } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import {
   IsBoolean,
@@ -36,6 +36,12 @@ class Address {
   @IsString()
   @MaxLength(255)
   street: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(255)
+  province: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -124,4 +130,21 @@ export class CreateCompanyResponseDto {
   constructor(data: Company & { _id: Types.ObjectId }) {
     this.data = data;
   }
+}
+
+class FilteredAddress extends OmitType(Address, ['street']) {}
+
+class CompanyAllType {
+  registrationNumber: string;
+  vatNumber: string;
+  name: string;
+  logo: string;
+  address: FilteredAddress;
+}
+
+export class CompanyAllNameResponseDto {
+  constructor(data: CompanyAllType[]) {
+    this.data = data;
+  }
+  data: CompanyAllType[];
 }
