@@ -1,11 +1,11 @@
 <template>
-  <v-card>
+  <v-card class="bg-cardColor">
+    <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
+      <h2 class="flex-grow-1">{{ passedInJob.heading }}</h2>
+    </v-card-title>
     <v-row>
       <v-col xs="12" sm="9" md="9" lg="9" xl="9" class="pr-0 pb-0" cols="12">
-        <v-card class="text-center">
-          <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-            <h2 class="flex-grow-1">{{ passedInJob.heading }}</h2>
-          </v-card-title>
+        <v-card flat class="text-center elevation-0">
 
           <v-card-text>
             <v-list>
@@ -146,13 +146,13 @@
         </v-card>
       </v-col>
       <v-col xs="12" sm="3" md="3" lg="3" xl="3" class="pl-0 pb-0" cols="12">
-        <v-card flat class="pa-2">
+        <v-card flat class="pa-5 bg-cardColor elevation-0">
           <div class="d-flex flex-column">
             <!--Job details and description Model Edit -->
 
             <v-btn class="mb-2" outlined @click="detailsDialog = true">
               <v-icon class="d-none d-lg-inline-block mr-2" left
-                >mdi-card-account-details-outline</v-icon
+                >{{'fa: fa-solid fa-pencil-alt'}}</v-icon
               >
               Edit Details
             </v-btn>
@@ -269,10 +269,9 @@
                   </v-form>
                 </v-card-text>
 
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" @click="saveJobDetails"> Save </v-btn>
-                  <v-btn color="blue darken-1" @click="cancelJob"> Cancel </v-btn>
+                <v-card-actions class="d-flex flex-column">
+                  <v-btn @click="saveJobDetails" color="success"> Save </v-btn>
+                  <v-btn @click="cancelJobDetails" color="error"> Cancel </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -280,7 +279,7 @@
             <!-- For client change -->
 
             <v-btn class="mb-2" outlined @click="openClientDialogAndFetchClients">
-              <v-icon class="d-none d-lg-inline-block mr-2" left>mdi-account-switch</v-icon>
+              <v-icon class="d-none d-lg-inline-block mr-2" left>{{'fa: fa-solid fa-user-edit'}}</v-icon>
               Change Client
             </v-btn>
 
@@ -298,7 +297,7 @@
                     hint="Click the field to select a client"
                     :items="clientNames"
                     label="Select Client"
-                    prepend-icon="mdi-account"
+                    prepend-icon="fa: fa-solid fa-handshake"
                     persistent-hint
                     outlined
                     dense
@@ -311,11 +310,9 @@
                   </v-autocomplete>
                 </v-card-text>
 
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" @click="saveClient">Save</v-btn>
-
-                  <v-btn color="blue darken-1" @click="clientDialog = false">Cancel</v-btn>
+                <v-card-actions class="d-flex flex-column">
+                  <v-btn @click="saveClient" color="success">Save</v-btn>
+                  <v-btn @click="clientDialog = false" color="error">Cancel</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -324,7 +321,7 @@
 
             <v-btn class="mb-2" outlined @click="membersDialog = true">
               <v-icon class="d-none d-lg-inline-block mr-2" left
-                >mdi-card-account-details-outline</v-icon
+                >{{'fa: fa-solid fa-users-cog'}}</v-icon
               >
               Select Employees
             </v-btn>
@@ -341,7 +338,7 @@
                     :items="states"
                     hint="Pick your favorite states"
                     label="Select Team Members"
-                    prepend-icon="mdi-account-multiple"
+                    prepend-icon="fa: fa-solid fa-users"
                     multiple
                     persistent-hint
                     outlined
@@ -352,16 +349,15 @@
                     variant="solo"
                   ></v-select>
                 </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" @click="saveSelection"> Save </v-btn>
-                  <v-btn color="blue darken-1" @click="membersDialog = false"> Cancel </v-btn>
+                <v-card-actions class="d-flex flex-column">
+                  <v-btn @click="saveSelection" color="success"> Save </v-btn>
+                  <v-btn @click="membersDialog = false" color="error"> Cancel </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
 
             <v-btn class="mb-2" outlined @click="statusDialog = true">
-              <v-icon class="d-none d-lg-inline-block mr-2" left>mdi-warehouse</v-icon>
+              <v-icon class="d-none d-lg-inline-block mr-2" left>{{'fa: fa-solid fa-tasks'}}</v-icon>
               Update Status
             </v-btn>
 
@@ -401,22 +397,21 @@
                     ></v-radio>
                   </v-radio-group>
                 </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" @click="saveStatus"> Save </v-btn>
-                  <v-btn color="blue darken-1" @click="statusDialog = false"> Cancel </v-btn>
+                <v-card-actions class="d-flex flex-column">
+                  <v-btn @click="saveStatus" color="success"> Save </v-btn>
+                  <v-btn @click="statusDialog = false" color="error"> Cancel </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
 
             <v-btn class="mb-2" outlined @click="dueDateDialog = true">
-              <v-icon class="d-none d-lg-inline-block mr-2" left>mdi-calendar-clock</v-icon>
+              <v-icon class="d-none d-lg-inline-block mr-2" left>{{'fa: fa-solid fa-calendar-alt'}}</v-icon>
               Change Due Date
             </v-btn>
 
             <v-dialog v-model="dueDateDialog" max-width="600px">
               <v-card>
-                <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
+                <v-card-title>
                   Enter the due date for this job
                 </v-card-title>
 
@@ -425,7 +420,7 @@
                     <v-row justify="space-around">
                       <v-date-picker
                         v-model="currentDate"
-                        color="primary"
+                        color="secondary"
                         @update:modelValue="updateDates"
                       ></v-date-picker>
                     </v-row>
@@ -434,7 +429,7 @@
                         <v-alert type="error">{{ errorMessage }}</v-alert>
                       </v-col>
                     </v-row>
-                    <v-row class="mt-4" align="center">
+                    <v-row class="pt-7" align="center">
                       <v-col cols="12" md="6">
                         <v-row>
                           <v-checkbox
@@ -469,18 +464,18 @@
                     </v-row>
                   </v-container>
                 </v-card-text>
-                <v-card-actions>
-                  <v-btn color="blue darken-1" @click="saveDate">Save </v-btn>
+                <v-card-actions class="d-flex flex-column pt-0">
+                  <v-btn @click="saveDate" color="success">Save </v-btn>
 
-                  <v-btn color="blue darken-1" @click="removeDates">Remove</v-btn>
-                  <v-btn color="blue darken-1" @click="dueDateDialog = false">Cancel</v-btn>
+                  <v-btn @click="removeDates" color="warning">Remove</v-btn>
+                  <v-btn @click="dueDateDialog = false" color="error">Cancel</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
           </div>
           <v-card-actions class="d-flex flex-column">
-            <v-btn class="mb-2" color="blue darken-1" @click="saveJob">Save</v-btn>
-            <v-btn class="mb-4" color="blue darken-1" @click="cancelJob">Cancel</v-btn>
+            <v-btn class="mb-2" @click="saveJob" color="success">Save</v-btn>
+            <v-btn class="mb-4" @click="cancelJob" color="error">Cancel</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -528,6 +523,10 @@ const saveJobDetails = () => {
   // Save job details logic here
   detailsDialog.value = false
   console.log('Job Details:', job.value)
+}
+
+const cancelJobDetails = () => {
+  detailsDialog.value = false
 }
 
 // Selecting team members
