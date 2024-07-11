@@ -45,132 +45,100 @@ export class EmployeeService {
     private teamService: TeamService,
   ) {}
 
-  async validateEmployee(
-    employee: Employee | CreateEmployeeDto | UpdateEmployeeDto,
-    companyId?: Types.ObjectId,
+  async validateCreateEmployee(employee: CreateEmployeeDto) {
+    // Checking that the company exists
+    if (!(await this.companyService.companyIdExists(employee.companyId))) {
+      throw new ConflictException('Company not found');
+    }
+
+    // Checking that the user exists
+    if (!(await this.usersService.userIdExists(employee.userId))) {
+      throw new ConflictException('User not found');
+    }
+
+    // Checking if the roleId was passed and if it exists
+    if (employee.roleId) {
+      if (
+        !(await this.roleService.roleExistsInCompany(
+          employee.roleId,
+          employee.companyId,
+        ))
+      ) {
+        throw new ConflictException('Role not found');
+      }
+    }
+
+    // Checking if the superiorId was passed and if it exists
+    if (employee.superiorId) {
+      if (
+        !(await this.employeeExistsForCompany(
+          employee.superiorId,
+          employee.companyId,
+        ))
+      ) {
+        throw new ConflictException('Superior not found');
+      }
+    }
+  }
+
+  async validateUpdateEmployee(
+    companyId: Types.ObjectId,
+    employee: UpdateEmployeeDto,
   ) {
-    if (!companyId && !('companyId' in employee)) {
-      //Potentially not necessary
-      if (employee.roleId) {
-        if (!(await this.roleService.roleExists(employee.roleId))) {
-          throw new ConflictException('Role not found');
-        }
-      }
-
-      if (employee.superiorId) {
-        if (!(await this.employeeExists(employee.superiorId))) {
-          throw new ConflictException('Superior not found');
-        }
-      }
-
+    // Check if the roleId is passed and exists for the company
+    if (employee.roleId) {
       if (
-        'currentJobAssignments' in employee &&
-        employee.currentJobAssignments
+        !(await this.roleService.roleExistsInCompany(
+          employee.roleId,
+          companyId,
+        ))
       ) {
-        for (const jobId of employee.currentJobAssignments) {
-          if (!(await this.jobService.jobExists(jobId))) {
-            throw new ConflictException(
-              `Job assignment ${jobId.toString()} not found`,
-            );
-          }
+        throw new ConflictException('Role not found');
+      }
+    }
+    // Check if the currentJobAssignments is passed and exists for the company
+    if (employee.currentJobAssignments) {
+      for (const jobId of employee.currentJobAssignments) {
+        if (!(await this.jobService.jobExistsInCompany(jobId, companyId))) {
+          throw new ConflictException('Job not found');
         }
       }
-
-      if ('subordinates' in employee && employee.subordinates) {
-        for (const subordinateId of employee.subordinates) {
-          if (!(await this.employeeExists(subordinateId))) {
-            throw new ConflictException(
-              `Subordinate ${subordinateId} not found`,
-            );
-          }
-        }
-      }
-
-      if ('subordinateTeams' in employee && employee.subordinateTeams) {
-        for (const teamId of employee.subordinateTeams) {
-          if (!(await this.teamService.teamExists(teamId))) {
-            throw new ConflictException(`Subordinate team ${teamId} not found`);
-          }
-        }
-      }
-    } else {
-      if (!companyId && 'companyId' in employee && employee.companyId) {
-        companyId = employee.companyId;
-      }
-
-      // console.log('Company ID: ' + companyId);
-
-      if (employee.roleId) {
-        if (
-          !(await this.roleService.roleExistsInCompany(
-            employee.roleId,
-            companyId,
-          ))
-        ) {
-          throw new ConflictException('Role not found');
-        }
-      }
-
-      if (employee.superiorId) {
-        if (
-          !(await this.employeeExistsForCompany(employee.superiorId, companyId))
-        ) {
-          throw new ConflictException('Superior not found');
-        }
-      }
-
+    }
+    // Check if the superiorId is passed and exists for the company
+    if (employee.superiorId) {
       if (
-        'currentJobAssignments' in employee &&
-        employee.currentJobAssignments
+        !(await this.employeeExistsForCompany(employee.superiorId, companyId))
       ) {
-        for (const jobId of employee.currentJobAssignments) {
-          if (!(await this.jobService.jobExistsInCompany(jobId, companyId))) {
-            throw new ConflictException(
-              `Job assignment ${jobId.toString()} not found`,
-            );
-          }
-        }
+        throw new ConflictException('Superior not found');
       }
+    }
 
-      if ('subordinates' in employee && employee.subordinates) {
-        for (const subordinateId of employee.subordinates) {
-          if (
-            !(await this.employeeExistsForCompany(subordinateId, companyId))
-          ) {
-            throw new ConflictException(
-              `Subordinate ${subordinateId.toString()} not found`,
-            );
-          }
-        }
-      }
-
-      if ('subordinateTeams' in employee && employee.subordinateTeams) {
-        for (const teamId of employee.subordinateTeams) {
-          if (
-            !(await this.teamService.teamExistsInCompany(teamId, companyId))
-          ) {
-            throw new ConflictException(
-              `Subordinate team ${teamId.toString()} not found`,
-            );
-          }
+    // Check if the subordinates is passed and exists for the company
+    if (employee.subordinates) {
+      for (const subordinateId of employee.subordinates) {
+        if (!(await this.employeeExistsForCompany(subordinateId, companyId))) {
+          throw new ConflictException('Subordinate not found');
         }
       }
     }
 
-    if ('userId' in employee && employee.userId) {
-      if (!(await this.usersService.userIdExists(employee.userId.toString()))) {
-        throw new ConflictException('User not found');
+    // Check if the subordinateTeams is passed and exists for the company
+    if (employee.subordinateTeams) {
+      for (const teamId of employee.subordinateTeams) {
+        if (!(await this.teamService.teamExistsInCompany(teamId, companyId))) {
+          throw new ConflictException('Team not found');
+        }
       }
     }
   }
 
   async create(createEmployeeDto: CreateEmployeeDto) {
-    // console.log('create function');
+    console.log('create function');
     try {
-      await this.validateEmployee(createEmployeeDto);
+      await this.validateCreateEmployee(createEmployeeDto);
       //Checking if the user is in the company
     } catch (error) {
-      // console.log('error -> ', error);
+      console.log('error -> ', error);
       throw new InternalServerErrorException(error);
     }
 
@@ -195,9 +163,7 @@ export class EmployeeService {
     }
 
     const model = new this.employeeModel(newEmployee);
-    const result = await model.save();
-
-    return result;
+    return await model.save();
   }
 
   async findAll() {
@@ -243,7 +209,7 @@ export class EmployeeService {
     // console.log('update function');
     try {
       const companyId = await this.getCompanyIdFromEmployee(id);
-      await this.validateEmployee(updateEmployeeDto, companyId);
+      await this.validateUpdateEmployee(companyId, updateEmployeeDto);
     } catch (error) {
       // console.log('error -> ', error);
       return `${error}`;
