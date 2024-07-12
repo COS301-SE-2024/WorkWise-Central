@@ -148,7 +148,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
-                class="item-list-small"
+                class="list-item-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -169,7 +169,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
-                class="item-list-small"
+                class="list-item-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -190,7 +190,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
-                class="item-list-small"
+                class="list-item-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -211,7 +211,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
-                class="item-list-small"
+                class="list-item-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -232,7 +232,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
-                class="item-list-small"
+                class="list-item-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -253,7 +253,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
-                class="item-list-small"
+                class="list-item-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -274,7 +274,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
-                class="item-list-small"
+                class="list-item-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -295,7 +295,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
-                class="item-list-small"
+                class="list-item-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
