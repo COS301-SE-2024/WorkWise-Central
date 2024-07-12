@@ -9,9 +9,9 @@
       >
         <v-avatar
             color="secondary"
-            size="medium"
+            style="width:38px; height: 36px;"
         >
-          <span class="text-h5">{{ user.initials }}</span>
+          <span class="text-h6">{{ user.initials }}</span>
         </v-avatar>
       </v-btn>
     </template>
@@ -19,7 +19,7 @@
       <v-card-text>
         <div class="mx-auto text-center">
           <v-avatar
-              color="brown"
+              color="secondary"
           >
             <span class="text-h5">{{ user.initials }}</span>
           </v-avatar>
@@ -63,4 +63,8 @@ const user = {
   fullName: 'John Doe',
   email: 'john.doe@doe.com'
 };
+
 </script>
+<style>
+
+</style>
