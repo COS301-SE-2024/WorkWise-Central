@@ -3,7 +3,6 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
@@ -59,17 +58,10 @@ export class TeamService {
     }
 
     // Check if the team already exists in the company
-    try {
-      if (
-        await this.teamRepository.teamNameExistsInCompany(
-          team.teamName,
-          team.companyId,
-        )
-      ) {
-        throw new ConflictException('Team already exists');
-      }
-    } catch (error) {
-      throw error;
+    if (
+      (await this.findByNameInCompany(team.teamName, team.companyId)) != null
+    ) {
+      throw new ConflictException('Team already exists');
     }
   }
 
@@ -77,10 +69,13 @@ export class TeamService {
     // Getting the company ID from the team
     const teamTemp = await this.findById(teamId);
     const companyId = teamTemp.companyId;
-
+    console.log('companyId: ', companyId);
+    console.log('one');
     // Check if the team exists in the company
     if ('teamMembers' in team && team.teamMembers) {
+      console.log('A');
       for (const memberId of team.teamMembers) {
+        console.log('member: ', memberId);
         if (
           !(await this.employeeService.employeeExistsForCompany(
             memberId,
@@ -93,14 +88,14 @@ export class TeamService {
         }
       }
     }
-
+    console.log('two');
     // Check if the team leader exists in the company
     if ('teamLeaderId' in team && team.teamLeaderId) {
       if (!(await this.employeeService.employeeExists(team.teamLeaderId))) {
         throw new ConflictException('Team leader not found');
       }
     }
-
+    console.log('three');
     // Check if the jobs exist in the company
     if ('currentJobAssignments' in team && team.currentJobAssignments) {
       for (const jobId of team.currentJobAssignments) {
@@ -111,13 +106,12 @@ export class TeamService {
         }
       }
     }
-
+    console.log('four');
     // Check if the team already exists in the company
-    try {
-      if (await this.findByNameInCompany(team.teamName, companyId)) {
-        throw new ConflictException('Team already exists');
-      }
-    } catch (error) {}
+
+    if ((await this.findByNameInCompany(team.teamName, companyId)) != null) {
+      throw new ConflictException('Team already exists');
+    }
   }
 
   async create(createTeamDto: CreateTeamDto) {
@@ -143,9 +137,6 @@ export class TeamService {
     identifier: Types.ObjectId,
   ): Promise<FlattenMaps<Team> & { _id: Types.ObjectId }> {
     const result = await this.teamRepository.findById(identifier);
-    if (result == null) {
-      throw new NotFoundException('Company not found');
-    }
     return result;
   }
 
@@ -154,9 +145,6 @@ export class TeamService {
       name,
       companyId,
     );
-    if (result == null) {
-      throw new NotFoundException('Team not found');
-    }
     return result;
   }
 
@@ -172,7 +160,14 @@ export class TeamService {
   }
 
   async update(id: Types.ObjectId, updateTeamDto: UpdateTeamDto) {
+    console.log(
+      'In update service.\n id: ',
+      id,
+      '\n updateDTO: ',
+      updateTeamDto,
+    );
     await this.validateUpdateTeam(id, updateTeamDto);
+    console.log('validate complete');
     return this.teamRepository.update(id, updateTeamDto);
   }
 
