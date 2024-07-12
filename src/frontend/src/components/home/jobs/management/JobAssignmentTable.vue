@@ -118,41 +118,105 @@
           <v-btn color="success" @click="viewJobDialog = true">View</v-btn>
           <!-- View Job Dialog -->
           <v-dialog v-model="viewJobDialog" max-width="500">
-            <v-card class="elevation-12 rounded-lg mx-auto my-5" max-width="600">
-              <!-- Dialog title -->
-              <v-card-title
-                class="text-h5 font-weight-regular bg-blue-grey text-center white--text py-4"
-              >
-                View Job Details
+            <v-card
+                elevation="14"
+                rounded="md"
+                :max-width="500"
+                :max-height="800"
+            >
+              <v-card-title>
+                Job Details
               </v-card-title>
-              <!-- Dialog content -->
-              <v-card-text class="py-4 px-6 text-center">
-                <div class="mb-3"><strong>Job Title:</strong> {{ selectedJob.heading }}</div>
-                <div class="mb-3">
-                  <strong>Description:</strong> {{ selectedJob.jobDescription }}
-                </div>
-                <div class="mb-3">
-                  <strong>Status:</strong>
-                  <v-chip :color="getStatusColor(selectedJob.status)" dark>{{
-                    selectedJob.status
-                  }}</v-chip>
-                </div>
-                <div class="mb-3">
-                  <strong>Address:</strong>
-                  <div>Street: {{ selectedJob.street }}</div>
-                  <div>Suburb: {{ selectedJob.suburb }}</div>
-                  <div>City: {{ selectedJob.city }}</div>
-                  <div>Postal Code: {{ selectedJob.postalCode }}</div>
-                  <div>Complex: {{ selectedJob.complex }}</div>
-                  <div>House Number: {{ selectedJob.houseNumber }}</div>
-                </div>
-                <div class="mb-3"><strong>Start Date:</strong> {{ selectedJob.startDate }}</div>
-                <div class="mb-3"><strong>End Date:</strong> {{ selectedJob.endDate }}</div>
-              </v-card-text>
-              <!-- Dialog actions -->
-              <v-card-actions class="justify-center py-4">
-                <v-btn color="primary" @click="viewJobDialog = false">Close</v-btn>
-              </v-card-actions>
+              <v-col>
+                  <v-col class="text-center">
+                    <h3>Job Title</h3>
+                    <p
+                        class="text-caption"
+                    >
+                      {{ selectedJob.heading }}
+                    </p>
+                </v-col>
+                <v-divider></v-divider>
+                  <v-col class="text-center">
+                    <h3>Description</h3><v-spacer></v-spacer>
+                    <small
+                        class="text-caption"
+                    >
+                      {{ selectedJob.jobDescription }}
+                    </small>
+                </v-col>
+                <v-divider></v-divider>
+                  <v-col class="text-center">
+                    <h3>Status</h3><v-spacer></v-spacer>
+                    <small
+                        class="text-caption"
+                    >
+                      <v-chip :color="getStatusColor(selectedJob.status)" dark>
+                        {{ selectedJob.status }}
+                      </v-chip>
+                    </small>
+                </v-col>
+                <v-divider></v-divider>
+                <v-col class="text-center">
+                  <h3>Address</h3>
+                  <v-col>
+                    <label>Street</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.street }}
+                    </small>
+                  </v-col>
+                  <v-col>
+                    <label>Suburb</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.suburb }}
+                    </small>
+                  </v-col>
+                  <v-col>
+                    <label>City</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.city }}
+                    </small>
+                  </v-col>
+                  <v-col>
+                    <label>Postal Code</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.postalCode }}
+                    </small>
+                  </v-col>
+                  <v-col>
+                    <label>Complex</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.complex }}
+                    </small>
+                  </v-col>
+                  <v-col>
+                    <label>House Number</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.houseNumber }}
+                    </small>
+                  </v-col>
+                </v-col>
+
+                <v-divider></v-divider>
+                <v-col class="text-center">
+                  <h3>Dates</h3>
+                  <v-col>
+                    <label>Start Date</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.startDate }}
+                    </small>
+                  </v-col>
+                  <v-col>
+                    <label>End Date</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.endDate }}
+                    </small>
+                  </v-col>
+                </v-col>
+              </v-col>
+              <v-col class="pt-0">
+                <v-btn color="error" width="100%" @click="viewJobDialog=false">Close</v-btn>
+              </v-col>
             </v-card>
           </v-dialog>
 
