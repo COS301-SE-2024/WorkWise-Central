@@ -297,7 +297,9 @@ export class JobController {
   async findOne(@Param('id') id: string) {
     this.validateObjectId(id);
     try {
-      return { data: await this.jobService.findJobById(id) };
+      return {
+        data: await this.jobService.findJobById(new Types.ObjectId(id)),
+      };
     } catch (e) {
       console.log(e);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
@@ -363,11 +365,11 @@ export class JobController {
   @Delete()
   remove(@Param('id') id: string, @Body() pass: { pass: string }) {
     console.log(pass); //Will be implemented later
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(id))
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-    }
+
     try {
-      return this.jobService.softDelete(id);
+      return this.jobService.softDelete(new Types.ObjectId(id));
     } catch (e) {
       throw new HttpException(
         'Internal Server Error',
