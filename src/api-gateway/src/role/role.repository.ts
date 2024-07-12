@@ -36,6 +36,27 @@ export class RoleRepository {
     return result;
   }
 
+  async findByIdInCompany(
+    identifier: string,
+    companyIdentifier: Types.ObjectId,
+  ): Promise<FlattenMaps<Role> & { _id: Types.ObjectId }> {
+    const result: FlattenMaps<Role> & { _id: Types.ObjectId } =
+      await this.roleModel
+        .findOne({
+          $and: [
+            { roleName: identifier },
+            {
+              companyId: companyIdentifier,
+            },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+    return result;
+  }
+
   async update(id: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
     const previousObject: FlattenMaps<Role> & { _id: Types.ObjectId } =
       await this.roleModel
@@ -80,15 +101,14 @@ export class RoleRepository {
         .findOne({
           $and: [
             { _id: id },
+            { companyId: companyId },
             {
               $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
         .lean();
-    if (result != null && result.companyId == companyId) return true;
-
-    return false;
+    return result != null;
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {

@@ -104,7 +104,7 @@ export class CompanyController {
     try {
       return { data: await this.companyService.addEmployee(addUserDto) };
     } catch (Error) {
-      throw new HttpException(Error, HttpStatus.CONFLICT);
+      throw new HttpException('Internal server error', HttpStatus.CONFLICT);
     }
   }
 

@@ -41,7 +41,7 @@ export class JobService {
     return new CreateJobResponseDto(result);
   }
   async findJobById(
-    identifier: string,
+    identifier: Types.ObjectId,
   ): Promise<FlattenMaps<Job> & { _id: Types.ObjectId }> {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
       await this.jobRepository.findById(identifier);
@@ -61,14 +61,17 @@ export class JobService {
     }
   }
 
-  async jobExists(id: string): Promise<boolean> {
+  async jobExists(id: Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
       await this.jobRepository.exists(id);
     //console.log('jobExists -> ', result);
     return result != null;
   }
 
-  async jobExistsInCompany(id: string, companyId: string): Promise<boolean> {
+  async jobExistsInCompany(
+    id: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ): Promise<boolean> {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
       await this.jobRepository.existsInCompany(id, companyId);
 
@@ -111,7 +114,7 @@ export class JobService {
     }
   }
 
-  async softDelete(id: string): Promise<boolean> {
+  async softDelete(id: Types.ObjectId): Promise<boolean> {
     await this.jobRepository.delete(id);
     return true;
   }
@@ -237,7 +240,7 @@ export class JobService {
 
     let userCanAccessJob = false;
     for (const joinedCompany of user.joinedCompanies) {
-      if (joinedCompany.companyId.toString() === jobInDb.companyId.toString()) {
+      if (joinedCompany.companyId.equals(jobInDb.companyId)) {
         userCanAccessJob = true;
         break;
       }

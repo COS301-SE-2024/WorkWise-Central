@@ -13,6 +13,7 @@ export class CreateTeamDto {
   teamName: string;
 
   @IsArray()
+  @IsNotEmpty()
   @IsMongoId({ each: true })
   @ApiProperty()
   teamMembers: Types.ObjectId[];

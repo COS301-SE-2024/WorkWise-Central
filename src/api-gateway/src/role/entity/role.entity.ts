@@ -20,7 +20,7 @@ export class Role {
   permissionSuite: string[];
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true })
   companyId: Types.ObjectId;
 
   @ApiHideProperty()
@@ -49,7 +49,7 @@ export class RoleApiObject {
   permissionSuite: string[];
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true })
   companyId: Types.ObjectId;
 
   @ApiHideProperty()

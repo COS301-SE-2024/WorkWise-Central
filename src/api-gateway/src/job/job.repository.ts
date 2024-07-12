@@ -24,7 +24,7 @@ export class JobRepository {
   }
 
   async findById(
-    identifier: string,
+    identifier: Types.ObjectId,
   ): Promise<FlattenMaps<Job> & { _id: Types.ObjectId }> {
     const populatedFields: string[] = [
       'clientId',
@@ -127,7 +127,7 @@ export class JobRepository {
       .exec();
   }
 
-  async exists(id: string) {
+  async exists(id: Types.ObjectId) {
     return this.jobModel
       .findOne({
         $and: [
@@ -140,7 +140,7 @@ export class JobRepository {
       .lean();
   }
 
-  async update(id: string | Types.ObjectId, updateJobDto: UpdateJobDto) {
+  async update(id: Types.ObjectId, updateJobDto: UpdateJobDto) {
     return this.jobModel
       .findOneAndUpdate(
         {
@@ -157,26 +157,26 @@ export class JobRepository {
       .lean();
   }
 
-  async existsInCompany(id: string, companyId: string) {
+  async existsInCompany(id: Types.ObjectId, companyId: Types.ObjectId) {
     const result = await this.jobModel
       .findOne({
         $and: [
           { _id: id },
-          { companyId: new Types.ObjectId(companyId) },
+          { companyId: companyId },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
         ],
       })
       .lean();
-    if (result != null && result.companyId.toString() == companyId) {
+    if (result != null && result.companyId.equals(companyId)) {
       return result;
     } else {
       return null;
     }
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: Types.ObjectId): Promise<boolean> {
     const result = await this.jobModel
       .findOneAndUpdate(
         {
