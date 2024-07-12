@@ -138,7 +138,7 @@ export class CompanyRepository {
     console.log('employeeExists');
     console.log(result);
     for (const employee of result.employees) {
-      if (employee.toString() == empId.toString()) {
+      if (employee.equals(empId)) {
         return true;
       }
     }
@@ -160,6 +160,37 @@ export class CompanyRepository {
         ],
       },
       { $set: { ...updateCompanyDto }, updatedAt: new Date() },
+      { new: true },
+    );
+  }
+
+  async addEmployee(id: Types.ObjectId, employeeId: Types.ObjectId) {
+    return this.companyModel.findOneAndUpdate(
+      {
+        $and: [
+          { _id: id },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      },
+      { $push: { employees: employeeId }, updatedAt: new Date() },
+      { new: true },
+    );
+  }
+
+  async removeEmployee(id: Types.ObjectId, employeeId: Types.ObjectId) {
+    //TODO: Test
+    return this.companyModel.findOneAndUpdate(
+      {
+        $and: [
+          { _id: id },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      },
+      { $pull: { employees: employeeId }, updatedAt: new Date() },
       { new: true },
     );
   }

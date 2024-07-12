@@ -358,8 +358,7 @@ export default defineComponent({
       return {
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
-    },
-   
+    }
   }
 })
 </script>

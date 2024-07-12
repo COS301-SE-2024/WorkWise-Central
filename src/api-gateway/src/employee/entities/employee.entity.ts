@@ -1,13 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
-// import mongoose, { SchemaTypes, Types } from 'mongoose';
 import { CreateEmployeeDto } from '../dto/create-employee.dto';
-// import { Role } from 'src/role/entity/role.entity';
-// import { Team } from 'src/team/entities/team.entity';
-// import { Job } from 'src/job/entities/job.entity';
-// // import { User } from 'src/users/entities/user.entity';
-// import { Company } from 'src/company/entities/company.entity';
 
 @Schema()
 export class Employee {

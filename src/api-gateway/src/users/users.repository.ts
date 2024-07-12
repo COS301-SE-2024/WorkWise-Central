@@ -2,11 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import {
+  JoinedCompany,
   User,
   /*  userEmployeeFields,
   userJoinedCompaniesField,*/
 } from './entities/user.entity';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { JoinUserDto, UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersRepository {
@@ -66,7 +67,7 @@ export class UsersRepository {
     const result = await this.userModel
       .findOne({
         $and: [
-          { 'contactInfo.email': email },
+          { 'personalInfo.contactInfo.email': email },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
@@ -80,7 +81,7 @@ export class UsersRepository {
     const result = await this.userModel
       .findOne({
         $and: [
-          { 'contactInfo.phone': phone },
+          { 'personalInfo.contactInfo.phone': phone },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
@@ -162,7 +163,64 @@ export class UsersRepository {
       .lean();
   }
 
-  async delete(id: string | Types.ObjectId) {
+  async updateJoinedCompany(id: Types.ObjectId, joinUserDto: JoinUserDto) {
+    return this.userModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            { _id: id },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        { $set: { ...joinUserDto }, updatedAt: new Date() },
+        { new: true },
+      )
+      .lean();
+  }
+
+  async addJoinedCompany(id: Types.ObjectId, joinedCompany: JoinedCompany) {
+    return this.userModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            { _id: id },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        {
+          $push: { joinedCompanies: joinedCompany },
+          updatedAt: new Date(),
+        },
+        { new: true },
+      )
+      .lean();
+  }
+
+  async removeJoinedCompany(id: Types.ObjectId, companyId: Types.ObjectId) {
+    return this.userModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            { _id: id },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        {
+          $pull: { joinedCompanies: { companyId: companyId } },
+          updatedAt: new Date(),
+        },
+        { new: true },
+      )
+      .lean();
+  }
+
+  async delete(id: Types.ObjectId) {
     return this.userModel.findOneAndUpdate(
       {
         $and: [

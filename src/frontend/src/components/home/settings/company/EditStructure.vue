@@ -5,6 +5,9 @@
               Edit Structure
           </v-btn>
       </template>
+      <v-card>
+        
+      </v-card>
     </v-dialog>
   </template>
   

@@ -14,7 +14,6 @@
               >
                 <v-card-title
                   class="d-flex align-center pe-2"
-                  :color="isdarkmode === true ? 'dark' : 'light'"
                   style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
                 >
                   <v-row align="center" justify="space-between">
@@ -71,17 +70,33 @@
                         class="bg-cardColor"
                         :row-props="getRowProps"
                       >
-                        <template v-slot:[`item.details.firstName`]="{ value }">
-                          <v-chip color="#5A82AF"> {{ value }}<v-icon>mdi-account</v-icon></v-chip>
+                        <template v-slot:[`item.firstName`]="{ value }">
+                          <v-chip variant="text" color="elementTextColor">
+                            <v-icon icon="fa:fa-solid fa-user "></v-icon>{{ value }}</v-chip
+                          >
                         </template>
+                        <template v-slot:[`item.surname`]="{ value }"
+                          ><v-chip variant="text" color="elementTextColor">{{
+                            value
+                          }}</v-chip></template
+                        >
                         <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                          <v-chip color="#5A82AF" @click="callPhone"
-                            ><v-icon>mdi-phone</v-icon> {{ value }}</v-chip
+                          <v-chip
+                            @click="callPhone"
+                            color="primary"
+                            text-color="elementTextColor"
+                            border="md"
+                            ><v-icon icon="fa:fa-solid fa-phone"></v-icon> {{ value }}</v-chip
                           >
                         </template>
                         <template v-slot:[`item.contactInfo.email`]="{ value }">
-                          <v-chip color="#5A82AF" @click="callPhone">
-                            <v-icon>mdi-email</v-icon> {{ value }}</v-chip
+                          <v-chip
+                            @click="sendEmail"
+                            color="primary"
+                            text-color="elementTextColor"
+                            border="md"
+                          >
+                            <v-icon icon="fa:fa-solid fa-envelope"></v-icon>{{ value }}</v-chip
                           >
                         </template>
                         <template v-slot:[`item.mostRecentJob`]="{ value }">
@@ -89,14 +104,13 @@
                             {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
                           >
                         </template>
-                        <!-- Expanded content slot -->
-                        <template v-slot:expanded-row="{ columns, item }">
-                          <tr>
-                            <td :colspan="columns.length">More info about {{ item.name }}</td>
-                          </tr>
-                        </template>
-                        <!-- Actions slot -->
 
+                        <!-- Actions slot -->
+                        <template v-slot:[`item.roleName`]="{ value }">
+                          <v-chip color="elementTextColor" variant="text">
+                            {{ value }}
+                          </v-chip>
+                        </template>
                         <template v-slot:[`item.actions`]="{ item }">
                           <v-btn
                             rounded="xl"

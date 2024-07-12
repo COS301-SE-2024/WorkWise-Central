@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto, CreateUserResponseDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { JoinUserDto, UpdateUserDto } from './dto/update-user.dto';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { JoinedCompany, SignInUserDto, User } from './entities/user.entity';
@@ -130,6 +130,89 @@ export class UsersService {
     return result;
   }
 
+  async updateJoinedCompanies(
+    //This is a temporary function that is only used within the service
+    id: Types.ObjectId,
+    joinUserDto: JoinUserDto,
+  ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
+    const updatedUser = await this.userRepository.updateJoinedCompany(
+      id,
+      joinUserDto,
+    );
+    if (updatedUser == null) {
+      throw new NotFoundException('failed to update user');
+    }
+    return updatedUser;
+  }
+
+  async addJoinedCompany(
+    //This is a temporary function that is only used within the service
+    userId: Types.ObjectId,
+    joinedCompany: JoinedCompany,
+  ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
+    const user = await this.getUserById(userId);
+    if (user == null) throw new NotFoundException('User not found');
+
+    const userAlreadyInCompany = user.joinedCompanies.some(
+      (company) =>
+        company.companyId.toString() === joinedCompany.companyId.toString() ||
+        company.employeeId.toString() === joinedCompany.employeeId.toString(),
+    );
+
+    if (userAlreadyInCompany) {
+      return user;
+    }
+
+    const updatedUser = await this.userRepository.addJoinedCompany(
+      userId,
+      joinedCompany,
+    );
+    if (updatedUser == null) {
+      throw new NotFoundException('failed to update user');
+    }
+    return updatedUser;
+  }
+
+  async removeJoinedCompany(
+    //This is a temporary function that is only used within the service
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
+    const user = await this.getUserById(userId);
+    if (user == null) throw new NotFoundException('User not found');
+
+    const userInCompany = user.joinedCompanies.some((company) =>
+      company.companyId.equals(companyId),
+    );
+
+    if (!userInCompany) {
+      return user; //Return unchanged user
+    }
+
+    const updatedUser = await this.userRepository.removeJoinedCompany(
+      userId,
+      companyId,
+    );
+    if (updatedUser == null) {
+      throw new NotFoundException('failed to update user');
+    }
+    return updatedUser;
+  }
+
+  async changeCurrentEmployee(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+  ) {
+    const user = await this.userRepository.findById(userId);
+    const includesEmployee = user.joinedCompanies.some((company) =>
+      company.employeeId.equals(employeeId),
+    );
+
+    if (includesEmployee)
+      await this.updateUser(userId, { currentEmployee: employeeId });
+    else throw new ConflictException('Invalid Employee');
+  }
+
   async updateUser(
     id: Types.ObjectId,
     updateUserDto: UpdateUserDto,
@@ -200,12 +283,12 @@ export class UsersService {
 
     let userJoinedCompany: JoinedCompany = null;
     for (const joinedCompany of user.joinedCompanies) {
-      if (joinedCompany.companyId.equals(companyId)) {
+      if (joinedCompany.companyId.toString() === companyId.toString()) {
         userJoinedCompany = joinedCompany;
       }
     }
 
-    if (!userJoinedCompany) return false;
+    if (userJoinedCompany == null) return false;
     for (const employee of company.employees) {
       if (employee._id.equals(userJoinedCompany.employeeId)) {
         return true;
@@ -251,7 +334,7 @@ export class UsersService {
       return new ValidationResult(false, `User cannot be found with id ${id}`);
     }
 
-    if (user.joinedCompanies) {
+    /*    if (user.joinedCompanies) {
       for (const joinedCompany of user.joinedCompanies) {
         const exists = await this.employeeService.employeeExists(
           joinedCompany.employeeId,
@@ -262,7 +345,7 @@ export class UsersService {
             `Invalid Employee ID: ${joinedCompany.employeeId}`,
           );
       }
-    }
+    }*/
 
     if (user.currentEmployee) {
       const exists = await this.employeeService.employeeExists(

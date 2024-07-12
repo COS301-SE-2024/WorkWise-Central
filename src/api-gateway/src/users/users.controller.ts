@@ -33,6 +33,7 @@ import {
 import mongoose, { Types } from 'mongoose';
 import { UserAllResponseDto, UserResponseDto } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
+import { UserEmailVerificationDTO } from './dto/user-validation.dto';
 
 const className = 'User';
 
@@ -159,9 +160,9 @@ export class UsersController {
     description: 'Response is a Boolean value',
   })
   @Post('/exists/email')
-  async emailExists(@Body('email') email: string) {
+  async emailExists(@Body() dto: UserEmailVerificationDTO) {
     try {
-      return { data: await this.usersService.emailExists(email) };
+      return { data: await this.usersService.emailExists(dto.email) };
     } catch (e) {
       console.log(e);
       throw new InternalServerErrorException('Something went wrong ');
@@ -192,10 +193,10 @@ export class UsersController {
     type: BooleanResponseDto,
     description: 'Response is a Boolean value',
   })
-  @Get('/phone/:phoneNum')
-  async isValidPhoneNumber(@Param('phoneNum') phoneNum: string) {
+  @Get('/isValid/phone')
+  async isValidPhoneNumber(@Body('phone') phone: string) {
     try {
-      return { data: this.usersService.isValidPhoneNumber(phoneNum) };
+      return { data: this.usersService.isValidPhoneNumber(phone) };
     } catch (e) {
       console.log(e);
       throw new HttpException('Username Taken', HttpStatus.CONFLICT);
