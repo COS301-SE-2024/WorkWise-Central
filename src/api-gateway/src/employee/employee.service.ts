@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { InjectModel } from '@nestjs/mongoose';
 import { Types, FlattenMaps } from 'mongoose';
 import { Employee } from './entities/employee.entity';
 import { UsersService } from '../users/users.service';
@@ -17,15 +16,10 @@ import { RoleService } from '../role/role.service';
 import { JobService } from '../job/job.service';
 import { TeamService } from '../team/team.service';
 import { EmployeeRepository } from './employee.repository';
-// import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class EmployeeService {
   constructor(
-    @InjectModel(Employee.name)
-    // @InjectModel(User.name)
-    // private readonly userModel: Model<User>,
-
     @Inject(forwardRef(() => EmployeeRepository))
     private readonly employeeRepository: EmployeeRepository,
 

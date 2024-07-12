@@ -15,19 +15,59 @@ export class TeamRepository {
     return this.teamModel.find().exec();
   }
 
-  async save(company: Team) {
-    const newCompanyModel = new this.teamModel(company);
-    return await newCompanyModel.save();
+  async save(team: Team) {
+    const newTeamModel = new this.teamModel(team);
+    return await newTeamModel.save();
   }
 
   async findById(
-    identifier: string | Types.ObjectId,
+    identifier: Types.ObjectId,
   ): Promise<FlattenMaps<Team> & { _id: Types.ObjectId }> {
     const result: FlattenMaps<Team> & { _id: Types.ObjectId } =
       await this.teamModel
         .findOne({
           $and: [
             { _id: identifier },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+
+    return result;
+  }
+
+  async findByIdInCompany(
+    identifier: Types.ObjectId,
+    companyIdentification: Types.ObjectId,
+  ): Promise<FlattenMaps<Team> & { _id: Types.ObjectId }> {
+    const result: FlattenMaps<Team> & { _id: Types.ObjectId } =
+      await this.teamModel
+        .findOne({
+          $and: [
+            { _id: identifier },
+            { companyId: companyIdentification },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+
+    return result;
+  }
+
+  async findByNameInCompany(
+    name: string,
+    companyIdentification: Types.ObjectId,
+  ) {
+    const result: FlattenMaps<Team> & { _id: Types.ObjectId } =
+      await this.teamModel
+        .findOne({
+          $and: [
+            { teamName: name },
+            { companyId: companyIdentification },
             {
               $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
@@ -55,24 +95,18 @@ export class TeamRepository {
 
   async teamExistsInCompany(
     id: Types.ObjectId,
-    companyId: Types.ObjectId,
+    companyIdentification: Types.ObjectId,
   ): Promise<boolean> {
-    const result: FlattenMaps<Team> & { _id: Types.ObjectId } =
-      await this.teamModel
-        .findOne({
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
+    const result = this.findByIdInCompany(id, companyIdentification);
+    return result != null;
+  }
 
-    if (result != null && result.companyId == companyId) {
-      return true;
-    }
-    return false;
+  async teamNameExistsInCompany(
+    name: string,
+    companyIdentification: Types.ObjectId,
+  ): Promise<boolean> {
+    const result = this.findByNameInCompany(name, companyIdentification);
+    return result != null;
   }
 
   async update(id: Types.ObjectId, updateTeamDto: UpdateTeamDto) {

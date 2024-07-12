@@ -7,8 +7,7 @@ import {
 } from '@nestjs/common';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, FlattenMaps } from 'mongoose';
+import { Types, FlattenMaps } from 'mongoose';
 import { Team } from './entities/team.entity';
 import { EmployeeService } from '../employee/employee.service';
 import { CompanyService } from '../company/company.service';
@@ -18,8 +17,6 @@ import { TeamRepository } from './team.repository';
 @Injectable()
 export class TeamService {
   constructor(
-    @InjectModel(Team.name)
-    private readonly teamModel: Model<Team>,
     @Inject(forwardRef(() => EmployeeService))
     private employeeService: EmployeeService,
     private companyService: CompanyService,
@@ -63,10 +60,17 @@ export class TeamService {
 
     // Check if the team already exists in the company
     try {
-      if (await this.findOneInCompany(team.teamName, team.companyId)) {
+      if (
+        await this.teamRepository.teamNameExistsInCompany(
+          team.teamName,
+          team.companyId,
+        )
+      ) {
         throw new ConflictException('Team already exists');
       }
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   }
 
   async validateUpdateTeam(teamId: Types.ObjectId, team: UpdateTeamDto) {
@@ -110,7 +114,7 @@ export class TeamService {
 
     // Check if the team already exists in the company
     try {
-      if (await this.findOneInCompany(team.teamName, companyId)) {
+      if (await this.findByNameInCompany(team.teamName, companyId)) {
         throw new ConflictException('Team already exists');
       }
     } catch (error) {}
@@ -126,7 +130,7 @@ export class TeamService {
     newRole.companyId = createTeamDto.companyId;
     newRole.teamLeaderId = createTeamDto.teamLeaderId;
     newRole.teamMembers = createTeamDto.teamMembers;
-    console.log('New role created');
+    console.log('New team created');
 
     return await this.teamRepository.save(newRole);
   }
@@ -136,7 +140,7 @@ export class TeamService {
   }
 
   async findById(
-    identifier: string | Types.ObjectId,
+    identifier: Types.ObjectId,
   ): Promise<FlattenMaps<Team> & { _id: Types.ObjectId }> {
     const result = await this.teamRepository.findById(identifier);
     if (result == null) {
@@ -145,11 +149,11 @@ export class TeamService {
     return result;
   }
 
-  async findOneInCompany(name: string, companyId: Types.ObjectId) {
-    const result = await this.teamModel.findOne({
-      roleName: name,
-      companyId: companyId,
-    });
+  async findByNameInCompany(name: string, companyId: Types.ObjectId) {
+    const result = await this.teamRepository.findByNameInCompany(
+      name,
+      companyId,
+    );
     if (result == null) {
       throw new NotFoundException('Team not found');
     }

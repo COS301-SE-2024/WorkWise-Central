@@ -29,7 +29,7 @@ export class Team {
   teamLeaderId?: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: true, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
   currentJobAssignments: Types.ObjectId[];
 
   @ApiHideProperty()
