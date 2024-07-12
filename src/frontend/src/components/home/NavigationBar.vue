@@ -138,6 +138,7 @@ export default defineComponent({
                   v-bind="props"
                   prepend-icon="fa: fa-solid fa-tachometer-alt"
                   title="Dashboard"
+                  class="list-item-large"
                 ></v-list-item>
               </template>
               <v-list-item
@@ -147,6 +148,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="item-list-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -157,6 +159,7 @@ export default defineComponent({
                   v-bind="props"
                   prepend-icon="fa: fa-solid fa-handshake"
                   title="Clients"
+                  class="list-item-large"
                 ></v-list-item>
               </template>
               <v-list-item
@@ -166,6 +169,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="item-list-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -176,6 +180,7 @@ export default defineComponent({
                   v-bind="props"
                   prepend-icon="fa: fa-solid fa-users"
                   title="Employees"
+                  class="list-item-large"
                 ></v-list-item>
               </template>
               <v-list-item
@@ -185,6 +190,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="item-list-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -195,6 +201,7 @@ export default defineComponent({
                   v-bind="props"
                   prepend-icon="fa: fa-solid fa-briefcase"
                   title="Jobs"
+                  class="list-item-large"
                 ></v-list-item>
               </template>
               <v-list-item
@@ -204,6 +211,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="item-list-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -214,6 +222,7 @@ export default defineComponent({
                   v-bind="props"
                   prepend-icon="fa: fa-solid fa-boxes"
                   title="Inventory"
+                  class="list-item-large"
                 ></v-list-item>
               </template>
               <v-list-item
@@ -223,6 +232,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="item-list-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -233,6 +243,7 @@ export default defineComponent({
                   v-bind="props"
                   prepend-icon="fa: fa-solid fa-envelope"
                   title="Inbox"
+                  class="list-item-large"
                 ></v-list-item>
               </template>
               <v-list-item
@@ -242,6 +253,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="item-list-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -252,6 +264,7 @@ export default defineComponent({
                   v-bind="props"
                   prepend-icon="fa: fa-solid fa-life-ring"
                   title="Help"
+                  class="list-item-large"
                 ></v-list-item>
               </template>
               <v-list-item
@@ -261,6 +274,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="item-list-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -271,6 +285,7 @@ export default defineComponent({
                   v-bind="props"
                   prepend-icon="fa: fa-solid fa-ellipsis-h"
                   title="More"
+                  class="list-item-large"
                 ></v-list-item>
               </template>
               <v-list-item
@@ -280,6 +295,7 @@ export default defineComponent({
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
+                class="item-list-small"
               ></v-list-item>
             </v-list-group>
           </v-list>
@@ -295,5 +311,13 @@ export default defineComponent({
 <style scoped>
 .icon-padding {
   padding: 8px; /* Adjust the padding value as needed */
+}
+
+.list-item-large {
+  height: 70px; /* Customize the height as needed */
+}
+
+.list-item-small {
+  height: 40px; /* Customize the height as needed */
 }
 </style>
