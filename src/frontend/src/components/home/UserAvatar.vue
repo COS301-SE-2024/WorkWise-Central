@@ -20,8 +20,9 @@
         <div class="mx-auto text-center">
           <v-avatar
               color="secondary"
+              style="width:38px; height: 36px;"
           >
-            <span class="text-h5">{{ user.initials }}</span>
+            <span class="text-h6">{{ user.initials }}</span>
           </v-avatar>
           <h3>{{ user.fullName }}</h3>
           <p class="text-caption mt-1">
