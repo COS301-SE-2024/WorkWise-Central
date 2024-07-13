@@ -394,7 +394,7 @@ export default {
         (value: string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
       ],
       req_obj: {
-        userId: sessionStorage['id'],
+        userId: sessionStorage.getItem('id'),
         name: '',
         type: '',
         registrationNumber: '',

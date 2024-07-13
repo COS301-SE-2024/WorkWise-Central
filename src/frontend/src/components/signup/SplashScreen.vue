@@ -571,6 +571,21 @@
                       ></v-row>
                       <v-row
                         ><v-col
+                          ><label style="font-size: 14px; font-weight: lighter">Province</label
+                          ><v-select
+                            :label="province ? '' : 'Select your province'"
+                            type="input"
+                            v-model="province"
+                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :rules="provinceRules"
+                            rounded="md"
+                            variant="solo"
+                            :items="provinceList"
+                            required
+                          ></v-select></v-col
+                      ></v-row>
+                      <v-row
+                        ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Postal Code</label
                           ><v-text-field
                             :theme="isdarkmode ? 'dark' : 'light'"
@@ -744,6 +759,17 @@ export default defineComponent({
       'Richards Bay',
       'Potchefstroom'
     ],
+    provinceList:[
+      'Eastern Cape',
+      'Free State',
+      'Gauteng',
+      'KwaZulu-Natal',
+      'Limpopo',
+      'Mpumalanga',
+      'North West',
+      'Northern Cape',
+      'Western Cape'
+    ],
     randomNumber: 0,
     email: '',
     flow: ['year', 'month', 'calendar'],
@@ -760,6 +786,7 @@ export default defineComponent({
     language: '',
     street: '',
     city: '',
+    province: '',
     dummyUsername: '',
     suburb: '',
     postal_code: '',
@@ -986,6 +1013,7 @@ export default defineComponent({
           address: {
             street: this.street,
             suburb: this.suburb,
+            province:this.province,
             city: this.city,
             postalCode: this.postal_code,
             complex: this.complex,

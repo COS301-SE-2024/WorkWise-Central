@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-height="800" max-width="600" :theme="isdarkmode === true ? 'dark' : 'light'">
+  <v-dialog max-height="800" max-width="600" :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
