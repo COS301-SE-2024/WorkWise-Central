@@ -314,6 +314,7 @@
             <!--            </v-row>-->
           </v-col>
           <v-col cols="8" offset="2" align="center">
+            <Toast />
             <v-btn
               color="primary"
               type="submit"
@@ -346,9 +347,12 @@
 
 <script lang="ts">
 import axios from 'axios'
-
+import Toast from 'primevue/toast'
 export default {
   name: 'RegisterCompanyModal',
+  components: {
+    Toast
+  },
   data() {
     return {
       dialog: false,
@@ -432,7 +436,12 @@ export default {
         .post(apiURL + 'company/create', this.req_obj, config)
         .then((res) => {
           console.log(res.data.data.id)
-          alert('The Company was registered successfully')
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Company registered successfully',
+            life: 3000
+          })
           sessionStorage['currentCompany'] = res.data.data.id._id
           console.log(res.data)
           this.$router.push('/dashboard')

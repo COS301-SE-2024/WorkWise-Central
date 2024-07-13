@@ -83,6 +83,7 @@
       <v-card-actions
         ><v-col align-self="center"
           ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
+            <Toast/>
             <v-btn color="success" width="85%" height="35" variant="text" @click="update">
               Save
             </v-btn>

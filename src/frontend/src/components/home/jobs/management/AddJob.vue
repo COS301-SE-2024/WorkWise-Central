@@ -296,9 +296,12 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import { type EmployeeJoined, type EmployeeInformation, type ClientInformation } from '../types'
-
+import Toast from 'primevue/toast'
 export default defineComponent({
   name: 'JobDetailsList',
+  components: {
+    Toast
+  },
   data() {
     return {
       localUrl: 'http://localhost:3000/',
@@ -373,11 +376,15 @@ export default defineComponent({
       axios
         .post('http://localhost:3000/job/create', this.req_obj, config)
         .then((res) => {
-          alert('Job Added Successfully added')
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Job Added Successfully'
+          })
           console.log(res)
         })
         .catch((res) => {
-          alert('Job NOT Added Successfully added')
+          this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Job not added' })
           console.log(res)
         })
     },

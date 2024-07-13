@@ -17,6 +17,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
+        <Toast />
         <v-btn label="Delete" color="error" text :loading="isDeleting" @click="deleteClient"
           >Delete</v-btn
         >
@@ -28,6 +29,7 @@
 
 <script>
 import axios from 'axios'
+import Toast from 'primevue/toast'
 export default {
   name: 'DeleteClient',
   props: {
@@ -35,6 +37,7 @@ export default {
     client_id: Number,
     client: Object
   },
+  components: { Toast },
   data() {
     return {
       clientDialog: false,
@@ -68,7 +71,12 @@ export default {
         .delete(`http://localhost:3000/client/delete/${this.client_id}`, config)
         .then((response) => {
           console.log(response)
-          alert('Client deleted')
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Client deleted successfully',
+            life: 3000
+          })
           this.clientDialog = false
           this.$emit('clientDeleted')
           // Consider using a more SPA-friendly way of updating the view instead of reloading

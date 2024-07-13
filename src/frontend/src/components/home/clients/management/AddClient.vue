@@ -185,6 +185,7 @@
               ></v-col>
             </v-col>
             <v-col cols="8" offset="2" align="center">
+              <Toast />
               <v-btn
                 rounded="md"
                 boarder="xl"
@@ -214,10 +215,13 @@ import axios from 'axios'
 
 const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
 import { defineComponent } from 'vue'
+import Toast from 'primevue/toast'
 
 export default defineComponent({
   name: 'RegisterCompanyModal ',
-
+  components: {
+    Toast
+  },
   data: () => ({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
@@ -338,7 +342,12 @@ export default defineComponent({
           })
           .then((res) => {
             if (res.data == 'Phone number already exists') {
-              alert('Phone number already exists')
+              this.$toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Phone number already exists',
+                life: 3000
+              })
               this.click_create_client = true
             } else {
               this.click_create_client = false
@@ -357,7 +366,12 @@ export default defineComponent({
         .post(apiURL + 'client/create', this.req_obj, config)
         .then((res) => {
           console.log(res)
-          alert('Client created successfully')
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Client created successfully',
+            life: 3000
+          })
           this.$router.push('/client-desk-view')
         })
         .catch((res) => {
