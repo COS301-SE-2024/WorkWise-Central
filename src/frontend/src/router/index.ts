@@ -22,6 +22,7 @@ import EditCompany from '@/components/home/settings/company/EditCompany.vue'
 import EditRoles from '@/components/home/settings/company/EditRoles.vue'
 import EditStructure from '@/components/home/settings/company/EditStructure.vue'
 import CompanySettingsView from '../views/settings/CompanySettings.vue'
+import LoadingScreen from '@/components/misc/LoadingScreen.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -180,6 +181,11 @@ const router = createRouter({
       path: '/companySettingsView',
       name: 'companySettingsView',
       component: CompanySettingsView
+    },
+    {
+      path: '/loading',
+      name: 'loading',
+      component: LoadingScreen
     }
   ]
 })

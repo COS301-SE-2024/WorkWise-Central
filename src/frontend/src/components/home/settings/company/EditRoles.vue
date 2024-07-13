@@ -1,52 +1,59 @@
 <template>
-  <v-container>
-    <v-card >
-      <v-card-title class="text-center"> Edit Roles </v-card-title>
-      <v-divider></v-divider>
-      <v-card-text>
-        <v-data-table
-          :headers="headers"
-          :items="items"
-          item-value="role"
-          class="bg-cardColor elevation-1"
-          :row-props="getRowProps"
-        >
-          <template v-slot:top>
-            <v-toolbar flat>
-              <v-toolbar-title>Roles and Permissions</v-toolbar-title>
-            </v-toolbar>
-          </template>
-          <template v-slot:[`item.roleName`]="{ item }">
-            <v-chip variant="elevated" color="elementTextColor">{{ item }}</v-chip>
-          </template>
-          <template v-slot:[`item.permission`]="{ item }">
-            <v-select
-              v-model="item.permission"
-              :items="permissions"
-              label="Permissions"
-              chips
-              multiple
-            ></v-select>
-          </template>
-        </v-data-table>
-      </v-card-text>
-      <v-divider></v-divider>
-      <v-card-actions class="bg-cardColor">
-        <v-col align="center"> <v-btn color="success" @click="viewRoles"> Save </v-btn></v-col>
-
-        <v-col align="center"><v-btn color="error" @click="close"> Cancel </v-btn></v-col>
-      </v-card-actions>
-    </v-card>
-  </v-container>
+  <v-app>
+    <v-container>
+      <v-card>
+        <v-card-title class="text-center"> Edit Roles </v-card-title>
+        <v-divider></v-divider>
+        <v-card-text>
+          <v-data-table
+            :headers="headers"
+            :items="items"
+            item-value="role"
+            class="bg-cardColor elevation-1"
+            :row-props="getRowProps"
+          >
+            <template v-slot:top>
+              <v-toolbar flat>
+                <v-toolbar-title>Roles and Permissions</v-toolbar-title>
+              </v-toolbar>
+            </template>
+            <template v-slot:[`item.roleName`]="{ item }">
+              <v-chip variant="elevated" color="elementTextColor">{{ item }}</v-chip>
+            </template>
+            <template v-slot:[`item.permission`]="{ item }">
+              <v-select
+                v-model="item.permission"
+                :items="permissions"
+                label="Permissions"
+                chips
+                multiple
+              ></v-select>
+            </template>
+          </v-data-table>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions class="bg-cardColor">
+          <Toast />
+          <v-col align="center"> <v-btn color="success" @click="saveChanges"> Save </v-btn></v-col>
+          <Toast />
+          <v-col align="center"><v-btn color="error" @click="cancel"> Cancel </v-btn></v-col>
+        </v-card-actions>
+      </v-card>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
 import axios from 'axios'
 import { defineComponent } from 'vue'
+import Toast from 'primevue/toast'
 export default defineComponent({
   props: {
     Company: Object,
     userDetails: Object
+  },
+  components: {
+    Toast
   },
   data: () => ({
     dialog: false,
@@ -144,6 +151,24 @@ export default defineComponent({
       return {
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
+    },
+    cancel() {
+      this.$emit('cancel')
+      this.$toast.add({
+        severity: 'info',
+        summary: 'Info',
+        detail: 'Company update cancelled',
+        life: 3000
+      })
+    },
+    saveChanges() {
+      this.$emit('save', this.company)
+      this.$toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Company updated',
+        life: 3000
+      })
     }
   },
   mounted() {

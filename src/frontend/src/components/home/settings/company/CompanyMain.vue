@@ -42,6 +42,16 @@
       <v-actions @click="closeCompanyDialog">
         <v-col cols="12" align-self="center">
           <v-btn
+            color="success"
+            width="100%"
+            height="35"
+            variant="outlined"
+            @click="switchCompany"
+            >Save</v-btn
+          ></v-col
+        >
+        <v-col cols="12" align-self="center">
+          <v-btn
             color="error"
             width="100%"
             height="35"
