@@ -113,6 +113,7 @@
                 </v-col>
 
                 <v-col cols="8" offset="2">
+                  <Toast />
                   <v-btn
                     :disabled="!valid"
                     text
@@ -273,7 +274,6 @@
                 rounded="md"
                 :theme="isdarkmode ? 'dark' : 'light'"
                 class="bg-background"
-                
               >
                 <v-col>
                   <v-col>
@@ -571,6 +571,21 @@
                       ></v-row>
                       <v-row
                         ><v-col
+                          ><label style="font-size: 14px; font-weight: lighter">Province</label
+                          ><v-select
+                            :label="province ? '' : 'Select your province'"
+                            type="input"
+                            v-model="province"
+                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :rules="provinceRules"
+                            rounded="md"
+                            variant="solo"
+                            :items="provinceList"
+                            required
+                          ></v-select></v-col
+                      ></v-row>
+                      <v-row
+                        ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Postal Code</label
                           ><v-text-field
                             :theme="isdarkmode ? 'dark' : 'light'"
@@ -637,12 +652,16 @@
               <!-- <v-sheet
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
               > -->
-              <v-sheet class="mx-auto bg-background" width="400" :theme="isdarkmode ? 'dark' : 'light'" >
+              <v-sheet
+                class="mx-auto bg-background"
+                width="400"
+                :theme="isdarkmode ? 'dark' : 'light'"
+              >
                 <v-col>
-                    <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
-                      Please select of the following details
-                    </h4></v-col
-                  >
+                  <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
+                    Please select of the following details
+                  </h4></v-col
+                >
                 <v-card-actions>
                   <v-col cols="6"> <RegisterCompanyModal :isdarkmode="isdarkmode" /> </v-col
                   ><v-col cols="6"> <JoinCompanyModal :isdarkmode="isdarkmode" /></v-col
@@ -685,12 +704,14 @@ import axios from 'axios'
 import { defineComponent } from 'vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import Toast from 'primevue/toast'
 
 export default defineComponent({
   components: {
     RegisterCompanyModal,
     JoinCompanyModal,
-    VueDatePicker
+    VueDatePicker,
+    Toast
   },
   data: () => ({
     click_create_client: false,
@@ -744,6 +765,17 @@ export default defineComponent({
       'Richards Bay',
       'Potchefstroom'
     ],
+    provinceList: [
+      'Eastern Cape',
+      'Free State',
+      'Gauteng',
+      'KwaZulu-Natal',
+      'Limpopo',
+      'Mpumalanga',
+      'North West',
+      'Northern Cape',
+      'Western Cape'
+    ],
     randomNumber: 0,
     email: '',
     flow: ['year', 'month', 'calendar'],
@@ -760,6 +792,7 @@ export default defineComponent({
     language: '',
     street: '',
     city: '',
+    province: '',
     dummyUsername: '',
     suburb: '',
     postal_code: '',
@@ -955,15 +988,23 @@ export default defineComponent({
               'currentCompany',
               response.data.user.joinedCompanies[0].companyId
             )
-            this.alertLoginFailure = false
-            this.alertLogin = true
+            this.$toast.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'User successfully logged in',
+              life: 3000
+            })
             this.resetForm()
             this.$router.push('/dashboard')
           })
           .catch((error) => {
             console.log(error.response.data.message)
-            this.alertLogin = false
-            this.alertLoginFailure = true
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'User unsuccessfully logged in',
+              life: 3000
+            })
           })
       }
     },
@@ -986,6 +1027,7 @@ export default defineComponent({
           address: {
             street: this.street,
             suburb: this.suburb,
+            province: this.province,
             city: this.city,
             postalCode: this.postal_code,
             complex: this.complex,

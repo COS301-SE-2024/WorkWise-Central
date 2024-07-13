@@ -28,10 +28,12 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="red darken-2" variant="text" :loading="isDeleting" @click="deleteEmployee"
+        <Toast />
+        <v-btn color="success" variant="text" :loading="isDeleting" @click="deleteEmployee"
           >Delete</v-btn
         >
-        <v-btn color="grey darken-1" variant="text" @click="clientDialog = false">Cancel</v-btn>
+        <Toast />
+        <v-btn color="error" variant="text" @click="clientDialog = false">Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -39,8 +41,10 @@
 
 <script lang="ts">
 import axios from 'axios'
+import Toast from 'primevue/toast'
 export default {
   name: 'DeleteClient',
+  components: { Toast },
   props: {
     details: {
       type: Object,
@@ -72,14 +76,24 @@ export default {
         .delete(apiURL + 'employee/' + this.details.employeeId, config)
         .then((response) => {
           console.log(response)
-          alert('Employee deleted')
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Employee deleted successfully',
+            life: 3000
+          })
           this.isDeleting = false
           this.clientDialog = false
           window.location.reload()
         })
         .catch((error) => {
           console.log(error)
-          alert('Error deleting client')
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'An error occurred while deleting the employee',
+            life: 3000
+          })
         })
     },
     async isLocalAvailable(localUrl: string) {
