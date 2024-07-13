@@ -65,6 +65,7 @@ export default {
           Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
         }
       }
+      const apiURL = await this.getRequestUrl()
       console.log(this.client_id)
       this.isDeleting = true // Indicate the start of the deletion process
       axios
@@ -89,6 +90,18 @@ export default {
           this.isDeleting = false // Reset the deletion indicator
           window.location.reload() // Consider removing this for SPA behavior
         })
+    },
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
   }
 }
