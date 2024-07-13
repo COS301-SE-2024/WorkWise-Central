@@ -46,14 +46,14 @@
                   {{data.details.priority}}
                 </v-chip></td>
               </tr>
-              <tr>
-                <td class="card-tag-container" ><span class="bolded">Tags:</span><v-chip
-                  class="ma-2"
-                  color="indigo"
-                >
-                  {{data.tags.map((tag:string)=>{'<span class="tag">${tag}</span>'}).join('')}}
-                </v-chip></td>
-              </tr>
+<!--              <tr>-->
+<!--                <td class="card-tag-container" ><span class="bolded">Tags:</span><v-chip-->
+<!--                  class="ma-2"-->
+<!--                  color="indigo"-->
+<!--                >-->
+<!--&lt;!&ndash;                  {{data.tags.map((tag:string)=>{'<span class="tag">${tag}</span>'}).join('')}}&ndash;&gt;-->
+<!--                </v-chip></td>-->
+<!--              </tr>-->
             </tbody>
           </table>
         </div>
@@ -61,7 +61,7 @@
     </ejs-kanban>
   </div>
 </template>
-c
+
 <script lang="ts">
 import { KanbanComponent, ColumnDirective, ColumnsDirective } from '@syncfusion/ej2-vue-kanban'
 
