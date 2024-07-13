@@ -45,7 +45,7 @@
                 height="35"
                 variant="text"
                 :disabled="click_create_client"
-                >ADD
+                >Add
               </v-btn>
             </v-col>
           </v-col>

@@ -37,6 +37,7 @@
               :items="roleItemNames"
               v-model="selectedRole"
               bg-color="background"
+              variant="solo"
             ></v-select> </v-col
         ></v-row>
       </v-card-text>
@@ -51,12 +52,12 @@
               variant="text"
               @click="savechanges"
             >
-              SAVE
+              Save
             </v-btn>
           </v-col>
           <v-col cols="12" md="12" xs="3" sm="6" offset="1">
             <v-btn color="error" rounded="md" width="85%" height="35" variant="text" @click="close">
-              CANCEL
+              Cancel
             </v-btn>
           </v-col></v-col
         >
