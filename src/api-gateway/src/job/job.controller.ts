@@ -62,7 +62,7 @@ export class JobController {
   @Get()
   lookAtDocumentation() {
     return {
-      message: 'Refer to localhost:3000/documentation for details on the API',
+      message: 'Refer to /documentation for details on the API',
     };
   }
 
@@ -378,7 +378,7 @@ export class JobController {
     }
   }
 
-  private extractUserId(headers: any) {
+  public extractUserId(headers: any) {
     const authHeader: string = headers.authorization;
     const decodedJwtAccessToken = this.jwtService.decode(
       authHeader.replace(/^Bearer\s+/i, ''),
