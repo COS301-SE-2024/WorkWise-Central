@@ -8,20 +8,7 @@
     </v-row>
     <v-row>
       <v-col cols="4" class="pl-15">
-        <Menu :model="items">
-          <template #item="{ item, props }">
-            <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-              <a v-ripple :href="href" v-bind="props.action" @click="navigate">
-                <span :class="item.icon" />
-                <span class="ml-2">{{ item.label }}</span>
-              </a>
-            </router-link>
-            <a v-else v-ripple :href="item.url" :target="item.target" v-bind="props.action">
-              <span :class="item.icon" />
-              <span class="ml-2">{{ item.label }}</span>
-            </a>
-          </template>
-        </Menu>
+        <settingsMenu/>
       </v-col>
       <!-- Personal Information -->
       <v-col cols="5" class="pl-15">
@@ -64,7 +51,7 @@
 import { ref } from 'vue'
 import Menu from 'primevue/menu'
 import { useRouter } from 'vue-router'
-const router = useRouter()
+import settingsMenu from '@/components/home/settings/SettingsMenu.vue'
 
 const user = ref({
   firstName: '',
@@ -86,29 +73,5 @@ const user = ref({
   }
 })
 
-const items = ref([
-  {
-    label: 'Personal Information',
-    icon: 'fa: fa-solid fa-user',
-    route: '/theming/unstyled'
-  },
-  {
-    label: 'Company Settings',
-    icon: 'fa: fa-solid fa-cog',
-    command: () => {
-      router.push('/introduction')
-    }
-  },
-  {
-    label: 'Preferences',
-    icon: 'fa: fa-solid fa-sliders-h',
-    url: 'https://vuejs.org/'
-  },
-  {
-    label: 'Notfications',
-    icon: 'fa: fa-solid fa-bell',
-    url: 'https://vuejs.org/'
-  }
-])
 </script>
 <style></style>
