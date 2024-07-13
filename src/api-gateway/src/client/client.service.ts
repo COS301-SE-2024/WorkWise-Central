@@ -108,7 +108,7 @@ export class ClientService {
     return clients;
   }
 
-  async clientExists(id: string | Types.ObjectId): Promise<boolean> {
+  async clientExists(id: Types.ObjectId): Promise<boolean> {
     return await this.clientRepository.exists(id);
   }
 
