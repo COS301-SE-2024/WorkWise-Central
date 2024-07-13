@@ -1,7 +1,11 @@
 <template>
   <v-overlay :value="loading" absolute>
     <div class="loading-content">
-      <img src="https://cdn.vuetifyjs.com/docs/images/brand-kit/v-logo-circle.png" alt="Loading" class="loading-logo" />
+      <img
+        src="https://cdn.vuetifyjs.com/docs/images/brand-kit/v-logo-circle.png"
+        alt="Loading"
+        class="loading-logo"
+      />
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </div>
   </v-overlay>
@@ -13,11 +17,10 @@ export default {
     loading: true
   }),
   mounted() {
-    console.log('Component mounted. Loading:', this.loading);
+    console.log('Component mounted. Loading:', this.loading)
   }
 }
 </script>
-
 
 <style scoped>
 .v-overlay__content {

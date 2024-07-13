@@ -4,8 +4,7 @@ import CompanySettings from '../../components/home/settings/company/CompanySetti
 </script>
 
 <template>
-  <NavigationBar :component="CompanySettings"/>
+  <NavigationBar :component="CompanySettings" />
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

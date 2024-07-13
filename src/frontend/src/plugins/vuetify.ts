@@ -107,7 +107,7 @@ const vuetify = createVuetify({
     VCalender: {
       class: 'bg-cardColor'
     },
-    VSelect:{
+    VSelect: {
       color: 'background'
     }
   },

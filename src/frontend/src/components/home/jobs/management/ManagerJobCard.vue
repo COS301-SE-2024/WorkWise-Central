@@ -477,7 +477,7 @@
             </v-dialog>
           </div>
           <v-card-actions class="d-flex flex-column">
-            <Toast/>
+            <Toast />
             <v-btn class="mb-2" @click="saveJob" color="success">Save</v-btn>
             <v-btn class="mb-4" @click="cancelJob" color="error">Cancel</v-btn>
           </v-card-actions>
