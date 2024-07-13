@@ -273,7 +273,6 @@
                 rounded="md"
                 :theme="isdarkmode ? 'dark' : 'light'"
                 class="bg-background"
-                
               >
                 <v-col>
                   <v-col>
@@ -637,12 +636,16 @@
               <!-- <v-sheet
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
               > -->
-              <v-sheet class="mx-auto bg-background" width="400" :theme="isdarkmode ? 'dark' : 'light'" >
+              <v-sheet
+                class="mx-auto bg-background"
+                width="400"
+                :theme="isdarkmode ? 'dark' : 'light'"
+              >
                 <v-col>
-                    <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
-                      Please select of the following details
-                    </h4></v-col
-                  >
+                  <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
+                    Please select of the following details
+                  </h4></v-col
+                >
                 <v-card-actions>
                   <v-col cols="6"> <RegisterCompanyModal :isdarkmode="isdarkmode" /> </v-col
                   ><v-col cols="6"> <JoinCompanyModal :isdarkmode="isdarkmode" /></v-col

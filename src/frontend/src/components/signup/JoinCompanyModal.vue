@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="dialog" max-width="500" height="500" :theme="isdarkmode === true ? 'dark' : 'light'">
+  <v-dialog
+    v-model="dialog"
+    max-width="500"
+    height="500"
+    :theme="isdarkmode === true ? 'dark' : 'light'"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"

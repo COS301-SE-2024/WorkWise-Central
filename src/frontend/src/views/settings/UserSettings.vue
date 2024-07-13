@@ -4,8 +4,7 @@ import UserPage from '../../components/home/settings/user/UserPage.vue'
 </script>
 
 <template>
-  <NavigationBar :component="UserPage"/>
+  <NavigationBar :component="UserPage" />
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

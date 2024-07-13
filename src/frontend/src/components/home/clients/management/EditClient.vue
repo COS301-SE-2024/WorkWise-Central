@@ -74,7 +74,11 @@
           <v-row>
             <v-col cols="12">
               <small class="text-caption font-weight-bold">Preferred Language</small>
-              <v-select :items="languages" v-model="localEditedItem.preferred_Language" variant="solo"></v-select>
+              <v-select
+                :items="languages"
+                v-model="localEditedItem.preferred_Language"
+                variant="solo"
+              ></v-select>
             </v-col>
           </v-row>
         </v-col>

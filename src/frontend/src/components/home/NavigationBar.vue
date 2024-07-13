@@ -114,7 +114,7 @@ export default defineComponent({
           <v-spacer class="d-none d-sm-flex"></v-spacer>
 
           <div class="d-flex align-center">
-            <UserAvatar/>
+            <UserAvatar />
             <v-icon
               class="icon-padding mr-5"
               @click="toggleDarkMode"

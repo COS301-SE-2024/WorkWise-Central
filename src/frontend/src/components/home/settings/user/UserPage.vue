@@ -5,7 +5,7 @@
         <h1>Your Profile</h1>
         <v-divider></v-divider>
       </v-col>
-      </v-row>
+    </v-row>
     <v-row>
       <v-col cols="4" class="pl-15">
         <Menu :model="items">
@@ -53,10 +53,7 @@
         <v-text-field v-model="user.address.houseNumber" label="House Number"></v-text-field>
       </v-col>
       <v-col cols="2" class="pl-15">
-        <v-avatar
-            color="grey"
-            size="150"
-        >
+        <v-avatar color="grey" size="150">
           <v-img src="https://cdn.vuetifyjs.com/images/profiles/marcus.jpg" cover></v-img>
         </v-avatar>
       </v-col>
@@ -66,28 +63,28 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import Menu from 'primevue/menu'
-import {useRouter} from 'vue-router'
-const router = useRouter();
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const user = ref({
-  firstName: "",
-  surname: "",
-  dateOfBirth: "",
-  gender: "",
-  preferredLanguage: "",
+  firstName: '',
+  surname: '',
+  dateOfBirth: '',
+  gender: '',
+  preferredLanguage: '',
   contactInfo: {
-    phone: "",
-    email: ""
+    phone: '',
+    email: ''
   },
   address: {
-    street: "",
-    suburb: "",
-    city: "",
-    postalCode: "",
-    complex: "",
-    houseNumber: ""
+    street: '',
+    suburb: '',
+    city: '',
+    postalCode: '',
+    complex: '',
+    houseNumber: ''
   }
-});
+})
 
 const items = ref([
   {
@@ -99,7 +96,7 @@ const items = ref([
     label: 'Company Settings',
     icon: 'fa: fa-solid fa-cog',
     command: () => {
-      router.push('/introduction');
+      router.push('/introduction')
     }
   },
   {
@@ -112,8 +109,6 @@ const items = ref([
     icon: 'fa: fa-solid fa-bell',
     url: 'https://vuejs.org/'
   }
-]);
+])
 </script>
-<style>
-
-</style>
+<style></style>

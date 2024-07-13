@@ -27,9 +27,8 @@
                 >{{ EmployeeDetails.firstName }}</small
               > </v-col
             ><v-col cols="6"
-              ><label> Surname</label
-              ><v-spacer></v-spacer
-                ><small
+              ><label> Surname</label><v-spacer></v-spacer
+              ><small
                 class="text-caption"
                 :style="
                   isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
