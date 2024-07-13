@@ -5,55 +5,61 @@
         <v-row justify="center">
           <v-col cols="12" xs="12" sm="12" md="12">
             <v-card
-              flat
-              :height="auto"
-              :max-height="auto"
-              class="pa-11 ma-0"
+              height="auto"
+              class="pa-11 ma-0 bg-cardColor"
               rounded="md"
-              elevation-2
-              :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
+              :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
               border="md"
             >
               <v-card-title
-                class="d-flex align-center pe-2"
-                :color="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
-                style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
+                height="auto"
+                width="100%"
               >
-                <v-icon icon="mdi-account"></v-icon> &nbsp;Job Details
+                <v-row align="center" justify="space-between">
+                  <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+                    <v-icon icon='fa: fa-solid fa-briefcase'></v-icon>
+                    <v-label
+                      class="ms-2 text-h4 font-family-lato text-headingTextColor"
+                      style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+                      height="auto"
+                      width="auto"
+                      >Job Details</v-label
+                    >
+                  </v-col>
 
-                <v-spacer></v-spacer>
-
-                <v-text-field
-                  v-model="search"
-                  density="compact"
-                  label="Search"
-                  prepend-inner-icon="mdi-magnify"
-                  variant="outlined"
-                  flat
-                  style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
-                  hide-details
-                  :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
-                  single-line
-                ></v-text-field>
-                <v-spacer></v-spacer>
-                <AddJob />
+                  <v-col cols="12" md="4" sm="6" xs="12">
+                    <v-text-field
+                      v-model="search"
+                      density="compact"
+                      label="Search"
+                      prepend-inner-icon="mdi-magnify"
+                      variant="solo-inverted"
+                      flat
+                      width="100%"
+                      style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+                      hide-details
+                      single-line
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
+                    <AddJob />
+                  </v-col>
+                </v-row>
               </v-card-title>
 
-              <v-divider></v-divider>
-              <v-col cols="12" xs="12" sm="12" md="12">
-                <div style="height: 700px; overflow-y: auto">
-                  <v-col cols="12" xs="12" sm="12" md="12">
+              <v-card-text>
+                <v-divider></v-divider>
+                <v-col cols="12" xs="12" sm="12" md="12">
+                  <div style="height: 700px; overflow-y: auto">
                     <v-data-table
                       :headers="headers"
                       :items="jobClientData"
                       :search="search"
-                      :single-expand="true"
-                      v-model:expanded="expanded"
-                      show-expand
+                      label="Jobs"
                       height="auto"
                       rounded="xl"
-                      :item-class="getRowClass"
-                      class=""
+                      class="bg-cardColor"
+                      :row-props="getRowProps"
                     >
                       <template v-slot:[`item.heading`]="{ value }">
                         {{ value }}
@@ -89,13 +95,13 @@
                           style="transform: rotate(0deg)"
                           @click="openDialog(item)"
                         >
-                          <v-icon color="#227D9B">mdi-dots-horizontal</v-icon>
+                          <v-icon color="primary">mdi-dots-horizontal</v-icon>
                         </v-btn>
                       </template>
                     </v-data-table>
-                  </v-col>
-                </div>
-              </v-col>
+                  </div>
+                </v-col>
+              </v-card-text>
             </v-card>
           </v-col>
         </v-row>
@@ -103,54 +109,119 @@
     >
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
-        <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
+        <v-card-title
+        >
           {{ selectedJob?.heading }}
         </v-card-title>
         <v-card-text> What would you like to do with this job? </v-card-text>
         <v-card-actions>
-          <v-btn color="primary" @click="viewJobDialog = true">View</v-btn>
+          <v-btn color="success" @click="viewJobDialog = true">View</v-btn>
           <!-- View Job Dialog -->
           <v-dialog v-model="viewJobDialog" max-width="500">
-            <v-card class="elevation-12 rounded-lg mx-auto my-5" max-width="600">
-              <!-- Dialog title -->
-              <v-card-title
-                class="text-h5 font-weight-regular bg-blue-grey text-center white--text py-4"
-              >
-                View Job Details
+            <v-card
+                elevation="14"
+                rounded="md"
+                :max-width="500"
+                :max-height="800"
+            >
+              <v-card-title>
+                Job Details
               </v-card-title>
-              <!-- Dialog content -->
-              <v-card-text class="py-4 px-6 text-center">
-                <div class="mb-3"><strong>Job Title:</strong> {{ selectedJob.heading }}</div>
-                <div class="mb-3">
-                  <strong>Description:</strong> {{ selectedJob.jobDescription }}
-                </div>
-                <div class="mb-3">
-                  <strong>Status:</strong>
-                  <v-chip :color="getStatusColor(selectedJob.status)" dark>{{
-                    selectedJob.status
-                  }}</v-chip>
-                </div>
-                <div class="mb-3">
-                  <strong>Address:</strong>
-                  <div>Street: {{ selectedJob.street }}</div>
-                  <div>Suburb: {{ selectedJob.suburb }}</div>
-                  <div>City: {{ selectedJob.city }}</div>
-                  <div>Postal Code: {{ selectedJob.postalCode }}</div>
-                  <div>Complex: {{ selectedJob.complex }}</div>
-                  <div>House Number: {{ selectedJob.houseNumber }}</div>
-                </div>
-                <div class="mb-3"><strong>Start Date:</strong> {{ selectedJob.startDate }}</div>
-                <div class="mb-3"><strong>End Date:</strong> {{ selectedJob.endDate }}</div>
-              </v-card-text>
-              <!-- Dialog actions -->
-              <v-card-actions class="justify-center py-4">
-                <v-btn color="primary" @click="viewJobDialog = false">Close</v-btn>
-              </v-card-actions>
+              <v-col>
+                  <v-col class="text-center">
+                    <h3>Job Title</h3>
+                    <p
+                        class="text-caption"
+                    >
+                      {{ selectedJob.heading }}
+                    </p>
+                </v-col>
+                <v-divider></v-divider>
+                  <v-col class="text-center">
+                    <h3>Description</h3><v-spacer></v-spacer>
+                    <small
+                        class="text-caption"
+                    >
+                      {{ selectedJob.jobDescription }}
+                    </small>
+                </v-col>
+                <v-divider></v-divider>
+                  <v-col class="text-center">
+                    <h3>Status</h3><v-spacer></v-spacer>
+                    <small
+                        class="text-caption"
+                    >
+                      <v-chip :color="getStatusColor(selectedJob.status)" dark>
+                        {{ selectedJob.status }}
+                      </v-chip>
+                    </small>
+                </v-col>
+                <v-divider></v-divider>
+                <v-col class="text-center">
+                  <h3>Address</h3>
+                  <v-col>
+                    <label>Street</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.street }}
+                    </small>
+                  </v-col>
+                  <v-col>
+                    <label>Suburb</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.suburb }}
+                    </small>
+                  </v-col>
+                  <v-col>
+                    <label>City</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.city }}
+                    </small>
+                  </v-col>
+                  <v-col>
+                    <label>Postal Code</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.postalCode }}
+                    </small>
+                  </v-col>
+                  <v-col>
+                    <label>Complex</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.complex }}
+                    </small>
+                  </v-col>
+                  <v-col>
+                    <label>House Number</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.houseNumber }}
+                    </small>
+                  </v-col>
+                </v-col>
+
+                <v-divider></v-divider>
+                <v-col class="text-center">
+                  <h3>Dates</h3>
+                  <v-col>
+                    <label>Start Date</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.startDate }}
+                    </small>
+                  </v-col>
+                  <v-col>
+                    <label>End Date</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ selectedJob.endDate }}
+                    </small>
+                  </v-col>
+                </v-col>
+              </v-col>
+              <v-col class="pt-0">
+                <v-btn color="error" width="100%" @click="viewJobDialog=false">Close</v-btn>
+              </v-col>
             </v-card>
           </v-dialog>
 
-          <v-btn color="primary" @click="editJobCardDialog()">Edit</v-btn>
-          <v-dialog v-model="managerJobCardDialog" max-width="2000px">
+          <v-btn color="warning" @click="editJobCardDialog()">Edit</v-btn>
+          <v-dialog v-model="managerJobCardDialog" max-width="1000px">
             <ManagerJobCard
               :passedInJob="selectedJob"
               @close="managerJobCardDialog = false"
@@ -187,10 +258,6 @@ import AddJob from './AddJob.vue'
 import ManagerJobCard from './ManagerJobCard.vue'
 
 const search = ref('')
-const expanded = ref([])
-const isDarkMode = ref(false)
-const modal_dark_theme_color = '#333'
-const modal_light_theme_color = '#fff'
 const viewJobDialog = ref(false)
 // set the table headers
 
@@ -391,8 +458,10 @@ const getStatusColor = (status) => {
 //   currentItemToDelete = null
 // }
 
-const getRowClass = () => {
-  // Define your row class logic here
+const getRowProps = ({ index }) => {
+  return {
+    class: index % 2 ? 'bg-secondRowColor' : ''
+  }
 }
 
 onMounted(() => {
@@ -401,7 +470,4 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.v-data-table-header .v-icon {
-  color: #F38A3F; /* Your desired color */
-}
 </style>

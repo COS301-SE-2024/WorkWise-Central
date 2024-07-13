@@ -1,110 +1,57 @@
 <template>
-  <v-dialog max-height="800" max-width="600">
+  <v-dialog max-height="800" max-width="600" :theme="isdarkmode === true ? 'dark' : 'light'">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn
-        rounded="md"
-        class="text-none font-weight-regular hello"
-        prepend-icon="mdi-account"
-        text="ADD EMPLOYEE"
-        variant="elevated"
-        color="#5A82AF"
-        v-bind="activatorProps"
-      ></v-btn>
+      <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
+        <v-btn
+          rounded="md"
+          class="text-none font-weight-regular hello"
+          style="font-size: 20px"
+          prepend-icon="mdi-account-multiple-plus"
+          text="Add Employee"
+          variant="elevated"
+          color="secondary"
+          v-bind="activatorProps"
+        ></v-btn>
+      </v-defaults-provider>
     </template>
-    <v-sheet
-      :color="isdarkmode === true ? 'dark' : 'light'"
-      elevation="14"
-      rounded="md"
-      max-height="800"
-      max-width="600"
-    >
-      <v-form ref="form" v-model="valid" @submit.prevent="handleSubmit">
-        <v-col>
-          <v-col>
-            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-              Add Employee
-            </h4></v-col
-          >
-          <v-spacer></v-spacer>
+    <v-card>
+      <v-card-title class="text-center">Add Employee</v-card-title>
+      <v-card-text>
+        <v-form ref="form" v-model="valid" @submit.prevent="handleSubmit">
           <v-col>
             <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption white--text"
-                >Add employee using employee username</small
-              >
+              <v-col>
+                <small class="text-caption font-weight-regular"
+                  >Add employee using employee username</small
+                >
 
-              <v-text-field
-                :bg-color="isdarkmode === true ? 'dark' : 'light'"
-                density="compact"
-                color="grey-lighten-4"
-                v-model="req_obj2.userName"
-                placeholder="Employee Username"
+                <v-text-field
+                  bg-color="background"
+                  v-model="req_obj2.userName"
+                  placeholder="Employee Username"
+                  rounded="md"
+                  required
+                ></v-text-field>
+              </v-col>
+            </v-col>
+
+            <v-col cols="12" md="12" xs="3" sm="6" align="center">
+              <v-btn
+                color="success"
                 rounded="md"
-                variant="underlined"
-                required
-              ></v-text-field
-            ></v-col>
-            <!--            <v-container>-->
-            <!--              <v-row align="center" justify="center">-->
-            <!--                <h2 style="font-weight: lighter">OR</h2></v-row-->
-            <!--              >-->
-            <!--            </v-container>-->
-            <!--            <v-col>-->
-            <!--              <small-->
-            <!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
-            <!--                class="text-caption"-->
-            <!--                >Send the employee the company ID to join the company-->
-            <!--              </small>-->
-            <!--              <v-text-field-->
-            <!--                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
-            <!--                density="compact"-->
-            <!--                color="grey-lighten-4"-->
-            <!--                v-model="req_obj.compid_for_emp"-->
-            <!--                label="################"-->
-            <!--                rounded="md"-->
-            <!--                variant="solo"-->
-            <!--              ></v-text-field-->
-            <!--            ></v-col>-->
-            <!--            <v-container>-->
-            <!--              <v-row align="center" justify="center"-->
-            <!--                ><h2 style="font-weight: lighter">OR</h2></v-row-->
-            <!--              >-->
-            <!--            </v-container>-->
-            <!--            <v-col>-->
-            <!--              <small-->
-            <!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
-            <!--                class="text-caption"-->
-            <!--                >Send the employee this link</small-->
-            <!--              >-->
-            <!--              <v-text-field-->
-            <!--                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"-->
-            <!--                density="compact"-->
-            <!--                v-model="req_obj.link_for_emp"-->
-            <!--                color="grey-lighten-4"-->
-            <!--                label="################"-->
-            <!--                rounded="md"-->
-            <!--                variant="solo"-->
-            <!--                required-->
-            <!--              ></v-text-field-->
-            <!--            ></v-col>-->
+                boarder="md"
+                type="submit"
+                width="100%"
+                height="35"
+                variant="text"
+                :disabled="click_create_client"
+                >ADD
+              </v-btn>
+            </v-col>
           </v-col>
-          <v-col cols="12" md="12" xs="3" sm="6" align="center">
-            <v-btn
-              color="success"
-              rounded="md"
-              boarder="md"
-              type="submit"
-              width="80%"
-              height="35"
-              variant="text"
-              :disabled="click_create_client"
-              >ADD EMPLOYEE</v-btn
-            >
-          </v-col>
-        </v-col>
-      </v-form>
-    </v-sheet>
+        </v-form>
+      </v-card-text>
+    </v-card>
   </v-dialog>
 </template>
 

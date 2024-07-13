@@ -1,7 +1,7 @@
 <template>
   <v-app :theme="isdarkmode ? 'dark' : 'light'">
     <!-- Toolbar -->
-    <v-app-bar :theme="isdarkmode ? 'themes.dark' : 'themes.light'">
+    <v-app-bar :theme="isdarkmode ? 'themes.dark' : 'themes.light'" class="bg-background">
       <v-toolbar-title class="d-flex justify-end">
         <v-label class="toolbar-text text-primary">Work</v-label>
         <v-label class="toolbar-text text-secondary">Wise</v-label>
@@ -9,9 +9,7 @@
 
       <v-spacer></v-spacer>
       <v-btn @click="toggleDarkMode"
-        ><v-icon
-          :icon="isdarkmode ? ' mdi-white-balance-sunny' : 'mdi-moon-waning-crescent'"
-        ></v-icon
+        ><v-icon :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"></v-icon
       ></v-btn>
     </v-app-bar>
     <!-- Main Content -->
@@ -61,6 +59,7 @@
                 border="md"
                 :theme="isdarkmode ? 'dark' : 'light'"
                 rounded="md"
+                class="bg-background"
               >
                 <v-col>
                   <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
@@ -69,7 +68,7 @@
                 </v-col>
                 <v-spacer></v-spacer>
                 <v-col
-                  ><v-form ref="form" v-model="valid">
+                  ><v-form ref="form" v-model="valid" class="bg-background">
                     <v-row align="center"
                       ><v-col
                         ><label for="email" style="font-size: 14px; font-weight: lighter"
@@ -101,7 +100,9 @@
                           name="password"
                           v-model="password"
                           :rules="passwordRules"
-                          :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                          :append-icon="
+                            showPassword ? 'fa:fa-solid fa-eye-slash' : 'fa:fa-solid fa-eye'
+                          "
                           @click:append="toggleShowPassword"
                           rounded="md"
                           variant="solo"
@@ -172,6 +173,7 @@
                 width="auto"
                 height="auto"
                 :theme="isdarkmode ? 'dark' : 'light'"
+                class="bg-background"
               >
                 <v-col>
                   <v-col>
@@ -182,7 +184,7 @@
                   <v-spacer></v-spacer>
 
                   <v-col>
-                    <v-form ref="form" v-model="valid">
+                    <v-form ref="form" v-model="valid" class="bg-background">
                       <v-row align="center"
                         ><v-col>
                           <label style="font-size: 14px; font-weight: lighter">Email</label>
@@ -270,6 +272,8 @@
                 border="md"
                 rounded="md"
                 :theme="isdarkmode ? 'dark' : 'light'"
+                class="bg-background"
+                
               >
                 <v-col>
                   <v-col>
@@ -279,7 +283,7 @@
                   >
                   <v-spacer></v-spacer>
                   <v-col>
-                    <v-form ref="form" v-model="valid">
+                    <v-form ref="form" v-model="valid" class="bg-background">
                       <v-row align="center"
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Name</label>
@@ -409,6 +413,7 @@
                 border="md"
                 rounded="md"
                 :theme="isdarkmode ? 'dark' : 'light'"
+                class="bg-background"
               >
                 <v-col>
                   <v-col>
@@ -418,7 +423,7 @@
                   >
                   <v-spacer></v-spacer>
                   <v-col>
-                    <v-form ref="form" v-model="valid">
+                    <v-form ref="form" v-model="valid" class="bg-background">
                       <v-row align="center"
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Date of Birth</label
@@ -507,6 +512,7 @@
                 border="md"
                 rounded="md"
                 :theme="isdarkmode ? 'dark' : 'light'"
+                class="bg-background"
               >
                 <v-col>
                   <v-col>
@@ -516,7 +522,7 @@
                   >
                   <v-spacer></v-spacer>
                   <v-col>
-                    <v-form ref="form" v-model="valid">
+                    <v-form ref="form" v-model="valid" class="bg-background">
                       <v-row justify="space-around"
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Street</label
@@ -631,15 +637,17 @@
               <!-- <v-sheet
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
               > -->
-              <v-card class="mx-auto" width="400" :theme="isdarkmode ? 'dark' : 'light'">
-                <template v-slot:title>
-                  <span class="font-weight-light">Please select one of the two options</span>
-                </template>
+              <v-sheet class="mx-auto bg-background" width="400" :theme="isdarkmode ? 'dark' : 'light'" >
+                <v-col>
+                    <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
+                      Please select of the following details
+                    </h4></v-col
+                  >
                 <v-card-actions>
                   <v-col cols="6"> <RegisterCompanyModal :isdarkmode="isdarkmode" /> </v-col
                   ><v-col cols="6"> <JoinCompanyModal :isdarkmode="isdarkmode" /></v-col
                 ></v-card-actions>
-              </v-card>
+              </v-sheet>
 
               <!-- </v-sheet> -->
             </v-dialog>
@@ -658,7 +666,7 @@
           <div class="w-full h-full background-image"></div>
         </v-col>
       </v-row>
-      <v-footer :theme="isdarkmode ? 'dark' : 'light'">
+      <v-footer :theme="isdarkmode ? 'dark' : 'light'" class="bg-background">
         <v-container>
           <v-row justify="space-between">
             <v-col cols="12" sm="6">

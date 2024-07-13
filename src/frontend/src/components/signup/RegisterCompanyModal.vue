@@ -1,12 +1,16 @@
 <template>
-  <v-dialog max-height="800" max-width="600">
+  <v-dialog
+    v-model="dialog"
+    max-height="800"
+    max-width="600"
+    :theme="isdarkmode === true ? 'dark' : 'light'"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        prepend-icon="mdi-account"
         variant="elevated"
-        color="#5A82AF"
+        color="secondary"
         v-bind="activatorProps"
         >Register Company</v-btn
       >
@@ -15,10 +19,14 @@
       elevation="14"
       rounded="md"
       max-width="600"
-      max-height="800"
-      :color="isdarkmode === true ? 'dark' : 'light'"
+      :theme="isdarkmode === true ? 'dark' : 'light'"
     >
-      <v-form ref="form" v-model="valid" @submit.prevent="registrationHandler">
+      <v-form
+        ref="form"
+        v-model="valid"
+        @submit.prevent="registrationHandler"
+        class="bg-background"
+      >
         <v-col>
           <v-col>
             <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -28,33 +36,23 @@
           <v-spacer></v-spacer>
           <v-col>
             <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Company name*</small
-              >
+              <label style="font-size: 14px; font-weight: lighter">Company Name</label>
               <v-text-field
                 density="compact"
-                color="grey-lighten-4"
+                color="cardColor"
                 placeholder="Enter the company's name"
                 v-model="req_obj.name"
                 :rules="company_name_rules"
                 rounded="md"
-                :bg-color="isdarkmode === true ? 'dark' : 'light'"
                 variant="solo"
                 required
               ></v-text-field
             ></v-col>
             <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Type of business*</small
-              >
+              <label style="font-size: 14px; font-weight: lighter">Type of business*</label>
               <v-autocomplete
-                :bg-color="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
-                color="grey-lighten-4"
+                color="cardColor"
                 placeholder="Select Job Type"
                 v-model="req_obj.type"
                 rounded="md"
@@ -135,15 +133,11 @@
             </v-col>
 
             <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Company email address</small
-              >
+              <label style="font-size: 14px; font-weight: lighter">Company email address</label>
+
               <v-text-field
-                :bg-color="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
-                color="grey-lighten-4"
+                color="cardColor"
                 placeholder="Enter the company's email adress"
                 type="email"
                 :rules="email_rules"
@@ -154,32 +148,27 @@
               ></v-text-field
             ></v-col>
             <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Company phone number</small
-              >
+              <label style="font-size: 14px; font-weight: lighter">Company phone number*</label>
+
               <v-text-field
-                :bg-color="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
-                color="grey-lighten-4"
+                color="cardColor"
                 placeholder="Enter the company's phone number"
                 rounded="md"
                 variant="solo"
                 v-model="req_obj.contactDetails.phoneNumber"
+                :rules="phone_number_rules"
                 required
               ></v-text-field
             ></v-col>
             <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Company registration number</small
+              <label style="font-size: 14px; font-weight: lighter"
+                >Company registration number*</label
               >
+
               <v-text-field
-                :bg-color="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
-                color="grey-lighten-4"
+                color="cardColor"
                 placeholder="Enter the company's registration number"
                 v-model="req_obj.registrationNumber"
                 :rules="company_registration_number_rules"
@@ -190,15 +179,11 @@
             ></v-col>
 
             <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Company VAT number</small
-              >
+              <label style="font-size: 14px; font-weight: lighter">Company VAT number*</label>
+
               <v-text-field
-                :bg-color="isdarkmode === true ? 'dark' : 'light'"
                 density="compact"
-                color="grey-lighten-4"
+                color="cardColor"
                 placeholder="Enter the company's VAT number"
                 :rules="vat_number_rules"
                 rounded="md"
@@ -214,7 +199,7 @@
             <!--                >Company logo</small-->
             <!--              >-->
             <!--              <v-file-input-->
-            <!--                :bg-color="isdarkmode === true ? 'dark' : 'light'"-->
+            <!--                :theme="isdarkmode === true ? 'dark' : 'light'"-->
             <!--                variant="solo"-->
             <!--                accept="image/*"-->
             <!--                width="100%"-->
@@ -224,21 +209,14 @@
             <!--                rounded="md"-->
             <!--              ></v-file-input>-->
             <!--            </v-col>-->
-            <small
-              :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-              class="text-caption"
-              >Company address</small
-            >
+            <label style="font-size: 14px; font-weight: lighter">Company address*</label>
+
             <v-row class="d-flex flex-wrap">
               <v-col sm="6" cols="12">
-                <small
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                  class="text-caption"
-                  >Street</small
-                ><v-text-field
-                  :bg-color="isdarkmode === true ? 'dark' : 'light'"
+                <label style="font-size: 11px; font-weight: lighter">Street</label>
+                <v-text-field
                   density="compact"
-                  color="grey-lighten-4"
+                  color="cardColor"
                   placeholder="Street"
                   rounded="md"
                   v-model="req_obj.address.street"
@@ -247,14 +225,10 @@
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
-                <small
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                  class="text-caption"
-                  >Suburb</small
-                ><v-text-field
-                  :bg-color="isdarkmode === true ? 'dark' : 'light'"
+                <label style="font-size: 11px; font-weight: lighter">Suburb</label>
+                <v-text-field
                   density="compact"
-                  color="grey-lighten-4"
+                  color="cardColor"
                   placeholder="Suburb"
                   rounded="md"
                   v-model="req_obj.address.suburb"
@@ -263,33 +237,50 @@
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
-                <small
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                  class="text-caption"
-                  >City</small
-                ><v-text-field
-                  :bg-color="isdarkmode === true ? 'dark' : 'light'"
+                <label style="font-size: 11px; font-weight: lighter">Province</label>
+                <v-autocomplete
                   density="compact"
-                  color="grey-lighten-4"
+                  placeholder="Province"
+                  color="cardColor"
+                  v-model="req_obj.address.province"
+                  rounded="md"
+                  type="houseNumber"
+                  variant="solo"
+                  :items="[
+                    'Eastern Cape',
+                    'Free State',
+                    'Gauteng',
+                    'KwaZulu-Natal',
+                    'Limpopo',
+                    'Mpumalanga',
+                    'North West',
+                    'Northern Cape',
+                    'Western Cape'
+                  ]"
+                  required
+                ></v-autocomplete
+              ></v-col>
+              <v-col sm="6" cols="12">
+                <label style="font-size: 11px; font-weight: lighter">City</label>
+                <v-text-field
+                  density="compact"
                   placeholder="City"
                   rounded="md"
                   v-model="req_obj.address.city"
                   variant="solo"
                   required
+                  color="cardColor"
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
-                <small
-                  :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                  class="text-caption"
-                  >Zip Code</small
-                ><v-text-field
-                  :bg-color="isdarkmode === true ? 'dark' : 'light'"
+                <label style="font-size: 11px; font-weight: lighter">Postal Code</label>
+                <v-text-field
                   density="compact"
-                  color="grey-lighten-4"
-                  placeholder="Zip Code"
+                  color="cardColor"
+                  placeholder="Postal Code"
                   rounded="md"
                   v-model="req_obj.address.postalCode"
+                  :rules="postal_code_rules"
                   variant="solo"
                   required
                 ></v-text-field
@@ -298,7 +289,7 @@
             <!--            <v-row>-->
             <!--              <v-col-->
             <!--                ><v-text-field-->
-            <!--                  :bg-color="isdarkmode === true ? 'dark' : 'light'"-->
+            <!--                  :theme="isdarkmode === true ? 'dark' : 'light'"-->
             <!--                  density="compact"-->
             <!--                  color="grey-lighten-4"-->
             <!--                  placeholder="Complex"-->
@@ -310,7 +301,7 @@
             <!--              ></v-col>-->
             <!--              <v-col-->
             <!--                ><v-text-field-->
-            <!--                  :bg-color="isdarkmode === true ? 'dark' : 'light'"-->
+            <!--                  :theme="isdarkmode === true ? 'dark' : 'light'"-->
             <!--                  density="compact"-->
             <!--                  color="grey-lighten-4"-->
             <!--                  placeholder="House number"-->
@@ -322,14 +313,9 @@
             <!--              ></v-col>-->
             <!--            </v-row>-->
           </v-col>
-          <v-col
-            :style="isdarkmode === true ? dark_theme_text_color : 'light'"
-            cols="8"
-            offset="2"
-            align="center"
-          >
+          <v-col cols="8" offset="2" align="center">
             <v-btn
-              color="#5A82AF"
+              color="primary"
               type="submit"
               rounded="md"
               boarder="md"
@@ -338,6 +324,18 @@
               variant="elevated"
               :disabled="click_create_client"
               >Continue</v-btn
+            >
+          </v-col>
+          <v-col cols="8" offset="2" align="center">
+            <v-btn
+              color="secondary"
+              @click="close"
+              rounded="md"
+              boarder="xl"
+              width="60%"
+              height="35"
+              variant="elevated"
+              >Back</v-btn
             >
           </v-col>
         </v-col>
@@ -354,7 +352,7 @@ export default {
   data() {
     return {
       dialog: false,
-      isdarkmode: sessionStorage['theme'] !== 'false',
+      isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
       click_create_client: false,
       valid: true,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
@@ -377,11 +375,6 @@ export default {
         (v: string) => !!v || 'E-mail is required',
         (v: string) => /.+@.+\..+/.test(v) || 'E-mail must be valid'
       ],
-      phone_number_rules: [
-        (v: string) => !!v || 'Phone number is required',
-        (v: string) =>
-          /^(\+27\d{9})$/.test(v) || 'Phone number must be a valid South African number'
-      ],
       vat_number_rules: [
         (v: string) => !!v || 'VAT number is required',
         (v: string) => /^\d{10}$/.test(v) || 'VAT number must be a valid South African VAT number'
@@ -389,9 +382,17 @@ export default {
       company_registration_number_rules: [
         (v: string) => !!v || 'Company registration number is required',
         (v: string) =>
-          /^(\d{14})$/.test(v) || 'Company registration number must be a valid South African number'
+          /^\d{4}\/\d{6}\/\d{2}$/.test(v) ||
+          'Company registration number must be a valid South African number format: YYYY/NNNNNN/XX'
       ],
-
+      phone_number_rules: [
+        (v: string) => !!v || 'Phone number is required',
+        (v: string) => /^0\d{9}$/.test(v) || 'Phone number must be a valid South African number'
+      ],
+      postal_code_rules: [
+        (v: string) => !!v || 'Postal code  is required',
+        (value: string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
+      ],
       req_obj: {
         userId: sessionStorage['id'],
         name: '',
@@ -403,6 +404,7 @@ export default {
           phoneNumber: ''
         },
         address: {
+          province: '',
           street: '',
           suburb: '',
           city: '',
@@ -452,6 +454,9 @@ export default {
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    close() {
+      this.dialog = false
     }
 
     // base64image() {

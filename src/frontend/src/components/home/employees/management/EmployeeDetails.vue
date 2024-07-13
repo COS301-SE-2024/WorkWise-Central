@@ -1,10 +1,10 @@
 <template>
-  <v-dialog v-model="clientDialog" max-width="500" height="800">
+  <v-dialog v-model="clientDialog" max-width="500" height="400">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        color="primary"
+        color="secondary"
         variant="text"
         v-bind="activatorProps"
       >
@@ -12,96 +12,81 @@
       </v-btn>
     </template>
 
-    <v-sheet
-      elevation="14"
-      rounded="md"
-      :max-width="500"
-      :max-height="800"
-      :color="isdarkmode === true ? colors.modal_dark_theme_color : colors.modal_light_theme_color"
-    >
-      <v-col>
+    <v-card elevation="14" rounded="md" :max-width="500" :max-height="800">
+      <v-card-title>Employee Details</v-card-title>
+      <v-card-text>
         <v-col>
-          <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-            Employee Details
-          </h4>
-        </v-col>
-        <v-spacer></v-spacer>
-        <v-divider></v-divider>
-        <v-col>
-          <v-col
-            ><label> First Name</label><v-spacer></v-spacer
-            ><small
-              class="text-caption"
-              :style="
-                isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
-              "
-              >{{ EmployeeDetails.firstName }}</small
-            ></v-col
+          <v-row>
+            <v-col cols="6">
+              <label> First Name</label><v-spacer></v-spacer
+              ><small
+                class="text-caption"
+                :style="
+                  isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
+                "
+                >{{ EmployeeDetails.firstName }}</small
+              > </v-col
+            ><v-col cols="6"
+              ><label> Surname</label
+              ><v-spacer></v-spacer
+                ><small
+                class="text-caption"
+                :style="
+                  isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
+                "
+                >{{ EmployeeDetails.surname }}</small
+              ></v-col
+            ></v-row
           >
-        </v-col>
-        <v-divider></v-divider>
-        <v-col>
-          <v-col
-            ><label> Surname</label><v-spacer></v-spacer
-            ><small
-              class="text-caption"
-              :style="
-                isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
-              "
-              >{{ EmployeeDetails.surname }}</small
-            ></v-col
+          <v-divider></v-divider>
+          <v-row
+            ><v-col cols="6"
+              ><label>Gender</label><v-spacer></v-spacer>
+              <small
+                class="text-caption"
+                :style="
+                  isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
+                "
+                >{{ EmployeeDetails.gender ? EmployeeDetails.gender : 'None' }}</small
+              ></v-col
+            ><v-col cols="6"
+              ><label>Phone Number</label><v-spacer></v-spacer
+              ><small
+                class="text-caption"
+                :style="
+                  isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
+                "
+                >{{ EmployeeDetails.contactInfo.phoneNumber }}</small
+              ></v-col
+            ></v-row
           >
-        </v-col>
-        <v-divider></v-divider>
-        <v-col>
-          <v-col
-            ><label>Gender</label><v-spacer></v-spacer>
-            <small
-              class="text-caption"
-              :style="
-                isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
-              "
-              >{{ EmployeeDetails.gender ? EmployeeDetails.gender : 'None' }}</small
-            ></v-col
+          <v-divider></v-divider>
+          <v-row
+            ><v-col cols="6"
+              ><label> Email</label><v-spacer></v-spacer
+              ><small class="text-caption" :style="isdarkmode === true ? 'dark' : 'light'">{{
+                EmployeeDetails.contactInfo.email
+              }}</small></v-col
+            ><v-col cols="6"
+              ><label> Role </label><v-spacer></v-spacer
+              ><small
+                class="text-caption"
+                :style="
+                  isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
+                "
+                >{{ EmployeeDetails.roleName }}</small
+              >
+            </v-col></v-row
           >
+          <v-divider></v-divider>
         </v-col>
-        <v-divider></v-divider>
+      </v-card-text>
+      <v-card-actions>
         <v-col>
-          <v-col
-            ><label>Phone Number</label><v-spacer></v-spacer
-            ><small
-              class="text-caption"
-              :style="
-                isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
-              "
-              >{{ EmployeeDetails.contactInfo.phoneNumber }}</small
-            ></v-col
-          >
-        </v-col>
-        <v-divider></v-divider>
-        <v-col>
-          <v-col
-            ><label> Email</label><v-spacer></v-spacer
-            ><small class="text-caption" :style="isdarkmode === true ? 'dark' : 'light'">{{
-              EmployeeDetails.contactInfo.email
-            }}</small></v-col
-          >
-        </v-col>
-        <v-divider></v-divider>
-        <v-col>
-          <v-col
-            ><label> Role </label><v-spacer></v-spacer
-            ><small
-              class="text-caption"
-              :style="
-                isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
-              "
-              >{{ EmployeeDetails.roleName }}</small
-            >
-          </v-col>
-        </v-col>
-      </v-col>
-    </v-sheet>
+          <v-btn color="error" width="100%" height="35" @click="close"> Close </v-btn>
+        </v-col></v-card-actions
+      >
+    </v-card>
   </v-dialog>
 </template>
 
@@ -116,6 +101,11 @@ export default defineComponent({
   data() {
     return {
       clientDialog: false
+    }
+  },
+  methods: {
+    close() {
+      this.clientDialog = false
     }
   }
 })

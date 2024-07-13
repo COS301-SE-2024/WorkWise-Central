@@ -1,15 +1,24 @@
 <template>
-  <v-dialog v-model="addDialog" max-height="800" max-width="600" scrollable>
+  <v-dialog
+    v-model="addDialog"
+    max-height="800"
+    max-width="600"
+    scrollable
+    :theme="isdarkmode === true ? 'dark' : 'light'"
+  >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn
-        rounded="md"
-        class="text-none font-weight-regular"
-        style="font-size: 20px"
-        text="Add Client"
-        variant="elevated"
-        color="primary"
-        v-bind="activatorProps"
-      ></v-btn>
+      <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
+        <v-btn
+          rounded="md"
+          class="text-none font-weight-regular"
+          style="font-size: 20px"
+          text="Add Client"
+          prepend-icon="mdi-account-plus"
+          variant="elevated"
+          color="secondary"
+          v-bind="activatorProps"
+        ></v-btn>
+      </v-defaults-provider>
     </template>
     <v-card :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
       ><v-card-title>
@@ -79,7 +88,7 @@
                   color="secondary"
                   placeholder="Enter the client's phone number"
                   v-model="req_obj.details.contactInfo.phoneNumber"
-                  type="number"
+                  type="text"
                   :rules="phone_number_rules"
                   required
                 ></v-text-field

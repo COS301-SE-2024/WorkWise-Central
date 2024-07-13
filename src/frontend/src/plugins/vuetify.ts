@@ -1,4 +1,6 @@
 import { createVuetify } from 'vuetify'
+import '@fortawesome/fontawesome-free/css/all.css'
+import { fa } from 'vuetify/iconsets/fa'
 import { VDateInput } from 'vuetify/labs/VDateInput'
 import { VCalendar } from 'vuetify/labs/VCalendar'
 import { VTimePicker } from 'vuetify/labs/VTimePicker'
@@ -18,10 +20,10 @@ const vuetify = createVuetify({
     VDialog: {
       VCard: {
         VCardTitle: {
-          class: 'text-h5 font-weight-regular bg-primary justify-center'
+          class: 'text-h5 font-weight-regular bg-secondary justify-end text-center'
         },
-        VCardText: {},
-        VCardActions: { class: 'text-h5 font-weight-regular justify-center' }
+        VCardText: { class: 'text-h7 font-weight-regular justify-center bg-cardColor' },
+        VCardActions: { class: 'text-h6 font-weight-regular justify-center bg-cardColor' }
       },
       VSheet: {
         VCardTitle: {
@@ -29,30 +31,44 @@ const vuetify = createVuetify({
         }
       }
     },
+
     VTextField: {
       variant: 'solo',
       rounded: 'md',
-      density: 'compact'
+      density: 'compact',
+      clearable: true
     },
 
     VCard: {
       elevation: 14,
-      rounded: 'xl',
+      rounded: 'md',
       height: 'auto',
-      class: 'bg-cardColor ',
+
       VCardTitle: {
-        class: 'text-h5 font-weight-regular bg-primary d-flex justify-center text-blue'
+        class: 'text-h5 font-weight-regular  d-flex justify-center bg-cardColor text-secondary'
       },
-      VCardText: { class: 'bg-cardColor', VList: { class: 'bg-cardColor' } }
+      VCardText: {
+        class: 'bg-cardColor',
+        VList: {
+          class: 'bg-cardColor',
+          VListItem: {
+            class: 'bg-cardColor'
+          }
+        }
+      },
+      VCard: {
+        class: 'bg-cardColor'
+      }
     },
     VBtn: {
       rounded: 'md',
       variant: 'text',
       class: 'text-none font-weight-regular hello',
-      size: 'large'
+      size: 'large',
+      color: 'primary'
     },
     VCardTitle: {
-      class: ''
+      class: 'text-h5 font-weight-regular bg-secondary justify-center'
     },
     VSheet: {
       elevation: 14,
@@ -68,7 +84,7 @@ const vuetify = createVuetify({
       variant: 'solo'
     },
     VIcon: {
-      color: 'elementTextColor'
+      color: 'secondary'
     },
     Small: {
       color: 'elementTextColor',
@@ -86,6 +102,9 @@ const vuetify = createVuetify({
     },
     VChip: {
       rounded: 'md'
+    },
+    VCalender: {
+      class: 'bg-cardColor'
     }
   },
   directives,
@@ -106,10 +125,10 @@ const vuetify = createVuetify({
     ...components
   },
   icons: {
-    defaultSet: 'mdi',
     aliases,
     sets: {
-      mdi
+      mdi,
+      fa
     }
   },
   theme: {
@@ -119,21 +138,23 @@ const vuetify = createVuetify({
         colors: {
           background: '#F7F8F9',
           primary: '#F0984D',
-          secondary: '#227D9B ',
+          secondary: '#227D9B',
           accent: '#82B1FF',
           error: '#e639462',
           info: '#2196F3',
-          success: '#37471F',
-          warning: '#FFC107',
+          success: '#1F845A',
+          warning: '#E2B203',
           cardColor: '#F1F2F4',
-          elementTextColor: '#44546F', // most important color for text
+          elementTextColor: '#4C9FC3', // most important color for text
           headingTextColor: '#091E42',
           n_elementTextColor: '#8C9BAB', // most nonImportant color for text
           highlighter: '#DEE4EA',
           tableRowColor: '',
           firstPlace: '#E2B203',
           secondPlace: '#626F86',
-          thirdPlace: '#533F04'
+          thirdPlace: '#533F04',
+          secondRowColor: '#dcdfe4',
+          buttonText: '#F7F8F9'
         }
       },
       dark: {
@@ -154,7 +175,9 @@ const vuetify = createVuetify({
           tableRowColor: '#454f5',
           firstPlace: '#FFD700',
           secondPlace: '#C0C0C0',
-          thirdPlace: '#CD7F32'
+          thirdPlace: '#CD7F32',
+          secondRowColor: '#454f59',
+          buttonText: '#F7F8F9'
         }
       }
     }
