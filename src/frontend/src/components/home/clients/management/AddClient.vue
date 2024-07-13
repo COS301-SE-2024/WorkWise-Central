@@ -381,6 +381,9 @@ export default defineComponent({
       console.log(this.addDialog)
       this.addDialog = false
     }
+  },
+  mounted() {
+    this.isdarkmode = sessionStorage.getItem('theme') === 'true' ? true : false
   }
 })
 </script>

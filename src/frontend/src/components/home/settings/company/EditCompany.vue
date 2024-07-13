@@ -1,7 +1,6 @@
 <template>
-  <v-container >
-    <v-card max-width="600"
-    >
+  <v-container>
+    <v-card max-width="600">
       <v-card-title class="text-center"> Edit Company </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
@@ -96,6 +95,7 @@ export default defineComponent({
     company: Object
   },
   data: () => ({
+    isdarkmode: false,
     company: {
       name: '',
       type: '',
@@ -233,6 +233,9 @@ export default defineComponent({
     saveChanges() {
       this.$emit('save', this.company)
     }
+  },
+  mounted() {
+    this.isdarkmode = sessionStorage.getItem('theme') === 'true' ? true : false
   }
 })
 </script>
