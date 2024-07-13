@@ -115,7 +115,7 @@ describe('ClientService', () => {
 
   it('should be able to check for existence of clients', async function () {
     jest.spyOn(clientRepository, 'exists').mockResolvedValue(true);
-    const a = await clientRepository.exists('a');
+    const a = await clientRepository.exists(new Types.ObjectId());
     expect(a).toBe(true);
   });
 
