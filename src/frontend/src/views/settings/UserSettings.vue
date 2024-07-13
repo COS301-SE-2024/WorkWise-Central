@@ -8,7 +8,4 @@ import UserPage from '../../components/home/settings/user/UserPage.vue'
 </template>
 
 <style scoped>
-.v-container {
-  margin-top: 20px;
-}
 </style>
