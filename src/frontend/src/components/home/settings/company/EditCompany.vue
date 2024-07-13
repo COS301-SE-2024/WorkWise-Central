@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card max-width="600">
+    <v-card>
       <v-card-title class="text-center"> Edit Company </v-card-title>
       <v-divider></v-divider>
       <v-card-text>

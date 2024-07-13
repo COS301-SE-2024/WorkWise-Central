@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card>
+    <v-card >
       <v-card-title class="text-center"> Edit Roles </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
@@ -8,8 +8,8 @@
           :headers="headers"
           :items="items"
           item-value="role"
-          class="elevation-1"
-          :bg-color="background"
+          class="bg-cardColor elevation-1"
+          :row-props="getRowProps"
         >
           <template v-slot:top>
             <v-toolbar flat>
@@ -17,11 +17,11 @@
             </v-toolbar>
           </template>
           <template v-slot:[`item.roleName`]="{ item }">
-            {{ item.roleName }}
+            <v-chip variant="elevated" color="elementTextColor">{{ item }}</v-chip>
           </template>
           <template v-slot:[`item.permission`]="{ item }">
             <v-select
-              v-model="item.permissions"
+              v-model="item.permission"
               :items="permissions"
               label="Permissions"
               chips
@@ -138,6 +138,11 @@ export default defineComponent({
         for (let j = 0; j < this.items[i].permission.length; j++) {
           console.log(this.items[i].permission[j])
         }
+      }
+    },
+    getRowProps({ index }) {
+      return {
+        class: index % 2 ? 'bg-secondRowColor' : ''
       }
     }
   },
