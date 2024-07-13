@@ -8,7 +8,7 @@
     </v-row>
     <v-row>
       <v-col cols="4" class="pl-15">
-        <Menu :model="items" class="bg-secondary" :theme="isdarkmode === true ? 'dark' : 'light'">
+        <!-- <Menu :model="items" class="bg-secondary" :theme="isdarkmode === true ? 'dark' : 'light'">
           <template #item="{ item, props }">
             <router-link v-if="item.route" :to="item.route" custom>
               <a
@@ -27,7 +27,7 @@
               <span class="ml-2">{{ item.label }}</span>
             </a>
           </template>
-        </Menu>
+        </Menu> -->
       </v-col>
       <v-col cols="8">
         <router-view></router-view>
@@ -38,7 +38,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import Menu from 'primevue/menu'
+// import Menu from 'primevue/menu'
 
 export default defineComponent({
   name: 'CompanySettings',
@@ -66,9 +66,9 @@ export default defineComponent({
       ]
     }
   },
-  components: {
-    Menu
-  },
+  // components: {
+  //   Menu
+  // },
   methods: {
     close() {
       this.companyDialog = false

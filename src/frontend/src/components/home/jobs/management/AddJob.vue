@@ -296,12 +296,10 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import { type EmployeeJoined, type EmployeeInformation, type ClientInformation } from '../types'
-import Toast from 'primevue/toast'
+
 export default defineComponent({
   name: 'JobDetailsList',
-  components: {
-    Toast
-  },
+
   data() {
     return {
       localUrl: 'http://localhost:3000/',

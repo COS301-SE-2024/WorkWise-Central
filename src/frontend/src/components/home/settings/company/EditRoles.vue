@@ -69,9 +69,7 @@ export default defineComponent({
     close() {
       this.dialog = false
     },
-    saveChanges() {
-      this.dialog = false
-    },
+
     async getRoles() {
       const config = {
         headers: {

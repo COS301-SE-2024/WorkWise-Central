@@ -99,9 +99,7 @@ import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 export default defineComponent({
   name: 'EditCompany',
-  props: {
-    company: Object
-  },
+
   components: {
     Toast
   },
@@ -239,7 +237,6 @@ export default defineComponent({
   }),
   methods: {
     cancel() {
-      this.$emit('cancel')
       this.$toast.add({
         severity: 'info',
         summary: 'Info',
@@ -248,7 +245,6 @@ export default defineComponent({
       })
     },
     saveChanges() {
-      this.$emit('save', this.company)
       this.$toast.add({
         severity: 'success',
         summary: 'Success',
