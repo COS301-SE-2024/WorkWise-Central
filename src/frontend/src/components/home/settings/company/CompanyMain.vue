@@ -4,9 +4,10 @@
     location="right"
     min-width="300"
     :theme="isdarkmode === true ? 'dark' : 'light'"
+    :close-on-content-click="false"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn color="secondary" class="h6" v-bind="activatorProps">Company Name</v-btn>
+      <v-btn color="secondary" class="h6" v-bind="activatorProps">{{ companyName }}</v-btn>
     </template>
     <v-card class="bg-background" :theme="isdarkmode === true ? 'dark' : 'light'">
       <v-card-title>User's Companies</v-card-title>
@@ -31,8 +32,9 @@
                 width="100%"
                 bg-color="background"
                 density="compact"
-                :items="companyList"
+                :items="joinedCompaniesNames"
                 persistent
+                v-model="company"
               ></v-select
               ><v-col></v-col
             ></v-row>
@@ -41,7 +43,13 @@
       </v-card-text>
       <v-actions @click="closeCompanyDialog">
         <v-col cols="12" align-self="center">
-          <v-btn color="success" width="100%" height="35" variant="outlined" @click="switchCompany"
+          <Toast />
+          <v-btn
+            color="success"
+            width="100%"
+            height="35"
+            variant="outlined"
+            @click="switchCompany(company)"
             >Save</v-btn
           ></v-col
         >
@@ -61,16 +69,26 @@
 </template>
 <script>
 import { defineComponent } from 'vue'
+import axios from 'axios'
+import Toast from 'primevue/toast'
+
 export default defineComponent({
   props: {
     Company: Object,
     userDetails: Object
   },
-
+  components: {
+    Toast
+  },
   data() {
     return {
       companyDialog: false,
       search: '',
+      company: '',
+      companyName: '',
+      joinedCompanies: [],
+      joinedCompaniesNames: [],
+      joinedCompaniesIds: [],
       isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
       companyList: [
         'Company 1',
@@ -90,7 +108,72 @@ export default defineComponent({
     closeCompanyDialog() {
       this.companyDialog = false
     },
-    switchCompany() {}
+    switchCompany(companyName) {
+      const index = this.joinedCompaniesNames.indexOf(companyName)
+      const companyId = this.joinedCompaniesIds[index]
+      this.$emit('switchCompany', companyId)
+      this.$toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: `Switched to ${companyName}`
+      })
+      this.companyName = companyName
+      this.companyDialog = false
+    },
+    async getCompanies() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      const user_id = sessionStorage.getItem('id')
+      await axios
+        .get(`http://localhost:3000/users/id/${user_id}`, config)
+        .then((response) => {
+          console.log(response.data.data.joinedCompanies)
+          this.joinedCompanies = response.data.data.joinedCompanies
+          this.joinedCompanies.forEach((company) => {
+            this.joinedCompaniesNames.push(company.companyName)
+            this.joinedCompaniesIds.push(company._id)
+          })
+          const currentCompanyID = sessionStorage.getItem('currentCompany')
+          console.log(this.joinedCompanies.length)
+          for (let i = 0; i < this.joinedCompanies.length; i++) {
+            if (this.joinedCompaniesIds[i] === currentCompanyID) {
+              this.companyName = this.joinedCompaniesNames[i]
+              console.log(this.companyName)
+            } else {
+              this.companyName = 'No company selected'
+              console.log(this.companyName)
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async getCurrentCompanyName() {
+      const currentCompanyID = sessionStorage.getItem('currentCompany')
+      console.log(this.joinedCompanies.length)
+    }
+  },
+  mounted() {
+    this.getCompanies()
+    this.getCurrentCompanyName()
   }
 })
 </script>

@@ -1,97 +1,95 @@
 <template>
-  <v-app>
-    <v-container>
-      <v-card>
-        <v-card-title class="text-center"> Edit Company </v-card-title>
-        <v-divider></v-divider>
-        <v-card-text>
-          <v-form>
-            <v-row>
-              <v-col cols="5" class="pl-15">
-                <v-avatar color="grey" size="150">
-                  <v-img
-                    src="https://cdn.vuetifyjs.com/docs/images/brand-kit/v-logo-circle.png"
-                    cover
-                  ></v-img>
-                </v-avatar>
-              </v-col>
-              <v-col cols="7" class="pl-15">
-                <v-label> Name</v-label>
-                <v-text-field
-                  v-model="company.name"
-                  label=" Name"
-                  :rules="nameRules"
-                  bg-color="background"
-                ></v-text-field>
-                <v-label>Type</v-label>
-                <v-select
-                  v-model="company.type"
-                  label="Type"
-                  :items="type"
-                  bg-color="background"
-                ></v-select>
-                <v-label>Email</v-label>
-                <v-text-field
-                  v-model="company.contactDetails.email"
-                  label="Email"
-                  :rules="emailRules"
-                  bg-color="background"
-                ></v-text-field>
-                <v-label>Phone</v-label>
-                <v-text-field
-                  v-model="company.contactDetails.phone"
-                  label="Phone"
-                  :rules="phone_number_rules"
-                  bg-color="background"
-                ></v-text-field>
-                <v-label>Street</v-label>
-                <v-text-field
-                  v-model="company.address.street"
-                  label="Street"
-                  bg-color="background"
-                ></v-text-field>
-                <v-label>Suburb</v-label>
-                <v-text-field
-                  v-model="company.address.suburb"
-                  label="Suburb"
-                  bg-color="background"
-                ></v-text-field>
+  <v-container>
+    <v-card>
+      <v-card-title class="text-center"> Edit Company </v-card-title>
+      <v-divider></v-divider>
+      <v-card-text>
+        <v-form>
+          <v-row>
+            <v-col cols="5" class="pl-15">
+              <v-avatar color="grey" size="150">
+                <v-img
+                  src="https://cdn.vuetifyjs.com/docs/images/brand-kit/v-logo-circle.png"
+                  cover
+                ></v-img>
+              </v-avatar>
+            </v-col>
+            <v-col cols="7" class="pl-15">
+              <v-label> Name</v-label>
+              <v-text-field
+                v-model="company.name"
+                label=" Name"
+                :rules="nameRules"
+                bg-color="background"
+              ></v-text-field>
+              <v-label>Type</v-label>
+              <v-select
+                v-model="company.type"
+                label="Type"
+                :items="type"
+                bg-color="background"
+              ></v-select>
+              <v-label>Email</v-label>
+              <v-text-field
+                v-model="company.contactDetails.email"
+                label="Email"
+                :rules="emailRules"
+                bg-color="background"
+              ></v-text-field>
+              <v-label>Phone</v-label>
+              <v-text-field
+                v-model="company.contactDetails.phone"
+                label="Phone"
+                :rules="phone_number_rules"
+                bg-color="background"
+              ></v-text-field>
+              <v-label>Street</v-label>
+              <v-text-field
+                v-model="company.address.street"
+                label="Street"
+                bg-color="background"
+              ></v-text-field>
+              <v-label>Suburb</v-label>
+              <v-text-field
+                v-model="company.address.suburb"
+                label="Suburb"
+                bg-color="background"
+              ></v-text-field>
 
-                <v-label>Province</v-label>
-                <v-select
-                  :items="provinces"
-                  v-model="company.address.province"
-                  bg-color="background"
-                ></v-select>
-                <v-label>City</v-label>
-                <v-text-field
-                  v-model="company.address.city"
-                  label="City"
-                  bg-color="background"
-                ></v-text-field>
-                <v-label>Postal Code</v-label>
-                <v-text-field
-                  v-model="company.address.postalCode"
-                  label="Postal Code"
-                  bg-color="background"
-                ></v-text-field>
-              </v-col> </v-row></v-form
-        ></v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions class="bg-cardColor">
-          <v-col align="center">
-            <Toast />
-            <v-btn color="success" @click="saveChanges"> Save </v-btn></v-col
-          >
-          <v-col align="center">
-            <Toast />
-            <v-btn color="error" @click="cancel"> Cancel </v-btn></v-col
-          >
-        </v-card-actions>
-        <div class="card flex justify-center"></div>
-      </v-card>
-    </v-container>
-  </v-app>
+              <v-label>Province</v-label>
+              <v-select
+                :items="provinces"
+                v-model="company.address.province"
+                bg-color="background"
+              ></v-select>
+              <v-label>City</v-label>
+              <v-text-field
+                v-model="company.address.city"
+                label="City"
+                bg-color="background"
+              ></v-text-field>
+              <v-label>Postal Code</v-label>
+              <v-text-field
+                v-model="company.address.postalCode"
+                label="Postal Code"
+                bg-color="background"
+              ></v-text-field>
+            </v-col> </v-row></v-form
+      ></v-card-text>
+      <v-divider></v-divider>
+      <v-card-actions class="bg-cardColor">
+        <v-col align="center">
+          <Toast />
+          <v-btn color="success" @click="saveChanges"> Save </v-btn></v-col
+        >
+        <v-col align="center">
+          <Toast />
+          <v-btn color="error" @click="cancel"> Cancel </v-btn></v-col
+        >
+      </v-card-actions>
+      <div class="card flex justify-center"></div>
+    </v-card>
+  </v-container>
 </template>
 
 <script lang="ts">

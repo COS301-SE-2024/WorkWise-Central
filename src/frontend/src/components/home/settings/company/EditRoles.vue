@@ -1,46 +1,44 @@
 <template>
-  <v-app>
-    <v-container>
-      <v-card>
-        <v-card-title class="text-center"> Edit Roles </v-card-title>
-        <v-divider></v-divider>
-        <v-card-text>
-          <v-data-table
-            :headers="headers"
-            :items="items"
-            item-value="role"
-            class="bg-cardColor elevation-1"
-            :row-props="getRowProps"
-          >
-            <template v-slot:top>
-              <v-toolbar flat>
-                <v-toolbar-title>Roles and Permissions</v-toolbar-title>
-              </v-toolbar>
-            </template>
-            <template v-slot:[`item.roleName`]="{ item }">
-              <v-chip variant="elevated" color="elementTextColor">{{ item }}</v-chip>
-            </template>
-            <template v-slot:[`item.permission`]="{ item }">
-              <v-select
-                v-model="item.permission"
-                :items="permissions"
-                label="Permissions"
-                chips
-                multiple
-              ></v-select>
-            </template>
-          </v-data-table>
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions class="bg-cardColor">
-          <Toast />
-          <v-col align="center"> <v-btn color="success" @click="saveChanges"> Save </v-btn></v-col>
-          <Toast />
-          <v-col align="center"><v-btn color="error" @click="cancel"> Cancel </v-btn></v-col>
-        </v-card-actions>
-      </v-card>
-    </v-container>
-  </v-app>
+  <v-container>
+    <v-card>
+      <v-card-title class="text-center"> Edit Roles </v-card-title>
+      <v-divider></v-divider>
+      <v-card-text>
+        <v-data-table
+          :headers="headers"
+          :items="items"
+          item-value="role"
+          class="bg-cardColor elevation-1"
+          :row-props="getRowProps"
+        >
+          <template v-slot:top>
+            <v-toolbar flat>
+              <v-toolbar-title>Roles and Permissions</v-toolbar-title>
+            </v-toolbar>
+          </template>
+          <template v-slot:[`item.roleName`]="{ item }">
+            <v-chip variant="elevated" color="elementTextColor">{{ item }}</v-chip>
+          </template>
+          <template v-slot:[`item.permission`]="{ item }">
+            <v-select
+              v-model="item.permission"
+              :items="permissions"
+              label="Permissions"
+              chips
+              multiple
+            ></v-select>
+          </template>
+        </v-data-table>
+      </v-card-text>
+      <v-divider></v-divider>
+      <v-card-actions class="bg-cardColor">
+        <Toast />
+        <v-col align="center"> <v-btn color="success" @click="saveChanges"> Save </v-btn></v-col>
+        <Toast />
+        <v-col align="center"><v-btn color="error" @click="cancel"> Cancel </v-btn></v-col>
+      </v-card-actions>
+    </v-card>
+  </v-container>
 </template>
 
 <script>

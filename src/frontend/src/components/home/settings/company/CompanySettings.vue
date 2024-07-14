@@ -1,4 +1,5 @@
 <template>
+  
   <v-container :theme="isdarkmode === true ? 'dark' : 'light'">
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
@@ -8,15 +9,14 @@
     </v-row>
     <v-row>
       <v-col cols="4" class="pl-15">
-        <!-- <Menu :model="items" class="bg-secondary" :theme="isdarkmode === true ? 'dark' : 'light'">
+        <Menu :model="items" class="bg-secondary" :theme="isdarkmode === true ? 'dark' : 'light'">
           <template #item="{ item, props }">
             <router-link v-if="item.route" :to="item.route" custom>
               <a
                 v-ripple
                 :href="props.href"
                 v-bind="props.action"
-                @click="props.navigate"
-                :class="{ active: $route.path === item.route }"
+                @click="selectSettings(item.label)"
               >
                 <span :class="item.icon"></span>
                 <span class="ml-2">{{ item.label }}</span>
@@ -27,18 +27,21 @@
               <span class="ml-2">{{ item.label }}</span>
             </a>
           </template>
-        </Menu> -->
+        </Menu>
       </v-col>
-      <v-col cols="8">
-        <router-view></router-view>
+      <v-col cols="8" class="pl-15">
+        <EditCompany v-if="currentSettings==='Company Details'" />
+        <EditRoles v-if="currentSettings==='Roles'"/>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue'
-// import Menu from 'primevue/menu'
+import Menu from 'primevue/menu'
+import EditCompany from './EditCompany.vue'
+import EditRoles from './EditRoles.vue'
 
 export default defineComponent({
   name: 'CompanySettings',
@@ -46,17 +49,18 @@ export default defineComponent({
   data() {
     return {
       companyDialog: false,
+      currentSettings: '',
       isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
       items: [
         {
           icon: 'fa: fa-solid fa-building',
           label: 'Company Details',
-          route: '/editCompany'
+          route: '/companySettingsView/editCompany'
         },
         {
           icon: 'fa: fa-solid fa-person',
           label: 'Roles',
-          route: '/editRoles'
+          route: '/companySettingsView/editRoles'
         },
         {
           icon: 'fa: fa-solid fa-folder-tree',
@@ -66,12 +70,23 @@ export default defineComponent({
       ]
     }
   },
-  // components: {
-  //   Menu
-  // },
+  components: {
+    Menu,
+    EditCompany,
+    EditRoles
+  },
   methods: {
     close() {
       this.companyDialog = false
+    },
+    selectSettings(name: string) {
+      if (name === 'Company Details') {
+        this.currentSettings = 'Company Details'
+      } else if (name === 'Roles') {
+        this.currentSettings = 'Roles'
+      } else if (name === 'Structure') {
+        this.currentSettings = 'Structure'
+      }
     }
   }
 })
