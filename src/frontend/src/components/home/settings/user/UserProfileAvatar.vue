@@ -8,7 +8,7 @@
         class="avatar-wrapper"
     >
       <v-img :src="avatarSrc" cover></v-img>
-      <v-icon small class="camera-icon" color="grey">mdi-camera</v-icon>
+      <v-icon small class="camera-icon" color="grey" style="opacity: 0.7;">mdi-camera</v-icon>
     </v-avatar>
     <v-file-input
         ref="fileInput"

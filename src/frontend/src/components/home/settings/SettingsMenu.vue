@@ -1,8 +1,8 @@
 <template>
-  <div class="card flex justify-center">
-    <Menu :model="items" class="w-full md:w-60">
+  <div :class="menuContainerClass">
+    <Menu :model="items" :class="menuClass">
       <template #start>
-        <span class="inline-flex items-center gap-1 px-2 py-5 custom-settings">
+        <span class="inline-flex items-center gap-1 px-2 py-4">
             <span class="text-xl font-semibold">Settings</span>
         </span>
       </template>
@@ -20,17 +20,19 @@
 </template>
 
 <script setup>
-import Menu from 'primevue/menu'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import Menu from 'primevue/menu';
 
-const router = useRouter()
+const router = useRouter();
+
+const theme = ref('light'); // Assume the theme is stored in a reactive variable
 
 const navigate = (route) => {
   if (route) {
-    router.push(route)
+    router.push(route);
   }
-}
+};
 
 const items = ref([
   {
@@ -46,7 +48,7 @@ const items = ref([
       },
       {
         label: 'Preferences',
-        icon: 'fa: fa-solid fa-sliders-h',
+        icon: 'fa fa-solid fa-sliders-h',
         route: '/preferences'
       },
       {
@@ -55,26 +57,37 @@ const items = ref([
         route: '/notifications'
       }
     ]
-  },
-  {
-    separator: true
-  },
-  {
-    label: 'Company',
-    items: [
-      {
-        label: 'Settings',
-        icon: 'fa fa-solid fa-building',
-        route: '/companySettings'
-      }
-    ]
   }
-])
+]);
+
+const menuClass = computed(() => ({
+  'bg-light': theme.value === 'light',
+  'bg-dark': theme.value === 'dark'
+}));
+
+const menuContainerClass = computed(() => ({
+  'flex justify-center': true,
+  'bg-light-page': theme.value === 'light',
+  'bg-dark-page': theme.value === 'dark'
+}));
 </script>
 
-<style>
-.custom-settings {
-  height: 80px; /* Adjust the height as needed */
-  align-items: center; /* Center the content vertically */
+<style scoped>
+.bg-light {
+  background-color: #F7F8F9; /* Light theme menu background color */
+  color: #4C9FC3; /* Light theme text color */
+}
+
+.bg-dark {
+  background-color: #161A1D; /* Dark theme menu background color */
+  color: #B6C2CF; /* Dark theme text color */
+}
+
+.bg-light-page {
+  background-color: #F1F2F4; /* Light theme page background color */
+}
+
+.bg-dark-page {
+  background-color: #22272B; /* Dark theme page background color */
 }
 </style>

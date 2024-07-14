@@ -46,10 +46,6 @@ const inboxSubItems = ref([
 const supportSubItems = ref([
   { title: 'Support', icon: 'fa: fa-solid fa-headset', routeName: 'support' }
 ])
-const moreSubItems = ref([
-  { title: 'Settings', icon: 'fa: fa-solid fa-cog', routeName: '404' },
-  { title: 'Logout', icon: 'fa: fa-solid fa-sign-out-alt', routeName: '404' }
-])
 </script>
 
 <script lang="ts">
@@ -269,27 +265,6 @@ export default defineComponent({
               </template>
               <v-list-item
                 v-for="(item, i) in supportSubItems"
-                :key="i"
-                :to="{ name: item.routeName }"
-                :prepend-icon="item.icon"
-                :title="item.title"
-                :value="item.title"
-                class="list-item-small"
-              ></v-list-item>
-            </v-list-group>
-          </v-list>
-          <v-list v-model:open="open">
-            <v-list-group fluid value="More">
-              <template v-slot:activator="{ props }">
-                <v-list-item
-                  v-bind="props"
-                  prepend-icon="fa: fa-solid fa-ellipsis-h"
-                  title="More"
-                  class="list-item-large"
-                ></v-list-item>
-              </template>
-              <v-list-item
-                v-for="(item, i) in moreSubItems"
                 :key="i"
                 :to="{ name: item.routeName }"
                 :prepend-icon="item.icon"
