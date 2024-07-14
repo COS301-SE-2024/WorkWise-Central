@@ -1,7 +1,31 @@
+example of use of Qalendar library (event listeners, configuration etc...) this is in case i forget
+how to use this library
+https://github.com/tomosterlund/qalendar/blob/master/development/QalendarView.vue
+
 <template>
-  <div class="calendar-container">
-    <Qalendar :events="events2" :config="config" :is-loading="are_events_loading" />
-  </div>
+  <Qalendar
+    :events="events2"
+    :config="config"
+    :is-loading="are_events_loading"
+    @event-was-clicked="clicked"
+    @delete-event="deleteEvent"
+  >
+    <template #customCurrentTime>
+      <div :style="{ height: '3px', backgroundColor: '#F38A3F', position: 'relative' }">
+        <div
+          :style="{
+            position: 'absolute',
+            left: '-7px',
+            top: '-6px',
+            height: '15px',
+            width: '15px',
+            backgroundColor: '#F38A3F',
+            borderRadius: '50%'
+          }"
+        ></div>
+      </div>
+    </template>
+  </Qalendar>
 </template>
 
 <script lang="ts">
@@ -9,21 +33,7 @@
 // @ts-ignore
 import { Qalendar } from 'qalendar'
 import axios from 'axios'
-
-type EventTime = {
-  start: string // Use string to represent the date-time format
-  end: string // Use string to represent the date-time format
-}
-
-type Event = {
-  title: string
-  with: string
-  time: EventTime
-  color: string
-  isEditable: boolean
-  id: string
-  description: string
-}
+import type { Event } from '@/components/home/dashboard/types'
 
 export default {
   name: 'CalendarComponent',
@@ -32,9 +42,17 @@ export default {
   },
   data() {
     return {
+      isdarkmode: localStorage['theme'] === 'true',
+      available_event_colors: ['blue', 'yellow', 'green', 'red', 'pink', 'purple', 'turquoise'],
       are_events_loading: true,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      request_config: {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+        }
+      },
       events: [
         // ...
         {
@@ -44,6 +62,7 @@ export default {
           color: 'yellow',
           isEditable: false,
           id: '753944708f0f',
+          location: 'Room 1',
           description:
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!'
         },
@@ -908,15 +927,38 @@ export default {
       ],
       events2: [] as Event[],
       config: {
-        // see configuration section
+        week: {
+          startsOn: 'monday',
+          nDays: 7,
+          scrollToHour: 8
+        },
         style: {
-          // When adding a custom font, please also set the fallback(s) yourself
           fontFamily: 'Nunito, sans-serif'
-        }
+        },
+        defaultMode: 'week',
+        showCurrentTime: true
+        // eventDialog: {
+        //   isCustom: true
+        // }
       }
     }
   },
   methods: {
+    async deleteEvent(payload_event_id: string) {
+      console.log(payload_event_id)
+      console.log('event deleted')
+      // uncomment this when youre ready to run an event delete
+      // const apiURL = await this.getRequestUrl()
+      // axios
+      //   .delete(apiURL + `job/${payload_event_id}`, this.request_config)
+      //   .then((res) => {
+      //     console.log('event deleted')
+      //   })
+      //   .catch((res) => {})
+    },
+    clicked() {
+      console.log('event clicked')
+    },
     loadJobs() {},
     loadJobsMockData() {
       this.jobs.forEach((job) => {
@@ -927,13 +969,24 @@ export default {
             start: this.formatDate(job.details.startDate),
             end: this.formatDate(job.details.endDate)
           },
-          color: 'pink',
+          color: this.available_event_colors[this.randNum(0, this.available_event_colors.length)],
+          location:
+            job.details.address.suburb +
+            ', ' +
+            job.details.address.city +
+            ', ' +
+            job.details.address.street +
+            ', ' +
+            job.details.address.postalCode +
+            ', ' +
+            job.details.address.complex +
+            ' ' +
+            job.details.address.houseNumber,
           isEditable: true,
           id: job.id,
           description: job.details.description
         }
         this.events2.push(event)
-        console.log(event)
       })
     },
     formatDate2(date: string) {
@@ -952,7 +1005,6 @@ export default {
       const [day, month, year] = formattedDate.split('/')[0].split('/')
       const time = formattedDate.split(', ')[1]
       const finalFormattedDate = `${year}-${month}-${day} ${time}`
-      console.log(finalFormattedDate)
     },
     toLocalISOString(date: Date) {
       const timezoneOffset = date.getTimezoneOffset() * 60000
@@ -970,7 +1022,7 @@ export default {
       const h = String(date_passed_in.getHours()).padStart(2, '0')
       const mn = String(date_passed_in.getMinutes()).padStart(2, '0')
       const f_date = `${y}-${m}-${d} ${h}:${mn}`
-      console.log(f_date)
+      // console.log(f_date)
       return f_date
     },
     async isLocalAvailable(localUrl: string) {
@@ -984,6 +1036,11 @@ export default {
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    randNum(min: number, max: number /*excluding*/) {
+      min = Math.ceil(min)
+      max = Math.floor(max)
+      return Math.floor(Math.random() * (max - min)) + min
     }
   },
   mounted() {
@@ -996,7 +1053,8 @@ export default {
 
 <style>
 @import 'qalendar/dist/style.css';
-/*.calendar-container {
-  background-color: white;
-}*/
+.calendar-container {
+  background-color: transparent;
+  color: black;
+}
 </style>
