@@ -1,4 +1,4 @@
-<template>
+<template class="emply-mng-container">
   <v-app :style="isdarkmode === true ? 'dark' : 'light'">
     <v-container fluid fill-height>
       <v-row justify="center" xs="6" sm="6" md="12">
@@ -14,16 +14,16 @@
               >
                 <v-card-title
                   class="d-flex align-center pe-2"
-                  style="font-family: 'Lato', sans-serif; font-size: 25px; font-weight: lighter"
+                  style="font-family: Nunito, sans-serif; font-size: 25px; font-weight: lighter"
                 >
                   <v-row align="center" justify="space-between">
                     <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
                       <v-icon icon="mdi-account-hard-hat"></v-icon>
                       <v-label
-                        class="ms-2 text-h4 font-family-lato text-headingTextColor"
+                        class="ms-2 text-h4 text-headingTextColor"
                         style="
-                          font-family: 'Lato', sans-serif;
                           font-size: 15px;
+                          font-family: Nunito, sans-serif;
                           font-weight: lighter;
                         "
                         height="auto"
@@ -41,7 +41,7 @@
                         flat
                         width="100%"
                         style="
-                          font-family: 'Lato', sans-serif;
+                          font-family: Nunito, sans-serif;
                           font-size: 15px;
                           font-weight: lighter;
                         "
@@ -964,6 +964,9 @@ export default {
 </script>
 
 <style>
+.emply-mng-container {
+  font-family: 'Nunito', sans-serif;
+}
 .fixed-container {
   position: fixed; /* or 'absolute' depending on your layout */
   top: 30px; /* Adjust this value based on the height of your navigation bar */
