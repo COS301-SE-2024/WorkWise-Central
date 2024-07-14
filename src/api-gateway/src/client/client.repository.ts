@@ -69,7 +69,7 @@ export class ClientRepository {
       .lean();
   }
 
-  async exists(id: string | Types.ObjectId) {
+  async exists(id: Types.ObjectId) {
     const result = await this.clientModel
       .findOne({
         $and: [
@@ -100,7 +100,7 @@ export class ClientRepository {
       .lean();
   }
 
-  async delete(id: string | Types.ObjectId) {
+  async delete(id: Types.ObjectId) {
     return this.clientModel.findOneAndUpdate(
       {
         $and: [

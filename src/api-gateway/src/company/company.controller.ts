@@ -64,7 +64,7 @@ export class CompanyController {
 
   @UseGuards(AuthGuard) //Need to add authorization
   @Get()
-  hello() {
+  lookAtDocumentation() {
     return { message: 'Refer to /documentation for details on the API' };
   }
 
