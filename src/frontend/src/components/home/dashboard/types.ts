@@ -13,3 +13,23 @@ export type Event = {
   id: string
   description: string
 }
+
+export type JobCardDataFormat = {
+  jobId: string
+  heading: string
+  jobDescription: string
+  startDate: string
+  endDate: string
+  status: string
+  clientName: string
+  street: string
+  suburb: string
+  city: string
+  postalCode: string
+  complex?: string
+  houseNumber?: string
+  imagesTaken: string[]
+  inventoryUsed: string[]
+  taskList: string[]
+  comments: string[]
+}
