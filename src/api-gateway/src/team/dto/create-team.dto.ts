@@ -1,5 +1,11 @@
 import { Types } from 'mongoose';
-import { IsArray, IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
+import {
+  IsArray,
+  IsMongoId,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTeamDto {
@@ -10,6 +16,7 @@ export class CreateTeamDto {
 
   @IsNotEmpty()
   @ApiProperty()
+  @IsString()
   teamName: string;
 
   @IsArray()
@@ -21,7 +28,7 @@ export class CreateTeamDto {
   @IsMongoId()
   @IsOptional()
   @ApiProperty()
-  teamLeaderId: Types.ObjectId;
+  teamLeaderId?: Types.ObjectId;
 }
 
 export class createTeamResponseDto {
