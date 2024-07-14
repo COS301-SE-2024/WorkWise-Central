@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid fill-height>
+  <v-container fluid>
     <v-row>
       <v-col>
         <v-col :cols="12">
@@ -7,58 +7,57 @@
         >
       </v-col>
       <v-col :cols="12">
-        <v-card>
-          <v-tabs v-model="tab" align-tabs="center" color="#5A82AF">
-            <v-tab :value="1">FAQ</v-tab>
-            <v-tab :value="2">TUTORIAL</v-tab>
-          </v-tabs>
-          <v-tabs-window v-model="tab">
-            <v-tabs-window-item :value="1">
-              <v-col :cols="12">
-                <v-sheet rounded class="h-lg-screen w-lg-screen">
-                  <div>
-                    <v-expansion-panels class="my-4" variant="inset" :theme="isdarkmode">
-                      <v-expansion-panel
-                        v-for="i in 14"
-                        :key="i"
-                        :text="faqs[i].answer"
-                        :title="faqs[i].question"
-                      ></v-expansion-panel>
-                    </v-expansion-panels>
-                  </div>
-                </v-sheet>
-              </v-col>
-            </v-tabs-window-item>
-            <v-tabs-window-item :value="2">
-              <v-col :cols="12"> </v-col>
-            </v-tabs-window-item>
-            <v-tabs-window-item :value="3">
-              <v-col :cols="12"
-                ><v-card>
-                  <v-card-title>
-                    <v-avatar size="40" class="mr-4">
-                      <img
-                        src="https://github.com/COS301-SE-2024/WorkWise-Central/blob/develop/res/img/team%20photos/Bob.jpg"
-                        alt="Avatar"
-                      />
-                    </v-avatar>
-                    Tinashe Fadza
-                  </v-card-title>
-                  <v-card-subtitle>Software Engineer</v-card-subtitle>
-                  <v-card-text>
-                    <div><strong>Email:</strong> ttfadzai@example.com</div>
-                    <div><strong>Phone:</strong> +27 73 441 4451</div>
-                    <div><strong>Address:</strong> 1234 Lunnon Street, Hatcrest, PTA</div>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-btn color="primary" @click="sendEmail">Email</v-btn>
-                    <v-btn color="secondary" @click="callPhone">Call</v-btn>
-                  </v-card-actions>
-                </v-card></v-col
-              >
-            </v-tabs-window-item>
-          </v-tabs-window>
-        </v-card>
+        <v-tabs v-model="tab" align-tabs="center" color="#5A82AF">
+          <v-tab :value="1">FAQ</v-tab>
+          <v-tab :value="2">TUTORIAL</v-tab>
+        </v-tabs>
+        <v-tabs-window v-model="tab" height="auto">
+          <v-tabs-window-item :value="1">
+            <v-col :cols="12">
+              <v-sheet rounded class="w-lg-screen">
+                <div>
+                  <v-expansion-panels class="my-4" variant="accordion">
+                    <v-expansion-panel
+                      v-for="i in 14"
+                      :key="i"
+                      :text="faqs[i].answer"
+                      :title="faqs[i].question"
+                      :color="isdarkmode === true ? '#22272B' : '#EEEEEE'"
+                    ></v-expansion-panel>
+                  </v-expansion-panels>
+                </div>
+              </v-sheet>
+            </v-col>
+          </v-tabs-window-item>
+          <v-tabs-window-item :value="2">
+            <v-col :cols="12"> </v-col>
+          </v-tabs-window-item>
+          <v-tabs-window-item :value="3">
+            <v-col :cols="12"
+              ><v-card>
+                <v-card-title>
+                  <v-avatar size="40" class="mr-4">
+                    <img
+                      src="https://github.com/COS301-SE-2024/WorkWise-Central/blob/develop/res/img/team%20photos/Bob.jpg"
+                      alt="Avatar"
+                    />
+                  </v-avatar>
+                  Tinashe Fadza
+                </v-card-title>
+                <v-card-subtitle>Software Engineer</v-card-subtitle>
+                <v-card-text>
+                  <div><strong>Email:</strong> ttfadzai@example.com</div>
+                  <div><strong>Phone:</strong> +27 73 441 4451</div>
+                  <div><strong>Address:</strong> 1234 Lunnon Street, Hatcrest, PTA</div>
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn color="primary" @click="sendEmail">Email</v-btn>
+                  <v-btn color="secondary" @click="callPhone">Call</v-btn>
+                </v-card-actions>
+              </v-card></v-col
+            >
+          </v-tabs-window-item>
+        </v-tabs-window>
       </v-col>
     </v-row>
   </v-container>
@@ -71,7 +70,7 @@ export default defineComponent({
   name: 'SupportComponent',
   data() {
     return {
-      isdarkmode: sessionStorage['theme'] === 'false' ? 'light' : 'dark',
+      isdarkmode: sessionStorage['theme'] === 'true',
       tab: null,
       faqs: [
         {
