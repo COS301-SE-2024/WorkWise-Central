@@ -1,36 +1,44 @@
 <template>
-  <v-dialog
-    v-model="companyDialog"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
-    location="bottom"
-    max-width="700"
-  >
-    <template v-slot:activator="{ props: activatorProps }">
-      <v-btn v-bind="activatorProps" color="success" width="100%" height="35" variant="outlined">
-        Settings
-      </v-btn>
-    </template>
-    <v-card>
-      <v-card-title>Company Settings</v-card-title>
-      <v-card-text>
-        <v-row>
-          <v-col cols="2" class="justify-center">
-            <EditCompany />
-            <EditRoles />
-            <EditStructure />
-          </v-col>
-          <v-col cols="10"></v-col
-        ></v-row>
-      </v-card-text>
-    </v-card>
-  </v-dialog>
+  <v-container :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-row class="justify-center align-center">
+      <v-col cols="12" class="text-center">
+        <h1>Company Settings</h1>
+        <v-divider></v-divider>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="4" class="pl-15">
+        <!-- <Menu :model="items" class="bg-secondary" :theme="isdarkmode === true ? 'dark' : 'light'">
+          <template #item="{ item, props }">
+            <router-link v-if="item.route" :to="item.route" custom>
+              <a
+                v-ripple
+                :href="props.href"
+                v-bind="props.action"
+                @click="props.navigate"
+                :class="{ active: $route.path === item.route }"
+              >
+                <span :class="item.icon"></span>
+                <span class="ml-2">{{ item.label }}</span>
+              </a>
+            </router-link>
+            <a v-else v-ripple :href="item.url" :target="item.target" v-bind="props.action">
+              <span :class="item.icon"></span>
+              <span class="ml-2">{{ item.label }}</span>
+            </a>
+          </template>
+        </Menu> -->
+      </v-col>
+      <v-col cols="8">
+        <router-view></router-view>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
-import EditCompany from './EditCompany.vue'
-import EditRoles from './EditRoles.vue'
-import EditStructure from './EditStructure.vue'
+// import Menu from 'primevue/menu'
 
 export default defineComponent({
   name: 'CompanySettings',
@@ -38,14 +46,29 @@ export default defineComponent({
   data() {
     return {
       companyDialog: false,
-      isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false
+      isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
+      items: [
+        {
+          icon: 'fa: fa-solid fa-building',
+          label: 'Company Details',
+          route: '/editCompany'
+        },
+        {
+          icon: 'fa: fa-solid fa-person',
+          label: 'Roles',
+          route: '/editRoles'
+        },
+        {
+          icon: 'fa: fa-solid fa-folder-tree',
+          label: 'Structure',
+          route: '/editStructure'
+        }
+      ]
     }
   },
-  components: {
-    EditCompany,
-    EditRoles,
-    EditStructure
-  },
+  // components: {
+  //   Menu
+  // },
   methods: {
     close() {
       this.companyDialog = false
@@ -54,4 +77,9 @@ export default defineComponent({
 })
 </script>
 
-<style></style>
+<style scoped>
+.active {
+  background-color: #f0f0f0;
+  color: #000;
+}
+</style>

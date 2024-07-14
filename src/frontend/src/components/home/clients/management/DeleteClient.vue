@@ -17,6 +17,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
+        <Toast />
         <v-btn label="Delete" color="error" text :loading="isDeleting" @click="deleteClient"
           >Delete</v-btn
         >
@@ -28,6 +29,7 @@
 
 <script>
 import axios from 'axios'
+import Toast from 'primevue/toast'
 export default {
   name: 'DeleteClient',
   props: {
@@ -35,6 +37,7 @@ export default {
     client_id: Number,
     client: Object
   },
+  components: { Toast },
   data() {
     return {
       clientDialog: false,
@@ -62,13 +65,19 @@ export default {
           Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
         }
       }
+      const apiURL = await this.getRequestUrl()
       console.log(this.client_id)
       this.isDeleting = true // Indicate the start of the deletion process
       axios
         .delete(`http://localhost:3000/client/delete/${this.client_id}`, config)
         .then((response) => {
           console.log(response)
-          alert('Client deleted')
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Client deleted successfully',
+            life: 3000
+          })
           this.clientDialog = false
           this.$emit('clientDeleted')
           // Consider using a more SPA-friendly way of updating the view instead of reloading
@@ -81,6 +90,18 @@ export default {
           this.isDeleting = false // Reset the deletion indicator
           window.location.reload() // Consider removing this for SPA behavior
         })
+    },
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
   }
 }

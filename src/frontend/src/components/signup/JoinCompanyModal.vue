@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="dialog" max-width="500" height="500" :theme="isdarkmode === true ? 'dark' : 'light'">
+  <v-dialog
+    v-model="dialog"
+    max-width="500"
+    height="500"
+    :theme="isdarkmode === true ? 'dark' : 'light'"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -49,6 +54,7 @@
             ></v-col>
           </v-col>
           <v-col cols="8" offset="2" align="center">
+            <Toast />
             <v-btn
               color="primary"
               rounded="md"
@@ -80,9 +86,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import Toast from 'primevue/toast'
 export default defineComponent({
   name: 'RegisterCompanyModal',
-
+  components: {
+    Toast
+  },
   data: () => ({
     dialog: false,
     valid: false,
@@ -101,7 +110,13 @@ export default defineComponent({
 
   methods: {
     handlesubmission() {
-      alert('Added employee successfully')
+      this.dialog = false
+      this.$toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'You have successfully joined the company',
+        life: 3000
+      })
     },
     close() {
       this.dialog = false

@@ -11,13 +11,10 @@
               :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
               border="md"
             >
-              <v-card-title
-                height="auto"
-                width="100%"
-              >
+              <v-card-title height="auto" width="100%">
                 <v-row align="center" justify="space-between">
                   <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
-                    <v-icon icon='fa: fa-solid fa-briefcase'></v-icon>
+                    <v-icon icon="fa: fa-solid fa-briefcase"></v-icon>
                     <v-label
                       class="ms-2 text-h4 font-family-lato text-headingTextColor"
                       style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
@@ -109,8 +106,7 @@
     >
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
-        <v-card-title
-        >
+        <v-card-title>
           {{ selectedJob?.heading }}
         </v-card-title>
         <v-card-text> What would you like to do with this job? </v-card-text>
@@ -118,43 +114,32 @@
           <v-btn color="success" @click="viewJobDialog = true">View</v-btn>
           <!-- View Job Dialog -->
           <v-dialog v-model="viewJobDialog" max-width="500">
-            <v-card
-                elevation="14"
-                rounded="md"
-                :max-width="500"
-                :max-height="800"
-            >
-              <v-card-title>
-                Job Details
-              </v-card-title>
+            <v-card elevation="14" rounded="md" :max-width="500" :max-height="800">
+              <v-card-title> Job Details </v-card-title>
               <v-col>
-                  <v-col class="text-center">
-                    <h3>Job Title</h3>
-                    <p
-                        class="text-caption"
-                    >
-                      {{ selectedJob.heading }}
-                    </p>
+                <v-col class="text-center">
+                  <h3>Job Title</h3>
+                  <p class="text-caption">
+                    {{ selectedJob.heading }}
+                  </p>
                 </v-col>
                 <v-divider></v-divider>
-                  <v-col class="text-center">
-                    <h3>Description</h3><v-spacer></v-spacer>
-                    <small
-                        class="text-caption"
-                    >
-                      {{ selectedJob.jobDescription }}
-                    </small>
+                <v-col class="text-center">
+                  <h3>Description</h3>
+                  <v-spacer></v-spacer>
+                  <small class="text-caption">
+                    {{ selectedJob.jobDescription }}
+                  </small>
                 </v-col>
                 <v-divider></v-divider>
-                  <v-col class="text-center">
-                    <h3>Status</h3><v-spacer></v-spacer>
-                    <small
-                        class="text-caption"
-                    >
-                      <v-chip :color="getStatusColor(selectedJob.status)" dark>
-                        {{ selectedJob.status }}
-                      </v-chip>
-                    </small>
+                <v-col class="text-center">
+                  <h3>Status</h3>
+                  <v-spacer></v-spacer>
+                  <small class="text-caption">
+                    <v-chip :color="getStatusColor(selectedJob.status)" dark>
+                      {{ selectedJob.status }}
+                    </v-chip>
+                  </small>
                 </v-col>
                 <v-divider></v-divider>
                 <v-col class="text-center">
@@ -215,7 +200,7 @@
                 </v-col>
               </v-col>
               <v-col class="pt-0">
-                <v-btn color="error" width="100%" @click="viewJobDialog=false">Close</v-btn>
+                <v-btn color="error" width="100%" @click="viewJobDialog = false">Close</v-btn>
               </v-col>
             </v-card>
           </v-dialog>
@@ -469,5 +454,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

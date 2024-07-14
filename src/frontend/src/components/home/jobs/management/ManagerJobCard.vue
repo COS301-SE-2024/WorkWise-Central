@@ -6,7 +6,6 @@
     <v-row>
       <v-col xs="12" sm="9" md="9" lg="9" xl="9" class="pr-0 pb-0" cols="12">
         <v-card flat class="text-center elevation-0">
-
           <v-card-text>
             <v-list>
               <!-- Job Details -->
@@ -151,9 +150,9 @@
             <!--Job details and description Model Edit -->
 
             <v-btn class="mb-2" outlined @click="detailsDialog = true">
-              <v-icon class="d-none d-lg-inline-block mr-2" left
-                >{{'fa: fa-solid fa-pencil-alt'}}</v-icon
-              >
+              <v-icon class="d-none d-lg-inline-block mr-2" left>{{
+                'fa: fa-solid fa-pencil-alt'
+              }}</v-icon>
               Edit Details
             </v-btn>
 
@@ -279,7 +278,9 @@
             <!-- For client change -->
 
             <v-btn class="mb-2" outlined @click="openClientDialogAndFetchClients">
-              <v-icon class="d-none d-lg-inline-block mr-2" left>{{'fa: fa-solid fa-user-edit'}}</v-icon>
+              <v-icon class="d-none d-lg-inline-block mr-2" left>{{
+                'fa: fa-solid fa-user-edit'
+              }}</v-icon>
               Change Client
             </v-btn>
 
@@ -320,9 +321,9 @@
             <!-- Mutli-member select -->
 
             <v-btn class="mb-2" outlined @click="membersDialog = true">
-              <v-icon class="d-none d-lg-inline-block mr-2" left
-                >{{'fa: fa-solid fa-users-cog'}}</v-icon
-              >
+              <v-icon class="d-none d-lg-inline-block mr-2" left>{{
+                'fa: fa-solid fa-users-cog'
+              }}</v-icon>
               Select Employees
             </v-btn>
 
@@ -357,7 +358,9 @@
             </v-dialog>
 
             <v-btn class="mb-2" outlined @click="statusDialog = true">
-              <v-icon class="d-none d-lg-inline-block mr-2" left>{{'fa: fa-solid fa-tasks'}}</v-icon>
+              <v-icon class="d-none d-lg-inline-block mr-2" left>{{
+                'fa: fa-solid fa-tasks'
+              }}</v-icon>
               Update Status
             </v-btn>
 
@@ -405,15 +408,15 @@
             </v-dialog>
 
             <v-btn class="mb-2" outlined @click="dueDateDialog = true">
-              <v-icon class="d-none d-lg-inline-block mr-2" left>{{'fa: fa-solid fa-calendar-alt'}}</v-icon>
+              <v-icon class="d-none d-lg-inline-block mr-2" left>{{
+                'fa: fa-solid fa-calendar-alt'
+              }}</v-icon>
               Change Due Date
             </v-btn>
 
             <v-dialog v-model="dueDateDialog" max-width="600px">
               <v-card>
-                <v-card-title>
-                  Enter the due date for this job
-                </v-card-title>
+                <v-card-title> Enter the due date for this job </v-card-title>
 
                 <v-card-text>
                   <v-container>
@@ -474,6 +477,7 @@
             </v-dialog>
           </div>
           <v-card-actions class="d-flex flex-column">
+            <Toast />
             <v-btn class="mb-2" @click="saveJob" color="success">Save</v-btn>
             <v-btn class="mb-4" @click="cancelJob" color="error">Cancel</v-btn>
           </v-card-actions>
@@ -489,7 +493,9 @@ import axios from 'axios'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { defineProps } from 'vue'
+import { useToast } from 'primevue/usetoast'
 
+const toast = useToast()
 // This passes in the selected job as a prop that the manager job component accepts
 
 const props = defineProps({
@@ -753,8 +759,18 @@ const saveJob = () => {
         filteredJobData,
         config
       )
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Job updated successfully'
+      })
       console.log('Job updated successfully:', response.data)
     } catch (error) {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to update job'
+      })
       console.error('Error updating job:', error)
     }
   }

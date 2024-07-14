@@ -36,7 +36,8 @@ const vuetify = createVuetify({
       variant: 'solo',
       rounded: 'md',
       density: 'compact',
-      clearable: true
+      clearable: true,
+      color: 'cardColor'
     },
 
     VCard: {
@@ -105,6 +106,9 @@ const vuetify = createVuetify({
     },
     VCalender: {
       class: 'bg-cardColor'
+    },
+    VSelect: {
+      color: 'background'
     }
   },
   directives,

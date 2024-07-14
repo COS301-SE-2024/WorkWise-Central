@@ -37,12 +37,14 @@
               :items="roleItemNames"
               v-model="selectedRole"
               bg-color="background"
+              variant="solo"
             ></v-select> </v-col
         ></v-row>
       </v-card-text>
       <v-card-action>
         <v-col align-self="center"
           ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
+            <Toast />
             <v-btn
               color="success"
               rounded="md"
@@ -51,12 +53,13 @@
               variant="text"
               @click="savechanges"
             >
-              SAVE
+              Save
             </v-btn>
           </v-col>
           <v-col cols="12" md="12" xs="3" sm="6" offset="1">
             <v-btn color="error" rounded="md" width="85%" height="35" variant="text" @click="close">
-              CANCEL
+              <Toast />
+              Cancel
             </v-btn>
           </v-col></v-col
         >
@@ -68,6 +71,7 @@
 <script lang="ts">
 import axios from 'axios'
 import { select } from '@syncfusion/ej2-base'
+import Toast from 'primevue/toast'
 
 type Role = {
   _id: string
@@ -81,6 +85,9 @@ type Role = {
 
 export default {
   name: 'EditClient',
+  components: {
+    Toast
+  },
   props: {
     editedItem: {
       type: Object,
@@ -177,12 +184,23 @@ export default {
       axios
         .patch(apiURL + `employee/${this.localEditedItem.employeeId}`, employee_req_obj, config)
         .then((res) => {
-          alert('Employee updated')
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Employee updated successfully',
+            life: 3000
+          })
           console.log(res)
           this.employeeDialog = false
           window.location.reload()
         })
         .catch((error) => {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'An error occurred while updating the employee',
+            life: 3000
+          })
           console.log(error)
         })
     },
