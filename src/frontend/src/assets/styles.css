@@ -31,6 +31,15 @@ h6, .h6 {
   font-size: 0.875rem;
 }
 
+.background-image {
+  background-image: url('/img/WorkWise.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100%;
+  width: 100%;
+}
+
 
 
 @media(max-width: 600px){
@@ -62,6 +71,14 @@ h6, .h6 {
     font-family: 'Nunito', sans-serif;
     font-size: 0.75rem;
   }
+  .background-image {
+    background-image: url('/img/WorkWise.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100%;
+    width: 100%;
+  }
 }
 
 @media (min-width: 601px) and (max-width: 960px) {
@@ -92,6 +109,14 @@ h6, .h6 {
   h6, .h6 {
     font-family: 'Nunito', sans-serif;
     font-size: 0.875rem;
+  }
+  .background-image {
+    background-image: url('/img/WorkWise.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100%;
+    width: 100%;
   }
 }
 
@@ -125,6 +150,14 @@ h6, .h6 {
     font-family: 'Nunito', sans-serif;
     font-size: 1.25rem;
   }
+  .background-image {
+    background-image: url('/img/WorkWise.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100%;
+    width: 100%;
+  }
 }
 
 /* Extra large screens */
@@ -147,15 +180,23 @@ h6, .h6 {
   }
   h4, .h4 {
     font-family: 'Nunito', sans-serif;
-    font-size: 2.25rem;
+    font-size: 2.1rem;
   }
   h5, .h5 {
     font-family: 'Nunito', sans-serif;
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
   h6, .h6 {
     font-family: 'Nunito', sans-serif;
-    font-size: 1.25rem;
+    font-size: 1rem;
+  }
+  .background-image {
+    background-image: url('/img/WorkWise.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100%;
+    width: 100%;
   }
 }
 

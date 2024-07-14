@@ -18,7 +18,7 @@
                 <v-card-text class="bg-cardColor">
                   <v-list>
                     <v-list-item v-for="(job, index) in recentJobs" :key="index">
-                      <v-chip color="success" variant="text" class="ma-2"
+                      <v-chip variant="text" class="ma-2"
                         ><v-list-item-content
                           >{{ job.title
                           }}<v-list-item-subtitle>{{
@@ -40,7 +40,7 @@
                 <v-card-text>
                   <v-list>
                     <v-list-item v-for="(employee, index) in activeEmployees" :key="index">
-                      <v-chip :color="getColorCompetition(index)" variant="text" class="ma-2"
+                      <v-chip  variant="text" class="ma-2"
                         ><v-list-item-content
                           >{{ employee.name }}
                           <v-list-item-subtitle>{{
@@ -62,7 +62,7 @@
                 <v-card-text>
                   <v-list>
                     <v-list-item v-for="(employee, index) in hoursWorked" :key="index">
-                      <v-chip :color="getColorCompetition(index)" variant="tonal" class="ma-2">
+                      <v-chip  variant="tonal" class="ma-2">
                         <v-list-item-content
                           >{{ employee.name }}
                           <v-list-item-subtitle
@@ -100,7 +100,7 @@
                 <v-card-text>
                   <v-list>
                     <v-list-item v-for="(appointment, index) in upcomingAppointments" :key="index">
-                      <v-chip :color="getColorImportance(index)" variant="text" class="ma-2"
+                      <v-chip  variant="text" class="ma-2"
                         ><v-list-item-content
                           >{{ appointment.title }}
                           <v-list-item-subtitle>{{
