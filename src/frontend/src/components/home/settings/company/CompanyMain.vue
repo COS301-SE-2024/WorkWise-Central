@@ -6,7 +6,7 @@
     :theme="isdarkmode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn color="secondary" v-bind="activatorProps">Company Name</v-btn>
+      <v-btn color="secondary" class="h6" v-bind="activatorProps">Company Name</v-btn>
     </template>
     <v-card class="bg-background" :theme="isdarkmode === true ? 'dark' : 'light'">
       <v-card-title>User's Companies</v-card-title>

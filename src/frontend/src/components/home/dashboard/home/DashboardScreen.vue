@@ -36,7 +36,7 @@
             <!-- Most Active Employees Card -->
             <v-col cols="12" md="4">
               <v-card border="md" rounded="xl">
-                <v-card-title>Most Active Employees</v-card-title>
+                <v-card-title >Most Active Employees</v-card-title>
                 <v-card-text>
                   <v-list>
                     <v-list-item v-for="(employee, index) in activeEmployees" :key="index">

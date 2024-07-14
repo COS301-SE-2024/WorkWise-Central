@@ -46,7 +46,7 @@ const vuetify = createVuetify({
       height: 'auto',
 
       VCardTitle: {
-        class: 'text-h5 font-weight-regular  d-flex justify-center bg-cardColor text-secondary'
+        class: 'h6 font-weight-regular  d-flex justify-center bg-cardColor text-secondary'
       },
       VCardText: {
         class: 'bg-cardColor',
