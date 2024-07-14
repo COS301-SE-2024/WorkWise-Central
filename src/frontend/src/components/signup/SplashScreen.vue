@@ -1050,6 +1050,9 @@ export default defineComponent({
           this.alertSignUp = true
           sessionStorage.setItem('access_token', response.data.data.access_token)
           sessionStorage.setItem('id', response.data.data.id)
+          localStorage.setItem('email', this.email)
+          localStorage.setItem('username', this.username)
+
           this.resetForm()
         })
         .catch((error) => {
