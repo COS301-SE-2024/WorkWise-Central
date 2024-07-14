@@ -15,6 +15,11 @@ export class EmployeeRepository {
     return this.employeeModel.find().lean().exec();
   }
 
+  async save(company: Employee) {
+    const newCompanyModel = new this.employeeModel(company);
+    return await newCompanyModel.save();
+  }
+
   async findAllInCompany(
     identifier: Types.ObjectId,
     fieldsToPopulate?: string[],
@@ -93,21 +98,21 @@ export class EmployeeRepository {
 
   async employeeExistsForCompany(
     id: Types.ObjectId,
-    companyId: Types.ObjectId,
+    companyIdentification: Types.ObjectId,
   ): Promise<boolean> {
     const result: FlattenMaps<Employee> & { _id: Types.ObjectId } =
       await this.employeeModel
         .findOne({
           $and: [
             { _id: new Types.ObjectId(id) },
+            { companyId: companyIdentification },
             {
               $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },
           ],
         })
         .lean();
-    if (result != null && result.companyId == companyId) return true;
-    return false;
+    return result != null;
   }
 
   async getCompanyIdFromEmployee(employeeId: Types.ObjectId) {

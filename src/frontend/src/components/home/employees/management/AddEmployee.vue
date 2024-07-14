@@ -2,6 +2,7 @@
   <v-dialog
     max-height="800"
     max-width="600"
+    style="font-family: Nunito, sans-serif"
     :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
@@ -9,7 +10,7 @@
         <v-btn
           rounded="md"
           class="text-none font-weight-regular hello"
-          style="font-size: 20px"
+          style="font-size: 20px; font-family: Nunito, sans-serif"
           prepend-icon="mdi-account-multiple-plus"
           text="Add Employee"
           variant="elevated"
@@ -19,13 +20,17 @@
       </v-defaults-provider>
     </template>
     <v-card>
-      <v-card-title class="text-center">Add Employee</v-card-title>
+      <v-card-title class="text-center" style="font-family: Nunito, sans-serif"
+        >Add Employee</v-card-title
+      >
       <v-card-text>
         <v-form ref="form" v-model="valid" @submit.prevent="handleSubmit">
           <v-col>
             <v-col>
               <v-col>
-                <small class="text-caption font-weight-regular"
+                <small
+                  class="text-caption font-weight-regular"
+                  style="font-family: Nunito, sans-serif"
                   >Add employee using employee username</small
                 >
 
@@ -50,6 +55,7 @@
                 height="35"
                 variant="text"
                 :disabled="click_create_client"
+                style="font-family: Nunito, sans-serif"
                 >Add
               </v-btn>
             </v-col>

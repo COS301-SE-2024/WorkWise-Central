@@ -1,16 +1,18 @@
 import { Types } from 'mongoose';
-import { IsArray, IsNotEmpty } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateRoleDto {
   @IsArray()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
-  permissionSuite: string[];
+  @IsString({ each: true })
+  permissionSuite?: string[];
 
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
-  roleName: string;
+  @IsString()
+  roleName?: string;
 }
 
 export class updateRoleResponseDto {

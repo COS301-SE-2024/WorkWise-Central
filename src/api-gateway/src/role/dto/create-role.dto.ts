@@ -1,15 +1,21 @@
 import { Types } from 'mongoose';
-import { IsArray, IsMongoId, IsNotEmpty } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateRoleDto {
   @IsArray()
   @IsNotEmpty()
   @ApiProperty()
-  permissionSuite: string[] = [];
+  @IsString({ each: true })
+  permissionSuite: string[] = [
+    'view all jobs assigned to me',
+    'view all clients that are assigned to me',
+    'record inventory use',
+  ];
 
   @IsNotEmpty()
   @ApiProperty()
+  @IsString()
   roleName: string;
 
   @IsNotEmpty()

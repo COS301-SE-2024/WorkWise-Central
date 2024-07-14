@@ -14,6 +14,11 @@ export class RoleRepository {
     return this.roleModel.find().exec();
   }
 
+  async save(company: Role) {
+    const newCompanyModel = new this.roleModel(company);
+    return await newCompanyModel.save();
+  }
+
   async findAllInCompany(companyId: Types.ObjectId) {
     const filter = companyId ? { companyId: companyId } : {};
     return await this.roleModel.find(filter).exec();

@@ -81,3 +81,48 @@ export type EmployeeJoined = {
   createdAt: string
   __v: number
 }
+
+type ClientDetails = {
+  name: string
+  preferredLanguage: string
+  contactInfo: ContactInfo
+  address: Address
+}
+
+type Client = {
+  id: string
+  clientUsername: string
+  details: ClientDetails
+  createdAt: string
+  __v: number
+  updatedAt: string
+}
+
+type JobDetails = {
+  heading: string
+  description: string
+  priority: 'Low' | 'Medium' | 'High'
+  address: Address
+  startDate: string
+  endDate: string
+}
+
+type RecordedDetails = {
+  imagesTaken: string[]
+  inventoryUsed: string[]
+}
+
+type Job = {
+  id: string
+  companyId: string
+  client: Client
+  assignedBy: string
+  status: 'Todo' | 'In Progress' | 'Done'
+  details: JobDetails
+  recordedDetails: RecordedDetails
+  taskList: string[]
+  comments: string[]
+  tags: string[]
+  createdAt: string
+  __v: number
+}
