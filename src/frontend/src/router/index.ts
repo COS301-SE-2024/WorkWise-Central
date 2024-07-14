@@ -186,6 +186,11 @@ const router = createRouter({
       path: '/loading',
       name: 'loading',
       component: LoadingScreen
+    },
+    {
+      path: '/backlog',
+      name: 'backlog',
+      component: () => import('@/views/home/jobs/BackLogView.vue')
     }
   ]
 })

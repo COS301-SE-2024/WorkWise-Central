@@ -103,11 +103,11 @@ export class UsersService {
     return isPhoneNumber(phoneNum, null);
   }
 
-  async userIdExists(id: string | Types.ObjectId): Promise<boolean> {
+  async userIdExists(id: Types.ObjectId): Promise<boolean> {
     return this.userRepository.userIdExists(id);
   }
 
-  async getUserById(identifier: string | Types.ObjectId) {
+  async getUserById(identifier: Types.ObjectId) {
     const result = await this.userRepository.findById(identifier);
 
     if (result == null) {
@@ -216,7 +216,7 @@ export class UsersService {
   async updateUser(
     id: Types.ObjectId,
     updateUserDto: UpdateUserDto,
-  ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
+  ) /*: Promise<FlattenMaps<User> & { _id: Types.ObjectId }> */ {
     const inputValidated = await this.updateUserValid(id, updateUserDto);
     if (!inputValidated.isValid) {
       throw new NotFoundException(inputValidated.message);

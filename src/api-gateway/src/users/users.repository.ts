@@ -104,7 +104,7 @@ export class UsersRepository {
     return true;
   }
 
-  async userIdExists(userId: string | Types.ObjectId): Promise<boolean> {
+  async userIdExists(userId: Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<User> & { _id: Types.ObjectId } =
       await this.userModel
         .findOne({
@@ -120,7 +120,7 @@ export class UsersRepository {
     return result == null;
   }
 
-  async findById(id: string | Types.ObjectId) {
+  async findById(id: Types.ObjectId) {
     return this.userModel
       .findOne({
         $and: [

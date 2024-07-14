@@ -108,7 +108,7 @@ export class ClientService {
     return clients;
   }
 
-  async clientExists(id: string | Types.ObjectId): Promise<boolean> {
+  async clientExists(id: Types.ObjectId): Promise<boolean> {
     return await this.clientRepository.exists(id);
   }
 
@@ -230,7 +230,7 @@ export class ClientService {
     createClientDto: CreateClientDto,
   ): Promise<ValidationResult> {
     if (!createClientDto.details || !createClientDto.details.companyId) {
-      return new ValidationResult(false, `There are are no details}`);
+      return new ValidationResult(false, `There are are no details`);
     }
     //Check user making request
     const user = await this.usersService.getUserById(userId);

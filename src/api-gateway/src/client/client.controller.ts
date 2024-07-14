@@ -264,7 +264,7 @@ export class ClientController {
     }
   }
 
-  private extractUserId(headers: any) {
+  public extractUserId(headers: any) {
     const authHeader: string = headers.authorization;
     const decodedJwtAccessToken = this.jwtService.decode(
       authHeader.replace(/^Bearer\s+/i, ''),
