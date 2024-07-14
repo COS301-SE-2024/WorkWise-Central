@@ -7,8 +7,10 @@ https://github.com/tomosterlund/qalendar/blob/master/development/QalendarView.vu
     :events="events2"
     :config="config"
     :is-loading="are_events_loading"
-    @event-was-clicked="clicked"
+    @event-was-clicked="clickedEvent"
     @delete-event="deleteEvent"
+    @event-was-dragged="draggedEvent"
+    @edit-event="openJobCard"
   >
     <template #customCurrentTime>
       <div :style="{ height: '3px', backgroundColor: '#F38A3F', position: 'relative' }">
@@ -26,6 +28,9 @@ https://github.com/tomosterlund/qalendar/blob/master/development/QalendarView.vu
       </div>
     </template>
   </Qalendar>
+  <v-dialog v-model="JobCardVisibility" max-width="1000px">
+    <JBC @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
+  </v-dialog>
 </template>
 
 <script lang="ts">
@@ -33,12 +38,14 @@ https://github.com/tomosterlund/qalendar/blob/master/development/QalendarView.vu
 // @ts-ignore
 import { Qalendar } from 'qalendar'
 import axios from 'axios'
-import type { Event } from '@/components/home/dashboard/types'
+import type { Event, JobCardDataFormat } from '@/components/home/dashboard/types'
+import JBC from '@/components/home/jobs/management/ManagerJobCard.vue'
 
 export default {
   name: 'CalendarComponent',
   components: {
-    Qalendar
+    Qalendar,
+    JBC
   },
   data() {
     return {
@@ -47,6 +54,8 @@ export default {
       are_events_loading: true,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      SelectedEvent: {} as JobCardDataFormat,
+      JobCardVisibility: false,
       request_config: {
         headers: {
           'Content-Type': 'application/json',
@@ -944,6 +953,33 @@ export default {
     }
   },
   methods: {
+    openJobCard() {
+      console.log('edit button clicked')
+      this.JobCardVisibility = true
+    },
+    async draggedEvent(ev: any) {
+      console.log('event dragged')
+      console.log(ev)
+
+      const req_obj = {
+        details: {
+          startDate: new Date(ev.time.start).toISOString(),
+          endDate: new Date(ev.time.end).toISOString()
+        }
+      }
+      console.log('Job Id:', ev.id)
+      console.log(req_obj)
+      // const apiURL = await this.getRequestUrl()
+      // axios
+      //   .patch(apiURL + `job/${ev.id}`, req_obj, this.request_config)
+      //   .then((res) => {
+      //     console.log('Job time Updated')
+      //     console.log(res)
+      //   })
+      //   .catch((error) => {
+      //     console.log('Error fetching data: ', error)
+      //   })
+    },
     async deleteEvent(payload_event_id: string) {
       console.log(payload_event_id)
       console.log('event deleted')
@@ -956,8 +992,34 @@ export default {
       //   })
       //   .catch((res) => {})
     },
-    clicked() {
-      console.log('event clicked')
+    clickedEvent(ev: any) {
+      console.log('event clickedEvent')
+      console.log(ev.clickedEvent.id)
+      for (let i = 0; i < this.jobs.length; i++) {
+        if (this.jobs[i].id === ev.clickedEvent.id) {
+          this.SelectedEvent = {
+            jobId: this.jobs[i].id,
+            heading: this.jobs[i].details.heading,
+            jobDescription: this.jobs[i].details.description,
+            startDate: this.jobs[i].details.startDate,
+            endDate: this.jobs[i].details.endDate,
+            status: this.jobs[i].status,
+            clientName: this.jobs[i].client.details.name,
+            street: this.jobs[i].details.address.street,
+            suburb: this.jobs[i].details.address.suburb,
+            city: this.jobs[i].details.address.city,
+            postalCode: this.jobs[i].details.address.postalCode,
+            complex: this.jobs[i].details.address.complex,
+            houseNumber: this.jobs[i].details.address.houseNumber,
+            imagesTaken: [],
+            inventoryUsed: [],
+            taskList: [],
+            comments: []
+          }
+          console.log(this.SelectedEvent)
+          break
+        }
+      }
     },
     loadJobs() {},
     loadJobsMockData() {
