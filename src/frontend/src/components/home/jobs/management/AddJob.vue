@@ -1,5 +1,10 @@
 <template>
-  <v-dialog max-height="800" max-width="900">
+  <v-dialog
+    max-height="800"
+    max-width="900"
+    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    v-model="jobDialog"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -14,268 +19,276 @@
         ></v-btn>
       </v-defaults-provider>
     </template>
-    <v-sheet
+    <v-card
       elevation="14"
       rounded="md"
       max-height="800"
       max-width="900"
       :theme="isdarkmode === true ? 'dark' : 'light'"
     >
-      <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
-        <v-col>
+      <v-card-title class="text-center">Job Details</v-card-title>
+      <v-card-text>
+        <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
           <v-col>
-            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-              Job Details
-            </h4></v-col
-          >
-          <v-spacer></v-spacer>
-          <v-col>
+            <v-spacer></v-spacer>
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Job Title*</label>
-
-              <v-text-field
-                :theme="isdarkmode === true ? 'dark' : 'light'"
-                density="compact"
-                color="grey-lighten-4"
-                placeholder="Enter the title of the job"
-                v-model="req_obj.details.heading"
-                rounded="md"
-                variant="solo"
-                :rules="job_title_rules"
-                required
-              ></v-text-field
-            ></v-col>
-            <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Client</label>
-
-              <v-autocomplete
-                density="compact"
-                color="grey-lighten-4"
-                label="Choose the employee for whom the job must be complete"
-                :theme="isdarkmode === true ? 'dark' : 'light'"
-                rounded="md"
-                variant="solo"
-                v-model="req_obj.clientId"
-                :items="clientsArray"
-                item-value="id"
-                item-title="name"
-                @update:modelValue="updateClient"
-                required
-                :rules="employees_rules"
-              ></v-autocomplete>
-
-              <label style="font-size: 14px; font-weight: lighter"
-                >If it is a new employee, create the employee first.
-                <RouterLink to="/manager-employees-t" style="color: rgb(0, 149, 246)"
-                  >Add new employee</RouterLink
-                ></label
-              >
-            </v-col>
-            <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Job description</label>
-
-              <v-textarea
-                :theme="isdarkmode === true ? 'dark' : 'light'"
-                placeholder="Enter the details of the job"
-                rounded="md"
-                variant="solo"
-                v-model="req_obj.details.description"
-                :rules="description_rules"
-                required
-              >
-              </v-textarea>
-            </v-col>
-            <!--            <v-col>-->
-            <!--              <small-->
-            <!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
-            <!--                class="text-caption"-->
-            <!--                >Comment</small-->
-            <!--              >-->
-            <!--              <v-textarea-->
-            <!--                :theme="isdarkmode === true ? 'dark' : 'light'"-->
-            <!--                placeholder="Enter any additional comments here"-->
-            <!--                rounded="md"-->
-            <!--                variant="solo"-->
-            <!--                v-model="comment"-->
-            <!--                @input="commentUpdate"-->
-            <!--                required-->
-            <!--              >-->
-            <!--              </v-textarea>-->
-            <!--            </v-col>-->
-
-            <v-row>
-              <v-col align="center" cols="12" md="6">
-                <v-date-picker
-                  title="SELECT START DATE"
-                  header="Start date of job"
-                  border="md"
-                  width="unset"
-                  max-width="350"
-                  v-model="startDate"
-                  elevation="5"
-                  required
-                  @update:modelValue="updateDates"
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
-                ></v-date-picker>
-              </v-col>
-              <v-col align="center" cols="12" md="6">
-                <v-date-picker
-                  title="SELECT END DATE"
-                  header="End date of job"
-                  border="md"
-                  width="unset"
-                  max-width="350"
-                  v-model="endDate"
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
-                  elevation="5"
-                  required
-                  @update:modelValue="updateDates"
-                ></v-date-picker>
-              </v-col>
-            </v-row>
-            <v-row>
               <v-col>
-                <label style="font-size: 14px; font-weight: lighter">Assign Employees</label>
+                <label style="font-size: 14px; font-weight: lighter">Job Title*</label>
 
-                <v-select
-                  v-model="req_obj.assignedEmployees.employeeIds"
-                  :items="employeesArray"
-                  item-value="employeeId"
-                  item-title="name"
-                  label="Select some employees you would like to assign to this job"
-                  chips
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
-                  multiple
-                  required
-                  @update:modelValue="updateEmployee"
-                  variant="solo"
-                ></v-select></v-col
-            ></v-row>
-
-            <label style="font-size: 14px; font-weight: lighter">Job address</label>
-
-            <v-row>
-              <v-col cols="12" sm="6">
-                <label style="font-size: 12px; font-weight: lighter">Street</label>
                 <v-text-field
                   :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
-                  placeholder="Street"
+                  placeholder="Enter the title of the job"
+                  v-model="req_obj.details.heading"
                   rounded="md"
-                  v-model="req_obj.details.address.street"
                   variant="solo"
+                  :rules="job_title_rules"
                   required
                 ></v-text-field
               ></v-col>
-              <v-col cols="12" sm="6">
-                <label style="font-size: 12px; font-weight: lighter">Suburb</label>
-                <v-text-field
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
-                  density="compact"
-                  color="grey-lighten-4"
-                  placeholder="Suburb"
-                  rounded="md"
-                  v-model="req_obj.details.address.suburb"
-                  variant="solo"
-                  required
-                ></v-text-field
-              ></v-col>
-              <v-col sm="6" cols="12">
-                <label style="font-size: 14px; font-weight: lighter">Province</label>
+              <v-col>
+                <label style="font-size: 14px; font-weight: lighter">Client</label>
+
                 <v-autocomplete
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
                   density="compact"
                   color="grey-lighten-4"
-                  placeholder="Province"
-                  rounded="md"
-                  type="houseNumber"
-                  variant="solo"
-                  :items="[
-                    'Eastern Cape',
-                    'Free State',
-                    'Gauteng',
-                    'KwaZulu-Natal',
-                    'Limpopo',
-                    'Mpumalanga',
-                    'North West',
-                    'Northern Cape',
-                    'Western Cape'
-                  ]"
-                  required
-                ></v-autocomplete
-              ></v-col>
-              <v-col cols="12" sm="6">
-                <label style="font-size: 12px; font-weight: lighter">City</label>
-                <v-text-field
+                  label="Choose the employee for whom the job must be complete"
                   :theme="isdarkmode === true ? 'dark' : 'light'"
-                  density="compact"
-                  color="grey-lighten-4"
-                  placeholder="City"
                   rounded="md"
-                  v-model="req_obj.details.address.city"
                   variant="solo"
+                  v-model="req_obj.clientId"
+                  :items="clientsArray"
+                  item-value="id"
+                  item-title="name"
+                  @update:modelValue="updateClient"
                   required
-                ></v-text-field
-              ></v-col>
-              <v-col cols="12" sm="6">
-                <label style="font-size: 12px; font-weight: lighter">Postal Code</label>
-                <v-text-field
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
-                  density="compact"
-                  color="grey-lighten-4"
-                  placeholder="Postal Code"
-                  :rules="postal_code_rules"
-                  rounded="md"
-                  v-model="req_obj.details.address.postalCode"
-                  variant="solo"
-                  required
-                ></v-text-field
-              ></v-col>
+                  :rules="employees_rules"
+                ></v-autocomplete>
 
-              <v-col cols="12" sm="6">
-                <label style="font-size: 12px; font-weight: lighter">Complex</label>
-                <v-text-field
+                <label style="font-size: 14px; font-weight: lighter"
+                  >If it is a new employee, create the employee first.
+                  <RouterLink to="/manager-employees-t" style="color: rgb(0, 149, 246)"
+                    >Add new employee</RouterLink
+                  ></label
+                >
+              </v-col>
+              <v-col>
+                <label style="font-size: 14px; font-weight: lighter">Job description</label>
+
+                <v-textarea
                   :theme="isdarkmode === true ? 'dark' : 'light'"
-                  density="compact"
-                  color="grey-lighten-4"
-                  placeholder="Complex"
+                  placeholder="Enter the details of the job"
                   rounded="md"
-                  v-model="req_obj.details.address.complex"
                   variant="solo"
+                  v-model="req_obj.details.description"
+                  :rules="description_rules"
                   required
-                ></v-text-field
-              ></v-col>
-              <v-col cols="12" sm="6">
-                <label style="font-size: 12px; font-weight: lighter">House number</label>
-                <v-text-field
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
-                  density="compact"
-                  color="grey-lighten-4"
-                  placeholder="House number"
-                  rounded="md"
-                  v-model="req_obj.details.address.houseNumber"
-                  variant="solo"
-                  required
-                ></v-text-field
-              ></v-col>
-            </v-row>
+                >
+                </v-textarea>
+              </v-col>
+              <!--            <v-col>-->
+              <!--              <small-->
+              <!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
+              <!--                class="text-caption"-->
+              <!--                >Comment</small-->
+              <!--              >-->
+              <!--              <v-textarea-->
+              <!--                :theme="isdarkmode === true ? 'dark' : 'light'"-->
+              <!--                placeholder="Enter any additional comments here"-->
+              <!--                rounded="md"-->
+              <!--                variant="solo"-->
+              <!--                v-model="comment"-->
+              <!--                @input="commentUpdate"-->
+              <!--                required-->
+              <!--              >-->
+              <!--              </v-textarea>-->
+              <!--            </v-col>-->
+
+              <v-row>
+                <v-col align="center" cols="12" md="6">
+                  <v-date-picker
+                    title="SELECT START DATE"
+                    header="Start date of job"
+                    border="md"
+                    width="unset"
+                    max-width="350"
+                    v-model="startDate"
+                    elevation="5"
+                    required
+                    @update:modelValue="updateDates"
+                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                  ></v-date-picker>
+                </v-col>
+                <v-col align="center" cols="12" md="6">
+                  <v-date-picker
+                    title="SELECT END DATE"
+                    header="End date of job"
+                    border="md"
+                    width="unset"
+                    max-width="350"
+                    v-model="endDate"
+                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    elevation="5"
+                    required
+                    @update:modelValue="updateDates"
+                  ></v-date-picker>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <label style="font-size: 14px; font-weight: lighter">Assign Employees</label>
+
+                  <v-select
+                    v-model="req_obj.assignedEmployees.employeeIds"
+                    :items="employeesArray"
+                    item-value="employeeId"
+                    item-title="name"
+                    label="Select some employees you would like to assign to this job"
+                    chips
+                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    multiple
+                    required
+                    @update:modelValue="updateEmployee"
+                    variant="solo"
+                  ></v-select></v-col
+              ></v-row>
+
+              <label style="font-size: 14px; font-weight: lighter">Job address</label>
+
+              <v-row>
+                <v-col cols="12" sm="6">
+                  <label style="font-size: 12px; font-weight: lighter">Street</label>
+                  <v-text-field
+                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    density="compact"
+                    color="grey-lighten-4"
+                    placeholder="Street"
+                    rounded="md"
+                    v-model="req_obj.details.address.street"
+                    variant="solo"
+                    required
+                  ></v-text-field
+                ></v-col>
+                <v-col cols="12" sm="6">
+                  <label style="font-size: 12px; font-weight: lighter">Suburb</label>
+                  <v-text-field
+                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    density="compact"
+                    color="grey-lighten-4"
+                    placeholder="Suburb"
+                    rounded="md"
+                    v-model="req_obj.details.address.suburb"
+                    variant="solo"
+                    required
+                  ></v-text-field
+                ></v-col>
+                <v-col sm="6" cols="12">
+                  <label style="font-size: 14px; font-weight: lighter">Province</label>
+                  <v-autocomplete
+                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    density="compact"
+                    color="grey-lighten-4"
+                    placeholder="Province"
+                    rounded="md"
+                    type="houseNumber"
+                    variant="solo"
+                    :items="[
+                      'Eastern Cape',
+                      'Free State',
+                      'Gauteng',
+                      'KwaZulu-Natal',
+                      'Limpopo',
+                      'Mpumalanga',
+                      'North West',
+                      'Northern Cape',
+                      'Western Cape'
+                    ]"
+                    required
+                  ></v-autocomplete
+                ></v-col>
+                <v-col cols="12" sm="6">
+                  <label style="font-size: 12px; font-weight: lighter">City</label>
+                  <v-text-field
+                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    density="compact"
+                    color="grey-lighten-4"
+                    placeholder="City"
+                    rounded="md"
+                    v-model="req_obj.details.address.city"
+                    variant="solo"
+                    required
+                  ></v-text-field
+                ></v-col>
+                <v-col cols="12" sm="6">
+                  <label style="font-size: 12px; font-weight: lighter">Postal Code</label>
+                  <v-text-field
+                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    density="compact"
+                    color="grey-lighten-4"
+                    placeholder="Postal Code"
+                    :rules="postal_code_rules"
+                    rounded="md"
+                    v-model="req_obj.details.address.postalCode"
+                    variant="solo"
+                    required
+                  ></v-text-field
+                ></v-col>
+
+                <v-col cols="12" sm="6">
+                  <label style="font-size: 12px; font-weight: lighter">Complex</label>
+                  <v-text-field
+                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    density="compact"
+                    color="grey-lighten-4"
+                    placeholder="Complex"
+                    rounded="md"
+                    v-model="req_obj.details.address.complex"
+                    variant="solo"
+                    required
+                  ></v-text-field
+                ></v-col>
+                <v-col cols="12" sm="6">
+                  <label style="font-size: 12px; font-weight: lighter">House number</label>
+                  <v-text-field
+                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    density="compact"
+                    color="grey-lighten-4"
+                    placeholder="House number"
+                    rounded="md"
+                    v-model="req_obj.details.address.houseNumber"
+                    variant="solo"
+                    required
+                  ></v-text-field
+                ></v-col>
+              </v-row>
+            </v-col>
           </v-col>
-        </v-col>
-        <v-col cols="8" offset="2" align="center">
-          <v-btn
-            color="#5A82AF"
-            rounded="md"
-            type="submit"
-            boarder="md"
-            width="60%"
-            height="35"
-            variant="elevated"
-            >CREATE JOB</v-btn
-          >
-        </v-col>
-      </v-form>
-    </v-sheet>
+          <v-col cols="8" offset="2" align="center">
+            <v-btn
+              color="success"
+              rounded="md"
+              type="submit"
+              boarder="md"
+              width="100%"
+              height="35"
+              variant="text"
+              >Create Job</v-btn
+            >
+            <v-btn
+              color="error"
+              rounded="md"
+              boarder="md"
+              width="100%"
+              height="35"
+              variant="text"
+              @click="close"
+              >Cancel</v-btn
+            >
+          </v-col>
+        </v-form>
+      </v-card-text>
+    </v-card>
   </v-dialog>
 </template>
 
@@ -286,6 +299,7 @@ import { type EmployeeJoined, type EmployeeInformation, type ClientInformation }
 
 export default defineComponent({
   name: 'JobDetailsList',
+
   data() {
     return {
       localUrl: 'http://localhost:3000/',
@@ -349,7 +363,8 @@ export default defineComponent({
         },
         taskList: [],
         comments: []
-      }
+      },
+      jobDialog: false
     }
   },
   methods: {
@@ -359,11 +374,15 @@ export default defineComponent({
       axios
         .post('http://localhost:3000/job/create', this.req_obj, config)
         .then((res) => {
-          alert('Job Added Successfully added')
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Job Added Successfully'
+          })
           console.log(res)
         })
         .catch((res) => {
-          alert('Job NOT Added Successfully added')
+          this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Job not added' })
           console.log(res)
         })
     },
@@ -470,6 +489,9 @@ export default defineComponent({
     },
     updateEmployee() {
       console.log(this.req_obj.assignedEmployees.employeeIds)
+    },
+    close() {
+      this.jobDialog = false
     }
   },
   mounted: function () {

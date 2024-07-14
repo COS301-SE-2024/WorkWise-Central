@@ -477,6 +477,7 @@
             </v-dialog>
           </div>
           <v-card-actions class="d-flex flex-column">
+            <Toast />
             <v-btn class="mb-2" @click="saveJob" color="success">Save</v-btn>
             <v-btn class="mb-4" @click="cancelJob" color="error">Cancel</v-btn>
           </v-card-actions>
@@ -492,7 +493,9 @@ import axios from 'axios'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { defineProps } from 'vue'
+import { useToast } from 'primevue/usetoast'
 
+const toast = useToast()
 // This passes in the selected job as a prop that the manager job component accepts
 
 const props = defineProps({
@@ -756,8 +759,18 @@ const saveJob = () => {
         filteredJobData,
         config
       )
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Job updated successfully'
+      })
       console.log('Job updated successfully:', response.data)
     } catch (error) {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to update job'
+      })
       console.error('Error updating job:', error)
     }
   }

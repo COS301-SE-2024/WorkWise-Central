@@ -1,11 +1,16 @@
 <template>
-  <v-dialog max-height="800" max-width="600" :theme="isdarkmode === true ? 'dark' : 'light'">
+  <v-dialog
+    max-height="800"
+    max-width="600"
+    style="font-family: Nunito, sans-serif"
+    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
           rounded="md"
           class="text-none font-weight-regular hello"
-          style="font-size: 20px"
+          style="font-size: 20px; font-family: Nunito, sans-serif"
           prepend-icon="mdi-account-multiple-plus"
           text="Add Employee"
           variant="elevated"
@@ -15,13 +20,17 @@
       </v-defaults-provider>
     </template>
     <v-card>
-      <v-card-title class="text-center">Add Employee</v-card-title>
+      <v-card-title class="text-center" style="font-family: Nunito, sans-serif"
+        >Add Employee</v-card-title
+      >
       <v-card-text>
         <v-form ref="form" v-model="valid" @submit.prevent="handleSubmit">
           <v-col>
             <v-col>
               <v-col>
-                <small class="text-caption font-weight-regular"
+                <small
+                  class="text-caption font-weight-regular"
+                  style="font-family: Nunito, sans-serif"
                   >Add employee using employee username</small
                 >
 
@@ -36,6 +45,7 @@
             </v-col>
 
             <v-col cols="12" md="12" xs="3" sm="6" align="center">
+              <Toast />
               <v-btn
                 color="success"
                 rounded="md"
@@ -45,6 +55,7 @@
                 height="35"
                 variant="text"
                 :disabled="click_create_client"
+                style="font-family: Nunito, sans-serif"
                 >Add
               </v-btn>
             </v-col>
@@ -58,9 +69,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import Toast from 'primevue/toast'
 // import router from '@/router'
 export default defineComponent({
   name: 'RegisterCompanyModal',
+  components: {
+    Toast
+  },
   data: () => ({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
@@ -100,6 +115,12 @@ export default defineComponent({
             this.req_obj.userId = emp_lst[i]._id
             let response = await axios.post(apiURL + 'employee/create', this.req_obj, config)
             console.log(response)
+            this.$toast.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Employee added successfully',
+              life: 3000
+            })
             this.$router.push('/manager-employees-t')
             break
           }

@@ -8,8 +8,7 @@ import {
 } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, FlattenMaps } from 'mongoose';
+import { Types, FlattenMaps } from 'mongoose';
 import { Employee } from './entities/employee.entity';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
@@ -17,17 +16,10 @@ import { RoleService } from '../role/role.service';
 import { JobService } from '../job/job.service';
 import { TeamService } from '../team/team.service';
 import { EmployeeRepository } from './employee.repository';
-// import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class EmployeeService {
   constructor(
-    @InjectModel(Employee.name)
-    private readonly employeeModel: Model<Employee>,
-
-    // @InjectModel(User.name)
-    // private readonly userModel: Model<User>,
-
     @Inject(forwardRef(() => EmployeeRepository))
     private readonly employeeRepository: EmployeeRepository,
 
@@ -162,8 +154,7 @@ export class EmployeeService {
       newEmployee.superiorId = createEmployeeDto.superiorId;
     }
 
-    const model = new this.employeeModel(newEmployee);
-    return await model.save();
+    return await this.employeeRepository.save(newEmployee);
   }
 
   async findAll() {

@@ -81,15 +81,14 @@
           <v-row>
             <!-- Calendar Card -->
             <v-col cols="12">
-              <v-card height="auto" border="md" rounded="xl">
+              <v-card max-height="auto" border="md" rounded="xl">
                 <v-card-title>Calendar</v-card-title>
-                <v-card-text>
-                  <v-calendar
-                    ref="calendar"
-                    color="primary"
-                    :weekdays="['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']"
-                  ></v-calendar>
-                </v-card-text>
+
+                <v-card-item>
+                  <div class="calendar-container-dark is-light-mode" :style="{ height: '700px' }">
+                    <Qalendar />
+                  </div>
+                </v-card-item>
               </v-card>
             </v-col>
             <!-- Upcoming Appointments Card -->
@@ -141,7 +140,11 @@
 </template>
 
 <script>
+import Qalendar from '@/components/home/dashboard/home/Calendar.vue'
 export default {
+  components: {
+    Qalendar
+  },
   data() {
     return {
       recentJobs: [
@@ -220,5 +223,15 @@ export default {
 
 .v-card-title {
   font-weight: bold;
+}
+
+.calendar-container-dark {
+  background-color: transparent;
+  color: grey;
+}
+
+.calendar-container-light {
+  background-color: transparent;
+  color: darkslategrey;
 }
 </style>

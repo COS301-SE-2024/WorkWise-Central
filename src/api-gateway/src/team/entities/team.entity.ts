@@ -17,16 +17,16 @@ export class Team {
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ required: false })
+  @Prop({ type: String, required: true })
   teamName: string;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: false, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true })
   teamMembers: Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: false })
-  teamLeaderId: Types.ObjectId;
+  teamLeaderId?: Types.ObjectId;
 
   @ApiProperty()
   @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
@@ -38,16 +38,16 @@ export class Team {
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public updatedAt: Date;
+  public updatedAt?: Date;
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public deletedAt: Date;
+  public deletedAt?: Date;
 }
 
 export class teamApiObject {
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, unique: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, unique: true })
   id: Types.ObjectId;
 
   @ApiProperty()
@@ -55,19 +55,19 @@ export class teamApiObject {
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ required: false })
+  @Prop({ type: String, required: true })
   teamName: string;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: false, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true })
   teamMembers: Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: false })
-  teamLeaderId: Types.ObjectId;
+  teamLeaderId?: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, default: [] })
   currentJobAssignments: Types.ObjectId[];
 
   @ApiHideProperty()
@@ -76,11 +76,11 @@ export class teamApiObject {
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public updatedAt: Date;
+  public updatedAt?: Date;
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public deletedAt: Date;
+  public deletedAt?: Date;
 }
 
 export const TeamSchema = SchemaFactory.createForClass(Team);

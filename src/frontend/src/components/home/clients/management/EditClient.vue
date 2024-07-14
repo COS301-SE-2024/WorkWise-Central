@@ -87,6 +87,7 @@
       <v-card-actions
         ><v-col align-self="center"
           ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
+            <Toast />
             <v-btn color="success" width="85%" height="35" variant="text" @click="update">
               Save
             </v-btn>
@@ -213,6 +214,18 @@ export default {
         .finally(() => {
           this.clientDialog = false
         })
+    },
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
   }
 }

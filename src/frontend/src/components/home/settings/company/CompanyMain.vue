@@ -39,8 +39,12 @@
           </v-col>
         </v-container>
       </v-card-text>
-      <v-actions>
-        <v-col cols="12" align-self="center"> <CompanySettings /></v-col>
+      <v-actions @click="closeCompanyDialog">
+        <v-col cols="12" align-self="center">
+          <v-btn color="success" width="100%" height="35" variant="outlined" @click="switchCompany"
+            >Save</v-btn
+          ></v-col
+        >
         <v-col cols="12" align-self="center">
           <v-btn
             color="error"
@@ -57,17 +61,12 @@
 </template>
 <script>
 import { defineComponent } from 'vue'
-
-import CompanySettings from './CompanySettings.vue'
-
 export default defineComponent({
   props: {
     Company: Object,
     userDetails: Object
   },
-  components: {
-    CompanySettings
-  },
+
   data() {
     return {
       companyDialog: false,

@@ -14,7 +14,7 @@ export class Employee {
   }
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, ref: 'Role' })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Role' })
   roleId: Types.ObjectId;
 
   @ApiProperty()
@@ -24,10 +24,10 @@ export class Employee {
     default: [],
     ref: 'Job',
   })
-  currentJobAssignments?: Types.ObjectId[];
+  currentJobAssignments: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: false, ref: 'Employee' })
+  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: 'Employee' })
   superiorId?: Types.ObjectId;
 
   @ApiProperty()
@@ -49,11 +49,11 @@ export class Employee {
   subordinateTeams?: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, ref: 'User' })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'User' })
   userId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, ref: 'Company' })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Company' })
   companyId: Types.ObjectId;
 
   @ApiHideProperty()
@@ -71,35 +71,50 @@ export class Employee {
 
 export class EmployeeApiObject {
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, unique: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, unique: true })
   id: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: false })
-  roleId?: Types.ObjectId;
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Role' })
+  roleId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: true,
+    default: [],
+    ref: 'Job',
+  })
   currentJobAssignments?: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: false })
+  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: 'Employee' })
   superiorId?: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: false, default: [] })
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: false,
+    default: [],
+    ref: Employee.name,
+  })
   subordinates?: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: false, default: [] })
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: false,
+    default: [],
+    ref: 'Team',
+  })
   subordinateTeams?: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'User' })
   userId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Company' })
   companyId: Types.ObjectId;
 
   @ApiHideProperty()
@@ -117,7 +132,7 @@ export class EmployeeApiObject {
 
 export class joinedEmployeeApiObject {
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, unique: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, unique: true })
   id: Types.ObjectId;
 
   @ApiProperty()
@@ -129,7 +144,7 @@ export class joinedEmployeeApiObject {
   currentJobAssignments?: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: false })
+  @Prop({ type: SchemaTypes.ObjectId, required: false })
   superiorId?: Types.ObjectId;
 
   @ApiProperty()
@@ -137,7 +152,7 @@ export class joinedEmployeeApiObject {
   subordinates?: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ type: Object, required: false, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: false, default: [] })
   subordinateTeams?: Types.ObjectId[];
 
   @ApiProperty()
@@ -145,7 +160,7 @@ export class joinedEmployeeApiObject {
   userId: object;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true })
   companyId: Types.ObjectId;
 
   @ApiHideProperty()
