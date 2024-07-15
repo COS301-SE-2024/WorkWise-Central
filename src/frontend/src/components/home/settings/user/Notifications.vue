@@ -82,7 +82,7 @@ export default defineComponent({
         },
       },
       emailRules: [
-        v => !!v && /.+@.+/.test(v) || 'E-mail must be valid',
+        (v:string) => !!v && /.+@.+/.test(v) || 'E-mail must be valid',
       ],
     };
   },
