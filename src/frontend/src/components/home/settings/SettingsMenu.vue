@@ -49,12 +49,12 @@ const items = ref([
       {
         label: 'Preferences',
         icon: 'fa fa-solid fa-sliders-h',
-        route: '/preferences'
+        route: '/preferenceSettings'
       },
       {
         label: 'Notifications',
         icon: 'fa fa-solid fa-bell',
-        route: '/notifications'
+        route: '/notificationSettings'
       }
     ]
   }

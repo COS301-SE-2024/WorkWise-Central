@@ -25,6 +25,14 @@
 
           <v-divider class="my-3"></v-divider>
 
+
+          <router-link to="/manageCompanies" class="text-decoration-none">
+            <v-btn variant="text"> <i class="fas fa-building"></i> Manage Companies </v-btn>
+          </router-link>
+
+          <v-divider class="my-3"></v-divider>
+
+
           <router-link to="/tutorial" class="text-decoration-none">
             <v-btn variant="text"> <i class="fas fa-info-circle"></i> Tutorial </v-btn>
           </router-link>
@@ -34,6 +42,8 @@
           <router-link to="/faq" class="text-decoration-none">
             <v-btn variant="text"> <i class="fas fa-question-circle"></i> FAQ </v-btn>
           </router-link>
+
+
 
           <v-divider class="my-3"></v-divider>
 
