@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerTheme, SwaggerThemeNameEnum } from 'swagger-themes';
+import * as compression from 'compression';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,11 +20,10 @@ async function bootstrap() {
   SwaggerModule.setup('documentation', app, document, options);
   app.useGlobalPipes(
     new ValidationPipe({
-      //stopAtFirstError: true,
-      //transform: true,
       whitelist: true,
     }),
   );
+  app.use(compression());
   app.enableCors();
   await app.listen(3000);
 }
