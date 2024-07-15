@@ -146,10 +146,7 @@ export class CompanyRepository {
     return false;
   }
 
-  async update(
-    id: string | Types.ObjectId,
-    updateCompanyDto: UpdateCompanyDto,
-  ) {
+  async update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
     return this.companyModel.findOneAndUpdate(
       {
         $and: [

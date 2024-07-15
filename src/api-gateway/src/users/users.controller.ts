@@ -122,12 +122,14 @@ export class UsersController {
   })
   @Get('id/:id')
   async findOne(@Headers() headers: any, @Param('id') identifier: string) {
-    this.validateObjectId(identifier);
     try {
+      this.validateObjectId(identifier);
       const userId = this.extractUserId(headers);
       console.log(userId, 'is searching'); //Add Guard here as well
       return {
-        data: await this.usersService.getUserById(identifier),
+        data: await this.usersService.getUserById(
+          new Types.ObjectId(identifier),
+        ),
       };
     } catch (e) {
       console.log(e);
@@ -266,7 +268,7 @@ export class UsersController {
     }
   }
 
-  private extractUserId(headers: any) {
+  public extractUserId(headers: any) {
     const authHeader: string = headers.authorization;
     const decodedJwtAccessToken = this.jwtService.decode(
       authHeader.replace(/^Bearer\s+/i, ''),

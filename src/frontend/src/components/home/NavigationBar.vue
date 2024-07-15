@@ -27,7 +27,7 @@ const employeeSubItems = ref([
 
 const jobSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'jobAssignmentView' },
-  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
+  { title: 'BackLog', icon: 'fa: fa-solid fa-clock', routeName: 'backlog' },
   { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
 ])
 
