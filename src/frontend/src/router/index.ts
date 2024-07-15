@@ -193,11 +193,6 @@ const router = createRouter({
       component: () => import('@/views/home/jobs/BackLogView.vue')
     },
     {
-      path: '/manageCompanies',
-      name: 'manageCompanies',
-      component: () => import('@/views/settings/ManageCompanies.vue')
-    },
-    {
       path: '/notificationSettings',
       name: 'notificationSettings',
       component: () => import('@/views/settings/NotificationSettings.vue')

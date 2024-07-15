@@ -83,6 +83,11 @@ export default defineComponent({
     settingsMenu,
     userAvatar
   },
+  methods: {
+    submitForm() {
+      // Placeholder method for submitting the form
+    }
+  },
   data() {
     return {
       user: {
