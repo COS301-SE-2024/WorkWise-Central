@@ -1,17 +1,11 @@
 <script setup lang="ts">
-// import NavigationBar from '../components/NavigationBar.vue'
-// import TeamMemberList from '@/components/TeamMemberList.vue'
-// import JobLabels from '@/components/JobLabels.vue'
-// import JobChecklist from '@/components/JobChecklist.vue'
-import JobCard from '@/components/JobCard.vue'
+import settingsMenu from '@/components/home/settings/SettingsMenu.vue'
 </script>
 
 <template>
-<!--  <NavigationBar />-->
-<!--  <TeamMemberList />-->
-<!--  <JobLabels />-->
-<!--  <JobChecklist />-->
-  <JobCard />
+  <v-container class="v-container">
+    <settingsMenu/>
+  </v-container>
 </template>
 
 <style scoped>

@@ -19,26 +19,45 @@ services:
       - vue-app
 
   nest-app:
+    restart: unless-stopped
+    container_name: "workwise_app"
     build:
       context: ./api-gateway
+    networks:
+      - webnet
     ports:
       - '3000:3000'
     depends_on:
-      - mongo
+      - mongo_db
     environment:
-      DATABASE_URL:
-        "mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@0.0.0.0:27019/${MONGO_INIT_ROOT_DATABASE}"
+      SERVER_LOGIN:
+        mongodb://mongo_db:27017/${MONGO_INIT_ROOT_DATABASE}?retryWrites=true&w=majority
 
-  mongo:
-    image: mongo:7.0
+  mongo_db:
+    restart: unless-stopped
+    container_name: "mongo_container"
+    image: mongo
+    command: [--replSet, rs0, --bind_ip_all, --port, "27017"]
+    healthcheck:
+      test: test $$(mongosh --port 27017 --quiet --eval "try {rs.initiate({_id:'rs0',members:[{_id:0,host:\"0.0.0.0:27017\"}]})} catch(e) {rs.status().ok}") -eq 1
+      interval: 10s
+      start_period: 30s
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       MONGO_INIT_ROOT_DATABASE: ${MONGO_INIT_ROOT_DATABASE}
     ports:
       - "27019:27017"
+    expose:
+      - "27017"
     volumes:
       - workwise_prod_volume:/data/db
+      - mongo_db_config:/data/configdb
+    networks:
+      - webnet
 
 volumes:
   workwise_prod_volume:
+  mongo_db_config:
+
+networks:
+  webnet:
+    driver: bridge

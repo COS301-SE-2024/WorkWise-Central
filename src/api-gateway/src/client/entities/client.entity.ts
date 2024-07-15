@@ -1,13 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+import { SchemaTypes, Types } from 'mongoose';
 import { CreateClientDto } from '../dto/create-client.dto';
+import { Company } from '../../company/entities/company.entity';
 
 export class Address {
   @Prop({ type: String, required: true })
   street: string;
   @Prop({ type: String, required: true })
   suburb: string;
+  @Prop({ type: String, required: true })
+  province: string;
   @Prop({ type: String, required: true })
   city: string;
   @Prop({ type: String, required: true })
@@ -22,14 +25,18 @@ export class ContactInfo {
   @Prop({ type: String, required: true })
   phoneNumber: string;
 
-  @Prop({ type: String, unique: true, required: true, lowercase: true })
+  @Prop({ type: String, unique: true, lowercase: true, trim: true })
   email: string;
 }
 
 export class ClientDetails {
   @ApiProperty()
-  @Prop({ type: String, required: false })
-  name?: string;
+  @Prop({ type: String, required: true })
+  firstName: string;
+
+  @ApiProperty()
+  @Prop({ type: String, required: true })
+  lastName: string;
 
   @Prop({ type: String, required: false, default: 'English' })
   @ApiProperty()
@@ -48,8 +55,8 @@ export class ClientDetails {
   vatNumber?: string;
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: false, ref: 'Company' })
-  companyId?: Types.ObjectId;
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Company.name })
+  companyId: Types.ObjectId;
 
   @ApiProperty()
   @Prop({ type: String, required: false })
@@ -77,7 +84,7 @@ export class Client {
 
   @ApiProperty()
   @Prop({ type: String, required: false, default: 'none' })
-  clientUsername?: string;
+  clientUsername?: string = 'none';
 
   @ApiProperty()
   @Prop({ required: true })
@@ -96,4 +103,39 @@ export class Client {
   public deletedAt: Date;
 }
 
+export class ClientApiObject {
+  @ApiProperty()
+  _id?: Types.ObjectId;
+
+  @ApiProperty()
+  registrationNumber?: string;
+
+  @ApiProperty()
+  clientUsername?: string;
+
+  @ApiProperty()
+  details: ClientDetails;
+
+  @ApiProperty()
+  public createdAt: Date;
+
+  @ApiProperty()
+  public updatedAt: Date;
+}
+
 export const ClientSchema = SchemaFactory.createForClass(Client);
+
+export class CreateClientResponseDto {
+  data: ClientApiObject;
+
+  constructor(data: ClientApiObject) {
+    this.data = data;
+  }
+}
+
+export class ApiResponseDto<Type> {
+  data: Type;
+  constructor(data: Type) {
+    this.data = data;
+  }
+}

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+import { SchemaTypes, Types } from 'mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { Company } from '../../company/entities/company.entity';
 import { Employee } from '../../employee/entities/employee.entity';
@@ -14,7 +14,7 @@ export class SystemDetails {
 }
 
 export class ContactInfo {
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: true, unique: true })
   phoneNumber: string;
 
   @Prop({ type: String, unique: true, required: true, lowercase: true })
@@ -24,6 +24,8 @@ export class ContactInfo {
 export class Address {
   @Prop({ type: String, required: true })
   street: string;
+  @Prop({ type: String, required: true })
+  province: string;
   @Prop({ type: String, required: true })
   suburb: string;
   @Prop({ type: String, required: true })
@@ -79,9 +81,19 @@ export class Profile {
 }
 
 export class JoinedCompany {
-  @Prop({ type: Types.ObjectId, ref: Employee.name })
+  constructor(
+    employeeId: Types.ObjectId,
+    companyId: Types.ObjectId,
+    companyName: string,
+  ) {
+    this.employeeId = employeeId;
+    this.companyId = companyId;
+    this.companyName = companyName;
+  }
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: Employee.name })
   employeeId: Types.ObjectId;
-  @Prop({ type: Types.ObjectId, ref: Company.name })
+  @Prop({ type: SchemaTypes.ObjectId, ref: Company.name })
   companyId: Types.ObjectId;
   @Prop({ type: String })
   companyName: string;
@@ -107,6 +119,7 @@ export class User {
     if (createUserDto.profile.displayImage != null) {
       this.profile = {
         displayName: createUserDto.profile.displayImage,
+        //This must be a URL from Storage bucket
         displayImage: createUserDto.profile.displayImage,
       };
     } else {
@@ -123,6 +136,9 @@ export class User {
     //this.deletedAt = new Date(); //logically deleted until confirmed
   }
 
+  /*  @Prop({ type: Types.ObjectId })
+  _id: Types.ObjectId;*/
+
   @ApiProperty()
   @Prop({ required: true })
   systemDetails: SystemDetails;
@@ -138,28 +154,21 @@ export class User {
   @ApiProperty()
   @Prop({
     type: [JoinedCompany],
-    required: false,
-    ref: 'Company',
+    required: true,
+    ref: Company.name,
     default: [],
   })
-  joinedCompanies?: JoinedCompany[] = [];
+  joinedCompanies: JoinedCompany[] = [];
 
   @ApiProperty()
   @Prop({ type: [String], required: false, default: [] })
   skills: string[] = [];
 
-  @ApiHideProperty()
-  @Prop({
-    type: [{ type: Types.ObjectId, required: true, ref: 'Employee' }],
-    default: [],
-  })
-  public employeeIds: Types.ObjectId[] = [];
-
-  @ApiHideProperty()
-  @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Employee.name })
   public currentEmployee?: Types.ObjectId;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: Boolean, required: false, default: false })
   public isValidated?: boolean = false;
 
@@ -176,7 +185,69 @@ export class User {
   public deletedAt?: Date;
 }
 
-export const userEmployeeFields: string[] = ['employeeIds', 'currentEmployee'];
+export class UserApiObject {
+  @ApiProperty()
+  _id: Types.ObjectId;
+
+  @ApiProperty()
+  systemDetails: SystemDetails;
+
+  @ApiProperty()
+  personalInfo: PersonalInfo;
+
+  @ApiProperty()
+  profile: Profile;
+
+  @ApiProperty()
+  joinedCompanies: JoinedCompany[] = [];
+
+  @ApiProperty()
+  skills: string[] = [];
+
+  @ApiProperty()
+  public currentEmployee?: Types.ObjectId;
+
+  @ApiProperty()
+  public isValidated?: boolean = false;
+
+  @ApiHideProperty()
+  public createdAt: Date = new Date();
+
+  @ApiHideProperty()
+  public updatedAt?: Date;
+}
+
+export class SignInUserDto {
+  constructor(
+    access_token: string,
+    id: Types.ObjectId,
+    user: UserApiObject = null,
+  ) {
+    this.access_token = access_token;
+    this.id = id;
+    this.user = user;
+  }
+
+  access_token: string;
+  id: Types.ObjectId;
+  user?: UserApiObject;
+}
+
+export class UserResponseDto {
+  constructor(data: UserApiObject) {
+    this.data = data;
+  }
+  data: UserApiObject;
+}
+
+export class UserAllResponseDto {
+  constructor(data: UserApiObject[]) {
+    this.data = data;
+  }
+  data: UserApiObject[];
+}
+
+export const userEmployeeFields: string[] = ['currentEmployee'];
 
 export const userJoinedCompaniesField = {
   path: 'joinedCompanies',

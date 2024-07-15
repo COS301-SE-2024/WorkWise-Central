@@ -6,11 +6,11 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto, createUserResponseDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto, CreateUserResponseDto } from './dto/create-user.dto';
+import { JoinUserDto, UpdateUserDto } from './dto/update-user.dto';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './entities/user.entity';
+import { JoinedCompany, SignInUserDto, User } from './entities/user.entity';
 import { AuthService } from '../auth/auth.service';
 import { EmployeeService } from '../employee/employee.service';
 import { UserConfirmation } from './entities/user-confirmation.entity';
@@ -19,12 +19,12 @@ import { EmailService } from '../email/email.service';
 import { UsersRepository } from './users.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { isPhoneNumber } from 'class-validator';
+import { CompanyService } from '../company/company.service';
+import { FileService } from '../file/file.service';
 
 @Injectable()
 export class UsersService {
   constructor(
-    /*    @InjectModel(User.name)
-    private readonly userModel: Model<User>,*/
     private readonly userRepository: UsersRepository,
     @InjectModel(UserConfirmation.name)
     private readonly userConfirmationModel: Model<UserConfirmation>,
@@ -32,26 +32,39 @@ export class UsersService {
     private authService: AuthService,
     @Inject(forwardRef(() => EmployeeService))
     private employeeService: EmployeeService,
+    @Inject(forwardRef(() => CompanyService))
+    private companyService: CompanyService,
     private emailService: EmailService,
+
+    @Inject(forwardRef(() => FileService))
+    private fileService: FileService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    if (await this.usernameExists(createUserDto.username)) {
-      throw new ConflictException(
-        'Username already exists, please use another one',
-      );
-    }
+    const inputValidated = await this.createUserValid(createUserDto);
+    if (!inputValidated.isValid)
+      throw new ConflictException(inputValidated.message);
 
+    //Save files In Bucket, and store URLs (if provided)
+    if (createUserDto.profile.displayImage) {
+      console.log('Uploading image');
+      const picture = await this.fileService.uploadBase64Image(
+        createUserDto.profile.displayImage,
+      );
+      if (picture.secure_url != null) {
+        createUserDto.profile.displayImage = picture.secure_url;
+      } else throw new InternalServerErrorException('file upload failed');
+    }
+    // else default
     const newUserObj = new User(createUserDto);
     const result = await this.userRepository.save(newUserObj);
     await this.createUserConfirmation(newUserObj); //sends email
 
-    const jwt: { access_token: string; id: Types.ObjectId } =
-      await this.authService.signIn(
-        result.systemDetails.username,
-        createUserDto.password,
-      );
-    return new createUserResponseDto(jwt);
+    const jwt: SignInUserDto = await this.authService.signIn(
+      result.systemDetails.username,
+      createUserDto.password,
+    );
+    return new CreateUserResponseDto(jwt);
   }
 
   async createUserConfirmation(newUser: User) {
@@ -62,7 +75,9 @@ export class UsersService {
       email: newUser.personalInfo.contactInfo.email,
       key: randomStringGenerator(),
     };
-    await this.userConfirmationModel.create(userConfirmation);
+    const confirmation =
+      await this.userConfirmationModel.create(userConfirmation);
+    await confirmation.save();
     //console.log(result);
     await this.emailService.sendUserConfirmation(userConfirmation);
   }
@@ -71,24 +86,40 @@ export class UsersService {
     return this.userRepository.verifyUser(email);
   }
 
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<
+    (FlattenMaps<User> & { _id: Types.ObjectId })[]
+  > {
     return this.userRepository.findAll();
+  }
+
+  async getAllUsersInCompany(
+    companyId: Types.ObjectId,
+  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+    return this.userRepository.findAllInCompany(companyId);
   }
 
   async usernameExists(identifier: string): Promise<boolean> {
     return this.userRepository.exists(identifier);
   }
 
+  async emailExists(email: string): Promise<boolean> {
+    return this.userRepository.emailExists(email);
+  }
+
+  async phoneExists(phoneNumber: string): Promise<boolean> {
+    return this.userRepository.phoneNumberExists(phoneNumber);
+  }
+
   isValidPhoneNumber(phoneNum: string) {
     return isPhoneNumber(phoneNum, null);
   }
 
-  async userIdExists(id: string | Types.ObjectId): Promise<boolean> {
+  async userIdExists(id: Types.ObjectId): Promise<boolean> {
     return this.userRepository.userIdExists(id);
   }
 
-  async getUserById(identifier: string | Types.ObjectId): Promise<User> {
-    const result: User = await this.userRepository.findById(identifier);
+  async getUserById(identifier: Types.ObjectId) {
+    const result = await this.userRepository.findById(identifier);
 
     if (result == null) {
       throw new NotFoundException(
@@ -110,11 +141,94 @@ export class UsersService {
     return result;
   }
 
-  async updateUser(
-    id: string,
-    updateUserDto: UpdateUserDto,
+  async updateJoinedCompanies(
+    //This is a temporary function that is only used within the service
+    id: Types.ObjectId,
+    joinUserDto: JoinUserDto,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
-    const inputValidated = await this.userIsValid(updateUserDto);
+    const updatedUser = await this.userRepository.updateJoinedCompany(
+      id,
+      joinUserDto,
+    );
+    if (updatedUser == null) {
+      throw new NotFoundException('failed to update user');
+    }
+    return updatedUser;
+  }
+
+  async addJoinedCompany(
+    //This is a temporary function that is only used within the service
+    userId: Types.ObjectId,
+    joinedCompany: JoinedCompany,
+  ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
+    const user = await this.getUserById(userId);
+    if (user == null) throw new NotFoundException('User not found');
+
+    const userAlreadyInCompany = user.joinedCompanies.some(
+      (company) =>
+        company.companyId.toString() === joinedCompany.companyId.toString() ||
+        company.employeeId.toString() === joinedCompany.employeeId.toString(),
+    );
+
+    if (userAlreadyInCompany) {
+      return user;
+    }
+
+    const updatedUser = await this.userRepository.addJoinedCompany(
+      userId,
+      joinedCompany,
+    );
+    if (updatedUser == null) {
+      throw new NotFoundException('failed to update user');
+    }
+    return updatedUser;
+  }
+
+  async removeJoinedCompany(
+    //This is a temporary function that is only used within the service
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
+    const user = await this.getUserById(userId);
+    if (user == null) throw new NotFoundException('User not found');
+
+    const userInCompany = user.joinedCompanies.some((company) =>
+      company.companyId.equals(companyId),
+    );
+
+    if (!userInCompany) {
+      return user; //Return unchanged user
+    }
+
+    const updatedUser = await this.userRepository.removeJoinedCompany(
+      userId,
+      companyId,
+    );
+    if (updatedUser == null) {
+      throw new NotFoundException('failed to update user');
+    }
+    return updatedUser;
+  }
+
+  async changeCurrentEmployee(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+  ) {
+    const user = await this.userRepository.findById(userId);
+    const includesEmployee = user.joinedCompanies.some((company) =>
+      company.employeeId.equals(employeeId),
+    );
+
+    if (includesEmployee)
+      await this.updateUser(userId, { currentEmployee: employeeId });
+    else throw new ConflictException('Invalid Employee');
+  }
+
+  async updateUser(
+    id: Types.ObjectId,
+    updateUserDto: UpdateUserDto,
+  ) /*: Promise<FlattenMaps<User> & { _id: Types.ObjectId }> */ {
+    const inputValidated = await this.updateUserValid(id, updateUserDto);
     if (!inputValidated.isValid) {
       throw new NotFoundException(inputValidated.message);
     }
@@ -127,7 +241,7 @@ export class UsersService {
     return updatedUser;
   }
 
-  async softDelete(id: string): Promise<boolean> {
+  async softDelete(id: Types.ObjectId): Promise<boolean> {
     const userToDelete = await this.userRepository.findById(id);
     if (!userToDelete) {
       throw new NotFoundException(
@@ -145,14 +259,72 @@ export class UsersService {
     return true;
   }
 
-  async userIsValid(user: User | UpdateUserDto): Promise<ValidationResult> {
-    if (user.employeeIds) {
-      for (const employee of user.employeeIds) {
-        const exists = await this.employeeService.employeeExists(employee);
+  async createUserValid(
+    createUserDto: CreateUserDto,
+  ): Promise<ValidationResult> {
+    console.log('createValidation', createUserDto);
+
+    const usernameTaken = await this.usernameExists(createUserDto.username);
+    if (usernameTaken)
+      return new ValidationResult(
+        false,
+        `Username "${createUserDto.username}" already in use`,
+      );
+
+    /*    const phoneNumberTaken = await this.phoneExists(
+      createUserDto.contactInfo.phoneNumber,
+    );
+    if (phoneNumberTaken)
+      return new ValidationResult(false, `Phone Number already in use`);*/
+
+    const emailTaken = await this.emailExists(createUserDto.contactInfo.email);
+    if (emailTaken) return new ValidationResult(false, `Email already in use`);
+
+    return new ValidationResult(true);
+  }
+
+  async userIsInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ): Promise<boolean> {
+    const user = await this.getUserById(userId);
+    const company = await this.companyService.getCompanyById(companyId);
+
+    if (!user) {
+      console.log('User is invalid');
+      return false;
+    }
+    if (!company) {
+      console.log('Company is invalid');
+      return false;
+    }
+
+    let userJoinedCompany: JoinedCompany = null;
+    for (const joinedCompany of user.joinedCompanies) {
+      if (joinedCompany.companyId.toString() === companyId.toString()) {
+        userJoinedCompany = joinedCompany;
+      }
+    }
+
+    if (userJoinedCompany == null) return false;
+    for (const employee of company.employees) {
+      if (employee._id.equals(userJoinedCompany.employeeId)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  async userIsValid(user: User): Promise<ValidationResult> {
+    if (user.joinedCompanies) {
+      for (const joinedCompany of user.joinedCompanies) {
+        const exists = await this.employeeService.employeeExists(
+          joinedCompany.employeeId,
+        );
         if (!exists)
           return new ValidationResult(
             false,
-            `Invalid Employee ID: ${employee}`,
+            `Invalid Employee ID: ${joinedCompany.employeeId}`,
           );
       }
     }
@@ -166,5 +338,62 @@ export class UsersService {
           `Invalid currentEmployee: ${user.currentEmployee}`,
         );
     }
+  }
+
+  async updateUserValid(
+    id: Types.ObjectId,
+    user: UpdateUserDto,
+  ): Promise<ValidationResult> {
+    if (!user) {
+      return new ValidationResult(false, `user cannot be undefined`);
+    }
+
+    if (!(await this.userIdExists(id))) {
+      return new ValidationResult(false, `User cannot be found with id ${id}`);
+    }
+
+    /*    if (user.joinedCompanies) {
+      for (const joinedCompany of user.joinedCompanies) {
+        const exists = await this.employeeService.employeeExists(
+          joinedCompany.employeeId,
+        );
+        if (!exists)
+          return new ValidationResult(
+            false,
+            `Invalid Employee ID: ${joinedCompany.employeeId}`,
+          );
+      }
+    }*/
+
+    if (user.currentEmployee) {
+      const exists = await this.employeeService.employeeExists(
+        user.currentEmployee,
+      );
+      if (!exists)
+        return new ValidationResult(
+          false,
+          `Invalid currentEmployee: ${user.currentEmployee}`,
+        );
+    }
+
+    return new ValidationResult(true);
+  }
+
+  async userIsInSameCompanyAsEmployee(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+  ) {
+    const user = await this.getUserById(userId);
+    const companyWithEmployee =
+      await this.companyService.getCompanyWithEmployee(employeeId);
+
+    if (!companyWithEmployee || !user) {
+      throw new ConflictException('User or Employee is Null');
+    }
+    for (const joinedCompany of user.joinedCompanies) {
+      if (joinedCompany.companyId.equals(companyWithEmployee._id)) return true;
+    }
+
+    return false;
   }
 }

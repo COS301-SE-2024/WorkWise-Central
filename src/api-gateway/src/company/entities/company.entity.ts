@@ -1,19 +1,28 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import mongoose from 'mongoose';
+import mongoose, { SchemaTypes, Types } from 'mongoose';
 import { CreateCompanyDto } from '../dto/create-company.dto';
+import { Employee } from '../../employee/entities/employee.entity';
 
 export class ContactDetails {
   @Prop({ type: String, required: true, trim: true })
   phoneNumber: string;
 
-  @Prop({ type: String, unique: true, required: true, lowercase: true })
+  @Prop({
+    type: String,
+    unique: true,
+    index: true,
+    required: true,
+    lowercase: true,
+  })
   email: string;
 }
 
 export class Address {
   @Prop({ type: String, required: true })
   street: string;
+  @Prop({ type: String, required: true })
+  province: string;
   @Prop({ type: String, required: true })
   suburb: string;
   @Prop({ type: String, required: true })
@@ -63,7 +72,7 @@ export class Company {
   vatNumber: string;
 
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   name: string;
 
   @ApiProperty()
@@ -88,16 +97,26 @@ export class Company {
   address: Address;
 
   @ApiProperty()
-  @Prop({ type: [mongoose.Types.ObjectId], required: true, default: [] })
-  employees: mongoose.Types.ObjectId[];
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: true,
+    default: [],
+    ref: Employee.name,
+  })
+  employees: Types.ObjectId[];
 
   @ApiHideProperty()
-  @Prop({ type: [mongoose.Types.ObjectId], required: true, default: [] })
-  inventoryItems: mongoose.Types.ObjectId[];
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: true,
+    default: [],
+    /*    ref: Inventory.name,*/ //TODO: Add ref to Inventory
+  })
+  inventoryItems: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ required: false, default: false })
-  private: boolean;
+  @Prop({ type: Boolean, required: true, default: false })
+  private: boolean = false;
 
   @ApiHideProperty()
   @Prop({ required: false, default: new Date() })
@@ -112,4 +131,71 @@ export class Company {
   public deletedAt: Date;
 }
 
+export class CompanyApiObject {
+  @ApiProperty()
+  id: Types.ObjectId;
+
+  @ApiProperty()
+  registrationNumber: string;
+
+  @ApiProperty()
+  vatNumber: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  type?: string;
+
+  @ApiProperty()
+  logo?: string =
+    'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
+
+  @ApiProperty()
+  contactDetails: ContactDetails;
+
+  @ApiProperty()
+  address: Address;
+
+  @ApiProperty()
+  employees: mongoose.Types.ObjectId[];
+
+  @ApiHideProperty()
+  inventoryItems: mongoose.Types.ObjectId[];
+
+  @ApiProperty()
+  private: boolean;
+
+  @ApiHideProperty()
+  public createdAt: Date;
+
+  @ApiHideProperty()
+  public updatedAt: Date;
+
+  @ApiHideProperty()
+  public deletedAt: Date;
+}
+
 export const CompanySchema = SchemaFactory.createForClass(Company);
+
+export class CompanyEmployeesResponseDto {
+  constructor(data: Employee & { _id: Types.ObjectId }[]) {
+    this.data = data;
+  }
+
+  data: Employee & { _id: Types.ObjectId }[];
+}
+
+export class CompanyAllResponseDto {
+  constructor(data: CompanyApiObject[]) {
+    this.data = data;
+  }
+  data: CompanyApiObject[];
+}
+
+export class CompanyResponseDto {
+  constructor(data: CompanyApiObject) {
+    this.data = data;
+  }
+  data: CompanyApiObject;
+}

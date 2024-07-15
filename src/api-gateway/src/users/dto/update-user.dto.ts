@@ -1,4 +1,9 @@
-import { PersonalInfo, Profile, SystemDetails } from '../entities/user.entity';
+import {
+  JoinedCompany,
+  PersonalInfo,
+  Profile,
+  SystemDetails,
+} from '../entities/user.entity';
 import { PartialType } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import {
@@ -9,7 +14,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-//class UpdateJoinedCompanyDto extends PartialType(JoinedCompany) {}
+class UpdateJoinedCompanyDto extends PartialType(JoinedCompany) {}
 class UpdateSystemDetails extends PartialType(SystemDetails) {}
 class UpdatePersonalInfo extends PartialType(PersonalInfo) {}
 class UpdateProfile extends PartialType(Profile) {}
@@ -30,7 +35,7 @@ export class UpdateUserDto {
   @Type(() => UpdateProfile)
   profile?: UpdateProfile;
 
-  /* @IsOptional()
+  /*  @IsOptional()  //Joined Companies will have its own endpoint to enter/exit
   @ValidateNested({ each: true })
   @Type(() => UpdateJoinedCompanyDto)
   joinedCompanies?: UpdateJoinedCompanyDto[];*/
@@ -41,11 +46,12 @@ export class UpdateUserDto {
   skills?: string[];
 
   @IsOptional()
-  @IsArray()
-  @Type(() => Types.ObjectId)
-  employeeIds?: Types.ObjectId[];
-
-  @IsOptional()
   @IsMongoId()
   currentEmployee?: Types.ObjectId;
+}
+
+export class JoinUserDto {
+  @ValidateNested({ each: true })
+  @Type(() => UpdateJoinedCompanyDto)
+  joinedCompanies: UpdateJoinedCompanyDto[];
 }
