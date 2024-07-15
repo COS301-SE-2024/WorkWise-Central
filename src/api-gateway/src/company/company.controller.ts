@@ -40,10 +40,10 @@ import {
   CompanyEmployeesResponseDto,
   CompanyResponseDto,
 } from './entities/company.entity';
-import { BooleanResponseDto } from '../users/dto/create-user.dto';
 import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
 import { validateObjectIds } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
+import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 
 const className = 'Company';
 

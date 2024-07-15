@@ -119,6 +119,7 @@ export class User {
     if (createUserDto.profile.displayImage != null) {
       this.profile = {
         displayName: createUserDto.profile.displayImage,
+        //This must be a URL from Storage bucket
         displayImage: createUserDto.profile.displayImage,
       };
     } else {

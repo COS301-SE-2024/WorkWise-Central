@@ -4,7 +4,7 @@
 
 ![WorkWise Central Logo](/res/img/logo/WorkWiseLogo.png)
 
-[![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)&ensp;
+[![codecov](https://codecov.io/github/COS301-SE-2024/WorkWise-Central/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/COS301-SE-2024/WorkWise-Central)&ensp;
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/WorkWise-Central/build.yml)&ensp;
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/COS301-SE-2024/WorkWise-Central)&ensp;
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/COS301-SE-2024/WorkWise-Central)&ensp;

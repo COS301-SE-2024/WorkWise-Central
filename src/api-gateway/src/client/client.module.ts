@@ -12,6 +12,7 @@ import { UsersModule } from '../users/users.module';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { EmailModule } from '../email/email.module';
+import { FileModule } from '../file/file.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { EmailModule } from '../email/email.module';
     forwardRef(() => RoleModule),
     forwardRef(() => UsersModule),
     forwardRef(() => EmailModule),
+    forwardRef(() => FileModule),
   ],
   controllers: [ClientController],
   providers: [

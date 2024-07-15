@@ -98,7 +98,3 @@ export class teamResponseDto {
   }
   data: teamApiObject;
 }
-
-export class BooleanResponseDto {
-  data: boolean;
-}

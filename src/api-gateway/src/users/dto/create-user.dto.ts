@@ -10,12 +10,14 @@ import {
   //IsPhoneNumber,
   IsString,
   MaxLength,
+  Validate,
   ValidateNested,
   //Validator,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { SignInUserDto } from '../entities/user.entity';
+import { Base64ContentIsImage } from '../../utils/Custom Validators/Base64ContentIsImage';
 //import { PasswordRules } from '../../utils/Custom Decorators/PasswordRules';
 
 class ContactInfo {
@@ -118,6 +120,7 @@ class Profile {
 
   @IsOptional()
   @IsString()
+  @Validate(Base64ContentIsImage)
   displayImage?: string;
 }
 
@@ -159,10 +162,6 @@ export class CreateUserDto {
   @IsArray()
   @Type(() => String)
   skills?: string[] = [];
-
-  /*  @IsOptional()
-  @IsMongoId()
-  public currentEmployee?: Types.ObjectId;*/
 }
 
 export class CreateUserResponseDto {
@@ -170,8 +169,4 @@ export class CreateUserResponseDto {
   constructor(data: SignInUserDto) {
     this.data = data;
   }
-}
-
-export class BooleanResponseDto {
-  data: boolean;
 }

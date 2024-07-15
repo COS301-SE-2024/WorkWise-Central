@@ -13,11 +13,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import {
-  CreateUserDto,
-  CreateUserResponseDto,
-  BooleanResponseDto,
-} from './dto/create-user.dto';
+import { CreateUserDto, CreateUserResponseDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
@@ -34,6 +30,7 @@ import mongoose, { Types } from 'mongoose';
 import { UserAllResponseDto, UserResponseDto } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { UserEmailVerificationDTO } from './dto/user-validation.dto';
+import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 
 const className = 'User';
 
@@ -82,6 +79,7 @@ export class UsersController {
   async create(
     @Body() createUserDto: CreateUserDto,
   ): Promise<CreateUserResponseDto> {
+    console.log('createUserController');
     try {
       return await this.usersService.create(createUserDto);
     } catch (Error) {
