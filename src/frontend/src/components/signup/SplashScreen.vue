@@ -14,7 +14,7 @@
     </v-app-bar>
     <!-- Main Content -->
     <v-main :theme="isdarkmode ? 'dark' : 'light'">
-      <v-row style="height: 800px" no-gutters>
+      <v-row style="height: 1000px" no-gutters>
         <!-- Left Half -->
         <v-col cols="6" sm="3" md="6" align-self="center">
           <v-row justify="center"

@@ -2,7 +2,7 @@
   <v-dialog
     max-height="800"
     max-width="900"
-    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :theme="isdarkmode === true ? 'dark' : 'light'"
     v-model="jobDialog"
   >
     <template v-slot:activator="{ props: activatorProps }">
@@ -24,7 +24,7 @@
       rounded="md"
       max-height="800"
       max-width="900"
-      :theme="isdarkmode === true ? 'dark' : 'light'"
+     
     >
       <v-card-title class="text-center">Job Details</v-card-title>
       <v-card-text>
@@ -36,7 +36,7 @@
                 <label style="font-size: 14px; font-weight: lighter">Job Title*</label>
 
                 <v-text-field
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
+                 
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Enter the title of the job"
@@ -54,7 +54,7 @@
                   density="compact"
                   color="grey-lighten-4"
                   label="Choose the employee for whom the job must be complete"
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
+                 
                   rounded="md"
                   variant="solo"
                   v-model="req_obj.clientId"
@@ -77,7 +77,7 @@
                 <label style="font-size: 14px; font-weight: lighter">Job description</label>
 
                 <v-textarea
-                  :theme="isdarkmode === true ? 'dark' : 'light'"
+                  
                   placeholder="Enter the details of the job"
                   rounded="md"
                   variant="solo"
@@ -117,7 +117,7 @@
                     elevation="5"
                     required
                     @update:modelValue="updateDates"
-                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                   
                   ></v-date-picker>
                 </v-col>
                 <v-col align="center" cols="12" md="6">
@@ -128,7 +128,7 @@
                     width="unset"
                     max-width="350"
                     v-model="endDate"
-                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                   
                     elevation="5"
                     required
                     @update:modelValue="updateDates"
@@ -146,9 +146,10 @@
                     item-title="name"
                     label="Select some employees you would like to assign to this job"
                     chips
-                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    
                     multiple
                     required
+                    color="primary"
                     @update:modelValue="updateEmployee"
                     variant="solo"
                   ></v-select></v-col
@@ -160,9 +161,9 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">Street</label>
                   <v-text-field
-                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    
                     density="compact"
-                    color="grey-lighten-4"
+                    color="primary"
                     placeholder="Street"
                     rounded="md"
                     v-model="req_obj.details.address.street"
@@ -173,9 +174,9 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">Suburb</label>
                   <v-text-field
-                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    
                     density="compact"
-                    color="grey-lighten-4"
+                    color="primary"
                     placeholder="Suburb"
                     rounded="md"
                     v-model="req_obj.details.address.suburb"
@@ -186,9 +187,9 @@
                 <v-col sm="6" cols="12">
                   <label style="font-size: 14px; font-weight: lighter">Province</label>
                   <v-autocomplete
-                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    
                     density="compact"
-                    color="grey-lighten-4"
+                    color="primary"
                     placeholder="Province"
                     rounded="md"
                     type="houseNumber"
@@ -210,9 +211,9 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">City</label>
                   <v-text-field
-                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                   
                     density="compact"
-                    color="grey-lighten-4"
+                    color="primary"
                     placeholder="City"
                     rounded="md"
                     v-model="req_obj.details.address.city"
@@ -223,9 +224,9 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">Postal Code</label>
                   <v-text-field
-                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                   
                     density="compact"
-                    color="grey-lighten-4"
+                    color="primary"
                     placeholder="Postal Code"
                     :rules="postal_code_rules"
                     rounded="md"
@@ -238,9 +239,9 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">Complex</label>
                   <v-text-field
-                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    
                     density="compact"
-                    color="grey-lighten-4"
+                    color="primary"
                     placeholder="Complex"
                     rounded="md"
                     v-model="req_obj.details.address.complex"
@@ -251,9 +252,9 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">House number</label>
                   <v-text-field
-                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                   F
                     density="compact"
-                    color="grey-lighten-4"
+                    color="primary"
                     placeholder="House number"
                     rounded="md"
                     v-model="req_obj.details.address.houseNumber"

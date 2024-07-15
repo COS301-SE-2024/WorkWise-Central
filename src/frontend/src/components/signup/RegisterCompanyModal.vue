@@ -52,7 +52,7 @@
               <label style="font-size: 14px; font-weight: lighter">Type of business*</label>
               <v-autocomplete
                 density="compact"
-                color="cardColor"
+                color="primary"
                 placeholder="Select Job Type"
                 v-model="req_obj.type"
                 rounded="md"

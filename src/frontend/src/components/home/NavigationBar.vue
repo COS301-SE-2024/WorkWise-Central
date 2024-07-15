@@ -8,8 +8,8 @@ const drawer = ref(true)
 const open = ref(['Dashboard'])
 
 const dashboardSubItems = ref([
-  { title: 'Home', icon: 'fa: fa-solid fa-house', routeName: 'dashboard' },
-  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
+  { title: 'Calender', icon: 'fa: fa-solid fa-house', routeName: 'dashboard' },
+  { title: 'Statistics', icon: 'fa: fa-solid fa-chart-line', routeName: 'statisticView' },
   { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
 ])
 
@@ -283,6 +283,7 @@ export default defineComponent({
               ></v-list-item>
             </v-list-group>
           </v-list>
+
           <v-list v-model:open="open">
             <v-list-group fluid value="More">
               <template v-slot:activator="{ props }">

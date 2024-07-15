@@ -3,7 +3,7 @@
     max-height="800"
     max-width="600"
     style="font-family: Nunito, sans-serif"
-    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :theme="isdarkmode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">

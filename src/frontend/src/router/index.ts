@@ -20,9 +20,11 @@ import ProfilePage from '@/components/home/settings/profile/ProfilePage.vue'
 import CompanySettings from '@/components/home/settings/company/CompanySettings.vue'
 import EditCompany from '@/components/home/settings/company/EditCompany.vue'
 import EditRoles from '@/components/home/settings/company/EditRoles.vue'
-// import EditStructure from '@/components/home/settings/company/EditStructure.vue'
+import EditStructure from '@/components/home/settings/company/EditStructure.vue'
 import CompanySettingsView from '../views/settings/CompanySettings.vue'
 import LoadingScreen from '@/components/misc/LoadingScreen.vue'
+import StatisticsDashboard from '@/components/home/statistics/StatisticsDashboard.vue'
+import StatisticView from '@/views/home/dashboard/StatisticView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -172,11 +174,11 @@ const router = createRouter({
       name: 'editRoles',
       component: EditRoles
     },
-    // {
-    //   path: '/companySettingsView/editStructure',
-    //   name: 'editStructure',
-    //   component: EditStructure
-    // },
+    {
+      path: '/companySettingsView/editStructure',
+      name: 'editStructure',
+      component: EditStructure
+    },
     {
       path: '/companySettingsView',
       name: 'companySettingsView',
@@ -201,6 +203,16 @@ const router = createRouter({
       path: '/preferenceSettings',
       name: 'preferenceSettings',
       component: () => import('@/views/settings/PreferenceSettings.vue')
+    },
+    {
+      path: '/statistics',
+      name: 'statistics',
+      component: StatisticsDashboard
+    },
+    {
+      path: '/statisticView',
+      name: 'statisticView',
+      component: StatisticView
     }
   ]
 })

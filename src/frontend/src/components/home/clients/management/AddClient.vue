@@ -163,7 +163,7 @@
               <v-col>
                 <small class="text-caption">Preferred language</small>
                 <v-autocomplete
-                  color="secondary"
+                  color="primary"
                   placeholder="Enter the language preferred by the client"
                   v-model="req_obj.details.preferredLanguage"
                   type="preferredLanguage"
