@@ -128,9 +128,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.pl-15 {
-  padding-left: 15px;
-}
 </style>
 
 
