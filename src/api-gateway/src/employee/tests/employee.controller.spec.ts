@@ -35,7 +35,7 @@ describe('--Employee Controller--', () => {
     });
   });
 
-  describe('all', () => {
+  describe('findAll', () => {
     //The all endpoint simply returns what is returned from the service with a {data:} wrapper.
     //Hence we only need 1 test.
     it('should return an array of employees', async () => {
