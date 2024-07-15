@@ -33,9 +33,9 @@ import {
 } from '@nestjs/swagger';
 import mongoose, { Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
-import { BooleanResponseDto } from '../users/dto/create-user.dto';
 import { JobResponseDto } from './entities/job.entity';
 import { JwtService } from '@nestjs/jwt';
+import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 
 const className = 'Job';
 
@@ -161,7 +161,7 @@ export class JobController {
     type: JobAllResponseDetailedDto,
     description: `An array of mongodb objects of the ${className} class`,
   })
-  @Get('all/company/:cid')
+  @Get('all/company/detailed/:cid')
   async findDetailedAllInCompany(
     @Headers() headers: any,
     @Param('cid') companyId: string,

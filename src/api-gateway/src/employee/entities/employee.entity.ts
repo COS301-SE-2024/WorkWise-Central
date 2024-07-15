@@ -190,7 +190,3 @@ export class joinedEmployeeResponseDto {
   }
   data: joinedEmployeeApiObject;
 }
-
-export class BooleanResponseDto {
-  data: boolean;
-}

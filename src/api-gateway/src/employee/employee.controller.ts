@@ -25,13 +25,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import {
-  BooleanResponseDto,
   EmployeeListResponseDto,
   EmployeeResponseDto,
   joinedEmployeeListResponseDto,
   joinedEmployeeResponseDto,
 } from './entities/employee.entity';
 import { Types } from 'mongoose';
+import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 
 const className = 'Employee';
 
