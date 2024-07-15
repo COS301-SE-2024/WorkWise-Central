@@ -3,4 +3,229 @@
 
 body {
   font-family: 'Nunito', sans-serif;
+  font-size: 16px;
 }
+
+h1,
+.h1 {
+  font-size: 2rem;
+  font-family: 'Nunito', sans-serif;
+}
+h2,
+.h2 {
+  font-size: 1.75rem;
+  font-family: 'Nunito', sans-serif;
+}
+h3,
+.h3 {
+  font-size: 1.5rem;
+  font-family: 'Nunito', sans-serif;
+}
+h4,
+.h4 {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.25rem;
+}
+h5,
+.h5 {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+}
+h6,
+.h6 {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.875rem;
+}
+
+.background-image {
+  background-image: url('/img/WorkWise.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100%;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  body {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+  }
+  h1,
+  .h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.5rem;
+  }
+  h2,
+  .h2 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.25rem;
+  }
+  h3,
+  .h3 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.125rem;
+  }
+  h4,
+  .h4 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+  }
+  h5,
+  .h5 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.875rem;
+  }
+  h6,
+  .h6 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.75rem;
+  }
+  .background-image {
+    background-image: url('/img/WorkWise.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 960px) {
+  body {
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+  }
+  h1,
+  .h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 2rem;
+  }
+  h2,
+  .h2 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.75rem;
+  }
+  h3,
+  .h3 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.5rem;
+  }
+  h4,
+  .h4 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.25rem;
+  }
+  h5,
+  .h5 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+  }
+  h6,
+  .h6 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.875rem;
+  }
+  .background-image {
+    background-image: url('/img/WorkWise.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+/* Large screens */
+@media (min-width: 961px) and (max-width: 1264px) {
+  body {
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+  }
+  h1,
+  .h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 2.5rem;
+  }
+  h2,
+  .h2 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 2.25rem;
+  }
+  h3,
+  .h3 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 2rem;
+  }
+  h4,
+  .h4 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.75rem;
+  }
+  h5,
+  .h5 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.5rem;
+  }
+  h6,
+  .h6 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.25rem;
+  }
+  .background-image {
+    background-image: url('/img/WorkWise.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+/* Extra large screens */
+@media (min-width: 1265px) {
+  body {
+    font-family: 'Nunito', sans-serif;
+    font-size: 20px;
+  }
+  h1,
+  .h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 3rem;
+  }
+  h2,
+  .h2 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 2.75rem;
+  }
+  h3,
+  .h3 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 2.5rem;
+  }
+  h4,
+  .h4 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 2.1rem;
+  }
+  h5,
+  .h5 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.5rem;
+  }
+  h6,
+  .h6 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+  }
+  .background-image {
+    background-image: url('/img/WorkWise.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+/* Default heading sizes */

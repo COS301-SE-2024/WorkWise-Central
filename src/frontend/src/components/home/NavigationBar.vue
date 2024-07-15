@@ -47,8 +47,8 @@ const supportSubItems = ref([
   { title: 'Support', icon: 'fa: fa-solid fa-headset', routeName: 'support' }
 ])
 const moreSubItems = ref([
-  { title: 'Settings', icon: 'fa: fa-solid fa-cog', routeName: '404' },
-  { title: 'Logout', icon: 'fa: fa-solid fa-sign-out-alt', routeName: '404' }
+  { title: 'Company Settings', icon: 'fa: fa-solid fa-cog', routeName: 'companySettingsView' },
+  { title: 'Logout', icon: 'fa: fa-solid fa-sign-out-alt', routeName: 'splash' }
 ])
 </script>
 
@@ -90,6 +90,11 @@ export default defineComponent({
         console.log(this.isdarkmode)
       }
       sessionStorage.setItem('theme', this.isdarkmode.toString()) // save the theme to session storage
+    },
+    logout(name: string) {
+      if (name === 'splash') {
+        sessionStorage.clear()
+      }
     }
   }
 })
@@ -107,8 +112,8 @@ export default defineComponent({
           <v-spacer></v-spacer>
 
           <v-toolbar-title class="d-flex justify-center">
-            <v-label class="text-primary">Work</v-label>
-            <v-label class="text-secondary">Wise</v-label>
+            <v-label class="text-primary h4">Work</v-label>
+            <v-label class="text-secondary h4">Wise</v-label>
           </v-toolbar-title>
 
           <v-spacer class="d-none d-sm-flex"></v-spacer>
@@ -292,6 +297,7 @@ export default defineComponent({
                 v-for="(item, i) in moreSubItems"
                 :key="i"
                 :to="{ name: item.routeName }"
+                @click="logout(item.routeName)"
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
