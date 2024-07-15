@@ -8,8 +8,7 @@ import {
 } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { FlattenMaps, Model, Types } from 'mongoose';
+import { FlattenMaps, Types } from 'mongoose';
 import { Role } from './entity/role.entity';
 import { CompanyService } from '../company/company.service';
 import { EmployeeService } from '../employee/employee.service';
@@ -20,8 +19,6 @@ export class RoleService {
   private permissionsArray: string[] = [];
 
   constructor(
-    @InjectModel(Role.name)
-    private readonly roleModel: Model<Role>,
     @Inject(forwardRef(() => EmployeeService))
     private employeeService: EmployeeService,
     @Inject(forwardRef(() => CompanyService))
@@ -107,8 +104,7 @@ export class RoleService {
     newRole.companyId = createRoleDto.companyId;
     newRole.permissionSuite = createRoleDto.permissionSuite;
 
-    const model = new this.roleModel(newRole);
-    return await model.save();
+    return await this.roleRepository.save(newRole);
   }
 
   async findAll() {
@@ -207,8 +203,7 @@ export class RoleService {
     adminRoleDto.permissionSuite.push('record inventory use');
 
     let newRole = await this.create(adminRoleDto);
-    let model = new this.roleModel(newRole);
-    await model.save();
+    await this.roleRepository.save(newRole);
 
     // Foreman
     const foremanRoleDto = new CreateRoleDto();
@@ -233,8 +228,7 @@ export class RoleService {
     foremanRoleDto.permissionSuite.push('record inventory use');
 
     newRole = await this.create(foremanRoleDto);
-    model = new this.roleModel(newRole);
-    await model.save();
+    await this.roleRepository.save(newRole);
 
     // Team Leader
     const teamRoleDto = new CreateRoleDto();
@@ -256,8 +250,7 @@ export class RoleService {
     teamRoleDto.permissionSuite.push('record inventory use');
 
     newRole = await this.create(teamRoleDto);
-    model = new this.roleModel(newRole);
-    await model.save();
+    await this.roleRepository.save(newRole);
 
     // Inventory manager
     const inventoryRoleDto = new CreateRoleDto();
@@ -269,8 +262,7 @@ export class RoleService {
     inventoryRoleDto.permissionSuite.push('record inventory use');
 
     newRole = await this.create(inventoryRoleDto);
-    model = new this.roleModel(newRole);
-    await model.save();
+    await this.roleRepository.save(newRole);
 
     // Worker
     const workerRoleDto = new CreateRoleDto();
@@ -290,7 +282,6 @@ export class RoleService {
     workerRoleDto.permissionSuite.push('record inventory use');
 
     newRole = await this.create(workerRoleDto);
-    model = new this.roleModel(newRole);
-    await model.save();
+    await this.roleRepository.save(newRole);
   }
 }

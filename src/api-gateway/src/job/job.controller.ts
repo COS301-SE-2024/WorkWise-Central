@@ -62,7 +62,7 @@ export class JobController {
   @Get()
   lookAtDocumentation() {
     return {
-      message: 'Refer to localhost:3000/documentation for details on the API',
+      message: 'Refer to /documentation for details on the API',
     };
   }
 
@@ -362,7 +362,7 @@ export class JobController {
     name: 'id',
     description: `The _id attribute of the ${className}`,
   })
-  @Delete()
+  @Delete('/:id')
   remove(@Param('id') id: string, @Body() pass: { pass: string }) {
     console.log(pass); //Will be implemented later
     if (!mongoose.Types.ObjectId.isValid(id))
@@ -378,7 +378,7 @@ export class JobController {
     }
   }
 
-  private extractUserId(headers: any) {
+  public extractUserId(headers: any) {
     const authHeader: string = headers.authorization;
     const decodedJwtAccessToken = this.jwtService.decode(
       authHeader.replace(/^Bearer\s+/i, ''),

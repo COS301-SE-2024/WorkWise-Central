@@ -91,6 +91,14 @@ export class TeamController {
     return this.teamService.findById(id);
   }
 
+  // @Get('name/:name/company/:company')
+  // findByNameInCompany(
+  //   @Param('name') name: string,
+  //   @Param('company') company: Types.ObjectId,
+  // ) {
+  //   return this.teamService.findByNameInCompany(name, company);
+  // }
+
   @ApiOperation({
     summary: `Update an ${className} instances`,
     description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
@@ -109,6 +117,7 @@ export class TeamController {
     @Param('id') id: Types.ObjectId,
     @Body() updateTeamDto: UpdateTeamDto,
   ) {
+    console.log('In the update controller');
     return this.teamService.update(id, updateTeamDto);
   }
 
@@ -127,6 +136,7 @@ export class TeamController {
   })
   @Delete(':id')
   remove(@Param('id') id: Types.ObjectId) {
+    console.log('In the delete controller');
     return this.teamService.remove(id);
   }
 }
