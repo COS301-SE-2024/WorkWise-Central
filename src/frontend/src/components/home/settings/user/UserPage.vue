@@ -8,11 +8,11 @@
     </v-row>
     <v-container class="d-flex flex-column align-center justify-center">
     <v-row>
-      <v-col cols="12" md="3" class="pa-16 text-center" sm="12">
+      <v-col cols="12" md="3" class="text-center" sm="12">
         <userAvatar/>
       </v-col>
       <!-- Personal Information -->
-      <v-col cols="12" md="5"  class="pa-10">
+      <v-col cols="12" md="5">
         <v-form ref="form" @submit.prevent>
           <v-row>
             <v-col cols="12" sm="6">
@@ -63,7 +63,7 @@
         </v-form>
       </v-col>
       <!-- This should not be visible for       -->
-      <v-col cols="12" md="4" class="pa-15">
+      <v-col cols="12" md="4">
         <settingsMenu/>
       </v-col>
     </v-row>
