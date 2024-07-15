@@ -17,6 +17,7 @@ import {
 import { Transform, Type } from 'class-transformer';
 import { Company } from '../entities/company.entity';
 import { RegistrationNumber } from '../../utils/Custom Validators/RegistrationNumber';
+import { Base64ContentIsImage } from '../../utils/Custom Validators/Base64ContentIsImage';
 
 export class ContactDetails {
   @IsNotEmpty()
@@ -95,8 +96,8 @@ export class CreateCompanyDto {
 
   @ApiProperty()
   @IsString()
-  logo?: string =
-    'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
+  @Validate(Base64ContentIsImage)
+  logo?: string;
 
   @ApiProperty()
   @IsNotEmpty()
