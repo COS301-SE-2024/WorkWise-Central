@@ -46,6 +46,10 @@ const inboxSubItems = ref([
 const supportSubItems = ref([
   { title: 'Support', icon: 'fa: fa-solid fa-headset', routeName: 'support' }
 ])
+const moreSubItems = ref([
+  { title: 'Company Settings', icon: 'fa: fa-solid fa-cog', routeName: 'companySettingsView' },
+  { title: 'Logout', icon: 'fa: fa-solid fa-sign-out-alt', routeName: 'splash' }
+])
 </script>
 
 <script lang="ts">
@@ -86,6 +90,11 @@ export default defineComponent({
         console.log(this.isdarkmode)
       }
       sessionStorage.setItem('theme', this.isdarkmode.toString()) // save the theme to session storage
+    },
+    logout(name: string) {
+      if (name === 'splash') {
+        sessionStorage.clear()
+      }
     }
   }
 })
@@ -103,8 +112,8 @@ export default defineComponent({
           <v-spacer></v-spacer>
 
           <v-toolbar-title class="d-flex justify-center">
-            <v-label class="text-primary">Work</v-label>
-            <v-label class="text-secondary">Wise</v-label>
+            <v-label class="text-primary h4">Work</v-label>
+            <v-label class="text-secondary h4">Wise</v-label>
           </v-toolbar-title>
 
           <v-spacer class="d-none d-sm-flex"></v-spacer>
@@ -267,6 +276,28 @@ export default defineComponent({
                 v-for="(item, i) in supportSubItems"
                 :key="i"
                 :to="{ name: item.routeName }"
+                :prepend-icon="item.icon"
+                :title="item.title"
+                :value="item.title"
+                class="list-item-small"
+              ></v-list-item>
+            </v-list-group>
+          </v-list>
+          <v-list v-model:open="open">
+            <v-list-group fluid value="More">
+              <template v-slot:activator="{ props }">
+                <v-list-item
+                  v-bind="props"
+                  prepend-icon="fa: fa-solid fa-ellipsis-h"
+                  title="More"
+                  class="list-item-large"
+                ></v-list-item>
+              </template>
+              <v-list-item
+                v-for="(item, i) in moreSubItems"
+                :key="i"
+                :to="{ name: item.routeName }"
+                @click="logout(item.routeName)"
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"

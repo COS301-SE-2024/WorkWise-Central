@@ -1,11 +1,7 @@
 <template>
-  <v-overlay :value="loading" absolute>
+  <v-overlay v-model="loading" absolute>
     <div class="loading-content">
-      <img
-        src="https://cdn.vuetifyjs.com/docs/images/brand-kit/v-logo-circle.png"
-        alt="Loading"
-        class="loading-logo"
-      />
+      <img class="loading-logo" />
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </div>
   </v-overlay>
@@ -37,7 +33,8 @@ export default {
 }
 
 .loading-logo {
-  width: 100px; /* Adjust the size as needed */
+  width: 100px;
+  /* Adjust the size as needed */
   height: auto;
   margin-bottom: 20px;
 }

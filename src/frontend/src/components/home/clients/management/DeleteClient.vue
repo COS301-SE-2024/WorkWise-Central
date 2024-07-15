@@ -84,7 +84,12 @@ export default {
         })
         .catch((error) => {
           console.log(error)
-          alert('Error deleting client')
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'An error occurred while deleting the client',
+            life: 3000
+          })
         })
         .finally(() => {
           this.isDeleting = false // Reset the deletion indicator

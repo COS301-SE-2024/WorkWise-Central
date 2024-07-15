@@ -3,8 +3,8 @@
     <!-- Toolbar -->
     <v-app-bar :theme="isdarkmode ? 'themes.dark' : 'themes.light'" class="bg-background">
       <v-toolbar-title class="d-flex justify-end">
-        <v-label class="toolbar-text text-primary">Work</v-label>
-        <v-label class="toolbar-text text-secondary">Wise</v-label>
+        <v-label class="h4 text-primary">Work</v-label>
+        <v-label class="h4 text-secondary">Wise</v-label>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -14,7 +14,7 @@
     </v-app-bar>
     <!-- Main Content -->
     <v-main :theme="isdarkmode ? 'dark' : 'light'">
-      <v-row style="height: 1000px; width: 2000px" no-gutters>
+      <v-row style="height: 800px" no-gutters>
         <!-- Left Half -->
         <v-col cols="6" sm="3" md="6" align-self="center">
           <v-row justify="center"
@@ -35,7 +35,7 @@
 
           <v-col>
             <v-row justify="center">
-              <v-col cols="8" offset="3"
+              <v-col cols="12" md="6"
                 ><v-btn
                   color="primary"
                   dark
@@ -150,7 +150,7 @@
               </v-card>
             </v-dialog>
             <v-row justify="center"
-              ><v-col cols="8" offset="3"
+              ><v-col cols="12" md="6"
                 ><v-btn
                   color="secondary"
                   dark
@@ -673,7 +673,7 @@
 
             <!-- Register Company Modal -->
 
-            <p class="text-center" :theme="isdarkmode ? 'dark' : 'light'">
+            <p class="text-center h6" :theme="isdarkmode ? 'dark' : 'light'">
               By clicking Continue to join or sign in, you agree to WorkWise Central's User
               Agreement, Privacy Policy, and Cookie Policy
             </p>
@@ -686,13 +686,13 @@
         </v-col>
       </v-row>
       <v-footer :theme="isdarkmode ? 'dark' : 'light'" class="bg-background">
-        <v-container>
+        <!-- <v-container>
           <v-row justify="space-between">
-            <v-col cols="12" sm="6">
-              <span>&copy; 2024 WorkWise Central</span>
+            <v-col cols="12" md="6">
+              <span class="h6">&copy; 2024 WorkWise Central</span>
             </v-col>
           </v-row>
-        </v-container>
+        </v-container> -->
       </v-footer>
     </v-main>
   </v-app>
@@ -1050,6 +1050,9 @@ export default defineComponent({
           this.alertSignUp = true
           sessionStorage.setItem('access_token', response.data.data.access_token)
           sessionStorage.setItem('id', response.data.data.id)
+          localStorage.setItem('email', this.email)
+          localStorage.setItem('username', this.username)
+
           this.resetForm()
         })
         .catch((error) => {
@@ -1181,19 +1184,6 @@ export default defineComponent({
   width: 140%;
   height: 100%;
   align-content: end;
-}
-.toolbar-text {
-  font-size: 36px;
-  font-display: 'Lato';
-}
-
-.background-image {
-  background-image: url('/img/WorkWise.png');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  height: 100%;
-  width: 100%;
 }
 
 .grad-class {

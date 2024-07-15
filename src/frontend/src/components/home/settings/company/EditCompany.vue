@@ -1,102 +1,101 @@
 <template>
-  <v-app>
-    <v-container>
-      <v-card>
-        <v-card-title class="text-center"> Edit Company </v-card-title>
-        <v-divider></v-divider>
-        <v-card-text>
-          <v-form>
-            <v-row>
-              <v-col cols="5" class="pl-15">
-                <v-avatar color="grey" size="150">
-                  <v-img
-                    src="https://cdn.vuetifyjs.com/docs/images/brand-kit/v-logo-circle.png"
-                    cover
-                  ></v-img>
-                </v-avatar>
-              </v-col>
-              <v-col cols="7" class="pl-15">
-                <v-label> Name</v-label>
-                <v-text-field
-                  v-model="company.name"
-                  label=" Name"
-                  :rules="nameRules"
-                  bg-color="background"
-                ></v-text-field>
-                <v-label>Type</v-label>
-                <v-select
-                  v-model="company.type"
-                  label="Type"
-                  :items="type"
-                  bg-color="background"
-                ></v-select>
-                <v-label>Email</v-label>
-                <v-text-field
-                  v-model="company.contactDetails.email"
-                  label="Email"
-                  :rules="emailRules"
-                  bg-color="background"
-                ></v-text-field>
-                <v-label>Phone</v-label>
-                <v-text-field
-                  v-model="company.contactDetails.phone"
-                  label="Phone"
-                  :rules="phone_number_rules"
-                  bg-color="background"
-                ></v-text-field>
-                <v-label>Street</v-label>
-                <v-text-field
-                  v-model="company.address.street"
-                  label="Street"
-                  bg-color="background"
-                ></v-text-field>
-                <v-label>Suburb</v-label>
-                <v-text-field
-                  v-model="company.address.suburb"
-                  label="Suburb"
-                  bg-color="background"
-                ></v-text-field>
+  <v-container>
+    <v-card>
+      <v-card-title class="text-center"> Edit Company </v-card-title>
+      <v-divider></v-divider>
+      <v-card-text>
+        <v-form>
+          <v-row>
+            <v-col cols="5" class="pl-15">
+              <v-avatar color="grey" size="150">
+                <v-img
+                  src="https://cdn.vuetifyjs.com/docs/images/brand-kit/v-logo-circle.png"
+                  cover
+                ></v-img>
+              </v-avatar>
+            </v-col>
+            <v-col cols="7" class="pl-15">
+              <v-label> Name</v-label>
+              <v-text-field
+                v-model="company.name"
+                label=" Name"
+                :rules="nameRules"
+                bg-color="background"
+              ></v-text-field>
+              <v-label>Type</v-label>
+              <v-select
+                v-model="company.type"
+                label="Type"
+                :items="type"
+                bg-color="background"
+              ></v-select>
+              <v-label>Email</v-label>
+              <v-text-field
+                v-model="company.contactDetails.email"
+                label="Email"
+                :rules="emailRules"
+                bg-color="background"
+              ></v-text-field>
+              <v-label>Phone</v-label>
+              <v-text-field
+                v-model="company.contactDetails.phoneNumber"
+                label="Phone"
+                :rules="phone_number_rules"
+                bg-color="background"
+              ></v-text-field>
+              <v-label>Street</v-label>
+              <v-text-field
+                v-model="company.address.street"
+                label="Street"
+                bg-color="background"
+              ></v-text-field>
+              <v-label>Suburb</v-label>
+              <v-text-field
+                v-model="company.address.suburb"
+                label="Suburb"
+                bg-color="background"
+              ></v-text-field>
 
-                <v-label>Province</v-label>
-                <v-select
-                  :items="provinces"
-                  v-model="company.address.province"
-                  bg-color="background"
-                ></v-select>
-                <v-label>City</v-label>
-                <v-text-field
-                  v-model="company.address.city"
-                  label="City"
-                  bg-color="background"
-                ></v-text-field>
-                <v-label>Postal Code</v-label>
-                <v-text-field
-                  v-model="company.address.postalCode"
-                  label="Postal Code"
-                  bg-color="background"
-                ></v-text-field>
-              </v-col> </v-row></v-form
-        ></v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions class="bg-cardColor">
-          <v-col align="center">
-            <Toast />
-            <v-btn color="success" @click="saveChanges"> Save </v-btn></v-col
-          >
-          <v-col align="center">
-            <Toast />
-            <v-btn color="error" @click="cancel"> Cancel </v-btn></v-col
-          >
-        </v-card-actions>
-        <div class="card flex justify-center"></div>
-      </v-card>
-    </v-container>
-  </v-app>
+              <v-label>Province</v-label>
+              <v-select
+                :items="provinces"
+                v-model="company.address.province"
+                bg-color="background"
+              ></v-select>
+              <v-label>City</v-label>
+              <v-text-field
+                v-model="company.address.city"
+                label="City"
+                bg-color="background"
+              ></v-text-field>
+              <v-label>Postal Code</v-label>
+              <v-text-field
+                v-model="company.address.postalCode"
+                label="Postal Code"
+                bg-color="background"
+              ></v-text-field>
+            </v-col> </v-row></v-form
+      ></v-card-text>
+      <v-divider></v-divider>
+      <v-card-actions class="bg-cardColor">
+        <v-col align="center">
+          <Toast />
+          <v-btn color="success" @click="saveChanges"> Save </v-btn></v-col
+        >
+        <v-col align="center">
+          <Toast />
+          <v-btn color="error" @click="cancel"> Cancel </v-btn></v-col
+        >
+      </v-card-actions>
+      <div class="card flex justify-center"></div>
+    </v-card>
+  </v-container>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
+import axios from 'axios'
 export default defineComponent({
   name: 'EditCompany',
 
@@ -105,11 +104,14 @@ export default defineComponent({
   },
   data: () => ({
     isdarkmode: false,
+    localUrl: 'http://localhost:3000',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+    currentCompanyID: sessionStorage.getItem('currentCompany'),
     company: {
       name: '',
       type: '',
       contactDetails: {
-        phone: '',
+        phoneNumber: '',
         email: ''
       },
       address: {
@@ -207,10 +209,7 @@ export default defineComponent({
       'Northern Cape',
       'Western Cape'
     ],
-    nameRules: [
-      (v: string) => !!v || 'Name is required',
-      (v: string) => (v && v.length <= 10) || 'Name must be less than 10 characters'
-    ],
+    nameRules: [(v: string) => !!v || 'Name is required'],
     phone_number_rules: [
       (v: string) => !!v || 'Phone number is required',
       (v: string) => /^0\d{9}$/.test(v) || 'Phone number must be a valid South African number',
@@ -252,10 +251,42 @@ export default defineComponent({
         life: 3000
       })
     },
+    async getCompanyDetails() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      const company_id = sessionStorage.getItem('currentCompany')
+      await axios
+        .get(`http://localhost:3000/company/id/${company_id}`, config)
+        .then((response) => {
+          this.company = response.data.data
+          console.log(this.company)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
     toast() {}
   },
   mounted() {
     this.isdarkmode = sessionStorage.getItem('theme') === 'true' ? true : false
+    this.getCompanyDetails()
   }
 })
 </script>
