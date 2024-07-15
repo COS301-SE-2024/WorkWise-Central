@@ -113,10 +113,10 @@ export default defineComponent({
         'Sepedi', 'Sesotho', 'Setswana', 'siSwati', 'Tshivenda', 'Xitsonga'
       ],
       phoneRules: [
-        v => !!v && /^[0-9]{10}$/.test(v) || 'Phone number must be 10 digits long and numeric'
+        (v:string) => !!v && /^[0-9]{10}$/.test(v) || 'Phone number must be 10 digits long and numeric'
       ],
       emailRules: [
-        v => !!v && /.+@.+/.test(v) || 'E-mail must be valid'
+        (v:string) => !!v && /.+@.+/.test(v) || 'E-mail must be valid'
       ]
     };
   },
