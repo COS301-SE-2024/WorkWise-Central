@@ -20,6 +20,7 @@ import { UsersRepository } from './users.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { isPhoneNumber } from 'class-validator';
 import { CompanyService } from '../company/company.service';
+import { FileService } from '../file/file.service';
 
 @Injectable()
 export class UsersService {
@@ -34,19 +35,29 @@ export class UsersService {
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     private emailService: EmailService,
+
+    @Inject(forwardRef(() => FileService))
+    private fileService: FileService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
     const inputValidated = await this.createUserValid(createUserDto);
-    if (!inputValidated.isValid) {
+    if (!inputValidated.isValid)
       throw new ConflictException(inputValidated.message);
+
+    //Save files In Bucket, and store URLs (if provided)
+    if (createUserDto.profile.displayImage) {
+      console.log('Uploading image');
+      const picture = await this.fileService.uploadBase64Image(
+        createUserDto.profile.displayImage,
+      );
+      if (picture.secure_url != null) {
+        createUserDto.profile.displayImage = picture.secure_url;
+      } else throw new InternalServerErrorException('file upload failed');
     }
-
+    // else default
     const newUserObj = new User(createUserDto);
-    console.log('newUserobj', newUserObj);
     const result = await this.userRepository.save(newUserObj);
-    console.log('result', result);
-
     await this.createUserConfirmation(newUserObj); //sends email
 
     const jwt: SignInUserDto = await this.authService.signIn(
@@ -95,8 +106,8 @@ export class UsersService {
     return this.userRepository.emailExists(email);
   }
 
-  async phoneExists(email: string): Promise<boolean> {
-    return this.userRepository.phoneExists(email);
+  async phoneExists(phoneNumber: string): Promise<boolean> {
+    return this.userRepository.phoneNumberExists(phoneNumber);
   }
 
   isValidPhoneNumber(phoneNum: string) {
@@ -251,16 +262,23 @@ export class UsersService {
   async createUserValid(
     createUserDto: CreateUserDto,
   ): Promise<ValidationResult> {
-    if ((await this.usernameExists(createUserDto.username)) == true) {
+    console.log('createValidation', createUserDto);
+
+    const usernameTaken = await this.usernameExists(createUserDto.username);
+    if (usernameTaken)
       return new ValidationResult(
         false,
-        `Username "${createUserDto.username}" already exists, please use another one`,
+        `Username "${createUserDto.username}" already in use`,
       );
 
-      /*      throw new ConflictException(
-        'Username already exists, please use another one',
-      );*/
-    }
+    /*    const phoneNumberTaken = await this.phoneExists(
+      createUserDto.contactInfo.phoneNumber,
+    );
+    if (phoneNumberTaken)
+      return new ValidationResult(false, `Phone Number already in use`);*/
+
+    const emailTaken = await this.emailExists(createUserDto.contactInfo.email);
+    if (emailTaken) return new ValidationResult(false, `Email already in use`);
 
     return new ValidationResult(true);
   }
