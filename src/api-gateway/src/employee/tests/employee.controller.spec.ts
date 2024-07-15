@@ -9,15 +9,6 @@ describe('--Employee Controller--', () => {
   let controller: EmployeeController;
   let service: EmployeeService;
 
-  // const mockEmployeeService = {
-  //   findAll: jest.fn(),
-  //   findAllInCompany: jest.fn(),
-  //   findById: jest.fn(),
-  //   create: jest.fn(),
-  //   update: jest.fn(),
-  //   remove: jest.fn(),
-  // };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [EmployeeController],
