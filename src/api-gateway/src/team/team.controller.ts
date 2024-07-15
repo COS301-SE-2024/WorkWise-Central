@@ -42,24 +42,6 @@ export class TeamController {
   hello() {
     return { message: 'Refer to /documentation for details on the API' };
   }
-  @ApiInternalServerErrorResponse({
-    type: HttpException,
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
-  })
-  @ApiOperation({
-    summary: `Create a new ${className}`,
-    description: `Call to create a new ${className} . The teamName, teamMembers array and companyId are required. The teamLeaderIdd is optional. It returns the access token and the teamId.`,
-  })
-  @ApiBody({ type: CreateTeamDto })
-  @ApiResponse({
-    status: 201,
-    type: createTeamResponseDto,
-  })
-  @Post('/create')
-  create(@Body() createTeamDto: CreateTeamDto) {
-    console.log('In endpoint\ncreateTeamDto: ', createTeamDto);
-    return this.teamService.create(createTeamDto);
-  }
 
   @ApiOperation({
     summary: `Get all ${className} instances`,
@@ -70,8 +52,8 @@ export class TeamController {
     description: `An array of mongodb objects of the ${className} class.`,
   })
   @Get('/all')
-  findAll() {
-    return this.teamService.findAll();
+  async findAll() {
+    return { data: await this.teamService.findAll() };
   }
 
   @ApiOperation({
@@ -87,8 +69,8 @@ export class TeamController {
     description: `The _id attribute of the ${className} to be retrieved.`,
   })
   @Get('id/:id')
-  findById(@Param('id') id: Types.ObjectId) {
-    return this.teamService.findById(id);
+  async findById(@Param('id') id: Types.ObjectId) {
+    return { data: await this.teamService.findById(id) };
   }
 
   // @Get('name/:name/company/:company')
@@ -98,6 +80,25 @@ export class TeamController {
   // ) {
   //   return this.teamService.findByNameInCompany(name, company);
   // }
+
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+  })
+  @ApiOperation({
+    summary: `Create a new ${className}`,
+    description: `Call to create a new ${className} . The teamName, teamMembers array and companyId are required. The teamLeaderIdd is optional. It returns the access token and the teamId.`,
+  })
+  @ApiBody({ type: CreateTeamDto })
+  @ApiResponse({
+    status: 201,
+    type: createTeamResponseDto,
+  })
+  @Post('/create')
+  async create(@Body() createTeamDto: CreateTeamDto) {
+    console.log('In endpoint\ncreateTeamDto: ', createTeamDto);
+    return { data: await this.teamService.create(createTeamDto) };
+  }
 
   @ApiOperation({
     summary: `Update an ${className} instances`,
@@ -113,12 +114,12 @@ export class TeamController {
   })
   @ApiBody({ type: UpdateTeamDto })
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: Types.ObjectId,
     @Body() updateTeamDto: UpdateTeamDto,
   ) {
     console.log('In the update controller');
-    return this.teamService.update(id, updateTeamDto);
+    return { data: await this.teamService.update(id, updateTeamDto) };
   }
 
   @ApiOperation({
@@ -135,8 +136,8 @@ export class TeamController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete(':id')
-  remove(@Param('id') id: Types.ObjectId) {
+  async remove(@Param('id') id: Types.ObjectId) {
     console.log('In the delete controller');
-    return this.teamService.remove(id);
+    return { data: await this.teamService.remove(id) };
   }
 }
