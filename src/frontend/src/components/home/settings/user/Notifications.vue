@@ -97,9 +97,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.pa-4 {
-  padding: 16px;
-}
 .mb-4 {
   margin-bottom: 16px;
 }
