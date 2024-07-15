@@ -179,6 +179,7 @@ export default {
           Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
         }
       }
+      const apiURL = await this.getRequestUrl()
       await axios
         .patch(`http://localhost:3000/client/${this._clientID}`, {
           config,

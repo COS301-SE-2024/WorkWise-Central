@@ -38,7 +38,7 @@
               ></v-text-field>
               <v-label>Phone</v-label>
               <v-text-field
-                v-model="company.contactDetails.phone"
+                v-model="company.contactDetails.phoneNumber"
                 label="Phone"
                 :rules="phone_number_rules"
                 bg-color="background"
@@ -95,6 +95,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
+import axios from 'axios'
 export default defineComponent({
   name: 'EditCompany',
 
@@ -103,11 +104,14 @@ export default defineComponent({
   },
   data: () => ({
     isdarkmode: false,
+    localUrl: 'http://localhost:3000',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+    currentCompanyID: sessionStorage.getItem('currentCompany'),
     company: {
       name: '',
       type: '',
       contactDetails: {
-        phone: '',
+        phoneNumber: '',
         email: ''
       },
       address: {
@@ -205,10 +209,7 @@ export default defineComponent({
       'Northern Cape',
       'Western Cape'
     ],
-    nameRules: [
-      (v: string) => !!v || 'Name is required',
-      (v: string) => (v && v.length <= 10) || 'Name must be less than 10 characters'
-    ],
+    nameRules: [(v: string) => !!v || 'Name is required'],
     phone_number_rules: [
       (v: string) => !!v || 'Phone number is required',
       (v: string) => /^0\d{9}$/.test(v) || 'Phone number must be a valid South African number',
@@ -250,10 +251,42 @@ export default defineComponent({
         life: 3000
       })
     },
+    async getCompanyDetails() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      const company_id = sessionStorage.getItem('currentCompany')
+      await axios
+        .get(`http://localhost:3000/company/id/${company_id}`, config)
+        .then((response) => {
+          this.company = response.data.data
+          console.log(this.company)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
     toast() {}
   },
   mounted() {
     this.isdarkmode = sessionStorage.getItem('theme') === 'true' ? true : false
+    this.getCompanyDetails()
   }
 })
 </script>

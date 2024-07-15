@@ -82,7 +82,7 @@
                   text-color="elementTextColor"
                   border="md"
                 >
-                  <v-icon icon="fa:fa-solid fa-envelope" ></v-icon>{{ value }}</v-chip
+                  <v-icon icon="fa:fa-solid fa-envelope"></v-icon>{{ value }}</v-chip
                 >
               </template>
               <template v-slot:[`item.address.street`]="{ value }">

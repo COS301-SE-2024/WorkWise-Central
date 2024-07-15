@@ -1,5 +1,4 @@
 <template>
-  
   <v-container :theme="isdarkmode === true ? 'dark' : 'light'">
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
@@ -9,7 +8,7 @@
     </v-row>
     <v-row>
       <v-col cols="4" class="pl-15">
-        <Menu :model="items" class="bg-secondary" :theme="isdarkmode === true ? 'dark' : 'light'">
+        <AppMenu :model="items" class="bg-secondary" :theme="isdarkmode === true ? 'dark' : 'light'">
           <template #item="{ item, props }">
             <router-link v-if="item.route" :to="item.route" custom>
               <a
@@ -27,11 +26,11 @@
               <span class="ml-2">{{ item.label }}</span>
             </a>
           </template>
-        </Menu>
+        </AppMenu>
       </v-col>
       <v-col cols="8" class="pl-15">
-        <EditCompany v-if="currentSettings==='Company Details'" />
-        <EditRoles v-if="currentSettings==='Roles'"/>
+        <EditCompany v-if="currentSettings === 'Company Details'" />
+        <EditRoles v-if="currentSettings === 'Roles'" />
       </v-col>
     </v-row>
   </v-container>
@@ -39,7 +38,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Menu from 'primevue/menu'
+import AppMenu from 'primevue/menu'
 import EditCompany from './EditCompany.vue'
 import EditRoles from './EditRoles.vue'
 
@@ -71,7 +70,7 @@ export default defineComponent({
     }
   },
   components: {
-    Menu,
+    AppMenu,
     EditCompany,
     EditRoles
   },

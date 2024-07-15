@@ -13,29 +13,17 @@
       <v-card-title>User's Companies</v-card-title>
       <v-card-text>
         <v-container>
-          <v-row>
-            <v-col>
-              <v-text-field
-                v-model="search"
-                density="compact"
-                label="Search for companies"
-                prepend-inner-icon="mdi-magnify"
-                variant="outlined"
-                width="100%"
-              ></v-text-field
-            ></v-col>
-          </v-row>
-
           <v-col>
             <v-row
-              ><v-select
+              ><v-combobox
                 width="100%"
                 bg-color="background"
                 density="compact"
                 :items="joinedCompaniesNames"
                 persistent
+                combobox
                 v-model="company"
-              ></v-select
+              ></v-combobox
               ><v-col></v-col
             ></v-row>
           </v-col>
@@ -118,6 +106,7 @@ export default defineComponent({
         detail: `Switched to ${companyName}`
       })
       this.companyName = companyName
+      sessionStorage.setItem('currentCompany', companyId)
       this.companyDialog = false
     },
     async getCompanies() {
@@ -136,12 +125,14 @@ export default defineComponent({
           this.joinedCompanies = response.data.data.joinedCompanies
           this.joinedCompanies.forEach((company) => {
             this.joinedCompaniesNames.push(company.companyName)
-            this.joinedCompaniesIds.push(company._id)
+            this.joinedCompaniesIds.push(company.companyId)
           })
           const currentCompanyID = sessionStorage.getItem('currentCompany')
           console.log(this.joinedCompanies.length)
+          console.log(this.joinedCompanies[0].companyId)
+          console.log(currentCompanyID)
           for (let i = 0; i < this.joinedCompanies.length; i++) {
-            if (this.joinedCompaniesIds[i] === currentCompanyID) {
+            if (this.joinedCompaniesIds[i] == currentCompanyID) {
               this.companyName = this.joinedCompaniesNames[i]
               console.log(this.companyName)
             } else {
