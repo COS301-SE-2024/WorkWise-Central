@@ -457,7 +457,7 @@ export default {
           console.log(res.data)
 
           axios
-            .get(apiURL + 'company/' + res.data.data._id, config)
+            .get(apiURL + 'company/id/' + res.data.data._id, config)
             .then((res) => {
               console.log(res.data.data)
               sessionStorage['employeeId'] = res.data.data.employees[0]
