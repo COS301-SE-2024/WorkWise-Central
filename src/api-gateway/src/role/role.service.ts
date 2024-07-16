@@ -11,7 +11,7 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { FlattenMaps, Types } from 'mongoose';
 import { Role } from './entity/role.entity';
 import { CompanyService } from '../company/company.service';
-import { EmployeeService } from '../employee/employee.service';
+// import { EmployeeService } from '../employee/employee.service';
 import { RoleRepository } from './role.repository';
 
 @Injectable()
@@ -19,8 +19,8 @@ export class RoleService {
   private permissionsArray: string[] = [];
 
   constructor(
-    @Inject(forwardRef(() => EmployeeService))
-    private employeeService: EmployeeService,
+    // @Inject(forwardRef(() => EmployeeService))
+    // private employeeService: EmployeeService,
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     @Inject(forwardRef(() => RoleRepository))
