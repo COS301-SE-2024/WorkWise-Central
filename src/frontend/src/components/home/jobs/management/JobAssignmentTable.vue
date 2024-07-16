@@ -114,6 +114,7 @@
           <v-btn color="success" @click="viewJobDialog = true">View</v-btn>
           <!-- View Job Dialog -->
           <v-dialog v-model="viewJobDialog" max-width="500">
+            <v-col xs="12" sm="9" md="9" lg="9" xl="9" class="pr-0 pb-0" cols="12">
             <v-card elevation="14" rounded="md" :max-width="500" :max-height="800">
               <v-card-title> Job Details </v-card-title>
               <v-col>
@@ -203,6 +204,15 @@
                 <v-btn color="error" width="100%" @click="viewJobDialog = false">Close</v-btn>
               </v-col>
             </v-card>
+            </v-col>
+            <v-col>
+              <v-btn class="mb-2" outlined>
+                <v-icon class="d-none d-lg-inline-block mr-2" left>{{
+                    'fa: fa-solid fa-tasks'
+                  }}</v-icon>
+                Update Status
+              </v-btn>
+            </v-col>
           </v-dialog>
 
           <v-btn color="warning" @click="editJobCardDialog()">Edit</v-btn>
