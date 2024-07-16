@@ -55,3 +55,10 @@ export class JoinUserDto {
   @Type(() => UpdateJoinedCompanyDto)
   joinedCompanies: UpdateJoinedCompanyDto[];
 }
+
+export class UpdateProfilePicDto {
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => UpdateProfile)
+  profile?: UpdateProfile;
+}

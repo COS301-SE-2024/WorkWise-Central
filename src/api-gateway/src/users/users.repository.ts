@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import {
   JoinedCompany,
+  Profile,
   User,
   /*  userEmployeeFields,
   userJoinedCompaniesField,*/
@@ -158,6 +159,23 @@ export class UsersRepository {
           ],
         },
         { $set: { ...updateUserDto }, updatedAt: new Date() },
+        { new: true },
+      )
+      .lean();
+  }
+
+  async updateProfilePicture(id: Types.ObjectId, updateProfilePicDto: Profile) {
+    return this.userModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            { _id: id },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        { $set: { ...updateProfilePicDto }, updatedAt: new Date() },
         { new: true },
       )
       .lean();
