@@ -38,6 +38,7 @@
             <v-col>
               <label style="font-size: 14px; font-weight: lighter">Company Name</label>
               <v-text-field
+                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's name"
@@ -136,6 +137,7 @@
               <label style="font-size: 14px; font-weight: lighter">Company email address</label>
 
               <v-text-field
+                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's email adress"
@@ -151,6 +153,7 @@
               <label style="font-size: 14px; font-weight: lighter">Company phone number*</label>
 
               <v-text-field
+                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's phone number"
@@ -167,6 +170,7 @@
               >
 
               <v-text-field
+                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's registration number"
@@ -182,6 +186,7 @@
               <label style="font-size: 14px; font-weight: lighter">Company VAT number*</label>
 
               <v-text-field
+                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's VAT number"
@@ -215,6 +220,7 @@
               <v-col sm="6" cols="12">
                 <label style="font-size: 11px; font-weight: lighter">Street</label>
                 <v-text-field
+                  @update:focused="setUserId"
                   density="compact"
                   color="cardColor"
                   placeholder="Street"
@@ -227,6 +233,7 @@
               <v-col sm="6" cols="12">
                 <label style="font-size: 11px; font-weight: lighter">Suburb</label>
                 <v-text-field
+                  @update:focused="setUserId"
                   density="compact"
                   color="cardColor"
                   placeholder="Suburb"
@@ -263,6 +270,7 @@
               <v-col sm="6" cols="12">
                 <label style="font-size: 11px; font-weight: lighter">City</label>
                 <v-text-field
+                  @update:focused="setUserId"
                   density="compact"
                   placeholder="City"
                   rounded="md"
@@ -275,6 +283,7 @@
               <v-col sm="6" cols="12">
                 <label style="font-size: 11px; font-weight: lighter">Postal Code</label>
                 <v-text-field
+                  @update:focused="setUserId"
                   density="compact"
                   color="cardColor"
                   placeholder="Postal Code"
@@ -288,7 +297,8 @@
             </v-row>
             <!--            <v-row>-->
             <!--              <v-col-->
-            <!--                ><v-text-field-->
+            <!--                > <v-text-field
+                @update:focused = "setUserId"-->
             <!--                  :theme="isdarkmode === true ? 'dark' : 'light'"-->
             <!--                  density="compact"-->
             <!--                  color="grey-lighten-4"-->
@@ -300,7 +310,8 @@
             <!--                ></v-text-field-->
             <!--              ></v-col>-->
             <!--              <v-col-->
-            <!--                ><v-text-field-->
+            <!--                > <v-text-field
+                @update:focused = "setUserId"-->
             <!--                  :theme="isdarkmode === true ? 'dark' : 'light'"-->
             <!--                  density="compact"-->
             <!--                  color="grey-lighten-4"-->
@@ -348,6 +359,8 @@
 <script lang="ts">
 import axios from 'axios'
 import Toast from 'primevue/toast'
+const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
+
 export default {
   name: 'RegisterCompanyModal',
   components: {
@@ -375,10 +388,7 @@ export default {
           /^[A-Z][a-zA-Z &-]{0,48}[a-zA-Z]$/.test(v) ||
           'Company name can contain both capital and lowercase letters, spaces, "&", or "-"'
       ],
-      email_rules: [
-        (v: string) => !!v || 'E-mail is required',
-        (v: string) => /.+@.+\..+/.test(v) || 'E-mail must be valid'
-      ],
+      email_rules: [(val: string) => email_reg.test(val) || 'Email should contain an @ symbol'],
       vat_number_rules: [
         (v: string) => !!v || 'VAT number is required',
         (v: string) => /^\d{10}$/.test(v) || 'VAT number must be a valid South African VAT number'
@@ -433,19 +443,38 @@ export default {
       axios
         .post(apiURL + 'company/create', this.req_obj, config)
         .then((res) => {
-          console.log(res.data.data.id)
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
             detail: 'Company registered successfully',
             life: 3000
           })
-          sessionStorage['currentCompany'] = res.data.data.id._id
+          console.log(res.data.data.id)
+
+          sessionStorage['currentCompany'] = res.data.data._id
+          // sessionStorage['employeeId'] = res.data.data.employees[0]
+
           console.log(res.data)
+
+          axios
+            .get(apiURL + 'company/' + res.data.data._id, config)
+            .then((res) => {
+              console.log(res.data.data)
+              sessionStorage['employeeId'] = res.data.data.employees[0]
+            })
+            .catch((error) => {
+              console.log('Error occured when storing employeeId: ', error)
+            })
+
           this.$router.push('/dashboard')
         })
         .catch((res) => {
-          alert('The Company was not registered successfully')
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed Company Registration',
+            life: 3000
+          })
           console.log(res)
         })
     },
@@ -482,6 +511,10 @@ export default {
     },
     print_base64_link() {
       console.log(this.req_obj.logo)
+    },
+    setUserId() {
+      this.req_obj.userId = sessionStorage['id']
+      console.log('userid set')
     }
 
     // base64image() {
