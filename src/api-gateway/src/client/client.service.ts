@@ -236,12 +236,15 @@ export class ClientService {
     const user = await this.usersService.getUserById(userId);
     let userIsInCompany = false;
     for (const joinedCompany of user.joinedCompanies) {
-      if (joinedCompany.companyId.equals(createClientDto.details.companyId)) {
+      if (
+        joinedCompany.companyId.toString() ===
+        createClientDto.details.companyId.toString()
+      ) {
         userIsInCompany = true;
       }
     }
     if (!userIsInCompany) {
-      return new ValidationResult(false, `There are are no details}`);
+      return new ValidationResult(false, `There are are no details`);
     }
     //Check companyId
     const companyIdIsValid = await this.companyService.companyIdExists(

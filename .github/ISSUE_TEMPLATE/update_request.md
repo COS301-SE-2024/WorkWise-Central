@@ -1,21 +1,21 @@
 ---
-name: Refactor request
-about: Request a refactor to be done 
+name: Update request
+about: Request for a update to be done 
 title: ''
 labels: ''
 assignees: ''
 
 ---
 
-# Refactor Request
+# Update Request
 
 ## Description
 
-[Provide a clear and concise description of what needs to be refactored.]
+[Provide a clear and concise description of what needs to be updated.]
 
 ## Deliverables
 
-- [ ] [List everything that needs to be refactored]
+- [ ] [List everything that needs to be updated]
 
 ## Additional Information
 

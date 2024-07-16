@@ -97,7 +97,3 @@ export class RoleResponseDto {
   }
   data: RoleApiObject;
 }
-
-export class BooleanResponseDto {
-  data: boolean;
-}

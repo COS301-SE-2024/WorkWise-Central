@@ -3,6 +3,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -22,11 +23,13 @@ import { RoleService } from '../role/role.service';
 import { UsersService } from '../users/users.service';
 import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
 import { Employee } from '../employee/entities/employee.entity';
+import { FileService } from '../file/file.service';
 
 @Injectable()
 export class CompanyService {
   constructor(
     private readonly companyRepository: CompanyRepository,
+
     @Inject(forwardRef(() => EmployeeService))
     private readonly employeeService: EmployeeService,
 
@@ -35,13 +38,28 @@ export class CompanyService {
 
     @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
+
+    @Inject(forwardRef(() => FileService))
+    private readonly fileService: FileService,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto) {
     const inputValidated = await this.companyCreateIsValid(createCompanyDto);
-    if (!inputValidated.isValid) {
+    if (!inputValidated.isValid)
       throw new ConflictException(inputValidated.message);
+
+    //Save files In Bucket, and store URLs (if provided)
+    if (createCompanyDto.logo) {
+      console.log('Uploading image');
+      const picture = await this.fileService.uploadBase64Image(
+        createCompanyDto.logo,
+      );
+      if (picture.secure_url != null) {
+        createCompanyDto.logo = picture.secure_url;
+      } else throw new InternalServerErrorException('file upload failed');
     }
+    // else it will be the default value
+
     //Create Company
     console.log('Create Company');
     const createdCompany = await this.companyRepository.save(
@@ -90,8 +108,8 @@ export class CompanyService {
     return this.companyRepository.registrationNumberExists(registerNumber);
   }
 
-  async companyVatNumberExists(registerNumber: string): Promise<boolean> {
-    return this.companyRepository.VatNumberExists(registerNumber);
+  async companyVatNumberExists(vatNumber: string): Promise<boolean> {
+    return this.companyRepository.VatNumberExists(vatNumber);
   }
 
   async companyIdExists(id: Types.ObjectId): Promise<boolean> {

@@ -22,11 +22,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Types } from 'mongoose';
-import {
-  BooleanResponseDto,
-  teamListResponseDto,
-  teamResponseDto,
-} from './entities/team.entity';
+import { teamListResponseDto, teamResponseDto } from './entities/team.entity';
+import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 
 const className = 'Team';
 

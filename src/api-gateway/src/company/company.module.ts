@@ -22,6 +22,8 @@ import { RoleRepository } from 'src/role/role.repository';
 import { EmployeeRepository } from 'src/employee/employee.repository';
 import { TeamRepository } from 'src/team/team.repository';
 import { JwtService } from '@nestjs/jwt';
+import { FileModule } from '../file/file.module';
+import { FileService } from '../file/file.service';
 
 @Module({
   imports: [
@@ -37,6 +39,7 @@ import { JwtService } from '@nestjs/jwt';
     forwardRef(() => ClientModule),
     forwardRef(() => RoleModule),
     forwardRef(() => EmailModule),
+    forwardRef(() => FileModule),
   ],
   controllers: [CompanyController],
   providers: [
@@ -51,6 +54,7 @@ import { JwtService } from '@nestjs/jwt';
     TeamRepository,
     UsersService,
     JwtService,
+    FileService,
   ],
   exports: [CompanyService, CompanyRepository, MongooseModule],
 })

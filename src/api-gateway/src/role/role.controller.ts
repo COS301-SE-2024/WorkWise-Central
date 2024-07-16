@@ -23,7 +23,8 @@ import {
 } from '@nestjs/swagger';
 import { EmployeeListResponseDto } from 'src/employee/entities/employee.entity';
 import { Types } from 'mongoose';
-import { BooleanResponseDto, RoleResponseDto } from './entity/role.entity';
+import { RoleResponseDto } from './entity/role.entity';
+import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 // import { CreateEmployeeDto, CreateEmployeeResponseDto } from 'src/employee/dto/create-employee.dto';
 
 const className = 'Role';
