@@ -171,20 +171,20 @@ export default {
       this.clientDialog = false
     },
     async update() {
-      console.log(this.localEditedItem.name)
+      console.log(this.localEditedItem.firstName)
+      console.log(localStorage.getItem('access_token'))
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+      // const apiURL = await this.getRequestUrl()
       await axios
         .patch(`http://localhost:3000/client/${this._clientID}`, {
           config,
-
           details: {
-            firstname: this.localEditedItem.name,
+            firstname: this.localEditedItem.firstName,
             lastname: this.localEditedItem.surname,
             preferred_Language: this.localEditedItem.preferred_Language,
             contactInfo: {

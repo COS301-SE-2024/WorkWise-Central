@@ -985,6 +985,8 @@ export default defineComponent({
             localStorage.setItem('access_token', response.data.access_token)
             localStorage.setItem('id', response.data.id)
             localStorage.setItem('currentCompany', response.data.user.joinedCompanies[0].companyId)
+            localStorage.setItem('email', this.email)
+            localStorage.setItem('username', this.username)
             this.$toast.add({
               severity: 'success',
               summary: 'Success',
@@ -1044,8 +1046,8 @@ export default defineComponent({
           console.log(response)
           this.alertSignUpFailure = false
           this.alertSignUp = true
-          sessionStorage.setItem('access_token', response.data.data.access_token)
-          sessionStorage.setItem('id', response.data.data.id)
+          localStorage.setItem('access_token', response.data.data.access_token)
+          localStorage.setItem('id', response.data.data.id)
           localStorage.setItem('email', this.email)
           localStorage.setItem('username', this.username)
 
