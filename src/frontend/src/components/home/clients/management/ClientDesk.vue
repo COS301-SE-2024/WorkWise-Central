@@ -319,7 +319,7 @@ export default defineComponent({
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
       axios

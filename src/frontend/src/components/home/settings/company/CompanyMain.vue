@@ -77,6 +77,7 @@ export default defineComponent({
       joinedCompanies: [],
       joinedCompaniesNames: [],
       joinedCompaniesIds: [],
+      joinedCompaniesEmployeeIds: [],
       isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
       companyList: [
         'Company 1',
@@ -99,6 +100,7 @@ export default defineComponent({
     switchCompany(companyName) {
       const index = this.joinedCompaniesNames.indexOf(companyName)
       const companyId = this.joinedCompaniesIds[index]
+      const employeeId = this.joinedCompaniesEmployeeIds[index]
       this.$emit('switchCompany', companyId)
       this.$toast.add({
         severity: 'success',
@@ -106,28 +108,31 @@ export default defineComponent({
         detail: `Switched to ${companyName}`
       })
       this.companyName = companyName
-      sessionStorage.setItem('currentCompany', companyId)
+      localStorage.setItem('currentCompany', companyId)
+      localStorage.setItem('currentEmployee', employeeId)
       this.companyDialog = false
     },
     async getCompanies() {
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
       const apiURL = await this.getRequestUrl()
-      const user_id = sessionStorage.getItem('id')
+      const user_id = localStorage.getItem('id')
       await axios
         .get(`http://localhost:3000/users/id/${user_id}`, config)
         .then((response) => {
           console.log(response.data.data.joinedCompanies)
+          console.log(response.data.data)
           this.joinedCompanies = response.data.data.joinedCompanies
           this.joinedCompanies.forEach((company) => {
             this.joinedCompaniesNames.push(company.companyName)
             this.joinedCompaniesIds.push(company.companyId)
+            this.joinedCompaniesEmployeeIds.push(company.employeeId)
           })
-          const currentCompanyID = sessionStorage.getItem('currentCompany')
+          const currentCompanyID = localStorage.getItem('currentCompany')
           console.log(this.joinedCompanies.length)
           console.log(this.joinedCompanies[0].companyId)
           console.log(currentCompanyID)
@@ -158,7 +163,7 @@ export default defineComponent({
       return localAvailable ? this.localUrl : this.remoteUrl
     },
     async getCurrentCompanyName() {
-      const currentCompanyID = sessionStorage.getItem('currentCompany')
+      const currentCompanyID = localStorage.getItem('currentCompany')
       console.log(this.joinedCompanies.length)
     }
   },

@@ -1,9 +1,13 @@
 <template>
-  <v-dialog v-model="clientDialog" max-width="500px">
+  <v-dialog
+    v-model="clientDialog"
+    max-width="500px"
+    :theme="isdarkmode === true ? 'dark' : 'light'"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="error" v-bind="activatorProps">Delete</v-btn>
     </template>
-    <v-card :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
+    <v-card>
       <v-card-title> Delete {{ client.name + ' ' + client.surname }} </v-card-title>
       <v-card-text>
         <v-container>
@@ -62,7 +66,7 @@ export default {
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
       const apiURL = await this.getRequestUrl()
@@ -93,7 +97,7 @@ export default {
         })
         .finally(() => {
           this.isDeleting = false // Reset the deletion indicator
-          window.location.reload() // Consider removing this for SPA behavior
+          // window.location.reload() // Consider removing this for SPA behavior
         })
     },
     async isLocalAvailable(localUrl) {

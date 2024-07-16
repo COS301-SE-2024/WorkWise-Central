@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="clientDialog" max-width="500">
+  <v-dialog v-model="clientDialog" max-width="500" :theme="isdarkmode === true ? 'dark' : 'light'">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
         >Edit</v-btn
@@ -147,7 +147,6 @@ export default {
       phoneRules: [
         (v) => !!v || 'Phone number is required',
         (v) => (v && v.length >= 10) || 'Phone number must be at least 10 digits'
-        // Add more specific validation for phone number format if needed
       ]
     }
   },
@@ -172,20 +171,20 @@ export default {
       this.clientDialog = false
     },
     async update() {
-      console.log(this.localEditedItem.name)
+      console.log(this.localEditedItem.firstName)
+      console.log(localStorage.getItem('access_token'))
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+      // const apiURL = await this.getRequestUrl()
       await axios
         .patch(`http://localhost:3000/client/${this._clientID}`, {
           config,
-
           details: {
-            firstname: this.localEditedItem.name,
+            firstname: this.localEditedItem.firstName,
             lastname: this.localEditedItem.surname,
             preferred_Language: this.localEditedItem.preferred_Language,
             contactInfo: {

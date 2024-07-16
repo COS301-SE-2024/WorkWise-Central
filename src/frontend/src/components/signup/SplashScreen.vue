@@ -14,7 +14,7 @@
     </v-app-bar>
     <!-- Main Content -->
     <v-main :theme="isdarkmode ? 'dark' : 'light'">
-      <v-row style="height: 800px" no-gutters>
+      <v-row style="height: 1000px" no-gutters>
         <!-- Left Half -->
         <v-col cols="6" sm="3" md="6" align-self="center">
           <v-row justify="center"
@@ -985,12 +985,11 @@ export default defineComponent({
             console.log(response)
             console.log(response.data.access_token)
             console.log(response.data.user.joinedCompanies[0].companyId)
-            sessionStorage.setItem('access_token', response.data.access_token)
-            sessionStorage.setItem('id', response.data.id)
-            sessionStorage.setItem(
-              'currentCompany',
-              response.data.user.joinedCompanies[0].companyId
-            )
+            localStorage.setItem('access_token', response.data.access_token)
+            localStorage.setItem('id', response.data.id)
+            localStorage.setItem('currentCompany', response.data.user.joinedCompanies[0].companyId)
+            localStorage.setItem('email', this.email)
+            localStorage.setItem('username', this.username)
             this.$toast.add({
               severity: 'success',
               summary: 'Success',
@@ -1043,7 +1042,6 @@ export default defineComponent({
           },
           profile: {
             displayName: this.name + ' ' + this.surname
-            // displayImage: this.profilePicture
           },
           skills: this.skills,
           currentCompany: this.company
@@ -1052,8 +1050,8 @@ export default defineComponent({
           console.log(response)
           this.alertSignUpFailure = false
           this.alertSignUp = true
-          sessionStorage.setItem('access_token', response.data.data.access_token)
-          sessionStorage.setItem('id', response.data.data.id)
+          localStorage.setItem('access_token', response.data.data.access_token)
+          localStorage.setItem('id', response.data.data.id)
           localStorage.setItem('email', this.email)
           localStorage.setItem('username', this.username)
 
