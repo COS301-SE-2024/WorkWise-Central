@@ -147,7 +147,6 @@ export default {
       phoneRules: [
         (v) => !!v || 'Phone number is required',
         (v) => (v && v.length >= 10) || 'Phone number must be at least 10 digits'
-        // Add more specific validation for phone number format if needed
       ]
     }
   },

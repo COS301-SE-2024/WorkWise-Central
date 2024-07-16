@@ -227,7 +227,7 @@ export default defineComponent({
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     valid: false,
     addDialog: false,
-    isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
+    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     click_create_client: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
@@ -313,7 +313,7 @@ export default defineComponent({
           houseNumber: ''
         }
       },
-      companyId: sessionStorage['currentCompany'],
+      companyId: localStorage['currentCompany'],
       idNumber: ''
     }
   }),
@@ -360,7 +360,7 @@ export default defineComponent({
     },
     async handleSubmission() {
       console.log(JSON.stringify(this.req_obj))
-      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       axios
         .post(apiURL + 'client/create', this.req_obj, config)
@@ -397,7 +397,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.isdarkmode = sessionStorage.getItem('theme') === 'true' ? true : false
+    this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
   }
 })
 </script>
