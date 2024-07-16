@@ -4,6 +4,7 @@
       <v-card-title class="text-center">Edit Roles</v-card-title>
       <v-divider></v-divider>
       <v-card-text>
+        <Toast/>
         <OrganizationChart :value="orgData" @nodeDrop="onNodeDrop" draggable />
       </v-card-text>
       <v-divider></v-divider>
