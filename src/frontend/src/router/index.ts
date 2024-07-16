@@ -108,11 +108,6 @@ const router = createRouter({
       component: ManagerView
     },
     {
-      path: '/manager-edit-employee',
-      name: 'managereditemployee',
-      component: () => import('@/views/home/employees/ManagerEditEmployee.vue')
-    },
-    {
       path: '/client-desk-view',
       name: 'client-desk-view',
       component: ClientEmployeeView

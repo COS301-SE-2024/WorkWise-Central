@@ -11,13 +11,6 @@ export type Person = {
   roleName: string
 }
 
-export type SystemDetails = {
-  email: string
-  password: string
-  username: string
-  _id: string
-}
-
 export type JobAssignment = {
   // Define properties for job assignments if there are any
 }
@@ -45,18 +38,8 @@ export type Employee = {
 }
 
 export type EmployeePersonalInfo = {
-  address: {
-    street: string
-    suburb: string
-    city: string
-    postalCode: string
-    complex: string
-    houseNumber: string
-  }
-  contactInfo: {
-    phoneNumber: string
-    email: string
-  }
+  address: Address
+  contactInfo: ContactInfo
   firstName: string
   surname: string
   preferredLanguage: string
@@ -77,50 +60,6 @@ export type EmployeeInformation = {
 export type ClientInformation = {
   name: string
   id: string
-}
-
-type Role = {
-  _id: string
-  roleName: string
-  permissionSuite: string[]
-  companyId: string
-  createdAt: string
-  __v: number
-}
-
-type Address = {
-  street: string
-  suburb: string
-  city: string
-  postalCode: string
-  complex: string
-  houseNumber: string
-}
-
-type ContactInfo = {
-  phoneNumber: string
-  email: string
-}
-
-export type PersonalInfo = {
-  address: Address
-  contactInfo: ContactInfo
-  firstName: string
-  surname: string
-  preferredLanguage: string
-  dateOfBirth: string
-  gender: string
-}
-
-type Profile = {
-  displayName: string
-  displayImage: string
-}
-
-type JoinedCompany = {
-  employeeId: string
-  companyId: string
-  companyName: string
 }
 
 type User = {
@@ -148,6 +87,106 @@ export type EmployeeJoined = {
   subordinates: any[]
   subordinateTeams: any[]
   userId: User[]
+  companyId: string
+  createdAt: string
+  __v: number
+}
+
+type PermissionSuite =
+  | 'view all employees'
+  | 'view employees under me'
+  | 'edit all employees'
+  | 'edit employees under me'
+  | 'add new employees'
+  | 'view all jobs'
+  | 'view all jobs under me'
+  | 'view all jobs assigned to me'
+  | 'edit all jobs'
+  | 'edit jobs that are under me'
+  | 'edit jobs that are assigned to me'
+  | 'add a new job'
+  | 'view all clients'
+  | 'view all clients under me'
+  | 'view all clients that are assigned to me'
+  | 'edit all clients'
+  | 'edit all clients that are under me'
+  | 'edit all clients that are assigned to me'
+  | 'view all inventory'
+  | 'edit all inventory'
+  | 'add a new inventory item'
+  | 'record inventory use'
+
+type Role = {
+  _id: string
+  roleName: string
+  permissionSuite: PermissionSuite[]
+  companyId: string
+  createdAt: string
+  __v: number
+}
+
+type Address = {
+  street: string
+  suburb: string
+  province: string
+  city: string
+  postalCode: string
+  complex: string
+  houseNumber: string
+}
+
+type ContactInfo = {
+  phoneNumber: string
+  email: string
+}
+
+type PersonalInfo = {
+  firstName: string
+  surname: string
+  preferredLanguage: string
+  dateOfBirth: string
+  gender: string
+  address: Address
+  contactInfo: ContactInfo
+}
+
+type Profile = {
+  displayName: string
+  displayImage: string
+}
+
+type JoinedCompany = {
+  employeeId: string
+  companyId: string
+  companyName: string
+}
+
+type SystemDetails = {
+  username: string
+  password: string
+}
+
+type UserId = {
+  _id: string
+  systemDetails: SystemDetails
+  personalInfo: PersonalInfo
+  profile: Profile
+  joinedCompanies: JoinedCompany[]
+  skills: string[]
+  isValidated: boolean
+  createdAt: string
+  __v: number
+  updatedAt: string
+  currentEmployee: string
+}
+
+export type EmployeeJoinResponse2 = {
+  _id: string
+  roleId: Role
+  currentJobAssignments: any[]
+  subordinates: any[]
+  subordinateTeams: any[]
+  userId: UserId
   companyId: string
   createdAt: string
   __v: number

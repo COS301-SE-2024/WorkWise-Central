@@ -714,6 +714,8 @@ export default defineComponent({
     Toast
   },
   data: () => ({
+    localUrl: 'http://localhost:3000/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     click_create_client: false,
     saltRounds: 10,
     loginDialog: false,
@@ -972,9 +974,10 @@ export default defineComponent({
       console.log('')
     },
     async login() {
+      const apiURL = await this.getRequestUrl()
       if (this.$refs.form.validate()) {
         await axios
-          .post('http://localhost:3000/auth/login', {
+          .post(apiURL + 'auth/login', {
             identifier: this.username,
             password: this.password
           })
@@ -994,7 +997,7 @@ export default defineComponent({
               detail: 'User successfully logged in',
               life: 3000
             })
-            this.resetForm()
+            // this.resetForm()
             this.$router.push('/dashboard')
           })
           .catch((error) => {
@@ -1012,9 +1015,10 @@ export default defineComponent({
       this.date = new Date(date).toISOString()
     },
     async signup() {
+      const apiURL = await this.getRequestUrl()
       this.birthDateFormatter(this.birthDate)
       await axios
-        .post('http://localhost:3000/users/create', {
+        .post(apiURL + 'users/create', {
           username: this.username,
           password: this.password,
           personalInfo: {
@@ -1038,8 +1042,8 @@ export default defineComponent({
             email: this.email
           },
           profile: {
-            displayName: this.name + ' ' + this.surname,
-            displayImage: this.profilePicture
+            displayName: this.name + ' ' + this.surname
+            // displayImage: this.profilePicture
           },
           skills: this.skills,
           currentCompany: this.company
@@ -1053,7 +1057,7 @@ export default defineComponent({
           localStorage.setItem('email', this.email)
           localStorage.setItem('username', this.username)
 
-          this.resetForm()
+          // this.resetForm()
         })
         .catch((error) => {
           console.log(error)
@@ -1097,8 +1101,9 @@ export default defineComponent({
       this.signup()
     },
     async usernameExist() {
+      const apiURL = await this.getRequestUrl()
       await axios
-        .post('http://localhost:3000/users/exists', {
+        .post(apiURL + 'users/exists', {
           params: {
             username: this.username
           }
@@ -1134,6 +1139,18 @@ export default defineComponent({
         console.log(this.isdarkmode)
       }
       sessionStorage.setItem('theme', this.isdarkmode) // save the theme to session storage
+    },
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
   }
 })
