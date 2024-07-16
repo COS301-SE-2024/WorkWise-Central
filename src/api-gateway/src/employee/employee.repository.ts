@@ -24,8 +24,12 @@ export class EmployeeRepository {
     identifier: Types.ObjectId,
     fieldsToPopulate?: string[],
   ) {
-    const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] =
-      await this.employeeModel
+    console.log('In the findAllInCompany in repository');
+    console.log('identifier: ', identifier);
+    let result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[];
+    if (fieldsToPopulate) {
+      console.log('In the if');
+      result = await this.employeeModel
         .find({
           $and: [
             {
@@ -38,6 +42,21 @@ export class EmployeeRepository {
         })
         .populate(fieldsToPopulate.join(' '))
         .lean();
+    } else {
+      console.log('In the else');
+      result = await this.employeeModel
+        .find({
+          $and: [
+            {
+              companyId: identifier,
+            },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+    }
     return result;
   }
 

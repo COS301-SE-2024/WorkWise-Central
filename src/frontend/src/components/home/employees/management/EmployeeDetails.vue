@@ -7,6 +7,7 @@
         color="secondary"
         variant="text"
         v-bind="activatorProps"
+        @click="dialogOpened"
       >
         View
       </v-btn>
@@ -24,7 +25,10 @@
                 :style="
                   isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
                 "
-                >{{ EmployeeDetails.firstName }}</small
+                >{{
+                  EmployeeDetails.firstName.charAt(0).toUpperCase() +
+                  EmployeeDetails.firstName.slice(1)
+                }}</small
               > </v-col
             ><v-col cols="6"
               ><label> Surname</label><v-spacer></v-spacer
@@ -33,7 +37,9 @@
                 :style="
                   isdarkmode === true ? colors.dark_theme_text_color : colors.light_theme_text_color
                 "
-                >{{ EmployeeDetails.surname }}</small
+                >{{
+                  EmployeeDetails.surname.charAt(0).toUpperCase() + EmployeeDetails.surname.slice(1)
+                }}</small
               ></v-col
             ></v-row
           >
@@ -103,6 +109,9 @@ export default defineComponent({
     }
   },
   methods: {
+    dialogOpened() {
+      this.clientDialog = true
+    },
     close() {
       this.clientDialog = false
     }

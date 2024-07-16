@@ -120,6 +120,9 @@
                    
                   ></v-date-picker>
                 </v-col>
+                <v-col cols="12" md="6" align="center">
+                  <v-time-picker format="24hr"></v-time-picker>
+                </v-col>
                 <v-col align="center" cols="12" md="6">
                   <v-date-picker
                     title="SELECT END DATE"
@@ -133,6 +136,9 @@
                     required
                     @update:modelValue="updateDates"
                   ></v-date-picker>
+                </v-col>
+                <v-col cols="12" md="6" align="center">
+                  <v-time-picker format="24hr"></v-time-picker>
                 </v-col>
               </v-row>
               <v-row>

@@ -73,20 +73,6 @@ import { KanbanComponent, ColumnDirective, ColumnsDirective } from '@syncfusion/
 import axios from 'axios'
 import JBC from '@/components/home/jobs/management/ManagerJobCard.vue'
 
-type KanbanJob = {
-  Id: string;
-  Status: string;
-  Title:string;
-  Client: string;
-  Description: string;
-  Notes: string;
-  Date: string;
-  Address: string;
-  Assignee: string;
-  Priority: string;
-  Tags: string[];
-};
-
 export type JobCardDataFormat = {
   jobId: string
   heading: string
