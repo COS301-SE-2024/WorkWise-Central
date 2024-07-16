@@ -100,8 +100,11 @@ export class CompanyService {
     });
 
     console.log('Add employee to Company');
-    await this.addNewEmployeeId(createdCompany._id, employee._id);
-    return new CreateCompanyResponseDto(createdCompany);
+    const updatedCompany = await this.addNewEmployeeId(
+      createdCompany._id,
+      employee._id,
+    );
+    return new CreateCompanyResponseDto(updatedCompany);
   }
 
   async companyRegNumberExists(registerNumber: string): Promise<boolean> {
@@ -238,9 +241,10 @@ export class CompanyService {
     companyId: Types.ObjectId,
     employeeId: Types.ObjectId,
   ) {
-    if (!(await this.employeeIsInCompany(companyId, employeeId)))
+    if (!(await this.employeeIsInCompany(companyId, employeeId))) {
       await this.companyRepository.addEmployee(companyId, employeeId);
-    else console.log('Employee is already in company, no need to add them');
+      return await this.getCompanyById(companyId);
+    } else console.log('Employee is already in company, no need to add them');
   }
 
   async update(
