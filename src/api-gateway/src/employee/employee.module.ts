@@ -11,6 +11,7 @@ import { TeamModule } from '../team/team.module';
 import { JobService } from '../job/job.service';
 import { ClientModule } from '../client/client.module';
 import { EmployeeRepository } from './employee.repository';
+import { FileModule } from '../file/file.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { EmployeeRepository } from './employee.repository';
     forwardRef(() => JobModule),
     forwardRef(() => TeamModule),
     forwardRef(() => ClientModule),
+    forwardRef(() => FileModule),
   ],
   controllers: [EmployeeController],
   providers: [EmployeeService, EmployeeRepository, JobService],
