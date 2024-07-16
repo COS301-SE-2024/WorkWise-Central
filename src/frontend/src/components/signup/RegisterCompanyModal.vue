@@ -192,23 +192,23 @@
                 required
               ></v-text-field
             ></v-col>
-            <!--            <v-col>-->
-            <!--              <small-->
-            <!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
-            <!--                class="text-caption"-->
-            <!--                >Company logo</small-->
-            <!--              >-->
-            <!--              <v-file-input-->
-            <!--                :theme="isdarkmode === true ? 'dark' : 'light'"-->
-            <!--                variant="solo"-->
-            <!--                accept="image/*"-->
-            <!--                width="100%"-->
-            <!--                placeholder="Company Logo"-->
-            <!--                @change="companyLogoHandler"-->
-            <!--                color="black"-->
-            <!--                rounded="md"-->
-            <!--              ></v-file-input>-->
-            <!--            </v-col>-->
+            <v-col>
+              <small
+                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                class="text-caption"
+                >Company logo</small
+              >
+              <v-file-input
+                :theme="isdarkmode === true ? 'dark' : 'light'"
+                variant="solo"
+                accept="image/*"
+                width="100%"
+                placeholder="Company Logo"
+                @change="handleImageUpload"
+                color="black"
+                rounded="md"
+              ></v-file-input>
+            </v-col>
             <label style="font-size: 14px; font-weight: lighter">Company address*</label>
 
             <v-row class="d-flex flex-wrap">
@@ -403,6 +403,7 @@ export default {
         type: '',
         registrationNumber: '',
         vatNumber: '',
+        logo: '',
         contactDetails: {
           email: '',
           phoneNumber: ''
@@ -415,17 +416,14 @@ export default {
           postalCode: '',
           complex: '',
           houseNumber: ''
-        },
-        employees: [],
-        inventoryItems: [],
-        private: false
+        }
+        // employees: [],
+        // inventoryItems: [],
+        // private: false
       }
     }
   },
   methods: {
-    companyLogoHandler() {
-      console.log('')
-    },
     async registrationHandler() {
       console.log(JSON.stringify(this.req_obj))
       console.log(this.req_obj)
@@ -466,6 +464,24 @@ export default {
     },
     close() {
       this.dialog = false
+    },
+    handleImageUpload(event: Event) {
+      const target = event.target as HTMLInputElement
+      if (target.files && target.files[0]) {
+        const file: File = target.files[0]
+        const reader = new FileReader()
+
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          if (e.target && typeof e.target.result === 'string') {
+            this.req_obj.logo = e.target.result
+          }
+        }
+        reader.readAsDataURL(file)
+      }
+      console.log(this.req_obj.logo)
+    },
+    print_base64_link() {
+      console.log(this.req_obj.logo)
     }
 
     // base64image() {
@@ -475,6 +491,9 @@ export default {
     //     this.req_obj.image = read.result
     //   }
     // }
+  },
+  mounted() {
+    this.req_obj.userId = sessionStorage['id']
   }
 }
 </script>
