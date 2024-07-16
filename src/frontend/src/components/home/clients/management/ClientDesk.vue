@@ -124,6 +124,7 @@
             :details="selectedItem"
             :client_id="selectedItemId"
             :client="selectedItem"
+            :company_id="clientCompanyID"
           />
           <v-spacer></v-spacer>
           <v-btn @click="actionsDialog = false" color="primary">Close</v-btn>
@@ -211,6 +212,7 @@ export default defineComponent({
     clients: [],
     clientDetails: [],
     clientIds: [],
+    clientCompanyID: '',
     expanded: [],
     selectedItemId: ''
   }),
@@ -244,7 +246,7 @@ export default defineComponent({
   },
   mounted() {
     this.getClients()
-    this.isdarkmode = sessionStorage.getItem('theme') === 'true' ? true : false
+    this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
   },
   methods: {
     getRowClass(index) {
@@ -258,6 +260,7 @@ export default defineComponent({
       for (let i = 0; i < this.clientDetails.length; i++) {
         if (this.clientDetails[i] === item) {
           this.selectedItemId = this.clientIds[i]
+          this.clientCompanyID = this.clientDetails[i].companyId
         }
       }
       console.log('Deleting client' + this.selectedItemId)

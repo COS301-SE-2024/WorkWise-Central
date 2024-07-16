@@ -369,7 +369,7 @@ export default {
   data() {
     return {
       dialog: false,
-      isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       click_create_client: false,
       valid: true,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
@@ -408,7 +408,7 @@ export default {
         (value: string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
       ],
       req_obj: {
-        userId: sessionStorage.getItem('id'),
+        userId: localStorage.getItem('id'),
         name: '',
         type: '',
         registrationNumber: '',
@@ -437,7 +437,7 @@ export default {
     async registrationHandler() {
       console.log(JSON.stringify(this.req_obj))
       console.log(this.req_obj)
-      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       console.log(apiURL)
       axios
@@ -451,8 +451,8 @@ export default {
           })
           console.log(res.data.data.id)
 
-          sessionStorage['currentCompany'] = res.data.data._id
-          // sessionStorage['employeeId'] = res.data.data.employees[0]
+          localStorage['currentCompany'] = res.data.data._id
+          // localStorage['employeeId'] = res.data.data.employees[0]
 
           console.log(res.data)
 
@@ -460,7 +460,7 @@ export default {
             .get(apiURL + 'company/id/' + res.data.data._id, config)
             .then((res) => {
               console.log(res.data.data)
-              sessionStorage['employeeId'] = res.data.data.employees[0]
+              localStorage['employeeId'] = res.data.data.employees[0]
             })
             .catch((error) => {
               console.log('Error occured when storing employeeId: ', error)
@@ -513,7 +513,7 @@ export default {
       console.log(this.req_obj.logo)
     },
     setUserId() {
-      this.req_obj.userId = sessionStorage['id']
+      this.req_obj.userId = localStorage['id']
       console.log('userid set')
     }
 
@@ -526,7 +526,7 @@ export default {
     // }
   },
   mounted() {
-    this.req_obj.userId = sessionStorage['id']
+    this.req_obj.userId = localStorage['id']
   }
 }
 </script>

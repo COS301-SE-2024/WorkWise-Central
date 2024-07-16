@@ -89,12 +89,12 @@ export default defineComponent({
     modal_light_theme_color: '#FFFFFF',
 
     req_obj: {
-      companyId: sessionStorage['currentCompany'],
+      companyId: localStorage['currentCompany'],
       userId: ''
     },
     req_obj2: {
-      adminId: sessionStorage['employeeId'],
-      currentCompany: sessionStorage['currentCompany'],
+      adminId: localStorage['employeeId'],
+      currentCompany: localStorage['currentCompany'],
       newUserUsername: ''
     }
   }),
@@ -103,7 +103,7 @@ export default defineComponent({
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
       const apiURL = await this.getRequestUrl()
@@ -143,8 +143,8 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.req_obj2.adminId = sessionStorage['employeeId']
-    this.req_obj2.currentCompany = sessionStorage['currentCompany']
+    this.req_obj2.adminId = localStorage['employeeId']
+    this.req_obj2.currentCompany = localStorage['currentCompany']
   }
 })
 </script>

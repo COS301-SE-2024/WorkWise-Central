@@ -76,7 +76,7 @@ export default {
     },
     async deleteEmployee() {
       this.isDeleting = true // Indicate the start of the deletion process
-      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       axios
         .delete(apiURL + 'employee/' + this.details.employeeId, config)

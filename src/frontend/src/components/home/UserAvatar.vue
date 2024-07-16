@@ -25,13 +25,11 @@
 
           <v-divider class="my-3"></v-divider>
 
-
           <router-link to="/manageCompanies" class="text-decoration-none">
             <v-btn variant="text"> <i class="fas fa-building"></i> Manage Companies </v-btn>
           </router-link>
 
           <v-divider class="my-3"></v-divider>
-
 
           <router-link to="/tutorial" class="text-decoration-none">
             <v-btn variant="text"> <i class="fas fa-info-circle"></i> Tutorial </v-btn>
@@ -43,8 +41,6 @@
             <v-btn variant="text"> <i class="fas fa-question-circle"></i> FAQ </v-btn>
           </router-link>
 
-
-
           <v-divider class="my-3"></v-divider>
 
           <v-btn variant="text" @click="logout"> <i class="fas fa-sign-out-alt"></i> Logout </v-btn>
@@ -55,7 +51,7 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 
 const user = {
   initials: 'JD',
@@ -63,11 +59,11 @@ const user = {
   email: 'john.doe@doe.com'
 }
 
-const router = useRouter();
+const router = useRouter()
 
 const logout = () => {
   // Perform logout logic, then redirect to login page
-  router.push('/');
+  router.push('/')
 }
 </script>
 

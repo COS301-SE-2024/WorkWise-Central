@@ -85,7 +85,7 @@ export default defineComponent({
   data() {
     return {
       clientDialog: false,
-      isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false
     }
   },
   methods: {

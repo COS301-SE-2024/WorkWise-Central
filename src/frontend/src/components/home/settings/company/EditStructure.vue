@@ -4,7 +4,7 @@
       <v-card-title class="text-center">Edit Roles</v-card-title>
       <v-divider></v-divider>
       <v-card-text>
-        <Toast/>
+        <Toast />
         <OrganizationChart :value="orgData" @nodeDrop="onNodeDrop" draggable />
       </v-card-text>
       <v-divider></v-divider>
@@ -19,7 +19,6 @@
     </v-card>
   </v-container>
 </template>
-
 
 <script>
 import OrganizationChart from 'primevue/organizationchart'

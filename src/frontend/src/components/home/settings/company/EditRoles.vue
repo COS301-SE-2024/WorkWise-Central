@@ -180,7 +180,7 @@ export default defineComponent({
     this.getRoles()
     this.getPermissions()
     this.companyID = localStorage.getItem('currentCompany')
-    this.isdarkmode = sessionStorage.getItem('theme') === 'true' ? true : false
+    this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
   }
 })
 </script>

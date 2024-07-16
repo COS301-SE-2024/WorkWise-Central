@@ -78,7 +78,7 @@ export default defineComponent({
       joinedCompaniesNames: [],
       joinedCompaniesIds: [],
       joinedCompaniesEmployeeIds: [],
-      isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       companyList: [
         'Company 1',
         'Company 2',
