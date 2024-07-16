@@ -32,6 +32,7 @@ import {
 } from './entities/employee.entity';
 import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
+// import { Prop } from '@nestjs/mongoose';
 
 const className = 'Employee';
 
@@ -170,7 +171,11 @@ export class EmployeeController {
     description: `The _id attribute of the Company.`,
   })
   @Get('/:id/company/:companyId')
-  async getOtherEmployees(id: Types.ObjectId, companyId: Types.ObjectId) {
+  async getOtherEmployees(
+    @Param('id') id: Types.ObjectId,
+    @Param('companyId') companyId: Types.ObjectId,
+  ) {
+    console.log('In the controller. id', id);
     return {
       data: await this.employeeService.getListOfOtherEmployees(id, companyId),
     };
