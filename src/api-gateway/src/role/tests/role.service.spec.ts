@@ -32,10 +32,6 @@ describe('--Role Service--', () => {
         { provide: getModelToken(Role.name), useValue: {} },
         { provide: RoleRepository, useValue: mockRoleRepository },
         { provide: CompanyService, useValue: mockCompanyService },
-        // { provide: RoleService, useValue: mockRoleService },
-        // { provide: JobService, useValue: mockJobService },
-        // { provide: TeamService, useValue: mockTeamService },
-        // { provide: UsersService, useValue: mockUsersService },
       ],
     }).compile();
 
@@ -51,15 +47,7 @@ describe('--Role Service--', () => {
   });
 
   describe('create', () => {
-    // it('should create a role', async () => {
-    //   const role = {
-    //     roleName: 'Admin',
-    //     companyId: new Types.ObjectId(),
-    //   };
-    //   mockRoleRepository.save.mockResolvedValue(role);
-    //   const result = await service.create(role);
-    //   expect(result).toEqual(role);
-    // });
+    //TODO
   });
 
   describe('findAll', () => {
