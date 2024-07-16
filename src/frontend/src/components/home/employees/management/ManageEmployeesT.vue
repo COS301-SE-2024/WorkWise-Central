@@ -220,7 +220,7 @@ export default {
       { title: 'Email', value: 'contactInfo.email', key: 'contactInfo.email' },
       { title: 'Role', value: 'roleName', key: 'roleName' },
       { title: '', value: 'actions', key: 'actions', sortable: false }
-    ],
+    ] as any[],
     search: '',
     expanded: [], // This will hold the currently expanded item
     clients: [] as Employee[],
