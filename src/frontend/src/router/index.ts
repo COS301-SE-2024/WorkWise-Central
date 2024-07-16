@@ -191,6 +191,16 @@ const router = createRouter({
       path: '/backlog',
       name: 'backlog',
       component: () => import('@/views/home/jobs/BackLogView.vue')
+    },
+    {
+      path: '/notificationSettings',
+      name: 'notificationSettings',
+      component: () => import('@/views/settings/NotificationSettings.vue')
+    },
+    {
+      path: '/preferenceSettings',
+      name: 'preferenceSettings',
+      component: () => import('@/views/settings/PreferenceSettings.vue')
     }
   ]
 })

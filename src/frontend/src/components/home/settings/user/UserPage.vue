@@ -6,109 +6,133 @@
         <v-divider></v-divider>
       </v-col>
     </v-row>
+    <v-container class="d-flex flex-column align-center justify-center">
     <v-row>
-      <v-col cols="4" class="pl-15">
-        <Menu :model="items">
-          <template #item="{ item, props }">
-            <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-              <a v-ripple :href="href" v-bind="props.action" @click="navigate">
-                <span :class="item.icon" />
-                <span class="ml-2">{{ item.label }}</span>
-              </a>
-            </router-link>
-            <a v-else v-ripple :href="item.url" :target="item.target" v-bind="props.action">
-              <span :class="item.icon" />
-              <span class="ml-2">{{ item.label }}</span>
-            </a>
-          </template>
-        </Menu>
+      <v-col cols="12" md="3" class="text-center" sm="12">
+        <userAvatar/>
       </v-col>
       <!-- Personal Information -->
-      <v-col cols="5" class="pl-15">
-        <v-label>First Name</v-label>
-        <v-text-field v-model="user.firstName" label="First Name"></v-text-field>
-        <v-label>Surname</v-label>
-        <v-text-field v-model="user.surname" label="Surname"></v-text-field>
-        <v-label>Date of Birth</v-label>
-        <v-text-field v-model="user.dateOfBirth" label="Date of Birth" type="date"></v-text-field>
-        <v-label>Gender</v-label>
-        <v-text-field v-model="user.gender" label="Gender"></v-text-field>
-        <v-label>Preferred Language</v-label>
-        <v-text-field v-model="user.preferredLanguage" label="Preferred Language"></v-text-field>
-        <v-label>Phone</v-label>
-        <v-text-field v-model="user.contactInfo.phone" label="Phone"></v-text-field>
-        <v-label>Email address</v-label>
-        <v-text-field v-model="user.contactInfo.email" label="Email"></v-text-field>
-        <v-label>Street</v-label>
-        <v-text-field v-model="user.address.street" label="Street"></v-text-field>
-        <v-label>Surburb</v-label>
-        <v-text-field v-model="user.address.suburb" label="Suburb"></v-text-field>
-        <v-label>City</v-label>
-        <v-text-field v-model="user.address.city" label="City"></v-text-field>
-        <v-label>Postal Code</v-label>
-        <v-text-field v-model="user.address.postalCode" label="Postal Code"></v-text-field>
-        <v-label>Complex</v-label>
-        <v-text-field v-model="user.address.complex" label="Complex"></v-text-field>
-        <v-label>House Number</v-label>
-        <v-text-field v-model="user.address.houseNumber" label="House Number"></v-text-field>
+      <v-col cols="12" md="5">
+        <v-form ref="form" @submit.prevent>
+          <v-row>
+            <v-col cols="12" sm="6">
+              <v-text-field v-model="user.firstName" label="First Name"></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field v-model="user.surname" label="Surname"></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field v-model="user.dateOfBirth" label="Date of Birth" type="date"></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-select v-model="user.gender" :items="genderOptions" label="Gender" variant="solo"></v-select>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-select v-model="user.preferredLanguage" :items="languageOptions" label="Preferred Language" variant="solo"></v-select>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field v-model="user.contactInfo.phone" :rules="phoneRules" label="Phone"></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field v-model="user.contactInfo.email" :rules="emailRules" label="Email"></v-text-field>
+            </v-col>
+            <!-- Address fields -->
+            <!-- ... (address fields omitted for brevity) -->
+            <v-col cols="12" sm="6">
+              <v-text-field v-model="user.address.street" label="Street"></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field v-model="user.address.suburb" label="Suburb"></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field v-model="user.address.city" label="City"></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field v-model="user.address.postalCode" label="Postal Code"></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field v-model="user.address.complex" label="Complex"></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field v-model="user.address.houseNumber" label="House Number"></v-text-field>
+            </v-col>
+          </v-row>
+          <div class="text-center">
+            <v-btn color="primary" @click="submitForm">Update Profile</v-btn>
+          </div>
+        </v-form>
       </v-col>
-      <v-col cols="2" class="pl-15">
-        <v-avatar color="grey" size="150">
-          <v-img src="https://cdn.vuetifyjs.com/images/profiles/marcus.jpg" cover></v-img>
-        </v-avatar>
+      <!-- This should not be visible for       -->
+      <v-col cols="12" md="4">
+        <settingsMenu/>
       </v-col>
     </v-row>
+    </v-container>
   </v-container>
 </template>
-<script setup lang="ts">
-import { ref } from 'vue'
-import Menu from 'primevue/menu'
-import { useRouter } from 'vue-router'
-const router = useRouter()
 
-const user = ref({
-  firstName: '',
-  surname: '',
-  dateOfBirth: '',
-  gender: '',
-  preferredLanguage: '',
-  contactInfo: {
-    phone: '',
-    email: ''
-  },
-  address: {
-    street: '',
-    suburb: '',
-    city: '',
-    postalCode: '',
-    complex: '',
-    houseNumber: ''
-  }
-})
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { useRouter } from 'vue-router';
+import settingsMenu from '@/components/home/settings/SettingsMenu.vue';
+import userAvatar from '@/components/home/settings/user/UserProfileAvatar.vue';
 
-const items = ref([
-  {
-    label: 'Personal Information',
-    icon: 'fa: fa-solid fa-user',
-    route: '/theming/unstyled'
+export default defineComponent({
+  name: 'UserPage',
+  components: {
+    settingsMenu,
+    userAvatar
   },
-  {
-    label: 'Company Settings',
-    icon: 'fa: fa-solid fa-cog',
-    command: () => {
-      router.push('/introduction')
+  methods: {
+    submitForm() {
+      // Placeholder method for submitting the form
     }
   },
-  {
-    label: 'Preferences',
-    icon: 'fa: fa-solid fa-sliders-h',
-    url: 'https://vuejs.org/'
+  data() {
+    return {
+      user: {
+        firstName: '',
+        surname: '',
+        dateOfBirth: '',
+        gender: '',
+        preferredLanguage: '',
+        contactInfo: {
+          phone: '',
+          email: ''
+        },
+        address: {
+          street: '',
+          suburb: '',
+          city: '',
+          postalCode: '',
+          complex: '',
+          houseNumber: ''
+        }
+      },
+      form: {
+        avatar: null
+      },
+      genderOptions: ['Male', 'Female', 'Other'],
+      languageOptions: [
+        'Afrikaans', 'English', 'isiNdebele', 'isiXhosa', 'isiZulu',
+        'Sepedi', 'Sesotho', 'Setswana', 'siSwati', 'Tshivenda', 'Xitsonga'
+      ],
+      phoneRules: [
+        (v:string) => !!v && /^[0-9]{10}$/.test(v) || 'Phone number must be 10 digits long and numeric'
+      ],
+      emailRules: [
+        (v:string) => !!v && /.+@.+/.test(v) || 'E-mail must be valid'
+      ]
+    };
   },
-  {
-    label: 'Notfications',
-    icon: 'fa: fa-solid fa-bell',
-    url: 'https://vuejs.org/'
+  setup() {
+    const router = useRouter();
+    return { router };
   }
-])
+});
 </script>
-<style></style>
+
+<style scoped>
+</style>
+
+

@@ -17,17 +17,27 @@ import { ClientService } from '../client/client.service';
 import { JobRepository } from './job.repository';
 import { EmployeeService } from '../employee/employee.service';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
+import { FileService } from '../file/file.service';
 
 @Injectable()
 export class JobService {
   constructor(
     private readonly jobRepository: JobRepository,
+
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
+
+    @Inject(forwardRef(() => CompanyService))
     private readonly companyService: CompanyService,
+
     @Inject(forwardRef(() => EmployeeService))
     private readonly employeeService: EmployeeService,
+
+    @Inject(forwardRef(() => ClientService))
     private readonly clientService: ClientService,
+
+    @Inject(forwardRef(() => FileService))
+    private readonly fileService: FileService,
   ) {}
 
   async create(createJobDto: CreateJobDto) {
@@ -35,6 +45,10 @@ export class JobService {
     if (!inputValidated.isValid) {
       throw new ConflictException(inputValidated.message);
     }
+
+    //Save files In Bucket, and store URLs (if provided)
+    //
+
     const createdJob = new Job(createJobDto);
     console.log('createdJob', createdJob);
     const result = await this.jobRepository.save(createdJob);

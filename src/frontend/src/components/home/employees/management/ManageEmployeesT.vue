@@ -64,6 +64,7 @@
                         :headers="headers"
                         :items="EmployeeDetails"
                         :search="search"
+                        :loading="loading_data"
                         label="Clients"
                         height="auto"
                         rounded="xl"
@@ -182,6 +183,7 @@ export default {
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     selectedItemSurname: '',
+    loading_data: true,
     selectedItem: {},
     isdarkmode: localStorage['theme'] !== 'false',
     clientDialog: false,
@@ -218,7 +220,7 @@ export default {
       { title: 'Email', value: 'contactInfo.email', key: 'contactInfo.email' },
       { title: 'Role', value: 'roleName', key: 'roleName' },
       { title: '', value: 'actions', key: 'actions', sortable: false }
-    ],
+    ] as any[],
     search: '',
     expanded: [], // This will hold the currently expanded item
     clients: [] as Employee[],
@@ -704,6 +706,7 @@ export default {
   },
   mounted() {
     this.getEmployees()
+    this.loading_data = false
   },
   methods: {
     selectItem(item: Person) {

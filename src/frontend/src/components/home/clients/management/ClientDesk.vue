@@ -16,8 +16,7 @@
           <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
             <v-icon icon="mdi-account"></v-icon>
             <v-label
-              class="ms-2 text-h4 font-family-lato text-headingTextColor"
-              style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+              class="ms-2 h4 font-family-Nunito text-headingTextColor"
               height="auto"
               width="auto"
               >Client Details</v-label
@@ -60,7 +59,7 @@
               :row-props="getRowProps"
               :header-props="getHeaderProps"
             >
-              <template v-slot:[`item.firstName`]="{ value }">
+              <template #[`item.firstName`]="{ value }">
                 <v-chip variant="text" color="elementTextColor">
                   <v-icon icon="fa:fa-solid fa-user "></v-icon>{{ value }}</v-chip
                 >
@@ -376,6 +375,7 @@ export default defineComponent({
 </script>
 
 <style>
+@import '@/assets/styles.css';
 .fixed-container {
   position: fixed; /* or 'absolute' depending on your layout */
   top: 30px; /* Adjust this value based on the height of your navigation bar */

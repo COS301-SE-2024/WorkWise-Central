@@ -77,11 +77,11 @@ export class UsersRepository {
     return result != null;
   }
 
-  async phoneExists(phone: string): Promise<boolean> {
+  async phoneNumberExists(phoneNumber: string): Promise<boolean> {
     const result = await this.userModel
       .findOne({
         $and: [
-          { 'personalInfo.contactInfo.phone': phone },
+          { 'personalInfo.contactInfo.phoneNumber': phoneNumber },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
