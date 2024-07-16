@@ -982,12 +982,9 @@ export default defineComponent({
             console.log(response)
             console.log(response.data.access_token)
             console.log(response.data.user.joinedCompanies[0].companyId)
-            sessionStorage.setItem('access_token', response.data.access_token)
-            sessionStorage.setItem('id', response.data.id)
-            sessionStorage.setItem(
-              'currentCompany',
-              response.data.user.joinedCompanies[0].companyId
-            )
+            localStorage.setItem('access_token', response.data.access_token)
+            localStorage.setItem('id', response.data.id)
+            localStorage.setItem('currentCompany', response.data.user.joinedCompanies[0].companyId)
             this.$toast.add({
               severity: 'success',
               summary: 'Success',
@@ -1038,8 +1035,7 @@ export default defineComponent({
             email: this.email
           },
           profile: {
-            displayName: this.name + ' ' + this.surname,
-            displayImage: this.profilePicture
+            displayName: this.name + ' ' + this.surname
           },
           skills: this.skills,
           currentCompany: this.company

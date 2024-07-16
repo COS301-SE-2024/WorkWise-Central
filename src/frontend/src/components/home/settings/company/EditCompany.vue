@@ -80,7 +80,7 @@
       <v-card-actions class="bg-cardColor">
         <v-col align="center">
           <Toast />
-          <v-btn color="success" @click="saveChanges"> Save </v-btn></v-col
+          <v-btn color="success" @click="updateCompanyDetails"> Save </v-btn></v-col
         >
         <v-col align="center">
           <Toast />
@@ -106,7 +106,7 @@ export default defineComponent({
     isdarkmode: false,
     localUrl: 'http://localhost:3000',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
-    currentCompanyID: sessionStorage.getItem('currentCompany'),
+    currentCompanyID: localStorage.getItem('currentCompany'),
     company: {
       name: '',
       type: '',
@@ -255,11 +255,11 @@ export default defineComponent({
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
       const apiURL = await this.getRequestUrl()
-      const company_id = sessionStorage.getItem('currentCompany')
+      const company_id = localStorage.getItem('currentCompany')
       await axios
         .get(`http://localhost:3000/company/id/${company_id}`, config)
         .then((response) => {
@@ -268,6 +268,36 @@ export default defineComponent({
         })
         .catch((error) => {
           console.log(error)
+        })
+    },
+    async updateCompanyDetails() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      const company_id = localStorage.getItem('currentCompany')
+      await axios
+        .patch(`http://localhost:3000/company/${company_id}`, this.company, config)
+        .then((response) => {
+          console.log(response)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Company updated',
+            life: 3000
+          })
+        })
+        .catch((error) => {
+          console.log(error)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Company update failed',
+            life: 3000
+          })
         })
     },
     async isLocalAvailable(localUrl: string) {

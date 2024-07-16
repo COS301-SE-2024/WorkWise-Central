@@ -7,7 +7,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="4" xs="12" class="pl-15">
+      <v-col cols="12" xs="12" sm="12" class="pl-15">
         <AppMenu :model="items" class="bg-secondary" :theme="isdarkmode === true ? 'dark' : 'light'">
           <template #item="{ item, props }">
             <router-link v-if="item.route" :to="item.route" custom>
@@ -28,7 +28,7 @@
           </template>
         </AppMenu>
       </v-col>
-      <v-col cols="8" xs="12" class="pl-15">
+      <v-col cols="12" xs="12" sm="12" class="pl-15">
         <EditCompany v-if="currentSettings === 'Company Details'" />
         <EditRoles v-if="currentSettings === 'Roles'" />
         <EditStructure v-if="currentSettings === 'Structure'" />
