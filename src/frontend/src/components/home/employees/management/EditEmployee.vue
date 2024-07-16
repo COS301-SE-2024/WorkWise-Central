@@ -22,20 +22,40 @@
         <v-row
           ><v-col>
             <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-              {{ localEditedItem.firstName }}
-              {{ localEditedItem.surname }}
+              {{
+                localEditedItem.firstName.charAt(0).toUpperCase() +
+                localEditedItem.firstName.slice(1)
+              }}
+              {{
+                localEditedItem.surname.charAt(0).toUpperCase() + localEditedItem.surname.slice(1)
+              }}
             </h4>
             <h3 class="text-center">Role: {{ localEditedItem.roleName }}</h3>
           </v-col></v-row
         >
         <v-row
-          ><v-col>
+          ><v-col :cols="12">
             <v-select
               clearable
               label="Company Role"
+              hint="Select the role you'd like to change this employee to"
+              persistent-hint
               @update:modelValue="change_roles"
               :items="roleItemNames"
               v-model="selectedRole"
+              bg-color="background"
+              variant="solo"
+            ></v-select>
+          </v-col>
+          <v-col>
+            <v-select
+              clearable
+              label="Subordinates"
+              hint="Select the employees you'd like to be subordinates of this employee"
+              persistent-hint
+              @update:modelValue="change_roles"
+              :items="subordinateItemNames"
+              v-model="subordinateItems"
               bg-color="background"
               variant="solo"
             ></v-select> </v-col
@@ -103,6 +123,8 @@ export default {
       employeeDialog: false,
       roleItemNames: [] as string[],
       roleItems: [] as Role[],
+      subordinateItemNames: [] as string[],
+      subordinateItems: [],
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',

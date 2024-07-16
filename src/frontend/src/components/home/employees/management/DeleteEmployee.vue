@@ -19,8 +19,14 @@
           <v-row>
             <p>
               Are you sure you want to delete
-              <strong>{{ details.firstName + ' ' + details.surname }}</strong> as an employee of
-              this company?
+              <strong>{{
+                details.firstName.charAt(0).toUpperCase() +
+                details.firstName.slice(1) +
+                ' ' +
+                details.surname.charAt(0).toUpperCase() +
+                details.surname.slice(1)
+              }}</strong>
+              as an employee of this company?
             </p>
             <strong> This action cannot be reversed. </strong>
           </v-row>

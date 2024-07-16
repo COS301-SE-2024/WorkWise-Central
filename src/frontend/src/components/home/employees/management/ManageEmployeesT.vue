@@ -73,12 +73,13 @@
                       >
                         <template v-slot:[`item.firstName`]="{ value }">
                           <v-chip variant="text" color="elementTextColor">
-                            <v-icon icon="fa:fa-solid fa-user "></v-icon>{{ value }}</v-chip
+                            <v-icon icon="fa:fa-solid fa-user "></v-icon
+                            >{{ value.charAt(0).toUpperCase() + value.slice(1) }}</v-chip
                           >
                         </template>
                         <template v-slot:[`item.surname`]="{ value }"
                           ><v-chip variant="text" color="elementTextColor">{{
-                            value
+                            value.charAt(0).toUpperCase() + value.slice(1)
                           }}</v-chip></template
                         >
                         <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
@@ -135,7 +136,13 @@
       <v-dialog v-model="actionsDialog" max-width="500px">
         <v-card>
           <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
-            {{ selectedItemName + ' ' + selectedItemSurname }}
+            {{
+              selectedItemName.charAt(0).toUpperCase() +
+              selectedItemName.slice(1) +
+              ' ' +
+              selectedItemSurname.charAt(0).toUpperCase() +
+              selectedItemSurname.slice(1)
+            }}
           </v-card-title>
           <v-card-text> What would you like to do with this account? </v-card-text>
           <v-card-actions>
