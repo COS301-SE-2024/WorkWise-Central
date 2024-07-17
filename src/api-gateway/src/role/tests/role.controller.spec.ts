@@ -1,75 +1,207 @@
-/*
 import { Test, TestingModule } from '@nestjs/testing';
-import { RoleController } from './role.controller';
-import { RoleService } from './role.service';
-import { getModelToken } from '@nestjs/mongoose';
-import { Role } from './entity/role.entity';
-import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
+import { RoleController } from '../role.controller';
+import { RoleService } from '../role.service';
+import { Types } from 'mongoose';
 
-const moduleMocker = new ModuleMocker(global);
+jest.mock('../role.service');
 
-describe('RoleController', () => {
+describe('--Role Controller--', () => {
   let controller: RoleController;
-
-  class MockRoleModel {
-    constructor(private data: any) {}
-    create = jest.fn().mockResolvedValue(this.data);
-    static find = jest.fn().mockResolvedValue(['event']);
-    static findOne = jest.fn().mockResolvedValue('event');
-    static findOneAndUpdate = jest.fn().mockResolvedValue('event');
-    static deleteOne = jest.fn().mockResolvedValue(true);
-  }
-
-  class MockRoleService {
-    verifyUser(a?: any) {
-      return !!a;
-    }
-    exists(a?: any) {
-      return a != 'b';
-    }
-    softDelete(a: any) {
-      console.log(a);
-    }
-    getUserByUsername() {
-      return null;
-    }
-  }
+  let service: RoleService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [RoleController],
-      providers: [
-        { provide: getModelToken(Role.name), useValue: MockRoleModel },
-        { provide: RoleService, useClass: MockRoleService },
-      ],
-    })
-      .useMocker((token) => {
-        const results = ['test1', 'test2'];
-        if (token === RoleService) {
-          return { findAll: jest.fn().mockResolvedValue(results) };
-        }
-
-        if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token,
-          ) as MockFunctionMetadata<any, any>;
-          const Mock = moduleMocker.generateFromMetadata(mockMetadata);
-          return new Mock();
-        }
-      })
-      .compile();
+      providers: [RoleService],
+    }).compile();
 
     controller = module.get<RoleController>(RoleController);
+    service = module.get<RoleService>(RoleService);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
-});
-*/
-describe('myGenericFunction', () => {
-  it('should return the correct value', () => {
-    const result = 1;
-    expect(result).toBe(1);
+
+  describe('hello', () => {
+    it('should return message', () => {
+      expect(controller.hello()).toEqual({
+        message: 'Refer to /documentation for details on the API',
+      });
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return an array of roles', async () => {
+      const returnedResponseFromService = [
+        {
+          _id: new Types.ObjectId(),
+          roleName: 'Role Name',
+          permissionSuite: ['permission1', 'permission2'],
+          companyId: new Types.ObjectId(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+        },
+      ];
+      const expectedResponse = {
+        data: returnedResponseFromService,
+      };
+      jest
+        .spyOn(service, 'findAll')
+        .mockResolvedValue(returnedResponseFromService as any);
+      expect(await controller.findAll()).toEqual(expectedResponse);
+    });
+  });
+
+  describe('findAllInCompany', () => {
+    it('should return an array of roles', async () => {
+      const companyId = new Types.ObjectId();
+      const returnedResponseFromService = [
+        {
+          _id: new Types.ObjectId(),
+          roleName: 'Role Name',
+          permissionSuite: ['permission1', 'permission2'],
+          companyId: new Types.ObjectId(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+        },
+      ];
+      const expectedResponse = {
+        data: returnedResponseFromService,
+      };
+      jest
+        .spyOn(service, 'findAllInCompany')
+        .mockResolvedValue(returnedResponseFromService as any);
+      expect(await controller.findAllInCompany(companyId)).toEqual(
+        expectedResponse,
+      );
+    });
+  });
+
+  describe('findById', () => {
+    it('should return an object with data property', async () => {
+      const returnedResponseFromService = {
+        _id: new Types.ObjectId(),
+        roleName: 'Role Name',
+        permissionSuite: ['permission1', 'permission2'],
+        companyId: new Types.ObjectId(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      };
+      const expectedResponse = {
+        data: returnedResponseFromService,
+      };
+      jest
+        .spyOn(service, 'findById')
+        .mockResolvedValue(returnedResponseFromService);
+      expect(await controller.findById(new Types.ObjectId())).toEqual(
+        expectedResponse,
+      );
+    });
+  });
+
+  describe('getPermissionsArray', () => {
+    it('should return an array of strings', async () => {
+      const returnedResponseFromService = [
+        'permission1',
+        'permission2',
+        'permission3',
+      ];
+      const expectedResponse = {
+        data: returnedResponseFromService,
+      };
+      jest
+        .spyOn(service, 'getPermissionsArray')
+        .mockResolvedValue(returnedResponseFromService as never);
+      expect(await controller.getPermissionsArray()).toEqual(expectedResponse);
+    });
+  });
+
+  describe('create', () => {
+    it('should return an object with data property', async () => {
+      const createRoleDto = {
+        roleName: 'Role Name',
+        permissionSuite: ['permission1', 'permission2'],
+        companyId: new Types.ObjectId(),
+      };
+      const returnedResponseFromService = {
+        _id: new Types.ObjectId(),
+        roleName: 'Role Name',
+        permissionSuite: ['permission1', 'permission2'],
+        companyId: new Types.ObjectId(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      };
+      const expectedResponse = {
+        data: returnedResponseFromService,
+      };
+      jest
+        .spyOn(service, 'create')
+        .mockResolvedValue(returnedResponseFromService as any);
+      expect(await controller.create(createRoleDto)).toEqual(expectedResponse);
+    });
+  });
+
+  describe('update', () => {
+    it('should return an object with data property', async () => {
+      const roleId = new Types.ObjectId();
+      const updateRoleDto = {
+        roleName: 'Role Name',
+        permissionSuite: ['permission1', 'permission2'],
+      };
+      const returnedResponseFromService = {
+        _id: new Types.ObjectId(),
+        roleName: 'Role Name',
+        permissionSuite: ['permission1', 'permission2'],
+        companyId: new Types.ObjectId(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      };
+      const expectedResponse = {
+        data: returnedResponseFromService,
+      };
+      jest
+        .spyOn(service, 'update')
+        .mockResolvedValue(returnedResponseFromService);
+      expect(await controller.update(roleId, updateRoleDto)).toEqual(
+        expectedResponse,
+      );
+    });
+  });
+
+  describe('remove', () => {
+    it('should return true if role is deleted', async () => {
+      const returnedResponseFromService = true;
+      const expectedResponse = {
+        data: returnedResponseFromService,
+      };
+      jest
+        .spyOn(service, 'remove')
+        .mockResolvedValue(returnedResponseFromService);
+      expect(await controller.remove(new Types.ObjectId())).toEqual(
+        expectedResponse,
+      );
+    });
+    it('should return false if role is not deleted', async () => {
+      const returnedResponseFromService = false;
+      const expectedResponse = {
+        data: returnedResponseFromService,
+      };
+      jest
+        .spyOn(service, 'remove')
+        .mockResolvedValue(returnedResponseFromService);
+      expect(await controller.remove(new Types.ObjectId())).toEqual(
+        expectedResponse,
+      );
+    });
   });
 });
