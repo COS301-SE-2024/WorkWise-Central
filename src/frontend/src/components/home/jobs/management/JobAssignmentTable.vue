@@ -216,6 +216,10 @@
                   <v-card flat class="pa-5 bg-cardColor elevation-0">
                     <div class="d-flex flex-column">
                       <AttachImages />
+                      <AddComment />
+                      <JobChecklist />
+                      <LogInventory/>
+                      <JobNotes/>
                     </div>
                   </v-card>
                 </v-col>
@@ -260,6 +264,10 @@ import axios from 'axios'
 import AddJob from './AddJob.vue'
 import ManagerJobCard from './ManagerJobCard.vue'
 import AttachImages from './AttachImages.vue'
+import AddComment from './AddComments.vue'
+import JobChecklist from './JobChecklist.vue'
+import LogInventory from './LogInventory.vue'
+import JobNotes from './JobNotes.vue'
 
 const search = ref('')
 const viewJobDialog = ref(false)
