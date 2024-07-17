@@ -279,8 +279,8 @@ export class UsersController {
     @Headers() headers: any,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const userId = this.extractUserId(headers);
     try {
+      const userId = this.extractUserId(headers);
       return {
         data: await this.usersService.updateProfilePic(userId, file),
       };

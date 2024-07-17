@@ -176,7 +176,7 @@ export class UsersRepository {
       .lean();
   }
 
-  async updateProfilePicture(id: Types.ObjectId, updateProfilePicDto: Profile) {
+  async updateProfilePicture(id: Types.ObjectId, profile: Profile) {
     return this.userModel
       .findOneAndUpdate(
         {
@@ -187,7 +187,7 @@ export class UsersRepository {
             },
           ],
         },
-        { $set: { ...updateProfilePicDto }, updatedAt: new Date() },
+        { $set: { profile: profile }, updatedAt: new Date() },
         { new: true },
       )
       .lean();
