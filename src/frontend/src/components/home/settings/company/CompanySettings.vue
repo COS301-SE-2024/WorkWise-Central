@@ -8,7 +8,11 @@
     </v-row>
     <v-row>
       <v-col cols="4" class="pl-15">
-        <AppMenu :model="items" class="bg-secondary" :theme="isdarkmode === true ? 'dark' : 'light'">
+        <AppMenu
+          :model="items"
+          class="bg-secondary"
+          :theme="isdarkmode === true ? 'dark' : 'light'"
+        >
           <template #item="{ item, props }">
             <router-link v-if="item.route" :to="item.route" custom>
               <a

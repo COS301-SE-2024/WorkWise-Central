@@ -102,8 +102,8 @@
             </v-card>
           </v-col>
         </v-row>
-      </v-col></v-row
-    >
+      </v-col>
+    </v-row>
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title>
@@ -113,106 +113,114 @@
         <v-card-actions>
           <v-btn color="success" @click="viewJobDialog = true">View</v-btn>
           <!-- View Job Dialog -->
-          <v-dialog v-model="viewJobDialog" max-width="500">
-            <v-col xs="12" sm="9" md="9" lg="9" xl="9" class="pr-0 pb-0" cols="12">
-            <v-card elevation="14" rounded="md" :max-width="500" :max-height="800">
+          <v-dialog v-model="viewJobDialog" max-width="1000">
+            <v-card elevation="14" rounded="md" :max-width="1000" :max-height="800">
               <v-card-title> Job Details </v-card-title>
-              <v-col>
-                <v-col class="text-center">
-                  <h3>Job Title</h3>
-                  <p class="text-caption">
-                    {{ selectedJob.heading }}
-                  </p>
-                </v-col>
-                <v-divider></v-divider>
-                <v-col class="text-center">
-                  <h3>Description</h3>
-                  <v-spacer></v-spacer>
-                  <small class="text-caption">
-                    {{ selectedJob.jobDescription }}
-                  </small>
-                </v-col>
-                <v-divider></v-divider>
-                <v-col class="text-center">
-                  <h3>Status</h3>
-                  <v-spacer></v-spacer>
-                  <small class="text-caption">
-                    <v-chip :color="getStatusColor(selectedJob.status)" dark>
-                      {{ selectedJob.status }}
-                    </v-chip>
-                  </small>
-                </v-col>
-                <v-divider></v-divider>
-                <v-col class="text-center">
-                  <h3>Address</h3>
-                  <v-col>
-                    <label>Street</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ selectedJob.street }}
-                    </small>
-                  </v-col>
-                  <v-col>
-                    <label>Suburb</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ selectedJob.suburb }}
-                    </small>
-                  </v-col>
-                  <v-col>
-                    <label>City</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ selectedJob.city }}
-                    </small>
-                  </v-col>
-                  <v-col>
-                    <label>Postal Code</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ selectedJob.postalCode }}
-                    </small>
-                  </v-col>
-                  <v-col>
-                    <label>Complex</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ selectedJob.complex }}
-                    </small>
-                  </v-col>
-                  <v-col>
-                    <label>House Number</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ selectedJob.houseNumber }}
-                    </small>
-                  </v-col>
-                </v-col>
 
-                <v-divider></v-divider>
-                <v-col class="text-center">
-                  <h3>Dates</h3>
-                  <v-col>
-                    <label>Start Date</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ selectedJob.startDate }}
-                    </small>
-                  </v-col>
-                  <v-col>
-                    <label>End Date</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ selectedJob.endDate }}
-                    </small>
-                  </v-col>
+              <v-row>
+                <v-col xs="12" sm="9" md="9" lg="9" xl="9" class="pr-0 pb-0" cols="12">
+                  <v-card flat class="text-center elevation-0">
+                    <v-card-text>
+                      <v-col>
+                        <v-col class="text-center">
+                          <h3>Job Title</h3>
+                          <p class="text-caption">
+                            {{ selectedJob.heading }}
+                          </p>
+                        </v-col>
+                        <v-divider></v-divider>
+                        <v-col class="text-center">
+                          <h3>Description</h3>
+                          <v-spacer></v-spacer>
+                          <small class="text-caption">
+                            {{ selectedJob.jobDescription }}
+                          </small>
+                        </v-col>
+                        <v-divider></v-divider>
+                        <v-col class="text-center">
+                          <h3>Status</h3>
+                          <v-spacer></v-spacer>
+                          <small class="text-caption">
+                            <v-chip :color="getStatusColor(selectedJob.status)" dark>
+                              {{ selectedJob.status }}
+                            </v-chip>
+                          </small>
+                        </v-col>
+                        <v-divider></v-divider>
+                        <v-col class="text-center">
+                          <h3>Address</h3>
+                          <v-col>
+                            <label>Street</label><v-spacer></v-spacer>
+                            <small class="text-caption">
+                              {{ selectedJob.street }}
+                            </small>
+                          </v-col>
+                          <v-col>
+                            <label>Suburb</label><v-spacer></v-spacer>
+                            <small class="text-caption">
+                              {{ selectedJob.suburb }}
+                            </small>
+                          </v-col>
+                          <v-col>
+                            <label>City</label><v-spacer></v-spacer>
+                            <small class="text-caption">
+                              {{ selectedJob.city }}
+                            </small>
+                          </v-col>
+                          <v-col>
+                            <label>Postal Code</label><v-spacer></v-spacer>
+                            <small class="text-caption">
+                              {{ selectedJob.postalCode }}
+                            </small>
+                          </v-col>
+                          <v-col>
+                            <label>Complex</label><v-spacer></v-spacer>
+                            <small class="text-caption">
+                              {{ selectedJob.complex }}
+                            </small>
+                          </v-col>
+                          <v-col>
+                            <label>House Number</label><v-spacer></v-spacer>
+                            <small class="text-caption">
+                              {{ selectedJob.houseNumber }}
+                            </small>
+                          </v-col>
+                        </v-col>
+
+                        <v-divider></v-divider>
+                        <v-col class="text-center">
+                          <h3>Dates</h3>
+                          <v-col>
+                            <label>Start Date</label><v-spacer></v-spacer>
+                            <small class="text-caption">
+                              {{ selectedJob.startDate }}
+                            </small>
+                          </v-col>
+                          <v-col>
+                            <label>End Date</label><v-spacer></v-spacer>
+                            <small class="text-caption">
+                              {{ selectedJob.endDate }}
+                            </small>
+                          </v-col>
+                        </v-col>
+                      </v-col>
+                      <v-col class="pt-0">
+                        <v-btn color="error" width="100%" @click="viewJobDialog = false"
+                          >Close</v-btn
+                        >
+                      </v-col>
+                    </v-card-text>
+                  </v-card>
                 </v-col>
-              </v-col>
-              <v-col class="pt-0">
-                <v-btn color="error" width="100%" @click="viewJobDialog = false">Close</v-btn>
-              </v-col>
+                <v-col xs="12" sm="3" md="3" lg="3" xl="3" class="pl-0 pb-0" cols="12">
+                  <v-card flat class="pa-5 bg-cardColor elevation-0">
+                    <div class="d-flex flex-column">
+                      <AttachImages />
+                    </div>
+                  </v-card>
+                </v-col>
+              </v-row>
             </v-card>
-            </v-col>
-            <v-col>
-              <v-btn class="mb-2" outlined>
-                <v-icon class="d-none d-lg-inline-block mr-2" left>{{
-                    'fa: fa-solid fa-tasks'
-                  }}</v-icon>
-                Update Status
-              </v-btn>
-            </v-col>
           </v-dialog>
 
           <v-btn color="warning" @click="editJobCardDialog()">Edit</v-btn>
@@ -246,11 +254,12 @@
   </v-container>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
 import AddJob from './AddJob.vue'
 import ManagerJobCard from './ManagerJobCard.vue'
+import AttachImages from './AttachImages.vue'
 
 const search = ref('')
 const viewJobDialog = ref(false)
@@ -267,9 +276,24 @@ const headers = [
 ]
 
 // Reactive variable to hold job and client data
+// Requests made locally or on the deployed server
 const jobClientData = ref([])
+const localUrl: string = 'http://localhost:3000/'
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
 
-// Function to fetch job data
+const isLocalAvailable = async (localUrl: string) => {
+  try {
+    const res = await axios.get(localUrl)
+    return res.status < 300 && res.status > 199
+  } catch (error) {
+    return false
+  }
+}
+
+const getRequestUrl = async () => {
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
 
 const fetchJobData = async () => {
   const config = {

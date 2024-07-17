@@ -998,7 +998,7 @@ export default defineComponent({
             this.$router.push('/dashboard')
           })
           .catch((error) => {
-            console.log(error.response.data.message)
+            console.log(error.response)
             this.$toast.add({
               severity: 'error',
               summary: 'Error',
