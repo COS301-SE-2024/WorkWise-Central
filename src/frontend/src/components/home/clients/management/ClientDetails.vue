@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="clientDialog" max-width="500">
+  <v-dialog v-model="clientDialog" max-width="500" :theme="isdarkmode === true ? 'dark' : 'light'">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="success" v-bind="activatorProps"> View </v-btn>
     </template>
@@ -59,7 +59,7 @@
             ><label class="font-weight-light" style="font-size: 20px"> Preferred Languages</label
             ><v-spacer></v-spacer>
             <v-chip :color="ClientDetails.preferred_Language ? 'success' : 'error'"
-              ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
+              ><small class="text-caption">{{
                 ClientDetails.preferred_Language ? ClientDetails.preferred_Language : 'None'
               }}</small></v-chip
             ></v-col
@@ -85,7 +85,7 @@ export default defineComponent({
   data() {
     return {
       clientDialog: false,
-      isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false
     }
   },
   methods: {

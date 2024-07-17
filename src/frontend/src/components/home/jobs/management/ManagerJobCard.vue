@@ -10,8 +10,8 @@
             <v-list>
               <!-- Job Details -->
               <v-list-item>
-                <v-list-item-title class="text-h6 font-weight-bold">Job Name</v-list-item-title>
-                <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
+                <v-list-item-title class="text font-weight-bold">Job Name</v-list-item-title>
+                <v-list-item-subtitle class="text font-weight-medium">{{
                   passedInJob.heading || 'Job name is empty'
                 }}</v-list-item-subtitle>
               </v-list-item>

@@ -31,6 +31,7 @@
                 density="compact"
                 label="Company Name"
                 variant="solo"
+                color="primary"
                 rounded="md"
                 v-model="req_obj.company_name"
                 :items="['Plumber Tronics', 'Nedbank', 'FNB', 'Talker', 'Friends', 'Wyoming']"
