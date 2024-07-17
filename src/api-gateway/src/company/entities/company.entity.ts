@@ -2,7 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import mongoose, { SchemaTypes, Types } from 'mongoose';
 import { CreateCompanyDto } from '../dto/create-company.dto';
-import { Employee } from '../../employee/entities/employee.entity';
+import {
+  Employee,
+  EmployeeApiObject,
+} from '../../employee/entities/employee.entity';
 
 export class ContactDetails {
   @Prop({ type: String, required: true, trim: true })
@@ -176,6 +179,51 @@ export class CompanyApiObject {
   public deletedAt: Date;
 }
 
+export class CompanyApiDetailedObject {
+  @ApiProperty()
+  _id: Types.ObjectId;
+
+  @ApiProperty()
+  registrationNumber: string;
+
+  @ApiProperty()
+  vatNumber: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  type?: string;
+
+  @ApiProperty()
+  logo?: string =
+    'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
+
+  @ApiProperty()
+  contactDetails: ContactDetails;
+
+  @ApiProperty()
+  address: Address;
+
+  @ApiProperty()
+  employees: EmployeeApiObject[];
+
+  @ApiProperty()
+  inventoryItems: mongoose.Types.ObjectId[]; //TODO: Change to Actual Type later-on
+
+  @ApiProperty()
+  private: boolean;
+
+  @ApiHideProperty()
+  public createdAt: Date;
+
+  @ApiHideProperty()
+  public updatedAt: Date;
+
+  @ApiHideProperty()
+  public deletedAt: Date;
+}
+
 export const CompanySchema = SchemaFactory.createForClass(Company);
 
 export class CompanyEmployeesResponseDto {
@@ -193,9 +241,23 @@ export class CompanyAllResponseDto {
   data: CompanyApiObject[];
 }
 
+export class CompanyAllDetailedResponseDto {
+  constructor(data: CompanyApiDetailedObject[]) {
+    this.data = data;
+  }
+  data: CompanyApiDetailedObject[];
+}
+
 export class CompanyResponseDto {
   constructor(data: CompanyApiObject) {
     this.data = data;
   }
   data: CompanyApiObject;
+}
+
+export class CompanyDetailedResponseDto {
+  constructor(data: CompanyApiDetailedObject) {
+    this.data = data;
+  }
+  data: CompanyApiDetailedObject;
 }

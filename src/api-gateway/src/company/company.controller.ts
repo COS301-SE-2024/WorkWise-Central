@@ -37,6 +37,7 @@ import mongoose, { FlattenMaps, Types } from 'mongoose';
 import {
   Company,
   CompanyAllResponseDto,
+  CompanyDetailedResponseDto,
   CompanyEmployeesResponseDto,
   CompanyResponseDto,
 } from './entities/company.entity';
@@ -183,6 +184,29 @@ export class CompanyController {
       this.validateObjectId(id);
       return {
         data: await this.companyService.getCompanyById(new Types.ObjectId(id)),
+      };
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @ApiOperation({
+    summary: `Find a ${className}, with Actual Employees and Inventory Items instead of ObjectIds`,
+  })
+  @ApiOkResponse({
+    type: CompanyDetailedResponseDto,
+    description: `The mongodb 'Detailed' object of the ${className}, with an _id attribute`,
+  })
+  @Get('id/:id/detailed')
+  async findOneDetailed(
+    @Param('id') id: string,
+  ): Promise<{ data: FlattenMaps<Company> & { _id: Types.ObjectId } }> {
+    try {
+      this.validateObjectId(id);
+      return {
+        data: await this.companyService.getCompanyByIdDetailed(
+          new Types.ObjectId(id),
+        ),
       };
     } catch (e) {
       throw new HttpException(e, HttpStatus.NOT_FOUND);

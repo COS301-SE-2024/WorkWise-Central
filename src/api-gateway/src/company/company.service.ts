@@ -120,7 +120,11 @@ export class CompanyService {
   }
 
   getAllCompanies() {
-    const fieldsToPopulate = ['employees'];
+    return this.companyRepository.findAll();
+  }
+
+  getAllCompaniesDetailed() {
+    const fieldsToPopulate = ['employees', 'inventoryItems'];
     return this.companyRepository.findAll(fieldsToPopulate);
   }
 
@@ -137,6 +141,19 @@ export class CompanyService {
   ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
     const result = await this.companyRepository.findById(identifier);
 
+    if (result == null) {
+      throw new ConflictException('Company not found');
+    }
+
+    return result;
+  }
+
+  async getCompanyByIdDetailed(identifier: Types.ObjectId) {
+    const populatedFields = ['employees', 'inventoryItems'];
+    const result = await this.companyRepository.findById(
+      identifier,
+      populatedFields,
+    );
     if (result == null) {
       throw new ConflictException('Company not found');
     }
