@@ -11,6 +11,8 @@ import {
   HttpStatus,
   Query,
   Headers,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import {
@@ -19,11 +21,15 @@ import {
   CreateCompanyResponseDto,
   findCompanyResponseDto,
 } from './dto/create-company.dto';
-import { UpdateCompanyDto } from './dto/update-company.dto';
+import {
+  UpdateCompanyDto,
+  UpdateCompanyLogoDto,
+} from './dto/update-company.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiConsumes,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
@@ -45,6 +51,7 @@ import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.d
 import { validateObjectIds } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 const className = 'Company';
 
@@ -247,7 +254,7 @@ export class CompanyController {
     description: `The updated ${className} object`,
   })
   @ApiBody({ type: UpdateCompanyDto })
-  @Patch(':cid')
+  @Patch('update/:cid')
   async update(
     @Headers() headers: any,
     @Param('cid') cid: string,
@@ -265,6 +272,42 @@ export class CompanyController {
       );
       return {
         data: updatedCompany,
+      };
+    } catch (e) {
+      throw new HttpException(
+        'internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Change the Logo of a ${className}`,
+  })
+  @ApiOkResponse({
+    type: CompanyResponseDto,
+    description: `The updated ${className} instance`,
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UpdateCompanyLogoDto })
+  @UseInterceptors(FileInterceptor('logo'))
+  @Patch('/update/:cid/logo')
+  async updateLogo(
+    @Headers() headers: any,
+    @Param('cid') companyId: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    try {
+      this.validateObjectId(companyId);
+      const userId = this.extractUserId(headers);
+      return {
+        data: await this.companyService.updateLogo(
+          userId,
+          new Types.ObjectId(companyId),
+          file,
+        ),
       };
     } catch (e) {
       throw new HttpException(
