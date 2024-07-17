@@ -200,7 +200,7 @@ export default {
             complex: this.localEditedItem.address.complex,
             houseNumber: this.localEditedItem.address.houseNumber
           },
-          companyID: this.localEditedItem.companyID
+         
         }
       }
 
