@@ -10,19 +10,34 @@ export class CompanyRepository {
     @InjectModel(Company.name) private readonly companyModel: Model<Company>,
   ) {}
 
-  async findById(
-    identifier: string | Types.ObjectId,
-  ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+  async save(company: Company) {
+    const newCompanyModel = new this.companyModel(company);
+    return await newCompanyModel.save();
+  }
+
+  async findById(identifier: Types.ObjectId, populatedFields?: string[]) {
+    if (populatedFields) {
+      return this.companyModel
+        .findOne({
+          $and: [
+            { _id: identifier },
+            { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] },
+          ],
+        })
+        .populate(populatedFields)
+        .lean()
+        .exec();
+    }
+
     return this.companyModel
       .findOne({
         $and: [
           { _id: identifier },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
+          { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] },
         ],
       })
-      .lean();
+      .lean()
+      .exec();
   }
 
   async findByRegistrationNumber(
@@ -40,10 +55,10 @@ export class CompanyRepository {
       .lean();
   }
 
-  async findByEmailOrName(identifier: string) {
-    const regex = `*${identifier}*`;
-    const searchTerm = new RegExp(regex, 'i');
-
+  async findByEmailOrName(
+    identifier: string,
+  ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+    const regex = `${identifier}`;
     return this.companyModel
       .find({
         $and: [
@@ -52,8 +67,8 @@ export class CompanyRepository {
           },
           {
             $or: [
-              { name: { $regex: searchTerm } },
-              { 'contactDetails.email': { $regex: searchTerm } },
+              { name: { $regex: regex, $options: 'i' } },
+              { 'contactDetails.email': { $regex: regex, $options: 'i' } },
             ],
           },
           {
@@ -64,15 +79,39 @@ export class CompanyRepository {
       .lean();
   }
 
-  async findAll() {
-    return this.companyModel.find().lean().exec();
+  async findAll(fields?: string[]) {
+    if (fields) {
+      return this.companyModel
+        .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
+        .populate(fields)
+        .lean();
+    }
+
+    return this.companyModel
+      .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
+      .lean();
   }
 
-  async registrationNumberExists(id: string): Promise<boolean> {
+  async registrationNumberExists(registrationNumber: string): Promise<boolean> {
     const result = await this.companyModel
       .findOne({
         $and: [
-          { registrationNumber: id },
+          { registrationNumber: registrationNumber },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+
+    return result != null;
+  }
+
+  async VatNumberExists(vatNumber: string): Promise<boolean> {
+    const result = await this.companyModel
+      .findOne({
+        $and: [
+          { vatNumber: vatNumber },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
@@ -111,26 +150,20 @@ export class CompanyRepository {
         ],
       })
       .lean();
-    if (result == null) return false;
+    if (!result) return false;
 
-    return result.employees.includes(empId);
+    console.log('employeeExists');
+    console.log(result);
+    for (const employee of result.employees) {
+      if (employee.equals(empId)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
-  async nameTaken(name: string) {
-    return this.companyModel.findOne({
-      $and: [
-        { name: name },
-        {
-          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-        },
-      ],
-    });
-  }
-
-  async update(
-    id: string | Types.ObjectId,
-    updateCompanyDto: UpdateCompanyDto,
-  ) {
+  async update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
     return this.companyModel.findOneAndUpdate(
       {
         $and: [
@@ -145,7 +178,38 @@ export class CompanyRepository {
     );
   }
 
-  async delete(id: string): Promise<boolean> {
+  async addEmployee(id: Types.ObjectId, employeeId: Types.ObjectId) {
+    return this.companyModel.findOneAndUpdate(
+      {
+        $and: [
+          { _id: id },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      },
+      { $push: { employees: employeeId }, updatedAt: new Date() },
+      { new: true },
+    );
+  }
+
+  async removeEmployee(id: Types.ObjectId, employeeId: Types.ObjectId) {
+    //TODO: Test
+    return this.companyModel.findOneAndUpdate(
+      {
+        $and: [
+          { _id: id },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      },
+      { $pull: { employees: employeeId }, updatedAt: new Date() },
+      { new: true },
+    );
+  }
+
+  async delete(id: Types.ObjectId): Promise<boolean> {
     const result = await this.companyModel.findOneAndUpdate(
       {
         $and: [
@@ -159,5 +223,41 @@ export class CompanyRepository {
     );
 
     return result != null;
+  }
+
+  async findCompanyWithEmployee(employeeId: Types.ObjectId) {
+    const filter = {
+      $and: [
+        { employees: { $in: [employeeId] } },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    };
+    return await this.companyModel.findOne(filter).lean().exec();
+  }
+
+  async findAllNames() {
+    const filter = {
+      $and: [
+        { $or: [{ private: false }, { private: { $exists: false } }] },
+        { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] },
+      ],
+    };
+    return await this.companyModel
+      .find(filter)
+      .select([
+        'registrationNumber',
+        'vatNumber',
+        'name',
+        'logo',
+        'address.city',
+        'address.province',
+        'address.suburb',
+        'address.street',
+        'address.postalCode',
+      ])
+      .lean()
+      .exec();
   }
 }

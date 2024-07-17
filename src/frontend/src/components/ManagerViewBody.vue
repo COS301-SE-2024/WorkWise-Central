@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-import AddEmployee from './AddEmployee.vue'
+import AddEmployee from './home/employees/management/AddEmployee.vue'
 import router from '@/router'
 
 export default defineComponent({

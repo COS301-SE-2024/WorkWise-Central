@@ -41,6 +41,12 @@ export class Address {
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
+  province: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(255)
   suburb: string;
 
   @ApiProperty()
@@ -72,7 +78,12 @@ export class ClientDetails {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  name: string;
+  firstName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  lastName: string;
 
   @ApiProperty()
   @IsOptional()
@@ -96,9 +107,9 @@ export class ClientDetails {
   vatNumber?: string;
 
   @ApiProperty()
-  @IsOptional()
+  @IsNotEmpty()
   @IsMongoId()
-  companyId?: Types.ObjectId;
+  companyId: Types.ObjectId;
 
   @ApiProperty()
   @IsOptional()

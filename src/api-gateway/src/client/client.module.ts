@@ -8,6 +8,11 @@ import { CompanyService } from '../company/company.service';
 import { CompanyModule } from '../company/company.module';
 import { EmployeeModule } from '../employee/employee.module';
 import { RoleModule } from '../role/role.module';
+import { UsersModule } from '../users/users.module';
+import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '../users/users.service';
+import { EmailModule } from '../email/email.module';
+import { FileModule } from '../file/file.module';
 
 @Module({
   imports: [
@@ -15,9 +20,18 @@ import { RoleModule } from '../role/role.module';
     forwardRef(() => CompanyModule),
     forwardRef(() => EmployeeModule),
     forwardRef(() => RoleModule),
+    forwardRef(() => UsersModule),
+    forwardRef(() => EmailModule),
+    forwardRef(() => FileModule),
   ],
   controllers: [ClientController],
-  providers: [ClientService, ClientRepository, CompanyService],
+  providers: [
+    ClientService,
+    ClientRepository,
+    CompanyService,
+    JwtService,
+    UsersService,
+  ],
   exports: [ClientService, MongooseModule],
 })
 export class ClientModule {}

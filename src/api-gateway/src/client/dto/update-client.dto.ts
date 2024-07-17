@@ -38,6 +38,12 @@ class Address {
   @IsOptional()
   @IsString()
   @MaxLength(255)
+  province?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
   suburb?: string;
 
   @ApiProperty()
@@ -69,7 +75,12 @@ class ClientDetails {
   @ApiProperty()
   @IsOptional()
   @IsString()
-  name?: string;
+  firstName?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  lastName?: string;
 
   @ApiProperty()
   @IsOptional()

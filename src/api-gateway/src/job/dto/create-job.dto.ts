@@ -15,7 +15,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { JobApiObject } from '../entities/job.entity';
+import { JobApiDetailedObject, JobApiObject } from '../entities/job.entity';
 
 class Address {
   @ApiProperty()
@@ -23,6 +23,12 @@ class Address {
   @IsString()
   @MaxLength(255)
   street: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(255)
+  province: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -98,10 +104,9 @@ class Details {
   startDate: Date;
 
   @ApiProperty()
-  @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsDateString()
-  endDate: Date;
+  endDate?: Date;
 }
 
 class InventoryUsed {
@@ -129,10 +134,9 @@ class RecordedDetails {
   imagesTaken?: string[] = [];
 
   @ApiProperty()
-  @IsArray()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => InventoryUsed)
-  @IsOptional()
   inventoryUsed?: InventoryUsed[] = [];
 }
 
@@ -210,32 +214,32 @@ export class CreateJobDto {
   assignedEmployees?: AssignedEmployees;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  status: string = 'To do';
+  status?: string = 'To do';
 
   @ApiProperty()
+  @IsNotEmpty()
   @ValidateNested()
   @Type(() => Details)
-  @IsNotEmpty()
   details: Details;
 
   @ApiProperty()
+  @IsOptional()
   @ValidateNested()
   @Type(() => RecordedDetails)
-  @IsOptional()
   recordedDetails?: RecordedDetails;
 
   @ApiProperty()
+  @IsOptional()
   @ValidateNested()
   @Type(() => ClientFeedback)
-  @IsOptional()
   clientFeedback?: ClientFeedback;
 
   @ApiProperty()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => Task)
-  @IsOptional()
   taskList?: Task[];
 
   @ApiProperty()
@@ -257,4 +261,11 @@ export class JobAllResponseDto {
     this.data = data;
   }
   data: JobApiObject[];
+}
+
+export class JobAllResponseDetailedDto {
+  constructor(data: JobApiDetailedObject[]) {
+    this.data = data;
+  }
+  data: JobApiDetailedObject[];
 }

@@ -27,21 +27,12 @@ export class UpdateJobDto {
   @ApiProperty()
   @IsOptional()
   @IsMongoId()
-  companyId?: Types.ObjectId;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsMongoId()
   clientId?: Types.ObjectId;
 
   @ApiProperty()
   @IsOptional()
   @IsString()
   clientUsername?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  assignedBy?: Types.ObjectId;
 
   @ApiProperty()
   @ValidateNested()
