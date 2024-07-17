@@ -45,23 +45,23 @@ export class PersonalInfo {
   @Prop({ type: String, required: true })
   surname: string;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: Date, required: true })
   dateOfBirth: Date;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: String, required: true, default: 'Rather Not Say' })
   gender: string = 'Rather Not Say';
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: String, required: true, default: 'English' })
   preferredLanguage: string;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: ContactInfo, required: false })
   contactInfo: ContactInfo;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: Address, required: false })
   address: Address;
 }
@@ -206,6 +206,39 @@ export class UserApiObject {
 
   @ApiProperty()
   public currentEmployee?: Types.ObjectId;
+
+  @ApiProperty()
+  public isValidated?: boolean = false;
+
+  @ApiHideProperty()
+  public createdAt: Date = new Date();
+
+  @ApiHideProperty()
+  public updatedAt?: Date;
+}
+
+export class UserApiDetailedObject {
+  //TODO: Use now
+  @ApiProperty()
+  _id: Types.ObjectId;
+
+  @ApiProperty()
+  systemDetails: SystemDetails;
+
+  @ApiProperty()
+  personalInfo: PersonalInfo;
+
+  @ApiProperty()
+  profile: Profile;
+
+  @ApiProperty()
+  joinedCompanies: JoinedCompany[] = [];
+
+  @ApiProperty()
+  skills: string[] = [];
+
+  @ApiProperty()
+  public currentEmployee?: Employee;
 
   @ApiProperty()
   public isValidated?: boolean = false;

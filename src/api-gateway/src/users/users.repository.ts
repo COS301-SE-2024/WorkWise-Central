@@ -23,7 +23,19 @@ export class UsersRepository {
     return result;
   }
 
-  async findAll(): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+  async findAll(
+    fieldsToPopulate?: string[],
+  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+    if (fieldsToPopulate) {
+      const result = await this.userModel
+        .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
+        .populate(fieldsToPopulate)
+        .lean()
+        .exec();
+      console.log(`Retrieving All users` /*, result*/);
+      return result;
+    }
+
     const result = await this.userModel
       .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
       /*      .populate(userEmployeeFields)

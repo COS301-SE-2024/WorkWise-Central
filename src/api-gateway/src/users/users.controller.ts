@@ -10,7 +10,9 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, CreateUserResponseDto } from './dto/create-user.dto';
@@ -19,6 +21,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiConsumes,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
@@ -31,6 +34,8 @@ import { UserAllResponseDto, UserResponseDto } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { UserEmailVerificationDTO } from './dto/user-validation.dto';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UserAllResponseDetailedDto } from './dto/user-response.dto';
 
 const className = 'User';
 
@@ -101,6 +106,28 @@ export class UsersController {
     try {
       console.log(headers);
       return { data: await this.usersService.getAllUsers() };
+    } catch (Error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all ${className}s, But with more detailed fields`,
+  })
+  @ApiOkResponse({
+    type: UserAllResponseDetailedDto,
+    description: `An array of Detailed mongodb objects of the ${className} class`,
+  })
+  @Get('all/detailed')
+  async findAllDetailed(@Headers() headers: any) {
+    try {
+      console.log(headers);
+      return { data: await this.usersService.getAllUsersDetailed() };
     } catch (Error) {
       throw new HttpException(
         'Something went wrong',
@@ -223,6 +250,39 @@ export class UsersController {
     try {
       return {
         data: await this.usersService.updateUser(userId, updateUserDto),
+      };
+    } catch (e) {
+      throw new HttpException(
+        'internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Change the Profile Picture of a ${className}`,
+    /*    description: `
+    You may send the entire ${className} object that was sent to you, in your request body.\r\n
+    You may also send a singular attribute `,*/
+  })
+  /*  @ApiOkResponse({
+    type: BooleanResponseDto,
+    description: `Confirmation `,
+  })*/ //TODO:Fix
+  @ApiBody({ type: UpdateUserDto })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('profilePic'))
+  @Patch('/update/profilePic')
+  async updateProfilePic(
+    @Headers() headers: any,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const userId = this.extractUserId(headers);
+    try {
+      return {
+        data: await this.usersService.updateProfilePic(userId, file),
       };
     } catch (e) {
       throw new HttpException(

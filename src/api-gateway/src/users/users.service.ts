@@ -92,6 +92,13 @@ export class UsersService {
     return this.userRepository.findAll();
   }
 
+  async getAllUsersDetailed(): Promise<
+    (FlattenMaps<User> & { _id: Types.ObjectId })[]
+  > {
+    const populatedFields = ['currentEmployee'];
+    return this.userRepository.findAll(populatedFields);
+  }
+
   async getAllUsersInCompany(
     companyId: Types.ObjectId,
   ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
