@@ -13,7 +13,34 @@
         aria-dropeffect="move"
       >
         <v-card>
-          <v-card-title>{{ column.status }}</v-card-title>
+          <v-card-title
+            :style="{ color: 'black' }"
+            class="font-weight-black"
+            v-if="column.status === 'Todo'"
+            ><v-icon class="pr-1" color="blue">{{ 'fa: fa-solid fa-clipboard-list' }}</v-icon>
+            {{ column.status }}
+            <v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
+              {{ column.cards.length }}
+            </v-chip></v-card-title
+          >
+          <v-card-subtitle></v-card-subtitle>
+          <v-card-title class="font-weight-black" v-if="column.status === 'In Progress'"
+            ><v-icon color="primary">{{ 'fa:fas fa-spinner fa-spin' }}</v-icon> {{ column.status
+            }}<v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
+              {{ column.cards.length }}
+            </v-chip></v-card-title
+          ><v-card-title class="font-weight-black" v-if="column.status === 'Awaiting review'"
+            ><v-icon color="purple">{{ 'fa:fas fa-hourglass-half' }}</v-icon> {{ column.status
+            }}<v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
+              {{ column.cards.length }}
+            </v-chip></v-card-title
+          ><v-card-title class="font-weight-black" v-if="column.status === 'Done'"
+            ><v-icon color="green">{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon>
+            {{ column.status
+            }}<v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
+              {{ column.cards.length }}
+            </v-chip></v-card-title
+          >
           <v-card-text>
             <v-card
               v-for="card in column.cards"
@@ -38,6 +65,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { JobCardDataFormat, Column } from '../types'
+import '@mdi/font/css/materialdesignicons.css' // icon import
 
 const columns = ref<Column[]>([
   {
