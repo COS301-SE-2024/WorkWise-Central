@@ -183,6 +183,20 @@ export class EmployeeService {
     return result;
   }
 
+  async findById(id: Types.ObjectId, fieldsToPopulate?: string[]) {
+    let result;
+    if (!(fieldsToPopulate && fieldsToPopulate.length === 0)) {
+      console.log('In the if');
+      result = await this.employeeRepository.findById(id, fieldsToPopulate);
+    } else {
+      result = await this.employeeRepository.findById(id);
+    }
+    if (result == null) {
+      throw new NotFoundException('Employee not found');
+    }
+    return result;
+  }
+
   async employeeExists(id: Types.ObjectId): Promise<boolean> {
     return await this.employeeRepository.employeeExists(id);
   }
@@ -219,23 +233,6 @@ export class EmployeeService {
 
   async remove(id: Types.ObjectId): Promise<boolean> {
     return await this.employeeRepository.remove(id);
-  }
-
-  async findById(
-    id: Types.ObjectId,
-    fieldsToPopulate?: string[],
-  ): Promise<FlattenMaps<Employee> & { _id: Types.ObjectId }> {
-    let result;
-    if (!(fieldsToPopulate && fieldsToPopulate.length === 0)) {
-      console.log('In the if');
-      result = await this.employeeRepository.findById(id, fieldsToPopulate);
-    } else {
-      result = await this.employeeRepository.findById(id);
-    }
-    if (result == null) {
-      throw new NotFoundException('Employee not found');
-    }
-    return result;
   }
 
   async findByIds(

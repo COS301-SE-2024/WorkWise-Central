@@ -60,10 +60,7 @@ export class EmployeeRepository {
     return result;
   }
 
-  async findById(
-    identifier: Types.ObjectId,
-    fieldsToPopulate?: string[],
-  ): Promise<FlattenMaps<Employee> & { _id: Types.ObjectId }> {
+  async findById(identifier: Types.ObjectId, fieldsToPopulate?: string[]) {
     console.log('In findById repository');
     console.log('identifier -> ', identifier);
     return this.employeeModel
