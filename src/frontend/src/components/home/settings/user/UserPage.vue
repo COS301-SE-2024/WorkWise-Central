@@ -16,16 +16,17 @@
           <v-form ref="form" @submit.prevent>
             <v-row>
               <v-col cols="12" sm="6">
-                <v-text-field v-model="user.firstName" label="First Name"></v-text-field>
+                <v-text-field v-model="user.firstName" label="First Name" hide-details="auto"></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-text-field v-model="user.surname" label="Surname"></v-text-field>
+                <v-text-field v-model="user.surname" label="Surname" hide-details="auto"></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
                 <v-text-field
                   v-model="user.dateOfBirth"
                   label="Date of Birth"
                   type="date"
+                  hide-details="auto"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
@@ -33,6 +34,7 @@
                   v-model="user.gender"
                   :items="genderOptions"
                   label="Gender"
+                  hide-details="auto"
                   variant="solo"
                 ></v-select>
               </v-col>
@@ -42,6 +44,7 @@
                   :items="languageOptions"
                   label="Preferred Language"
                   variant="solo"
+                  hide-details="auto"
                 ></v-select>
               </v-col>
               <v-col cols="12" sm="6">
@@ -49,6 +52,7 @@
                   v-model="user.contactInfo.phone"
                   :rules="phoneRules"
                   label="Phone"
+                  hide-details="auto"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
@@ -56,29 +60,31 @@
                   v-model="user.contactInfo.email"
                   :rules="emailRules"
                   label="Email"
+                  hide-details="auto"
                 ></v-text-field>
               </v-col>
               <!-- Address fields -->
               <!-- ... (address fields omitted for brevity) -->
               <v-col cols="12" sm="6">
-                <v-text-field v-model="user.address.street" label="Street"></v-text-field>
+                <v-text-field v-model="user.address.street" label="Street" hide-details="auto"></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-text-field v-model="user.address.suburb" label="Suburb"></v-text-field>
+                <v-text-field v-model="user.address.suburb" label="Suburb" hide-details="auto"></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-text-field v-model="user.address.city" label="City"></v-text-field>
+                <v-text-field v-model="user.address.city" label="City" hide-details="auto"></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-text-field v-model="user.address.postalCode" label="Postal Code"></v-text-field>
+                <v-text-field v-model="user.address.postalCode" label="Postal Code" hide-details="auto"></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-text-field v-model="user.address.complex" label="Complex"></v-text-field>
+                <v-text-field v-model="user.address.complex" label="Complex" hide-details="auto"></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
                 <v-text-field
                   v-model="user.address.houseNumber"
                   label="House Number"
+                  hide-details="auto"
                 ></v-text-field>
               </v-col>
             </v-row>

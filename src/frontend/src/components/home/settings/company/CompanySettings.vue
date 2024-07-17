@@ -7,7 +7,12 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" xs="12" sm="12" class="pl-15">
+     
+      <v-col cols="8" class="pl-15">
+        <EditCompany v-if="currentSettings === 'Company Details'" />
+        <EditRoles v-if="currentSettings === 'Roles'" />
+        <EditStructure v-if="currentSettings === 'Structure'" />
+      </v-col> <v-col cols="4"  class="pl-15">
         <AppMenu
           :model="items"
           class="bg-secondary"
@@ -31,11 +36,6 @@
             </a>
           </template>
         </AppMenu>
-      </v-col>
-      <v-col cols="12" xs="12" sm="12" class="pl-15">
-        <EditCompany v-if="currentSettings === 'Company Details'" />
-        <EditRoles v-if="currentSettings === 'Roles'" />
-        <EditStructure v-if="currentSettings === 'Structure'" />
       </v-col>
     </v-row>
   </v-container>
