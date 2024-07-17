@@ -218,7 +218,6 @@ export class UserApiObject {
 }
 
 export class UserApiDetailedObject {
-  //TODO: Use now
   @ApiProperty()
   _id: Types.ObjectId;
 

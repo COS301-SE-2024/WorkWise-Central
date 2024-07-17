@@ -16,7 +16,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, CreateUserResponseDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateProfilePicDto, UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiBearerAuth,
@@ -267,13 +267,13 @@ export class UsersController {
     You may send the entire ${className} object that was sent to you, in your request body.\r\n
     You may also send a singular attribute `,*/
   })
-  /*  @ApiOkResponse({
-    type: BooleanResponseDto,
-    description: `Confirmation `,
-  })*/ //TODO:Fix
-  @ApiBody({ type: UpdateUserDto })
+  @ApiOkResponse({
+    type: UserResponseDto,
+    description: `The updated ${className} instance`,
+  })
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('profilePic'))
+  @ApiBody({ type: UpdateProfilePicDto })
+  @UseInterceptors(FileInterceptor('profilePicture'))
   @Patch('/update/profilePic')
   async updateProfilePic(
     @Headers() headers: any,
