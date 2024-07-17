@@ -173,47 +173,53 @@ export default {
     async update() {
       console.log(this.localEditedItem.firstName)
       console.log(localStorage.getItem('access_token'))
+
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      // const apiURL = await this.getRequestUrl()
-      await axios
-        .patch(`http://localhost:3000/client/${this._clientID}`, {
-          config,
-          details: {
-            firstname: this.localEditedItem.firstName,
-            lastname: this.localEditedItem.surname,
-            preferred_Language: this.localEditedItem.preferred_Language,
-            contactInfo: {
-              phoneNumber: this.localEditedItem.contactInfo.phoneNumber,
-              email: this.editedItem.contactInfo.email
-            },
-            address: {
-              street: this.localEditedItem.address.street,
-              suburb: this.localEditedItem.address.suburb,
-              city: this.localEditedItem.address.city,
-              postalCode: this.localEditedItem.address.postalCode,
-              complex: this.localEditedItem.address.complex,
-              houseNumber: this.localEditedItem.address.houseNumber
-            }
-          }
-        })
-        .then((response) => {
-          console.log(response)
-          alert('Client updated')
-          return true
-        })
-        .catch((error) => {
-          console.log(error)
-          alert('Error updating client')
-          return false
-        })
-        .finally(() => {
-          this.clientDialog = false
-        })
+
+      // const apiURL = await this.getRequestUrl();
+
+      const data = {
+        details: {
+          firstname: this.localEditedItem.firstName,
+          lastname: this.localEditedItem.surname,
+          preferred_Language: this.localEditedItem.preferred_Language,
+          contactInfo: {
+            phoneNumber: this.localEditedItem.contactInfo.phoneNumber,
+            email: this.editedItem.contactInfo.email
+          },
+          address: {
+            street: this.localEditedItem.address.street,
+            suburb: this.localEditedItem.address.suburb,
+            city: this.localEditedItem.address.city,
+            postalCode: this.localEditedItem.address.postalCode,
+            complex: this.localEditedItem.address.complex,
+            houseNumber: this.localEditedItem.address.houseNumber
+          },
+          companyID: this.localEditedItem.companyID
+        }
+      }
+
+      try {
+        const response = await axios.patch(
+          `http://localhost:3000/client/${this._clientID}`,
+          data,
+          config
+        )
+        console.log(response)
+        alert('Client updated')
+        return true
+      } catch (error) {
+        console.error('Error updating client:', error)
+        alert('Error updating client')
+        return false
+      } finally {
+        this.clientDialog = false
+      }
     },
     async isLocalAvailable(localUrl) {
       try {

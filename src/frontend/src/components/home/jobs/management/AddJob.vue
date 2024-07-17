@@ -19,13 +19,7 @@
         ></v-btn>
       </v-defaults-provider>
     </template>
-    <v-card
-      elevation="14"
-      rounded="md"
-      max-height="800"
-      max-width="900"
-     
-    >
+    <v-card elevation="14" rounded="md" max-height="800" max-width="900">
       <v-card-title class="text-center">Job Details</v-card-title>
       <v-card-text>
         <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
@@ -36,7 +30,6 @@
                 <label style="font-size: 14px; font-weight: lighter">Job Title*</label>
 
                 <v-text-field
-                 
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Enter the title of the job"
@@ -54,7 +47,6 @@
                   density="compact"
                   color="grey-lighten-4"
                   label="Choose the employee for whom the job must be complete"
-                 
                   rounded="md"
                   variant="solo"
                   v-model="req_obj.clientId"
@@ -77,7 +69,6 @@
                 <label style="font-size: 14px; font-weight: lighter">Job description</label>
 
                 <v-textarea
-                  
                   placeholder="Enter the details of the job"
                   rounded="md"
                   variant="solo"
@@ -117,7 +108,6 @@
                     elevation="5"
                     required
                     @update:modelValue="updateDates"
-                   
                   ></v-date-picker>
                 </v-col>
                 <v-col cols="12" md="6" align="center">
@@ -131,7 +121,6 @@
                     width="unset"
                     max-width="350"
                     v-model="endDate"
-                   
                     elevation="5"
                     required
                     @update:modelValue="updateDates"
@@ -152,7 +141,6 @@
                     item-title="name"
                     label="Select some employees you would like to assign to this job"
                     chips
-                    
                     multiple
                     required
                     color="primary"
@@ -167,7 +155,6 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">Street</label>
                   <v-text-field
-                    
                     density="compact"
                     color="primary"
                     placeholder="Street"
@@ -180,7 +167,6 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">Suburb</label>
                   <v-text-field
-                    
                     density="compact"
                     color="primary"
                     placeholder="Suburb"
@@ -193,7 +179,6 @@
                 <v-col sm="6" cols="12">
                   <label style="font-size: 14px; font-weight: lighter">Province</label>
                   <v-autocomplete
-                    
                     density="compact"
                     color="primary"
                     placeholder="Province"
@@ -217,7 +202,6 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">City</label>
                   <v-text-field
-                   
                     density="compact"
                     color="primary"
                     placeholder="City"
@@ -230,7 +214,6 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">Postal Code</label>
                   <v-text-field
-                   
                     density="compact"
                     color="primary"
                     placeholder="Postal Code"
@@ -245,7 +228,6 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">Complex</label>
                   <v-text-field
-                    
                     density="compact"
                     color="primary"
                     placeholder="Complex"
@@ -258,7 +240,7 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">House number</label>
                   <v-text-field
-                   F
+                    F
                     density="compact"
                     color="primary"
                     placeholder="House number"
@@ -313,7 +295,7 @@ export default defineComponent({
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       click_create_employee: false,
       valid: false,
-      isdarkmode: sessionStorage['theme'] !== 'false',
+      isdarkmode: localStorage['theme'] !== 'false',
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       dark: '#2b2b2b',
@@ -336,9 +318,9 @@ export default defineComponent({
       startDate: null,
       endDate: null,
       req_obj: {
-        companyId: sessionStorage['currentCompany'],
+        companyId: localStorage['currentCompany'],
         clientId: '',
-        assignedBy: sessionStorage['id'],
+        assignedBy: localStorage['id'],
         assignedEmployees: {
           employeeIds: [] as string[],
           teamId: ''
@@ -377,7 +359,7 @@ export default defineComponent({
   methods: {
     handleSubmission() {
       console.log(this.req_obj)
-      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       axios
         .post('http://localhost:3000/job/create', this.req_obj, config)
         .then((res) => {
@@ -403,7 +385,7 @@ export default defineComponent({
       }
     },
     async loadClients() {
-      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       console.log(apiURL)
       axios
@@ -429,13 +411,13 @@ export default defineComponent({
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
       const apiURL = await this.getRequestUrl()
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/joined/all/${sessionStorage['currentCompany']}`,
+          apiURL + `employee/joined/all/${localStorage['currentCompany']}`,
           config
         )
 

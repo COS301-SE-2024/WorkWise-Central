@@ -4,7 +4,7 @@ import settingsMenu from '@/components/home/settings/SettingsMenu.vue'
 
 <template>
   <v-container class="v-container">
-    <settingsMenu/>
+    <settingsMenu />
   </v-container>
 </template>
 

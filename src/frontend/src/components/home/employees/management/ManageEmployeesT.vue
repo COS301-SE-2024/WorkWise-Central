@@ -761,14 +761,14 @@ export default {
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
       const apiURL = await this.getRequestUrl()
 
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/joined/all/${sessionStorage['currentCompany']}`,
+          apiURL + `employee/joined/all/${localStorage['currentCompany']}`,
           config
         )
 
@@ -845,7 +845,7 @@ export default {
 
       // try {
       //   const employee_response = await axios.get(
-      //     apiURL + `employee/all/${sessionStorage['currentCompany']}`,
+      //     apiURL + `employee/all/${localStorage['currentCompany']}`,
       //     config
       //   )
       //   let employee_all_data: Employee[] = employee_response.data.data

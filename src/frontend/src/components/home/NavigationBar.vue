@@ -74,7 +74,7 @@ export default defineComponent({
     CompanyMain
   },
   data: () => ({
-    isdarkmode: sessionStorage.getItem('theme') === 'true'
+    isdarkmode: localStorage.getItem('theme') === 'true'
   }),
   // computed: {
   //   ...mapGetters(['isDarkMode'])
@@ -89,11 +89,11 @@ export default defineComponent({
         this.isdarkmode = true
         console.log(this.isdarkmode)
       }
-      sessionStorage.setItem('theme', this.isdarkmode.toString()) // save the theme to session storage
+      localStorage.setItem('theme', this.isdarkmode.toString()) // save the theme to session storage
     },
     logout(name: string) {
       if (name === 'splash') {
-        sessionStorage.clear()
+        localStorage.clear()
       }
     }
   }

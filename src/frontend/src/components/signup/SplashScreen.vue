@@ -239,6 +239,7 @@
                     </v-form>
                   </v-col>
                   <v-col cols="8" offset="2">
+                    <Toast />
                     <v-btn
                       :disabled="!valid"
                       text
@@ -377,6 +378,7 @@
                     </v-form>
                   </v-col>
                   <v-col cols="8" offset="2">
+                    <Toast />
                     <v-btn
                       :disabled="!valid"
                       text
@@ -786,6 +788,7 @@ export default defineComponent({
     confirm_password: '',
     showPassword: false,
     date: '',
+    emailExists: false,
     name: '',
     surname: '',
     username: '',
@@ -968,7 +971,7 @@ export default defineComponent({
       setTimeout(() => {
         this.loading = false
       }, 3000)
-      isdarkmode = sessionStorage.getItem('theme')
+      isdarkmode = localStorage.getItem('theme')
     },
     companyLogoHandler() {
       console.log('')
@@ -1063,21 +1066,47 @@ export default defineComponent({
           this.alertSignUpFailure = true
         })
     },
-    nextFlow1() {
-      this.signupDialog = false
-      this.signup1Dialog = true
+    async nextFlow1() {
+      try {
+        this.emailExists = await this.emailExist()
+        console.log(this.emailExists)
+        if (this.emailExists === true) {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Username already exists',
+            life: 3000
+          })
+        } else {
+          // Handle the case where the email does not exist
+          this.signupDialog = false
+          this.signup1Dialog = true
+        }
+      } catch (error) {
+        console.error('Error during next flow:', error)
+      }
     },
     nextFlow2() {
       this.signup1Dialog = false
       this.signupUsernameDialog = true
       this.populateUsernameList()
     },
-    nextFlowUsername() {
-      if (this.checkUsernameExist() === true) {
-        alert('Username already exists')
-      } else {
-        this.signupUsernameDialog = false
-        this.signup2Dialog = true
+    async nextFlowUsername() {
+      try {
+        this.exists = await this.usernameExist()
+        if (this.exists === true) {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Username already exists',
+            life: 3000
+          })
+        } else {
+          this.signupUsernameDialog = false
+          this.signup2Dialog = true
+        }
+      } catch (error) {
+        console.error('Error during next flow for username:', error)
       }
     },
     nextFlow3() {
@@ -1098,27 +1127,47 @@ export default defineComponent({
       this.joinDialog = true
       this.signup()
     },
+    async emailExist() {
+      try {
+        const apiURL = await this.getRequestUrl()
+        const response = await axios.post(`${apiURL}users/exists/email`, {
+          email: this.email
+        })
+        console.log(response.data.data)
+        return response.data.data
+      } catch (error) {
+        console.error('Error checking email existence:', error)
+        return null // Return null or handle the error as needed
+      }
+    },
     async usernameExist() {
-      const apiURL = await this.getRequestUrl()
-      await axios
-        .post(apiURL + 'users/exists', {
-          params: {
-            username: this.username
-          }
+      try {
+        const apiURL = await this.getRequestUrl()
+        const response = await axios.post(`${apiURL}users/exists/username`, {
+          username: this.username
         })
-        .then((response) => {
-          console.log(response)
-          console.log(this.username)
-          this.exists = response
-        })
-        .catch((error) => {
-          console.log(error)
-        })
+        console.log(response.data.data)
+        return response.data.data
+      } catch (error) {
+        console.error('Error checking username existence:', error)
+        return null // Return null or handle the error as needed
+      }
     },
     checkUsernameExist() {
+      console.log('Checking if username exists')
       this.usernameExist()
+      console.log(this.exists)
       if (this.exists === true) {
         alert('Username already exists')
+        return true
+      }
+      return false
+    },
+    checkEmailExist() {
+      this.emailExist()
+      console.log(this.emailExists)
+      if (this.emailExists === true) {
+        alert('Email already exists')
         return true
       }
       return false
@@ -1136,7 +1185,7 @@ export default defineComponent({
         this.isdarkmode = true
         console.log(this.isdarkmode)
       }
-      sessionStorage.setItem('theme', this.isdarkmode) // save the theme to session storage
+      localStorage.setItem('theme', this.isdarkmode) // save the theme to session storage
     },
     async isLocalAvailable(localUrl) {
       try {

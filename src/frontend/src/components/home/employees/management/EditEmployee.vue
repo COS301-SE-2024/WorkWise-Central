@@ -118,7 +118,7 @@ export default {
     return {
       selectedRole: '',
       localEditedItem: this.editedItem,
-      isdarkmode: sessionStorage['theme'] !== 'false',
+      isdarkmode: localStorage['theme'] !== 'false',
       role_change: false,
       employeeDialog: false,
       roleItemNames: [] as string[],
@@ -162,13 +162,13 @@ export default {
       console.log(this.localEditedItem)
     },
     async loadRoles() {
-      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       console.log(apiURL)
       let rolesNames_arr: string[] = []
       try {
         let roles_response = await axios.get(
-          apiURL + `role/all/${sessionStorage['currentCompany']}`,
+          apiURL + `role/all/${localStorage['currentCompany']}`,
           config
         )
         let roles_data: Role[] = roles_response.data.data
@@ -200,7 +200,7 @@ export default {
         }
       }
       console.log(employee_req_obj.roleId)
-      let config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       let apiURL = await this.getRequestUrl()
       console.log(this.localEditedItem)
       axios

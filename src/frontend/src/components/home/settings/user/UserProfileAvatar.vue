@@ -1,20 +1,14 @@
 <template>
   <div class="avatar-upload">
-    <v-avatar
-        color="grey"
-        rounded="1"
-        size="150"
-        @click="triggerFileInput"
-        class="avatar-wrapper"
-    >
+    <v-avatar color="grey" rounded="1" size="150" @click="triggerFileInput" class="avatar-wrapper">
       <v-img :src="avatarSrc" cover></v-img>
-      <v-icon small class="camera-icon" color="grey" style="opacity: 0.7;">mdi-camera</v-icon>
+      <v-icon small class="camera-icon" color="grey" style="opacity: 0.7">mdi-camera</v-icon>
     </v-avatar>
     <v-file-input
-        ref="fileInput"
-        accept="image/*"
-        class="hidden bg-transparent"
-        @change="onFileChange"
+      ref="fileInput"
+      accept="image/*"
+      class="hidden bg-transparent"
+      @change="onFileChange"
     ></v-file-input>
   </div>
 </template>
@@ -23,25 +17,25 @@
 export default {
   data() {
     return {
-      avatarSrc: "https://cdn.vuetifyjs.com/images/profiles/marcus.jpg",
-    };
+      avatarSrc: 'https://cdn.vuetifyjs.com/images/profiles/marcus.jpg'
+    }
   },
   methods: {
     triggerFileInput() {
-      this.$refs.fileInput.click();
+      this.$refs.fileInput.click()
     },
     onFileChange(event) {
-      const file = event.target.files[0];
+      const file = event.target.files[0]
       if (file) {
-        const reader = new FileReader();
+        const reader = new FileReader()
         reader.onload = (e) => {
-          this.avatarSrc = e.target.result;
-        };
-        reader.readAsDataURL(file);
+          this.avatarSrc = e.target.result
+        }
+        reader.readAsDataURL(file)
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>
 
 <style scoped>

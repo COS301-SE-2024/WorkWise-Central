@@ -315,7 +315,7 @@ export default defineComponent({
     toast() {}
   },
   mounted() {
-    this.isdarkmode = sessionStorage.getItem('theme') === 'true' ? true : false
+    this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
     this.getCompanyDetails()
   }
 })

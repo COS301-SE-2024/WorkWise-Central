@@ -31,7 +31,7 @@
 <script>
 export default {
   data: () => ({
-    isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false
+    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false
   }),
   props: {
     user: Object

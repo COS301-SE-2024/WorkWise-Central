@@ -7,8 +7,17 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" xs="12" sm="12" class="pl-15">
-        <AppMenu :model="items" class="bg-secondary" :theme="isdarkmode === true ? 'dark' : 'light'">
+     
+      <v-col cols="8" class="pl-15">
+        <EditCompany v-if="currentSettings === 'Company Details'" />
+        <EditRoles v-if="currentSettings === 'Roles'" />
+        <EditStructure v-if="currentSettings === 'Structure'" />
+      </v-col> <v-col cols="4"  class="pl-15">
+        <AppMenu
+          :model="items"
+          class="bg-secondary"
+          :theme="isdarkmode === true ? 'dark' : 'light'"
+        >
           <template #item="{ item, props }">
             <router-link v-if="item.route" :to="item.route" custom>
               <a
@@ -28,11 +37,6 @@
           </template>
         </AppMenu>
       </v-col>
-      <v-col cols="12" xs="12" sm="12" class="pl-15">
-        <EditCompany v-if="currentSettings === 'Company Details'" />
-        <EditRoles v-if="currentSettings === 'Roles'" />
-        <EditStructure v-if="currentSettings === 'Structure'" />
-      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -51,7 +55,7 @@ export default defineComponent({
     return {
       companyDialog: false,
       currentSettings: '',
-      isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       items: [
         {
           icon: 'fa: fa-solid fa-building',
