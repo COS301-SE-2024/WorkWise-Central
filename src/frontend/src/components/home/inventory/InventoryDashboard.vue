@@ -4,7 +4,7 @@
       height="auto"
       class="pa-11 ma-0 bg-cardColor"
       rounded="md"
-      :theme="isdarkmode ? 'dark' : 'light'"
+      :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
       border="md"
     >
       <v-card-title
@@ -28,11 +28,11 @@
               density="compact"
               label="Search"
               prepend-inner-icon="mdi-magnify"
-              variant="solo-inverted"
+              variant="outlined"
               flat
+              color="primary"
               width="100%"
-              style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
-              hide-details
+              hide-details="auto"
               single-line
             ></v-text-field>
           </v-col>
@@ -47,9 +47,8 @@
           :headers="inventoryHeaders"
           :items="inventoryItems"
           :search="search"
-          :items-per-page="5"
+          height="auto"
           class="bg-cardColor"
-          :theme="isdarkmode ? 'dark' : 'light'"
           :row-props="getRowProps"
         >
           <template v-slot:[`item.actions`]="{ item }">

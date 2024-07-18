@@ -7,11 +7,15 @@
     :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
-        >Add</v-btn
+      <v-btn
+        class="text-none font-weight-regular hello"
+        color="secondary"
+        v-bind="activatorProps"
+        variant="elevated"
+        ><v-icon icon="fa: fa-solid fa-plus" color=""></v-icon>Add Inventory</v-btn
       >
     </template>
-    <v-card >
+    <v-card>
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
         Add Inventory
@@ -19,28 +23,49 @@
       <v-divider></v-divider>
       <v-card-text>
         <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
-          <v-spacer></v-spacer>
           <v-col>
-            <v-col>
-              <small class="text-caption white--text">Name</small
-              ><v-text-field v-model="name" color="secondary" required></v-text-field
-            ></v-col>
-            <v-col>
-              <small class="text-caption white--text">Description</small
-              ><v-text-field v-model="description" color="secondary" required></v-text-field
-            ></v-col>
+            <v-row>
+              <v-col>
+                <h6>Name</h6>
+                <v-text-field
+                  v-model="name"
+                  color="secondary"
+                  required
+                  hide-details="auto"
+                ></v-text-field
+              ></v-col>
+              <v-col>
+                <h6>Description</h6>
+                <v-text-field
+                  v-model="description"
+                  color="secondary"
+                  required
+                  hide-details="auto"
+                ></v-text-field></v-col
+            ></v-row>
+
             <v-row
               ><v-col col="4">
-                <small class="text-caption white--text">Cost Price</small
-                ><v-text-field v-model="costPrice" color="secondary" required></v-text-field
+                <h6>Cost Price</h6>
+                <v-text-field
+                  v-model="costPrice"
+                  color="secondary"
+                  required
+                  hide-details="auto"
+                ></v-text-field
               ></v-col>
               <v-col col="4">
-                <small class="text-caption white--text">Current Stock Level</small
-                ><v-text-field v-model="currentStockLevel" color="secondary" required></v-text-field
+                <h6>Current Stock Level</h6>
+                <v-text-field
+                  v-model="currentStockLevel"
+                  color="secondary"
+                  required
+                  hide-details="auto"
+                ></v-text-field
               ></v-col>
               <v-col col="4">
-                <small class="text-caption white--text">Reorder Level</small
-                ><v-text-field
+                <h6>Reorder Level</h6>
+                <v-text-field
                   v-model="reorderLevel"
                   color="secondary"
                   required
@@ -49,11 +74,16 @@
           </v-col>
         </v-form>
       </v-card-text>
+      <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
         <Toast />
-        <v-btn @click="createInventoryItem" color="success">Create</v-btn>
-        <v-btn @click="close" color="error">Cancel</v-btn>
+        <v-btn @click="createInventoryItem" color="success"
+          >Create<v-icon icon="fa:fa-solid fa-plus" color="success" size="small" end></v-icon
+        ></v-btn>
+        <v-btn @click="close" color="error"
+          >Cancel <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon
+        ></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
