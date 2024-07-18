@@ -1,11 +1,5 @@
 import { Types } from 'mongoose';
-import {
-  IsMongoId,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateInventoryDto {
@@ -33,11 +27,6 @@ export class UpdateInventoryDto {
   @ApiProperty()
   @IsNumber()
   reorderLevel: number;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  @ApiProperty()
-  companyId: Types.ObjectId;
 }
 
 export class updateInventoryResponseDto {
