@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-divider></v-divider>
-    <h3 class="pb-2">Check Off Complated Tasks</h3>
+    <h3 class="pt-5">Check Off Complated Tasks</h3>
     <v-select
         v-model="value"
         :items="items"
@@ -9,6 +9,8 @@
         chips
         multiple
         variant="solo"
+        class="pt-4"
+        hide-details
     ></v-select>
     <v-btn color="success" @click="saveChecklist">Save</v-btn>
   </div>

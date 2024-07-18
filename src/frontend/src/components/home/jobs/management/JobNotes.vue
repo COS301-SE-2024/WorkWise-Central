@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-divider></v-divider>
-    <h3>Add job notes</h3>
+    <h3 class="pt-5">Add job notes</h3>
     <v-container>
       <v-row v-for="(note, index) in notes" :key="index" class="d-flex align-center mb-3">
         <v-col cols="11">
@@ -11,11 +11,13 @@
               dense
               readonly
               :clearable="false"
+              class="pt-4"
+              hide-details
           ></v-text-field>
         </v-col>
         <v-col cols="1">
           <v-btn icon @click="deleteNote(index)">
-            <v-icon color="red" class="fa fa-trash"></v-icon>
+            <v-icon color="red" class="fa fa-trash pt-4" ></v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -26,6 +28,7 @@
           auto-grow
           variant="solo"
           hint="Add a job note"
+          hide-details
       ></v-textarea>
       <v-btn color="success" @click="addNote">Add Note</v-btn>
     </v-container>

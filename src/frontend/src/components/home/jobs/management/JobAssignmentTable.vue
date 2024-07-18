@@ -193,18 +193,20 @@
                         <v-divider></v-divider>
                         <v-col class="text-center">
                           <h4>Dates</h4>
-                          <v-col>
-                            <label>Start Date</label><v-spacer></v-spacer>
-                            <small class="text-caption">
-                              {{ selectedJob.startDate }}
-                            </small>
-                          </v-col>
-                          <v-col>
-                            <label>End Date</label><v-spacer></v-spacer>
-                            <small class="text-caption">
-                              {{ selectedJob.endDate }}
-                            </small>
-                          </v-col>
+                          <v-row>
+                            <v-col>
+                              <label>Start Date</label><v-spacer></v-spacer>
+                              <small class="text-caption">
+                                {{ selectedJob.startDate }}
+                              </small>
+                            </v-col>
+                            <v-col>
+                              <label>End Date</label><v-spacer></v-spacer>
+                              <small class="text-caption">
+                                {{ selectedJob.endDate }}
+                              </small>
+                            </v-col>
+                          </v-row>
                         </v-col>
                       </v-col>
 

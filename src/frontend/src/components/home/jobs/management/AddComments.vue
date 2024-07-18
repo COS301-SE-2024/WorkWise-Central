@@ -1,12 +1,14 @@
 <template>
   <div>
     <v-divider></v-divider>
-    <h3>Add a comment</h3>
+    <h3 class="pt-5">Add a comment</h3>
     <v-textarea
         label="Comment"
         clearable prepend-icon="fa: fa-solid fa-comment"
         variant="solo"
         hint="Enter your comment"
+        class="pt-4"
+        hide-details
     >
     </v-textarea>
     <v-btn color="success" @click="comment">Comment</v-btn>
