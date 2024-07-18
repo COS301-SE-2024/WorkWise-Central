@@ -318,12 +318,12 @@ const fetchJobData = async () => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-
+  const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get('http://localhost:3000/job/all', config)
+    const response = await axios.get(apiUrl + `job/all/company/detailed/${localStorage['currentCompany']}`, config)
     const jobData = response.data.data
 
     console.log(response.data)
@@ -332,78 +332,27 @@ const fetchJobData = async () => {
     const jobs = Array.isArray(jobData) ? jobData : [jobData]
 
     // Map job data to include necessary details
-    const mappedJobs = jobs.map((job) => ({
-      jobId: job._id,
-      heading: job.details.heading,
-      jobDescription: job.details.description,
-      startDate: job.details.startDate,
-      endDate: job.details.endDate,
-      status: job.status,
-      clientId: job.clientId,
-      street: job.details.address.street,
-      suburb: job.details.address.suburb,
-      city: job.details.address.city,
-      postalCode: job.details.address.postalCode,
-      complex: job.details.address.complex,
-      houseNumber: job.details.address.houseNumber,
-      imagesTaken: job.recordedDetails.imagesTaken, // is an array
-      inventoryUsed: job.recordedDetails.inventoryUsed, // is an array
-      taskList: job.taskList, // is an array
-      comments: job.comments // is an array
-    }))
-
-    // Fetch client data for each job
-    // Return combined job and client data
-    return await fetchClientData(mappedJobs)
+    return jobs.map((job) => ({
+          jobId: job._id,
+          heading: job.details.heading,
+          jobDescription: job.details.description,
+          startDate: job.details.startDate,
+          endDate: job.details.endDate,
+          status: job.status,
+          clientId: job.clientId,
+          street: job.details.address.street,
+          suburb: job.details.address.suburb,
+          city: job.details.address.city,
+          postalCode: job.details.address.postalCode,
+          complex: job.details.address.complex,
+          houseNumber: job.details.address.houseNumber,
+          imagesTaken: job.recordedDetails.imagesTaken, // is an array
+          inventoryUsed: job.recordedDetails.inventoryUsed, // is an array
+          taskList: job.taskList, // is an array
+          comments: job.comments // is an array
+          }));
   } catch (error) {
     console.error('Error fetching job data:', error)
-    throw error // Re-throw the error for handling elsewhere if needed
-  }
-}
-
-// Function to fetch client data for each job
-const fetchClientData = async (jobs) => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
-    }
-  }
-
-  try {
-    // Fetch client data for each job asynchronously
-    const promises = jobs.map(async (job) => {
-      const response = await axios.get(`http://localhost:3000/client/id/${job.clientId}`, config)
-      const client = response.data.data
-
-      const clientName = `${client.details.firstName} ${client.details.lastName}`
-
-      // Return complete job details including client name
-      return {
-        jobId: job.jobId,
-        heading: job.heading,
-        jobDescription: job.jobDescription, // Corrected reference to jobDescription
-        startDate: job.startDate,
-        endDate: job.endDate,
-        status: job.status,
-        clientName: clientName,
-        street: job.street,
-        suburb: job.suburb,
-        city: job.city,
-        postalCode: job.postalCode,
-        complex: job.complex,
-        houseNumber: job.houseNumber,
-        imagesTaken: job.imagesTaken,
-        inventoryUsed: job.inventoryUsed,
-        taskList: job.taskList,
-        comments: job.comments
-      }
-    })
-
-    // Wait for all promises to resolve
-    return await Promise.all(promises)
-  } catch (error) {
-    console.error('Error fetching client data:', error)
     throw error // Re-throw the error for handling elsewhere if needed
   }
 }

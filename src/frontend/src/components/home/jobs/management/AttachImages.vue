@@ -8,6 +8,7 @@
         prepend-icon="mdi-camera"
         variant="solo"
         hide-details
+        multiple
     ></v-file-input>
     <v-btn color="success" @click="upload">Upload</v-btn>
   </div>
