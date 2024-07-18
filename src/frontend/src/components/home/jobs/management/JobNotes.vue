@@ -10,7 +10,7 @@
               label="Note"
               dense
               readonly
-              clearable="false"
+              :clearable="false"
           ></v-text-field>
         </v-col>
         <v-col cols="1">
