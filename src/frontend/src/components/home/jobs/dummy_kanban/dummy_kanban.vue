@@ -12,37 +12,35 @@
         role="listbox"
         aria-dropeffect="move"
       >
-        <v-card>
-          <v-card-title
-            :style="{ color: 'black' }"
-            class="font-weight-black"
-            v-if="column.status === 'Todo'"
-            ><v-icon class="pr-1" color="blue">{{ 'fa: fa-solid fa-clipboard-list' }}</v-icon>
+        <v-card variant="flat">
+          <v-card-title color="red" class="font-weight-black" v-if="column.status === 'Todo'"
+            ><v-icon class="pr-1" color="#708090">{{ 'fa: fa-solid fa-clipboard-list' }}</v-icon>
             {{ column.status }}
             <v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
               {{ column.cards.length }}
             </v-chip></v-card-title
           >
-          <v-card-subtitle></v-card-subtitle>
-          <v-card-title class="font-weight-black" v-if="column.status === 'In Progress'"
-            ><v-icon color="primary">{{ 'fa:fas fa-spinner fa-spin' }}</v-icon> {{ column.status
+          <v-card-title class="font-weight-black" v-else-if="column.status === 'In Progress'"
+            ><v-icon color="blue">{{ 'fa:fas fa-spinner fa-spin' }}</v-icon> {{ column.status
             }}<v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
               {{ column.cards.length }}
             </v-chip></v-card-title
-          ><v-card-title class="font-weight-black" v-if="column.status === 'Awaiting review'"
-            ><v-icon color="purple">{{ 'fa:fas fa-hourglass-half' }}</v-icon> {{ column.status
-            }}<v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
+          ><v-card-title class="font-weight-black" v-else-if="column.status === 'Awaiting review'"
+            ><v-icon color="purple">{{ 'fa:fas fa-hourglass-half' }}</v-icon> {{ column.status }}
+            <v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
               {{ column.cards.length }}
             </v-chip></v-card-title
-          ><v-card-title class="font-weight-black" v-if="column.status === 'Done'"
+          ><v-card-title class="font-weight-black" v-else-if="column.status === 'Done'"
             ><v-icon color="green">{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon>
-            {{ column.status
-            }}<v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
+            {{ column.status }}
+            <v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
               {{ column.cards.length }}
             </v-chip></v-card-title
           >
+
           <v-card-text>
             <v-card
+              variant="flat"
               v-for="card in column.cards"
               :key="card.jobId"
               class="kanban-card mb-2"
@@ -54,6 +52,44 @@
               role="option"
             >
               <v-card-title>{{ card.heading }}</v-card-title>
+              <v-card-subtitle v-if="column.status === 'Todo'"
+                ><v-chip color="#708090" variant="flat" rounded="sm" density="comfortable">{{
+                  card.status
+                }}</v-chip></v-card-subtitle
+              ><v-card-subtitle v-else-if="column.status === 'In Progress'"
+                ><v-chip color="blue" variant="flat" rounded="sm" density="comfortable">{{
+                  card.status
+                }}</v-chip></v-card-subtitle
+              ><v-card-subtitle v-else-if="column.status === 'Awaiting review'"
+                ><v-chip color="purple" variant="flat" rounded="sm" density="comfortable">{{
+                  card.status
+                }}</v-chip></v-card-subtitle
+              ><v-card-subtitle v-else-if="column.status === 'Done'"
+                ><v-chip color="green" variant="flat" rounded="sm" density="comfortable">{{
+                  card.status
+                }}</v-chip></v-card-subtitle
+              >
+
+              <v-card-text class="text-body-1">
+                <b>Description:</b> {{ card.jobDescription }}</v-card-text
+              >
+
+              <v-card-subtitle v-if="card.priority === 'High'"
+                ><v-chip color="#FF0000" variant="tonal" density="comfortable"
+                  >Priority: {{ card.priority }}</v-chip
+                ></v-card-subtitle
+              ><v-card-subtitle v-if="card.priority === 'Medium'"
+                ><v-chip color="#FFA500" variant="tonal" density="comfortable"
+                  >Priority: {{ card.priority }}</v-chip
+                ></v-card-subtitle
+              ><v-card-subtitle v-if="card.priority === 'Low'"
+                ><v-chip color="#008000" variant="tonal" density="comfortable"
+                  >Priority: {{ card.priority }}</v-chip
+                ></v-card-subtitle
+              >
+              <v-card-text>
+                <v-chip color="blue" variant="tonal" v-for="tag in card.tags">{{ tag }}</v-chip>
+              </v-card-text>
             </v-card>
           </v-card-text>
         </v-card>
@@ -68,15 +104,13 @@ import type { JobCardDataFormat, Column } from '../types'
 import '@mdi/font/css/materialdesignicons.css' // icon import
 
 const columns = ref<Column[]>([
-  {
-    id: 1,
-    status: 'Todo',
-    cards: []
-  },
+  { id: 1, status: 'Todo', cards: [] },
   { id: 2, status: 'In Progress', cards: [] },
   { id: 3, status: 'Awaiting review', cards: [] },
   { id: 4, status: 'Done', cards: [] }
 ])
+
+const order_of_sorting_in_columns = ref<string[]>(['High', 'Medium', 'Low'])
 
 const draggedCard = ref<JobCardDataFormat | null>(null)
 const sourceColumn = ref<Column | null>(null)
@@ -279,20 +313,15 @@ function loading(cards: JobCardDataFormat[]) {
   for (let i = 0; i < cards.length; i++) {
     switch (cards[i].status) {
       case 'Todo':
-        // columns.value[0].cards.push(cards[i])
         loadCardsInRespectiveColumns(cards[i], columns.value[0])
-
         break
       case 'In Progress':
-        // columns.value[1].cards.push(cards[i])
         loadCardsInRespectiveColumns(cards[i], columns.value[1])
         break
       case 'Awaiting review':
-        // columns.value[2].cards.push(cards[i])
         loadCardsInRespectiveColumns(cards[i], columns.value[2])
         break
       case 'Done':
-        // columns.value[3].cards.push(cards[i])
         loadCardsInRespectiveColumns(cards[i], columns.value[3])
         break
       default:
@@ -328,6 +357,7 @@ function onDrop(targetColumn: Column) {
     sourceColumn.value.cards = sourceColumn.value.cards.filter(
       (c) => c.jobId !== draggedCard.value!.jobId
     )
+    draggedCard.value.status = targetColumn.status
     targetColumn.cards.push(draggedCard.value)
     draggedCard.value = null
     sourceColumn.value = null
@@ -341,6 +371,23 @@ function isDropTarget(column: Column) {
 
 function isDragging(card: JobCardDataFormat) {
   return draggedCard.value === card
+}
+
+const N_M_Sort = (sorted: string[], sortee: string[]) => {
+  let tracker = new Map()
+
+  for (let i = 0; i < sortee.length; i++) if (!tracker.has(sortee[i])) tracker.set(sortee[i], i + 1)
+
+  sorted.sort((x: string, y: string) => {
+    let tracker1: number = tracker.get(x) || 0
+    let tracker2: number = tracker.get(y) || 0
+
+    if (tracker1 === 0 && tracker2 === 0) return x - y
+    else if (tracker1 === 0) return 1
+    else if (tracker2 === 0) return -1
+
+    return tracker1 - tracker2
+  })
 }
 
 onMounted(() => {
