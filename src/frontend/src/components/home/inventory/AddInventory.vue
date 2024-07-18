@@ -7,25 +7,16 @@
     :theme="isdarkmode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
-        <v-btn
-          rounded="md"
-          class="text-none font-weight-regular"
-          style="font-size: 20px"
-          text="Add to Inventory"
-          prepend-icon="fa:fa-solid fa-plus"
-          variant="elevated"
-          color="secondary"
-          v-bind="activatorProps"
-        >
-        </v-btn>
-      </v-defaults-provider>
+      <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
+        >Add</v-btn
+      >
     </template>
     <v-card :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
-        <span>Add Inventory</span>
+        Add Inventory
       </v-card-title>
+      <v-divider></v-divider>
       <v-card-text>
         <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission"> </v-form>
       </v-card-text>
@@ -42,7 +33,15 @@ export default defineComponent({
   components: {
     Toast
   },
-  data: () => ({}),
+  data: () => ({
+    addDialog: false,
+    isdarkmode: localStorage.getItem('isdarkmode') === 'true' ? true : false,
+    light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
+    dark_theme_text_color: 'color: #DCDBDB',
+    modal_dark_theme_color: '#2b2b2b',
+    modal_light_theme_color: '#FFFFFF',
+    valid: false
+  }),
   methods: {
     addInventory() {
       this.$toast.add({
@@ -51,6 +50,14 @@ export default defineComponent({
         detail: 'Inventory Added',
         life: 3000
       })
+    },
+    handleSubmission() {
+      if (this.valid) {
+        this.addInventory()
+      }
+    },
+    close() {
+      this.addDialog = false
     }
   }
 })

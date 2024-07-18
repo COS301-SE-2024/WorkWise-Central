@@ -5,9 +5,9 @@
     :theme="isdarkmode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-defaults-provider v-bind="activatorProps">
-        <v-btn> </v-btn>
-      </v-defaults-provider>
+      <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
+        >Delete</v-btn
+      >
     </template>
     <v-card>
       <v-card-title>
@@ -41,6 +41,9 @@ import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 export default defineComponent({
   name: 'DeleteInventory',
+  props:{
+    inventory_id: String
+  },
   components: {
     Toast
   },

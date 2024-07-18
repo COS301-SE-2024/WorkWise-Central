@@ -1,15 +1,12 @@
 <template>
   <v-dialog>
-    <template>
-      <v-defaults-provider>
-        <v-btn> </v-btn>
-      </v-defaults-provider>
+    <template v-slot:activator="{ props: activatorProps }">
+      <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
+        >Edit</v-btn
+      >
     </template>
     <v-card>
-      <v-card-title>
-        <v-icon>mdi-pencil</v-icon>
-        <span>Edit Inventory</span>
-      </v-card-title>
+      <v-card-title class="text-center"> Edit Inventory </v-card-title>
       <v-card-text></v-card-text>
       <v-card-actions></v-card-actions>
     </v-card>
@@ -21,6 +18,10 @@ import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 export default defineComponent({
   name: 'EditInventory',
+  props: {
+    inventory_id: String,
+    inventoryItem: Object
+  },
   components: {
     Toast
   },

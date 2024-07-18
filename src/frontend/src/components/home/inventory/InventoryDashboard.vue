@@ -53,25 +53,50 @@
           :row-props="getRowProps"
         >
           <template v-slot:[`item.actions`]="{ item }">
-            <v-btn rounded="xl" variant="plain" @click="(actionsMenu = true), selectItem(item)">
-              <v-icon color="primary">mdi-dots-horizontal</v-icon>
-            </v-btn>
+            <v-menu v-model="actionsMenu" open-on-hover>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  rounded="xl"
+                  variant="plain"
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="fuga(), selectItem(item)"
+                >
+                  <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item>
+                  <v-list-item-content class="text-h5 font-weight-regular text-center">
+                    {{ selectedItemName }}
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-content>
+                    What would you like to do with this inventory item
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-action>
+                    <EditInventory :inventory_id="selectedItemID" :inventoryItem="selectedItem" />
+                  </v-list-item-action>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-action>
+                    <InventoryDetails :inventoryItem="selectedItem" />
+                  </v-list-item-action>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-action>
+                    <DeleteInventory :inventory_id="selectedItemID" />
+                  </v-list-item-action>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </template>
         </v-data-table>
       </v-card-text>
     </v-card>
-
-    <v-menu v-model="actionsMenu" max-width="500px">
-      <v-card>
-        <v-card-title class="text-h5 font-weight-regular bg-primary text-center"></v-card-title>
-        <v-card-text> What would you like to do with this inventory item</v-card-text>
-        <v-card-actions>
-          <InventoryDetails />
-          <EditInventory />
-          <DeleteInventory />
-        </v-card-actions>
-      </v-card>
-    </v-menu>
   </v-container>
 </template>
 
@@ -81,6 +106,7 @@ import AddInventory from './AddInventory.vue'
 import DeleteInventory from './DeleteInventory.vue'
 import EditInventory from './EditInventory.vue'
 import InventoryDetails from './InventoryDetails.vue'
+import axios from 'axios'
 
 export default defineComponent({
   name: 'InventoryDashboard',
@@ -90,11 +116,15 @@ export default defineComponent({
       inventoryHeaders: [
         { title: 'Name', value: 'name', sortable: true, key: 'name' },
         { title: 'Description', value: 'description', sortable: true, key: 'description' },
-        { title: 'Quantity', value: 'quantity', sortable: true, key: 'quantity' },
-        { title: 'Price', value: 'price', sortable: true, key: 'price' },
-        { title: 'Category', value: 'category', sortable: true, key: 'category' },
-        { title: 'Supplier', value: 'supplier', sortable: true, key: 'supplier' },
-        { title: 'Date', value: 'date', sortable: true, key: 'date' },
+        { title: 'Cost Price', value: 'costPrice', sortable: true, key: 'costPrice' },
+        {
+          title: 'Current Stock Level',
+          value: 'currentStockLevel',
+          sortable: true,
+          key: 'currentStockLevel'
+        },
+        { title: 'Reorder Level', value: 'reorderLevel', sortable: true, key: 'reorderLevel' },
+        // Keep the actions column if you have actions like edit or delete for each row
         { title: '', value: 'actions', key: 'actions', sortable: false, class: 'my-header-style' }
       ],
       form: {
@@ -113,69 +143,43 @@ export default defineComponent({
         'Supplier 9',
         'Supplier 10'
       ],
-      inventoryItems: [
-        {
-          name: 'Laptop',
-          description: 'Dell Inspiron 15',
-          quantity: 10,
-          price: 15000,
-          category: 'Electronics',
-          supplier: 'Supplier 1',
-          date: '2021-09-01'
-        },
-        {
-          name: 'T-Shirt',
-          description: 'Blue T-Shirt',
-          quantity: 20,
-          price: 500,
-          category: 'Clothing',
-          supplier: 'Supplier 2',
-          date: '2021-09-02'
-        },
-        {
-          name: 'Rice',
-          description: 'Basmati Rice',
-          quantity: 50,
-          price: 1000,
-          category: 'Food',
-          supplier: 'Supplier 3',
-          date: '2021-09-03'
-        },
-        {
-          name: 'Chair',
-          description: 'Office Chair',
-          quantity: 5,
-          price: 2000,
-          category: 'Furniture',
-          supplier: 'Supplier 4',
-          date: '2021-09-04'
-        },
-        {
-          name: 'Pen',
-          description: 'Blue Pen',
-          quantity: 100,
-          price: 10,
-          category: 'Stationery',
-          supplier: 'Supplier 5',
-          date: '2021-09-05'
-        }
-      ],
+      inventoryItems: [],
       search: '',
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       selectedItem: {},
-      selectedItemName: ''
+      selectedItemName: '',
+      selectedItemID: '',
+      actionsMenu: false
     }
   },
   methods: {
     selectItem(item) {
+      console.log(item)
       this.selectedItem = item
       this.selectedItemName = item.name
+      this.selectItemID = item._id
     },
     getRowProps({ index }) {
       return {
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
+    },
+    fuga() {
+      this.actionsMenu = true
+    },
+    async getInventory() {
+      // Fetch inventory items from the backend
+      try {
+        const response = await axios.get('http://localhost:3000/inventory/all')
+        console.log(response.data.data)
+        this.inventoryItems = response.data.data
+      } catch (error) {
+        console.error(error)
+      }
     }
+  },
+  mounted() {
+    this.getInventory()
   }
 })
 </script>
