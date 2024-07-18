@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-divider></v-divider>
-    <h3 class="pt-5">Add job notes</h3>
+    <h3 class="pt-4">Add job notes</h3>
     <v-container>
       <v-row v-for="(note, index) in notes" :key="index" class="d-flex align-center mb-3">
         <v-col cols="11">
@@ -13,6 +13,7 @@
               :clearable="false"
               class="pt-4"
               hide-details
+              prepend-icon="fa: fa-solid fa-sticky-note"
           ></v-text-field>
         </v-col>
         <v-col cols="1">
@@ -29,6 +30,7 @@
           variant="solo"
           hint="Add a job note"
           hide-details
+          prepend-icon="fa: fa-solid fa-sticky-note"
       ></v-textarea>
       <v-btn color="success" @click="addNote">Add Note</v-btn>
     </v-container>

@@ -122,7 +122,7 @@
                   <v-card flat class="text-center elevation-0">
                     <v-card-text>
                       <v-col>
-                        <v-col class="text-center">
+                        <v-col class="text-center pt-0">
                           <h2>{{ selectedJob.heading }}</h2>
                         </v-col>
                         <v-divider></v-divider>

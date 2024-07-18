@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-divider></v-divider>
-    <h3 class="pt-5">Add a comment</h3>
+    <h3 class="pt-4">Add a comment</h3>
     <v-textarea
         label="Comment"
         clearable prepend-icon="fa: fa-solid fa-comment"
