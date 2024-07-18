@@ -80,17 +80,21 @@
 <script>
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
+
 export default defineComponent({
   name: 'InventoryDetails',
-  prop: {
-    inventoryItem: Object
+  props: {
+    inventoryItem: Object,
+    
   },
   components: {
     Toast
   },
-  data: () => ({
-    dialog: false
-  }),
+  data() {
+    return {
+      dialog: false
+    }
+  },
   methods: {
     addInventory() {
       this.$toast.add({

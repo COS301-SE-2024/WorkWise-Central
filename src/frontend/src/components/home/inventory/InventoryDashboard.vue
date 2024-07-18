@@ -78,7 +78,7 @@
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-action>
-                    <EditInventory :inventory_id="selectedItemID" :inventoryItem="selectedItem" />
+                    <EditInventory :inventory_id="selectedItemID" :editedItem="selectedItem" />
                   </v-list-item-action>
                 </v-list-item>
                 <v-list-item>
@@ -88,7 +88,10 @@
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-action>
-                    <DeleteInventory :inventory_id="selectedItemID" />
+                    <DeleteInventory
+                      :inventory_id="selectedItemID"
+                      :inventoryName="selectedItemName"
+                    />
                   </v-list-item-action>
                 </v-list-item>
               </v-list>
@@ -157,7 +160,7 @@ export default defineComponent({
       console.log(item)
       this.selectedItem = item
       this.selectedItemName = item.name
-      this.selectItemID = item._id
+      this.selectedItemID = item._id
     },
     getRowProps({ index }) {
       return {

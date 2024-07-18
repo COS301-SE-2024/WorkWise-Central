@@ -18,7 +18,7 @@
         ><v-container>
           <v-row>
             <p class="font-weight-regular">
-              Are you sure you want to delete <strong>{{ clientName }}</strong
+              Are you sure you want to delete <strong>{{ inventoryName }}</strong
               >? This action cannot be reversed.
             </p>
           </v-row>
@@ -39,10 +39,12 @@
 <script>
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
+import axios from 'axios'
 export default defineComponent({
   name: 'DeleteInventory',
-  props:{
-    inventory_id: String
+  props: {
+    inventory_id: String,
+    inventoryName: String
   },
   components: {
     Toast
@@ -58,16 +60,48 @@ export default defineComponent({
     modal_light_theme_color: '#FFFFFF'
   }),
   methods: {
-    deleteInventory() {
-      this.$toast.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Inventory Added',
-        life: 3000
-      })
+    async deleteInventory() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      await axios
+        .delete(`${apiURL}inventory/${this.inventory_id}`, config)
+        .then(() => {
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Inventory Deleted',
+            life: 3000
+          })
+          this.deleteDialog = false
+        })
+        .catch(() => {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Inventory Not Deleted',
+            life: 3000
+          })
+        })
     },
     close() {
       this.deleteDialog = false
+    },
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status >= 200 && res.status < 300
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
   }
 })
