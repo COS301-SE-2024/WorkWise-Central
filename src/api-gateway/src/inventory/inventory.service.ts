@@ -38,6 +38,14 @@ export class InventoryService {
     return true;
   }
 
+  async validateUpdateInventory(id: Types.ObjectId) {
+    //Checking that the inventory item exists
+    if (!(await this.InventoryExists(id))) {
+      return false;
+    }
+    return true;
+  }
+
   async create(createInventoryDto: CreateInventoryDto) {
     console.log('create function');
     if (this.validateCreateInventory(createInventoryDto)) {
@@ -74,7 +82,10 @@ export class InventoryService {
   }
 
   async update(id: Types.ObjectId, updateInventoryDto: UpdateInventoryDto) {
-    return await this.inventoryRepository.update(id, updateInventoryDto);
+    if (this.validateUpdateInventory(id)) {
+      return await this.inventoryRepository.update(id, updateInventoryDto);
+    }
+    return null;
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {
