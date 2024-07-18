@@ -66,7 +66,7 @@ const saveItem = (index: number) => {
     if (inventory.value[index].name.trim() !== '' && inventory.value[index].quantity > 0) {
       inventory.value[index].name = inventory.value[index].name.trim();
       // textfield and quantity for the item become index readonly
-      // post the item to the backend
+      // post the list of inventory items to the backend
     } else {
       // display error toast
     }

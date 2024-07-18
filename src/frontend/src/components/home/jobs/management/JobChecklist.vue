@@ -19,17 +19,17 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-const checklistSection = ref(false);
+// const props = defineProps(checklistItems);
+
+// checklist items are populated using the passed in prop
 const items = ref(['foo', 'bar', 'fizz', 'buzz']);
-const value = ref(['foo', 'bar', 'fizz', 'buzz']);
+const value = ref([]);
+
 
 const saveChecklist = () => {
-  checklistSection.value = false;
+  // once the save button is clicked the checklist is updated and the backed is updated
 };
 
-const cancel = () => {
-  checklistSection.value = false;
-};
 </script>
 
 <style></style>

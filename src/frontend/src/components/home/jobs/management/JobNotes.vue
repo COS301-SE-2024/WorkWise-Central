@@ -40,7 +40,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const noteSection = ref(false);
 const notes = ref([{ text: 'Initial note' }]);
 const newNote = ref('');
 
@@ -48,21 +47,15 @@ const addNote = () => {
   if (newNote.value.trim() !== '') {
     notes.value.push({ text: newNote.value.trim() });
     newNote.value = '';
+    // make the update job api request here with the notes as the patch
   }
 };
 
 const deleteNote = (index: number) => {
   notes.value.splice(index, 1);
+  // make update job api request here with the notes as the patch
 };
 
-const saveNotes = () => {
-  // Logic to save notes data
-  noteSection.value = false;
-};
-
-const cancel = () => {
-  noteSection.value = false;
-};
 </script>
 
 <style></style>
