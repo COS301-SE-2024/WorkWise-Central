@@ -67,3 +67,8 @@ export class UpdateCompanyDto {
   @IsOptional()
   private?: boolean;
 }
+
+export class UpdateCompanyLogoDto {
+  @ApiProperty({ type: 'string', format: 'binary', required: true })
+  logo: Express.Multer.File;
+}

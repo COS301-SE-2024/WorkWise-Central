@@ -13,12 +13,10 @@
         >
           <template v-slot:top>
             <v-toolbar flat>
-              <v-toolbar-title>Roles and Permissions</v-toolbar-title>
+              <v-toolbar-title class="h4">Roles and Permissions</v-toolbar-title>
             </v-toolbar>
           </template>
-          <template v-slot:[`item.roleName`]="{ item }">
-            <v-chip variant="elevated" color="elementTextColor">{{ item }}</v-chip>
-          </template>
+          <template v-slot:[`item.roleName`]> </template>
           <template v-slot:[`item.permission`]="{ item }">
             <v-select
               v-model="item.permission"
@@ -60,7 +58,8 @@ export default defineComponent({
     roleNames: [],
     rolePermissions: [],
     permissions: [],
-    value: []
+    value: [],
+    companyID: ''
   }),
 
   methods: {
@@ -72,15 +71,15 @@ export default defineComponent({
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
       await axios
-        .get('http://localhost:3000/role/all', config)
+        .get(`http://localhost:3000/role/all/${this.companyID}`, config)
         .then((response) => {
+          console.log(response.data.data[0])
           for (let i = 0; i < response.data.data.length; i++) {
             const { _id, roleName, permissionSuite } = response.data.data[i]
-
             if (!this.roleIds.includes(_id)) {
               this.roleIds.push(_id)
             }
@@ -115,11 +114,11 @@ export default defineComponent({
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
       await axios
-        .get('http://localhost:3000/role/all', config)
+        .get(`http://localhost:3000/role/all/${this.companyID}`, config)
         .then((response) => {
           for (let i = 0; i < response.data.data.length; i++) {
             if (response.data.data[i].roleName === 'Owner') {
@@ -130,6 +129,16 @@ export default defineComponent({
               break
             }
           }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    async updateRole(roleID) {
+      await axios
+        .put(`http://localhost:3000/role/${roleID}`, config)
+        .then((response) => {
+          console.log(response)
         })
         .catch((error) => {
           console.log(error)
@@ -170,7 +179,8 @@ export default defineComponent({
   mounted() {
     this.getRoles()
     this.getPermissions()
-    this.isdarkmode = sessionStorage.getItem('theme') === 'true' ? true : false
+    this.companyID = localStorage.getItem('currentCompany')
+    this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
   }
 })
 </script>

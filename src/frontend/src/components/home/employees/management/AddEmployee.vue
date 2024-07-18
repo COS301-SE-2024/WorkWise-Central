@@ -3,7 +3,7 @@
     max-height="800"
     max-width="600"
     style="font-family: Nunito, sans-serif"
-    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :theme="isdarkmode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
@@ -36,7 +36,7 @@
 
                 <v-text-field
                   bg-color="background"
-                  v-model="req_obj2.userName"
+                  v-model="req_obj2.newUserUsername"
                   placeholder="Employee Username"
                   rounded="md"
                   required
@@ -89,12 +89,13 @@ export default defineComponent({
     modal_light_theme_color: '#FFFFFF',
 
     req_obj: {
-      companyId: sessionStorage['currentCompany'],
+      companyId: localStorage['currentCompany'],
       userId: ''
     },
     req_obj2: {
-      userName: '',
-      companyId: sessionStorage['currentCompany']
+      adminId: localStorage['employeeId'],
+      currentCompany: localStorage['currentCompany'],
+      newUserUsername: ''
     }
   }),
   methods: {
@@ -102,32 +103,31 @@ export default defineComponent({
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
       const apiURL = await this.getRequestUrl()
-      try {
-        const employee_response = await axios.get(apiURL + `users/all`, config)
-        const emp_lst = employee_response.data.data
-        console.log(emp_lst)
-        for (let i = 0; i < emp_lst.length; i++) {
-          if (emp_lst[i].systemDetails.username === this.req_obj2.userName) {
-            this.req_obj.userId = emp_lst[i]._id
-            let response = await axios.post(apiURL + 'employee/create', this.req_obj, config)
-            console.log(response)
-            this.$toast.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Employee added successfully',
-              life: 3000
-            })
-            this.$router.push('/manager-employees-t')
-            break
-          }
-        }
-      } catch (error) {
-        console.log('Error fetching data:', error)
-      }
+      axios
+        .post(apiURL + 'company/add', this.req_obj2, config)
+        .then((response) => {
+          console.log(response)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Employee Added Successfully',
+            life: 3000
+          })
+          window.location.reload()
+        })
+        .catch((error) => {
+          console.log(error)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to add employee',
+            life: 3000
+          })
+        })
     },
     async isLocalAvailable(localUrl: string) {
       try {
@@ -141,6 +141,10 @@ export default defineComponent({
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     }
+  },
+  mounted() {
+    this.req_obj2.adminId = localStorage['employeeId']
+    this.req_obj2.currentCompany = localStorage['currentCompany']
   }
 })
 </script>

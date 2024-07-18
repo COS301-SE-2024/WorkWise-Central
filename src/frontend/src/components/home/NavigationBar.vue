@@ -8,8 +8,8 @@ const drawer = ref(true)
 const open = ref(['Dashboard'])
 
 const dashboardSubItems = ref([
-  { title: 'Home', icon: 'fa: fa-solid fa-house', routeName: 'dashboard' },
-  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
+  { title: 'Calender', icon: 'fa: fa-solid fa-house', routeName: 'dashboard' },
+  { title: 'Statistics', icon: 'fa: fa-solid fa-chart-line', routeName: 'statisticView' },
   { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
 ])
 
@@ -74,7 +74,7 @@ export default defineComponent({
     CompanyMain
   },
   data: () => ({
-    isdarkmode: sessionStorage.getItem('theme') === 'true'
+    isdarkmode: localStorage.getItem('theme') === 'true'
   }),
   // computed: {
   //   ...mapGetters(['isDarkMode'])
@@ -89,11 +89,11 @@ export default defineComponent({
         this.isdarkmode = true
         console.log(this.isdarkmode)
       }
-      sessionStorage.setItem('theme', this.isdarkmode.toString()) // save the theme to session storage
+      localStorage.setItem('theme', this.isdarkmode.toString()) // save the theme to session storage
     },
     logout(name: string) {
       if (name === 'splash') {
-        sessionStorage.clear()
+        localStorage.clear()
       }
     }
   }
@@ -283,6 +283,7 @@ export default defineComponent({
               ></v-list-item>
             </v-list-group>
           </v-list>
+
           <v-list v-model:open="open">
             <v-list-group fluid value="More">
               <template v-slot:activator="{ props }">

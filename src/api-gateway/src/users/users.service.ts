@@ -92,6 +92,13 @@ export class UsersService {
     return this.userRepository.findAll();
   }
 
+  async getAllUsersDetailed(): Promise<
+    (FlattenMaps<User> & { _id: Types.ObjectId })[]
+  > {
+    const populatedFields = ['currentEmployee'];
+    return this.userRepository.findAll(populatedFields);
+  }
+
   async getAllUsersInCompany(
     companyId: Types.ObjectId,
   ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
@@ -225,16 +232,41 @@ export class UsersService {
   }
 
   async updateUser(
-    id: Types.ObjectId,
+    userId: Types.ObjectId,
     updateUserDto: UpdateUserDto,
   ) /*: Promise<FlattenMaps<User> & { _id: Types.ObjectId }> */ {
-    const inputValidated = await this.updateUserValid(id, updateUserDto);
+    const inputValidated = await this.updateUserValid(userId, updateUserDto);
     if (!inputValidated.isValid) {
       throw new NotFoundException(inputValidated.message);
     }
 
     const updatedUser: FlattenMaps<User> & { _id: Types.ObjectId } =
-      await this.userRepository.update(id, updateUserDto);
+      await this.userRepository.update(userId, updateUserDto);
+    if (updatedUser == null) {
+      throw new NotFoundException('failed to update user');
+    }
+    return updatedUser;
+  }
+
+  async updateProfilePic(id: Types.ObjectId, file: Express.Multer.File) {
+    //TODO: Add validation
+    const uploadApiResponse = await this.fileService.uploadImage(file);
+    let newUrl: string;
+    if (uploadApiResponse.secure_url) {
+      console.log('Upload successful');
+      newUrl = uploadApiResponse.secure_url;
+      console.log(newUrl);
+    } else {
+      console.log('Failed to upload image');
+      return null;
+    }
+
+    const user = await this.getUserById(id);
+    user.profile.displayImage = newUrl;
+    const updatedUser = await this.userRepository.updateProfilePicture(
+      id,
+      user.profile,
+    );
     if (updatedUser == null) {
       throw new NotFoundException('failed to update user');
     }

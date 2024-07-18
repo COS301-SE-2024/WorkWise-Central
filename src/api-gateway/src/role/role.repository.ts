@@ -11,7 +11,7 @@ export class RoleRepository {
   ) {}
 
   async findAll() {
-    return this.roleModel.find().exec();
+    return this.roleModel.find().find().lean().exec();
   }
 
   async save(company: Role) {
@@ -21,7 +21,7 @@ export class RoleRepository {
 
   async findAllInCompany(companyId: Types.ObjectId) {
     const filter = companyId ? { companyId: companyId } : {};
-    return await this.roleModel.find(filter).exec();
+    return await this.roleModel.find(filter).find().lean().exec();
   }
 
   async findById(

@@ -14,7 +14,7 @@
     </v-app-bar>
     <!-- Main Content -->
     <v-main :theme="isdarkmode ? 'dark' : 'light'">
-      <v-row style="height: 800px" no-gutters>
+      <v-row style="height: 1000px" no-gutters>
         <!-- Left Half -->
         <v-col cols="6" sm="3" md="6" align-self="center">
           <v-row justify="center"
@@ -239,6 +239,7 @@
                     </v-form>
                   </v-col>
                   <v-col cols="8" offset="2">
+                    <Toast />
                     <v-btn
                       :disabled="!valid"
                       text
@@ -377,6 +378,7 @@
                     </v-form>
                   </v-col>
                   <v-col cols="8" offset="2">
+                    <Toast />
                     <v-btn
                       :disabled="!valid"
                       text
@@ -714,6 +716,8 @@ export default defineComponent({
     Toast
   },
   data: () => ({
+    localUrl: 'http://localhost:3000/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     click_create_client: false,
     saltRounds: 10,
     loginDialog: false,
@@ -784,6 +788,7 @@ export default defineComponent({
     confirm_password: '',
     showPassword: false,
     date: '',
+    emailExists: false,
     name: '',
     surname: '',
     username: '',
@@ -966,15 +971,16 @@ export default defineComponent({
       setTimeout(() => {
         this.loading = false
       }, 3000)
-      isdarkmode = sessionStorage.getItem('theme')
+      isdarkmode = localStorage.getItem('theme')
     },
     companyLogoHandler() {
       console.log('')
     },
     async login() {
+      const apiURL = await this.getRequestUrl()
       if (this.$refs.form.validate()) {
         await axios
-          .post('http://localhost:3000/auth/login', {
+          .post(apiURL + 'auth/login', {
             identifier: this.username,
             password: this.password
           })
@@ -982,19 +988,18 @@ export default defineComponent({
             console.log(response)
             console.log(response.data.access_token)
             console.log(response.data.user.joinedCompanies[0].companyId)
-            sessionStorage.setItem('access_token', response.data.access_token)
-            sessionStorage.setItem('id', response.data.id)
-            sessionStorage.setItem(
-              'currentCompany',
-              response.data.user.joinedCompanies[0].companyId
-            )
+            localStorage.setItem('access_token', response.data.access_token)
+            localStorage.setItem('id', response.data.id)
+            localStorage.setItem('currentCompany', response.data.user.joinedCompanies[0].companyId)
+            localStorage.setItem('email', this.email)
+            localStorage.setItem('username', this.username)
             this.$toast.add({
               severity: 'success',
               summary: 'Success',
               detail: 'User successfully logged in',
               life: 3000
             })
-            this.resetForm()
+            // this.resetForm()
             this.$router.push('/dashboard')
           })
           .catch((error) => {
@@ -1012,9 +1017,10 @@ export default defineComponent({
       this.date = new Date(date).toISOString()
     },
     async signup() {
+      const apiURL = await this.getRequestUrl()
       this.birthDateFormatter(this.birthDate)
       await axios
-        .post('http://localhost:3000/users/create', {
+        .post(apiURL + 'users/create', {
           username: this.username,
           password: this.password,
           personalInfo: {
@@ -1038,8 +1044,7 @@ export default defineComponent({
             email: this.email
           },
           profile: {
-            displayName: this.name + ' ' + this.surname,
-            displayImage: this.profilePicture
+            displayName: this.name + ' ' + this.surname
           },
           skills: this.skills,
           currentCompany: this.company
@@ -1048,12 +1053,12 @@ export default defineComponent({
           console.log(response)
           this.alertSignUpFailure = false
           this.alertSignUp = true
-          sessionStorage.setItem('access_token', response.data.data.access_token)
-          sessionStorage.setItem('id', response.data.data.id)
+          localStorage.setItem('access_token', response.data.data.access_token)
+          localStorage.setItem('id', response.data.data.id)
           localStorage.setItem('email', this.email)
           localStorage.setItem('username', this.username)
 
-          this.resetForm()
+          // this.resetForm()
         })
         .catch((error) => {
           console.log(error)
@@ -1061,21 +1066,47 @@ export default defineComponent({
           this.alertSignUpFailure = true
         })
     },
-    nextFlow1() {
-      this.signupDialog = false
-      this.signup1Dialog = true
+    async nextFlow1() {
+      try {
+        this.emailExists = await this.emailExist()
+        console.log(this.emailExists)
+        if (this.emailExists === true) {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Username already exists',
+            life: 3000
+          })
+        } else {
+          // Handle the case where the email does not exist
+          this.signupDialog = false
+          this.signup1Dialog = true
+        }
+      } catch (error) {
+        console.error('Error during next flow:', error)
+      }
     },
     nextFlow2() {
       this.signup1Dialog = false
       this.signupUsernameDialog = true
       this.populateUsernameList()
     },
-    nextFlowUsername() {
-      if (this.checkUsernameExist() === true) {
-        alert('Username already exists')
-      } else {
-        this.signupUsernameDialog = false
-        this.signup2Dialog = true
+    async nextFlowUsername() {
+      try {
+        this.exists = await this.usernameExist()
+        if (this.exists === true) {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Username already exists',
+            life: 3000
+          })
+        } else {
+          this.signupUsernameDialog = false
+          this.signup2Dialog = true
+        }
+      } catch (error) {
+        console.error('Error during next flow for username:', error)
       }
     },
     nextFlow3() {
@@ -1096,26 +1127,47 @@ export default defineComponent({
       this.joinDialog = true
       this.signup()
     },
+    async emailExist() {
+      try {
+        const apiURL = await this.getRequestUrl()
+        const response = await axios.post(`${apiURL}users/exists/email`, {
+          email: this.email
+        })
+        console.log(response.data.data)
+        return response.data.data
+      } catch (error) {
+        console.error('Error checking email existence:', error)
+        return null // Return null or handle the error as needed
+      }
+    },
     async usernameExist() {
-      await axios
-        .post('http://localhost:3000/users/exists', {
-          params: {
-            username: this.username
-          }
+      try {
+        const apiURL = await this.getRequestUrl()
+        const response = await axios.post(`${apiURL}users/exists/username`, {
+          username: this.username
         })
-        .then((response) => {
-          console.log(response)
-          console.log(this.username)
-          this.exists = response
-        })
-        .catch((error) => {
-          console.log(error)
-        })
+        console.log(response.data.data)
+        return response.data.data
+      } catch (error) {
+        console.error('Error checking username existence:', error)
+        return null // Return null or handle the error as needed
+      }
     },
     checkUsernameExist() {
+      console.log('Checking if username exists')
       this.usernameExist()
+      console.log(this.exists)
       if (this.exists === true) {
         alert('Username already exists')
+        return true
+      }
+      return false
+    },
+    checkEmailExist() {
+      this.emailExist()
+      console.log(this.emailExists)
+      if (this.emailExists === true) {
+        alert('Email already exists')
         return true
       }
       return false
@@ -1133,7 +1185,19 @@ export default defineComponent({
         this.isdarkmode = true
         console.log(this.isdarkmode)
       }
-      sessionStorage.setItem('theme', this.isdarkmode) // save the theme to session storage
+      localStorage.setItem('theme', this.isdarkmode) // save the theme to session storage
+    },
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
   }
 })

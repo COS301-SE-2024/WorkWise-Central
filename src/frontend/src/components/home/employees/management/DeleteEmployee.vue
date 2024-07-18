@@ -19,8 +19,14 @@
           <v-row>
             <p>
               Are you sure you want to delete
-              <strong>{{ details.firstName + ' ' + details.surname }}</strong> as an employee of
-              this company?
+              <strong>{{
+                details.firstName.charAt(0).toUpperCase() +
+                details.firstName.slice(1) +
+                ' ' +
+                details.surname.charAt(0).toUpperCase() +
+                details.surname.slice(1)
+              }}</strong>
+              as an employee of this company?
             </p>
             <strong> This action cannot be reversed. </strong>
           </v-row>
@@ -70,7 +76,7 @@ export default {
     },
     async deleteEmployee() {
       this.isDeleting = true // Indicate the start of the deletion process
-      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       axios
         .delete(apiURL + 'employee/' + this.details.employeeId, config)

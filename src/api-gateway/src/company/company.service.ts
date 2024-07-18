@@ -100,8 +100,11 @@ export class CompanyService {
     });
 
     console.log('Add employee to Company');
-    await this.addNewEmployeeId(createdCompany._id, employee._id);
-    return new CreateCompanyResponseDto(createdCompany);
+    const updatedCompany = await this.addNewEmployeeId(
+      createdCompany._id,
+      employee._id,
+    );
+    return new CreateCompanyResponseDto(updatedCompany);
   }
 
   async companyRegNumberExists(registerNumber: string): Promise<boolean> {
@@ -117,7 +120,11 @@ export class CompanyService {
   }
 
   getAllCompanies() {
-    const fieldsToPopulate = ['employees'];
+    return this.companyRepository.findAll();
+  }
+
+  getAllCompaniesDetailed() {
+    const fieldsToPopulate = ['employees', 'inventoryItems'];
     return this.companyRepository.findAll(fieldsToPopulate);
   }
 
@@ -134,6 +141,19 @@ export class CompanyService {
   ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
     const result = await this.companyRepository.findById(identifier);
 
+    if (result == null) {
+      throw new ConflictException('Company not found');
+    }
+
+    return result;
+  }
+
+  async getCompanyByIdDetailed(identifier: Types.ObjectId) {
+    const populatedFields = ['employees', 'inventoryItems'];
+    const result = await this.companyRepository.findById(
+      identifier,
+      populatedFields,
+    );
     if (result == null) {
       throw new ConflictException('Company not found');
     }
@@ -238,9 +258,10 @@ export class CompanyService {
     companyId: Types.ObjectId,
     employeeId: Types.ObjectId,
   ) {
-    if (!(await this.employeeIsInCompany(companyId, employeeId)))
+    if (!(await this.employeeIsInCompany(companyId, employeeId))) {
       await this.companyRepository.addEmployee(companyId, employeeId);
-    else console.log('Employee is already in company, no need to add them');
+      return await this.getCompanyById(companyId);
+    } else console.log('Employee is already in company, no need to add them');
   }
 
   async update(
@@ -248,7 +269,11 @@ export class CompanyService {
     companyId: Types.ObjectId,
     updateCompanyDto: UpdateCompanyDto,
   ) {
-    const inputValidated = await this.companyUpdateIsValid(updateCompanyDto);
+    const inputValidated = await this.companyUpdateIsValid(
+      userId,
+      companyId,
+      updateCompanyDto,
+    );
     if (!inputValidated.isValid) {
       throw new ConflictException(inputValidated.message);
     }
@@ -262,6 +287,27 @@ export class CompanyService {
     );
     console.log(updatedCompany);
     return updatedCompany;
+  }
+
+  async updateLogo(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+    file: Express.Multer.File,
+  ) {
+    //TODO: Add more validation
+    if (!(await this.usersService.userIsInCompany(userId, companyId))) {
+      throw new ConflictException('User not in company');
+    }
+    //
+    const uploadApiResponse = await this.fileService.uploadImage(file);
+    if (uploadApiResponse.secure_url) {
+      const company = await this.getCompanyById(companyId);
+      company.logo = uploadApiResponse.secure_url;
+      return await this.companyRepository.save(company);
+    } else {
+      console.log('Failed to upload image');
+      throw new InternalServerErrorException('Upload failed');
+    }
   }
 
   async deleteCompany(
@@ -440,7 +486,12 @@ export class CompanyService {
     return new ValidationResult(true);
   }
 
-  async companyUpdateIsValid(company: UpdateCompanyDto) {
+  async companyUpdateIsValid(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+    company: UpdateCompanyDto,
+  ) {
+    //Validate that all changes made in the Dto are valid/non-breaking
     if (!company) return new ValidationResult(false, `Company is null`);
 
     if (company.registrationNumber) {
@@ -467,6 +518,7 @@ export class CompanyService {
         }
       }
     }
+
     if (company.employees) {
       for (const employee of company.employees) {
         if (!Types.ObjectId.isValid(employee))
@@ -480,6 +532,27 @@ export class CompanyService {
         }
       }
     }
+
+    //Check that user is in company and has correct rights for this
+    if (!(await this.usersService.userIsInCompany(userId, companyId)))
+      return new ValidationResult(false, 'User not in company');
+
+    // const user = await this.usersService.getUserById(userId);
+    // const joinedCompany = user.joinedCompanies.filter(
+    //   (obj) => obj.companyId == companyId,
+    // )[0];
+
+    //TODO: Add role-based validation and add Requested Jess function
+    /*    const employee = await this.employeeService.findById(
+      joinedCompany.employeeId,
+    );
+    const employeeRole = await this.roleService.findById(employee.roleId);
+    if (!employeeRole.permissionSuite.includes('can edit company')) {
+      return new ValidationResult(
+        false,
+        'Employee does not have necessary permissions',
+      );
+    }*/
 
     return new ValidationResult(true);
   }
