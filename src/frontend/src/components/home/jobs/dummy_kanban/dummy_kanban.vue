@@ -13,29 +13,51 @@
         aria-dropeffect="move"
       >
         <v-card variant="flat">
-          <v-card-title color="red" class="font-weight-black" v-if="column.status === 'Todo'"
+          <v-card-item
+            class="font-weight-black text-h5"
+            style="font-family: 'Nunito', sans-serif"
+            v-if="column.status === 'Todo'"
+            align="center"
             ><v-icon class="pr-1" color="#708090">{{ 'fa: fa-solid fa-clipboard-list' }}</v-icon>
             {{ column.status }}
             <v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
               {{ column.cards.length }}
-            </v-chip></v-card-title
+            </v-chip></v-card-item
           >
-          <v-card-title class="font-weight-black" v-else-if="column.status === 'In Progress'"
-            ><v-icon color="blue">{{ 'fa:fas fa-spinner fa-spin' }}</v-icon> {{ column.status
+          <v-card-item
+            class="font-weight-black text-h5"
+            style="font-family: 'Nunito', sans-serif"
+            v-else-if="column.status === 'In Progress'"
+            align="center"
+            ><v-icon class="pr-1" color="light-blue-accent-4">{{
+              'fa:fas fa-spinner fa-spin'
+            }}</v-icon>
+            {{ column.status
             }}<v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
               {{ column.cards.length }}
-            </v-chip></v-card-title
-          ><v-card-title class="font-weight-black" v-else-if="column.status === 'Awaiting review'"
-            ><v-icon color="purple">{{ 'fa:fas fa-hourglass-half' }}</v-icon> {{ column.status }}
-            <v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
-              {{ column.cards.length }}
-            </v-chip></v-card-title
-          ><v-card-title class="font-weight-black" v-else-if="column.status === 'Done'"
-            ><v-icon color="green">{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon>
+            </v-chip></v-card-item
+          ><v-card-item
+            class="font-weight-black text-h5"
+            style="font-family: 'Nunito', sans-serif"
+            v-else-if="column.status === 'Awaiting review'"
+            align="center"
+            ><v-icon class="pr-1" color="purple-accent-3">{{ 'fa:fas fa-hourglass-half' }}</v-icon>
             {{ column.status }}
             <v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
               {{ column.cards.length }}
-            </v-chip></v-card-title
+            </v-chip></v-card-item
+          ><v-card-item
+            class="font-weight-black text-h5"
+            style="font-family: 'Nunito', sans-serif"
+            v-else-if="column.status === 'Done'"
+            align="center"
+            ><v-icon class="pr-1" color="green-accent-4">{{
+              'fa: fa-solid fa-clipboard-check'
+            }}</v-icon>
+            {{ column.status }}
+            <v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
+              {{ column.cards.length }}
+            </v-chip></v-card-item
           >
 
           <v-card-text>
@@ -51,44 +73,71 @@
               aria-grabbed="true"
               role="option"
             >
-              <v-card-title>{{ card.heading }}</v-card-title>
+              <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
+                ><b>{{ card.heading }}</b></v-card-item
+              >
               <v-card-subtitle v-if="column.status === 'Todo'"
-                ><v-chip color="#708090" variant="flat" rounded="sm" density="comfortable">{{
-                  card.status
-                }}</v-chip></v-card-subtitle
+                ><v-chip color="#708090" variant="elevated" rounded="sm" density="comfortable">
+                  <b>{{ card.status }}</b></v-chip
+                ></v-card-subtitle
               ><v-card-subtitle v-else-if="column.status === 'In Progress'"
-                ><v-chip color="blue" variant="flat" rounded="sm" density="comfortable">{{
-                  card.status
-                }}</v-chip></v-card-subtitle
+                ><v-chip
+                  color="light-blue-accent-4"
+                  variant="elevated"
+                  rounded="sm"
+                  density="comfortable"
+                  ><b>{{ card.status }}</b></v-chip
+                ></v-card-subtitle
               ><v-card-subtitle v-else-if="column.status === 'Awaiting review'"
-                ><v-chip color="purple" variant="flat" rounded="sm" density="comfortable">{{
-                  card.status
-                }}</v-chip></v-card-subtitle
+                ><v-chip
+                  color="purple-accent-3"
+                  variant="elevated"
+                  rounded="sm"
+                  density="comfortable"
+                  ><b>{{ card.status }}</b></v-chip
+                ></v-card-subtitle
               ><v-card-subtitle v-else-if="column.status === 'Done'"
-                ><v-chip color="green" variant="flat" rounded="sm" density="comfortable">{{
-                  card.status
-                }}</v-chip></v-card-subtitle
+                ><v-chip
+                  color="green-accent-4"
+                  variant="elevated"
+                  rounded="sm"
+                  density="comfortable"
+                  ><b>{{ card.status }}</b></v-chip
+                ></v-card-subtitle
               >
 
-              <v-card-text class="text-body-1">
-                <b>Description:</b> {{ card.jobDescription }}</v-card-text
+              <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                <v-icon color="black">{{ 'fa: fa-solid fa-user-large' }}</v-icon>
+                {{ card.clientName }}</v-card-item
+              ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                <v-icon color="black">{{ 'fa: fa-solid fa-clock' }}</v-icon>
+                {{ card.startDate }}</v-card-item
+              ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                <v-icon color="black">{{ 'fa: fa-solid fa-location-dot' }}</v-icon>
+                {{ card.city + ', ' + card.suburb }}</v-card-item
               >
 
               <v-card-subtitle v-if="card.priority === 'High'"
                 ><v-chip color="#FF0000" variant="tonal" density="comfortable"
-                  >Priority: {{ card.priority }}</v-chip
+                  ><b>Priority: {{ card.priority }}</b></v-chip
                 ></v-card-subtitle
               ><v-card-subtitle v-if="card.priority === 'Medium'"
-                ><v-chip color="#FFA500" variant="tonal" density="comfortable"
-                  >Priority: {{ card.priority }}</v-chip
+                ><v-chip color="amber-darken-4" variant="tonal" density="comfortable"
+                  ><b>Priority: {{ card.priority }}</b></v-chip
                 ></v-card-subtitle
               ><v-card-subtitle v-if="card.priority === 'Low'"
                 ><v-chip color="#008000" variant="tonal" density="comfortable"
-                  >Priority: {{ card.priority }}</v-chip
+                  ><b>Priority: {{ card.priority }}</b></v-chip
                 ></v-card-subtitle
               >
               <v-card-text>
-                <v-chip color="blue" variant="tonal" v-for="tag in card.tags">{{ tag }}</v-chip>
+                <v-chip
+                  color="light-blue-accent-4"
+                  class=""
+                  v-for="(n, i) in card.tags.length"
+                  :key="i"
+                  ><b>{{ card.tags[i] }}</b></v-chip
+                >
               </v-card-text>
             </v-card>
           </v-card-text>
@@ -328,10 +377,13 @@ function loading(cards: JobCardDataFormat[]) {
         console.log('No column with such status name')
     }
   }
+  N_M_Sort(columns.value[0].cards, order_of_sorting_in_columns.value)
+  N_M_Sort(columns.value[1].cards, order_of_sorting_in_columns.value)
+  N_M_Sort(columns.value[2].cards, order_of_sorting_in_columns.value)
+  N_M_Sort(columns.value[3].cards, order_of_sorting_in_columns.value)
 }
 function loadCardsInRespectiveColumns(card: JobCardDataFormat, column: Column) {
   column.cards.push(card)
-  // loading(starting_cards.value)
 }
 
 function onDragStart(card: JobCardDataFormat, column: Column) {
@@ -359,6 +411,7 @@ function onDrop(targetColumn: Column) {
     )
     draggedCard.value.status = targetColumn.status
     targetColumn.cards.push(draggedCard.value)
+    N_M_Sort(targetColumn.cards, order_of_sorting_in_columns.value)
     draggedCard.value = null
     sourceColumn.value = null
     dropTarget.value = null
@@ -373,14 +426,18 @@ function isDragging(card: JobCardDataFormat) {
   return draggedCard.value === card
 }
 
-const N_M_Sort = (sorted: string[], sortee: string[]) => {
+// function algorith to sort list according to priority
+//it uses the order_of_sorting_in_columns to sort the list
+// and thats where the desired sorted order is defined so do not change that order of elements
+// unless you want it to sort in a different way
+const N_M_Sort = (sorted: JobCardDataFormat[], sortee: string[]) => {
   let tracker = new Map()
 
   for (let i = 0; i < sortee.length; i++) if (!tracker.has(sortee[i])) tracker.set(sortee[i], i + 1)
 
-  sorted.sort((x: string, y: string) => {
-    let tracker1: number = tracker.get(x) || 0
-    let tracker2: number = tracker.get(y) || 0
+  sorted.sort((x: JobCardDataFormat, y: JobCardDataFormat) => {
+    let tracker1: number = tracker.get(x.priority) || 0
+    let tracker2: number = tracker.get(y.priority) || 0
 
     if (tracker1 === 0 && tracker2 === 0) return x - y
     else if (tracker1 === 0) return 1
