@@ -83,12 +83,12 @@
                           }}</v-chip></template
                         >
                         <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                          <v-chip @click="callPhone" color="primary" text- border="md"
+                          <v-chip @click="callPhone" color="primary" border="md"
                             ><v-icon icon="fa:fa-solid fa-phone"></v-icon> {{ value }}</v-chip
                           >
                         </template>
                         <template v-slot:[`item.contactInfo.email`]="{ value }">
-                          <v-chip @click="sendEmail" color="primary" text- border="md">
+                          <v-chip @click="sendEmail" color="primary" border="md">
                             <v-icon icon="fa:fa-solid fa-envelope"></v-icon>{{ value }}</v-chip
                           >
                         </template>

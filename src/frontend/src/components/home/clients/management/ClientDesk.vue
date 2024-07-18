@@ -253,7 +253,7 @@ export default defineComponent({
   created() {
     window.addEventListener('resize', this.handleResize)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('resize', this.handleResize)
   },
   mounted() {

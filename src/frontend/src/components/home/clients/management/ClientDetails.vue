@@ -51,8 +51,8 @@
               <br /><small class="text-caption">{{ ClientDetails.address.city }}</small>
               <br /><small class="text-caption">{{ ClientDetails.address.postalCode }}</small>
               <br /><small class="text-caption">{{ ClientDetails.address.complex }}</small>
-              <br /><small class="text-caption"
-                >Unit: {{ ClientDetails.address.houseNumber }}</small
+              <br /><small class="text-caption">
+                {{ ClientDetails.address.houseNumber }}</small
               ></v-col
             >
           </v-row>
