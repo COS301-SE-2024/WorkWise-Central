@@ -1051,30 +1051,6 @@ export default {
         this.events2.push(event)
       })
     },
-    formatDate2(date: string) {
-      const d = new Date(date)
-      const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        timeZone: 'Africa/Johannesburg',
-        hour12: false
-      }
-      const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(d)
-
-      const [day, month, year] = formattedDate.split('/')[0].split('/')
-      const time = formattedDate.split(', ')[1]
-      const finalFormattedDate = `${year}-${month}-${day} ${time}`
-    },
-    toLocalISOString(date: Date) {
-      const timezoneOffset = date.getTimezoneOffset() * 60000
-      const localDate = new Date(date.getTime() - timezoneOffset)
-      const localISO = localDate.toISOString().slice(0, -1)
-      console.log(localISO)
-      return localISO
-    },
 
     formatDate(date: string) {
       const date_passed_in = new Date(date)
