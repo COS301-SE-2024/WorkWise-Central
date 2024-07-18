@@ -21,19 +21,19 @@ export class Inventory {
   name: string;
 
   @ApiProperty()
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: false })
   description: string;
 
   @ApiProperty()
-  @Prop({ type: Number, required: true })
+  @Prop({ type: Number, required: false })
   costPrice: number;
 
   @ApiProperty()
-  @Prop({ type: Number, required: true })
+  @Prop({ type: Number, required: false, default: 0 })
   currentStockLevel: number;
 
   @ApiProperty()
-  @Prop({ type: Number, required: true })
+  @Prop({ type: Number, required: false })
   reorderLevel: number;
 
   @ApiProperty()
