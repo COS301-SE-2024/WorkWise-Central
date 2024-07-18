@@ -204,6 +204,23 @@
                           </v-col>
                         </v-col>
                       </v-col>
+
+                      <v-col>
+                        <AttachImages />
+                      </v-col>
+                      <v-col>
+                        <AddComment />
+                      </v-col>
+                      <v-col>
+                        <JobNotes/>
+                      </v-col>
+                      <v-col>
+                        <JobChecklist />
+                      </v-col>
+                      <v-col>
+                        <LogInventory/>
+                      </v-col>
+
                       <v-col class="pt-0">
                         <v-btn color="error" width="100%" @click="viewJobDialog = false"
                           >Close</v-btn
@@ -215,11 +232,11 @@
                 <v-col xs="12" sm="3" md="3" lg="3" xl="3" class="pl-0 pb-0" cols="12">
                   <v-card flat class="pa-5 bg-cardColor elevation-0">
                     <div class="d-flex flex-column">
-                      <AttachImages />
-                      <AddComment />
-                      <JobChecklist />
-                      <LogInventory/>
-                      <JobNotes/>
+                      <v-btn>Attach Images</v-btn>
+                      <v-btn>Add Comment</v-btn>
+                      <v-btn>Job Checklist</v-btn>
+                      <v-btn>Log inventory</v-btn>
+                      <v-btn>Job Notes</v-btn>
                     </div>
                   </v-card>
                 </v-col>

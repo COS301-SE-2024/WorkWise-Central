@@ -1,10 +1,7 @@
 <template>
-  <v-btn @click="inventorySection = true">Log Inventory</v-btn>
-  <v-dialog v-model="inventorySection" max-width="700px">
-    <v-card class="text-center">
-      <v-card-title>Log Inventory Used in the Job</v-card-title>
-      <v-card-text>
-        <label class="pb-2">Add or Edit Inventory Items</label>
+    <div>
+      <v-divider></v-divider>
+        <h3 class="pb-2">Log Inventory</h3>
         <v-container>
           <v-row v-for="(item, index) in inventory" :key="index" class="d-flex align-center mb-3">
             <v-col cols="8">
@@ -28,15 +25,9 @@
               </v-btn>
             </v-col>
           </v-row>
-          <v-btn color="primary" @click="addItem">Add Item</v-btn>
+          <v-btn color="success" @click="addItem">Add Item</v-btn>
         </v-container>
-      </v-card-text>
-      <v-card-actions class="d-flex flex-column">
-        <v-btn color="success" @click="saveInventory">Save</v-btn>
-        <v-btn color="error" @click="cancel">Cancel</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+    </div>
 </template>
 
 <script setup lang="ts">
