@@ -15,9 +15,20 @@ export class CompanyRepository {
     return await newCompanyModel.save();
   }
 
-  async findById(
-    identifier: Types.ObjectId,
-  ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+  async findById(identifier: Types.ObjectId, populatedFields?: string[]) {
+    if (populatedFields) {
+      return this.companyModel
+        .findOne({
+          $and: [
+            { _id: identifier },
+            { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] },
+          ],
+        })
+        .populate(populatedFields)
+        .lean()
+        .exec();
+    }
+
     return this.companyModel
       .findOne({
         $and: [
@@ -69,9 +80,15 @@ export class CompanyRepository {
   }
 
   async findAll(fields?: string[]) {
+    if (fields) {
+      return this.companyModel
+        .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
+        .populate(fields)
+        .lean();
+    }
+
     return this.companyModel
       .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
-      .populate(fields)
       .lean();
   }
 

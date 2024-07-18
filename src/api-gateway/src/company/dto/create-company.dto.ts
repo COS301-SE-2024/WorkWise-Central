@@ -91,10 +91,12 @@ export class CreateCompanyDto {
   name: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   type?: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   @Validate(Base64ContentIsImage)
   logo?: string;
