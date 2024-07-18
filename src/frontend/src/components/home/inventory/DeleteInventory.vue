@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="deleteDialog"
-    max-width="500px"
+    max-width="600px"
     :theme="isdarkmode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
@@ -9,7 +9,7 @@
         >Delete</v-btn
       >
     </template>
-    <v-card>
+    <v-card min-width="600">
       <v-card-title>
         <v-icon>mdi-plus</v-icon>
         <span>Delete Inventory</span>

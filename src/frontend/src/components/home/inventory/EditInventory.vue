@@ -11,7 +11,7 @@
         >Edit</v-btn
       >
     </template>
-    <v-card>
+    <v-card >
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
         Edit Inventory
@@ -141,7 +141,7 @@ export default {
         costPrice: this.convertToNumber(this.localEditedItem.costPrice),
         currentStockLevel: this.convertToNumber(this.localEditedItem.currentStockLevel),
         reorderLevel: this.convertToNumber(this.localEditedItem.reorderLevel),
-        companyID: localStorage.getItem('currentCompany')
+        companyId: localStorage.getItem('currentCompany')
       }
       try {
         const response = await axios.patch(`${apiURL}inventory/${this.inventory_id}`, data, config)

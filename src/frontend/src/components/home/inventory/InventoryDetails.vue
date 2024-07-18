@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="500" :theme="isdarkmode === true ? 'dark' : 'light'">
+  <v-dialog v-model="dialog" max-width="600" :theme="isdarkmode === true ? 'dark' : 'light'">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
         >View</v-btn
@@ -84,8 +84,7 @@ import Toast from 'primevue/toast'
 export default defineComponent({
   name: 'InventoryDetails',
   props: {
-    inventoryItem: Object,
-    
+    inventoryItem: Object
   },
   components: {
     Toast

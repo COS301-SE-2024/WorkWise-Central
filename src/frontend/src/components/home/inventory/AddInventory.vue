@@ -11,7 +11,7 @@
         >Add</v-btn
       >
     </template>
-    <v-card>
+    <v-card >
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
         Add Inventory
@@ -103,7 +103,7 @@ export default defineComponent({
         costPrice: this.convertToNumber(this.costPrice),
         currentStockLevel: this.convertToNumber(this.currentStockLevel),
         reorderLevel: this.convertToNumber(this.reorderLevel),
-        companyID: localStorage.getItem('currentCompany')
+        companyId: localStorage.getItem('currentCompany')
       }
       try {
         const response = await axios.post(`${apiURL}inventory/create`, data, config)

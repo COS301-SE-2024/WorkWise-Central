@@ -30,7 +30,7 @@
                       density="compact"
                       label="Search"
                       prepend-inner-icon="mdi-magnify"
-                      variant="solo-inverted"
+                      variant="outlined"
                       flat
                       width="100%"
                       style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"

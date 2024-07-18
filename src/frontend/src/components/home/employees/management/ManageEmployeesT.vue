@@ -37,7 +37,7 @@
                         density="compact"
                         label="Search"
                         prepend-inner-icon="mdi-magnify"
-                        variant="solo-inverted"
+                        variant="outlined"
                         flat
                         width="100%"
                         style="
@@ -72,32 +72,23 @@
                         :row-props="getRowProps"
                       >
                         <template v-slot:[`item.firstName`]="{ value }">
-                          <v-chip variant="text" color="elementTextColor">
+                          <v-chip variant="text">
                             <v-icon icon="fa:fa-solid fa-user "></v-icon
                             >{{ value.charAt(0).toUpperCase() + value.slice(1) }}</v-chip
                           >
                         </template>
                         <template v-slot:[`item.surname`]="{ value }"
-                          ><v-chip variant="text" color="elementTextColor">{{
+                          ><v-chip variant="text">{{
                             value.charAt(0).toUpperCase() + value.slice(1)
                           }}</v-chip></template
                         >
                         <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                          <v-chip
-                            @click="callPhone"
-                            color="primary"
-                            text-color="elementTextColor"
-                            border="md"
+                          <v-chip @click="callPhone" color="primary" text- border="md"
                             ><v-icon icon="fa:fa-solid fa-phone"></v-icon> {{ value }}</v-chip
                           >
                         </template>
                         <template v-slot:[`item.contactInfo.email`]="{ value }">
-                          <v-chip
-                            @click="sendEmail"
-                            color="primary"
-                            text-color="elementTextColor"
-                            border="md"
-                          >
+                          <v-chip @click="sendEmail" color="primary" text- border="md">
                             <v-icon icon="fa:fa-solid fa-envelope"></v-icon>{{ value }}</v-chip
                           >
                         </template>
@@ -109,7 +100,7 @@
 
                         <!-- Actions slot -->
                         <template v-slot:[`item.roleName`]="{ value }">
-                          <v-chip color="elementTextColor" variant="text">
+                          <v-chip variant="text">
                             {{ value }}
                           </v-chip>
                         </template>
