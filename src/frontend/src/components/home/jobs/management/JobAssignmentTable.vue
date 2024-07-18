@@ -111,6 +111,8 @@
         </v-card-title>
         <v-card-text> What would you like to do with this job? </v-card-text>
         <v-card-actions>
+          <v-btn @click="closeDialog">Cancel</v-btn>
+          <v-spacer></v-spacer>
           <v-btn color="success" @click="viewJobDialog = true">View</v-btn>
           <!-- View Job Dialog -->
           <v-dialog v-model="viewJobDialog" max-width="500">
@@ -231,8 +233,6 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-
-          <v-btn @click="closeDialog">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

@@ -1,7 +1,9 @@
 <template>
   <v-dialog v-model="clientDialog" max-width="500" :theme="isdarkmode === true ? 'dark' : 'light'">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn color="success" v-bind="activatorProps"> View </v-btn>
+      <v-btn color="success" v-bind="activatorProps">
+        View <v-icon icon="fa:fa-solid fa-eye" end color="success" size="small"></v-icon>
+      </v-btn>
     </template>
 
     <v-card :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
@@ -69,9 +71,10 @@
       </v-card-text>
       <v-card-actions>
         <v-col>
-          <v-btn color="error" width="100%" height="35" @click="close"> Close </v-btn>
-        </v-col></v-card-actions
-      >
+          <v-btn color="error" width="100%" height="35" @click="close">
+            Close <v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon>
+          </v-btn> </v-col
+      ></v-card-actions>
     </v-card>
   </v-dialog>
 </template>

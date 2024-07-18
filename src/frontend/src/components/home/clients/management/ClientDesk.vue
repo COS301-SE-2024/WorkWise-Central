@@ -110,8 +110,16 @@
         </v-card-title>
         <v-card-text> What would you like to do with this client? </v-card-text>
         <v-card-actions>
-          <v-btn @click="actionsDialog = false" color="primary">Close</v-btn><v-spacer></v-spacer>
+          <v-btn @click="actionsDialog = false" color="primary"
+            >Close<v-icon
+              icon="fa:fa-solid fa-cancel"
+              end
+              color="primary"
+              size="small"
+            ></v-icon></v-btn
+          ><v-spacer></v-spacer>
           <ClientDetails :colors="colors" :ClientDetails="selectedItem" />
+
           <EditClient
             @update:item="selectedItem = $event"
             :editedItem="selectedItem"

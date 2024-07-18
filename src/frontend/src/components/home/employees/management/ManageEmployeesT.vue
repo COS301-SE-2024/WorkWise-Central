@@ -136,7 +136,8 @@
             }}
           </v-card-title>
           <v-card-text> What would you like to do with this account? </v-card-text>
-          <v-card-actions>
+          <v-card-actions
+            ><v-btn @click="actionsDialog = false">Cancel</v-btn> <v-spacer></v-spacer>
             <EmployeeDetails
               v-model="clientDialog"
               colors="colors"
@@ -146,8 +147,6 @@
               @update:item="selectedItem = $event"
               :editedItem="selectedItem"
             /><DeleteEmployee :details="selectedItem" />
-            <v-spacer></v-spacer>
-            <v-btn @click="actionsDialog = false">Cancel</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
