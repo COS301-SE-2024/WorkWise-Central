@@ -439,7 +439,7 @@ const N_M_Sort = (sorted: JobCardDataFormat[], sortee: string[]) => {
     let tracker1: number = tracker.get(x.priority) || 0
     let tracker2: number = tracker.get(y.priority) || 0
 
-    if (tracker1 === 0 && tracker2 === 0) return x - y
+    if (tracker1 === 0 && tracker2 === 0) return 0
     else if (tracker1 === 0) return 1
     else if (tracker2 === 0) return -1
 
