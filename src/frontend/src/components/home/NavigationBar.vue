@@ -32,7 +32,7 @@ const jobSubItems = ref([
 ])
 
 const inventorySubItems = ref([
-  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
+  { title: 'Management', icon: 'fa: fa-solid fa-warehouse', routeName: 'inventory' },
   { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
   { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
 ])

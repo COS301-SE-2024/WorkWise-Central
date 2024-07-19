@@ -24,6 +24,7 @@
               label="Permissions"
               chips
               multiple
+              variant="default"
             ></v-select>
           </template>
         </v-data-table>

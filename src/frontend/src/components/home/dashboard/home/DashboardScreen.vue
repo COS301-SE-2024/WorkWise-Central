@@ -12,7 +12,8 @@
         >
           <!-- Calendar Card -->
           <v-col cols="12">
-            <v-card max-height="auto" border="md" rounded="xl">
+            <v-card max-height="auto" border="md" rounded="xl"
+              ><v-icon icon="fa:fa-solid fa-calender-alt"></v-icon>
               <v-card-title>Calendar</v-card-title>
 
               <v-card-item>

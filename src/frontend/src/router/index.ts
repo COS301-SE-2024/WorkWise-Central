@@ -25,6 +25,7 @@ import CompanySettingsView from '../views/settings/CompanySettings.vue'
 import LoadingScreen from '@/components/misc/LoadingScreen.vue'
 import StatisticsDashboard from '@/components/home/statistics/StatisticsDashboard.vue'
 import StatisticView from '@/views/home/dashboard/StatisticView.vue'
+import InventoryView from '@/views/home/inventory/InventoryView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -213,6 +214,11 @@ const router = createRouter({
       path: '/dummy-kanban',
       name: 'dummy-kanban',
       component: () => import('@/components/home/jobs/KanbanV2/KanbanV2.vue')
+    },
+    {
+      path: '/inventory',
+      name: 'inventory',
+      component: InventoryView
     }
   ]
 })

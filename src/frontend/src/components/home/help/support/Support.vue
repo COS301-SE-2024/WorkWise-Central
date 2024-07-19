@@ -7,7 +7,7 @@
         >
       </v-col>
       <v-col :cols="12">
-        <v-tabs v-model="tab" align-tabs="center" color="#5A82AF">
+        <v-tabs v-model="tab" align-tabs="center" color="primary">
           <v-tab :value="1">FAQ</v-tab>
           <v-tab :value="2">TUTORIAL</v-tab>
         </v-tabs>
