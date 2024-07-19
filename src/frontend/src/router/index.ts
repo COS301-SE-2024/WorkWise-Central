@@ -212,7 +212,7 @@ const router = createRouter({
     {
       path: '/dummy-kanban',
       name: 'dummy-kanban',
-      component: () => import('@/components/home/jobs/dummy_kanban/dummy_kanban.vue')
+      component: () => import('@/components/home/jobs/KanbanV2/KanbanV2.vue')
     }
   ]
 })
