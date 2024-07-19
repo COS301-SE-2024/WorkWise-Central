@@ -164,7 +164,8 @@ const vuetify = createVuetify({
           secondPlace: '#626F86',
           thirdPlace: '#533F04',
           secondRowColor: '#dcdfe4',
-          buttonText: '#F7F8F9'
+          buttonText: '#F7F8F9',
+          kanbanIconColor: '#161A1D'
         }
       },
       dark: {
@@ -187,7 +188,8 @@ const vuetify = createVuetify({
           secondPlace: '#C0C0C0',
           thirdPlace: '#CD7F32',
           secondRowColor: '#454f59',
-          buttonText: '#F7F8F9'
+          buttonText: '#F7F8F9',
+          kanbanIconColor: '#DCDFE4'
         }
       }
     }

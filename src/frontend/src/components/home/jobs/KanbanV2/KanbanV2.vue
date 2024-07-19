@@ -12,7 +12,7 @@
         role="listbox"
         aria-dropeffect="move"
       >
-        <v-card variant="flat">
+        <v-card variant="flat" elevation="1" color="red">
           <v-card-item
             class="font-weight-black text-h5"
             style="font-family: 'Nunito', sans-serif"
@@ -20,7 +20,7 @@
             align="center"
             ><v-icon class="pr-1" color="#708090">{{ 'fa: fa-solid fa-clipboard-list' }}</v-icon>
             {{ column.status }}
-            <v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
+            <v-chip class="text-subtitle-1 font-weight-black" variant="tonal">
               {{ column.cards.length }}
             </v-chip></v-card-item
           >
@@ -33,7 +33,7 @@
               'fa:fas fa-spinner fa-spin'
             }}</v-icon>
             {{ column.status
-            }}<v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
+            }}<v-chip class="text-subtitle-1 font-weight-black" variant="tonal">
               {{ column.cards.length }}
             </v-chip></v-card-item
           ><v-card-item
@@ -43,7 +43,7 @@
             align="center"
             ><v-icon class="pr-1" color="purple-accent-3">{{ 'fa:fas fa-hourglass-half' }}</v-icon>
             {{ column.status }}
-            <v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
+            <v-chip class="text-subtitle-1 font-weight-black" variant="tonal">
               {{ column.cards.length }}
             </v-chip></v-card-item
           ><v-card-item
@@ -55,7 +55,7 @@
               'fa: fa-solid fa-clipboard-check'
             }}</v-icon>
             {{ column.status }}
-            <v-chip class="text-subtitle-1 font-weight-black" color="black" variant="tonal">
+            <v-chip class="text-subtitle-1 font-weight-black" variant="tonal">
               {{ column.cards.length }}
             </v-chip></v-card-item
           >
@@ -63,6 +63,7 @@
           <v-card-text>
             <v-card
               variant="flat"
+              elevation="3"
               v-for="card in column.cards"
               :key="card.jobId"
               class="kanban-card mb-2"
@@ -107,13 +108,13 @@
               >
 
               <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                <v-icon color="black">{{ 'fa: fa-solid fa-user-large' }}</v-icon>
+                <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-user-large' }}</v-icon>
                 {{ card.clientName }}</v-card-item
               ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                <v-icon color="black">{{ 'fa: fa-solid fa-clock' }}</v-icon>
+                <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
                 {{ card.startDate }}</v-card-item
               ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                <v-icon color="black">{{ 'fa: fa-solid fa-location-dot' }}</v-icon>
+                <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-location-dot' }}</v-icon>
                 {{ card.city + ', ' + card.suburb }}</v-card-item
               >
 
