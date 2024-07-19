@@ -4,7 +4,7 @@ import {
   Profile,
   SystemDetails,
 } from '../entities/user.entity';
-import { PartialType } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import {
   IsArray,
@@ -54,4 +54,9 @@ export class JoinUserDto {
   @ValidateNested({ each: true })
   @Type(() => UpdateJoinedCompanyDto)
   joinedCompanies: UpdateJoinedCompanyDto[];
+}
+
+export class UpdateProfilePicDto {
+  @ApiProperty({ type: 'string', format: 'binary', required: true })
+  profilePicture: Express.Multer.File;
 }

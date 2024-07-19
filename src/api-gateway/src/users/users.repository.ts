@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import {
   JoinedCompany,
+  Profile,
   User,
   /*  userEmployeeFields,
   userJoinedCompaniesField,*/
@@ -22,7 +23,19 @@ export class UsersRepository {
     return result;
   }
 
-  async findAll(): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+  async findAll(
+    fieldsToPopulate?: string[],
+  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+    if (fieldsToPopulate) {
+      const result = await this.userModel
+        .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
+        .populate(fieldsToPopulate)
+        .lean()
+        .exec();
+      console.log(`Retrieving All users` /*, result*/);
+      return result;
+    }
+
     const result = await this.userModel
       .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
       /*      .populate(userEmployeeFields)
@@ -158,6 +171,23 @@ export class UsersRepository {
           ],
         },
         { $set: { ...updateUserDto }, updatedAt: new Date() },
+        { new: true },
+      )
+      .lean();
+  }
+
+  async updateProfilePicture(id: Types.ObjectId, profile: Profile) {
+    return this.userModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            { _id: id },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        { $set: { profile: profile }, updatedAt: new Date() },
         { new: true },
       )
       .lean();
