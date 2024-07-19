@@ -1,7 +1,7 @@
 <template>
   <v-card class="bg-cardColor">
     <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-      <h2 class="flex-grow-1">{{ passedInJob.heading }}</h2>
+      <h2 class="flex-grow-1">{{ props.passedInJob.heading }}</h2>
     </v-card-title>
     <v-row>
       <v-col xs="12" sm="9" md="9" lg="9" xl="9" class="pr-0 pb-0" cols="12">
@@ -19,7 +19,7 @@
                   color="grey-lighten-4"
                   rounded="l"
                   required
-                  :value="passedInJob.heading"
+                  :value="props.passedInJob.heading"
               ></v-text-field>
               <v-label>Job Description</v-label>
               <v-textarea
@@ -30,7 +30,7 @@
                   color="grey-lighten-4"
                   rounded="l"
                   required
-                  :value="passedInJob.jobDescription"
+                  :value="props.passedInJob.jobDescription"
               ></v-textarea>
               <v-row>
                 <v-col cols="6">
@@ -42,7 +42,7 @@
                       color="grey-lighten-4"
                       rounded="l"
                       required
-                      :value="passedInJob.street"
+                      :value="props.passedInJob.street"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="6">
@@ -54,7 +54,7 @@
                       color="grey-lighten-4"
                       rounded="l"
                       required
-                      :value="passedInJob.suburb"
+                      :value="props.passedInJob.suburb"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -69,7 +69,7 @@
                       color="grey-lighten-4"
                       rounded="l"
                       required
-                      :value="passedInJob.city"
+                      :value="props.passedInJob.city"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="6">
@@ -81,7 +81,7 @@
                       color="grey-lighten-4"
                       rounded="l"
                       required
-                      :value="passedInJob.postalCode"
+                      :value="props.passedInJob.postalCode"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -95,7 +95,7 @@
                       density="compact"
                       color="grey-lighten-4"
                       rounded="l"
-                      :value="passedInJob.complex"
+                      :value="props.passedInJob.complex"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="6">
@@ -107,7 +107,7 @@
                       color="grey-lighten-4"
                       rounded="l"
                       required
-                      :value="passedInJob.houseNumber"
+                      :value="props.passedInJob.houseNumber"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -126,162 +126,14 @@
 
 
             <!-- Mutli-member select -->
+            <SelectMembers/>
 
-            <v-btn class="mb-2" outlined @click="membersDialog = true">
-              <v-icon class="d-none d-lg-inline-block mr-2" left>{{
-                'fa: fa-solid fa-users-cog'
-              }}</v-icon>
-              Select Employees
-            </v-btn>
+            <!-- For job status-->
+            <UpdateJobStatus/>
 
-            <v-dialog v-model="membersDialog" max-width="600px">
-              <v-card>
-                <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-                  Assigned Employees
-                </v-card-title>
-                <v-card-text>
-                  <div class="text-caption pa-3">Select Employees</div>
-                  <v-select
-                    v-model="favorites"
-                    :items="states"
-                    hint="Pick your favorite states"
-                    label="Select Team Members"
-                    prepend-icon="fa: fa-solid fa-users"
-                    multiple
-                    persistent-hint
-                    outlined
-                    dense
-                    class="my-custom-autocomplete"
-                    background-color="#f5f5f5"
-                    rounded="l"
-                    variant="solo"
-                  ></v-select>
-                </v-card-text>
-                <v-card-actions class="d-flex flex-column">
-                  <v-btn @click="saveSelection" color="success"> Save </v-btn>
-                  <v-btn @click="membersDialog = false" color="error"> Cancel </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
+            <!-- For date change -->
+            <ChangeDueDate :passedInJob="props.passedInJob"/>
 
-            <v-btn class="mb-2" outlined @click="statusDialog = true">
-              <v-icon class="d-none d-lg-inline-block mr-2" left>{{
-                'fa: fa-solid fa-tasks'
-              }}</v-icon>
-              Update Status
-            </v-btn>
-
-            <v-dialog v-model="statusDialog" max-width="600px">
-              <v-card>
-                <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-                  Update Job Status
-                </v-card-title>
-                <v-card-text>
-                  <v-radio-group
-                    v-model="job.status"
-                    column
-                    class="my-custom-radio-group"
-                    row
-                    background-color="#f5f5f5"
-                  >
-                    <v-radio label="Todo" value="todo" :color="colors.todo"></v-radio>
-                    <v-radio
-                      label="In progress"
-                      value="inProgress"
-                      :color="colors.inProgress"
-                    ></v-radio>
-                    <v-radio
-                      label="Awaiting Invoice"
-                      value="awaitingInvoice"
-                      :color="colors.awaitingInvoice"
-                    ></v-radio>
-                    <v-radio
-                      label="Awaiting payment"
-                      value="awaitingPayment"
-                      :color="colors.awaitingPayment"
-                    ></v-radio>
-                    <v-radio
-                      label="Awaiting sign off"
-                      value="awaitingSignOff"
-                      :color="colors.awaitingSignOff"
-                    ></v-radio>
-                  </v-radio-group>
-                </v-card-text>
-                <v-card-actions class="d-flex flex-column">
-                  <v-btn @click="saveStatus" color="success"> Save </v-btn>
-                  <v-btn @click="statusDialog = false" color="error"> Cancel </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-
-            <v-btn class="mb-2" outlined @click="dueDateDialog = true">
-              <v-icon class="d-none d-lg-inline-block mr-2" left>{{
-                'fa: fa-solid fa-calendar-alt'
-              }}</v-icon>
-              Change Due Date
-            </v-btn>
-
-            <v-dialog v-model="dueDateDialog" max-width="600px">
-              <v-card>
-                <v-card-title> Enter the due date for this job </v-card-title>
-
-                <v-card-text>
-                  <v-container>
-                    <v-row justify="space-around">
-                      <v-date-picker
-                        v-model="currentDate"
-                        color="secondary"
-                        @update:modelValue="updateDates"
-                      ></v-date-picker>
-                    </v-row>
-                    <v-row v-if="errorMessage" class="mt-4">
-                      <v-col cols="12">
-                        <v-alert type="error">{{ errorMessage }}</v-alert>
-                      </v-col>
-                    </v-row>
-                    <v-row class="pt-7" align="center">
-                      <v-col cols="12" md="6">
-                        <v-row>
-                          <v-checkbox
-                            v-model="isStartDatePicked"
-                            @click="toggleStartDate"
-                          ></v-checkbox>
-                          <v-text-field
-                            v-model="formattedStartDate"
-                            label="Start Date"
-                            readonly
-                            variant="solo"
-                            density="compact"
-                            color="grey-lighten-4"
-                            rounded="l"
-                          ></v-text-field>
-                        </v-row>
-                      </v-col>
-                      <v-col cols="12" md="6">
-                        <v-row>
-                          <v-checkbox v-model="isEndDatePicked" @click="toggleEndDate"></v-checkbox>
-                          <v-text-field
-                            v-model="formattedEndDate"
-                            label="End Date"
-                            readonly
-                            variant="solo"
-                            density="compact"
-                            color="grey-lighten-4"
-                            rounded="l"
-                          ></v-text-field>
-                        </v-row>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-                <v-card-actions class="d-flex flex-column pt-0">
-                  <v-btn @click="saveDate" color="success">Save </v-btn>
-
-                  <v-btn @click="removeDates" color="warning">Remove</v-btn>
-                  <v-btn @click="dueDateDialog = false" color="error">Cancel</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
           </div>
           <v-card-actions class="d-flex flex-column">
             <Toast />
@@ -302,6 +154,9 @@ import { useRouter } from 'vue-router'
 import { defineProps } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import ChangeClient from './ChangeClientDialog.vue'
+import SelectMembers from './SelectMembers.vue'
+import UpdateJobStatus from './UpdateJobStatus.vue'
+import ChangeDueDate from './UpdateDateDialog.vue'
 
 const toast = useToast()
 // This passes in the selected job as a prop that the manager job component accepts
@@ -381,82 +236,7 @@ const saveStatus = () => {
 //For change client
 
 
-// For Due Date Dialog
 
-const dueDateDialog = ref(false)
-const currentDate = ref(null)
-const startDate = ref(null)
-const endDate = ref(null)
-const isStartDatePicked = ref(false)
-const isEndDatePicked = ref(false)
-const errorMessage = ref('')
-
-const updateDates = (value) => {
-  setDates(value)
-}
-
-const setDates = (value) => {
-  if (!isStartDatePicked.value) {
-    if (isEndDatePicked.value && value > endDate.value) {
-      errorMessage.value = 'Start date can not come after end date.'
-      return
-    }
-    errorMessage.value = null
-    startDate.value = value // stores the updated start date
-    job.value.jobStartDate = value
-    console.log(job.value)
-    isStartDatePicked.value = true
-    currentDate.value = null
-  } else if (!isEndDatePicked.value) {
-    if (isStartDatePicked.value && value < startDate.value) {
-      errorMessage.value = 'End date can not come before start date.'
-      return
-    }
-    errorMessage.value = null
-    endDate.value = value // stores the updated end date
-    job.value.jobEndDate = value
-    isEndDatePicked.value = true
-    currentDate.value = null
-  }
-}
-
-const toggleStartDate = () => {
-  isStartDatePicked.value = !isStartDatePicked.value
-  startDate.value = null
-  job.value.jobStartDate = null
-}
-
-const toggleEndDate = () => {
-  isEndDatePicked.value = !isEndDatePicked.value
-  endDate.value = null
-  job.value.jobEndDate = null
-}
-
-const formatDate = (date) => {
-  if (!date) return ''
-  const d = new Date(date)
-  const yyyy = d.getFullYear()
-  const mm = String(d.getMonth() + 1).padStart(2, '0')
-  const dd = String(d.getDate()).padStart(2, '0')
-  return `${yyyy}-${mm}-${dd}`
-}
-
-const formattedStartDate = computed(() => formatDate(startDate.value))
-const formattedEndDate = computed(() => formatDate(endDate.value))
-
-const saveDate = () => {
-  dueDateDialog.value = false
-}
-
-const removeDates = () => {
-  currentDate.value = null
-  startDate.value = null
-  job.value.jobStartDate = null
-  endDate.value = null
-  job.value.jobEndDate = null
-  isStartDatePicked.value = false
-  isEndDatePicked.value = false
-}
 
 function filterNonEmptyValues(obj) {
   return Object.fromEntries(
