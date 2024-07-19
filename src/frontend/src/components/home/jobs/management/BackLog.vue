@@ -7,7 +7,7 @@
         >
       </v-col>
       <v-col :cols="12">
-        <v-card><Kanban /></v-card>
+        <KanbanV2 />
       </v-col>
     </v-row>
   </v-container>
@@ -15,12 +15,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Kanban from '@/components/home/jobs/Kanban.vue'
+import KanbanV2 from '@/components/home/jobs/KanbanV2/KanbanV2.vue'
 
 export default defineComponent({
   name: 'BackLog',
   components: {
-    Kanban
+    KanbanV2
   },
   data() {
     return {

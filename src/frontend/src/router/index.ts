@@ -211,6 +211,11 @@ const router = createRouter({
       component: StatisticView
     },
     {
+      path: '/dummy-kanban',
+      name: 'dummy-kanban',
+      component: () => import('@/components/home/jobs/KanbanV2/KanbanV2.vue')
+    },
+    {
       path: '/inventory',
       name: 'inventory',
       component: InventoryView

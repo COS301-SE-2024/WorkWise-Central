@@ -126,3 +126,38 @@ type Job = {
   createdAt: string
   __v: number
 }
+
+export type Card = {
+  id: number
+  title: string
+  status: string
+}
+
+export type Column = {
+  id: number
+  status: string
+  cards: JobCardDataFormat[]
+}
+
+export type JobCardDataFormat = {
+  jobId: string
+  heading: string
+  jobDescription: string
+  startDate: string
+  endDate: string
+  status: string
+  clientName: string
+  street: string
+  suburb: string
+  city: string
+  postalCode: string
+  complex?: string
+  houseNumber?: string
+  imagesTaken: string[]
+  inventoryUsed: string[]
+  taskList: string[]
+  comments: string[]
+  //tell hamza to add these new one here
+  priority: string
+  tags: string[]
+}
