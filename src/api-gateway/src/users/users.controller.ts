@@ -246,8 +246,8 @@ export class UsersController {
   @ApiBody({ type: UpdateUserDto })
   @Patch('/update')
   async update(@Headers() headers: any, @Body() updateUserDto: UpdateUserDto) {
-    const userId = this.extractUserId(headers);
     try {
+      const userId = this.extractUserId(headers);
       return {
         data: await this.usersService.updateUser(userId, updateUserDto),
       };
