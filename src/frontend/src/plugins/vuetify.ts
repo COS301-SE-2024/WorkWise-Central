@@ -165,7 +165,7 @@ const vuetify = createVuetify({
           firstPlace: '#E2B203',
           secondPlace: '#626F86',
           thirdPlace: '#533F04',
-          kanbanIconColor: '#161A1D'
+          kanbanIconColor: '#161A1D',
           secondRowColor: '#F7F8F9',
           buttonText: '#F7F8F9'
         }
@@ -189,7 +189,7 @@ const vuetify = createVuetify({
           firstPlace: '#FFD700',
           secondPlace: '#C0C0C0',
           thirdPlace: '#CD7F32',
-          kanbanIconColor: '#DCDFE4'
+          kanbanIconColor: '#DCDFE4',
           secondRowColor: '#161A1D',
           buttonText: '#F7F8F9'
         }
