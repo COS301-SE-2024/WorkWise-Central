@@ -113,7 +113,7 @@
         <v-card-actions>
           <v-btn color="success" @click="viewJobDialog = true">View</v-btn>
           <!-- View Job Dialog -->
-          <v-dialog v-model="viewJobDialog" max-width="1000">
+          <v-dialog v-model="viewJobDialog" max-width="1000" scrollable>
             <v-card elevation="14" rounded="md" :max-width="1000" :max-height="800">
               <v-card-title> Job Details </v-card-title>
 

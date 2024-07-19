@@ -7,316 +7,123 @@
       <v-col xs="12" sm="9" md="9" lg="9" xl="9" class="pr-0 pb-0" cols="12">
         <v-card flat class="text-center elevation-0">
           <v-card-text>
-            <v-list>
-              <!-- Job Details -->
-              <v-list-item>
-                <v-list-item-title class="text font-weight-bold">Job Name</v-list-item-title>
-                <v-list-item-subtitle class="text font-weight-medium">{{
-                  passedInJob.heading || 'Job name is empty'
-                }}</v-list-item-subtitle>
-              </v-list-item>
 
-              <v-list-item>
-                <v-list-item-title class="text-h6 font-weight-bold"
-                  >Job Description</v-list-item-title
-                >
-                <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
-                  passedInJob.jobDescription || 'Job description is empty'
-                }}</v-list-item-subtitle>
-              </v-list-item>
+            <!--            Edit the details of a job -->
 
-              <v-list-item>
-                <v-list-item-title class="text-h6 font-weight-bold">Start Date</v-list-item-title>
-                <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
-                  passedInJob.startDate || 'Start date is empty'
-                }}</v-list-item-subtitle>
-              </v-list-item>
+            <v-form ref="jobForm">
+              <v-label>Job Name</v-label>
+              <v-text-field
+                  v-model="job.jobDetails.jobName"
+                  variant="solo"
+                  density="compact"
+                  color="grey-lighten-4"
+                  rounded="l"
+                  required
+                  :value="passedInJob.heading"
+              ></v-text-field>
+              <v-label>Job Description</v-label>
+              <v-textarea
+                  v-model="job.jobDetails.jobDescription"
+                  clearable
+                  variant="solo"
+                  density="compact"
+                  color="grey-lighten-4"
+                  rounded="l"
+                  required
+                  :value="passedInJob.jobDescription"
+              ></v-textarea>
+              <v-row>
+                <v-col cols="6">
+                  <v-label>Street</v-label>
+                  <v-text-field
+                      v-model="job.jobDetails.jobAddress.street"
+                      variant="solo"
+                      density="compact"
+                      color="grey-lighten-4"
+                      rounded="l"
+                      required
+                      :value="passedInJob.street"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-label>Suburb</v-label>
+                  <v-text-field
+                      v-model="job.jobDetails.jobAddress.suburb"
+                      variant="solo"
+                      density="compact"
+                      color="grey-lighten-4"
+                      rounded="l"
+                      required
+                      :value="passedInJob.suburb"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
 
-              <v-list-item>
-                <v-list-item-title class="text-h6 font-weight-bold">End Date</v-list-item-title>
-                <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
-                  passedInJob.endDate || 'End date is empty'
-                }}</v-list-item-subtitle>
-              </v-list-item>
+              <v-row>
+                <v-col cols="6">
+                  <v-label>City</v-label>
+                  <v-text-field
+                      v-model="job.jobDetails.jobAddress.city"
+                      variant="solo"
+                      density="compact"
+                      color="grey-lighten-4"
+                      rounded="l"
+                      required
+                      :value="passedInJob.city"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-label>Postal Code</v-label>
+                  <v-text-field
+                      v-model="job.jobDetails.jobAddress.postalCode"
+                      variant="solo"
+                      density="compact"
+                      color="grey-lighten-4"
+                      rounded="l"
+                      required
+                      :value="passedInJob.postalCode"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
 
-              <!-- Job Address -->
-              <v-list-item>
-                <v-list-item-title class="text-h6 font-weight-bold">Address</v-list-item-title>
-                <v-list-item-subtitle class="text-body-1 font-weight-medium">
-                  {{ passedInJob.street || 'Street is empty' }},
-                  {{ passedInJob.suburb || 'Suburb is empty' }},
-                  {{ passedInJob.city || 'City is empty' }},
-                  {{ passedInJob.postalCode || 'Postal code is empty' }}
-                </v-list-item-subtitle>
-              </v-list-item>
-
-              <v-list-item>
-                <v-list-item-title class="text-h6 font-weight-bold">Complex</v-list-item-title>
-                <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
-                  passedInJob.complex || 'Complex is empty'
-                }}</v-list-item-subtitle>
-              </v-list-item>
-
-              <v-list-item>
-                <v-list-item-title class="text-h6 font-weight-bold">House Number</v-list-item-title>
-                <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
-                  passedInJob.houseNumber || 'House number is empty'
-                }}</v-list-item-subtitle>
-              </v-list-item>
-
-              <!-- Assigned Employees -->
-              <v-list-item>
-                <v-list-item-title class="text-h6 font-weight-bold"
-                  >Assigned Employees</v-list-item-title
-                >
-                <v-list-item-subtitle class="text-body-1 font-weight-medium">
-                  <span v-for="employeeId in assignedEmployees" :key="employeeId">
-                    {{ employeeId || 'Employee ID is empty' }}
-                  </span>
-                </v-list-item-subtitle>
-              </v-list-item>
-
-              <!-- Recorded Details -->
-              <!--              <v-list-item>-->
-              <!--                -->
-              <!--                  <v-list-item-title class="text-h6 font-weight-bold">Images Taken</v-list-item-title>-->
-              <!--                  <v-list-item-subtitle class="text-body-1 font-weight-medium">-->
-              <!--                    <img-->
-              <!--                        v-for="image in imagesTaken"-->
-              <!--                        :key="image"-->
-              <!--                        :src="image"-->
-              <!--                        alt="Job Image"-->
-              <!--                        class="ma-2"-->
-              <!--                        width="50"-->
-              <!--                        v-if="image"-->
-              <!--                    />-->
-              <!--                    <span v-if="imagesTaken.length === 0">No images taken</span>-->
-              <!--                  </v-list-item-subtitle>-->
-              <!--                -->
-              <!--              </v-list-item>-->
-
-              <!--              <v-list-item>-->
-              <!--                -->
-              <!--                  <v-list-item-title class="text-h6 font-weight-bold">Inventory Used</v-list-item-title>-->
-              <!--                  <v-list-item-subtitle class="text-body-1 font-weight-medium">-->
-              <!--                    <div v-for="item in inventoryUsed" :key="item.InventoryItem">-->
-              <!--                      {{ item.InventoryItem || 'Inventory item is empty' }} - Quantity: {{ item.QuantityUsed || 'Quantity is empty' }}-->
-              <!--                    </div>-->
-              <!--                    <span v-if="inventoryUsed.length === 0">No inventory used</span>-->
-              <!--                  </v-list-item-subtitle>-->
-              <!--                -->
-              <!--              </v-list-item>-->
-
-              <!-- Status -->
-              <v-list-item>
-                <v-list-item-title class="text-h6 font-weight-bold">Status</v-list-item-title>
-                <v-list-item-subtitle class="text-body-1 font-weight-medium">{{
-                  passedInJob.status || 'Status is empty'
-                }}</v-list-item-subtitle>
-              </v-list-item>
-
-              <!-- Task List -->
-              <!--              <v-list-item>-->
-              <!--                -->
-              <!--                  <v-list-item-title class="text-h6 font-weight-bold">Task List</v-list-item-title>-->
-              <!--                  <v-list-item-subtitle class="text-body-1 font-weight-medium">-->
-              <!--                    <div v-for="task in taskList" :key="task.taskName">-->
-              <!--                      {{ task.taskName || 'Task name is empty' }} - Status: {{ task.status || 'Task status is empty' }} - Assigned Employees: {{ task.assignedEmployees.join(', ') || 'No assigned employees' }}-->
-              <!--                    </div>-->
-              <!--                    <span v-if="taskList.length === 0">No tasks available</span>-->
-              <!--                  </v-list-item-subtitle>-->
-              <!--                -->
-              <!--              </v-list-item>-->
-
-              <!--              &lt;!&ndash; Comments &ndash;&gt;-->
-              <!--              <v-list-item>-->
-              <!--                -->
-              <!--                  <v-list-item-title class="text-h6 font-weight-bold">Comments</v-list-item-title>-->
-              <!--                  <v-list-item-subtitle class="text-body-1 font-weight-medium">-->
-              <!--                    <div v-for="comment in comments" :key="comment.commentDate">-->
-              <!--                      {{ comment.comment || 'Comment is empty' }} - By: {{ comment.employeeId || 'Employee ID is empty' }} on {{ comment.commentDate || 'Comment date is empty' }}-->
-              <!--                    </div>-->
-              <!--                    <span v-if="comments.length === 0">No comments available</span>-->
-              <!--                  </v-list-item-subtitle>-->
-              <!--                -->
-              <!--              </v-list-item>-->
-            </v-list>
+              <v-row>
+                <v-col cols="6">
+                  <v-label>Complex</v-label>
+                  <v-text-field
+                      v-model="job.jobDetails.jobAddress.complex"
+                      variant="solo"
+                      density="compact"
+                      color="grey-lighten-4"
+                      rounded="l"
+                      :value="passedInJob.complex"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-label>House Number</v-label>
+                  <v-text-field
+                      v-model="job.jobDetails.jobAddress.houseNumber"
+                      variant="solo"
+                      density="compact"
+                      color="grey-lighten-4"
+                      rounded="l"
+                      required
+                      :value="passedInJob.houseNumber"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+            </v-form>
           </v-card-text>
         </v-card>
       </v-col>
       <v-col xs="12" sm="3" md="3" lg="3" xl="3" class="pl-0 pb-0" cols="12">
         <v-card flat class="pa-5 bg-cardColor elevation-0">
           <div class="d-flex flex-column">
-            <!--Job details and description Model Edit -->
 
-            <v-btn class="mb-2" outlined @click="detailsDialog = true">
-              <v-icon class="d-none d-lg-inline-block mr-2" left>{{
-                'fa: fa-solid fa-pencil-alt'
-              }}</v-icon>
-              Edit Details
-            </v-btn>
 
-            <v-dialog v-model="detailsDialog" max-width="600px">
-              <v-card>
-                <v-card-title
-                  class="text-h5 font-weight-regular bg-blue-grey text-center text-center"
-                >
-                  Edit The Job Details
-                </v-card-title>
-                <v-card-text>
-                  <v-form ref="jobForm">
-                    <v-label>Job Name</v-label>
-                    <v-text-field
-                      v-model="job.jobDetails.jobName"
-                      label="Job Name"
-                      variant="solo"
-                      density="compact"
-                      color="grey-lighten-4"
-                      rounded="l"
-                      required
-                    ></v-text-field>
-                    <v-label>Job Description</v-label>
-                    <v-textarea
-                      v-model="job.jobDetails.jobDescription"
-                      clearable
-                      label="Job Description"
-                      variant="solo"
-                      density="compact"
-                      color="grey-lighten-4"
-                      rounded="l"
-                      required
-                    ></v-textarea>
-                    <v-row>
-                      <v-col cols="6">
-                        <v-label>Street</v-label>
-                        <v-text-field
-                          v-model="job.jobDetails.jobAddress.street"
-                          label="Street"
-                          variant="solo"
-                          density="compact"
-                          color="grey-lighten-4"
-                          rounded="l"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="6">
-                        <v-label>Suburb</v-label>
-                        <v-text-field
-                          v-model="job.jobDetails.jobAddress.suburb"
-                          label="Suburb"
-                          variant="solo"
-                          density="compact"
-                          color="grey-lighten-4"
-                          rounded="l"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-
-                    <v-row>
-                      <v-col cols="6">
-                        <v-label>City</v-label>
-                        <v-text-field
-                          v-model="job.jobDetails.jobAddress.city"
-                          label="City"
-                          variant="solo"
-                          density="compact"
-                          color="grey-lighten-4"
-                          rounded="l"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="6">
-                        <v-label>Postal Code</v-label>
-                        <v-text-field
-                          v-model="job.jobDetails.jobAddress.postalCode"
-                          label="Postal Code"
-                          variant="solo"
-                          density="compact"
-                          color="grey-lighten-4"
-                          rounded="l"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-
-                    <v-row>
-                      <v-col cols="6">
-                        <v-label>Complex</v-label>
-                        <v-text-field
-                          v-model="job.jobDetails.jobAddress.complex"
-                          label="Complex"
-                          variant="solo"
-                          density="compact"
-                          color="grey-lighten-4"
-                          rounded="l"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="6">
-                        <v-label>House Number</v-label>
-                        <v-text-field
-                          v-model="job.jobDetails.jobAddress.houseNumber"
-                          label="House Number"
-                          variant="solo"
-                          density="compact"
-                          color="grey-lighten-4"
-                          rounded="l"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-form>
-                </v-card-text>
-
-                <v-card-actions class="d-flex flex-column">
-                  <v-btn @click="saveJobDetails" color="success"> Save </v-btn>
-                  <v-btn @click="cancelJobDetails" color="error"> Cancel </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
 
             <!-- For client change -->
+            <ChangeClient/>
 
-            <v-btn class="mb-2" outlined @click="openClientDialogAndFetchClients">
-              <v-icon class="d-none d-lg-inline-block mr-2" left>{{
-                'fa: fa-solid fa-user-edit'
-              }}</v-icon>
-              Change Client
-            </v-btn>
-
-            <v-dialog v-model="clientDialog" max-width="600px">
-              <v-card>
-                <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-                  Change the client for this job
-                </v-card-title>
-
-                <v-card-text>
-                  <div class="text-caption pa-3">Select a client</div>
-
-                  <v-autocomplete
-                    v-model="selectedClientName"
-                    hint="Click the field to select a client"
-                    :items="clientNames"
-                    label="Select Client"
-                    prepend-icon="fa: fa-solid fa-handshake"
-                    persistent-hint
-                    outlined
-                    dense
-                    class="my-custom-autocomplete"
-                    color="primary"
-                    background-color="#f5f5f5"
-                    rounded="l"
-                    variant="solo"
-                  >
-                  </v-autocomplete>
-                </v-card-text>
-
-                <v-card-actions class="d-flex flex-column">
-                  <v-btn @click="saveClient" color="success">Save</v-btn>
-                  <v-btn @click="clientDialog = false" color="error">Cancel</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
 
             <!-- Mutli-member select -->
 
@@ -494,6 +301,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { defineProps } from 'vue'
 import { useToast } from 'primevue/usetoast'
+import ChangeClient from './ChangeClientDialog.vue'
 
 const toast = useToast()
 // This passes in the selected job as a prop that the manager job component accepts
@@ -572,68 +380,6 @@ const saveStatus = () => {
 
 //For change client
 
-const clientDialog = ref(false)
-const selectedClient = ref(null)
-const clients = ref([])
-const selectedClientName = ref(null)
-const clientNames = ref([])
-
-const router = useRouter()
-
-const openClientDialogAndFetchClients = async () => {
-  clientDialog.value = true
-  await fetchClients()
-}
-
-// api call to get clients and stores them here
-const fetchClients = async () => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
-    }
-  }
-  try {
-    const response = await axios.get('http://localhost:3000/client/all', config)
-    console.log(response.data)
-    clients.value = response.data.data.map((client) => ({
-      ...client,
-      fullName: `${client.details.firstName ?? ''} ${client.details.surname ?? ''}`.trim()
-    }))
-
-    // Populate clientNames array with just the names
-    clientNames.value = clients.value.map((client) => {
-      return client.details.firstName && client.details.surname
-        ? `${client.details.firstName} ${client.details.surname}`
-        : client.details.name ?? 'Unknown Name'
-    })
-
-    // Watch for changes in selectedClientName and update selectedClient
-    watch(
-      () => selectedClientName.value,
-      (newVal) => {
-        const selected = clients.value.find((client) => {
-          const fullName =
-            client.details.firstName && client.details.surname
-              ? `${client.details.firstName} ${client.details.surname}`
-              : client.details.name ?? 'Unknown Name'
-          return fullName === newVal
-        })
-        selectedClient.value = selected?._id ?? null
-      }
-    )
-  } catch (error) {
-    console.error('Failed to fetch clients:', error)
-  }
-}
-
-const saveClient = () => {
-  if (selectedClientName.value) {
-    // match the client name with the client id
-    // add that id to the job
-  }
-  clientDialog.value = false
-}
 
 // For Due Date Dialog
 
