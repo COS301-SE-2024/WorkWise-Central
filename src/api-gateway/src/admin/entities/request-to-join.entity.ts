@@ -1,9 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
+import { SchemaTypes, Types } from 'mongoose';
 import { CreateUserRequestDto } from '../../users/dto/create-user-request.dto';
 
-@Schema()
-export class UserRequestToJoin {
+const ONEWEEK = 604800;
+
+@Schema({ timestamps: true })
+export class UserJoinRequest {
   constructor(createRequestDto: CreateUserRequestDto) {
     if (createRequestDto.companyId) this.companyId = createRequestDto.companyId;
     if (createRequestDto.companyName)
@@ -12,10 +14,16 @@ export class UserRequestToJoin {
   }
 
   @Prop({ required: false, type: Types.ObjectId, ref: 'Company' })
-  companyId?: Types.ObjectId;
+  companyId: Types.ObjectId;
 
   @Prop({ required: false, type: String })
   companyName?: string;
+
+  @Prop({ required: false, type: SchemaTypes.ObjectId, ref: 'Role' })
+  roleId?: Types.ObjectId; //Still not sure about this...
+
+  @Prop({ required: true, type: String, default: 'Worker' })
+  roleName?: string = 'Worker';
 
   @Prop({ required: true, type: Types.ObjectId, ref: 'Users' })
   userToJoin: Types.ObjectId;
@@ -24,5 +32,7 @@ export class UserRequestToJoin {
   createdAt: Date = new Date();
 }
 
-export const UserRequestToJoinSchema =
-  SchemaFactory.createForClass(UserRequestToJoin);
+export const UserJoinRequestSchema =
+  SchemaFactory.createForClass(UserJoinRequest);
+
+UserJoinRequestSchema.index({ createdAt: 1 }, { expireAfterSeconds: ONEWEEK });
