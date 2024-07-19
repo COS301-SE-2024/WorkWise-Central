@@ -2,12 +2,14 @@
   <v-dialog
     v-model="clientDialog"
     max-width="500px"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
+    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn color="error" v-bind="activatorProps">Delete</v-btn>
+      <v-btn color="error" v-bind="activatorProps"
+        >Delete <v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
+      ></v-btn>
     </template>
-    <v-card>
+    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
       <v-card-title> Delete {{ client.name + ' ' + client.surname }} </v-card-title>
       <v-card-text>
         <v-container>
@@ -23,9 +25,11 @@
         <v-spacer></v-spacer>
         <Toast />
         <v-btn label="Delete" color="error" text :loading="isDeleting" @click="deleteClient"
-          >Delete</v-btn
-        >
-        <v-btn label="Cancel" color="secondary" text @click="clientDialog = false">Cancel</v-btn>
+          >Delete <v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
+        ></v-btn>
+        <v-btn label="Cancel" color="secondary" text @click="clientDialog = false"
+          >Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="secondary" size="small"></v-icon
+        ></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -45,10 +49,12 @@ export default {
   components: { Toast },
   data() {
     return {
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       clientDialog: false,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
-      isdarkmode: localStorage.getItem('isdarkmode') === 'true' ? true : false,
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',

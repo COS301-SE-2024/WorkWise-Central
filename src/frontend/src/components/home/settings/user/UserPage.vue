@@ -16,10 +16,18 @@
           <v-form ref="form" @submit.prevent>
             <v-row>
               <v-col cols="12" sm="6">
-                <v-text-field v-model="user.firstName" label="First Name" hide-details="auto"></v-text-field>
+                <v-text-field
+                  v-model="user.firstName"
+                  label="First Name"
+                  hide-details="auto"
+                ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-text-field v-model="user.surname" label="Surname" hide-details="auto"></v-text-field>
+                <v-text-field
+                  v-model="user.surname"
+                  label="Surname"
+                  hide-details="auto"
+                ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
                 <v-text-field
@@ -66,19 +74,39 @@
               <!-- Address fields -->
               <!-- ... (address fields omitted for brevity) -->
               <v-col cols="12" sm="6">
-                <v-text-field v-model="user.address.street" label="Street" hide-details="auto"></v-text-field>
+                <v-text-field
+                  v-model="user.address.street"
+                  label="Street"
+                  hide-details="auto"
+                ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-text-field v-model="user.address.suburb" label="Suburb" hide-details="auto"></v-text-field>
+                <v-text-field
+                  v-model="user.address.suburb"
+                  label="Suburb"
+                  hide-details="auto"
+                ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-text-field v-model="user.address.city" label="City" hide-details="auto"></v-text-field>
+                <v-text-field
+                  v-model="user.address.city"
+                  label="City"
+                  hide-details="auto"
+                ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-text-field v-model="user.address.postalCode" label="Postal Code" hide-details="auto"></v-text-field>
+                <v-text-field
+                  v-model="user.address.postalCode"
+                  label="Postal Code"
+                  hide-details="auto"
+                ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-text-field v-model="user.address.complex" label="Complex" hide-details="auto"></v-text-field>
+                <v-text-field
+                  v-model="user.address.complex"
+                  label="Complex"
+                  hide-details="auto"
+                ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
                 <v-text-field

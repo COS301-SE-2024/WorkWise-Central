@@ -13,7 +13,7 @@
         width="100%"
       >
         <v-row align="center" justify="space-between">
-          <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+          <v-col cols="12" md="4" sm="6" xs="4" class="d-flex justify-start align-center">
             <v-icon icon="mdi-account"></v-icon>
             <v-label
               class="ms-2 h4 font-family-Nunito text-headingTextColor"
@@ -23,22 +23,22 @@
             >
           </v-col>
 
-          <v-col cols="12" md="4" sm="6" xs="12">
+          <v-col cols="12" md="4" sm="6" xs="4" class="d-flex justify-center">
             <v-text-field
               v-model="search"
               density="compact"
               label="Search"
               prepend-inner-icon="mdi-magnify"
-              variant="solo-inverted"
+              variant="outlined"
               flat
-              width="100%"
+              width="80%"
               style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
               hide-details
               single-line
             ></v-text-field>
           </v-col>
 
-          <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
+          <v-col cols="12" md="4" sm="12" xs="4" :class="{ 'justify-end': !isSmallScreen }">
             <AddClient />
           </v-col>
         </v-row>
@@ -60,12 +60,12 @@
               :header-props="getHeaderProps"
             >
               <template #[`item.firstName`]="{ value }">
-                <v-chip variant="text" color="elementTextColor">
+                <v-chip variant="text">
                   <v-icon icon="fa:fa-solid fa-user "></v-icon>{{ value }}</v-chip
                 >
               </template>
               <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                <v-chip @click="callPhone" color="primary" text-color="elementTextColor" border="md"
+                <v-chip @click="callPhone" text- border="md"
                   ><v-icon icon="fa:fa-solid fa-phone"></v-icon> {{ value }}</v-chip
                 >
               </template>
@@ -73,20 +73,15 @@
                 <v-chip :color="getColor(value)"> {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip>
               </template>
               <template v-slot:[`item.lastName`]="{ value }">
-                <v-chip variant="text" color="elementTextColor"> {{ value }}</v-chip>
+                <v-chip variant="text"> {{ value }}</v-chip>
               </template>
               <template v-slot:[`item.contactInfo.email`]="{ value }">
-                <v-chip
-                  @click="sendEmail"
-                  color="primary"
-                  text-color="elementTextColor"
-                  border="md"
-                >
+                <v-chip @click="sendEmail" text- border="md">
                   <v-icon icon="fa:fa-solid fa-envelope"></v-icon>{{ value }}</v-chip
                 >
               </template>
               <template v-slot:[`item.address.street`]="{ value }">
-                <v-chip variant="text" color="elementTextColor">
+                <v-chip variant="text">
                   <v-icon icon="fa:fa-solid fa-location-dot"></v-icon>{{ value }}</v-chip
                 >
               </template>
@@ -115,7 +110,16 @@
         </v-card-title>
         <v-card-text> What would you like to do with this client? </v-card-text>
         <v-card-actions>
+          <v-btn @click="actionsDialog = false" color="primary"
+            >Close<v-icon
+              icon="fa:fa-solid fa-cancel"
+              end
+              color="primary"
+              size="small"
+            ></v-icon></v-btn
+          ><v-spacer></v-spacer>
           <ClientDetails :colors="colors" :ClientDetails="selectedItem" />
+
           <EditClient
             @update:item="selectedItem = $event"
             :editedItem="selectedItem"
@@ -126,8 +130,6 @@
             :client="selectedItem"
             :company_id="clientCompanyID"
           />
-          <v-spacer></v-spacer>
-          <v-btn @click="actionsDialog = false" color="primary">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -151,6 +153,7 @@ export default defineComponent({
   data: () => ({
     dummy: '',
     selectedItem: {},
+    windowWidth: window.innerWidth,
     selectedItemName: '',
     selectedItemSurname: '',
     isdarkmode: true,
@@ -178,7 +181,7 @@ export default defineComponent({
         sortable: true,
         value: 'firstName',
         key: 'firstName',
-        class: 'my-header-style'
+        class: 'text-h3'
       },
       {
         title: 'Surname',
@@ -186,27 +189,27 @@ export default defineComponent({
         sortable: true,
         value: 'lastName',
         key: 'lastName',
-        class: 'my-header-style'
+        class: 'h3'
       },
       {
         title: 'Phone',
         value: 'contactInfo.phoneNumber',
         key: 'contactInfo.phoneNumber',
-        class: 'my-header-style'
+        class: 'h3'
       },
       {
         title: 'Email',
         value: 'contactInfo.email',
         key: 'contactInfo.email',
-        class: 'my-header-style'
+        class: 'h3'
       },
       {
         title: 'Address',
         value: 'address.street',
         key: 'address.street',
-        class: 'my-header-style'
+        class: 'h3'
       },
-      { title: '', value: 'actions', key: 'actions', sortable: false, class: 'my-header-style' }
+      { title: '', value: 'actions', key: 'actions', sortable: false, class: 'h3' }
     ],
     search: '',
     clients: [],
@@ -242,7 +245,16 @@ export default defineComponent({
     },
     globalTheme() {
       return this.$theme.global // Adjust based on actual implementation
+    },
+    isSmallScreen() {
+      return this.windowWidth < 960 // adjust this value based on your breakpoint
     }
+  },
+  created() {
+    window.addEventListener('resize', this.handleResize)
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize)
   },
   mounted() {
     this.getClients()
@@ -431,7 +443,7 @@ export default defineComponent({
 
 /* Light mode */
 
-.my-header-style {
+.h3 {
   background: red;
 }
 .font-family-lato {
