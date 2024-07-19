@@ -12,6 +12,7 @@ import { EmployeeModule } from './employee/employee.module';
 import { NotificationModule } from './notification/notification.module';
 import { EmailModule } from './email/email.module';
 import { FileModule } from './file/file.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { FileModule } from './file/file.module';
     NotificationModule,
     EmailModule,
     FileModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

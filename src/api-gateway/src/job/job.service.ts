@@ -304,6 +304,7 @@ export class JobService {
     if (!(await this.usersService.userIsInCompany(userId, companyId))) {
       throw new UnauthorizedException('User not in company');
     }
+
     return await this.jobRepository.findAllInCompanyDetailed(companyId);
   }
 
