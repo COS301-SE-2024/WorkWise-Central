@@ -176,16 +176,18 @@ export class ClientService {
 
     if (client.details) {
       if (client.details) {
-        if (client.details.contactInfo.email && client.details.companyId) {
-          const exists = await this.clientRepository.findClientByEmailOrName(
-            client.details.companyId,
-            client.details.contactInfo.email,
-          );
-          if (!exists)
-            return new ValidationResultWithException(
-              false,
-              new NotFoundException('Client not found'),
+        if (client.details.contactInfo) {
+          if (client.details.contactInfo.email && client.details.companyId) {
+            const exists = await this.clientRepository.findClientByEmailOrName(
+              client.details.companyId,
+              client.details.contactInfo.email,
             );
+            if (!exists)
+              return new ValidationResultWithException(
+                false,
+                new NotFoundException('Client not found'),
+              );
+          }
         }
 
         if (client.details.companyId) {
