@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   forwardRef,
   Inject,
   Injectable,
@@ -10,7 +11,7 @@ import {
   CancelRequestDto,
   UserJoinRequestDto,
 } from '../users/dto/request-to-join.dto';
-import { Types } from 'mongoose';
+import { FlattenMaps, Types } from 'mongoose';
 import { AdminRepository } from './admin.repository';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
@@ -18,6 +19,8 @@ import { UserJoinRequest } from './entities/request-to-join.entity';
 import { AcceptRequestDto } from '../client/dto/accept-request.dto';
 import { EmployeeService } from '../employee/employee.service';
 import { RoleService } from '../role/role.service';
+import { NotificationService } from '../notification/notification.service';
+import { Role } from '../role/entity/role.entity';
 
 @Injectable()
 export class AdminService {
@@ -35,16 +38,20 @@ export class AdminService {
 
     @Inject(forwardRef(() => RoleService))
     private roleService: RoleService,
+
+    @Inject(forwardRef(() => NotificationService))
+    private notificationService: NotificationService,
   ) {}
 
   async createRequest(
+    //User must have a WorkWise Account
     userId: Types.ObjectId,
     requestToJoin: UserJoinRequestDto,
   ) {
     //Validation Section
-    if (userId.toString() !== requestToJoin.userToJoin.toString()) {
+    /*    if (userId.toString() !== requestToJoin.requestingUserId.toString()) {
       throw new BadRequestException('Inconsistent UserId in JWT and Request');
-    }
+    }*/
 
     if (!(await this.usersService.userIdExists(userId))) {
       throw new BadRequestException('userId Invalid');
@@ -61,8 +68,25 @@ export class AdminService {
     if (userIsInCompany) {
       throw new BadRequestException('User Already in company');
     }
+
+    const requestsToCompany: (FlattenMaps<UserJoinRequest> & {
+      _id: Types.ObjectId;
+    })[] = await this.adminRepository.findRequestsFromUserForCompany(
+      userId,
+      requestToJoin.companyId,
+    );
+
+    if (requestsToCompany.length > 0) {
+      throw new ConflictException(
+        'User has already made a request to join this company',
+      );
+    }
+
     //
-    const newRequest = new UserJoinRequest(requestToJoin);
+    const newRequest = new UserJoinRequest({
+      userToJoin: userId,
+      companyId: requestToJoin.companyId,
+    });
     return await this.adminRepository.save(newRequest);
   }
 
@@ -89,12 +113,12 @@ export class AdminService {
       throw new BadRequestException('User already in company');
     }
     //
-    return (
-      await this.adminRepository.cancelRequest(
-        userId,
-        cancelRequestDto.companyId,
-      )
-    ).acknowledged;
+    const req = await this.adminRepository.cancelRequest(
+      userId,
+      cancelRequestDto.companyId,
+    );
+    console.log(req.deletedCount);
+    return req.deletedCount > 0;
   }
 
   async getAllRequests() {
@@ -119,14 +143,42 @@ export class AdminService {
       userId,
       companyId,
     );
-    if (userIsInCompany) {
-      throw new UnauthorizedException('User Already in company');
+    if (!userIsInCompany) {
+      throw new UnauthorizedException('User not in company');
     }
     //TODO: Add Role Validation
 
     ///
 
     return this.adminRepository.findAllRequestsForCompany(companyId);
+  }
+
+  async getAllDetailedRequestsInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ) {
+    ///Validation Section
+    // User exists
+    if (!(await this.usersService.userIdExists(userId))) {
+      throw new NotFoundException('userId Invalid');
+    }
+    //CompanyExists
+    if (!(await this.companyService.companyIdExists(companyId))) {
+      throw new NotFoundException('CompanyId Invalid');
+    }
+    //UserInCompany
+    const userIsInCompany = await this.usersService.userIsInCompany(
+      userId,
+      companyId,
+    );
+    if (!userIsInCompany) {
+      throw new UnauthorizedException('User not in company');
+    }
+    //TODO: Add Role Validation
+
+    ///
+
+    return this.adminRepository.findAllDetailedRequestsForCompany(companyId);
   }
 
   async getAllRequestsForUser(userId: Types.ObjectId) {
@@ -140,20 +192,27 @@ export class AdminService {
   }
 
   ///Company-side
-  async acceptRequest(
-    userId: Types.ObjectId,
+  async processRequest(
+    adminUserId: Types.ObjectId,
     acceptRequestDto: AcceptRequestDto,
   ) {
     ///Validation Section
     // User exists
-    if (!(await this.usersService.userIdExists(userId))) {
-      throw new NotFoundException('userId Invalid');
+    if ((await this.usersService.userIdExists(adminUserId)) == false) {
+      throw new NotFoundException('adminUserId Invalid');
+    }
+    const requestingUser = await this.usersService.getUserById(
+      acceptRequestDto.userToJoinId,
+    );
+
+    if (requestingUser == null) {
+      throw new NotFoundException('Joining UserId Invalid');
     }
     //companyId
-    const companyExists = await this.companyService.companyIdExists(
+    const company = await this.companyService.getCompanyById(
       acceptRequestDto.companyId,
     );
-    if (companyExists) throw new BadRequestException('CompanyId Invalid');
+    if (company == null) throw new BadRequestException('CompanyId Invalid');
     //superiorId
     const superior = await this.employeeService.findById(
       acceptRequestDto.superiorId,
@@ -186,20 +245,76 @@ export class AdminService {
     //TODO: Permissions of user to add person
     ///
 
-    if (!acceptRequestDto.accept) {
-      //Reject and delete request
-    } else {
-    }
+    if (acceptRequestDto.accept) {
+      const username: string = (
+        await this.usersService.getUserById(acceptRequestDto.userToJoinId)
+      ).systemDetails.username;
 
-    let roleId: Types.ObjectId;
-    if (acceptRequestDto.assignedRoleId == null)
-      roleId = (
-        await this.roleService.findOneInCompany(
+      let userRole: FlattenMaps<Role> & { _id: Types.ObjectId };
+      if (acceptRequestDto.assignedRoleId != null)
+        userRole = await this.roleService.findById(
+          acceptRequestDto.assignedRoleId,
+        );
+      else {
+        userRole = await this.roleService.findOneInCompany(
           'Worker',
           acceptRequestDto.companyId,
-        )
-      )._id;
-    else roleId = acceptRequestDto.assignedRoleId;
-    //Accept or nah
+        );
+      }
+
+      const joinedCompany = (
+        await this.usersService.getUserById(adminUserId)
+      ).joinedCompanies.filter(
+        (x) =>
+          x.companyId.toLocaleString() ===
+          acceptRequestDto.companyId.toString(),
+      )[0];
+
+      try {
+        await this.companyService.addEmployee({
+          adminId: joinedCompany.employeeId,
+          currentCompany: acceptRequestDto.companyId,
+          newUserUsername: username,
+          superiorId: acceptRequestDto.superiorId,
+          roleId: userRole._id,
+        });
+      } catch (Error) {
+        console.log(Error);
+        throw Error;
+      }
+
+      //Notification of acceptance
+      const fName = requestingUser.personalInfo.firstName;
+      const lName = requestingUser.personalInfo.surname;
+      const companyName = company.name;
+      const roleName = userRole.roleName;
+      await this.notificationService.createNotificationsFromUser({
+        //THIS IS A MOCK
+        message: `Congratulations, ${fName} ${lName}! You have been accepted into ${companyName} in the role: ${roleName}`,
+        recipientIds: [acceptRequestDto.userToJoinId],
+      });
+      //remove request
+      await this.adminRepository.acceptRequest(
+        acceptRequestDto.userToJoinId,
+        acceptRequestDto.companyId,
+      );
+
+      return true;
+    } else {
+      const fName = requestingUser.personalInfo.firstName;
+      const lName = requestingUser.personalInfo.surname;
+      const companyName = company.name;
+      //Reject and delete request
+      await this.notificationService.createNotificationsFromUser({
+        //THIS IS A MOCK
+        message: `Good day, ${fName} ${lName}. You have unfortunately been rejected from ${companyName}.`,
+        recipientIds: [acceptRequestDto.userToJoinId],
+      });
+      await this.adminRepository.rejectRequest(
+        acceptRequestDto.userToJoinId,
+        acceptRequestDto.companyId,
+      );
+      return true;
+    }
   }
 }
