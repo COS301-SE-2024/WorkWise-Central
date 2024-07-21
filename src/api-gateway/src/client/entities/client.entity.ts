@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
 import { CreateClientDto } from '../dto/create-client.dto';
 import { Company } from '../../company/entities/company.entity';
@@ -42,11 +42,11 @@ export class ClientDetails {
   @ApiProperty()
   preferredLanguage?: string;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: ContactInfo, required: false })
   contactInfo: ContactInfo;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: Address, required: false })
   address?: Address;
 
