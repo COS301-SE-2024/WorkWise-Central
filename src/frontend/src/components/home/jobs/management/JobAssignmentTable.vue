@@ -270,8 +270,9 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, Ref } from 'vue'
 import axios from 'axios'
+import { useToast } from 'primevue/usetoast'
 import AddJob from './AddJob.vue'
 import ManagerJobCard from './ManagerJobCard.vue'
 import AttachImages from './AttachImages.vue'
@@ -280,10 +281,17 @@ import JobChecklist from './JobChecklist.vue'
 import LogInventory from './LogInventory.vue'
 import JobNotes from './JobNotes.vue'
 
-const search = ref('')
-const viewJobDialog = ref(false)
-// set the table headers
+const toast = useToast()
 
+// Search and dialog states
+const search: Ref<string> = ref('')
+const viewJobDialog: Ref<boolean> = ref(false)
+const dialog: Ref<boolean> = ref(false)
+const deleteDialog: Ref<boolean> = ref(false)
+const managerJobCardDialog: Ref<boolean> = ref(false)
+const selectedJob: Ref<any | null> = ref(null)
+
+// Table headers
 const headers = [
   { title: 'Job Heading', key: 'heading', align: 'start', value: 'heading' },
   { title: 'Client', key: 'clientName', align: 'start', value: 'client' },
@@ -295,12 +303,14 @@ const headers = [
 ]
 
 // Reactive variable to hold job and client data
-// Requests made locally or on the deployed server
-const jobClientData = ref([])
+const jobClientData: Ref<any[]> = ref([])
+
+// API URLs
 const localUrl: string = 'http://localhost:3000/'
 const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
 
-const isLocalAvailable = async (localUrl: string) => {
+// Utility functions
+const isLocalAvailable = async (localUrl: string): Promise<boolean> => {
   try {
     const res = await axios.get(localUrl)
     return res.status < 300 && res.status > 199
@@ -309,12 +319,13 @@ const isLocalAvailable = async (localUrl: string) => {
   }
 }
 
-const getRequestUrl = async () => {
+const getRequestUrl = async (): Promise<string> => {
   const localAvailable = await isLocalAvailable(localUrl)
   return localAvailable ? localUrl : remoteUrl
 }
 
-const fetchJobData = async () => {
+// Fetch job data
+const fetchJobData = async (): Promise<any[]> => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -325,56 +336,44 @@ const fetchJobData = async () => {
   try {
     const response = await axios.get(apiUrl + `job/all/company/detailed/${localStorage['currentCompany']}`, config)
     const jobData = response.data.data
-
-    console.log(response.data)
-
-    // Check if jobData is an array or needs conversion
     const jobs = Array.isArray(jobData) ? jobData : [jobData]
-
-    // Map job data to include necessary details
     return jobs.map((job) => ({
-          jobId: job._id,
-          heading: job.details.heading,
-          jobDescription: job.details.description,
-          startDate: job.details.startDate,
-          endDate: job.details.endDate,
-          status: job.status,
-          clientId: job.clientId,
-          street: job.details.address.street,
-          suburb: job.details.address.suburb,
-          city: job.details.address.city,
-          postalCode: job.details.address.postalCode,
-          complex: job.details.address.complex,
-          houseNumber: job.details.address.houseNumber,
-          imagesTaken: job.recordedDetails.imagesTaken, // is an array
-          inventoryUsed: job.recordedDetails.inventoryUsed, // is an array
-          taskList: job.taskList, // is an array
-          comments: job.comments // is an array
-          }));
+      jobId: job._id,
+      heading: job.details.heading,
+      jobDescription: job.details.description,
+      startDate: job.details.startDate,
+      endDate: job.details.endDate,
+      status: job.status,
+      clientId: job.clientId,
+      street: job.details.address.street,
+      suburb: job.details.address.suburb,
+      city: job.details.address.city,
+      postalCode: job.details.address.postalCode,
+      complex: job.details.address.complex,
+      houseNumber: job.details.address.houseNumber,
+      imagesTaken: job.recordedDetails.imagesTaken,
+      inventoryUsed: job.recordedDetails.inventoryUsed,
+      taskList: job.taskList,
+      comments: job.comments
+    }))
   } catch (error) {
     console.error('Error fetching job data:', error)
-    throw error // Re-throw the error for handling elsewhere if needed
+    throw error
   }
 }
 
-// Fetch data on component mount using onMounted() hook
+// Fetch data on component mount
 onMounted(async () => {
   try {
     jobClientData.value = await fetchJobData()
-    // Log job and client data for verification
     console.log('Job and client data fetched successfully:', jobClientData.value)
   } catch (error) {
     console.error('Error fetching job and client data:', error)
   }
 })
 
-// Actions
-
-const dialog = ref(false)
-const selectedJob = ref(null)
-const managerJobCardDialog = ref(false)
-
-const openDialog = (item) => {
+// Dialog actions
+const openDialog = (item: any) => {
   selectedJob.value = item
   dialog.value = true
 }
@@ -384,25 +383,45 @@ const closeDialog = () => {
   selectedJob.value = null
 }
 
-// Deleting a job
+// Delete job
+const showJobDeleteSuccess = () => {
+  toast.add({ severity: 'success', summary: 'Success Message', detail: `Successfully deleted ${selectedJob.value.heading}`, life: 3000 });
+}
 
-const deleteDialog = ref(false)
+const showJobDeleteError = () => {
+  toast.add({ severity: 'error', summary: 'Error Message', detail: `Failed to delete ${selectedJob.value.heading}`, life: 3000 });
+}
 
-const confirmDelete = () => {
+const confirmDelete = async () => {
   console.log('Delete job:', selectedJob.value)
-  // confirm delete dialog activation here
-  // add delete end point and refresh data
-  closeDialog()
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+  const apiUrl = await getRequestUrl()
+
+  try {
+    const response = await axios.delete(`${apiUrl}job/${selectedJob.value.jobId}`, config)
+    console.log(response.data)
+
+    if (response.data === true) {
+      showJobDeleteSuccess()
+      jobClientData.value = await fetchJobData()
+    } else {
+      showJobDeleteError()
+    }
+    closeDialog()
+  } catch (error) {
+    console.error('Error fetching job and client data:', error)
+    showJobDeleteError()
+  }
 }
 
-// managers the managerJobCard state
-
-const editJobCardDialog = () => {
-  managerJobCardDialog.value = true
-}
-
-// Job Status colours
-const getStatusColor = (status) => {
+// Job status colors
+const getStatusColor = (status: string): string => {
   switch (status.toLowerCase()) {
     case 'completed':
       return 'green'
@@ -411,49 +430,22 @@ const getStatusColor = (status) => {
     case 'not started':
       return 'red'
     default:
-      return 'primary' // Default color
+      return 'primary'
   }
 }
 
-//
-// const openJobCard = (item) => {
-//   router.push('/jobCard')
-//   console.log('Open job card for:', item)
-// }
-//
-// const confirmDelete = ref(false)
-// const items = ref([
-//   // Your list of items
-// ])
-// let currentItemToDelete = null
-
-// const confirmDeleteItem = (item) => {
-//   currentItemToDelete = item
-//   confirmDelete.value = true
-// }
-//
-// const deleteConfirmed = () => {
-//   const index = items.value.findIndex((i) => i === currentItemToDelete)
-//   if (index !== -1) {
-//     items.value.splice(index, 1)
-//   }
-//   cancelDelete()
-// }
-
-// const cancelDelete = () => {
-//   confirmDelete.value = false
-//   currentItemToDelete = null
-// }
-
-const getRowProps = ({ index }) => {
+// Row styling
+const getRowProps = ({ index }: { index: number }) => {
   return {
     class: index % 2 ? 'bg-secondRowColor' : ''
   }
 }
 
-onMounted(() => {
-  fetchJobData()
-})
+// Manager job card dialog
+const editJobCardDialog = () => {
+  managerJobCardDialog.value = true
+}
 </script>
+
 
 <style scoped></style>
