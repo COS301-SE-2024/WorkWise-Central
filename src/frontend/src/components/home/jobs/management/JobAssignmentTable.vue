@@ -62,10 +62,17 @@
                         {{ value }}
                       </template>
 
-                      <template v-slot:[`item.clientName`]="{ value }">
-                        <v-chip color="primary"> <v-icon>mdi-phone</v-icon>{{ value }} </v-chip>
+                      <template v-slot:[`item.clientPhone`]="{ value }">
+                        <v-chip color="primary">
+                          <v-icon>fa-solid fa-phone</v-icon>{{ value }}
+                        </v-chip>
                       </template>
 
+                      <template v-slot:[`item.clientMail`]="{ value }">
+                        <v-chip color="primary">
+                          <v-icon>fa-solid fa-envelope</v-icon>{{ value }}
+                        </v-chip>
+                      </template>
                       <template v-slot:[`item.jobDescription`]="{ value }">
                         {{ value }}
                       </template>
@@ -296,7 +303,8 @@ const selectedJob: Ref<any | null> = ref(null)
 // Table headers
 const headers = [
   { title: 'Job Heading', key: 'heading', align: 'start', value: 'heading' },
-  { title: 'Client', key: 'clientName', align: 'start', value: 'client' },
+  { title: 'Client Phone', key: 'clientPhone', align: 'start', value: 'clientPhone' },
+  { title: 'Client Mail', key: 'clientMail', align: 'start', value: 'clientMail' },
   { title: 'Job Description', key: 'jobDescription', align: 'start', value: 'jobDescription' },
   { title: 'Status', key: 'status', align: 'start', value: 'status' },
   { title: 'Start Date', key: 'startDate', align: 'start', value: 'startDate' },
@@ -387,11 +395,11 @@ const closeDialog = () => {
 
 // Delete job
 const showJobDeleteSuccess = () => {
-  toast.add({ severity: 'success', summary: 'Success Message', detail: `Successfully deleted ${selectedJob.value.heading}`, life: 3000 });
+  toast.add({ severity: 'success', summary: 'Success Message', detail: `${selectedJob.value.heading} deleted successfully`, life: 3000 });
 }
 
 const showJobDeleteError = () => {
-  toast.add({ severity: 'error', summary: 'Error Message', detail: `Failed to delete ${selectedJob.value.heading}`, life: 3000 });
+  toast.add({ severity: 'error', summary: 'Error Message', detail: `An error occurred while deleting ${selectedJob.value.heading}`, life: 3000 });
 }
 
 const confirmDelete = async () => {
