@@ -2,10 +2,10 @@ import { Types } from 'mongoose';
 import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UserJoinRequestDto {
-  @IsNotEmpty()
+  /*  @IsNotEmpty()
   @IsString()
   @IsMongoId()
-  userToJoin: Types.ObjectId;
+  requestingUserId: Types.ObjectId;*/
 
   @IsNotEmpty()
   @IsString()

@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { SchemaTypes, Types } from 'mongoose';
 import { CreateUserRequestDto } from '../../users/dto/create-user-request.dto';
+import { User } from '../../users/entities/user.entity';
+import { Role } from '../../role/entity/role.entity';
 
 const ONEWEEK = 604800;
 
@@ -19,13 +21,13 @@ export class UserJoinRequest {
   @Prop({ required: false, type: String })
   companyName?: string;
 
-  @Prop({ required: false, type: SchemaTypes.ObjectId, ref: 'Role' })
+  @Prop({ required: false, type: SchemaTypes.ObjectId, ref: Role.name })
   roleId?: Types.ObjectId; //Still not sure about this...
 
   @Prop({ required: true, type: String, default: 'Worker' })
   roleName?: string = 'Worker';
 
-  @Prop({ required: true, type: Types.ObjectId, ref: 'Users' })
+  @Prop({ required: true, type: Types.ObjectId, ref: User.name })
   userToJoin: Types.ObjectId;
 
   @Prop({ required: true, type: Date, default: new Date() })
