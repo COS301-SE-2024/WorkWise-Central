@@ -126,26 +126,11 @@ export class UsersService {
   }
 
   async getUserById(identifier: Types.ObjectId) {
-    const result = await this.userRepository.findById(identifier);
-
-    if (result == null) {
-      throw new NotFoundException(
-        'Error: User not found, please verify your username and password',
-      );
-    }
-    return result;
+    return await this.userRepository.findById(identifier);
   }
 
   async getUserByUsername(identifier: string) {
-    const result = this.userRepository.findByUsername(identifier);
-
-    if (result == null) {
-      throw new NotFoundException(
-        'Error: User not found, please verify your username and password',
-      );
-    }
-
-    return result;
+    return this.userRepository.findByUsername(identifier);
   }
 
   async updateJoinedCompanies(
