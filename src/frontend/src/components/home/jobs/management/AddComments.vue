@@ -42,29 +42,177 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { defineProps, ref } from 'vue';
+import axios from 'axios';
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
 
+// Toast for notifications
+const toast = useToast();
+
+// Define props with TypeScript
+const props = defineProps({
+  passedInJob: Object
+})
+// API URLs
+const localUrl: string = 'http://localhost:3000/';
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/';
+
+// Utility functions
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url);
+    return res.status < 300 && res.status > 199;
+  } catch (error) {
+    return false;
+  }
+};
+
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl);
+  return localAvailable ? localUrl : remoteUrl;
+};
+
+// Initial user data
 const user = {
   initials: 'JD',
   fullName: 'John Doe',
   email: 'john.doe@doe.com'
-}
-const comments = ref([{ text: 'Initial comment' }]);
+};
+
+// Comments and new comment
+const comments = ref<{ text: string }[]>(props.passedInJob.comments.map(comment => ({ text: comment.comment })));
 const newComment = ref('');
 
-const comment = () => {
+// Toast messages
+const showJobCommentSuccess = () => {
+  toast.add({ severity: 'success', summary: 'Success Message', detail: 'Successfully commented on job', life: 3000 });
+};
+
+const showJobCommentError = () => {
+  toast.add({ severity: 'error', summary: 'Error Message', detail: 'An error occurred while commenting on this job', life: 3000 });
+};
+
+const restructureJob = (job: any) => {
+  return {
+    _id: job._id || '',
+    companyId: job.companyId || '',
+    clientId: job.clientId || '',
+    clientUsername: job.clientUsername || '',
+    assignedBy: job.assignedBy || '',
+    assignedEmployees: {
+      employeeIds: job.assignedEmployees?.employeeIds || []
+    },
+    status: job.status || '',
+    details: {
+      heading: job.details?.heading || '',
+      description: job.details?.description || '',
+      address: {
+        street: job.details?.address?.street || '',
+        province: job.details?.address?.province || '',
+        suburb: job.details?.address?.suburb || '',
+        city: job.details?.address?.city || '',
+        postalCode: job.details?.address?.postalCode || '',
+        complex: job.details?.address?.complex || '',
+        houseNumber: job.details?.address?.houseNumber || ''
+      },
+      startDate: job.details?.startDate || '',
+      endDate: job.details?.endDate || ''
+    },
+    recordedDetails: {
+      imagesTaken: job.recordedDetails?.imagesTaken || [],
+      inventoryUsed: job.recordedDetails?.inventoryUsed || []
+    },
+    taskList: job.taskList || [],
+    comments: job.comments || [],
+    createdAt: job.createdAt || '',
+    updatedAt: job.updatedAt || ''
+  };
+};
+
+// Add a comment
+const comment = async () => {
   if (newComment.value.trim() !== '') {
-    comments.value.push({ text: newComment.value.trim() });
-    newComment.value = '';
-    // make the update job api request here with the comments as the patch
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+      }
+    };
+    const apiUrl = await getRequestUrl();
+
+    try {
+      const job = restructureJob(props.passedInJob.value);
+      console.log(job)
+      const currentComments = job.comments || [];
+
+      // Create the new comment object
+      const commentToAdd = {
+        employeeId: localStorage.getItem('id') || '',
+        comment: newComment.value,
+        date: new Date().toISOString()
+      };
+
+      // Append the new comment to the existing comments array
+      const updatedComments = [...currentComments, commentToAdd];
+
+      // Prepare the payload for the PATCH request
+      const updatedJob = {
+        ...job,
+        comments: updatedComments
+      };
+
+      // Make the PATCH request to update the job
+      console.log(updatedJob)
+      const response = await axios.patch(`${apiUrl}job/${job._id}`, updatedJob, config);
+      console.log(response.data);
+
+      if (response.status < 300 && response.status > 199) {
+        showJobCommentSuccess();
+        comments.value.push({ text: newComment.value.trim() });
+        newComment.value = '';
+      } else {
+        showJobCommentError();
+      }
+    } catch (error) {
+      console.error('Error updating job:', error);
+      showJobCommentError();
+    }
   }
 };
 
-const deleteComment = (index: number) => {
-  comments.value.splice(index, 1);
-  // make update job api request here with the comments as the patch
-};
+// Delete a comment
+const deleteComment = async (index: number) => {
+  const job = restructureJob(props.passedInJob.value);
+  const updatedComments = job.comments.filter((_, i) => i !== index);
+  updatedComments.splice(index, 1);
 
+  const updatedJob = {
+    ...job,
+    comments: updatedComments
+  };
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  };
+
+  try {
+    const apiUrl = await getRequestUrl();
+    const response = await axios.patch(`${apiUrl}job/${job._id}`, updatedJob, config);
+
+    if (response.status < 300 && response.status > 199) {
+      comments.value.splice(index, 1);
+    } else {
+      showJobCommentError();
+    }
+  } catch (error) {
+    console.error('Error deleting comment:', error);
+    showJobCommentError();
+  }
+};
 </script>
 
 <style></style>

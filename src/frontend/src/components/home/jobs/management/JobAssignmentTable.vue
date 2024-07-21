@@ -64,15 +64,20 @@
 
                       <template v-slot:[`item.clientPhone`]="{ value }">
                         <v-chip color="primary">
-                          <v-icon>fa-solid fa-phone</v-icon>{{ value }}
+                          <a :href="`tel:${value}`" style="color: inherit; text-decoration: none;">
+                            <v-icon>fa-solid fa-phone</v-icon>{{ value }}
+                          </a>
                         </v-chip>
                       </template>
 
                       <template v-slot:[`item.clientMail`]="{ value }">
                         <v-chip color="primary">
-                          <v-icon>fa-solid fa-envelope</v-icon>{{ value }}
+                          <a :href="`mailto:${value}`" style="color: inherit; text-decoration: none;">
+                            <v-icon>fa-solid fa-envelope</v-icon>{{ value }}
+                          </a>
                         </v-chip>
                       </template>
+
                       <template v-slot:[`item.jobDescription`]="{ value }">
                         {{ value }}
                       </template>
@@ -221,7 +226,7 @@
                         <AttachImages />
                       </v-col>
                       <v-col>
-                        <AddComment />
+                        <AddComment :passedInJob="selectedJob" />
                       </v-col>
                       <v-col>
                         <JobNotes/>
@@ -403,7 +408,6 @@ const showJobDeleteError = () => {
 }
 
 const confirmDelete = async () => {
-  console.log('Delete job:', selectedJob.value)
 
   const config = {
     headers: {
