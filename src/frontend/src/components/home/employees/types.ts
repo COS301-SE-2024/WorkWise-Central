@@ -191,3 +191,8 @@ export type EmployeeJoinResponse2 = {
   createdAt: string
   __v: number
 }
+
+export type EmployeeInformation2 = {
+  name: string
+  employeeId: string
+}
