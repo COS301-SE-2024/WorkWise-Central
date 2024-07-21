@@ -28,7 +28,10 @@ import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
-import { AllJoinRequestsDto } from './dto/request.dto';
+import {
+  AllJoinDetailedRequestsDto,
+  AllJoinRequestsDto,
+} from './dto/request.dto';
 import { AcceptRequestDto } from '../client/dto/accept-request.dto';
 
 //const className = 'Administration';
@@ -86,10 +89,7 @@ export class AdminController {
         data: await this.adminService.createRequest(userId, requestToJoin),
       };
     } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw Error;
     }
   }
 
@@ -117,10 +117,7 @@ export class AdminController {
         data: await this.adminService.cancelRequest(userId, cancelRequestDto),
       };
     } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw Error;
     }
   }
   ///
@@ -139,7 +136,7 @@ export class AdminController {
     type: BooleanResponseDto,
     description: `Confirmation that the request was successfully created`,
   })
-  @Post('/request/accept')
+  @Post('/request/decide')
   async acceptRequest(
     @Headers() headers: any,
     @Body() acceptRequestDto: AcceptRequestDto,
@@ -148,13 +145,11 @@ export class AdminController {
       const userId = extractUserId(this.jwtService, headers);
 
       return {
-        data: await this.adminService.acceptRequest(userId, acceptRequestDto),
+        data: await this.adminService.processRequest(userId, acceptRequestDto),
       };
     } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw Error;
+      //throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   ///
@@ -200,6 +195,37 @@ export class AdminController {
       const userId = extractUserId(this.jwtService, headers);
       return {
         data: await this.adminService.getAllRequestsInCompany(
+          userId,
+          companyId,
+        ),
+      };
+    } catch (Error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all User Requests for a Company`,
+  })
+  @ApiOkResponse({
+    type: AllJoinDetailedRequestsDto,
+    description: `An array of mongodb objects in the Request Collection, with detailed User, and Role information`,
+  })
+  @Get('/request/all/company/:cid/detailed')
+  async findAllDetailedInCompany(
+    @Headers() headers: any,
+    @Param('cid') companyId: Types.ObjectId,
+  ) {
+    try {
+      this.validateObjectId(companyId);
+      const userId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.adminService.getAllDetailedRequestsInCompany(
           userId,
           companyId,
         ),

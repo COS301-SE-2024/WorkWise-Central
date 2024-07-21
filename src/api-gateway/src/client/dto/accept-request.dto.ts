@@ -7,6 +7,9 @@ export class AcceptRequestDto {
   companyId: Types.ObjectId;
 
   @IsObjectId()
+  userToJoinId: Types.ObjectId;
+
+  @IsObjectId()
   superiorId: Types.ObjectId;
 
   @IsOptional()
