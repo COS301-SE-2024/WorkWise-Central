@@ -165,6 +165,7 @@ export class EmployeeService {
     companyId: Types.ObjectId,
     fieldsToPopulate?: string[],
   ) {
+    console.log('In findAllInCompany in services. companyId: ', companyId);
     let result;
     if (!(fieldsToPopulate && fieldsToPopulate.length === 0)) {
       console.log('In the if');
@@ -175,6 +176,20 @@ export class EmployeeService {
       );
     } else {
       result = await this.employeeRepository.findAllInCompany(companyId);
+    }
+    if (result == null) {
+      throw new NotFoundException('Employee not found');
+    }
+    return result;
+  }
+
+  async findById(id: Types.ObjectId, fieldsToPopulate?: string[]) {
+    let result;
+    if (!(fieldsToPopulate && fieldsToPopulate.length === 0)) {
+      console.log('In the if');
+      result = await this.employeeRepository.findById(id, fieldsToPopulate);
+    } else {
+      result = await this.employeeRepository.findById(id);
     }
     if (result == null) {
       throw new NotFoundException('Employee not found');
@@ -220,23 +235,6 @@ export class EmployeeService {
     return await this.employeeRepository.remove(id);
   }
 
-  async findById(
-    id: Types.ObjectId,
-    fieldsToPopulate?: string[],
-  ): Promise<FlattenMaps<Employee> & { _id: Types.ObjectId }> {
-    let result;
-    if (!(fieldsToPopulate && fieldsToPopulate.length === 0)) {
-      console.log('In the if');
-      result = await this.employeeRepository.findById(id, fieldsToPopulate);
-    } else {
-      result = await this.employeeRepository.findById(id);
-    }
-    if (result == null) {
-      throw new NotFoundException('Employee not found');
-    }
-    return result;
-  }
-
   async findByIds(
     ids: Types.ObjectId[],
   ): Promise<(FlattenMaps<Employee> & { _id: Types.ObjectId })[]> {
@@ -263,23 +261,46 @@ export class EmployeeService {
     return [];
   }
 
-  async getListOfOtherEmployees(id: Types.ObjectId, companyId: Types.ObjectId) {
-    //Return a list of all the employees in the company that is not a superior or subordinate of the employee with the given id again
-    const currentSuperior = await this.getSuperior(id);
-    const currentSubordinates = await this.getSubordinates(id);
-    const allEmployees = await this.findAllInCompany(companyId);
+  async getListOfOtherEmployees(id, companyId) {
+    console.log('In the service. id', id);
+    const currentEmployee = await this.findById(id);
+    console.log('currentEmployee', currentEmployee);
+    const listOfEmployees = await this.findAllInCompany(companyId);
+    console.log('listOfEmployees', listOfEmployees);
 
-    // Creating a list of all employees that does not contain the current superior or current subordinates
-    const potentialSuperiors = allEmployees.filter(
-      (employee) =>
-        employee._id.toString() !== id.toString() &&
-        employee._id.toString() !== currentSuperior._id.toString() &&
-        !currentSubordinates.some(
-          (subordinate) =>
-            subordinate._id.toString() !== employee._id.toString(),
-        ),
+    //Removing the current employee from the list
+    const index = listOfEmployees.findIndex((employee) =>
+      employee._id.equals(currentEmployee._id),
     );
+    if (index !== -1) {
+      listOfEmployees.splice(index, 1);
+    }
 
-    return potentialSuperiors;
+    // Remove the superior from the list if it exists
+    if (currentEmployee.superiorId) {
+      const index = listOfEmployees.findIndex((employee) =>
+        employee._id.equals(currentEmployee.superiorId),
+      );
+      if (index !== -1) {
+        listOfEmployees.splice(index, 1);
+      }
+    }
+
+    // Remove subordinates from the list if they exist
+    if (
+      currentEmployee.subordinates &&
+      currentEmployee.subordinates.length > 0
+    ) {
+      currentEmployee.subordinates.forEach((subordinateId) => {
+        const index = listOfEmployees.findIndex((employee) =>
+          employee._id.equals(subordinateId),
+        );
+        if (index !== -1) {
+          listOfEmployees.splice(index, 1);
+        }
+      });
+    }
+
+    return listOfEmployees;
   }
 }

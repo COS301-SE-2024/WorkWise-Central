@@ -1,7 +1,9 @@
 <template>
-  <v-dialog v-model="clientDialog" max-width="500">
+  <v-dialog v-model="clientDialog" max-width="500" :theme="isdarkmode === true ? 'dark' : 'light'">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn color="success" v-bind="activatorProps"> View </v-btn>
+      <v-btn color="success" v-bind="activatorProps">
+        View <v-icon icon="fa:fa-solid fa-eye" end color="success" size="small"></v-icon>
+      </v-btn>
     </template>
 
     <v-card :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
@@ -49,8 +51,8 @@
               <br /><small class="text-caption">{{ ClientDetails.address.city }}</small>
               <br /><small class="text-caption">{{ ClientDetails.address.postalCode }}</small>
               <br /><small class="text-caption">{{ ClientDetails.address.complex }}</small>
-              <br /><small class="text-caption"
-                >Unit: {{ ClientDetails.address.houseNumber }}</small
+              <br /><small class="text-caption">
+                {{ ClientDetails.address.houseNumber }}</small
               ></v-col
             >
           </v-row>
@@ -59,7 +61,7 @@
             ><label class="font-weight-light" style="font-size: 20px"> Preferred Languages</label
             ><v-spacer></v-spacer>
             <v-chip :color="ClientDetails.preferred_Language ? 'success' : 'error'"
-              ><small class="text-caption" :theme="isdarkmode === true ? 'dark' : 'light'">{{
+              ><small class="text-caption">{{
                 ClientDetails.preferred_Language ? ClientDetails.preferred_Language : 'None'
               }}</small></v-chip
             ></v-col
@@ -69,9 +71,10 @@
       </v-card-text>
       <v-card-actions>
         <v-col>
-          <v-btn color="error" width="100%" height="35" @click="close"> Close </v-btn>
-        </v-col></v-card-actions
-      >
+          <v-btn color="error" width="100%" height="35" @click="close">
+            Close <v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon>
+          </v-btn> </v-col
+      ></v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -85,7 +88,7 @@ export default defineComponent({
   data() {
     return {
       clientDialog: false,
-      isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false
     }
   },
   methods: {

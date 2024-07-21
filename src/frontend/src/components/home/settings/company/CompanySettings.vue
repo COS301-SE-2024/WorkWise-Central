@@ -7,8 +7,17 @@
       </v-col>
     </v-row>
     <v-row>
+      <v-col cols="8" class="pl-15">
+        <EditCompany v-if="currentSettings === 'Company Details'" />
+        <EditRoles v-if="currentSettings === 'Roles'" />
+        <EditStructure v-if="currentSettings === 'Structure'" />
+      </v-col>
       <v-col cols="4" class="pl-15">
-        <AppMenu :model="items" class="bg-secondary" :theme="isdarkmode === true ? 'dark' : 'light'">
+        <AppMenu
+          :model="items"
+          class="bg-secondary"
+          :theme="isdarkmode === true ? 'dark' : 'light'"
+        >
           <template #item="{ item, props }">
             <router-link v-if="item.route" :to="item.route" custom>
               <a
@@ -28,10 +37,6 @@
           </template>
         </AppMenu>
       </v-col>
-      <v-col cols="8" class="pl-15">
-        <EditCompany v-if="currentSettings === 'Company Details'" />
-        <EditRoles v-if="currentSettings === 'Roles'" />
-      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -41,6 +46,7 @@ import { defineComponent } from 'vue'
 import AppMenu from 'primevue/menu'
 import EditCompany from './EditCompany.vue'
 import EditRoles from './EditRoles.vue'
+import EditStructure from './EditStructure.vue'
 
 export default defineComponent({
   name: 'CompanySettings',
@@ -49,7 +55,7 @@ export default defineComponent({
     return {
       companyDialog: false,
       currentSettings: '',
-      isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       items: [
         {
           icon: 'fa: fa-solid fa-building',
@@ -72,7 +78,8 @@ export default defineComponent({
   components: {
     AppMenu,
     EditCompany,
-    EditRoles
+    EditRoles,
+    EditStructure
   },
   methods: {
     close() {

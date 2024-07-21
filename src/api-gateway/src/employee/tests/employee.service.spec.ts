@@ -1,32 +1,375 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { getModelToken } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
 import { EmployeeService } from '../employee.service';
+import { EmployeeRepository } from '../employee.repository';
+import { UsersService } from '../../users/users.service';
+import { CompanyService } from '../../company/company.service';
+import { RoleService } from '../../role/role.service';
+import { JobService } from '../../job/job.service';
+import { TeamService } from '../../team/team.service';
+import { Employee } from '../entities/employee.entity';
+// import { mock } from 'node:test';
+// import { NotFoundException } from '@nestjs/common';
 
-describe('EmployeeService', () => {
-  let service: EmployeeService;
-  const employeeModelMock = {
-    find: jest.fn(),
-    create: jest.fn(),
-    // ...other methods...
-  };
+const mockEmployeeRepository = {
+  findAll: jest.fn(),
+  findAllInCompany: jest.fn(),
+  findById: jest.fn(),
+  findByIds: jest.fn(),
+  employeeExists: jest.fn(),
+  employeeExistsForCompany: jest.fn(),
+  getCompanyIdFromEmployee: jest.fn(),
+  update: jest.fn(),
+  remove: jest.fn(),
+};
 
-  const employeeServiceMock = {
-    find: jest.fn(),
-    create: jest.fn(),
-    // ...other methods...
-  };
+const mockUsersService = {
+  userIdExists: jest.fn(),
+  getUserById: jest.fn(),
+  userIsInCompany: jest.fn(),
+};
+
+const mockCompanyService = {
+  companyIdExists: jest.fn(),
+};
+
+const mockRoleService = {
+  roleExistsInCompany: jest.fn(),
+};
+
+const mockJobService = {
+  jobExistsInCompany: jest.fn(),
+};
+
+const mockTeamService = {
+  teamExistsInCompany: jest.fn(),
+};
+
+// const mockValidateCreateEmployee = {
+//   validateCreateEmployee: jest.fn(),
+// };
+
+// const mockValidateUpdateEmployee = {
+//   validateUpdateEmployee: jest.fn(),
+// };
+
+describe('--Employee Service--', () => {
+  let employeeService: EmployeeService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        { provide: EmployeeService, useValue: employeeServiceMock },
-        { provide: 'EmployeeModel', useValue: employeeModelMock },
+        EmployeeService,
+        { provide: getModelToken(Employee.name), useValue: {} },
+        { provide: EmployeeRepository, useValue: mockEmployeeRepository },
+        { provide: UsersService, useValue: mockUsersService },
+        { provide: CompanyService, useValue: mockCompanyService },
+        { provide: RoleService, useValue: mockRoleService },
+        { provide: JobService, useValue: mockJobService },
+        { provide: TeamService, useValue: mockTeamService },
       ],
     }).compile();
 
-    service = module.get<EmployeeService>(EmployeeService);
+    employeeService = module.get<EmployeeService>(EmployeeService);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(employeeService).toBeDefined();
   });
+
+  describe('create', () => {
+    // it('should create a new employee', async () => {
+    //   const createEmployeeDto = {
+    //     roleId: new Types.ObjectId(),
+    //     superiorId: new Types.ObjectId(),
+    //     userId: new Types.ObjectId(),
+    //     companyId: new Types.ObjectId(),
+    //   };
+    //   mockValidateCreateEmployee.validateCreateEmployee.mockResolvedValue(null);
+    //   await employeeService.create(createEmployeeDto);
+    //   expect(mockEmployeeRepository.employeeExists).toHaveBeenCalledWith(
+    //     createEmployeeDto.userId,
+    //     createEmployeeDto.companyId,
+    //   );
+    //   // expect(mockEmployeeRepository.create).toHaveBeenCalledWith(employee);
+    // });
+  });
+
+  describe('findAll', () => {
+    it('should return all employees', async () => {
+      const expectedResponse = [
+        {
+          _id: new Types.ObjectId(),
+          roleId: new Types.ObjectId(),
+          currentJobAssignments: [new Types.ObjectId()],
+          superiorId: new Types.ObjectId(),
+          subordinates: [new Types.ObjectId()],
+          subordinateTeams: [new Types.ObjectId()],
+          userId: new Types.ObjectId(),
+          companyId: new Types.ObjectId(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+        },
+      ];
+
+      mockEmployeeRepository.findAll.mockResolvedValue(expectedResponse);
+
+      expect(await employeeService.findAll()).toEqual(expectedResponse);
+    });
+  });
+
+  describe('findAllInCompany', () => {
+    it('should return all employees in a given company', async () => {
+      const companyId = new Types.ObjectId();
+      const expectedResponse = [
+        {
+          _id: new Types.ObjectId(),
+          roleId: new Types.ObjectId(),
+          currentJobAssignments: [new Types.ObjectId()],
+          superiorId: new Types.ObjectId(),
+          subordinates: [new Types.ObjectId()],
+          subordinateTeams: [new Types.ObjectId()],
+          userId: new Types.ObjectId(),
+          companyId: new Types.ObjectId(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+        },
+      ];
+
+      mockEmployeeRepository.findAllInCompany.mockResolvedValue(
+        expectedResponse,
+      );
+
+      expect(await employeeService.findAllInCompany(companyId)).toEqual(
+        expectedResponse,
+      );
+    });
+  });
+
+  describe('findById', () => {
+    it('should return an employee by id', async () => {
+      const id = new Types.ObjectId();
+      const expectedResponse = {
+        _id: id,
+        roleId: new Types.ObjectId(),
+        currentJobAssignments: [new Types.ObjectId()],
+        superiorId: new Types.ObjectId(),
+        subordinates: [new Types.ObjectId()],
+        subordinateTeams: [new Types.ObjectId()],
+        userId: new Types.ObjectId(),
+        companyId: new Types.ObjectId(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      };
+
+      mockEmployeeRepository.findById.mockResolvedValue(expectedResponse);
+      expect(await employeeService.findById(id)).toEqual(expectedResponse);
+    });
+  });
+
+  describe('employeeExists', () => {
+    it('should return true if employee exists', async () => {
+      const id = new Types.ObjectId();
+
+      mockEmployeeRepository.employeeExists.mockResolvedValue(true);
+
+      expect(await employeeService.employeeExists(id)).toBe(true);
+    });
+
+    it('should return false if employee does not exist', async () => {
+      const id = new Types.ObjectId();
+
+      mockEmployeeRepository.employeeExists.mockResolvedValue(false);
+
+      expect(await employeeService.employeeExists(id)).toBe(false);
+    });
+  });
+
+  describe('employeeExistsForCompany', () => {
+    it('should return true if employee exists in a given company', async () => {
+      const id = new Types.ObjectId();
+      const companyId = new Types.ObjectId();
+
+      mockEmployeeRepository.employeeExistsForCompany.mockResolvedValue(true);
+
+      expect(
+        await employeeService.employeeExistsForCompany(id, companyId),
+      ).toBe(true);
+    });
+
+    it('should return false if employee does not exist in a given company', async () => {
+      const id = new Types.ObjectId();
+      const companyId = new Types.ObjectId();
+
+      mockEmployeeRepository.employeeExistsForCompany.mockResolvedValue(false);
+
+      expect(
+        await employeeService.employeeExistsForCompany(id, companyId),
+      ).toBe(false);
+    });
+  });
+
+  describe('update', () => {
+    // it('should update an employee', async () => {
+    //   const id = new Types.ObjectId();
+    //   const updateEmployeeDto = {
+    //     roleId: new Types.ObjectId(),
+    //     currentJobAssignments: [new Types.ObjectId()],
+    //     superiorId: new Types.ObjectId(),
+    //     subordinates: [new Types.ObjectId()],
+    //     subordinateTeams: [new Types.ObjectId()],
+    //     userId: new Types.ObjectId(),
+    //     companyId: new Types.ObjectId(),
+    //   };
+    //   const returnedResponseFromRepository = {
+    //     _id: new Types.ObjectId(),
+    //     roleId: new Types.ObjectId(),
+    //     currentJobAssignments: [new Types.ObjectId()],
+    //     superiorId: new Types.ObjectId(),
+    //     subordinates: [new Types.ObjectId()],
+    //     subordinateTeams: [new Types.ObjectId()],
+    //     userId: new Types.ObjectId(),
+    //     companyId: new Types.ObjectId(),
+    //     createdAt: new Date(),
+    //     updatedAt: new Date(),
+    //     deletedAt: null,
+    //   };
+    //   mockEmployeeRepository.update.mockResolvedValue(
+    //     returnedResponseFromRepository,
+    //   );
+    //   mockValidateUpdateEmployee.validateUpdateEmployee.mockResolvedValue(null);
+    //   expect(await employeeService.update(id, updateEmployeeDto)).toEqual(
+    //     returnedResponseFromRepository,
+    //   );
+    // });
+  });
+
+  describe('getCompanyIdFromEmployee', () => {
+    it('should return the company Id for a given employee id', async () => {
+      const id = new Types.ObjectId();
+      const expectedResponse = new Types.ObjectId();
+
+      mockEmployeeRepository.getCompanyIdFromEmployee.mockResolvedValue(
+        expectedResponse,
+      );
+
+      expect(await employeeService.getCompanyIdFromEmployee(id)).toBe(
+        expectedResponse,
+      );
+    });
+
+    it('should return null if the employee id does not exist', async () => {
+      const id = new Types.ObjectId();
+      const expectedResponse = null;
+
+      mockEmployeeRepository.getCompanyIdFromEmployee.mockResolvedValue(
+        expectedResponse,
+      );
+
+      expect(await employeeService.getCompanyIdFromEmployee(id)).toBe(
+        expectedResponse,
+      );
+    });
+  });
+
+  describe('remove', () => {
+    it('should return true if employee is deleted', async () => {
+      const id = new Types.ObjectId();
+
+      mockEmployeeRepository.remove.mockResolvedValue(true);
+
+      expect(await employeeService.remove(id)).toBe(true);
+    });
+
+    it('should return false if employee is not deleted', async () => {
+      const id = new Types.ObjectId();
+
+      mockEmployeeRepository.remove.mockResolvedValue(false);
+
+      expect(await employeeService.remove(id)).toBe(false);
+    });
+  });
+
+  describe('findByIds', () => {
+    it('should return employees by ids', async () => {
+      const ids = [new Types.ObjectId()];
+      const expectedResponse = [
+        {
+          _id: new Types.ObjectId(),
+          roleId: new Types.ObjectId(),
+          currentJobAssignments: [new Types.ObjectId()],
+          superiorId: new Types.ObjectId(),
+          subordinates: [new Types.ObjectId()],
+          subordinateTeams: [new Types.ObjectId()],
+          userId: new Types.ObjectId(),
+          companyId: new Types.ObjectId(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+        },
+      ];
+
+      mockEmployeeRepository.findByIds.mockResolvedValue(expectedResponse);
+
+      expect(await employeeService.findByIds(ids)).toEqual(expectedResponse);
+    });
+  });
+
+  describe('getSuperior', () => {
+    // it('should return the superior of an employee', async () => {
+    //   const id = new Types.ObjectId();
+    //   const expectedResponse = new Types.ObjectId();
+    //   mockEmployeeRepository.findById.mockResolvedValue(expectedResponse);
+    //   expect(await employeeService.getSuperior(id)).toEqual(expectedResponse);
+    // });
+    // it('should return null if the employee has no superior', async () => {
+    //   const id = new Types.ObjectId();
+    //   const expectedResponse = null;
+    //   mockEmployeeRepository.findById.mockResolvedValue(expectedResponse);
+    //   expect(await employeeService.getSuperior(id)).toBe(expectedResponse);
+    // });
+  });
+
+  describe('getSubordinates', () => {
+    // it('should return the subordinates of an employee', async () => {
+    //   const id = new Types.ObjectId();
+    //   const expectedResponse = [
+    //     {
+    //       _id: new Types.ObjectId(),
+    //       roleId: new Types.ObjectId(),
+    //       currentJobAssignments: [new Types.ObjectId()],
+    //       superiorId: new Types.ObjectId(),
+    //       subordinates: [new Types.ObjectId()],
+    //       subordinateTeams: [new Types.ObjectId()],
+    //       userId: new Types.ObjectId(),
+    //       companyId: new Types.ObjectId(),
+    //       createdAt: new Date(),
+    //       updatedAt: new Date(),
+    //       deletedAt: null,
+    //     },
+    //   ];
+    //   mockEmployeeRepository.findById.mockResolvedValue(expectedResponse);
+    //   expect(await employeeService.getSubordinates(id)).toEqual(
+    //     expectedResponse,
+    //   );
+    // });
+    // it('should return an empty array if the employee has no subordinates', async () => {
+    //   const id = new Types.ObjectId();
+    //   const expectedResponse = [];
+    //   mockEmployeeRepository.findById.mockResolvedValue(expectedResponse);
+    //   expect(await employeeService.getSubordinates(id)).toEqual(
+    //     expectedResponse,
+    //   );
+    // });
+  });
+
+  describe('getSubordinateTeams', () => {});
 });

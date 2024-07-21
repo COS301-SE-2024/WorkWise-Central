@@ -30,7 +30,7 @@
                       density="compact"
                       label="Search"
                       prepend-inner-icon="mdi-magnify"
-                      variant="solo-inverted"
+                      variant="outlined"
                       flat
                       width="100%"
                       style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
@@ -77,11 +77,11 @@
                       </template>
 
                       <template v-slot:[`item.startDate`]="{ value }">
-                        {{ value }}
+                        {{ formatDate(value) }}
                       </template>
 
                       <template v-slot:[`item.endDate`]="{ value }">
-                        {{ value }}
+                        {{ formatDate(value) }}
                       </template>
 
                       <!-- Actions slot -->
@@ -111,6 +111,8 @@
         </v-card-title>
         <v-card-text> What would you like to do with this job? </v-card-text>
         <v-card-actions>
+          <v-btn @click="closeDialog">Cancel</v-btn>
+          <v-spacer></v-spacer>
           <v-btn color="success" @click="viewJobDialog = true">View</v-btn>
           <!-- View Job Dialog -->
           <v-dialog v-model="viewJobDialog" max-width="500">
@@ -118,23 +120,23 @@
               <v-card-title> Job Details </v-card-title>
               <v-col>
                 <v-col class="text-center">
-                  <h3>Job Title</h3>
+                  <h6>Job Title</h6>
                   <p class="text-caption">
                     {{ selectedJob.heading }}
                   </p>
                 </v-col>
                 <v-divider></v-divider>
                 <v-col class="text-center">
-                  <h3>Description</h3>
-                  <v-spacer></v-spacer>
+                  <h6>Description</h6>
+
                   <small class="text-caption">
                     {{ selectedJob.jobDescription }}
                   </small>
                 </v-col>
                 <v-divider></v-divider>
                 <v-col class="text-center">
-                  <h3>Status</h3>
-                  <v-spacer></v-spacer>
+                  <h6>Status</h6>
+
                   <small class="text-caption">
                     <v-chip :color="getStatusColor(selectedJob.status)" dark>
                       {{ selectedJob.status }}
@@ -143,58 +145,62 @@
                 </v-col>
                 <v-divider></v-divider>
                 <v-col class="text-center">
-                  <h3>Address</h3>
-                  <v-col>
-                    <label>Street</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ selectedJob.street }}
-                    </small>
-                  </v-col>
-                  <v-col>
-                    <label>Suburb</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ selectedJob.suburb }}
-                    </small>
-                  </v-col>
-                  <v-col>
-                    <label>City</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ selectedJob.city }}
-                    </small>
-                  </v-col>
-                  <v-col>
-                    <label>Postal Code</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ selectedJob.postalCode }}
-                    </small>
-                  </v-col>
-                  <v-col>
-                    <label>Complex</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ selectedJob.complex }}
-                    </small>
-                  </v-col>
-                  <v-col>
-                    <label>House Number</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ selectedJob.houseNumber }}
-                    </small>
-                  </v-col>
+                  <h6>Address</h6>
+                  <v-row>
+                    <v-col>
+                      <label>Street</label><v-spacer></v-spacer>
+                      <small class="text-caption">
+                        {{ selectedJob.street }}
+                      </small>
+                    </v-col>
+                    <v-col>
+                      <label>Suburb</label><v-spacer></v-spacer>
+                      <small class="text-caption">
+                        {{ selectedJob.suburb }}
+                      </small>
+                    </v-col>
+                    <v-col>
+                      <label>City</label><v-spacer></v-spacer>
+                      <small class="text-caption">
+                        {{ selectedJob.city }}
+                      </small>
+                    </v-col></v-row
+                  >
+                  <v-row>
+                    <v-col>
+                      <label>Postal Code</label><v-spacer></v-spacer>
+                      <small class="text-caption">
+                        {{ selectedJob.postalCode }}
+                      </small>
+                    </v-col>
+                    <v-col>
+                      <label>Complex</label><v-spacer></v-spacer>
+                      <small class="text-caption">
+                        {{ selectedJob.complex }}
+                      </small>
+                    </v-col>
+                    <v-col>
+                      <label>House Number</label><v-spacer></v-spacer>
+                      <small class="text-caption">
+                        {{ selectedJob.houseNumber }}
+                      </small>
+                    </v-col></v-row
+                  >
                 </v-col>
 
                 <v-divider></v-divider>
                 <v-col class="text-center">
-                  <h3>Dates</h3>
+                  <h6>Dates</h6>
                   <v-col>
                     <label>Start Date</label><v-spacer></v-spacer>
                     <small class="text-caption">
-                      {{ selectedJob.startDate }}
+                      {{ formatDate(selectedJob.startDate) }}
                     </small>
                   </v-col>
                   <v-col>
                     <label>End Date</label><v-spacer></v-spacer>
                     <small class="text-caption">
-                      {{ selectedJob.endDate }}
+                      {{ formatDate(selectedJob.endDate) }}
                     </small>
                   </v-col>
                 </v-col>
@@ -216,7 +222,7 @@
           <v-btn color="error" @click="deleteDialog = true">Delete</v-btn>
           <v-dialog v-model="deleteDialog" max-width="500">
             <v-card>
-              <v-card-title class="text-h5 font-weight-regular bg-red">
+              <v-card-title class="text-h6 font-weight-regular bg-red">
                 <v-icon color="white">mdi-alert-circle-outline</v-icon>
                 Confirm Deletion
               </v-card-title>
@@ -227,9 +233,6 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-
-          <v-spacer></v-spacer>
-          <v-btn @click="closeDialog">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -265,7 +268,7 @@ const fetchJobData = async () => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
 
@@ -313,7 +316,7 @@ const fetchClientData = async (jobs) => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
 
@@ -447,6 +450,10 @@ const getRowProps = ({ index }) => {
   return {
     class: index % 2 ? 'bg-secondRowColor' : ''
   }
+}
+
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString()
 }
 
 onMounted(() => {

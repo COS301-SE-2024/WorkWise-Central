@@ -37,7 +37,7 @@
                         density="compact"
                         label="Search"
                         prepend-inner-icon="mdi-magnify"
-                        variant="solo-inverted"
+                        variant="outlined"
                         flat
                         width="100%"
                         style="
@@ -62,7 +62,7 @@
                     <v-col cols="12" xs="12" sm="12" md="12">
                       <v-data-table
                         :headers="headers"
-                        :items="EmployeeDetails"
+                        :items="EmployeeDetails2"
                         :search="search"
                         :loading="loading_data"
                         label="Clients"
@@ -72,31 +72,23 @@
                         :row-props="getRowProps"
                       >
                         <template v-slot:[`item.firstName`]="{ value }">
-                          <v-chip variant="text" color="elementTextColor">
-                            <v-icon icon="fa:fa-solid fa-user "></v-icon>{{ value }}</v-chip
+                          <v-chip variant="text">
+                            <v-icon icon="fa:fa-solid fa-user "></v-icon
+                            >{{ value.charAt(0).toUpperCase() + value.slice(1) }}</v-chip
                           >
                         </template>
                         <template v-slot:[`item.surname`]="{ value }"
-                          ><v-chip variant="text" color="elementTextColor">{{
-                            value
+                          ><v-chip variant="text">{{
+                            value.charAt(0).toUpperCase() + value.slice(1)
                           }}</v-chip></template
                         >
                         <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                          <v-chip
-                            @click="callPhone"
-                            color="primary"
-                            text-color="elementTextColor"
-                            border="md"
+                          <v-chip @click="callPhone" color="primary" border="md"
                             ><v-icon icon="fa:fa-solid fa-phone"></v-icon> {{ value }}</v-chip
                           >
                         </template>
                         <template v-slot:[`item.contactInfo.email`]="{ value }">
-                          <v-chip
-                            @click="sendEmail"
-                            color="primary"
-                            text-color="elementTextColor"
-                            border="md"
-                          >
+                          <v-chip @click="sendEmail" color="primary" border="md">
                             <v-icon icon="fa:fa-solid fa-envelope"></v-icon>{{ value }}</v-chip
                           >
                         </template>
@@ -108,7 +100,7 @@
 
                         <!-- Actions slot -->
                         <template v-slot:[`item.roleName`]="{ value }">
-                          <v-chip color="elementTextColor" variant="text">
+                          <v-chip variant="text">
                             {{ value }}
                           </v-chip>
                         </template>
@@ -135,10 +127,17 @@
       <v-dialog v-model="actionsDialog" max-width="500px">
         <v-card>
           <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
-            {{ selectedItemName + ' ' + selectedItemSurname }}
+            {{
+              selectedItemName.charAt(0).toUpperCase() +
+              selectedItemName.slice(1) +
+              ' ' +
+              selectedItemSurname.charAt(0).toUpperCase() +
+              selectedItemSurname.slice(1)
+            }}
           </v-card-title>
           <v-card-text> What would you like to do with this account? </v-card-text>
-          <v-card-actions>
+          <v-card-actions
+            ><v-btn @click="actionsDialog = false">Cancel</v-btn> <v-spacer></v-spacer>
             <EmployeeDetails
               v-model="clientDialog"
               colors="colors"
@@ -148,8 +147,6 @@
               @update:item="selectedItem = $event"
               :editedItem="selectedItem"
             /><DeleteEmployee :details="selectedItem" />
-            <v-spacer></v-spacer>
-            <v-btn @click="actionsDialog = false">Cancel</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -166,9 +163,9 @@ import EditEmployee from '@/components/home/employees/management/EditEmployee.vu
 import DeleteEmployee from '@/components/home/employees/management/DeleteEmployee.vue'
 import EmployeeDetails from '@/components/home/employees/management/EmployeeDetails.vue'
 import type {
-  EmployeeJoined,
-  Person,
+  EmployeeJoinResponse2,
   Employee,
+  Person,
   EmployeePersonalInfo
 } from '@/components/home/employees/types'
 
@@ -754,75 +751,78 @@ export default {
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
       const apiURL = await this.getRequestUrl()
 
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/joined/all/${sessionStorage['currentCompany']}`,
+          apiURL + `employee/joined/all/${localStorage['currentCompany']}`,
           config
         )
 
-        let employee_all_data: EmployeeJoined[] = employee_response.data.data
+        let employee_all_data: EmployeeJoinResponse2[] = employee_response.data.data
 
         console.log(employee_all_data)
 
         let company_employee_arr: EmployeePersonalInfo[] = []
 
         for (let i = 0; i < employee_all_data.length; i++) {
-          if (employee_all_data[i].userId[0].personalInfo.address !== undefined) continue
+          if (employee_all_data[i].userId.personalInfo.address === undefined) continue
 
+          console.log('hello')
           if (employee_all_data[i].roleId !== undefined) {
             let company_employee: EmployeePersonalInfo = {
               address: {
-                street: employee_all_data[i].userId[0].personalInfo.address.street,
-                suburb: employee_all_data[i].userId[0].personalInfo.address.suburb,
-                city: employee_all_data[i].userId[0].personalInfo.address.city,
-                postalCode: employee_all_data[i].userId[0].personalInfo.address.postalCode,
-                complex: employee_all_data[i].userId[0].personalInfo.address.complex,
-                houseNumber: employee_all_data[i].userId[0].personalInfo.address.houseNumber
+                province: employee_all_data[i].userId.personalInfo.address.province,
+                street: employee_all_data[i].userId.personalInfo.address.street,
+                suburb: employee_all_data[i].userId.personalInfo.address.suburb,
+                city: employee_all_data[i].userId.personalInfo.address.city,
+                postalCode: employee_all_data[i].userId.personalInfo.address.postalCode,
+                complex: employee_all_data[i].userId.personalInfo.address.complex,
+                houseNumber: employee_all_data[i].userId.personalInfo.address.houseNumber
               },
               contactInfo: {
-                phoneNumber: employee_all_data[i].userId[0].personalInfo.contactInfo.phoneNumber,
-                email: employee_all_data[i].userId[0].personalInfo.contactInfo.email
+                phoneNumber: employee_all_data[i].userId.personalInfo.contactInfo.phoneNumber,
+                email: employee_all_data[i].userId.personalInfo.contactInfo.email
               },
-              firstName: employee_all_data[i].userId[0].personalInfo.firstName,
-              surname: employee_all_data[i].userId[0].personalInfo.surname,
-              preferredLanguage: employee_all_data[i].userId[0].personalInfo.preferredLanguage,
-              dateOfBirth: employee_all_data[i].userId[0].personalInfo.dateOfBirth,
-              gender: employee_all_data[i].userId[0].personalInfo.gender,
-              roleId: employee_all_data[i].roleId[0]._id,
-              roleName: employee_all_data[i].roleId[0].roleName,
+              firstName: employee_all_data[i].userId.personalInfo.firstName,
+              surname: employee_all_data[i].userId.personalInfo.surname,
+              preferredLanguage: employee_all_data[i].userId.personalInfo.preferredLanguage,
+              dateOfBirth: employee_all_data[i].userId.personalInfo.dateOfBirth,
+              gender: employee_all_data[i].userId.personalInfo.gender,
+              roleId: employee_all_data[i].roleId._id,
+              roleName: employee_all_data[i].roleId.roleName,
               employeeId: employee_all_data[i]._id,
-              userId: employee_all_data[i].userId[0]._id
+              userId: employee_all_data[i].userId._id
             }
 
             company_employee_arr.push(company_employee)
           } else {
             let company_employee: EmployeePersonalInfo = {
               address: {
-                street: employee_all_data[i].userId[0].personalInfo.address.street,
-                suburb: employee_all_data[i].userId[0].personalInfo.address.suburb,
-                city: employee_all_data[i].userId[0].personalInfo.address.city,
-                postalCode: employee_all_data[i].userId[0].personalInfo.address.postalCode,
-                complex: employee_all_data[i].userId[0].personalInfo.address.complex,
-                houseNumber: employee_all_data[i].userId[0].personalInfo.address.houseNumber
+                province: employee_all_data[i].userId.personalInfo.address.province,
+                street: employee_all_data[i].userId.personalInfo.address.street,
+                suburb: employee_all_data[i].userId.personalInfo.address.suburb,
+                city: employee_all_data[i].userId.personalInfo.address.city,
+                postalCode: employee_all_data[i].userId.personalInfo.address.postalCode,
+                complex: employee_all_data[i].userId.personalInfo.address.complex,
+                houseNumber: employee_all_data[i].userId.personalInfo.address.houseNumber
               },
               contactInfo: {
-                phoneNumber: employee_all_data[i].userId[0].personalInfo.contactInfo.phoneNumber,
-                email: employee_all_data[i].userId[0].personalInfo.contactInfo.email
+                phoneNumber: employee_all_data[i].userId.personalInfo.contactInfo.phoneNumber,
+                email: employee_all_data[i].userId.personalInfo.contactInfo.email
               },
-              firstName: employee_all_data[i].userId[0].personalInfo.firstName,
-              surname: employee_all_data[i].userId[0].personalInfo.surname,
-              preferredLanguage: employee_all_data[i].userId[0].personalInfo.preferredLanguage,
-              dateOfBirth: employee_all_data[i].userId[0].personalInfo.dateOfBirth,
-              gender: employee_all_data[i].userId[0].personalInfo.gender,
+              firstName: employee_all_data[i].userId.personalInfo.firstName,
+              surname: employee_all_data[i].userId.personalInfo.surname,
+              preferredLanguage: employee_all_data[i].userId.personalInfo.preferredLanguage,
+              dateOfBirth: employee_all_data[i].userId.personalInfo.dateOfBirth,
+              gender: employee_all_data[i].userId.personalInfo.gender,
               roleId: '',
               roleName: '',
               employeeId: employee_all_data[i]._id,
-              userId: employee_all_data[i].userId[0]._id
+              userId: employee_all_data[i].userId._id
             }
             company_employee_arr.push(company_employee)
           }
@@ -835,7 +835,7 @@ export default {
 
       // try {
       //   const employee_response = await axios.get(
-      //     apiURL + `employee/all/${sessionStorage['currentCompany']}`,
+      //     apiURL + `employee/all/${localStorage['currentCompany']}`,
       //     config
       //   )
       //   let employee_all_data: Employee[] = employee_response.data.data
