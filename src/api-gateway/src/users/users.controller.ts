@@ -326,6 +326,32 @@ export class UsersController {
     }
   }
 
+  @ApiParam({
+    name: 'companyId',
+    type: Types.ObjectId,
+    description: 'Id of Company you want to change to',
+  })
+  changeCompany(
+    @Headers() headers: any,
+    @Param('companyId') companyId: string,
+  ) {
+    if (!mongoose.Types.ObjectId.isValid(companyId)) {
+      throw new HttpException('Invalid CompanyId', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      const userId = this.extractUserId(headers);
+      return this.usersService.changeCurrentEmployee(
+        userId,
+        new Types.ObjectId(companyId),
+      );
+    } catch (e) {
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.SERVICE_UNAVAILABLE,
+      );
+    }
+  }
+
   public extractUserId(headers: any) {
     const authHeader: string = headers.authorization;
     const decodedJwtAccessToken = this.jwtService.decode(

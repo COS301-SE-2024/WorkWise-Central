@@ -219,16 +219,19 @@ export class UsersService {
 
   async changeCurrentEmployee(
     userId: Types.ObjectId,
-    employeeId: Types.ObjectId,
+    companyId: Types.ObjectId,
   ) {
     const user = await this.userRepository.findById(userId);
-    const includesEmployee = user.joinedCompanies.some((company) =>
-      company.employeeId.equals(employeeId),
+    const joinedCompany = user.joinedCompanies.filter(
+      (company) => company.companyId.toString() === companyId.toString(),
     );
 
-    if (includesEmployee)
+    if (joinedCompany.length > 0) {
+      const employeeId = joinedCompany[0].employeeId;
       await this.updateUser(userId, { currentEmployee: employeeId });
-    else throw new ConflictException('Invalid Employee');
+    } else throw new ConflictException('Invalid Employee');
+
+    return this.companyService.getCompanyById(joinedCompany[0].companyId);
   }
 
   async updateUser(
