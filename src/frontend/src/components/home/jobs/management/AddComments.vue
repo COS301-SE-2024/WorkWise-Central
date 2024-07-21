@@ -94,39 +94,39 @@ const showJobCommentError = () => {
 };
 
 const restructureJob = (job: any) => {
+  console.log(job)
   return {
-    _id: job._id || '',
-    companyId: job.companyId || '',
-    clientId: job.clientId || '',
-    clientUsername: job.clientUsername || '',
-    assignedBy: job.assignedBy || '',
+    _id: job?._id || '', // Safe access with optional chaining
+    clientId: job?.clientId || '', // Assume clientId is a string; adjust if it's an object
+    clientUsername: job?.clientUsername || '',
+    assignedBy: job?.assignedBy || '',
     assignedEmployees: {
-      employeeIds: job.assignedEmployees?.employeeIds || []
+      employeeIds: job?.assignedEmployees?.employeeIds || [] // Ensure it's an array
     },
-    status: job.status || '',
+    status: job?.status || '',
     details: {
-      heading: job.details?.heading || '',
-      description: job.details?.description || '',
+      heading: job?.details?.heading || '',
+      description: job?.details?.description || '',
       address: {
-        street: job.details?.address?.street || '',
-        province: job.details?.address?.province || '',
-        suburb: job.details?.address?.suburb || '',
-        city: job.details?.address?.city || '',
-        postalCode: job.details?.address?.postalCode || '',
-        complex: job.details?.address?.complex || '',
-        houseNumber: job.details?.address?.houseNumber || ''
+        street: job?.details?.address?.street || '',
+        province: job?.details?.address?.province || '',
+        suburb: job?.details?.address?.suburb || '',
+        city: job?.details?.address?.city || '',
+        postalCode: job?.details?.address?.postalCode || '',
+        complex: job?.details?.address?.complex || '',
+        houseNumber: job?.details?.address?.houseNumber || ''
       },
-      startDate: job.details?.startDate || '',
-      endDate: job.details?.endDate || ''
+      startDate: job?.details?.startDate || '',
+      endDate: job?.details?.endDate || ''
     },
     recordedDetails: {
-      imagesTaken: job.recordedDetails?.imagesTaken || [],
-      inventoryUsed: job.recordedDetails?.inventoryUsed || []
+      imagesTaken: job?.recordedDetails?.imagesTaken || [],
+      inventoryUsed: job?.recordedDetails?.inventoryUsed || []
     },
-    taskList: job.taskList || [],
-    comments: job.comments || [],
-    createdAt: job.createdAt || '',
-    updatedAt: job.updatedAt || ''
+    taskList: job?.taskList || [],
+    comments: job?.comments || [],
+    createdAt: job?.createdAt || '',
+    updatedAt: job?.updatedAt || ''
   };
 };
 
@@ -142,7 +142,8 @@ const comment = async () => {
     const apiUrl = await getRequestUrl();
 
     try {
-      const job = restructureJob(props.passedInJob.value);
+      console.log(props.passedInJob)
+      const job = restructureJob(props.passedInJob);
       console.log(job)
       const currentComments = job.comments || [];
 
@@ -183,7 +184,7 @@ const comment = async () => {
 
 // Delete a comment
 const deleteComment = async (index: number) => {
-  const job = restructureJob(props.passedInJob.value);
+  const job = restructureJob(props.passedInJob);
   const updatedComments = job.comments.filter((_, i) => i !== index);
   updatedComments.splice(index, 1);
 

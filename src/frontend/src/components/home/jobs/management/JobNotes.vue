@@ -38,24 +38,172 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { defineProps, ref } from 'vue';
+import axios from 'axios';
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
 
-const notes = ref([{ text: 'Initial note' }]);
+// Toast for notifications
+const toast = useToast();
+
+// Define props with TypeScript
+const props = defineProps({
+  passedInJob: Object
+})
+
+// Initial notes and new note
+const notes = ref<{ text: string }[]>(props.passedInJob?.notes?.map(note => ({ text: note.text })) || []);
 const newNote = ref('');
 
-const addNote = () => {
-  if (newNote.value.trim() !== '') {
-    notes.value.push({ text: newNote.value.trim() });
-    newNote.value = '';
-    // make the update job api request here with the notes as the patch
+// Toast messages
+const showJobNoteSuccess = () => {
+  toast.add({ severity: 'success', summary: 'Success Message', detail: 'Successfully added note to job', life: 3000 });
+};
+
+const showJobNoteError = () => {
+  toast.add({ severity: 'error', summary: 'Error Message', detail: 'An error occurred while adding note to this job', life: 3000 });
+};
+
+// Utility functions
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url);
+    return res.status < 300 && res.status > 199;
+  } catch (error) {
+    return false;
   }
 };
 
-const deleteNote = (index: number) => {
-  notes.value.splice(index, 1);
-  // make update job api request here with the notes as the patch
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl);
+  return localAvailable ? localUrl : remoteUrl;
 };
 
+// Restructure job data
+const restructureJob = (job: any) => {
+  console.log(job);
+  return {
+    _id: job?._id || '',
+    clientId: job?.clientId || '',
+    clientUsername: job?.clientUsername || '',
+    assignedBy: job?.assignedBy || '',
+    assignedEmployees: {
+      employeeIds: job?.assignedEmployees?.employeeIds || []
+    },
+    status: job?.status || '',
+    details: {
+      heading: job?.details?.heading || '',
+      description: job?.details?.description || '',
+      address: {
+        street: job?.details?.address?.street || '',
+        province: job?.details?.address?.province || '',
+        suburb: job?.details?.address?.suburb || '',
+        city: job?.details?.address?.city || '',
+        postalCode: job?.details?.address?.postalCode || '',
+        complex: job?.details?.address?.complex || '',
+        houseNumber: job?.details?.address?.houseNumber || ''
+      },
+      startDate: job?.details?.startDate || '',
+      endDate: job?.details?.endDate || ''
+    },
+    recordedDetails: {
+      imagesTaken: job?.recordedDetails?.imagesTaken || [],
+      inventoryUsed: job?.recordedDetails?.inventoryUsed || []
+    },
+    taskList: job?.taskList || [],
+    notes: job?.notes || [],
+    createdAt: job?.createdAt || '',
+    updatedAt: job?.updatedAt || ''
+  };
+};
+
+// Add a note
+const addNote = async () => {
+  if (newNote.value.trim() !== '') {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+      }
+    };
+    const apiUrl = await getRequestUrl();
+
+    try {
+      console.log(props.passedInJob);
+      const job = restructureJob(props.passedInJob);
+      console.log(job);
+      const currentNotes = job.notes || [];
+
+      // Create the new note object
+      const noteToAdd = {
+        text: newNote.value.trim(),
+        date: new Date().toISOString() // Optional: include the date if needed
+      };
+
+      // Append the new note to the existing notes array
+      const updatedNotes = [...currentNotes, noteToAdd];
+
+      // Prepare the payload for the PATCH request
+      const updatedJob = {
+        ...job,
+        notes: updatedNotes
+      };
+
+      // Make the PATCH request to update the job
+      console.log(updatedJob);
+      const response = await axios.patch(`${apiUrl}job/${job._id}`, updatedJob, config);
+      console.log(response.data);
+
+      if (response.status < 300 && response.status > 199) {
+        showJobNoteSuccess();
+        notes.value.push({ text: newNote.value.trim() });
+        newNote.value = '';
+      } else {
+        showJobNoteError();
+      }
+    } catch (error) {
+      console.error('Error updating job:', error);
+      showJobNoteError();
+    }
+  }
+};
+
+// Delete a note
+const deleteNote = async (index: number) => {
+  const job = restructureJob(props.passedInJob);
+  const updatedNotes = job.notes.filter((_, i) => i !== index);
+
+  const updatedJob = {
+    ...job,
+    notes: updatedNotes
+  };
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  };
+
+  try {
+    const apiUrl = await getRequestUrl();
+    const response = await axios.patch(`${apiUrl}job/${job._id}`, updatedJob, config);
+
+    if (response.status < 300 && response.status > 199) {
+      notes.value.splice(index, 1);
+    } else {
+      showJobNoteError();
+    }
+  } catch (error) {
+    console.error('Error deleting note:', error);
+    showJobNoteError();
+  }
+};
+
+// API URLs
+const localUrl: string = 'http://localhost:3000/';
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/';
 </script>
+
 
 <style></style>

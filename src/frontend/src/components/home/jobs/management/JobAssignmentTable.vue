@@ -353,13 +353,20 @@ const fetchJobData = async (): Promise<any[]> => {
     const jobData = response.data.data
     const jobs = Array.isArray(jobData) ? jobData : [jobData]
     return jobs.map((job) => ({
+      _id: job._id,
+      clientId: job.clientId._id,
+      clientUsername: job.clientUsername,
+      assignedBy: job.assignedBy,
+      assignedEmployees: job.assignedEmployees,
+      details: job.details,
+      recordedDetails: job.recordedDetails,
+
       jobId: job._id,
       heading: job.details.heading,
       jobDescription: job.details.description,
       startDate: job.details.startDate,
       endDate: job.details.endDate,
       status: job.status,
-      clientId: job.clientId,
       street: job.details.address.street,
       suburb: job.details.address.suburb,
       city: job.details.address.city,
