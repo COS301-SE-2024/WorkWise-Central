@@ -5,7 +5,6 @@ import JobAssignTable from '../../../components/home/jobs/management/JobAssignme
 
 <template>
   <v-app>
-    <Toast/>
     <NavigationBar :component="JobAssignTable" />
   </v-app>
 </template>

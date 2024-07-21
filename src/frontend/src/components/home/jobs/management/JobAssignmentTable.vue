@@ -255,6 +255,7 @@
               </v-card-title>
               <v-card-text> Are you sure you want to delete this job? </v-card-text>
               <v-card-actions>
+                <Toast/>
                 <v-btn color="error" @click="confirmDelete">Confirm</v-btn>
                 <v-btn @click="deleteDialog = false">Cancel</v-btn>
               </v-card-actions>
@@ -272,6 +273,7 @@
 <script setup lang="ts">
 import { onMounted, ref, Ref } from 'vue'
 import axios from 'axios'
+import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import AddJob from './AddJob.vue'
 import ManagerJobCard from './ManagerJobCard.vue'
