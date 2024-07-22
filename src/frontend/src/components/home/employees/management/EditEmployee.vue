@@ -58,6 +58,7 @@
               v-model="subordinateItems"
               bg-color="background"
               variant="solo"
+              multiple
             ></v-select> </v-col
         ></v-row>
       </v-card-text>

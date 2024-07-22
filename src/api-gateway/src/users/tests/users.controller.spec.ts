@@ -282,10 +282,8 @@ describe('UsersController', () => {
       try {
         await usersController.update({ userId }, updateUserDto);
       } catch (error) {
-        expect(error).toBeInstanceOf(TypeError);
-        expect(error.message).toBe(
-          "Cannot read properties of undefined (reading 'replace')",
-        );
+        expect(error).toBeInstanceOf(HttpException);
+        expect(error.message).toBe('internal server error');
       }
     });
   });
