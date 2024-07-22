@@ -9,5 +9,4 @@ import JobAssignTable from '../../../components/home/jobs/management/JobAssignme
   </v-app>
 </template>
 
-<style>
-</style>
+<style></style>

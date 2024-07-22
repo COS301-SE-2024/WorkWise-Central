@@ -1,19 +1,14 @@
 <template>
   <v-dialog
-      v-model="dueDateDialog"
-      max-width="400px"
-      location="bottom"
-      location-strategy="connected"
-      opacity="0"
-      origin="top center"
+    v-model="dueDateDialog"
+    max-width="400px"
+    location="bottom"
+    location-strategy="connected"
+    opacity="0"
+    origin="top center"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn
-          class="mb-2"
-          outlined
-          @click="dueDateDialog = true"
-          v-bind="activatorProps"
-      >
+      <v-btn class="mb-2" outlined @click="dueDateDialog = true" v-bind="activatorProps">
         <v-icon class="d-none d-lg-inline-block mr-2" left>
           {{ 'fa: fa-solid fa-calendar-alt' }}
         </v-icon>
@@ -23,17 +18,15 @@
 
     <template v-slot:default="{ isActive }">
       <v-card>
-        <v-card-title>
-          Enter the due date for this job
-        </v-card-title>
+        <v-card-title> Enter the due date for this job </v-card-title>
 
         <v-card-text>
           <v-container>
             <v-row justify="space-around">
               <v-date-picker
-                  v-model="currentDate"
-                  color="secondary"
-                  @update:modelValue="updateDates"
+                v-model="currentDate"
+                color="secondary"
+                @update:modelValue="updateDates"
               ></v-date-picker>
             </v-row>
             <v-row v-if="errorMessage" class="mt-4">
@@ -44,33 +37,27 @@
             <v-row class="pt-7" align="center">
               <v-col cols="12" md="6">
                 <v-row>
-                  <v-checkbox
-                      v-model="isStartDatePicked"
-                      @click="toggleStartDate"
-                  ></v-checkbox>
+                  <v-checkbox v-model="isStartDatePicked" @click="toggleStartDate"></v-checkbox>
                   <v-text-field
-                      v-model="formattedStartDate"
-                      readonly
-                      variant="solo"
-                      density="compact"
-                      color="grey-lighten-4"
-                      rounded="l"
+                    v-model="formattedStartDate"
+                    readonly
+                    variant="solo"
+                    density="compact"
+                    color="grey-lighten-4"
+                    rounded="l"
                   ></v-text-field>
                 </v-row>
               </v-col>
               <v-col cols="12" md="6">
                 <v-row>
-                  <v-checkbox
-                      v-model="isEndDatePicked"
-                      @click="toggleEndDate"
-                  ></v-checkbox>
+                  <v-checkbox v-model="isEndDatePicked" @click="toggleEndDate"></v-checkbox>
                   <v-text-field
-                      v-model="formattedEndDate"
-                      readonly
-                      variant="solo"
-                      density="compact"
-                      color="grey-lighten-4"
-                      rounded="l"
+                    v-model="formattedEndDate"
+                    readonly
+                    variant="solo"
+                    density="compact"
+                    color="grey-lighten-4"
+                    rounded="l"
                   ></v-text-field>
                 </v-row>
               </v-col>
@@ -147,17 +134,17 @@ const toggleEndDate = () => {
 }
 
 const formatDate = (date: Date | null): string => {
-  if (!date) return '';
-  const d = new Date(date);
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  const hh = String(d.getHours()).padStart(2, '0');
-  const min = String(d.getMinutes()).padStart(2, '0');
-  const ss = String(d.getSeconds()).padStart(2, '0');
-  const sss = String(d.getMilliseconds()).padStart(3, '0');
-  return `${yyyy}-${mm}-${dd}T${hh}:${min}:${ss}.${sss}Z`;
-};
+  if (!date) return ''
+  const d = new Date(date)
+  const yyyy = d.getFullYear()
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  const dd = String(d.getDate()).padStart(2, '0')
+  const hh = String(d.getHours()).padStart(2, '0')
+  const min = String(d.getMinutes()).padStart(2, '0')
+  const ss = String(d.getSeconds()).padStart(2, '0')
+  const sss = String(d.getMilliseconds()).padStart(3, '0')
+  return `${yyyy}-${mm}-${dd}T${hh}:${min}:${ss}.${sss}Z`
+}
 
 const formattedStartDate = computed(() => formatDate(startDate.value))
 const formattedEndDate = computed(() => formatDate(endDate.value))

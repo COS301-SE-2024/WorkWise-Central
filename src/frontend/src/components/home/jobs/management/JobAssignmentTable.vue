@@ -64,7 +64,7 @@
 
                       <template v-slot:[`item.clientPhone`]="{ value }">
                         <v-chip color="primary">
-                          <a :href="`tel:${value}`" style="color: inherit; text-decoration: none;">
+                          <a :href="`tel:${value}`" style="color: inherit; text-decoration: none">
                             <v-icon>fa-solid fa-phone</v-icon>{{ value }}
                           </a>
                         </v-chip>
@@ -72,7 +72,10 @@
 
                       <template v-slot:[`item.clientMail`]="{ value }">
                         <v-chip color="primary">
-                          <a :href="`mailto:${value}`" style="color: inherit; text-decoration: none;">
+                          <a
+                            :href="`mailto:${value}`"
+                            style="color: inherit; text-decoration: none"
+                          >
                             <v-icon>fa-solid fa-envelope</v-icon>{{ value }}
                           </a>
                         </v-chip>
@@ -229,19 +232,17 @@
                         <AddComment :passedInJob="selectedJob" />
                       </v-col>
                       <v-col>
-                        <JobNotes/>
+                        <JobNotes />
                       </v-col>
                       <v-col>
                         <JobChecklist />
                       </v-col>
                       <v-col>
-                        <LogInventory/>
+                        <LogInventory />
                       </v-col>
 
                       <v-col class="pt-0">
-                        <v-btn color="error" width="100%" @click="viewJobDialog = false"
-                          >Close</v-btn
-                        >
+                        <v-btn color="error" @click="viewJobDialog = false">Close</v-btn>
                       </v-col>
                     </v-card-text>
                   </v-card>
@@ -267,7 +268,7 @@
               </v-card-title>
               <v-card-text> Are you sure you want to delete this job? </v-card-text>
               <v-card-actions>
-                <Toast/>
+                <Toast />
                 <v-btn color="error" @click="confirmDelete">Confirm</v-btn>
                 <v-btn @click="deleteDialog = false">Cancel</v-btn>
               </v-card-actions>
@@ -349,7 +350,10 @@ const fetchJobData = async (): Promise<any[]> => {
   }
   const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(apiUrl + `job/all/company/detailed/${localStorage['currentCompany']}`, config)
+    const response = await axios.get(
+      apiUrl + `job/all/company/detailed/${localStorage['currentCompany']}`,
+      config
+    )
     const jobData = response.data.data
     const jobs = Array.isArray(jobData) ? jobData : [jobData]
     return jobs.map((job) => ({
@@ -407,15 +411,24 @@ const closeDialog = () => {
 
 // Delete job
 const showJobDeleteSuccess = () => {
-  toast.add({ severity: 'success', summary: 'Success Message', detail: `${selectedJob.value.heading} deleted successfully`, life: 3000 });
+  toast.add({
+    severity: 'success',
+    summary: 'Success Message',
+    detail: `${selectedJob.value.heading} deleted successfully`,
+    life: 3000
+  })
 }
 
 const showJobDeleteError = () => {
-  toast.add({ severity: 'error', summary: 'Error Message', detail: `An error occurred while deleting ${selectedJob.value.heading}`, life: 3000 });
+  toast.add({
+    severity: 'error',
+    summary: 'Error Message',
+    detail: `An error occurred while deleting ${selectedJob.value.heading}`,
+    life: 3000
+  })
 }
 
 const confirmDelete = async () => {
-
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -467,6 +480,5 @@ const editJobCardDialog = () => {
   managerJobCardDialog.value = true
 }
 </script>
-
 
 <style scoped></style>

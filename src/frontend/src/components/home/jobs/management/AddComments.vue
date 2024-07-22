@@ -5,36 +5,36 @@
     <v-container>
       <v-row v-for="(comment, index) in comments" :key="index" class="d-flex align-center mb-3">
         <v-col cols="2" class="pt-6">
-          <v-avatar color="secondary" style="width: 38px; height: 36px" >
+          <v-avatar color="secondary" style="width: 38px; height: 36px">
             <span class="text-h6">{{ user.initials }}</span>
           </v-avatar>
         </v-col>
         <v-col cols="9">
           <v-text-field
-              v-model="comment.text"
-              label="Comment"
-              dense
-              readonly
-              :clearable="false"
-              class="pt-4"
-              hide-details
+            v-model="comment.text"
+            label="Comment"
+            dense
+            readonly
+            :clearable="false"
+            class="pt-4"
+            hide-details
           ></v-text-field>
         </v-col>
         <v-col cols="1">
           <v-btn icon @click="deleteComment(index)">
-            <v-icon color="red" class="fa fa-trash pt-4" ></v-icon>
+            <v-icon color="red" class="fa fa-trash pt-4"></v-icon>
           </v-btn>
         </v-col>
       </v-row>
       <v-textarea
-          v-model="newComment"
-          label="Add a comment"
-          clearable
-          auto-grow
-          variant="solo"
-          hint="Enter your comment here"
-          hide-details
-          prepend-icon="fa: fa-solid fa-comment"
+        v-model="newComment"
+        label="Add a comment"
+        clearable
+        auto-grow
+        variant="solo"
+        hint="Enter your comment here"
+        hide-details
+        prepend-icon="fa: fa-solid fa-comment"
       ></v-textarea>
       <v-btn color="success" @click="comment">Comment</v-btn>
     </v-container>
@@ -42,56 +42,68 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from 'vue';
-import axios from 'axios';
-import Toast from 'primevue/toast';
-import { useToast } from 'primevue/usetoast';
+import { defineProps, ref } from 'vue'
+import axios from 'axios'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
 
 // Toast for notifications
-const toast = useToast();
+const toast = useToast()
 
 // Define props with TypeScript
 const props = defineProps({
   passedInJob: Object
 })
 // API URLs
-const localUrl: string = 'http://localhost:3000/';
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/';
+const localUrl: string = 'http://localhost:3000/'
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
 
 // Utility functions
 const isLocalAvailable = async (url: string): Promise<boolean> => {
   try {
-    const res = await axios.get(url);
-    return res.status < 300 && res.status > 199;
+    const res = await axios.get(url)
+    return res.status < 300 && res.status > 199
   } catch (error) {
-    return false;
+    return false
   }
-};
+}
 
 const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl);
-  return localAvailable ? localUrl : remoteUrl;
-};
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
 
 // Initial user data
 const user = {
   initials: 'JD',
   fullName: 'John Doe',
   email: 'john.doe@doe.com'
-};
+}
 
 // Comments and new comment
-const comments = ref<{ text: string }[]>(props.passedInJob.comments.map(comment => ({ text: comment.comment })));
-const newComment = ref('');
+const comments = ref<{ text: string }[]>(
+  props.passedInJob.comments.map((comment) => ({ text: comment.comment }))
+)
+const newComment = ref('')
 
 // Toast messages
 const showJobCommentSuccess = () => {
-  toast.add({ severity: 'success', summary: 'Success Message', detail: 'Successfully commented on job', life: 3000 });
-};
+  toast.add({
+    severity: 'success',
+    summary: 'Success Message',
+    detail: 'Successfully commented on job',
+    life: 3000
+  })
+}
 
 const showJobCommentError = () => {
-  toast.add({ severity: 'error', summary: 'Error Message', detail: 'An error occurred while commenting on this job', life: 3000 });
-};
+  toast.add({
+    severity: 'error',
+    summary: 'Error Message',
+    detail: 'An error occurred while commenting on this job',
+    life: 3000
+  })
+}
 
 const restructureJob = (job: any) => {
   console.log(job)
@@ -127,8 +139,8 @@ const restructureJob = (job: any) => {
     comments: job?.comments || [],
     createdAt: job?.createdAt || '',
     updatedAt: job?.updatedAt || ''
-  };
-};
+  }
+}
 
 // Add a comment
 const comment = async () => {
@@ -138,84 +150,82 @@ const comment = async () => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('access_token')}`
       }
-    };
-    const apiUrl = await getRequestUrl();
+    }
+    const apiUrl = await getRequestUrl()
 
     try {
       console.log(props.passedInJob)
-      const job = restructureJob(props.passedInJob);
+      const job = restructureJob(props.passedInJob)
       console.log(job)
-      const currentComments = job.comments || [];
+      const currentComments = job.comments || []
 
       // Create the new comment object
       const commentToAdd = {
         employeeId: localStorage.getItem('id') || '',
         comment: newComment.value,
         date: new Date().toISOString()
-      };
+      }
 
       // Append the new comment to the existing comments array
-      const updatedComments = [...currentComments, commentToAdd];
+      const updatedComments = [...currentComments, commentToAdd]
 
       // Prepare the payload for the PATCH request
       const updatedJob = {
         ...job,
         comments: updatedComments
-      };
+      }
 
       // Make the PATCH request to update the job
       console.log(updatedJob)
-      const response = await axios.patch(`${apiUrl}job/${job._id}`, updatedJob, config);
-      console.log(response.data);
+      const response = await axios.patch(`${apiUrl}job/${job._id}`, updatedJob, config)
+      console.log(response.data)
 
       if (response.status < 300 && response.status > 199) {
-        showJobCommentSuccess();
-        comments.value.push({ text: newComment.value.trim() });
-        newComment.value = '';
+        showJobCommentSuccess()
+        comments.value.push({ text: newComment.value.trim() })
+        newComment.value = ''
       } else {
-        showJobCommentError();
+        showJobCommentError()
       }
     } catch (error) {
-      console.error('Error updating job:', error);
-      showJobCommentError();
+      console.error('Error updating job:', error)
+      showJobCommentError()
     }
   }
-};
+}
 
 // Delete a comment
 const deleteComment = async (index: number) => {
-  const job = restructureJob(props.passedInJob);
-  const updatedComments = job.comments.filter((_, i) => i !== index);
-  updatedComments.splice(index, 1);
+  const job = restructureJob(props.passedInJob)
+  const updatedComments = job.comments.filter((_, i) => i !== index)
+  updatedComments.splice(index, 1)
 
   const updatedJob = {
     ...job,
     comments: updatedComments
-  };
+  }
 
   const config = {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
-  };
+  }
 
   try {
-    const apiUrl = await getRequestUrl();
-    const response = await axios.patch(`${apiUrl}job/${job._id}`, updatedJob, config);
+    const apiUrl = await getRequestUrl()
+    const response = await axios.patch(`${apiUrl}job/${job._id}`, updatedJob, config)
 
     if (response.status < 300 && response.status > 199) {
-      comments.value.splice(index, 1);
+      comments.value.splice(index, 1)
     } else {
-      showJobCommentError();
+      showJobCommentError()
     }
   } catch (error) {
-    console.error('Error deleting comment:', error);
-    showJobCommentError();
+    console.error('Error deleting comment:', error)
+    showJobCommentError()
   }
-};
+}
 </script>
 
 <style></style>
-
-
