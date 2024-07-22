@@ -58,6 +58,7 @@
               v-model="subordinateItems"
               bg-color="background"
               variant="solo"
+              multiple
             ></v-select> </v-col
         ></v-row>
       </v-card-text>
@@ -92,6 +93,7 @@
 import axios from 'axios'
 import { select } from '@syncfusion/ej2-base'
 import Toast from 'primevue/toast'
+import type { EmployeeInformation, EmployeeJoined } from '@/components/home/jobs/types'
 
 type Role = {
   _id: string
@@ -160,6 +162,65 @@ export default {
     },
     showlcalvalues() {
       console.log(this.localEditedItem)
+    },
+    async loadSubordinates() {
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const sub_res = await axios(
+          apiURL +
+            `employee/${localStorage.getItem('employeeId')}/company/${localStorage.getItem('currentCompany')}`,
+          config
+        )
+        let sub_employees: EmployeeJoined[] = []
+        for (let i = 0; i < sub_res.data.data.length; i++) {
+          const employee_details = await axios.get(
+            apiURL + `employee/joined/id/${sub_res.data.data[i]._id}`,
+            config
+          )
+
+          console.log(employee_details.data)
+
+          // let employee_all_data: EmployeeJoined[] = employee_response.data.data
+          //
+          // console.log(employee_all_data)
+          //
+          // let company_employee_arr: EmployeeInformation[] = []
+          //
+          // for (let i = 0; i < employee_all_data.length; i++) {
+          //   if (employee_all_data[i].userId[0].personalInfo.address !== undefined) continue
+          //
+          //   if (employee_all_data[i].roleId !== undefined) {
+          //     let company_employee: EmployeeInformation = {
+          //       name:
+          //         employee_all_data[i].userId[0].personalInfo.firstName +
+          //         ' ' +
+          //         employee_all_data[i].userId[0].personalInfo.surname +
+          //         ' (' +
+          //         employee_all_data[i].roleId[0].roleName +
+          //         ')',
+          //       employeeId: employee_all_data[i]._id
+          //     }
+          //
+          //     company_employee_arr.push(company_employee)
+          //   } else {
+          //     let company_employee: EmployeeInformation = {
+          //       name:
+          //         employee_all_data[i].userId[0].personalInfo.firstName +
+          //         ' ' +
+          //         employee_all_data[i].userId[0].personalInfo.surname +
+          //         ' (Unassigned Role)',
+          //       employeeId: employee_all_data[i]._id
+          //     }
+          //     company_employee_arr.push(company_employee)
+          //   }
+          // }
+          // console.log(company_employee_arr)
+          // // this.employeesArray = company_employee_arr
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
     },
     async loadRoles() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
@@ -259,6 +320,7 @@ export default {
   mounted() {
     this.showlcalvalues()
     this.loadRoles()
+    this.loadSubordinates()
   }
 }
 </script>
