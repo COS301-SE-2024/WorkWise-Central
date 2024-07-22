@@ -18,6 +18,11 @@ import { JobRepository } from './job.repository';
 import { EmployeeService } from '../employee/employee.service';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { FileService } from '../file/file.service';
+import {
+  JobAssignDto,
+  JobAssignGroupDto,
+  jobAssignResultDto,
+} from './dto/assign-job.dto';
 
 @Injectable()
 export class JobService {
@@ -54,7 +59,7 @@ export class JobService {
     const result = await this.jobRepository.save(createdJob);
     return new CreateJobResponseDto(result);
   }
-  async findJobById(
+  async getJobById(
     identifier: Types.ObjectId,
   ): Promise<FlattenMaps<Job> & { _id: Types.ObjectId }> {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
@@ -368,7 +373,7 @@ export class JobService {
   ) {
     ///Validation
     const user = await this.usersService.getUserById(userId);
-    const job = await this.findJobById(jobId);
+    const job = await this.getJobById(jobId);
 
     if (user == null) throw new NotFoundException('User not found');
     if (job == null) throw new NotFoundException('Job not found');
@@ -407,5 +412,95 @@ export class JobService {
     //TODO: Implement later
     console.log(employeeId);
     console.log(jobId);
+  }
+
+  async assignEmployees(
+    userId: Types.ObjectId, //TODO
+    jobAssignGroupDto: JobAssignGroupDto,
+  ) {
+    ///Validation
+
+    //// User validation
+    const job = await this.getJobById(jobAssignGroupDto.jobId);
+    for (const employeeId of jobAssignGroupDto.employeeIds) {
+      const exists = await this.employeeService.employeeExists(employeeId);
+      if (!exists) {
+        throw new NotFoundException('Employee not found');
+      }
+    }
+    ///
+    const total = jobAssignGroupDto.employeeIds.length;
+
+    //remove duplicates
+    jobAssignGroupDto.employeeIds = [...new Set(jobAssignGroupDto.employeeIds)];
+    let pass: number = 0;
+
+    //const result = [];
+    for (const employeeId of jobAssignGroupDto.employeeIds) {
+      const isInJob = job.assignedEmployees.employeeIds.some((e) =>
+        e.equals(employeeId),
+      );
+
+      if (!isInJob) {
+        await this.jobRepository.assignEmployee(
+          employeeId,
+          jobAssignGroupDto.jobId,
+        );
+        pass++;
+      }
+    }
+    return new jobAssignResultDto({
+      passed: pass,
+      failed: total - pass,
+    });
+  }
+
+  async unassignEmployee(userId: Types.ObjectId, jobAssignDto: JobAssignDto) {
+    ///Validation
+    ///
+    return this.jobRepository.unassignEmployee(
+      jobAssignDto.employeeId,
+      jobAssignDto.jobId,
+    );
+  }
+  async unassignEmployees(
+    userId: Types.ObjectId,
+    jobAssignGroupDto: JobAssignGroupDto,
+  ) {
+    ///Validation
+
+    //// User validation //TODO
+    const job = await this.getJobById(jobAssignGroupDto.jobId);
+    for (const employeeId of jobAssignGroupDto.employeeIds) {
+      const exists = await this.employeeService.employeeExists(employeeId);
+      if (!exists) {
+        throw new NotFoundException('Employee not found');
+      }
+    }
+    ///
+    const total = jobAssignGroupDto.employeeIds.length;
+
+    //remove duplicates
+    jobAssignGroupDto.employeeIds = [...new Set(jobAssignGroupDto.employeeIds)];
+    let pass: number = 0;
+
+    //const result = [];
+    for (const employeeId of jobAssignGroupDto.employeeIds) {
+      const isInJob = job.assignedEmployees.employeeIds.some((e) =>
+        e.equals(employeeId),
+      );
+
+      if (isInJob) {
+        await this.jobRepository.unassignEmployee(
+          employeeId,
+          jobAssignGroupDto.jobId,
+        );
+        pass++;
+      }
+    }
+    return new jobAssignResultDto({
+      passed: pass,
+      failed: total - pass,
+    });
   }
 }

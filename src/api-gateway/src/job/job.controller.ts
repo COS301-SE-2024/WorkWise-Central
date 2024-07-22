@@ -298,7 +298,7 @@ export class JobController {
     this.validateObjectId(id);
     try {
       return {
-        data: await this.jobService.findJobById(new Types.ObjectId(id)),
+        data: await this.jobService.getJobById(new Types.ObjectId(id)),
       };
     } catch (e) {
       console.log(e);
