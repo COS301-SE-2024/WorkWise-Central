@@ -3,11 +3,7 @@ import { CreateInventoryDto } from './dto/create-inventory.dto';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
 import { Types } from 'mongoose';
 import { Inventory } from './entities/inventory.entity';
-import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
-import { RoleService } from '../role/role.service';
-import { JobService } from '../job/job.service';
-import { TeamService } from '../team/team.service';
 import { InventoryRepository } from './inventory.repository';
 
 @Injectable()
@@ -15,19 +11,7 @@ export class InventoryService {
   constructor(
     @Inject(forwardRef(() => InventoryRepository))
     private readonly inventoryRepository: InventoryRepository,
-
-    @Inject(forwardRef(() => UsersService))
-    private readonly usersService: UsersService,
-
     private readonly companyService: CompanyService,
-
-    @Inject(forwardRef(() => RoleService))
-    private readonly roleService: RoleService,
-
-    @Inject(forwardRef(() => JobService))
-    private readonly jobService: JobService,
-
-    private teamService: TeamService,
   ) {}
 
   async validateCreateInventory(inventory: CreateInventoryDto) {
