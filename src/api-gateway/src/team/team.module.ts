@@ -25,6 +25,6 @@ import { FileModule } from '../file/file.module';
   ],
   controllers: [TeamController],
   providers: [TeamService, TeamRepository, JobService, JobRepository],
-  exports: [TeamService, MongooseModule],
+  exports: [TeamService, TeamRepository, MongooseModule],
 })
 export class TeamModule {}

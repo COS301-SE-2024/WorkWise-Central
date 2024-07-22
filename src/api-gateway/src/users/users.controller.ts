@@ -246,8 +246,8 @@ export class UsersController {
   @ApiBody({ type: UpdateUserDto })
   @Patch('/update')
   async update(@Headers() headers: any, @Body() updateUserDto: UpdateUserDto) {
-    const userId = this.extractUserId(headers);
     try {
+      const userId = this.extractUserId(headers);
       return {
         data: await this.usersService.updateUser(userId, updateUserDto),
       };
@@ -318,6 +318,32 @@ export class UsersController {
       if (userId.equals(new Types.ObjectId(id)))
         return this.usersService.softDelete(userId);
       else return new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
+    } catch (e) {
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.SERVICE_UNAVAILABLE,
+      );
+    }
+  }
+
+  @ApiParam({
+    name: 'companyId',
+    type: Types.ObjectId,
+    description: 'Id of Company you want to change to',
+  })
+  changeCompany(
+    @Headers() headers: any,
+    @Param('companyId') companyId: string,
+  ) {
+    if (!mongoose.Types.ObjectId.isValid(companyId)) {
+      throw new HttpException('Invalid CompanyId', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      const userId = this.extractUserId(headers);
+      return this.usersService.changeCurrentEmployee(
+        userId,
+        new Types.ObjectId(companyId),
+      );
     } catch (e) {
       throw new HttpException(
         'Internal Server Error',
