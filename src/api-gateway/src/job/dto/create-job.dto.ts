@@ -49,16 +49,16 @@ class Address {
   postalCode: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(255)
-  complex: string;
+  complex?: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(255)
-  houseNumber: string;
+  houseNumber?: string;
 }
 
 class ClientFeedback {
