@@ -194,10 +194,7 @@ export class CompanyService {
   //For now, I assume the person is authorised
   async addEmployee(addUserDto: AddUserToCompanyDto) {
     //Add validation
-    console.log('Test');
-
     const inputValidated = await this.addUserValidation(addUserDto); //TODO: Add more validation later
-    console.log('Test');
 
     if (!inputValidated.isValid) {
       throw new ConflictException(inputValidated.message);
@@ -210,8 +207,6 @@ export class CompanyService {
     // null checks
     if (company == null || user == null)
       throw new NotFoundException('User or Company not found');
-
-    console.log('Test');
 
     //TODO: Ask about superiorId
     //CreateEmployee and link them to the company
@@ -227,7 +222,6 @@ export class CompanyService {
         'Worker',
         addUserDto.currentCompany,
       );
-      console.log('Test');
 
       addedEmployee = await this.employeeService.create({
         companyId: addUserDto.currentCompany,
@@ -235,14 +229,12 @@ export class CompanyService {
         roleId: defaultRole._id,
       });
     }
-    console.log('Test');
 
     const newJoinedCompany: JoinedCompany = {
       companyId: addUserDto.currentCompany,
       employeeId: addedEmployee._id,
       companyName: company.name,
     };
-    console.log('Test');
 
     const updatedUser = await this.usersService.addJoinedCompany(
       user._id,

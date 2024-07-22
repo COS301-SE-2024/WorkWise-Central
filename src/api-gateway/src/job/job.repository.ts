@@ -6,6 +6,8 @@ import { UpdateJobDto } from './dto/update-job.dto';
 import { Employee } from '../employee/entities/employee.entity';
 import { Company } from '../company/entities/company.entity';
 import { Team } from '../team/entities/team.entity';
+import { isNotDeleted } from '../shared/soft-delete';
+import { Comment } from './entities/job.entity';
 
 @Injectable()
 export class JobRepository {
@@ -35,29 +37,19 @@ export class JobRepository {
 
     return this.jobModel
       .findOne({
-        $and: [
-          { _id: identifier },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
+        $and: [{ _id: identifier }, isNotDeleted],
       })
       .populate(populatedFields)
       .lean();
   }
 
   async findAll() {
-    return this.jobModel
-      .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
-      .lean();
+    return this.jobModel.find(isNotDeleted).lean();
   }
 
   async findAllInCompany(companyId: Types.ObjectId) {
     const filter = {
-      $and: [
-        { companyId: companyId },
-        { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] },
-      ],
+      $and: [{ companyId: companyId }, isNotDeleted],
     };
 
     return this.jobModel.find(filter).lean().exec();
@@ -111,10 +103,7 @@ export class JobRepository {
     ],
   ) {
     const filter = {
-      $and: [
-        { companyId: companyId },
-        { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] },
-      ],
+      $and: [{ companyId: companyId }, isNotDeleted],
     };
 
     return this.jobModel //TODO: Test
@@ -130,12 +119,7 @@ export class JobRepository {
   async exists(id: Types.ObjectId) {
     return this.jobModel
       .findOne({
-        $and: [
-          { _id: id },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
+        $and: [{ _id: id }, isNotDeleted],
       })
       .lean();
   }
@@ -144,12 +128,7 @@ export class JobRepository {
     return this.jobModel
       .findOneAndUpdate(
         {
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
+          $and: [{ _id: id }, isNotDeleted],
         },
         { $set: { ...updateJobDto }, updatedAt: new Date() },
         { new: true },
@@ -160,13 +139,7 @@ export class JobRepository {
   async existsInCompany(id: Types.ObjectId, companyId: Types.ObjectId) {
     const result = await this.jobModel
       .findOne({
-        $and: [
-          { _id: id },
-          { companyId: companyId },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
+        $and: [{ _id: id }, { companyId: companyId }, isNotDeleted],
       })
       .lean();
     if (result != null && result.companyId.equals(companyId)) {
@@ -180,12 +153,7 @@ export class JobRepository {
     const result = await this.jobModel
       .findOneAndUpdate(
         {
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
+          $and: [{ _id: id }, isNotDeleted],
         },
         { $set: { deletedAt: new Date() } },
       )
@@ -197,6 +165,9 @@ export class JobRepository {
   async findOne(id: Types.ObjectId) {
     return await this.jobModel.findOne({ _id: id }).lean().exec();
   }
+
+  //Specific endpoints
+
   async findAllForEmployee(employeeId: Types.ObjectId) {
     const filter = {
       $and: [
@@ -223,6 +194,292 @@ export class JobRepository {
     return await this.jobModel
       .find(filter)
       .populate(fieldsToPopulate)
+      .lean()
+      .exec();
+  }
+
+  async assignEmployee(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        { $push: { assignedEmployees: employeeId }, updatedAt: new Date() },
+        {
+          new: true,
+        },
+      )
+      .lean()
+      .exec();
+  }
+
+  async assignEmployees(employeeIds: Types.ObjectId[], jobId: Types.ObjectId) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        {
+          $push: { assignedEmployees: { $each: employeeIds } },
+          updatedAt: new Date(),
+        },
+        {
+          new: true,
+        },
+      )
+      .lean()
+      .exec();
+  }
+
+  async unassignEmployee(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        { $pull: { assignedEmployees: employeeId }, updatedAt: new Date() },
+        {
+          new: true,
+        },
+      )
+      .lean()
+      .exec();
+  }
+
+  async unassignEmployees(
+    employeeIds: Types.ObjectId[],
+    jobId: Types.ObjectId,
+  ) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        {
+          $pull: { assignedEmployees: { $in: employeeIds } },
+          updatedAt: new Date(),
+        },
+        {
+          new: true,
+        },
+      )
+      .lean()
+      .exec();
+  }
+
+  async assignEmployeeToTask(
+    //TODO: Speak to Jess and thando
+    employeeId: Types.ObjectId,
+    jobId: Types.ObjectId,
+  ) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        {
+          $push: { 'taskList.assignedEmployees': employeeId },
+          updatedAt: new Date(),
+        },
+        {
+          new: true,
+        },
+      )
+      .lean()
+      .exec();
+  }
+
+  async assignEmployeesToTask(
+    employeeIds: Types.ObjectId[],
+    jobId: Types.ObjectId,
+  ) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        {
+          $push: { 'taskList.assignedEmployees': { $each: employeeIds } },
+          updatedAt: new Date(),
+        },
+        {
+          new: true,
+        },
+      )
+      .lean()
+      .exec();
+  }
+
+  async unassignEmployeeFromTask(
+    employeeId: Types.ObjectId,
+    jobId: Types.ObjectId,
+  ) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        {
+          $pull: { 'taskList.assignedEmployees': employeeId },
+          updatedAt: new Date(),
+        },
+        {
+          new: true,
+        },
+      )
+      .lean()
+      .exec();
+  }
+
+  async unassignEmployeesFromTask(
+    employeeIds: Types.ObjectId[],
+    jobId: Types.ObjectId,
+  ) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        {
+          $pull: { 'taskList.assignedEmployees': { $in: employeeIds } },
+          updatedAt: new Date(),
+        },
+        {
+          new: true,
+        },
+      )
+      .lean()
+      .exec();
+  }
+
+  async updateTeam(teamId: Types.ObjectId, jobId: Types.ObjectId) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        {
+          $set: { 'assignedEmployees.teamId': teamId },
+          updatedAt: new Date(),
+        },
+        {
+          new: true,
+        },
+      )
+      .lean()
+      .exec();
+  }
+
+  async addComment(newComment: Comment, jobId: Types.ObjectId) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        {
+          $push: { comments: newComment },
+          updatedAt: new Date(),
+        },
+        {
+          new: true,
+        },
+      )
+      .lean()
+      .exec();
+  }
+
+  async removeComment(newComment: Comment, jobId: Types.ObjectId) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        {
+          $pull: { comments: newComment },
+          updatedAt: new Date(),
+        },
+        {
+          new: true,
+        },
+      )
+      .lean()
+      .exec();
+  }
+
+  async editComment(newComment: Comment, jobId: Types.ObjectId) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        {
+          $pull: { comments: newComment },
+          updatedAt: new Date(),
+        },
+        {
+          new: true,
+        },
+      )
       .lean()
       .exec();
   }

@@ -28,6 +28,6 @@ import { FileModule } from '../file/file.module';
   ],
   controllers: [EmployeeController],
   providers: [EmployeeService, EmployeeRepository, JobService],
-  exports: [EmployeeService, MongooseModule],
+  exports: [EmployeeService, EmployeeRepository, MongooseModule],
 })
 export class EmployeeModule {}

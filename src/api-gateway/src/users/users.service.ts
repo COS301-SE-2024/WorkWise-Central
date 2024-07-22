@@ -126,26 +126,11 @@ export class UsersService {
   }
 
   async getUserById(identifier: Types.ObjectId) {
-    const result = await this.userRepository.findById(identifier);
-
-    if (result == null) {
-      throw new NotFoundException(
-        'Error: User not found, please verify your username and password',
-      );
-    }
-    return result;
+    return await this.userRepository.findById(identifier);
   }
 
   async getUserByUsername(identifier: string) {
-    const result = this.userRepository.findByUsername(identifier);
-
-    if (result == null) {
-      throw new NotFoundException(
-        'Error: User not found, please verify your username and password',
-      );
-    }
-
-    return result;
+    return this.userRepository.findByUsername(identifier);
   }
 
   async updateJoinedCompanies(
@@ -219,16 +204,19 @@ export class UsersService {
 
   async changeCurrentEmployee(
     userId: Types.ObjectId,
-    employeeId: Types.ObjectId,
+    companyId: Types.ObjectId,
   ) {
     const user = await this.userRepository.findById(userId);
-    const includesEmployee = user.joinedCompanies.some((company) =>
-      company.employeeId.equals(employeeId),
+    const joinedCompany = user.joinedCompanies.filter(
+      (company) => company.companyId.toString() === companyId.toString(),
     );
 
-    if (includesEmployee)
+    if (joinedCompany.length > 0) {
+      const employeeId = joinedCompany[0].employeeId;
       await this.updateUser(userId, { currentEmployee: employeeId });
-    else throw new ConflictException('Invalid Employee');
+    } else throw new ConflictException('Invalid Employee');
+
+    return this.companyService.getCompanyById(joinedCompany[0].companyId);
   }
 
   async updateUser(

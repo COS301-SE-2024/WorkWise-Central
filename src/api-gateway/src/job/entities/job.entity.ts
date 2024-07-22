@@ -77,14 +77,14 @@ export class RecordedDetails {
 
   @ApiProperty()
   @Prop({ type: [InventoryUsed], required: false, default: [] })
-  inventoryUsed?: InventoryUsed[] = [];
+  inventoryUsed?: InventoryUsed[] = []; //TODO: Flesh out
 }
 
 export class AssignedEmployees {
   @Prop({
     type: [SchemaTypes.ObjectId],
     required: false,
-    ref: 'Employee',
+    ref: Employee.name,
     default: [],
   })
   employeeIds?: Types.ObjectId[] = [];
@@ -102,13 +102,18 @@ export class Task {
   status: string = 'To do';
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: false, default: [] })
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: false,
+    default: [],
+    ref: Employee.name,
+  })
   assignedEmployees?: Types.ObjectId[] = [];
 }
 
 export class Comment {
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Employee.name })
   employeeId: Types.ObjectId;
 
   @ApiProperty()
@@ -167,7 +172,6 @@ export class Job {
     type: AssignedEmployees,
     required: false,
     default: new AssignedEmployees(), //Will this work?💀
-    ref: Employee.name,
   })
   assignedEmployees?: AssignedEmployees = new AssignedEmployees();
 

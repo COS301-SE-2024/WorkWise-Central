@@ -13,6 +13,7 @@ import { NotificationModule } from './notification/notification.module';
 import { EmailModule } from './email/email.module';
 import { FileModule } from './file/file.module';
 import { InventoryModule } from './inventory/inventory.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { InventoryModule } from './inventory/inventory.module';
     EmailModule,
     FileModule,
     InventoryModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
