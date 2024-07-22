@@ -20,11 +20,16 @@
                     <v-expansion-panel
                       v-for="i in 14"
                       :key="i"
-                      :text="faqs[i].answer"
-                      :title="faqs[i].question"
                       :theme="isdarkmode === true ? 'dark' : 'light'"
                       style="font-family: Nunito, sans-serif"
-                    ></v-expansion-panel>
+                    >
+                      <v-expansion-panel-title color="faqQuestion"
+                        ><b>{{ faqs[i].question }}</b></v-expansion-panel-title
+                      >
+                      <v-expansion-panel-text>{{
+                        faqs[i].answer
+                      }}</v-expansion-panel-text></v-expansion-panel
+                    >
                   </v-expansion-panels>
                 </div>
               </v-sheet>
@@ -48,34 +53,9 @@
 
                               <br />
 
-                              <v-sheet border>
-                                <v-table>
-                                  <thead>
-                                    <tr>
-                                      <th>Description</th>
-                                      <th class="text-end">Quantity</th>
-                                      <th class="text-end">Price</th>
-                                    </tr>
-                                  </thead>
-
-                                  <tbody>
-                                    <tr v-for="(product, index) in products" :key="index">
-                                      <td v-text="product.name"></td>
-                                      <td class="text-end" v-text="product.quantity"></td>
-                                      <td
-                                        class="text-end"
-                                        v-text="product.quantity * product.price"
-                                      ></td>
-                                    </tr>
-
-                                    <tr>
-                                      <th>Total</th>
-                                      <th></th>
-                                      <th class="text-end">${{ subtotal }}</th>
-                                    </tr>
-                                  </tbody>
-                                </v-table>
-                              </v-sheet>
+                              <v-img
+                                src="@/assets/images/tutorial/signup/splash_page._login_button.png"
+                              />
                             </template>
 
                             <template #[`item.2`]>

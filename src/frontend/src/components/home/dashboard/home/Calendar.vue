@@ -50,7 +50,16 @@ export default {
   data() {
     return {
       isdarkmode: localStorage['theme'] === 'true',
-      available_event_colors: ['blue', 'yellow', 'green', 'red', 'pink', 'purple', 'turquoise'],
+      available_event_colors: [
+        'blue',
+        'yellow',
+        'green',
+        'pink',
+        'red',
+        'purple',
+        'turquoise',
+        'brown'
+      ],
       are_events_loading: true,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
