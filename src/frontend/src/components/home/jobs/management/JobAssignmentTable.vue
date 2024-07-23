@@ -31,6 +31,7 @@
                       label="Search"
                       prepend-inner-icon="mdi-magnify"
                       variant="outlined"
+                      color="primary"
                       flat
                       width="100%"
                       style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
@@ -63,7 +64,7 @@
                       </template>
 
                       <template v-slot:[`item.clientName`]="{ value }">
-                        <v-chip color="primary"> <v-icon>mdi-phone</v-icon>{{ value }} </v-chip>
+                        <v-chip color=""> <v-icon>mdi-phone</v-icon>{{ value }} </v-chip>
                       </template>
 
                       <template v-slot:[`item.jobDescription`]="{ value }">

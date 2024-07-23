@@ -67,9 +67,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <Toast />
+        <Toast /><v-btn @click="close" color="error">Cancel</v-btn>
         <v-btn @click="createInventoryItem" color="success">Save</v-btn>
-        <v-btn @click="close" color="error">Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

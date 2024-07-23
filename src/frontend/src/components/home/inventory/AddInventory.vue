@@ -12,7 +12,7 @@
         color="secondary"
         v-bind="activatorProps"
         variant="elevated"
-        ><v-icon icon="fa:fa-solid fa-plus" color="" size="xs"/>
+        ><v-icon icon="fa:fa-solid fa-plus" color="" size="xs" />
         <v-icon icon="fa:fa-solid fa-warehouse" color="" />
         Add Inventory</v-btn
       >
@@ -80,11 +80,11 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <Toast />
-        <v-btn @click="createInventoryItem" color="success"
-          >Create<v-icon icon="fa:fa-solid fa-plus" color="success" size="small" end></v-icon
-        ></v-btn>
         <v-btn @click="close" color="error"
           >Cancel <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon
+        ></v-btn>
+        <v-btn @click="createInventoryItem" color="success"
+          >Create<v-icon icon="fa:fa-solid fa-plus" color="success" size="small" end></v-icon
         ></v-btn>
       </v-card-actions>
     </v-card>

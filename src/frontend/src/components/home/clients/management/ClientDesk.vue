@@ -31,6 +31,7 @@
               prepend-inner-icon="mdi-magnify"
               variant="outlined"
               flat
+              color="primary"
               width="80%"
               style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
               hide-details
@@ -38,7 +39,7 @@
             ></v-text-field>
           </v-col>
 
-          <v-col cols="12" md="4" sm="12" xs="4" :class="{ 'justify-end': !isSmallScreen }">
+          <v-col cols="12" md="4" sm="12" xs="4" :class="{ 'd-flex justify-end': !isSmallScreen }">
             <AddClient />
           </v-col>
         </v-row>

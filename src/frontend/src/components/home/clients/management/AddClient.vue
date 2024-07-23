@@ -200,6 +200,11 @@
           <v-spacer></v-spacer>
           <v-row>
             <v-col cols="6">
+              <v-btn color="error" width="100%" height="35" variant="text" @click="close">
+                Cancel <v-icon icon="fa: fa-solid fa-ban" color="error" end></v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="6">
               <Toast />
               <v-btn
                 rounded="md"
@@ -213,11 +218,7 @@
                 >Create Client <v-icon icon="fa: fa-solid fa-user-plus" color="success" end></v-icon
               ></v-btn>
             </v-col>
-            <v-col cols="6">
-              <v-btn color="error" width="100%" height="35" variant="text" @click="close">
-                Cancel <v-icon icon="fa: fa-solid fa-ban" color="error" end></v-icon>
-              </v-btn> </v-col
-          ></v-row>
+          </v-row>
         </v-form>
       </v-card-text>
     </v-card>

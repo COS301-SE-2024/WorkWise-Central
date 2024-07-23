@@ -26,11 +26,10 @@
       >
       <v-card-actions>
         <v-spacer></v-spacer>
-        <Toast />
+        <Toast /><v-btn label="Cancel" color="secondary" text @click="close">Cancel</v-btn>
         <v-btn label="Delete" color="error" text :loading="isDeleting" @click="deleteInventory"
           >Delete</v-btn
         >
-        <v-btn label="Cancel" color="secondary" text @click="close">Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
