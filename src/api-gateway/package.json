@@ -43,6 +43,8 @@
     "class-validator-mongo-object-id": "^1.4.0",
     "cloudinary": "^2.2.0",
     "compression": "^1.7.4",
+    "firebase": "^10.12.4",
+    "firebase-admin": "^12.2.0",
     "glob": "^10.4.1",
     "handlebars": "^4.7.8",
     "inflight": "^1.0.6",
