@@ -106,16 +106,16 @@
       <v-card-actions>
         <v-row align-self="center"
           ><v-col>
+            <v-btn color="error" width="85%" height="35" variant="text" @click="close">
+              Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon>
+            </v-btn> </v-col
+          ><v-col>
             <Toast />
             <v-btn color="success" width="85%" height="35" variant="text" @click="update">
               Save
               <v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon>
             </v-btn>
-          </v-col>
-          <v-col>
-            <v-btn color="error" width="85%" height="35" variant="text" @click="close">
-              Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon>
-            </v-btn> </v-col></v-row
+          </v-col> </v-row
       ></v-card-actions>
     </v-card>
   </v-dialog>

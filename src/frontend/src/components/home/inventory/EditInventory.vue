@@ -67,8 +67,12 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <Toast /><v-btn @click="close" color="error">Cancel</v-btn>
-        <v-btn @click="createInventoryItem" color="success">Save</v-btn>
+        <Toast /><v-btn @click="close" color="error"
+          >Cancel<v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon
+        ></v-btn>
+        <v-btn @click="createInventoryItem" color="success"
+          >Save<v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon
+        ></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

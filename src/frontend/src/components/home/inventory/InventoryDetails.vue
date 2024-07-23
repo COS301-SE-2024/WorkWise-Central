@@ -71,7 +71,9 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <Toast />
-        <v-btn label="Close" color="secondary" text @click="close">Close</v-btn>
+        <v-btn label="Close" color="secondary" text @click="close"
+          >Close<v-icon icon="fa:fa-solid fa-cancel" end color="secondary" size="small"></v-icon
+        ></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

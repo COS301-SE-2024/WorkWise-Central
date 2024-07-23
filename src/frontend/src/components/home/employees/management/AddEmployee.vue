@@ -56,7 +56,7 @@
                 variant="text"
                 :disabled="click_create_client"
                 style="font-family: Nunito, sans-serif"
-                >Add
+                >Add<v-icon icon="fa:fa-solid fa-plus" color="success" size="small" end></v-icon>
               </v-btn>
             </v-col>
           </v-col>

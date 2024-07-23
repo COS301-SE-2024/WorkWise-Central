@@ -52,7 +52,8 @@
               ></v-row
             >
 
-            <v-dialog v-model="loginDialog" max-width="400" @click:outside="resetFields">
+            <v-dialog opacity="" v-model="loginDialog" max-width="400" @click:outside="resetFields">
+              <Toast position="top-center" />
               <v-card
                 width="auto"
                 height="auto"
@@ -113,7 +114,6 @@
                 </v-col>
 
                 <v-col cols="8" offset="2">
-                  <Toast />
                   <v-btn
                     :disabled="!valid"
                     text
@@ -167,7 +167,7 @@
             >
 
             <!-- Flow 1 -->
-            <v-dialog v-model="signupDialog" max-width="400" @click:outside="resetFields">
+            <v-dialog opacity="" v-model="signupDialog" max-width="400" @click:outside="resetFields">
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -239,7 +239,7 @@
                     </v-form>
                   </v-col>
                   <v-col cols="8" offset="2">
-                    <Toast />
+                    <Toast position="top-center" />
                     <v-btn
                       :disabled="!valid"
                       text
@@ -267,7 +267,7 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 2 -->
-            <v-dialog v-model="signup1Dialog" max-width="400" @click:outside="resetFields">
+            <v-dialog opacity="" v-model="signup1Dialog" max-width="400" @click:outside="resetFields">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -345,7 +345,7 @@
               </v-sheet>
             </v-dialog>
             <v-col xs="3" align-self="center">
-              <v-dialog v-model="signupUsernameDialog" max-width="400" @click:outside="resetFields">
+              <v-dialog opacity="" v-model="signupUsernameDialog" max-width="400" @click:outside="resetFields">
                 <v-sheet
                   width="auto"
                   height="auto"
@@ -378,7 +378,7 @@
                     </v-form>
                   </v-col>
                   <v-col cols="8" offset="2">
-                    <Toast />
+                    <Toast position="top-center" />
                     <v-btn
                       :disabled="!valid"
                       text
@@ -408,7 +408,7 @@
               </v-dialog>
             </v-col>
             <!-- Flow 3 -->
-            <v-dialog v-model="signup2Dialog" max-width="400" @click:outside="resetFields">
+            <v-dialog opacity="" v-model="signup2Dialog" max-width="400" @click:outside="resetFields">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -507,7 +507,7 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 4 -->
-            <v-dialog v-model="signupAddressDialog" max-width="1000" @click:outside="resetFields">
+            <v-dialog opacity="" v-model="signupAddressDialog" max-width="1000" @click:outside="resetFields">
               <v-sheet
                 width="auto"
                 height="auto"
@@ -645,7 +645,7 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 5 -->
-            <v-dialog
+            <v-dialog opacity=""
               v-model="signup3Dialog"
               max-width="700"
               style="height: 750px"
@@ -1100,7 +1100,7 @@ export default defineComponent({
             severity: 'error',
             summary: 'Error',
             detail: 'Username already exists',
-            life: 3000
+            life: 6000
           })
         } else {
           this.signupUsernameDialog = false
