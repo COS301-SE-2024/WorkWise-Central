@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import ManageEmployeesT from '@/components/home/employees/management/ManageEmployeesT.vue'
+import ManageEmployeesT from '@/components/home/employees/management/ManageEmployees.vue'
 import NavigationBar from '@/components/home/NavigationBar.vue'
 export default defineComponent({
   name: 'ManagerEmployeesView',

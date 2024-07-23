@@ -78,23 +78,6 @@
                 >
                 </v-textarea>
               </v-col>
-              <!--            <v-col>-->
-              <!--              <small-->
-              <!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
-              <!--                class="text-caption"-->
-              <!--                >Comment</small-->
-              <!--              >-->
-              <!--              <v-textarea-->
-              <!--                :theme="isdarkmode === true ? 'dark' : 'light'"-->
-              <!--                placeholder="Enter any additional comments here"-->
-              <!--                rounded="md"-->
-              <!--                variant="solo"-->
-              <!--                v-model="comment"-->
-              <!--                @input="commentUpdate"-->
-              <!--                required-->
-              <!--              >-->
-              <!--              </v-textarea>-->
-              <!--            </v-col>-->
 
               <v-row>
                 <v-col align="center" cols="12" md="6">

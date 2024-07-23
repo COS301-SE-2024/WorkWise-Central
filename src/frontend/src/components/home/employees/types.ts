@@ -196,3 +196,8 @@ export type EmployeeInformation2 = {
   name: string
   employeeId: string
 }
+
+export type RoleItem = {
+  roleName: string
+  roleId: string
+}
