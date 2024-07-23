@@ -123,18 +123,9 @@ import Toast from 'primevue/toast'
 import type {
   EmployeeInformation2,
   EmployeeJoined,
-  RoleItem
+  RoleItem,
+  Role
 } from '@/components/home/employees/types'
-
-type Role = {
-  _id: string
-  roleName: string
-  permissionSuite: string[]
-  companyId: string
-  createdAt: string // ISO 8601 date string
-  __v: number
-  updatedAt: string // ISO 8601 date string
-}
 
 export default {
   name: 'EditClient',

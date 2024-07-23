@@ -116,14 +116,14 @@ type PermissionSuite =
   | 'add a new inventory item'
   | 'record inventory use'
 
-type Role = {
-  _id: string
-  roleName: string
-  permissionSuite: PermissionSuite[]
-  companyId: string
-  createdAt: string
-  __v: number
-}
+// type Role = {
+//   _id: string
+//   roleName: string
+//   permissionSuite: PermissionSuite[]
+//   companyId: string
+//   createdAt: string
+//   __v: number
+// }
 
 type Address = {
   street: string
@@ -200,4 +200,14 @@ export type EmployeeInformation2 = {
 export type RoleItem = {
   roleName: string
   roleId: string
+}
+
+export type Role = {
+  _id: string
+  roleName: string
+  permissionSuite: string[]
+  companyId: string
+  createdAt: string // ISO 8601 date string
+  __v: number
+  updatedAt: string // ISO 8601 date string
 }
