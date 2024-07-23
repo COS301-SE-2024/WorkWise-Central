@@ -142,7 +142,7 @@ export class JobController {
     }
     try {
       return {
-        data: await this.jobService.GetAllJobsInCompany(
+        data: await this.jobService.getAllJobsInCompany(
           userId,
           new Types.ObjectId(companyId),
         ),
@@ -176,7 +176,7 @@ export class JobController {
     }
     try {
       return {
-        data: await this.jobService.GetAllDetailedJobsInCompany(
+        data: await this.jobService.getAllDetailedJobsInCompany(
           userId,
           new Types.ObjectId(companyId),
         ),
@@ -208,7 +208,7 @@ export class JobController {
 
     try {
       return {
-        data: await this.jobService.GetAllJobsForUser(userId),
+        data: await this.jobService.getAllJobsForUser(userId),
       };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -229,19 +229,19 @@ export class JobController {
     @Headers() headers: any,
     @Param('eid') empId: string,
   ) {
+    const decodedJwtAccessToken = this.jwtService.decode(
+      headers.authorization.replace(/^Bearer\s+/i, ''),
+    );
+    const userId: Types.ObjectId = decodedJwtAccessToken.sub;
+    if (!userId) {
+      throw new UnauthorizedException('Unauthorized, JWT required');
+    }
     try {
-      const decodedJwtAccessToken = this.jwtService.decode(
-        headers.authorization.replace(/^Bearer\s+/i, ''),
-      );
-      const userId: Types.ObjectId = decodedJwtAccessToken.sub;
-      if (!userId) {
-        throw new UnauthorizedException('Unauthorized, JWT required');
-      }
       this.validateObjectId(userId);
       this.validateObjectId(empId);
 
       return {
-        data: await this.jobService.GetAllJobsForEmployee(
+        data: await this.jobService.getAllJobsForEmployee(
           userId,
           new Types.ObjectId(empId),
         ),
@@ -265,16 +265,16 @@ export class JobController {
     @Headers() headers: any,
     @Param('eid') empId: string,
   ) {
+    const userId: Types.ObjectId = this.extractUserId(headers);
+    if (!userId) {
+      throw new UnauthorizedException('Unauthorized, JWT required');
+    }
     try {
-      const userId: Types.ObjectId = this.extractUserId(headers);
-      if (!userId) {
-        throw new UnauthorizedException('Unauthorized, JWT required');
-      }
       this.validateObjectId(userId);
       this.validateObjectId(empId);
 
       return {
-        data: await this.jobService.GetAllDetailedJobsForEmployee(
+        data: await this.jobService.getAllDetailedJobsForEmployee(
           userId,
           new Types.ObjectId(empId),
         ),

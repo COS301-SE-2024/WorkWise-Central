@@ -121,7 +121,7 @@ describe('--Employee Controller--', () => {
       jest
         .spyOn(service, 'findAllInCompany')
         .mockResolvedValue(returnedResponseFromService);
-      const result = await controller.findAllInCompanyJoinUserRole(companyId);
+      const result = await controller.findAllInCompany(companyId);
       expect(result).toEqual(expectedResponse);
     });
   });
@@ -137,7 +137,7 @@ describe('--Employee Controller--', () => {
       jest
         .spyOn(service, 'findById')
         .mockResolvedValue(returnedResponseFromService);
-      const result = await controller.findAllInCompanyJoinUserRole(employeeId);
+      const result = await controller.findByIdJoinedUserRole(employeeId);
       expect(result).toEqual(expectedResponse);
     });
   });
@@ -153,7 +153,7 @@ describe('--Employee Controller--', () => {
       jest
         .spyOn(service, 'findById')
         .mockResolvedValue(returnedResponseFromService);
-      const result = await controller.findAllInCompanyJoinUserRole(employeeId);
+      const result = await controller.findById(employeeId);
       expect(result).toEqual(expectedResponse);
     });
   });

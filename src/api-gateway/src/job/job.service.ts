@@ -286,7 +286,7 @@ export class JobService {
     return new ValidationResult(true);
   }
 
-  async GetAllJobsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
+  async getAllJobsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
     //Basic Authentication
     //TODO: Add role-related rules if necessary
     if (!(await this.usersService.userIsInCompany(userId, companyId))) {
@@ -295,7 +295,7 @@ export class JobService {
     return await this.jobRepository.findAllInCompany(companyId);
   }
 
-  async GetAllDetailedJobsInCompany(
+  async getAllDetailedJobsInCompany(
     userId: Types.ObjectId,
     companyId: Types.ObjectId,
   ) {
@@ -304,17 +304,18 @@ export class JobService {
     if (!(await this.usersService.userIsInCompany(userId, companyId))) {
       throw new UnauthorizedException('User not in company');
     }
+
     return await this.jobRepository.findAllInCompanyDetailed(companyId);
   }
 
-  async GetAllJobsForUser(
+  async getAllJobsForUser(
     userId: Types.ObjectId,
   ): Promise<(FlattenMaps<Job> & { _id: Types.ObjectId })[]> {
     const user = await this.usersService.getUserById(userId);
     if (!user) throw new NotFoundException('User not found');
     const arrOfJobs: (FlattenMaps<Job> & { _id: Types.ObjectId })[] = [];
     for (const joinedCompany of user.joinedCompanies) {
-      const jobsForEmployee = await this.GetAllJobsForEmployee(
+      const jobsForEmployee = await this.getAllJobsForEmployee(
         userId,
         joinedCompany.employeeId,
       );
@@ -323,7 +324,7 @@ export class JobService {
     return arrOfJobs; //TODO: Test
   }
 
-  async GetAllJobsForEmployee(
+  async getAllJobsForEmployee(
     userId: Types.ObjectId,
     employeeId: Types.ObjectId,
   ): Promise<(FlattenMaps<Job> & { _id: Types.ObjectId })[]> {
@@ -342,7 +343,7 @@ export class JobService {
     return this.jobRepository.findAllForEmployee(employeeId);
   }
 
-  async GetAllDetailedJobsForEmployee(
+  async getAllDetailedJobsForEmployee(
     userId: Types.ObjectId,
     employeeId: Types.ObjectId,
   ): Promise<(FlattenMaps<Job> & { _id: Types.ObjectId })[]> {
@@ -359,5 +360,52 @@ export class JobService {
     }
 
     return this.jobRepository.findAllForEmployee(employeeId);
+  }
+
+  async getAllForEmployeeDetailed(
+    userId: Types.ObjectId,
+    jobId: Types.ObjectId,
+  ) {
+    ///Validation
+    const user = await this.usersService.getUserById(userId);
+    const job = await this.findJobById(jobId);
+
+    if (user == null) throw new NotFoundException('User not found');
+    if (job == null) throw new NotFoundException('Job not found');
+    const relatedCompany = user.joinedCompanies
+      .filter((x) => x.companyId.toString() === job.companyId.toString())
+      .pop(); //sus, but users must only have one employee per company
+    /*    let valid = false;
+    for (const joinedCompany of user.joinedCompanies) {
+      if (
+        job.assignedBy.toString() == joinedCompany.employeeId.toString() ||
+        job.assignedEmployees.employeeIds.includes(joinedCompany.employeeId)
+      ) {
+        valid = true;
+        break;
+      }
+    }
+    if (!valid) throw new NotAcceptableException('user not related to job');*/
+    ///
+
+    //
+    return this.jobRepository.findAllForEmployeeDetailed(
+      relatedCompany.employeeId,
+    );
+  }
+
+  async assignEmployee(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+    jobId: Types.ObjectId,
+  ) {
+    ///Validation
+    const userExists = await this.usersService.userIdExists(userId);
+    if (!userExists) throw new NotFoundException('User not found');
+
+    ///
+    //TODO: Implement later
+    console.log(employeeId);
+    console.log(jobId);
   }
 }
