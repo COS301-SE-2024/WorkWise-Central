@@ -12,7 +12,9 @@
         color="secondary"
         v-bind="activatorProps"
         variant="elevated"
-        ><v-icon icon="fa: fa-solid fa-plus" color=""></v-icon>Add Inventory</v-btn
+        ><v-icon icon="fa:fa-solid fa-plus" color="" size="xs"/>
+        <v-icon icon="fa:fa-solid fa-warehouse" color="" />
+        Add Inventory</v-btn
       >
     </template>
     <v-card>
@@ -26,7 +28,7 @@
           <v-col>
             <v-row>
               <v-col>
-                <h6>Name</h6>
+                <h6>Product Name</h6>
                 <v-text-field
                   v-model="name"
                   color="secondary"

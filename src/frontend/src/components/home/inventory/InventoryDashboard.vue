@@ -116,7 +116,7 @@ export default defineComponent({
   data() {
     return {
       inventoryHeaders: [
-        { title: 'Name', value: 'name', sortable: true, key: 'name' },
+        { title: 'Product Name', value: 'name', sortable: true, key: 'name' },
         { title: 'Description', value: 'description', sortable: true, key: 'description' },
         { title: 'Cost Price', value: 'costPrice', sortable: true, key: 'costPrice' },
         {

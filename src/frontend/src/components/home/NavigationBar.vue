@@ -93,7 +93,14 @@ export default defineComponent({
     },
     logout(name: string) {
       if (name === 'splash') {
+        // Clear local storage
         localStorage.clear()
+
+        // Replace current history state to prevent back navigation
+        window.history.replaceState({}, document.title, window.location.pathname)
+
+        // Redirect to login page
+        this.$router.push({ name: 'login' })
       }
     }
   }

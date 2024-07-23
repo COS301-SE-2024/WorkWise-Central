@@ -22,7 +22,7 @@
           <v-spacer></v-spacer>
           <v-col>
             <v-col>
-              <small class="text-caption white--text">Name</small
+              <small class="text-caption white--text">Product Name</small
               ><v-text-field
                 v-model="localEditedItem.name"
                 color="secondary"
@@ -68,7 +68,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <Toast />
-        <v-btn @click="createInventoryItem" color="success">Create</v-btn>
+        <v-btn @click="createInventoryItem" color="success">Save</v-btn>
         <v-btn @click="close" color="error">Cancel</v-btn>
       </v-card-actions>
     </v-card>
@@ -107,6 +107,10 @@ export default {
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
+  },
+  created() {
+    // Create a deep copy of editedItem
+    this.localEditedItem = this.deepCopy(this.editedItem)
   },
   methods: {
     addInventory() {
@@ -188,6 +192,9 @@ export default {
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    deepCopy(obj) {
+      return JSON.parse(JSON.stringify(obj))
     }
   }
 }

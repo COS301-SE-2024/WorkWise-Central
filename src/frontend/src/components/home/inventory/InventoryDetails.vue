@@ -13,7 +13,7 @@
       <v-card-text>
         <v-row>
           <v-col cols="4">
-            <label class="font-weight-light" style="font-size: 20px"> Name</label
+            <label class="font-weight-light" style="font-size: 20px"> Product Name</label
             ><v-spacer></v-spacer
             ><small class="text-caption" style="font-size: 12px">{{ inventoryItem.name }}</small>
           </v-col>
