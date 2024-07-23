@@ -174,7 +174,7 @@ export class CompanyService {
   }
 
   async employeeIsInCompany(compId: Types.ObjectId, empId: Types.ObjectId) {
-    return await this.companyRepository.employeeExists(compId, empId);
+    return await this.employeeService.employeeExistsForCompany(empId, compId);
   }
 
   async getCompanyByRegNumber(
@@ -393,35 +393,6 @@ export class CompanyService {
   async companyIsValid(company: Company) {
     if (!company) return new ValidationResult(false, `Company is null`);
 
-    if (company.inventoryItems) {
-      for (const item of company.inventoryItems) {
-        //TODO: When inventory is done//
-
-        /* const exists = await this.InventoryService.employeeExists(item);
-        if (!exists)
-          return new ValidationResult(
-            false,
-            `Invalid Inventory ID: ${item}`,
-          );*/
-        if (!Types.ObjectId.isValid(item)) {
-          return new ValidationResult(false, 'Invalid ObjectId in Inventory');
-        }
-      }
-    }
-    if (company.employees) {
-      for (const employee of company.employees) {
-        if (!Types.ObjectId.isValid(employee))
-          return new ValidationResult(false, 'Employee ID is invalid');
-
-        if (!(await this.employeeService.employeeExists(employee))) {
-          return new ValidationResult(
-            false,
-            'Employee ID Not Found in Company',
-          );
-        }
-      }
-    }
-
     return new ValidationResult(true);
   }
 
@@ -446,35 +417,6 @@ export class CompanyService {
       );
     }
 
-    if (company.inventoryItems) {
-      for (const item of company.inventoryItems) {
-        //TODO: When inventory is done//
-
-        /* const exists = await this.InventoryService.employeeExists(item);
-        if (!exists)
-          return new ValidationResult(
-            false,
-            `Invalid Inventory ID: ${item}`,
-          );*/
-        if (!Types.ObjectId.isValid(item)) {
-          return new ValidationResult(false, 'Invalid ObjectId in Inventory');
-        }
-      }
-    }
-
-    if (company.employees) {
-      for (const employee of company.employees) {
-        if (!Types.ObjectId.isValid(employee))
-          return new ValidationResult(false, 'Employee ID is invalid');
-
-        if (!(await this.employeeService.employeeExists(employee))) {
-          return new ValidationResult(
-            false,
-            'Employee ID Not Found in Company',
-          );
-        }
-      }
-    }
     return new ValidationResult(true);
   }
 
@@ -492,36 +434,6 @@ export class CompanyService {
           false,
           `Company with ${company.registrationNumber} does not exist`,
         );
-      }
-    }
-
-    if (company.inventoryItems) {
-      for (const item of company.inventoryItems) {
-        //TODO: When inventory is done//
-
-        /* const exists = await this.InventoryService.employeeExists(item);
-        if (!exists)
-          return new ValidationResult(
-            false,
-            `Invalid Inventory ID: ${item}`,
-          );*/
-        if (!Types.ObjectId.isValid(item)) {
-          return new ValidationResult(false, 'Invalid ObjectId in Inventory');
-        }
-      }
-    }
-
-    if (company.employees) {
-      for (const employee of company.employees) {
-        if (!Types.ObjectId.isValid(employee))
-          return new ValidationResult(false, 'Employee ID is invalid');
-
-        if (!(await this.employeeService.employeeExists(employee))) {
-          return new ValidationResult(
-            false,
-            'Employee ID Not Found in Company',
-          );
-        }
       }
     }
 
