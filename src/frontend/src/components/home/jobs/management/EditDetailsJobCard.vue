@@ -107,7 +107,7 @@
   </v-card>
 </template>
 <script setup>
-import {defineProps, ref} from 'vue'
+import { defineProps, ref } from 'vue'
 
 const job = ref({
   clientId: ref(''),

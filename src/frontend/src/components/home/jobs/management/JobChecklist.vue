@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-divider></v-divider>
-    <h3 class="pt-4">Check Off Complated Tasks</h3>
+    <h5 class="pt-4">Check Off Completed Tasks</h5>
     <v-select
       v-model="value"
       :items="items"

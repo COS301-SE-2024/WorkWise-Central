@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-divider></v-divider>
-    <h3 class="pt-4">Select a file to upload</h3>
+    <h5 class="pt-4">Select a file to upload</h5>
     <v-file-input
       class="pt-4"
       label="File input"

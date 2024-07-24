@@ -1,38 +1,31 @@
 <template>
   <div>
     <v-divider></v-divider>
-    <h3 class="pt-4">Log Inventory</h3>
+    <h5 class="pt-4">Log Inventory</h5>
     <v-container>
       <v-row v-for="(item, index) in inventory" :key="index" class="d-flex align-center mb-3">
-        <v-col cols="7">
-          <v-text-field
-            v-model="item.name"
-            label="Item Name"
-            dense
-            class="pt-4"
-            hide-details
-            prepend-icon="fa: fa-solid fa-box"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="3">
-          <v-text-field
-            v-model="item.quantity"
-            label="Quantity"
-            dense
-            class="pt-4"
-            hide-details
-          ></v-text-field>
-        </v-col>
-        <v-col cols="1">
-          <v-btn icon @click="deleteItem(index)">
-            <v-icon color="red" class="pt-4">{{ 'fa: fa-solid fa-trash' }}</v-icon>
-          </v-btn>
-        </v-col>
-        <v-col cols="1">
-          <v-btn icon @click="saveItem(index)">
-            <v-icon color="success" class="pt-4">{{ 'fa: fa-solid fa-save' }}</v-icon>
-          </v-btn>
-        </v-col>
+        <v-text-field
+          v-model="item.name"
+          label="Item Name"
+          dense
+          class="pt-4 pr-2"
+          hide-details
+          prepend-icon="fa: fa-solid fa-box"
+        ></v-text-field>
+        <v-text-field
+          v-model="item.quantity"
+          label="Quantity"
+          dense
+          class="pt-4"
+          hide-details
+        ></v-text-field>
+
+        <v-btn icon @click="deleteItem(index)">
+          <v-icon color="red" class="pt-4">{{ 'fa: fa-solid fa-trash' }}</v-icon>
+        </v-btn>
+        <v-btn icon @click="saveItem(index)">
+          <v-icon color="success" class="pt-4">{{ 'fa: fa-solid fa-save' }}</v-icon>
+        </v-btn>
       </v-row>
       <v-btn color="success" @click="addItem">Add Item</v-btn>
     </v-container>

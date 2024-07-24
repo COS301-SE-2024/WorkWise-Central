@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-divider></v-divider>
-    <h3 class="pt-4">Add job comments</h3>
+    <h5 class="pt-4">Add job comments</h5>
     <v-container>
       <v-row v-for="(comment, index) in comments" :key="index" class="d-flex align-center mb-3">
         <v-col cols="2" class="pt-6">
@@ -9,7 +9,7 @@
             <span class="text-h6">{{ user.initials }}</span>
           </v-avatar>
         </v-col>
-        <v-col cols="9">
+        <v-col md="9">
           <v-text-field
             v-model="comment.text"
             label="Comment"

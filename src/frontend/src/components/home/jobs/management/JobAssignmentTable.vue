@@ -130,19 +130,19 @@
           <!-- View Job Dialog -->
           <v-dialog v-model="viewJobDialog" max-width="1000" scrollable>
             <v-card elevation="14" rounded="md" :max-width="1000" :max-height="800">
-              <v-card-title> Job Details </v-card-title>
-
+              <v-card-title>Job Details</v-card-title>
               <v-row>
-                <v-col cols="12">
+
+                <v-col cols="12" md="9" order-xs="1" order-sm="1" order-md="0">
                   <v-card flat class="text-center elevation-0">
                     <v-card-text>
                       <v-col>
                         <v-col class="text-center pt-0">
-                          <h2>{{ selectedJob.heading }}</h2>
+                          <h5>{{ selectedJob.heading }}</h5>
                         </v-col>
                         <v-divider></v-divider>
                         <v-col class="text-center">
-                          <h4>Description</h4>
+                          <h5>Description</h5>
                           <v-spacer></v-spacer>
                           <small class="text-caption">
                             {{ selectedJob.jobDescription }}
@@ -150,7 +150,7 @@
                         </v-col>
                         <v-divider></v-divider>
                         <v-col class="text-center">
-                          <h4>Status</h4>
+                          <h5>Status</h5>
                           <v-spacer></v-spacer>
                           <small class="text-caption">
                             <v-chip :color="getStatusColor(selectedJob.status)" dark>
@@ -160,44 +160,50 @@
                         </v-col>
                         <v-divider></v-divider>
                         <v-col class="text-center">
-                          <h4>Address</h4>
-                          <v-row>
-                            <v-col>
-                              <label>City</label><v-spacer></v-spacer>
+                          <h5>Address</h5>
+                          <v-row class="text-center">
+                            <v-col sm="6" md="3" offset-md="3">
+                              <label class="font-weight-bold">City</label>
+                              <v-spacer></v-spacer>
                               <small class="text-caption">
                                 {{ selectedJob.city }}
                               </small>
                             </v-col>
-                            <v-col>
-                              <label>Suburb</label><v-spacer></v-spacer>
+                            <v-col sm="6" md="3">
+                              <label class="font-weight-bold">Suburb</label>
+                              <v-spacer></v-spacer>
                               <small class="text-caption">
                                 {{ selectedJob.suburb }}
                               </small>
                             </v-col>
                           </v-row>
                           <v-row>
-                            <v-col>
-                              <label>Street</label><v-spacer></v-spacer>
+                            <v-col sm="6" md="3" offset-md="3">
+                              <label class="font-weight-bold">Street</label>
+                              <v-spacer></v-spacer>
                               <small class="text-caption">
                                 {{ selectedJob.street }}
                               </small>
                             </v-col>
-                            <v-col>
-                              <label>Postal Code</label><v-spacer></v-spacer>
+                            <v-col sm="6" md="3">
+                              <label class="font-weight-bold">Postal Code</label>
+                              <v-spacer></v-spacer>
                               <small class="text-caption">
                                 {{ selectedJob.postalCode }}
                               </small>
                             </v-col>
                           </v-row>
                           <v-row>
-                            <v-col>
-                              <label>Complex</label><v-spacer></v-spacer>
+                            <v-col sm="6" md="3" offset-md="3">
+                              <label class="font-weight-bold">Complex</label>
+                              <v-spacer></v-spacer>
                               <small class="text-caption">
                                 {{ selectedJob.complex }}
                               </small>
                             </v-col>
-                            <v-col>
-                              <label>House Number</label><v-spacer></v-spacer>
+                            <v-col sm="6" md="3">
+                              <label class="font-weight-bold">House Number</label>
+                              <v-spacer></v-spacer>
                               <small class="text-caption">
                                 {{ selectedJob.houseNumber }}
                               </small>
@@ -207,16 +213,18 @@
 
                         <v-divider></v-divider>
                         <v-col class="text-center">
-                          <h4>Dates</h4>
+                          <h5>Dates</h5>
                           <v-row>
-                            <v-col>
-                              <label>Start Date</label><v-spacer></v-spacer>
+                            <v-col sm="6" md="3" offset-md="3">
+                              <label class="font-weight-bold">Start Date</label>
+                              <v-spacer></v-spacer>
                               <small class="text-caption">
                                 {{ selectedJob.startDate }}
                               </small>
                             </v-col>
-                            <v-col>
-                              <label>End Date</label><v-spacer></v-spacer>
+                            <v-col sm="6" md="3">
+                              <label class="font-weight-bold">End Date</label>
+                              <v-spacer></v-spacer>
                               <small class="text-caption">
                                 {{ selectedJob.endDate }}
                               </small>
@@ -224,28 +232,60 @@
                           </v-row>
                         </v-col>
                       </v-col>
-
-                      <v-col>
-                        <AttachImages />
+                      <v-col ref="imagesSection">
+                        <AttachImages :passedInJob="selectedJob" />
                       </v-col>
-                      <v-col>
+                      <v-col ref="commentsSection">
                         <AddComment :passedInJob="selectedJob" />
                       </v-col>
-                      <v-col>
-                        <JobNotes />
+                      <v-col ref="notesSection">
+                        <JobNotes :passedInJob="selectedJob" />
                       </v-col>
-                      <v-col>
-                        <JobChecklist />
+                      <v-col ref="checklistSection">
+                        <JobChecklist :passedInJob="selectedJob" />
                       </v-col>
-                      <v-col>
-                        <LogInventory />
+                      <v-col ref="inventorySection">
+                        <LogInventory :passedInJob="selectedJob" />
+                        <v-divider></v-divider>
                       </v-col>
-
                       <v-col class="pt-0">
                         <v-btn color="error" @click="viewJobDialog = false">Close</v-btn>
                       </v-col>
                     </v-card-text>
                   </v-card>
+                </v-col>
+
+                <v-col cols="12" md="3" class="pt-10" order-xs="0" order-sm="0" order-md="1">
+                  <v-row justify="center">
+                    <v-btn class="mb-2" outlined @click="scrollToSection(imagesSection)">
+                      <v-icon left>{{ 'fa: fas fa-upload' }}</v-icon>
+                      Upload File
+                    </v-btn>
+                  </v-row>
+                  <v-row justify="center">
+                    <v-btn class="mb-2" outlined @click="scrollToSection(commentsSection)">
+                      <v-icon left>{{ 'fa: fas fa-comment' }}</v-icon>
+                      Add Comment
+                    </v-btn>
+                  </v-row>
+                  <v-row justify="center">
+                    <v-btn class="mb-2" outlined @click="scrollToSection(notesSection)">
+                      <v-icon left>{{ 'fa: fas fa-sticky-note' }}</v-icon>
+                      Add Notes
+                    </v-btn>
+                  </v-row>
+                  <v-row justify="center">
+                    <v-btn class="mb-2" outlined @click="scrollToSection(checklistSection)">
+                      <v-icon left>{{ 'fa: fas fa-check-circle' }}</v-icon>
+                      Check Off Task
+                    </v-btn>
+                  </v-row>
+                  <v-row justify="center">
+                    <v-btn class="mb-2" outlined @click="scrollToSection(inventorySection)">
+                      <v-icon left>{{ 'fa: fas fa-clipboard-list' }}</v-icon>
+                      Log Inventory
+                    </v-btn>
+                  </v-row>
                 </v-col>
               </v-row>
             </v-card>
@@ -284,21 +324,35 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, Ref } from 'vue'
 import axios from 'axios'
-import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import AddJob from './AddJob.vue'
-import ManagerJobCard from './ManagerJobCard.vue'
 import AttachImages from './AttachImages.vue'
 import AddComment from './AddComments.vue'
+import JobNotes from './JobNotes.vue'
 import JobChecklist from './JobChecklist.vue'
 import LogInventory from './LogInventory.vue'
-import JobNotes from './JobNotes.vue'
+import ManagerJobCard from './ManagerJobCard.vue'
 
 const toast = useToast()
 
-// Search and dialog states
+const imagesSection = ref(null);
+const commentsSection = ref(null);
+const notesSection = ref(null);
+const checklistSection = ref(null);
+const inventorySection = ref(null);
+
+// Function to scroll to a section
+function scrollToSection(sectionRef) {
+  console.log(sectionRef)
+  const section = sectionRef.value;
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    console.log('failed')
+  }
+}
+// State variables
 const search: Ref<string> = ref('')
 const viewJobDialog: Ref<boolean> = ref(false)
 const dialog: Ref<boolean> = ref(false)
@@ -306,7 +360,7 @@ const deleteDialog: Ref<boolean> = ref(false)
 const managerJobCardDialog: Ref<boolean> = ref(false)
 const selectedJob: Ref<any | null> = ref(null)
 
-// Table headers
+// Table headers definition
 const headers = [
   { title: 'Job Heading', key: 'heading', align: 'start', value: 'heading' },
   { title: 'Client Phone', key: 'clientPhone', align: 'start', value: 'clientPhone' },
@@ -325,22 +379,23 @@ const jobClientData: Ref<any[]> = ref([])
 const localUrl: string = 'http://localhost:3000/'
 const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
 
-// Utility functions
+// Utility function to check if local URL is available
 const isLocalAvailable = async (localUrl: string): Promise<boolean> => {
   try {
     const res = await axios.get(localUrl)
-    return res.status < 300 && res.status > 199
+    return res.status >= 200 && res.status < 300
   } catch (error) {
     return false
   }
 }
 
+// Function to get the appropriate request URL
 const getRequestUrl = async (): Promise<string> => {
   const localAvailable = await isLocalAvailable(localUrl)
   return localAvailable ? localUrl : remoteUrl
 }
 
-// Fetch job data
+// Function to fetch job data from the API
 const fetchJobData = async (): Promise<any[]> => {
   const config = {
     headers: {
@@ -351,7 +406,7 @@ const fetchJobData = async (): Promise<any[]> => {
   const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(
-      apiUrl + `job/all/company/detailed/${localStorage['currentCompany']}`,
+      `${apiUrl}job/all/company/detailed/${localStorage['currentCompany']}`,
       config
     )
     const jobData = response.data.data
@@ -364,7 +419,6 @@ const fetchJobData = async (): Promise<any[]> => {
       assignedEmployees: job.assignedEmployees,
       details: job.details,
       recordedDetails: job.recordedDetails,
-
       jobId: job._id,
       heading: job.details.heading,
       jobDescription: job.details.description,
@@ -388,13 +442,13 @@ const fetchJobData = async (): Promise<any[]> => {
   }
 }
 
-// Fetch data on component mount
+// Fetch job data on component mount
 onMounted(async () => {
   try {
     jobClientData.value = await fetchJobData()
-    console.log('Job and client data fetched successfully:', jobClientData.value)
+    console.log('Job data fetched successfully:', jobClientData.value)
   } catch (error) {
-    console.error('Error fetching job and client data:', error)
+    console.error('Error fetching job data:', error)
   }
 })
 
@@ -409,7 +463,7 @@ const closeDialog = () => {
   selectedJob.value = null
 }
 
-// Delete job
+// Functions to show toast notifications
 const showJobDeleteSuccess = () => {
   toast.add({
     severity: 'success',
@@ -428,6 +482,7 @@ const showJobDeleteError = () => {
   })
 }
 
+// Function to confirm job deletion
 const confirmDelete = async () => {
   const config = {
     headers: {
@@ -449,36 +504,38 @@ const confirmDelete = async () => {
     }
     closeDialog()
   } catch (error) {
-    console.error('Error fetching job and client data:', error)
+    console.error('Error deleting job:', error)
     showJobDeleteError()
   }
 }
 
-// Job status colors
+// Function to get the color based on job status
 const getStatusColor = (status: string): string => {
   switch (status.toLowerCase()) {
-    case 'completed':
-      return 'green'
-    case 'in progress':
+    case 'To do':
+      return 'blue'
+    case 'In progress':
+      return 'yellow'
+    case 'Awaiting invoice':
       return 'orange'
-    case 'not started':
+    case 'Awaiting payment':
       return 'red'
+    case 'Awaiting sign off':
+      return 'green'
     default:
-      return 'primary'
+      return 'grey'
   }
 }
 
-// Row styling
+// Function to style table rows
 const getRowProps = ({ index }: { index: number }) => {
   return {
     class: index % 2 ? 'bg-secondRowColor' : ''
   }
 }
 
-// Manager job card dialog
+// Function to open the manager job card dialog
 const editJobCardDialog = () => {
   managerJobCardDialog.value = true
 }
 </script>
-
-<style scoped></style>

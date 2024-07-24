@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-divider></v-divider>
-    <h3 class="pt-4">Add job notes</h3>
+    <h5 class="pt-4">Add job notes</h5>
     <v-container>
       <v-row v-for="(note, index) in notes" :key="index" class="d-flex align-center mb-3">
         <v-col cols="11">
