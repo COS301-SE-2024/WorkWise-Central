@@ -48,7 +48,7 @@ export class InventoryController {
 
   @ApiInternalServerErrorResponse({
     type: HttpException,
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    status: HttpStatus.BAD_REQUEST,
   })
   @ApiOperation({
     summary: `Create a new ${className}`,
@@ -61,12 +61,20 @@ export class InventoryController {
     type: CreateInventoryResponseDto,
   })
   @Post('/create')
-  async create(
-    @Body() createInventoryDto: CreateInventoryDto,
-  ): Promise<{ data: CreateInventoryDto }> {
-    return { data: await this.inventoryService.create(createInventoryDto) };
+  async create(@Body() createInventoryDto: CreateInventoryDto) {
+    let data;
+    try {
+      data = await this.inventoryService.create(createInventoryDto);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
   }
 
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
   @ApiOperation({
     summary: `Get all ${className} instances`,
     description: `Returns all ${className} instances in the database.`,
@@ -77,9 +85,21 @@ export class InventoryController {
   })
   @Get('/all')
   async findAll() {
-    return { data: await this.inventoryService.findAll() };
+    const data = await await this.inventoryService.findAll();
+    if (data.length === 0) {
+      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
+    }
+    return { data: data };
   }
 
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
   @ApiOperation({
     summary: `Get all ${className} instances for a given Company`,
     description: `Returns all ${className} instances in the database for a given Company.`,
@@ -94,9 +114,22 @@ export class InventoryController {
   })
   @Get('/all/:id')
   async findAllInCompany(@Param('id') id: Types.ObjectId) {
-    return { data: await this.inventoryService.findAllInCompany(id) };
+    let data;
+    try {
+      data = await this.inventoryService.findAllInCompany(id);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    if (data.length === 0) {
+      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
+    }
+    return { data: data };
   }
 
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
   @ApiOperation({
     summary: `Find an ${className}`,
     description: `Returns the ${className} instance with the given id.`,
@@ -111,9 +144,17 @@ export class InventoryController {
   })
   @Get('id/:id')
   async findById(@Param('id') id: Types.ObjectId) {
-    return { data: await this.inventoryService.findById(id) };
+    const data = await this.inventoryService.findById(id);
+    if (!data) {
+      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
+    }
+    return { data: data };
   }
 
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
   @ApiOperation({
     summary: `Update an ${className} instances`,
     description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
@@ -132,9 +173,23 @@ export class InventoryController {
     @Param('id') id: Types.ObjectId,
     @Body() updateInventoryDto: UpdateInventoryDto,
   ) {
-    return { data: await this.inventoryService.update(id, updateInventoryDto) };
+    let data;
+    try {
+      data = await this.inventoryService.update(id, updateInventoryDto);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
   }
 
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+  })
   @ApiOperation({
     summary: `Delete an ${className}`,
     description: `Send the ${className} ObjectId, and then they get deleted if the id is valid.\n `,
@@ -150,6 +205,19 @@ export class InventoryController {
   })
   @Delete(':id')
   async remove(@Param('id') id: Types.ObjectId) {
-    return { data: await this.inventoryService.remove(id) };
+    let data;
+    try {
+      data = await this.inventoryService.remove(id);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+
+    if (data === false) {
+      throw new HttpException(
+        'update unsuccessful',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+    return { data: data };
   }
 }

@@ -68,6 +68,7 @@ export class RoleService {
         return new ValidationResult(false, `Role already exists`);
       }
     } catch (error) {}
+    return new ValidationResult(true, `All good`);
   }
 
   async validateUpdateRole(roleId: Types.ObjectId, role: UpdateRoleDto) {
@@ -88,6 +89,7 @@ export class RoleService {
         return new ValidationResult(false, `Role already exists`);
       }
     } catch (error) {}
+    return new ValidationResult(true, `All good`);
   }
 
   async create(createRoleDto: CreateRoleDto) {

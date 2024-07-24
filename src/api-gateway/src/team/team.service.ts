@@ -57,6 +57,8 @@ export class TeamService {
     ) {
       return new ValidationResult(false, `Team already exists`);
     }
+
+    return new ValidationResult(true, `All good`);
   }
 
   async validateUpdateTeam(teamId: Types.ObjectId, team: UpdateTeamDto) {
@@ -100,6 +102,8 @@ export class TeamService {
     if ((await this.findByNameInCompany(team.teamName, companyId)) != null) {
       return new ValidationResult(false, `Team already exists`);
     }
+
+    return new ValidationResult(true, `All good`);
   }
 
   async create(createTeamDto: CreateTeamDto) {
