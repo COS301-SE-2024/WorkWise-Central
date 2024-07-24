@@ -218,6 +218,7 @@ export class CompanyService {
         companyId: company._id,
         userId: user._id,
         roleId: addUserDto.roleId,
+        superiorId: addUserDto.superiorId,
       });
     } else {
       const defaultRole = await this.roleService.findOneInCompany(
@@ -229,6 +230,7 @@ export class CompanyService {
         companyId: company._id,
         userId: user._id,
         roleId: defaultRole._id,
+        superiorId: addUserDto.superiorId,
       });
     }
 
