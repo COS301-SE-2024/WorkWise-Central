@@ -8,11 +8,13 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateTeamDto, createTeamResponseDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { TeamService } from './team.service';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
@@ -24,6 +26,7 @@ import {
 import { Types } from 'mongoose';
 import { teamListResponseDto, teamResponseDto } from './entities/team.entity';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 const className = 'Team';
 
@@ -40,6 +43,8 @@ export class TeamController {
     return { message: 'Refer to /documentation for details on the API' };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
@@ -61,6 +66,8 @@ export class TeamController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
@@ -86,6 +93,8 @@ export class TeamController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
@@ -114,6 +123,8 @@ export class TeamController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Update an ${className} instances`,
     description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
@@ -141,6 +152,8 @@ export class TeamController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Delete an ${className}`,
     description: `Send the ${className} ObjectId, and then they get deleted if the id is valid.\n `,
