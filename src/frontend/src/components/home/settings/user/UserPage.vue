@@ -69,18 +69,6 @@
 
               <v-col cols="12" sm="6">
                 <div class="v-text-field-wrapper">
-                  <label for="preferredLanguage" class="v-text-field-label">Preferred Language</label>
-                  <v-select
-                      id="preferredLanguage"
-                      v-model="user.preferredLanguage"
-                      :items="languageOptions"
-                      variant="solo"
-                  ></v-select>
-                </div>
-              </v-col>
-
-              <v-col cols="12" sm="6">
-                <div class="v-text-field-wrapper">
                   <label for="phone" class="v-text-field-label">Phone</label>
                   <v-text-field
                       id="phone"
@@ -98,6 +86,18 @@
                       v-model="user.contactInfo.email"
                       :rules="emailRules"
                   ></v-text-field>
+                </div>
+              </v-col>
+
+              <v-col cols="12" sm="6">
+                <div class="v-text-field-wrapper">
+                  <label for="preferredLanguage" class="v-text-field-label">Preferred Language</label>
+                  <v-select
+                      id="preferredLanguage"
+                      v-model="user.preferredLanguage"
+                      :items="languageOptions"
+                      variant="solo"
+                  ></v-select>
                 </div>
               </v-col>
 
@@ -188,73 +188,65 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import settingsMenu from '@/components/home/settings/SettingsMenu.vue'
 import userAvatar from '@/components/home/settings/user/UserProfileAvatar.vue'
 
-export default defineComponent({
-  name: 'UserPage',
-  components: {
-    settingsMenu,
-    userAvatar
+// Use router
+const router = useRouter()
+
+// Define user data
+const user = ref({
+  firstName: '',
+  surname: '',
+  dateOfBirth: '',
+  gender: '',
+  preferredLanguage: '',
+  contactInfo: {
+    phone: '',
+    email: ''
   },
-  methods: {
-    submitForm() {
-      // Placeholder method for submitting the form
-    }
-  },
-  data() {
-    return {
-      user: {
-        firstName: '',
-        surname: '',
-        dateOfBirth: '',
-        gender: '',
-        preferredLanguage: '',
-        contactInfo: {
-          phone: '',
-          email: ''
-        },
-        address: {
-          street: '',
-          suburb: '',
-          city: '',
-          postalCode: '',
-          complex: '',
-          houseNumber: ''
-        }
-      },
-      form: {
-        avatar: null
-      },
-      genderOptions: ['Male', 'Female', 'Other'],
-      languageOptions: [
-        'Afrikaans',
-        'English',
-        'isiNdebele',
-        'isiXhosa',
-        'isiZulu',
-        'Sepedi',
-        'Sesotho',
-        'Setswana',
-        'siSwati',
-        'Tshivenda',
-        'Xitsonga'
-      ],
-      phoneRules: [
-        (v: string) =>
-          (!!v && /^[0-9]{10}$/.test(v)) || 'Phone number must be 10 digits long and numeric'
-      ],
-      emailRules: [(v: string) => (!!v && /.+@.+/.test(v)) || 'E-mail must be valid']
-    }
-  },
-  setup() {
-    const router = useRouter()
-    return { router }
+  address: {
+    street: '',
+    suburb: '',
+    city: '',
+    postalCode: '',
+    complex: '',
+    houseNumber: ''
   }
 })
-</script>
 
-<style scoped></style>
+// Define form data
+const form = ref({
+  avatar: null
+})
+
+// Define options and rules
+const genderOptions = ['Male', 'Female', 'Other']
+const languageOptions = [
+  'Afrikaans',
+  'English',
+  'isiNdebele',
+  'isiXhosa',
+  'isiZulu',
+  'Sepedi',
+  'Sesotho',
+  'Setswana',
+  'siSwati',
+  'Tshivenda',
+  'Xitsonga'
+]
+
+//Define rules
+const phoneRules = [
+  (v: string) => (!!v && /^[0-9]{10}$/.test(v)) || 'Phone number must be 10 digits long and numeric'
+]
+const emailRules = [(v: string) => (!!v && /.+@.+/.test(v)) || 'E-mail must be valid']
+
+// Define method
+const submitForm = () => {
+  // Placeholder method for submitting the form
+}
+</script>
