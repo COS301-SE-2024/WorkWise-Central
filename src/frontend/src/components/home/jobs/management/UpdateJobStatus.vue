@@ -1,11 +1,11 @@
 <template>
   <v-dialog
-      v-model="statusDialog"
-      max-width="400px"
-      location="bottom"
-      location-strategy="connected"
-      opacity="0"
-      origin="top center"
+    v-model="statusDialog"
+    max-width="400px"
+    location="bottom"
+    location-strategy="connected"
+    opacity="0"
+    origin="top center"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="mb-2" outlined @click="statusDialog = true" v-bind="activatorProps">
@@ -23,28 +23,28 @@
         </v-card-title>
         <v-card-text>
           <v-radio-group
-              v-model="displayJob.status"
-              column
-              class="my-custom-radio-group"
-              row
-              background-color="#f5f5f5"
+            v-model="displayJob.status"
+            column
+            class="my-custom-radio-group"
+            row
+            background-color="#f5f5f5"
           >
             <v-radio label="Todo" value="To do" :color="colors.todo"></v-radio>
             <v-radio label="In progress" value="In Progress" :color="colors.inProgress"></v-radio>
             <v-radio
-                label="Awaiting Invoice"
-                value="Awaiting Invoice"
-                :color="colors.awaitingInvoice"
+              label="Awaiting Invoice"
+              value="Awaiting Invoice"
+              :color="colors.awaitingInvoice"
             ></v-radio>
             <v-radio
-                label="Awaiting payment"
-                value="Awaiting Payment"
-                :color="colors.awaitingPayment"
+              label="Awaiting payment"
+              value="Awaiting Payment"
+              :color="colors.awaitingPayment"
             ></v-radio>
             <v-radio
-                label="Awaiting sign off"
-                value="Awaiting SignOff"
-                :color="colors.awaitingSignOff"
+              label="Awaiting sign off"
+              value="Awaiting SignOff"
+              :color="colors.awaitingSignOff"
             ></v-radio>
           </v-radio-group>
         </v-card-text>

@@ -1,11 +1,11 @@
 <template>
   <v-dialog
-      v-model="clientDialog"
-      max-width="400px"
-      location="bottom"
-      location-strategy="connected"
-      opacity="0"
-      origin="top center"
+    v-model="clientDialog"
+    max-width="400px"
+    location="bottom"
+    location-strategy="connected"
+    opacity="0"
+    origin="top center"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="mb-2" outlined @click="openClientDialogAndFetchClients" v-bind="activatorProps">
@@ -26,19 +26,19 @@
           <div class="text-caption pa-3">Select a client</div>
 
           <v-autocomplete
-              v-model="selectedClientName"
-              hint="Click the field to select a client"
-              :items="clientNames"
-              label="Select Client"
-              prepend-icon="fa: fa-solid fa-handshake"
-              persistent-hint
-              outlined
-              dense
-              class="my-custom-autocomplete"
-              color="primary"
-              background-color="#f5f5f5"
-              rounded="l"
-              variant="solo"
+            v-model="selectedClientName"
+            hint="Click the field to select a client"
+            :items="clientNames"
+            label="Select Client"
+            prepend-icon="fa: fa-solid fa-handshake"
+            persistent-hint
+            outlined
+            dense
+            class="my-custom-autocomplete"
+            color="primary"
+            background-color="#f5f5f5"
+            rounded="l"
+            variant="solo"
           >
           </v-autocomplete>
         </v-card-text>

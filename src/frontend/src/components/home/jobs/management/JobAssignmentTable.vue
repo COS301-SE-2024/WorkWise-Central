@@ -132,7 +132,6 @@
             <v-card elevation="14" rounded="md" :max-width="1000" :max-height="800">
               <v-card-title>Job Details</v-card-title>
               <v-row>
-
                 <v-col cols="12" md="9" order-xs="1" order-sm="1" order-md="0">
                   <v-card flat class="text-center elevation-0">
                     <v-card-text>
@@ -336,18 +335,18 @@ import ManagerJobCard from './ManagerJobCard.vue'
 
 const toast = useToast()
 
-const imagesSection = ref(null);
-const commentsSection = ref(null);
-const notesSection = ref(null);
-const checklistSection = ref(null);
-const inventorySection = ref(null);
+const imagesSection = ref(null)
+const commentsSection = ref(null)
+const notesSection = ref(null)
+const checklistSection = ref(null)
+const inventorySection = ref(null)
 
 // Function to scroll to a section
 function scrollToSection(sectionRef) {
   console.log(sectionRef)
-  const section = sectionRef.value;
+  const section = sectionRef.value
   if (section) {
-    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' })
   } else {
     console.log('failed')
   }

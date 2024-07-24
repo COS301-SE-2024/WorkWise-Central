@@ -17,7 +17,7 @@
             <!-- For job status-->
             <UpdateJobStatus :passedInJob="props.passedInJob" />
             <!-- For date change -->
-            <ChangeDueDate :passedInJob="props.passedInJob"/>
+            <ChangeDueDate :passedInJob="props.passedInJob" />
           </div>
           <v-card-actions class="d-flex flex-column">
             <Toast />
@@ -70,12 +70,12 @@ const job = ref({
 
 function filterNonEmptyValues(obj) {
   return Object.fromEntries(
-      Object.entries(obj)
-          .filter(([_, v]) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0))
-          .map(([k, v]) => [
-            k,
-            typeof v === 'object' && !Array.isArray(v) ? filterNonEmptyValues(v) : v
-          ])
+    Object.entries(obj)
+      .filter(([_, v]) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0))
+      .map(([k, v]) => [
+        k,
+        typeof v === 'object' && !Array.isArray(v) ? filterNonEmptyValues(v) : v
+      ])
   )
 }
 
@@ -111,9 +111,9 @@ const saveJob = () => {
 
     try {
       const response = await axios.patch(
-          `http://localhost:3000/job/${props.passedInJob.jobId}`,
-          filteredJobData,
-          config
+        `http://localhost:3000/job/${props.passedInJob.jobId}`,
+        filteredJobData,
+        config
       )
       toast.add({
         severity: 'success',

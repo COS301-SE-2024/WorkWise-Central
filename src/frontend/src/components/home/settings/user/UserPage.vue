@@ -25,22 +25,14 @@
               <v-col cols="12" sm="6">
                 <div class="v-text-field-wrapper">
                   <label for="firstName" class="v-text-field-label">First Name</label>
-                  <v-text-field
-                      id="firstName"
-                      v-model="user.firstName"
-                      hide-details
-                  ></v-text-field>
+                  <v-text-field id="firstName" v-model="user.firstName" hide-details></v-text-field>
                 </div>
               </v-col>
 
               <v-col cols="12" sm="6">
                 <div class="v-text-field-wrapper">
                   <label for="surname" class="v-text-field-label">Surname</label>
-                  <v-text-field
-                      id="surname"
-                      v-model="user.surname"
-                      hide-details
-                  ></v-text-field>
+                  <v-text-field id="surname" v-model="user.surname" hide-details></v-text-field>
                 </div>
               </v-col>
 
@@ -48,9 +40,9 @@
                 <div class="v-text-field-wrapper">
                   <label for="dateOfBirth" class="v-text-field-label">Date of Birth</label>
                   <v-text-field
-                      id="dateOfBirth"
-                      v-model="user.dateOfBirth"
-                      type="date"
+                    id="dateOfBirth"
+                    v-model="user.dateOfBirth"
+                    type="date"
                   ></v-text-field>
                 </div>
               </v-col>
@@ -59,10 +51,10 @@
                 <div class="v-text-field-wrapper">
                   <label for="gender" class="v-text-field-label">Gender</label>
                   <v-select
-                      id="gender"
-                      v-model="user.gender"
-                      :items="genderOptions"
-                      variant="solo"
+                    id="gender"
+                    v-model="user.gender"
+                    :items="genderOptions"
+                    variant="solo"
                   ></v-select>
                 </div>
               </v-col>
@@ -71,9 +63,9 @@
                 <div class="v-text-field-wrapper">
                   <label for="phone" class="v-text-field-label">Phone</label>
                   <v-text-field
-                      id="phone"
-                      v-model="user.contactInfo.phone"
-                      :rules="phoneRules"
+                    id="phone"
+                    v-model="user.contactInfo.phone"
+                    :rules="phoneRules"
                   ></v-text-field>
                 </div>
               </v-col>
@@ -82,21 +74,23 @@
                 <div class="v-text-field-wrapper">
                   <label for="email" class="v-text-field-label">Email</label>
                   <v-text-field
-                      id="email"
-                      v-model="user.contactInfo.email"
-                      :rules="emailRules"
+                    id="email"
+                    v-model="user.contactInfo.email"
+                    :rules="emailRules"
                   ></v-text-field>
                 </div>
               </v-col>
 
               <v-col cols="12" sm="6">
                 <div class="v-text-field-wrapper">
-                  <label for="preferredLanguage" class="v-text-field-label">Preferred Language</label>
+                  <label for="preferredLanguage" class="v-text-field-label"
+                    >Preferred Language</label
+                  >
                   <v-select
-                      id="preferredLanguage"
-                      v-model="user.preferredLanguage"
-                      :items="languageOptions"
-                      variant="solo"
+                    id="preferredLanguage"
+                    v-model="user.preferredLanguage"
+                    :items="languageOptions"
+                    variant="solo"
                   ></v-select>
                 </div>
               </v-col>
@@ -112,9 +106,9 @@
                 <div class="v-text-field-wrapper">
                   <label for="street" class="v-text-field-label">Street</label>
                   <v-text-field
-                      id="street"
-                      v-model="user.address.street"
-                      hide-details
+                    id="street"
+                    v-model="user.address.street"
+                    hide-details
                   ></v-text-field>
                 </div>
               </v-col>
@@ -123,9 +117,9 @@
                 <div class="v-text-field-wrapper">
                   <label for="suburb" class="v-text-field-label">Suburb</label>
                   <v-text-field
-                      id="suburb"
-                      v-model="user.address.suburb"
-                      hide-details
+                    id="suburb"
+                    v-model="user.address.suburb"
+                    hide-details
                   ></v-text-field>
                 </div>
               </v-col>
@@ -133,11 +127,7 @@
               <v-col cols="12" sm="6">
                 <div class="v-text-field-wrapper">
                   <label for="city" class="v-text-field-label">City</label>
-                  <v-text-field
-                      id="city"
-                      v-model="user.address.city"
-                      hide-details
-                  ></v-text-field>
+                  <v-text-field id="city" v-model="user.address.city" hide-details></v-text-field>
                 </div>
               </v-col>
 
@@ -145,9 +135,9 @@
                 <div class="v-text-field-wrapper">
                   <label for="postalCode" class="v-text-field-label">Postal Code</label>
                   <v-text-field
-                      id="postalCode"
-                      v-model="user.address.postalCode"
-                      hide-details
+                    id="postalCode"
+                    v-model="user.address.postalCode"
+                    hide-details
                   ></v-text-field>
                 </div>
               </v-col>
@@ -156,9 +146,9 @@
                 <div class="v-text-field-wrapper">
                   <label for="complex" class="v-text-field-label">Complex</label>
                   <v-text-field
-                      id="complex"
-                      v-model="user.address.complex"
-                      hide-details
+                    id="complex"
+                    v-model="user.address.complex"
+                    hide-details
                   ></v-text-field>
                 </div>
               </v-col>
@@ -166,10 +156,7 @@
               <v-col cols="12" sm="6">
                 <div class="v-text-field-wrapper">
                   <label for="houseNumber" class="v-text-field-label">House Number</label>
-                  <v-text-field
-                      id="houseNumber"
-                      v-model="user.address.houseNumber"
-                  ></v-text-field>
+                  <v-text-field id="houseNumber" v-model="user.address.houseNumber"></v-text-field>
                 </div>
               </v-col>
             </v-row>

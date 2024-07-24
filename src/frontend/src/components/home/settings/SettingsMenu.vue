@@ -1,7 +1,7 @@
 <template>
-  <v-card max-width="300" class="elevation-0">
-    <v-list>
-      <v-list-subheader>User Settings</v-list-subheader>
+  <v-card class="elevation-0">
+    <v-list class="bg-cardColor">
+      <v-list-subheader class="text-center">User Settings</v-list-subheader>
       <!-- Render the list items -->
       <v-list-item-group>
         <template v-for="(item, i) in items" :key="i">

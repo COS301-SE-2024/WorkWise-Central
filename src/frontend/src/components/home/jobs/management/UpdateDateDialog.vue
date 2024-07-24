@@ -1,11 +1,11 @@
 <template>
   <v-dialog
-      v-model="dueDateDialog"
-      max-width="400px"
-      location="bottom"
-      location-strategy="connected"
-      opacity="0"
-      origin="top center"
+    v-model="dueDateDialog"
+    max-width="400px"
+    location="bottom"
+    location-strategy="connected"
+    opacity="0"
+    origin="top center"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="mb-2" outlined @click="dueDateDialog = true" v-bind="activatorProps">
@@ -24,9 +24,9 @@
           <v-container>
             <v-row justify="space-around">
               <v-date-picker
-                  v-model="currentDate"
-                  color="secondary"
-                  @update:modelValue="updateDates"
+                v-model="currentDate"
+                color="secondary"
+                @update:modelValue="updateDates"
               ></v-date-picker>
             </v-row>
             <v-row v-if="errorMessage" class="mt-4">
@@ -39,12 +39,12 @@
                 <v-row>
                   <v-checkbox v-model="isStartDatePicked" @click="toggleStartDate"></v-checkbox>
                   <v-text-field
-                      v-model="formattedStartDate"
-                      readonly
-                      variant="solo"
-                      density="compact"
-                      color="grey-lighten-4"
-                      rounded="l"
+                    v-model="formattedStartDate"
+                    readonly
+                    variant="solo"
+                    density="compact"
+                    color="grey-lighten-4"
+                    rounded="l"
                   ></v-text-field>
                 </v-row>
               </v-col>
@@ -52,12 +52,12 @@
                 <v-row>
                   <v-checkbox v-model="isEndDatePicked" @click="toggleEndDate"></v-checkbox>
                   <v-text-field
-                      v-model="formattedEndDate"
-                      readonly
-                      variant="solo"
-                      density="compact"
-                      color="grey-lighten-4"
-                      rounded="l"
+                    v-model="formattedEndDate"
+                    readonly
+                    variant="solo"
+                    density="compact"
+                    color="grey-lighten-4"
+                    rounded="l"
                   ></v-text-field>
                 </v-row>
               </v-col>
