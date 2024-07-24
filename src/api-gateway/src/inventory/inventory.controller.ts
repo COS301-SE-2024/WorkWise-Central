@@ -8,10 +8,12 @@ import {
   HttpException,
   HttpStatus,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
@@ -30,6 +32,7 @@ import {
   CreateInventoryDto,
   CreateInventoryResponseDto,
 } from './dto/create-inventory.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 const className = 'Inventory';
 
@@ -46,6 +49,8 @@ export class InventoryController {
     return { message: 'Refer to /documentation for details on the API' };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
@@ -71,6 +76,8 @@ export class InventoryController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
@@ -92,6 +99,8 @@ export class InventoryController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
@@ -126,6 +135,8 @@ export class InventoryController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
@@ -151,6 +162,8 @@ export class InventoryController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
@@ -182,6 +195,8 @@ export class InventoryController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
