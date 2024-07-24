@@ -104,36 +104,44 @@
       </v-card-text>
     </v-card>
 
-    <v-dialog v-model="actionsDialog" max-width="500px">
+    <v-menu v-model="actionsDialog" max-width="500px">
       <v-card>
         <v-card-title class="text-h5 font-weight-regular bg-primary text-center">
           {{ selectedItemName + ' ' + selectedItemSurname }}
         </v-card-title>
         <v-card-text> What would you like to do with this client? </v-card-text>
-        <v-card-actions>
-          <v-btn @click="actionsDialog = false" color="primary"
-            >Close<v-icon
-              icon="fa:fa-solid fa-cancel"
-              end
-              color="primary"
-              size="small"
-            ></v-icon></v-btn
-          ><v-spacer></v-spacer>
-          <ClientDetails :colors="colors" :ClientDetails="selectedItem" />
+        <v-list class="bg-cardColor">
+          <v-list-item>
+            <v-btn @click="actionsDialog = false" color="primary"
+              >Close<v-icon
+                icon="fa:fa-solid fa-cancel"
+                end
+                color="primary"
+                size="small"
+              ></v-icon></v-btn
+          ></v-list-item>
+          <v-spacer></v-spacer>
+          <v-list-item
+            ><ClientDetails :colors="colors" :ClientDetails="selectedItem"
+          /></v-list-item>
 
-          <EditClient
-            @update:item="selectedItem = $event"
-            :editedItem="selectedItem"
-            :_clientID="selectedItemId"
-          /><DeleteClient
-            :details="selectedItem"
-            :client_id="selectedItemId"
-            :client="selectedItem"
-            :company_id="clientCompanyID"
-          />
-        </v-card-actions>
+          <v-list-item
+            ><EditClient
+              @update:item="selectedItem = $event"
+              :editedItem="selectedItem"
+              :_clientID="selectedItemId"
+          /></v-list-item>
+
+          <v-list-item>
+            <DeleteClient
+              :details="selectedItem"
+              :client_id="selectedItemId"
+              :client="selectedItem"
+              :company_id="clientCompanyID"
+          /></v-list-item>
+        </v-list>
       </v-card>
-    </v-dialog>
+    </v-menu>
   </v-container>
 </template>
 

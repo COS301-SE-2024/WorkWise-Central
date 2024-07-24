@@ -130,7 +130,7 @@ export default {
     colors: Object,
     editedItem: Object,
     item: Object,
-    _clientID: String
+    _clientID: Number
   },
   data() {
     return {
