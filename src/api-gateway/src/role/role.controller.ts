@@ -8,11 +8,13 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto, createRoleResponseDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
@@ -21,11 +23,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-// import { EmployeeListResponseDto } from 'src/employee/entities/employee.entity';
 import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { RoleListResponseDto, RoleResponseDto } from './entity/role.entity';
-// import { CreateEmployeeDto, CreateEmployeeResponseDto } from 'src/employee/dto/create-employee.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 const className = 'Role';
 
@@ -42,6 +43,8 @@ export class RoleController {
     return { message: 'Refer to /documentation for details on the API' };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
@@ -63,6 +66,8 @@ export class RoleController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
@@ -97,6 +102,8 @@ export class RoleController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
@@ -122,6 +129,8 @@ export class RoleController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Get the list of all the permissions available in the system.`,
     description: `Returns the array of strings of all the permissions available in the system.`,
@@ -135,6 +144,8 @@ export class RoleController {
     return { data: await this.roleService.getPermissionsArray() };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
@@ -160,6 +171,8 @@ export class RoleController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
@@ -191,6 +204,8 @@ export class RoleController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
