@@ -1,20 +1,21 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title class="text-center"> Edit Company </v-card-title>
+      <v-card-title class="text-primary font-bold text-center"> Edit Company </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
         <v-form>
           <v-row>
-            <v-col cols="5" class="pl-15">
+            <v-col cols="12" lg="5" class="d-flex justify-center">
               <v-avatar color="grey" size="150">
                 <v-img
+                  size="50"
                   src="https://cdn.vuetifyjs.com/docs/images/brand-kit/v-logo-circle.png"
                   cover
                 ></v-img>
               </v-avatar>
             </v-col>
-            <v-col cols="7" class="pl-15">
+            <v-col cols="12" lg="7">
               <v-label> Name</v-label>
               <v-text-field
                 v-model="company.name"
@@ -79,8 +80,10 @@
       <v-divider></v-divider>
       <v-card-actions class="bg-cardColor">
         <v-col align="center">
-          <Toast />
-          <v-btn color="success" @click="updateCompanyDetails"> Save </v-btn></v-col
+          <Toast position="top-center" />
+          <v-btn color="success" @click="updateCompanyDetails" :disabled="!rulesPassed">
+            Save
+          </v-btn></v-col
         >
         <v-col align="center">
           <Toast />
@@ -213,7 +216,8 @@ export default defineComponent({
     phone_number_rules: [
       (v: string) => !!v || 'Phone number is required',
       (v: string) => /^0\d{9}$/.test(v) || 'Phone number must be a valid South African number',
-      (v: string) => (v && v.length === 10) || 'Phone number must be 10 digits'
+      (v: string) => (v && v.length === 10) || 'Phone number must be 10 digits',
+      (v: string) => (v && v.startsWith('0')) || 'Phone number must start with 0'
     ],
     emailRules: [
       (v: string) => !!v || 'E-mail is required',
@@ -294,7 +298,7 @@ export default defineComponent({
           console.log(error)
           this.$toast.add({
             severity: 'error',
-            summary: 'Error',
+            summary: 'Sticky Message',
             detail: 'Company update failed',
             life: 3000
           })
@@ -312,7 +316,17 @@ export default defineComponent({
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     },
-    toast() {}
+    toast() {},
+    rulesPassed() {
+      return (
+        this.nameRules &&
+        this.phone_number_rules &&
+        this.emailRules &&
+        this.postalCodeRules &&
+        this.vatNumberRules &&
+        this.company_registration_number_rules
+      )
+    }
   },
   mounted() {
     this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false

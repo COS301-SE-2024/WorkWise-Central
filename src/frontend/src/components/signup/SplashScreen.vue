@@ -2,13 +2,13 @@
   <v-app :theme="isdarkmode ? 'dark' : 'light'">
     <!-- Toolbar -->
     <v-app-bar :theme="isdarkmode ? 'themes.dark' : 'themes.light'" class="bg-background">
-      <v-toolbar-title class="d-flex justify-end">
+      <v-toolbar-title class="d-flex justify-start">
         <v-label class="h4 text-primary">Work</v-label>
         <v-label class="h4 text-secondary">Wise</v-label>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-btn @click="toggleDarkMode"
+      <v-btn @click="toggleDarkMode" base-color="background" text
         ><v-icon :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"></v-icon
       ></v-btn>
     </v-app-bar>
@@ -16,7 +16,17 @@
     <v-main :theme="isdarkmode ? 'dark' : 'light'">
       <v-row style="height: 1000px" no-gutters>
         <!-- Left Half -->
-        <v-col cols="6" sm="3" md="6" align-self="center">
+
+        <v-col
+          cols="12"
+          lg="6"
+          md="6"
+          align-self="center"
+          order="last"
+          order-lg="first"
+          order-md="first"
+          order-sm="last"
+        >
           <v-row justify="center"
             ><v-col align-self="center">
               <h1
@@ -130,7 +140,7 @@
                 <v-col cols="8" offset="2">
                   <v-btn
                     text
-                    @click="(signupDialog = true)((loginDialog = false))"
+                    @click="(signupDialog = true)((loginDialog = false))(resetFields)"
                     rounded="md"
                     color="secondary"
                     size="large"
@@ -167,7 +177,12 @@
             >
 
             <!-- Flow 1 -->
-            <v-dialog opacity="" v-model="signupDialog" max-width="400" @click:outside="resetFields">
+            <v-dialog
+              opacity=""
+              v-model="signupDialog"
+              max-width="400"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -205,10 +220,10 @@
                           ><label style="font-size: 14px; font-weight: lighter">Password</label>
                           <v-text-field
                             :theme="isdarkmode ? 'dark' : 'light'"
-                            :label="password ? '' : 'Enter your password'"
+                            :label="signupPassword ? '' : 'Enter your password'"
                             :type="showPassword ? 'text' : 'password'"
                             name="password"
-                            v-model="password"
+                            v-model="signupPassword"
                             :rules="passwordRules"
                             :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                             @click:append="toggleShowPassword"
@@ -225,12 +240,12 @@
                           ><v-text-field
                             :theme="isdarkmode ? 'dark' : 'light'"
                             :label="confirm_password ? '' : 'Confirm your password'"
-                            :type="showPassword ? 'text' : 'password'"
+                            :type="showPassword ? 'text' : 'confirm_password'"
                             :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                             @click:append="toggleShowPassword"
                             name="confirm_password"
                             v-model="confirm_password"
-                            :rules="[(v) => v === password || 'Passwords do not match']"
+                            :rules="[(v) => v === signupPassword || 'Passwords do not match']"
                             rounded="md"
                             variant="solo"
                             required
@@ -267,7 +282,12 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 2 -->
-            <v-dialog opacity="" v-model="signup1Dialog" max-width="400" @click:outside="resetFields">
+            <v-dialog
+              opacity=""
+              v-model="signup1Dialog"
+              max-width="400"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 width="auto"
                 height="auto"
@@ -345,7 +365,12 @@
               </v-sheet>
             </v-dialog>
             <v-col xs="3" align-self="center">
-              <v-dialog opacity="" v-model="signupUsernameDialog" max-width="400" @click:outside="resetFields">
+              <v-dialog
+                opacity=""
+                v-model="signupUsernameDialog"
+                max-width="400"
+                @click:outside="resetFields"
+              >
                 <v-sheet
                   width="auto"
                   height="auto"
@@ -408,7 +433,12 @@
               </v-dialog>
             </v-col>
             <!-- Flow 3 -->
-            <v-dialog opacity="" v-model="signup2Dialog" max-width="400" @click:outside="resetFields">
+            <v-dialog
+              opacity=""
+              v-model="signup2Dialog"
+              max-width="400"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 width="auto"
                 height="auto"
@@ -507,7 +537,12 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 4 -->
-            <v-dialog opacity="" v-model="signupAddressDialog" max-width="1000" @click:outside="resetFields">
+            <v-dialog
+              opacity=""
+              v-model="signupAddressDialog"
+              max-width="1000"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 width="auto"
                 height="auto"
@@ -645,7 +680,8 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 5 -->
-            <v-dialog opacity=""
+            <v-dialog
+              opacity=""
               v-model="signup3Dialog"
               max-width="700"
               style="height: 750px"
@@ -683,7 +719,16 @@
         </v-col>
 
         <!-- Right Half -->
-        <v-col cols="6" sm="3" md="6">
+
+        <v-col
+          cols="12"
+          lg="6"
+          md="6"
+          order="first"
+          order-lg="last"
+          order-md="last"
+          order-sm="first"
+        >
           <div class="w-full h-full background-image"></div>
         </v-col>
       </v-row>
@@ -785,6 +830,7 @@ export default defineComponent({
     flow: ['year', 'month', 'calendar'],
     access_token: '',
     password: '',
+    signupPassword: '',
     confirm_password: '',
     showPassword: false,
     date: '',
@@ -917,7 +963,8 @@ export default defineComponent({
     phoneNumberRules: [
       (v) => !!v || 'Phone number is required',
       (v) => (v.length >= 10 && v.length <= 10) || 'Phone number must be 10 characters',
-      (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers'
+      (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers',
+      (v) => /^0[0-9]*$/.test(v) || 'Phone number must start with 0'
     ]
   }),
 
@@ -1004,7 +1051,7 @@ export default defineComponent({
             this.$router.push('/dashboard')
           })
           .catch((error) => {
-            console.log(error.response.data.message)
+            console.log(error)
             this.$toast.add({
               severity: 'error',
               summary: 'Error',
@@ -1075,7 +1122,7 @@ export default defineComponent({
           this.$toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Username already exists',
+            detail: 'Email already exists',
             life: 3000
           })
         } else {

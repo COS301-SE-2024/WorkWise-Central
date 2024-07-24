@@ -32,6 +32,7 @@
                 <v-text-field
                   v-model="name"
                   color="secondary"
+                  :rules="nameRules"
                   required
                   hide-details="auto"
                 ></v-text-field
@@ -41,6 +42,7 @@
                 <v-text-field
                   v-model="description"
                   color="secondary"
+                  :rules="descriptionRules"
                   required
                   hide-details="auto"
                 ></v-text-field></v-col
@@ -52,6 +54,7 @@
                 <v-text-field
                   v-model="costPrice"
                   color="secondary"
+                  :rules="costPriceRules"
                   required
                   hide-details="auto"
                 ></v-text-field
@@ -61,6 +64,7 @@
                 <v-text-field
                   v-model="currentStockLevel"
                   color="secondary"
+                  :rules="currentStockLevelRules"
                   required
                   hide-details="auto"
                 ></v-text-field
@@ -70,6 +74,7 @@
                 <v-text-field
                   v-model="reorderLevel"
                   color="secondary"
+                  :rules="reorderLevelRules"
                   required
                 ></v-text-field></v-col
             ></v-row>
@@ -79,11 +84,11 @@
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <Toast />
+        <Toast position="top-center" />
         <v-btn @click="close" color="error"
           >Cancel <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon
         ></v-btn>
-        <v-btn @click="createInventoryItem" color="success"
+        <v-btn @click="createInventoryItem" color="success" :disabled="!allRulesPass"
           >Create<v-icon icon="fa:fa-solid fa-plus" color="success" size="small" end></v-icon
         ></v-btn>
       </v-card-actions>
@@ -114,7 +119,22 @@ export default defineComponent({
     currentStockLevel: '',
     reorderLevel: '',
     localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+    nameRules: [(v: string) => !!v || 'Name is required'],
+    descriptionRules: [(v: string) => !!v || 'Description is required'],
+    costPriceRules: [
+      (v: string) => !!v || 'Cost Price is required',
+      (v: string) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Cost Price must be a valid number'
+    ],
+    currentStockLevelRules: [
+      (v: string) => !!v || 'Current Stock Level is required',
+      (v: string) =>
+        /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Current Stock Level must be a valid number'
+    ],
+    reorderLevelRules: [
+      (v: string) => !!v || 'Reorder Level is required',
+      (v: string) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Reorder Level must be a valid number'
+    ]
   }),
   methods: {
     addInventory() {
@@ -179,6 +199,15 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    allRulesPass() {
+      return (
+        this.nameRules.every((rule) => rule(this.name)) &&
+        this.descriptionRules.every((rule) => rule(this.description)) &&
+        this.costPriceRules.every((rule) => rule(this.costPrice)) &&
+        this.currentStockLevelRules.every((rule) => rule(this.currentStockLevel)) &&
+        this.reorderLevelRules.every((rule) => rule(this.reorderLevel))
+      )
     }
   }
 })

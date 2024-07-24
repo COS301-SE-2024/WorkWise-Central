@@ -26,12 +26,21 @@
       >
       <v-card-actions>
         <v-spacer></v-spacer>
-        <Toast /><v-btn label="Cancel" color="secondary" text @click="close"
-          >Cancel<v-icon icon="fa:fa-solid fa-cancel" end color="secondary" size="small"></v-icon
-        ></v-btn>
-        <v-btn label="Delete" color="error" text :loading="isDeleting" @click="deleteInventory"
-          >Delete <v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
-        ></v-btn>
+        <Toast position="top-center" />
+        <v-col cols="12" lg="6" order="last" order-lg="first"
+          ><v-btn label="Cancel" color="secondary" text @click="close"
+            >Cancel<v-icon
+              icon="fa:fa-solid fa-cancel"
+              end
+              color="secondary"
+              size="small"
+            ></v-icon></v-btn
+        ></v-col>
+        <v-col cols="12" lg="6" order="first" order-lg="last">
+          <v-btn label="Delete" color="error" text :loading="isDeleting" @click="deleteInventory"
+            >Delete
+            <v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon></v-btn
+        ></v-col>
       </v-card-actions>
     </v-card>
   </v-dialog>

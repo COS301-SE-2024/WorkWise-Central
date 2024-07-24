@@ -105,12 +105,30 @@
       <v-divider></v-divider>
       <v-card-actions>
         <v-row align-self="center"
-          ><v-col>
+          ><v-col
+            cols="12"
+            lg="6"
+            md="6"
+            sm="6"
+            order="last"
+            order-lg="first"
+            order-md="first"
+            order-sm="first"
+          >
             <v-btn color="error" width="85%" height="35" variant="text" @click="close">
               Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon>
             </v-btn> </v-col
-          ><v-col>
-            <Toast />
+          ><v-col
+            cols="12"
+            lg="6"
+            md="6"
+            sm="6"
+            order="first"
+            order-lg="last"
+            order-md="last"
+            order-sm="last"
+          >
+          <Toast position="top-center" />
             <v-btn color="success" width="85%" height="35" variant="text" @click="update">
               Save
               <v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon>

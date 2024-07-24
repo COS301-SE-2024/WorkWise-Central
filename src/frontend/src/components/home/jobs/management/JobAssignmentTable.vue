@@ -112,9 +112,13 @@
         </v-card-title>
         <v-card-text> What would you like to do with this job? </v-card-text>
         <v-card-actions>
-          <v-btn @click="closeDialog">Cancel</v-btn>
+          <v-btn @click="closeDialog"
+            >Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="primary" size="small"></v-icon
+          ></v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="success" @click="viewJobDialog = true">View</v-btn>
+          <v-btn color="success" @click="viewJobDialog = true"
+            >View<v-icon icon="fa:fa-solid fa-eye" end color="success" size="small"></v-icon
+          ></v-btn>
           <!-- View Job Dialog -->
           <v-dialog v-model="viewJobDialog" max-width="500">
             <v-card elevation="14" rounded="md" :max-width="500" :max-height="800">
@@ -207,12 +211,15 @@
                 </v-col>
               </v-col>
               <v-col class="pt-0">
-                <v-btn color="error" width="100%" @click="viewJobDialog = false">Close</v-btn>
+                <v-btn color="error" width="100%" @click="viewJobDialog = false">Close<v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon
+                  ></v-btn>
               </v-col>
             </v-card>
           </v-dialog>
 
-          <v-btn color="warning" @click="editJobCardDialog()">Edit</v-btn>
+          <v-btn color="warning" @click="editJobCardDialog()"
+            >Edit<v-icon icon="fa:fa-solid fa-pencil" end color="warning " size="small"></v-icon
+          ></v-btn>
           <v-dialog v-model="managerJobCardDialog" max-width="1000px">
             <ManagerJobCard
               :passedInJob="selectedJob"
@@ -220,7 +227,9 @@
             ></ManagerJobCard>
           </v-dialog>
 
-          <v-btn color="error" @click="deleteDialog = true">Delete</v-btn>
+          <v-btn color="error" @click="deleteDialog = true"
+            >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
+          ></v-btn>
           <v-dialog v-model="deleteDialog" max-width="500">
             <v-card>
               <v-card-title class="text-h6 font-weight-regular bg-red">
@@ -230,7 +239,14 @@
               <v-card-text> Are you sure you want to delete this job? </v-card-text>
               <v-card-actions>
                 <v-btn color="error" @click="confirmDelete">Confirm</v-btn>
-                <v-btn @click="deleteDialog = false">Cancel</v-btn>
+                <v-btn @click="deleteDialog = false"
+                  >Cancel<v-icon
+                    icon="fa:fa-solid fa-cancel"
+                    end
+                    color="error"
+                    size="small"
+                  ></v-icon
+                ></v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>

@@ -21,7 +21,7 @@
       </v-defaults-provider>
     </template>
     <v-card :theme="isdarkmode === true ? 'dark' : 'light'"
-      ><v-card-title>
+      ><v-card-title class="fixed">
         <span class="headline text-center">Create a Client </span>
       </v-card-title>
       <v-card-text>
@@ -198,14 +198,32 @@
           ></v-col>
 
           <v-spacer></v-spacer>
-          <v-row>
-            <v-col cols="6">
+          <v-row class="fixed">
+            <v-col
+              cols="12"
+              lg="6"
+              md="6"
+              sm="6"
+              order="last"
+              order-lg="first"
+              order-md="first"
+              order-sm="first"
+            >
               <v-btn color="error" width="100%" height="35" variant="text" @click="close">
                 Cancel <v-icon icon="fa: fa-solid fa-ban" color="error" end></v-icon>
               </v-btn>
             </v-col>
-            <v-col cols="6">
-              <Toast />
+            <v-col
+              cols="12"
+              lg="6"
+              md="6"
+              sm="6"
+              order="last"
+              order-lg="first"
+              order-md="first"
+              order-sm="first"
+            >
+            <Toast position="top-center" />
               <v-btn
                 rounded="md"
                 boarder="xl"

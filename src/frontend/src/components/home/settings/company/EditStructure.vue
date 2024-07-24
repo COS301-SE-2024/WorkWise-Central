@@ -5,7 +5,7 @@
       <v-divider></v-divider>
       <v-card-text>
         <Toast />
-        <OrganizationChart :value="orgData" @nodeDrop="onNodeDrop" draggable />
+        <v-network-graph :nodes="nodes" :edges="edges" :layouts="layouts"></v-network-graph>
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions class="bg-cardColor">
@@ -20,46 +20,46 @@
   </v-container>
 </template>
 
-<script>
-import OrganizationChart from 'primevue/organizationchart'
+<script lang="ts">
+
 import Toast from 'primevue/toast'
 
+import { reactive } from 'vue'
+
 export default {
-  components: {
-    OrganizationChart,
-    Toast
-  },
+  name: 'MyNetworkGraph',
   data() {
     return {
-      orgData: {
-        name: 'CEO',
-        children: [
-          {
-            name: 'CTO',
-            children: [
-              { name: 'Dev Manager', children: [{ name: 'Developer' }] },
-              { name: 'QA Manager', children: [{ name: 'QA Tester' }] }
-            ]
-          },
-          {
-            name: 'CFO',
-            children: [{ name: 'Account Manager', children: [{ name: 'Accountant' }] }]
-          },
-          {
-            name: 'COO',
-            children: [{ name: 'Operations Manager', children: [{ name: 'Operations Staff' }] }]
-          }
-        ]
-      }
+      nodes: {
+        node1: { name: 'N1' },
+        node2: { name: 'N2' },
+        node3: { name: 'N3' },
+        node4: { name: 'N4' },
+        node5: { name: 'N5' },
+        node6: { name: 'N6' },
+        node7: { name: 'N7' }
+      },
+      edges: {
+        edge1: { source: 'node1', target: 'node2' },
+        edge2: { source: 'node2', target: 'node3' },
+        edge3: { source: 'node3', target: 'node4' },
+        edge4: { source: 'node3', target: 'node5' },
+        edge5: { source: 'node2', target: 'node6' },
+        edge6: { source: 'node6', target: 'node7' }
+      },
+      layouts: reactive({
+        nodes: {}
+      })
     }
   },
+  components: {
+    
+    Toast
+  },
   methods: {
-    updateOrgData(newData) {
-      this.orgData = newData
-    },
     saveChanges() {
       // Logic to save changes
-      console.log('Changes saved:', this.orgData)
+      console.log('Changes saved:')
     },
     cancel() {
       // Logic to cancel changes

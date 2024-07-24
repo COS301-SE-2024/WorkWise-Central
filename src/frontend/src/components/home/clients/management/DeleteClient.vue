@@ -23,7 +23,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <Toast />
+        <Toast position="bottom-center" />
         <v-btn label="Cancel" color="secondary" text @click="clientDialog = false"
           >Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="secondary" size="small"></v-icon
         ></v-btn>

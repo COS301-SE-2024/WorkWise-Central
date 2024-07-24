@@ -45,7 +45,7 @@
             </v-col>
 
             <v-col cols="12" md="12" xs="3" sm="6" align="center">
-              <Toast />
+              <Toast position="top-center" />
               <v-btn
                 color="success"
                 rounded="md"

@@ -26,6 +26,7 @@
               ><v-text-field
                 v-model="localEditedItem.name"
                 color="secondary"
+                :rules="nameRules"
                 required
               ></v-text-field
             ></v-col>
@@ -34,6 +35,7 @@
               ><v-text-field
                 v-model="localEditedItem.description"
                 color="secondary"
+                :rules="descriptionRules"
                 required
               ></v-text-field
             ></v-col>
@@ -43,6 +45,7 @@
                 ><v-text-field
                   v-model="localEditedItem.costPrice"
                   color="secondary"
+                  :rules="costPriceRules"
                   required
                 ></v-text-field
               ></v-col>
@@ -51,6 +54,7 @@
                 ><v-text-field
                   v-model="localEditedItem.currentStockLevel"
                   color="secondary"
+                  :rules="currentStockLevelRules"
                   required
                 ></v-text-field
               ></v-col>
@@ -59,6 +63,7 @@
                 ><v-text-field
                   v-model="localEditedItem.reorderLevel"
                   color="secondary"
+                  :rules="reorderLevelRules"
                   required
                 ></v-text-field></v-col
             ></v-row>
@@ -67,10 +72,11 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <Toast /><v-btn @click="close" color="error"
+        <Toast position="top-center" />
+        <v-btn @click="close" color="error"
           >Cancel<v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon
         ></v-btn>
-        <v-btn @click="createInventoryItem" color="success"
+        <v-btn @click="createInventoryItem" color="success" :disabled="!allRulesPass"
           >Save<v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon
         ></v-btn>
       </v-card-actions>
@@ -108,7 +114,21 @@ export default {
       currentStockLevel: '',
       reorderLevel: '',
       localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      nameRules: [(v) => !!v || 'Name is required'],
+      descriptionRules: [(v) => !!v || 'Description is required'],
+      costPriceRules: [
+        (v) => !!v || 'Cost Price is required',
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Cost Price must be a valid number'
+      ],
+      currentStockLevelRules: [
+        (v) => !!v || 'Current Stock Level is required',
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Current Stock Level must be a valid number'
+      ],
+      reorderLevelRules: [
+        (v) => !!v || 'Reorder Level is required',
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Reorder Level must be a valid number'
+      ]
     }
   },
   created() {
@@ -170,8 +190,14 @@ export default {
         })
       }
     },
-    logInventoryItem() {
-      console.log(this.inventoryItem)
+    allRulesPass() {
+      return (
+        this.nameRules.every((rule) => rule(this.localEditedItem.name)) &&
+        this.descriptionRules.every((rule) => rule(this.localEditedItem.description)) &&
+        this.costPriceRules.every((rule) => rule(this.localEditedItem.costPrice)) &&
+        this.currentStockLevelRules.every((rule) => rule(this.localEditedItem.currentStockLevel)) &&
+        this.reorderLevelRules.every((rule) => rule(this.localEditedItem.reorderLevel))
+      )
     },
     convertToNumber(value) {
       return parseFloat(value)

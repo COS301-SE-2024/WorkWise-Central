@@ -269,8 +269,22 @@
                 </v-card-text>
 
                 <v-card-actions class="d-flex flex-column">
-                  <v-btn @click="saveJobDetails" color="success"> Save </v-btn>
-                  <v-btn @click="cancelJobDetails" color="error"> Cancel </v-btn>
+                  <v-btn @click="saveJobDetails" color="success">
+                    Save<v-icon
+                      icon="fa:fa-solid fa-floppy-disk"
+                      end
+                      color="success"
+                      size="small"
+                    ></v-icon>
+                  </v-btn>
+                  <v-btn @click="cancelJobDetails" color="error">
+                    Cancel<v-icon
+                      icon="fa:fa-solid fa-cancel"
+                      end
+                      color="error"
+                      size="small"
+                    ></v-icon>
+                  </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -312,8 +326,22 @@
                 </v-card-text>
 
                 <v-card-actions class="d-flex flex-column">
-                  <v-btn @click="saveClient" color="success">Save</v-btn>
-                  <v-btn @click="clientDialog = false" color="error">Cancel</v-btn>
+                  <v-btn @click="saveClient" color="success"
+                    >Save<v-icon
+                      icon="fa:fa-solid fa-floppy-disk"
+                      end
+                      color="success"
+                      size="small"
+                    ></v-icon
+                  ></v-btn>
+                  <v-btn @click="clientDialog = false" color="error"
+                    >Cancel<v-icon
+                      icon="fa:fa-solid fa-cancel"
+                      end
+                      color="error"
+                      size="small"
+                    ></v-icon
+                  ></v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -351,8 +379,23 @@
                   ></v-select>
                 </v-card-text>
                 <v-card-actions class="d-flex flex-column">
-                  <v-btn @click="saveSelection" color="success"> Save </v-btn>
-                  <v-btn @click="membersDialog = false" color="error"> Cancel </v-btn>
+                  <v-btn @click="saveSelection" color="success">
+                    Save
+                    <v-icon
+                      icon="fa:fa-solid fa-floppy-disk"
+                      end
+                      color="success"
+                      size="small"
+                    ></v-icon>
+                  </v-btn>
+                  <v-btn @click="membersDialog = false" color="error">
+                    Cancel<v-icon
+                      icon="fa:fa-solid fa-cancel"
+                      end
+                      color="error"
+                      size="small"
+                    ></v-icon>
+                  </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -401,8 +444,10 @@
                   </v-radio-group>
                 </v-card-text>
                 <v-card-actions class="d-flex flex-column">
-                  <v-btn @click="saveStatus" color="success"> Save </v-btn>
-                  <v-btn @click="statusDialog = false" color="error"> Cancel </v-btn>
+                  <v-btn @click="saveStatus" color="success"> Save<v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon
+                    > </v-btn>
+                  <v-btn @click="statusDialog = false" color="error"> Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon
+                    > </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -468,18 +513,23 @@
                   </v-container>
                 </v-card-text>
                 <v-card-actions class="d-flex flex-column pt-0">
-                  <v-btn @click="saveDate" color="success">Save </v-btn>
+                  <v-btn @click="saveDate" color="success">Save<v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon
+                    > </v-btn>
 
-                  <v-btn @click="removeDates" color="warning">Remove</v-btn>
-                  <v-btn @click="dueDateDialog = false" color="error">Cancel</v-btn>
+                  <v-btn @click="removeDates" color="warning">Remove<v-icon icon="fa:fa-solid fa-trash" end color="warning" size="small"></v-icon
+                    ></v-btn>
+                  <v-btn @click="dueDateDialog = false" color="error">Cancel<v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon
+                    ></v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
           </div>
           <v-card-actions class="d-flex flex-column">
             <Toast />
-            <v-btn class="mb-2" @click="saveJob" color="success">Save</v-btn>
-            <v-btn class="mb-4" @click="cancelJob" color="error">Cancel</v-btn>
+            <v-btn class="mb-2" @click="saveJob" color="success">Save<v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon
+              ></v-btn>
+            <v-btn class="mb-4" @click="cancelJob" color="error">Cancel<v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon
+              ></v-btn>
           </v-card-actions>
         </v-card>
       </v-col>

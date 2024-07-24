@@ -15,13 +15,13 @@
               <label class="font-weight-light" style="font-size: 20px"> First Name</label
               ><v-spacer></v-spacer
               ><small class="text-caption" style="font-size: 12px">{{
-                ClientDetails.firstName
+                clientDetails.firstName
               }}</small></v-col
             >
             <v-col cols="6">
               <label class="font-weight-light" style="font-size: 20px"> Surname</label
               ><v-spacer></v-spacer
-              ><small class="text-caption">{{ ClientDetails.lastName }}</small></v-col
+              ><small class="text-caption">{{ clientDetails.lastName }}</small></v-col
             >
           </v-row>
 
@@ -31,28 +31,35 @@
               <label class="font-weight-light" style="font-size: 20px">Phone Number</label
               ><v-spacer></v-spacer
               ><small class="text-caption">{{
-                ClientDetails.contactInfo.phoneNumber
+                clientDetails.contactInfo.phoneNumber
               }}</small></v-col
             >
             <v-col cols="6">
               <label class="font-weight-light" style="font-size: 20px"> Email</label
               ><v-spacer></v-spacer
-              ><small class="text-caption">{{ ClientDetails.contactInfo.email }}</small></v-col
+              ><small class="text-caption">{{ clientDetails.contactInfo.email }}</small></v-col
             >
           </v-row>
           <v-divider></v-divider>
           <v-row>
             <v-col cols="6">
-              <label class="font-weight-light" style="font-size: 20px"> Address</label
+              <label class="font-weight-light justify-center" style="font-size: 20px">
+                Address</label
               ><v-spacer></v-spacer
-              ><small class="text-caption">{{ ClientDetails.address.street }}</small>
+              ><small class="text-caption">Street: {{ clientDetails.address.street }}</small>
               <br />
-              <small class="text-caption">{{ ClientDetails.address.suburb }}</small>
-              <br /><small class="text-caption">{{ ClientDetails.address.city }}</small>
-              <br /><small class="text-caption">{{ ClientDetails.address.postalCode }}</small>
-              <br /><small class="text-caption">{{ ClientDetails.address.complex }}</small>
+              <small class="text-caption">Suburb: {{ clientDetails.address.suburb }}</small>
+            </v-col>
+            <v-col cols="6">
+              <br /><small class="text-caption">City: {{ clientDetails.address.city }}</small>
+              <br /><small class="text-caption"
+                >Postal Code: {{ clientDetails.address.postalCode }}</small
+              >
+              <br /><small class="text-caption"
+                >Complex/Building: {{ clientDetails.address.complex }}</small
+              >
               <br /><small class="text-caption">
-                {{ ClientDetails.address.houseNumber }}</small
+                House Number: {{ clientDetails.address.houseNumber }}</small
               ></v-col
             >
           </v-row>
@@ -60,9 +67,9 @@
           <v-col
             ><label class="font-weight-light" style="font-size: 20px"> Preferred Languages</label
             ><v-spacer></v-spacer>
-            <v-chip :color="ClientDetails.preferred_Language ? 'success' : 'error'"
+            <v-chip :color="clientDetails.preferred_Language ? 'success' : 'error'"
               ><small class="text-caption">{{
-                ClientDetails.preferred_Language ? ClientDetails.preferred_Language : 'None'
+                clientDetails.preferred_Language ? clientDetails.preferred_Language : 'None'
               }}</small></v-chip
             ></v-col
           >
