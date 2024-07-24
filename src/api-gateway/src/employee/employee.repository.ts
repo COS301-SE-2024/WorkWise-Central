@@ -70,9 +70,7 @@ export class EmployeeRepository {
       .lean();
   }
 
-  async findByIds(
-    identifiers: Types.ObjectId[],
-  ): Promise<(FlattenMaps<Employee> & { _id: Types.ObjectId })[]> {
+  async findByIds(identifiers: Types.ObjectId[]) {
     const ids = identifiers.map((id) => new Types.ObjectId(id));
 
     const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] =

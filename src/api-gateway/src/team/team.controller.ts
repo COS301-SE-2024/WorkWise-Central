@@ -40,6 +40,10 @@ export class TeamController {
     return { message: 'Refer to /documentation for details on the API' };
   }
 
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
   @ApiOperation({
     summary: `Get all ${className} instances`,
     description: `Returns all ${className} instances in the database.`,
@@ -50,9 +54,17 @@ export class TeamController {
   })
   @Get('/all')
   async findAll() {
-    return { data: await this.teamService.findAll() };
+    const data = await this.teamService.findAll();
+    if (data.length === 0) {
+      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
+    }
+    return { data: data };
   }
 
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
   @ApiOperation({
     summary: `Find an ${className}`,
     description: `Returns the ${className} instance with the given id.`,
@@ -67,17 +79,17 @@ export class TeamController {
   })
   @Get('id/:id')
   async findById(@Param('id') id: Types.ObjectId) {
-    return { data: await this.teamService.findById(id) };
+    const data = await this.teamService.findById(id);
+    if (!data) {
+      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
+    }
+    return { data: data };
   }
 
-  // @Get('name/:name/company/:company')
-  // findByNameInCompany(
-  //   @Param('name') name: string,
-  //   @Param('company') company: Types.ObjectId,
-  // ) {
-  //   return this.teamService.findByNameInCompany(name, company);
-  // }
-
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -93,8 +105,13 @@ export class TeamController {
   })
   @Post('/create')
   async create(@Body() createTeamDto: CreateTeamDto) {
-    console.log('In endpoint\ncreateTeamDto: ', createTeamDto);
-    return { data: await this.teamService.create(createTeamDto) };
+    let data;
+    try {
+      data = await this.teamService.create(createTeamDto);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
   }
 
   @ApiOperation({
@@ -115,8 +132,13 @@ export class TeamController {
     @Param('id') id: Types.ObjectId,
     @Body() updateTeamDto: UpdateTeamDto,
   ) {
-    console.log('In the update controller');
-    return { data: await this.teamService.update(id, updateTeamDto) };
+    let data;
+    try {
+      data = await this.teamService.update(id, updateTeamDto);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
   }
 
   @ApiOperation({
@@ -134,7 +156,12 @@ export class TeamController {
   })
   @Delete(':id')
   async remove(@Param('id') id: Types.ObjectId) {
-    console.log('In the delete controller');
-    return { data: await this.teamService.remove(id) };
+    let data;
+    try {
+      data = await this.teamService.remove(id);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
   }
 }
