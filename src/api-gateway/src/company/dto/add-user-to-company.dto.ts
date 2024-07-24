@@ -14,9 +14,9 @@ export class AddUserToCompanyDto {
   @IsMongoId()
   roleId?: Types.ObjectId;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsMongoId()
-  superiorId?: Types.ObjectId; //TODO: Add check
+  superiorId: Types.ObjectId;
 
   @IsNotEmpty()
   @IsString()
