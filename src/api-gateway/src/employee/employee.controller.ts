@@ -7,10 +7,12 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
@@ -27,6 +29,7 @@ import {
 import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { CompanyService } from 'src/company/company.service';
+import { AuthGuard } from '../auth/auth.guard';
 
 const className = 'Employee';
 
@@ -46,6 +49,8 @@ export class EmployeeController {
     return { message: 'Refer to /documentation for details on the API' };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
@@ -67,6 +72,8 @@ export class EmployeeController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
@@ -107,6 +114,8 @@ export class EmployeeController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
@@ -141,6 +150,8 @@ export class EmployeeController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
@@ -167,6 +178,8 @@ export class EmployeeController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
@@ -192,6 +205,8 @@ export class EmployeeController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
@@ -227,6 +242,8 @@ export class EmployeeController {
     };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
@@ -258,6 +275,8 @@ export class EmployeeController {
     return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
