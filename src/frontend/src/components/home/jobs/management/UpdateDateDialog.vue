@@ -1,54 +1,77 @@
 <template>
-  <v-container>
-    <v-container>
-      <v-row justify="space-around">
-        <v-col cols="12" md="6">
-          <v-date-picker
-            v-model="currentDate"
-            color="secondary"
-            @update:modelValue="updateDates"
-          ></v-date-picker>
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-time-picker format="24hr"></v-time-picker>
-        </v-col>
-      </v-row>
-      <v-row v-if="errorMessage" class="mt-4">
-        <v-col cols="12">
-          <v-alert type="error">{{ errorMessage }}</v-alert>
-        </v-col>
-      </v-row>
-      <v-row class="pt-7" align="center">
-        <v-col cols="12" md="6">
-          <v-row>
-            <v-checkbox v-model="isStartDatePicked" @click="toggleStartDate"></v-checkbox>
-            <v-text-field
-              v-model="formattedStartDate"
-              readonly
-              variant="solo"
-              density="compact"
-              color="grey-lighten-4"
-              rounded="l"
-            ></v-text-field>
-          </v-row>
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-row>
-            <v-checkbox v-model="isEndDatePicked" @click="toggleEndDate"></v-checkbox>
-            <v-text-field
-              v-model="formattedEndDate"
-              readonly
-              variant="solo"
-              density="compact"
-              color="grey-lighten-4"
-              rounded="l"
-            ></v-text-field>
-          </v-row>
-        </v-col>
-      </v-row>
-    </v-container>
-    <v-btn @click="removeDates" color="warning">Remove</v-btn>
-  </v-container>
+  <v-dialog
+      v-model="dueDateDialog"
+      max-width="400px"
+      location="bottom"
+      location-strategy="connected"
+      opacity="0"
+      origin="top center"
+  >
+    <template v-slot:activator="{ props: activatorProps }">
+      <v-btn class="mb-2" outlined @click="dueDateDialog = true" v-bind="activatorProps">
+        <v-icon class="d-none d-lg-inline-block mr-2" left>
+          {{ 'fa: fa-solid fa-calendar-alt' }}
+        </v-icon>
+        Change Due Date
+      </v-btn>
+    </template>
+
+    <template v-slot:default="{ isActive }">
+      <v-card>
+        <v-card-title> Enter the due date for this job </v-card-title>
+
+        <v-card-text>
+          <v-container>
+            <v-row justify="space-around">
+              <v-date-picker
+                  v-model="currentDate"
+                  color="secondary"
+                  @update:modelValue="updateDates"
+              ></v-date-picker>
+            </v-row>
+            <v-row v-if="errorMessage" class="mt-4">
+              <v-col cols="12">
+                <v-alert type="error">{{ errorMessage }}</v-alert>
+              </v-col>
+            </v-row>
+            <v-row class="pt-7" align="center">
+              <v-col cols="12" md="6">
+                <v-row>
+                  <v-checkbox v-model="isStartDatePicked" @click="toggleStartDate"></v-checkbox>
+                  <v-text-field
+                      v-model="formattedStartDate"
+                      readonly
+                      variant="solo"
+                      density="compact"
+                      color="grey-lighten-4"
+                      rounded="l"
+                  ></v-text-field>
+                </v-row>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-row>
+                  <v-checkbox v-model="isEndDatePicked" @click="toggleEndDate"></v-checkbox>
+                  <v-text-field
+                      v-model="formattedEndDate"
+                      readonly
+                      variant="solo"
+                      density="compact"
+                      color="grey-lighten-4"
+                      rounded="l"
+                  ></v-text-field>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions class="d-flex flex-column pt-0">
+          <v-btn @click="saveDate" color="success">Save</v-btn>
+          <v-btn @click="removeDates" color="warning">Remove</v-btn>
+          <v-btn @click="isActive.value = false" color="error">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </template>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
@@ -77,7 +100,7 @@ const updateDates = (value: Date) => {
 const setDates = (value: Date) => {
   if (!isStartDatePicked.value) {
     if (isEndDatePicked.value && endDate.value && value > endDate.value) {
-      errorMessage.value = 'Start date can not come after end date.'
+      errorMessage.value = 'Start date cannot come after end date.'
       return
     }
     errorMessage.value = null
@@ -87,7 +110,7 @@ const setDates = (value: Date) => {
     currentDate.value = null
   } else if (!isEndDatePicked.value) {
     if (isStartDatePicked.value && startDate.value && value < startDate.value) {
-      errorMessage.value = 'End date can not come before start date.'
+      errorMessage.value = 'End date cannot come before start date.'
       return
     }
     errorMessage.value = null
