@@ -24,11 +24,8 @@ export class EmployeeRepository {
     identifier: Types.ObjectId,
     fieldsToPopulate?: string[],
   ) {
-    console.log('In the findAllInCompany in repository');
-    console.log('identifier: ', identifier);
     let result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[];
     if (fieldsToPopulate) {
-      console.log('In the if');
       result = await this.employeeModel
         .find({
           $and: [
@@ -43,7 +40,6 @@ export class EmployeeRepository {
         .populate(fieldsToPopulate.join(' '))
         .lean();
     } else {
-      console.log('In the else');
       result = await this.employeeModel
         .find({
           $and: [
@@ -61,8 +57,6 @@ export class EmployeeRepository {
   }
 
   async findById(identifier: Types.ObjectId, fieldsToPopulate?: string[]) {
-    console.log('In findById repository');
-    console.log('identifier -> ', identifier);
     return this.employeeModel
       .findOne({
         $and: [
@@ -107,8 +101,6 @@ export class EmployeeRepository {
           ],
         })
         .lean();
-
-    console.log('employeeExists -> ', result);
     return result != null;
   }
 
@@ -162,9 +154,7 @@ export class EmployeeRepository {
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {
-    console.log('In remove repository');
     const employeeToDelete = await this.findById(id);
-    console.log('employeeToDelete -> ', employeeToDelete);
 
     if (employeeToDelete == null) {
       return false;
