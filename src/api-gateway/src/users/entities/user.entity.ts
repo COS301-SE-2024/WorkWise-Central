@@ -136,9 +136,6 @@ export class User {
     //this.deletedAt = new Date(); //logically deleted until confirmed
   }
 
-  /*  @Prop({ type: Types.ObjectId })
-  _id: Types.ObjectId;*/
-
   @ApiProperty()
   @Prop({ required: true })
   systemDetails: SystemDetails;
@@ -163,6 +160,10 @@ export class User {
   @ApiProperty()
   @Prop({ type: [String], required: false, default: [] })
   skills: string[] = [];
+
+  @ApiHideProperty()
+  @Prop({ type: [String], required: false, default: [] })
+  deviceIds?: string[] = [];
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Employee.name })
@@ -211,6 +212,9 @@ export class UserApiObject {
   public isValidated?: boolean = false;
 
   @ApiHideProperty()
+  public deviceIds?: string[];
+
+  @ApiHideProperty()
   public createdAt: Date = new Date();
 
   @ApiHideProperty()
@@ -238,6 +242,10 @@ export class UserApiDetailedObject {
 
   @ApiProperty()
   public currentEmployee?: Employee;
+
+  @ApiHideProperty()
+  @Prop({ type: [String], required: false, default: [] })
+  deviceIds: string[];
 
   @ApiProperty()
   public isValidated?: boolean = false;

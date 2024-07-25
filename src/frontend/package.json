@@ -28,6 +28,7 @@
     "axios": "^1.7.2",
     "bcrpyt": "^2.0.0",
     "bcryptjs": "^2.4.3",
+    "firebase": "^10.12.4",
     "mdi": "^2.2.43",
     "primevue": "^4.0.0",
     "v-tooltip": "^2.1.3",
