@@ -1,6 +1,28 @@
 import { Types } from 'mongoose';
-import { IsArray, IsMongoId, IsOptional } from 'class-validator';
+import { IsArray, IsMongoId, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+
+export class UpdateEmployeeUserInfoDto {
+  @IsString()
+  @IsOptional()
+  username?: string;
+
+  @IsString()
+  @IsOptional()
+  firstName: string;
+
+  @IsString()
+  @IsOptional()
+  surname: string;
+
+  @IsString()
+  @IsOptional()
+  displayName: string;
+
+  @IsString()
+  @IsOptional()
+  displayImage: string;
+}
 
 export class UpdateEmployeeDto {
   @IsMongoId()
@@ -8,11 +30,11 @@ export class UpdateEmployeeDto {
   @ApiProperty()
   roleId?: Types.ObjectId;
 
-  @IsArray()
-  @IsMongoId({ each: true })
-  @IsOptional()
-  @ApiProperty()
-  currentJobAssignments?: Types.ObjectId[];
+  // @IsArray()
+  // @IsMongoId({ each: true })
+  // @IsOptional()
+  // @ApiProperty()
+  // currentJobAssignments?: Types.ObjectId[];
 
   @IsMongoId()
   @IsOptional()

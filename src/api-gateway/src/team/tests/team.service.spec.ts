@@ -134,6 +134,7 @@ describe('--Team Service--', () => {
         deletedAt: null,
       };
 
+      mockCompanyService.companyIdExists.mockResolvedValue(true);
       mockTeamRepository.findByNameInCompany.mockResolvedValue(team);
       const result = await service.findByNameInCompany(
         team.teamName,
@@ -158,6 +159,7 @@ describe('--Team Service--', () => {
 
   describe('teamExistsInCompany', () => {
     it('should return true if team exists for a company', async () => {
+      mockCompanyService.companyIdExists.mockResolvedValue(true);
       mockTeamRepository.teamExistsInCompany.mockResolvedValue(true);
       const result = await service.teamExistsInCompany(
         new Types.ObjectId(),
@@ -166,6 +168,7 @@ describe('--Team Service--', () => {
       expect(result).toEqual(true);
     });
     it('should return true if team exists for a company', async () => {
+      mockCompanyService.companyIdExists.mockResolvedValue(true);
       mockTeamRepository.teamExistsInCompany.mockResolvedValue(true);
       const result = await service.teamExistsInCompany(
         new Types.ObjectId(),
@@ -182,12 +185,14 @@ describe('--Team Service--', () => {
   describe('remove', () => {
     it('should return true if role is removed', async () => {
       const id = new Types.ObjectId();
+      jest.spyOn(service, 'teamExists').mockResolvedValue(true);
       mockTeamRepository.remove.mockResolvedValue(true);
       const result = await service.remove(id);
       expect(result).toBe(true);
     });
     it('should return false if role is not removed', async () => {
       const id = new Types.ObjectId();
+      jest.spyOn(service, 'teamExists').mockResolvedValue(true);
       mockTeamRepository.remove.mockResolvedValue(false);
       const result = await service.remove(id);
       expect(result).toBe(false);
