@@ -93,15 +93,7 @@ export class EmployeeService {
         return new ValidationResult(false, `Role not found`);
       }
     }
-    // // Check if the currentJobAssignments is passed and exists for the company
-    // if (employee.currentJobAssignments) {
-    //   for (const jobId of employee.currentJobAssignments) {
-    //     if (!(await this.jobService.jobExistsInCompany(jobId, companyId))) {
-    //       return new ValidationResult(false, `Job not found`);
-    //     }
-    //   }
-    // }
-    // Check if the superiorId is passed and exists for the company
+
     if (employee.superiorId) {
       if (
         !(await this.employeeExistsForCompany(employee.superiorId, companyId))
@@ -162,17 +154,23 @@ export class EmployeeService {
   }
 
   async detailedFindAllInCompany(companyId: Types.ObjectId) {
-    // const fieldsToJoin = ['userId', 'roleId'];
     //checking if the company exists
     if (!(await this.companyService.companyIdExists(companyId))) {
       throw new Error('CompanyId does not exist');
     }
-    const all = await this.employeeRepository.findAllInCompany(companyId);
-    const result = [];
-    for (const employee of all) {
-      result.push(await this.detailedFindById(employee._id));
-    }
-    return result;
+    const employees: any =
+      await this.employeeRepository.DetailedFindAllInCompany(companyId, [
+        'roleId',
+        'userId',
+      ]);
+
+    // for (let employee in employees) {
+    // employee.role = employee.roleId;
+    // employee.user = employee.userId;
+    // delete employee.userId;
+    // delete employee.roleId;
+    // }
+    return employees;
   }
 
   async findById(id: Types.ObjectId) {
@@ -180,15 +178,17 @@ export class EmployeeService {
   }
 
   async detailedFindById(id: Types.ObjectId) {
-    const employee: any = await this.findById(id);
-    const role = await this.roleService.findById(employee.roleId);
-    const user = await this.usersService.getUserById(employee.userId);
+    const employee: any = await this.employeeRepository.DetailedFindById(id, [
+      'roleId',
+      'userId',
+    ]);
 
-    delete employee.userId;
-    delete employee.roleId;
+    // employee.role = employee.roleId;
+    // employee.user = employee.userId;
 
-    employee.role = role;
-    employee.user = user;
+    // delete employee.userId;
+    // delete employee.roleId;
+
     return employee;
   }
 

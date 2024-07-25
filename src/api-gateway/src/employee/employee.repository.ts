@@ -41,6 +41,28 @@ export class EmployeeRepository {
     return result;
   }
 
+  async DetailedFindAllInCompany(
+    identifier: Types.ObjectId,
+    fieldsToPouplate: string[],
+  ) {
+    const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] =
+      await this.employeeModel
+        .find({
+          $and: [
+            {
+              companyId: identifier,
+            },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .populate(fieldsToPouplate)
+        .lean();
+
+    return result;
+  }
+
   async findById(identifier: Types.ObjectId) {
     return this.employeeModel
       .findOne({
@@ -51,6 +73,23 @@ export class EmployeeRepository {
           },
         ],
       })
+      .lean();
+  }
+
+  async DetailedFindById(
+    identifier: Types.ObjectId,
+    fieldsToPouplate: string[],
+  ) {
+    return this.employeeModel
+      .findOne({
+        $and: [
+          { _id: identifier },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .populate(fieldsToPouplate)
       .lean();
   }
 

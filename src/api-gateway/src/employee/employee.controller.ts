@@ -30,6 +30,7 @@ import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { CompanyService } from 'src/company/company.service';
 import { AuthGuard } from '../auth/auth.guard';
+import { isEmpty } from 'class-validator';
 
 const className = 'Employee';
 
@@ -104,7 +105,7 @@ export class EmployeeController {
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
-    if (data.length === 0) {
+    if (isEmpty(data)) {
       throw new HttpException('No data found', HttpStatus.NO_CONTENT);
     }
     return { data: data };
@@ -167,7 +168,7 @@ export class EmployeeController {
   @Get('/detailed/id/:id')
   async findByIdDetailed(@Param('id') id: Types.ObjectId) {
     const data = await this.employeeService.detailedFindById(id);
-    if (data.length === 0) {
+    if (isEmpty(data)) {
       throw new HttpException('No data found', HttpStatus.NO_CONTENT);
     }
     return { data: data };
