@@ -1,7 +1,13 @@
 <template>
   <v-container>
+    <v-row class="justify-center align-center">
+      <v-col cols="12" class="text-center">
+        <h2 class="text-xl font-semibold">Notifications</h2>
+        <v-divider></v-divider>
+      </v-col>
+    </v-row>
     <v-row>
-      <v-col cols="12" lg="3"> 
+      <v-col cols="12" lg="3">
         <v-card>
           <v-list>
             <v-list-item v-for="(item, index) in items" :key="index" :value="index">
@@ -10,12 +16,14 @@
           </v-list>
           <v-divider></v-divider>
           <v-list>
+            <v-label>Filters</v-label>
             <v-list-item v-for="(item, index) in filters" :key="index" :value="index">
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item>
           </v-list>
           <v-divider></v-divider>
           <v-list>
+            <v-label>Companies</v-label>
             <v-list-item v-for="(item, index) in companies" :key="index" :value="index">
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item>
@@ -40,11 +48,6 @@
         <v-row>
           <v-col cols="12" order="last" justify="center">
             <v-card>
-              <v-card-title>
-                <v-icon>mdi-bell</v-icon>
-                Notifications
-              </v-card-title>
-              <v-divider></v-divider>
               <v-list class="bg-cardColor" rounded="md">
                 <v-label> <v-radio></v-radio>Select All </v-label>
                 <v-divider></v-divider>
@@ -108,9 +111,8 @@ export default {
         // Add more items here
       ],
       filters: [
-        { title: 'Inbox' },
-        { title: 'Saved' },
-        { title: 'Done' }
+        { title: 'Job Oriented ' },
+        { title: 'Admin' }
 
         // Add more items here
       ],
