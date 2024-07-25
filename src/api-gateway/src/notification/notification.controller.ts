@@ -24,6 +24,23 @@ export class NotificationController {
     return true;
   }
 
+  @Get()
+  async test(@Query('id') id: string) {
+    //this.validateObjectId(id);
+    const compId = new Types.ObjectId(id);
+    try {
+      return await this.notificationService.notifyAllInCompany(
+        compId,
+        'Hello world',
+      );
+    } catch (e) {
+      throw new HttpException(
+        'internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.CONFLICT,
