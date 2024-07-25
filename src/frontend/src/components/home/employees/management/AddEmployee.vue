@@ -151,10 +151,10 @@ export default defineComponent({
       const apiURL = await this.getRequestUrl()
       try {
         const sub_res = await axios(
-          apiURL +
-            `employee/${localStorage.getItem('employeeId')}/company/${localStorage.getItem('currentCompany')}`,
+          apiURL + `company/all/employees/${localStorage.getItem('currentCompany')}`,
           config
         )
+        console.log(sub_res)
         let sub_employees: EmployeeJoined[] = []
         for (let i = 0; i < sub_res.data.data.length; i++) {
           const employee_details = await axios.get(

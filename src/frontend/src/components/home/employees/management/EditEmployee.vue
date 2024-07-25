@@ -118,7 +118,6 @@
 
 <script lang="ts">
 import axios from 'axios'
-import { select } from '@syncfusion/ej2-base'
 import Toast from 'primevue/toast'
 import type {
   EmployeeInformation2,
@@ -182,6 +181,7 @@ export default {
   methods: {
     selected_subordiates() {
       console.log(this.req_obj.subordinates)
+      // console.log(this.editedItem)
     },
     selected_supirior() {
       console.log(this.req_obj.superiorId)
@@ -203,7 +203,7 @@ export default {
       try {
         const sub_res = await axios(
           apiURL +
-            `employee/${localStorage.getItem('employeeId')}/company/${localStorage.getItem('currentCompany')}`,
+            `employee/${this.editedItem.employeeId}/company/${localStorage.getItem('currentCompany')}`,
           config
         )
         let sub_employees: EmployeeJoined[] = []
