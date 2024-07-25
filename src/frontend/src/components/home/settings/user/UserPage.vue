@@ -164,10 +164,10 @@
                 <div class="v-text-field-wrapper">
                   <label for="preferredProvince" class="v-text-field-label">Province</label>
                   <v-select
-                      id="preferredProvince"
-                      v-model="user.address.preferredProvince"
-                      :items="provinceOptions"
-                      variant="solo"
+                    id="preferredProvince"
+                    v-model="user.address.preferredProvince"
+                    :items="provinceOptions"
+                    variant="solo"
                   ></v-select>
                 </div>
               </v-col>
@@ -239,7 +239,7 @@ const languageOptions = [
   'Xitsonga'
 ]
 
-const provinceOptions =  [
+const provinceOptions = [
   'Eastern Cape',
   'Free State',
   'Gauteng',
