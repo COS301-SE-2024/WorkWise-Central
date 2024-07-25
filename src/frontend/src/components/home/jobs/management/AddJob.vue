@@ -22,7 +22,7 @@
     <v-card elevation="14" rounded="md" max-height="800" max-width="900">
       <v-card-title class="text-center">Job Details</v-card-title>
       <v-card-text>
-        <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
+        <v-form ref="form" v-model="valid" @submit.prevent="validateForm">
           <v-col>
             <v-spacer></v-spacer>
             <v-col>
@@ -49,7 +49,6 @@
                   label="Choose the employee for whom the job must be complete"
                   rounded="md"
                   variant="solo"
-                  v-model="req_obj.clientId"
                   :items="clientsArray"
                   item-value="id"
                   item-title="name"
@@ -59,9 +58,9 @@
                 ></v-autocomplete>
 
                 <label style="font-size: 14px; font-weight: lighter"
-                  >If it is a new employee, create the employee first.
-                  <RouterLink to="/manager-employees-t" style="color: rgb(0, 149, 246)"
-                    >Add new employee</RouterLink
+                  >If it is a new client, create the employee first.
+                  <RouterLink to="/client-desk-view" style="color: rgb(0, 149, 246)"
+                    >Add new client</RouterLink
                   ></label
                 >
               </v-col>
@@ -94,7 +93,7 @@
                   ></v-date-picker>
                 </v-col>
                 <v-col cols="12" md="6" align="center">
-                  <v-time-picker format="24hr"></v-time-picker>
+                  <v-time-picker format="24hr" v-model="startTime"></v-time-picker>
                 </v-col>
                 <v-col align="center" cols="12" md="6">
                   <v-date-picker
@@ -110,11 +109,11 @@
                   ></v-date-picker>
                 </v-col>
                 <v-col cols="12" md="6" align="center">
-                  <v-time-picker format="24hr"></v-time-picker>
+                  <v-time-picker format="24hr" v-model="endTime"></v-time-picker>
                 </v-col>
               </v-row>
               <v-row>
-                <v-col>
+                <v-col :cols="12">
                   <label style="font-size: 14px; font-weight: lighter">Assign Employees</label>
 
                   <v-select
@@ -129,8 +128,37 @@
                     color="primary"
                     @update:modelValue="updateEmployee"
                     variant="solo"
-                  ></v-select></v-col
-              ></v-row>
+                  ></v-select
+                ></v-col>
+                <v-col>
+                  <label style="font-size: 14px; font-weight: lighter" :cols="6">Priority</label>
+
+                  <v-select
+                    :items="priorityOptionsArray"
+                    label="Select the priority level of this job"
+                    chips
+                    required
+                    color="primary"
+                    @update:modelValue="updateEmployee"
+                    variant="solo"
+                  ></v-select
+                ></v-col>
+
+                <v-col>
+                  <label style="font-size: 14px; font-weight: lighter" :cols="6">Tags</label>
+
+                  <v-select
+                    :items="tagOptionsArray"
+                    label="Select some tags you would like to assign to this job"
+                    chips
+                    multiple
+                    required
+                    color="primary"
+                    @update:modelValue="updateEmployee"
+                    variant="solo"
+                  ></v-select
+                ></v-col>
+              </v-row>
 
               <label style="font-size: 14px; font-weight: lighter">Job address</label>
 
@@ -166,6 +194,8 @@
                     color="primary"
                     placeholder="Province"
                     rounded="md"
+                    v-model="req_obj.details.address.province"
+                    @update:model-value="hello"
                     type="houseNumber"
                     variant="solo"
                     :items="[
@@ -183,11 +213,11 @@
                   ></v-autocomplete
                 ></v-col>
                 <v-col cols="12" sm="6">
-                  <label style="font-size: 12px; font-weight: lighter">City</label>
+                  <label style="font-size: 12px; font-weight: lighter">City/Town</label>
                   <v-text-field
                     density="compact"
                     color="primary"
-                    placeholder="City"
+                    placeholder="City/Town"
                     rounded="md"
                     v-model="req_obj.details.address.city"
                     variant="solo"
@@ -209,7 +239,7 @@
                 ></v-col>
 
                 <v-col cols="12" sm="6">
-                  <label style="font-size: 12px; font-weight: lighter">Complex</label>
+                  <label style="font-size: 12px; font-weight: lighter">Complex/Building</label>
                   <v-text-field
                     density="compact"
                     color="primary"
@@ -218,19 +248,8 @@
                     v-model="req_obj.details.address.complex"
                     variant="solo"
                     required
-                  ></v-text-field
-                ></v-col>
-                <v-col cols="12" sm="6">
-                  <label style="font-size: 12px; font-weight: lighter">House number</label>
-                  <v-text-field
-                    F
-                    density="compact"
-                    color="primary"
-                    placeholder="House number"
-                    rounded="md"
-                    v-model="req_obj.details.address.houseNumber"
-                    variant="solo"
-                    required
+                    hint="Complex or Building Name, unit number or floor"
+                    persistent-hint
                   ></v-text-field
                 ></v-col>
               </v-row>
@@ -245,8 +264,8 @@
               width="100%"
               height="35"
               variant="text"
-              >Create Job</v-btn
-            >
+              >Create Job
+            </v-btn>
             <v-btn
               color="error"
               rounded="md"
@@ -255,8 +274,8 @@
               height="35"
               variant="text"
               @click="close"
-              >Cancel</v-btn
-            >
+              >Cancel
+            </v-btn>
           </v-col>
         </v-form>
       </v-card-text>
@@ -267,7 +286,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import { type EmployeeJoined, type EmployeeInformation, type ClientInformation } from '../types'
+import type { EmployeeJoined, EmployeeInformation, ClientInformation } from '../types'
 
 export default defineComponent({
   name: 'JobDetailsList',
@@ -298,17 +317,242 @@ export default defineComponent({
       employeesArray: [] as EmployeeInformation[],
       clientsArray: [] as ClientInformation[],
       time: '',
-      startDate: null,
-      endDate: null,
+      startDate: null as Date,
+      startTime: '',
+      endDate: null as Date,
+      endTime: '',
+      priorityOptionsArray: ['High', 'Medium', 'Low'],
+      tagOptionsArray: [
+        'Cleaning',
+        'Landscaping',
+        'Plumbing',
+        'Electrical',
+        'HVAC',
+        'Pest Control',
+        'Moving',
+        'Delivery',
+        'Courier',
+        'Security',
+        'Maintenance',
+        'Repair',
+        'Installation',
+        'Janitorial',
+        'Painting',
+        'Carpentry',
+        'Roofing',
+        'Gardening',
+        'Window Cleaning',
+        'Flooring',
+        'Carpet Cleaning',
+        'Pool Cleaning',
+        'Handyman',
+        'Waste Removal',
+        'Gutter Cleaning',
+        'Pressure Washing',
+        'Tree Trimming',
+        'Snow Removal',
+        'Lawn Care',
+        'Irrigation',
+        'Appliance Repair',
+        'Drywall',
+        'Masonry',
+        'Fencing',
+        'Paving',
+        'Locksmith',
+        'Home Staging',
+        'Furniture Assembly',
+        'Pest Inspection',
+        'Chimney Sweep',
+        'Duct Cleaning',
+        'Tile Installation',
+        'Cabinet Making',
+        'Glass Repair',
+        'Garage Door Repair',
+        'Solar Panel Installation',
+        'Insulation',
+        'Septic Tank Cleaning',
+        'Waterproofing',
+        'Bathroom Remodeling',
+        'Kitchen Remodeling',
+        'Basement Remodeling',
+        'Attic Remodeling',
+        'Exterior Painting',
+        'Interior Painting',
+        'Fence Painting',
+        'Deck Painting',
+        'Deck Staining',
+        'Fence Staining',
+        'Driveway Sealing',
+        'Siding Installation',
+        'Siding Repair',
+        'Home Theater Installation',
+        'Smart Home Installation',
+        'TV Mounting',
+        'Internet Setup',
+        'Networking',
+        'Computer Repair',
+        'Printer Repair',
+        'Data Recovery',
+        'Virus Removal',
+        'Backup Solutions',
+        'Software Installation',
+        'Hardware Upgrade',
+        'IT Support',
+        'Tech Support',
+        'WiFi Setup',
+        'Cable Installation',
+        'Satellite Installation',
+        'Audio Installation',
+        'Video Surveillance',
+        'Alarm Systems',
+        'Access Control',
+        'Fire Alarm Installation',
+        'Sprinkler Systems',
+        'Emergency Lighting',
+        'First Aid Training',
+        'CPR Training',
+        'Disaster Recovery',
+        'Business Continuity',
+        'Project Management',
+        'Construction Management',
+        'General Contracting',
+        'Subcontracting',
+        'Property Management',
+        'Facility Management',
+        'Real Estate Management',
+        'Event Planning',
+        'Catering',
+        'Wedding Planning',
+        'Birthday Planning',
+        'Conference Planning',
+        'Exhibition Planning',
+        'Promotional Events',
+        'Trade Shows',
+        'Fundraisers',
+        'Community Events',
+        'Corporate Events',
+        'Concerts',
+        'Theater',
+        'Tour Guide',
+        'Travel Planning',
+        'Hotel Booking',
+        'Flight Booking',
+        'Car Rental',
+        'Bus Rental',
+        'Limousine Service',
+        'Shuttle Service',
+        'Pet Sitting',
+        'Dog Walking',
+        'Pet Grooming',
+        'Veterinary Services',
+        'Pet Training',
+        'Aquarium Services',
+        'Horse Training',
+        'Stable Management',
+        'Landscaping Design',
+        'Landscape Maintenance',
+        'Tree Removal',
+        'Stump Grinding',
+        'Weed Control',
+        'Fertilization',
+        'Aeration',
+        'Seeding',
+        'Lawn Mowing',
+        'Mulching',
+        'Soil Testing',
+        'Land Surveying',
+        'Land Clearing',
+        'Excavation',
+        'Grading',
+        'Drainage Solutions',
+        'Retaining Walls',
+        'Stone Work',
+        'Water Features',
+        'Irrigation Systems',
+        'Lighting Installation',
+        'Greenhouse Services',
+        'Nursery Services',
+        'Plant Delivery',
+        'Soil Delivery',
+        'Compost Delivery',
+        'Firewood Delivery',
+        'Junk Removal',
+        'Recycling',
+        'Hazardous Waste Removal',
+        'E-Waste Removal',
+        'Document Shredding',
+        'Vehicle Removal',
+        'Scrap Metal Removal',
+        'Estate Cleanout',
+        'Hoarding Cleanup',
+        'Biohazard Cleanup',
+        'Crime Scene Cleanup',
+        'Water Damage Restoration',
+        'Fire Damage Restoration',
+        'Mold Remediation',
+        'Storm Damage Repair',
+        'Insurance Claims',
+        'Legal Services',
+        'Accounting',
+        'Bookkeeping',
+        'Tax Preparation',
+        'Payroll Services',
+        'HR Services',
+        'Recruitment',
+        'Staffing',
+        'Training',
+        'Consulting',
+        'Marketing',
+        'Advertising',
+        'SEO Services',
+        'Social Media Management',
+        'Content Creation',
+        'Graphic Design',
+        'Web Design',
+        'App Development',
+        'Software Development',
+        'Cloud Services',
+        'Data Analytics',
+        'Cybersecurity',
+        'Compliance',
+        'Auditing',
+        'Risk Management',
+        'Quality Assurance',
+        'Customer Support',
+        'Technical Support',
+        'Virtual Assistant',
+        'Call Center Services',
+        'Telemarketing',
+        'Sales Training',
+        'Lead Generation',
+        'Market Research',
+        'Brand Development',
+        'Public Relations',
+        'Crisis Management',
+        'Media Buying',
+        'Video Production',
+        'Photography',
+        'Animation',
+        'Copywriting',
+        'Editing',
+        'Proofreading',
+        'Translation',
+        'Transcription',
+        'Interpretation',
+        'Voice Over',
+        'Podcasting',
+        'Blogging',
+        'Vlogging'
+      ],
       req_obj: {
         companyId: localStorage['currentCompany'],
-        clientId: '',
-        assignedBy: localStorage['id'],
+        // clientId: '',
+        assignedBy: localStorage['employeeId'],
         assignedEmployees: {
-          employeeIds: [] as string[],
-          teamId: ''
+          employeeIds: [] as string[]
         },
-        status: 'To do',
+        //default job statuses ['Todo','In Progress','Awaiting Review','Done']
+        status: 'Todo',
         details: {
           heading: '',
           description: '',
@@ -318,33 +562,39 @@ export default defineComponent({
             suburb: '',
             city: '',
             postalCode: '',
-            complex: '',
-            houseNumber: ''
+            complex: ''
           },
           startDate: '',
           endDate: ''
-        },
-        recordedDetails: {
-          imagesTaken: [],
-          inventoryUsed: []
-        },
-        employeeFeedback: {
-          jobRating: 0,
-          customerServiceRating: 0,
-          comments: ''
-        },
-        taskList: [],
-        comments: []
+        }
       },
       jobDialog: false
     }
   },
   methods: {
-    handleSubmission() {
+    async validateForm() {
+      if (this.startDate !== null && this.startTime !== '') {
+        this.formatDateAndTime(this.startDate, this.startTime)
+      }
+      if (this.endDate !== null && this.endTime !== '') {
+        this.formatDateAndTime(this.endDate, this.endTime)
+      }
+      await this.handleSubmission()
+    },
+    formatDateAndTime(date: Date, time: string) {
+      const [hrs, min] = time.split(':').map(Number)
+      date.setHours(hrs)
+      date.setMinutes(min)
+      console.log(date.startDate)
+      console.log(date.toISOString())
+      this.req_obj.details.startDate = date.toISOString()
+    },
+    async handleSubmission() {
       console.log(this.req_obj)
+      const apiURL = await this.getRequestUrl()
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       axios
-        .post('http://localhost:3000/job/create', this.req_obj, config)
+        .post(apiURL + 'job/create', this.req_obj, config)
         .then((res) => {
           this.$toast.add({
             severity: 'success',
@@ -366,6 +616,9 @@ export default defineComponent({
         console.log(this.req_obj.details.startDate)
         console.log(this.req_obj.details.endDate)
       }
+    },
+    hello() {
+      console.log(this.req_obj.details.address.province)
     },
     async loadClients() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
@@ -411,16 +664,14 @@ export default defineComponent({
         let company_employee_arr: EmployeeInformation[] = []
 
         for (let i = 0; i < employee_all_data.length; i++) {
-          if (employee_all_data[i].userId[0].personalInfo.address !== undefined) continue
-
           if (employee_all_data[i].roleId !== undefined) {
             let company_employee: EmployeeInformation = {
               name:
-                employee_all_data[i].userId[0].personalInfo.firstName +
+                employee_all_data[i].userId.personalInfo.firstName +
                 ' ' +
-                employee_all_data[i].userId[0].personalInfo.surname +
+                employee_all_data[i].userId.personalInfo.surname +
                 ' (' +
-                employee_all_data[i].roleId[0].roleName +
+                employee_all_data[i].roleId.roleName +
                 ')',
               employeeId: employee_all_data[i]._id
             }
@@ -429,9 +680,9 @@ export default defineComponent({
           } else {
             let company_employee: EmployeeInformation = {
               name:
-                employee_all_data[i].userId[0].personalInfo.firstName +
+                employee_all_data[i].userId.personalInfo.firstName +
                 ' ' +
-                employee_all_data[i].userId[0].personalInfo.surname +
+                employee_all_data[i].userId.personalInfo.surname +
                 ' (Unassigned Role)',
               employeeId: employee_all_data[i]._id
             }
@@ -457,7 +708,7 @@ export default defineComponent({
       return localAvailable ? this.localUrl : this.remoteUrl
     },
     updateClient() {
-      console.log(this.req_obj.clientId)
+      // console.log(this.req_obj.clientId)
     },
     updateEmployee() {
       console.log(this.req_obj.assignedEmployees.employeeIds)
