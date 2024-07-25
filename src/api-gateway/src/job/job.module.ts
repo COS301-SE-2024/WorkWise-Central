@@ -15,13 +15,19 @@ import { EmployeeRepository } from 'src/employee/employee.repository';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { FileService } from '../file/file.service';
 import { FileModule } from '../file/file.module';
-import { JobTag, JobTagSchema } from './entities/job-tag.entity';
+import {
+  JobPriorityTag,
+  JobPriorityTagSchema,
+  JobTag,
+  JobTagSchema,
+} from './entities/job-tag.entity';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Job.name, schema: JobSchema },
       { name: JobTag.name, schema: JobTagSchema },
+      { name: JobPriorityTag.name, schema: JobPriorityTagSchema },
     ]),
     forwardRef(() => UsersModule),
     forwardRef(() => CompanyModule),

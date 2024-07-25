@@ -1,6 +1,4 @@
-import { SchemaTypes, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Company } from '../../company/entities/company.entity';
 
 @Schema()
 export class JobTag {
@@ -8,18 +6,18 @@ export class JobTag {
   label: string;
   @Prop({ type: String, required: false, default: '#FAF9F6' })
   colour: string; //Will be hex value
-  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Company.name })
-  companyId: Types.ObjectId;
 }
 
-//TODO: Flesh out
+@Schema()
 export class JobPriorityTag {
   @Prop({ type: String, required: true })
-  value: string;
-  @Prop({ type: String, required: false, default: '#F00000' })
+  label: string;
+  @Prop({ type: Number, required: true, default: 0 })
+  priorityLevel: number;
+  @Prop({ type: String, required: false, default: '#fbfffc' })
   colour: string; //Will be hex value
-  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Company.name })
-  companyId: Types.ObjectId;
 }
 
 export const JobTagSchema = SchemaFactory.createForClass(JobTag);
+export const JobPriorityTagSchema =
+  SchemaFactory.createForClass(JobPriorityTag);
