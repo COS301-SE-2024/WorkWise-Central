@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { Employee } from './entities/employee.entity';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import {
+  UpdateEmployeeDto,
+  UpdateEmployeeUserInfoDto,
+} from './dto/update-employee.dto';
 import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
@@ -20,27 +23,9 @@ export class EmployeeRepository {
     return await newCompanyModel.save();
   }
 
-  async findAllInCompany(
-    identifier: Types.ObjectId,
-    fieldsToPopulate?: string[],
-  ) {
-    let result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[];
-    if (fieldsToPopulate) {
-      result = await this.employeeModel
-        .find({
-          $and: [
-            {
-              companyId: identifier,
-            },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .populate(fieldsToPopulate.join(' '))
-        .lean();
-    } else {
-      result = await this.employeeModel
+  async findAllInCompany(identifier: Types.ObjectId) {
+    const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] =
+      await this.employeeModel
         .find({
           $and: [
             {
@@ -52,11 +37,11 @@ export class EmployeeRepository {
           ],
         })
         .lean();
-    }
+
     return result;
   }
 
-  async findById(identifier: Types.ObjectId, fieldsToPopulate?: string[]) {
+  async findById(identifier: Types.ObjectId) {
     return this.employeeModel
       .findOne({
         $and: [
@@ -66,7 +51,6 @@ export class EmployeeRepository {
           },
         ],
       })
-      .populate(fieldsToPopulate)
       .lean();
   }
 
@@ -145,6 +129,34 @@ export class EmployeeRepository {
             ],
           },
           { $set: { ...updateEmployeeDto }, updatedAt: new Date() },
+        )
+        .lean();
+
+    return previousObject;
+  }
+
+  async updateUserInfo(
+    id: Types.ObjectId,
+    userInfo: UpdateEmployeeUserInfoDto,
+  ) {
+    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } =
+      await this.employeeModel
+        .findOneAndUpdate(
+          {
+            $and: [
+              { _id: id },
+              {
+                $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+              },
+            ],
+          },
+          {
+            $set: {
+              userInfo: userInfo,
+              updatedAt: new Date(),
+            },
+          },
+          { new: true, lean: true },
         )
         .lean();
 

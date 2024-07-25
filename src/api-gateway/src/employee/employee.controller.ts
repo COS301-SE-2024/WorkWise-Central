@@ -98,13 +98,9 @@ export class EmployeeController {
   async findAllInCompanyDetailed(
     @Param('companyId') companyId: Types.ObjectId,
   ) {
-    const fieldsToJoin = ['userId', 'roleId'];
     let data;
     try {
-      data = await this.employeeService.findAllInCompany(
-        companyId,
-        fieldsToJoin,
-      );
+      data = await this.employeeService.detailedFindAllInCompany(companyId);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
@@ -170,8 +166,7 @@ export class EmployeeController {
   })
   @Get('/detailed/id/:id')
   async findByIdDetailed(@Param('id') id: Types.ObjectId) {
-    const fieldsToJoin = ['userId', 'roleId'];
-    const data = await this.employeeService.findById(id, fieldsToJoin);
+    const data = await this.employeeService.detailedFindById(id);
     if (data.length === 0) {
       throw new HttpException('No data found', HttpStatus.NO_CONTENT);
     }
@@ -199,7 +194,7 @@ export class EmployeeController {
   @Get('id/:id')
   async findById(@Param('id') id: Types.ObjectId) {
     const data = await this.employeeService.findById(id);
-    if (data.length === 0) {
+    if (!data) {
       throw new HttpException('No data found', HttpStatus.NO_CONTENT);
     }
     return { data: data };

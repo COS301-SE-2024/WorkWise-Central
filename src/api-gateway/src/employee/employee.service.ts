@@ -1,6 +1,9 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import {
+  UpdateEmployeeDto,
+  UpdateEmployeeUserInfoDto,
+} from './dto/update-employee.dto';
 import { Types } from 'mongoose';
 import { Employee } from './entities/employee.entity';
 import { UsersService } from '../users/users.service';
@@ -90,14 +93,14 @@ export class EmployeeService {
         return new ValidationResult(false, `Role not found`);
       }
     }
-    // Check if the currentJobAssignments is passed and exists for the company
-    if (employee.currentJobAssignments) {
-      for (const jobId of employee.currentJobAssignments) {
-        if (!(await this.jobService.jobExistsInCompany(jobId, companyId))) {
-          return new ValidationResult(false, `Job not found`);
-        }
-      }
-    }
+    // // Check if the currentJobAssignments is passed and exists for the company
+    // if (employee.currentJobAssignments) {
+    //   for (const jobId of employee.currentJobAssignments) {
+    //     if (!(await this.jobService.jobExistsInCompany(jobId, companyId))) {
+    //       return new ValidationResult(false, `Job not found`);
+    //     }
+    //   }
+    // }
     // Check if the superiorId is passed and exists for the company
     if (employee.superiorId) {
       if (
@@ -150,34 +153,43 @@ export class EmployeeService {
     return await this.employeeRepository.findAll();
   }
 
-  async findAllInCompany(
-    companyId: Types.ObjectId,
-    fieldsToPopulate?: string[],
-  ) {
+  async findAllInCompany(companyId: Types.ObjectId) {
     //checking if the company exists
     if (!(await this.companyService.companyIdExists(companyId))) {
       throw new Error('CompanyId does not exist');
     }
-    let result;
-    if (!(fieldsToPopulate && fieldsToPopulate.length === 0)) {
-      result = await this.employeeRepository.findAllInCompany(
-        companyId,
-        fieldsToPopulate,
-      );
-    } else {
-      result = await this.employeeRepository.findAllInCompany(companyId);
+    return await this.employeeRepository.findAllInCompany(companyId);
+  }
+
+  async detailedFindAllInCompany(companyId: Types.ObjectId) {
+    // const fieldsToJoin = ['userId', 'roleId'];
+    //checking if the company exists
+    if (!(await this.companyService.companyIdExists(companyId))) {
+      throw new Error('CompanyId does not exist');
+    }
+    const all = await this.employeeRepository.findAllInCompany(companyId);
+    const result = [];
+    for (const employee of all) {
+      result.push(await this.detailedFindById(employee._id));
     }
     return result;
   }
 
-  async findById(id: Types.ObjectId, fieldsToPopulate?: string[]) {
-    let result;
-    if (!(fieldsToPopulate && fieldsToPopulate.length === 0)) {
-      result = await this.employeeRepository.findById(id, fieldsToPopulate);
-    } else {
-      result = await this.employeeRepository.findById(id);
-    }
-    return result;
+  async findById(id: Types.ObjectId) {
+    return await this.employeeRepository.findById(id);
+  }
+
+  async detailedFindById(id: Types.ObjectId) {
+    const employee: any = await this.findById(id);
+    const role = await this.roleService.findById(employee.roleId);
+    const user = await this.usersService.getUserById(employee.userId);
+
+    delete employee.userId;
+    delete employee.roleId;
+
+    employee.role = role;
+    employee.user = user;
+    return employee;
   }
 
   async employeeExists(id: Types.ObjectId): Promise<boolean> {
@@ -208,6 +220,14 @@ export class EmployeeService {
       id,
       updateEmployeeDto,
     );
+    return previousObject;
+  }
+
+  async updateUserInfo(
+    id: Types.ObjectId,
+    userInfo: UpdateEmployeeUserInfoDto,
+  ) {
+    const previousObject = this.employeeRepository.updateUserInfo(id, userInfo);
     return previousObject;
   }
 
