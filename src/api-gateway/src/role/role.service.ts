@@ -11,7 +11,7 @@ import { Role } from './entity/role.entity';
 import { CompanyService } from '../company/company.service';
 // import { EmployeeService } from '../employee/employee.service';
 import { RoleRepository } from './role.repository';
-import { ValidationResult } from 'src/auth/entities/validationResult.entity';
+import { ValidationResult } from '../auth/entities/validationResult.entity';
 
 @Injectable()
 export class RoleService {

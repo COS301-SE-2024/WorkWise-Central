@@ -12,7 +12,7 @@ import { RoleService } from '../role/role.service';
 import { JobService } from '../job/job.service';
 import { TeamService } from '../team/team.service';
 import { EmployeeRepository } from './employee.repository';
-import { ValidationResult } from 'src/auth/entities/validationResult.entity';
+import { ValidationResult } from '../auth/entities/validationResult.entity';
 
 @Injectable()
 export class EmployeeService {

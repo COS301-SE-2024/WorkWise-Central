@@ -93,9 +93,6 @@ export class InventoryController {
   @Get('/all')
   async findAll() {
     const data = await await this.inventoryService.findAll();
-    if (data.length === 0) {
-      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
-    }
     return { data: data };
   }
 
@@ -129,9 +126,6 @@ export class InventoryController {
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
-    if (data.length === 0) {
-      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
-    }
     return { data: data };
   }
 
@@ -156,9 +150,6 @@ export class InventoryController {
   @Get('id/:id')
   async findById(@Param('id') id: Types.ObjectId) {
     const data = await this.inventoryService.findById(id);
-    if (!data) {
-      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
-    }
     return { data: data };
   }
 

@@ -5,7 +5,7 @@ import { Types } from 'mongoose';
 import { Inventory } from './entities/inventory.entity';
 import { CompanyService } from '../company/company.service';
 import { InventoryRepository } from './inventory.repository';
-import { ValidationResult } from 'src/auth/entities/validationResult.entity';
+import { ValidationResult } from '../auth/entities/validationResult.entity';
 
 @Injectable()
 export class InventoryService {

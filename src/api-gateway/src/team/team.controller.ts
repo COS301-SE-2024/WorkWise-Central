@@ -60,9 +60,6 @@ export class TeamController {
   @Get('/all')
   async findAll() {
     const data = await this.teamService.findAll();
-    if (data.length === 0) {
-      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
-    }
     return { data: data };
   }
 
@@ -87,9 +84,6 @@ export class TeamController {
   @Get('id/:id')
   async findById(@Param('id') id: Types.ObjectId) {
     const data = await this.teamService.findById(id);
-    if (!data) {
-      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
-    }
     return { data: data };
   }
 

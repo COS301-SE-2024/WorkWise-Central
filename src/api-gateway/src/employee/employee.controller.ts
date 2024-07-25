@@ -28,19 +28,14 @@ import {
 } from './entities/employee.entity';
 import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
-import { CompanyService } from 'src/company/company.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { isEmpty } from 'class-validator';
 
 const className = 'Employee';
 
 @ApiTags('Employee')
 @Controller('employee')
 export class EmployeeController {
-  constructor(
-    private readonly employeeService: EmployeeService,
-    private readonly companyService: CompanyService,
-  ) {}
+  constructor(private readonly employeeService: EmployeeService) {}
 
   @ApiOperation({
     summary: `Refer to Documentation`,
@@ -67,9 +62,6 @@ export class EmployeeController {
   @Get('/all')
   async findAll() {
     const data = await this.employeeService.findAll();
-    if (data.length === 0) {
-      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
-    }
     return { data: data };
   }
 
@@ -105,9 +97,6 @@ export class EmployeeController {
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
-    if (isEmpty(data)) {
-      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
-    }
     return { data: data };
   }
 
@@ -141,9 +130,6 @@ export class EmployeeController {
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
-    if (data.length === 0) {
-      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
-    }
     return { data: data };
   }
 
@@ -168,9 +154,6 @@ export class EmployeeController {
   @Get('/detailed/id/:id')
   async findByIdDetailed(@Param('id') id: Types.ObjectId) {
     const data = await this.employeeService.detailedFindById(id);
-    if (isEmpty(data)) {
-      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
-    }
     return { data: data };
   }
 
@@ -195,9 +178,6 @@ export class EmployeeController {
   @Get('id/:id')
   async findById(@Param('id') id: Types.ObjectId) {
     const data = await this.employeeService.findById(id);
-    if (!data) {
-      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
-    }
     return { data: data };
   }
 
@@ -229,9 +209,6 @@ export class EmployeeController {
       data = await this.employeeService.getListOfOtherEmployees(id);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-    }
-    if (data.length === 0) {
-      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
     }
     return {
       data: data,
