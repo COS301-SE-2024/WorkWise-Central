@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { Employee } from './entities/employee.entity';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import {
+  UpdateEmployeeDto,
+  UpdateEmployeeUserInfoDto,
+} from './dto/update-employee.dto';
 import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
@@ -20,31 +23,9 @@ export class EmployeeRepository {
     return await newCompanyModel.save();
   }
 
-  async findAllInCompany(
-    identifier: Types.ObjectId,
-    fieldsToPopulate?: string[],
-  ) {
-    console.log('In the findAllInCompany in repository');
-    console.log('identifier: ', identifier);
-    let result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[];
-    if (fieldsToPopulate) {
-      console.log('In the if');
-      result = await this.employeeModel
-        .find({
-          $and: [
-            {
-              companyId: identifier,
-            },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .populate(fieldsToPopulate.join(' '))
-        .lean();
-    } else {
-      console.log('In the else');
-      result = await this.employeeModel
+  async findAllInCompany(identifier: Types.ObjectId) {
+    const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] =
+      await this.employeeModel
         .find({
           $and: [
             {
@@ -56,13 +37,33 @@ export class EmployeeRepository {
           ],
         })
         .lean();
-    }
+
     return result;
   }
 
-  async findById(identifier: Types.ObjectId, fieldsToPopulate?: string[]) {
-    console.log('In findById repository');
-    console.log('identifier -> ', identifier);
+  async DetailedFindAllInCompany(
+    identifier: Types.ObjectId,
+    fieldsToPouplate: string[],
+  ) {
+    const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] =
+      await this.employeeModel
+        .find({
+          $and: [
+            {
+              companyId: identifier,
+            },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .populate(fieldsToPouplate)
+        .lean();
+
+    return result;
+  }
+
+  async findById(identifier: Types.ObjectId) {
     return this.employeeModel
       .findOne({
         $and: [
@@ -72,13 +73,27 @@ export class EmployeeRepository {
           },
         ],
       })
-      .populate(fieldsToPopulate)
       .lean();
   }
 
-  async findByIds(
-    identifiers: Types.ObjectId[],
-  ): Promise<(FlattenMaps<Employee> & { _id: Types.ObjectId })[]> {
+  async DetailedFindById(
+    identifier: Types.ObjectId,
+    fieldsToPouplate: string[],
+  ) {
+    return this.employeeModel
+      .findOne({
+        $and: [
+          { _id: identifier },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .populate(fieldsToPouplate)
+      .lean();
+  }
+
+  async findByIds(identifiers: Types.ObjectId[]) {
     const ids = identifiers.map((id) => new Types.ObjectId(id));
 
     const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] =
@@ -107,8 +122,6 @@ export class EmployeeRepository {
           ],
         })
         .lean();
-
-    console.log('employeeExists -> ', result);
     return result != null;
   }
 
@@ -161,10 +174,36 @@ export class EmployeeRepository {
     return previousObject;
   }
 
+  async updateUserInfo(
+    id: Types.ObjectId,
+    userInfo: UpdateEmployeeUserInfoDto,
+  ) {
+    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } =
+      await this.employeeModel
+        .findOneAndUpdate(
+          {
+            $and: [
+              { _id: id },
+              {
+                $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+              },
+            ],
+          },
+          {
+            $set: {
+              userInfo: userInfo,
+              updatedAt: new Date(),
+            },
+          },
+          { new: true, lean: true },
+        )
+        .lean();
+
+    return previousObject;
+  }
+
   async remove(id: Types.ObjectId): Promise<boolean> {
-    console.log('In remove repository');
     const employeeToDelete = await this.findById(id);
-    console.log('employeeToDelete -> ', employeeToDelete);
 
     if (employeeToDelete == null) {
       return false;

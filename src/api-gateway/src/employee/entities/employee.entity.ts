@@ -3,11 +3,21 @@ import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
 import { CreateEmployeeDto } from '../dto/create-employee.dto';
 
+export class userInfo {
+  @Prop({ type: String, required: true })
+  username: string;
+  @Prop({ type: String, required: true })
+  firstName: string;
+  @Prop({ type: String, required: true })
+  surname: string;
+  @Prop({ type: String, required: true })
+  displayName: string;
+  @Prop({ type: String, required: true })
+  displayImage: string;
+}
 @Schema()
 export class Employee {
   constructor(createEmployeeDto: CreateEmployeeDto) {
-    // this.superiorId = createEmployeeDto.superiorId;
-    // this.roleId = createEmployeeDto.roleId;
     this.userId = createEmployeeDto.userId;
     this.companyId = createEmployeeDto.companyId;
     this.createdAt = new Date();
@@ -17,14 +27,14 @@ export class Employee {
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Role' })
   roleId: Types.ObjectId;
 
-  @ApiProperty()
-  @Prop({
-    type: [SchemaTypes.ObjectId],
-    required: true,
-    default: [],
-    ref: 'Job',
-  })
-  currentJobAssignments: Types.ObjectId[];
+  // @ApiProperty()
+  // @Prop({
+  //   type: [SchemaTypes.ObjectId],
+  //   required: true,
+  //   default: [],
+  //   ref: 'Job',
+  // })
+  // currentJobAssignments: Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: false, ref: 'Employee' })
@@ -51,6 +61,10 @@ export class Employee {
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'User' })
   userId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  userInfo: userInfo;
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Company' })
@@ -78,14 +92,14 @@ export class EmployeeApiObject {
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Role' })
   roleId: Types.ObjectId;
 
-  @ApiProperty()
-  @Prop({
-    type: [SchemaTypes.ObjectId],
-    required: true,
-    default: [],
-    ref: 'Job',
-  })
-  currentJobAssignments?: Types.ObjectId[];
+  // @ApiProperty()
+  // @Prop({
+  //   type: [SchemaTypes.ObjectId],
+  //   required: true,
+  //   default: [],
+  //   ref: 'Job',
+  // })
+  // currentJobAssignments: Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: false, ref: 'Employee' })
@@ -114,6 +128,10 @@ export class EmployeeApiObject {
   userId: Types.ObjectId;
 
   @ApiProperty()
+  @Prop({ required: true })
+  userInfo: userInfo;
+
+  @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Company' })
   companyId: Types.ObjectId;
 
@@ -139,9 +157,9 @@ export class joinedEmployeeApiObject {
   @Prop({ type: Object, required: false })
   roleId?: object;
 
-  @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
-  currentJobAssignments?: Types.ObjectId[];
+  // @ApiProperty()
+  // @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
+  // currentJobAssignments?: Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: false })

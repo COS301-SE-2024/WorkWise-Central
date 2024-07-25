@@ -24,9 +24,7 @@ export class RoleRepository {
     return await this.roleModel.find(filter).find().lean().exec();
   }
 
-  async findById(
-    identifier: string | Types.ObjectId,
-  ): Promise<FlattenMaps<Role> & { _id: Types.ObjectId }> {
+  async findById(identifier: string | Types.ObjectId) {
     const result: FlattenMaps<Role> & { _id: Types.ObjectId } =
       await this.roleModel
         .findOne({
@@ -44,7 +42,7 @@ export class RoleRepository {
   async findByIdInCompany(
     identifier: string,
     companyIdentifier: Types.ObjectId,
-  ): Promise<FlattenMaps<Role> & { _id: Types.ObjectId }> {
+  ) {
     const result: FlattenMaps<Role> & { _id: Types.ObjectId } =
       await this.roleModel
         .findOne({
