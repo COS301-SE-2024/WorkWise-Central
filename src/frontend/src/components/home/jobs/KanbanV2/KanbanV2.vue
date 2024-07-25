@@ -64,6 +64,7 @@
             <template #default="{ item }">
               <v-card-text>
                 <v-card
+                  @click="clickedEvent(item)"
                   variant="flat"
                   elevation="3"
                   class="kanban-card mb-2"
@@ -148,12 +149,16 @@
       </v-col>
     </v-row>
   </v-container>
+  <v-dialog v-model="JobCardVisibility" max-width="1000px">
+    <JBC @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { JobCardDataFormat, Column } from '../types'
-import '@mdi/font/css/materialdesignicons.css' // icon import
+import '@mdi/font/css/materialdesignicons.css'
+import JBC from '@/components/home/jobs/management/ManagerJobCard.vue' // icon import
 
 const columns = ref<Column[]>([
   { id: 1, status: 'Todo', cards: [] },
@@ -162,8 +167,9 @@ const columns = ref<Column[]>([
   { id: 4, status: 'Done', cards: [] }
 ])
 
+let SelectedEvent = ref<JobCardDataFormat>()
+let JobCardVisibility = ref<boolean>(false)
 const order_of_sorting_in_columns = ref<string[]>(['High', 'Medium', 'Low'])
-
 const draggedCard = ref<JobCardDataFormat | null>(null)
 const sourceColumn = ref<Column | null>(null)
 const dropTarget = ref<Column | null>(null)
@@ -361,6 +367,14 @@ let starting_cards = ref<JobCardDataFormat[]>([
   }
 ])
 
+function clickedEvent(payload: JobCardDataFormat) {
+  SelectedEvent.value = payload
+  openJobCard()
+}
+function openJobCard() {
+  console.log('edit button clicked')
+  JobCardVisibility.value = true
+}
 function loading(cards: JobCardDataFormat[]) {
   for (let i = 0; i < cards.length; i++) {
     switch (cards[i].status) {
@@ -417,11 +431,14 @@ function onDrop(targetColumn: Column) {
     draggedCard.value.status = targetColumn.status
     targetColumn.cards.push(draggedCard.value)
     N_M_Sort(targetColumn.cards, order_of_sorting_in_columns.value)
+    makeRequest()
     draggedCard.value = null
     sourceColumn.value = null
     dropTarget.value = null
   }
 }
+
+function makeRequest() {}
 
 function isDropTarget(column: Column) {
   return dropTarget.value === column
