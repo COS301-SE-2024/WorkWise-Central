@@ -101,12 +101,7 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
-import type {
-  EmployeeInformation2,
-  EmployeeJoined,
-  RoleItem,
-  Role
-} from '@/components/home/employees/types'
+import type { EmployeeInformation2, RoleItem, Role } from '@/components/home/employees/types'
 // import router from '@/router'
 export default defineComponent({
   name: 'RegisterCompanyModal',
@@ -155,7 +150,6 @@ export default defineComponent({
           config
         )
         console.log(sub_res)
-        let sub_employees: EmployeeJoined[] = []
         for (let i = 0; i < sub_res.data.data.length; i++) {
           const employee_details = await axios.get(
             apiURL + `employee/joined/id/${sub_res.data.data[i]._id}`,
@@ -185,7 +179,6 @@ export default defineComponent({
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       console.log(apiURL)
-      let rolesNames_arr: string[] = []
       try {
         let roles_response = await axios.get(
           apiURL + `role/all/${localStorage['currentCompany']}`,
