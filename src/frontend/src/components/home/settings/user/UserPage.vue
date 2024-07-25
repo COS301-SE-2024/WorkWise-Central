@@ -159,6 +159,18 @@
                   <v-text-field id="houseNumber" v-model="user.address.houseNumber"></v-text-field>
                 </div>
               </v-col>
+
+              <v-col cols="12" sm="6">
+                <div class="v-text-field-wrapper">
+                  <label for="preferredProvince" class="v-text-field-label">Province</label>
+                  <v-select
+                      id="preferredProvince"
+                      v-model="user.address.preferredProvince"
+                      :items="provinceOptions"
+                      variant="solo"
+                  ></v-select>
+                </div>
+              </v-col>
             </v-row>
 
             <div class="text-center">
@@ -201,7 +213,8 @@ const user = ref({
     city: '',
     postalCode: '',
     complex: '',
-    houseNumber: ''
+    houseNumber: '',
+    preferredProvince: ''
   }
 })
 
@@ -224,6 +237,18 @@ const languageOptions = [
   'siSwati',
   'Tshivenda',
   'Xitsonga'
+]
+
+const provinceOptions =  [
+  'Eastern Cape',
+  'Free State',
+  'Gauteng',
+  'KwaZulu-Natal',
+  'Limpopo',
+  'Mpumalanga',
+  'Northern Cape',
+  'North West',
+  'Western Cape'
 ]
 
 //Define rules

@@ -208,6 +208,11 @@ const router = createRouter({
       path: '/statisticView',
       name: 'statisticView',
       component: StatisticView
+    },
+    {
+      path: '/manageCompanies',
+      name: 'manageCompanies',
+      component: () => import('@/views/settings/ManageCompanies.vue')
     }
   ]
 })
