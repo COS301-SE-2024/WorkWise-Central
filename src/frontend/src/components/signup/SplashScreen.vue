@@ -14,7 +14,7 @@
     </v-app-bar>
     <!-- Main Content -->
     <v-main :theme="isdarkmode ? 'dark' : 'light'">
-      <v-row style="height: 1000px" no-gutters>
+      <v-row style="height: 1000px" >
         <!-- Left Half -->
 
         <v-col
@@ -732,15 +732,15 @@
           <div class="w-full h-full background-image"></div>
         </v-col>
       </v-row>
-      <v-footer :theme="isdarkmode ? 'dark' : 'light'" class="bg-background">
-        <!-- <v-container>
+      <!-- <v-footer :theme="isdarkmode ? 'dark' : 'light'" class="bg-background">
+         <v-container>
           <v-row justify="space-between">
             <v-col cols="12" md="6">
               <span class="h6">&copy; 2024 WorkWise Central</span>
             </v-col>
           </v-row>
-        </v-container> -->
-      </v-footer>
+        </v-container>
+      </v-footer> -->
     </v-main>
   </v-app>
 </template>
