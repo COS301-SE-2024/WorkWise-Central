@@ -164,7 +164,7 @@ export class EmployeeService {
   async findAllInCompany(
     companyId: Types.ObjectId,
     fieldsToPopulate?: string[],
-  ) {
+  ): Promise<(FlattenMaps<Employee> & { _id: Types.ObjectId })[]> {
     console.log('In findAllInCompany in services. companyId: ', companyId);
     let result;
     if (!(fieldsToPopulate && fieldsToPopulate.length === 0)) {
