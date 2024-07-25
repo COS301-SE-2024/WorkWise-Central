@@ -6,6 +6,7 @@ import { Client } from '../../client/entities/client.entity';
 import { Company } from '../../company/entities/company.entity';
 import { Employee } from '../../employee/entities/employee.entity';
 import { Team } from '../../team/entities/team.entity';
+import { JobTag } from './job-tag.entity';
 
 export class Address {
   //They are optional for flexibility
@@ -111,6 +112,11 @@ export class Task {
   assignedEmployees?: Types.ObjectId[] = [];
 }
 
+export class History {
+  event: string;
+  timestamp: Date;
+}
+
 export class Comment {
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Employee.name })
@@ -175,13 +181,30 @@ export class Job {
   })
   assignedEmployees?: AssignedEmployees = new AssignedEmployees();
 
-  /*  @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: true })
-  assignedEmployees: Types.ObjectId[];*/
-
   @ApiProperty()
   @Prop({ type: String, required: true, default: 'To do' })
   status: string = 'To do';
+
+  @ApiProperty()
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: false,
+    ref: JobTag.name,
+    default: [],
+  })
+  tags?: Types.ObjectId[];
+
+  @ApiProperty()
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: false,
+    ref: JobTag.name,
+  })
+  priorityTag?: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: String, required: false, default: null })
+  attachments: string[];
 
   @ApiProperty()
   @Prop({ type: Details, required: true })
@@ -202,6 +225,10 @@ export class Job {
   @ApiProperty()
   @Prop({ type: [Task], required: false, default: [] })
   taskList?: Task[] = [];
+
+  @ApiProperty()
+  @Prop({ type: [History], required: true, default: [] })
+  history: History[];
 
   @ApiProperty()
   @Prop({ type: [Comment], required: false, default: [] })
@@ -243,6 +270,15 @@ export class JobApiObject {
   status: string = 'To do';
 
   @ApiProperty()
+  tags?: Types.ObjectId[];
+
+  @ApiProperty()
+  priorityTag?: Types.ObjectId;
+
+  @ApiProperty()
+  attachments: string[];
+
+  @ApiProperty()
   details: Details;
 
   @ApiProperty()
@@ -253,6 +289,9 @@ export class JobApiObject {
 
   @ApiProperty()
   taskList?: Task[];
+
+  @ApiProperty()
+  history: History[];
 
   @ApiProperty()
   comments?: Comment[];
@@ -287,6 +326,15 @@ export class JobApiDetailedObject {
   status: string = 'To do';
 
   @ApiProperty()
+  tags?: Types.ObjectId[];
+
+  @ApiProperty()
+  priorityTag?: Types.ObjectId;
+
+  @ApiProperty()
+  attachments: string[];
+
+  @ApiProperty()
   details: Details;
 
   @ApiProperty()
@@ -308,6 +356,9 @@ export class JobApiDetailedObject {
     comment: string;
     date?: Date;
   }[];
+
+  @ApiProperty()
+  history: History[];
 
   @ApiProperty()
   public createdAt: Date;
