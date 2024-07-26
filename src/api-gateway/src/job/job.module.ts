@@ -21,6 +21,7 @@ import {
   JobTag,
   JobTagSchema,
 } from './entities/job-tag.entity';
+import { JobTagRepository } from './job-tag.repository';
 
 @Module({
   imports: [
@@ -41,12 +42,13 @@ import {
   providers: [
     JobService,
     JobRepository,
+    JobTagRepository,
     EmployeeService,
     EmployeeRepository,
     JwtService,
     FileService,
   ],
   controllers: [JobController],
-  exports: [JobService, MongooseModule, JobRepository],
+  exports: [JobService, MongooseModule, JobRepository, JobTagRepository],
 })
 export class JobModule {}

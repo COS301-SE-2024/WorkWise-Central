@@ -23,11 +23,16 @@ import {
   JobAssignGroupDto,
   jobAssignResultDto,
 } from './dto/assign-job.dto';
+import { JobTagRepository } from './job-tag.repository';
+import { CreatePriorityTagDto, CreateTagDto } from './dto/create-tag.dto';
+import { JobPriorityTag, JobTag } from './entities/job-tag.entity';
+import { DeleteTagDto } from './dto/edit-tag.dto';
 
 @Injectable()
 export class JobService {
   constructor(
     private readonly jobRepository: JobRepository,
+    private readonly jobTagRepository: JobTagRepository,
 
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
@@ -502,5 +507,67 @@ export class JobService {
       passed: pass,
       failed: total - pass,
     });
+  }
+
+  async getAllTagsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
+    const company = await this.companyService.companyIdExists(companyId);
+    if (!company) throw new NotFoundException('Company not found');
+    return this.jobTagRepository.findAllTagsInCompany(companyId);
+  }
+
+  async getAllPriorityTagsInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ) {
+    return this.jobTagRepository.findAllPriorityTagsInCompany(companyId);
+  }
+
+  async addJobTagToCompany(
+    userId: Types.ObjectId,
+    createTagDto: CreateTagDto,
+  ): Promise<boolean> {
+    const newTag = new JobTag(
+      createTagDto.label,
+      createTagDto.colour,
+      createTagDto.companyId,
+    );
+    const savedDoc = this.jobTagRepository.addJobTagToCompany(newTag);
+    console.log(savedDoc);
+    return savedDoc != null;
+  }
+
+  async addJobPriorityTagToCompany(
+    userId: Types.ObjectId,
+    createPriorityTagDto: CreatePriorityTagDto,
+  ): Promise<boolean> {
+    const newTag = new JobPriorityTag(
+      createPriorityTagDto.label,
+      createPriorityTagDto.priorityLevel,
+      createPriorityTagDto.colour,
+      createPriorityTagDto.companyId,
+    );
+    const savedDoc = this.jobTagRepository.addJobPriorityTagToCompany(newTag);
+    console.log(savedDoc);
+    return savedDoc != null;
+  }
+
+  async removeJobTagFromCompany(
+    userId: Types.ObjectId,
+    deleteTagDto: DeleteTagDto,
+  ) {
+    const deleteResult = await this.jobTagRepository.deleteJobTag(
+      deleteTagDto.tagId,
+    );
+    return deleteResult.acknowledged;
+  }
+
+  async removeJobPriorityTagFromCompany(
+    userId: Types.ObjectId,
+    deleteTagDto: DeleteTagDto,
+  ) {
+    const deleteResult = await this.jobTagRepository.deletePriorityTag(
+      deleteTagDto.tagId,
+    );
+    return deleteResult.acknowledged;
   }
 }
