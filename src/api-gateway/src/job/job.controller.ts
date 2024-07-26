@@ -378,6 +378,117 @@ export class JobController {
     }
   }
 
+  // tags
+  getAllTagsInCompany(
+    @Headers() headers: any,
+    @Param('cid') companyId: string,
+  ) {
+    try {
+      this.validateObjectId(companyId);
+      const userId: Types.ObjectId = this.extractUserId(headers);
+      return this.jobService.getAllTags(userId, new Types.ObjectId(companyId));
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException(`Job could not be updated`);
+    }
+  }
+
+  getAllPriorityTagsInCompany(
+    @Headers() headers: any,
+    @Param('cid') companyId: string,
+  ) {
+    try {
+      this.validateObjectId(companyId);
+      const userId: Types.ObjectId = this.extractUserId(headers);
+      return this.jobService.getAllPriorityTags(
+        userId,
+        new Types.ObjectId(companyId),
+      );
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException(`Job could not be updated`);
+    }
+  }
+
+  addJobTagToCompany(@Headers() headers: any, @Param('cid') companyId: string) {
+    try {
+      this.validateObjectId(companyId);
+      const userId: Types.ObjectId = this.extractUserId(headers);
+      return this.jobService.addJobTagToCompany(
+        userId,
+        new Types.ObjectId(companyId),
+      );
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException(`Job could not be updated`);
+    }
+  }
+
+  removeJobTagFromCompany(
+    @Headers() headers: any,
+    @Param('cid') companyId: string,
+  ) {
+    try {
+      this.validateObjectId(companyId);
+      const userId: Types.ObjectId = this.extractUserId(headers);
+      return this.jobService.addJobTagToCompany(
+        userId,
+        new Types.ObjectId(companyId),
+      );
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException(`Job could not be updated`);
+    }
+  }
+
+  addPriorityTagInCompany(
+    @Headers() headers: any,
+    @Param('cid') companyId: string,
+  ) {
+    try {
+      this.validateObjectId(companyId);
+      const userId: Types.ObjectId = this.extractUserId(headers);
+      return this.jobService.addPriorityTagToCompany(
+        userId,
+        new Types.ObjectId(companyId),
+      );
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException(`Job could not be updated`);
+    }
+  }
+
+  removePriorityTagFromCompany(
+    @Headers() headers: any,
+    @Param('cid') companyId: string,
+  ) {
+    try {
+      this.validateObjectId(companyId);
+      const userId: Types.ObjectId = this.extractUserId(headers);
+      return this.jobService.addPriorityTagToCompany(
+        userId,
+        new Types.ObjectId(companyId),
+      );
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException(`Job could not be updated`);
+    }
+  }
+
+  addAttachmentToJob(@Headers() headers: any, @Param('cid') companyId: string) {
+    try {
+      this.validateObjectId(companyId);
+      const userId: Types.ObjectId = this.extractUserId(headers);
+      return this.jobService.addPriorityTagToCompany(
+        userId,
+        new Types.ObjectId(companyId),
+      );
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException(`Job could not be updated`);
+    }
+  }
+
   public extractUserId(headers: any) {
     const authHeader: string = headers.authorization;
     const decodedJwtAccessToken = this.jwtService.decode(
