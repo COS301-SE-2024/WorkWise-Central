@@ -9,7 +9,7 @@
     <v-container class="d-flex flex-column align-center justify-center">
       <v-row>
         <v-col cols="12" md="3" class="text-center" sm="12" order-sm="1" order-md="0" order="1">
-          <userAvatar ref="UserAvatar"/>
+          <userAvatar ref="UserAvatar" />
         </v-col>
         <!-- Personal Information -->
         <v-col cols="12" md="5" order-sm="2" order-md="1" order="2">
@@ -184,7 +184,7 @@
         </v-col>
       </v-row>
     </v-container>
-    <Toast/>
+    <Toast />
   </v-container>
 </template>
 
@@ -406,4 +406,3 @@ const submitForm = async () => {
   }
 }
 </script>
-

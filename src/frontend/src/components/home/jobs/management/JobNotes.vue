@@ -43,17 +43,110 @@ import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 
+// Define types
+interface Note {
+  text: string
+}
+
+interface Job {
+  _id?: string
+  clientId?: string
+  clientUsername?: string
+  assignedBy?: string
+  assignedEmployees?: {
+    employeeIds?: string[]
+  }
+  status?: string
+  details?: {
+    heading?: string
+    description?: string
+    address?: {
+      street?: string
+      province?: string
+      suburb?: string
+      city?: string
+      postalCode?: string
+      complex?: string
+      houseNumber?: string
+    }
+    startDate?: string
+    endDate?: string
+  }
+  recordedDetails?: {
+    imagesTaken?: any[]
+    inventoryUsed?: any[]
+  }
+  taskList?: any[]
+  notes?: Note[]
+  createdAt?: string
+  updatedAt?: string
+}
+
+const props = defineProps<{ passedInJob: Job }>()
+
 // Toast for notifications
 const toast = useToast()
 
-// Define props with TypeScript
-const props = defineProps({
-  passedInJob: Object
-})
+// API URLs
+const localUrl: string = 'http://localhost:3000/'
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
+
+// Utility functions
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url)
+    return res.status < 300 && res.status > 199
+  } catch (error) {
+    return false
+  }
+}
+
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
+
+// Restructure job data
+const restructureJob = (job: Job): Job => {
+  console.log(job)
+  return {
+    _id: job._id || '',
+    clientId: job.clientId || '',
+    clientUsername: job.clientUsername || '',
+    assignedBy: job.assignedBy || '',
+    assignedEmployees: {
+      employeeIds: job.assignedEmployees?.employeeIds || []
+    },
+    status: job.status || '',
+    details: {
+      heading: job.details?.heading || '',
+      description: job.details?.description || '',
+      address: {
+        street: job.details?.address?.street || '',
+        province: job.details?.address?.province || '',
+        suburb: job.details?.address?.suburb || '',
+        city: job.details?.address?.city || '',
+        postalCode: job.details?.address?.postalCode || '',
+        complex: job.details?.address?.complex || '',
+        houseNumber: job.details?.address?.houseNumber || ''
+      },
+      startDate: job.details?.startDate || '',
+      endDate: job.details?.endDate || ''
+    },
+    recordedDetails: {
+      imagesTaken: job.recordedDetails?.imagesTaken || [],
+      inventoryUsed: job.recordedDetails?.inventoryUsed || []
+    },
+    taskList: job.taskList || [],
+    notes: job.notes || [],
+    createdAt: job.createdAt || '',
+    updatedAt: job.updatedAt || ''
+  }
+}
 
 // Initial notes and new note
 const notes = ref<{ text: string }[]>(
-  props.passedInJob?.notes?.map((note) => ({ text: note.text })) || []
+    (props.passedInJob?.notes || []).map((note: Note) => ({ text: note.text }))
 )
 const newNote = ref('')
 
@@ -76,59 +169,6 @@ const showJobNoteError = () => {
   })
 }
 
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
-
-// Restructure job data
-const restructureJob = (job: any) => {
-  console.log(job)
-  return {
-    _id: job?._id || '',
-    clientId: job?.clientId || '',
-    clientUsername: job?.clientUsername || '',
-    assignedBy: job?.assignedBy || '',
-    assignedEmployees: {
-      employeeIds: job?.assignedEmployees?.employeeIds || []
-    },
-    status: job?.status || '',
-    details: {
-      heading: job?.details?.heading || '',
-      description: job?.details?.description || '',
-      address: {
-        street: job?.details?.address?.street || '',
-        province: job?.details?.address?.province || '',
-        suburb: job?.details?.address?.suburb || '',
-        city: job?.details?.address?.city || '',
-        postalCode: job?.details?.address?.postalCode || '',
-        complex: job?.details?.address?.complex || '',
-        houseNumber: job?.details?.address?.houseNumber || ''
-      },
-      startDate: job?.details?.startDate || '',
-      endDate: job?.details?.endDate || ''
-    },
-    recordedDetails: {
-      imagesTaken: job?.recordedDetails?.imagesTaken || [],
-      inventoryUsed: job?.recordedDetails?.inventoryUsed || []
-    },
-    taskList: job?.taskList || [],
-    notes: job?.notes || [],
-    createdAt: job?.createdAt || '',
-    updatedAt: job?.updatedAt || ''
-  }
-}
-
 // Add a note
 const addNote = async () => {
   if (newNote.value.trim() !== '') {
@@ -141,9 +181,7 @@ const addNote = async () => {
     const apiUrl = await getRequestUrl()
 
     try {
-      console.log(props.passedInJob)
       const job = restructureJob(props.passedInJob)
-      console.log(job)
       const currentNotes = job.notes || []
 
       // Create the new note object
@@ -162,9 +200,7 @@ const addNote = async () => {
       }
 
       // Make the PATCH request to update the job
-      console.log(updatedJob)
       const response = await axios.patch(`${apiUrl}job/${job._id}`, updatedJob, config)
-      console.log(response.data)
 
       if (response.status < 300 && response.status > 199) {
         showJobNoteSuccess()
@@ -183,7 +219,7 @@ const addNote = async () => {
 // Delete a note
 const deleteNote = async (index: number) => {
   const job = restructureJob(props.passedInJob)
-  const updatedNotes = job.notes.filter((_, i) => i !== index)
+  const updatedNotes = (job.notes || []).filter((_, i: number) => i !== index)
 
   const updatedJob = {
     ...job,
@@ -211,10 +247,7 @@ const deleteNote = async (index: number) => {
     showJobNoteError()
   }
 }
-
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
 </script>
+
 
 <style></style>

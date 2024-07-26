@@ -325,7 +325,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, Ref } from 'vue'
+import { onMounted, ref} from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 import AttachImages from './AttachImages.vue'

@@ -56,7 +56,6 @@ const getProfileImage = async () => {
 
     displayName.value = data.profile.displayName || ''
     avatarSrc.value = data.profile.displayImage || avatarImage
-
   } catch (error) {
     console.error('Error fetching user data:', error)
   }
@@ -99,7 +98,6 @@ const updateProfileImage = async () => {
       displayName: displayName.value,
       displayImage: avatarSrc.value
     }
-
   }
 
   try {
@@ -117,7 +115,6 @@ onMounted(() => {
 //   window.addEventListener('UploadImage', updateProfileImage)
 // })
 </script>
-
 
 <style scoped>
 .avatar-upload {

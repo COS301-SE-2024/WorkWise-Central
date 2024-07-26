@@ -77,24 +77,32 @@
 <script setup lang="ts">
 import { defineProps, ref, computed } from 'vue'
 
+// Define the interface for the passedInJob prop
+interface Job {
+  startDate?: Date | null;
+  endDate?: Date | null;
+  comments?: Array<{ comment: string }>;
+}
+
 interface Props {
-  passedInJob: {
-    type: Object
-  }
+  passedInJob: Job
 }
 
 const props = defineProps<Props>()
 
 const dueDateDialog = ref(false)
 const currentDate = ref<Date | null>(null)
-const startDate = ref<Date | null>(props.passedInJob.startDate)
-const endDate = ref<Date | null>(props.passedInJob.endDate)
+const startDate = ref<Date | null>(props.passedInJob.startDate || null)
+const endDate = ref<Date | null>(props.passedInJob.endDate || null)
 const isStartDatePicked = ref(false)
 const isEndDatePicked = ref(false)
 const errorMessage = ref<string | null>('')
 
-const updateDates = (value: Date) => {
-  setDates(value)
+// Update the dates with correct type handling
+const updateDates = (value: Date | null) => {
+  if (value) {
+    setDates(value)
+  }
 }
 
 const setDates = (value: Date) => {
@@ -105,6 +113,7 @@ const setDates = (value: Date) => {
     }
     errorMessage.value = null
     startDate.value = value
+    // Ensure that startDate is set on the props object safely
     props.passedInJob.startDate = value
     isStartDatePicked.value = true
     currentDate.value = null
@@ -115,6 +124,7 @@ const setDates = (value: Date) => {
     }
     errorMessage.value = null
     endDate.value = value
+    // Ensure that endDate is set on the props object safely
     props.passedInJob.endDate = value
     isEndDatePicked.value = true
     currentDate.value = null
@@ -164,6 +174,7 @@ const removeDates = () => {
   isEndDatePicked.value = false
 }
 </script>
+
 
 <style scoped>
 /* Add your styles here */

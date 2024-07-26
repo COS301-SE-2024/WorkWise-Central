@@ -26,12 +26,16 @@
           <v-divider class="my-3"></v-divider>
 
           <router-link to="/manageCompanies" class="text-decoration-none">
-            <v-btn variant="text" width="100%"> <i class="fas fa-building"></i> Manage Companies </v-btn>
+            <v-btn variant="text" width="100%">
+              <i class="fas fa-building"></i> Manage Companies
+            </v-btn>
           </router-link>
 
           <v-divider class="my-3"></v-divider>
 
-          <v-btn variant="text" @click="logout" width="100%"> <i class="fas fa-sign-out-alt"></i> Logout </v-btn>
+          <v-btn variant="text" @click="logout" width="100%">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </v-btn>
         </div>
       </v-card-text>
     </v-card>
@@ -42,7 +46,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import avatarImage from "@/assets/images/profile/avatar.jpg";
+import avatarImage from '@/assets/images/profile/avatar.jpg'
 
 const firstName = ref('')
 const lastName = ref('')

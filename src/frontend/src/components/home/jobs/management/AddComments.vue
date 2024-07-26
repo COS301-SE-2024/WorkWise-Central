@@ -47,13 +47,50 @@ import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 
+// Define types
+interface Comment {
+  comment: string
+}
+
+interface Job {
+  _id?: string
+  clientId?: string
+  clientUsername?: string
+  assignedBy?: string
+  assignedEmployees?: {
+    employeeIds?: string[]
+  }
+  status?: string
+  details?: {
+    heading?: string
+    description?: string
+    address?: {
+      street?: string
+      province?: string
+      suburb?: string
+      city?: string
+      postalCode?: string
+      complex?: string
+      houseNumber?: string
+    }
+    startDate?: string
+    endDate?: string
+  }
+  recordedDetails?: {
+    imagesTaken?: any[]
+    inventoryUsed?: any[]
+  }
+  taskList?: any[]
+  comments?: Comment[]
+  createdAt?: string
+  updatedAt?: string
+}
+
+const props = defineProps<{ passedInJob: Job }>()
+
 // Toast for notifications
 const toast = useToast()
 
-// Define props with TypeScript
-const props = defineProps({
-  passedInJob: Object
-})
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
 const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
@@ -82,7 +119,7 @@ const user = {
 
 // Comments and new comment
 const comments = ref<{ text: string }[]>(
-  props.passedInJob.comments.map((comment) => ({ text: comment.comment }))
+    (props.passedInJob.comments || []).map((comment) => ({ text: comment.comment }))
 )
 const newComment = ref('')
 
@@ -105,40 +142,40 @@ const showJobCommentError = () => {
   })
 }
 
-const restructureJob = (job: any) => {
+const restructureJob = (job: Job): Job => {
   console.log(job)
   return {
-    _id: job?._id || '', // Safe access with optional chaining
-    clientId: job?.clientId || '', // Assume clientId is a string; adjust if it's an object
-    clientUsername: job?.clientUsername || '',
-    assignedBy: job?.assignedBy || '',
+    _id: job._id || '', // Safe access with optional chaining
+    clientId: job.clientId || '', // Assume clientId is a string; adjust if it's an object
+    clientUsername: job.clientUsername || '',
+    assignedBy: job.assignedBy || '',
     assignedEmployees: {
-      employeeIds: job?.assignedEmployees?.employeeIds || [] // Ensure it's an array
+      employeeIds: job.assignedEmployees?.employeeIds || [] // Ensure it's an array
     },
-    status: job?.status || '',
+    status: job.status || '',
     details: {
-      heading: job?.details?.heading || '',
-      description: job?.details?.description || '',
+      heading: job.details?.heading || '',
+      description: job.details?.description || '',
       address: {
-        street: job?.details?.address?.street || '',
-        province: job?.details?.address?.province || '',
-        suburb: job?.details?.address?.suburb || '',
-        city: job?.details?.address?.city || '',
-        postalCode: job?.details?.address?.postalCode || '',
-        complex: job?.details?.address?.complex || '',
-        houseNumber: job?.details?.address?.houseNumber || ''
+        street: job.details?.address?.street || '',
+        province: job.details?.address?.province || '',
+        suburb: job.details?.address?.suburb || '',
+        city: job.details?.address?.city || '',
+        postalCode: job.details?.address?.postalCode || '',
+        complex: job.details?.address?.complex || '',
+        houseNumber: job.details?.address?.houseNumber || ''
       },
-      startDate: job?.details?.startDate || '',
-      endDate: job?.details?.endDate || ''
+      startDate: job.details?.startDate || '',
+      endDate: job.details?.endDate || ''
     },
     recordedDetails: {
-      imagesTaken: job?.recordedDetails?.imagesTaken || [],
-      inventoryUsed: job?.recordedDetails?.inventoryUsed || []
+      imagesTaken: job.recordedDetails?.imagesTaken || [],
+      inventoryUsed: job.recordedDetails?.inventoryUsed || []
     },
-    taskList: job?.taskList || [],
-    comments: job?.comments || [],
-    createdAt: job?.createdAt || '',
-    updatedAt: job?.updatedAt || ''
+    taskList: job.taskList || [],
+    comments: job.comments || [],
+    createdAt: job.createdAt || '',
+    updatedAt: job.updatedAt || ''
   }
 }
 
@@ -154,9 +191,7 @@ const comment = async () => {
     const apiUrl = await getRequestUrl()
 
     try {
-      console.log(props.passedInJob)
       const job = restructureJob(props.passedInJob)
-      console.log(job)
       const currentComments = job.comments || []
 
       // Create the new comment object
@@ -176,9 +211,7 @@ const comment = async () => {
       }
 
       // Make the PATCH request to update the job
-      console.log(updatedJob)
       const response = await axios.patch(`${apiUrl}job/${job._id}`, updatedJob, config)
-      console.log(response.data)
 
       if (response.status < 300 && response.status > 199) {
         showJobCommentSuccess()
@@ -197,7 +230,7 @@ const comment = async () => {
 // Delete a comment
 const deleteComment = async (index: number) => {
   const job = restructureJob(props.passedInJob)
-  const updatedComments = job.comments.filter((_, i) => i !== index)
+  const updatedComments = job.comments?.filter((_, i) => i !== index) || []
   updatedComments.splice(index, 1)
 
   const updatedJob = {
@@ -228,4 +261,3 @@ const deleteComment = async (index: number) => {
 }
 </script>
 
-<style></style>
