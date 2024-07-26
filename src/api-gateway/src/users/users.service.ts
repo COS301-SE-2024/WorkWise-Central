@@ -153,6 +153,7 @@ export class UsersService {
     userId: Types.ObjectId,
     joinedCompany: JoinedCompany,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
+    console.log('Service_AddJoinedCompany', joinedCompany);
     const user = await this.getUserById(userId);
     if (user == null) throw new NotFoundException('User not found');
 
