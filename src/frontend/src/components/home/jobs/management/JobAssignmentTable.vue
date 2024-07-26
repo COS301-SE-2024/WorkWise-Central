@@ -211,8 +211,9 @@
                 </v-col>
               </v-col>
               <v-col class="pt-0">
-                <v-btn color="error" width="100%" @click="viewJobDialog = false">Close<v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon
-                  ></v-btn>
+                <v-btn color="error" width="100%" @click="viewJobDialog = false"
+                  >Close<v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon
+                ></v-btn>
               </v-col>
             </v-card>
           </v-dialog>

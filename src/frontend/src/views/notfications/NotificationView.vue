@@ -8,8 +8,7 @@ import NotificationsPage from '@/components/home/notifications/NotificationsPage
 export default defineComponent({
   name: 'NotificationView',
   components: {
-    NavigationBar,
-    NotificationsPage
+    NavigationBar
   },
   computed: {
     NotificationsPage() {

@@ -444,10 +444,18 @@
                   </v-radio-group>
                 </v-card-text>
                 <v-card-actions class="d-flex flex-column">
-                  <v-btn @click="saveStatus" color="success"> Save<v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon
-                    > </v-btn>
-                  <v-btn @click="statusDialog = false" color="error"> Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon
-                    > </v-btn>
+                  <v-btn @click="saveStatus" color="success">
+                    Save<v-icon
+                      icon="fa:fa-solid fa-floppy-disk"
+                      end
+                      color="success"
+                      size="small"
+                    ></v-icon>
+                  </v-btn>
+                  <v-btn @click="statusDialog = false" color="error">
+                    Cancel
+                    <v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon>
+                  </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -513,23 +521,48 @@
                   </v-container>
                 </v-card-text>
                 <v-card-actions class="d-flex flex-column pt-0">
-                  <v-btn @click="saveDate" color="success">Save<v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon
-                    > </v-btn>
+                  <v-btn @click="saveDate" color="success"
+                    >Save<v-icon
+                      icon="fa:fa-solid fa-floppy-disk"
+                      end
+                      color="success"
+                      size="small"
+                    ></v-icon>
+                  </v-btn>
 
-                  <v-btn @click="removeDates" color="warning">Remove<v-icon icon="fa:fa-solid fa-trash" end color="warning" size="small"></v-icon
-                    ></v-btn>
-                  <v-btn @click="dueDateDialog = false" color="error">Cancel<v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon
-                    ></v-btn>
+                  <v-btn @click="removeDates" color="warning"
+                    >Remove<v-icon
+                      icon="fa:fa-solid fa-trash"
+                      end
+                      color="warning"
+                      size="small"
+                    ></v-icon
+                  ></v-btn>
+                  <v-btn @click="dueDateDialog = false" color="error"
+                    >Cancel<v-icon
+                      icon="fa:fa-solid fa-cancel"
+                      end
+                      color="error"
+                      size="small"
+                    ></v-icon
+                  ></v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
           </div>
           <v-card-actions class="d-flex flex-column">
             <Toast />
-            <v-btn class="mb-2" @click="saveJob" color="success">Save<v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon
-              ></v-btn>
-            <v-btn class="mb-4" @click="cancelJob" color="error">Cancel<v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon
-              ></v-btn>
+            <v-btn class="mb-2" @click="saveJob" color="success"
+              >Save<v-icon
+                icon="fa:fa-solid fa-floppy-disk"
+                end
+                color="success"
+                size="small"
+              ></v-icon
+            ></v-btn>
+            <v-btn class="mb-4" @click="cancelJob" color="error"
+              >Cancel<v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon
+            ></v-btn>
           </v-card-actions>
         </v-card>
       </v-col>

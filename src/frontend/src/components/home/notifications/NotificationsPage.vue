@@ -65,7 +65,7 @@
                     <span>{{ notification.title }}</span>
                     <br />
                     {{ notification.message }}
-                    <v-btn @click="handleAction(notification.action)" color="primary" text
+                    <v-btn @click="handleAction(notification.action)" color="primary"
                       ><v-icon color="primary">mdi-dots-horizontal</v-icon></v-btn
                     >
                   </v-card-text>

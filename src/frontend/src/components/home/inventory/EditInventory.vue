@@ -4,12 +4,13 @@
     max-height="800"
     max-width="600"
     scrollable
+    color="warning"
     :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
-        >Edit</v-btn
-      >
+        >Edit<v-icon icon="fa:fa-solid fa-pencil" end color="warning " size="small"></v-icon
+      ></v-btn>
     </template>
     <v-card>
       <v-card-title>
@@ -76,7 +77,7 @@
         <v-btn @click="close" color="error"
           >Cancel<v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon
         ></v-btn>
-        <v-btn @click="createInventoryItem" color="success" :disabled="!allRulesPass"
+        <v-btn @click="createInventoryItem" color="success" :disabled="!valid"
           >Save<v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon
         ></v-btn>
       </v-card-actions>
@@ -119,15 +120,19 @@ export default {
       descriptionRules: [(v) => !!v || 'Description is required'],
       costPriceRules: [
         (v) => !!v || 'Cost Price is required',
-        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Cost Price must be a valid number'
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Cost Price must be a valid number',
+        (v) => parseFloat(v) > 0 || 'Cost Price must be greater than 0',
+        (v) => !/^0\d/.test(v) || 'Cost Price cannot have leading zeros'
       ],
       currentStockLevelRules: [
         (v) => !!v || 'Current Stock Level is required',
-        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Current Stock Level must be a valid number'
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Current Stock Level must be a valid number',
+        (v) => !/^0\d/.test(v) || 'Current Stock Level cannot have leading zeros'
       ],
       reorderLevelRules: [
         (v) => !!v || 'Reorder Level is required',
-        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Reorder Level must be a valid number'
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Reorder Level must be a valid number',
+        (v) => !/^0\d/.test(v) || 'Reorder Level cannot have leading zeros'
       ]
     }
   },
@@ -174,30 +179,24 @@ export default {
         const response = await axios.patch(`${apiURL}inventory/${this.inventory_id}`, data, config)
         console.log(response)
         this.addDialog = false
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Inventory Added',
-          life: 3000
-        })
+        alert('Inventory updated')
       } catch (error) {
         console.error(error)
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to add inventory',
-          life: 3000
-        })
+        alert('Failed to update inventory')
       }
     },
     allRulesPass() {
-      return (
+      if (
         this.nameRules.every((rule) => rule(this.localEditedItem.name)) &&
         this.descriptionRules.every((rule) => rule(this.localEditedItem.description)) &&
         this.costPriceRules.every((rule) => rule(this.localEditedItem.costPrice)) &&
         this.currentStockLevelRules.every((rule) => rule(this.localEditedItem.currentStockLevel)) &&
         this.reorderLevelRules.every((rule) => rule(this.localEditedItem.reorderLevel))
-      )
+      ) {
+        this.valid = true
+      } else {
+        this.valid = false
+      }
     },
     convertToNumber(value) {
       return parseFloat(value)

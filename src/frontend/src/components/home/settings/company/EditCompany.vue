@@ -81,7 +81,7 @@
       <v-card-actions class="bg-cardColor">
         <v-col align="center">
           <Toast position="top-center" />
-          <v-btn color="success" @click="updateCompanyDetails" :disabled="!rulesPassed">
+          <v-btn color="success" @click="updateCompanyDetails" :disabled="valid">
             Save
           </v-btn></v-col
         >
@@ -110,6 +110,7 @@ export default defineComponent({
     localUrl: 'http://localhost:3000',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     currentCompanyID: localStorage.getItem('currentCompany'),
+    valid: false,
     company: {
       name: '',
       type: '',
@@ -284,7 +285,7 @@ export default defineComponent({
       const apiURL = await this.getRequestUrl()
       const company_id = localStorage.getItem('currentCompany')
       await axios
-        .patch(`http://localhost:3000/company/${company_id}`, this.company, config)
+        .patch(`http://localhost:3000/company/update/${company_id}`, this.company, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -318,14 +319,18 @@ export default defineComponent({
     },
     toast() {},
     rulesPassed() {
-      return (
+      if (
         this.nameRules &&
         this.phone_number_rules &&
         this.emailRules &&
         this.postalCodeRules &&
         this.vatNumberRules &&
         this.company_registration_number_rules
-      )
+      ) {
+        this.valid = true
+      } else {
+        this.valid = false
+      }
     }
   },
   mounted() {

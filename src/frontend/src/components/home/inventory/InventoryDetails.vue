@@ -1,9 +1,9 @@
 <template>
   <v-dialog v-model="dialog" max-width="600" :theme="isdarkmode === true ? 'dark' : 'light'">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
-        >View</v-btn
-      >
+      <v-btn class="text-none font-weight-regular hello" color="success" v-bind="activatorProps"
+        >View<v-icon icon="fa:fa-solid fa-eye" end color="success" size="small"></v-icon
+      ></v-btn>
     </template>
     <v-card>
       <v-card-title>

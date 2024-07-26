@@ -14,7 +14,7 @@
     </v-app-bar>
     <!-- Main Content -->
     <v-main :theme="isdarkmode ? 'dark' : 'light'">
-      <v-row style="height: 1000px" >
+      <v-row style="height: 1000px">
         <!-- Left Half -->
 
         <v-col
@@ -240,7 +240,7 @@
                           ><v-text-field
                             :theme="isdarkmode ? 'dark' : 'light'"
                             :label="confirm_password ? '' : 'Confirm your password'"
-                            :type="showPassword ? 'text' : 'confirm_password'"
+                            :type="showPassword ? 'text' : 'password'"
                             :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                             @click:append="toggleShowPassword"
                             name="confirm_password"
@@ -594,7 +594,7 @@
                       <v-row
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">City</label
-                          ><v-select
+                          ><v-text-field
                             :label="city ? '' : 'Select your city'"
                             type="input"
                             v-model="city"
@@ -602,9 +602,8 @@
                             :rules="cityRules"
                             rounded="md"
                             variant="solo"
-                            :items="cityList"
                             required
-                          ></v-select></v-col
+                          ></v-text-field></v-col
                       ></v-row>
                       <v-row
                         ><v-col
@@ -1070,7 +1069,7 @@ export default defineComponent({
       await axios
         .post(apiURL + 'users/create', {
           username: this.username,
-          password: this.password,
+          password: this.signupPassword,
           personalInfo: {
             firstName: this.name,
             surname: this.surname,

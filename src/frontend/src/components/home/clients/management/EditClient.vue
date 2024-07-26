@@ -128,8 +128,15 @@
             order-md="last"
             order-sm="last"
           >
-          <Toast position="top-center" />
-            <v-btn color="success" width="85%" height="35" variant="text" @click="update">
+            <Toast position="top-center" />
+            <v-btn
+              color="success"
+              width="85%"
+              height="35"
+              variant="text"
+              @click="update"
+              :disabled="!valid"
+            >
               Save
               <v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon>
             </v-btn>
@@ -268,6 +275,18 @@ export default {
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    allRulesPass() {
+      if (
+        this.nameRules.every((rule) => rule(this.localEditedItem.firstName)) &&
+        this.surnameRules.every((rule) => rule(this.localEditedItem.surname)) &&
+        this.emailRules.every((rule) => rule(this.localEditedItem.contactInfo.email)) &&
+        this.phoneRules.every((rule) => rule(this.localEditedItem.contactInfo.phoneNumber))
+      ) {
+        this.valid = true
+      } else {
+        this.valid = false
+      }
     }
   }
 }

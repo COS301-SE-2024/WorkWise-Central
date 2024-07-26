@@ -21,7 +21,6 @@
 </template>
 
 <script lang="ts">
-
 import Toast from 'primevue/toast'
 
 import { reactive } from 'vue'
@@ -31,13 +30,13 @@ export default {
   data() {
     return {
       nodes: {
-        node1: { name: 'N1' },
-        node2: { name: 'N2' },
-        node3: { name: 'N3' },
-        node4: { name: 'N4' },
-        node5: { name: 'N5' },
-        node6: { name: 'N6' },
-        node7: { name: 'N7' }
+        node1: { name: 'Joe' },
+        node2: { name: 'Alice' },
+        node3: { name: 'Bob' },
+        node4: { name: 'Carol' },
+        node5: { name: 'Dave' },
+        node6: { name: 'Eve' },
+        node7: { name: 'Frank' }
       },
       edges: {
         edge1: { source: 'node1', target: 'node2' },
@@ -53,7 +52,6 @@ export default {
     }
   },
   components: {
-    
     Toast
   },
   methods: {

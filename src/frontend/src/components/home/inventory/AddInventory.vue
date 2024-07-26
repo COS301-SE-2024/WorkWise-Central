@@ -88,7 +88,7 @@
         <v-btn @click="close" color="error"
           >Cancel <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon
         ></v-btn>
-        <v-btn @click="createInventoryItem" color="success" :disabled="!allRulesPass"
+        <v-btn @click="createInventoryItem" color="success" :disabled="!valid"
           >Create<v-icon icon="fa:fa-solid fa-plus" color="success" size="small" end></v-icon
         ></v-btn>
       </v-card-actions>
@@ -124,16 +124,20 @@ export default defineComponent({
     descriptionRules: [(v: string) => !!v || 'Description is required'],
     costPriceRules: [
       (v: string) => !!v || 'Cost Price is required',
-      (v: string) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Cost Price must be a valid number'
+      (v: string) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Cost Price must be a valid number',
+      (v: string) => parseFloat(v) > 0 || 'Cost Price must be greater than 0',
+      (v: string) => !/^0\d/.test(v) || 'Cost Price cannot have leading zeros'
     ],
     currentStockLevelRules: [
       (v: string) => !!v || 'Current Stock Level is required',
       (v: string) =>
-        /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Current Stock Level must be a valid number'
+        /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Current Stock Level must be a valid number',
+      (v: string) => !/^0\d/.test(v) || 'Current Stock Level cannot have leading zeros'
     ],
     reorderLevelRules: [
       (v: string) => !!v || 'Reorder Level is required',
-      (v: string) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Reorder Level must be a valid number'
+      (v: string) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Reorder Level must be a valid number',
+      (v: string) => !/^0\d/.test(v) || 'Reorder Level cannot have leading zeros'
     ]
   }),
   methods: {
@@ -160,21 +164,13 @@ export default defineComponent({
       try {
         const response = await axios.post(`${apiURL}inventory/create`, data, config)
         console.log(response)
-        this.addDialog = false
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Inventory Added',
-          life: 3000
-        })
+        alert('Inventory added')
       } catch (error) {
         console.error(error)
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to add inventory',
-          life: 3000
-        })
+        alert('Inventory not added')
+      } finally {
+        this.addDialog = false
+        window.location.reload()
       }
     },
     convertToNumber(value: string) {
@@ -201,13 +197,17 @@ export default defineComponent({
       return localAvailable ? this.localUrl : this.remoteUrl
     },
     allRulesPass() {
-      return (
+      if (
         this.nameRules.every((rule) => rule(this.name)) &&
         this.descriptionRules.every((rule) => rule(this.description)) &&
         this.costPriceRules.every((rule) => rule(this.costPrice)) &&
         this.currentStockLevelRules.every((rule) => rule(this.currentStockLevel)) &&
         this.reorderLevelRules.every((rule) => rule(this.reorderLevel))
-      )
+      ) {
+        this.valid = true
+      } else {
+        this.valid = false
+      }
     }
   }
 })
