@@ -38,21 +38,86 @@
   </v-menu>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
+import avatarImage from "@/assets/images/profile/avatar.jpg";
 
-const user = {
-  initials: 'JD',
-  fullName: 'John Doe',
-  email: 'john.doe@doe.com'
+const firstName = ref('')
+const lastName = ref('')
+
+const makeInitials = (firstName: string, lastName: string) => {
+  if (!firstName || !lastName) return ''
+  return `${firstName[0]}${lastName[0]}`.toUpperCase()
+}
+
+const user = ref({
+  initials: '',
+  fullName: '',
+  email: localStorage.getItem('email')
+})
+
+const updateUser = () => {
+  user.value.initials = makeInitials(firstName.value, lastName.value)
+  user.value.fullName = `${firstName.value} ${lastName.value}`
 }
 
 const router = useRouter()
 
+// API URLs
+const localUrl: string = 'http://localhost:3000/'
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
+
+// Utility functions
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url)
+    return res.status < 300 && res.status > 199
+  } catch (error) {
+    return false
+  }
+}
+
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
+
+const getUserData = async () => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+  const apiUrl = await getRequestUrl()
+  const userId = localStorage.getItem('id')
+
+  try {
+    const response = await axios.get(`${apiUrl}users/id/${userId}`, config)
+    const data = response.data.data
+
+    firstName.value = data.personalInfo.firstName
+    lastName.value = data.personalInfo.surname
+
+    updateUser()
+  } catch (error) {
+    console.error('Error fetching user data:', error)
+  }
+}
+
 const logout = () => {
   // Perform logout logic, then redirect to login page
+  localStorage.removeItem('access_token')
+  localStorage.removeItem('id')
+  localStorage.removeItem('email')
   router.push('/')
 }
+
+onMounted(() => {
+  getUserData()
+})
 </script>
 
 <style></style>
