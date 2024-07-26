@@ -19,7 +19,7 @@
       <v-form @submit.prevent="validateEdits">
         <v-card-title class="text-center">Edit Employee</v-card-title>
         <v-divider></v-divider>
-        <v-card-text>
+        <v-card-item>
           <v-row
             ><v-col>
               <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -80,7 +80,7 @@
                 variant="solo"
               ></v-select> </v-col
           ></v-row>
-        </v-card-text>
+        </v-card-item>
         <v-card-actions>
           <v-col align-self="center"
             ><v-col cols="12" md="12" xs="3" sm="6" offset="1">

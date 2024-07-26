@@ -210,6 +210,8 @@
                 width="100%"
                 placeholder="Company Logo"
                 @change="handleImageUpload"
+                hint="Image size limit of  5MB"
+                persistent-hint
                 color="black"
                 rounded="md"
               ></v-file-input>
