@@ -1,9 +1,9 @@
 <template>
   <v-dialog v-model="dialog" max-width="600" :theme="isdarkmode === true ? 'dark' : 'light'">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
-        >View</v-btn
-      >
+      <v-btn class="text-none font-weight-regular hello" color="success" v-bind="activatorProps"
+        >View<v-icon icon="fa:fa-solid fa-eye" end color="success" size="small"></v-icon
+      ></v-btn>
     </template>
     <v-card>
       <v-card-title>
@@ -13,7 +13,7 @@
       <v-card-text>
         <v-row>
           <v-col cols="4">
-            <label class="font-weight-light" style="font-size: 20px"> Name</label
+            <label class="font-weight-light" style="font-size: 20px"> Product Name</label
             ><v-spacer></v-spacer
             ><small class="text-caption" style="font-size: 12px">{{ inventoryItem.name }}</small>
           </v-col>
@@ -70,8 +70,16 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <Toast />
-        <v-btn label="Close" color="secondary" text @click="close">Close</v-btn>
+        <Toast position="top-center" />
+        <v-col cols="12">
+          <v-btn label="Close" color="secondary" text @click="close"
+            >Close<v-icon
+              icon="fa:fa-solid fa-cancel"
+              end
+              color="secondary"
+              size="small"
+            ></v-icon></v-btn
+        ></v-col>
       </v-card-actions>
     </v-card>
   </v-dialog>

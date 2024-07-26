@@ -13,17 +13,17 @@
         width="100%"
       >
         <v-row align="center" justify="space-between">
-          <v-col cols="12" md="4" sm="6" xs="4" class="d-flex justify-start align-center">
+          <v-col cols="12" lg="4" md="4" sm="4" class="d-flex justify-start align-center">
             <v-icon icon="mdi-account"></v-icon>
             <v-label
-              class="ms-2 h4 font-family-Nunito text-headingTextColor"
+              class="ms-2 h2 font-family-Nunito text-headingTextColor"
               height="auto"
               width="auto"
               >Client Details</v-label
             >
           </v-col>
 
-          <v-col cols="12" md="4" sm="6" xs="4" class="d-flex justify-center">
+          <v-col cols="12" lg="4" md="4" sm="4" class="d-flex justify-center">
             <v-text-field
               v-model="search"
               density="compact"
@@ -31,6 +31,7 @@
               prepend-inner-icon="mdi-magnify"
               variant="outlined"
               flat
+              color="primary"
               width="80%"
               style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
               hide-details
@@ -38,7 +39,7 @@
             ></v-text-field>
           </v-col>
 
-          <v-col cols="12" md="4" sm="12" xs="4" :class="{ 'justify-end': !isSmallScreen }">
+          <v-col cols="12" lg="4" md="4" sm="4" :class="{ 'd-flex justify-end': !isSmallScreen }">
             <AddClient />
           </v-col>
         </v-row>
@@ -46,7 +47,7 @@
 
       <v-card-text>
         <v-divider></v-divider>
-        <v-col cols="12" xs="12" sm="12" md="12">
+        <v-col cols="12">
           <div style="height: auto; overflow-y: auto">
             <v-data-table
               :headers="headers"
@@ -57,7 +58,7 @@
               rounded="xl"
               class="bg-cardColor"
               :row-props="getRowProps"
-              :header-props="getHeaderProps"
+              :header-props="{ class: 'bg-cardColor h6' }"
             >
               <template #[`item.firstName`]="{ value }">
                 <v-chip variant="text">
@@ -103,36 +104,34 @@
       </v-card-text>
     </v-card>
 
-    <v-dialog v-model="actionsDialog" max-width="500px">
-      <v-card>
-        <v-card-title class="text-h5 font-weight-regular bg-primary text-center">
-          {{ selectedItemName + ' ' + selectedItemSurname }}
-        </v-card-title>
-        <v-card-text> What would you like to do with this client? </v-card-text>
-        <v-card-actions>
-          <v-btn @click="actionsDialog = false" color="primary"
-            >Close<v-icon
-              icon="fa:fa-solid fa-cancel"
-              end
-              color="primary"
-              size="small"
-            ></v-icon></v-btn
-          ><v-spacer></v-spacer>
-          <ClientDetails :colors="colors" :ClientDetails="selectedItem" />
+    <v-menu v-model="actionsDialog" max-width="500px">
+      <v-list>
+        <v-list-item>
+          <v-list-item-content class="text-h5 font-weight-regular">
+            {{ selectedItemName + ' ' + selectedItemSurname }}
+          </v-list-item-content></v-list-item
+        >
 
-          <EditClient
+        <v-list-item-content> What would you like to do with this client? </v-list-item-content>
+
+        <v-list-item><ClientDetails :colors="colors" :clientDetails="selectedItem" /></v-list-item>
+
+        <v-list-item
+          ><EditClient
             @update:item="selectedItem = $event"
             :editedItem="selectedItem"
             :_clientID="selectedItemId"
-          /><DeleteClient
+        /></v-list-item>
+
+        <v-list-item>
+          <DeleteClient
             :details="selectedItem"
             :client_id="selectedItemId"
             :client="selectedItem"
             :company_id="clientCompanyID"
-          />
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+        /></v-list-item>
+      </v-list>
+    </v-menu>
   </v-container>
 </template>
 

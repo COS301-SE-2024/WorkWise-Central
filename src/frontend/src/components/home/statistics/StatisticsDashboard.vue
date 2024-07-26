@@ -8,7 +8,7 @@
           rounded="md"
           :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
           border="md"
-          elevation="2"
+          elevation="0"
         >
           <v-row>
             <!-- Recent Jobs Completed Card -->
