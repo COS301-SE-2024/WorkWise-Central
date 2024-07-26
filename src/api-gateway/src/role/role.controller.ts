@@ -12,7 +12,11 @@ import {
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto, createRoleResponseDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
+import {
+  UpdateRoleDto,
+  BulkUpdateRoleDto,
+  BulkUpdateRoleResponseDto,
+} from './dto/update-role.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -198,6 +202,31 @@ export class RoleController {
     let data;
     try {
       data = await this.roleService.update(id, updateRoleDto);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @ApiOperation({
+    summary: `Update an ${className} instances`,
+    description: `Send array of ${className} ObjectIds and an array of updated objects, and then they get updated if the id is valid.`,
+  })
+  @ApiOkResponse({
+    type: BulkUpdateRoleResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @ApiBody({ type: BulkUpdateRoleDto })
+  async bulkUpdate(@Body() updateRoleDto: BulkUpdateRoleDto) {
+    let data;
+    try {
+      data = await this.roleService.bulkUpdate(updateRoleDto);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }

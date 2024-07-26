@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
+import { UpdateRoleDto, BulkUpdateRoleDto } from './dto/update-role.dto';
 import { Types } from 'mongoose';
 import { Role } from './entity/role.entity';
 import { CompanyService } from '../company/company.service';
@@ -177,6 +177,15 @@ export class RoleService {
     }
 
     return this.roleRepository.update(id, updateRoleDto);
+  }
+
+  async bulkUpdate(bulkUpdateRoleDto: BulkUpdateRoleDto) {
+    //Doing the updates
+    for (let i = 0; i < bulkUpdateRoleDto.ids.length; i++) {
+      const id = bulkUpdateRoleDto.ids[i];
+      const updateRoleDto = bulkUpdateRoleDto.roleUpdates[i];
+      await this.update(id, updateRoleDto);
+    }
   }
 
   async roleExists(id: Types.ObjectId): Promise<boolean> {
