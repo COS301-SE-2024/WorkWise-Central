@@ -24,6 +24,7 @@ import { UpdateDtoResponse, UpdateJobDto } from './dto/update-job.dto';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
@@ -36,6 +37,13 @@ import { AuthGuard } from '../auth/auth.guard';
 import { JobResponseDto } from './entities/job.entity';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
+import { CreatePriorityTagDto, CreateTagDto } from './dto/create-tag.dto';
+import { extractUserId } from '../utils/Utils';
+import { DeleteTagDto } from './dto/edit-tag.dto';
+import {
+  PriorityTagsAllResponseDto,
+  TagsAllResponseDto,
+} from './dto/job-responses.dto';
 
 const className = 'Job';
 
@@ -265,7 +273,7 @@ export class JobController {
     @Headers() headers: any,
     @Param('eid') empId: string,
   ) {
-    const userId: Types.ObjectId = this.extractUserId(headers);
+    const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
     if (!userId) {
       throw new UnauthorizedException('Unauthorized, JWT required');
     }
@@ -332,7 +340,7 @@ export class JobController {
   ) {
     try {
       this.validateObjectId(jobId);
-      const userId: Types.ObjectId = this.extractUserId(headers);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       // console.log(userId);
       // console.log(new Types.ObjectId(jobId));
       const success = await this.jobService.update(
@@ -363,13 +371,13 @@ export class JobController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete('/:id')
-  remove(@Param('id') id: string, @Body() pass: { pass: string }) {
+  async remove(@Param('id') id: string, @Body() pass: { pass: string }) {
     console.log(pass); //Will be implemented later
     if (!mongoose.Types.ObjectId.isValid(id))
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
 
     try {
-      return this.jobService.softDelete(new Types.ObjectId(id));
+      return { data: await this.jobService.softDelete(new Types.ObjectId(id)) };
     } catch (e) {
       throw new HttpException(
         'Internal Server Error',
@@ -379,125 +387,167 @@ export class JobController {
   }
 
   // tags
-  getAllTagsInCompany(
+  @ApiOperation({
+    summary: 'Get all Tags in a company',
+  })
+  @ApiOkResponse({
+    type: TagsAllResponseDto,
+    description: 'An array of tags',
+  })
+  @Get('/tags/:cid')
+  async getAllTagsInCompany(
     @Headers() headers: any,
     @Param('cid') companyId: string,
   ) {
     try {
       this.validateObjectId(companyId);
-      const userId: Types.ObjectId = this.extractUserId(headers);
-      return this.jobService.getAllTags(userId, new Types.ObjectId(companyId));
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      const compId = new Types.ObjectId(companyId);
+      return {
+        data: await this.jobService.getAllTagsInCompany(userId, compId),
+      };
     } catch (e) {
       console.log(e);
-      throw new InternalServerErrorException(`Job could not be updated`);
+      throw e;
     }
   }
 
-  getAllPriorityTagsInCompany(
+  @ApiOperation({
+    summary: 'Get all Priority Tags in a company',
+  })
+  @ApiOkResponse({
+    type: PriorityTagsAllResponseDto,
+    description: 'An array of Priority tags',
+  })
+  @Get('/tags/p/:cid')
+  async getAllPriorityTagsInCompany(
     @Headers() headers: any,
     @Param('cid') companyId: string,
   ) {
     try {
       this.validateObjectId(companyId);
-      const userId: Types.ObjectId = this.extractUserId(headers);
-      return this.jobService.getAllPriorityTags(
-        userId,
-        new Types.ObjectId(companyId),
-      );
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      const compId = new Types.ObjectId(companyId);
+      return {
+        data: await this.jobService.getAllPriorityTagsInCompany(userId, compId),
+      };
     } catch (e) {
       console.log(e);
-      throw new InternalServerErrorException(`Job could not be updated`);
+      throw e;
     }
   }
 
-  addJobTagToCompany(@Headers() headers: any, @Param('cid') companyId: string) {
-    try {
-      this.validateObjectId(companyId);
-      const userId: Types.ObjectId = this.extractUserId(headers);
-      return this.jobService.addJobTagToCompany(
-        userId,
-        new Types.ObjectId(companyId),
-      );
-    } catch (e) {
-      console.log(e);
-      throw new InternalServerErrorException(`Job could not be updated`);
-    }
-  }
-
-  removeJobTagFromCompany(
+  @ApiOperation({
+    summary: 'Add a Job Tag to a company',
+  })
+  @ApiCreatedResponse({
+    type: BooleanResponseDto,
+    description: 'Confirmation of success of request',
+  })
+  @Post('/tags')
+  addJobTagToCompany(
     @Headers() headers: any,
-    @Param('cid') companyId: string,
+    @Body() createTagDto: CreateTagDto,
   ) {
     try {
-      this.validateObjectId(companyId);
-      const userId: Types.ObjectId = this.extractUserId(headers);
-      return this.jobService.addJobTagToCompany(
-        userId,
-        new Types.ObjectId(companyId),
-      );
+      this.validateObjectId(createTagDto.companyId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return this.jobService.addJobTagToCompany(userId, createTagDto);
     } catch (e) {
       console.log(e);
-      throw new InternalServerErrorException(`Job could not be updated`);
+      throw e;
     }
   }
 
-  addPriorityTagInCompany(
+  @ApiOperation({
+    summary: 'Add a job Priority Tag to a company',
+  })
+  @ApiCreatedResponse({
+    type: BooleanResponseDto,
+    description: 'Confirmation of success of request',
+  })
+  @Post('/tags/p')
+  async addJobPriorityTagToCompany(
     @Headers() headers: any,
-    @Param('cid') companyId: string,
+    @Body() createPriorityTagDto: CreatePriorityTagDto,
   ) {
     try {
-      this.validateObjectId(companyId);
-      const userId: Types.ObjectId = this.extractUserId(headers);
-      return this.jobService.addPriorityTagToCompany(
-        userId,
-        new Types.ObjectId(companyId),
-      );
+      this.validateObjectId(createPriorityTagDto.companyId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.addJobPriorityTagToCompany(
+          userId,
+          createPriorityTagDto,
+        ),
+      };
     } catch (e) {
       console.log(e);
-      throw new InternalServerErrorException(`Job could not be updated`);
+      throw e;
     }
   }
 
-  removePriorityTagFromCompany(
+  @ApiOperation({
+    summary: 'Remove a Job Tag from a company',
+  })
+  @ApiResponse({
+    type: BooleanResponseDto,
+    description: 'Tag successfully removed',
+  })
+  @Delete('tags/')
+  async removeJobTagFromCompany(
     @Headers() headers: any,
-    @Param('cid') companyId: string,
+    @Body() deleteTagDto: DeleteTagDto,
   ) {
     try {
-      this.validateObjectId(companyId);
-      const userId: Types.ObjectId = this.extractUserId(headers);
-      return this.jobService.addPriorityTagToCompany(
-        userId,
-        new Types.ObjectId(companyId),
-      );
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.removeJobTagFromCompany(
+          userId,
+          deleteTagDto,
+        ),
+      };
     } catch (e) {
       console.log(e);
-      throw new InternalServerErrorException(`Job could not be updated`);
+      throw e;
     }
   }
 
-  addAttachmentToJob(@Headers() headers: any, @Param('cid') companyId: string) {
+  @ApiOperation({
+    summary: 'Remove a Job Priority Tag from a company',
+  })
+  @ApiResponse({
+    type: BooleanResponseDto,
+    description: 'Tag successfully removed',
+  })
+  @Delete('tags/p/')
+  async removePriorityTagFromCompany(
+    @Headers() headers: any,
+    @Body() deleteTagDto: DeleteTagDto,
+  ) {
+    try {
+      this.validateObjectId(deleteTagDto.tagId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.removeJobPriorityTagFromCompany(
+          userId,
+          deleteTagDto,
+        ),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  /*  addAttachmentToJob(@Headers() headers: any, @Param('cid') companyId: string) {
     try {
       this.validateObjectId(companyId);
-      const userId: Types.ObjectId = this.extractUserId(headers);
-      return this.jobService.addPriorityTagToCompany(
-        userId,
-        new Types.ObjectId(companyId),
-      );
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      const compId = new Types.ObjectId(companyId);
+      return this.jobService.addAttachmentToJob(userId, compId);
     } catch (e) {
       console.log(e);
       throw new InternalServerErrorException(`Job could not be updated`);
     }
-  }
-
-  public extractUserId(headers: any) {
-    const authHeader: string = headers.authorization;
-    const decodedJwtAccessToken = this.jwtService.decode(
-      authHeader.replace(/^Bearer\s+/i, ''),
-    );
-    if (!Types.ObjectId.isValid(decodedJwtAccessToken.sub)) {
-      throw new HttpException('Invalid User', HttpStatus.BAD_REQUEST);
-    }
-    const userId: Types.ObjectId = decodedJwtAccessToken.sub; //This attribute is retrieved in the JWT
-    return userId;
-  }
+  }*/
 }
