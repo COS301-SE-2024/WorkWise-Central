@@ -128,6 +128,7 @@ describe('--Role Service--', () => {
           deletedAt: null,
         },
       ];
+      mockCompanyService.companyIdExists.mockResolvedValue(true);
       mockRoleRepository.findAllInCompany.mockResolvedValue(roles);
       const result = await service.findAllInCompany(companId);
       expect(result).toEqual(roles);
@@ -145,7 +146,7 @@ describe('--Role Service--', () => {
         updatedAt: null,
         deletedAt: null,
       };
-
+      mockCompanyService.companyIdExists.mockResolvedValue(true);
       mockRoleRepository.findByIdInCompany.mockResolvedValue(role);
       const result = await service.findOneInCompany(role.roleName, companyId);
       expect(result).toEqual(role);
@@ -166,11 +167,7 @@ describe('--Role Service--', () => {
   });
 
   describe('update', () => {
-    // it('should update a role', async () => {
-    //   const id = new Types.ObjectId();
-    //   const role = {
-    //     roleName: 'Admin',
-    //     companyId: new Types.ObjectId(),
+    // TODO
   });
 
   describe('roleExists', () => {
@@ -192,6 +189,7 @@ describe('--Role Service--', () => {
     it('should return true if role exists in a company', async () => {
       const id = new Types.ObjectId();
       const companyId = new Types.ObjectId();
+      mockCompanyService.companyIdExists.mockResolvedValue(true);
       mockRoleRepository.roleExistsInCompany.mockResolvedValue(true);
       const result = await service.roleExistsInCompany(id, companyId);
       expect(result).toBe(true);
@@ -199,6 +197,7 @@ describe('--Role Service--', () => {
     it('should return false if role does not exist', async () => {
       const id = new Types.ObjectId();
       const companyId = new Types.ObjectId();
+      mockCompanyService.companyIdExists.mockResolvedValue(true);
       mockRoleRepository.roleExistsInCompany.mockResolvedValue(false);
       const result = await service.roleExistsInCompany(id, companyId);
       expect(result).toBe(false);
@@ -208,12 +207,14 @@ describe('--Role Service--', () => {
   describe('remove', () => {
     it('should return true if role is removed', async () => {
       const id = new Types.ObjectId();
+      jest.spyOn(service, 'roleExists').mockResolvedValue(true);
       mockRoleRepository.remove.mockResolvedValue(true);
       const result = await service.remove(id);
       expect(result).toBe(true);
     });
     it('should return false if role is not removed', async () => {
       const id = new Types.ObjectId();
+      jest.spyOn(service, 'roleExists').mockResolvedValue(true);
       mockRoleRepository.remove.mockResolvedValue(false);
       const result = await service.remove(id);
       expect(result).toBe(false);

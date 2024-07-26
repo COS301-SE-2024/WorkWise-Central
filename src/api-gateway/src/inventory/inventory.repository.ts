@@ -45,9 +45,7 @@ export class InventoryRepository {
     }).lean();
   }
 
-  async findByIds(
-    identifiers: Types.ObjectId[],
-  ): Promise<(FlattenMaps<Inventory> & { _id: Types.ObjectId })[]> {
+  async findByIds(identifiers: Types.ObjectId[]) {
     const ids = identifiers.map((id) => new Types.ObjectId(id));
 
     const result: (FlattenMaps<Inventory> & { _id: Types.ObjectId })[] =

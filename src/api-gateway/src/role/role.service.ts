@@ -1,18 +1,17 @@
 import {
-  ConflictException,
   forwardRef,
   Inject,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { FlattenMaps, Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { Role } from './entity/role.entity';
 import { CompanyService } from '../company/company.service';
 // import { EmployeeService } from '../employee/employee.service';
 import { RoleRepository } from './role.repository';
+import { ValidationResult } from '../auth/entities/validationResult.entity';
 
 @Injectable()
 export class RoleService {
@@ -54,28 +53,29 @@ export class RoleService {
     //Check if the permissions are valid
     for (const permission of role.permissionSuite) {
       if (!this.permissionsArray.includes(permission.toString())) {
-        throw new ConflictException('Invalid permission');
+        return new ValidationResult(false, `Invalid permission`);
       }
     }
 
     //Check if the company exists
     if (!(await this.companyService.companyIdExists(role.companyId))) {
-      throw new ConflictException('Company not found');
+      return new ValidationResult(false, `Company not found`);
     }
 
     //Check if the role already exists
     try {
       if (await this.findOneInCompany(role.roleName, role.companyId)) {
-        throw new ConflictException('Role already exists');
+        return new ValidationResult(false, `Role already exists`);
       }
     } catch (error) {}
+    return new ValidationResult(true, `All good`);
   }
 
   async validateUpdateRole(roleId: Types.ObjectId, role: UpdateRoleDto) {
     //Check if the permissions are valid
     for (const permission of role.permissionSuite) {
       if (!this.permissionsArray.includes(permission.toString())) {
-        throw new ConflictException('Invalid permission');
+        return new ValidationResult(false, `Invalid permission`);
       }
     }
 
@@ -86,17 +86,16 @@ export class RoleService {
     //Check if the role already exists
     try {
       if (await this.findOneInCompany(role.roleName, companyId)) {
-        throw new ConflictException('Role already exists');
+        return new ValidationResult(false, `Role already exists`);
       }
     } catch (error) {}
+    return new ValidationResult(true, `All good`);
   }
 
   async create(createRoleDto: CreateRoleDto) {
-    try {
-      await this.validateCreateRole(createRoleDto);
-    } catch (error) {
-      // console.log('Throwing error');
-      throw new InternalServerErrorException(error);
+    const validation = await this.validateCreateRole(createRoleDto);
+    if (!validation.isValid) {
+      throw new Error(validation.message);
     }
 
     const newRole = new Role(createRoleDto);
@@ -116,37 +115,34 @@ export class RoleService {
   }
 
   async findAllInCompany(companyId: Types.ObjectId) {
-    const result = await this.roleRepository.findAllInCompany(companyId);
-    if (result == null) {
-      throw new NotFoundException('The company does not have any roles');
+    //checking if the company exists
+    if (!(await this.companyService.companyIdExists(companyId))) {
+      throw new Error('CompanyId does not exist');
     }
+    const result = await this.roleRepository.findAllInCompany(companyId);
     return result;
   }
 
   async findOneInCompany(name: string, companyId: Types.ObjectId) {
-    const result = await this.roleRepository.findByIdInCompany(name, companyId);
-    if (result == null) {
-      throw new NotFoundException('Role not found');
+    //checking if the company exists
+    if (!(await this.companyService.companyIdExists(companyId))) {
+      throw new Error('CompanyId does not exist');
     }
+    const result = await this.roleRepository.findByIdInCompany(name, companyId);
     return result;
   }
 
-  async findById(
-    identifier: Types.ObjectId,
-  ): Promise<FlattenMaps<Role> & { _id: Types.ObjectId }> {
+  async findById(identifier: Types.ObjectId) {
     const result = await this.roleRepository.findById(identifier);
-    if (result == null) {
-      throw new NotFoundException('Role not found');
-    }
     return result;
   }
 
   async update(id: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
-    try {
-      await this.validateUpdateRole(id, updateRoleDto);
-    } catch (error) {
-      return `${error}`;
+    const validation = await this.validateUpdateRole(id, updateRoleDto);
+    if (!validation.isValid) {
+      throw new Error(validation.message);
     }
+
     return this.roleRepository.update(id, updateRoleDto);
   }
 
@@ -158,10 +154,18 @@ export class RoleService {
     id: Types.ObjectId,
     companyId: Types.ObjectId,
   ): Promise<boolean> {
+    //checking if the company exists
+    if (!(await this.companyService.companyIdExists(companyId))) {
+      throw new Error('CompanyId does not exist');
+    }
     return await this.roleRepository.roleExistsInCompany(id, companyId);
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {
+    //Checking if the role exists
+    if (!(await this.roleExists(id))) {
+      throw new NotFoundException('Role not found');
+    }
     return this.roleRepository.remove(id);
   }
 
