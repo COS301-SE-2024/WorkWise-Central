@@ -317,9 +317,9 @@ export default defineComponent({
       employeesArray: [] as EmployeeInformation[],
       clientsArray: [] as ClientInformation[],
       time: '',
-      startDate: null as Date,
+      startDate: null,
       startTime: '',
-      endDate: null as Date,
+      endDate: null,
       endTime: '',
       priorityOptionsArray: ['High', 'Medium', 'Low'],
       tagOptionsArray: [
@@ -585,7 +585,6 @@ export default defineComponent({
       const [hrs, min] = time.split(':').map(Number)
       date.setHours(hrs)
       date.setMinutes(min)
-      console.log(date.startDate)
       console.log(date.toISOString())
       this.req_obj.details.startDate = date.toISOString()
     },
