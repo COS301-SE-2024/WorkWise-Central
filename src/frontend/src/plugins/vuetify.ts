@@ -18,11 +18,13 @@ const vuetify = createVuetify({
   },
   defaults: {
     VDialog: {
+      scrollable: true,
       VCard: {
+        height: '70vh',
         VCardTitle: {
           class: 'text-h5 font-weight-regular bg-secondary justify-end text-center'
         },
-        VCardText: { class: 'text-h7 font-weight-regular justify-center bg-cardColor' },
+        VCardText: { class: 'text-h7 font-weight-regular justify-center bg-cardColor fill-height' },
         VCardActions: { class: 'text-h6 font-weight-regular justify-center bg-cardColor' }
       },
       VSheet: {
@@ -41,7 +43,7 @@ const vuetify = createVuetify({
     },
 
     VCard: {
-      elevation: 14,
+      elevation: 2,
       rounded: 'md',
       height: 'auto',
 
@@ -163,8 +165,10 @@ const vuetify = createVuetify({
           firstPlace: '#E2B203',
           secondPlace: '#626F86',
           thirdPlace: '#533F04',
-          secondRowColor: '#dcdfe4',
-          buttonText: '#F7F8F9'
+          kanbanIconColor: '#161A1D',
+          secondRowColor: '#F7F8F9',
+          buttonText: '#F7F8F9',
+          faqQuestion: '#E8E9EB'
         }
       },
       dark: {
@@ -186,8 +190,10 @@ const vuetify = createVuetify({
           firstPlace: '#FFD700',
           secondPlace: '#C0C0C0',
           thirdPlace: '#CD7F32',
-          secondRowColor: '#454f59',
-          buttonText: '#F7F8F9'
+          kanbanIconColor: '#DCDFE4',
+          secondRowColor: '#161A1D',
+          buttonText: '#F7F8F9',
+          faqQuestion: '#2C3135'
         }
       }
     }

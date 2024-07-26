@@ -9,8 +9,6 @@ import { RoleService } from '../../role/role.service';
 import { JobService } from '../../job/job.service';
 import { TeamService } from '../../team/team.service';
 import { Employee } from '../entities/employee.entity';
-// import { mock } from 'node:test';
-// import { NotFoundException } from '@nestjs/common';
 
 const mockEmployeeRepository = {
   findAll: jest.fn(),
@@ -46,14 +44,6 @@ const mockTeamService = {
   teamExistsInCompany: jest.fn(),
 };
 
-// const mockValidateCreateEmployee = {
-//   validateCreateEmployee: jest.fn(),
-// };
-
-// const mockValidateUpdateEmployee = {
-//   validateUpdateEmployee: jest.fn(),
-// };
-
 describe('--Employee Service--', () => {
   let employeeService: EmployeeService;
 
@@ -83,21 +73,7 @@ describe('--Employee Service--', () => {
   });
 
   describe('create', () => {
-    // it('should create a new employee', async () => {
-    //   const createEmployeeDto = {
-    //     roleId: new Types.ObjectId(),
-    //     superiorId: new Types.ObjectId(),
-    //     userId: new Types.ObjectId(),
-    //     companyId: new Types.ObjectId(),
-    //   };
-    //   mockValidateCreateEmployee.validateCreateEmployee.mockResolvedValue(null);
-    //   await employeeService.create(createEmployeeDto);
-    //   expect(mockEmployeeRepository.employeeExists).toHaveBeenCalledWith(
-    //     createEmployeeDto.userId,
-    //     createEmployeeDto.companyId,
-    //   );
-    //   // expect(mockEmployeeRepository.create).toHaveBeenCalledWith(employee);
-    // });
+    // TODO
   });
 
   describe('findAll', () => {
@@ -143,6 +119,7 @@ describe('--Employee Service--', () => {
         },
       ];
 
+      jest.spyOn(mockCompanyService, 'companyIdExists').mockResolvedValue(true);
       mockEmployeeRepository.findAllInCompany.mockResolvedValue(
         expectedResponse,
       );
@@ -198,6 +175,7 @@ describe('--Employee Service--', () => {
       const id = new Types.ObjectId();
       const companyId = new Types.ObjectId();
 
+      jest.spyOn(mockCompanyService, 'companyIdExists').mockResolvedValue(true);
       mockEmployeeRepository.employeeExistsForCompany.mockResolvedValue(true);
 
       expect(
@@ -209,6 +187,7 @@ describe('--Employee Service--', () => {
       const id = new Types.ObjectId();
       const companyId = new Types.ObjectId();
 
+      jest.spyOn(mockCompanyService, 'companyIdExists').mockResolvedValue(true);
       mockEmployeeRepository.employeeExistsForCompany.mockResolvedValue(false);
 
       expect(
@@ -218,38 +197,7 @@ describe('--Employee Service--', () => {
   });
 
   describe('update', () => {
-    // it('should update an employee', async () => {
-    //   const id = new Types.ObjectId();
-    //   const updateEmployeeDto = {
-    //     roleId: new Types.ObjectId(),
-    //     currentJobAssignments: [new Types.ObjectId()],
-    //     superiorId: new Types.ObjectId(),
-    //     subordinates: [new Types.ObjectId()],
-    //     subordinateTeams: [new Types.ObjectId()],
-    //     userId: new Types.ObjectId(),
-    //     companyId: new Types.ObjectId(),
-    //   };
-    //   const returnedResponseFromRepository = {
-    //     _id: new Types.ObjectId(),
-    //     roleId: new Types.ObjectId(),
-    //     currentJobAssignments: [new Types.ObjectId()],
-    //     superiorId: new Types.ObjectId(),
-    //     subordinates: [new Types.ObjectId()],
-    //     subordinateTeams: [new Types.ObjectId()],
-    //     userId: new Types.ObjectId(),
-    //     companyId: new Types.ObjectId(),
-    //     createdAt: new Date(),
-    //     updatedAt: new Date(),
-    //     deletedAt: null,
-    //   };
-    //   mockEmployeeRepository.update.mockResolvedValue(
-    //     returnedResponseFromRepository,
-    //   );
-    //   mockValidateUpdateEmployee.validateUpdateEmployee.mockResolvedValue(null);
-    //   expect(await employeeService.update(id, updateEmployeeDto)).toEqual(
-    //     returnedResponseFromRepository,
-    //   );
-    // });
+    // TODO
   });
 
   describe('getCompanyIdFromEmployee', () => {
@@ -257,6 +205,7 @@ describe('--Employee Service--', () => {
       const id = new Types.ObjectId();
       const expectedResponse = new Types.ObjectId();
 
+      jest.spyOn(employeeService, 'employeeExists').mockResolvedValue(true);
       mockEmployeeRepository.getCompanyIdFromEmployee.mockResolvedValue(
         expectedResponse,
       );
@@ -270,6 +219,7 @@ describe('--Employee Service--', () => {
       const id = new Types.ObjectId();
       const expectedResponse = null;
 
+      jest.spyOn(employeeService, 'employeeExists').mockResolvedValue(true);
       mockEmployeeRepository.getCompanyIdFromEmployee.mockResolvedValue(
         expectedResponse,
       );
@@ -284,6 +234,7 @@ describe('--Employee Service--', () => {
     it('should return true if employee is deleted', async () => {
       const id = new Types.ObjectId();
 
+      jest.spyOn(employeeService, 'employeeExists').mockResolvedValue(true);
       mockEmployeeRepository.remove.mockResolvedValue(true);
 
       expect(await employeeService.remove(id)).toBe(true);
@@ -292,6 +243,7 @@ describe('--Employee Service--', () => {
     it('should return false if employee is not deleted', async () => {
       const id = new Types.ObjectId();
 
+      jest.spyOn(employeeService, 'employeeExists').mockResolvedValue(true);
       mockEmployeeRepository.remove.mockResolvedValue(false);
 
       expect(await employeeService.remove(id)).toBe(false);
@@ -324,52 +276,14 @@ describe('--Employee Service--', () => {
   });
 
   describe('getSuperior', () => {
-    // it('should return the superior of an employee', async () => {
-    //   const id = new Types.ObjectId();
-    //   const expectedResponse = new Types.ObjectId();
-    //   mockEmployeeRepository.findById.mockResolvedValue(expectedResponse);
-    //   expect(await employeeService.getSuperior(id)).toEqual(expectedResponse);
-    // });
-    // it('should return null if the employee has no superior', async () => {
-    //   const id = new Types.ObjectId();
-    //   const expectedResponse = null;
-    //   mockEmployeeRepository.findById.mockResolvedValue(expectedResponse);
-    //   expect(await employeeService.getSuperior(id)).toBe(expectedResponse);
-    // });
+    // TODO
   });
 
   describe('getSubordinates', () => {
-    // it('should return the subordinates of an employee', async () => {
-    //   const id = new Types.ObjectId();
-    //   const expectedResponse = [
-    //     {
-    //       _id: new Types.ObjectId(),
-    //       roleId: new Types.ObjectId(),
-    //       currentJobAssignments: [new Types.ObjectId()],
-    //       superiorId: new Types.ObjectId(),
-    //       subordinates: [new Types.ObjectId()],
-    //       subordinateTeams: [new Types.ObjectId()],
-    //       userId: new Types.ObjectId(),
-    //       companyId: new Types.ObjectId(),
-    //       createdAt: new Date(),
-    //       updatedAt: new Date(),
-    //       deletedAt: null,
-    //     },
-    //   ];
-    //   mockEmployeeRepository.findById.mockResolvedValue(expectedResponse);
-    //   expect(await employeeService.getSubordinates(id)).toEqual(
-    //     expectedResponse,
-    //   );
-    // });
-    // it('should return an empty array if the employee has no subordinates', async () => {
-    //   const id = new Types.ObjectId();
-    //   const expectedResponse = [];
-    //   mockEmployeeRepository.findById.mockResolvedValue(expectedResponse);
-    //   expect(await employeeService.getSubordinates(id)).toEqual(
-    //     expectedResponse,
-    //   );
-    // });
+    // TODO
   });
 
-  describe('getSubordinateTeams', () => {});
+  describe('getSubordinateTeams', () => {
+    // TODO
+  });
 });

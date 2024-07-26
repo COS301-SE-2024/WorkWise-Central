@@ -20,9 +20,7 @@ export class TeamRepository {
     return await newTeamModel.save();
   }
 
-  async findById(
-    identifier: Types.ObjectId,
-  ): Promise<FlattenMaps<Team> & { _id: Types.ObjectId }> {
+  async findById(identifier: Types.ObjectId) {
     const result: FlattenMaps<Team> & { _id: Types.ObjectId } =
       await this.teamModel
         .findOne({
@@ -41,7 +39,7 @@ export class TeamRepository {
   async findByIdInCompany(
     identifier: Types.ObjectId,
     companyIdentification: Types.ObjectId,
-  ): Promise<FlattenMaps<Team> & { _id: Types.ObjectId }> {
+  ) {
     const result: FlattenMaps<Team> & { _id: Types.ObjectId } =
       await this.teamModel
         .findOne({

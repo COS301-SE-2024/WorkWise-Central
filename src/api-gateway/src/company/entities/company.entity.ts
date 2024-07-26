@@ -108,7 +108,7 @@ export class Company {
   })
   employees: Types.ObjectId[];
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({
     type: [SchemaTypes.ObjectId],
     required: true,
@@ -163,7 +163,7 @@ export class CompanyApiObject {
   @ApiProperty()
   employees: mongoose.Types.ObjectId[];
 
-  @ApiHideProperty()
+  @ApiProperty()
   inventoryItems: mongoose.Types.ObjectId[];
 
   @ApiProperty()

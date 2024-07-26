@@ -52,6 +52,6 @@ import { FileModule } from '../file/file.module';
     TeamRepository,
     RoleRepository,
   ],
-  exports: [RoleService, MongooseModule],
+  exports: [RoleService, RoleRepository, MongooseModule],
 })
 export class RoleModule {}

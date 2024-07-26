@@ -991,6 +991,7 @@ export default defineComponent({
             localStorage.setItem('access_token', response.data.access_token)
             localStorage.setItem('id', response.data.id)
             localStorage.setItem('currentCompany', response.data.user.joinedCompanies[0].companyId)
+            localStorage.setItem('employeeId', response.data.user.joinedCompanies[0].employeeId)
             localStorage.setItem('email', this.email)
             localStorage.setItem('username', this.username)
             this.$toast.add({

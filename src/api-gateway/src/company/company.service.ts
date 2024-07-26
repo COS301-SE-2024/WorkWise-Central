@@ -194,14 +194,13 @@ export class CompanyService {
   //For now, I assume the person is authorised
   async addEmployee(addUserDto: AddUserToCompanyDto) {
     //Add validation
-    console.log('Test');
-
     const inputValidated = await this.addUserValidation(addUserDto); //TODO: Add more validation later
-    console.log('Test');
 
     if (!inputValidated.isValid) {
       throw new ConflictException(inputValidated.message);
     }
+
+    console.log('addUserDto', addUserDto);
     //Get company and user
     const company = await this.getCompanyById(addUserDto.currentCompany);
     const user = await this.usersService.getUserByUsername(
@@ -211,38 +210,35 @@ export class CompanyService {
     if (company == null || user == null)
       throw new NotFoundException('User or Company not found');
 
-    console.log('Test');
-
     //TODO: Ask about superiorId
     //CreateEmployee and link them to the company
     let addedEmployee: Employee & { _id: Types.ObjectId };
     if (addUserDto.roleId) {
       addedEmployee = await this.employeeService.create({
-        companyId: addUserDto.currentCompany,
+        companyId: company._id,
         userId: user._id,
         roleId: addUserDto.roleId,
+        superiorId: addUserDto.superiorId,
       });
     } else {
       const defaultRole = await this.roleService.findOneInCompany(
         'Worker',
-        addUserDto.currentCompany,
+        company._id,
       );
-      console.log('Test');
 
       addedEmployee = await this.employeeService.create({
-        companyId: addUserDto.currentCompany,
+        companyId: company._id,
         userId: user._id,
         roleId: defaultRole._id,
+        superiorId: addUserDto.superiorId,
       });
     }
-    console.log('Test');
 
     const newJoinedCompany: JoinedCompany = {
-      companyId: addUserDto.currentCompany,
+      companyId: company._id,
       employeeId: addedEmployee._id,
       companyName: company.name,
     };
-    console.log('Test');
 
     const updatedUser = await this.usersService.addJoinedCompany(
       user._id,

@@ -7,115 +7,315 @@
         >
       </v-col>
       <v-col :cols="12">
-        <v-tabs v-model="tab" align-tabs="center" color="#5A82AF">
+        <v-tabs v-model="tab" align-tabs="center" color="primary">
           <v-tab :value="1">FAQ</v-tab>
           <v-tab :value="2">TUTORIAL</v-tab>
         </v-tabs>
         <v-tabs-window v-model="tab" height="auto">
           <v-tabs-window-item :value="1">
             <v-col :cols="12">
-              <v-sheet rounded class="w-lg-screen">
+              <v-sheet rounded class="w-lg-screen" elevation="0">
                 <div>
                   <v-expansion-panels class="my-4" variant="accordion">
                     <v-expansion-panel
                       v-for="i in 14"
                       :key="i"
-                      :text="faqs[i].answer"
-                      :title="faqs[i].question"
                       :theme="isdarkmode === true ? 'dark' : 'light'"
                       style="font-family: Nunito, sans-serif"
-                    ></v-expansion-panel>
+                    >
+                      <v-expansion-panel-title color="faqQuestion"
+                        ><b>{{ faqs[i].question }}</b></v-expansion-panel-title
+                      >
+                      <v-expansion-panel-text>{{
+                        faqs[i].answer
+                      }}</v-expansion-panel-text></v-expansion-panel
+                    >
                   </v-expansion-panels>
                 </div>
               </v-sheet>
             </v-col>
           </v-tabs-window-item>
           <v-tabs-window-item :value="2">
-            <v-col :cols="12"
-              ><v-stepper v-model="step" :items="items" show-actions>
-                <template #[`item.1`]>
-                  <h3 class="text-h6">Order</h3>
+            <v-col :cols="12">
+              <v-sheet rounded class="w-lg-screen" elevation="0">
+                <div>
+                  <v-expansion-panels class="my-4" variant="accordion">
+                    <v-expansion-panel
+                      :title="tutorialQuestions[0]"
+                      :theme="isdarkmode === true ? 'dark' : 'light'"
+                      style="font-family: Nunito, sans-serif"
+                    >
+                      <v-expansion-panel-text>
+                        <v-col :cols="12"
+                          ><v-stepper v-model="step" :items="items" show-actions>
+                            <template #[`item.1`]>
+                              <h3 class="text-h6">Splash Page</h3>
 
-                  <br />
+                              <br />
 
-                  <v-sheet border>
-                    <v-table>
-                      <thead>
-                        <tr>
-                          <th>Description</th>
-                          <th class="text-end">Quantity</th>
-                          <th class="text-end">Price</th>
-                        </tr>
-                      </thead>
+                              <v-img
+                                src="@/assets/images/tutorial/signup/splash_page._login_button.png"
+                              />
+                            </template>
 
-                      <tbody>
-                        <tr v-for="(product, index) in products" :key="index">
-                          <td v-text="product.name"></td>
-                          <td class="text-end" v-text="product.quantity"></td>
-                          <td class="text-end" v-text="product.quantity * product.price"></td>
-                        </tr>
+                            <template #[`item.2`]>
+                              <h3 class="text-h6">Login Modal</h3>
 
-                        <tr>
-                          <th>Total</th>
-                          <th></th>
-                          <th class="text-end">${{ subtotal }}</th>
-                        </tr>
-                      </tbody>
-                    </v-table>
-                  </v-sheet>
-                </template>
+                              <br />
 
-                <template #[`item.2`]>
-                  <h3 class="text-h6">Shipping</h3>
+                              <v-radio-group v-model="shipping" label="Delivery Method">
+                                <v-radio label="Standard Shipping" value="5"></v-radio>
+                                <v-radio label="Priority Shipping" value="10"></v-radio>
+                                <v-radio label="Express Shipping" value="15"></v-radio>
+                              </v-radio-group>
+                            </template>
 
-                  <br />
+                            <template #[`item.3`]>
+                              <h3 class="text-h6">Click Login Button</h3>
 
-                  <v-radio-group v-model="shipping" label="Delivery Method">
-                    <v-radio label="Standard Shipping" value="5"></v-radio>
-                    <v-radio label="Priority Shipping" value="10"></v-radio>
-                    <v-radio label="Express Shipping" value="15"></v-radio>
-                  </v-radio-group>
-                </template>
+                              <br />
 
-                <template #[`item.3`]>
-                  <h3 class="text-h6">Confirm</h3>
+                              <v-sheet border>
+                                <v-table>
+                                  <thead>
+                                    <tr>
+                                      <th>Description</th>
+                                      <th class="text-end">Quantity</th>
+                                      <th class="text-end">Price</th>
+                                    </tr>
+                                  </thead>
 
-                  <br />
+                                  <tbody>
+                                    <tr v-for="(product, index) in products" :key="index">
+                                      <td v-text="product.name"></td>
+                                      <td class="text-end" v-text="product.quantity"></td>
+                                      <td
+                                        class="text-end"
+                                        v-text="product.quantity * product.price"
+                                      ></td>
+                                    </tr>
 
-                  <v-sheet border>
-                    <v-table>
-                      <thead>
-                        <tr>
-                          <th>Description</th>
-                          <th class="text-end">Quantity</th>
-                          <th class="text-end">Price</th>
-                        </tr>
-                      </thead>
+                                    <tr>
+                                      <td>Shipping</td>
+                                      <td></td>
+                                      <td class="text-end" v-text="shipping"></td>
+                                    </tr>
 
-                      <tbody>
-                        <tr v-for="(product, index) in products" :key="index">
-                          <td v-text="product.name"></td>
-                          <td class="text-end" v-text="product.quantity"></td>
-                          <td class="text-end" v-text="product.quantity * product.price"></td>
-                        </tr>
+                                    <tr>
+                                      <th>Total</th>
+                                      <th></th>
+                                      <th class="text-end">${{ total }}</th>
+                                    </tr>
+                                  </tbody>
+                                </v-table>
+                              </v-sheet>
+                            </template>
+                          </v-stepper></v-col
+                        >
+                      </v-expansion-panel-text>
+                    </v-expansion-panel>
+                    <v-expansion-panel
+                      :title="tutorialQuestions[1]"
+                      :theme="isdarkmode === true ? 'dark' : 'light'"
+                      style="font-family: Nunito, sans-serif"
+                    >
+                      <v-expansion-panel-text>
+                        <v-col :cols="12"
+                          ><v-stepper v-model="step" :items="items" show-actions>
+                            <template #[`item.1`]>
+                              <h3 class="text-h6">Order</h3>
 
-                        <tr>
-                          <td>Shipping</td>
-                          <td></td>
-                          <td class="text-end" v-text="shipping"></td>
-                        </tr>
+                              <br />
 
-                        <tr>
-                          <th>Total</th>
-                          <th></th>
-                          <th class="text-end">${{ total }}</th>
-                        </tr>
-                      </tbody>
-                    </v-table>
-                  </v-sheet>
-                </template>
-              </v-stepper></v-col
-            >
+                              <v-sheet border>
+                                <v-table>
+                                  <thead>
+                                    <tr>
+                                      <th>Description</th>
+                                      <th class="text-end">Quantity</th>
+                                      <th class="text-end">Price</th>
+                                    </tr>
+                                  </thead>
+
+                                  <tbody>
+                                    <tr v-for="(product, index) in products" :key="index">
+                                      <td v-text="product.name"></td>
+                                      <td class="text-end" v-text="product.quantity"></td>
+                                      <td
+                                        class="text-end"
+                                        v-text="product.quantity * product.price"
+                                      ></td>
+                                    </tr>
+
+                                    <tr>
+                                      <th>Total</th>
+                                      <th></th>
+                                      <th class="text-end">${{ subtotal }}</th>
+                                    </tr>
+                                  </tbody>
+                                </v-table>
+                              </v-sheet>
+                            </template>
+
+                            <template #[`item.2`]>
+                              <h3 class="text-h6">Shipping</h3>
+
+                              <br />
+
+                              <v-radio-group v-model="shipping" label="Delivery Method">
+                                <v-radio label="Standard Shipping" value="5"></v-radio>
+                                <v-radio label="Priority Shipping" value="10"></v-radio>
+                                <v-radio label="Express Shipping" value="15"></v-radio>
+                              </v-radio-group>
+                            </template>
+
+                            <template #[`item.3`]>
+                              <h3 class="text-h6">Confirm</h3>
+
+                              <br />
+
+                              <v-sheet border>
+                                <v-table>
+                                  <thead>
+                                    <tr>
+                                      <th>Description</th>
+                                      <th class="text-end">Quantity</th>
+                                      <th class="text-end">Price</th>
+                                    </tr>
+                                  </thead>
+
+                                  <tbody>
+                                    <tr v-for="(product, index) in products" :key="index">
+                                      <td v-text="product.name"></td>
+                                      <td class="text-end" v-text="product.quantity"></td>
+                                      <td
+                                        class="text-end"
+                                        v-text="product.quantity * product.price"
+                                      ></td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>Shipping</td>
+                                      <td></td>
+                                      <td class="text-end" v-text="shipping"></td>
+                                    </tr>
+
+                                    <tr>
+                                      <th>Total</th>
+                                      <th></th>
+                                      <th class="text-end">${{ total }}</th>
+                                    </tr>
+                                  </tbody>
+                                </v-table>
+                              </v-sheet>
+                            </template>
+                          </v-stepper></v-col
+                        >
+                      </v-expansion-panel-text>
+                    </v-expansion-panel>
+                    <v-expansion-panel
+                      :title="tutorialQuestions[2]"
+                      :theme="isdarkmode === true ? 'dark' : 'light'"
+                      style="font-family: Nunito, sans-serif"
+                    >
+                      <v-expansion-panel-text>
+                        <v-col :cols="12"
+                          ><v-stepper v-model="step" :items="items" show-actions>
+                            <template #[`item.1`]>
+                              <h3 class="text-h6">Order</h3>
+
+                              <br />
+
+                              <v-sheet border>
+                                <v-table>
+                                  <thead>
+                                    <tr>
+                                      <th>Description</th>
+                                      <th class="text-end">Quantity</th>
+                                      <th class="text-end">Price</th>
+                                    </tr>
+                                  </thead>
+
+                                  <tbody>
+                                    <tr v-for="(product, index) in products" :key="index">
+                                      <td v-text="product.name"></td>
+                                      <td class="text-end" v-text="product.quantity"></td>
+                                      <td
+                                        class="text-end"
+                                        v-text="product.quantity * product.price"
+                                      ></td>
+                                    </tr>
+
+                                    <tr>
+                                      <th>Total</th>
+                                      <th></th>
+                                      <th class="text-end">${{ subtotal }}</th>
+                                    </tr>
+                                  </tbody>
+                                </v-table>
+                              </v-sheet>
+                            </template>
+
+                            <template #[`item.2`]>
+                              <h3 class="text-h6">Shipping</h3>
+
+                              <br />
+
+                              <v-radio-group v-model="shipping" label="Delivery Method">
+                                <v-radio label="Standard Shipping" value="5"></v-radio>
+                                <v-radio label="Priority Shipping" value="10"></v-radio>
+                                <v-radio label="Express Shipping" value="15"></v-radio>
+                              </v-radio-group>
+                            </template>
+
+                            <template #[`item.3`]>
+                              <h3 class="text-h6">Confirm</h3>
+
+                              <br />
+
+                              <v-sheet border>
+                                <v-table>
+                                  <thead>
+                                    <tr>
+                                      <th>Description</th>
+                                      <th class="text-end">Quantity</th>
+                                      <th class="text-end">Price</th>
+                                    </tr>
+                                  </thead>
+
+                                  <tbody>
+                                    <tr v-for="(product, index) in products" :key="index">
+                                      <td v-text="product.name"></td>
+                                      <td class="text-end" v-text="product.quantity"></td>
+                                      <td
+                                        class="text-end"
+                                        v-text="product.quantity * product.price"
+                                      ></td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>Shipping</td>
+                                      <td></td>
+                                      <td class="text-end" v-text="shipping"></td>
+                                    </tr>
+
+                                    <tr>
+                                      <th>Total</th>
+                                      <th></th>
+                                      <th class="text-end">${{ total }}</th>
+                                    </tr>
+                                  </tbody>
+                                </v-table>
+                              </v-sheet>
+                            </template>
+                          </v-stepper></v-col
+                        >
+                      </v-expansion-panel-text>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+                </div>
+              </v-sheet>
+            </v-col>
           </v-tabs-window-item>
         </v-tabs-window>
       </v-col>
@@ -209,9 +409,29 @@ export default defineComponent({
             "Yes, you can view all jobs assigned to you by clicking on the 'My Tasks' section from the dashboard. This view consolidates jobs from all projects, making it easier for you to manage your workload."
         }
       ],
+      tutorialQuestions: [
+        'How to Sign Up and Log In?',
+        'How to Configure Company Settings?',
+        // 'How to Add and Manage Departments?',
+        'How to Add New Employees?',
+        'How to Manage Employee Details?',
+        'How to Assign Tasks to Employees?',
+        'How to Add New Clients?',
+        'How to Manage Client Details?',
+        'How to Edit Your Profile?',
+        'How to Set Up Notifications?',
+        'How to Create and Manage Projects?',
+        'How to Use the Kanban Board?',
+        'How to Generate Reports?',
+        'How to Analyze Performance Metrics?',
+        'How to Integrate with Other Tools?',
+        'How to Get Support?',
+        'How to Troubleshoot Common Issues?',
+        'How to Optimize System Usage?'
+      ],
       shipping: 0,
       step: 1,
-      items: ['Review Order', 'Select Shipping', 'Submit'],
+      items: ['Step 1', 'Step 2', 'Step 3'],
       products: [
         {
           name: 'Product 1',

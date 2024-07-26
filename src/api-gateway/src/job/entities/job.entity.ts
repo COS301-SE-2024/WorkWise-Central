@@ -77,7 +77,7 @@ export class RecordedDetails {
 
   @ApiProperty()
   @Prop({ type: [InventoryUsed], required: false, default: [] })
-  inventoryUsed?: InventoryUsed[] = [];
+  inventoryUsed?: InventoryUsed[] = []; //TODO: Flesh out
 }
 
 export class AssignedEmployees {

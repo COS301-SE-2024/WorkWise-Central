@@ -14,18 +14,19 @@
             <!-- Recent Jobs Completed Card -->
             <v-col cols="12" md="4">
               <v-card border="md" rounded="xl">
-                <v-card-title>Recent Jobs Completed</v-card-title>
+                <v-card-title>
+                  <v-icon icon="fa: fa-solid fa-briefcase mr-2"></v-icon>
+                  Recent Jobs Completed
+                </v-card-title>
                 <v-card-text class="bg-cardColor">
                   <v-list>
                     <v-list-item v-for="(job, index) in recentJobs" :key="index">
-                      <v-chip variant="text" class="ma-2"
-                        ><v-list-item-content
-                          >{{ job.title
-                          }}<v-list-item-subtitle>{{
-                            job.date
-                          }}</v-list-item-subtitle></v-list-item-content
-                        ></v-chip
-                      >
+                      <v-chip variant="text" class="pa-5 ma-2">
+                        <v-list-item-content>
+                          {{ job.title }}
+                          <v-list-item-subtitle>{{ job.date }}</v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-chip>
                       <v-divider></v-divider>
                     </v-list-item>
                   </v-list>
@@ -36,17 +37,18 @@
             <!-- Most Active Employees Card -->
             <v-col cols="12" md="4">
               <v-card border="md" rounded="xl">
-                <v-card-title>Most Active Employees</v-card-title>
+                <v-card-title>
+                  <v-icon icon="fa: fa-solid fa-user-friends mr-2"></v-icon>
+                  Most Active Employees
+                </v-card-title>
                 <v-card-text>
                   <v-list>
                     <v-list-item v-for="(employee, index) in activeEmployees" :key="index">
-                      <v-chip variant="text" class="ma-2"
-                        ><v-list-item-content
-                          >{{ employee.name }}
-                          <v-list-item-subtitle>{{
-                            employee.activityLevel
-                          }}</v-list-item-subtitle></v-list-item-content
-                        >
+                      <v-chip variant="text" class="pa-5 ma-2">
+                        <v-list-item-content>
+                          {{ employee.name }}
+                          <v-list-item-subtitle>{{ employee.activityLevel }}</v-list-item-subtitle>
+                        </v-list-item-content>
                       </v-chip>
                       <v-divider></v-divider>
                     </v-list-item>
@@ -58,17 +60,18 @@
             <!-- Hours Worked by Employees Card -->
             <v-col cols="12" md="4">
               <v-card border="md" rounded="xl">
-                <v-card-title>Hours Worked</v-card-title>
+                <v-card-title>
+                  <v-icon icon="fa: fa-solid fa-clock mr-2"></v-icon>
+                  Hours Worked
+                </v-card-title>
                 <v-card-text>
                   <v-list>
                     <v-list-item v-for="(employee, index) in hoursWorked" :key="index">
-                      <v-chip variant="tonal" class="ma-2">
-                        <v-list-item-content
-                          >{{ employee.name }}
-                          <v-list-item-subtitle
-                            >{{ employee.hours }} hours</v-list-item-subtitle
-                          ></v-list-item-content
-                        >
+                      <v-chip variant="tonal" class="pa-5 ma-2">
+                        <v-list-item-content>
+                          {{ employee.name }}
+                          <v-list-item-subtitle>{{ employee.hours }} hours</v-list-item-subtitle>
+                        </v-list-item-content>
                       </v-chip>
                       <v-divider v-if="index < hoursWorked.length - 1"></v-divider>
                     </v-list-item>
@@ -77,20 +80,21 @@
               </v-card>
             </v-col>
           </v-row>
-          <v-row
-            ><v-col cols="12" md="6">
+          <v-row>
+            <v-col cols="12" md="6">
               <v-card border="md" rounded="xl" height="auto">
-                <v-card-title>Upcoming Appointments</v-card-title>
+                <v-card-title>
+                  <v-icon icon="fa: fa-solid fa-calendar-alt mr-2"></v-icon>
+                  Upcoming Appointments
+                </v-card-title>
                 <v-card-text>
                   <v-list>
                     <v-list-item v-for="(appointment, index) in upcomingAppointments" :key="index">
-                      <v-chip variant="text" class="ma-2"
-                        ><v-list-item-content
-                          >{{ appointment.title }}
-                          <v-list-item-subtitle>{{
-                            appointment.date
-                          }}</v-list-item-subtitle></v-list-item-content
-                        >
+                      <v-chip variant="text" class="pa-5 ma-2">
+                        <v-list-item-content>
+                          {{ appointment.title }}
+                          <v-list-item-subtitle>{{ appointment.date }}</v-list-item-subtitle>
+                        </v-list-item-content>
                       </v-chip>
                       <v-divider></v-divider>
                     </v-list-item>
@@ -101,27 +105,30 @@
             <!-- Team Breakdown Card -->
             <v-col cols="12" md="6">
               <v-card border="md" rounded="xl">
-                <v-card-title>Team Breakdown</v-card-title>
+                <v-card-title>
+                  <v-icon icon="fa: fa-solid fa-users mr-2"></v-icon>
+                  Team Breakdown
+                </v-card-title>
                 <v-card-text>
                   <v-list>
                     <v-list-item v-for="(team, index) in teams" :key="index">
-                      <v-list-item-content
-                        >{{ team.name }}
-                        <v-list-item-subtitle
-                          >{{ team.members }} members</v-list-item-subtitle
-                        ></v-list-item-content
-                      >
+                      <v-list-item-content>
+                        {{ team.name }}
+                        <v-list-item-subtitle>{{ team.members }} members</v-list-item-subtitle>
+                      </v-list-item-content>
                       <v-divider></v-divider>
                     </v-list-item>
                   </v-list>
                 </v-card-text>
-              </v-card> </v-col
-          ></v-row>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
+
 <script lang="ts">
 import { defineComponent } from 'vue'
 export default defineComponent({
@@ -184,3 +191,5 @@ export default defineComponent({
   }
 })
 </script>
+
+<style></style>

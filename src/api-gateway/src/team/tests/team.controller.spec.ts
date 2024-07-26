@@ -2,8 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TeamController } from '../team.controller';
 import { TeamService } from '../team.service';
 import { Types } from 'mongoose';
+import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 
 jest.mock('../team.service');
+const moduleMocker = new ModuleMocker(global);
 
 describe('--Team Controller--', () => {
   let controller: TeamController;
@@ -13,7 +15,17 @@ describe('--Team Controller--', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TeamController],
       providers: [TeamService],
-    }).compile();
+    })
+      .useMocker((token) => {
+        if (typeof token === 'function') {
+          const mockMetadata = moduleMocker.getMetadata(
+            token,
+          ) as MockFunctionMetadata<any, any>;
+          const Mock = moduleMocker.generateFromMetadata(mockMetadata);
+          return new Mock();
+        }
+      })
+      .compile();
 
     controller = module.get<TeamController>(TeamController);
     service = module.get<TeamService>(TeamService);

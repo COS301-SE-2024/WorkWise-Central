@@ -11,6 +11,7 @@ it('renders add employee', () => {
   })
   cy.contains('Add Employee')
   cy.contains('Add employee using employee username')
+  cy.contains('Employee Username')
 })
 
 it('click add employee button', () => {
