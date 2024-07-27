@@ -24,7 +24,12 @@ import { TeamRepository } from 'src/team/team.repository';
 import { JwtService } from '@nestjs/jwt';
 import { FileModule } from '../file/file.module';
 import { FileService } from '../file/file.service';
-import { JobTag, JobTagSchema } from '../job/entities/job-tag.entity';
+import {
+  JobPriorityTag,
+  JobPriorityTagSchema,
+  JobTag,
+  JobTagSchema,
+} from '../job/entities/job-tag.entity';
 
 @Module({
   imports: [
@@ -34,6 +39,7 @@ import { JobTag, JobTagSchema } from '../job/entities/job-tag.entity';
       { name: User.name, schema: UserSchema },
       { name: Employee.name, schema: EmployeeSchema },
       { name: JobTag.name, schema: JobTagSchema },
+      { name: JobPriorityTag.name, schema: JobPriorityTagSchema },
     ]),
     forwardRef(() => UsersModule),
     forwardRef(() => JobModule),

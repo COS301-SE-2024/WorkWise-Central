@@ -89,11 +89,25 @@ export class AssignedEmployees {
     default: [],
   })
   employeeIds?: Types.ObjectId[] = [];
-  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Team.name })
-  teamId?: Types.ObjectId;
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: false,
+    ref: Team.name,
+    default: [],
+  })
+  teamIds?: Types.ObjectId[] = [];
 }
 
+@Schema()
 export class Task {
+  @ApiProperty()
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: true,
+    default: new Types.ObjectId(),
+  })
+  _id: Types.ObjectId = new Types.ObjectId();
+
   @ApiProperty()
   @Prop({ type: String, required: true })
   name: string;
@@ -117,7 +131,16 @@ export class History {
   timestamp: Date;
 }
 
+@Schema()
 export class Comment {
+  @ApiProperty()
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: true,
+    default: new Types.ObjectId(),
+  })
+  _id: Types.ObjectId = new Types.ObjectId();
+
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Employee.name })
   employeeId: Types.ObjectId;
@@ -125,6 +148,10 @@ export class Comment {
   @ApiProperty()
   @Prop({ type: String, required: true })
   comment: string;
+
+  @ApiProperty()
+  @Prop({ type: Boolean, required: true, default: false })
+  edited: boolean = false;
 
   @ApiProperty()
   @Prop({ type: Date, required: false, default: new Date() })
@@ -150,6 +177,8 @@ export class Job {
       this.clientFeedback = createJobDto.clientFeedback;
     if (createJobDto.taskList) this.taskList = createJobDto.taskList;
     if (createJobDto.comments) this.comments = createJobDto.comments;
+    if (createJobDto.tags) this.tags = createJobDto.tags;
+    if (createJobDto.priorityTag) this.priorityTag = createJobDto.priorityTag;
     this.createdAt = new Date();
   }
 
@@ -187,12 +216,12 @@ export class Job {
 
   @ApiProperty()
   @Prop({
-    type: SchemaTypes.ObjectId,
+    type: [SchemaTypes.ObjectId],
     required: false,
     ref: JobTag.name,
     default: [],
   })
-  tags?: Types.ObjectId[];
+  tags?: Types.ObjectId[] = [];
 
   @ApiProperty()
   @Prop({
@@ -236,7 +265,7 @@ export class Job {
 
   @ApiProperty()
   @Prop({ required: false, default: new Date() })
-  public createdAt: Date;
+  public createdAt: Date = new Date();
 
   @ApiProperty()
   @Prop({ required: false })
@@ -244,7 +273,7 @@ export class Job {
 
   @ApiProperty()
   @Prop({ required: false })
-  public deletedAt: Date;
+  public deletedAt?: Date;
 }
 
 export class JobApiObject {

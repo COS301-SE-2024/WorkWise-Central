@@ -10,7 +10,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Types } from 'mongoose';
-import { UpdateDtoResponse, UpdateJobDto } from '../dto/update-job.dto';
+import { UpdateJobDto } from '../dto/update-job.dto';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 
 const moduleMocker = new ModuleMocker(global);

@@ -1,9 +1,17 @@
 import { JobPriorityTag, JobTag } from '../entities/job-tag.entity';
+import { ApiProperty } from '@nestjs/swagger';
+
+type jobTagWithId = JobTag & { _id: string };
 
 export class TagsAllResponseDto {
-  data: JobTag & { _id: string }[];
+  @ApiProperty() //TODO: Find solution to show in swagger
+  data: jobTagWithId[];
 }
 
+// type jobPriorityTagWithId = JobPriorityTag & { _id: string };
+// class test extends JobPriorityTag {
+//   _id: string;
+// }
 export class PriorityTagsAllResponseDto {
-  data: JobPriorityTag & { _id: string }[];
+  data: JobPriorityTag[];
 }
