@@ -4,11 +4,13 @@ import {
   ClientFeedback,
   Details,
   RecordedDetails,
-  Task,
   Comment,
-} from '../entities/job.entity';
+  Task,
+} from './create-job.dto';
 import {
+  IsArray,
   IsMongoId,
+  IsNotEmpty,
   IsOptional,
   IsString,
   ValidateNested,
@@ -74,6 +76,58 @@ export class UpdateJobDto {
   @Type(() => UpdateComment)
   @IsOptional()
   comments?: UpdateComment[];
+
+  @ApiProperty()
+  @IsArray()
+  @IsOptional()
+  @IsMongoId({ each: true })
+  tags?: Types.ObjectId[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsMongoId()
+  priorityTag?: Types.ObjectId[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  attachments?: string[];
+}
+
+export class AddCommentDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  jobId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => Comment)
+  comment: Comment;
+}
+
+export class RemoveCommentDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  jobId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  commentId: Types.ObjectId;
+}
+
+export class UpdateCommentDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  jobId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  commentId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  comment: string;
 }
 
 export class UpdateDtoResponse {
