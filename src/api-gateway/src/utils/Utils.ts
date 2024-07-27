@@ -14,6 +14,13 @@ export function validateObjectIds(ids: string[] | Types.ObjectId[]): boolean {
   return true;
 }
 
+export function validateObjectId(id: string | Types.ObjectId): boolean {
+  if (!mongoose.Types.ObjectId.isValid(id) || id == null) {
+    throw new HttpException(`Invalid ${id} ID`, HttpStatus.BAD_REQUEST);
+  }
+  return true;
+}
+
 export function extractUserId(
   jwtService: JwtService,
   headers: any,
