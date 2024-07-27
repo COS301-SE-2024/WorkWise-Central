@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty, OmitType } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { Company } from '../../company/entities/company.entity';
@@ -22,26 +22,41 @@ export class ContactInfo {
 }
 
 export class Address {
+  @ApiProperty({ type: String })
   @Prop({ type: String, required: true })
   street: string;
+
+  @ApiProperty()
   @Prop({ type: String, required: true })
   province: string;
+
+  @ApiProperty()
   @Prop({ type: String, required: true })
   suburb: string;
+
+  @ApiProperty()
   @Prop({ type: String, required: true })
   city: string;
+
+  @ApiProperty()
   @Prop({ type: String, required: true })
   postalCode: string;
+
+  @ApiProperty()
   @Prop({ type: String, required: false })
   complex?: string;
+
+  @ApiProperty()
   @Prop({ type: String, required: false })
   houseNumber?: string;
 }
 
 export class PersonalInfo {
+  @ApiProperty()
   @Prop({ type: String, required: true })
   firstName: string;
 
+  @ApiProperty()
   @Prop({ type: String, required: true })
   surname: string;
 
@@ -61,7 +76,7 @@ export class PersonalInfo {
   @Prop({ type: ContactInfo, required: false })
   contactInfo: ContactInfo;
 
-  @ApiProperty()
+  @ApiProperty({ type: () => Address })
   @Prop({ type: Address, required: false })
   address: Address;
 }
@@ -140,7 +155,7 @@ export class User {
   @Prop({ required: true })
   systemDetails: SystemDetails;
 
-  @ApiProperty()
+  @ApiProperty({ type: PersonalInfo })
   @Prop({ required: true })
   personalInfo: PersonalInfo;
 
@@ -161,7 +176,7 @@ export class User {
   @Prop({ type: [String], required: false, default: [] })
   skills: string[] = [];
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: [String], required: false, default: [] })
   deviceIds?: string[] = [];
 
@@ -186,39 +201,12 @@ export class User {
   public deletedAt?: Date;
 }
 
-export class UserApiObject {
+export class UserApiObject extends OmitType(User, ['deviceIds', 'deletedAt']) {
   @ApiProperty()
   _id: Types.ObjectId;
 
-  @ApiProperty()
-  systemDetails: SystemDetails;
-
-  @ApiProperty()
-  personalInfo: PersonalInfo;
-
-  @ApiProperty()
-  profile: Profile;
-
-  @ApiProperty()
-  joinedCompanies: JoinedCompany[] = [];
-
-  @ApiProperty()
-  skills: string[] = [];
-
-  @ApiProperty()
-  public currentEmployee?: Types.ObjectId;
-
-  @ApiProperty()
-  public isValidated?: boolean = false;
-
-  @ApiHideProperty()
-  public deviceIds?: string[];
-
   @ApiHideProperty()
   public createdAt: Date = new Date();
-
-  @ApiHideProperty()
-  public updatedAt?: Date;
 }
 
 export class UserApiDetailedObject {
@@ -228,7 +216,8 @@ export class UserApiDetailedObject {
   @ApiProperty()
   systemDetails: SystemDetails;
 
-  @ApiProperty()
+  @ApiProperty({ type: PersonalInfo })
+  @Prop({ required: true })
   personalInfo: PersonalInfo;
 
   @ApiProperty()
@@ -243,7 +232,7 @@ export class UserApiDetailedObject {
   @ApiProperty()
   public currentEmployee?: Employee;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: [String], required: false, default: [] })
   deviceIds: string[];
 
