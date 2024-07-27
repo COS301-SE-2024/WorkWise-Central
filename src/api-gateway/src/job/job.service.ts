@@ -6,9 +6,15 @@ import {
   ConflictException,
   NotFoundException,
   UnauthorizedException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { CreateJobDto, CreateJobResponseDto } from './dto/create-job.dto';
-import { UpdateJobDto } from './dto/update-job.dto';
+import {
+  AddCommentDto,
+  RemoveCommentDto,
+  UpdateCommentDto,
+  UpdateJobDto,
+} from './dto/update-job.dto';
 import { FlattenMaps, Types } from 'mongoose';
 import { Job } from './entities/job.entity';
 import { UsersService } from '../users/users.service';
@@ -483,30 +489,21 @@ export class JobService {
       }
     }
     ///
-    const total = jobAssignGroupDto.employeeIds.length;
 
-    //remove duplicates
-    jobAssignGroupDto.employeeIds = [...new Set(jobAssignGroupDto.employeeIds)];
-    let pass: number = 0;
-
-    //const result = [];
     for (const employeeId of jobAssignGroupDto.employeeIds) {
       const isInJob = job.assignedEmployees.employeeIds.some((e) =>
         e.equals(employeeId),
       );
 
       if (isInJob) {
-        await this.jobRepository.unassignEmployee(
+        const result = await this.jobRepository.unassignEmployee(
           employeeId,
           jobAssignGroupDto.jobId,
         );
-        pass++;
+        console.log(result);
       }
     }
-    return new jobAssignResultDto({
-      passed: pass,
-      failed: total - pass,
-    });
+    return true;
   }
 
   async getAllTagsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
@@ -569,5 +566,59 @@ export class JobService {
       deleteTagDto.tagId,
     );
     return deleteResult.acknowledged;
+  }
+
+  async addCommentToJob(userId: Types.ObjectId, addCommentDto: AddCommentDto) {
+    const userExists = await this.usersService.userIdExists(userId);
+    if (!userExists) throw new NotFoundException('User not found');
+
+    const jobExists = await this.jobRepository.exists(addCommentDto.jobId);
+    if (!jobExists) throw new NotFoundException('Job not found');
+
+    return this.jobRepository.addComment(
+      addCommentDto.comment,
+      addCommentDto.jobId,
+    );
+  }
+
+  async removeCommentFromJob(
+    userId: Types.ObjectId,
+    removeCommentDto: RemoveCommentDto,
+  ) {
+    const userExists = await this.usersService.userIdExists(userId);
+    if (!userExists) throw new NotFoundException('User not found');
+
+    const jobExists = await this.jobRepository.exists(removeCommentDto.jobId);
+    if (!jobExists) throw new NotFoundException('Job not found');
+
+    return this.jobRepository.removeComment(
+      removeCommentDto.jobId,
+      removeCommentDto.commentId,
+    );
+  }
+
+  async editCommentInJob(
+    userId: Types.ObjectId,
+    updateCommentDto: UpdateCommentDto,
+  ) {
+    const user = this.usersService.getUserById(userId);
+    if (!user) throw new NotFoundException('User not found');
+
+    const job = await this.getJobById(updateCommentDto.jobId);
+    if (!job) throw new InternalServerErrorException('JobId not found');
+
+    const commentExists = job.comments.some((c) =>
+      c._id.equals(updateCommentDto.commentId),
+    );
+    if (!commentExists)
+      throw new InternalServerErrorException('CommentId not found');
+
+    const updateResult = await this.jobRepository.editComment(
+      updateCommentDto.jobId,
+      updateCommentDto.commentId,
+      updateCommentDto.comment,
+    );
+    console.log(updateResult);
+    return true;
   }
 }
