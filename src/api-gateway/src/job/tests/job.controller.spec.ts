@@ -142,12 +142,12 @@ describe('JobController', () => {
 
   describe('update', () => {
     it('should update job attributes', async () => {
-      const jobId = new Types.ObjectId();
-      const updateJobDto: UpdateJobDto = {
-        status: 'To do',
-      };
+      //const jobId = new Types.ObjectId();
+      //const updateJobDto: UpdateJobDto = {
+      //  status: 'To do',
+      // };
 
-      const expectedResponse: UpdateDtoResponse = { success: true };
+      //const expectedResponse: UpdateDtoResponse = { success: true };
 
       /*      jest
         .spyOn(, 'extractUserId')
