@@ -12,6 +12,7 @@ import {
   InternalServerErrorException,
   Headers,
   UnauthorizedException,
+  Put,
 } from '@nestjs/common';
 import { JobService } from './job.service';
 import {
@@ -20,7 +21,12 @@ import {
   JobAllResponseDetailedDto,
   JobAllResponseDto,
 } from './dto/create-job.dto';
-import { UpdateDtoResponse, UpdateJobDto } from './dto/update-job.dto';
+import {
+  AddCommentDto,
+  RemoveCommentDto,
+  UpdateDtoResponse,
+  UpdateJobDto,
+} from './dto/update-job.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -385,6 +391,57 @@ export class JobController {
       );
     }
   }
+  // Specific
+
+  // Comments
+  @ApiResponse({
+    type: JobResponseDto,
+    description: 'The updated Job',
+  })
+  @ApiBody({ type: AddCommentDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Put('comment')
+  async addComment(
+    @Headers() headers: any,
+    @Body() addCommentDto: AddCommentDto,
+  ) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.addCommentToJob(userId, addCommentDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiResponse({
+    type: JobResponseDto,
+    description: 'The updated Job',
+  })
+  @ApiBody({ type: AddCommentDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Delete('comment')
+  async removeComment(
+    @Headers() headers: any,
+    @Body() removeCommentDto: RemoveCommentDto,
+  ) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.removeCommentFromJob(
+          userId,
+          removeCommentDto,
+        ),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
 
   // tags
   @ApiOperation({
@@ -394,6 +451,8 @@ export class JobController {
     type: TagsAllResponseDto,
     description: 'An array of tags',
   })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @Get('/tags/:cid')
   async getAllTagsInCompany(
     @Headers() headers: any,
@@ -419,6 +478,8 @@ export class JobController {
     type: PriorityTagsAllResponseDto,
     description: 'An array of Priority tags',
   })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @Get('/tags/p/:cid')
   async getAllPriorityTagsInCompany(
     @Headers() headers: any,
@@ -444,7 +505,9 @@ export class JobController {
     type: BooleanResponseDto,
     description: 'Confirmation of success of request',
   })
-  @Post('/tags')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Post('/tags/add')
   addJobTagToCompany(
     @Headers() headers: any,
     @Body() createTagDto: CreateTagDto,
@@ -466,6 +529,8 @@ export class JobController {
     type: BooleanResponseDto,
     description: 'Confirmation of success of request',
   })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @Post('/tags/p')
   async addJobPriorityTagToCompany(
     @Headers() headers: any,
@@ -493,6 +558,8 @@ export class JobController {
     type: BooleanResponseDto,
     description: 'Tag successfully removed',
   })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @Delete('tags/')
   async removeJobTagFromCompany(
     @Headers() headers: any,
@@ -519,6 +586,8 @@ export class JobController {
     type: BooleanResponseDto,
     description: 'Tag successfully removed',
   })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @Delete('tags/p/')
   async removePriorityTagFromCompany(
     @Headers() headers: any,
@@ -538,6 +607,8 @@ export class JobController {
       throw e;
     }
   }
+
+  //Comments
 
   /*  addAttachmentToJob(@Headers() headers: any, @Param('cid') companyId: string) {
     try {
