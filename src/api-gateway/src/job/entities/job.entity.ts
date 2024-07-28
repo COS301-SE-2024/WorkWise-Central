@@ -164,8 +164,6 @@ export class Job {
     //Object.assign(this, createJobDto);
     if (createJobDto.companyId) this.companyId = createJobDto.companyId;
     if (createJobDto.clientId) this.clientId = createJobDto.clientId;
-    if (createJobDto.clientUsername)
-      this.clientUsername = createJobDto.clientUsername;
     if (createJobDto.assignedBy) this.assignedBy = createJobDto.assignedBy;
     if (createJobDto.assignedEmployees)
       this.assignedEmployees = createJobDto.assignedEmployees;
@@ -193,10 +191,6 @@ export class Job {
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Client.name })
   clientId?: Types.ObjectId;
-
-  @ApiProperty()
-  @Prop({ required: false, default: `Client-${Date.now()}` })
-  clientUsername?: string;
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Employee.name })
@@ -287,9 +281,6 @@ export class JobApiObject {
   clientId?: Types.ObjectId;
 
   @ApiProperty()
-  clientUsername?: string;
-
-  @ApiProperty()
   assignedBy: Types.ObjectId;
 
   @ApiProperty()
@@ -341,9 +332,6 @@ export class JobApiDetailedObject {
 
   @ApiProperty()
   client?: Client;
-
-  @ApiProperty()
-  clientUsername?: string;
 
   @ApiProperty()
   assignedBy: Employee;

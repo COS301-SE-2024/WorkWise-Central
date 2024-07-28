@@ -216,11 +216,6 @@ export class CreateJobDto {
   clientId?: Types.ObjectId;
 
   @ApiProperty()
-  @IsOptional()
-  @IsString()
-  clientUsername?: string;
-
-  @ApiProperty()
   @IsNotEmpty()
   assignedBy: Types.ObjectId;
 

@@ -16,9 +16,7 @@ export class Address {
   @Prop({ type: String, required: true })
   postalCode: string;
   @Prop({ type: String, required: false })
-  complex?: string;
-  @Prop({ type: String, required: false })
-  houseNumber?: string;
+  complexOrBuilding?: string;
 }
 
 export class ContactInfo {
@@ -71,8 +69,6 @@ export class ClientDetails {
 export class Client {
   constructor(createClientDto: CreateClientDto) {
     if (createClientDto.details) this.details = createClientDto.details;
-    if (createClientDto.clientUsername)
-      this.clientUsername = createClientDto.clientUsername;
     if (createClientDto.registrationNumber)
       this.registrationNumber = createClientDto.registrationNumber;
     this.createdAt = new Date();
@@ -81,10 +77,6 @@ export class Client {
   @ApiProperty()
   @Prop({ type: String, required: false })
   registrationNumber?: string;
-
-  @ApiProperty()
-  @Prop({ type: String, required: false, default: 'none' })
-  clientUsername?: string = 'none';
 
   @ApiProperty()
   @Prop({ required: true })
@@ -109,9 +101,6 @@ export class ClientApiObject {
 
   @ApiProperty()
   registrationNumber?: string;
-
-  @ApiProperty()
-  clientUsername?: string;
 
   @ApiProperty()
   details: ClientDetails;

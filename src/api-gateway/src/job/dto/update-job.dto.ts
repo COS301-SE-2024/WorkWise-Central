@@ -32,11 +32,6 @@ export class UpdateJobDto {
   clientId?: Types.ObjectId;
 
   @ApiProperty()
-  @IsOptional()
-  @IsString()
-  clientUsername?: string;
-
-  @ApiProperty()
   @ValidateNested()
   @Type(() => UpdateAssignedEmployees)
   @IsOptional()
