@@ -48,7 +48,15 @@
       </v-col>
       <v-col cols="12" lg="10">
         <v-row>
-          <v-col cols="12" lg="10">
+          <v-col cols="12" lg="2">
+            <v-btn @click="setInbox('Unread')" :class="{ 'bg-cardColor': currentInbox === 'Unread' }"
+              ><v-icon icon="fa: fa-solid fa-bell"></v-icon>Unread</v-btn
+            >
+            <v-btn @click="setInbox('Read')" :class="{ 'bg-cardColor': currentInbox === 'Read' }"
+              ><v-icon icon="fa: fa-regular fa-bell"></v-icon>Read</v-btn
+            >
+          </v-col>
+          <v-col cols="12" lg="8">
             <v-text-field
               v-model="search"
               label="Search"
@@ -60,7 +68,7 @@
           </v-col>
           <v-col cols="12" lg="2">
             <v-select
-              label="Group By"
+              label="Sort By"
               :items="groupBy"
               density="compact"
               @change="groupBySelection($event)"
@@ -248,6 +256,10 @@ export default {
         filtered = filtered.filter((notification) => notification.saved)
       } else if (this.currentInbox === 'Done') {
         filtered = filtered.filter((notification) => notification.done)
+      } else if (this.currentInbox === 'Read') {
+        filtered = filtered.filter((notification) => !notification.read)
+      } else if (this.currentInbox === 'Unread') {
+        filtered = filtered.filter((notification) => notification.read)
       }
 
       if (this.currentCompany) {
