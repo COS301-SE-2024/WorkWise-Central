@@ -40,6 +40,7 @@
                   placeholder="Employee Username"
                   rounded="md"
                   required
+                  data-testid="username-textfield"
                 ></v-text-field>
               </v-col>
 
@@ -56,6 +57,7 @@
                   v-model="req_obj2.roleId"
                   bg-color="background"
                   variant="solo"
+                  data-testid="role-select"
                 ></v-select>
               </v-col>
               <v-col :cols="12">
@@ -71,6 +73,7 @@
                   item-title="name"
                   bg-color="background"
                   variant="solo"
+                  data-testid="superior-select"
                 ></v-select>
               </v-col>
             </v-row>
