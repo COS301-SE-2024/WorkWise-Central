@@ -49,7 +49,9 @@
       <v-col cols="12" lg="10">
         <v-row>
           <v-col cols="12" lg="2">
-            <v-btn @click="setInbox('Unread')" :class="{ 'bg-cardColor': currentInbox === 'Unread' }"
+            <v-btn
+              @click="setInbox('Unread')"
+              :class="{ 'bg-cardColor': currentInbox === 'Unread' }"
               ><v-icon icon="fa: fa-solid fa-bell"></v-icon>Unread</v-btn
             >
             <v-btn @click="setInbox('Read')" :class="{ 'bg-cardColor': currentInbox === 'Read' }"
@@ -121,7 +123,6 @@
                     <v-btn
                       v-if="showActionButtons"
                       @click="handleAction('mark as read', notification.id)"
-                      text
                       color="primary"
                     >
                       <v-icon
@@ -136,7 +137,6 @@
                     <v-btn
                       v-if="showActionButtons"
                       @click="handleAction('save', notification.id)"
-                      text
                       color="primary"
                     >
                       <v-icon
@@ -151,7 +151,6 @@
                     <v-btn
                       v-if="showActionButtons"
                       @click="handleAction('add to done', notification.id)"
-                      text
                       color="primary"
                     >
                       <v-icon
