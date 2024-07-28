@@ -38,6 +38,7 @@ import {
 import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { extractUserId, validateObjectId } from '../utils/Utils';
+import { DeleteClientDto } from './dto/delete-client.dto';
 
 const className = 'Client';
 
@@ -48,12 +49,12 @@ export class ClientController {
     private readonly clientService: ClientService,
     private readonly jwtService: JwtService,
   ) {}
-  /*  validateObjectId(id: string): boolean {
+  validateObjectId(id: string): boolean {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
     }
     return true;
-  }*/
+  }
 
   @ApiOperation({ summary: 'Refer to the Documentation' })
   @Get()
@@ -87,8 +88,8 @@ export class ClientController {
       const userId = extractUserId(this.jwtService, headers);
       const result = await this.clientService.create(userId, createClientDto);
       return new CreateClientResponseDto(result);
-    } catch (Error) {
-      throw new HttpException(Error, HttpStatus.CONFLICT);
+    } catch (e) {
+      throw e;
     }
   }
 
@@ -105,11 +106,8 @@ export class ClientController {
   async findAll() {
     try {
       return { data: await this.clientService.getAllClients() };
-    } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    } catch (e) {
+      throw e;
     }
   }
 
@@ -133,11 +131,8 @@ export class ClientController {
           new Types.ObjectId(cid),
         ),
       };
-    } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    } catch (e) {
+      throw e;
     }
   }
 
@@ -163,7 +158,7 @@ export class ClientController {
       return new ApiResponseDto(response);
     } catch (e) {
       console.log(e);
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+      throw e;
     }
   }
 
@@ -195,7 +190,7 @@ export class ClientController {
       };
     } catch (e) {
       console.log(e);
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+      throw e;
     }
   }
 
@@ -232,36 +227,28 @@ export class ClientController {
       );
     } catch (e) {
       console.log(e);
-      throw new HttpException(e, HttpStatus.CONFLICT);
+      throw e;
     }
   }
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
+  @ApiBody({ type: DeleteClientDto })
   @ApiOperation({
     summary: `Delete a ${className}`,
     description: `You send the ${className} ObjectId, and then they get deleted if the id is valid. 
     There will be rules on deletion later.`,
-    security: [],
   })
   @ApiResponse({
     description: `A boolean value indicating whether or not the deletion was a success`,
   })
-  @Delete('/delete/:id')
-  remove(
-    @Headers() headers: any,
-    @Param('id') id: string /*, @Body() pass: { pass: string }*/,
-  ) {
+  @Delete('/delete/')
+  remove(@Headers() headers: any, @Body() deleteClientDto: DeleteClientDto) {
     try {
-      validateObjectId(id);
       const userId = extractUserId(this.jwtService, headers);
-
-      return this.clientService.softDelete(userId, new Types.ObjectId(id));
+      return this.clientService.softDelete(userId, deleteClientDto);
     } catch (e) {
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+      throw e;
     }
   }
 }
