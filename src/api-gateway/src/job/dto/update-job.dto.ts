@@ -98,6 +98,10 @@ export class UpdateJobDto {
 export class AddCommentDto {
   @IsNotEmpty()
   @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
   jobId: Types.ObjectId;
 
   @IsNotEmpty()
@@ -109,6 +113,10 @@ export class AddCommentDto {
 export class RemoveCommentDto {
   @IsNotEmpty()
   @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
   jobId: Types.ObjectId;
 
   @IsNotEmpty()
@@ -117,6 +125,10 @@ export class RemoveCommentDto {
 }
 
 export class UpdateCommentDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
   @IsNotEmpty()
   @IsMongoId()
   jobId: Types.ObjectId;

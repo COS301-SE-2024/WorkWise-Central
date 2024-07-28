@@ -10,6 +10,16 @@ import { Types } from 'mongoose';
 export class UpdateTagDto {
   @IsNotEmpty()
   @IsString()
+  @IsMongoId()
+  companyId: Types.ObjectId;
+
+  @IsOptional()
+  @IsString()
+  @IsMongoId()
+  tagId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
   label?: string;
 
   @IsOptional()
@@ -24,8 +34,8 @@ export class DeleteTagDto {
   @IsMongoId()
   tagId: Types.ObjectId;
 
-  /*  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @IsMongoId()
-  companyId: string;*/
+  companyId: Types.ObjectId;
 }

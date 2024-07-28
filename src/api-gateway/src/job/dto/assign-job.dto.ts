@@ -5,6 +5,11 @@ export class JobAssignDto {
   @IsNotEmpty()
   @IsMongoId()
   employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeToAssignId: Types.ObjectId;
+
   @IsNotEmpty()
   @IsMongoId()
   jobId: Types.ObjectId;
@@ -12,8 +17,13 @@ export class JobAssignDto {
 
 export class JobAssignGroupDto {
   @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
   @IsMongoId({ each: true })
-  employeeIds: Types.ObjectId[];
+  employeesToAssignIds: Types.ObjectId[];
+
   @IsNotEmpty()
   @IsMongoId()
   jobId: Types.ObjectId;
@@ -21,8 +31,13 @@ export class JobAssignGroupDto {
 
 export class JobAssignTeamDto {
   @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
   @IsMongoId({ each: true })
   teamIds: Types.ObjectId[];
+
   @IsNotEmpty()
   @IsMongoId()
   jobId: Types.ObjectId;
