@@ -447,7 +447,34 @@ export class JobController {
     }
   }
 
-  // tags
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Change the contents a Comment`,
+  })
+  @ApiOkResponse({
+    type: JobResponseDto,
+    description: `The updated Job object, with a new comment`,
+  })
+  @ApiBody({ type: UpdateCommentDto })
+  @Patch('/comment')
+  async editComment(
+    @Headers() headers: any,
+    @Body() updateCommentDto: UpdateCommentDto,
+  ) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.editCommentInJob(userId, updateCommentDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+  /// Comments
+
+  /// Tags
   @ApiOperation({
     summary: 'Get all Tags in a company',
   })
@@ -605,6 +632,68 @@ export class JobController {
           userId,
           deleteTagDto,
         ),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+  /// Tags
+
+  ///Employees
+  @ApiOperation({ summary: 'Assign an employee to a job' })
+  @ApiResponse({ type: JobResponseDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Put('/employee')
+  async assignEmployee(
+    @Headers() headers: any,
+    @Body() jobAssignDto: JobAssignDto,
+  ) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.assignEmployee(userId, jobAssignDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({ summary: 'Unassign an employee to a job' })
+  @ApiResponse({ type: JobResponseDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Patch('/employee')
+  async unassignEmployee(
+    @Headers() headers: any,
+    @Body() jobAssignDto: JobAssignDto,
+  ) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.unassignEmployee(userId, jobAssignDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({ summary: 'Assign multiple employees to a job at once' })
+  @ApiResponse({ type: JobResponseDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Put('/employees')
+  async assignEmployees(
+    @Headers() headers: any,
+    @Body() jobAssignGroupDto: JobAssignGroupDto,
+  ) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.assignEmployees(userId, jobAssignGroupDto),
       };
     } catch (e) {
       console.log(e);
