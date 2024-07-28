@@ -4,127 +4,104 @@
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
         <h2 class="text-xl font-semibold">Notifications</h2>
-        <v-divider></v-divider>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12" lg="2">
-        <v-card>
-          <v-list>
-            <v-list-item
-              v-for="(item, index) in items"
-              :key="index"
-              :value="index"
-              @click="setInbox(item.title)"
-            >
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-          <v-divider></v-divider>
-          <v-list>
-            <v-label>Filters</v-label>
-            <v-list-item
-              v-for="(item, index) in filters"
-              :key="index"
-              :value="index"
-              @click="filter(item.title)"
-            >
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-          <v-divider></v-divider>
-          <v-list>
-            <v-label>Companies</v-label>
-            <v-list-item
-              v-for="(item, index) in companies"
-              :key="index"
-              :value="index"
-              @click="switchCompany(item.title)"
-            >
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-col>
-      <v-col cols="12" lg="10">
-        <v-row>
-          <v-col cols="12" lg="2">
-            <v-btn
-              @click="setInbox('Unread')"
-              :class="{ 'bg-cardColor': currentInbox === 'Unread' }"
-              ><v-icon icon="fa: fa-solid fa-bell"></v-icon>Unread</v-btn
-            >
-            <v-btn @click="setInbox('Read')" :class="{ 'bg-cardColor': currentInbox === 'Read' }"
-              ><v-icon icon="fa: fa-regular fa-bell"></v-icon>Read</v-btn
-            >
-          </v-col>
-          <v-col cols="12" lg="8">
-            <v-text-field
-              v-model="search"
-              label="Search"
-              outlined
-              dense
-              hide-details
-              @input="searchEmails"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" lg="2">
-            <v-select
-              label="Sort By"
-              :items="groupBy"
-              density="compact"
-              @change="groupBySelection($event)"
-            ></v-select>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12" order="last" justify="center">
-            <v-card>
-              <v-list class="bg-cardColor" rounded="md">
-                <v-label>
-                  <v-checkbox v-model="selectAllNotifications" @click="selectAll"> </v-checkbox>
-                  Select All
-                </v-label>
-                <v-divider></v-divider>
-                <v-list-item
-                  v-for="notification in filteredNotifications"
-                  :key="notification.id"
-                  @click="handleNotificationClick(notification.id)"
-                  :class="{
-                    'bg-background':
-                      clickedNotificationId === notification.id ||
-                      clickedNotfiicationIds.includes(notification.id)
-                  }"
-                >
-                  <v-label
-                    class="h5 font-weight-regular d-flex justify-center bg-cardColor text-secondary"
-                  ></v-label>
-                  <v-card-text>
-                    <v-icon
-                      :icon="
-                        notification.read === false
-                          ? 'fa: fa-regular fa-bell'
-                          : 'fa: fa-solid fa-bell'
-                      "
-                    >
-                    </v-icon>
-                    <span>{{ notification.title }}</span>
-                    <br />
-                    {{ notification.message }}
-                    <br />
-                    {{ notification.type }}
-                    <br />
-                    {{ notification.company }}
-                    <br />
-                    {{ notification.date }}
-                  </v-card-text>
+    <v-card rounded="md">
+      <v-row>
+        <v-col cols="12" lg="2">
+          <v-card class="pa-0 ma-2">
+            <v-list>
+              <v-list-item
+                v-for="(item, index) in items"
+                :key="index"
+                :value="index"
+                @click="setInbox(item.title)"
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+            <v-divider></v-divider>
+            <v-list>
+              <v-label>Filters</v-label>
+              <v-list-item
+                v-for="(item, index) in filters"
+                :key="index"
+                :value="index"
+                @click="filter(item.title)"
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+            <v-divider></v-divider>
+            <v-list>
+              <v-label>Companies</v-label>
+              <v-list-item
+                v-for="(item, index) in companies"
+                :key="index"
+                :value="index"
+                @click="switchCompany(item.title)"
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-col>
+        <v-col cols="12" lg="10">
+          <v-row>
+            <v-col cols="12" lg="2">
+              <v-btn
+                @click="setInbox('Unread')"
+                :class="{ 'bg-cardColor': currentInbox === 'Unread' }"
+                ><v-icon icon="fa: fa-solid fa-bell"></v-icon>Unread</v-btn
+              >
+              <v-btn @click="setInbox('Read')" :class="{ 'bg-cardColor': currentInbox === 'Read' }"
+                ><v-icon icon="fa: fa-regular fa-bell"></v-icon>Read</v-btn
+              >
+            </v-col>
+            <v-col cols="12" lg="8">
+              <v-text-field
+                v-model="search"
+                label="Search"
+                outlined
+                dense
+                hide-details
+                class="pa-0 ma-2"
+                @input="searchEmails"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" lg="2">
+              <v-select
+                label="Sort By"
+                :items="groupBy"
+                density="compact"
+                 class="pa-0 ma-2"
+                @change="groupBySelection($event)"
+              ></v-select>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" order="last" justify="center">
+              <v-card class="pa-0 ma-3">
+                <v-list class="bg-cardColor" rounded="md">
+                  <v-label>
+                    <v-checkbox v-model="selectAllNotifications" @click="selectAll"> </v-checkbox>
+                    Select All
+                  </v-label>
                   <v-divider></v-divider>
-                  <v-list-item-action>
-                    <v-btn
-                      v-if="showActionButtons"
-                      @click="handleAction('mark as read', notification.id)"
-                      color="primary"
-                    >
+                  <v-list-item
+                    v-for="notification in filteredNotifications"
+                    :key="notification.id"
+                    @click="handleNotificationClick(notification.id)"
+                    :class="{
+                      'bg-background':
+                        clickedNotificationId === notification.id ||
+                        clickedNotfiicationIds.includes(notification.id)
+                    }"
+                  >
+                    <v-label
+                      class="h5 font-weight-regular d-flex justify-center bg-cardColor text-secondary"
+                    ></v-label>
+                    <v-card-text>
                       <v-icon
                         :icon="
                           notification.read === false
@@ -133,43 +110,69 @@
                         "
                       >
                       </v-icon>
-                    </v-btn>
-                    <v-btn
-                      v-if="showActionButtons"
-                      @click="handleAction('save', notification.id)"
-                      color="primary"
-                    >
-                      <v-icon
-                        :icon="
-                          notification.saved === false
-                            ? 'fa: fa-regular fa-bookmark'
-                            : 'fa: fa-solid fa-bookmark'
-                        "
+                      <span>{{ notification.title }}</span>
+                      <br />
+                      {{ notification.message }}
+                      <br />
+                      {{ notification.type }}
+                      <br />
+                      {{ notification.company }}
+                      <br />
+                      {{ notification.date }}
+                    </v-card-text>
+                    <v-divider></v-divider>
+                    <v-list-item-action>
+                      <v-btn
+                        v-if="showActionButtons"
+                        @click="handleAction('mark as read', notification.id)"
+                        color="primary"
                       >
-                      </v-icon>
-                    </v-btn>
-                    <v-btn
-                      v-if="showActionButtons"
-                      @click="handleAction('add to done', notification.id)"
-                      color="primary"
-                    >
-                      <v-icon
-                        :icon="
-                          notification.done === false
-                            ? 'fa: fa-solid fa-check'
-                            : 'fa: fa-solid fa-check'
-                        "
+                        <v-icon
+                          :icon="
+                            notification.read === false
+                              ? 'fa: fa-regular fa-bell'
+                              : 'fa: fa-solid fa-bell'
+                          "
+                        >
+                        </v-icon>
+                      </v-btn>
+                      <v-btn
+                        v-if="showActionButtons"
+                        @click="handleAction('save', notification.id)"
+                        color="primary"
                       >
-                      </v-icon>
-                    </v-btn>
-                  </v-list-item-action>
-                </v-list-item>
-              </v-list>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
+                        <v-icon
+                          :icon="
+                            notification.saved === false
+                              ? 'fa: fa-regular fa-bookmark'
+                              : 'fa: fa-solid fa-bookmark'
+                          "
+                        >
+                        </v-icon>
+                      </v-btn>
+                      <v-btn
+                        v-if="showActionButtons"
+                        @click="handleAction('add to done', notification.id)"
+                        color="primary"
+                      >
+                        <v-icon
+                          :icon="
+                            notification.done === false
+                              ? 'fa: fa-solid fa-check'
+                              : 'fa: fa-solid fa-check'
+                          "
+                        >
+                        </v-icon>
+                      </v-btn>
+                    </v-list-item-action>
+                  </v-list-item>
+                </v-list>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-card>
   </v-container>
 </template>
 
