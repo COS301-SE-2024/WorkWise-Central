@@ -2,21 +2,31 @@
   <v-app :theme="isdarkmode ? 'dark' : 'light'">
     <!-- Toolbar -->
     <v-app-bar :theme="isdarkmode ? 'themes.dark' : 'themes.light'" class="bg-background">
-      <v-toolbar-title class="d-flex justify-end">
+      <v-toolbar-title class="d-flex justify-start">
         <v-label class="h4 text-primary">Work</v-label>
         <v-label class="h4 text-secondary">Wise</v-label>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-btn @click="toggleDarkMode"
+      <v-btn @click="toggleDarkMode" base-color="background" text
         ><v-icon :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"></v-icon
       ></v-btn>
     </v-app-bar>
     <!-- Main Content -->
     <v-main :theme="isdarkmode ? 'dark' : 'light'">
-      <v-row style="height: 1000px" no-gutters>
+      <v-row style="height: 1000px">
         <!-- Left Half -->
-        <v-col cols="6" sm="3" md="6" align-self="center">
+
+        <v-col
+          cols="12"
+          lg="6"
+          md="6"
+          align-self="center"
+          order="last"
+          order-lg="first"
+          order-md="first"
+          order-sm="last"
+        >
           <v-row justify="center"
             ><v-col align-self="center">
               <h1
@@ -52,7 +62,8 @@
               ></v-row
             >
 
-            <v-dialog v-model="loginDialog" max-width="400" @click:outside="resetFields">
+            <v-dialog opacity="" v-model="loginDialog" max-width="400" @click:outside="resetFields">
+              <Toast position="top-center" />
               <v-card
                 width="auto"
                 height="auto"
@@ -113,7 +124,6 @@
                 </v-col>
 
                 <v-col cols="8" offset="2">
-                  <Toast />
                   <v-btn
                     :disabled="!valid"
                     text
@@ -130,7 +140,7 @@
                 <v-col cols="8" offset="2">
                   <v-btn
                     text
-                    @click="(signupDialog = true)((loginDialog = false))"
+                    @click="(signupDialog = true)((loginDialog = false))(resetFields)"
                     rounded="md"
                     color="secondary"
                     size="large"
@@ -167,7 +177,12 @@
             >
 
             <!-- Flow 1 -->
-            <v-dialog v-model="signupDialog" max-width="400" @click:outside="resetFields">
+            <v-dialog
+              opacity=""
+              v-model="signupDialog"
+              max-width="400"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -205,10 +220,10 @@
                           ><label style="font-size: 14px; font-weight: lighter">Password</label>
                           <v-text-field
                             :theme="isdarkmode ? 'dark' : 'light'"
-                            :label="password ? '' : 'Enter your password'"
+                            :label="signupPassword ? '' : 'Enter your password'"
                             :type="showPassword ? 'text' : 'password'"
                             name="password"
-                            v-model="password"
+                            v-model="signupPassword"
                             :rules="passwordRules"
                             :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                             @click:append="toggleShowPassword"
@@ -230,7 +245,7 @@
                             @click:append="toggleShowPassword"
                             name="confirm_password"
                             v-model="confirm_password"
-                            :rules="[(v) => v === password || 'Passwords do not match']"
+                            :rules="[(v) => v === signupPassword || 'Passwords do not match']"
                             rounded="md"
                             variant="solo"
                             required
@@ -239,7 +254,7 @@
                     </v-form>
                   </v-col>
                   <v-col cols="8" offset="2">
-                    <Toast />
+                    <Toast position="top-center" />
                     <v-btn
                       :disabled="!valid"
                       text
@@ -267,7 +282,12 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 2 -->
-            <v-dialog v-model="signup1Dialog" max-width="400" @click:outside="resetFields">
+            <v-dialog
+              opacity=""
+              v-model="signup1Dialog"
+              max-width="400"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 width="auto"
                 height="auto"
@@ -345,7 +365,12 @@
               </v-sheet>
             </v-dialog>
             <v-col xs="3" align-self="center">
-              <v-dialog v-model="signupUsernameDialog" max-width="400" @click:outside="resetFields">
+              <v-dialog
+                opacity=""
+                v-model="signupUsernameDialog"
+                max-width="400"
+                @click:outside="resetFields"
+              >
                 <v-sheet
                   width="auto"
                   height="auto"
@@ -378,7 +403,7 @@
                     </v-form>
                   </v-col>
                   <v-col cols="8" offset="2">
-                    <Toast />
+                    <Toast position="top-center" />
                     <v-btn
                       :disabled="!valid"
                       text
@@ -408,7 +433,12 @@
               </v-dialog>
             </v-col>
             <!-- Flow 3 -->
-            <v-dialog v-model="signup2Dialog" max-width="400" @click:outside="resetFields">
+            <v-dialog
+              opacity=""
+              v-model="signup2Dialog"
+              max-width="400"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 width="auto"
                 height="auto"
@@ -507,7 +537,12 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 4 -->
-            <v-dialog v-model="signupAddressDialog" max-width="1000" @click:outside="resetFields">
+            <v-dialog
+              opacity=""
+              v-model="signupAddressDialog"
+              max-width="1000"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 width="auto"
                 height="auto"
@@ -559,7 +594,7 @@
                       <v-row
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">City</label
-                          ><v-select
+                          ><v-text-field
                             :label="city ? '' : 'Select your city'"
                             type="input"
                             v-model="city"
@@ -567,9 +602,8 @@
                             :rules="cityRules"
                             rounded="md"
                             variant="solo"
-                            :items="cityList"
                             required
-                          ></v-select></v-col
+                          ></v-text-field></v-col
                       ></v-row>
                       <v-row
                         ><v-col
@@ -646,6 +680,7 @@
             </v-dialog>
             <!-- Flow 5 -->
             <v-dialog
+              opacity=""
               v-model="signup3Dialog"
               max-width="700"
               style="height: 750px"
@@ -683,19 +718,28 @@
         </v-col>
 
         <!-- Right Half -->
-        <v-col cols="6" sm="3" md="6">
+
+        <v-col
+          cols="12"
+          lg="6"
+          md="6"
+          order="first"
+          order-lg="last"
+          order-md="last"
+          order-sm="first"
+        >
           <div class="w-full h-full background-image"></div>
         </v-col>
       </v-row>
-      <v-footer :theme="isdarkmode ? 'dark' : 'light'" class="bg-background">
-        <!-- <v-container>
+      <!-- <v-footer :theme="isdarkmode ? 'dark' : 'light'" class="bg-background">
+         <v-container>
           <v-row justify="space-between">
             <v-col cols="12" md="6">
               <span class="h6">&copy; 2024 WorkWise Central</span>
             </v-col>
           </v-row>
-        </v-container> -->
-      </v-footer>
+        </v-container>
+      </v-footer> -->
     </v-main>
   </v-app>
 </template>
@@ -785,6 +829,7 @@ export default defineComponent({
     flow: ['year', 'month', 'calendar'],
     access_token: '',
     password: '',
+    signupPassword: '',
     confirm_password: '',
     showPassword: false,
     date: '',
@@ -917,7 +962,8 @@ export default defineComponent({
     phoneNumberRules: [
       (v) => !!v || 'Phone number is required',
       (v) => (v.length >= 10 && v.length <= 10) || 'Phone number must be 10 characters',
-      (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers'
+      (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers',
+      (v) => /^0[0-9]*$/.test(v) || 'Phone number must start with 0'
     ]
   }),
 
@@ -991,6 +1037,7 @@ export default defineComponent({
             localStorage.setItem('access_token', response.data.access_token)
             localStorage.setItem('id', response.data.id)
             localStorage.setItem('currentCompany', response.data.user.joinedCompanies[0].companyId)
+            localStorage.setItem('employeeId', response.data.user.joinedCompanies[0].employeeId)
             localStorage.setItem('email', this.email)
             localStorage.setItem('username', this.username)
             this.$toast.add({
@@ -1003,7 +1050,7 @@ export default defineComponent({
             this.$router.push('/dashboard')
           })
           .catch((error) => {
-            console.log(error.response.data.message)
+            console.log(error)
             this.$toast.add({
               severity: 'error',
               summary: 'Error',
@@ -1022,7 +1069,7 @@ export default defineComponent({
       await axios
         .post(apiURL + 'users/create', {
           username: this.username,
-          password: this.password,
+          password: this.signupPassword,
           personalInfo: {
             firstName: this.name,
             surname: this.surname,
@@ -1074,7 +1121,7 @@ export default defineComponent({
           this.$toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Username already exists',
+            detail: 'Email already exists',
             life: 3000
           })
         } else {
@@ -1099,7 +1146,7 @@ export default defineComponent({
             severity: 'error',
             summary: 'Error',
             detail: 'Username already exists',
-            life: 3000
+            life: 6000
           })
         } else {
           this.signupUsernameDialog = false

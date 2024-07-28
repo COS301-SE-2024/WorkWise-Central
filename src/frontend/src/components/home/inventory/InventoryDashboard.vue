@@ -52,53 +52,42 @@
           :row-props="getRowProps"
         >
           <template v-slot:[`item.actions`]="{ item }">
-            <v-menu v-model="actionsMenu" open-on-hover>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  rounded="xl"
-                  variant="plain"
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="fuga(), selectItem(item)"
-                >
-                  <v-icon color="primary">mdi-dots-horizontal</v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item>
-                  <v-list-item-content class="text-h5 font-weight-regular text-center">
-                    {{ selectedItemName }}
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-content>
-                    What would you like to do with this inventory item
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-action>
-                    <EditInventory :inventory_id="selectedItemID" :editedItem="selectedItem" />
-                  </v-list-item-action>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-action>
-                    <InventoryDetails :inventoryItem="selectedItem" />
-                  </v-list-item-action>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-action>
-                    <DeleteInventory
-                      :inventory_id="selectedItemID"
-                      :inventoryName="selectedItemName"
-                    />
-                  </v-list-item-action>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </template>
+            <v-btn
+              rounded="xl"
+              variant="plain"
+              v-bind="attrs"
+              v-on="on"
+              @click="fuga(), selectItem(item)"
+            >
+              <v-icon color="primary">mdi-dots-horizontal</v-icon>
+            </v-btn></template
+          >
         </v-data-table>
       </v-card-text>
     </v-card>
+    <v-menu v-model="actionsMenu" max-width="500px">
+      <v-list>
+        <v-list-item>
+          <v-list-item-content class="text-h5 font-weight-regular text-center">
+            {{ selectedItemName }}
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            What would you like to do with this inventory item
+          </v-list-item-content> </v-list-item
+        ><v-list-item>
+          <InventoryDetails :inventoryItem="selectedItem" />
+        </v-list-item>
+        <v-list-item>
+          <EditInventory :inventory_id="selectedItemID" :editedItem="selectedItem" />
+        </v-list-item>
+
+        <v-list-item>
+          <DeleteInventory :inventory_id="selectedItemID" :inventoryName="selectedItemName" />
+        </v-list-item>
+      </v-list>
+    </v-menu>
   </v-container>
 </template>
 
@@ -116,7 +105,7 @@ export default defineComponent({
   data() {
     return {
       inventoryHeaders: [
-        { title: 'Name', value: 'name', sortable: true, key: 'name' },
+        { title: 'Product Name', value: 'name', sortable: true, key: 'name' },
         { title: 'Description', value: 'description', sortable: true, key: 'description' },
         { title: 'Cost Price', value: 'costPrice', sortable: true, key: 'costPrice' },
         {
@@ -171,8 +160,14 @@ export default defineComponent({
     },
     async getInventory() {
       // Fetch inventory items from the backend
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
       try {
-        const response = await axios.get('http://localhost:3000/inventory/all')
+        const response = await axios.get('http://localhost:3000/inventory/all', config)
         console.log(response.data.data)
         this.inventoryItems = response.data.data
       } catch (error) {

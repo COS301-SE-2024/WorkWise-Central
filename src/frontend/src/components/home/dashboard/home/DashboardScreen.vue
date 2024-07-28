@@ -8,12 +8,12 @@
           rounded="md"
           :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
           border="md"
-          elevation="2"
+          elevation="0"
         >
           <!-- Calendar Card -->
           <v-col cols="12">
-            <v-card max-height="auto" border="md" rounded="xl"
-              ><v-icon icon="fa:fa-solid fa-calender-alt"></v-icon>
+            <v-card max-height="auto" border="md" rounded="xl" class="bg-cardColor">
+              <v-icon icon="fa:fa-solid fa-calender-alt"></v-icon>
               <v-card-title>Calendar</v-card-title>
 
               <v-card-item>

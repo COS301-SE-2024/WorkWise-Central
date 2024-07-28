@@ -8,11 +8,13 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateTeamDto, createTeamResponseDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { TeamService } from './team.service';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
@@ -24,6 +26,7 @@ import {
 import { Types } from 'mongoose';
 import { teamListResponseDto, teamResponseDto } from './entities/team.entity';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 const className = 'Team';
 
@@ -40,6 +43,12 @@ export class TeamController {
     return { message: 'Refer to /documentation for details on the API' };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
   @ApiOperation({
     summary: `Get all ${className} instances`,
     description: `Returns all ${className} instances in the database.`,
@@ -50,9 +59,16 @@ export class TeamController {
   })
   @Get('/all')
   async findAll() {
-    return { data: await this.teamService.findAll() };
+    const data = await this.teamService.findAll();
+    return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
   @ApiOperation({
     summary: `Find an ${className}`,
     description: `Returns the ${className} instance with the given id.`,
@@ -67,17 +83,16 @@ export class TeamController {
   })
   @Get('id/:id')
   async findById(@Param('id') id: Types.ObjectId) {
-    return { data: await this.teamService.findById(id) };
+    const data = await this.teamService.findById(id);
+    return { data: data };
   }
 
-  // @Get('name/:name/company/:company')
-  // findByNameInCompany(
-  //   @Param('name') name: string,
-  //   @Param('company') company: Types.ObjectId,
-  // ) {
-  //   return this.teamService.findByNameInCompany(name, company);
-  // }
-
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -93,10 +108,17 @@ export class TeamController {
   })
   @Post('/create')
   async create(@Body() createTeamDto: CreateTeamDto) {
-    console.log('In endpoint\ncreateTeamDto: ', createTeamDto);
-    return { data: await this.teamService.create(createTeamDto) };
+    let data;
+    try {
+      data = await this.teamService.create(createTeamDto);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Update an ${className} instances`,
     description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
@@ -115,10 +137,17 @@ export class TeamController {
     @Param('id') id: Types.ObjectId,
     @Body() updateTeamDto: UpdateTeamDto,
   ) {
-    console.log('In the update controller');
-    return { data: await this.teamService.update(id, updateTeamDto) };
+    let data;
+    try {
+      data = await this.teamService.update(id, updateTeamDto);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Delete an ${className}`,
     description: `Send the ${className} ObjectId, and then they get deleted if the id is valid.\n `,
@@ -134,7 +163,12 @@ export class TeamController {
   })
   @Delete(':id')
   async remove(@Param('id') id: Types.ObjectId) {
-    console.log('In the delete controller');
-    return { data: await this.teamService.remove(id) };
+    let data;
+    try {
+      data = await this.teamService.remove(id);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
   }
 }

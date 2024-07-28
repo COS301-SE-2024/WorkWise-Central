@@ -8,11 +8,13 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto, createRoleResponseDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
@@ -21,14 +23,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-// import { EmployeeListResponseDto } from 'src/employee/entities/employee.entity';
 import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
-import {
-  RoleListResponseDto,
-  RoleResponseDto,
-} from './entity/role.entity';
-// import { CreateEmployeeDto, CreateEmployeeResponseDto } from 'src/employee/dto/create-employee.dto';
+import { RoleListResponseDto, RoleResponseDto } from './entity/role.entity';
+import { AuthGuard } from '../auth/auth.guard';
 
 const className = 'Role';
 
@@ -45,6 +43,12 @@ export class RoleController {
     return { message: 'Refer to /documentation for details on the API' };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
   @ApiOperation({
     summary: `Get all ${className} instances`,
     description: `Returns all ${className} instances in the database.`,
@@ -55,9 +59,23 @@ export class RoleController {
   })
   @Get('/all')
   async findAll() {
-    return { data: await this.roleService.findAll() };
+    const data = await this.roleService.findAll();
+    if (data.length === 0) {
+      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
+    }
+    return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
   @ApiOperation({
     summary: `Get all ${className} instances for a given company`,
     description: `Returns all ${className} instances in the database for a given Company.`,
@@ -72,9 +90,24 @@ export class RoleController {
   })
   @Get('/all/:id')
   async findAllInCompany(@Param('id') id: Types.ObjectId) {
-    return { data: await this.roleService.findAllInCompany(id) };
+    let data;
+    try {
+      data = await this.roleService.findAllInCompany(id);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    if (data.length === 0) {
+      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
+    }
+    return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
   @ApiOperation({
     summary: `Find an ${className}`,
     description: `Returns the ${className} instance with the given id.`,
@@ -89,9 +122,15 @@ export class RoleController {
   })
   @Get('id/:id')
   async findById(@Param('id') id: Types.ObjectId) {
-    return { data: await this.roleService.findById(id) };
+    const data = await this.roleService.findById(id);
+    if (!data) {
+      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
+    }
+    return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Get the list of all the permissions available in the system.`,
     description: `Returns the array of strings of all the permissions available in the system.`,
@@ -105,9 +144,11 @@ export class RoleController {
     return { data: await this.roleService.getPermissionsArray() };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    status: HttpStatus.BAD_REQUEST,
   })
   @ApiOperation({
     summary: `Create a new ${className}`,
@@ -121,9 +162,21 @@ export class RoleController {
   })
   @Post('/create')
   async create(@Body() createRoleDto: CreateRoleDto) {
-    return { data: await this.roleService.create(createRoleDto) };
+    let data;
+    try {
+      data = await this.roleService.create(createRoleDto);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
   @ApiOperation({
     summary: `Update an ${className} instances`,
     description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
@@ -142,9 +195,25 @@ export class RoleController {
     @Param('id') id: Types.ObjectId,
     @Body() updateRoleDto: UpdateRoleDto,
   ) {
-    return { data: await this.roleService.update(id, updateRoleDto) };
+    let data;
+    try {
+      data = await this.roleService.update(id, updateRoleDto);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+  })
   @ApiOperation({
     summary: `Delete an ${className}`,
     description: `Send the ${className} ObjectId, and then they get deleted if the id is valid.\n `,
@@ -160,6 +229,19 @@ export class RoleController {
   })
   @Delete(':id')
   async remove(@Param('id') id: Types.ObjectId) {
-    return { data: await this.roleService.remove(id) };
+    let data;
+    try {
+      data = await this.roleService.remove(id);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+
+    if (data === false) {
+      throw new HttpException(
+        'update unsuccessful',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+    return { data: data };
   }
 }

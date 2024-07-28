@@ -38,9 +38,9 @@ const inventorySubItems = ref([
 ])
 
 const inboxSubItems = ref([
-  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
-  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
-  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
+  { title: 'Notifications', icon: 'fa: fa-solid fa-bell', routeName: 'notifications' },
+  { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: '404' },
+  { title: 'Upcoming Appointments', icon: 'fa: fa-solid fa-calendar-check', routeName: '404' }
 ])
 
 const supportSubItems = ref([
@@ -93,7 +93,14 @@ export default defineComponent({
     },
     logout(name: string) {
       if (name === 'splash') {
+        // Clear local storage
         localStorage.clear()
+
+        // Replace current history state to prevent back navigation
+        window.history.replaceState({}, document.title, window.location.pathname)
+
+        // Redirect to login page
+        this.$router.push({ name: 'login' })
       }
     }
   }

@@ -116,6 +116,7 @@ describe('--Inventory Service--', () => {
         },
       ];
 
+      mockCompanyService.companyIdExists.mockResolvedValue(true);
       mockInventoryRepository.findAllInCompany.mockResolvedValue(
         expectedResponse,
       );
@@ -170,6 +171,7 @@ describe('--Inventory Service--', () => {
       const id = new Types.ObjectId();
       const companyId = new Types.ObjectId();
 
+      mockCompanyService.companyIdExists.mockResolvedValue(true);
       mockInventoryRepository.InventoryExistsForCompany.mockResolvedValue(true);
 
       expect(
@@ -181,6 +183,7 @@ describe('--Inventory Service--', () => {
       const id = new Types.ObjectId();
       const companyId = new Types.ObjectId();
 
+      mockCompanyService.companyIdExists.mockResolvedValue(true);
       mockInventoryRepository.InventoryExistsForCompany.mockResolvedValue(
         false,
       );
@@ -199,6 +202,8 @@ describe('--Inventory Service--', () => {
     it('should return true if the Inventory item is deleted', async () => {
       const id = new Types.ObjectId();
 
+      //mocking the InventoryExists function
+      jest.spyOn(inventoryService, 'InventoryExists').mockResolvedValue(true);
       mockInventoryRepository.remove.mockResolvedValue(true);
 
       expect(await inventoryService.remove(id)).toBe(true);
@@ -207,6 +212,7 @@ describe('--Inventory Service--', () => {
     it('should return false if the Inventory item is not deleted', async () => {
       const id = new Types.ObjectId();
 
+      jest.spyOn(inventoryService, 'InventoryExists').mockResolvedValue(true);
       mockInventoryRepository.remove.mockResolvedValue(false);
 
       expect(await inventoryService.remove(id)).toBe(false);

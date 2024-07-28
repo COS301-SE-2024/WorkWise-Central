@@ -199,6 +199,8 @@ export class CompanyService {
     if (!inputValidated.isValid) {
       throw new ConflictException(inputValidated.message);
     }
+
+    console.log('addUserDto', addUserDto);
     //Get company and user
     const company = await this.getCompanyById(addUserDto.currentCompany);
     const user = await this.usersService.getUserByUsername(
@@ -213,25 +215,27 @@ export class CompanyService {
     let addedEmployee: Employee & { _id: Types.ObjectId };
     if (addUserDto.roleId) {
       addedEmployee = await this.employeeService.create({
-        companyId: addUserDto.currentCompany,
+        companyId: company._id,
         userId: user._id,
         roleId: addUserDto.roleId,
+        superiorId: addUserDto.superiorId,
       });
     } else {
       const defaultRole = await this.roleService.findOneInCompany(
         'Worker',
-        addUserDto.currentCompany,
+        company._id,
       );
 
       addedEmployee = await this.employeeService.create({
-        companyId: addUserDto.currentCompany,
+        companyId: company._id,
         userId: user._id,
         roleId: defaultRole._id,
+        superiorId: addUserDto.superiorId,
       });
     }
 
     const newJoinedCompany: JoinedCompany = {
-      companyId: addUserDto.currentCompany,
+      companyId: company._id,
       employeeId: addedEmployee._id,
       companyName: company.name,
     };

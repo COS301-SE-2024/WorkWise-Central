@@ -211,6 +211,7 @@ export class UsersRepository {
   }
 
   async addJoinedCompany(id: Types.ObjectId, joinedCompany: JoinedCompany) {
+    console.log('addJoinedCompany', joinedCompany);
     return this.userModel
       .findOneAndUpdate(
         {

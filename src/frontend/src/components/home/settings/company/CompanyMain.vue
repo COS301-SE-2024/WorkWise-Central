@@ -31,7 +31,7 @@
       </v-card-text>
       <v-actions @click="closeCompanyDialog">
         <v-col cols="12" align-self="center">
-          <Toast />
+          <Toast position="top-center" />
           <v-btn
             color="success"
             width="100%"
