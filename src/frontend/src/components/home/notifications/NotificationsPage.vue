@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <Toast position="bottom-center" />
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
         <h2 class="text-xl font-semibold">Notifications</h2>
@@ -10,21 +11,36 @@
       <v-col cols="12" lg="2">
         <v-card>
           <v-list>
-            <v-list-item v-for="(item, index) in items" :key="index" :value="index">
+            <v-list-item
+              v-for="(item, index) in items"
+              :key="index"
+              :value="index"
+              @click="setInbox(item.title)"
+            >
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item>
           </v-list>
           <v-divider></v-divider>
           <v-list>
             <v-label>Filters</v-label>
-            <v-list-item v-for="(item, index) in filters" :key="index" :value="index" @click="filter(item.title)">
+            <v-list-item
+              v-for="(item, index) in filters"
+              :key="index"
+              :value="index"
+              @click="filter(item.title)"
+            >
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item>
           </v-list>
           <v-divider></v-divider>
           <v-list>
             <v-label>Companies</v-label>
-            <v-list-item v-for="(item, index) in companies" :key="index" :value="index">
+            <v-list-item
+              v-for="(item, index) in companies"
+              :key="index"
+              :value="index"
+              @click="switchCompany(item.title)"
+            >
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item>
           </v-list>
@@ -65,7 +81,7 @@
                   :key="notification.id"
                   @click="handleNotificationClick(notification.id)"
                   :class="{
-                    'bg-secondary':
+                    'bg-background':
                       clickedNotificationId === notification.id ||
                       clickedNotfiicationIds.includes(notification.id)
                   }"
@@ -74,7 +90,14 @@
                     class="h5 font-weight-regular d-flex justify-center bg-cardColor text-secondary"
                   ></v-label>
                   <v-card-text>
-                    <v-icon>{{ notification.icon }}</v-icon>
+                    <v-icon
+                      :icon="
+                        notification.read === false
+                          ? 'fa: fa-regular fa-bell'
+                          : 'fa: fa-solid fa-bell'
+                      "
+                    >
+                    </v-icon>
                     <span>{{ notification.title }}</span>
                     <br />
                     {{ notification.message }}
@@ -86,6 +109,53 @@
                     {{ notification.date }}
                   </v-card-text>
                   <v-divider></v-divider>
+                  <v-list-item-action>
+                    <v-btn
+                      v-if="showActionButtons"
+                      @click="handleAction('mark as read', notification.id)"
+                      text
+                      color="primary"
+                    >
+                      <v-icon
+                        :icon="
+                          notification.read === false
+                            ? 'fa: fa-regular fa-bell'
+                            : 'fa: fa-solid fa-bell'
+                        "
+                      >
+                      </v-icon>
+                    </v-btn>
+                    <v-btn
+                      v-if="showActionButtons"
+                      @click="handleAction('save', notification.id)"
+                      text
+                      color="primary"
+                    >
+                      <v-icon
+                        :icon="
+                          notification.saved === false
+                            ? 'fa: fa-regular fa-bookmark'
+                            : 'fa: fa-solid fa-bookmark'
+                        "
+                      >
+                      </v-icon>
+                    </v-btn>
+                    <v-btn
+                      v-if="showActionButtons"
+                      @click="handleAction('add to done', notification.id)"
+                      text
+                      color="primary"
+                    >
+                      <v-icon
+                        :icon="
+                          notification.done === false
+                            ? 'fa: fa-solid fa-check'
+                            : 'fa: fa-solid fa-check'
+                        "
+                      >
+                      </v-icon>
+                    </v-btn>
+                  </v-list-item-action>
                 </v-list-item>
               </v-list>
             </v-card>
@@ -97,6 +167,7 @@
 </template>
 
 <script lang="ts">
+import Toast from 'primevue/toast'
 export default {
   data() {
     return {
@@ -105,23 +176,27 @@ export default {
           id: 1,
           title: 'Notification 1',
           message: 'This is the first notification.',
-          icon: 'mdi-bell',
           action: 'action1',
           actionText: 'Action 1',
           type: 'Job Oriented',
           company: 'Wielding Tires',
-          date: '2021-09-01'
+          date: '2021-09-01',
+          read: false,
+          done: false,
+          saved: false
         },
         {
           id: 2,
           title: 'Notification 2',
           message: 'This is the second notification.',
-          icon: 'mdi-bell-outline',
           action: 'action2',
           actionText: 'Action 2',
           type: 'Admin',
           company: 'Plumbing Bros',
-          date: '2021-09-02'
+          date: '2021-09-02',
+          read: false,
+          done: false,
+          saved: false
         }
         // Add more notifications here
       ],
@@ -148,22 +223,52 @@ export default {
       clickedNotificationId: 0, // Track the clicked notification ID
       active: true,
       clickedNotfiicationIds: [] as number[],
-      selectAllNotifications: false // Track the select all checkbox
+      selectAllNotifications: false, // Track the select all checkbox
+      showActionButtons: false,
+      read: [] as number[],
+      unread: [] as number[],
+      done: [] as number[],
+      saved: [] as number[],
+      currentInbox: 'Inbox', // Track the current inbox
+      currentCompany: '' // Track the current company
     }
   },
+  components: { Toast },
   computed: {
     filteredNotifications() {
-      // Filter notifications based on the search term and filter selection
-      return this.notifications.filter(notification =>
-        notification.title.toLowerCase().includes(this.search.toLowerCase()) &&
-        (this.filteredNotificationsArray.length === 0 || this.filteredNotificationsArray.includes(notification.id))
+      // Filter notifications based on the current inbox
+      let filtered = this.notifications.filter(
+        (notification) =>
+          notification.title.toLowerCase().includes(this.search.toLowerCase()) &&
+          (this.filteredNotificationsArray.length === 0 ||
+            this.filteredNotificationsArray.includes(notification.id))
       )
+
+      if (this.currentInbox === 'Saved') {
+        filtered = filtered.filter((notification) => notification.saved)
+      } else if (this.currentInbox === 'Done') {
+        filtered = filtered.filter((notification) => notification.done)
+      }
+
+      if (this.currentCompany) {
+        filtered = filtered.filter((notification) => notification.company === this.currentCompany)
+      }
+
+      return filtered
     }
   },
   methods: {
+    setInbox(inbox: string) {
+      this.currentInbox = inbox
+    },
+    switchCompany(company: string) {
+      console.log('Switch Company:', company)
+      this.currentCompany = company
+    },
     handleNotificationClick(id: number) {
       if (this.clickedNotificationId === id) {
         this.clickedNotificationId = 0
+        this.showActionButtons = false
         for (let i = 0; i < this.clickedNotfiicationIds.length; i++) {
           if (this.clickedNotfiicationIds[i] === id) {
             this.clickedNotfiicationIds.splice(i, 1)
@@ -172,10 +277,28 @@ export default {
       } else {
         this.clickedNotificationId = id
         this.clickedNotfiicationIds.push(id)
+        this.showActionButtons = true
       }
     },
-    handleAction(action: string) {
+    handleAction(action: string, id: number) {
       console.log(`Action performed: ${action}`)
+      if (action === 'add to done') {
+        if (this.notifications.find((notification) => notification.id === id)?.done === true) {
+          this.removeFromDone(id)
+        } else {
+          this.movetoDone(id)
+        }
+      } else if (action === 'save') {
+        if (this.notifications.find((notification) => notification.id === id)?.saved === true) {
+          this.removeFromSaved(id)
+        } else {
+          this.movetoSaved(id)
+        }
+      } else if (action === 'mark as read') {
+        this.notifications.find((notification) => notification.id === id)?.read === false
+          ? this.markAsRead(id)
+          : this.markAsUnread(id)
+      }
     },
     selectAll() {
       this.selectAllNotifications = !this.selectAllNotifications
@@ -203,19 +326,98 @@ export default {
       this.clickedNotificationId = 0
       console.log('Delete Selected')
     },
-    markAsRead() {
+    markAsRead(id: number) {
       console.log('Mark as Read')
+      for (let i = 0; i < this.notifications.length; i++) {
+        if (this.notifications[i].id === id) {
+          this.read.push(this.notifications[i].id)
+          this.notifications[i].read = true
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Notification marked as read',
+            life: 3000
+          })
+        }
+      }
     },
-    markAsUnread() {
+    markAsUnread(id: number) {
       console.log('Mark as Unread')
+      for (let i = 0; i < this.notifications.length; i++) {
+        if (this.notifications[i].id === id) {
+          this.unread.push(this.notifications[i].id)
+          this.notifications[i].read = false
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Notification marked as unread',
+            life: 3000
+          })
+        }
+      }
     },
-    movetoSaved() {
+    movetoSaved(id: number) {
       console.log('Move to Saved')
+      for (let i = 0; i < this.notifications.length; i++) {
+        if (this.notifications[i].id === id) {
+          this.saved.push(this.notifications[i].id)
+          this.notifications[i].saved = true
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Notification saved',
+            life: 3000
+          })
+        }
+      }
     },
-    movetoDone() {
+    movetoDone(id: number) {
       console.log('Move to Done')
+      for (let i = 0; i < this.notifications.length; i++) {
+        if (this.notifications[i].id === id) {
+          this.done.push(this.notifications[i].id)
+          this.notifications[i].done = true
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Notification marked as done',
+            life: 3000
+          })
+        }
+      }
+    },
+    removeFromDone(id: number) {
+      console.log('Remove from Done')
+      for (let i = 0; i < this.notifications.length; i++) {
+        if (this.notifications[i].id === id) {
+          this.done = this.done.filter((done) => done !== this.notifications[i].id)
+          this.notifications[i].done = false
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Notification removed from done',
+            life: 3000
+          })
+        }
+      }
+    },
+    removeFromSaved(id: number) {
+      console.log('Remove from Saved')
+      for (let i = 0; i < this.notifications.length; i++) {
+        if (this.notifications[i].id === id) {
+          this.saved = this.saved.filter((saved) => saved !== this.notifications[i].id)
+          this.notifications[i].saved = false
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Notification removed from saved',
+            life: 3000
+          })
+        }
+      }
     },
     filter(filterType: string) {
+      this.filteredNotificationsArray = []
       if (filterType === 'Job Oriented') {
         for (let i = 0; i < this.notifications.length; i++) {
           if (this.notifications[i].type === 'Job Oriented') {
