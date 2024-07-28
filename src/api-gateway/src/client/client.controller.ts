@@ -37,6 +37,7 @@ import {
 } from './entities/client.entity';
 import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { extractUserId, validateObjectId } from '../utils/Utils';
 
 const className = 'Client';
 
@@ -47,12 +48,12 @@ export class ClientController {
     private readonly clientService: ClientService,
     private readonly jwtService: JwtService,
   ) {}
-  validateObjectId(id: string): boolean {
+  /*  validateObjectId(id: string): boolean {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
     }
     return true;
-  }
+  }*/
 
   @ApiOperation({ summary: 'Refer to the Documentation' })
   @Get()
@@ -83,7 +84,7 @@ export class ClientController {
     @Body() createClientDto: CreateClientDto,
   ): Promise<CreateClientResponseDto> {
     try {
-      const userId = this.extractUserId(headers);
+      const userId = extractUserId(this.jwtService, headers);
       const result = await this.clientService.create(userId, createClientDto);
       return new CreateClientResponseDto(result);
     } catch (Error) {
@@ -124,8 +125,8 @@ export class ClientController {
   @Get('all/:cid')
   async findAllInCompany(@Headers() headers: any, @Param('cid') cid: string) {
     try {
-      this.validateObjectId(cid);
-      const userId = this.extractUserId(headers);
+      validateObjectId(cid);
+      const userId = extractUserId(this.jwtService, headers);
       return {
         data: await this.clientService.getAllClientsInCompany(
           userId,
@@ -152,9 +153,9 @@ export class ClientController {
   })
   @Get('id/:id')
   async findOne(@Headers() headers: any, @Param('id') id: string) {
-    this.validateObjectId(id);
+    validateObjectId(id);
     try {
-      const userId = this.extractUserId(headers);
+      const userId = extractUserId(this.jwtService, headers);
       const response = await this.clientService.getClientById(
         userId,
         new Types.ObjectId(id),
@@ -180,10 +181,10 @@ export class ClientController {
     compId: string,
     @Query('term') emailOrName: string,
   ): Promise<{ data: (FlattenMaps<Client> & { _id: Types.ObjectId })[] }> {
-    this.validateObjectId(compId);
+    validateObjectId(compId);
     const companyId = new mongoose.Types.ObjectId(compId);
     try {
-      const userId = this.extractUserId(headers);
+      const userId = extractUserId(this.jwtService, headers);
 
       return {
         data: await this.clientService.getByEmailOrName(
@@ -220,9 +221,9 @@ export class ClientController {
     @Body() updateClientDto: UpdateClientDto,
   ) {
     try {
-      this.validateObjectId(id);
+      validateObjectId(id);
       const clientId = new Types.ObjectId(id);
-      const userId = this.extractUserId(headers);
+      const userId = extractUserId(this.jwtService, headers);
 
       return await this.clientService.updateClient(
         userId,
@@ -252,8 +253,8 @@ export class ClientController {
     @Param('id') id: string /*, @Body() pass: { pass: string }*/,
   ) {
     try {
-      this.validateObjectId(id);
-      const userId = this.extractUserId(headers);
+      validateObjectId(id);
+      const userId = extractUserId(this.jwtService, headers);
 
       return this.clientService.softDelete(userId, new Types.ObjectId(id));
     } catch (e) {
@@ -262,17 +263,5 @@ export class ClientController {
         HttpStatus.SERVICE_UNAVAILABLE,
       );
     }
-  }
-
-  public extractUserId(headers: any) {
-    const authHeader: string = headers.authorization;
-    const decodedJwtAccessToken = this.jwtService.decode(
-      authHeader.replace(/^Bearer\s+/i, ''),
-    );
-    if (!Types.ObjectId.isValid(decodedJwtAccessToken.sub)) {
-      throw new HttpException('Invalid User', HttpStatus.BAD_REQUEST);
-    }
-    const userId: Types.ObjectId = decodedJwtAccessToken.sub; //This attribute is retrieved in the JWT
-    return userId;
   }
 }
