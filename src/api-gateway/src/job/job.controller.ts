@@ -24,6 +24,7 @@ import {
 import {
   AddCommentDto,
   RemoveCommentDto,
+  UpdateCommentDto,
   UpdateDtoResponse,
   UpdateJobDto,
 } from './dto/update-job.dto';
@@ -44,12 +45,13 @@ import { JobResponseDto } from './entities/job.entity';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { CreatePriorityTagDto, CreateTagDto } from './dto/create-tag.dto';
-import { extractUserId } from '../utils/Utils';
+import { extractUserId, validateObjectId } from '../utils/Utils';
 import { DeleteTagDto } from './dto/edit-tag.dto';
 import {
   PriorityTagsAllResponseDto,
   TagsAllResponseDto,
 } from './dto/job-responses.dto';
+import { JobAssignDto, JobAssignGroupDto } from './dto/assign-job.dto';
 
 const className = 'Job';
 
@@ -100,9 +102,9 @@ export class JobController {
   async create(
     @Body() createJobDto: CreateJobDto,
   ): Promise<CreateJobResponseDto> {
-    this.validateObjectId(createJobDto.assignedBy, 'assignedBy');
+    validateObjectId(createJobDto.assignedBy, 'assignedBy');
     if (createJobDto.companyId)
-      this.validateObjectId(createJobDto.companyId, 'Company');
+      validateObjectId(createJobDto.companyId, 'Company');
 
     try {
       return await this.jobService.create(createJobDto);
@@ -146,7 +148,7 @@ export class JobController {
     @Headers() headers: any,
     @Param('cid') companyId: string,
   ) {
-    this.validateObjectId(companyId);
+    validateObjectId(companyId);
     const decodedJwtAccessToken = this.jwtService.decode(
       headers.authorization.replace(/^Bearer\s+/i, ''),
     );
@@ -180,7 +182,7 @@ export class JobController {
     @Headers() headers: any,
     @Param('cid') companyId: string,
   ) {
-    this.validateObjectId(companyId);
+    validateObjectId(companyId);
     const decodedJwtAccessToken = this.jwtService.decode(
       headers.authorization.replace(/^Bearer\s+/i, ''),
     );
@@ -218,7 +220,7 @@ export class JobController {
     if (!userId) {
       throw new UnauthorizedException('Unauthorized, JWT required');
     }
-    this.validateObjectId(userId);
+    validateObjectId(userId);
 
     try {
       return {
@@ -251,8 +253,8 @@ export class JobController {
       throw new UnauthorizedException('Unauthorized, JWT required');
     }
     try {
-      this.validateObjectId(userId);
-      this.validateObjectId(empId);
+      validateObjectId(userId);
+      validateObjectId(empId);
 
       return {
         data: await this.jobService.getAllJobsForEmployee(
@@ -284,8 +286,8 @@ export class JobController {
       throw new UnauthorizedException('Unauthorized, JWT required');
     }
     try {
-      this.validateObjectId(userId);
-      this.validateObjectId(empId);
+      validateObjectId(userId);
+      validateObjectId(empId);
 
       return {
         data: await this.jobService.getAllDetailedJobsForEmployee(
@@ -309,7 +311,7 @@ export class JobController {
   })
   @Get('id/:id')
   async findOne(@Param('id') id: string) {
-    this.validateObjectId(id);
+    validateObjectId(id);
     try {
       return {
         data: await this.jobService.getJobById(new Types.ObjectId(id)),
@@ -345,7 +347,7 @@ export class JobController {
     @Body() updateJobDto: UpdateJobDto,
   ) {
     try {
-      this.validateObjectId(jobId);
+      validateObjectId(jobId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       // console.log(userId);
       // console.log(new Types.ObjectId(jobId));
@@ -393,7 +395,8 @@ export class JobController {
   }
   // Specific
 
-  // Comments
+  /// Comments
+  @ApiOperation({ summary: 'Add a comment to a Job' })
   @ApiResponse({
     type: JobResponseDto,
     description: 'The updated Job',
@@ -401,7 +404,7 @@ export class JobController {
   @ApiBody({ type: AddCommentDto })
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
-  @Put('comment')
+  @Put('/comment')
   async addComment(
     @Headers() headers: any,
     @Body() addCommentDto: AddCommentDto,
@@ -417,6 +420,7 @@ export class JobController {
     }
   }
 
+  @ApiOperation({ summary: 'Remove a comment within a Job' })
   @ApiResponse({
     type: JobResponseDto,
     description: 'The updated Job',
@@ -424,7 +428,7 @@ export class JobController {
   @ApiBody({ type: AddCommentDto })
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
-  @Delete('comment')
+  @Delete('/comment')
   async removeComment(
     @Headers() headers: any,
     @Body() removeCommentDto: RemoveCommentDto,
@@ -459,7 +463,7 @@ export class JobController {
     @Param('cid') companyId: string,
   ) {
     try {
-      this.validateObjectId(companyId);
+      validateObjectId(companyId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       const compId = new Types.ObjectId(companyId);
       return {
@@ -486,7 +490,7 @@ export class JobController {
     @Param('cid') companyId: string,
   ) {
     try {
-      this.validateObjectId(companyId);
+      validateObjectId(companyId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       const compId = new Types.ObjectId(companyId);
       return {
@@ -513,7 +517,7 @@ export class JobController {
     @Body() createTagDto: CreateTagDto,
   ) {
     try {
-      this.validateObjectId(createTagDto.companyId);
+      validateObjectId(createTagDto.companyId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return this.jobService.addJobTagToCompany(userId, createTagDto);
     } catch (e) {
@@ -537,7 +541,7 @@ export class JobController {
     @Body() createPriorityTagDto: CreatePriorityTagDto,
   ) {
     try {
-      this.validateObjectId(createPriorityTagDto.companyId);
+      validateObjectId(createPriorityTagDto.companyId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
         data: await this.jobService.addJobPriorityTagToCompany(
@@ -594,7 +598,7 @@ export class JobController {
     @Body() deleteTagDto: DeleteTagDto,
   ) {
     try {
-      this.validateObjectId(deleteTagDto.tagId);
+      validateObjectId(deleteTagDto.tagId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
         data: await this.jobService.removeJobPriorityTagFromCompany(
@@ -608,11 +612,34 @@ export class JobController {
     }
   }
 
-  //Comments
+  @ApiOperation({ summary: 'Unassign multiple employees to a job at once' })
+  @ApiResponse({ type: JobResponseDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Patch('/employees')
+  async unassignEmployees(
+    @Headers() headers: any,
+    @Body() jobAssignGroupDto: JobAssignGroupDto,
+  ) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.unassignEmployees(
+          userId,
+          jobAssignGroupDto,
+        ),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  ///Employees
 
   /*  addAttachmentToJob(@Headers() headers: any, @Param('cid') companyId: string) {
     try {
-      this.validateObjectId(companyId);
+      validateObjectId(companyId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       const compId = new Types.ObjectId(companyId);
       return this.jobService.addAttachmentToJob(userId, compId);
