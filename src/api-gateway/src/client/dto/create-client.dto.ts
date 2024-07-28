@@ -124,6 +124,11 @@ export class ClientDetails {
 
 export class CreateClientDto {
   @ApiProperty()
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @ApiProperty()
   @IsOptional()
   @IsString()
   registrationNumber?: string;
