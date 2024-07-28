@@ -145,6 +145,19 @@ export class JobService {
     }
   }
 
+  async updateWithoutValidation(
+    jobId: Types.ObjectId,
+    updateJobDto: UpdateJobDto,
+  ) {
+    try {
+      const updated = await this.jobRepository.update(jobId, updateJobDto);
+      console.log('updatedJob', updated);
+      return true;
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+
   async softDelete(id: Types.ObjectId): Promise<boolean> {
     await this.jobRepository.delete(id);
     return true;
@@ -255,6 +268,10 @@ export class JobService {
     if (!(await this.usersService.userIsInCompany(userId, companyId))) {
       throw new UnauthorizedException('User not in company');
     }
+    return await this.jobRepository.findAllInCompany(companyId);
+  }
+
+  async getAllJobsInCompanyWithoutValidation(companyId: Types.ObjectId) {
     return await this.jobRepository.findAllInCompany(companyId);
   }
 
