@@ -39,7 +39,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
-import { FlattenMaps, Types } from 'mongoose';
+import mongoose, { FlattenMaps, Types } from 'mongoose';
 import {
   Company,
   CompanyAllResponseDto,
@@ -66,6 +66,12 @@ export class CompanyController {
     private readonly companyService: CompanyService,
     private readonly jwtService: JwtService,
   ) {}
+  validateObjectId(id: string | Types.ObjectId): boolean {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+    }
+    return true;
+  }
 
   @UseGuards(AuthGuard) //Need to add authorization
   @Get()
