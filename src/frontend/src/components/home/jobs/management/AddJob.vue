@@ -38,6 +38,7 @@
                   variant="solo"
                   :rules="job_title_rules"
                   required
+                  data-testid="job-title-field"
                 ></v-text-field
               ></v-col>
               <v-col>
@@ -55,6 +56,7 @@
                   @update:modelValue="updateClient"
                   required
                   :rules="employees_rules"
+                  data-testid="client-select"
                 ></v-autocomplete>
 
                 <label style="font-size: 14px; font-weight: lighter"
@@ -74,6 +76,7 @@
                   v-model="req_obj.details.description"
                   :rules="description_rules"
                   required
+                  data-testid="job-description-textarea"
                 >
                 </v-textarea>
               </v-col>
@@ -90,10 +93,15 @@
                     elevation="5"
                     required
                     @update:modelValue="updateDates"
+                    data-testid="job-start-date-datepicker"
                   ></v-date-picker>
                 </v-col>
                 <v-col cols="12" md="6" align="center">
-                  <v-time-picker format="24hr" v-model="startTime"></v-time-picker>
+                  <v-time-picker
+                    format="24hr"
+                    v-model="startTime"
+                    data-testid="job-start-time-timepicker"
+                  ></v-time-picker>
                 </v-col>
                 <v-col align="center" cols="12" md="6">
                   <v-date-picker
@@ -106,10 +114,15 @@
                     elevation="5"
                     required
                     @update:modelValue="updateDates"
+                    data-testid="job-end-date-datepicker"
                   ></v-date-picker>
                 </v-col>
                 <v-col cols="12" md="6" align="center">
-                  <v-time-picker format="24hr" v-model="endTime"></v-time-picker>
+                  <v-time-picker
+                    format="24hr"
+                    v-model="endTime"
+                    data-testid="job-end-time-timepicker"
+                  ></v-time-picker>
                 </v-col>
               </v-row>
               <v-row>
@@ -128,6 +141,7 @@
                     color="primary"
                     @update:modelValue="updateEmployee"
                     variant="solo"
+                    data-testid="employee-multi-select"
                   ></v-select
                 ></v-col>
                 <v-col>
@@ -141,6 +155,7 @@
                     color="primary"
                     @update:modelValue="updateEmployee"
                     variant="solo"
+                    data-testid="priority-select"
                   ></v-select
                 ></v-col>
 
@@ -156,6 +171,7 @@
                     color="primary"
                     @update:modelValue="updateEmployee"
                     variant="solo"
+                    data-testid="tags-multi-select"
                   ></v-select
                 ></v-col>
               </v-row>
@@ -173,6 +189,7 @@
                     v-model="req_obj.details.address.street"
                     variant="solo"
                     required
+                    data-testid="street-field"
                   ></v-text-field
                 ></v-col>
                 <v-col cols="12" sm="6">
@@ -185,6 +202,7 @@
                     v-model="req_obj.details.address.suburb"
                     variant="solo"
                     required
+                    data-testid="suburb-field"
                   ></v-text-field
                 ></v-col>
                 <v-col sm="6" cols="12">
@@ -209,6 +227,7 @@
                       'Northern Cape',
                       'Western Cape'
                     ]"
+                    data-testid="province-autocomplete"
                     required
                   ></v-autocomplete
                 ></v-col>
@@ -222,6 +241,7 @@
                     v-model="req_obj.details.address.city"
                     variant="solo"
                     required
+                    data-testid="city-town-field"
                   ></v-text-field
                 ></v-col>
                 <v-col cols="12" sm="6">
@@ -235,6 +255,7 @@
                     v-model="req_obj.details.address.postalCode"
                     variant="solo"
                     required
+                    data-testid="postal-code-field"
                   ></v-text-field
                 ></v-col>
 
@@ -250,6 +271,7 @@
                     required
                     hint="Complex or Building Name, unit number or floor"
                     persistent-hint
+                    data-testid="complex-field"
                   ></v-text-field
                 ></v-col>
               </v-row>
@@ -264,6 +286,7 @@
               width="100%"
               height="35"
               variant="text"
+              data-testid="create-btn"
               >Create Job
             </v-btn>
             <v-btn
@@ -274,6 +297,7 @@
               height="35"
               variant="text"
               @click="close"
+              data-testid="cancel-btn"
               >Cancel
             </v-btn>
           </v-col>
