@@ -237,7 +237,7 @@ export class JobRepository {
       .exec();
   }
 
-  async assignEmployees(employeeIds: Types.ObjectId[], jobId: Types.ObjectId) {
+  /*  async assignEmployees(employeeIds: Types.ObjectId[], jobId: Types.ObjectId) {
     return await this.jobModel
       .findOneAndUpdate(
         {
@@ -258,7 +258,7 @@ export class JobRepository {
       )
       .lean()
       .exec();
-  }
+  }*/
 
   async unassignEmployee(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
     return await this.jobModel
@@ -280,6 +280,7 @@ export class JobRepository {
       .exec();
   }
 
+  /*
   async unassignEmployees(
     employeeIds: Types.ObjectId[],
     jobId: Types.ObjectId,
@@ -305,6 +306,7 @@ export class JobRepository {
       .lean()
       .exec();
   }
+*/
 
   async assignEmployeeToTask(
     employeeId: Types.ObjectId,
@@ -410,7 +412,7 @@ export class JobRepository {
       .exec();
   }
 
-  async updateTeam(teamId: Types.ObjectId, jobId: Types.ObjectId) {
+  async assignTeam(teamId: Types.ObjectId, jobId: Types.ObjectId) {
     return await this.jobModel
       .findOneAndUpdate(
         {
@@ -422,7 +424,30 @@ export class JobRepository {
           ],
         },
         {
-          $set: { 'assignedEmployees.teamId': teamId },
+          $push: { 'assignedEmployees.teamIds': teamId },
+          updatedAt: new Date(),
+        },
+        {
+          new: true,
+        },
+      )
+      .lean()
+      .exec();
+  }
+
+  async unassignTeam(teamId: Types.ObjectId, jobId: Types.ObjectId) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        {
+          $pull: { 'assignedEmployees.teamIds': teamId },
           updatedAt: new Date(),
         },
         {
@@ -493,7 +518,7 @@ export class JobRepository {
     commentToUpdate.comment = newComment;
     job.updatedAt = new Date();
     await job.save();
-    return job;
+    return job.toObject();
   }
 
   async addHistory(event: History, jobId: Types.ObjectId) {
