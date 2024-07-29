@@ -19,7 +19,7 @@
       <v-form @submit.prevent="validateEdits">
         <v-card-title class="text-center">Edit Employee</v-card-title>
         <v-divider></v-divider>
-        <v-card-text>
+        <v-card-item>
           <v-row
             ><v-col>
               <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -80,7 +80,7 @@
                 variant="solo"
               ></v-select> </v-col
           ></v-row>
-        </v-card-text>
+        </v-card-item>
         <v-card-actions>
           <v-row>
             <v-col>
@@ -118,23 +118,8 @@
 
 <script lang="ts">
 import axios from 'axios'
-import { select } from '@syncfusion/ej2-base'
 import Toast from 'primevue/toast'
-import type {
-  EmployeeInformation2,
-  EmployeeJoined,
-  RoleItem
-} from '@/components/home/employees/types'
-
-type Role = {
-  _id: string
-  roleName: string
-  permissionSuite: string[]
-  companyId: string
-  createdAt: string // ISO 8601 date string
-  __v: number
-  updatedAt: string // ISO 8601 date string
-}
+import type { EmployeeInformation2, RoleItem, Role } from '@/components/home/employees/types'
 
 export default {
   name: 'EditClient',
@@ -191,6 +176,7 @@ export default {
   methods: {
     selected_subordiates() {
       console.log(this.req_obj.subordinates)
+      // console.log(this.editedItem)
     },
     selected_supirior() {
       console.log(this.req_obj.superiorId)
@@ -212,10 +198,9 @@ export default {
       try {
         const sub_res = await axios(
           apiURL +
-            `employee/${localStorage.getItem('employeeId')}/company/${localStorage.getItem('currentCompany')}`,
+            `employee/${this.editedItem.employeeId}/company/${localStorage.getItem('currentCompany')}`,
           config
         )
-        let sub_employees: EmployeeJoined[] = []
         for (let i = 0; i < sub_res.data.data.length; i++) {
           const employee_details = await axios.get(
             apiURL + `employee/joined/id/${sub_res.data.data[i]._id}`,
@@ -245,7 +230,6 @@ export default {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       console.log(apiURL)
-      let rolesNames_arr: string[] = []
       try {
         let roles_response = await axios.get(
           apiURL + `role/all/${localStorage['currentCompany']}`,

@@ -9,4 +9,6 @@ it('renders add employee', () => {
       plugins: [vuetify]
     }
   })
+  cy.contains('Delete')
+  cy.get('button').contains('Delete')
 })
