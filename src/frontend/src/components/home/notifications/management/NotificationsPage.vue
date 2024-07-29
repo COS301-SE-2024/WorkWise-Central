@@ -9,13 +9,14 @@
     <v-card rounded="md">
       <v-row>
         <v-col cols="12" lg="2">
-          <v-card class="pa-0 ma-2">
+          <v-card class="pa-0 ma-2" elevation="1">
             <v-list>
               <v-list-item
                 v-for="(item, index) in items"
                 :key="index"
                 :value="index"
                 @click="setInbox(item.title)"
+                :class="{ 'bg-secondary': currentInbox === item.title }"
               >
                 <v-list-item-title>{{ item.title }}</v-list-item-title>
               </v-list-item>
@@ -27,7 +28,8 @@
                 v-for="(item, index) in filters"
                 :key="index"
                 :value="index"
-                @click="filter(item.title)"
+                @click="filterOn === true ? filter(item.title, false) : filter(item.title, false)"
+                :class="{ 'bg-secondary': currentFilter === item.title }"
               >
                 <v-list-item-title>{{ item.title }}</v-list-item-title>
               </v-list-item>
@@ -62,8 +64,10 @@
               <v-text-field
                 v-model="search"
                 label="Search"
-                outlined
+                elevation="1"
+                variant="outlined"
                 dense
+                color="primary"
                 hide-details
                 class="pa-0 ma-2"
                 @input="searchEmails"
@@ -74,14 +78,14 @@
                 label="Sort By"
                 :items="groupBy"
                 density="compact"
-                 class="pa-0 ma-2"
+                class="pa-0 ma-2"
                 @change="groupBySelection($event)"
               ></v-select>
             </v-col>
           </v-row>
           <v-row>
             <v-col cols="12" order="last" justify="center">
-              <v-card class="pa-0 ma-3">
+              <v-card class="pa-0 ma-3" elevation="1">
                 <v-list class="bg-cardColor" rounded="md">
                   <v-label>
                     <v-checkbox v-model="selectAllNotifications" @click="selectAll"> </v-checkbox>
@@ -93,7 +97,7 @@
                     :key="notification.id"
                     @click="handleNotificationClick(notification.id)"
                     :class="{
-                      'bg-background':
+                      'bg-cardColor':
                         clickedNotificationId === notification.id ||
                         clickedNotfiicationIds.includes(notification.id)
                     }"
@@ -239,8 +243,10 @@ export default {
       unread: [] as number[],
       done: [] as number[],
       saved: [] as number[],
+      filterOn: false,
       currentInbox: 'Inbox', // Track the current inbox
-      currentCompany: '' // Track the current company
+      currentCompany: '', // Track the current company
+      currentFilter: '' // Track the current filter
     }
   },
   components: { Toast },
@@ -430,22 +436,33 @@ export default {
         }
       }
     },
-    filter(filterType: string) {
+    filter(filterType: string, apply: boolean) {
       this.filteredNotificationsArray = []
-      if (filterType === 'Job Oriented') {
-        for (let i = 0; i < this.notifications.length; i++) {
-          if (this.notifications[i].type === 'Job Oriented') {
-            this.filteredNotificationsArray.push(this.notifications[i].id)
+      console.log('Filter:', apply)
+      this.currentFilter = filterType
+      if (this.filterOn) {
+        this.applyFilter(apply)
+      } else {
+        this.applyFilter(apply)
+        if (filterType === 'Job Oriented') {
+          for (let i = 0; i < this.notifications.length; i++) {
+            if (this.notifications[i].type === 'Job Oriented') {
+              this.filteredNotificationsArray.push(this.notifications[i].id)
+            }
           }
-        }
-      } else if (filterType === 'Admin') {
-        for (let i = 0; i < this.notifications.length; i++) {
-          if (this.notifications[i].type === 'Admin') {
-            this.filteredNotificationsArray.push(this.notifications[i].id)
+        } else if (filterType === 'Admin') {
+          for (let i = 0; i < this.notifications.length; i++) {
+            if (this.notifications[i].type === 'Admin') {
+              this.filteredNotificationsArray.push(this.notifications[i].id)
+            }
           }
         }
       }
     },
+    applyFilter(apply: boolean) {
+      this.filterOn = apply
+    },
+
     filterEmailsBasedOnCompany(company: string) {
       console.log('Filter Emails Based on Company:', company)
     },

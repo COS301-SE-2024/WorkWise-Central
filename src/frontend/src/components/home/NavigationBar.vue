@@ -74,7 +74,8 @@ export default defineComponent({
     CompanyMain
   },
   data: () => ({
-    isdarkmode: localStorage.getItem('theme') === 'true'
+    isdarkmode: localStorage.getItem('theme') === 'true',
+    logoutDialog: false
   }),
   // computed: {
   //   ...mapGetters(['isDarkMode'])
@@ -91,6 +92,9 @@ export default defineComponent({
       }
       localStorage.setItem('theme', this.isdarkmode.toString()) // save the theme to session storage
     },
+    fuga() {
+      this.logoutDialog = true
+    },
     logout(name: string) {
       if (name === 'splash') {
         // Clear local storage
@@ -100,7 +104,7 @@ export default defineComponent({
         window.history.replaceState({}, document.title, window.location.pathname)
 
         // Redirect to login page
-        this.$router.push({ name: 'login' })
+        this.$router.push({ name: 'splash' })
       }
     }
   }
@@ -304,13 +308,31 @@ export default defineComponent({
               <v-list-item
                 v-for="(item, i) in moreSubItems"
                 :key="i"
-                :to="{ name: item.routeName }"
-                @click="logout(item.routeName)"
+                @click="fuga()"
                 :prepend-icon="item.icon"
                 :title="item.title"
                 :value="item.title"
                 class="list-item-small"
-              ></v-list-item>
+                ><v-dialog
+                  v-model="logoutDialog"
+                  max-width="500px"
+                  :theme="isdarkmode ? 'dark' : 'light'"
+                >
+                  <v-card>
+                    <v-card-title>Logout</v-card-title>
+                    <v-card-text>Are you sure you want to log out?</v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn @click="logout('splash')" color="success"
+                        ><v-icon icon="fa: fa-solid fa-check" color="success"></v-icon>Yes</v-btn
+                      >
+                      <v-btn @click="logoutDialog = false" color="error"
+                        ><v-icon icon="fa: fa-solid fa-x" color="error"></v-icon>No</v-btn
+                      >
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog></v-list-item
+              >
             </v-list-group>
           </v-list>
         </v-navigation-drawer>
