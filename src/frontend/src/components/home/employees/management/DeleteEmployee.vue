@@ -7,8 +7,8 @@
         color="error"
         variant="text"
         v-bind="activatorProps"
-        >Delete</v-btn
-      >
+        >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
+      ></v-btn>
     </template>
     <v-card :color="isdarkmode === true ? 'dark' : 'light'">
       <v-card-title>
@@ -35,11 +35,12 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <Toast />
-        <v-btn color="success" variant="text" :loading="isDeleting" @click="deleteEmployee"
-          >Delete</v-btn
-        >
-        <Toast />
-        <v-btn color="error" variant="text" @click="clientDialog = false">Cancel</v-btn>
+        <v-btn color="primary" variant="text" @click="clientDialog = false"
+          >Cancel<v-icon icon="fa:fa-solid fa-cancel" end color="primary" size="small"></v-icon
+        ></v-btn>
+        <v-btn color="error" variant="text" :loading="isDeleting" @click="deleteEmployee"
+          >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
+        ></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

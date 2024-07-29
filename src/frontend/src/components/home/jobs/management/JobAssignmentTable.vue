@@ -31,6 +31,7 @@
                       label="Search"
                       prepend-inner-icon="mdi-magnify"
                       variant="outlined"
+                      color="primary"
                       flat
                       width="100%"
                       style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
@@ -62,23 +63,8 @@
                         {{ value }}
                       </template>
 
-                      <template v-slot:[`item.clientPhone`]="{ value }">
-                        <v-chip color="primary">
-                          <a :href="`tel:${value}`" style="color: inherit; text-decoration: none">
-                            <v-icon>fa-solid fa-phone</v-icon>{{ value }}
-                          </a>
-                        </v-chip>
-                      </template>
-
-                      <template v-slot:[`item.clientMail`]="{ value }">
-                        <v-chip color="primary">
-                          <a
-                            :href="`mailto:${value}`"
-                            style="color: inherit; text-decoration: none"
-                          >
-                            <v-icon>fa-solid fa-envelope</v-icon>{{ value }}
-                          </a>
-                        </v-chip>
+                      <template v-slot:[`item.clientName`]="{ value }">
+                        <v-chip color=""> <v-icon>mdi-phone</v-icon>{{ value }} </v-chip>
                       </template>
 
                       <template v-slot:[`item.jobDescription`]="{ value }">
@@ -92,11 +78,11 @@
                       </template>
 
                       <template v-slot:[`item.startDate`]="{ value }">
-                        {{ value }}
+                        {{ formatDate(value) }}
                       </template>
 
                       <template v-slot:[`item.endDate`]="{ value }">
-                        {{ value }}
+                        {{ formatDate(value) }}
                       </template>
 
                       <!-- Actions slot -->
@@ -117,8 +103,8 @@
             </v-card>
           </v-col>
         </v-row>
-      </v-col>
-    </v-row>
+      </v-col></v-row
+    >
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title>
@@ -126,173 +112,115 @@
         </v-card-title>
         <v-card-text> What would you like to do with this job? </v-card-text>
         <v-card-actions>
-          <v-btn @click="closeDialog">Cancel</v-btn>
+          <v-btn @click="closeDialog"
+            >Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="primary" size="small"></v-icon
+          ></v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="success" @click="viewJobDialog = true">View</v-btn>
+          <v-btn color="success" @click="viewJobDialog = true"
+            >View<v-icon icon="fa:fa-solid fa-eye" end color="success" size="small"></v-icon
+          ></v-btn>
           <!-- View Job Dialog -->
-          <v-dialog v-model="viewJobDialog" max-width="1000" scrollable>
-            <v-card elevation="14" rounded="md" :max-width="1000" :max-height="800">
-              <v-card-title>Job Details</v-card-title>
-              <v-row>
-                <v-col cols="12" md="9" order-xs="1" order-sm="1" order-md="0">
-                  <v-card flat class="text-center elevation-0">
-                    <v-card-text>
-                      <v-col>
-                        <v-col class="text-center pt-0">
-                          <h5>{{ selectedJob.heading }}</h5>
-                        </v-col>
-                        <v-divider></v-divider>
-                        <v-col class="text-center">
-                          <h5>Description</h5>
-                          <v-spacer></v-spacer>
-                          <small class="text-caption">
-                            {{ selectedJob.jobDescription }}
-                          </small>
-                        </v-col>
-                        <v-divider></v-divider>
-                        <v-col class="text-center">
-                          <h5>Status</h5>
-                          <v-spacer></v-spacer>
-                          <small class="text-caption">
-                            <v-chip :color="getStatusColor(selectedJob.status)" dark>
-                              {{ selectedJob.status }}
-                            </v-chip>
-                          </small>
-                        </v-col>
-                        <v-divider></v-divider>
-                        <v-col class="text-center">
-                          <h5>Address</h5>
-                          <v-row class="text-center">
-                            <v-col sm="6" md="3" offset-md="3">
-                              <label class="font-weight-bold">City</label>
-                              <v-spacer></v-spacer>
-                              <small class="text-caption">
-                                {{ selectedJob.city }}
-                              </small>
-                            </v-col>
-                            <v-col sm="6" md="3">
-                              <label class="font-weight-bold">Suburb</label>
-                              <v-spacer></v-spacer>
-                              <small class="text-caption">
-                                {{ selectedJob.suburb }}
-                              </small>
-                            </v-col>
-                          </v-row>
-                          <v-row>
-                            <v-col sm="6" md="3" offset-md="3">
-                              <label class="font-weight-bold">Street</label>
-                              <v-spacer></v-spacer>
-                              <small class="text-caption">
-                                {{ selectedJob.street }}
-                              </small>
-                            </v-col>
-                            <v-col sm="6" md="3">
-                              <label class="font-weight-bold">Postal Code</label>
-                              <v-spacer></v-spacer>
-                              <small class="text-caption">
-                                {{ selectedJob.postalCode }}
-                              </small>
-                            </v-col>
-                          </v-row>
-                          <v-row>
-                            <v-col sm="6" md="3" offset-md="3">
-                              <label class="font-weight-bold">Complex</label>
-                              <v-spacer></v-spacer>
-                              <small class="text-caption">
-                                {{ selectedJob.complex }}
-                              </small>
-                            </v-col>
-                            <v-col sm="6" md="3">
-                              <label class="font-weight-bold">House Number</label>
-                              <v-spacer></v-spacer>
-                              <small class="text-caption">
-                                {{ selectedJob.houseNumber }}
-                              </small>
-                            </v-col>
-                          </v-row>
-                        </v-col>
+          <v-dialog v-model="viewJobDialog" max-width="500">
+            <v-card elevation="14" rounded="md" :max-width="500" :max-height="800">
+              <v-card-title> Job Details </v-card-title>
+              <v-col>
+                <v-col class="text-center">
+                  <h6>Job Title</h6>
+                  <p class="text-caption">
+                    {{ selectedJob.heading }}
+                  </p>
+                </v-col>
+                <v-divider></v-divider>
+                <v-col class="text-center">
+                  <h6>Description</h6>
 
-                        <v-divider></v-divider>
-                        <v-col class="text-center">
-                          <h5>Dates</h5>
-                          <v-row>
-                            <v-col sm="6" md="3" offset-md="3">
-                              <label class="font-weight-bold">Start Date</label>
-                              <v-spacer></v-spacer>
-                              <small class="text-caption">
-                                {{ selectedJob.startDate }}
-                              </small>
-                            </v-col>
-                            <v-col sm="6" md="3">
-                              <label class="font-weight-bold">End Date</label>
-                              <v-spacer></v-spacer>
-                              <small class="text-caption">
-                                {{ selectedJob.endDate }}
-                              </small>
-                            </v-col>
-                          </v-row>
-                        </v-col>
-                      </v-col>
-                      <v-col ref="imagesSection">
-                        <AttachImages :passedInJob="selectedJob" />
-                      </v-col>
-                      <v-col ref="commentsSection">
-                        <AddComment :passedInJob="selectedJob" />
-                      </v-col>
-                      <v-col ref="notesSection">
-                        <JobNotes :passedInJob="selectedJob" />
-                      </v-col>
-                      <v-col ref="checklistSection">
-                        <JobChecklist :passedInJob="selectedJob" />
-                      </v-col>
-                      <v-col ref="inventorySection">
-                        <LogInventory :passedInJob="selectedJob" />
-                        <v-divider></v-divider>
-                      </v-col>
-                      <v-col class="pt-0">
-                        <v-btn color="error" @click="viewJobDialog = false">Close</v-btn>
-                      </v-col>
-                    </v-card-text>
-                  </v-card>
+                  <small class="text-caption">
+                    {{ selectedJob.jobDescription }}
+                  </small>
+                </v-col>
+                <v-divider></v-divider>
+                <v-col class="text-center">
+                  <h6>Status</h6>
+
+                  <small class="text-caption">
+                    <v-chip :color="getStatusColor(selectedJob.status)" dark>
+                      {{ selectedJob.status }}
+                    </v-chip>
+                  </small>
+                </v-col>
+                <v-divider></v-divider>
+                <v-col class="text-center">
+                  <h6>Address</h6>
+                  <v-row>
+                    <v-col>
+                      <label>Street</label><v-spacer></v-spacer>
+                      <small class="text-caption">
+                        {{ selectedJob.street }}
+                      </small>
+                    </v-col>
+                    <v-col>
+                      <label>Suburb</label><v-spacer></v-spacer>
+                      <small class="text-caption">
+                        {{ selectedJob.suburb }}
+                      </small>
+                    </v-col>
+                    <v-col>
+                      <label>City</label><v-spacer></v-spacer>
+                      <small class="text-caption">
+                        {{ selectedJob.city }}
+                      </small>
+                    </v-col></v-row
+                  >
+                  <v-row>
+                    <v-col>
+                      <label>Postal Code</label><v-spacer></v-spacer>
+                      <small class="text-caption">
+                        {{ selectedJob.postalCode }}
+                      </small>
+                    </v-col>
+                    <v-col>
+                      <label>Complex</label><v-spacer></v-spacer>
+                      <small class="text-caption">
+                        {{ selectedJob.complex }}
+                      </small>
+                    </v-col>
+                    <v-col>
+                      <label>House Number</label><v-spacer></v-spacer>
+                      <small class="text-caption">
+                        {{ selectedJob.houseNumber }}
+                      </small>
+                    </v-col></v-row
+                  >
                 </v-col>
 
-                <v-col cols="12" md="3" class="pt-10" order-xs="0" order-sm="0" order-md="1">
-                  <v-row justify="center">
-                    <v-btn class="mb-2" outlined @click="scrollToSection(imagesSection)">
-                      <v-icon left>{{ 'fa: fas fa-upload' }}</v-icon>
-                      Upload File
-                    </v-btn>
-                  </v-row>
-                  <v-row justify="center">
-                    <v-btn class="mb-2" outlined @click="scrollToSection(commentsSection)">
-                      <v-icon left>{{ 'fa: fas fa-comment' }}</v-icon>
-                      Add Comment
-                    </v-btn>
-                  </v-row>
-                  <v-row justify="center">
-                    <v-btn class="mb-2" outlined @click="scrollToSection(notesSection)">
-                      <v-icon left>{{ 'fa: fas fa-sticky-note' }}</v-icon>
-                      Add Notes
-                    </v-btn>
-                  </v-row>
-                  <v-row justify="center">
-                    <v-btn class="mb-2" outlined @click="scrollToSection(checklistSection)">
-                      <v-icon left>{{ 'fa: fas fa-check-circle' }}</v-icon>
-                      Check Off Task
-                    </v-btn>
-                  </v-row>
-                  <v-row justify="center">
-                    <v-btn class="mb-2" outlined @click="scrollToSection(inventorySection)">
-                      <v-icon left>{{ 'fa: fas fa-clipboard-list' }}</v-icon>
-                      Log Inventory
-                    </v-btn>
-                  </v-row>
+                <v-divider></v-divider>
+                <v-col class="text-center">
+                  <h6>Dates</h6>
+                  <v-col>
+                    <label>Start Date</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ formatDate(selectedJob.startDate) }}
+                    </small>
+                  </v-col>
+                  <v-col>
+                    <label>End Date</label><v-spacer></v-spacer>
+                    <small class="text-caption">
+                      {{ formatDate(selectedJob.endDate) }}
+                    </small>
+                  </v-col>
                 </v-col>
-              </v-row>
+              </v-col>
+              <v-col class="pt-0">
+                <v-btn color="error" width="100%" @click="viewJobDialog = false"
+                  >Close<v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon
+                ></v-btn>
+              </v-col>
             </v-card>
           </v-dialog>
 
-          <v-btn color="warning" @click="editJobCardDialog()">Edit</v-btn>
+          <v-btn color="warning" @click="editJobCardDialog()"
+            >Edit<v-icon icon="fa:fa-solid fa-pencil" end color="warning " size="small"></v-icon
+          ></v-btn>
           <v-dialog v-model="managerJobCardDialog" max-width="1000px">
             <ManagerJobCard
               :passedInJob="selectedJob"
@@ -300,72 +228,48 @@
             ></ManagerJobCard>
           </v-dialog>
 
-          <v-btn color="error" @click="deleteDialog = true">Delete</v-btn>
+          <v-btn color="error" @click="deleteDialog = true"
+            >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
+          ></v-btn>
           <v-dialog v-model="deleteDialog" max-width="500">
             <v-card>
-              <v-card-title class="text-h5 font-weight-regular bg-red">
+              <v-card-title class="text-h6 font-weight-regular bg-red">
                 <v-icon color="white">mdi-alert-circle-outline</v-icon>
                 Confirm Deletion
               </v-card-title>
               <v-card-text> Are you sure you want to delete this job? </v-card-text>
               <v-card-actions>
-                <Toast />
                 <v-btn color="error" @click="confirmDelete">Confirm</v-btn>
-                <v-btn @click="deleteDialog = false">Cancel</v-btn>
+                <v-btn @click="deleteDialog = false"
+                  >Cancel<v-icon
+                    icon="fa:fa-solid fa-cancel"
+                    end
+                    color="error"
+                    size="small"
+                  ></v-icon
+                ></v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
-
-          <v-spacer></v-spacer>
-          <v-btn @click="closeDialog">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </v-container>
 </template>
 
-<script setup lang="ts">
-import { onMounted, ref} from 'vue'
+<script setup>
+import { onMounted, ref } from 'vue'
 import axios from 'axios'
-import { useToast } from 'primevue/usetoast'
-import AttachImages from './AttachImages.vue'
-import AddComment from './AddComments.vue'
-import JobNotes from './JobNotes.vue'
-import JobChecklist from './JobChecklist.vue'
-import LogInventory from './LogInventory.vue'
+import AddJob from './AddJob.vue'
 import ManagerJobCard from './ManagerJobCard.vue'
 
-const toast = useToast()
+const search = ref('')
+const viewJobDialog = ref(false)
+// set the table headers
 
-const imagesSection = ref(null)
-const commentsSection = ref(null)
-const notesSection = ref(null)
-const checklistSection = ref(null)
-const inventorySection = ref(null)
-
-// Function to scroll to a section
-function scrollToSection(sectionRef) {
-  console.log(sectionRef)
-  const section = sectionRef.value
-  if (section) {
-    section.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  } else {
-    console.log('failed')
-  }
-}
-// State variables
-const search: Ref<string> = ref('')
-const viewJobDialog: Ref<boolean> = ref(false)
-const dialog: Ref<boolean> = ref(false)
-const deleteDialog: Ref<boolean> = ref(false)
-const managerJobCardDialog: Ref<boolean> = ref(false)
-const selectedJob: Ref<any | null> = ref(null)
-
-// Table headers definition
 const headers = [
   { title: 'Job Heading', key: 'heading', align: 'start', value: 'heading' },
-  { title: 'Client Phone', key: 'clientPhone', align: 'start', value: 'clientPhone' },
-  { title: 'Client Mail', key: 'clientMail', align: 'start', value: 'clientMail' },
+  { title: 'Client', key: 'clientName', align: 'start', value: 'client' },
   { title: 'Job Description', key: 'jobDescription', align: 'start', value: 'jobDescription' },
   { title: 'Status', key: 'status', align: 'start', value: 'status' },
   { title: 'Start Date', key: 'startDate', align: 'start', value: 'startDate' },
@@ -374,87 +278,122 @@ const headers = [
 ]
 
 // Reactive variable to hold job and client data
-const jobClientData: Ref<any[]> = ref([])
+const jobClientData = ref([])
 
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
+// Function to fetch job data
 
-// Utility function to check if local URL is available
-const isLocalAvailable = async (localUrl: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(localUrl)
-    return res.status >= 200 && res.status < 300
-  } catch (error) {
-    return false
-  }
-}
-
-// Function to get the appropriate request URL
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
-
-// Function to fetch job data from the API
-const fetchJobData = async (): Promise<any[]> => {
+const fetchJobData = async () => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-  const apiUrl = await getRequestUrl()
+
   try {
-    const response = await axios.get(
-      `${apiUrl}job/all/company/detailed/${localStorage['currentCompany']}`,
-      config
-    )
+    const response = await axios.get('http://localhost:3000/job/all', config)
     const jobData = response.data.data
+
+    console.log(response.data)
+
+    // Check if jobData is an array or needs conversion
     const jobs = Array.isArray(jobData) ? jobData : [jobData]
-    return jobs.map((job) => ({
-      _id: job._id,
-      clientId: job.clientId._id,
-      clientUsername: job.clientUsername,
-      assignedBy: job.assignedBy,
-      assignedEmployees: job.assignedEmployees,
-      details: job.details,
-      recordedDetails: job.recordedDetails,
+
+    // Map job data to include necessary details
+    const mappedJobs = jobs.map((job) => ({
       jobId: job._id,
       heading: job.details.heading,
       jobDescription: job.details.description,
       startDate: job.details.startDate,
       endDate: job.details.endDate,
       status: job.status,
+      clientId: job.clientId,
       street: job.details.address.street,
       suburb: job.details.address.suburb,
       city: job.details.address.city,
       postalCode: job.details.address.postalCode,
       complex: job.details.address.complex,
       houseNumber: job.details.address.houseNumber,
-      imagesTaken: job.recordedDetails.imagesTaken,
-      inventoryUsed: job.recordedDetails.inventoryUsed,
-      taskList: job.taskList,
-      comments: job.comments
+      imagesTaken: job.recordedDetails.imagesTaken, // is an array
+      inventoryUsed: job.recordedDetails.inventoryUsed, // is an array
+      taskList: job.taskList, // is an array
+      comments: job.comments // is an array
     }))
+
+    // Fetch client data for each job
+    // Return combined job and client data
+    return await fetchClientData(mappedJobs)
   } catch (error) {
     console.error('Error fetching job data:', error)
-    throw error
+    throw error // Re-throw the error for handling elsewhere if needed
   }
 }
 
-// Fetch job data on component mount
+// Function to fetch client data for each job
+const fetchClientData = async (jobs) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+
+  try {
+    // Fetch client data for each job asynchronously
+    const promises = jobs.map(async (job) => {
+      const response = await axios.get(`http://localhost:3000/client/id/${job.clientId}`, config)
+      const client = response.data.data
+
+      const clientName = `${client.details.firstName} ${client.details.lastName}`
+
+      // Return complete job details including client name
+      return {
+        jobId: job.jobId,
+        heading: job.heading,
+        jobDescription: job.jobDescription, // Corrected reference to jobDescription
+        startDate: job.startDate,
+        endDate: job.endDate,
+        status: job.status,
+        clientName: clientName,
+        street: job.street,
+        suburb: job.suburb,
+        city: job.city,
+        postalCode: job.postalCode,
+        complex: job.complex,
+        houseNumber: job.houseNumber,
+        imagesTaken: job.imagesTaken,
+        inventoryUsed: job.inventoryUsed,
+        taskList: job.taskList,
+        comments: job.comments
+      }
+    })
+
+    // Wait for all promises to resolve
+    return await Promise.all(promises)
+  } catch (error) {
+    console.error('Error fetching client data:', error)
+    throw error // Re-throw the error for handling elsewhere if needed
+  }
+}
+
+// Fetch data on component mount using onMounted() hook
 onMounted(async () => {
   try {
     jobClientData.value = await fetchJobData()
-    console.log('Job data fetched successfully:', jobClientData.value)
+    // Log job and client data for verification
+    console.log('Job and client data fetched successfully:', jobClientData.value)
   } catch (error) {
-    console.error('Error fetching job data:', error)
+    console.error('Error fetching job and client data:', error)
   }
 })
 
-// Dialog actions
-const openDialog = (item: any) => {
+// Actions
+
+const dialog = ref(false)
+const selectedJob = ref(null)
+const managerJobCardDialog = ref(false)
+
+const openDialog = (item) => {
   selectedJob.value = item
   dialog.value = true
 }
@@ -464,79 +403,80 @@ const closeDialog = () => {
   selectedJob.value = null
 }
 
-// Functions to show toast notifications
-const showJobDeleteSuccess = () => {
-  toast.add({
-    severity: 'success',
-    summary: 'Success Message',
-    detail: `${selectedJob.value.heading} deleted successfully`,
-    life: 3000
-  })
+// Deleting a job
+
+const deleteDialog = ref(false)
+
+const confirmDelete = () => {
+  console.log('Delete job:', selectedJob.value)
+  // confirm delete dialog activation here
+  // add delete end point and refresh data
+  closeDialog()
 }
 
-const showJobDeleteError = () => {
-  toast.add({
-    severity: 'error',
-    summary: 'Error Message',
-    detail: `An error occurred while deleting ${selectedJob.value.heading}`,
-    life: 3000
-  })
+// managers the managerJobCard state
+
+const editJobCardDialog = () => {
+  managerJobCardDialog.value = true
 }
 
-// Function to confirm job deletion
-const confirmDelete = async () => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('access_token')}`
-    }
-  }
-  const apiUrl = await getRequestUrl()
-
-  try {
-    const response = await axios.delete(`${apiUrl}job/${selectedJob.value.jobId}`, config)
-    console.log(response.data)
-
-    if (response.data === true) {
-      showJobDeleteSuccess()
-      jobClientData.value = await fetchJobData()
-    } else {
-      showJobDeleteError()
-    }
-    closeDialog()
-  } catch (error) {
-    console.error('Error deleting job:', error)
-    showJobDeleteError()
-  }
-}
-
-// Function to get the color based on job status
-const getStatusColor = (status: string): string => {
+// Job Status colours
+const getStatusColor = (status) => {
   switch (status.toLowerCase()) {
-    case 'To do':
-      return 'blue'
-    case 'In progress':
-      return 'yellow'
-    case 'Awaiting invoice':
-      return 'orange'
-    case 'Awaiting payment':
-      return 'red'
-    case 'Awaiting sign off':
+    case 'completed':
       return 'green'
+    case 'in progress':
+      return 'orange'
+    case 'not started':
+      return 'red'
     default:
-      return 'grey'
+      return 'primary' // Default color
   }
 }
 
-// Function to style table rows
-const getRowProps = ({ index }: { index: number }) => {
+//
+// const openJobCard = (item) => {
+//   router.push('/jobCard')
+//   console.log('Open job card for:', item)
+// }
+//
+// const confirmDelete = ref(false)
+// const items = ref([
+//   // Your list of items
+// ])
+// let currentItemToDelete = null
+
+// const confirmDeleteItem = (item) => {
+//   currentItemToDelete = item
+//   confirmDelete.value = true
+// }
+//
+// const deleteConfirmed = () => {
+//   const index = items.value.findIndex((i) => i === currentItemToDelete)
+//   if (index !== -1) {
+//     items.value.splice(index, 1)
+//   }
+//   cancelDelete()
+// }
+
+// const cancelDelete = () => {
+//   confirmDelete.value = false
+//   currentItemToDelete = null
+// }
+
+const getRowProps = ({ index }) => {
   return {
     class: index % 2 ? 'bg-secondRowColor' : ''
   }
 }
 
-// Function to open the manager job card dialog
-const editJobCardDialog = () => {
-  managerJobCardDialog.value = true
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString()
 }
+
+onMounted(() => {
+  fetchJobData()
+})
 </script>
+
+<style scoped></style>

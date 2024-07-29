@@ -39,6 +39,7 @@
                         prepend-inner-icon="mdi-magnify"
                         variant="outlined"
                         flat
+                        color="primary"
                         width="100%"
                         style="
                           font-family: Nunito, sans-serif;
@@ -83,12 +84,12 @@
                           }}</v-chip></template
                         >
                         <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                          <v-chip @click="callPhone" color="primary" border="md"
+                          <v-chip @click="callPhone" color="" border="md"
                             ><v-icon icon="fa:fa-solid fa-phone"></v-icon> {{ value }}</v-chip
                           >
                         </template>
                         <template v-slot:[`item.contactInfo.email`]="{ value }">
-                          <v-chip @click="sendEmail" color="primary" border="md">
+                          <v-chip @click="sendEmail" color="" border="md">
                             <v-icon icon="fa:fa-solid fa-envelope"></v-icon>{{ value }}</v-chip
                           >
                         </template>
@@ -124,32 +125,35 @@
         </v-col></v-row
       >
 
-      <v-dialog v-model="actionsDialog" max-width="500px">
-        <v-card>
-          <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
-            {{
-              selectedItemName.charAt(0).toUpperCase() +
-              selectedItemName.slice(1) +
-              ' ' +
-              selectedItemSurname.charAt(0).toUpperCase() +
-              selectedItemSurname.slice(1)
-            }}
-          </v-card-title>
-          <v-card-text> What would you like to do with this account? </v-card-text>
-          <v-card-actions
-            ><v-btn @click="actionsDialog = false">Cancel</v-btn> <v-spacer></v-spacer>
-            <EmployeeDetails
+      <v-menu v-model="actionsDialog" max-width="500px">
+        <v-list>
+          <v-list-item>
+            <v-list-item-content class="text-h5 font-weight-regular">
+              {{
+                selectedItemName.charAt(0).toUpperCase() +
+                selectedItemName.slice(1) +
+                ' ' +
+                selectedItemSurname.charAt(0).toUpperCase() +
+                selectedItemSurname.slice(1)
+              }}</v-list-item-content
+            >
+          </v-list-item>
+          <v-list-item-content> What would you like to do with this account? </v-list-item-content>
+
+          <v-list-item
+            ><EmployeeDetails
               v-model="clientDialog"
               colors="colors"
               :EmployeeDetails="selectedItem"
-            />
-            <EditEmployee
-              @update:item="selectedItem = $event"
-              :editedItem="selectedItem"
-            /><DeleteEmployee :details="selectedItem" />
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+          /></v-list-item>
+
+          <v-list-item>
+            <EditEmployee @update:item="selectedItem = $event" :editedItem="selectedItem"
+          /></v-list-item>
+
+          <v-list-item><DeleteEmployee :details="selectedItem" /></v-list-item>
+        </v-list>
+      </v-menu>
     </v-container>
   </v-app>
 </template>

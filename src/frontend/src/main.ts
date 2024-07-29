@@ -6,6 +6,8 @@ import { KanbanPlugin } from '@syncfusion/ej2-vue-kanban'
 import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
 import ToastService from 'primevue/toastservice'
+import VNetworkGraph from 'v-network-graph'
+import 'v-network-graph/lib/style.css'
 import './assets/styles.css'
 
 const app = createApp(App)
@@ -14,5 +16,6 @@ app.use(vuetify)
 app.use(router)
 app.use(ToastService)
 app.use(PrimeVue, { theme: { preset: Aura } })
+app.use(VNetworkGraph)
 // app.use(store)
 app.mount('#app')
