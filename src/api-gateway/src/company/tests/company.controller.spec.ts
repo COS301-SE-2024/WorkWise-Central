@@ -170,7 +170,7 @@ describe('CompanyController', () => {
 
       jest
         .spyOn(companyController, 'validateObjectId')
-        .mockImplementation((a: Types.ObjectId) => {
+        .mockImplementation((a: string) => {
           console.log(a);
           return true;
         });
@@ -187,7 +187,7 @@ describe('CompanyController', () => {
 
       jest
         .spyOn(companyController, 'validateObjectId')
-        .mockImplementation((a: Types.ObjectId) => {
+        .mockImplementation((a: string) => {
           console.log(a);
           return true;
         });
@@ -209,7 +209,7 @@ describe('CompanyController', () => {
 
       jest
         .spyOn(companyController, 'validateObjectId')
-        .mockImplementation((a: Types.ObjectId) => {
+        .mockImplementation((a: string) => {
           console.log(a);
           return true;
         });

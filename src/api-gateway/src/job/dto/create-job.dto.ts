@@ -1,7 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import {
   IsArray,
+  IsBoolean,
   IsDateString,
   IsMongoId,
   IsNotEmpty,
@@ -17,7 +18,7 @@ import {
 import { Type } from 'class-transformer';
 import { JobApiDetailedObject, JobApiObject } from '../entities/job.entity';
 
-class Address {
+export class Address {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -49,19 +50,19 @@ class Address {
   postalCode: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(255)
-  complex: string;
+  complex?: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(255)
-  houseNumber: string;
+  houseNumber?: string;
 }
 
-class ClientFeedback {
+export class ClientFeedback {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
@@ -82,7 +83,7 @@ class ClientFeedback {
   comments?: string = '';
 }
 
-class Details {
+export class Details {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -109,7 +110,7 @@ class Details {
   endDate?: Date;
 }
 
-class InventoryUsed {
+export class InventoryUsed {
   @ApiProperty()
   @IsNotEmpty()
   inventoryItemId: Types.ObjectId;
@@ -126,7 +127,7 @@ class InventoryUsed {
   quantityUsed: number = 0;
 }
 
-class RecordedDetails {
+export class RecordedDetails {
   @ApiProperty()
   @IsArray()
   @IsString({ each: true })
@@ -140,7 +141,7 @@ class RecordedDetails {
   inventoryUsed?: InventoryUsed[] = [];
 }
 
-class AssignedEmployees {
+export class AssignedEmployees {
   @ApiProperty()
   @IsArray()
   @IsMongoId({ each: true })
@@ -149,11 +150,17 @@ class AssignedEmployees {
 
   @ApiProperty()
   @IsOptional()
-  @IsMongoId()
-  teamId?: Types.ObjectId;
+  @IsArray()
+  @IsMongoId({ each: true })
+  teamIds?: Types.ObjectId[];
 }
 
-class Task {
+export class Task {
+  @ApiHideProperty()
+  @IsOptional()
+  @IsMongoId()
+  _id: Types.ObjectId = new Types.ObjectId();
+
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -170,7 +177,12 @@ class Task {
   assignedEmployees?: Types.ObjectId[] = [];
 }
 
-class Comment {
+export class Comment {
+  @ApiHideProperty()
+  @IsOptional()
+  @IsMongoId()
+  _id: Types.ObjectId = new Types.ObjectId();
+
   @ApiProperty()
   @IsNotEmpty()
   @IsMongoId()
@@ -180,6 +192,11 @@ class Comment {
   @IsNotEmpty()
   @IsString()
   comment: string;
+
+  @ApiHideProperty()
+  @IsOptional()
+  @IsBoolean()
+  edited: boolean = false;
 
   @ApiProperty()
   @IsDateString()
@@ -247,6 +264,29 @@ export class CreateJobDto {
   @ValidateNested({ each: true })
   @Type(() => Comment)
   comments?: Comment[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  tags?: Types.ObjectId[] = [];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsMongoId()
+  priorityTag?: Types.ObjectId;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  attachments?: string[];
+
+  /*  @ApiProperty()
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  history?: History[];*/
 }
 
 export class CreateJobResponseDto {

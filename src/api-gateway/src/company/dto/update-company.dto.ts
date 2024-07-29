@@ -1,7 +1,6 @@
 import { Address, ContactDetails } from '../entities/company.entity';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import {
-  IsMongoId,
   IsOptional,
   IsString,
   MaxLength,
@@ -9,7 +8,6 @@ import {
   Validate,
   ValidateNested,
 } from 'class-validator';
-import { Types } from 'mongoose';
 import { Type } from 'class-transformer';
 import { RegistrationNumber } from '../../utils/Custom Validators/RegistrationNumber';
 
@@ -53,15 +51,6 @@ export class UpdateCompanyDto {
   @ValidateNested()
   @Type(() => UpdateAddress)
   address?: UpdateAddress;
-
-  @ApiProperty({ type: [Types.ObjectId] })
-  @IsOptional()
-  @IsMongoId({ each: true })
-  employees?: Types.ObjectId[];
-
-  @IsOptional()
-  @IsMongoId({ each: true })
-  inventoryItems?: Types.ObjectId[];
 
   @ApiProperty()
   @IsOptional()

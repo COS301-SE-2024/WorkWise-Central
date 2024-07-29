@@ -37,6 +37,8 @@ import {
 } from './entities/client.entity';
 import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { extractUserId, validateObjectId } from '../utils/Utils';
+import { DeleteClientDto } from './dto/delete-client.dto';
 
 const className = 'Client';
 
@@ -83,11 +85,11 @@ export class ClientController {
     @Body() createClientDto: CreateClientDto,
   ): Promise<CreateClientResponseDto> {
     try {
-      const userId = this.extractUserId(headers);
+      const userId = extractUserId(this.jwtService, headers);
       const result = await this.clientService.create(userId, createClientDto);
       return new CreateClientResponseDto(result);
-    } catch (Error) {
-      throw new HttpException(Error, HttpStatus.CONFLICT);
+    } catch (e) {
+      throw e;
     }
   }
 
@@ -104,11 +106,8 @@ export class ClientController {
   async findAll() {
     try {
       return { data: await this.clientService.getAllClients() };
-    } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    } catch (e) {
+      throw e;
     }
   }
 
@@ -124,19 +123,16 @@ export class ClientController {
   @Get('all/:cid')
   async findAllInCompany(@Headers() headers: any, @Param('cid') cid: string) {
     try {
-      this.validateObjectId(cid);
-      const userId = this.extractUserId(headers);
+      validateObjectId(cid);
+      const userId = extractUserId(this.jwtService, headers);
       return {
         data: await this.clientService.getAllClientsInCompany(
           userId,
           new Types.ObjectId(cid),
         ),
       };
-    } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    } catch (e) {
+      throw e;
     }
   }
 
@@ -152,9 +148,9 @@ export class ClientController {
   })
   @Get('id/:id')
   async findOne(@Headers() headers: any, @Param('id') id: string) {
-    this.validateObjectId(id);
+    validateObjectId(id);
     try {
-      const userId = this.extractUserId(headers);
+      const userId = extractUserId(this.jwtService, headers);
       const response = await this.clientService.getClientById(
         userId,
         new Types.ObjectId(id),
@@ -162,7 +158,7 @@ export class ClientController {
       return new ApiResponseDto(response);
     } catch (e) {
       console.log(e);
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+      throw e;
     }
   }
 
@@ -180,10 +176,10 @@ export class ClientController {
     compId: string,
     @Query('term') emailOrName: string,
   ): Promise<{ data: (FlattenMaps<Client> & { _id: Types.ObjectId })[] }> {
-    this.validateObjectId(compId);
+    validateObjectId(compId);
     const companyId = new mongoose.Types.ObjectId(compId);
     try {
-      const userId = this.extractUserId(headers);
+      const userId = extractUserId(this.jwtService, headers);
 
       return {
         data: await this.clientService.getByEmailOrName(
@@ -194,7 +190,7 @@ export class ClientController {
       };
     } catch (e) {
       console.log(e);
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+      throw e;
     }
   }
 
@@ -220,9 +216,9 @@ export class ClientController {
     @Body() updateClientDto: UpdateClientDto,
   ) {
     try {
-      this.validateObjectId(id);
+      validateObjectId(id);
       const clientId = new Types.ObjectId(id);
-      const userId = this.extractUserId(headers);
+      const userId = extractUserId(this.jwtService, headers);
 
       return await this.clientService.updateClient(
         userId,
@@ -231,48 +227,28 @@ export class ClientController {
       );
     } catch (e) {
       console.log(e);
-      throw new HttpException(e, HttpStatus.CONFLICT);
+      throw e;
     }
   }
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
+  @ApiBody({ type: DeleteClientDto })
   @ApiOperation({
     summary: `Delete a ${className}`,
     description: `You send the ${className} ObjectId, and then they get deleted if the id is valid. 
     There will be rules on deletion later.`,
-    security: [],
   })
   @ApiResponse({
     description: `A boolean value indicating whether or not the deletion was a success`,
   })
-  @Delete('/delete/:id')
-  remove(
-    @Headers() headers: any,
-    @Param('id') id: string /*, @Body() pass: { pass: string }*/,
-  ) {
+  @Delete('/delete/')
+  remove(@Headers() headers: any, @Body() deleteClientDto: DeleteClientDto) {
     try {
-      this.validateObjectId(id);
-      const userId = this.extractUserId(headers);
-
-      return this.clientService.softDelete(userId, new Types.ObjectId(id));
+      const userId = extractUserId(this.jwtService, headers);
+      return this.clientService.softDelete(userId, deleteClientDto);
     } catch (e) {
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+      throw e;
     }
-  }
-
-  public extractUserId(headers: any) {
-    const authHeader: string = headers.authorization;
-    const decodedJwtAccessToken = this.jwtService.decode(
-      authHeader.replace(/^Bearer\s+/i, ''),
-    );
-    if (!Types.ObjectId.isValid(decodedJwtAccessToken.sub)) {
-      throw new HttpException('Invalid User', HttpStatus.BAD_REQUEST);
-    }
-    const userId: Types.ObjectId = decodedJwtAccessToken.sub; //This attribute is retrieved in the JWT
-    return userId;
   }
 }

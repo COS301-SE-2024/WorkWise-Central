@@ -1,14 +1,19 @@
 import {
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   OnModuleInit,
 } from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import * as console from 'node:console';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Notification } from './entities/notification.entity';
 import { NotificationRepository } from './notification.repository';
+import { EmployeeService } from '../employee/employee.service';
+import { CompanyService } from '../company/company.service';
+import { UsersService } from '../users/users.service';
+import { FcmNotificationService } from './fcm-notification.service';
 
 @Injectable()
 export class NotificationService implements OnModuleInit {
@@ -16,6 +21,17 @@ export class NotificationService implements OnModuleInit {
     @InjectModel('Notification')
     private readonly notificationModel: Model<Notification>,
     private readonly notificationRepository: NotificationRepository,
+    @Inject(forwardRef(() => EmployeeService))
+    private employeeService: EmployeeService,
+
+    @Inject(forwardRef(() => CompanyService))
+    private companyService: CompanyService,
+
+    @Inject(forwardRef(() => UsersService))
+    private usersService: UsersService,
+
+    @Inject(forwardRef(() => FcmNotificationService))
+    private fcmNotificationService: FcmNotificationService,
   ) {}
 
   onModuleInit() {
@@ -31,6 +47,13 @@ export class NotificationService implements OnModuleInit {
   watchDatabase() {
     this.notificationModel.watch().on('change', (change) => {
       console.log(change);
+      const document: Notification = change.fullDocument;
+      console.log(document);
+      this.fcmNotificationService
+        .sendingNotificationOneUser('rand')
+        .then((r) => {
+          console.log('message sent', r);
+        });
     });
   }
 
@@ -73,6 +96,23 @@ export class NotificationService implements OnModuleInit {
       return result;
     } catch (error) {
       throw new InternalServerErrorException();
+    }
+  }
+
+  async notifyAllInCompany(companyId: Types.ObjectId, message: string) {
+    const company = await this.companyService.getCompanyById(companyId);
+    if (company == null)
+      throw new InternalServerErrorException('Invalid CompanyId');
+    const employeesInCompany =
+      await this.employeeService.findAllInCompany(companyId);
+    for (const employee of employeesInCompany) {
+      const user = employee.userId;
+      const notification = new Notification(
+        new Types.ObjectId(),
+        user,
+        message,
+      );
+      this.notificationRepository.save(notification);
     }
   }
 }

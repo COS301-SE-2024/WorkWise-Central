@@ -136,7 +136,7 @@ export class CompanyRepository {
     return result != null;
   }
 
-  async employeeExists(
+  /*  async employeeExists(
     compId: Types.ObjectId,
     empId: Types.ObjectId,
   ): Promise<boolean> {
@@ -161,7 +161,7 @@ export class CompanyRepository {
     }
 
     return false;
-  }
+  }*/
 
   async update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
     return this.companyModel.findOneAndUpdate(

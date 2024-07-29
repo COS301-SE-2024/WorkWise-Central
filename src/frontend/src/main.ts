@@ -9,8 +9,10 @@ import ToastService from 'primevue/toastservice'
 import VNetworkGraph from 'v-network-graph'
 import 'v-network-graph/lib/style.css'
 import './assets/styles.css'
+//import firebaseMessaging from '@/store/firebase'
 
 const app = createApp(App)
+//app.config.globalProperties.$messaging = firebaseMessaging
 app.use(KanbanPlugin)
 app.use(vuetify)
 app.use(router)
