@@ -53,4 +53,15 @@ it('testing error messages on blur', () => {
   cy.get('.v-btn').click()
   cy.get('[data-testid=job-title-field]').click()
   cy.focused().blur()
+  cy.get('[data-testid=job-title-field] > .v-input__details').contains('Job title is required')
+
+  cy.get('[data-testid=client-select]').click()
+  cy.focused().blur()
+  cy.get('[data-testid=client-select] > .v-input__details').contains('Client is required')
+
+  cy.get('[data-testid=job-description-textarea]').click()
+  cy.focused().blur()
+  cy.get('[data-testid=job-description-textarea] > .v-input__details').contains(
+    'Description is required'
+  )
 })
