@@ -90,48 +90,44 @@
 
               <!-- Actions slot -->
               <template v-slot:[`item.actions`]="{ item }">
-                <v-btn
-                  rounded="xl"
-                  variant="plain"
-                  @click="(actionsDialog = true), selectItem(item)"
-                >
-                  <v-icon color="primary">mdi-dots-horizontal</v-icon>
-                </v-btn>
+                <v-menu max-width="500px">
+                  <template v-slot:activator="{ props }">
+                    <v-btn
+                      rounded="xl"
+                      variant="plain"
+                      v-bind="props"
+                      @click="(actionsDialog = true), selectItem(item)"
+                    >
+                      <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list class="bg-background">
+                    <v-list-item
+                      ><ClientDetails :colors="colors" :clientDetails="selectedItem"
+                    /></v-list-item>
+
+                    <v-list-item
+                      ><EditClient
+                        @update:item="selectedItem = $event"
+                        :editedItem="selectedItem"
+                        :_clientID="selectedItemId"
+                    /></v-list-item>
+
+                    <v-list-item>
+                      <DeleteClient
+                        :details="selectedItem"
+                        :client_id="selectedItemId"
+                        :client="selectedItem"
+                        :company_id="clientCompanyID"
+                    /></v-list-item>
+                  </v-list>
+                </v-menu>
               </template>
             </v-data-table>
           </div>
         </v-col>
       </v-card-text>
     </v-card>
-
-    <v-menu v-model="actionsDialog" max-width="500px">
-      <v-list>
-        <v-list-item>
-          <v-list-item-content class="text-h5 font-weight-regular">
-            {{ selectedItemName + ' ' + selectedItemSurname }}
-          </v-list-item-content></v-list-item
-        >
-
-        <v-list-item-content> What would you like to do with this client? </v-list-item-content>
-
-        <v-list-item><ClientDetails :colors="colors" :clientDetails="selectedItem" /></v-list-item>
-
-        <v-list-item
-          ><EditClient
-            @update:item="selectedItem = $event"
-            :editedItem="selectedItem"
-            :_clientID="selectedItemId"
-        /></v-list-item>
-
-        <v-list-item>
-          <DeleteClient
-            :details="selectedItem"
-            :client_id="selectedItemId"
-            :client="selectedItem"
-            :company_id="clientCompanyID"
-        /></v-list-item>
-      </v-list>
-    </v-menu>
   </v-container>
 </template>
 

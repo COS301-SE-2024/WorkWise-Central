@@ -27,6 +27,8 @@ import StatisticsDashboard from '@/components/home/statistics/StatisticsDashboar
 import StatisticView from '@/views/home/dashboard/StatisticView.vue'
 import InventoryView from '@/views/home/inventory/InventoryView.vue'
 import NotificationView from '@/views/notfications/NotificationView.vue'
+import TeamworkLoad from '@/views/home/employees/TeamworkLoad.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -225,6 +227,11 @@ const router = createRouter({
       path: '/notifications',
       name: 'notifications',
       component: NotificationView
+    },
+    {
+      path: '/teamwork-load',
+      name: 'teamwork-load',
+      component: TeamworkLoad
     }
   ]
 })

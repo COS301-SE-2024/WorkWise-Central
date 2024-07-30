@@ -8,6 +8,32 @@
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
+      <v-col></v-col>
+      <v-btn
+        color="primary"
+        dark
+        @click="loginDialog = true"
+        rounded="xl"
+        variant="outlined"
+        align-center
+        justify-center
+        class="my-3 text-center"
+        size="large"
+      >
+        Log in
+      </v-btn>
+      <v-btn
+        color="secondary"
+        dark
+        @click="signupDialog = true"
+        rounded="xl"
+        align-center
+        variant="elevated"
+        class="my-3 text-center"
+        size="large"
+      >
+        Sign up
+      </v-btn>
       <v-btn @click="toggleDarkMode" base-color="background" text
         ><v-icon :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"></v-icon
       ></v-btn>
@@ -45,24 +71,6 @@
           >
 
           <v-col>
-            <v-row justify="center">
-              <v-col cols="12" md="6"
-                ><v-btn
-                  color="primary"
-                  dark
-                  @click="loginDialog = true"
-                  rounded="md"
-                  variant="elevated"
-                  align-center
-                  justify-center
-                  class="my-3 button-width button-height text-center"
-                  size="large"
-                >
-                  Log in
-                </v-btn></v-col
-              ></v-row
-            >
-
             <v-dialog opacity="" v-model="loginDialog" max-width="400" @click:outside="resetFields">
               <Toast position="top-center" />
               <v-card
@@ -160,22 +168,6 @@
                 >
               </v-card>
             </v-dialog>
-            <v-row justify="center"
-              ><v-col cols="12" md="6"
-                ><v-btn
-                  color="secondary"
-                  dark
-                  @click="signupDialog = true"
-                  rounded="md"
-                  align-center
-                  variant="elevated"
-                  class="my-3 button-width button-height text-center"
-                  size="large"
-                >
-                  Sign up
-                </v-btn></v-col
-              ></v-row
-            >
 
             <!-- Flow 1 -->
             <v-dialog
@@ -742,6 +734,85 @@
           </v-row>
         </v-container>
       </v-footer> -->
+      <h1
+        :class="[
+          'splash-title',
+          'header-title',
+          'text-center',
+          { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
+        ]"
+      >
+        What <span class="text-primary">services</span> would you like to
+        <span class="text-secondary">manage</span>
+      </h1>
+      <v-row justify="end" style="height: 500px">
+        <v-col cols="12">
+          <v-sheet class="bg-background mx-auto" elevation="0">
+            <v-slide-group v-model="model" class="pa-4" selected-class="bg-success" show-arrows>
+              <v-spacer></v-spacer>
+              <v-slide-group-item>
+                <v-row>
+                  <v-col
+                    cols="12"
+                    lg="4"
+                    md="4"
+                    v-for="(service, index) in services.slice(0, 3)"
+                    :key="index"
+                  >
+                    <v-card max-width="500px" rounded="xl">
+                      <v-card-title>{{ service.title }}</v-card-title>
+                      <v-card-text>{{ service.text1 }}</v-card-text>
+                      <v-card-text>{{ service.text2 }}</v-card-text>
+                      <v-card-text>{{ service.text3 }}</v-card-text>
+                      <v-card-actions class="bg-cardColor">
+                        <v-btn
+                          color="primary"
+                          dark
+                          @click="signupDialog = true"
+                          rounded="xl"
+                          align-center
+                          variant="elevated"
+                          class="my-3 text-center"
+                          size="large"
+                          >Get Started</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-col>
+                </v-row>
+              </v-slide-group-item>
+            </v-slide-group>
+          </v-sheet>
+        </v-col>
+      </v-row>
+      <h1
+        :class="[
+          'splash-title',
+          'header-title',
+          'text-center',
+          { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
+        ]"
+      >
+        Manage your business <span class="text-primary">effectively</span> and
+        <span class="text-secondary">efficiently</span> using <span class="text-primary">Work</span
+        ><span class="text-secondary">Wise</span> Central
+      </h1>
+      <v-row style="height: 1000px">
+        <v-col cols="12" order="first" order-lg="last" order-md="last" order-sm="first">
+          <v-tabs v-model="tab" align-tabs="center" bg-color="secondary" stacked>
+            <v-tab v-for="(item, index) in tabs" :key="index">
+              {{ item.title }}<v-icon :icon="item.icon"></v-icon>
+            </v-tab>
+          </v-tabs>
+          <v-tabs-window v-model="tab">
+            <v-tabs-window-item v-for="item in tabs" :key="item" :value="item">
+              <v-card flat>
+                <v-img> </v-img>
+              </v-card>
+            </v-tabs-window-item>
+          </v-tabs-window>
+        </v-col>
+      </v-row>
     </v-main>
   </v-app>
 </template>
@@ -753,19 +824,31 @@ import { defineComponent } from 'vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import Toast from 'primevue/toast'
+import Carousel from 'primevue/carousel'
 
 export default defineComponent({
   components: {
     RegisterCompanyModal,
     JoinCompanyModal,
     VueDatePicker,
-    Toast
+    Toast,
+    Carousel
   },
   data: () => ({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     click_create_client: false,
+    tabs: [
+      { title: 'Client Management', icon: 'mdi-account-group' },
+      { title: 'Project Management', icon: 'mdi-account-group' },
+      { title: 'Employee Management', icon: 'mdi-account-group' },
+      { title: 'Team Management', icon: 'mdi-account-group' },
+      { title: 'Operations', icon: 'mdi-account-group' },
+      { title: 'Client Projects', icon: 'mdi-account-group' }
+    ],
+    text: 'sidgkbvufteWOARBGADIGU8AjgnWJVG',
     saltRounds: 10,
+    tab: false,
     loginDialog: false,
     alertSignUp: false,
     alertSignUpFailure: false,
@@ -792,6 +875,26 @@ export default defineComponent({
       'Venda',
       'Xhosa',
       'Zulu'
+    ],
+    services: [
+      {
+        title: 'Plumbing Services',
+        text1: 'Manage your plumbing services',
+        text2: 'Project Management, Job Management, Employee Management',
+        text3: 'Team Management, Operations, Client Projects'
+      },
+      {
+        title: 'Electronics Services',
+        text1: 'Manage your electronics services',
+        text2: 'Project Management, Job Management, Employee Management',
+        text3: 'Team Management, Operations, Client Projects'
+      },
+      {
+        title: 'Electricians Services',
+        text1: 'Manage your electricians services',
+        text2: 'Project Management, Job Management, Employee Management',
+        text3: 'Team Management, Operations, Client Projects'
+      }
     ],
     cityList: [
       'Johannesburg',
@@ -1307,5 +1410,8 @@ export default defineComponent({
     #3a6073,
     #3a7bd5
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.mb-4 {
+  margin-bottom: 1.5rem;
 }
 </style>

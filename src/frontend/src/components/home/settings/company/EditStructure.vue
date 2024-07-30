@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card>
+    <v-card max-height="1000px">
       <v-card-title class="text-center">Edit Roles</v-card-title>
       <v-divider></v-divider>
       <v-card-text>
