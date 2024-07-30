@@ -225,6 +225,11 @@ const router = createRouter({
       path: '/notifications',
       name: 'notifications',
       component: NotificationView
+    },
+    {
+      path: '/manageCompanies',
+      name: 'manageCompanies',
+      component: () => import('@/views/settings/ManageCompanies.vue')
     }
   ]
 })
