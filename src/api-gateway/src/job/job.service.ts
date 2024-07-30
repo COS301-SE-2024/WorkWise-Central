@@ -6,9 +6,15 @@ import {
   ConflictException,
   NotFoundException,
   UnauthorizedException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { CreateJobDto, CreateJobResponseDto } from './dto/create-job.dto';
-import { UpdateJobDto } from './dto/update-job.dto';
+import {
+  AddCommentDto,
+  RemoveCommentDto,
+  UpdateCommentDto,
+  UpdateJobDto,
+} from './dto/update-job.dto';
 import { FlattenMaps, Types } from 'mongoose';
 import { Job } from './entities/job.entity';
 import { UsersService } from '../users/users.service';
@@ -18,11 +24,22 @@ import { JobRepository } from './job.repository';
 import { EmployeeService } from '../employee/employee.service';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { FileService } from '../file/file.service';
+import {
+  JobAssignDto,
+  JobAssignGroupDto,
+  jobAssignResultDto,
+} from './dto/assign-job.dto';
+import { JobTagRepository } from './job-tag.repository';
+import { CreatePriorityTagDto, CreateTagDto } from './dto/create-tag.dto';
+import { JobPriorityTag, JobTag } from './entities/job-tag.entity';
+import { DeleteTagDto } from './dto/edit-tag.dto';
+import { Employee } from '../employee/entities/employee.entity';
 
 @Injectable()
 export class JobService {
   constructor(
     private readonly jobRepository: JobRepository,
+    private readonly jobTagRepository: JobTagRepository,
 
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
@@ -54,7 +71,7 @@ export class JobService {
     const result = await this.jobRepository.save(createdJob);
     return new CreateJobResponseDto(result);
   }
-  async findJobById(
+  async getJobById(
     identifier: Types.ObjectId,
   ): Promise<FlattenMaps<Job> & { _id: Types.ObjectId }> {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
@@ -128,63 +145,22 @@ export class JobService {
     }
   }
 
+  async updateWithoutValidation(
+    jobId: Types.ObjectId,
+    updateJobDto: UpdateJobDto,
+  ) {
+    try {
+      const updated = await this.jobRepository.update(jobId, updateJobDto);
+      console.log('updatedJob', updated);
+      return true;
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+
   async softDelete(id: Types.ObjectId): Promise<boolean> {
     await this.jobRepository.delete(id);
     return true;
-  }
-
-  async jobIsValid(job: Job): Promise<ValidationResult> {
-    if (!job) {
-      return new ValidationResult(false, 'Job is null');
-    }
-
-    if (!job.companyId || !job.assignedBy) {
-      return new ValidationResult(false, 'CompanyId or assignedBy is invalid');
-    }
-
-    if (!job.companyId || !job.assignedBy) {
-      return new ValidationResult(false, 'CompanyId or assignedBy is invalid');
-    }
-
-    const exists = await this.employeeService.employeeExists(job.assignedBy);
-    const isInCompany = await this.companyService.employeeIsInCompany(
-      job.companyId,
-      job.assignedBy,
-    );
-    if (!exists || !isInCompany) {
-      return new ValidationResult(
-        false,
-        'Assigned By is invalid or Employee is not in company',
-      );
-    }
-
-    if (job.assignedEmployees) {
-      for (const employee of job.assignedEmployees.employeeIds) {
-        const exists = await this.employeeService.employeeExists(employee);
-        if (!exists) {
-          return new ValidationResult(false, `Employee: ${employee} Not found`);
-        }
-      }
-    }
-
-    if (job.clientId) {
-      const exists = await this.clientService.clientExists(job.clientId);
-      if (!exists) {
-        return new ValidationResult(false, 'Client does not exist');
-      }
-    }
-
-    if (job.companyId) {
-      const exists = await this.companyService.companyIdExists(job.companyId);
-      if (!exists) {
-        return new ValidationResult(
-          false,
-          `Company: ${job.companyId} Not found`,
-        );
-      }
-    }
-
-    return new ValidationResult(true);
   }
 
   async jobCreateIsValid(job: CreateJobDto): Promise<ValidationResult> {
@@ -295,6 +271,10 @@ export class JobService {
     return await this.jobRepository.findAllInCompany(companyId);
   }
 
+  async getAllJobsInCompanyWithoutValidation(companyId: Types.ObjectId) {
+    return await this.jobRepository.findAllInCompany(companyId);
+  }
+
   async getAllDetailedJobsInCompany(
     userId: Types.ObjectId,
     companyId: Types.ObjectId,
@@ -359,53 +339,330 @@ export class JobService {
       throw new UnauthorizedException('User not in Same Company');
     }
 
-    return this.jobRepository.findAllForEmployee(employeeId);
+    return this.jobRepository.findAllForEmployeeDetailed(employeeId);
   }
 
-  async getAllForEmployeeDetailed(
-    userId: Types.ObjectId,
-    jobId: Types.ObjectId,
-  ) {
+  async assignEmployee(userId: Types.ObjectId, jobAssignDto: JobAssignDto) {
     ///Validation
-    const user = await this.usersService.getUserById(userId);
-    const job = await this.findJobById(jobId);
+    await this.userIdMatchesEmployeeId(userId, jobAssignDto.employeeId);
 
-    if (user == null) throw new NotFoundException('User not found');
-    if (job == null) throw new NotFoundException('Job not found');
-    const relatedCompany = user.joinedCompanies
-      .filter((x) => x.companyId.toString() === job.companyId.toString())
-      .pop(); //sus, but users must only have one employee per company
-    /*    let valid = false;
-    for (const joinedCompany of user.joinedCompanies) {
-      if (
-        job.assignedBy.toString() == joinedCompany.employeeId.toString() ||
-        job.assignedEmployees.employeeIds.includes(joinedCompany.employeeId)
-      ) {
-        valid = true;
-        break;
-      }
-    }
-    if (!valid) throw new NotAcceptableException('user not related to job');*/
-    ///
+    const job = await this.getJobById(jobAssignDto.jobId);
+    if (!job) throw new NotFoundException('Job not found');
+    const alreadyAssigned = job.assignedEmployees.employeeIds.some(
+      (id) => id.toString() === jobAssignDto.employeeToAssignId.toString(),
+    );
+    if (alreadyAssigned) throw new ConflictException('Already Assigned');
+    /// Role-based stuff
+    //TODO: Implement later
 
-    //
-    return this.jobRepository.findAllForEmployeeDetailed(
-      relatedCompany.employeeId,
+    return await this.jobRepository.assignEmployee(
+      jobAssignDto.employeeToAssignId,
+      jobAssignDto.jobId,
     );
   }
 
-  async assignEmployee(
+  async unassignEmployee(userId: Types.ObjectId, jobAssignDto: JobAssignDto) {
+    ///Validation
+    await this.userIdMatchesEmployeeId(userId, jobAssignDto.employeeId);
+
+    const job = await this.getJobById(jobAssignDto.jobId);
+    if (!job) throw new NotFoundException('Job not found');
+    const alreadyAssigned = job.assignedEmployees.employeeIds.some(
+      (id) => id.toString() === jobAssignDto.employeeToAssignId.toString(),
+    );
+    if (!alreadyAssigned) throw new ConflictException('Employee Not Assigned');
+    /// Role-based stuff
+    //TODO: Implement later
+
+    return await this.jobRepository.unassignEmployee(
+      jobAssignDto.employeeToAssignId,
+      jobAssignDto.jobId,
+    );
+  }
+
+  private async userIdMatchesEmployeeId(
     userId: Types.ObjectId,
     employeeId: Types.ObjectId,
-    jobId: Types.ObjectId,
   ) {
-    ///Validation
     const userExists = await this.usersService.userIdExists(userId);
     if (!userExists) throw new NotFoundException('User not found');
 
+    const employee: FlattenMaps<Employee> & { _id: Types.ObjectId } =
+      await this.employeeService.findById(employeeId);
+    if (!employee) throw new NotFoundException('Employee not found');
+    if (!employee.userId.equals(userId))
+      throw new UnauthorizedException('Inconsistent userId');
+  }
+
+  async assignEmployees(
+    userId: Types.ObjectId, //TODO
+    jobAssignGroupDto: JobAssignGroupDto,
+  ) {
+    ///Validation
+    await this.userIdMatchesEmployeeId(userId, jobAssignGroupDto.employeeId);
+
+    const job = await this.getJobById(jobAssignGroupDto.jobId);
+    for (const employeeId of jobAssignGroupDto.employeesToAssignIds) {
+      const exists = await this.employeeService.employeeExists(employeeId);
+      if (!exists) {
+        throw new NotFoundException('Employee not found');
+      }
+    }
     ///
-    //TODO: Implement later
-    console.log(employeeId);
-    console.log(jobId);
+    const total = jobAssignGroupDto.employeesToAssignIds.length;
+
+    //remove duplicates
+    jobAssignGroupDto.employeesToAssignIds = [
+      ...new Set(jobAssignGroupDto.employeesToAssignIds),
+    ];
+    let pass: number = 0;
+
+    //const result = [];
+    for (const employeeId of jobAssignGroupDto.employeesToAssignIds) {
+      const isInJob = job.assignedEmployees.employeeIds.some((e) =>
+        e.equals(employeeId),
+      );
+
+      if (!isInJob) {
+        await this.jobRepository.assignEmployee(
+          employeeId,
+          jobAssignGroupDto.jobId,
+        );
+        pass++;
+      }
+    }
+    return new jobAssignResultDto({
+      passed: pass,
+      failed: total - pass,
+    });
+  }
+
+  async unassignEmployees(
+    userId: Types.ObjectId,
+    jobAssignGroupDto: JobAssignGroupDto,
+  ) {
+    ///Validation
+    await this.userIdMatchesEmployeeId(userId, jobAssignGroupDto.employeeId);
+
+    const job = await this.getJobById(jobAssignGroupDto.jobId);
+    for (const employeeId of jobAssignGroupDto.employeesToAssignIds) {
+      const exists = await this.employeeService.employeeExists(employeeId);
+      if (!exists) {
+        throw new NotFoundException('Employee not found');
+      }
+    }
+    ///
+
+    for (const employeeId of jobAssignGroupDto.employeesToAssignIds) {
+      const isInJob = job.assignedEmployees.employeeIds.some((e) =>
+        e.equals(employeeId),
+      );
+
+      if (isInJob) {
+        const result = await this.jobRepository.unassignEmployee(
+          employeeId,
+          jobAssignGroupDto.jobId,
+        );
+        console.log(result);
+      }
+    }
+    return true;
+  }
+
+  async getAllTagsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
+    /// Validation
+    const user = await this.usersService.getUserById(userId);
+    if (!user) throw new NotFoundException('User not found');
+
+    const isInCompany = user.joinedCompanies.some(
+      (x) => x.companyId.toString() === companyId.toString(),
+    );
+    if (!isInCompany) throw new UnauthorizedException('User not in Company');
+
+    const companyExists = await this.companyService.companyIdExists(companyId);
+    if (!companyExists) throw new NotFoundException('Company not found');
+    ///
+    return this.jobTagRepository.findAllTagsInCompany(companyId);
+  }
+
+  async getAllPriorityTagsInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ) {
+    /// Validation
+    const user = await this.usersService.getUserById(userId);
+    if (!user) throw new NotFoundException('User not found');
+
+    const isInCompany = user.joinedCompanies.some(
+      (x) => x.companyId.toString() === companyId.toString(),
+    );
+    if (!isInCompany) throw new UnauthorizedException('User not in Company');
+
+    const companyExists = await this.companyService.companyIdExists(companyId);
+    if (!companyExists) throw new NotFoundException('Company not found');
+    ///
+    return this.jobTagRepository.findAllPriorityTagsInCompany(companyId);
+  }
+
+  async addJobTagToCompany(
+    userId: Types.ObjectId,
+    createTagDto: CreateTagDto,
+  ): Promise<boolean> {
+    /// Validation
+    const user = await this.usersService.getUserById(userId);
+    if (!user) throw new NotFoundException('User not found');
+
+    const isInCompany = user.joinedCompanies.some(
+      (x) => x.companyId.toString() === createTagDto.companyId.toString(),
+    );
+    if (!isInCompany) throw new UnauthorizedException('User not in Company');
+
+    const companyExists = await this.companyService.companyIdExists(
+      createTagDto.companyId,
+    );
+    if (!companyExists) throw new NotFoundException('Company not found');
+    ///
+
+    const newTag = new JobTag(
+      createTagDto.label,
+      createTagDto.colour,
+      createTagDto.companyId,
+    );
+    const savedDoc = await this.jobTagRepository.addJobTagToCompany(newTag);
+    console.log(savedDoc);
+    return savedDoc != null;
+  }
+
+  async addJobPriorityTagToCompany(
+    userId: Types.ObjectId,
+    createPriorityTagDto: CreatePriorityTagDto,
+  ): Promise<boolean> {
+    /// Validation
+    const user = await this.usersService.getUserById(userId);
+    if (!user) throw new NotFoundException('User not found');
+
+    const isInCompany = user.joinedCompanies.some(
+      (x) =>
+        x.companyId.toString() === createPriorityTagDto.companyId.toString(),
+    );
+    if (!isInCompany) throw new UnauthorizedException('User not in Company');
+
+    const companyExists = await this.companyService.companyIdExists(
+      createPriorityTagDto.companyId,
+    );
+    if (!companyExists) throw new NotFoundException('Company not found');
+    ///
+
+    const newTag = new JobPriorityTag(
+      createPriorityTagDto.label,
+      createPriorityTagDto.priorityLevel,
+      createPriorityTagDto.colour,
+      createPriorityTagDto.companyId,
+    );
+    const savedDoc =
+      await this.jobTagRepository.addJobPriorityTagToCompany(newTag);
+    console.log(savedDoc);
+    return savedDoc != null;
+  }
+
+  async removeJobTagFromCompany(
+    userId: Types.ObjectId,
+    deleteTagDto: DeleteTagDto,
+  ) {
+    /// Validation
+    const user = await this.usersService.getUserById(userId);
+    if (!user) throw new NotFoundException('User not found');
+
+    const isInCompany = user.joinedCompanies.some(
+      (x) => x.companyId.toString() === deleteTagDto.companyId.toString(),
+    );
+    if (!isInCompany) throw new UnauthorizedException('User not in Company');
+
+    const companyExists = await this.companyService.companyIdExists(
+      deleteTagDto.companyId,
+    );
+    if (!companyExists) throw new NotFoundException('Company not found');
+    ///
+    //TODO: Cascade delete
+    const deleteResult = await this.jobTagRepository.deleteJobTag(
+      deleteTagDto.tagId,
+    );
+    return deleteResult.acknowledged;
+  }
+
+  async removeJobPriorityTagFromCompany(
+    userId: Types.ObjectId,
+    deleteTagDto: DeleteTagDto,
+  ) {
+    /// Validation
+    const user = await this.usersService.getUserById(userId);
+    if (!user) throw new NotFoundException('User not found');
+
+    const isInCompany = user.joinedCompanies.some(
+      (x) => x.companyId.toString() === deleteTagDto.companyId.toString(),
+    );
+    if (!isInCompany) throw new UnauthorizedException('User not in Company');
+
+    const companyExists = await this.companyService.companyIdExists(
+      deleteTagDto.companyId,
+    );
+    if (!companyExists) throw new NotFoundException('Company not found');
+    ///
+    //TODO: Cascade delete
+    const deleteResult = await this.jobTagRepository.deletePriorityTag(
+      deleteTagDto.tagId,
+    );
+    return deleteResult.acknowledged;
+  }
+
+  async addCommentToJob(userId: Types.ObjectId, addCommentDto: AddCommentDto) {
+    await this.userIdMatchesEmployeeId(userId, addCommentDto.employeeId);
+
+    const jobExists = await this.jobRepository.exists(addCommentDto.jobId);
+    if (!jobExists) throw new NotFoundException('Job not found');
+
+    return this.jobRepository.addComment(
+      addCommentDto.comment,
+      addCommentDto.jobId,
+    );
+  }
+
+  async removeCommentFromJob(
+    userId: Types.ObjectId,
+    removeCommentDto: RemoveCommentDto,
+  ) {
+    await this.userIdMatchesEmployeeId(userId, removeCommentDto.employeeId);
+
+    const jobExists = await this.jobRepository.exists(removeCommentDto.jobId);
+    if (!jobExists) throw new NotFoundException('Job not found');
+
+    return this.jobRepository.removeComment(
+      removeCommentDto.jobId,
+      removeCommentDto.commentId,
+    );
+  }
+
+  async editCommentInJob(
+    userId: Types.ObjectId,
+    updateCommentDto: UpdateCommentDto,
+  ) {
+    await this.userIdMatchesEmployeeId(userId, updateCommentDto.employeeId);
+
+    const job = await this.getJobById(updateCommentDto.jobId);
+    if (!job) throw new InternalServerErrorException('JobId not found');
+
+    const commentExists = job.comments.some((c) =>
+      c._id.equals(updateCommentDto.commentId),
+    );
+    if (!commentExists)
+      throw new InternalServerErrorException('CommentId not found');
+
+    const updateResult = await this.jobRepository.editComment(
+      updateCommentDto.jobId,
+      updateCommentDto.commentId,
+      updateCommentDto.comment,
+    );
+    console.log(updateResult);
+    return updateResult;
   }
 }

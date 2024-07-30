@@ -115,16 +115,6 @@ export class CreateCompanyDto {
 
   @ApiProperty()
   @IsOptional()
-  @IsMongoId({ each: true })
-  employees?: Types.ObjectId[] = [];
-
-  @ApiProperty()
-  @IsOptional()
-  @IsMongoId({ each: true })
-  inventoryItems?: Types.ObjectId[] = [];
-
-  @ApiProperty()
-  @IsOptional()
   @IsBoolean()
   private?: boolean = false;
 }

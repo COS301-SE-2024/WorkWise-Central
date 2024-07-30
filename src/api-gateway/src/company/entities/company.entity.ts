@@ -1,11 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import mongoose, { SchemaTypes, Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { CreateCompanyDto } from '../dto/create-company.dto';
-import {
-  Employee,
-  EmployeeApiObject,
-} from '../../employee/entities/employee.entity';
+import { Employee } from '../../employee/entities/employee.entity';
 
 export class ContactDetails {
   @Prop({ type: String, required: true, trim: true })
@@ -50,21 +47,9 @@ export class Company {
       this.contactDetails = createCompanyDto.contactDetails;
 
     if (createCompanyDto.address) this.address = createCompanyDto.address;
-    if (createCompanyDto.employees) this.employees = createCompanyDto.employees;
-
-    if (createCompanyDto.inventoryItems)
-      this.inventoryItems = createCompanyDto.inventoryItems;
 
     this.createdAt = new Date();
   }
-
-  /*  mapFromDto(dto: CreateCompanyDto) {
-    for (const key in dto) {
-      if (Object.prototype.hasOwnProperty.call(dto, key)) {
-        this[key] = dto[key];
-      }
-    }
-  }*/
 
   @ApiProperty()
   @Prop({ required: true, unique: true })
@@ -98,24 +83,6 @@ export class Company {
   @ApiProperty()
   @Prop({ required: true })
   address: Address;
-
-  @ApiProperty()
-  @Prop({
-    type: [SchemaTypes.ObjectId],
-    required: true,
-    default: [],
-    ref: Employee.name,
-  })
-  employees: Types.ObjectId[];
-
-  @ApiProperty()
-  @Prop({
-    type: [SchemaTypes.ObjectId],
-    required: true,
-    default: [],
-    /*    ref: Inventory.name,*/ //TODO: Add ref to Inventory
-  })
-  inventoryItems: Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ type: Boolean, required: true, default: false })
@@ -161,12 +128,6 @@ export class CompanyApiObject {
   address: Address;
 
   @ApiProperty()
-  employees: mongoose.Types.ObjectId[];
-
-  @ApiProperty()
-  inventoryItems: mongoose.Types.ObjectId[];
-
-  @ApiProperty()
   private: boolean;
 
   @ApiHideProperty()
@@ -204,12 +165,6 @@ export class CompanyApiDetailedObject {
 
   @ApiProperty()
   address: Address;
-
-  @ApiProperty()
-  employees: EmployeeApiObject[];
-
-  @ApiProperty()
-  inventoryItems: mongoose.Types.ObjectId[]; //TODO: Change to Actual Type later-on
 
   @ApiProperty()
   private: boolean;
