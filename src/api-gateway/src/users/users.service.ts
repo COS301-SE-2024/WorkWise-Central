@@ -327,13 +327,7 @@ export class UsersService {
       }
     }
 
-    if (userJoinedCompany == null) return false;
-    for (const employee of company.employees) {
-      if (employee._id.equals(userJoinedCompany.employeeId)) {
-        return true;
-      }
-    }
-    return false;
+    return userJoinedCompany != null;
   }
 
   async userIsValid(user: User): Promise<ValidationResult> {
