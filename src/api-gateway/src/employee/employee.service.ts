@@ -13,6 +13,7 @@ import { JobService } from '../job/job.service';
 import { TeamService } from '../team/team.service';
 import { EmployeeRepository } from './employee.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
+import { ClientService } from 'src/client/client.service';
 
 @Injectable()
 export class EmployeeService {
@@ -32,6 +33,9 @@ export class EmployeeService {
     private readonly jobService: JobService,
 
     private teamService: TeamService,
+
+    @Inject(forwardRef(() => ClientService))
+    private clientService: ClientService,
   ) {}
 
   async validateCreateEmployee(employee: CreateEmployeeDto) {
@@ -164,12 +168,6 @@ export class EmployeeService {
         'userId',
       ]);
 
-    // for (let employee in employees) {
-    // employee.role = employee.roleId;
-    // employee.user = employee.userId;
-    // delete employee.userId;
-    // delete employee.roleId;
-    // }
     return employees;
   }
 
@@ -182,12 +180,6 @@ export class EmployeeService {
       'roleId',
       'userId',
     ]);
-
-    // employee.role = employee.roleId;
-    // employee.user = employee.userId;
-
-    // delete employee.userId;
-    // delete employee.roleId;
 
     return employee;
   }
@@ -223,6 +215,33 @@ export class EmployeeService {
     return previousObject;
   }
 
+  async updateUnderMe(
+    userId: Types.ObjectId,
+    id: Types.ObjectId,
+    updateEmployeeDto: UpdateEmployeeDto,
+  ) {
+    const validation = await this.validateUpdateEmployee(id, updateEmployeeDto);
+    if (!validation.isValid) {
+      throw new Error(validation.message);
+    }
+
+    //checking if the employee is under the requesting employee
+    const companyId = await this.getCompanyIdFromEmployee(id);
+    const currentEmployeeId = await this.getRequestingEmployeeFromComapnyId(
+      companyId,
+      userId,
+    );
+    if (!(await this.isBelowMe(currentEmployeeId, id))) {
+      throw new Error('Employee not below the requesting employee');
+    }
+
+    const previousObject = this.employeeRepository.update(
+      id,
+      updateEmployeeDto,
+    );
+    return previousObject;
+  }
+
   async updateUserInfo(
     id: Types.ObjectId,
     userInfo: UpdateEmployeeUserInfoDto,
@@ -242,6 +261,26 @@ export class EmployeeService {
   async remove(id: Types.ObjectId): Promise<boolean> {
     if (!(await this.employeeExists(id))) {
       throw new Error('Employee does not exist');
+    }
+    return await this.employeeRepository.remove(id);
+  }
+
+  async removeUnderMe(
+    userId: Types.ObjectId,
+    id: Types.ObjectId,
+  ): Promise<boolean> {
+    if (!(await this.employeeExists(id))) {
+      throw new Error('Employee does not exist');
+    }
+
+    //checking that the employee is under the requesting employee
+    const companyId = await this.getCompanyIdFromEmployee(id);
+    const currentEmployeeId = await this.getRequestingEmployeeFromComapnyId(
+      companyId,
+      userId,
+    );
+    if (!(await this.isBelowMe(currentEmployeeId, id))) {
+      throw new Error('Employee not below the requesting employee');
     }
     return await this.employeeRepository.remove(id);
   }
@@ -277,7 +316,7 @@ export class EmployeeService {
     return [];
   }
 
-  async getListOfOtherEmployees(id) {
+  async getListOfOtherEmployees(id: Types.ObjectId) {
     const currentEmployee = await this.findById(id);
     const listOfEmployees = await this.findAllInCompany(
       currentEmployee.companyId,
@@ -322,5 +361,271 @@ export class EmployeeService {
     }
 
     return listOfEmployees;
+  }
+
+  async getRequestingEmployeeFromComapnyId(
+    companyId: Types.ObjectId,
+    userId: Types.ObjectId,
+  ) {
+    const user = this.usersService.getUserById(userId);
+    const companies = (await user).joinedCompanies;
+    let employeeId: Types.ObjectId;
+    companies.forEach((company) => {
+      if (company.companyId == companyId) {
+        employeeId = company.employeeId;
+      }
+    });
+    if (employeeId === null) {
+      throw new Error('employeeId not found');
+    }
+
+    return employeeId;
+  }
+
+  async validateRoleCompanyId(
+    companyId: Types.ObjectId,
+    userId: Types.ObjectId,
+    permission: string,
+  ) {
+    const employeeId = await this.getRequestingEmployeeFromComapnyId(
+      companyId,
+      userId,
+    );
+    return this.roleService.hasPermission(permission, employeeId);
+  }
+
+  async validateRoleEmployeeId(
+    id: Types.ObjectId,
+    userId: Types.ObjectId,
+    permission: string,
+  ) {
+    const employee = this.findById(id);
+    const employeeId = await this.getRequestingEmployeeFromComapnyId(
+      (await employee).companyId,
+      userId,
+    );
+    return this.roleService.hasPermission(permission, employeeId);
+  }
+
+  async validateRoleJobId(
+    id: Types.ObjectId,
+    userId: Types.ObjectId,
+    permission: string,
+  ) {
+    const job = this.jobService.findJobById(id);
+    const employeeId = await this.getRequestingEmployeeFromComapnyId(
+      (await job).companyId,
+      userId,
+    );
+    return this.roleService.hasPermission(permission, employeeId);
+  }
+
+  async validateRoleClientId(
+    id: Types.ObjectId,
+    userId: Types.ObjectId,
+    permission: string,
+  ) {
+    const client = await this.clientService.getClientById(userId, id);
+    const employeeId = await this.getRequestingEmployeeFromComapnyId(
+      client.details.companyId,
+      userId,
+    );
+    return this.roleService.hasPermission(permission, employeeId);
+  }
+
+  async validateRoleTeamId(
+    id: Types.ObjectId,
+    userId: Types.ObjectId,
+    permission: string,
+  ) {
+    const team = this.teamService.findById(id);
+    const employeeId = await this.getRequestingEmployeeFromComapnyId(
+      (await team).companyId,
+      userId,
+    );
+    return this.roleService.hasPermission(permission, employeeId);
+  }
+
+  // async getEmployeesUnderMeRecursive(
+  //   id: Types.ObjectId,
+  //   list: Types.ObjectId[],
+  // ) {
+  //   const employee = this.findById(id);
+  //   const listOfEmployees = (await employee).subordinates;
+  //   if (listOfEmployees !== null) {
+  //     listOfEmployees.forEach((employeeId) => {
+  //       list.push(employeeId);
+  //       this.getEmployeesUnderMeRecursive(employeeId, list);
+  //     });
+  //   }
+  // }
+
+  async deptFirstTraversalId(id: Types.ObjectId) {
+    console.log('In the depth first traversal function');
+    let currentEmployee = await this.findById(id);
+    let subordinateList = currentEmployee.subordinates;
+    let currentId = id;
+    const open: Types.ObjectId[] = [];
+    const closed: Types.ObjectId[] = [];
+
+    if (subordinateList !== null) {
+      subordinateList.forEach((sub) => {
+        open.push(sub);
+      });
+    }
+    closed.push(id);
+
+    while (open.length !== 0) {
+      currentId = open.shift();
+      currentEmployee = await this.findById(currentId);
+      subordinateList = currentEmployee.subordinates;
+      if (subordinateList !== null) {
+        subordinateList.reverse();
+        subordinateList.forEach((sub) => {
+          open.unshift(sub);
+        });
+      }
+      closed.push(currentId);
+    }
+    return closed;
+  }
+
+  async deptFirstTraversalObjects(id: Types.ObjectId) {
+    console.log('In the depth first traversal function');
+    let currentEmployee = await this.findById(id);
+    let subordinateList = currentEmployee.subordinates;
+    let currentId = id;
+    const open: Types.ObjectId[] = [];
+    const closed: Types.ObjectId[] = [];
+    const employees: Employee[] = [];
+    if (subordinateList !== null) {
+      subordinateList.forEach((sub) => {
+        open.push(sub);
+      });
+    }
+    employees.push(currentEmployee);
+    closed.push(id);
+
+    while (open.length !== 0) {
+      currentId = open.shift();
+      currentEmployee = await this.findById(currentId);
+      subordinateList = currentEmployee.subordinates;
+      if (subordinateList !== null) {
+        subordinateList.reverse();
+        subordinateList.forEach((sub) => {
+          open.unshift(sub);
+        });
+      }
+      employees.push(currentEmployee);
+      closed.push(currentId);
+    }
+    return employees;
+  }
+
+  async deptFirstTraversalDetailed(id: Types.ObjectId) {
+    console.log('In the depth first traversal function');
+    let currentEmployee = await this.detailedFindById(id);
+    let subordinateList = currentEmployee.subordinates;
+    let currentId = id;
+    const open: Types.ObjectId[] = [];
+    const closed: Types.ObjectId[] = [];
+    const employees: Employee[] = [];
+    if (subordinateList !== null) {
+      subordinateList.forEach((sub) => {
+        open.push(sub);
+      });
+    }
+    employees.push(currentEmployee);
+    closed.push(id);
+
+    while (open.length !== 0) {
+      currentId = open.shift();
+      currentEmployee = await this.detailedFindById(currentId);
+      subordinateList = currentEmployee.subordinates;
+      if (subordinateList !== null) {
+        subordinateList.reverse();
+        subordinateList.forEach((sub) => {
+          open.unshift(sub);
+        });
+      }
+      employees.push(currentEmployee);
+      closed.push(currentId);
+    }
+    return employees;
+  }
+
+  async isBelowMe(
+    currentEmployeeId: Types.ObjectId,
+    otherEmployeeId: Types.ObjectId,
+  ) {
+    const list = await this.deptFirstTraversalId(currentEmployeeId);
+
+    return list.includes(otherEmployeeId);
+  }
+
+  async detailedFindBelowMeInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ) {
+    try {
+      const employeeId = await this.getRequestingEmployeeFromComapnyId(
+        companyId,
+        userId,
+      );
+      const list = await this.deptFirstTraversalDetailed(employeeId);
+      return list;
+    } catch (error) {
+      throw new Error(
+        'Employee id for given userId and companyId could not be found',
+      );
+    }
+  }
+
+  async findBelowMeInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ) {
+    try {
+      const employeeId = await this.getRequestingEmployeeFromComapnyId(
+        companyId,
+        userId,
+      );
+      const list = await this.deptFirstTraversalObjects(employeeId);
+      return list;
+    } catch (error) {
+      throw new Error(
+        'Employee id for given userId and companyId could not be found',
+      );
+    }
+  }
+  async detailedFindByIdUnderMe(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+  ) {
+    const companyId = await this.getCompanyIdFromEmployee(employeeId);
+    const currentEmployeeId = await this.getRequestingEmployeeFromComapnyId(
+      companyId,
+      userId,
+    );
+    const employee = await this.detailedFindById(employeeId);
+    if (await this.isBelowMe(currentEmployeeId, employeeId)) {
+      return employee;
+    } else {
+      throw new Error('Employee not below the requesting employee');
+    }
+  }
+
+  async findByIdUnderMe(userId: Types.ObjectId, employeeId: Types.ObjectId) {
+    const companyId = await this.getCompanyIdFromEmployee(employeeId);
+    const currentEmployeeId = await this.getRequestingEmployeeFromComapnyId(
+      companyId,
+      userId,
+    );
+    const employee = await this.findById(employeeId);
+    if (await this.isBelowMe(currentEmployeeId, employeeId)) {
+      return employee;
+    } else {
+      throw new Error('Employee not below the requesting employee');
+    }
   }
 }

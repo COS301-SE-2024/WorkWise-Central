@@ -8,6 +8,7 @@ import {
   HttpException,
   HttpStatus,
   UseGuards,
+  Headers,
 } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
@@ -29,13 +30,18 @@ import {
 import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { extractUserId } from '../utils/Utils';
+import { JwtService } from '@nestjs/jwt';
 
 const className = 'Employee';
 
 @ApiTags('Employee')
 @Controller('employee')
 export class EmployeeController {
-  constructor(private readonly employeeService: EmployeeService) {}
+  constructor(
+    private readonly employeeService: EmployeeService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @ApiOperation({
     summary: `Refer to Documentation`,
@@ -52,7 +58,7 @@ export class EmployeeController {
     status: HttpStatus.NO_CONTENT,
   })
   @ApiOperation({
-    summary: `Get all ${className} instances`,
+    summary: `Get all ${className} instances. DO NOT USE`,
     description: `Returns all ${className} instances in the database.`,
   })
   @ApiOkResponse({
@@ -89,15 +95,44 @@ export class EmployeeController {
   })
   @Get('/detailed/all/:companyId')
   async findAllInCompanyDetailed(
+    @Headers() headers: any,
     @Param('companyId') companyId: Types.ObjectId,
   ) {
-    let data;
-    try {
-      data = await this.employeeService.detailedFindAllInCompany(companyId);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    const userId = extractUserId(this.jwtService, headers);
+    if (
+      await this.employeeService.validateRoleCompanyId(
+        companyId,
+        userId,
+        'view all employees',
+      )
+    ) {
+      let data;
+      try {
+        data = await this.employeeService.detailedFindAllInCompany(companyId);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else if (
+      await this.employeeService.validateRoleCompanyId(
+        companyId,
+        userId,
+        'view employees under me',
+      )
+    ) {
+      let data;
+      try {
+        data = await this.employeeService.detailedFindBelowMeInCompany(
+          userId,
+          companyId,
+        );
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
-    return { data: data };
   }
 
   @UseGuards(AuthGuard)
@@ -123,14 +158,45 @@ export class EmployeeController {
     description: `The _id attribute of the Company for which to get all ${className} instances.`,
   })
   @Get('/all/:companyId')
-  async findAllInCompany(@Param('companyId') companyId: Types.ObjectId) {
-    let data;
-    try {
-      data = await this.employeeService.findAllInCompany(companyId);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+  async findAllInCompany(
+    @Headers() headers: any,
+    @Param('companyId') companyId: Types.ObjectId,
+  ) {
+    const userId = extractUserId(this.jwtService, headers);
+    if (
+      await this.employeeService.validateRoleCompanyId(
+        companyId,
+        userId,
+        'view all employees',
+      )
+    ) {
+      let data;
+      try {
+        data = await this.employeeService.findAllInCompany(companyId);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else if (
+      await this.employeeService.validateRoleCompanyId(
+        companyId,
+        userId,
+        'view employees under me',
+      )
+    ) {
+      let data;
+      try {
+        data = await this.employeeService.findBelowMeInCompany(
+          userId,
+          companyId,
+        );
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
-    return { data: data };
   }
 
   @UseGuards(AuthGuard)
@@ -152,9 +218,37 @@ export class EmployeeController {
     description: `The _id attribute of the ${className} to be retrieved.`,
   })
   @Get('/detailed/id/:id')
-  async findByIdDetailed(@Param('id') id: Types.ObjectId) {
-    const data = await this.employeeService.detailedFindById(id);
-    return { data: data };
+  async findByIdDetailed(
+    @Headers() headers: any,
+    @Param('id') id: Types.ObjectId,
+  ) {
+    const userId = extractUserId(this.jwtService, headers);
+    if (
+      await this.employeeService.validateRoleEmployeeId(
+        id,
+        userId,
+        'view all employees',
+      )
+    ) {
+      const data = await this.employeeService.detailedFindById(id);
+      return { data: data };
+    } else if (
+      await this.employeeService.validateRoleEmployeeId(
+        id,
+        userId,
+        'view employees under me',
+      )
+    ) {
+      let data;
+      try {
+        data = await this.employeeService.detailedFindByIdUnderMe(userId, id);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
   }
 
   @UseGuards(AuthGuard)
@@ -176,9 +270,34 @@ export class EmployeeController {
     description: `The _id attribute of the ${className} to be retrieved.`,
   })
   @Get('id/:id')
-  async findById(@Param('id') id: Types.ObjectId) {
-    const data = await this.employeeService.findById(id);
-    return { data: data };
+  async findById(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
+    const userId = extractUserId(this.jwtService, headers);
+    if (
+      await this.employeeService.validateRoleEmployeeId(
+        id,
+        userId,
+        'view all employees',
+      )
+    ) {
+      const data = await this.employeeService.findById(id);
+      return { data: data };
+    } else if (
+      await this.employeeService.validateRoleEmployeeId(
+        id,
+        userId,
+        'view employees under me',
+      )
+    ) {
+      let data;
+      try {
+        data = await this.employeeService.findByIdUnderMe(userId, id);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
   }
 
   @UseGuards(AuthGuard)
@@ -203,7 +322,11 @@ export class EmployeeController {
     description: `The _id attribute of the Company.`,
   })
   @Get('/listOther/:id')
-  async getOtherEmployees(@Param('id') id: Types.ObjectId) {
+  async getOtherEmployees(
+    @Headers() headers: any,
+    @Param('id') id: Types.ObjectId,
+  ) {
+    //Not sure if role based access in needed???
     let data;
     try {
       data = await this.employeeService.getListOfOtherEmployees(id);
@@ -236,16 +359,47 @@ export class EmployeeController {
   @ApiBody({ type: UpdateEmployeeDto })
   @Patch(':id')
   async update(
+    @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
     @Body() updateEmployeeDto: UpdateEmployeeDto,
   ) {
-    let data;
-    try {
-      data = await this.employeeService.update(id, updateEmployeeDto);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    const userId = extractUserId(this.jwtService, headers);
+    if (
+      await this.employeeService.validateRoleEmployeeId(
+        id,
+        userId,
+        'edit all employees',
+      )
+    ) {
+      let data;
+      try {
+        data = await this.employeeService.update(id, updateEmployeeDto);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
     }
-    return { data: data };
+    if (
+      await this.employeeService.validateRoleEmployeeId(
+        id,
+        userId,
+        'edit employees under me',
+      )
+    ) {
+      let data;
+      try {
+        data = await this.employeeService.updateUnderMe(
+          userId,
+          id,
+          updateEmployeeDto,
+        );
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
   }
 
   @UseGuards(AuthGuard)
@@ -272,20 +426,58 @@ export class EmployeeController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete(':id')
-  async remove(@Param('id') id: Types.ObjectId) {
-    let data;
-    try {
-      data = await this.employeeService.remove(id);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-    }
+  async remove(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
+    const userId = extractUserId(this.jwtService, headers);
+    if (
+      await this.employeeService.validateRoleEmployeeId(
+        id,
+        userId,
+        'remove any employees',
+      )
+    ) {
+      let data;
+      try {
+        data = await this.employeeService.remove(id);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
 
-    if (data === false) {
-      throw new HttpException(
-        'update unsuccessful',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      if (data === false) {
+        throw new HttpException(
+          'update unsuccessful',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      return { data: data };
+    } else if (
+      await this.employeeService.validateRoleEmployeeId(
+        id,
+        userId,
+        'remove employees under me',
+      )
+    ) {
+      let data;
+      try {
+        data = await this.employeeService.removeUnderMe(userId, id);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+
+      if (data === false) {
+        throw new HttpException(
+          'update unsuccessful',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
-    return { data: data };
   }
+
+  // @Get('/depthFirst/:id')
+  // async dephFirstTraversal(@Param('id') id: Types.ObjectId) {
+  //   const data = await this.employeeService.deptFirstTraversal(id);
+  //   return { data: data };
+  // }
 }
