@@ -63,8 +63,23 @@
                         {{ value }}
                       </template>
 
-                      <template v-slot:[`item.clientName`]="{ value }">
-                        <v-chip color=""> <v-icon>mdi-phone</v-icon>{{ value }} </v-chip>
+                      <template v-slot:[`item.clientPhone`]="{ value }">
+                        <v-chip color="primary">
+                          <a :href="`tel:${value}`" style="color: inherit; text-decoration: none">
+                            <v-icon>fa-solid fa-phone</v-icon>{{ value }}
+                          </a>
+                        </v-chip>
+                      </template>
+
+                      <template v-slot:[`item.clientMail`]="{ value }">
+                        <v-chip color="primary">
+                          <a
+                              :href="`mailto:${value}`"
+                              style="color: inherit; text-decoration: none"
+                          >
+                            <v-icon>fa-solid fa-envelope</v-icon>{{ value }}
+                          </a>
+                        </v-chip>
                       </template>
 
                       <template v-slot:[`item.jobDescription`]="{ value }">
@@ -120,108 +135,17 @@
             >View<v-icon icon="fa:fa-solid fa-eye" end color="success" size="small"></v-icon
           ></v-btn>
           <!-- View Job Dialog -->
-          <v-dialog v-model="viewJobDialog" max-width="500">
-            <v-card elevation="14" rounded="md" :max-width="500" :max-height="800">
-              <v-card-title> Job Details </v-card-title>
-              <v-col>
-                <v-col class="text-center">
-                  <h6>Job Title</h6>
-                  <p class="text-caption">
-                    {{ selectedJob.heading }}
-                  </p>
-                </v-col>
-                <v-divider></v-divider>
-                <v-col class="text-center">
-                  <h6>Description</h6>
-
-                  <small class="text-caption">
-                    {{ selectedJob.jobDescription }}
-                  </small>
-                </v-col>
-                <v-divider></v-divider>
-                <v-col class="text-center">
-                  <h6>Status</h6>
-
-                  <small class="text-caption">
-                    <v-chip :color="getStatusColor(selectedJob.status)" dark>
-                      {{ selectedJob.status }}
-                    </v-chip>
-                  </small>
-                </v-col>
-                <v-divider></v-divider>
-                <v-col class="text-center">
-                  <h6>Address</h6>
-                  <v-row>
-                    <v-col>
-                      <label>Street</label><v-spacer></v-spacer>
-                      <small class="text-caption">
-                        {{ selectedJob.street }}
-                      </small>
-                    </v-col>
-                    <v-col>
-                      <label>Suburb</label><v-spacer></v-spacer>
-                      <small class="text-caption">
-                        {{ selectedJob.suburb }}
-                      </small>
-                    </v-col>
-                    <v-col>
-                      <label>City</label><v-spacer></v-spacer>
-                      <small class="text-caption">
-                        {{ selectedJob.city }}
-                      </small>
-                    </v-col></v-row
-                  >
-                  <v-row>
-                    <v-col>
-                      <label>Postal Code</label><v-spacer></v-spacer>
-                      <small class="text-caption">
-                        {{ selectedJob.postalCode }}
-                      </small>
-                    </v-col>
-                    <v-col>
-                      <label>Complex</label><v-spacer></v-spacer>
-                      <small class="text-caption">
-                        {{ selectedJob.complex }}
-                      </small>
-                    </v-col>
-                    <v-col>
-                      <label>House Number</label><v-spacer></v-spacer>
-                      <small class="text-caption">
-                        {{ selectedJob.houseNumber }}
-                      </small>
-                    </v-col></v-row
-                  >
-                </v-col>
-
-                <v-divider></v-divider>
-                <v-col class="text-center">
-                  <h6>Dates</h6>
-                  <v-col>
-                    <label>Start Date</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ formatDate(selectedJob.startDate) }}
-                    </small>
-                  </v-col>
-                  <v-col>
-                    <label>End Date</label><v-spacer></v-spacer>
-                    <small class="text-caption">
-                      {{ formatDate(selectedJob.endDate) }}
-                    </small>
-                  </v-col>
-                </v-col>
-              </v-col>
-              <v-col class="pt-0">
-                <v-btn color="error" width="100%" @click="viewJobDialog = false"
-                  >Close<v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon
-                ></v-btn>
-              </v-col>
-            </v-card>
+          <v-dialog v-model="viewJobDialog" :max-width="1000">
+            <ViewJob
+              :passedInJob="selectedJob"
+              @close="viewJobDialog"
+              ></ViewJob>
           </v-dialog>
 
           <v-btn color="warning" @click="editJobCardDialog()"
             >Edit<v-icon icon="fa:fa-solid fa-pencil" end color="warning " size="small"></v-icon
           ></v-btn>
-          <v-dialog v-model="managerJobCardDialog" max-width="1000px">
+          <v-dialog v-model="managerJobCardDialog" :max-width="1000">
             <ManagerJobCard
               :passedInJob="selectedJob"
               @close="managerJobCardDialog = false"
@@ -262,6 +186,7 @@ import { onMounted, ref } from 'vue'
 import axios from 'axios'
 import AddJob from './AddJob.vue'
 import ManagerJobCard from './ManagerJobCard.vue'
+import ViewJob from './ViewJob.vue'
 
 const search = ref('')
 const viewJobDialog = ref(false)
@@ -269,13 +194,15 @@ const viewJobDialog = ref(false)
 
 const headers = [
   { title: 'Job Heading', key: 'heading', align: 'start', value: 'heading' },
-  { title: 'Client', key: 'clientName', align: 'start', value: 'client' },
+  { title: 'Client Phone', key: 'clientPhone', align: 'start', value: 'clientPhone' },
+  { title: 'Client Mail', key: 'clientMail', align: 'start', value: 'clientMail' },
   { title: 'Job Description', key: 'jobDescription', align: 'start', value: 'jobDescription' },
   { title: 'Status', key: 'status', align: 'start', value: 'status' },
   { title: 'Start Date', key: 'startDate', align: 'start', value: 'startDate' },
   { title: 'End Date', key: 'endDate', align: 'start', value: 'endDate' },
   { title: 'Actions', key: 'actions', align: 'start', sortable: false, value: 'actions' }
 ]
+
 
 // Reactive variable to hold job and client data
 const jobClientData = ref([])
