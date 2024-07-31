@@ -131,16 +131,12 @@
             >Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="primary" size="small"></v-icon
           ></v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="success" @click="viewJobDialog = true"
-            >View<v-icon icon="fa:fa-solid fa-eye" end color="success" size="small"></v-icon
-          ></v-btn>
+
           <!-- View Job Dialog -->
-          <v-dialog v-model="viewJobDialog" :max-width="1000">
-            <ViewJob
-              :passedInJob="selectedJob"
-              @close="viewJobDialog"
-              ></ViewJob>
-          </v-dialog>
+          <ViewJob
+            :passedInJob="selectedJob"
+            @close="viewJobDialog"
+            ></ViewJob>
 
           <v-btn color="warning" @click="editJobCardDialog()"
             >Edit<v-icon icon="fa:fa-solid fa-pencil" end color="warning " size="small"></v-icon
@@ -190,8 +186,8 @@ import ViewJob from './ViewJob.vue'
 
 const search = ref('')
 const viewJobDialog = ref(false)
-// set the table headers
 
+// set the table headers
 const headers = [
   { title: 'Job Heading', key: 'heading', align: 'start', value: 'heading' },
   { title: 'Client Phone', key: 'clientPhone', align: 'start', value: 'clientPhone' },
