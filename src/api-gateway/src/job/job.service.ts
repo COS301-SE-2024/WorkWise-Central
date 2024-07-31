@@ -30,10 +30,16 @@ import {
   jobAssignResultDto,
 } from './dto/assign-job.dto';
 import { JobTagRepository } from './job-tag.repository';
-import { CreatePriorityTagDto, CreateTagDto } from './dto/create-tag.dto';
+import {
+  CreatePriorityTagDto,
+  CreateStatusDto,
+  CreateTagDto,
+} from './dto/create-tag.dto';
 import { JobPriorityTag, JobTag } from './entities/job-tag.entity';
 import { DeleteTagDto } from './dto/edit-tag.dto';
 import { Employee } from '../employee/entities/employee.entity';
+import { Comment } from './entities/job.entity';
+import { JobStatus } from './entities/job-status.entity';
 
 @Injectable()
 export class JobService {
@@ -230,7 +236,7 @@ export class JobService {
 
     let userCanAccessJob = false;
     for (const joinedCompany of user.joinedCompanies) {
-      if (joinedCompany.companyId.equals(jobInDb.companyId)) {
+      if (joinedCompany.companyId.toString() === jobInDb.companyId.toString()) {
         userCanAccessJob = true;
         break;
       }
@@ -390,7 +396,7 @@ export class JobService {
     const employee: FlattenMaps<Employee> & { _id: Types.ObjectId } =
       await this.employeeService.findById(employeeId);
     if (!employee) throw new NotFoundException('Employee not found');
-    if (!employee.userId.equals(userId))
+    if (employee.userId.toString() !== userId.toString())
       throw new UnauthorizedException('Inconsistent userId');
   }
 
@@ -419,8 +425,8 @@ export class JobService {
 
     //const result = [];
     for (const employeeId of jobAssignGroupDto.employeesToAssignIds) {
-      const isInJob = job.assignedEmployees.employeeIds.some((e) =>
-        e.equals(employeeId),
+      const isInJob = job.assignedEmployees.employeeIds.some(
+        (e) => e.toString() === employeeId.toString(),
       );
 
       if (!isInJob) {
@@ -454,8 +460,8 @@ export class JobService {
     ///
 
     for (const employeeId of jobAssignGroupDto.employeesToAssignIds) {
-      const isInJob = job.assignedEmployees.employeeIds.some((e) =>
-        e.equals(employeeId),
+      const isInJob = job.assignedEmployees.employeeIds.some(
+        (e) => e.toString() === employeeId.toString(),
       );
 
       if (isInJob) {
@@ -529,6 +535,36 @@ export class JobService {
       createTagDto.companyId,
     );
     const savedDoc = await this.jobTagRepository.addJobTagToCompany(newTag);
+    console.log(savedDoc);
+    return savedDoc != null;
+  }
+
+  async addJobStatusToCompany(
+    userId: Types.ObjectId,
+    createStatusDto: CreateStatusDto,
+  ): Promise<boolean> {
+    /// Validation
+    const user = await this.usersService.getUserById(userId);
+    if (!user) throw new NotFoundException('User not found');
+
+    const isInCompany = user.joinedCompanies.some(
+      (x) => x.companyId.toString() === createStatusDto.companyId.toString(),
+    );
+    if (!isInCompany) throw new UnauthorizedException('User not in Company');
+
+    const companyExists = await this.companyService.companyIdExists(
+      createStatusDto.companyId,
+    );
+    if (!companyExists) throw new NotFoundException('Company not found');
+    ///
+    /// TODO: Check if it exists already
+    const newStatus = new JobStatus(
+      createStatusDto.status,
+      createStatusDto.colour,
+      createStatusDto.companyId,
+    );
+    const savedDoc =
+      await this.jobTagRepository.addJobStatusToCompany(newStatus);
     console.log(savedDoc);
     return savedDoc != null;
   }
@@ -621,10 +657,14 @@ export class JobService {
     const jobExists = await this.jobRepository.exists(addCommentDto.jobId);
     if (!jobExists) throw new NotFoundException('Job not found');
 
-    return this.jobRepository.addComment(
-      addCommentDto.comment,
-      addCommentDto.jobId,
+    const comment = new Comment(
+      addCommentDto.employeeId,
+      addCommentDto.newComment,
+      false,
+      new Date(),
     );
+
+    return this.jobRepository.addComment(comment, addCommentDto.jobId);
   }
 
   async removeCommentFromJob(
@@ -651,8 +691,8 @@ export class JobService {
     const job = await this.getJobById(updateCommentDto.jobId);
     if (!job) throw new InternalServerErrorException('JobId not found');
 
-    const commentExists = job.comments.some((c) =>
-      c._id.equals(updateCommentDto.commentId),
+    const commentExists = job.comments.some(
+      (c) => c._id.toString() === updateCommentDto.commentId.toString(),
     );
     if (!commentExists)
       throw new InternalServerErrorException('CommentId not found');
