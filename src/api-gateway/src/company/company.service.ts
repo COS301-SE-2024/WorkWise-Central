@@ -95,6 +95,15 @@ export class CompanyService {
     console.log('Perform Update');
     await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
 
+    await this.employeeService.updateUserInfo(employee._id, {
+      //Add user details to Employee
+      firstName: user.personalInfo.firstName,
+      surname: user.personalInfo.surname,
+      displayImage: user.profile.displayImage,
+      displayName: user.profile.displayName,
+      username: user.systemDetails.username,
+    });
+
     await this.usersService.updateUser(user._id, {
       currentEmployee: employee._id,
     });
@@ -231,6 +240,15 @@ export class CompanyService {
         userId: user._id,
         roleId: defaultRole._id,
         superiorId: addUserDto.superiorId,
+      });
+
+      await this.employeeService.updateUserInfo(addedEmployee._id, {
+        //Add user details
+        firstName: user.personalInfo.firstName,
+        surname: user.personalInfo.surname,
+        displayImage: user.profile.displayImage,
+        displayName: user.profile.displayName,
+        username: user.systemDetails.username,
       });
     }
 

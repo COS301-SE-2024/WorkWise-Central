@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { JobPriorityTag, JobTag } from './entities/job-tag.entity';
 import { Model, Types } from 'mongoose';
+import { JobStatus } from './entities/job-status.entity';
 
 @Injectable()
 export class JobTagRepository {
@@ -11,6 +12,9 @@ export class JobTagRepository {
 
     @InjectModel(JobPriorityTag.name)
     private readonly jobPriorityTagModel: Model<JobPriorityTag>,
+
+    @InjectModel(JobStatus.name)
+    private readonly jobStatusModel: Model<JobStatus>,
   ) {}
 
   async findAllTagsInCompany(companyId: Types.ObjectId) {
@@ -34,6 +38,11 @@ export class JobTagRepository {
     return await priorityTagModel.save();
   }
 
+  async addJobStatusToCompany(jobStatus: JobStatus) {
+    const jobTagModel = new this.jobStatusModel(jobStatus);
+    return await jobTagModel.save();
+  }
+
   async deleteJobTag(tagId: Types.ObjectId) {
     const deleteResult = await this.jobTagModel
       .deleteOne({ _id: tagId })
@@ -44,6 +53,14 @@ export class JobTagRepository {
 
   async deletePriorityTag(tagId: Types.ObjectId) {
     const deleteResult = await this.jobPriorityTagModel
+      .deleteOne({ _id: tagId })
+      .exec();
+    console.log(deleteResult);
+    return deleteResult;
+  }
+
+  async deleteJobStatus(tagId: Types.ObjectId) {
+    const deleteResult = await this.jobStatusModel
       .deleteOne({ _id: tagId })
       .exec();
     console.log(deleteResult);

@@ -133,6 +133,18 @@ export class History {
 
 @Schema()
 export class Comment {
+  constructor(
+    employeeId: Types.ObjectId,
+    comment: string,
+    edited: boolean,
+    date: Date,
+  ) {
+    this.employeeId = employeeId;
+    this.comment = comment;
+    this.edited = edited;
+    this.date = date;
+  }
+
   @ApiProperty()
   @Prop({
     type: SchemaTypes.ObjectId,
@@ -189,8 +201,13 @@ export class Job {
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Client.name })
-  clientId?: Types.ObjectId;
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: false,
+    ref: Client.name,
+    default: null,
+  })
+  clientId?: Types.ObjectId = null;
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Employee.name })
@@ -209,6 +226,10 @@ export class Job {
   status: string = 'To do';
 
   @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: false })
+  column: Types.ObjectId;
+
+  @ApiProperty()
   @Prop({
     type: [SchemaTypes.ObjectId],
     required: false,
@@ -222,8 +243,9 @@ export class Job {
     type: SchemaTypes.ObjectId,
     required: false,
     ref: JobTag.name,
+    default: null,
   })
-  priorityTag?: Types.ObjectId;
+  priorityTag?: Types.ObjectId = null;
 
   @ApiProperty()
   @Prop({ type: String, required: false, default: null })
@@ -392,3 +414,48 @@ export class JobResponseDto {
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);
+
+const defaultPopulatedFields = ['tags', 'priorityTag', 'history'];
+const jobTasks = {
+  path: 'taskList',
+  populate: [
+    {
+      path: 'assignedEmployees',
+      model: Employee.name,
+    },
+  ],
+};
+const jobAssignedEmployees = {
+  path: 'assignedEmployees',
+  populate: [
+    {
+      path: 'employeeIds',
+      model: Employee.name,
+    },
+    {
+      path: 'teamId',
+      model: Team.name,
+    },
+  ],
+};
+const employeeComments = {
+  path: 'comments',
+  populate: [
+    {
+      path: 'employeeId',
+      model: Employee.name,
+    },
+  ],
+};
+
+const autoPopulatedFields = function (next: any) {
+  this.populate(defaultPopulatedFields);
+  this.populate(jobTasks);
+  this.populate(jobAssignedEmployees);
+  this.populate(employeeComments);
+  next();
+};
+
+JobSchema.pre('find', autoPopulatedFields)
+  .pre('findOne', autoPopulatedFields)
+  .pre('findOneAndUpdate', autoPopulatedFields);

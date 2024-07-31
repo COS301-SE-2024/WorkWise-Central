@@ -205,10 +205,16 @@ export class Comment {
 }
 
 export class CreateJobDto {
+  //TODO: Add optional columnId field, if not given 'No status'
   @ApiProperty()
   @IsNotEmpty()
   @IsMongoId()
   companyId: Types.ObjectId;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsMongoId()
+  statusId?: Types.ObjectId;
 
   @ApiProperty()
   @IsOptional()
