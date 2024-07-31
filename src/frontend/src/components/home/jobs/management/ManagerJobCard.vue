@@ -571,304 +571,304 @@
 </template>
 
 <script setup>
-import { watch, ref } from 'vue'
-import axios from 'axios'
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { defineProps } from 'vue'
-import { useToast } from 'primevue/usetoast'
-
-const toast = useToast()
-// This passes in the selected job as a prop that the manager job component accepts
-
-const props = defineProps({
-  passedInJob: Object
-})
-
-// Editing the job details dialog
-
-const detailsDialog = ref(false)
-
-const job = ref({
-  clientId: ref(''),
-  status: ref(''),
-  jobDetails: {
-    jobName: ref(''),
-    description: ref(''),
-    jobAddress: {
-      street: ref(''),
-      suburb: ref(''),
-      city: ref(''),
-      postalCode: ref(''),
-      complex: ref(''),
-      houseNumber: ref('')
-    }
-  },
-  jobStartDate: ref(null),
-  jobEndDate: ref(null)
-})
-
-const saveJobDetails = () => {
-  // Save job details logic here
-  detailsDialog.value = false
-  console.log('Job Details:', job.value)
-}
-
-const cancelJobDetails = () => {
-  detailsDialog.value = false
-}
-
-// Selecting team members
-
-const membersDialog = ref(false)
-const favorites = ref([])
-const states = ref(['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado'])
-
-// get all the employees
-// get all the employees users for from the userId field in the returned employee object
-// map those names to the employee ids
-// display the names in the select box
-// when the user selects a name, add the employee id to the favorites array
-
-const saveSelection = () => {
-  // Save selected members logic here
-  membersDialog.value = false
-  console.log('Selected Members:', favorites.value)
-}
-
-// For job status update
-
-const statusDialog = ref(false)
-const colors = {
-  todo: 'red',
-  inProgress: 'blue',
-  awaitingInvoice: 'orange',
-  awaitingPayment: 'green',
-  awaitingSignOff: 'purple'
-}
-
-const saveStatus = () => {
-  // Save job status logic here
-  statusDialog.value = false
-  console.log('Selected Job State:', job.value.status)
-}
-
-//For change client
-
-const clientDialog = ref(false)
-const selectedClient = ref(null)
-const clients = ref([])
-const selectedClientName = ref(null)
-const clientNames = ref([])
-
-const router = useRouter()
-
-const openClientDialogAndFetchClients = async () => {
-  clientDialog.value = true
-  await fetchClients()
-}
-
-// api call to get clients and stores them here
-const fetchClients = async () => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
-    }
-  }
-  try {
-    const response = await axios.get('http://localhost:3000/client/all', config)
-    console.log(response.data)
-    clients.value = response.data.data.map((client) => ({
-      ...client,
-      fullName: `${client.details.firstName ?? ''} ${client.details.surname ?? ''}`.trim()
-    }))
-
-    // Populate clientNames array with just the names
-    clientNames.value = clients.value.map((client) => {
-      return client.details.firstName && client.details.surname
-        ? `${client.details.firstName} ${client.details.surname}`
-        : client.details.name ?? 'Unknown Name'
-    })
-
-    // Watch for changes in selectedClientName and update selectedClient
-    watch(
-      () => selectedClientName.value,
-      (newVal) => {
-        const selected = clients.value.find((client) => {
-          const fullName =
-            client.details.firstName && client.details.surname
-              ? `${client.details.firstName} ${client.details.surname}`
-              : client.details.name ?? 'Unknown Name'
-          return fullName === newVal
-        })
-        selectedClient.value = selected?._id ?? null
-      }
-    )
-  } catch (error) {
-    console.error('Failed to fetch clients:', error)
-  }
-}
-
-const saveClient = () => {
-  if (selectedClientName.value) {
-    // match the client name with the client id
-    // add that id to the job
-  }
-  clientDialog.value = false
-}
-
-// For Due Date Dialog
-
-const dueDateDialog = ref(false)
-const currentDate = ref(null)
-const startDate = ref(null)
-const endDate = ref(null)
-const isStartDatePicked = ref(false)
-const isEndDatePicked = ref(false)
-const errorMessage = ref('')
-
-const updateDates = (value) => {
-  setDates(value)
-}
-
-const setDates = (value) => {
-  if (!isStartDatePicked.value) {
-    if (isEndDatePicked.value && value > endDate.value) {
-      errorMessage.value = 'Start date can not come after end date.'
-      return
-    }
-    errorMessage.value = null
-    startDate.value = value // stores the updated start date
-    job.value.jobStartDate = value
-    console.log(job.value)
-    isStartDatePicked.value = true
-    currentDate.value = null
-  } else if (!isEndDatePicked.value) {
-    if (isStartDatePicked.value && value < startDate.value) {
-      errorMessage.value = 'End date can not come before start date.'
-      return
-    }
-    errorMessage.value = null
-    endDate.value = value // stores the updated end date
-    job.value.jobEndDate = value
-    isEndDatePicked.value = true
-    currentDate.value = null
-  }
-}
-
-const toggleStartDate = () => {
-  isStartDatePicked.value = !isStartDatePicked.value
-  startDate.value = null
-  job.value.jobStartDate = null
-}
-
-const toggleEndDate = () => {
-  isEndDatePicked.value = !isEndDatePicked.value
-  endDate.value = null
-  job.value.jobEndDate = null
-}
-
-const formatDate = (date) => {
-  if (!date) return ''
-  const d = new Date(date)
-  const yyyy = d.getFullYear()
-  const mm = String(d.getMonth() + 1).padStart(2, '0')
-  const dd = String(d.getDate()).padStart(2, '0')
-  return `${yyyy}-${mm}-${dd}`
-}
-
-const formattedStartDate = computed(() => formatDate(startDate.value))
-const formattedEndDate = computed(() => formatDate(endDate.value))
-
-const saveDate = () => {
-  dueDateDialog.value = false
-}
-
-const removeDates = () => {
-  currentDate.value = null
-  startDate.value = null
-  job.value.jobStartDate = null
-  endDate.value = null
-  job.value.jobEndDate = null
-  isStartDatePicked.value = false
-  isEndDatePicked.value = false
-}
-
-function filterNonEmptyValues(obj) {
-  return Object.fromEntries(
-    Object.entries(obj)
-      .filter(([_, v]) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0))
-      .map(([k, v]) => [
-        k,
-        typeof v === 'object' && !Array.isArray(v) ? filterNonEmptyValues(v) : v
-      ])
-  )
-}
-
-const saveJob = () => {
-  const pathJob = async () => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
-      }
-    }
-
-    const jobData = {
-      clientId: job.value.clientId,
-      status: job.value.status,
-      jobDetails: {
-        jobName: job.value.jobDetails.jobName,
-        description: job.value.jobDetails.description,
-        jobAddress: {
-          street: job.value.jobDetails.jobAddress.street,
-          suburb: job.value.jobDetails.jobAddress.suburb,
-          city: job.value.jobDetails.jobAddress.city,
-          postalCode: job.value.jobDetails.jobAddress.postalCode,
-          complex: job.value.jobDetails.jobAddress.complex,
-          houseNumber: job.value.jobDetails.jobAddress.houseNumber
-        }
-      },
-      jobStartDate: job.value.jobStartDate,
-      jobEndDate: job.value.jobEndDate
-    }
-
-    const filteredJobData = filterNonEmptyValues(jobData)
-
-    try {
-      const response = await axios.patch(
-        `http://localhost:3000/job/${props.passedInJob.jobId}`,
-        filteredJobData,
-        config
-      )
-      toast.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Job updated successfully'
-      })
-      console.log('Job updated successfully:', response.data)
-    } catch (error) {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to update job'
-      })
-      console.error('Error updating job:', error)
-    }
-  }
-
-  // Show alert indicating successful save
-  window.alert('Job saved successfully!')
-
-  // Navigate to /jobAssignmentView
-  router.push('/jobAssignmentView')
-}
-
-const emit = defineEmits(['close'])
-const cancelJob = () => {
-  emit('close')
-}
+// import { watch, ref } from 'vue'
+// import axios from 'axios'
+// import { computed } from 'vue'
+// import { useRouter } from 'vue-router'
+// import { defineProps } from 'vue'
+// import { useToast } from 'primevue/usetoast'
+//
+// const toast = useToast()
+// // This passes in the selected job as a prop that the manager job component accepts
+//
+// const props = defineProps({
+//   passedInJob: Object
+// })
+//
+// // Editing the job details dialog
+//
+// const detailsDialog = ref(false)
+//
+// const job = ref({
+//   clientId: ref(''),
+//   status: ref(''),
+//   jobDetails: {
+//     jobName: ref(''),
+//     description: ref(''),
+//     jobAddress: {
+//       street: ref(''),
+//       suburb: ref(''),
+//       city: ref(''),
+//       postalCode: ref(''),
+//       complex: ref(''),
+//       houseNumber: ref('')
+//     }
+//   },
+//   jobStartDate: ref(null),
+//   jobEndDate: ref(null)
+// })
+//
+// const saveJobDetails = () => {
+//   // Save job details logic here
+//   detailsDialog.value = false
+//   console.log('Job Details:', job.value)
+// }
+//
+// const cancelJobDetails = () => {
+//   detailsDialog.value = false
+// }
+//
+// // Selecting team members
+//
+// const membersDialog = ref(false)
+// const favorites = ref([])
+// const states = ref(['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado'])
+//
+// // get all the employees
+// // get all the employees users for from the userId field in the returned employee object
+// // map those names to the employee ids
+// // display the names in the select box
+// // when the user selects a name, add the employee id to the favorites array
+//
+// const saveSelection = () => {
+//   // Save selected members logic here
+//   membersDialog.value = false
+//   console.log('Selected Members:', favorites.value)
+// }
+//
+// // For job status update
+//
+// const statusDialog = ref(false)
+// const colors = {
+//   todo: 'red',
+//   inProgress: 'blue',
+//   awaitingInvoice: 'orange',
+//   awaitingPayment: 'green',
+//   awaitingSignOff: 'purple'
+// }
+//
+// const saveStatus = () => {
+//   // Save job status logic here
+//   statusDialog.value = false
+//   console.log('Selected Job State:', job.value.status)
+// }
+//
+// //For change client
+//
+// const clientDialog = ref(false)
+// const selectedClient = ref(null)
+// const clients = ref([])
+// const selectedClientName = ref(null)
+// const clientNames = ref([])
+//
+// const router = useRouter()
+//
+// const openClientDialogAndFetchClients = async () => {
+//   clientDialog.value = true
+//   await fetchClients()
+// }
+//
+// // api call to get clients and stores them here
+// const fetchClients = async () => {
+//   const config = {
+//     headers: {
+//       'Content-Type': 'application/json',
+//       Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+//     }
+//   }
+//   try {
+//     const response = await axios.get('http://localhost:3000/client/all', config)
+//     console.log(response.data)
+//     clients.value = response.data.data.map((client) => ({
+//       ...client,
+//       fullName: `${client.details.firstName ?? ''} ${client.details.surname ?? ''}`.trim()
+//     }))
+//
+//     // Populate clientNames array with just the names
+//     clientNames.value = clients.value.map((client) => {
+//       return client.details.firstName && client.details.surname
+//         ? `${client.details.firstName} ${client.details.surname}`
+//         : client.details.name ?? 'Unknown Name'
+//     })
+//
+//     // Watch for changes in selectedClientName and update selectedClient
+//     watch(
+//       () => selectedClientName.value,
+//       (newVal) => {
+//         const selected = clients.value.find((client) => {
+//           const fullName =
+//             client.details.firstName && client.details.surname
+//               ? `${client.details.firstName} ${client.details.surname}`
+//               : client.details.name ?? 'Unknown Name'
+//           return fullName === newVal
+//         })
+//         selectedClient.value = selected?._id ?? null
+//       }
+//     )
+//   } catch (error) {
+//     console.error('Failed to fetch clients:', error)
+//   }
+// }
+//
+// const saveClient = () => {
+//   if (selectedClientName.value) {
+//     // match the client name with the client id
+//     // add that id to the job
+//   }
+//   clientDialog.value = false
+// }
+//
+// // For Due Date Dialog
+//
+// const dueDateDialog = ref(false)
+// const currentDate = ref(null)
+// const startDate = ref(null)
+// const endDate = ref(null)
+// const isStartDatePicked = ref(false)
+// const isEndDatePicked = ref(false)
+// const errorMessage = ref('')
+//
+// const updateDates = (value) => {
+//   setDates(value)
+// }
+//
+// const setDates = (value) => {
+//   if (!isStartDatePicked.value) {
+//     if (isEndDatePicked.value && value > endDate.value) {
+//       errorMessage.value = 'Start date can not come after end date.'
+//       return
+//     }
+//     errorMessage.value = null
+//     startDate.value = value // stores the updated start date
+//     job.value.jobStartDate = value
+//     console.log(job.value)
+//     isStartDatePicked.value = true
+//     currentDate.value = null
+//   } else if (!isEndDatePicked.value) {
+//     if (isStartDatePicked.value && value < startDate.value) {
+//       errorMessage.value = 'End date can not come before start date.'
+//       return
+//     }
+//     errorMessage.value = null
+//     endDate.value = value // stores the updated end date
+//     job.value.jobEndDate = value
+//     isEndDatePicked.value = true
+//     currentDate.value = null
+//   }
+// }
+//
+// const toggleStartDate = () => {
+//   isStartDatePicked.value = !isStartDatePicked.value
+//   startDate.value = null
+//   job.value.jobStartDate = null
+// }
+//
+// const toggleEndDate = () => {
+//   isEndDatePicked.value = !isEndDatePicked.value
+//   endDate.value = null
+//   job.value.jobEndDate = null
+// }
+//
+// const formatDate = (date) => {
+//   if (!date) return ''
+//   const d = new Date(date)
+//   const yyyy = d.getFullYear()
+//   const mm = String(d.getMonth() + 1).padStart(2, '0')
+//   const dd = String(d.getDate()).padStart(2, '0')
+//   return `${yyyy}-${mm}-${dd}`
+// }
+//
+// const formattedStartDate = computed(() => formatDate(startDate.value))
+// const formattedEndDate = computed(() => formatDate(endDate.value))
+//
+// const saveDate = () => {
+//   dueDateDialog.value = false
+// }
+//
+// const removeDates = () => {
+//   currentDate.value = null
+//   startDate.value = null
+//   job.value.jobStartDate = null
+//   endDate.value = null
+//   job.value.jobEndDate = null
+//   isStartDatePicked.value = false
+//   isEndDatePicked.value = false
+// }
+//
+// function filterNonEmptyValues(obj) {
+//   return Object.fromEntries(
+//     Object.entries(obj)
+//       .filter(([_, v]) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0))
+//       .map(([k, v]) => [
+//         k,
+//         typeof v === 'object' && !Array.isArray(v) ? filterNonEmptyValues(v) : v
+//       ])
+//   )
+// }
+//
+// const saveJob = () => {
+//   const patchJob = async () => {
+//     const config = {
+//       headers: {
+//         'Content-Type': 'application/json',
+//         Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+//       }
+//     }
+//
+//     const jobData = {
+//       clientId: job.value.clientId,
+//       status: job.value.status,
+//       jobDetails: {
+//         jobName: job.value.jobDetails.jobName,
+//         description: job.value.jobDetails.description,
+//         jobAddress: {
+//           street: job.value.jobDetails.jobAddress.street,
+//           suburb: job.value.jobDetails.jobAddress.suburb,
+//           city: job.value.jobDetails.jobAddress.city,
+//           postalCode: job.value.jobDetails.jobAddress.postalCode,
+//           complex: job.value.jobDetails.jobAddress.complex,
+//           houseNumber: job.value.jobDetails.jobAddress.houseNumber
+//         }
+//       },
+//       jobStartDate: job.value.jobStartDate,
+//       jobEndDate: job.value.jobEndDate
+//     }
+//
+//     const filteredJobData = filterNonEmptyValues(jobData)
+//
+//     try {
+//       const response = await axios.patch(
+//         `http://localhost:3000/job/${props.passedInJob.jobId}`,
+//         filteredJobData,
+//         config
+//       )
+//       toast.add({
+//         severity: 'success',
+//         summary: 'Success',
+//         detail: 'Job updated successfully'
+//       })
+//       console.log('Job updated successfully:', response.data)
+//     } catch (error) {
+//       toast.add({
+//         severity: 'error',
+//         summary: 'Error',
+//         detail: 'Failed to update job'
+//       })
+//       console.error('Error updating job:', error)
+//     }
+//   }
+//
+//   // Show alert indicating successful save
+//   window.alert('Job saved successfully!')
+//
+//   // Navigate to /jobAssignmentView
+//   router.push('/jobAssignmentView')
+// }
+//
+// const emit = defineEmits(['close'])
+// const cancelJob = () => {
+//   emit('close')
+// }
 </script>
 
 <style scoped>

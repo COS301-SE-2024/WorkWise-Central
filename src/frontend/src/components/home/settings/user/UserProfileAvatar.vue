@@ -14,7 +14,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUpdated } from 'vue'
+import { ref, onMounted} from 'vue'
+// import { onUpdated } from 'vue'
 import axios from 'axios'
 import avatarImage from '@/assets/images/profile/avatar.jpg'
 

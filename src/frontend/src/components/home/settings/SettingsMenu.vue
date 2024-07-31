@@ -12,7 +12,7 @@
                 <template v-slot:prepend>
                   <v-icon :icon="subItem.icon"></v-icon>
                 </template>
-                <v-list-item-title v-text="subItem.label"></v-list-item-title>
+                <v-list-item-title>{{ subItem.label }}</v-list-item-title>
               </v-list-item>
             </v-list-item-group>
           </template>
@@ -23,7 +23,7 @@
               <template v-slot:prepend>
                 <v-icon :icon="item.icon"></v-icon>
               </template>
-              <v-list-item-title v-text="item.label"></v-list-item-title>
+              <v-list-item-title>{{ item.label }}</v-list-item-title>
             </v-list-item>
           </template>
         </template>
@@ -31,6 +31,7 @@
     </v-list>
   </v-card>
 </template>
+
 
 <script setup>
 import { ref } from 'vue'

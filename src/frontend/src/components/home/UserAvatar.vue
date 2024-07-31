@@ -46,7 +46,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import avatarImage from '@/assets/images/profile/avatar.jpg'
+// import avatarImage from '@/assets/images/profile/avatar.jpg'
 
 const firstName = ref('')
 const lastName = ref('')

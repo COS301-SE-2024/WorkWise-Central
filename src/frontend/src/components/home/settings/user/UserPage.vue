@@ -190,7 +190,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, defineEmits } from 'vue'
-import { useRouter } from 'vue-router'
 import settingsMenu from '@/components/home/settings/SettingsMenu.vue'
 import userAvatar from '@/components/home/settings/user/UserProfileAvatar.vue'
 import axios from 'axios'
@@ -199,7 +198,6 @@ import { useToast } from 'primevue/usetoast'
 
 const emit = defineEmits(['UploadImage'])
 // Use router
-const router = useRouter()
 
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
@@ -275,7 +273,6 @@ const patchUser = async () => {
     }
   }
   const apiUrl = await getRequestUrl()
-  const userId = localStorage.getItem('id')
 
   const updatedUserData = {
     personalInfo: {
@@ -301,7 +298,7 @@ const patchUser = async () => {
   }
 
   try {
-    const response = await axios.patch(`${apiUrl}users/update`, updatedUserData, config)
+    await axios.patch(`${apiUrl}users/update`, updatedUserData, config)
     return 'pass'
   } catch (error) {
     return 'fail'

@@ -22,9 +22,9 @@ const upload = () => {
   fileInputSection.value = false
 }
 
-const cancel = () => {
-  fileInputSection.value = false
-}
+// const cancel = () => {
+//   fileInputSection.value = false
+// }
 </script>
 
 <style></style>
