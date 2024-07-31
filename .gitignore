@@ -40,3 +40,7 @@ functions/node_modules/
 .vscode-test/
 
 *.idea
+
+commands.js
+component.js
+component-index.html
