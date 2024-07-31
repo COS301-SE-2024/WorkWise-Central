@@ -74,8 +74,8 @@
                       <template v-slot:[`item.clientMail`]="{ value }">
                         <v-chip color="primary">
                           <a
-                              :href="`mailto:${value}`"
-                              style="color: inherit; text-decoration: none"
+                            :href="`mailto:${value}`"
+                            style="color: inherit; text-decoration: none"
                           >
                             <v-icon>fa-solid fa-envelope</v-icon>{{ value }}
                           </a>
@@ -133,20 +133,12 @@
           <v-spacer></v-spacer>
 
           <!-- View Job Dialog -->
-          <ViewJob
-            :passedInJob="selectedJob"
-            @close="viewJobDialog"
-            ></ViewJob>
+          <ViewJob :passedInJob="selectedJob" @close="viewJobDialog"></ViewJob>
 
-          <v-btn color="warning" @click="editJobCardDialog()"
-            >Edit<v-icon icon="fa:fa-solid fa-pencil" end color="warning " size="small"></v-icon
-          ></v-btn>
-          <v-dialog v-model="managerJobCardDialog" :max-width="1000">
-            <ManagerJobCard
-              :passedInJob="selectedJob"
-              @close="managerJobCardDialog = false"
-            ></ManagerJobCard>
-          </v-dialog>
+          <ManagerJobCard
+            :passedInJob="selectedJob"
+            @close="managerJobCardDialog = false"
+          ></ManagerJobCard>
 
           <v-btn color="error" @click="deleteDialog = true"
             >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
@@ -198,7 +190,6 @@ const headers = [
   { title: 'End Date', key: 'endDate', align: 'start', value: 'endDate' },
   { title: 'Actions', key: 'actions', align: 'start', sortable: false, value: 'actions' }
 ]
-
 
 // Reactive variable to hold job and client data
 const jobClientData = ref([])

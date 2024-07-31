@@ -1,33 +1,45 @@
 <template>
-  <v-card class="bg-cardColor" :max-height="700">
-    <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-      <h2 class="flex-grow-1">{{ props.passedInJob.heading }}</h2>
-    </v-card-title>
-    <v-row>
-      <v-col xs="12" sm="9" md="9" lg="9" xl="9" class="pr-0 pb-0" cols="12">
-        <EditDetails :passedInJob="props.passedInJob" />
-      </v-col>
-      <v-col xs="12" sm="3" md="3" lg="3" xl="3" class="pl-0 pb-0" cols="12">
-        <v-card flat class="pa-5 bg-cardColor elevation-0">
-          <div class="d-flex flex-column">
-            <!-- For client change -->
-            <ChangeClient />
-            <!-- Multi-member select -->
-            <SelectMembers />
-            <!-- For job status-->
-            <UpdateJobStatus :passedInJob="props.passedInJob" />
-            <!-- For date change -->
-            <ChangeDueDate :passedInJob="props.passedInJob" />
-          </div>
-          <v-card-actions class="d-flex flex-column">
-            <Toast />
-            <v-btn class="mb-2" @click="saveJob" color="success">Save</v-btn>
-            <v-btn class="mb-4" @click="cancelJob" color="error">Cancel</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-card>
+  <v-dialog v-model="managerJobCard" :max-height="700" :max-width="1000">
+    <template v-slot:activator="{ props: activatorProps }">
+      <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
+        <v-btn
+            text="Edit"
+            prepend-icon="fa:fa-solid fa-pencil"
+            color="warning"
+            v-bind="activatorProps"
+        ></v-btn>
+      </v-defaults-provider>
+    </template>
+    <v-card elevation="14" rounded="md">
+      <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
+        <h2 class="flex-grow-1">{{ props.passedInJob.heading }}</h2>
+      </v-card-title>
+      <v-row>
+        <v-col xs="12" sm="9" md="9" lg="9" xl="9" class="pr-0 pb-0" cols="12">
+          <EditDetails :passedInJob="props.passedInJob" />
+        </v-col>
+        <v-col xs="12" sm="3" md="3" lg="3" xl="3" class="pl-0 pb-0" cols="12">
+          <v-card flat class="pa-5 bg-cardColor elevation-0">
+            <div class="d-flex flex-column">
+              <!-- For client change -->
+              <ChangeClient />
+              <!-- Multi-member select -->
+              <SelectMembers />
+              <!-- For job status -->
+              <UpdateJobStatus :passedInJob="props.passedInJob" />
+              <!-- For date change -->
+              <ChangeDueDate :passedInJob="props.passedInJob" />
+            </div>
+            <v-card-actions class="d-flex flex-column">
+              <Toast />
+              <v-btn class="mb-2" @click="saveJob" color="success">Save</v-btn>
+              <v-btn class="mb-4" @click="cancelJob" color="error">Cancel</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -42,6 +54,8 @@ import UpdateJobStatus from './UpdateJobStatus.vue'
 import ChangeDueDate from './UpdateDateDialog.vue'
 
 const toast = useToast()
+
+const managerJobCard = ref(false) // Dialog state
 
 const props = defineProps({
   passedInJob: Object
@@ -70,12 +84,12 @@ const job = ref({
 
 function filterNonEmptyValues(obj) {
   return Object.fromEntries(
-      Object.entries(obj)
-          .filter(([_, v]) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0))
-          .map(([k, v]) => [
-            k,
-            typeof v === 'object' && !Array.isArray(v) ? filterNonEmptyValues(v) : v
-          ])
+    Object.entries(obj)
+      .filter(([_, v]) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0))
+      .map(([k, v]) => [
+        k,
+        typeof v === 'object' && !Array.isArray(v) ? filterNonEmptyValues(v) : v
+      ])
   )
 }
 
@@ -111,9 +125,9 @@ const saveJob = () => {
 
     try {
       const response = await axios.patch(
-          `http://localhost:3000/job/${props.passedInJob.jobId}`,
-          filteredJobData,
-          config
+        `http://localhost:3000/job/${props.passedInJob.jobId}`,
+        filteredJobData,
+        config
       )
       toast.add({
         severity: 'success',

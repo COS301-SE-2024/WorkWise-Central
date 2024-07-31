@@ -79,9 +79,9 @@ import { defineProps, ref, computed, watch, defineEmits } from 'vue'
 
 // Define the interface for the passedInJob prop
 interface Job {
-  startDate?: Date | null;
-  endDate?: Date | null;
-  comments?: Array<{ comment: string }>;
+  startDate?: Date | null
+  endDate?: Date | null
+  comments?: Array<{ comment: string }>
 }
 
 interface Props {
@@ -100,10 +100,14 @@ const isEndDatePicked = ref(false)
 const errorMessage = ref<string | null>('')
 
 // Watch for changes in props and update local state
-watch(() => props.passedInJob, (newJob) => {
-  startDate.value = newJob.startDate || null
-  endDate.value = newJob.endDate || null
-}, { immediate: true })
+watch(
+  () => props.passedInJob,
+  (newJob) => {
+    startDate.value = newJob.startDate || null
+    endDate.value = newJob.endDate || null
+  },
+  { immediate: true }
+)
 
 const updateDates = (value: Date | null) => {
   if (value) {
@@ -180,8 +184,6 @@ const removeDates = () => {
   emit('updateJob', { ...props.passedInJob, startDate: null, endDate: null })
 }
 </script>
-
-
 
 <style scoped>
 /* Add your styles here */

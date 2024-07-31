@@ -1,16 +1,12 @@
 <template>
-  <v-dialog
-      v-model="viewJobDialog"
-      :max-height="800"
-      :max-width="1000"
-  >
+  <v-dialog v-model="viewJobDialog" :max-height="800" :max-width="1000">
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
-            text="View"
-            prepend-icon="fa:fa-solid fa-eye"
-            color="success"
-            v-bind="activatorProps"
+          text="View"
+          prepend-icon="fa:fa-solid fa-eye"
+          color="success"
+          v-bind="activatorProps"
         ></v-btn>
       </v-defaults-provider>
     </template>
@@ -19,24 +15,24 @@
         {{ props.passedInJob.heading }}
       </v-card-title>
       <v-card-text class="text-center">
-          <v-col class="text-center">
-            <h5>Description</h5>
-            <v-spacer></v-spacer>
-            <small class="text-caption">
-              {{ props.passedInJob.jobDescription }}
-            </small>
-          </v-col>
-          <v-divider></v-divider>
-          <v-col class="text-center">
-            <h5>Status</h5>
-            <v-spacer></v-spacer>
-            <small class="text-caption">
-              <v-chip :color="getStatusColor(props.passedInJob.status)" dark>
-                {{ props.passedInJob.status }}
-              </v-chip>
-            </small>
-          </v-col>
-          <v-divider></v-divider>
+        <v-col class="text-center">
+          <h5>Description</h5>
+          <v-spacer></v-spacer>
+          <small class="text-caption">
+            {{ props.passedInJob.jobDescription }}
+          </small>
+        </v-col>
+        <v-divider></v-divider>
+        <v-col class="text-center">
+          <h5>Status</h5>
+          <v-spacer></v-spacer>
+          <small class="text-caption">
+            <v-chip :color="getStatusColor(props.passedInJob.status)" dark>
+              {{ props.passedInJob.status }}
+            </v-chip>
+          </small>
+        </v-col>
+        <v-divider></v-divider>
         <v-col class="text-center">
           <h5>Address</h5>
           <v-row class="text-center">
@@ -169,5 +165,4 @@ const scrollToSection = (sectionRef) => {
 const closeView = () => {
   viewJobDialog.value = false
 }
-
 </script>

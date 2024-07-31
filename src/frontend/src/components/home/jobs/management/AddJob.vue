@@ -278,32 +278,31 @@
               </v-row>
             </v-col>
           </v-col>
-          <v-col cols="8" offset="2" align="center">
-          </v-col>
+          <v-col cols="8" offset="2" align="center"> </v-col>
         </v-form>
       </v-card-text>
       <v-card-actions class="d-flex flex-column">
         <v-btn
-            color="success"
-            rounded="md"
-            type="submit"
-            boarder="md"
-            width="100%"
-            height="35"
-            variant="text"
-            data-testid="create-btn"
-        >Create Job
+          color="success"
+          rounded="md"
+          type="submit"
+          boarder="md"
+          width="100%"
+          height="35"
+          variant="text"
+          data-testid="create-btn"
+          >Create Job
         </v-btn>
         <v-btn
-            color="error"
-            rounded="md"
-            boarder="md"
-            width="100%"
-            height="35"
-            variant="text"
-            @click="close"
-            data-testid="cancel-btn"
-        >Cancel
+          color="error"
+          rounded="md"
+          boarder="md"
+          width="100%"
+          height="35"
+          variant="text"
+          @click="close"
+          data-testid="cancel-btn"
+          >Cancel
         </v-btn>
       </v-card-actions>
     </v-card>
