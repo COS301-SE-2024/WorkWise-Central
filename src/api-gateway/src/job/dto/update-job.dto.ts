@@ -105,9 +105,8 @@ export class AddCommentDto {
   jobId: Types.ObjectId;
 
   @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => Comment)
-  comment: Comment;
+  @IsString()
+  newComment: string;
 }
 
 export class RemoveCommentDto {

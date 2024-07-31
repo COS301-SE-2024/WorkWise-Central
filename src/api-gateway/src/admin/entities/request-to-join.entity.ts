@@ -21,8 +21,13 @@ export class UserJoinRequest {
   @Prop({ required: false, type: String })
   companyName?: string;
 
-  @Prop({ required: false, type: SchemaTypes.ObjectId, ref: Role.name })
-  roleId?: Types.ObjectId; //Still not sure about this...
+  @Prop({
+    required: false,
+    type: SchemaTypes.ObjectId,
+    ref: Role.name,
+    default: null,
+  })
+  roleId?: Types.ObjectId = null; //Still not sure about this...
 
   @Prop({ required: true, type: String, default: 'Worker' })
   roleName?: string = 'Worker';
