@@ -229,6 +229,11 @@ const router = createRouter({
       component: NotificationView
     },
     {
+      path: '/manageCompanies',
+      name: 'manageCompanies',
+      component: () => import('@/views/settings/ManageCompanies.vue')
+    },
+    {
       path: '/teamwork-load',
       name: 'teamwork-load',
       component: TeamworkLoad
