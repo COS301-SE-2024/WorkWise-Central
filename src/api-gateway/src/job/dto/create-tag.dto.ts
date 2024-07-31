@@ -45,3 +45,18 @@ export class CreatePriorityTagDto {
   @IsHexColor()
   colour?: string = defaultPriorityColour; //Will be hex value
 }
+
+export class CreateStatusDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  companyId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  status: string;
+
+  @IsOptional()
+  @IsString()
+  @IsHexColor()
+  colour?: string = defaultTagColour; //Will be hex value
+}
