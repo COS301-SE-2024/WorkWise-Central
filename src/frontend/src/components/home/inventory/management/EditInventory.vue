@@ -79,7 +79,6 @@
                 >Cancel<v-icon
                   icon="fa:fa-solid fa-cancel"
                   end
-                  block
                   color="error"
                   size="small"
                 ></v-icon></v-btn

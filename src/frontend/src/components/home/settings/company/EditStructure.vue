@@ -9,12 +9,16 @@
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions class="bg-cardColor">
-        <v-col align="center">
-          <v-btn color="success" @click="saveChanges">Save</v-btn>
-        </v-col>
-        <v-col align="center">
-          <v-btn color="error" @click="cancel">Cancel</v-btn>
-        </v-col>
+        <v-container
+          ><v-row justify="end">
+            <v-col align="center" cols="12" lg="6">
+              <v-btn color="success" @click="saveChanges" block>Save</v-btn>
+            </v-col>
+            <v-col align="center" cols="12" lg="6">
+              <v-btn color="error" @click="cancel" block>Cancel</v-btn>
+            </v-col></v-row
+          ></v-container
+        >
       </v-card-actions>
     </v-card>
   </v-container>

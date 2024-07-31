@@ -28,10 +28,24 @@
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions class="bg-cardColor">
-        <Toast position="top-center" />
-        <v-col align="center"> <v-btn color="success" @click="updateRole"> Save </v-btn></v-col>
-        <Toast />
-        <v-col align="center"><v-btn color="error" @click="cancel"> Cancel </v-btn></v-col>
+        <v-container
+          ><v-row justify="end">
+            <Toast position="top-center" />
+            <v-col align="center" cols="12" lg="6">
+              <v-btn color="success" @click="updateRole" block>
+                Save
+                <v-icon end color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon> </v-btn
+            ></v-col>
+
+            <v-col align="center" cols="12" lg="6"
+              ><v-btn color="error" @click="cancel" block>
+                Cancel
+                <v-icon
+                  end
+                  color="error"
+                  icon="fa: fa-solid fa-cancel"
+                ></v-icon> </v-btn></v-col></v-row
+        ></v-container>
       </v-card-actions>
     </v-card>
   </v-container>
