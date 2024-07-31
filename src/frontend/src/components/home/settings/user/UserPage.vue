@@ -196,7 +196,6 @@ import userAvatar from '@/components/home/settings/user/UserProfileAvatar.vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import avatarImage from '@/assets/images/profile/avatar.jpg'
 
 const emit = defineEmits(['UploadImage'])
 // Use router
