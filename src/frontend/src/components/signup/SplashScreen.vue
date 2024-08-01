@@ -734,57 +734,52 @@
           </v-row>
         </v-container>
       </v-footer> -->
-      <h1
-        :class="[
-          'splash-title',
-          'header-title',
-          'text-center',
-          { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
-        ]"
-      >
-        What <span class="text-primary">services</span> would you like to
-        <span class="text-secondary">manage</span>
-      </h1>
-      <v-row justify="end" style="height: 500px">
-        <v-col cols="12">
-          <v-sheet class="bg-background mx-auto" elevation="0">
-            <v-slide-group v-model="model" class="pa-4" selected-class="bg-success" show-arrows>
-              <v-spacer></v-spacer>
-              <v-slide-group-item>
-                <v-row>
-                  <v-col
-                    cols="12"
-                    lg="4"
-                    md="4"
-                    v-for="(service, index) in services.slice(0, 3)"
-                    :key="index"
-                  >
+      <div>
+        <h1
+          :class="[
+            'splash-title',
+            'header-title',
+            'text-center',
+            { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
+          ]"
+        >
+          What <span class="text-primary">services</span> would you like to
+          <span class="text-secondary">manage</span>
+        </h1>
+        <v-row justify="end" style="height: 500px">
+          <v-col cols="12">
+            <v-sheet class="bg-background mx-auto" elevation="0">
+              <v-slide-group v-model="model" class="pa-4" show-arrows>
+                <v-spacer></v-spacer>
+                <v-slide-group-item v-for="(service, index) in services.slice(0, 3)" :key="index">
+                  <v-col cols="12" lg="4" md="4">
                     <v-card max-width="500px" rounded="xl">
                       <v-card-title>{{ service.title }}</v-card-title>
-                      <v-card-text>{{ service.text1 }}</v-card-text>
-                      <v-card-text>{{ service.text2 }}</v-card-text>
-                      <v-card-text>{{ service.text3 }}</v-card-text>
+                      <v-card-text>
+                        <div>{{ service.text1 }}</div>
+                        <div>{{ service.text2 }}</div>
+                        <div>{{ service.text3 }}</div>
+                      </v-card-text>
                       <v-card-actions class="bg-cardColor">
                         <v-btn
                           color="primary"
                           dark
                           @click="signupDialog = true"
                           rounded="xl"
-                          align-center
-                          variant="elevated"
                           class="my-3 text-center"
                           size="large"
-                          >Get Started</v-btn
                         >
+                          Get Started
+                        </v-btn>
                       </v-card-actions>
                     </v-card>
                   </v-col>
-                </v-row>
-              </v-slide-group-item>
-            </v-slide-group>
-          </v-sheet>
-        </v-col>
-      </v-row>
+                </v-slide-group-item>
+              </v-slide-group>
+            </v-sheet>
+          </v-col>
+        </v-row>
+      </div>
       <h1
         :class="[
           'splash-title',
@@ -801,7 +796,7 @@
         <v-col cols="12" order="first" order-lg="last" order-md="last" order-sm="first">
           <v-tabs v-model="tab" align-tabs="center" bg-color="secondary" stacked>
             <v-tab v-for="(item, index) in tabs" :key="index">
-              {{ item.title }}<v-icon :icon="item.icon"></v-icon>
+              {{ item.title }}<v-icon :icon="item.icon" color="primary"></v-icon>
             </v-tab>
           </v-tabs>
           <v-tabs-window v-model="tab">

@@ -20,9 +20,9 @@ const clientSubItems = ref([
 ])
 
 const employeeSubItems = ref([
+  { title: 'Employee Center', icon: 'fa: fa-solid fa-circle-user', routeName: 'employee-center' },
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'manageremployees' },
-  { title: 'Team Workload', icon: 'fa: fa-solid fa-users', routeName: 'teamwork-load' },
-  { title: 'Employee Center', icon: 'fa: fa-solid fa-circle-user', routeName: 'employee-center' }
+  { title: 'Team Workload', icon: 'fa: fa-solid fa-users', routeName: 'teamwork-load' }
 ])
 
 const jobSubItems = ref([
