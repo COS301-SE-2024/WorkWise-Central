@@ -10,8 +10,10 @@
         @drop="onDrop(column)"
         role="listbox"
         aria-dropeffect="move"
-        :col="12"
-        :md="3"
+        :lg="3"
+        :md="4"
+        :sm="6"
+        :cols="12"
       >
         <v-card variant="flat" elevation="1" color="red">
           <v-card-item
@@ -26,7 +28,7 @@
             </v-chip>
             <v-menu align="left">
               <template v-slot:activator="{ props }">
-                <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
+                <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
               </template>
 
               <v-list :border="true" bg-color="background" rounded="lg">
@@ -165,10 +167,13 @@
           </v-virtual-scroll>
         </v-card>
       </v-col>
+      <v-col cols="auto">
+        <v-btn icon="fa: fa-solid fa-plus"></v-btn>
+      </v-col>
     </v-row>
   </v-container>
   <v-dialog v-model="JobCardVisibility" max-width="1000px">
-    <JBC @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
+    <JBC @close="JobCardVisibility = false" :passed-in-job="SelectedEvent" />
   </v-dialog>
 </template>
 
