@@ -824,15 +824,13 @@ import { defineComponent } from 'vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import Toast from 'primevue/toast'
-import Carousel from 'primevue/carousel'
 
 export default defineComponent({
   components: {
     RegisterCompanyModal,
     JoinCompanyModal,
     VueDatePicker,
-    Toast,
-    Carousel
+    Toast
   },
   data: () => ({
     localUrl: 'http://localhost:3000/',

@@ -292,7 +292,7 @@ export default {
       } else if (this.currentInbox === 'Unread') {
         filtered = filtered.filter((notification) => notification.read)
       } else if (this.currentInbox === 'All' || this.currentInbox === 'Inbox') {
-        filtered = filtered
+        return filtered
       }
 
       if (this.currentCompany) {
