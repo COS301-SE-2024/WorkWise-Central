@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { currentDate } from '../utils/Utils';
 
 @Injectable()
 export class CompanyRepository {
@@ -173,7 +174,7 @@ export class CompanyRepository {
           },
         ],
       },
-      { $set: { ...updateCompanyDto }, updatedAt: new Date() },
+      { $set: { ...updateCompanyDto }, updatedAt: currentDate() },
       { new: true },
     );
   }
@@ -188,7 +189,7 @@ export class CompanyRepository {
           },
         ],
       },
-      { $push: { employees: employeeId }, updatedAt: new Date() },
+      { $push: { employees: employeeId }, updatedAt: currentDate() },
       { new: true },
     );
   }
@@ -204,7 +205,7 @@ export class CompanyRepository {
           },
         ],
       },
-      { $pull: { employees: employeeId }, updatedAt: new Date() },
+      { $pull: { employees: employeeId }, updatedAt: currentDate() },
       { new: true },
     );
   }
@@ -219,7 +220,7 @@ export class CompanyRepository {
           },
         ],
       },
-      { $set: { deletedAt: new Date() } },
+      { $set: { deletedAt: currentDate() } },
     );
 
     return result != null;

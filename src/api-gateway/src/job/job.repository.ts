@@ -8,6 +8,7 @@ import { Company } from '../company/entities/company.entity';
 import { Team } from '../team/entities/team.entity';
 import { isNotDeleted } from '../shared/soft-delete';
 import { Comment } from './entities/job.entity';
+import { currentDate } from '../utils/Utils';
 
 @Injectable()
 export class JobRepository {
@@ -131,7 +132,7 @@ export class JobRepository {
         {
           $and: [{ _id: id }, isNotDeleted],
         },
-        { $set: { ...updateJobDto }, updatedAt: new Date() },
+        { $set: { ...updateJobDto }, updatedAt: currentDate() },
         { new: true },
       )
       .lean();
@@ -159,7 +160,7 @@ export class JobRepository {
         {
           $and: [{ _id: id }, isNotDeleted],
         },
-        { $set: { deletedAt: new Date() } },
+        { $set: { deletedAt: currentDate() } },
       )
       .lean();
 
@@ -213,7 +214,7 @@ export class JobRepository {
             isNotDeleted,
           ],
         },
-        { $push: { assignedEmployees: employeeId }, updatedAt: new Date() },
+        { $push: { assignedEmployees: employeeId }, updatedAt: currentDate() },
         {
           new: true,
         },

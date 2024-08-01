@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
 import { CreateEmployeeDto } from '../dto/create-employee.dto';
+import { currentDate } from '../../utils/Utils';
 
 export class userInfo {
   @Prop({ type: String, required: true })
@@ -20,7 +21,7 @@ export class Employee {
   constructor(createEmployeeDto: CreateEmployeeDto) {
     this.userId = createEmployeeDto.userId;
     this.companyId = createEmployeeDto.companyId;
-    this.createdAt = new Date();
+    this.createdAt = currentDate();
   }
 
   @ApiProperty()

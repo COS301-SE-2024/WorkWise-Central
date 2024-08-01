@@ -16,7 +16,8 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { JobApiDetailedObject, JobApiObject } from '../entities/job.entity';
+import { currentDate } from '../../utils/Utils';
+import { JobApiObject } from './job-responses.dto';
 
 export class Address {
   @ApiProperty()
@@ -201,7 +202,7 @@ export class Comment {
   @ApiProperty()
   @IsDateString()
   @IsOptional()
-  date?: Date = new Date();
+  date?: Date = currentDate();
 }
 
 export class CreateJobDto {
@@ -214,7 +215,7 @@ export class CreateJobDto {
   @ApiProperty()
   @IsOptional()
   @IsMongoId()
-  statusId?: Types.ObjectId;
+  status?: Types.ObjectId;
 
   @ApiProperty()
   @IsOptional()
@@ -230,11 +231,6 @@ export class CreateJobDto {
   @Type(() => AssignedEmployees)
   @IsOptional()
   assignedEmployees?: AssignedEmployees;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  status?: string = 'To do';
 
   @ApiProperty()
   @IsNotEmpty()
@@ -282,12 +278,6 @@ export class CreateJobDto {
   @IsArray()
   @IsString({ each: true })
   attachments?: string[];
-
-  /*  @ApiProperty()
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  history?: History[];*/
 }
 
 export class CreateJobResponseDto {
@@ -295,18 +285,4 @@ export class CreateJobResponseDto {
   constructor(data: JobApiObject) {
     this.data = data;
   }
-}
-
-export class JobAllResponseDto {
-  constructor(data: JobApiObject[]) {
-    this.data = data;
-  }
-  data: JobApiObject[];
-}
-
-export class JobAllResponseDetailedDto {
-  constructor(data: JobApiDetailedObject[]) {
-    this.data = data;
-  }
-  data: JobApiDetailedObject[];
 }

@@ -3,6 +3,7 @@ import { SchemaTypes, Types } from 'mongoose';
 import { CreateUserRequestDto } from '../../users/dto/create-user-request.dto';
 import { User } from '../../users/entities/user.entity';
 import { Role } from '../../role/entity/role.entity';
+import { currentDate } from '../../utils/Utils';
 
 const ONEWEEK = 604800;
 
@@ -35,7 +36,7 @@ export class UserJoinRequest {
   @Prop({ required: true, type: Types.ObjectId, ref: User.name })
   userToJoin: Types.ObjectId;
 
-  @Prop({ required: true, type: Date, default: new Date() })
+  @Prop({ required: true, type: Date, default: currentDate() })
   createdAt: Date = new Date();
 }
 

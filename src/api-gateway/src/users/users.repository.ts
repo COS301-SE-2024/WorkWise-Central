@@ -9,6 +9,7 @@ import {
   userJoinedCompaniesField,*/
 } from './entities/user.entity';
 import { JoinUserDto, UpdateUserDto } from './dto/update-user.dto';
+import { currentDate } from '../utils/Utils';
 
 @Injectable()
 export class UsersRepository {
@@ -170,7 +171,7 @@ export class UsersRepository {
             },
           ],
         },
-        { $set: { ...updateUserDto }, updatedAt: new Date() },
+        { $set: { ...updateUserDto }, updatedAt: currentDate() },
         { new: true },
       )
       .lean();
@@ -187,7 +188,7 @@ export class UsersRepository {
             },
           ],
         },
-        { $set: { profile: profile }, updatedAt: new Date() },
+        { $set: { profile: profile }, updatedAt: currentDate() },
         { new: true },
       )
       .lean();
@@ -204,7 +205,7 @@ export class UsersRepository {
             },
           ],
         },
-        { $set: { ...joinUserDto }, updatedAt: new Date() },
+        { $set: { ...joinUserDto }, updatedAt: currentDate() },
         { new: true },
       )
       .lean();
@@ -224,7 +225,7 @@ export class UsersRepository {
         },
         {
           $push: { joinedCompanies: joinedCompany },
-          updatedAt: new Date(),
+          updatedAt: currentDate(),
         },
         { new: true },
       )
@@ -244,7 +245,7 @@ export class UsersRepository {
         },
         {
           $pull: { joinedCompanies: { companyId: companyId } },
-          updatedAt: new Date(),
+          updatedAt: currentDate(),
         },
         { new: true },
       )
@@ -263,7 +264,7 @@ export class UsersRepository {
           },
         ],
       },
-      { $set: { deletedAt: new Date() } },
+      { $set: { deletedAt: currentDate() } },
     );
   }
 }

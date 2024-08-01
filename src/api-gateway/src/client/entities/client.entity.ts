@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
 import { CreateClientDto } from '../dto/create-client.dto';
 import { Company } from '../../company/entities/company.entity';
+import { currentDate } from '../../utils/Utils';
 
 export class Address {
   @Prop({ type: String, required: true })
@@ -24,7 +25,7 @@ export class ContactInfo {
   phoneNumber: string;
 
   @Prop({ type: String, unique: true, lowercase: true, trim: true })
-  email: string;
+  email: string; //TODO: Make unique within company, instead of within DB
 }
 
 export class ClientDetails {
@@ -71,7 +72,7 @@ export class Client {
     if (createClientDto.details) this.details = createClientDto.details;
     if (createClientDto.registrationNumber)
       this.registrationNumber = createClientDto.registrationNumber;
-    this.createdAt = new Date();
+    this.createdAt = currentDate();
   }
 
   @ApiProperty()
@@ -83,7 +84,7 @@ export class Client {
   details: ClientDetails;
 
   @ApiProperty()
-  @Prop({ required: false, default: new Date() })
+  @Prop({ required: false, default: currentDate() })
   public createdAt: Date;
 
   @ApiProperty()

@@ -3,6 +3,7 @@ import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { CreateCompanyDto } from '../dto/create-company.dto';
 import { Employee } from '../../employee/entities/employee.entity';
+import { currentDate } from '../../utils/Utils';
 
 export class ContactDetails {
   @Prop({ type: String, required: true, trim: true })
@@ -48,7 +49,7 @@ export class Company {
 
     if (createCompanyDto.address) this.address = createCompanyDto.address;
 
-    this.createdAt = new Date();
+    this.createdAt = currentDate();
   }
 
   @ApiProperty()
@@ -89,7 +90,7 @@ export class Company {
   private: boolean = false;
 
   @ApiHideProperty()
-  @Prop({ required: false, default: new Date() })
+  @Prop({ required: false, default: currentDate() })
   public createdAt: Date;
 
   @ApiHideProperty()

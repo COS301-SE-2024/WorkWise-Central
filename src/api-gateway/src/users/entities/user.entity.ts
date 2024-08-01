@@ -5,6 +5,7 @@ import { SchemaTypes, Types } from 'mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { Company } from '../../company/entities/company.entity';
 import { Employee } from '../../employee/entities/employee.entity';
+import { currentDate } from '../../utils/Utils';
 
 export class SystemDetails {
   @Prop({ required: true, unique: true })
@@ -147,7 +148,7 @@ export class User {
 
     this.profile.displayName = createUserDto.profile.displayName;
     this.skills = createUserDto.skills;
-    this.createdAt = new Date();
+    this.createdAt = currentDate();
     //this.deletedAt = new Date(); //logically deleted until confirmed
   }
 
@@ -189,8 +190,8 @@ export class User {
   public isValidated?: boolean = false;
 
   @ApiHideProperty()
-  @Prop({ type: Date, required: true, default: new Date() })
-  public createdAt: Date = new Date();
+  @Prop({ type: Date, required: true, default: currentDate() })
+  public createdAt: Date = currentDate();
 
   @ApiHideProperty()
   @Prop({ type: Date, required: false })
@@ -240,7 +241,7 @@ export class UserApiDetailedObject {
   public isValidated?: boolean = false;
 
   @ApiHideProperty()
-  public createdAt: Date = new Date();
+  public createdAt: Date = currentDate();
 
   @ApiHideProperty()
   public updatedAt?: Date;
