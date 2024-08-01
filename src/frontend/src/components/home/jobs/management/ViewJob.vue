@@ -111,7 +111,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from 'vue'
+import { defineProps, ref, type Ref } from 'vue'
 import AttachImages from './AttachImages.vue'
 import AddComment from './AddComments.vue'
 import JobNotes from './JobNotes.vue'
@@ -152,7 +152,7 @@ const getStatusColor = (status: string): string => {
 }
 
 // Function to scroll to a section
-const scrollToSection = (sectionRef: string) => {
+const scrollToSection = (sectionRef: Ref<HTMLElement | null>) => {
   const section = sectionRef.value
   if (section) {
     section.scrollIntoView({ behavior: 'smooth', block: 'start' })
