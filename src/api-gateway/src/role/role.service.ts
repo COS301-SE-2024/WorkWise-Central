@@ -56,6 +56,7 @@ export class RoleService {
     this.permissionsArray.push('view all inventory');
     this.permissionsArray.push('edit all inventory');
     this.permissionsArray.push('add new inventory item');
+    this.permissionsArray.push('delete inventory item');
     this.permissionsArray.push('record inventory use');
     this.permissionsArray.push('record job details');
     this.permissionsArray.push('company settings');
@@ -92,7 +93,7 @@ export class RoleService {
     const roleToBeUpdate = await this.findById(roleId);
     const companyId = roleToBeUpdate.companyId;
     const requestingEmployeeId =
-      await this.employeeService.getRequestingEmployeeFromComapnyId(
+      await this.employeeService.getRequestingEmployeeFromCompanyId(
         companyId,
         userId,
       );
@@ -340,6 +341,7 @@ export class RoleService {
     inventoryRoleDto.roleName = 'Inventory manager';
     inventoryRoleDto.permissionSuite.push('view all inventory');
     inventoryRoleDto.permissionSuite.push('edit all inventory');
+    inventoryRoleDto.permissionSuite.push('delete inventory item');
     inventoryRoleDto.permissionSuite.push('add new inventory item');
     inventoryRoleDto.permissionSuite.push('record inventory use');
 

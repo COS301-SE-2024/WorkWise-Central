@@ -9,6 +9,7 @@ import {
   HttpStatus,
   Post,
   UseGuards,
+  Headers,
 } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
@@ -33,13 +34,20 @@ import {
   CreateInventoryResponseDto,
 } from './dto/create-inventory.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { extractUserId } from '../utils/Utils';
+import { JwtService } from '@nestjs/jwt';
+import { EmployeeService } from 'src/employee/employee.service';
 
 const className = 'Inventory';
 
 @ApiTags('Inventory')
 @Controller('inventory')
 export class InventoryController {
-  constructor(private readonly inventoryService: InventoryService) {}
+  constructor(
+    private readonly inventoryService: InventoryService,
+    private readonly jwtService: JwtService,
+    private readonly employeeService: EmployeeService,
+  ) {}
 
   @ApiOperation({
     summary: `Refer to Documentation`,
@@ -66,14 +74,29 @@ export class InventoryController {
     type: CreateInventoryResponseDto,
   })
   @Post('/create')
-  async create(@Body() createInventoryDto: CreateInventoryDto) {
-    let data;
-    try {
-      data = await this.inventoryService.create(createInventoryDto);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+  async create(
+    @Headers() headers: any,
+    @Body() createInventoryDto: CreateInventoryDto,
+  ) {
+    const userId = extractUserId(this.jwtService, headers);
+    const companyId = createInventoryDto.companyId;
+    if (
+      this.employeeService.validateRole(
+        companyId,
+        userId,
+        'add new inventory item',
+      )
+    ) {
+      let data;
+      try {
+        data = await this.inventoryService.create(createInventoryDto);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
-    return { data: data };
   }
 
   @UseGuards(AuthGuard)
@@ -119,14 +142,28 @@ export class InventoryController {
     description: `The _id attribute of the Company for which to get all ${className} instances.`,
   })
   @Get('/all/:id')
-  async findAllInCompany(@Param('id') id: Types.ObjectId) {
-    let data;
-    try {
-      data = await this.inventoryService.findAllInCompany(id);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+  async findAllInCompany(
+    @Headers() headers: any,
+    @Param('id') id: Types.ObjectId,
+  ) {
+    const userId = extractUserId(this.jwtService, headers);
+    if (
+      await this.employeeService.validateRoleInventoryId(
+        id,
+        userId,
+        'view all inventory',
+      )
+    ) {
+      let data;
+      try {
+        data = await this.inventoryService.findAllInCompany(id);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
-    return { data: data };
   }
 
   @UseGuards(AuthGuard)
@@ -148,9 +185,20 @@ export class InventoryController {
     description: `The _id attribute of the ${className} to be retrieved.`,
   })
   @Get('id/:id')
-  async findById(@Param('id') id: Types.ObjectId) {
-    const data = await this.inventoryService.findById(id);
-    return { data: data };
+  async findById(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
+    const userId = extractUserId(this.jwtService, headers);
+    if (
+      await this.employeeService.validateRoleInventoryId(
+        id,
+        userId,
+        'view all inventory',
+      )
+    ) {
+      const data = await this.inventoryService.findById(id);
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
   }
 
   @UseGuards(AuthGuard)
@@ -174,16 +222,28 @@ export class InventoryController {
   @ApiBody({ type: UpdateInventoryDto })
   @Patch(':id')
   async update(
+    @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
     @Body() updateInventoryDto: UpdateInventoryDto,
   ) {
-    let data;
-    try {
-      data = await this.inventoryService.update(id, updateInventoryDto);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    const userId = extractUserId(this.jwtService, headers);
+    if (
+      this.employeeService.validateRoleInventoryId(
+        id,
+        userId,
+        'edit all inventory',
+      )
+    ) {
+      let data;
+      try {
+        data = await this.inventoryService.update(id, updateInventoryDto);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
-    return { data: data };
   }
 
   @UseGuards(AuthGuard)
@@ -210,20 +270,31 @@ export class InventoryController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete(':id')
-  async remove(@Param('id') id: Types.ObjectId) {
-    let data;
-    try {
-      data = await this.inventoryService.remove(id);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-    }
+  async remove(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
+    const userId = extractUserId(this.jwtService, headers);
+    if (
+      this.employeeService.validateRoleInventoryId(
+        id,
+        userId,
+        'delete inventory item',
+      )
+    ) {
+      let data;
+      try {
+        data = await this.inventoryService.remove(id);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
 
-    if (data === false) {
-      throw new HttpException(
-        'update unsuccessful',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      if (data === false) {
+        throw new HttpException(
+          'update unsuccessful',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
-    return { data: data };
   }
 }

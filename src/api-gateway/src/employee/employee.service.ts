@@ -1,3 +1,4 @@
+import { InventoryService } from './../inventory/inventory.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import {
@@ -36,6 +37,8 @@ export class EmployeeService {
 
     @Inject(forwardRef(() => ClientService))
     private clientService: ClientService,
+
+    private inventoryService: InventoryService,
   ) {}
 
   async validateCreateEmployee(employee: CreateEmployeeDto) {
@@ -227,7 +230,7 @@ export class EmployeeService {
 
     //checking if the employee is under the requesting employee
     const companyId = await this.getCompanyIdFromEmployee(id);
-    const currentEmployeeId = await this.getRequestingEmployeeFromComapnyId(
+    const currentEmployeeId = await this.getRequestingEmployeeFromCompanyId(
       companyId,
       userId,
     );
@@ -275,7 +278,7 @@ export class EmployeeService {
 
     //checking that the employee is under the requesting employee
     const companyId = await this.getCompanyIdFromEmployee(id);
-    const currentEmployeeId = await this.getRequestingEmployeeFromComapnyId(
+    const currentEmployeeId = await this.getRequestingEmployeeFromCompanyId(
       companyId,
       userId,
     );
@@ -363,7 +366,7 @@ export class EmployeeService {
     return listOfEmployees;
   }
 
-  async getRequestingEmployeeFromComapnyId(
+  async getRequestingEmployeeFromCompanyId(
     companyId: Types.ObjectId,
     userId: Types.ObjectId,
   ) {
@@ -383,7 +386,7 @@ export class EmployeeService {
     userId: Types.ObjectId,
     permission: string,
   ) {
-    const employeeId = await this.getRequestingEmployeeFromComapnyId(
+    const employeeId = await this.getRequestingEmployeeFromCompanyId(
       companyId,
       userId,
     );
@@ -396,7 +399,7 @@ export class EmployeeService {
     permission: string,
   ) {
     const employee = await this.findById(id);
-    const employeeId = await this.getRequestingEmployeeFromComapnyId(
+    const employeeId = await this.getRequestingEmployeeFromCompanyId(
       employee.companyId,
       userId,
     );
@@ -409,7 +412,7 @@ export class EmployeeService {
     permission: string,
   ) {
     const job = await this.jobService.findJobById(id);
-    const employeeId = await this.getRequestingEmployeeFromComapnyId(
+    const employeeId = await this.getRequestingEmployeeFromCompanyId(
       job.companyId,
       userId,
     );
@@ -422,7 +425,7 @@ export class EmployeeService {
     permission: string,
   ) {
     const client = await this.clientService.getClientById(userId, id);
-    const employeeId = await this.getRequestingEmployeeFromComapnyId(
+    const employeeId = await this.getRequestingEmployeeFromCompanyId(
       client.details.companyId,
       userId,
     );
@@ -435,7 +438,7 @@ export class EmployeeService {
     permission: string,
   ) {
     const team = await this.teamService.findById(id);
-    const employeeId = await this.getRequestingEmployeeFromComapnyId(
+    const employeeId = await this.getRequestingEmployeeFromCompanyId(
       team.companyId,
       userId,
     );
@@ -448,8 +451,21 @@ export class EmployeeService {
     permission: string,
   ) {
     const role = await this.roleService.findById(id);
-    const employeeId = await this.getRequestingEmployeeFromComapnyId(
+    const employeeId = await this.getRequestingEmployeeFromCompanyId(
       role.companyId,
+      userId,
+    );
+    return this.roleService.hasPermission(permission, employeeId);
+  }
+
+  async validateRoleInventoryId(
+    id: Types.ObjectId,
+    userId: Types.ObjectId,
+    permission: string,
+  ) {
+    const inventory = await this.inventoryService.findById(id);
+    const employeeId = await this.getRequestingEmployeeFromCompanyId(
+      inventory.companyId,
       userId,
     );
     return this.roleService.hasPermission(permission, employeeId);
@@ -460,26 +476,12 @@ export class EmployeeService {
     userId: Types.ObjectId,
     permission: string,
   ) {
-    const employeeId = await this.getRequestingEmployeeFromComapnyId(
+    const employeeId = await this.getRequestingEmployeeFromCompanyId(
       companyId,
       userId,
     );
     return this.roleService.hasPermission(permission, employeeId);
   }
-
-  // async getEmployeesUnderMeRecursive(
-  //   id: Types.ObjectId,
-  //   list: Types.ObjectId[],
-  // ) {
-  //   const employee = this.findById(id);
-  //   const listOfEmployees = (await employee).subordinates;
-  //   if (listOfEmployees !== null) {
-  //     listOfEmployees.forEach((employeeId) => {
-  //       list.push(employeeId);
-  //       this.getEmployeesUnderMeRecursive(employeeId, list);
-  //     });
-  //   }
-  // }
 
   async deptFirstTraversalId(id: Types.ObjectId) {
     console.log('In the depth first traversal function');
@@ -589,7 +591,7 @@ export class EmployeeService {
     companyId: Types.ObjectId,
   ) {
     try {
-      const employeeId = await this.getRequestingEmployeeFromComapnyId(
+      const employeeId = await this.getRequestingEmployeeFromCompanyId(
         companyId,
         userId,
       );
@@ -607,7 +609,7 @@ export class EmployeeService {
     companyId: Types.ObjectId,
   ) {
     try {
-      const employeeId = await this.getRequestingEmployeeFromComapnyId(
+      const employeeId = await this.getRequestingEmployeeFromCompanyId(
         companyId,
         userId,
       );
@@ -624,7 +626,7 @@ export class EmployeeService {
     employeeId: Types.ObjectId,
   ) {
     const companyId = await this.getCompanyIdFromEmployee(employeeId);
-    const currentEmployeeId = await this.getRequestingEmployeeFromComapnyId(
+    const currentEmployeeId = await this.getRequestingEmployeeFromCompanyId(
       companyId,
       userId,
     );
@@ -638,7 +640,7 @@ export class EmployeeService {
 
   async findByIdUnderMe(userId: Types.ObjectId, employeeId: Types.ObjectId) {
     const companyId = await this.getCompanyIdFromEmployee(employeeId);
-    const currentEmployeeId = await this.getRequestingEmployeeFromComapnyId(
+    const currentEmployeeId = await this.getRequestingEmployeeFromCompanyId(
       companyId,
       userId,
     );
