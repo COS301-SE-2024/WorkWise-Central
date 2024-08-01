@@ -2,9 +2,7 @@
   <v-container fluid>
     <v-row>
       <v-col>
-        <v-col :cols="12">
-          <h4 class="text-center" style="font-size: 25px; font-weight: lighter">BackLog</h4></v-col
-        >
+        <v-col :cols="12"> <h4 class="text-center">Job Board</h4></v-col>
       </v-col>
       <v-col :cols="12">
         <KanbanV2 />

@@ -10,10 +10,14 @@
           border="md"
           elevation="0"
         >
-          <v-row>
-            <!-- Recent Jobs Completed Card -->
-            <v-col cols="12" md="4">
-              <v-card border="md" rounded="xl">
+          <v-tabs v-model="activeTab" fixed-tabs bg-color="secondary" rounded="md">
+            <v-tab v-for="tab in tabs" :key="tab" @click="changeTab(tab)">{{ tab }}</v-tab>
+            <v-spacer></v-spacer>
+          </v-tabs>
+          <v-spacer></v-spacer>
+          <v-tabs-items v-model="activeTab">
+            <v-tab-item v-if="currentTab === 'Recent Jobs Completed'">
+              <v-card border="md" rounded="md">
                 <v-card-title>
                   <v-icon icon="fa: fa-solid fa-briefcase mr-2"></v-icon>
                   Recent Jobs Completed
@@ -32,11 +36,10 @@
                   </v-list>
                 </v-card-text>
               </v-card>
-            </v-col>
+            </v-tab-item>
 
-            <!-- Most Active Employees Card -->
-            <v-col cols="12" md="4">
-              <v-card border="md" rounded="xl">
+            <v-tab-item v-if="currentTab === 'Most Active Employees'">
+              <v-card border="md" rounded="md">
                 <v-card-title>
                   <v-icon icon="fa: fa-solid fa-user-friends mr-2"></v-icon>
                   Most Active Employees
@@ -55,11 +58,10 @@
                   </v-list>
                 </v-card-text>
               </v-card>
-            </v-col>
+            </v-tab-item>
 
-            <!-- Hours Worked by Employees Card -->
-            <v-col cols="12" md="4">
-              <v-card border="md" rounded="xl">
+            <v-tab-item v-if="currentTab === 'Hours Worked'">
+              <v-card border="md" rounded="md">
                 <v-card-title>
                   <v-icon icon="fa: fa-solid fa-clock mr-2"></v-icon>
                   Hours Worked
@@ -78,11 +80,10 @@
                   </v-list>
                 </v-card-text>
               </v-card>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-card border="md" rounded="xl" height="auto">
+            </v-tab-item>
+
+            <v-tab-item v-if="currentTab === 'Upcoming Appointments'">
+              <v-card border="md" rounded="md" height="auto">
                 <v-card-title>
                   <v-icon icon="fa: fa-solid fa-calendar-alt mr-2"></v-icon>
                   Upcoming Appointments
@@ -101,10 +102,10 @@
                   </v-list>
                 </v-card-text>
               </v-card>
-            </v-col>
-            <!-- Team Breakdown Card -->
-            <v-col cols="12" md="6">
-              <v-card border="md" rounded="xl">
+            </v-tab-item>
+
+            <v-tab-item v-if="currentTab === 'Team Breakdown'">
+              <v-card border="md" rounded="md">
                 <v-card-title>
                   <v-icon icon="fa: fa-solid fa-users mr-2"></v-icon>
                   Team Breakdown
@@ -121,8 +122,8 @@
                   </v-list>
                 </v-card-text>
               </v-card>
-            </v-col>
-          </v-row>
+            </v-tab-item>
+          </v-tabs-items>
         </v-card>
       </v-col>
     </v-row>
@@ -131,10 +132,20 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+
 export default defineComponent({
   name: 'StatisticsDashboard',
   data() {
     return {
+      activeTab: 0,
+      currentTab: 'Recent Jobs Completed',
+      tabs: [
+        'Recent Jobs Completed',
+        'Most Active Employees',
+        'Hours Worked',
+        'Upcoming Appointments',
+        'Team Breakdown'
+      ],
       recentJobs: [
         { title: 'Job 1', date: '2024-06-21' },
         { title: 'Job 2', date: '2024-06-20' },
@@ -187,9 +198,14 @@ export default defineComponent({
         default:
           return ''
       }
+    },
+    changeTab(tab: string) {
+      this.currentTab = tab
     }
   }
 })
 </script>
 
-<style></style>
+<style scoped>
+/* Add your styles here */
+</style>

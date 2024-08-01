@@ -171,7 +171,7 @@ export default defineComponent({
                 @click="setInbox(item.title)"
                 :class="{ 'bg-secondary': selected === item.title }"
                 ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small>{{ item.title }}</small></v-list-item
+                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
               >
             </v-list-group>
           </v-list>
@@ -193,7 +193,7 @@ export default defineComponent({
                 @click="setInbox(item.title)"
                 :class="{ 'bg-secondary': selected === item.title }"
                 ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small>{{ item.title }}</small></v-list-item
+                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
               >
             </v-list-group>
           </v-list>
@@ -216,7 +216,7 @@ export default defineComponent({
                 @click="setInbox(item.title)"
                 :class="{ 'bg-secondary': selected === item.title }"
                 ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small>{{ item.title }}</small></v-list-item
+                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
               >
             </v-list-group>
           </v-list>
@@ -238,7 +238,7 @@ export default defineComponent({
                 @click="setInbox(item.title)"
                 :class="{ 'bg-secondary': selected === item.title }"
                 ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small>{{ item.title }}</small></v-list-item
+                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
               >
             </v-list-group>
           </v-list>
@@ -260,7 +260,7 @@ export default defineComponent({
                 @click="setInbox(item.title)"
                 :class="{ 'bg-secondary': selected === item.title }"
                 ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small>{{ item.title }}</small></v-list-item
+                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
               >
             </v-list-group>
           </v-list>
@@ -282,7 +282,7 @@ export default defineComponent({
                 @click="setInbox(item.title)"
                 :class="{ 'bg-secondary': selected === item.title }"
                 ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small>{{ item.title }}</small></v-list-item
+                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
               >
             </v-list-group>
           </v-list>
@@ -304,7 +304,7 @@ export default defineComponent({
                 @click="setInbox(item.title)"
                 :class="{ 'bg-secondary': selected === item.title }"
                 ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small>{{ item.title }}</small></v-list-item
+                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
               >
             </v-list-group>
           </v-list>
@@ -327,7 +327,7 @@ export default defineComponent({
                 @click="setInbox(item.title)"
                 :class="{ 'bg-secondary': selected === item.title }"
                 ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small>{{ item.title }}</small></v-list-item
+                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
               >
             </v-list-group>
           </v-list>

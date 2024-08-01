@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col cols="12">
-        <v-card class="mb-5">
+        <v-card class="mb-5" border="md">
           <v-card-title>Recently Visited Clients</v-card-title>
           <h6 class="bg-cardColor pa-5 ma-0">
             Here are the clients that have been recently visited and the jobs requested.
@@ -18,7 +18,7 @@
       </v-col>
 
       <v-col cols="12">
-        <v-card>
+        <v-card class="mb-5" border="md">
           <v-card-title>Upcoming Appointments</v-card-title>
           <h6 class="bg-cardColor pa-5 ma-0">
             Here are the upcoming appointments for our employees.
