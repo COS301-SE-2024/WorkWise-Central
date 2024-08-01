@@ -15,26 +15,26 @@ const dashboardSubItems = ref([
 
 const clientSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'client-desk-view' },
-  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
-  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
+  { title: 'Client Center', icon: 'fa: fa-brands fa-centercode', routeName: '404' },
+  { title: 'Customer Feedback', icon: 'fa: fa-solid fa-comment', routeName: '404' }
 ])
 
 const employeeSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'manageremployees' },
   { title: 'Team Workload', icon: 'fa: fa-solid fa-users', routeName: 'teamwork-load' },
-  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
+  { title: 'Employee Center', icon: 'fa: fa-solid fa-circle-user', routeName: '404' }
 ])
 
 const jobSubItems = ref([
+  { title: 'Task Center', icon: 'fa: fa-solid fa-list-check', routeName: '404' },
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'jobAssignmentView' },
-  { title: 'Job Board', icon: 'fa: fa-solid fa-table', routeName: 'backlog' },
-  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
+  { title: 'Job Board', icon: 'fa: fa-solid fa-table', routeName: 'backlog' }
 ])
 
 const inventorySubItems = ref([
+  { title: 'Inventory Center', icon: 'fa: fa-solid fa-bars-progress', routeName: '404' },
   { title: 'Management', icon: 'fa: fa-solid fa-warehouse', routeName: 'inventory' },
-  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
-  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
+  { title: 'Reports', icon: 'fa: fa-solid fa-chart-simple', routeName: '404' }
 ])
 
 const inboxSubItems = ref([
@@ -97,7 +97,7 @@ export default defineComponent({
     },
     fuga() {
       this.logoutDialog = true
-    },
+    }
     // logout(name: string) {
     //   if (name === 'splash') {
     //     // Clear local storage
