@@ -9,6 +9,7 @@ import {
 } from './create-job.dto';
 import {
   IsArray,
+  IsHexColor,
   IsMongoId,
   IsNotEmpty,
   IsOptional,
@@ -17,6 +18,7 @@ import {
 } from 'class-validator';
 import { Types } from 'mongoose';
 import { Type } from 'class-transformer';
+import { JobStatus } from '../entities/job-status.entity';
 
 class UpdateAssignedEmployees extends PartialType(AssignedEmployees) {}
 class UpdateDetails extends PartialType(Details) {}
@@ -24,7 +26,7 @@ class UpdateRecordedDetails extends PartialType(RecordedDetails) {}
 class UpdateClientFeedback extends PartialType(ClientFeedback) {}
 class UpdateTask extends PartialType(Task) {}
 class UpdateComment extends PartialType(Comment) {}
-
+// Status is in a separate schema
 export class UpdateJobDto {
   @ApiProperty()
   @IsOptional()
@@ -134,6 +136,16 @@ export class UpdateCommentDto {
   @IsNotEmpty()
   @IsString()
   comment: string;
+}
+
+export class UpdateStatusDto {
+  @IsOptional()
+  @IsString()
+  status: string;
+  @IsOptional()
+  @IsString()
+  @IsHexColor()
+  colour: string;
 }
 
 export class UpdateDtoResponse {

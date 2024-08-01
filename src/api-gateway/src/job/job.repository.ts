@@ -41,9 +41,6 @@ export class JobRepository {
   constructor(
     @InjectModel(Job.name)
     private jobModel: Model<Job>,
-
-    @InjectModel(JobStatus.name)
-    private jobStatusModel: Model<JobStatus>,
   ) {}
 
   private isNotDeleted = {
