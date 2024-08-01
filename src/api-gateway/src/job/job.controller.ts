@@ -15,12 +15,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { JobService } from './job.service';
-import {
-  CreateJobDto,
-  CreateJobResponseDto,
-  JobAllResponseDetailedDto,
-  JobAllResponseDto,
-} from './dto/create-job.dto';
+import { CreateJobDto, CreateJobResponseDto } from './dto/create-job.dto';
 import {
   AddCommentDto,
   RemoveCommentDto,
@@ -41,13 +36,15 @@ import {
 } from '@nestjs/swagger';
 import mongoose, { Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
-import { JobResponseDto } from './entities/job.entity';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { CreatePriorityTagDto, CreateTagDto } from './dto/create-tag.dto';
 import { extractUserId, validateObjectId } from '../utils/Utils';
 import { DeleteTagDto } from './dto/edit-tag.dto';
 import {
+  JobAllResponseDetailedDto,
+  JobAllResponseDto,
+  JobResponseDto,
   PriorityTagsAllResponseDto,
   TagsAllResponseDto,
 } from './dto/job-responses.dto';
@@ -99,15 +96,13 @@ export class JobController {
     description: `The ${className}'s Object of the created job`,
   })
   @Post('/create')
-  async create(
-    @Body() createJobDto: CreateJobDto,
-  ): Promise<CreateJobResponseDto> {
+  async create(@Body() createJobDto: CreateJobDto) {
     validateObjectId(createJobDto.assignedBy, 'assignedBy');
     if (createJobDto.companyId)
       validateObjectId(createJobDto.companyId, 'Company');
 
     try {
-      return await this.jobService.create(createJobDto);
+      return { data: await this.jobService.create(createJobDto) };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
@@ -148,15 +143,9 @@ export class JobController {
     @Headers() headers: any,
     @Param('cid') companyId: string,
   ) {
-    validateObjectId(companyId);
-    const decodedJwtAccessToken = this.jwtService.decode(
-      headers.authorization.replace(/^Bearer\s+/i, ''),
-    );
-    const userId: Types.ObjectId = decodedJwtAccessToken.sub;
-    if (!userId) {
-      throw new UnauthorizedException('Unauthorized, JWT required');
-    }
     try {
+      validateObjectId(companyId);
+      const userId = extractUserId(this.jwtService, headers);
       return {
         data: await this.jobService.getAllJobsInCompany(
           userId,
@@ -182,15 +171,9 @@ export class JobController {
     @Headers() headers: any,
     @Param('cid') companyId: string,
   ) {
-    validateObjectId(companyId);
-    const decodedJwtAccessToken = this.jwtService.decode(
-      headers.authorization.replace(/^Bearer\s+/i, ''),
-    );
-    const userId: Types.ObjectId = decodedJwtAccessToken.sub;
-    if (!userId) {
-      throw new UnauthorizedException('Unauthorized, JWT required');
-    }
     try {
+      const userId = extractUserId(this.jwtService, headers);
+      validateObjectId(companyId);
       return {
         data: await this.jobService.getAllDetailedJobsInCompany(
           userId,
@@ -213,16 +196,9 @@ export class JobController {
   })
   @Get('all/user/')
   async findAllForUser(@Headers() headers: any) {
-    const decodedJwtAccessToken = this.jwtService.decode(
-      headers.authorization.replace(/^Bearer\s+/i, ''),
-    );
-    const userId: Types.ObjectId = decodedJwtAccessToken.sub;
-    if (!userId) {
-      throw new UnauthorizedException('Unauthorized, JWT required');
-    }
-    validateObjectId(userId);
-
     try {
+      const userId = extractUserId(this.jwtService, headers);
+      validateObjectId(userId);
       return {
         data: await this.jobService.getAllJobsForUser(userId),
       };
@@ -245,14 +221,8 @@ export class JobController {
     @Headers() headers: any,
     @Param('eid') empId: string,
   ) {
-    const decodedJwtAccessToken = this.jwtService.decode(
-      headers.authorization.replace(/^Bearer\s+/i, ''),
-    );
-    const userId: Types.ObjectId = decodedJwtAccessToken.sub;
-    if (!userId) {
-      throw new UnauthorizedException('Unauthorized, JWT required');
-    }
     try {
+      const userId = extractUserId(this.jwtService, headers);
       validateObjectId(userId);
       validateObjectId(empId);
 
