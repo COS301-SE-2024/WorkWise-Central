@@ -32,9 +32,8 @@ import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { RoleListResponseDto, RoleResponseDto } from './entity/role.entity';
 import { AuthGuard } from '../auth/auth.guard';
-import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
-import { EmployeeService } from 'src/employee/employee.service';
+import { EmployeeService } from '../employee/employee.service';
 
 const className = 'Role';
 
@@ -174,7 +173,7 @@ export class RoleController {
   })
   @Post('/create')
   async create(@Headers() headers: any, @Body() createRoleDto: CreateRoleDto) {
-    const userId = extractUserId(this.jwtService, headers);
+    const userId = this.extractUserId(headers);
     const companyId = createRoleDto.companyId;
     if (
       this.employeeService.validateRole(companyId, userId, 'company settings')
@@ -216,7 +215,7 @@ export class RoleController {
     @Param('id') id: Types.ObjectId,
     @Body() updateRoleDto: UpdateRoleDto,
   ) {
-    const userId = extractUserId(this.jwtService, headers);
+    const userId = this.extractUserId(headers);
     if (
       this.employeeService.validateRoleRoleId(id, userId, 'company settings')
     ) {
@@ -251,7 +250,7 @@ export class RoleController {
     @Headers() headers: any,
     @Body() updateRoleDto: BulkUpdateRoleDto,
   ) {
-    const userId = extractUserId(this.jwtService, headers);
+    const userId = this.extractUserId(headers);
     let data;
     try {
       data = await this.roleService.bulkUpdate(userId, updateRoleDto);
@@ -286,7 +285,7 @@ export class RoleController {
   })
   @Delete(':id')
   async remove(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
-    const userId = extractUserId(this.jwtService, headers);
+    const userId = this.extractUserId(headers);
     if (
       this.employeeService.validateRoleRoleId(id, userId, 'company settings')
     ) {
@@ -307,5 +306,17 @@ export class RoleController {
     } else {
       throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  public extractUserId(headers: any) {
+    const authHeader: string = headers.authorization;
+    const decodedJwtAccessToken = this.jwtService.decode(
+      authHeader.replace(/^Bearer\s+/i, ''),
+    );
+    if (!Types.ObjectId.isValid(decodedJwtAccessToken.sub)) {
+      throw new HttpException('Invalid User', HttpStatus.BAD_REQUEST);
+    }
+    const userId: Types.ObjectId = decodedJwtAccessToken.sub; //This attribute is retrieved in the JWT
+    return userId;
   }
 }

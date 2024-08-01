@@ -8,9 +8,9 @@ import { ClientService } from '../../client/client.service';
 import { Company } from '../../company/entities/company.entity';
 import { Job } from '../entities/job.entity';
 import { User } from '../../users/entities/user.entity';
-import { Client } from '../../client/entities/client.entity';
 import { JobRepository } from '../job.repository';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
+import { Client } from '../../client/entities/client.entity';
 
 const moduleMocker = new ModuleMocker(global);
 

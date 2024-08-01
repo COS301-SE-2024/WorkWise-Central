@@ -5,6 +5,7 @@ import { RoleService } from '../role.service';
 import { RoleRepository } from '../role.repository';
 import { CompanyService } from '../../company/company.service';
 import { Role } from '../entity/role.entity';
+import { EmployeeService } from '../../employee/employee.service';
 
 const mockRoleRepository = {
   findAll: jest.fn(),
@@ -32,6 +33,7 @@ describe('--Role Service--', () => {
         { provide: getModelToken(Role.name), useValue: {} },
         { provide: RoleRepository, useValue: mockRoleRepository },
         { provide: CompanyService, useValue: mockCompanyService },
+        EmployeeService,
       ],
     }).compile();
 

@@ -27,13 +27,17 @@ import { Types } from 'mongoose';
 import { teamListResponseDto, teamResponseDto } from './entities/team.entity';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { JwtService } from '@nestjs/jwt';
 
 const className = 'Team';
 
 @ApiTags('Team')
 @Controller('team')
 export class TeamController {
-  constructor(private readonly teamService: TeamService) {}
+  constructor(
+    private readonly teamService: TeamService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @ApiOperation({
     summary: `Refer to Documentation`,
@@ -170,5 +174,17 @@ export class TeamController {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
     return { data: data };
+  }
+
+  public extractUserId(headers: any) {
+    const authHeader: string = headers.authorization;
+    const decodedJwtAccessToken = this.jwtService.decode(
+      authHeader.replace(/^Bearer\s+/i, ''),
+    );
+    if (!Types.ObjectId.isValid(decodedJwtAccessToken.sub)) {
+      throw new HttpException('Invalid User', HttpStatus.BAD_REQUEST);
+    }
+    const userId: Types.ObjectId = decodedJwtAccessToken.sub; //This attribute is retrieved in the JWT
+    return userId;
   }
 }

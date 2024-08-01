@@ -1,4 +1,4 @@
-import { InventoryService } from './../inventory/inventory.service';
+import { InventoryService } from '../inventory/inventory.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import {
@@ -14,7 +14,7 @@ import { JobService } from '../job/job.service';
 import { TeamService } from '../team/team.service';
 import { EmployeeRepository } from './employee.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
-import { ClientService } from 'src/client/client.service';
+import { ClientService } from '../client/client.service';
 
 @Injectable()
 export class EmployeeService {
@@ -38,6 +38,7 @@ export class EmployeeService {
     @Inject(forwardRef(() => ClientService))
     private clientService: ClientService,
 
+    @Inject(forwardRef(() => InventoryService))
     private inventoryService: InventoryService,
   ) {}
 

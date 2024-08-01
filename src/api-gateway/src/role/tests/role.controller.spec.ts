@@ -3,6 +3,7 @@ import { RoleController } from '../role.controller';
 import { RoleService } from '../role.service';
 import { Types } from 'mongoose';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
+import { EmployeeService } from '../../employee/employee.service';
 // import { HttpException, HttpStatus } from '@nestjs/common';
 
 jest.mock('../role.service');
@@ -15,7 +16,7 @@ describe('--Role Controller--', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [RoleController],
-      providers: [RoleService],
+      providers: [RoleService, EmployeeService],
     })
       .useMocker((token) => {
         if (typeof token === 'function') {
@@ -30,6 +31,10 @@ describe('--Role Controller--', () => {
 
     controller = module.get<RoleController>(RoleController);
     service = module.get<RoleService>(RoleService);
+
+    jest
+      .spyOn(controller, 'extractUserId')
+      .mockReturnValue(new Types.ObjectId() as any);
   });
 
   afterEach(() => {
@@ -159,7 +164,9 @@ describe('--Role Controller--', () => {
       jest
         .spyOn(service, 'create')
         .mockResolvedValue(returnedResponseFromService as any);
-      expect(await controller.create(createRoleDto)).toEqual(expectedResponse);
+      expect(
+        await controller.create({ sub: new Types.ObjectId() }, createRoleDto),
+      ).toEqual(expectedResponse);
     });
   });
 
@@ -185,9 +192,13 @@ describe('--Role Controller--', () => {
       jest
         .spyOn(service, 'update')
         .mockResolvedValue(returnedResponseFromService);
-      expect(await controller.update(roleId, updateRoleDto)).toEqual(
-        expectedResponse,
-      );
+      expect(
+        await controller.update(
+          { sub: new Types.ObjectId() },
+          roleId,
+          updateRoleDto,
+        ),
+      ).toEqual(expectedResponse);
     });
   });
 
@@ -200,9 +211,12 @@ describe('--Role Controller--', () => {
       jest
         .spyOn(service, 'remove')
         .mockResolvedValue(returnedResponseFromService);
-      expect(await controller.remove(new Types.ObjectId())).toEqual(
-        expectedResponse,
-      );
+      expect(
+        await controller.remove(
+          { sub: new Types.ObjectId() },
+          new Types.ObjectId(),
+        ),
+      ).toEqual(expectedResponse);
     });
     // it('should return false if role is not deleted', async () => {
     //   const returnedResponseFromService = false;

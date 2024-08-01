@@ -30,7 +30,6 @@ import {
 import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 
 const className = 'Employee';
@@ -98,7 +97,7 @@ export class EmployeeController {
     @Headers() headers: any,
     @Param('companyId') companyId: Types.ObjectId,
   ) {
-    const userId = extractUserId(this.jwtService, headers);
+    const userId = this.extractUserId(headers);
     if (
       await this.employeeService.validateRoleCompanyId(
         companyId,
@@ -162,7 +161,7 @@ export class EmployeeController {
     @Headers() headers: any,
     @Param('companyId') companyId: Types.ObjectId,
   ) {
-    const userId = extractUserId(this.jwtService, headers);
+    const userId = this.extractUserId(headers);
     if (
       await this.employeeService.validateRoleCompanyId(
         companyId,
@@ -222,7 +221,7 @@ export class EmployeeController {
     @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
   ) {
-    const userId = extractUserId(this.jwtService, headers);
+    const userId = this.extractUserId(headers);
     if (
       await this.employeeService.validateRoleEmployeeId(
         id,
@@ -271,7 +270,7 @@ export class EmployeeController {
   })
   @Get('id/:id')
   async findById(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
-    const userId = extractUserId(this.jwtService, headers);
+    const userId = this.extractUserId(headers);
     if (
       await this.employeeService.validateRoleEmployeeId(
         id,
@@ -363,7 +362,7 @@ export class EmployeeController {
     @Param('id') id: Types.ObjectId,
     @Body() updateEmployeeDto: UpdateEmployeeDto,
   ) {
-    const userId = extractUserId(this.jwtService, headers);
+    const userId = this.extractUserId(headers);
     if (
       await this.employeeService.validateRoleEmployeeId(
         id,
@@ -427,7 +426,7 @@ export class EmployeeController {
   })
   @Delete(':id')
   async remove(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
-    const userId = extractUserId(this.jwtService, headers);
+    const userId = this.extractUserId(headers);
     if (
       await this.employeeService.validateRoleEmployeeId(
         id,
@@ -473,6 +472,18 @@ export class EmployeeController {
     } else {
       throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  public extractUserId(headers: any) {
+    const authHeader: string = headers.authorization;
+    const decodedJwtAccessToken = this.jwtService.decode(
+      authHeader.replace(/^Bearer\s+/i, ''),
+    );
+    if (!Types.ObjectId.isValid(decodedJwtAccessToken.sub)) {
+      throw new HttpException('Invalid User', HttpStatus.BAD_REQUEST);
+    }
+    const userId: Types.ObjectId = decodedJwtAccessToken.sub; //This attribute is retrieved in the JWT
+    return userId;
   }
 
   // @Get('/depthFirst/:id')

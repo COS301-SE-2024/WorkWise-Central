@@ -18,12 +18,14 @@ import { ClientModule } from '../client/client.module';
 import { RoleModule } from '../role/role.module';
 import { UsersService } from '../users/users.service';
 import { EmailModule } from '../email/email.module';
-import { RoleRepository } from 'src/role/role.repository';
-import { EmployeeRepository } from 'src/employee/employee.repository';
-import { TeamRepository } from 'src/team/team.repository';
 import { JwtService } from '@nestjs/jwt';
 import { FileModule } from '../file/file.module';
 import { FileService } from '../file/file.service';
+import { InventoryModule } from '../inventory/inventory.module';
+import { RoleRepository } from '../role/role.repository';
+import { TeamRepository } from '../team/team.repository';
+import { InventoryService } from '../inventory/inventory.service';
+import { EmployeeRepository } from '../employee/employee.repository';
 
 @Module({
   imports: [
@@ -40,6 +42,7 @@ import { FileService } from '../file/file.service';
     forwardRef(() => RoleModule),
     forwardRef(() => EmailModule),
     forwardRef(() => FileModule),
+    forwardRef(() => InventoryModule),
   ],
   controllers: [CompanyController],
   providers: [
@@ -55,6 +58,7 @@ import { FileService } from '../file/file.service';
     UsersService,
     JwtService,
     FileService,
+    InventoryService,
   ],
   exports: [CompanyService, CompanyRepository, MongooseModule],
 })

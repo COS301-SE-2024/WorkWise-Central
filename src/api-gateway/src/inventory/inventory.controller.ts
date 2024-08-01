@@ -34,9 +34,8 @@ import {
   CreateInventoryResponseDto,
 } from './dto/create-inventory.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
-import { EmployeeService } from 'src/employee/employee.service';
+import { EmployeeService } from '../employee/employee.service';
 
 const className = 'Inventory';
 
@@ -78,7 +77,7 @@ export class InventoryController {
     @Headers() headers: any,
     @Body() createInventoryDto: CreateInventoryDto,
   ) {
-    const userId = extractUserId(this.jwtService, headers);
+    const userId = this.extractUserId(headers);
     const companyId = createInventoryDto.companyId;
     if (
       this.employeeService.validateRole(
@@ -146,7 +145,7 @@ export class InventoryController {
     @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
   ) {
-    const userId = extractUserId(this.jwtService, headers);
+    const userId = this.extractUserId(headers);
     if (
       await this.employeeService.validateRoleInventoryId(
         id,
@@ -186,7 +185,7 @@ export class InventoryController {
   })
   @Get('id/:id')
   async findById(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
-    const userId = extractUserId(this.jwtService, headers);
+    const userId = this.extractUserId(headers);
     if (
       await this.employeeService.validateRoleInventoryId(
         id,
@@ -226,7 +225,7 @@ export class InventoryController {
     @Param('id') id: Types.ObjectId,
     @Body() updateInventoryDto: UpdateInventoryDto,
   ) {
-    const userId = extractUserId(this.jwtService, headers);
+    const userId = this.extractUserId(headers);
     if (
       this.employeeService.validateRoleInventoryId(
         id,
@@ -271,7 +270,7 @@ export class InventoryController {
   })
   @Delete(':id')
   async remove(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
-    const userId = extractUserId(this.jwtService, headers);
+    const userId = this.extractUserId(headers);
     if (
       this.employeeService.validateRoleInventoryId(
         id,
@@ -296,5 +295,17 @@ export class InventoryController {
     } else {
       throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  public extractUserId(headers: any) {
+    const authHeader: string = headers.authorization;
+    const decodedJwtAccessToken = this.jwtService.decode(
+      authHeader.replace(/^Bearer\s+/i, ''),
+    );
+    if (!Types.ObjectId.isValid(decodedJwtAccessToken.sub)) {
+      throw new HttpException('Invalid User', HttpStatus.BAD_REQUEST);
+    }
+    const userId: Types.ObjectId = decodedJwtAccessToken.sub; //This attribute is retrieved in the JWT
+    return userId;
   }
 }

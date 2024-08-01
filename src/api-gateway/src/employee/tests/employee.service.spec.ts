@@ -9,6 +9,7 @@ import { RoleService } from '../../role/role.service';
 import { JobService } from '../../job/job.service';
 import { TeamService } from '../../team/team.service';
 import { Employee } from '../entities/employee.entity';
+import { ClientService } from '../../client/client.service';
 
 const mockEmployeeRepository = {
   findAll: jest.fn(),
@@ -47,6 +48,15 @@ const mockTeamService = {
 describe('--Employee Service--', () => {
   let employeeService: EmployeeService;
 
+  class userConfirmationModel {
+    constructor(private data: any) {}
+    create = jest.fn().mockResolvedValue(this.data);
+    static find = jest.fn().mockResolvedValue(['event']);
+    static findOne = jest.fn().mockResolvedValue('event');
+    static findOneAndUpdate = jest.fn().mockResolvedValue('event');
+    static deleteOne = jest.fn().mockResolvedValue(true);
+  }
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -58,6 +68,12 @@ describe('--Employee Service--', () => {
         { provide: RoleService, useValue: mockRoleService },
         { provide: JobService, useValue: mockJobService },
         { provide: TeamService, useValue: mockTeamService },
+        { provide: ClientService, useValue: mockTeamService },
+
+        /*        {
+          provide: getModelToken('UserConfirmation'),
+          useValue: userConfirmationModel,
+        },*/
       ],
     }).compile();
 
