@@ -32,6 +32,7 @@ import ClientCenter from '@/views/home/clients/ClientCenter.vue'
 import EmployeeCenter from '@/views/home/employees/EmployeeCenter.vue'
 import InventoryCenter from '@/views/home/inventory/InventoryCenter.vue'
 import TaskCenter from '@/views/home/jobs/TaskCenter.vue'
+import ClientFeedback from '@/views/home/clients/ClientFeedback.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -261,6 +262,11 @@ const router = createRouter({
       path: '/task-center',
       name: 'task-center',
       component: TaskCenter
+    },
+    {
+      path: '/client-feedback',
+      name: 'client-feedback',
+      component: ClientFeedback
     }
   ]
 })

@@ -4,14 +4,15 @@
       <v-col cols="12">
         <v-card class="mb-5">
           <v-card-title>Recently Visited Clients</v-card-title>
-          <v-card-subtitle
-            >Here are the clients that have been recently visited and the jobs
-            requested.</v-card-subtitle
-          >
+          <h6 class="bg-cardColor pa-5 ma-0">
+            Here are the clients that have been recently visited and the jobs requested.
+          </h6>
           <v-data-table
             :headers="recentClientsHeaders"
             :items="recentClients"
-            class="elevation-1"
+            class="elevation-1 bg-cardColor"
+            :row-props="getRowProps"
+            :header-props="{ class: 'bg-background h6' }"
           ></v-data-table>
         </v-card>
       </v-col>
@@ -19,11 +20,15 @@
       <v-col cols="12">
         <v-card>
           <v-card-title>Upcoming Appointments</v-card-title>
-          <v-card-subtitle>Here are the upcoming appointments for our employees.</v-card-subtitle>
+          <h6 class="bg-cardColor pa-5 ma-0">
+            Here are the upcoming appointments for our employees.
+          </h6>
           <v-data-table
             :headers="appointmentsHeaders"
             :items="upcomingAppointments"
-            class="elevation-1"
+            class="elevation-1 bg-cardColor"
+            :row-props="getRowProps"
+            :header-props="{ class: 'bg-background h6' }"
           ></v-data-table>
         </v-card>
       </v-col>
@@ -51,15 +56,15 @@ export default defineComponent({
   data() {
     return {
       recentClientsHeaders: [
-        { text: 'Client Name', value: 'name' },
-        { text: 'Job Requested', value: 'jobRequested' },
-        { text: 'Job Status', value: 'jobStatus' }
+        { title: 'Client Name', value: 'name' },
+        { title: 'Job Requested', value: 'jobRequested' },
+        { title: 'Job Status', value: 'jobStatus' }
       ],
       appointmentsHeaders: [
-        { text: 'Client Name', value: 'clientName' },
-        { text: 'Employee Name', value: 'employeeName' },
-        { text: 'Job', value: 'job' },
-        { text: 'Appointment Date', value: 'appointmentDate' }
+        { title: 'Client Name', value: 'clientName', key: 'clientName' },
+        { title: 'Employee Name', value: 'employeeName', key: 'employeeName' },
+        { title: 'Job', value: 'job', key: 'job' },
+        { title: 'Appointment Date', value: 'appointmentDate', key: 'appointmentDate' }
       ],
       recentClients: [
         {
@@ -89,6 +94,13 @@ export default defineComponent({
         }
         // Add more upcoming appointments here
       ] as Appointment[]
+    }
+  },
+  methods: {
+    getRowProps(item: number) {
+      return {
+        class: item % 2 ? 'bg-warning' : ''
+      }
     }
   }
 })

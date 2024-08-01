@@ -1,15 +1,13 @@
-<template></template>
-<script lang="ts"></script>
 <template>
   <v-container>
-    <v-tabs v-model="activeTab" background-color="primary" dark>
+    <v-tabs v-model="activeTab" background-color="primary" bg-color="secondary" dark>
       <v-tab v-for="category in categories" :key="category">{{ category }}</v-tab>
     </v-tabs>
 
     <v-tabs-items v-model="activeTab">
       <v-tab-item v-for="category in categories" :key="category">
         <v-row>
-          <v-col v-for="(feedback, index) in feedbacks" :key="index" cols="12" md="4">
+          <v-col v-for="(feedback, index) in feedbacks" :key="index" cols="12" lg="6" md="6">
             <v-menu
               v-model="feedbackMenu"
               :close-on-content-click="false"
@@ -17,29 +15,38 @@
               :return-value.sync="selectedFeedback"
               @click:outside="feedbackMenu = false"
             >
-              <template v-slot:activator="{ on, attrs }">
-                <v-card v-bind="attrs" v-on="on" class="ma-3">
+              <template v-slot:activator="{ props }">
+                <v-card v-bind="props" class="ma-3">
                   <v-card-title>
                     <span>{{ feedback.employeeName }}</span>
                     <v-spacer></v-spacer>
-                    <v-rating v-model="feedback.satisfactionLevel" readonly></v-rating>
+                    <v-rating
+                      v-model="feedback.satisfactionLevel"
+                      active-color="blue"
+                      color="orange-lighten-1"
+                      readonly
+                    ></v-rating>
                   </v-card-title>
-                  <v-card-subtitle>{{ feedback.jobDone }}</v-card-subtitle>
+                  <h6 class="bg-cardColor pa-5 ma-0">{{ feedback.jobDone }}</h6>
                   <v-card-text>{{ feedback.feedback }}</v-card-text>
                   <v-card-actions>
-                    <v-btn text v-bind="attrs" v-on="on">Details</v-btn>
+                    <v-btn text v-bind="props">Details</v-btn>
                   </v-card-actions>
                 </v-card>
               </template>
 
               <v-card>
                 <v-card-title>{{ feedback.clientName }}</v-card-title>
-                <v-card-subtitle>{{ feedback.employeeName }}</v-card-subtitle>
+                <h6 class="bg-cardColor pa-5 ma-0">{{ feedback.employeeName }}</h6>
                 <v-card-text>
                   <div><strong>Job Done:</strong> {{ feedback.jobDone }}</div>
                   <div>
                     <strong>Satisfaction Level:</strong>
-                    <v-rating v-model="feedback.satisfactionLevel" readonly></v-rating>
+                    <v-rating
+                      v-model="feedback.satisfactionLevel"
+                      color="success"
+                      readonly
+                    ></v-rating>
                   </div>
                   <div><strong>Feedback:</strong> {{ feedback.feedback }}</div>
                 </v-card-text>
@@ -89,7 +96,24 @@ export default defineComponent({
           feedback: 'Excellent work, highly recommend!'
         }
         // Add more feedback objects here
-      ] as Feedback[]
+      ] as Feedback[],
+      methods: {
+        getRowProps(row: Feedback) {
+          return {
+            class: 'bg-cardColor'
+          }
+        },
+        getFeedbackDetails(feedback: Feedback) {
+          console.log(feedback)
+        },
+        filterCategory(category: string): Feedback[] {
+          if (category === 'All Feedback') {
+            return this.feedbacks
+          } else {
+            return this.feedbacks.filter((feedback) => feedback.jobDone === category)
+          }
+        }
+      }
     }
   }
 })

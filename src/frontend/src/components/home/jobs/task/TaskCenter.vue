@@ -18,7 +18,7 @@
                 <v-list-item-subtitle>{{ job.status }}</v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
-                <v-btn @click="createReport(job)">Create Report</v-btn>
+                <ReportForm />
               </v-list-item-action>
             </v-list-item>
           </v-list>
@@ -26,7 +26,7 @@
       </v-col>
 
       <v-col cols="12" md="8">
-        <v-tabs v-model="activeTab">
+        <v-tabs v-model="activeTab" bg-color="secondary">
           <v-tab>Completed Jobs</v-tab>
           <v-tab>Ongoing Jobs</v-tab>
         </v-tabs>
@@ -40,7 +40,7 @@
                   <v-list-item-subtitle>{{ job.status }}</v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn @click="createReport(job)">Create Report</v-btn>
+                  <ReportForm />
                 </v-list-item-action>
               </v-list-item>
             </v-list>
@@ -54,7 +54,7 @@
                   <v-list-item-subtitle>{{ job.status }}</v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn @click="createReport(job)">Create Report</v-btn>
+                  <ReportForm />
                 </v-list-item-action>
               </v-list-item>
             </v-list>
@@ -67,6 +67,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import ReportForm from './ReportForm.vue'
 
 interface Job {
   id: number
@@ -95,6 +96,9 @@ export default defineComponent({
         // Add more ongoing jobs here
       ] as Job[]
     }
+  },
+  components: {
+    ReportForm
   },
   methods: {
     createReport(job: Job) {

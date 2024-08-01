@@ -16,7 +16,7 @@ const dashboardSubItems = ref([
 const clientSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'client-desk-view' },
   { title: 'Client Center', icon: 'fa: fa-brands fa-centercode', routeName: 'client-center' },
-  { title: 'Customer Feedback', icon: 'fa: fa-solid fa-comment', routeName: '404' }
+  { title: 'Customer Feedback', icon: 'fa: fa-solid fa-comment', routeName: 'client-feedback' }
 ])
 
 const employeeSubItems = ref([
