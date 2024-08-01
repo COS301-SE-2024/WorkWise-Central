@@ -152,7 +152,7 @@ const getStatusColor = (status: string): string => {
 }
 
 // Function to scroll to a section
-const scrollToSection = (sectionRef) => {
+const scrollToSection = (sectionRef: string) => {
   const section = sectionRef.value
   if (section) {
     section.scrollIntoView({ behavior: 'smooth', block: 'start' })
