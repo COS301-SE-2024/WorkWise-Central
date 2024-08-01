@@ -48,3 +48,17 @@ export class JobPriorityTag {
 export const JobTagSchema = SchemaFactory.createForClass(JobTag);
 export const JobPriorityTagSchema =
   SchemaFactory.createForClass(JobPriorityTag);
+
+export class JobTagObject {
+  _id: Types.ObjectId;
+  label: string;
+  colour: string; //Will be hex value
+  companyId: Types.ObjectId;
+}
+export class JobPriorityTagApiObject {
+  _id: Types.ObjectId;
+  label: string;
+  priorityLevel: number;
+  colour: string; //Will be hex value
+  companyId: Types.ObjectId;
+}

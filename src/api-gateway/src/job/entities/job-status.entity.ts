@@ -19,4 +19,11 @@ export class JobStatus {
   companyId: Types.ObjectId;
 }
 
+export class JobStatusApiObject {
+  _id: Types.ObjectId;
+  status: string;
+  colour: string;
+  companyId: Types.ObjectId;
+}
+
 export const JobStatusSchema = SchemaFactory.createForClass(JobStatus);

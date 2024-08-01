@@ -1,14 +1,14 @@
 import {
-  Injectable,
-  ServiceUnavailableException,
+  ConflictException,
   forwardRef,
   Inject,
-  ConflictException,
-  NotFoundException,
-  UnauthorizedException,
+  Injectable,
   InternalServerErrorException,
+  NotFoundException,
+  ServiceUnavailableException,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { CreateJobDto, CreateJobResponseDto } from './dto/create-job.dto';
+import { CreateJobDto } from './dto/create-job.dto';
 import {
   AddCommentDto,
   RemoveCommentDto,
@@ -16,14 +16,13 @@ import {
   UpdateJobDto,
 } from './dto/update-job.dto';
 import { FlattenMaps, Types } from 'mongoose';
-import { Job } from './entities/job.entity';
+import { Comment, Job } from './entities/job.entity';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
 import { ClientService } from '../client/client.service';
 import { JobRepository } from './job.repository';
 import { EmployeeService } from '../employee/employee.service';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
-import { FileService } from '../file/file.service';
 import {
   JobAssignDto,
   JobAssignGroupDto,
@@ -38,7 +37,6 @@ import {
 import { JobPriorityTag, JobTag } from './entities/job-tag.entity';
 import { DeleteTagDto } from './dto/edit-tag.dto';
 import { Employee } from '../employee/entities/employee.entity';
-import { Comment } from './entities/job.entity';
 import { JobStatus } from './entities/job-status.entity';
 
 @Injectable()
@@ -59,8 +57,8 @@ export class JobService {
     @Inject(forwardRef(() => ClientService))
     private readonly clientService: ClientService,
 
-    @Inject(forwardRef(() => FileService))
-    private readonly fileService: FileService,
+    // @Inject(forwardRef(() => FileService))
+    // private readonly fileService: FileService,
   ) {}
 
   async create(createJobDto: CreateJobDto) {
@@ -72,10 +70,12 @@ export class JobService {
     //Save files In Bucket, and store URLs (if provided)
     //
 
+    // if (!createdJob.status)
+    //   createdJob.status = this.jobRepository.find;
+
     const createdJob = new Job(createJobDto);
     console.log('createdJob', createdJob);
-    const result = await this.jobRepository.save(createdJob);
-    return new CreateJobResponseDto(result);
+    return await this.jobRepository.save(createdJob);
   }
   async getJobById(
     identifier: Types.ObjectId,
