@@ -13,6 +13,7 @@ import { ClientModule } from '../client/client.module';
 import { InventoryRepository } from './inventory.repository';
 import { FileModule } from '../file/file.module';
 import { EmployeeModule } from '../employee/employee.module';
+import { EmployeeService } from 'src/employee/employee.service';
 
 @Module({
   imports: [
@@ -29,7 +30,12 @@ import { EmployeeModule } from '../employee/employee.module';
     forwardRef(() => EmployeeModule),
   ],
   controllers: [InventoryController],
-  providers: [InventoryService, InventoryRepository, JobService],
-  exports: [InventoryService, MongooseModule],
+  providers: [
+    InventoryService,
+    InventoryRepository,
+    JobService,
+    EmployeeService,
+  ],
+  exports: [InventoryService, InventoryRepository, MongooseModule],
 })
 export class InventoryModule {}

@@ -22,6 +22,8 @@ import { RoleRepository } from './role.repository';
 import { EmployeeRepository } from 'src/employee/employee.repository';
 import { TeamRepository } from 'src/team/team.repository';
 import { FileModule } from '../file/file.module';
+import { InventoryService } from 'src/inventory/inventory.service';
+import { InventoryModule } from 'src/inventory/inventory.module';
 
 @Module({
   imports: [
@@ -38,6 +40,7 @@ import { FileModule } from '../file/file.module';
     forwardRef(() => JobModule),
     forwardRef(() => ClientModule),
     forwardRef(() => FileModule),
+    forwardRef(() => InventoryModule),
   ],
   controllers: [RoleController],
   providers: [
@@ -51,6 +54,7 @@ import { FileModule } from '../file/file.module';
     TeamService,
     TeamRepository,
     RoleRepository,
+    InventoryService,
   ],
   exports: [RoleService, RoleRepository, MongooseModule],
 })

@@ -38,6 +38,7 @@ export class EmployeeService {
     @Inject(forwardRef(() => ClientService))
     private clientService: ClientService,
 
+    @Inject(forwardRef(() => InventoryService))
     private inventoryService: InventoryService,
   ) {}
 

@@ -16,6 +16,8 @@ import { FileModule } from '../file/file.module';
 import { EmployeeService } from '../employee/employee.service';
 import { JobModule } from '../job/job.module';
 import { TeamModule } from '../team/team.module';
+import { InventoryModule } from 'src/inventory/inventory.module';
+import { InventoryService } from 'src/inventory/inventory.service';
 
 @Module({
   imports: [
@@ -28,6 +30,7 @@ import { TeamModule } from '../team/team.module';
     forwardRef(() => FileModule),
     forwardRef(() => JobModule),
     forwardRef(() => TeamModule),
+    forwardRef(() => InventoryModule),
   ],
   controllers: [ClientController],
   providers: [
@@ -37,6 +40,7 @@ import { TeamModule } from '../team/team.module';
     JwtService,
     UsersService,
     EmployeeService,
+    InventoryService,
   ],
   exports: [ClientService, MongooseModule],
 })

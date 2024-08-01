@@ -24,6 +24,8 @@ import { TeamRepository } from 'src/team/team.repository';
 import { JwtService } from '@nestjs/jwt';
 import { FileModule } from '../file/file.module';
 import { FileService } from '../file/file.service';
+import { InventoryModule } from 'src/inventory/inventory.module';
+import { InventoryService } from 'src/inventory/inventory.service';
 
 @Module({
   imports: [
@@ -40,6 +42,7 @@ import { FileService } from '../file/file.service';
     forwardRef(() => RoleModule),
     forwardRef(() => EmailModule),
     forwardRef(() => FileModule),
+    forwardRef(() => InventoryModule),
   ],
   controllers: [CompanyController],
   providers: [
@@ -55,6 +58,7 @@ import { FileService } from '../file/file.service';
     UsersService,
     JwtService,
     FileService,
+    InventoryService,
   ],
   exports: [CompanyService, CompanyRepository, MongooseModule],
 })
