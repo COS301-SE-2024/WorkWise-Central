@@ -98,18 +98,18 @@ export default defineComponent({
     fuga() {
       this.logoutDialog = true
     },
-    logout(name: string) {
-      if (name === 'splash') {
-        // Clear local storage
-        localStorage.clear()
+    // logout(name: string) {
+    //   if (name === 'splash') {
+    //     // Clear local storage
+    //     localStorage.clear()
 
-        // Replace current history state to prevent back navigation
-        window.history.replaceState({}, document.title, window.location.pathname)
+    //     // Replace current history state to prevent back navigation
+    //     window.history.replaceState({}, document.title, window.location.pathname)
 
-        // Redirect to login page
-        this.$router.push({ name: 'splash' })
-      }
-    }
+    //     // Redirect to login page
+    //     this.$router.push({ name: 'splash' })
+    //   }
+    // }
   }
 })
 </script>
