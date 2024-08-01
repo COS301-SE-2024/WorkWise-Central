@@ -15,24 +15,28 @@ const dashboardSubItems = ref([
 
 const clientSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'client-desk-view' },
-  { title: 'Client Center', icon: 'fa: fa-brands fa-centercode', routeName: '404' },
+  { title: 'Client Center', icon: 'fa: fa-brands fa-centercode', routeName: 'client-center' },
   { title: 'Customer Feedback', icon: 'fa: fa-solid fa-comment', routeName: '404' }
 ])
 
 const employeeSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'manageremployees' },
   { title: 'Team Workload', icon: 'fa: fa-solid fa-users', routeName: 'teamwork-load' },
-  { title: 'Employee Center', icon: 'fa: fa-solid fa-circle-user', routeName: '404' }
+  { title: 'Employee Center', icon: 'fa: fa-solid fa-circle-user', routeName: 'employee-center' }
 ])
 
 const jobSubItems = ref([
-  { title: 'Task Center', icon: 'fa: fa-solid fa-list-check', routeName: '404' },
+  { title: 'Task Center', icon: 'fa: fa-solid fa-list-check', routeName: 'task-center' },
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'jobAssignmentView' },
   { title: 'Job Board', icon: 'fa: fa-solid fa-table', routeName: 'backlog' }
 ])
 
 const inventorySubItems = ref([
-  { title: 'Inventory Center', icon: 'fa: fa-solid fa-bars-progress', routeName: '404' },
+  {
+    title: 'Inventory Center',
+    icon: 'fa: fa-solid fa-bars-progress',
+    routeName: 'inventory-center'
+  },
   { title: 'Management', icon: 'fa: fa-solid fa-warehouse', routeName: 'inventory' },
   { title: 'Reports', icon: 'fa: fa-solid fa-chart-simple', routeName: '404' }
 ])

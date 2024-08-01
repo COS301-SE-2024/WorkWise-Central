@@ -28,6 +28,10 @@ import StatisticView from '@/views/home/dashboard/StatisticView.vue'
 import InventoryView from '@/views/home/inventory/InventoryView.vue'
 import NotificationView from '@/views/notfications/NotificationView.vue'
 import TeamworkLoad from '@/views/home/employees/TeamworkLoad.vue'
+import ClientCenter from '@/views/home/clients/ClientCenter.vue'
+import EmployeeCenter from '@/views/home/employees/EmployeeCenter.vue'
+import InventoryCenter from '@/views/home/inventory/InventoryCenter.vue'
+import TaskCenter from '@/views/home/jobs/TaskCenter.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -237,6 +241,26 @@ const router = createRouter({
       path: '/teamwork-load',
       name: 'teamwork-load',
       component: TeamworkLoad
+    },
+    {
+      path: '/client-center',
+      name: 'client-center',
+      component: ClientCenter
+    },
+    {
+      path: '/employee-center',
+      name: 'employee-center',
+      component: EmployeeCenter
+    },
+    {
+      path: '/inventory-center',
+      name: 'inventory-center',
+      component: InventoryCenter
+    },
+    {
+      path: '/task-center',
+      name: 'task-center',
+      component: TaskCenter
     }
   ]
 })
