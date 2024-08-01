@@ -18,7 +18,6 @@
           :model="items"
           class="bg-cardColor text-primary"
           :theme="isdarkmode === true ? 'dark' : 'light'"
-          
         >
           <template #item="{ item, props }">
             <router-link v-if="item.route" :to="item.route" custom>
@@ -33,8 +32,8 @@
               </a>
             </router-link>
             <a v-else v-ripple :href="item.url" :target="item.target" v-bind="props.action">
-           <v-icon :icon="item.icon"></v-icon>
-           <v-list-item-title>{{ item.label }}</v-list-item-title>
+              <v-icon :icon="item.icon"></v-icon>
+              <v-list-item-title>{{ item.label }}</v-list-item-title>
             </a>
           </template>
         </AppMenu>

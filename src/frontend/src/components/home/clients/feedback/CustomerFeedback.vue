@@ -12,7 +12,7 @@
               v-model="feedbackMenu"
               :close-on-content-click="false"
               :nudge-width="200"
-              :return-value.sync="selectedFeedback"
+              v-model:return-value="selectedFeedback"
               @click:outside="feedbackMenu = false"
             >
               <template v-slot:activator="{ props }">
@@ -30,7 +30,7 @@
                   <h6 class="bg-cardColor pa-5 ma-0">{{ feedback.jobDone }}</h6>
                   <v-card-text>{{ feedback.feedback }}</v-card-text>
                   <v-card-actions>
-                    <v-btn text v-bind="props">Details</v-btn>
+                    <v-btn v-bind="props">Details</v-btn>
                   </v-card-actions>
                 </v-card>
               </template>
@@ -51,7 +51,7 @@
                   <div><strong>Feedback:</strong> {{ feedback.feedback }}</div>
                 </v-card-text>
                 <v-card-actions>
-                  <v-btn text @click="feedbackMenu = false">Close</v-btn>
+                  <v-btn @click="feedbackMenu = false">Close</v-btn>
                 </v-card-actions>
               </v-card>
             </v-menu>
@@ -105,14 +105,14 @@ export default defineComponent({
         },
         getFeedbackDetails(feedback: Feedback) {
           console.log(feedback)
-        },
-        filterCategory(category: string): Feedback[] {
-          if (category === 'All Feedback') {
-            return this.feedbacks
-          } else {
-            return this.feedbacks.filter((feedback) => feedback.jobDone === category)
-          }
         }
+        // filterCategory(category: string): Feedback[] {
+        //   if (category === 'All Feedback') {
+        //     return this.feedbacks
+        //   } else {
+        //     return this.feedbacks.filter((feedback) => feedback.jobDone === category)
+        //   }
+        // }
       }
     }
   }

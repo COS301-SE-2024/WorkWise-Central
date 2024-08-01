@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col cols="12">
-        <v-tabs v-model="activeTab">
+        <v-tabs v-model="activeTab" bg-color="secondary">
           <v-tab v-for="tab in header" :key="tab" @click="changeTab(tab)">{{ tab }}</v-tab>
         </v-tabs>
 
@@ -14,7 +14,8 @@
               <v-data-table
                 :headers="stockMovementHeaders"
                 :items="stockMovements"
-                class="elevation-1"
+                class="elevation-1 bg-cardColor"
+                :header-props="{ class: 'bg-cardColor h6' }"
               />
             </v-card>
           </v-tab-item>
@@ -26,7 +27,8 @@
               <v-data-table
                 :headers="employeeActivityHeaders"
                 :items="employeeActivities"
-                class="elevation-1"
+                class="elevation-1 bg-cardColor"
+                :header-props="{ class: 'bg-cardColor h6' }"
               />
             </v-card>
           </v-tab-item>
@@ -35,7 +37,7 @@
           <v-tab-item v-if="currentTab === 'Location-Based Inventory Report'">
             <v-card>
               <v-card-title>Location-Based Inventory Report</v-card-title>
-              <v-tabs v-model="locationTab">
+              <v-tabs v-model="locationTab" bg-color="background">
                 <v-tab
                   v-for="location in locations"
                   :key="location"
@@ -47,7 +49,7 @@
                 <v-tab-item v-for="location in locations" :key="location">
                   <v-card v-if="locationName === location">
                     <v-card-title>{{ location }} Inventory Levels</v-card-title>
-                    <v-list>
+                    <v-list class="bg-cardColor">
                       <v-list-item v-for="item in getLocationItems(location)" :key="item.id">
                         <v-list-item-content>
                           <v-list-item-title>{{ item.name }}</v-list-item-title>
@@ -70,9 +72,10 @@
                 :items-per-page="5"
                 content-tag="v-data-table"
                 :headers="forecastHeaders"
+                class="elevation-1 bg-cardColor"
               >
               </v-data-iterator>
-              <Chart type="bar" :data="chartData" />
+              <Chart type="bar" :data="chartData" class="elevation-1 bg-cardColor" />
             </v-card>
           </v-tab-item>
         </v-tabs-items>
@@ -103,12 +106,12 @@ export default defineComponent({
         'Inventory Forecast Report'
       ],
       stockMovementHeaders: [
-        { text: 'Date', value: 'date' },
-        { text: 'Type', value: 'type' },
-        { text: 'Item', value: 'item' },
-        { text: 'Quantity', value: 'quantity' },
-        { text: 'Employee', value: 'employee' },
-        { text: 'Reason', value: 'reason' }
+        { title: 'Date', value: 'date' },
+        { title: 'Type', value: 'type' },
+        { title: 'Item', value: 'item' },
+        { title: 'Quantity', value: 'quantity' },
+        { title: 'Employee', value: 'employee' },
+        { title: 'Reason', value: 'reason' }
       ],
       stockMovements: [
         {
@@ -137,10 +140,10 @@ export default defineComponent({
         }
       ],
       employeeActivityHeaders: [
-        { text: 'Employee', value: 'employee' },
-        { text: 'Item Managed', value: 'item' },
-        { text: 'Action', value: 'action' },
-        { text: 'Date', value: 'date' }
+        { title: 'Employee', value: 'employee' },
+        { title: 'Item Managed', value: 'item' },
+        { title: 'Action', value: 'action' },
+        { title: 'Date', value: 'date' }
       ],
       employeeActivities: [
         { employee: 'John Doe', item: 'Item A', action: 'Restock', date: '2024-07-01' },
@@ -153,9 +156,9 @@ export default defineComponent({
         { id: 2, name: 'Item B', stock: 50, location: 'Warehouse B' }
       ],
       forecastHeaders: [
-        { text: 'Item', value: 'item' },
-        { text: 'Predicted Demand', value: 'predictedDemand' },
-        { text: 'Reorder Recommendation', value: 'reorderRecommendation' }
+        { title: 'Item', value: 'item' },
+        { title: 'Predicted Demand', value: 'predictedDemand' },
+        { title: 'Reorder Recommendation', value: 'reorderRecommendation' }
       ],
       forecastData: [
         { item: 'Item A', predictedDemand: 200, reorderRecommendation: 50 },

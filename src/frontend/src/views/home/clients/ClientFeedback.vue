@@ -1,5 +1,5 @@
 <template>
-    <NavigationBar :component="ClientFeedbackScreen" />
+  <NavigationBar :component="ClientFeedbackScreen" />
 </template>
 
 <script lang="ts">

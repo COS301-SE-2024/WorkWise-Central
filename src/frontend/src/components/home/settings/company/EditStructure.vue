@@ -41,7 +41,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent, reactive } from 'vue'
 import * as vNG from 'v-network-graph'
 import dagre from 'dagre/dist/dagre.min.js'
@@ -102,7 +102,7 @@ export default defineComponent({
     }
   },
   methods: {
-    layout(direction: 'TB' | 'LR') {
+    layout(direction) {
       if (Object.keys(this.data.nodes).length <= 1 || Object.keys(this.data.edges).length == 0) {
         return
       }
@@ -126,14 +126,20 @@ export default defineComponent({
 
       dagre.layout(g)
 
-      g.nodes().forEach((nodeId: string) => {
+      g.nodes().forEach((nodeId) => {
         const x = g.node(nodeId).x
         const y = g.node(nodeId).y
         this.data.layouts.nodes[nodeId] = { x, y }
       })
     },
-    updateLayout(direction: 'TB' | 'LR') {
+    updateLayout(direction) {
       this.layout(direction)
+    },
+    saveChanges() {
+      console.log('Save changes')
+    },
+    cancel() {
+      console.log('Cancel')
     }
   },
   mounted() {

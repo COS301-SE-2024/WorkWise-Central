@@ -146,7 +146,7 @@ const restructureJob = (job: Job): Job => {
 
 // Initial notes and new note
 const notes = ref<{ text: string }[]>(
-    (props.passedInJob?.notes || []).map((note: Note) => ({ text: note.text }))
+  (props.passedInJob?.notes || []).map((note: Note) => ({ text: note.text }))
 )
 const newNote = ref('')
 
@@ -248,6 +248,5 @@ const deleteNote = async (index: number) => {
   }
 }
 </script>
-
 
 <style></style>

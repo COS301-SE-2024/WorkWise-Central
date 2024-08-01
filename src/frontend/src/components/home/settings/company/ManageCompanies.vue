@@ -90,9 +90,9 @@ import { ref, reactive } from 'vue'
 import JoinCompany from '@/components/signup/JoinCompanyModal.vue'
 
 interface Company {
-  id: string;
-  name: string;
-  description: string;
+  id: string
+  name: string
+  description: string
 }
 
 const companies = reactive<Company[]>([
@@ -138,7 +138,6 @@ const undoLeaveCompany = (company: Company) => {
   }
 }
 </script>
-
 
 <style scoped>
 .mb-4 {
