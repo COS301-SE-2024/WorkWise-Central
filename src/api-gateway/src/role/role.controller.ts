@@ -9,6 +9,7 @@ import {
   HttpException,
   HttpStatus,
   UseGuards,
+  Headers,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto, createRoleResponseDto } from './dto/create-role.dto';
@@ -31,13 +32,20 @@ import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { RoleListResponseDto, RoleResponseDto } from './entity/role.entity';
 import { AuthGuard } from '../auth/auth.guard';
+import { extractUserId } from '../utils/Utils';
+import { JwtService } from '@nestjs/jwt';
+import { EmployeeService } from 'src/employee/employee.service';
 
 const className = 'Role';
 
 @ApiTags('Role')
 @Controller('role')
 export class RoleController {
-  constructor(private readonly roleService: RoleService) {}
+  constructor(
+    private readonly roleService: RoleService,
+    private readonly jwtService: JwtService,
+    private readonly employeeService: EmployeeService,
+  ) {}
 
   @ApiOperation({
     summary: `Refer to Documentation`,
@@ -165,14 +173,22 @@ export class RoleController {
     type: createRoleResponseDto,
   })
   @Post('/create')
-  async create(@Body() createRoleDto: CreateRoleDto) {
-    let data;
-    try {
-      data = await this.roleService.create(createRoleDto);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+  async create(@Headers() headers: any, @Body() createRoleDto: CreateRoleDto) {
+    const userId = extractUserId(this.jwtService, headers);
+    const companyId = createRoleDto.companyId;
+    if (
+      this.employeeService.validateRole(companyId, userId, 'company settings')
+    ) {
+      let data;
+      try {
+        data = await this.roleService.create(createRoleDto);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
-    return { data: data };
   }
 
   @UseGuards(AuthGuard)
@@ -196,16 +212,24 @@ export class RoleController {
   @ApiBody({ type: UpdateRoleDto })
   @Patch(':id')
   async update(
+    @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
     @Body() updateRoleDto: UpdateRoleDto,
   ) {
-    let data;
-    try {
-      data = await this.roleService.update(id, updateRoleDto);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    const userId = extractUserId(this.jwtService, headers);
+    if (
+      this.employeeService.validateRoleRoleId(id, userId, 'company settings')
+    ) {
+      let data;
+      try {
+        data = await this.roleService.update(userId, id, updateRoleDto);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
-    return { data: data };
   }
 
   @UseGuards(AuthGuard)
@@ -223,10 +247,14 @@ export class RoleController {
     description: `The updated ${className} object`,
   })
   @ApiBody({ type: BulkUpdateRoleDto })
-  async bulkUpdate(@Body() updateRoleDto: BulkUpdateRoleDto) {
+  async bulkUpdate(
+    @Headers() headers: any,
+    @Body() updateRoleDto: BulkUpdateRoleDto,
+  ) {
+    const userId = extractUserId(this.jwtService, headers);
     let data;
     try {
-      data = await this.roleService.bulkUpdate(updateRoleDto);
+      data = await this.roleService.bulkUpdate(userId, updateRoleDto);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
@@ -257,20 +285,27 @@ export class RoleController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete(':id')
-  async remove(@Param('id') id: Types.ObjectId) {
-    let data;
-    try {
-      data = await this.roleService.remove(id);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-    }
+  async remove(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
+    const userId = extractUserId(this.jwtService, headers);
+    if (
+      this.employeeService.validateRoleRoleId(id, userId, 'company settings')
+    ) {
+      let data;
+      try {
+        data = await this.roleService.remove(id);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
 
-    if (data === false) {
-      throw new HttpException(
-        'update unsuccessful',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      if (data === false) {
+        throw new HttpException(
+          'update unsuccessful',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
-    return { data: data };
   }
 }

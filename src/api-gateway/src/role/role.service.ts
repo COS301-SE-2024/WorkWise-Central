@@ -12,14 +12,15 @@ import { CompanyService } from '../company/company.service';
 // import { EmployeeService } from '../employee/employee.service';
 import { RoleRepository } from './role.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
+import { EmployeeService } from '../employee/employee.service';
 
 @Injectable()
 export class RoleService {
   private permissionsArray: string[] = [];
 
   constructor(
-    // @Inject(forwardRef(() => EmployeeService))
-    // private employeeService: EmployeeService,
+    @Inject(forwardRef(() => EmployeeService))
+    private employeeService: EmployeeService,
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     @Inject(forwardRef(() => RoleRepository))
@@ -82,27 +83,53 @@ export class RoleService {
     return new ValidationResult(true, `All good`);
   }
 
-  async validateUpdateRole(roleId: Types.ObjectId, role: UpdateRoleDto) {
+  async validateUpdateRole(
+    userId: Types.ObjectId,
+    roleId: Types.ObjectId,
+    updateRoleDto: UpdateRoleDto,
+  ) {
+    //Getting the company id from the role
+    const roleToBeUpdate = await this.findById(roleId);
+    const companyId = roleToBeUpdate.companyId;
+    const requestingEmployeeId =
+      await this.employeeService.getRequestingEmployeeFromComapnyId(
+        companyId,
+        userId,
+      );
+    //checking that the requesting employee's companyId is equal to the companyId of the role being update
+    if (requestingEmployeeId === null) {
+      return new ValidationResult(false, `CompanyId does not match`);
+    }
+
+    const requestingEmployee =
+      await this.employeeService.findById(requestingEmployeeId);
+
+    //Checking that the requesting employee has appropriate permission
+    if (
+      !(await this.hasPermission('company settings', requestingEmployee.roleId))
+    ) {
+      return new ValidationResult(false, `Invalid permission`);
+    }
+
     //Check if the permissions are valid
-    for (const permission of role.permissionSuite) {
+    for (const permission of updateRoleDto.permissionSuite) {
       if (!this.permissionsArray.includes(permission.toString())) {
         return new ValidationResult(false, `Invalid permission`);
       }
     }
 
-    //Getting the company id from the role
-    const roleObj = await this.findById(roleId);
-    const companyId = roleObj.companyId;
-
     //Check if the role already exists
     try {
-      if (await this.findOneInCompany(role.roleName, companyId)) {
+      if (await this.findOneInCompany(updateRoleDto.roleName, companyId)) {
         return new ValidationResult(false, `Role already exists`);
       }
     } catch (error) {}
 
     //Checking that the role is not Default or owner
-    if (roleObj.roleName === 'Owner' || roleObj.roleName === 'Default') {
+    if (
+      roleToBeUpdate.roleName === 'Owner' ||
+      roleToBeUpdate.roleName === 'Default'
+    ) {
       return new ValidationResult(false, `Not allowed to edit this role`);
     }
 
@@ -170,21 +197,32 @@ export class RoleService {
     return null;
   }
 
-  async update(id: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
-    const validation = await this.validateUpdateRole(id, updateRoleDto);
+  async update(
+    userId: Types.ObjectId,
+    roleId: Types.ObjectId,
+    updateRoleDto: UpdateRoleDto,
+  ) {
+    const validation = await this.validateUpdateRole(
+      userId,
+      roleId,
+      updateRoleDto,
+    );
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
 
-    return this.roleRepository.update(id, updateRoleDto);
+    return this.roleRepository.update(roleId, updateRoleDto);
   }
 
-  async bulkUpdate(bulkUpdateRoleDto: BulkUpdateRoleDto) {
+  async bulkUpdate(
+    userId: Types.ObjectId,
+    bulkUpdateRoleDto: BulkUpdateRoleDto,
+  ) {
     //Doing the updates
     for (let i = 0; i < bulkUpdateRoleDto.ids.length; i++) {
       const id = bulkUpdateRoleDto.ids[i];
       const updateRoleDto = bulkUpdateRoleDto.roleUpdates[i];
-      await this.update(id, updateRoleDto);
+      await this.update(userId, id, updateRoleDto);
     }
   }
 

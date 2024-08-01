@@ -375,10 +375,6 @@ export class EmployeeService {
         employeeId = company.employeeId;
       }
     });
-    if (employeeId === null) {
-      throw new Error('employeeId not found');
-    }
-
     return employeeId;
   }
 
@@ -399,9 +395,9 @@ export class EmployeeService {
     userId: Types.ObjectId,
     permission: string,
   ) {
-    const employee = this.findById(id);
+    const employee = await this.findById(id);
     const employeeId = await this.getRequestingEmployeeFromComapnyId(
-      (await employee).companyId,
+      employee.companyId,
       userId,
     );
     return this.roleService.hasPermission(permission, employeeId);
@@ -412,9 +408,9 @@ export class EmployeeService {
     userId: Types.ObjectId,
     permission: string,
   ) {
-    const job = this.jobService.findJobById(id);
+    const job = await this.jobService.findJobById(id);
     const employeeId = await this.getRequestingEmployeeFromComapnyId(
-      (await job).companyId,
+      job.companyId,
       userId,
     );
     return this.roleService.hasPermission(permission, employeeId);
@@ -438,9 +434,34 @@ export class EmployeeService {
     userId: Types.ObjectId,
     permission: string,
   ) {
-    const team = this.teamService.findById(id);
+    const team = await this.teamService.findById(id);
     const employeeId = await this.getRequestingEmployeeFromComapnyId(
-      (await team).companyId,
+      team.companyId,
+      userId,
+    );
+    return this.roleService.hasPermission(permission, employeeId);
+  }
+
+  async validateRoleRoleId(
+    id: Types.ObjectId,
+    userId: Types.ObjectId,
+    permission: string,
+  ) {
+    const role = await this.roleService.findById(id);
+    const employeeId = await this.getRequestingEmployeeFromComapnyId(
+      role.companyId,
+      userId,
+    );
+    return this.roleService.hasPermission(permission, employeeId);
+  }
+
+  async validateRole(
+    companyId: Types.ObjectId,
+    userId: Types.ObjectId,
+    permission: string,
+  ) {
+    const employeeId = await this.getRequestingEmployeeFromComapnyId(
+      companyId,
       userId,
     );
     return this.roleService.hasPermission(permission, employeeId);
