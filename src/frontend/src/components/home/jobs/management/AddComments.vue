@@ -119,7 +119,7 @@ const user = {
 
 // Comments and new comment
 const comments = ref<{ text: string }[]>(
-    (props.passedInJob.comments || []).map((comment) => ({ text: comment.comment }))
+  (props.passedInJob.comments || []).map((comment) => ({ text: comment.comment }))
 )
 const newComment = ref('')
 
@@ -260,4 +260,3 @@ const deleteComment = async (index: number) => {
   }
 }
 </script>
-

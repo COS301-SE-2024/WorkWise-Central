@@ -79,16 +79,23 @@
       ></v-card-text>
       <v-divider></v-divider>
       <v-card-actions class="bg-cardColor">
-        <v-col align="center">
-          <Toast position="top-center" />
-          <v-btn color="success" @click="updateCompanyDetails" :disabled="valid">
-            Save
-          </v-btn></v-col
-        >
-        <v-col align="center">
-          <Toast />
-          <v-btn color="error" @click="cancel"> Cancel </v-btn></v-col
-        >
+        <v-container
+          ><v-row justify="end">
+            <v-col align="center" cols="12" lg="6">
+              <Toast position="top-center" />
+              <v-btn color="success" @click="updateCompanyDetails" :disabled="valid" block>
+                Save
+                <v-icon end color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon> </v-btn
+            ></v-col>
+            <v-col align="center" cols="12" lg="6">
+              <Toast />
+              <v-btn color="error" @click="cancel" block>
+                Cancel<v-icon
+                  end
+                  color="error"
+                  icon="fa: fa-solid fa-cancel"
+                ></v-icon> </v-btn></v-col></v-row
+        ></v-container>
       </v-card-actions>
       <div class="card flex justify-center"></div>
     </v-card>

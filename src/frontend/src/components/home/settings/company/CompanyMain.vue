@@ -7,7 +7,7 @@
     :close-on-content-click="false"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn color="secondary" class="h6" v-bind="activatorProps">{{ companyName }}</v-btn>
+      <v-btn color="primary" class="h6" v-bind="activatorProps">{{ companyName }}</v-btn>
     </template>
     <v-card class="bg-background" :theme="isdarkmode === true ? 'dark' : 'light'">
       <v-card-title>User's Companies</v-card-title>
@@ -20,6 +20,7 @@
                 bg-color="background"
                 density="compact"
                 :items="joinedCompaniesNames"
+                :label="companyName === '' ? 'No company selected' : companyName"
                 persistent
                 combobox
                 v-model="company"
@@ -29,7 +30,7 @@
           </v-col>
         </v-container>
       </v-card-text>
-      <v-actions @click="closeCompanyDialog">
+      <v-actions @click="closeCompanyDialog" class="bg-cardColor">
         <v-col cols="12" align-self="center">
           <Toast position="top-center" />
           <v-btn

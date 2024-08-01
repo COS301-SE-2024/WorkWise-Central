@@ -1,16 +1,15 @@
 <template>
-  <NavigationBar :component="InventoryScreen" />
+  <NavigationBar :component="EmployeeCenter" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import InventoryScreen from '@/components/home/inventory/management/InventoryDashboard.vue'
+import EmployeeCenter from '@/components/home/employees/employeecenter/EmployeeCenter.vue'
 import NavigationBar from '@/components/home/NavigationBar.vue'
-
 export default defineComponent({
-  name: 'InventoryView',
+  name: 'EmployeeView',
   computed: {
-    InventoryScreen() {
-      return InventoryScreen
+    EmployeeCenter() {
+      return EmployeeCenter
     }
   },
   components: {

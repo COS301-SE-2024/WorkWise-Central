@@ -1,16 +1,16 @@
 <template>
-  <NavigationBar :component="InventoryScreen" />
+  <NavigationBar :component="ClientFeedbackScreen" />
 </template>
+
 <script lang="ts">
 import { defineComponent } from 'vue'
-import InventoryScreen from '@/components/home/inventory/management/InventoryDashboard.vue'
+import ClientFeedbackScreen from '@/components/home/clients/feedback/CustomerFeedback.vue'
 import NavigationBar from '@/components/home/NavigationBar.vue'
-
 export default defineComponent({
-  name: 'InventoryView',
+  name: 'ClientFeedbackView',
   computed: {
-    InventoryScreen() {
-      return InventoryScreen
+    ClientFeedbackScreen() {
+      return ClientFeedbackScreen
     }
   },
   components: {

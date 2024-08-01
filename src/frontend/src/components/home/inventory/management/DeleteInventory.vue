@@ -24,18 +24,38 @@
           </v-row>
         </v-container></v-card-text
       >
+
+      <Toast position="top-center" />
       <v-card-actions>
-        <Toast position="top-center" />
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <Toast position="bottom-center" />
-          <v-btn label="Cancel" color="secondary" text @click="close"
-            >Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="secondary" size="small"></v-icon
-          ></v-btn>
-          <v-btn label="Delete" color="error" text :loading="isDeleting" @click="deleteInventory"
-            >Delete <v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
-          ></v-btn>
-        </v-card-actions>
+        <v-container
+          ><v-row justify="end"
+            ><v-col cols="12" lg="6"
+              ><Toast position="bottom-center" />
+              <v-btn label="Cancel" color="secondary" text @click="close" block
+                >Cancel
+                <v-icon
+                  icon="fa:fa-solid fa-cancel"
+                  end
+                  color="secondary"
+                  size="small"
+                ></v-icon></v-btn
+            ></v-col>
+            <v-col cols="12" lg="6">
+              <v-btn
+                label="Delete"
+                color="error"
+                text
+                :loading="isDeleting"
+                block
+                @click="deleteInventory"
+                >Delete
+                <v-icon
+                  icon="fa:fa-solid fa-trash"
+                  end
+                  color="error"
+                  size="small"
+                ></v-icon></v-btn></v-col></v-row
+        ></v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>

@@ -262,10 +262,6 @@ export default defineComponent({
     addDialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     click_create_client: false,
-    light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
-    dark_theme_text_color: 'color: #DCDBDB',
-    modal_dark_theme_color: '#2b2b2b',
-    modal_light_theme_color: '#FFFFFF',
     email_rules: [(val: string) => email_reg.test(val) || 'Email should contain an @ symbol'],
     first_name_rules: [
       (v: string) => !!v || 'First name is required',
