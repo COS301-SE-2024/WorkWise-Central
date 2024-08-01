@@ -21,13 +21,13 @@ const clientSubItems = ref([
 
 const employeeSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'manageremployees' },
-  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' },
+  { title: 'Team Workload', icon: 'fa: fa-solid fa-users', routeName: 'teamwork-load' },
   { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
 ])
 
 const jobSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'jobAssignmentView' },
-  { title: 'BackLog', icon: 'fa: fa-solid fa-clock', routeName: 'backlog' },
+  { title: 'Job Board', icon: 'fa: fa-solid fa-table', routeName: 'backlog' },
   { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
 ])
 
@@ -40,15 +40,14 @@ const inventorySubItems = ref([
 const inboxSubItems = ref([
   { title: 'Notifications', icon: 'fa: fa-solid fa-bell', routeName: 'notifications' },
   { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: '404' },
-  { title: 'Upcoming Appointments', icon: 'fa: fa-solid fa-calendar-check', routeName: '404' }
+  { title: 'Appointments', icon: 'fa: fa-solid fa-calendar-check', routeName: '404' }
 ])
 
 const supportSubItems = ref([
   { title: 'Support', icon: 'fa: fa-solid fa-headset', routeName: 'support' }
 ])
 const moreSubItems = ref([
-  { title: 'Company Settings', icon: 'fa: fa-solid fa-cog', routeName: 'companySettingsView' },
-  { title: 'Logout', icon: 'fa: fa-solid fa-sign-out-alt', routeName: 'splash' }
+  { title: 'Company Settings', icon: 'fa: fa-solid fa-cog', routeName: 'companySettingsView' }
 ])
 </script>
 
@@ -75,7 +74,8 @@ export default defineComponent({
   },
   data: () => ({
     isdarkmode: localStorage.getItem('theme') === 'true',
-    logoutDialog: false
+    logoutDialog: false,
+    selected: ''
   }),
   // computed: {
   //   ...mapGetters(['isDarkMode'])
@@ -91,6 +91,9 @@ export default defineComponent({
         console.log(this.isdarkmode)
       }
       localStorage.setItem('theme', this.isdarkmode.toString()) // save the theme to session storage
+    },
+    setInbox(inbox: string) {
+      this.selected = inbox
     },
     fuga() {
       this.logoutDialog = true
@@ -117,9 +120,9 @@ export default defineComponent({
       <v-app :theme="isdarkmode ? 'dark' : 'light'">
         <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-background">
           <v-app-bar-nav-icon @click="isVisible = !isVisible">
-            <v-icon>{{ isVisible ? 'fa: fa-solid fa-times' : 'fa: fa-solid fa-bars' }}</v-icon>
+            <v-icon>{{ isVisible ? 'fa: fa-solid fa-bars' : 'fa: fa-solid fa-bars' }}</v-icon>
           </v-app-bar-nav-icon>
-
+          <CompanyMain />
           <v-spacer></v-spacer>
 
           <v-toolbar-title class="d-flex justify-center">
@@ -146,7 +149,6 @@ export default defineComponent({
           :rail="isVisible"
           :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
         >
-          <CompanyMain />
           <v-list v-model:open="open">
             <v-list-group fluid value="Dashboard">
               <template v-slot:activator="{ props }">
@@ -161,11 +163,12 @@ export default defineComponent({
                 v-for="(item, i) in dashboardSubItems"
                 :key="i"
                 :to="{ name: item.routeName }"
-                :prepend-icon="item.icon"
-                :title="item.title"
                 :value="item.title"
-                class="list-item-small"
-              ></v-list-item>
+                @click="setInbox(item.title)"
+                :class="{ 'bg-secondary': selected === item.title }"
+                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
+                ><small>{{ item.title }}</small></v-list-item
+              >
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
@@ -182,11 +185,12 @@ export default defineComponent({
                 v-for="(item, i) in clientSubItems"
                 :key="i"
                 :to="{ name: item.routeName }"
-                :prepend-icon="item.icon"
-                :title="item.title"
                 :value="item.title"
-                class="list-item-small"
-              ></v-list-item>
+                @click="setInbox(item.title)"
+                :class="{ 'bg-secondary': selected === item.title }"
+                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
+                ><small>{{ item.title }}</small></v-list-item
+              >
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
@@ -199,15 +203,17 @@ export default defineComponent({
                   class="list-item-large"
                 ></v-list-item>
               </template>
+
               <v-list-item
                 v-for="(item, i) in employeeSubItems"
                 :key="i"
                 :to="{ name: item.routeName }"
-                :prepend-icon="item.icon"
-                :title="item.title"
                 :value="item.title"
-                class="list-item-small"
-              ></v-list-item>
+                @click="setInbox(item.title)"
+                :class="{ 'bg-secondary': selected === item.title }"
+                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
+                ><small>{{ item.title }}</small></v-list-item
+              >
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
@@ -224,11 +230,12 @@ export default defineComponent({
                 v-for="(item, i) in jobSubItems"
                 :key="i"
                 :to="{ name: item.routeName }"
-                :prepend-icon="item.icon"
-                :title="item.title"
                 :value="item.title"
-                class="list-item-small"
-              ></v-list-item>
+                @click="setInbox(item.title)"
+                :class="{ 'bg-secondary': selected === item.title }"
+                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
+                ><small>{{ item.title }}</small></v-list-item
+              >
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
@@ -245,11 +252,12 @@ export default defineComponent({
                 v-for="(item, i) in inventorySubItems"
                 :key="i"
                 :to="{ name: item.routeName }"
-                :prepend-icon="item.icon"
-                :title="item.title"
                 :value="item.title"
-                class="list-item-small"
-              ></v-list-item>
+                @click="setInbox(item.title)"
+                :class="{ 'bg-secondary': selected === item.title }"
+                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
+                ><small>{{ item.title }}</small></v-list-item
+              >
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
@@ -266,11 +274,12 @@ export default defineComponent({
                 v-for="(item, i) in inboxSubItems"
                 :key="i"
                 :to="{ name: item.routeName }"
-                :prepend-icon="item.icon"
-                :title="item.title"
                 :value="item.title"
-                class="list-item-small"
-              ></v-list-item>
+                @click="setInbox(item.title)"
+                :class="{ 'bg-secondary': selected === item.title }"
+                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
+                ><small>{{ item.title }}</small></v-list-item
+              >
             </v-list-group>
           </v-list>
           <v-list v-model:open="open">
@@ -287,11 +296,12 @@ export default defineComponent({
                 v-for="(item, i) in supportSubItems"
                 :key="i"
                 :to="{ name: item.routeName }"
-                :prepend-icon="item.icon"
-                :title="item.title"
                 :value="item.title"
-                class="list-item-small"
-              ></v-list-item>
+                @click="setInbox(item.title)"
+                :class="{ 'bg-secondary': selected === item.title }"
+                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
+                ><small>{{ item.title }}</small></v-list-item
+              >
             </v-list-group>
           </v-list>
 
@@ -308,30 +318,12 @@ export default defineComponent({
               <v-list-item
                 v-for="(item, i) in moreSubItems"
                 :key="i"
-                @click="fuga()"
-                :prepend-icon="item.icon"
-                :title="item.title"
+                :to="{ name: item.routeName }"
                 :value="item.title"
-                class="list-item-small"
-                ><v-dialog
-                  v-model="logoutDialog"
-                  max-width="500px"
-                  :theme="isdarkmode ? 'dark' : 'light'"
-                >
-                  <v-card>
-                    <v-card-title>Logout</v-card-title>
-                    <v-card-text>Are you sure you want to log out?</v-card-text>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn @click="logout('splash')" color="success"
-                        ><v-icon icon="fa: fa-solid fa-check" color="success"></v-icon>Yes</v-btn
-                      >
-                      <v-btn @click="logoutDialog = false" color="error"
-                        ><v-icon icon="fa: fa-solid fa-x" color="error"></v-icon>No</v-btn
-                      >
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog></v-list-item
+                @click="setInbox(item.title)"
+                :class="{ 'bg-secondary': selected === item.title }"
+                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
+                ><small>{{ item.title }}</small></v-list-item
               >
             </v-list-group>
           </v-list>

@@ -70,6 +70,11 @@ export default {
   }
 }
 </script>
+<script setup lang="ts">
+import { ref } from 'vue'
+import * as vNG from "v-network-graph"
+
+</script>
 
 <style scoped>
 .bg-cardColor {
