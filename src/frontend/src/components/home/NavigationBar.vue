@@ -38,7 +38,7 @@ const inventorySubItems = ref([
     routeName: 'inventory-center'
   },
   { title: 'Management', icon: 'fa: fa-solid fa-warehouse', routeName: 'inventory' },
-  { title: 'Reports', icon: 'fa: fa-solid fa-chart-simple', routeName: '404' }
+  { title: 'Reports', icon: 'fa: fa-solid fa-chart-simple', routeName: 'report-view' }
 ])
 
 const inboxSubItems = ref([
