@@ -11,7 +11,10 @@ import {
   CreateCompanyDto,
   CreateCompanyResponseDto,
 } from './dto/create-company.dto';
-import { UpdateCompanyDto } from './dto/update-company.dto';
+import {
+  UpdateCompanyDto,
+  UpdateCompanyJobStatuses,
+} from './dto/update-company.dto';
 import { FlattenMaps, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
 import { JoinedCompany } from '../users/entities/user.entity';
@@ -24,6 +27,7 @@ import { UsersService } from '../users/users.service';
 import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
 import { Employee } from '../employee/entities/employee.entity';
 import { FileService } from '../file/file.service';
+import { JobService } from '../job/job.service';
 
 @Injectable()
 export class CompanyService {
@@ -41,6 +45,9 @@ export class CompanyService {
 
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
+
+    @Inject(forwardRef(() => JobService))
+    private readonly jobService: JobService,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto) {
@@ -70,6 +77,9 @@ export class CompanyService {
     console.log('Create Default Role in Company');
     await this.roleService.createDefaultRoles(createdCompany._id);
 
+    //Create Default JobStatuses in company
+    await this.jobService.createDefaultStatuses(createdCompany._id);
+
     //Assign Owner to user
     console.log('Assign Owner to user');
     const ownerRoleId = (
@@ -94,6 +104,15 @@ export class CompanyService {
     );
     console.log('Perform Update');
     await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
+
+    await this.employeeService.updateUserInfo(employee._id, {
+      //Add user details to Employee
+      firstName: user.personalInfo.firstName,
+      surname: user.personalInfo.surname,
+      displayImage: user.profile.displayImage,
+      displayName: user.profile.displayName,
+      username: user.systemDetails.username,
+    });
 
     await this.usersService.updateUser(user._id, {
       currentEmployee: employee._id,
@@ -231,6 +250,15 @@ export class CompanyService {
         userId: user._id,
         roleId: defaultRole._id,
         superiorId: addUserDto.superiorId,
+      });
+
+      await this.employeeService.updateUserInfo(addedEmployee._id, {
+        //Add user details
+        firstName: user.personalInfo.firstName,
+        surname: user.personalInfo.surname,
+        displayImage: user.profile.displayImage,
+        displayName: user.profile.displayName,
+        username: user.systemDetails.username,
       });
     }
 
@@ -534,5 +562,35 @@ export class CompanyService {
 
   async getAllCompanyNames() {
     return await this.companyRepository.findAllNames();
+  }
+
+  async addJobStatus(companyId: Types.ObjectId, statusId: Types.ObjectId) {
+    return await this.companyRepository.addJobStatus(companyId, statusId);
+  }
+
+  async updateCompanyStatuses(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+    updateCompanyJobStatuses: UpdateCompanyJobStatuses,
+  ) {
+    const userExists = await this.usersService.userIdExists(userId);
+    if (!userExists) throw new NotFoundException('User not found');
+
+    const employee = await this.employeeService.findById(employeeId);
+    if (employee == null) throw new NotFoundException('Employee not found');
+
+    return this.companyRepository.updateStatuses(
+      employee.companyId,
+      updateCompanyJobStatuses.jobStatuses,
+    );
+  }
+
+  async findAllStatusesInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ) {
+    if (!(await this.usersService.userIdExists(userId)))
+      throw new NotFoundException('User not found');
+    return this.companyRepository.findAllStatusesInCompany(companyId);
   }
 }

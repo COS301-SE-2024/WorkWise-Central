@@ -34,7 +34,7 @@ export class ContactDetails {
   email: string;
 }
 
-class Address {
+export class Address {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()

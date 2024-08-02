@@ -44,3 +44,15 @@ export function extractUserId(
 
   return decodedJwtAccessToken.sub;
 }
+
+export function currentDate(): Date {
+  const date = new Date();
+  date.setHours(date.getHours() + 2);
+  return date;
+}
+
+export function ciEquals(a: string, b: string) {
+  return typeof a === 'string' && typeof b === 'string'
+    ? a.localeCompare(b, undefined, { sensitivity: 'base' }) === 0
+    : a === b;
+}

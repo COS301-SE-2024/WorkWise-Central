@@ -65,13 +65,7 @@ export class Address {
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  complex?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  houseNumber?: string;
+  complexOrBuilding?: string;
 }
 
 export class ClientDetails {
@@ -132,11 +126,6 @@ export class CreateClientDto {
   @IsOptional()
   @IsString()
   registrationNumber?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  clientUsername?: string;
 
   @ApiProperty()
   @IsNotEmpty()

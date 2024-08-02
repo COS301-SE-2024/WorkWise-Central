@@ -22,6 +22,7 @@ import {
   JobTagSchema,
 } from './entities/job-tag.entity';
 import { JobTagRepository } from './job-tag.repository';
+import { JobStatus, JobStatusSchema } from './entities/job-status.entity';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { JobTagRepository } from './job-tag.repository';
       { name: Job.name, schema: JobSchema },
       { name: JobTag.name, schema: JobTagSchema },
       { name: JobPriorityTag.name, schema: JobPriorityTagSchema },
+      { name: JobStatus.name, schema: JobStatusSchema },
     ]),
     forwardRef(() => UsersModule),
     forwardRef(() => CompanyModule),

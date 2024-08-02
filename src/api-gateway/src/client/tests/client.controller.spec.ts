@@ -141,7 +141,7 @@ describe('ClientController', () => {
 
       try {
         await clientController.update({ userId }, clientId.toString(), {
-          clientUsername: 'test',
+          registrationNumber: '123/12351/52132',
         });
       } catch (error) {
         expect(error).toBeInstanceOf(TypeError);

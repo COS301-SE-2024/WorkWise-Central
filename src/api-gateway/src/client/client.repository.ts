@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { Client } from './entities/client.entity';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { currentDate } from '../utils/Utils';
 
 @Injectable()
 export class ClientRepository {
@@ -94,7 +95,7 @@ export class ClientRepository {
             },
           ],
         },
-        { $set: { ...updateClientDto }, updatedAt: new Date() },
+        { $set: { ...updateClientDto }, updatedAt: currentDate() },
         { new: true },
       )
       .lean();
@@ -110,7 +111,7 @@ export class ClientRepository {
           },
         ],
       },
-      { $set: { deletedAt: new Date() } },
+      { $set: { deletedAt: currentDate() } },
     );
   }
 }
