@@ -50,3 +50,9 @@ export function currentDate(): Date {
   date.setHours(date.getHours() + 2);
   return date;
 }
+
+export function ciEquals(a: string, b: string) {
+  return typeof a === 'string' && typeof b === 'string'
+    ? a.localeCompare(b, undefined, { sensitivity: 'base' }) === 0
+    : a === b;
+}
