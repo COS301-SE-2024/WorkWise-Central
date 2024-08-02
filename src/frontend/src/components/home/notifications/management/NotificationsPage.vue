@@ -4,127 +4,71 @@
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
         <h2 class="text-xl font-semibold">Notifications</h2>
-        <v-divider></v-divider>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12" lg="2">
-        <v-card>
-          <v-list>
-            <v-list-item
-              v-for="(item, index) in items"
-              :key="index"
-              :value="index"
-              @click="setInbox(item.title)"
-            >
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-          <v-divider></v-divider>
-          <v-list>
-            <v-label>Filters</v-label>
-            <v-list-item
-              v-for="(item, index) in filters"
-              :key="index"
-              :value="index"
-              @click="filter(item.title)"
-            >
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-          <v-divider></v-divider>
-          <v-list>
-            <v-label>Companies</v-label>
-            <v-list-item
-              v-for="(item, index) in companies"
-              :key="index"
-              :value="index"
-              @click="switchCompany(item.title)"
-            >
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-col>
-      <v-col cols="12" lg="10">
-        <v-row>
-          <v-col cols="12" lg="2">
-            <v-btn
-              @click="setInbox('Unread')"
-              :class="{ 'bg-cardColor': currentInbox === 'Unread' }"
-              ><v-icon icon="fa: fa-solid fa-bell"></v-icon>Unread</v-btn
-            >
-            <v-btn @click="setInbox('Read')" :class="{ 'bg-cardColor': currentInbox === 'Read' }"
-              ><v-icon icon="fa: fa-regular fa-bell"></v-icon>Read</v-btn
-            >
-          </v-col>
-          <v-col cols="12" lg="8">
-            <v-text-field
-              v-model="search"
-              label="Search"
-              outlined
-              dense
-              hide-details
-              @input="searchEmails"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" lg="2">
-            <v-select
-              label="Sort By"
-              :items="groupBy"
-              density="compact"
-              @change="groupBySelection($event)"
-            ></v-select>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12" order="last" justify="center">
-            <v-card>
-              <v-list class="bg-cardColor" rounded="md">
-                <v-label>
-                  <v-checkbox v-model="selectAllNotifications" @click="selectAll"> </v-checkbox>
-                  Select All
-                </v-label>
-                <v-divider></v-divider>
-                <v-list-item
-                  v-for="notification in filteredNotifications"
-                  :key="notification.id"
-                  @click="handleNotificationClick(notification.id)"
-                  :class="{
-                    'bg-background':
-                      clickedNotificationId === notification.id ||
-                      clickedNotfiicationIds.includes(notification.id)
-                  }"
-                >
-                  <v-label
-                    class="h5 font-weight-regular d-flex justify-center bg-cardColor text-secondary"
-                  ></v-label>
-                  <v-card-text>
-                    <v-icon
-                      :icon="
-                        notification.read === false
-                          ? 'fa: fa-regular fa-bell'
-                          : 'fa: fa-solid fa-bell'
-                      "
-                    >
-                    </v-icon>
-                    <span>{{ notification.title }}</span>
-                    <br />
-                    {{ notification.message }}
-                    <br />
-                    {{ notification.type }}
-                    <br />
-                    {{ notification.company }}
-                    <br />
-                    {{ notification.date }}
-                  </v-card-text>
+    <v-card rounded="md">
+      <v-row>
+        <v-col cols="12" lg="10">
+          <v-row>
+            <v-col cols="12" lg="2">
+              <v-btn @click="setInbox('All')" :class="{ 'bg-cardColor': currentInbox === 'All' }"
+                ><v-icon icon="fa: fa-solid fa-bells"></v-icon>All</v-btn
+              >
+              <v-btn
+                @click="setInbox('Unread')"
+                :class="{ 'bg-cardColor': currentInbox === 'Unread' }"
+                ><v-icon icon="fa: fa-solid fa-bell"></v-icon>Unread</v-btn
+              >
+              <v-btn @click="setInbox('Read')" :class="{ 'bg-cardColor': currentInbox === 'Read' }"
+                ><v-icon icon="fa: fa-regular fa-bell"></v-icon>Read</v-btn
+              >
+            </v-col>
+            <v-col cols="12" lg="8">
+              <v-text-field
+                v-model="search"
+                label="Search"
+                elevation="1"
+                variant="outlined"
+                dense
+                color="primary"
+                hide-details
+                class="pa-0 ma-2"
+                @input="searchEmails"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" lg="2">
+              <v-select
+                label="Sort By"
+                :items="groupBy"
+                density="compact"
+                class="pa-0 ma-2"
+                @change="groupBySelection($event)"
+              ></v-select>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" order="last" justify="center">
+              <v-card class="pa-0 ma-3" elevation="1">
+                <v-list class="bg-cardColor" rounded="md">
+                  <v-label>
+                    <v-checkbox v-model="selectAllNotifications" @click="selectAll"> </v-checkbox>
+                    Select All
+                  </v-label>
                   <v-divider></v-divider>
-                  <v-list-item-action>
-                    <v-btn
-                      v-if="showActionButtons"
-                      @click="handleAction('mark as read', notification.id)"
-                      color="primary"
-                    >
+                  <v-list-item
+                    v-for="notification in filteredNotifications"
+                    :key="notification.id"
+                    @click="handleNotificationClick(notification.id)"
+                    :class="{
+                      'bg-cardColor':
+                        clickedNotificationId === notification.id ||
+                        clickedNotfiicationIds.includes(notification.id)
+                    }"
+                  >
+                    <v-label
+                      class="h5 font-weight-regular d-flex justify-center bg-cardColor text-secondary"
+                    ></v-label>
+                    <v-card-text>
                       <v-icon
                         :icon="
                           notification.read === false
@@ -133,43 +77,127 @@
                         "
                       >
                       </v-icon>
-                    </v-btn>
-                    <v-btn
-                      v-if="showActionButtons"
-                      @click="handleAction('save', notification.id)"
-                      color="primary"
-                    >
-                      <v-icon
-                        :icon="
-                          notification.saved === false
-                            ? 'fa: fa-regular fa-bookmark'
-                            : 'fa: fa-solid fa-bookmark'
-                        "
+                      <span>{{ notification.title }}</span>
+                      <br />
+                      {{ notification.message }}
+                      <br />
+                      {{ notification.type }}
+                      <br />
+                      {{ notification.company }}
+                      <br />
+                      {{ notification.date }}
+                    </v-card-text>
+                    <v-divider></v-divider>
+                    <v-list-item-action>
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ props }">
+                          <v-btn
+                            v-if="showActionButtons"
+                            @click="handleAction('mark as read', notification.id)"
+                            color="primary"
+                            v-bind="props"
+                          >
+                            <v-icon
+                              :icon="
+                                notification.read === false
+                                  ? 'fa: fa-regular fa-bell'
+                                  : 'fa: fa-solid fa-bell'
+                              "
+                            >
+                            </v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Mark as Read</span>
+                      </v-tooltip>
+                      <v-tooltip bottom
+                        ><template v-slot:activator="{ props }">
+                          <v-btn
+                            v-if="showActionButtons"
+                            @click="handleAction('save', notification.id)"
+                            color="primary"
+                            v-bind="props"
+                          >
+                            <v-icon
+                              :icon="
+                                notification.saved === false
+                                  ? 'fa: fa-regular fa-bookmark'
+                                  : 'fa: fa-solid fa-bookmark'
+                              "
+                            >
+                            </v-icon> </v-btn></template
+                        ><span>Save</span></v-tooltip
                       >
-                      </v-icon>
-                    </v-btn>
-                    <v-btn
-                      v-if="showActionButtons"
-                      @click="handleAction('add to done', notification.id)"
-                      color="primary"
-                    >
-                      <v-icon
-                        :icon="
-                          notification.done === false
-                            ? 'fa: fa-solid fa-check'
-                            : 'fa: fa-solid fa-check'
-                        "
-                      >
-                      </v-icon>
-                    </v-btn>
-                  </v-list-item-action>
-                </v-list-item>
-              </v-list>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
+                      <v-tooltip bottom
+                        ><template v-slot:activator="{ props }">
+                          <v-btn
+                            v-if="showActionButtons"
+                            @click="handleAction('add to done', notification.id)"
+                            color="primary"
+                            v-bind="props"
+                          >
+                            <v-icon
+                              :icon="
+                                notification.done === false
+                                  ? 'fa: fa-solid fa-check'
+                                  : 'fa: fa-solid fa-check'
+                              "
+                            >
+                            </v-icon> </v-btn
+                        ></template>
+                        <span>Add to Done</span>
+                      </v-tooltip>
+                    </v-list-item-action>
+                  </v-list-item>
+                </v-list>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="12" lg="2">
+          <v-card class="pa-0 ma-2" elevation="1">
+            <v-list class="bg-cardColor">
+              <v-list-item
+                v-for="(item, index) in items"
+                :key="index"
+                :value="index"
+                @click="setInbox(item.title)"
+                :class="{ 'bg-secondary': currentInbox === item.title }"
+              >
+                <v-list-item-title
+                  ><v-icon :icon="item.icon" start color="primary"></v-icon
+                  >{{ item.title }}</v-list-item-title
+                >
+              </v-list-item>
+            </v-list>
+            <v-divider></v-divider>
+            <v-list class="bg-cardColor">
+              <v-label>Filters</v-label>
+              <v-list-item
+                v-for="(item, index) in filters"
+                :key="index"
+                :value="index"
+                @click="filterOn === true ? filter(item.title, false) : filter(item.title, false)"
+                :class="{ 'bg-secondary': currentFilter === item.title }"
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+            <v-divider></v-divider>
+            <v-list class="bg-cardColor">
+              <v-label>Companies</v-label>
+              <v-list-item
+                v-for="(item, index) in companies"
+                :key="index"
+                :value="index"
+                @click="switchCompany(item.title)"
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-card>
   </v-container>
 </template>
 
@@ -208,9 +236,11 @@ export default {
         // Add more notifications here
       ],
       items: [
-        { title: 'Inbox' },
-        { title: 'Saved' },
-        { title: 'Done' }
+        { title: 'Inbox', icon: 'fa: fa-solid fa-inbox' },
+
+        { title: 'Saved', icon: 'fa: fa-solid fa-bookmark' },
+        { title: 'Done', icon: 'fa: fa-solid fa-check' }
+
         // Add more items here
       ],
       filters: [
@@ -236,8 +266,10 @@ export default {
       unread: [] as number[],
       done: [] as number[],
       saved: [] as number[],
+      filterOn: false,
       currentInbox: 'Inbox', // Track the current inbox
-      currentCompany: '' // Track the current company
+      currentCompany: '', // Track the current company
+      currentFilter: '' // Track the current filter
     }
   },
   components: { Toast },
@@ -259,6 +291,8 @@ export default {
         filtered = filtered.filter((notification) => !notification.read)
       } else if (this.currentInbox === 'Unread') {
         filtered = filtered.filter((notification) => notification.read)
+      } else if (this.currentInbox === 'All' || this.currentInbox === 'Inbox') {
+        return filtered
       }
 
       if (this.currentCompany) {
@@ -427,22 +461,33 @@ export default {
         }
       }
     },
-    filter(filterType: string) {
+    filter(filterType: string, apply: boolean) {
       this.filteredNotificationsArray = []
-      if (filterType === 'Job Oriented') {
-        for (let i = 0; i < this.notifications.length; i++) {
-          if (this.notifications[i].type === 'Job Oriented') {
-            this.filteredNotificationsArray.push(this.notifications[i].id)
+      console.log('Filter:', apply)
+      this.currentFilter = filterType
+      if (this.filterOn) {
+        this.applyFilter(apply)
+      } else {
+        this.applyFilter(apply)
+        if (filterType === 'Job Oriented') {
+          for (let i = 0; i < this.notifications.length; i++) {
+            if (this.notifications[i].type === 'Job Oriented') {
+              this.filteredNotificationsArray.push(this.notifications[i].id)
+            }
           }
-        }
-      } else if (filterType === 'Admin') {
-        for (let i = 0; i < this.notifications.length; i++) {
-          if (this.notifications[i].type === 'Admin') {
-            this.filteredNotificationsArray.push(this.notifications[i].id)
+        } else if (filterType === 'Admin') {
+          for (let i = 0; i < this.notifications.length; i++) {
+            if (this.notifications[i].type === 'Admin') {
+              this.filteredNotificationsArray.push(this.notifications[i].id)
+            }
           }
         }
       }
     },
+    applyFilter(apply: boolean) {
+      this.filterOn = apply
+    },
+
     filterEmailsBasedOnCompany(company: string) {
       console.log('Filter Emails Based on Company:', company)
     },

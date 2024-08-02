@@ -106,14 +106,35 @@
                           </v-chip>
                         </template>
                         <template v-slot:[`item.actions`]="{ item }">
-                          <v-btn
-                            rounded="xl"
-                            variant="plain"
-                            :style="'transform: rotate(90deg) dots'"
-                            @click="(actionsDialog = true), selectItem(item)"
-                          >
-                            <v-icon color="primary">mdi-dots-horizontal</v-icon>
-                          </v-btn>
+                          <v-menu v-model="actionsDialog" max-width="500px">
+                            <template v-slot:activator="{ props }"
+                              ><v-btn
+                                rounded="xl"
+                                variant="plain"
+                                :style="'transform: rotate(90deg) dots'"
+                                v-bind="props"
+                                @click="(actionsDialog = true), selectItem(item)"
+                              >
+                                <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                              </v-btn></template
+                            >
+                            <v-list>
+                              <v-list-item
+                                ><EmployeeDetails
+                                  v-model="clientDialog"
+                                  colors="colors"
+                                  :EmployeeDetails="selectedItem"
+                              /></v-list-item>
+
+                              <v-list-item>
+                                <EditEmployee
+                                  @update:item="selectedItem = $event"
+                                  :editedItem="selectedItem"
+                              /></v-list-item>
+
+                              <v-list-item><DeleteEmployee :details="selectedItem" /></v-list-item>
+                            </v-list>
+                          </v-menu>
                         </template>
                       </v-data-table>
                     </v-col>
@@ -121,9 +142,8 @@
                 </v-col>
               </v-card>
             </v-col>
-          </v-row>
-        </v-col></v-row
-      >
+          </v-row> </v-col
+      ></v-row>
 
       <v-menu v-model="actionsDialog" max-width="500px">
         <v-list>
