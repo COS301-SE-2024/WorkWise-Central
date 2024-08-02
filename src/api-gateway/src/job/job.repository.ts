@@ -9,7 +9,6 @@ import { Team } from '../team/entities/team.entity';
 import { isNotDeleted } from '../shared/soft-delete';
 import { Comment } from './entities/job.entity';
 import { currentDate } from '../utils/Utils';
-import { JobStatus } from './entities/job-status.entity';
 
 @Injectable()
 export class JobRepository {

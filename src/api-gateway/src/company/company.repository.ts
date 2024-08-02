@@ -4,6 +4,7 @@ import { FlattenMaps, Model, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { currentDate } from '../utils/Utils';
+import { isNotDeleted } from '../shared/soft-delete';
 
 @Injectable()
 export class CompanyRepository {
@@ -263,5 +264,39 @@ export class CompanyRepository {
       ])
       .lean()
       .exec();
+  }
+
+  async updateStatuses(
+    companyId: Types.ObjectId,
+    jobStatuses: Types.ObjectId[],
+  ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+    return this.companyModel
+      .findOneAndUpdate(
+        { $and: [{ _id: companyId }, isNotDeleted] },
+        { $set: { jobStatuses: jobStatuses } },
+        { new: true },
+      )
+      .lean()
+      .exec();
+  }
+
+  async findAllStatusesInCompany(companyId: Types.ObjectId) {
+    return this.companyModel
+      .findOne({
+        $and: [{ _id: companyId }, isNotDeleted],
+      })
+      .select(['jobStatuses'])
+      .populate('jobStatuses')
+      .lean()
+      .exec();
+  }
+
+  async addJobStatus(companyId: Types.ObjectId, statusId: Types.ObjectId) {
+    return this.companyModel.findOneAndUpdate(
+      {
+        $and: [{ _id: companyId }, isNotDeleted],
+      },
+      { $push: { jobStatuses: statusId } },
+    );
   }
 }

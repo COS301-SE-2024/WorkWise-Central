@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { JobPriorityTag, JobTag } from './entities/job-tag.entity';
 import { Model, Types } from 'mongoose';
 import { JobStatus } from './entities/job-status.entity';
-import { UpdateStatus, UpdateStatusDto } from './dto/update-job.dto';
+import { UpdateStatus } from './dto/update-job.dto';
 import { isNotDeleted } from '../shared/soft-delete';
 
 @Injectable()

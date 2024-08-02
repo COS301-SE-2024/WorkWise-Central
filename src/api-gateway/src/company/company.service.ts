@@ -11,7 +11,10 @@ import {
   CreateCompanyDto,
   CreateCompanyResponseDto,
 } from './dto/create-company.dto';
-import { UpdateCompanyDto } from './dto/update-company.dto';
+import {
+  UpdateCompanyDto,
+  UpdateCompanyJobStatuses,
+} from './dto/update-company.dto';
 import { FlattenMaps, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
 import { JoinedCompany } from '../users/entities/user.entity';
@@ -559,5 +562,35 @@ export class CompanyService {
 
   async getAllCompanyNames() {
     return await this.companyRepository.findAllNames();
+  }
+
+  async addJobStatus(companyId: Types.ObjectId, statusId: Types.ObjectId) {
+    return await this.companyRepository.addJobStatus(companyId, statusId);
+  }
+
+  async updateCompanyStatuses(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+    updateCompanyJobStatuses: UpdateCompanyJobStatuses,
+  ) {
+    const userExists = await this.usersService.userIdExists(userId);
+    if (!userExists) throw new NotFoundException('User not found');
+
+    const employee = await this.employeeService.findById(employeeId);
+    if (employee == null) throw new NotFoundException('Employee not found');
+
+    return this.companyRepository.updateStatuses(
+      employee.companyId,
+      updateCompanyJobStatuses.jobStatuses,
+    );
+  }
+
+  async findAllStatusesInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ) {
+    if (!(await this.usersService.userIdExists(userId)))
+      throw new NotFoundException('User not found');
+    return this.companyRepository.findAllStatusesInCompany(companyId);
   }
 }
