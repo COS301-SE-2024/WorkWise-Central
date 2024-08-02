@@ -8,9 +8,12 @@
           <!-- Handle sections with nested items -->
           <template v-if="item.items">
             <v-list-item-group v-for="(subItem, j) in item.items" :key="j">
-              <v-list-item @click="navigate(subItem.route)">
+              <v-list-item
+                @click="navigate(subItem.route), changeSettings(subItem.label)"
+                :class="{ 'bg-cardColor': currentSetting === subItem.label }"
+              >
                 <template v-slot:prepend>
-                  <v-icon :icon="subItem.icon"></v-icon>
+                  <v-icon :icon="subItem.icon" color="primary"></v-icon>
                 </template>
                 <v-list-item-title>{{ subItem.label }}</v-list-item-title>
               </v-list-item>
@@ -66,6 +69,22 @@ const items = ref([
     ]
   }
 ])
+</script>
+<script>
+import { defineComponent } from 'vue'
+export default {
+  name: 'SettingsMenu',
+  data() {
+    return {
+      currentSetting: 'Personal Information'
+    }
+  },
+  methods: {
+    changeSettings(settings) {
+      this.currentSetting = settings
+    }
+  }
+}
 </script>
 
 <style scoped>

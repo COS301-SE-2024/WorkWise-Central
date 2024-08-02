@@ -66,7 +66,7 @@
           <!-- Inventory Forecast Report -->
           <v-tab-item v-if="currentTab === 'Inventory Forecast Report'">
             <v-card>
-              <v-card-title>Inventory Forecast Report</v-card-title>
+              <v-card-title>Inventory Usage Report</v-card-title>
               <v-data-iterator
                 :items="forecastData"
                 :items-per-page="5"
