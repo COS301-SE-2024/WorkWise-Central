@@ -3,22 +3,28 @@
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
-            text="Edit"
-            prepend-icon="fa:fa-solid fa-pencil"
-            color="warning"
-            v-bind="activatorProps"
+          text="Edit"
+          prepend-icon="fa:fa-solid fa-pencil"
+          color="warning"
+          v-bind="activatorProps"
         ></v-btn>
       </v-defaults-provider>
     </template>
-    <v-card elevation="14" rounded="md">
+    <v-card elevation="14" rounded="md" class="">
+      <v-img
+        src="https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U="
+        aspect-ratio="5.75"
+      ></v-img>
+      <!--      <v-img :src="props.passedInJob.imageUrl" aspect-ratio="2.75"></v-img>-->
       <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
         <h2 class="flex-grow-1">{{ props.passedInJob.heading }}</h2>
       </v-card-title>
+
       <v-row>
-        <v-col xs="12" sm="9" md="9" lg="9" xl="9" class="pr-0 pb-0" cols="12">
+        <v-col xs="12" sm="12" md="9" lg="9" xl="9" class="pr-0 pb-0" cols="12">
           <EditDetails :passedInJob="props.passedInJob" />
         </v-col>
-        <v-col xs="12" sm="3" md="3" lg="3" xl="3" class="pl-0 pb-0" cols="12">
+        <v-col xs="12" sm="12" md="3" lg="3" xl="3" class="pl-0 pb-0" cols="12">
           <v-card flat class="pa-5 bg-cardColor elevation-0">
             <div class="d-flex flex-column">
               <!-- For client change -->
@@ -151,3 +157,9 @@ const cancelJob = () => {
   emit('close')
 }
 </script>
+
+<style scoped>
+.card-with-image-background {
+  background-color: #f5f5f5; /* Light grey color that blends well with most images */
+}
+</style>

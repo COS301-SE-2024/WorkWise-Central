@@ -34,6 +34,7 @@
       ></v-textarea>
       <v-btn color="success" @click="addNote">Add Note</v-btn>
     </v-container>
+    <v-divider></v-divider>
   </div>
 </template>
 
