@@ -16,7 +16,7 @@ import {
   RecordedDetails,
   Task,
 } from '../entities/job.entity';
-import { JobStatusApiObject } from '../entities/job-status.entity';
+import { JobStatus } from '../entities/job-status.entity';
 import { Company } from '../../company/entities/company.entity';
 import { Client } from '../../client/entities/client.entity';
 type jobTagWithId = JobTag & { _id: string };
@@ -47,10 +47,21 @@ export class TagsAllResponseDto {
   data: jobTagWithId[];
 }
 
-// type jobPriorityTagWithId = JobPriorityTag & { _id: string };
-// class test extends JobPriorityTag {
-//   _id: string;
-// }
+export class JobStatusResponseDto extends JobStatus {
+  _id: Types.ObjectId;
+}
+
+export class JobStatusAllResponseDto extends JobStatus {
+  data: JobStatusResponseDto[];
+}
+
+export class JobStatusApiObject {
+  _id: Types.ObjectId;
+  status: string;
+  colour: string;
+  companyId: Types.ObjectId;
+}
+
 export class PriorityTagsAllResponseDto {
   data: JobPriorityTag[];
 }
