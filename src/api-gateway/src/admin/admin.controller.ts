@@ -6,12 +6,14 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import {
   CancelRequestDto,
+  UserInviteRequestDto,
   UserJoinRequestDto,
 } from '../users/dto/request-to-join.dto';
 import mongoose, { Types } from 'mongoose';
@@ -105,7 +107,7 @@ export class AdminController {
     type: BooleanResponseDto,
     description: `Confirmation that the request was successfully deleted`,
   })
-  @Post('/request/cancel')
+  @Patch('/request/cancel')
   async deleteRequest(
     @Headers() headers: any,
     @Body() cancelRequestDto: CancelRequestDto,
@@ -136,7 +138,7 @@ export class AdminController {
     type: BooleanResponseDto,
     description: `Confirmation that the request was successfully created`,
   })
-  @Post('/request/decide')
+  @Patch('/request/decide')
   async acceptRequest(
     @Headers() headers: any,
     @Body() acceptRequestDto: AcceptRequestDto,
@@ -150,6 +152,68 @@ export class AdminController {
     } catch (Error) {
       throw Error;
       //throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.CONFLICT,
+  })
+  @ApiOperation({
+    summary: `Create an invite to join a company`,
+    description:
+      'This is a request created by someone with a WorkWise Account.' +
+      'If the user has an account, they get a notification (email + push) and can see it in frontend.' +
+      'Otherwise, they just get an email inviting them to join',
+  })
+  @ApiBody({ type: UserInviteRequestDto })
+  @ApiResponse({
+    status: 201,
+    type: BooleanResponseDto,
+    description: `Confirmation that the request was successfully created`,
+  })
+  @Post('/invite/create')
+  async createInvite(
+    @Headers() headers: any,
+    @Body() inviteRequestDto: UserInviteRequestDto,
+  ) {
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.adminService.createInvite(userId, inviteRequestDto),
+      };
+    } catch (Error) {
+      throw Error;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Create a Request to Join a company`,
+    description: 'This is a request created by someone with a WorkWise Account',
+  })
+  @ApiBody({ type: CancelRequestDto })
+  @ApiResponse({
+    status: 201,
+    type: BooleanResponseDto,
+    description: `Confirmation that the request was successfully deleted`,
+  })
+  @Patch('/request/cancel')
+  async deleteRequest(
+    @Headers() headers: any,
+    @Body() cancelRequestDto: CancelRequestDto,
+  ) {
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      // if (!userId) throw new BadRequestException('Invalid JWT');
+      return {
+        data: await this.adminService.cancelRequest(userId, cancelRequestDto),
+      };
+    } catch (Error) {
+      throw Error;
     }
   }
   ///
@@ -237,7 +301,7 @@ export class AdminController {
       );
     }
   }
-
+  ///
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @ApiOperation({

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import {
   CancelRequestDto,
+  UserInviteRequestDto,
   UserJoinRequestDto,
 } from '../users/dto/request-to-join.dto';
 import { FlattenMaps, Types } from 'mongoose';
@@ -60,6 +61,58 @@ export class AdminService {
     if (!(await this.companyService.companyIdExists(requestToJoin.companyId))) {
       throw new BadRequestException('CompanyId Invalid');
     }
+
+    const userIsInCompany = await this.usersService.userIsInCompany(
+      userId,
+      requestToJoin.companyId,
+    );
+    if (userIsInCompany) {
+      throw new BadRequestException('User Already in company');
+    }
+
+    const requestsToCompany: (FlattenMaps<UserJoinRequest> & {
+      _id: Types.ObjectId;
+    })[] = await this.adminRepository.findRequestsFromUserForCompany(
+      userId,
+      requestToJoin.companyId,
+    );
+
+    if (requestsToCompany.length > 0) {
+      throw new ConflictException(
+        'User has already made a request to join this company',
+      );
+    }
+
+    //
+    const newRequest = new UserJoinRequest({
+      userToJoin: userId,
+      companyId: requestToJoin.companyId,
+    });
+    return await this.adminRepository.save(newRequest);
+  }
+
+  async createInvite(
+    //User must have a WorkWise Account
+    userId: Types.ObjectId,
+    userInviteRequestDto: UserInviteRequestDto,
+  ) {
+    if (!(await this.usersService.userIdExists(userId))) {
+      throw new BadRequestException('userId Invalid');
+    }
+    const employee = await this.employeeService.findById(
+      userInviteRequestDto.employeeId,
+    );
+    const company = await this.companyService.getCompanyById(
+      employee.companyId,
+    );
+    if (company == null) throw new NotFoundException('Company Invalid');
+
+    // Someone with the email address already exists
+    const allUsers = await this.usersService.getAllUsersInCompany(company._id);
+    for (const user of allUsers) {
+      //if (ciEqual(user.personalInfo.contactInfo.email))
+    }
+    // get user
 
     const userIsInCompany = await this.usersService.userIsInCompany(
       userId,
