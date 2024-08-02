@@ -21,7 +21,7 @@
             style="font-family: 'Nunito', sans-serif"
             align="center"
           >
-            <v-icon class="pr-1" color="#708090">{{ 'fa: fa-solid fa-cube' }}</v-icon>
+            <v-icon class="pr-1" :color="column.color">{{ 'fa: fa-solid fa-cube' }}</v-icon>
             {{ column.status }}
             <v-chip class="text-subtitle-1 font-weight-black" variant="tonal">
               {{ column.cards.length }}
@@ -41,7 +41,7 @@
                   >
                 </v-list-item>
                 <v-list-item>
-                  <v-btn :elevation="0"
+                  <v-btn :elevation="0" @click="columnDeleteAllJobs(column)"
                     ><v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon
                     >{{ 'Delete all' }}</v-btn
                   >
@@ -55,7 +55,7 @@
                   </v-btn>
                 </v-list-item>
                 <v-list-item>
-                  <v-btn :elevation="0"
+                  <v-btn :elevation="0" @click="columnDelete(column)"
                     ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
                     >{{ 'Delete' }}</v-btn
                   >
@@ -123,7 +123,12 @@
                     ><b>{{ item.heading }}</b></v-card-item
                   >
                   <v-card-subtitle v-if="item.status === column.status"
-                    ><v-chip color="#708090" variant="elevated" rounded="sm" density="comfortable">
+                    ><v-chip
+                      :color="column.color"
+                      variant="elevated"
+                      rounded="sm"
+                      density="comfortable"
+                    >
                       <b>{{ item.status }}</b></v-chip
                     ></v-card-subtitle
                   >
@@ -168,12 +173,81 @@
         </v-card>
       </v-col>
       <v-col cols="auto">
-        <v-btn icon="fa: fa-solid fa-plus"></v-btn>
+        <v-btn icon="fa: fa-solid fa-plus" @click="add_column_dialog = true"></v-btn>
+        <v-dialog max-height="700" max-width="500" v-model="add_column_dialog">
+          <v-card elevation="14" rounded="md" max-height="800" max-width="900">
+            <v-card-title class="text-center">New Column</v-card-title>
+            <v-card-text>
+              <!--              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">-->
+              <v-col>
+                <v-spacer></v-spacer>
+                <v-col>
+                  <v-col align="center">
+                    <v-icon :color="column_color" :size="40">
+                      {{ 'fa: fa-solid fa-cube' }}
+                    </v-icon>
+                  </v-col>
+                  <v-col>
+                    <label style="font-size: 14px; font-weight: lighter">Column Name</label>
+                    <v-text-field
+                      density="compact"
+                      color="grey-lighten-4"
+                      placeholder="Enter the name of the new column"
+                      rounded="md"
+                      variant="solo"
+                      v-model="new_column_name"
+                      :rule="column_name_rule"
+                      required
+                      data-testid="job-title-field"
+                    ></v-text-field
+                  ></v-col>
+                  <v-col align="center">
+                    <label style="font-size: 14px; font-weight: lighter">Color</label>
+                    <v-color-picker
+                      v-model="column_color"
+                      hide-inputs
+                      show-swatches
+                      @update:modelValue="addColorPickerUpdate"
+                    ></v-color-picker>
+                  </v-col>
+                </v-col>
+              </v-col>
+              <v-col align="center">
+                <label style="{color:red;}">{{ error_message }}</label>
+              </v-col>
+              <v-col cols="8" offset="2" align="center">
+                <v-btn
+                  color="success"
+                  rounded="md"
+                  type="submit"
+                  boarder="md"
+                  width="100%"
+                  height="35"
+                  variant="text"
+                  @click="addColumnButtonClickedSave"
+                  data-testid="create-btn"
+                  >Save
+                </v-btn>
+                <v-btn
+                  color="error"
+                  rounded="md"
+                  boarder="md"
+                  width="100%"
+                  height="35"
+                  variant="text"
+                  @click="add_column_dialog = false"
+                  data-testid="cancel-btn"
+                  >Cancel
+                </v-btn>
+              </v-col>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
       </v-col>
     </v-row>
   </v-container>
   <v-dialog v-model="JobCardVisibility" max-width="1000px">
-    <JBC @close="JobCardVisibility = false" :passed-in-job="SelectedEvent" />
+    <JBC @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
   </v-dialog>
 </template>
 
@@ -188,15 +262,18 @@ export default {
   },
   data() {
     return {
+      add_column_dialog: false,
       columns: [
-        { id: 1, status: 'Todo', cards: [] },
-        { id: 2, status: 'In Progress', cards: [] },
-        { id: 3, status: 'Awaiting review', cards: [] },
-        { id: 4, status: 'Done', cards: [] },
-        { id: 5, status: 'Hello', cards: [] }
+        { id: 0, status: 'No Status', color: 'purple-accent-3', cards: [] },
+        { id: 1, status: 'Todo', color: '#FF073A', cards: [] },
+        { id: 2, status: 'In Progress', color: '#39FF14', cards: [] },
+        { id: 3, status: 'Awaiting review', color: '#0FF0FC', cards: [] },
+        { id: 4, status: 'Done', color: '#FFFF33', cards: [] }
       ] as Column[],
-
-      SelectedEvent: null as JobCardDataFormat | null,
+      new_column_name: '',
+      error_message: '',
+      column_color: '',
+      SelectedEvent: {},
       JobCardVisibility: false,
       order_of_sorting_in_columns: ['High', 'Medium', 'Low'],
       draggedCard: null as JobCardDataFormat | null,
@@ -394,10 +471,47 @@ export default {
           priority: 'High',
           tags: ['Basement', 'Waterproofing', 'Residential']
         }
-      ] as JobCardDataFormat[]
+      ] as JobCardDataFormat[],
+      column_name_rule: [
+        (v: string) => !!v || 'Column name is required',
+        (v: string) => (v && v.length <= 20) || 'Column name must be less than 20 characters'
+      ]
     }
   },
   methods: {
+    columnDelete(col: Column) {
+      this.columns.splice(this.columns.indexOf(col), 1)
+    },
+    columnDeleteAllJobs(col: Column) {
+      //add a modal that will ask the user if they are sure they want to delete all the cards in a job column
+      col.cards.splice(0, col.cards.length)
+    },
+    addColumnButtonClickedSave() {
+      if (this.new_column_name === '') {
+        this.error_message = 'Column name is empty'
+      }
+      if (this.new_column_name.length < 20) {
+        this.error_message = 'Column name length should be shorter than 20 characters'
+      }
+      if (this.column_color === '') {
+        this.error_message = 'A color should be selected'
+        return
+      }
+      const column: Column = {
+        id: this.columns.length + 1,
+        status: this.new_column_name,
+        color: this.column_color,
+        cards: []
+      }
+      this.add_column_dialog = !this.add_column_dialog
+      this.columns.push(column)
+    },
+    addColorPickerUpdate() {
+      console.log(this.column_color)
+    },
+    addColumnButtonClicked() {
+      console.log('Add button clicked')
+    },
     clickedEvent(payload: JobCardDataFormat) {
       this.SelectedEvent = payload
       this.openJobCard()
