@@ -1,9 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+import { SchemaTypes, Types } from 'mongoose';
 import { CreateCompanyDto } from '../dto/create-company.dto';
 import { Employee } from '../../employee/entities/employee.entity';
 import { currentDate } from '../../utils/Utils';
+import { JobStatus } from '../../job/entities/job-status.entity';
 
 export class ContactDetails {
   @Prop({ type: String, required: true, trim: true })
@@ -67,6 +68,15 @@ export class Company {
   @ApiProperty()
   @Prop({ required: false })
   type?: string;
+
+  @ApiProperty()
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: true,
+    default: [],
+    ref: JobStatus.name,
+  })
+  jobStatuses: Types.ObjectId[] = [];
 
   @ApiProperty()
   @Prop({
