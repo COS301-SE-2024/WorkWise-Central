@@ -206,7 +206,7 @@ export default defineComponent({
                 size="sm"
                 color="primary"
                 start
-                :class="isvisible === true ? '' : 'mr-4'"
+                :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
               ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
             >
