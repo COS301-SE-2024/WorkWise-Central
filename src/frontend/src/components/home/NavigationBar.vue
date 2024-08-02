@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
 import UserAvatar from './UserAvatar.vue'
-const isVisible = ref(false)
+const isVisible = ref(true)
 const drawer = ref(true)
 
 const open = ref(['Dashboard'])
@@ -174,7 +174,7 @@ export default defineComponent({
                 size="sm"
                 color="primary"
                 start
-                :class="isvisible === true ? '' : 'mr-4'"
+                :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
               ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
             >
