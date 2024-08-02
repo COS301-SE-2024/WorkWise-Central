@@ -39,6 +39,7 @@ import { JobPriorityTag, JobTag } from './entities/job-tag.entity';
 import { DeleteStatusDto, DeleteTagDto } from './dto/edit-tag.dto';
 import { Employee } from '../employee/entities/employee.entity';
 import { JobStatus } from './entities/job-status.entity';
+import { ciEquals } from '../utils/Utils';
 
 @Injectable()
 export class JobService {
@@ -530,6 +531,17 @@ export class JobService {
     if (!companyExists) throw new NotFoundException('Company not found');
     ///
 
+    const allTags = await this.jobTagRepository.findAllTagsInCompany(
+      createTagDto.companyId,
+    );
+    if (allTags.length > 0) {
+      for (const tag of allTags) {
+        if (ciEquals(createTagDto.label, tag.label)) {
+          throw new ConflictException('Tag already exists in company');
+        }
+      }
+    }
+
     const newTag = new JobTag(
       createTagDto.label,
       createTagDto.colour,
@@ -540,7 +552,7 @@ export class JobService {
     return savedDoc != null;
   }
 
-  async addJobStatusToCompany(
+  /*  async addJobStatusToCompany(
     userId: Types.ObjectId,
     createStatusDto: CreateStatusDto,
   ): Promise<boolean> {
@@ -559,6 +571,7 @@ export class JobService {
     if (!companyExists) throw new NotFoundException('Company not found');
     ///
     /// TODO: Check if it exists already
+
     const newStatus = new JobStatus(
       createStatusDto.status,
       createStatusDto.colour,
@@ -568,7 +581,7 @@ export class JobService {
       await this.jobTagRepository.addJobStatusToCompany(newStatus);
     console.log(savedDoc);
     return savedDoc != null;
-  }
+  }*/
 
   async addJobPriorityTagToCompany(
     userId: Types.ObjectId,
@@ -589,6 +602,18 @@ export class JobService {
     );
     if (!companyExists) throw new NotFoundException('Company not found');
     ///
+
+    const allPriorityTags =
+      await this.jobTagRepository.findAllPriorityTagsInCompany(
+        createPriorityTagDto.companyId,
+      );
+    if (allPriorityTags.length > 0) {
+      for (const tag of allPriorityTags) {
+        if (ciEquals(createPriorityTagDto.label, tag.label)) {
+          throw new ConflictException('Tag already exists in company');
+        }
+      }
+    }
 
     const newTag = new JobPriorityTag(
       createPriorityTagDto.label,
@@ -714,6 +739,10 @@ export class JobService {
     return this.jobTagRepository.findStatusById(statusId);
   }
 
+  private async getStatusByIdWithoutValidation(statusId: Types.ObjectId) {
+    return this.jobTagRepository.findStatusById(statusId);
+  }
+
   async findAllStatusesInCompany(
     userId: Types.ObjectId,
     companyId: Types.ObjectId,
@@ -757,12 +786,27 @@ export class JobService {
       );
 
     ///
+    const protectedStatuses = ['No status', 'Archive'];
+    for (const protectedStatus of protectedStatuses) {
+      if (ciEquals(protectedStatus, createStatusDto.status)) {
+        throw new ConflictException(
+          'You cannot alter "No status" and "Archive"',
+        );
+      }
+    }
+
     const newStatus = new JobStatus(
       createStatusDto.status,
       createStatusDto.colour,
       createStatusDto.companyId,
     );
-    return await this.jobTagRepository.createStatus(newStatus);
+    const result = await this.jobTagRepository.createStatus(newStatus);
+    //Update the company Array for kanban
+    await this.companyService.addJobStatus(
+      createStatusDto.companyId,
+      result._id,
+    );
+    return result;
   }
 
   async updateStatus(
@@ -775,6 +819,17 @@ export class JobService {
     if (!userExists) throw new NotFoundException('User not found');
 
     // Role stuff
+
+    const protectedStatuses = ['No status', 'Archive'];
+    const status = await this.getStatusByIdWithoutValidation(statusId);
+    if (status == null) throw new NotFoundException('Status not found');
+    for (const protectedStatus of protectedStatuses) {
+      if (ciEquals(protectedStatus, status.status)) {
+        throw new ConflictException(
+          'You cannot alter "No status" and "Archive"',
+        );
+      }
+    }
     return await this.jobTagRepository.updateStatus(statusId, updateStatus);
   }
 
@@ -783,6 +838,20 @@ export class JobService {
     if (!userExists) throw new NotFoundException('User not found');
 
     // Role stuff
+
+    const protectedStatuses = ['No status', 'Archive'];
+    const status = await this.getStatusByIdWithoutValidation(
+      deleteStatusDto.statusId,
+    );
+    if (status == null) throw new NotFoundException('Status not found');
+    for (const protectedStatus of protectedStatuses) {
+      if (ciEquals(protectedStatus, status.status)) {
+        throw new ConflictException(
+          'You cannot alter "No status" and "Archive"',
+        );
+      }
+    }
+
     return await this.jobTagRepository.deleteStatus(
       deleteStatusDto.statusId,
       deleteStatusDto.companyId,
