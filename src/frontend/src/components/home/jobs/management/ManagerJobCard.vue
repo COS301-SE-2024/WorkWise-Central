@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    v-model="managerJobCard"
-    :max-height="700"
-    :max-width="1000"
-    scrollable
-  >
+  <v-dialog v-model="managerJobCard" :max-height="700" :max-width="1000" scrollable>
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn

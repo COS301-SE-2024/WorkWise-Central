@@ -45,23 +45,17 @@
             <v-col class="text-center">
               <label class="font-weight-bold">Client Name</label>
               <v-spacer></v-spacer>
-              <small class="text-caption">
-                Holder Name
-              </small>
+              <small class="text-caption"> Holder Name </small>
             </v-col>
             <v-col class="text-center">
               <label class="font-weight-bold">Phone</label>
               <v-spacer></v-spacer>
-              <small class="text-caption">
-                Holder phone
-              </small>
+              <small class="text-caption"> Holder phone </small>
             </v-col>
             <v-col class="text-center">
               <label class="font-weight-bold">Email</label>
               <v-spacer></v-spacer>
-              <small class="text-caption">
-                Holder Email
-              </small>
+              <small class="text-caption"> Holder Email </small>
             </v-col>
 
             <v-divider>
@@ -117,7 +111,7 @@
                 </v-col>
               </v-row>
               <v-divider>
-                <h5> Add Job Comments</h5>
+                <h5>Add Job Comments</h5>
               </v-divider>
               <v-row>
                 <v-col ref="commentsSection">
@@ -125,7 +119,7 @@
                 </v-col>
               </v-row>
               <v-divider>
-                <h5> Add Job Notes</h5>
+                <h5>Add Job Notes</h5>
               </v-divider>
               <v-row>
                 <v-col ref="notesSection">
@@ -135,15 +129,15 @@
             </v-col>
           </v-col>
           <v-col sm="12" md="3">
-              <v-col ref="imagesSection">
-                <AttachImages :passedInJob="props.passedInJob" />
-              </v-col>
-              <v-col ref="checklistSection">
-                <JobChecklist :passedInJob="props.passedInJob" />
-              </v-col>
-              <v-col ref="inventorySection">
-                <LogInventory :passedInJob="props.passedInJob" />
-              </v-col>
+            <v-col ref="imagesSection">
+              <AttachImages :passedInJob="props.passedInJob" />
+            </v-col>
+            <v-col ref="checklistSection">
+              <JobChecklist :passedInJob="props.passedInJob" />
+            </v-col>
+            <v-col ref="inventorySection">
+              <LogInventory :passedInJob="props.passedInJob" />
+            </v-col>
           </v-col>
         </v-row>
       </v-card-text>

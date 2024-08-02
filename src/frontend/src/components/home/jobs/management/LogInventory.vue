@@ -26,7 +26,11 @@
           <div>
             <h5 class="pt-4">Log Inventory</h5>
             <v-container>
-              <v-row v-for="(item, index) in inventory" :key="index" class="d-flex align-center mb-3">
+              <v-row
+                v-for="(item, index) in inventory"
+                :key="index"
+                class="d-flex align-center mb-3"
+              >
                 <v-text-field
                   v-model="item.name"
                   label="Item Name"
