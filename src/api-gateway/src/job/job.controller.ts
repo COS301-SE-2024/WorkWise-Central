@@ -22,6 +22,8 @@ import {
   UpdateCommentDto,
   UpdateDtoResponse,
   UpdateJobDto,
+  UpdateStatus,
+  UpdateStatusDto,
 } from './dto/update-job.dto';
 import {
   ApiBearerAuth,
@@ -38,9 +40,13 @@ import mongoose, { Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
-import { CreatePriorityTagDto, CreateTagDto } from './dto/create-tag.dto';
+import {
+  CreatePriorityTagDto,
+  CreateStatusDto,
+  CreateTagDto,
+} from './dto/create-tag.dto';
 import { extractUserId, validateObjectId } from '../utils/Utils';
-import { DeleteTagDto } from './dto/edit-tag.dto';
+import { DeleteStatusDto, DeleteTagDto } from './dto/edit-tag.dto';
 import {
   JobAllResponseDetailedDto,
   JobAllResponseDto,
@@ -707,4 +713,91 @@ export class JobController {
       throw new InternalServerErrorException(`Job could not be updated`);
     }
   }*/
+
+  ///STATUS
+  @Get('status/:sid')
+  async getStatusById(@Headers() headers: any, @Param('sid') statusId: string) {
+    try {
+      validateObjectId(statusId);
+      const sId = new Types.ObjectId(statusId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.getStatusById(userId, sId),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+  @Get('status/all/:cid')
+  async findAllStatusInCompany(
+    @Headers() headers: any,
+    @Param('cid') cId: string,
+  ) {
+    try {
+      validateObjectId(cId);
+      const companyId = new Types.ObjectId(cId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.findAllStatusesInCompany(userId, companyId),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+  @Post('status/')
+  async createStatus(
+    @Headers() headers: any,
+    @Body() createStatusDto: CreateStatusDto,
+  ) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.createStatus(userId, createStatusDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @Patch('status/emp')
+  async updateStatus(
+    @Headers() headers: any,
+    @Body() updateStatusDto: UpdateStatusDto,
+  ) {
+    try {
+      const employeeId = new Types.ObjectId(updateStatusDto.employeeId);
+      const statusId = new Types.ObjectId(updateStatusDto.statusId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      const updateStatus: UpdateStatus = new UpdateStatus(updateStatusDto);
+      return {
+        data: await this.jobService.updateStatus(
+          userId,
+          employeeId,
+          statusId,
+          updateStatus,
+        ),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+  @Delete('status')
+  async deleteStatus(
+    @Headers() headers: any,
+    @Body() deleteStatusDto: DeleteStatusDto,
+  ) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.deleteStatus(userId, deleteStatusDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
 }
