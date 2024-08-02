@@ -17,16 +17,19 @@
       <v-card-text class="text-center">
         <v-row>
           <v-col sm="12" md="9">
-            <v-col class="text-center">
+            <v-divider>
               <h5>Description</h5>
+            </v-divider>
+            <v-col class="text-center">
               <v-spacer></v-spacer>
               <small class="text-caption">
                 {{ props.passedInJob.jobDescription }}
               </small>
             </v-col>
-            <v-divider></v-divider>
-            <v-col class="text-center">
+            <v-divider>
               <h5>Status</h5>
+            </v-divider>
+            <v-col class="text-center">
               <v-spacer></v-spacer>
               <small class="text-caption">
                 <v-chip :color="getStatusColor(props.passedInJob.status)" dark>
@@ -34,9 +37,37 @@
                 </v-chip>
               </small>
             </v-col>
-            <v-divider></v-divider>
+
+            <v-divider>
+              <h5>Client Details</h5>
+            </v-divider>
+
             <v-col class="text-center">
+              <label class="font-weight-bold">Client Name</label>
+              <v-spacer></v-spacer>
+              <small class="text-caption">
+                Holder Name
+              </small>
+            </v-col>
+            <v-col class="text-center">
+              <label class="font-weight-bold">Phone</label>
+              <v-spacer></v-spacer>
+              <small class="text-caption">
+                Holder phone
+              </small>
+            </v-col>
+            <v-col class="text-center">
+              <label class="font-weight-bold">Email</label>
+              <v-spacer></v-spacer>
+              <small class="text-caption">
+                Holder Email
+              </small>
+            </v-col>
+
+            <v-divider>
               <h5>Address</h5>
+            </v-divider>
+            <v-col class="text-center">
               <v-row class="text-center">
                 <v-col sm="6" md="3" offset-md="3">
                   <label class="font-weight-bold">City</label>
@@ -85,11 +116,17 @@
                   </small>
                 </v-col>
               </v-row>
+              <v-divider>
+                <h5> Add Job Comments</h5>
+              </v-divider>
               <v-row>
                 <v-col ref="commentsSection">
                   <AddComment :passedInJob="props.passedInJob" />
                 </v-col>
               </v-row>
+              <v-divider>
+                <h5> Add Job Notes</h5>
+              </v-divider>
               <v-row>
                 <v-col ref="notesSection">
                   <JobNotes :passedInJob="props.passedInJob" />
