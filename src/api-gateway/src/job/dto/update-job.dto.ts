@@ -18,7 +18,6 @@ import {
 } from 'class-validator';
 import { Types } from 'mongoose';
 import { Type } from 'class-transformer';
-import { JobStatus } from '../entities/job-status.entity';
 
 class UpdateAssignedEmployees extends PartialType(AssignedEmployees) {}
 class UpdateDetails extends PartialType(Details) {}
@@ -139,10 +138,35 @@ export class UpdateCommentDto {
 }
 
 export class UpdateStatusDto {
-  @IsOptional()
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  statusId: Types.ObjectId;
+
+  @IsNotEmpty()
   @IsString()
   status: string;
-  @IsOptional()
+
+  @IsNotEmpty()
+  @IsString()
+  @IsHexColor()
+  colour: string;
+}
+
+export class UpdateStatus {
+  constructor(updateStatusDto: UpdateStatusDto) {
+    this.status = updateStatusDto.status;
+    this.colour = updateStatusDto.colour;
+  }
+
+  @IsNotEmpty()
+  @IsString()
+  status: string;
+
+  @IsNotEmpty()
   @IsString()
   @IsHexColor()
   colour: string;

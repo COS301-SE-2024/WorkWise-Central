@@ -49,6 +49,10 @@ export class CreatePriorityTagDto {
 export class CreateStatusDto {
   @IsNotEmpty()
   @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
   companyId: Types.ObjectId;
 
   @IsNotEmpty()
