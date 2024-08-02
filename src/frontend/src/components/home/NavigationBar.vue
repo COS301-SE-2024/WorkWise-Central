@@ -120,31 +120,30 @@ export default defineComponent({
 
 <template>
   <v-app :theme="isdarkmode ? 'dark' : 'light'">
-    <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-background">
-      <v-app-bar-nav-icon @click="isVisible = !isVisible">
-        <v-icon>{{ isVisible ? 'fa: fa-solid fa-bars' : 'fa: fa-solid fa-bars' }}</v-icon>
-      </v-app-bar-nav-icon>
-      <CompanyMain />
-      <v-spacer></v-spacer>
-
-      <v-toolbar-title class="d-flex justify-center">
-        <v-label class="text-primary h4">Work</v-label>
-        <v-label class="text-secondary h4">Wise</v-label>
-      </v-toolbar-title>
-
-      <v-spacer class="d-none d-sm-flex"></v-spacer>
-
-      <div class="d-flex align-center">
-        <UserAvatar />
-        <v-icon
-          class="icon-padding mr-5"
-          @click="toggleDarkMode"
-          :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"
-        ></v-icon>
-      </div>
-    </v-app-bar>
-
     <v-app :theme="isdarkmode ? 'dark' : 'light'">
+      <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-background">
+        <v-app-bar-nav-icon @click="isVisible = !isVisible">
+          <v-icon>{{ isVisible ? 'fa: fa-solid fa-bars' : 'fa: fa-solid fa-bars' }}</v-icon>
+        </v-app-bar-nav-icon>
+        <CompanyMain />
+        <v-spacer></v-spacer>
+
+        <v-toolbar-title class="d-flex justify-center">
+          <v-label class="text-primary h4">Work</v-label>
+          <v-label class="text-secondary h4">Wise</v-label>
+        </v-toolbar-title>
+
+        <v-spacer class="d-none d-sm-flex"></v-spacer>
+
+        <div class="d-flex align-center">
+          <UserAvatar />
+          <v-icon
+            class="icon-padding mr-5"
+            @click="toggleDarkMode"
+            :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"
+          ></v-icon>
+        </div>
+      </v-app-bar>
       <v-navigation-drawer
         class="bg-background"
         app
