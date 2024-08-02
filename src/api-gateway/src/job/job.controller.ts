@@ -51,6 +51,8 @@ import {
   JobAllResponseDetailedDto,
   JobAllResponseDto,
   JobResponseDto,
+  JobStatusAllResponseDto,
+  JobStatusResponseDto,
   PriorityTagsAllResponseDto,
   TagsAllResponseDto,
 } from './dto/job-responses.dto';
@@ -729,6 +731,16 @@ export class JobController {
       throw e;
     }
   }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all Statuses in a company. Should not be used in kanban`,
+  })
+  @ApiOkResponse({
+    type: JobStatusAllResponseDto,
+    description: `An array of JobsStatuses`,
+  })
   @Get('status/all/:cid')
   async findAllStatusInCompany(
     @Headers() headers: any,
@@ -746,6 +758,16 @@ export class JobController {
       throw e;
     }
   }
+
+  @ApiOperation({
+    summary: 'Add a Job Status to a company',
+  })
+  @ApiCreatedResponse({
+    type: JobStatusResponseDto,
+    description: 'The created JobStatus object',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @Post('status/')
   async createStatus(
     @Headers() headers: any,
@@ -762,7 +784,17 @@ export class JobController {
     }
   }
 
-  @Patch('status/emp')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Change the attributes of a Status within a company`,
+  })
+  @ApiOkResponse({
+    type: JobResponseDto,
+    description: `The updated Status object`,
+  })
+  @ApiBody({ type: UpdateStatusDto })
+  @Patch('status/')
   async updateStatus(
     @Headers() headers: any,
     @Body() updateStatusDto: UpdateStatusDto,
@@ -785,6 +817,16 @@ export class JobController {
       throw e;
     }
   }
+
+  @ApiOperation({
+    summary: 'Remove a Job Status from a company',
+  })
+  @ApiResponse({
+    type: BooleanResponseDto,
+    description: 'Status successfully removed',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @Delete('status')
   async deleteStatus(
     @Headers() headers: any,
