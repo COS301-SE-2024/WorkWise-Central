@@ -1,0 +1,168 @@
+<template>
+  <v-dialog v-model="viewJobDialog" :max-height="800" :max-width="1000">
+    <template v-slot:activator="{ props: activatorProps }">
+      <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
+        <v-btn
+          text="View"
+          prepend-icon="fa:fa-solid fa-eye"
+          color="success"
+          v-bind="activatorProps"
+        ></v-btn>
+      </v-defaults-provider>
+    </template>
+    <v-card elevation="14" rounded="md">
+      <v-card-title>
+        {{ props.passedInJob.heading }}
+      </v-card-title>
+      <v-card-text class="text-center">
+        <v-col class="text-center">
+          <h5>Description</h5>
+          <v-spacer></v-spacer>
+          <small class="text-caption">
+            {{ props.passedInJob.jobDescription }}
+          </small>
+        </v-col>
+        <v-divider></v-divider>
+        <v-col class="text-center">
+          <h5>Status</h5>
+          <v-spacer></v-spacer>
+          <small class="text-caption">
+            <v-chip :color="getStatusColor(props.passedInJob.status)" dark>
+              {{ props.passedInJob.status }}
+            </v-chip>
+          </small>
+        </v-col>
+        <v-divider></v-divider>
+        <v-col class="text-center">
+          <h5>Address</h5>
+          <v-row class="text-center">
+            <v-col sm="6" md="3" offset-md="3">
+              <label class="font-weight-bold">City</label>
+              <v-spacer></v-spacer>
+              <small class="text-caption">
+                {{ props.passedInJob.city }}
+              </small>
+            </v-col>
+            <v-col sm="6" md="3">
+              <label class="font-weight-bold">Suburb</label>
+              <v-spacer></v-spacer>
+              <small class="text-caption">
+                {{ props.passedInJob.suburb }}
+              </small>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col sm="6" md="3" offset-md="3">
+              <label class="font-weight-bold">Street</label>
+              <v-spacer></v-spacer>
+              <small class="text-caption">
+                {{ props.passedInJob.street }}
+              </small>
+            </v-col>
+            <v-col sm="6" md="3">
+              <label class="font-weight-bold">Postal Code</label>
+              <v-spacer></v-spacer>
+              <small class="text-caption">
+                {{ props.passedInJob.postalCode }}
+              </small>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col sm="6" md="3" offset-md="3">
+              <label class="font-weight-bold">Complex</label>
+              <v-spacer></v-spacer>
+              <small class="text-caption">
+                {{ props.passedInJob.complex }}
+              </small>
+            </v-col>
+            <v-col sm="6" md="3">
+              <label class="font-weight-bold">House Number</label>
+              <v-spacer></v-spacer>
+              <small class="text-caption">
+                {{ props.passedInJob.houseNumber }}
+              </small>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col ref="imagesSection">
+          <AttachImages :passedInJob="props.passedInJob" />
+        </v-col>
+        <v-col ref="commentsSection">
+          <AddComment :passedInJob="props.passedInJob" />
+        </v-col>
+        <v-col ref="notesSection">
+          <JobNotes :passedInJob="props.passedInJob" />
+        </v-col>
+        <v-col ref="checklistSection">
+          <JobChecklist :passedInJob="props.passedInJob" />
+        </v-col>
+        <v-col ref="inventorySection">
+          <LogInventory :passedInJob="props.passedInJob" />
+          <v-divider></v-divider>
+        </v-col>
+      </v-card-text>
+      <v-card-actions>
+        <v-col class="pt-0 d-flex flex-column">
+          <v-btn color="error" @click="closeView">Close</v-btn>
+        </v-col>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script setup lang="ts">
+import { defineProps, ref, type Ref } from 'vue'
+import AttachImages from './AttachImages.vue'
+import AddComment from './AddComments.vue'
+import JobNotes from './JobNotes.vue'
+import JobChecklist from './JobChecklist.vue'
+import LogInventory from './LogInventory.vue'
+
+const props = defineProps({
+  passedInJob: {
+    type: Object,
+    required: true
+  }
+})
+
+const viewJobDialog = ref(false) // Dialog state
+
+const imagesSection = ref(null)
+const commentsSection = ref(null)
+const notesSection = ref(null)
+const checklistSection = ref(null)
+const inventorySection = ref(null)
+
+// Function to get the color based on job status
+const getStatusColor = (status: string): string => {
+  switch (status.toLowerCase()) {
+    case 'to do':
+      return 'blue'
+    case 'in progress':
+      return 'yellow'
+    case 'awaiting invoice':
+      return 'orange'
+    case 'awaiting payment':
+      return 'red'
+    case 'awaiting sign off':
+      return 'green'
+    default:
+      return 'grey'
+  }
+}
+
+// Function to scroll to a section
+const scrollToSection = (sectionRef: Ref<HTMLElement | null>) => {
+  const section = sectionRef.value
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  } else {
+    console.log('Section not found')
+  }
+}
+
+// Function to close the dialog
+const closeView = () => {
+  viewJobDialog.value = false
+}
+</script>
