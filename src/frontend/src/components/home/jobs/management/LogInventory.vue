@@ -47,10 +47,10 @@
                   hide-details
                 ></v-text-field>
 
-                <v-btn icon @click="deleteItem(index)">
+                <v-btn @click="deleteItem(index)">
                   <v-icon color="red" class="pt-4">{{ 'fa: fa-solid fa-trash' }}</v-icon>
                 </v-btn>
-                <v-btn icon @click="saveItem(index)">
+                <v-btn @click="saveItem(index)">
                   <v-icon color="success" class="pt-4">{{ 'fa: fa-solid fa-save' }}</v-icon>
                 </v-btn>
               </v-row>

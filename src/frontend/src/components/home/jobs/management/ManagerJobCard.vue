@@ -166,7 +166,5 @@ const cancelJob = () => {
 </script>
 
 <style scoped>
-.card-with-image-background {
-  background-color: #f5f5f5; /* Light grey color that blends well with most images */
-}
+
 </style>

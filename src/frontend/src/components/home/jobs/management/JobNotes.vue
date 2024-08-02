@@ -15,7 +15,7 @@
           ></v-text-field>
         </v-col>
         <v-col cols="1">
-          <v-btn icon @click="deleteNote(index)">
+          <v-btn @click="deleteNote(index)">
             <v-icon color="red" class="fa fa-trash pt-4"></v-icon>
           </v-btn>
         </v-col>
