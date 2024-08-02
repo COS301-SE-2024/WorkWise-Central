@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { currentDate } from '../../utils/Utils';
 
 @Schema()
 export class UserConfirmation {
@@ -8,8 +9,8 @@ export class UserConfirmation {
   surname: string;
   @Prop({ required: true, type: String })
   email: string;
-  @Prop({ required: true, type: Date, default: new Date() })
-  createdAt?: Date = new Date();
+  @Prop({ required: true, type: Date, default: currentDate() })
+  createdAt?: Date = currentDate();
   @Prop({ required: true, type: String })
   key: string;
 }

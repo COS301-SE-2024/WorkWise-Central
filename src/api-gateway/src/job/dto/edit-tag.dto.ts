@@ -39,3 +39,20 @@ export class DeleteTagDto {
   @IsMongoId()
   companyId: Types.ObjectId;
 }
+
+export class DeleteStatusDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsMongoId()
+  statusId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsMongoId()
+  companyId: Types.ObjectId;
+}

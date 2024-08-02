@@ -15,18 +15,15 @@ import {
   Put,
 } from '@nestjs/common';
 import { JobService } from './job.service';
-import {
-  CreateJobDto,
-  CreateJobResponseDto,
-  JobAllResponseDetailedDto,
-  JobAllResponseDto,
-} from './dto/create-job.dto';
+import { CreateJobDto, CreateJobResponseDto } from './dto/create-job.dto';
 import {
   AddCommentDto,
   RemoveCommentDto,
   UpdateCommentDto,
   UpdateDtoResponse,
   UpdateJobDto,
+  UpdateStatus,
+  UpdateStatusDto,
 } from './dto/update-job.dto';
 import {
   ApiBearerAuth,
@@ -41,13 +38,21 @@ import {
 } from '@nestjs/swagger';
 import mongoose, { Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
-import { JobResponseDto } from './entities/job.entity';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
-import { CreatePriorityTagDto, CreateTagDto } from './dto/create-tag.dto';
-import { extractUserId, validateObjectId } from '../utils/Utils';
-import { DeleteTagDto } from './dto/edit-tag.dto';
 import {
+  CreatePriorityTagDto,
+  CreateStatusDto,
+  CreateTagDto,
+} from './dto/create-tag.dto';
+import { extractUserId, validateObjectId } from '../utils/Utils';
+import { DeleteStatusDto, DeleteTagDto } from './dto/edit-tag.dto';
+import {
+  JobAllResponseDetailedDto,
+  JobAllResponseDto,
+  JobResponseDto,
+  JobStatusAllResponseDto,
+  JobStatusResponseDto,
   PriorityTagsAllResponseDto,
   TagsAllResponseDto,
 } from './dto/job-responses.dto';
@@ -99,15 +104,13 @@ export class JobController {
     description: `The ${className}'s Object of the created job`,
   })
   @Post('/create')
-  async create(
-    @Body() createJobDto: CreateJobDto,
-  ): Promise<CreateJobResponseDto> {
+  async create(@Body() createJobDto: CreateJobDto) {
     validateObjectId(createJobDto.assignedBy, 'assignedBy');
     if (createJobDto.companyId)
       validateObjectId(createJobDto.companyId, 'Company');
 
     try {
-      return await this.jobService.create(createJobDto);
+      return { data: await this.jobService.create(createJobDto) };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
@@ -148,15 +151,9 @@ export class JobController {
     @Headers() headers: any,
     @Param('cid') companyId: string,
   ) {
-    validateObjectId(companyId);
-    const decodedJwtAccessToken = this.jwtService.decode(
-      headers.authorization.replace(/^Bearer\s+/i, ''),
-    );
-    const userId: Types.ObjectId = decodedJwtAccessToken.sub;
-    if (!userId) {
-      throw new UnauthorizedException('Unauthorized, JWT required');
-    }
     try {
+      validateObjectId(companyId);
+      const userId = extractUserId(this.jwtService, headers);
       return {
         data: await this.jobService.getAllJobsInCompany(
           userId,
@@ -182,15 +179,9 @@ export class JobController {
     @Headers() headers: any,
     @Param('cid') companyId: string,
   ) {
-    validateObjectId(companyId);
-    const decodedJwtAccessToken = this.jwtService.decode(
-      headers.authorization.replace(/^Bearer\s+/i, ''),
-    );
-    const userId: Types.ObjectId = decodedJwtAccessToken.sub;
-    if (!userId) {
-      throw new UnauthorizedException('Unauthorized, JWT required');
-    }
     try {
+      const userId = extractUserId(this.jwtService, headers);
+      validateObjectId(companyId);
       return {
         data: await this.jobService.getAllDetailedJobsInCompany(
           userId,
@@ -213,16 +204,9 @@ export class JobController {
   })
   @Get('all/user/')
   async findAllForUser(@Headers() headers: any) {
-    const decodedJwtAccessToken = this.jwtService.decode(
-      headers.authorization.replace(/^Bearer\s+/i, ''),
-    );
-    const userId: Types.ObjectId = decodedJwtAccessToken.sub;
-    if (!userId) {
-      throw new UnauthorizedException('Unauthorized, JWT required');
-    }
-    validateObjectId(userId);
-
     try {
+      const userId = extractUserId(this.jwtService, headers);
+      validateObjectId(userId);
       return {
         data: await this.jobService.getAllJobsForUser(userId),
       };
@@ -245,14 +229,8 @@ export class JobController {
     @Headers() headers: any,
     @Param('eid') empId: string,
   ) {
-    const decodedJwtAccessToken = this.jwtService.decode(
-      headers.authorization.replace(/^Bearer\s+/i, ''),
-    );
-    const userId: Types.ObjectId = decodedJwtAccessToken.sub;
-    if (!userId) {
-      throw new UnauthorizedException('Unauthorized, JWT required');
-    }
     try {
+      const userId = extractUserId(this.jwtService, headers);
       validateObjectId(userId);
       validateObjectId(empId);
 
@@ -737,4 +715,131 @@ export class JobController {
       throw new InternalServerErrorException(`Job could not be updated`);
     }
   }*/
+
+  ///STATUS
+  @Get('status/:sid')
+  async getStatusById(@Headers() headers: any, @Param('sid') statusId: string) {
+    try {
+      validateObjectId(statusId);
+      const sId = new Types.ObjectId(statusId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.getStatusById(userId, sId),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all Statuses in a company. Should not be used in kanban`,
+  })
+  @ApiOkResponse({
+    type: JobStatusAllResponseDto,
+    description: `An array of JobsStatuses`,
+  })
+  @Get('status/all/:cid')
+  async findAllStatusInCompany(
+    @Headers() headers: any,
+    @Param('cid') cId: string,
+  ) {
+    try {
+      validateObjectId(cId);
+      const companyId = new Types.ObjectId(cId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.findAllStatusesInCompany(userId, companyId),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Add a Job Status to a company',
+  })
+  @ApiCreatedResponse({
+    type: JobStatusResponseDto,
+    description: 'The created JobStatus object',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Post('status/')
+  async createStatus(
+    @Headers() headers: any,
+    @Body() createStatusDto: CreateStatusDto,
+  ) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.createStatus(userId, createStatusDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Change the attributes of a Status within a company`,
+  })
+  @ApiOkResponse({
+    type: JobResponseDto,
+    description: `The updated Status object`,
+  })
+  @ApiBody({ type: UpdateStatusDto })
+  @Patch('status/')
+  async updateStatus(
+    @Headers() headers: any,
+    @Body() updateStatusDto: UpdateStatusDto,
+  ) {
+    try {
+      const employeeId = new Types.ObjectId(updateStatusDto.employeeId);
+      const statusId = new Types.ObjectId(updateStatusDto.statusId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      const updateStatus: UpdateStatus = new UpdateStatus(updateStatusDto);
+      return {
+        data: await this.jobService.updateStatus(
+          userId,
+          employeeId,
+          statusId,
+          updateStatus,
+        ),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Remove a Job Status from a company',
+  })
+  @ApiResponse({
+    type: BooleanResponseDto,
+    description: 'Status successfully removed',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Delete('status')
+  async deleteStatus(
+    @Headers() headers: any,
+    @Body() deleteStatusDto: DeleteStatusDto,
+  ) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.deleteStatus(userId, deleteStatusDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
 }

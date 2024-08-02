@@ -18,6 +18,7 @@ import { RoleModule } from '../role/role.module';
 import { JwtService } from '@nestjs/jwt';
 import { FileModule } from '../file/file.module';
 import { FileService } from '../file/file.service';
+import { JobModule } from '../job/job.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { FileService } from '../file/file.service';
     forwardRef(() => CompanyModule),
     forwardRef(() => RoleModule),
     forwardRef(() => FileModule),
+    forwardRef(() => JobModule),
 
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },

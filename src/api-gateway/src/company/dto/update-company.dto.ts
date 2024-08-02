@@ -1,6 +1,9 @@
 import { Address, ContactDetails } from '../entities/company.entity';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import {
+  IsArray,
+  IsMongoId,
+  IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
@@ -10,6 +13,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { RegistrationNumber } from '../../utils/Custom Validators/RegistrationNumber';
+import { Types } from 'mongoose';
 
 class UpdateContactDetails extends PartialType(ContactDetails) {}
 class UpdateAddress extends PartialType(Address) {}
@@ -55,6 +59,24 @@ export class UpdateCompanyDto {
   @ApiProperty()
   @IsOptional()
   private?: boolean;
+}
+
+export class UpdateCompanyJobStatusesDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+  @IsNotEmpty()
+  @IsArray()
+  @IsMongoId({ each: true })
+  jobStatuses: Types.ObjectId[];
+}
+
+export class UpdateCompanyJobStatuses {
+  constructor(updateCompanyJobStatusesDto: UpdateCompanyJobStatusesDto) {
+    this.jobStatuses = updateCompanyJobStatusesDto.jobStatuses;
+  }
+
+  jobStatuses: Types.ObjectId[];
 }
 
 export class UpdateCompanyLogoDto {
