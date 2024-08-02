@@ -93,17 +93,6 @@ export class JobService {
     return result != null;
   }
 
-  /*  async GetJobWithEmployees(jobId: Types.ObjectId) {
-    const job: Job = await this.findJobById(jobId);
-    const employees = [];
-    for (const assignedEmployee of job.assignedEmployees) {
-      employees.push(this.employeeService.findOne(assignedEmployee));
-    }
-    //Strip everything except profile details
-    //Create some Dto specifically showing Job+ Employee details array?
-    //return that dto
-  }*/
-
   async update(
     userId: Types.ObjectId,
     id: Types.ObjectId,
