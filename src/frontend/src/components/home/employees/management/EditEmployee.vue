@@ -196,14 +196,13 @@ export default {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       try {
-        const sub_res = await axios(
-          apiURL +
-            `employee/${this.editedItem.employeeId}/company/${localStorage.getItem('currentCompany')}`,
+        const sub_res = await axios.get(
+          apiURL + `employee/listOther/${localStorage.getItem('employeeId')}`,
           config
         )
         for (let i = 0; i < sub_res.data.data.length; i++) {
           const employee_details = await axios.get(
-            apiURL + `employee/joined/id/${sub_res.data.data[i]._id}`,
+            apiURL + `employee/detailed/id/${sub_res.data.data[i]._id}`,
             config
           )
 
