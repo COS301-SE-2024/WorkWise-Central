@@ -22,7 +22,7 @@ export class UserJoinRequest {
   companyName?: string;
 
   @Prop({ required: false, type: SchemaTypes.ObjectId, ref: Role.name })
-  roleId?: Types.ObjectId; //Still not sure about this...
+  roleId?: Types.ObjectId;
 
   @Prop({ required: true, type: String, default: 'Worker' })
   roleName?: string = 'Worker';

@@ -1,5 +1,11 @@
 import { Types } from 'mongoose';
-import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsMongoId,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class UserJoinRequestDto {
   /*  @IsNotEmpty()
@@ -23,6 +29,22 @@ export class UserJoinRequestDto {
   @IsOptional()
   @IsString()
   companyName?: string;
+}
+
+export class UserInviteRequestDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsEmail()
+  emailToInvite: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  roleId: Types.ObjectId;
 }
 
 export class CancelRequestDto {
