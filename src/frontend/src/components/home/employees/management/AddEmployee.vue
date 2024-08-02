@@ -155,7 +155,7 @@ export default defineComponent({
         console.log(sub_res)
         for (let i = 0; i < sub_res.data.data.length; i++) {
           const employee_details = await axios.get(
-            apiURL + `employee/joined/id/${sub_res.data.data[i]._id}`,
+            apiURL + `employee/detailed/id/${sub_res.data.data[i]._id}`,
             config
           )
 

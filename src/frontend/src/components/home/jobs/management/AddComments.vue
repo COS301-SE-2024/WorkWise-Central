@@ -1,7 +1,5 @@
 <template>
   <div>
-    <v-divider></v-divider>
-    <h5 class="pt-4">Add job comments</h5>
     <v-container>
       <v-row v-for="(comment, index) in comments" :key="index" class="d-flex align-center mb-3">
         <v-col cols="2" class="pt-6">
@@ -21,7 +19,7 @@
           ></v-text-field>
         </v-col>
         <v-col cols="1">
-          <v-btn icon @click="deleteComment(index)">
+          <v-btn @click="deleteComment(index)">
             <v-icon color="red" class="fa fa-trash pt-4"></v-icon>
           </v-btn>
         </v-col>
@@ -36,7 +34,7 @@
         hide-details
         prepend-icon="fa: fa-solid fa-comment"
       ></v-textarea>
-      <v-btn color="success" @click="comment">Comment</v-btn>
+      <v-btn color="success" @click="comment" prepend-icon="mdi-comment-plus">Comment</v-btn>
     </v-container>
   </div>
 </template>

@@ -8,9 +8,34 @@ import { Company } from '../company/entities/company.entity';
 import { Team } from '../team/entities/team.entity';
 import { isNotDeleted } from '../shared/soft-delete';
 import { Comment } from './entities/job.entity';
+import { currentDate } from '../utils/Utils';
 
 @Injectable()
 export class JobRepository {
+  jobTasks = {
+    path: 'taskList',
+    populate: [
+      {
+        path: 'assignedEmployees',
+        model: Employee.name,
+      },
+    ],
+  };
+
+  jobAssignedEmployees = {
+    path: 'assignedEmployees',
+    populate: [
+      {
+        path: 'employeeIds',
+        model: Employee.name,
+      },
+      {
+        path: 'teamId',
+        model: Team.name,
+      },
+    ],
+  };
+
   defaultPopulatedFields: string[] = ['tags', 'priorityTag', 'history'];
   constructor(
     @InjectModel(Job.name)
@@ -41,15 +66,11 @@ export class JobRepository {
         $and: [{ _id: identifier }, isNotDeleted],
       })
       .populate(populatedFields)
-      .populate(this.defaultPopulatedFields)
       .lean();
   }
 
   async findAll() {
-    return this.jobModel
-      .find(isNotDeleted)
-      .populate(this.defaultPopulatedFields)
-      .lean();
+    return this.jobModel.find(isNotDeleted).lean();
   }
 
   async findAllInCompany(companyId: Types.ObjectId) {
@@ -57,11 +78,7 @@ export class JobRepository {
       $and: [{ companyId: companyId }, isNotDeleted],
     };
 
-    return this.jobModel
-      .find(filter)
-      .populate(this.defaultPopulatedFields)
-      .lean()
-      .exec();
+    return this.jobModel.find(filter).lean().exec();
   }
 
   jobComments = {
@@ -74,30 +91,6 @@ export class JobRepository {
       {
         path: 'companyId',
         model: Company.name,
-      },
-    ],
-  };
-
-  jobTasks = {
-    path: 'taskList',
-    populate: [
-      {
-        path: 'assignedEmployees',
-        model: Employee.name,
-      },
-    ],
-  };
-
-  jobAssignedEmployees = {
-    path: 'assignedEmployees',
-    populate: [
-      {
-        path: 'employeeIds',
-        model: Employee.name,
-      },
-      {
-        path: 'teamId',
-        model: Team.name,
       },
     ],
   };
@@ -121,7 +114,6 @@ export class JobRepository {
       .populate(this.jobComments)
       .populate(this.jobAssignedEmployees)
       .populate(this.jobTasks)
-      .populate(this.defaultPopulatedFields)
       .lean()
       .exec();
   }
@@ -140,7 +132,7 @@ export class JobRepository {
         {
           $and: [{ _id: id }, isNotDeleted],
         },
-        { $set: { ...updateJobDto }, updatedAt: new Date() },
+        { $set: { ...updateJobDto }, updatedAt: currentDate() },
         { new: true },
       )
       .lean();
@@ -152,7 +144,10 @@ export class JobRepository {
         $and: [{ _id: id }, { companyId: companyId }, isNotDeleted],
       })
       .lean();
-    if (result != null && result.companyId.equals(companyId)) {
+    if (
+      result != null &&
+      result.companyId.toString() === companyId.toString()
+    ) {
       return result;
     } else {
       return null;
@@ -165,7 +160,7 @@ export class JobRepository {
         {
           $and: [{ _id: id }, isNotDeleted],
         },
-        { $set: { deletedAt: new Date() } },
+        { $set: { deletedAt: currentDate() } },
       )
       .lean();
 
@@ -173,11 +168,7 @@ export class JobRepository {
   }
 
   async findOne(id: Types.ObjectId) {
-    return await this.jobModel
-      .findOne({ _id: id })
-      .populate(this.defaultPopulatedFields)
-      .lean()
-      .exec();
+    return await this.jobModel.findOne({ _id: id }).lean().exec();
   }
 
   //Specific endpoints
@@ -189,11 +180,7 @@ export class JobRepository {
         this.isNotDeleted,
       ],
     };
-    return await this.jobModel
-      .find(filter)
-      .populate(this.defaultPopulatedFields)
-      .lean()
-      .exec();
+    return await this.jobModel.find(filter).lean().exec();
   }
 
   async findAllForEmployeeDetailed(employeeId: Types.ObjectId) {
@@ -212,7 +199,6 @@ export class JobRepository {
     return await this.jobModel
       .find(filter)
       .populate(fieldsToPopulate)
-      .populate(this.defaultPopulatedFields)
       .lean()
       .exec();
   }
@@ -228,7 +214,7 @@ export class JobRepository {
             isNotDeleted,
           ],
         },
-        { $push: { assignedEmployees: employeeId }, updatedAt: new Date() },
+        { $push: { assignedEmployees: employeeId }, updatedAt: currentDate() },
         {
           new: true,
         },

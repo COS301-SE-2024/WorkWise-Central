@@ -782,7 +782,7 @@ export default {
 
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/joined/all/${localStorage['currentCompany']}`,
+          apiURL + `employee/detailed/all/${localStorage['currentCompany']}`,
           config
         )
 

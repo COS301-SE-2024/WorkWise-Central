@@ -23,7 +23,9 @@ import {
 } from './dto/create-company.dto';
 import {
   UpdateCompanyDto,
+  UpdateCompanyJobStatusesDto,
   UpdateCompanyLogoDto,
+  UpdateCompanyJobStatuses,
 } from './dto/update-company.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
@@ -56,6 +58,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { JobStatusAllResponseDto } from '../job/dto/job-responses.dto';
 
 const className = 'Company';
 
@@ -381,6 +384,69 @@ export class CompanyController {
         'Internal Server Error',
         HttpStatus.SERVICE_UNAVAILABLE,
       );
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all Statuses in a company`,
+  })
+  @ApiOkResponse({
+    type: JobStatusAllResponseDto,
+    description: `An array of JobsStatuses`,
+  })
+  @Get('status/all/:cid')
+  async findAllStatusInCompany(
+    @Headers() headers: any,
+    @Param('cid') cId: string,
+  ) {
+    try {
+      validateObjectId(cId);
+      const companyId = new Types.ObjectId(cId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.companyService.findAllStatusesInCompany(
+          userId,
+          companyId,
+        ),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Update the order of Job Statuses in company, this will be used for the kanban`,
+    description: '',
+  })
+  @ApiOkResponse({
+    type: JobStatusAllResponseDto,
+    description: `The updated array`,
+  })
+  @ApiBody({ type: UpdateCompanyJobStatusesDto })
+  @Patch('statuses')
+  async updateStatusOrder(
+    @Headers() headers: any,
+    @Body() updateCompanyJobStatusesDto: UpdateCompanyJobStatusesDto,
+  ) {
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      const statusArr = new UpdateCompanyJobStatuses(
+        updateCompanyJobStatusesDto,
+      );
+      return {
+        data: await this.companyService.updateCompanyStatuses(
+          userId,
+          updateCompanyJobStatusesDto.employeeId,
+          statusArr,
+        ),
+      };
+    } catch (e) {
+      throw e;
     }
   }
 }

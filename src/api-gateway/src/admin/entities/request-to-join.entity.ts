@@ -3,6 +3,7 @@ import { SchemaTypes, Types } from 'mongoose';
 import { CreateUserRequestDto } from '../../users/dto/create-user-request.dto';
 import { User } from '../../users/entities/user.entity';
 import { Role } from '../../role/entity/role.entity';
+import { currentDate } from '../../utils/Utils';
 
 const ONEWEEK = 604800;
 
@@ -21,8 +22,13 @@ export class UserJoinRequest {
   @Prop({ required: false, type: String })
   companyName?: string;
 
-  @Prop({ required: false, type: SchemaTypes.ObjectId, ref: Role.name })
-  roleId?: Types.ObjectId; //Still not sure about this...
+  @Prop({
+    required: false,
+    type: SchemaTypes.ObjectId,
+    ref: Role.name,
+    default: null,
+  })
+  roleId?: Types.ObjectId = null; //Still not sure about this...
 
   @Prop({ required: true, type: String, default: 'Worker' })
   roleName?: string = 'Worker';
@@ -30,7 +36,7 @@ export class UserJoinRequest {
   @Prop({ required: true, type: Types.ObjectId, ref: User.name })
   userToJoin: Types.ObjectId;
 
-  @Prop({ required: true, type: Date, default: new Date() })
+  @Prop({ required: true, type: Date, default: currentDate() })
   createdAt: Date = new Date();
 }
 

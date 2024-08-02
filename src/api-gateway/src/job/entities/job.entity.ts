@@ -7,6 +7,7 @@ import { Company } from '../../company/entities/company.entity';
 import { Employee } from '../../employee/entities/employee.entity';
 import { Team } from '../../team/entities/team.entity';
 import { JobTag } from './job-tag.entity';
+import { currentDate } from '../../utils/Utils';
 
 export class Address {
   //They are optional for flexibility
@@ -133,6 +134,18 @@ export class History {
 
 @Schema()
 export class Comment {
+  constructor(
+    employeeId: Types.ObjectId,
+    comment: string,
+    edited: boolean,
+    date: Date,
+  ) {
+    this.employeeId = employeeId;
+    this.comment = comment;
+    this.edited = edited;
+    this.date = date;
+  }
+
   @ApiProperty()
   @Prop({
     type: SchemaTypes.ObjectId,
@@ -154,8 +167,8 @@ export class Comment {
   edited: boolean = false;
 
   @ApiProperty()
-  @Prop({ type: Date, required: false, default: new Date() })
-  date?: Date = new Date();
+  @Prop({ type: Date, required: false, default: currentDate() })
+  date?: Date = currentDate();
 }
 
 @Schema()
@@ -164,8 +177,6 @@ export class Job {
     //Object.assign(this, createJobDto);
     if (createJobDto.companyId) this.companyId = createJobDto.companyId;
     if (createJobDto.clientId) this.clientId = createJobDto.clientId;
-    if (createJobDto.clientUsername)
-      this.clientUsername = createJobDto.clientUsername;
     if (createJobDto.assignedBy) this.assignedBy = createJobDto.assignedBy;
     if (createJobDto.assignedEmployees)
       this.assignedEmployees = createJobDto.assignedEmployees;
@@ -179,7 +190,7 @@ export class Job {
     if (createJobDto.comments) this.comments = createJobDto.comments;
     if (createJobDto.tags) this.tags = createJobDto.tags;
     if (createJobDto.priorityTag) this.priorityTag = createJobDto.priorityTag;
-    this.createdAt = new Date();
+    this.createdAt = currentDate();
   }
 
   @ApiProperty()
@@ -191,12 +202,13 @@ export class Job {
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Client.name })
-  clientId?: Types.ObjectId;
-
-  @ApiProperty()
-  @Prop({ required: false, default: `Client-${Date.now()}` })
-  clientUsername?: string;
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: false,
+    ref: Client.name,
+    default: null,
+  })
+  clientId?: Types.ObjectId = null;
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Employee.name })
@@ -210,9 +222,13 @@ export class Job {
   })
   assignedEmployees?: AssignedEmployees = new AssignedEmployees();
 
-  @ApiProperty()
+  /*  @ApiProperty()
   @Prop({ type: String, required: true, default: 'To do' })
-  status: string = 'To do';
+  status: string = 'To do';*/
+
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: false, default: null })
+  status: Types.ObjectId = null;
 
   @ApiProperty()
   @Prop({
@@ -228,8 +244,9 @@ export class Job {
     type: SchemaTypes.ObjectId,
     required: false,
     ref: JobTag.name,
+    default: null,
   })
-  priorityTag?: Types.ObjectId;
+  priorityTag?: Types.ObjectId = null;
 
   @ApiProperty()
   @Prop({ type: String, required: false, default: null })
@@ -264,8 +281,8 @@ export class Job {
   comments?: Comment[] = [];
 
   @ApiProperty()
-  @Prop({ required: false, default: new Date() })
-  public createdAt: Date = new Date();
+  @Prop({ required: false, default: currentDate() })
+  public createdAt: Date = currentDate();
 
   @ApiProperty()
   @Prop({ required: false })
@@ -276,131 +293,49 @@ export class Job {
   public deletedAt?: Date;
 }
 
-export class JobApiObject {
-  @ApiProperty()
-  _id: Types.ObjectId;
-
-  @ApiProperty()
-  companyId: Types.ObjectId;
-
-  @ApiProperty()
-  clientId?: Types.ObjectId;
-
-  @ApiProperty()
-  clientUsername?: string;
-
-  @ApiProperty()
-  assignedBy: Types.ObjectId;
-
-  @ApiProperty()
-  assignedEmployees?: AssignedEmployees;
-
-  @ApiProperty()
-  status: string = 'To do';
-
-  @ApiProperty()
-  tags?: Types.ObjectId[];
-
-  @ApiProperty()
-  priorityTag?: Types.ObjectId;
-
-  @ApiProperty()
-  attachments: string[];
-
-  @ApiProperty()
-  details: Details;
-
-  @ApiProperty()
-  recordedDetails?: RecordedDetails;
-
-  @ApiProperty()
-  clientFeedback?: ClientFeedback;
-
-  @ApiProperty()
-  taskList?: Task[];
-
-  @ApiProperty()
-  history: History[];
-
-  @ApiProperty()
-  comments?: Comment[];
-
-  @ApiProperty()
-  public createdAt: Date;
-
-  @ApiProperty()
-  public updatedAt: Date;
-}
-
-export class JobApiDetailedObject {
-  @ApiProperty()
-  _id: Types.ObjectId;
-
-  @ApiProperty()
-  company: Company;
-
-  @ApiProperty()
-  client?: Client;
-
-  @ApiProperty()
-  clientUsername?: string;
-
-  @ApiProperty()
-  assignedBy: Employee;
-
-  @ApiProperty()
-  assignedEmployees?: AssignedEmployees;
-
-  @ApiProperty()
-  status: string = 'To do';
-
-  @ApiProperty()
-  tags?: Types.ObjectId[];
-
-  @ApiProperty()
-  priorityTag?: Types.ObjectId;
-
-  @ApiProperty()
-  attachments: string[];
-
-  @ApiProperty()
-  details: Details;
-
-  @ApiProperty()
-  recordedDetails?: RecordedDetails;
-
-  @ApiProperty()
-  clientFeedback?: ClientFeedback;
-
-  @ApiProperty()
-  taskList?: {
-    name: string;
-    status: string;
-    assignedEmployees?: Employee[];
-  };
-
-  @ApiProperty()
-  comments?: {
-    employeeId: Employee;
-    comment: string;
-    date?: Date;
-  }[];
-
-  @ApiProperty()
-  history: History[];
-
-  @ApiProperty()
-  public createdAt: Date;
-
-  @ApiProperty()
-  public updatedAt: Date;
-}
-
-export class JobResponseDto {
-  constructor(data: JobApiObject) {
-    this.data = data;
-  }
-  data: JobApiObject;
-}
-
 export const JobSchema = SchemaFactory.createForClass(Job);
+
+const defaultPopulatedFields = ['tags', 'priorityTag', 'history'];
+const jobTasks = {
+  path: 'taskList',
+  populate: [
+    {
+      path: 'assignedEmployees',
+      model: Employee.name,
+    },
+  ],
+};
+const jobAssignedEmployees = {
+  path: 'assignedEmployees',
+  populate: [
+    {
+      path: 'employeeIds',
+      model: Employee.name,
+    },
+    {
+      path: 'teamId',
+      model: Team.name,
+    },
+  ],
+};
+const employeeComments = {
+  path: 'comments',
+  populate: [
+    {
+      path: 'employeeId',
+      model: Employee.name,
+    },
+  ],
+};
+
+const autoPopulatedFields = function (next: any) {
+  this.populate(defaultPopulatedFields);
+  this.populate(jobTasks);
+  this.populate(jobAssignedEmployees);
+  this.populate(employeeComments);
+  next();
+};
+
+JobSchema.pre('find', autoPopulatedFields)
+  .pre('findOne', autoPopulatedFields)
+  .pre('findOneAndUpdate', autoPopulatedFields);
