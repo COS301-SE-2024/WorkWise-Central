@@ -4,16 +4,14 @@ import { FlattenMaps, Model, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { currentDate } from '../utils/Utils';
-import { JobStatus } from '../job/entities/job-status.entity';
-import { isNotDeleted } from '../shared/soft-delete';
 
 @Injectable()
 export class CompanyRepository {
   constructor(
     @InjectModel(Company.name) private readonly companyModel: Model<Company>,
 
-    @InjectModel(JobStatus.name)
-    private jobStatusModel: Model<JobStatus>,
+    /*    @InjectModel(JobStatus.name)
+    private jobStatusModel: Model<JobStatus>,*/
   ) {}
 
   async save(company: Company) {
@@ -266,24 +264,4 @@ export class CompanyRepository {
       .lean()
       .exec();
   }
-
-  ///STATUS
-  //TODO: URGENT
-  /*  async addDefaultStatuses(companyId: Types.ObjectId, statusArr: JobStatus[]) {
-    //'No status' and 'Archive'
-    const updatedCompany = await this.companyModel.findOneAndUpdate({ _id: companyId, isNotDeleted },{ $push: }  )
-
-  }
-
-  async addStatus(status: JobStatus) {
-    const newStatus = await this.jobStatusModel.create(status);
-    return await newStatus.save();
-  }
-
-  async updateStatus(
-    statusId: Types.ObjectId,
-    updateStatusDto: UpdateStatusDto,
-  ) {}
-
-  async removeStatus(statusId: JobStatus, companyId: Types.ObjectId) {}*/
 }

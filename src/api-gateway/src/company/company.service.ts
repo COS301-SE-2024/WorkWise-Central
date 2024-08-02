@@ -24,6 +24,7 @@ import { UsersService } from '../users/users.service';
 import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
 import { Employee } from '../employee/entities/employee.entity';
 import { FileService } from '../file/file.service';
+import { JobService } from '../job/job.service';
 
 @Injectable()
 export class CompanyService {
@@ -41,6 +42,9 @@ export class CompanyService {
 
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
+
+    @Inject(forwardRef(() => JobService))
+    private readonly jobService: JobService,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto) {
@@ -69,6 +73,9 @@ export class CompanyService {
     //Create Default role in company
     console.log('Create Default Role in Company');
     await this.roleService.createDefaultRoles(createdCompany._id);
+
+    //Create Default JobStatuses in company
+    await this.jobService.createDefaultStatuses(createdCompany._id);
 
     //Assign Owner to user
     console.log('Assign Owner to user');
