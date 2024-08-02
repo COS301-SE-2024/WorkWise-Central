@@ -26,8 +26,8 @@
       <v-card-text>
         <v-form ref="form" v-model="valid" @submit.prevent="handleSubmit">
           <v-col>
-            <v-col>
-              <v-col>
+            <v-row>
+              <v-col :cols="12">
                 <small
                   class="text-caption font-weight-regular"
                   style="font-family: Nunito, sans-serif"
@@ -40,12 +40,46 @@
                   placeholder="Employee Username"
                   rounded="md"
                   required
+                  data-testid="username-textfield"
                 ></v-text-field>
               </v-col>
-            </v-col>
+
+              <v-col :cols="12">
+                <v-select
+                  clearable
+                  label="Company Role"
+                  hint="Select the role you'd like to change this employee to"
+                  persistent-hint
+                  @update:modelValue="change_roles"
+                  :items="roleItems"
+                  item-value="roleId"
+                  item-title="roleName"
+                  v-model="req_obj2.roleId"
+                  bg-color="background"
+                  variant="solo"
+                  data-testid="role-select"
+                ></v-select>
+              </v-col>
+              <v-col :cols="12">
+                <v-select
+                  clearable
+                  label="Superior"
+                  hint="Select the employee you'd like to be superior of this employee"
+                  persistent-hint
+                  @update:modelValue="selected_supirior"
+                  :items="subordinateItemNames"
+                  v-model="req_obj2.superiorId"
+                  item-value="employeeId"
+                  item-title="name"
+                  bg-color="background"
+                  variant="solo"
+                  data-testid="superior-select"
+                ></v-select>
+              </v-col>
+            </v-row>
 
             <v-col cols="12" md="12" xs="3" sm="6" align="center">
-              <Toast />
+              <Toast position="top-center" />
               <v-btn
                 color="success"
                 rounded="md"
@@ -56,7 +90,7 @@
                 variant="text"
                 :disabled="click_create_client"
                 style="font-family: Nunito, sans-serif"
-                >Add
+                >Add<v-icon icon="fa:fa-solid fa-plus" color="success" size="small" end></v-icon>
               </v-btn>
             </v-col>
           </v-col>
@@ -70,6 +104,7 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
+import type { EmployeeInformation2, RoleItem, Role } from '@/components/home/employees/types'
 // import router from '@/router'
 export default defineComponent({
   name: 'RegisterCompanyModal',
@@ -81,6 +116,8 @@ export default defineComponent({
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     valid: false,
     dialog: false,
+    roleItems: [] as RoleItem[],
+    subordinateItemNames: [] as EmployeeInformation2[],
     isdarkmode: localStorage['theme'] !== 'false',
     click_create_client: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
@@ -95,10 +132,72 @@ export default defineComponent({
     req_obj2: {
       adminId: localStorage['employeeId'],
       currentCompany: localStorage['currentCompany'],
-      newUserUsername: ''
+      newUserUsername: '',
+      superiorId: '',
+      roleId: ''
     }
   }),
   methods: {
+    selected_supirior() {
+      console.log(this.req_obj2.superiorId)
+    },
+    change_roles() {
+      console.log(this.req_obj2.roleId)
+    },
+    async loadSubordinates() {
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const sub_res = await axios(
+          apiURL + `company/all/employees/${localStorage.getItem('currentCompany')}`,
+          config
+        )
+        console.log(sub_res)
+        for (let i = 0; i < sub_res.data.data.length; i++) {
+          const employee_details = await axios.get(
+            apiURL + `employee/joined/id/${sub_res.data.data[i]._id}`,
+            config
+          )
+
+          console.log(employee_details.data)
+
+          let company_employee: EmployeeInformation2 = {
+            name:
+              employee_details.data.data.userId.personalInfo.firstName +
+              ' ' +
+              employee_details.data.data.userId.personalInfo.surname +
+              ' (' +
+              employee_details.data.data.roleId.roleName +
+              ')',
+            employeeId: employee_details.data.data._id
+          }
+
+          this.subordinateItemNames.push(company_employee)
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    },
+    async loadRoles() {
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      try {
+        let roles_response = await axios.get(
+          apiURL + `role/all/${localStorage['currentCompany']}`,
+          config
+        )
+        let roles_data: Role[] = roles_response.data.data
+        for (let i = 0; i < roles_data.length; i++) {
+          this.roleItems.push({
+            roleName: roles_data[i].roleName,
+            roleId: roles_data[i]._id
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    },
     async handleSubmit() {
       const config = {
         headers: {
@@ -145,6 +244,8 @@ export default defineComponent({
   mounted() {
     this.req_obj2.adminId = localStorage['employeeId']
     this.req_obj2.currentCompany = localStorage['currentCompany']
+    this.loadRoles()
+    this.loadSubordinates()
   }
 })
 </script>

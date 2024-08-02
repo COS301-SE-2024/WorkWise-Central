@@ -1,32 +1,42 @@
 <template>
-  <div :class="menuContainerClass">
-    <Menu :model="items" :class="menuClass">
-      <template #start>
-        <span class="inline-flex items-center gap-1 px-2 py-4">
-          <span class="text-xl font-semibold">Settings</span>
-        </span>
-      </template>
-      <template #submenulabel="{ item }">
-        <span class="text-primary font-bold">{{ item.label }}</span>
-      </template>
-      <template #item="{ item, props }">
-        <a v-ripple class="flex items-center" v-bind="props.action" @click="navigate(item.route)">
-          <span :class="item.icon" />
-          <span>{{ item.label }}</span>
-        </a>
-      </template>
-    </Menu>
-  </div>
+  <v-card class="elevation-0">
+    <v-list class="bg-cardColor">
+      <v-list-subheader class="text-center">User Settings</v-list-subheader>
+      <!-- Render the list items -->
+      <v-list-item-group>
+        <template v-for="(item, i) in items" :key="i">
+          <!-- Handle sections with nested items -->
+          <template v-if="item.items">
+            <v-list-item-group v-for="(subItem, j) in item.items" :key="j">
+              <v-list-item @click="navigate(subItem.route)">
+                <template v-slot:prepend>
+                  <v-icon :icon="subItem.icon"></v-icon>
+                </template>
+                <v-list-item-title>{{ subItem.label }}</v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
+          </template>
+
+          <!-- Handle regular items -->
+          <template v-else>
+            <v-list-item @click="navigate(item.route)">
+              <template v-slot:prepend>
+                <v-icon :icon="item.icon"></v-icon>
+              </template>
+              <v-list-item-title>{{ item.label }}</v-list-item-title>
+            </v-list-item>
+          </template>
+        </template>
+      </v-list-item-group>
+    </v-list>
+  </v-card>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import Menu from 'primevue/menu'
 
 const router = useRouter()
-
-const theme = ref('light') // Assume the theme is stored in a reactive variable
 
 const navigate = (route) => {
   if (route) {
@@ -36,58 +46,31 @@ const navigate = (route) => {
 
 const items = ref([
   {
-    separator: true
-  },
-  {
     label: 'User',
     items: [
       {
         label: 'Personal Information',
-        icon: 'fa fa-solid fa-user',
+        icon: 'fa: fa-solid fa-user',
         route: '/userSettings'
       },
       {
         label: 'Preferences',
-        icon: 'fa fa-solid fa-sliders-h',
+        icon: 'fa: fa-solid fa-sliders-h',
         route: '/preferenceSettings'
       },
       {
         label: 'Notifications',
-        icon: 'fa fa-solid fa-bell',
+        icon: 'fa: fa-solid fa-bell',
         route: '/notificationSettings'
       }
     ]
   }
 ])
-
-const menuClass = computed(() => ({
-  'bg-light': theme.value === 'light',
-  'bg-dark': theme.value === 'dark'
-}))
-
-const menuContainerClass = computed(() => ({
-  'flex justify-center': true,
-  'bg-light-page': theme.value === 'light',
-  'bg-dark-page': theme.value === 'dark'
-}))
 </script>
 
 <style scoped>
-.bg-light {
-  background-color: #f7f8f9; /* Light theme menu background color */
-  color: #4c9fc3; /* Light theme text color */
-}
-
-.bg-dark {
-  background-color: #161a1d; /* Dark theme menu background color */
-  color: #b6c2cf; /* Dark theme text color */
-}
-
-.bg-light-page {
-  background-color: #f1f2f4; /* Light theme page background color */
-}
-
-.bg-dark-page {
-  background-color: #22272b; /* Dark theme page background color */
+/* Optional: Custom hover effect */
+.v-list-item:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* Change the color as needed */
 }
 </style>

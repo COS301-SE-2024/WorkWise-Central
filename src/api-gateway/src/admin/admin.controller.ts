@@ -16,7 +16,7 @@ import {
   UserInviteRequestDto,
   UserJoinRequestDto,
 } from '../users/dto/request-to-join.dto';
-import mongoose, { Types } from 'mongoose';
+import { Types } from 'mongoose';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -28,7 +28,7 @@ import {
 } from '@nestjs/swagger';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { extractUserId } from '../utils/Utils';
+import { extractUserId, validateObjectId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import {
   AllJoinDetailedRequestsDto,
@@ -50,7 +50,7 @@ export class AdminController {
     if (entity === '') data = `Invalid ID`;
     else data = `Invalid ${entity} ID`;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!Types.ObjectId.isValid(id)) {
       throw new HttpException(data, HttpStatus.BAD_REQUEST);
     }
     return true;
@@ -86,7 +86,6 @@ export class AdminController {
   ) {
     try {
       const userId = extractUserId(this.jwtService, headers);
-
       return {
         data: await this.adminService.createRequest(userId, requestToJoin),
       };
@@ -255,7 +254,7 @@ export class AdminController {
     @Param('cid') companyId: Types.ObjectId,
   ) {
     try {
-      this.validateObjectId(companyId);
+      validateObjectId(companyId);
       const userId = extractUserId(this.jwtService, headers);
       return {
         data: await this.adminService.getAllRequestsInCompany(
@@ -286,7 +285,7 @@ export class AdminController {
     @Param('cid') companyId: Types.ObjectId,
   ) {
     try {
-      this.validateObjectId(companyId);
+      validateObjectId(companyId);
       const userId = extractUserId(this.jwtService, headers);
       return {
         data: await this.adminService.getAllDetailedRequestsInCompany(
@@ -305,17 +304,17 @@ export class AdminController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @ApiOperation({
-    summary: `Get all User Requests From a specific User`,
+    summary: `Get all User Requests for a specific User`,
   })
   @ApiOkResponse({
     type: AllJoinRequestsDto,
     description: `An array of mongodb objects in the Request Collection`,
   })
-  @Get('/request/all/user/:cid')
+  @Get('/request/all/user/')
   async findAllForUser(@Headers() headers: any) {
     try {
       const userId = extractUserId(this.jwtService, headers);
-      this.validateObjectId(userId);
+      validateObjectId(userId);
       return {
         data: await this.adminService.getAllRequestsForUser(userId),
       };

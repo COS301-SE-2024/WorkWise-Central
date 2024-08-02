@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title class="text-center"> Edit Roles </v-card-title>
+      <v-card-title class="text-primary font-bold text-center"> Edit Roles </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
         <v-data-table
@@ -10,12 +10,9 @@
           item-value="role"
           class="bg-cardColor elevation-1"
           :row-props="getRowProps"
+          :header-props="{ class: 'bg-secondary h3 bold' }"
         >
-          <template v-slot:top>
-            <v-toolbar flat>
-              <v-toolbar-title class="h4">Roles and Permissions</v-toolbar-title>
-            </v-toolbar>
-          </template>
+          <template v-slot:top> </template>
           <template v-slot:[`item.roleName`]> </template>
           <template v-slot:[`item.permission`]="{ item }">
             <v-select
@@ -31,10 +28,24 @@
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions class="bg-cardColor">
-        <Toast />
-        <v-col align="center"> <v-btn color="success" @click="saveChanges"> Save </v-btn></v-col>
-        <Toast />
-        <v-col align="center"><v-btn color="error" @click="cancel"> Cancel </v-btn></v-col>
+        <v-container
+          ><v-row justify="end">
+            <Toast position="top-center" />
+            <v-col align="center" cols="12" lg="6">
+              <v-btn color="success" @click="updateRole" block>
+                Save
+                <v-icon end color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon> </v-btn
+            ></v-col>
+
+            <v-col align="center" cols="12" lg="6"
+              ><v-btn color="error" @click="cancel" block>
+                Cancel
+                <v-icon
+                  end
+                  color="error"
+                  icon="fa: fa-solid fa-cancel"
+                ></v-icon> </v-btn></v-col></v-row
+        ></v-container>
       </v-card-actions>
     </v-card>
   </v-container>
@@ -78,7 +89,7 @@ export default defineComponent({
       await axios
         .get(`http://localhost:3000/role/all/${this.companyID}`, config)
         .then((response) => {
-          console.log(response.data.data[0])
+          console.log(response.data.data.length)
           for (let i = 0; i < response.data.data.length; i++) {
             const { _id, roleName, permissionSuite } = response.data.data[i]
             if (!this.roleIds.includes(_id)) {
@@ -136,8 +147,20 @@ export default defineComponent({
         })
     },
     async updateRole(roleID) {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      console.log(this.items[roleID].role)
+      console.log(this.items[roleID].permission)
+      const data = {
+        roleName: this.items[roleID].role,
+        permissionSuite: this.items[roleID].permission
+      }
       await axios
-        .put(`http://localhost:3000/role/${roleID}`, config)
+        .patch(`http://localhost:3000/role/${roleID}`, config, data)
         .then((response) => {
           console.log(response)
         })
@@ -155,7 +178,7 @@ export default defineComponent({
     },
     getRowProps({ index }) {
       return {
-        class: index % 2 ? 'bg-secondRowColor' : ''
+        class: (index % 2 ? 'bg-secondRowColor ' : '') + 'h5'
       }
     },
     cancel() {

@@ -11,7 +11,10 @@ import {
   CreateCompanyDto,
   CreateCompanyResponseDto,
 } from './dto/create-company.dto';
-import { UpdateCompanyDto } from './dto/update-company.dto';
+import {
+  UpdateCompanyDto,
+  UpdateCompanyJobStatuses,
+} from './dto/update-company.dto';
 import { FlattenMaps, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
 import { JoinedCompany } from '../users/entities/user.entity';
@@ -24,6 +27,7 @@ import { UsersService } from '../users/users.service';
 import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
 import { Employee } from '../employee/entities/employee.entity';
 import { FileService } from '../file/file.service';
+import { JobService } from '../job/job.service';
 
 @Injectable()
 export class CompanyService {
@@ -41,6 +45,9 @@ export class CompanyService {
 
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
+
+    @Inject(forwardRef(() => JobService))
+    private readonly jobService: JobService,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto) {
@@ -70,6 +77,9 @@ export class CompanyService {
     console.log('Create Default Role in Company');
     await this.roleService.createDefaultRoles(createdCompany._id);
 
+    //Create Default JobStatuses in company
+    await this.jobService.createDefaultStatuses(createdCompany._id);
+
     //Assign Owner to user
     console.log('Assign Owner to user');
     const ownerRoleId = (
@@ -94,6 +104,15 @@ export class CompanyService {
     );
     console.log('Perform Update');
     await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
+
+    await this.employeeService.updateUserInfo(employee._id, {
+      //Add user details to Employee
+      firstName: user.personalInfo.firstName,
+      surname: user.personalInfo.surname,
+      displayImage: user.profile.displayImage,
+      displayName: user.profile.displayName,
+      username: user.systemDetails.username,
+    });
 
     await this.usersService.updateUser(user._id, {
       currentEmployee: employee._id,
@@ -174,7 +193,7 @@ export class CompanyService {
   }
 
   async employeeIsInCompany(compId: Types.ObjectId, empId: Types.ObjectId) {
-    return await this.companyRepository.employeeExists(compId, empId);
+    return await this.employeeService.employeeExistsForCompany(empId, compId);
   }
 
   async getCompanyByRegNumber(
@@ -199,6 +218,8 @@ export class CompanyService {
     if (!inputValidated.isValid) {
       throw new ConflictException(inputValidated.message);
     }
+
+    console.log('addUserDto', addUserDto);
     //Get company and user
     const company = await this.getCompanyById(addUserDto.currentCompany);
     const user = await this.usersService.getUserByUsername(
@@ -213,25 +234,36 @@ export class CompanyService {
     let addedEmployee: Employee & { _id: Types.ObjectId };
     if (addUserDto.roleId) {
       addedEmployee = await this.employeeService.create({
-        companyId: addUserDto.currentCompany,
+        companyId: company._id,
         userId: user._id,
         roleId: addUserDto.roleId,
+        superiorId: addUserDto.superiorId,
       });
     } else {
       const defaultRole = await this.roleService.findOneInCompany(
         'Worker',
-        addUserDto.currentCompany,
+        company._id,
       );
 
       addedEmployee = await this.employeeService.create({
-        companyId: addUserDto.currentCompany,
+        companyId: company._id,
         userId: user._id,
         roleId: defaultRole._id,
+        superiorId: addUserDto.superiorId,
+      });
+
+      await this.employeeService.updateUserInfo(addedEmployee._id, {
+        //Add user details
+        firstName: user.personalInfo.firstName,
+        surname: user.personalInfo.surname,
+        displayImage: user.profile.displayImage,
+        displayName: user.profile.displayName,
+        username: user.systemDetails.username,
       });
     }
 
     const newJoinedCompany: JoinedCompany = {
-      companyId: addUserDto.currentCompany,
+      companyId: company._id,
       employeeId: addedEmployee._id,
       companyName: company.name,
     };
@@ -393,35 +425,6 @@ export class CompanyService {
   async companyIsValid(company: Company) {
     if (!company) return new ValidationResult(false, `Company is null`);
 
-    if (company.inventoryItems) {
-      for (const item of company.inventoryItems) {
-        //TODO: When inventory is done//
-
-        /* const exists = await this.InventoryService.employeeExists(item);
-        if (!exists)
-          return new ValidationResult(
-            false,
-            `Invalid Inventory ID: ${item}`,
-          );*/
-        if (!Types.ObjectId.isValid(item)) {
-          return new ValidationResult(false, 'Invalid ObjectId in Inventory');
-        }
-      }
-    }
-    if (company.employees) {
-      for (const employee of company.employees) {
-        if (!Types.ObjectId.isValid(employee))
-          return new ValidationResult(false, 'Employee ID is invalid');
-
-        if (!(await this.employeeService.employeeExists(employee))) {
-          return new ValidationResult(
-            false,
-            'Employee ID Not Found in Company',
-          );
-        }
-      }
-    }
-
     return new ValidationResult(true);
   }
 
@@ -446,35 +449,6 @@ export class CompanyService {
       );
     }
 
-    if (company.inventoryItems) {
-      for (const item of company.inventoryItems) {
-        //TODO: When inventory is done//
-
-        /* const exists = await this.InventoryService.employeeExists(item);
-        if (!exists)
-          return new ValidationResult(
-            false,
-            `Invalid Inventory ID: ${item}`,
-          );*/
-        if (!Types.ObjectId.isValid(item)) {
-          return new ValidationResult(false, 'Invalid ObjectId in Inventory');
-        }
-      }
-    }
-
-    if (company.employees) {
-      for (const employee of company.employees) {
-        if (!Types.ObjectId.isValid(employee))
-          return new ValidationResult(false, 'Employee ID is invalid');
-
-        if (!(await this.employeeService.employeeExists(employee))) {
-          return new ValidationResult(
-            false,
-            'Employee ID Not Found in Company',
-          );
-        }
-      }
-    }
     return new ValidationResult(true);
   }
 
@@ -492,36 +466,6 @@ export class CompanyService {
           false,
           `Company with ${company.registrationNumber} does not exist`,
         );
-      }
-    }
-
-    if (company.inventoryItems) {
-      for (const item of company.inventoryItems) {
-        //TODO: When inventory is done//
-
-        /* const exists = await this.InventoryService.employeeExists(item);
-        if (!exists)
-          return new ValidationResult(
-            false,
-            `Invalid Inventory ID: ${item}`,
-          );*/
-        if (!Types.ObjectId.isValid(item)) {
-          return new ValidationResult(false, 'Invalid ObjectId in Inventory');
-        }
-      }
-    }
-
-    if (company.employees) {
-      for (const employee of company.employees) {
-        if (!Types.ObjectId.isValid(employee))
-          return new ValidationResult(false, 'Employee ID is invalid');
-
-        if (!(await this.employeeService.employeeExists(employee))) {
-          return new ValidationResult(
-            false,
-            'Employee ID Not Found in Company',
-          );
-        }
       }
     }
 
@@ -618,5 +562,35 @@ export class CompanyService {
 
   async getAllCompanyNames() {
     return await this.companyRepository.findAllNames();
+  }
+
+  async addJobStatus(companyId: Types.ObjectId, statusId: Types.ObjectId) {
+    return await this.companyRepository.addJobStatus(companyId, statusId);
+  }
+
+  async updateCompanyStatuses(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+    updateCompanyJobStatuses: UpdateCompanyJobStatuses,
+  ) {
+    const userExists = await this.usersService.userIdExists(userId);
+    if (!userExists) throw new NotFoundException('User not found');
+
+    const employee = await this.employeeService.findById(employeeId);
+    if (employee == null) throw new NotFoundException('Employee not found');
+
+    return this.companyRepository.updateStatuses(
+      employee.companyId,
+      updateCompanyJobStatuses.jobStatuses,
+    );
+  }
+
+  async findAllStatusesInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ) {
+    if (!(await this.usersService.userIdExists(userId)))
+      throw new NotFoundException('User not found');
+    return this.companyRepository.findAllStatusesInCompany(companyId);
   }
 }

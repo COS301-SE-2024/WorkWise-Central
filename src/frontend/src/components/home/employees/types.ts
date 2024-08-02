@@ -92,39 +92,6 @@ export type EmployeeJoined = {
   __v: number
 }
 
-type PermissionSuite =
-  | 'view all employees'
-  | 'view employees under me'
-  | 'edit all employees'
-  | 'edit employees under me'
-  | 'add new employees'
-  | 'view all jobs'
-  | 'view all jobs under me'
-  | 'view all jobs assigned to me'
-  | 'edit all jobs'
-  | 'edit jobs that are under me'
-  | 'edit jobs that are assigned to me'
-  | 'add a new job'
-  | 'view all clients'
-  | 'view all clients under me'
-  | 'view all clients that are assigned to me'
-  | 'edit all clients'
-  | 'edit all clients that are under me'
-  | 'edit all clients that are assigned to me'
-  | 'view all inventory'
-  | 'edit all inventory'
-  | 'add a new inventory item'
-  | 'record inventory use'
-
-type Role = {
-  _id: string
-  roleName: string
-  permissionSuite: PermissionSuite[]
-  companyId: string
-  createdAt: string
-  __v: number
-}
-
 type Address = {
   street: string
   suburb: string
@@ -190,4 +157,24 @@ export type EmployeeJoinResponse2 = {
   companyId: string
   createdAt: string
   __v: number
+}
+
+export type EmployeeInformation2 = {
+  name: string
+  employeeId: string
+}
+
+export type RoleItem = {
+  roleName: string
+  roleId: string
+}
+
+export type Role = {
+  _id: string
+  roleName: string
+  permissionSuite: string[]
+  companyId: string
+  createdAt: string // ISO 8601 date string
+  __v: number
+  updatedAt: string // ISO 8601 date string
 }

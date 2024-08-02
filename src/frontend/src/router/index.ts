@@ -26,6 +26,15 @@ import LoadingScreen from '@/components/misc/LoadingScreen.vue'
 import StatisticsDashboard from '@/components/home/statistics/StatisticsDashboard.vue'
 import StatisticView from '@/views/home/dashboard/StatisticView.vue'
 import InventoryView from '@/views/home/inventory/InventoryView.vue'
+import NotificationView from '@/views/notfications/NotificationView.vue'
+import TeamworkLoad from '@/views/home/employees/TeamworkLoad.vue'
+import ClientCenter from '@/views/home/clients/ClientCenter.vue'
+import EmployeeCenter from '@/views/home/employees/EmployeeCenter.vue'
+import InventoryCenter from '@/views/home/inventory/InventoryCenter.vue'
+import TaskCenter from '@/views/home/jobs/TaskCenter.vue'
+import ClientFeedback from '@/views/home/clients/ClientFeedback.vue'
+import ReportView from '@/views/home/inventory/ReportView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -98,7 +107,7 @@ const router = createRouter({
     {
       path: '/manager-employees-t',
       name: 'manageremployees',
-      component: () => import('@/views/home/employees/ManageEmployeesT.vue')
+      component: () => import('@/views/home/employees/ManageEmployees.vue')
     },
     {
       path: '/support',
@@ -219,6 +228,51 @@ const router = createRouter({
       path: '/inventory',
       name: 'inventory',
       component: InventoryView
+    },
+    {
+      path: '/notifications',
+      name: 'notifications',
+      component: NotificationView
+    },
+    {
+      path: '/manageCompanies',
+      name: 'manageCompanies',
+      component: () => import('@/views/settings/ManageCompanies.vue')
+    },
+    {
+      path: '/teamwork-load',
+      name: 'teamwork-load',
+      component: TeamworkLoad
+    },
+    {
+      path: '/client-center',
+      name: 'client-center',
+      component: ClientCenter
+    },
+    {
+      path: '/employee-center',
+      name: 'employee-center',
+      component: EmployeeCenter
+    },
+    {
+      path: '/inventory-center',
+      name: 'inventory-center',
+      component: InventoryCenter
+    },
+    {
+      path: '/task-center',
+      name: 'task-center',
+      component: TaskCenter
+    },
+    {
+      path: '/client-feedback',
+      name: 'client-feedback',
+      component: ClientFeedback
+    },
+    {
+      path: '/report-view',
+      name: 'report-view',
+      component: ReportView
     }
   ]
 })

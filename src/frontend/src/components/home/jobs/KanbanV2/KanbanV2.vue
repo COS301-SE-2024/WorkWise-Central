@@ -60,98 +60,105 @@
             </v-chip></v-card-item
           >
 
-          <v-card-text>
-            <v-card
-              variant="flat"
-              elevation="3"
-              v-for="card in column.cards"
-              :key="card.jobId"
-              class="kanban-card mb-2"
-              draggable="true"
-              :class="{ dragging: isDragging(card) }"
-              @dragstart="onDragStart(card, column)"
-              @dragend="onDragEnd"
-              aria-grabbed="true"
-              role="option"
-            >
-              <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
-                ><b>{{ card.heading }}</b></v-card-item
-              >
-              <v-card-subtitle v-if="column.status === 'Todo'"
-                ><v-chip color="#708090" variant="elevated" rounded="sm" density="comfortable">
-                  <b>{{ card.status }}</b></v-chip
-                ></v-card-subtitle
-              ><v-card-subtitle v-else-if="column.status === 'In Progress'"
-                ><v-chip
-                  color="light-blue-accent-4"
-                  variant="elevated"
-                  rounded="sm"
-                  density="comfortable"
-                  ><b>{{ card.status }}</b></v-chip
-                ></v-card-subtitle
-              ><v-card-subtitle v-else-if="column.status === 'Awaiting review'"
-                ><v-chip
-                  color="purple-accent-3"
-                  variant="elevated"
-                  rounded="sm"
-                  density="comfortable"
-                  ><b>{{ card.status }}</b></v-chip
-                ></v-card-subtitle
-              ><v-card-subtitle v-else-if="column.status === 'Done'"
-                ><v-chip
-                  color="green-accent-4"
-                  variant="elevated"
-                  rounded="sm"
-                  density="comfortable"
-                  ><b>{{ card.status }}</b></v-chip
-                ></v-card-subtitle
-              >
-
-              <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-user-large' }}</v-icon>
-                {{ card.clientName }}</v-card-item
-              ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
-                {{ card.startDate }}</v-card-item
-              ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-location-dot' }}</v-icon>
-                {{ card.city + ', ' + card.suburb }}</v-card-item
-              >
-
-              <v-card-subtitle v-if="card.priority === 'High'"
-                ><v-chip color="#FF0000" variant="tonal" density="comfortable"
-                  ><b>Priority: {{ card.priority }}</b></v-chip
-                ></v-card-subtitle
-              ><v-card-subtitle v-if="card.priority === 'Medium'"
-                ><v-chip color="amber-darken-4" variant="tonal" density="comfortable"
-                  ><b>Priority: {{ card.priority }}</b></v-chip
-                ></v-card-subtitle
-              ><v-card-subtitle v-if="card.priority === 'Low'"
-                ><v-chip color="#008000" variant="tonal" density="comfortable"
-                  ><b>Priority: {{ card.priority }}</b></v-chip
-                ></v-card-subtitle
-              >
+          <v-virtual-scroll :items="column.cards" class="kanban-column-scroller" :max-height="850">
+            <template #default="{ item }">
               <v-card-text>
-                <v-chip
-                  color="light-blue-accent-4"
-                  class=""
-                  v-for="(n, i) in card.tags.length"
-                  :key="i"
-                  ><b>{{ card.tags[i] }}</b></v-chip
+                <v-card
+                  @click="clickedEvent(item)"
+                  variant="flat"
+                  elevation="3"
+                  class="kanban-card mb-2"
+                  draggable="true"
+                  :class="{ dragging: isDragging(item) }"
+                  @dragstart="onDragStart(item, column)"
+                  @dragend="onDragEnd"
+                  aria-grabbed="true"
+                  role="option"
                 >
+                  <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
+                    ><b>{{ item.heading }}</b></v-card-item
+                  >
+                  <v-card-subtitle v-if="item.status === 'Todo'"
+                    ><v-chip color="#708090" variant="elevated" rounded="sm" density="comfortable">
+                      <b>{{ item.status }}</b></v-chip
+                    ></v-card-subtitle
+                  ><v-card-subtitle v-else-if="item.status === 'In Progress'"
+                    ><v-chip
+                      color="light-blue-accent-4"
+                      variant="elevated"
+                      rounded="sm"
+                      density="comfortable"
+                      ><b>{{ item.status }}</b></v-chip
+                    ></v-card-subtitle
+                  ><v-card-subtitle v-else-if="item.status === 'Awaiting review'"
+                    ><v-chip
+                      color="purple-accent-3"
+                      variant="elevated"
+                      rounded="sm"
+                      density="comfortable"
+                      ><b>{{ item.status }}</b></v-chip
+                    ></v-card-subtitle
+                  ><v-card-subtitle v-else-if="item.status === 'Done'"
+                    ><v-chip
+                      color="green-accent-4"
+                      variant="elevated"
+                      rounded="sm"
+                      density="comfortable"
+                      ><b>{{ item.status }}</b></v-chip
+                    ></v-card-subtitle
+                  >
+
+                  <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-user-large' }}</v-icon>
+                    {{ item.clientName }}</v-card-item
+                  ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
+                    {{ item.startDate }}</v-card-item
+                  ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-location-dot' }}</v-icon>
+                    {{ item.city + ', ' + item.suburb }}</v-card-item
+                  >
+
+                  <v-card-subtitle v-if="item.priority === 'High'"
+                    ><v-chip color="#FF0000" variant="tonal" density="comfortable"
+                      ><b>Priority: {{ item.priority }}</b></v-chip
+                    ></v-card-subtitle
+                  ><v-card-subtitle v-if="item.priority === 'Medium'"
+                    ><v-chip color="amber-darken-4" variant="tonal" density="comfortable"
+                      ><b>Priority: {{ item.priority }}</b></v-chip
+                    ></v-card-subtitle
+                  ><v-card-subtitle v-if="item.priority === 'Low'"
+                    ><v-chip color="#008000" variant="tonal" density="comfortable"
+                      ><b>Priority: {{ item.priority }}</b></v-chip
+                    ></v-card-subtitle
+                  >
+                  <v-card-text>
+                    <v-chip
+                      color="light-blue-accent-4"
+                      class=""
+                      v-for="(n, i) in item.tags.length"
+                      :key="i"
+                      ><b>{{ item.tags[i] }}</b></v-chip
+                    >
+                  </v-card-text>
+                </v-card>
               </v-card-text>
-            </v-card>
-          </v-card-text>
+            </template>
+          </v-virtual-scroll>
         </v-card>
       </v-col>
     </v-row>
   </v-container>
+  <v-dialog v-model="JobCardVisibility" max-width="1000px">
+    <JBC @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { JobCardDataFormat, Column } from '../types'
-import '@mdi/font/css/materialdesignicons.css' // icon import
+import '@mdi/font/css/materialdesignicons.css'
+import JBC from '@/components/home/jobs/management/ManagerJobCard.vue' // icon import
 
 const columns = ref<Column[]>([
   { id: 1, status: 'Todo', cards: [] },
@@ -160,8 +167,9 @@ const columns = ref<Column[]>([
   { id: 4, status: 'Done', cards: [] }
 ])
 
+let SelectedEvent = ref<JobCardDataFormat>()
+let JobCardVisibility = ref<boolean>(false)
 const order_of_sorting_in_columns = ref<string[]>(['High', 'Medium', 'Low'])
-
 const draggedCard = ref<JobCardDataFormat | null>(null)
 const sourceColumn = ref<Column | null>(null)
 const dropTarget = ref<Column | null>(null)
@@ -359,6 +367,14 @@ let starting_cards = ref<JobCardDataFormat[]>([
   }
 ])
 
+function clickedEvent(payload: JobCardDataFormat) {
+  SelectedEvent.value = payload
+  openJobCard()
+}
+function openJobCard() {
+  console.log('edit button clicked')
+  JobCardVisibility.value = true
+}
 function loading(cards: JobCardDataFormat[]) {
   for (let i = 0; i < cards.length; i++) {
     switch (cards[i].status) {
@@ -382,6 +398,8 @@ function loading(cards: JobCardDataFormat[]) {
   N_M_Sort(columns.value[1].cards, order_of_sorting_in_columns.value)
   N_M_Sort(columns.value[2].cards, order_of_sorting_in_columns.value)
   N_M_Sort(columns.value[3].cards, order_of_sorting_in_columns.value)
+
+  console.log(columns.value[0].cards.length)
 }
 function loadCardsInRespectiveColumns(card: JobCardDataFormat, column: Column) {
   column.cards.push(card)
@@ -413,11 +431,14 @@ function onDrop(targetColumn: Column) {
     draggedCard.value.status = targetColumn.status
     targetColumn.cards.push(draggedCard.value)
     N_M_Sort(targetColumn.cards, order_of_sorting_in_columns.value)
+    makeRequest()
     draggedCard.value = null
     sourceColumn.value = null
     dropTarget.value = null
   }
 }
+
+function makeRequest() {}
 
 function isDropTarget(column: Column) {
   return dropTarget.value === column

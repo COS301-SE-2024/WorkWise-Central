@@ -8,7 +8,6 @@ import { CompanyModule } from '../company/company.module';
 import { EmployeeModule } from '../employee/employee.module';
 import { JobModule } from '../job/job.module';
 import { JobService } from '../job/job.service';
-import { JobRepository } from '../job/job.repository';
 import { ClientModule } from '../client/client.module';
 import { TeamRepository } from './team.repository';
 import { FileModule } from '../file/file.module';
@@ -24,7 +23,7 @@ import { FileModule } from '../file/file.module';
     forwardRef(() => FileModule),
   ],
   controllers: [TeamController],
-  providers: [TeamService, TeamRepository, JobService, JobRepository],
+  providers: [TeamService, TeamRepository, JobService],
   exports: [TeamService, TeamRepository, MongooseModule],
 })
 export class TeamModule {}

@@ -15,10 +15,23 @@ import { EmployeeRepository } from 'src/employee/employee.repository';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { FileService } from '../file/file.service';
 import { FileModule } from '../file/file.module';
+import {
+  JobPriorityTag,
+  JobPriorityTagSchema,
+  JobTag,
+  JobTagSchema,
+} from './entities/job-tag.entity';
+import { JobTagRepository } from './job-tag.repository';
+import { JobStatus, JobStatusSchema } from './entities/job-status.entity';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Job.name, schema: JobSchema }]),
+    MongooseModule.forFeature([
+      { name: Job.name, schema: JobSchema },
+      { name: JobTag.name, schema: JobTagSchema },
+      { name: JobPriorityTag.name, schema: JobPriorityTagSchema },
+      { name: JobStatus.name, schema: JobStatusSchema },
+    ]),
     forwardRef(() => UsersModule),
     forwardRef(() => CompanyModule),
     forwardRef(() => ClientModule),
@@ -31,12 +44,13 @@ import { FileModule } from '../file/file.module';
   providers: [
     JobService,
     JobRepository,
+    JobTagRepository,
     EmployeeService,
     EmployeeRepository,
     JwtService,
     FileService,
   ],
   controllers: [JobController],
-  exports: [JobService, MongooseModule, JobRepository],
+  exports: [JobService, MongooseModule, JobRepository, JobTagRepository],
 })
 export class JobModule {}

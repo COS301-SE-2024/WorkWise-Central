@@ -3,11 +3,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { currentDate } from '../utils/Utils';
+import { isNotDeleted } from '../shared/soft-delete';
 
 @Injectable()
 export class CompanyRepository {
   constructor(
     @InjectModel(Company.name) private readonly companyModel: Model<Company>,
+
+    /*    @InjectModel(JobStatus.name)
+    private jobStatusModel: Model<JobStatus>,*/
   ) {}
 
   async save(company: Company) {
@@ -136,7 +141,7 @@ export class CompanyRepository {
     return result != null;
   }
 
-  async employeeExists(
+  /*  async employeeExists(
     compId: Types.ObjectId,
     empId: Types.ObjectId,
   ): Promise<boolean> {
@@ -161,7 +166,7 @@ export class CompanyRepository {
     }
 
     return false;
-  }
+  }*/
 
   async update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
     return this.companyModel.findOneAndUpdate(
@@ -173,7 +178,7 @@ export class CompanyRepository {
           },
         ],
       },
-      { $set: { ...updateCompanyDto }, updatedAt: new Date() },
+      { $set: { ...updateCompanyDto }, updatedAt: currentDate() },
       { new: true },
     );
   }
@@ -188,7 +193,7 @@ export class CompanyRepository {
           },
         ],
       },
-      { $push: { employees: employeeId }, updatedAt: new Date() },
+      { $push: { employees: employeeId }, updatedAt: currentDate() },
       { new: true },
     );
   }
@@ -204,7 +209,7 @@ export class CompanyRepository {
           },
         ],
       },
-      { $pull: { employees: employeeId }, updatedAt: new Date() },
+      { $pull: { employees: employeeId }, updatedAt: currentDate() },
       { new: true },
     );
   }
@@ -219,7 +224,7 @@ export class CompanyRepository {
           },
         ],
       },
-      { $set: { deletedAt: new Date() } },
+      { $set: { deletedAt: currentDate() } },
     );
 
     return result != null;
@@ -259,5 +264,39 @@ export class CompanyRepository {
       ])
       .lean()
       .exec();
+  }
+
+  async updateStatuses(
+    companyId: Types.ObjectId,
+    jobStatuses: Types.ObjectId[],
+  ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+    return this.companyModel
+      .findOneAndUpdate(
+        { $and: [{ _id: companyId }, isNotDeleted] },
+        { $set: { jobStatuses: jobStatuses } },
+        { new: true },
+      )
+      .lean()
+      .exec();
+  }
+
+  async findAllStatusesInCompany(companyId: Types.ObjectId) {
+    return this.companyModel
+      .findOne({
+        $and: [{ _id: companyId }, isNotDeleted],
+      })
+      .select(['jobStatuses'])
+      .populate('jobStatuses')
+      .lean()
+      .exec();
+  }
+
+  async addJobStatus(companyId: Types.ObjectId, statusId: Types.ObjectId) {
+    return this.companyModel.findOneAndUpdate(
+      {
+        $and: [{ _id: companyId }, isNotDeleted],
+      },
+      { $push: { jobStatuses: statusId } },
+    );
   }
 }

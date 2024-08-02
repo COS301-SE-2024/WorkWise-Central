@@ -18,21 +18,34 @@ import {
 } from '../auth/entities/validationResult.entity';
 import { CompanyService } from '../company/company.service';
 import { UsersService } from '../users/users.service';
+import { Employee } from '../employee/entities/employee.entity';
+import { EmployeeService } from '../employee/employee.service';
+import { DeleteClientDto } from './dto/delete-client.dto';
+import { JobService } from '../job/job.service';
 
 @Injectable()
 export class ClientService {
   constructor(
     private readonly clientRepository: ClientRepository,
+
     @Inject(forwardRef(() => CompanyService))
     private readonly companyService: CompanyService,
+
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
+
+    @Inject(forwardRef(() => EmployeeService))
+    private readonly employeeService: EmployeeService,
+
+    @Inject(forwardRef(() => JobService))
+    private readonly jobService: JobService,
   ) {}
 
   async create(
     userId: Types.ObjectId,
     createClientDto: CreateClientDto,
   ): Promise<Client & { _id: Types.ObjectId }> {
+    await this.userIdMatchesEmployeeId(userId, createClientDto.employeeId);
     const check = await this.validateCreate(userId, createClientDto);
     if (!check.isValid) {
       throw new ConflictException(check.message);
@@ -142,13 +155,10 @@ export class ClientService {
 
   async softDelete(
     userId: Types.ObjectId,
-    clientId: Types.ObjectId,
+    deleteClientDto: DeleteClientDto,
   ): Promise<boolean> {
-    /*    const inputValidated = await this.clientUpdateIsValid(updateClientDto);
-    if (!inputValidated.isValid) {
-      throw inputValidated.exception;
-    }*/
-    const client = await this.getClientById(userId, clientId);
+    await this.userIdMatchesEmployeeId(userId, deleteClientDto.employeeId);
+    const client = await this.getClientById(userId, deleteClientDto.clientId);
     if (
       !(await this.usersService.userIsInCompany(
         userId,
@@ -157,14 +167,29 @@ export class ClientService {
     )
       throw new UnauthorizedException('User not in Company');
 
-    const result = await this.clientRepository.delete(clientId);
+    const employee: Employee = await this.employeeService.findById(
+      deleteClientDto.employeeId,
+    );
+    const allJobs = await this.jobService.getAllJobsInCompanyWithoutValidation(
+      employee.companyId,
+    );
+
+    for (const job of allJobs) {
+      if (job.clientId.equals(deleteClientDto.clientId)) {
+        await this.jobService.updateWithoutValidation(job._id, {
+          clientId: null, //Remove reference to client
+        });
+      }
+    }
+
+    const result = await this.clientRepository.delete(deleteClientDto.clientId);
     if (result == null) {
       throw new InternalServerErrorException('Internal server Error');
     }
     return true;
   }
 
-  async clientUpdateIsValid(
+  private async clientUpdateIsValid(
     client: UpdateClientDto,
   ): Promise<ValidationResultWithException> {
     if (!client) {
@@ -175,39 +200,37 @@ export class ClientService {
     }
 
     if (client.details) {
-      if (client.details) {
-        if (client.details.contactInfo) {
-          if (client.details.contactInfo.email && client.details.companyId) {
-            const exists = await this.clientRepository.findClientByEmailOrName(
-              client.details.companyId,
-              client.details.contactInfo.email,
-            );
-            if (!exists)
-              return new ValidationResultWithException(
-                false,
-                new NotFoundException('Client not found'),
-              );
-          }
-        }
-
-        if (client.details.companyId) {
-          const exists = await this.companyService.companyIdExists(
+      /*      if (client.details.contactInfo) {
+        if (client.details.contactInfo.email && client.details.companyId) {
+          const exists = await this.clientRepository.findClientByEmailOrName(
             client.details.companyId,
+            client.details.contactInfo.email,
           );
           if (!exists)
             return new ValidationResultWithException(
               false,
-              new ConflictException(
-                `Invalid Company ID: ${client.details.companyId}`,
-              ),
+              new NotFoundException('Client not found'),
             );
         }
+      }*/
+
+      if (client.details.companyId) {
+        const exists = await this.companyService.companyIdExists(
+          client.details.companyId,
+        );
+        if (!exists)
+          return new ValidationResultWithException(
+            false,
+            new ConflictException(
+              `Invalid Company ID: ${client.details.companyId}`,
+            ),
+          );
       }
     }
     return new ValidationResultWithException(true);
   }
 
-  async clientIsValid(
+  private async clientIsValid(
     //Will have to check this
     client: Client | CreateClientDto,
   ): Promise<ValidationResult> {
@@ -260,5 +283,18 @@ export class ClientService {
     }
 
     return new ValidationResult(true);
+  }
+  private async userIdMatchesEmployeeId(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+  ) {
+    const userExists = await this.usersService.userIdExists(userId);
+    if (!userExists) throw new NotFoundException('User not found');
+
+    const employee: FlattenMaps<Employee> & { _id: Types.ObjectId } =
+      await this.employeeService.findById(employeeId);
+    if (!employee) throw new NotFoundException('Employee not found');
+    if (!employee.userId.equals(userId))
+      throw new UnauthorizedException('Inconsistent userId');
   }
 }
