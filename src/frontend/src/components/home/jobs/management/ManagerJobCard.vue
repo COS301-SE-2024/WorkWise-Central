@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="managerJobCard" :max-height="700" :max-width="1000">
+  <v-dialog
+    v-model="managerJobCard"
+    :max-height="700"
+    :max-width="1000"
+    scrollable
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -10,7 +15,7 @@
         ></v-btn>
       </v-defaults-provider>
     </template>
-    <v-card elevation="14" rounded="md" class="">
+    <v-card elevation="14" rounded="md" :max-height="1000" :max-width="900">
       <v-img
         src="https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U="
         aspect-ratio="5.75"
@@ -19,31 +24,38 @@
       <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
         <h2 class="flex-grow-1">{{ props.passedInJob.heading }}</h2>
       </v-card-title>
-
-      <v-row>
-        <v-col xs="12" sm="12" md="9" lg="9" xl="9" class="pr-0 pb-0" cols="12">
-          <EditDetails :passedInJob="props.passedInJob" />
-        </v-col>
-        <v-col xs="12" sm="12" md="3" lg="3" xl="3" class="pl-0 pb-0" cols="12">
-          <v-card flat class="pa-5 bg-cardColor elevation-0">
-            <div class="d-flex flex-column">
+      <v-card-text class="text-center">
+        <v-row>
+          <v-col xs="12" sm="12" md="9" lg="9" xl="9" class="pr-0 pb-0" cols="12">
+            <EditDetails :passedInJob="props.passedInJob" />
+          </v-col>
+          <v-col xs="12" sm="12" md="3" lg="3" xl="3">
+            <v-col>
               <!-- For client change -->
               <ChangeClient />
+            </v-col>
+            <v-col>
               <!-- Multi-member select -->
               <SelectMembers />
+            </v-col>
+            <v-col>
               <!-- For job status -->
               <UpdateJobStatus :passedInJob="props.passedInJob" />
+            </v-col>
+            <v-col>
               <!-- For date change -->
               <ChangeDueDate :passedInJob="props.passedInJob" />
-            </div>
-            <v-card-actions class="d-flex flex-column">
-              <Toast />
-              <v-btn class="mb-2" @click="saveJob" color="success">Save</v-btn>
-              <v-btn class="mb-4" @click="cancelJob" color="error">Cancel</v-btn>
-            </v-card-actions>
-          </v-card>
+            </v-col>
+          </v-col>
+        </v-row>
+      </v-card-text>
+      <v-card-actions>
+        <v-col class="d-flex flex-column">
+          <Toast />
+          <v-btn class="mb-2" @click="saveJob" color="success">Save</v-btn>
+          <v-btn class="mb-4" @click="cancelJob" color="error">Cancel</v-btn>
         </v-col>
-      </v-row>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
