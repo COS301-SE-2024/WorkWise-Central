@@ -26,7 +26,7 @@ const employeeSubItems = ref([
 ])
 
 const jobSubItems = ref([
-  { title: 'Task Center', icon: 'fa: fa-solid fa-list-check', routeName: 'task-center' },
+  { title: 'Job Center', icon: 'fa: fa-solid fa-list-check', routeName: 'task-center' },
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'jobAssignmentView' },
   { title: 'Job Board', icon: 'fa: fa-solid fa-table', routeName: 'backlog' }
 ])
@@ -38,7 +38,12 @@ const inventorySubItems = ref([
     routeName: 'inventory-center'
   },
   { title: 'Management', icon: 'fa: fa-solid fa-warehouse', routeName: 'inventory' },
-  { title: 'Reports', icon: 'fa: fa-solid fa-chart-simple', routeName: 'report-view' }
+  { title: 'Reports', icon: 'fa: fa-solid fa-chart-simple', routeName: 'report-view' },
+  {
+    title: 'Inventory Stock Take',
+    icon: 'fa: fa-solid fa-chart-line',
+    routeName: '404'
+  }
 ])
 
 const inboxSubItems = ref([
