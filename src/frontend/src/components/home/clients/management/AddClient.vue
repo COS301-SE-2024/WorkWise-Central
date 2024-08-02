@@ -61,18 +61,18 @@
                 hide-details="auto"
               ></v-text-field
             ></v-col>
-            <v-col>
-              <small class="text-caption white--text">Username of client*</small>
+            <!--            <v-col>-->
+            <!--              <small class="text-caption white&#45;&#45;text">Username of client*</small>-->
 
-              <v-text-field
-                color="secondary"
-                placeholder="Enter the username of the client"
-                v-model="req_obj.clientUsername"
-                required
-                :rules="username_rules"
-                hide-details="auto"
-              ></v-text-field
-            ></v-col>
+            <!--              <v-text-field-->
+            <!--                color="secondary"-->
+            <!--                placeholder="Enter the username of the client"-->
+            <!--                v-model="req_obj.clientUsername"-->
+            <!--                required-->
+            <!--                :rules="username_rules"-->
+            <!--                hide-details="auto"-->
+            <!--              ></v-text-field-->
+            <!--            ></v-col>-->
           </v-row>
           <v-row>
             <v-col>
@@ -149,27 +149,27 @@
             ></v-col>
 
             <v-col sm="6" cols="12"
-              ><small class="text-caption">Complex</small
+              ><small class="text-caption">Complex/Building</small
               ><v-text-field
                 color="secondary"
-                placeholder="Complex"
+                placeholder="Complex/Building"
                 v-model="req_obj.details.address.complex"
                 type="complex"
                 required
                 hide-details="auto"
               ></v-text-field
             ></v-col>
-            <v-col sm="6" cols="12">
-              <small class="text-caption">House number</small
-              ><v-text-field
-                color="secondary"
-                placeholder="House number"
-                v-model="req_obj.details.address.houseNumber"
-                type="houseNumber"
-                required
-                hide-details="auto"
-              ></v-text-field
-            ></v-col>
+            <!--            <v-col sm="6" cols="12">-->
+            <!--              <small class="text-caption">House number</small-->
+            <!--              ><v-text-field-->
+            <!--                color="secondary"-->
+            <!--                placeholder="House number"-->
+            <!--                v-model="req_obj.details.address.houseNumber"-->
+            <!--                type="houseNumber"-->
+            <!--                required-->
+            <!--                hide-details="auto"-->
+            <!--              ></v-text-field-->
+            <!--            ></v-col>-->
           </v-row>
 
           <v-col>
@@ -262,10 +262,6 @@ export default defineComponent({
     addDialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     click_create_client: false,
-    light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
-    dark_theme_text_color: 'color: #DCDBDB',
-    modal_dark_theme_color: '#2b2b2b',
-    modal_light_theme_color: '#FFFFFF',
     email_rules: [(val: string) => email_reg.test(val) || 'Email should contain an @ symbol'],
     first_name_rules: [
       (v: string) => !!v || 'First name is required',

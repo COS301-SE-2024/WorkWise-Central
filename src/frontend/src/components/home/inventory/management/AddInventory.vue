@@ -81,16 +81,25 @@
           </v-col>
         </v-form>
       </v-card-text>
+      <Toast position="top-center" />
       <v-divider></v-divider>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <Toast position="top-center" />
-        <v-btn @click="close" color="error"
-          >Cancel <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon
-        ></v-btn>
-        <v-btn @click="createInventoryItem" color="success" :disabled="!valid"
-          >Create<v-icon icon="fa:fa-solid fa-plus" color="success" size="small" end></v-icon
-        ></v-btn>
+      <v-card-actions
+        ><v-container
+          ><v-row justify="end"
+            ><v-col cols="12" lg="6">
+              <v-btn @click="close" color="error" block
+                >Cancel
+                <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon></v-btn
+            ></v-col>
+            <v-col cols="12" lg="6">
+              <v-btn @click="createInventoryItem" color="success" :disabled="!valid" block
+                >Create<v-icon
+                  icon="fa:fa-solid fa-plus"
+                  color="success"
+                  size="small"
+                  end
+                ></v-icon></v-btn></v-col></v-row
+        ></v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>

@@ -9,24 +9,4 @@ import JobAssignTable from '../../../components/home/jobs/management/JobAssignme
   </v-app>
 </template>
 
-<style>
-.position-static {
-  position: static;
-}
-
-.position-relative {
-  position: relative;
-}
-
-.position-absolute {
-  position: absolute;
-}
-
-.position-fixed {
-  position: fixed;
-}
-
-.position-sticky {
-  position: sticky;
-}
-</style>
+<style></style>
