@@ -138,6 +138,9 @@ export class RoleController {
     if (!data) {
       throw new HttpException('No data found', HttpStatus.NO_CONTENT);
     }
+    if (data.roleName === 'Owner' || data.roleName === 'Owner') {
+      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
+    }
     return { data: data };
   }
 

@@ -192,10 +192,7 @@ export class RoleService {
 
   async findById(identifier: Types.ObjectId) {
     const result = await this.roleRepository.findById(identifier);
-    if (result.roleName !== 'Owner' && result.roleName !== 'Default') {
-      return result;
-    }
-    return null;
+    return result;
   }
 
   async update(
@@ -231,13 +228,19 @@ export class RoleService {
     return await this.roleRepository.roleExists(id);
   }
 
-  async hasPermission(permission: string, id: Types.ObjectId) {
-    //checking if the role exists
-    if (!(await this.roleExists(id))) {
-      throw new Error('role not found');
-    }
-    const role = await this.findById(id);
-    if (role.permissionSuite.includes(permission)) {
+  async hasPermission(permission: string, employeeId: Types.ObjectId) {
+    //removing any excess spaces from the permission
+    permission = permission.trim();
+    // console.log('In hasPermission. Permission: .', permission, '.');
+    // console.log('id: ', employeeId);
+    const employee = await this.employeeService.findById(employeeId);
+    // console.log('employee: ', employee);
+    // console.log('employee.roleId: ', employee.roleId);
+    const role = await this.findById(employee.roleId);
+    // console.log('role: ', role);
+    if (role.permissionSuite == null) {
+      return false;
+    } else if (role.permissionSuite.includes(permission)) {
       return true;
     }
     return false;

@@ -162,6 +162,7 @@ export class EmployeeController {
     @Headers() headers: any,
     @Param('companyId') companyId: Types.ObjectId,
   ) {
+    console.log('In find all endpoint');
     const userId = extractUserId(this.jwtService, headers);
     if (
       await this.employeeService.validateRoleCompanyId(
@@ -170,6 +171,7 @@ export class EmployeeController {
         'view all employees',
       )
     ) {
+      console.log('In if');
       let data;
       try {
         data = await this.employeeService.findAllInCompany(companyId);
@@ -184,13 +186,16 @@ export class EmployeeController {
         'view employees under me',
       )
     ) {
+      console.log('In if else');
       let data;
       try {
+        console.log('In try');
         data = await this.employeeService.findBelowMeInCompany(
           userId,
           companyId,
         );
       } catch (e) {
+        console.log('In catch');
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
       return { data: data };
@@ -271,7 +276,10 @@ export class EmployeeController {
   })
   @Get('id/:id')
   async findById(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
+    // console.log('In findById endpoint');
     const userId = extractUserId(this.jwtService, headers);
+    // console.log('User id:', userId);
+    // console.log('Employee id:', id);
     if (
       await this.employeeService.validateRoleEmployeeId(
         id,
@@ -279,6 +287,7 @@ export class EmployeeController {
         'view all employees',
       )
     ) {
+      // console.log('In if');
       const data = await this.employeeService.findById(id);
       return { data: data };
     } else if (
@@ -288,6 +297,7 @@ export class EmployeeController {
         'view employees under me',
       )
     ) {
+      // console.log('In else');
       let data;
       try {
         data = await this.employeeService.findByIdUnderMe(userId, id);
@@ -296,6 +306,7 @@ export class EmployeeController {
       }
       return { data: data };
     } else {
+      // console.log('In else');
       throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
   }
@@ -326,11 +337,15 @@ export class EmployeeController {
     @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
   ) {
-    //Not sure if role based access in needed???
+    // console.log('In getOtherEmployees endpoint');
+    // console.log('Id:', id);
     let data;
     try {
+      // console.log('In try');
       data = await this.employeeService.getListOfOtherEmployees(id);
     } catch (e) {
+      // console.log('In catch');
+      // console.log(e);
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
     return {
@@ -363,7 +378,9 @@ export class EmployeeController {
     @Param('id') id: Types.ObjectId,
     @Body() updateEmployeeDto: UpdateEmployeeDto,
   ) {
+    console.log('In update endpoint');
     const userId = extractUserId(this.jwtService, headers);
+    console.log('User id:', userId);
     if (
       await this.employeeService.validateRoleEmployeeId(
         id,
@@ -371,21 +388,25 @@ export class EmployeeController {
         'edit all employees',
       )
     ) {
+      console.log('In if');
       let data;
       try {
+        console.log('In try');
         data = await this.employeeService.update(id, updateEmployeeDto);
       } catch (e) {
+        console.log('In catch');
+        console.log(e);
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
       return { data: data };
-    }
-    if (
+    } else if (
       await this.employeeService.validateRoleEmployeeId(
         id,
         userId,
         'edit employees under me',
       )
     ) {
+      console.log('In else');
       let data;
       try {
         data = await this.employeeService.updateUnderMe(
@@ -398,6 +419,7 @@ export class EmployeeController {
       }
       return { data: data };
     } else {
+      console.log('In else');
       throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
   }
