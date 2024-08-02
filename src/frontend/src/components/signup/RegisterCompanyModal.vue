@@ -47,6 +47,7 @@
                 rounded="md"
                 variant="solo"
                 required
+                data-testid="company-name-field"
               ></v-text-field
             ></v-col>
             <v-col>
@@ -58,6 +59,7 @@
                 v-model="req_obj.type"
                 rounded="md"
                 variant="solo"
+                :rules="business_type_rules"
                 :items="[
                   'Agricultural Labor',
                   'Automotive Repair',
@@ -130,6 +132,7 @@
                   'Welding',
                   'Window Cleaning'
                 ]"
+                data-testid="type-of-company-autocomplete"
               ></v-autocomplete>
             </v-col>
 
@@ -147,6 +150,7 @@
                 rounded="md"
                 variant="solo"
                 required
+                data-testid="company-email-address-field"
               ></v-text-field
             ></v-col>
             <v-col>
@@ -162,6 +166,7 @@
                 v-model="req_obj.contactDetails.phoneNumber"
                 :rules="phone_number_rules"
                 required
+                data-testid="company-phone-number-field"
               ></v-text-field
             ></v-col>
             <v-col>
@@ -179,6 +184,7 @@
                 rounded="md"
                 variant="solo"
                 required
+                data-testid="company-registration-number-field"
               ></v-text-field
             ></v-col>
 
@@ -195,14 +201,11 @@
                 v-model="req_obj.vatNumber"
                 variant="solo"
                 required
+                data-testid="company-VAT-field"
               ></v-text-field
             ></v-col>
             <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Company logo</small
-              >
+              <small class="text-caption">Company logo</small>
               <v-file-input
                 :theme="isdarkmode === true ? 'dark' : 'light'"
                 variant="solo"
@@ -210,8 +213,13 @@
                 width="100%"
                 placeholder="Company Logo"
                 @change="handleImageUpload"
+                hint="Image size limit of  5MB"
+                persistent-hint
                 color="black"
                 rounded="md"
+                required
+                :rules="company_logo_rules"
+                data-testid="company-logo-file-input"
               ></v-file-input>
             </v-col>
             <label style="font-size: 14px; font-weight: lighter">Company address*</label>
@@ -228,6 +236,8 @@
                   v-model="req_obj.address.street"
                   variant="solo"
                   required
+                  :rules="street_rules"
+                  data-testid="street-field"
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
@@ -241,6 +251,8 @@
                   v-model="req_obj.address.suburb"
                   variant="solo"
                   required
+                  :rules="suburb_rules"
+                  data-testid="suburb-field"
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
@@ -265,10 +277,12 @@
                     'Western Cape'
                   ]"
                   required
+                  :rules="province_rules"
+                  data-testid="province-autocomplete"
                 ></v-autocomplete
               ></v-col>
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">City</label>
+                <label style="font-size: 11px; font-weight: lighter">City/Town</label>
                 <v-text-field
                   @update:focused="setUserId"
                   density="compact"
@@ -278,6 +292,8 @@
                   variant="solo"
                   required
                   color="cardColor"
+                  :rules="city_rules"
+                  data-testid="city-town-field"
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
@@ -292,6 +308,23 @@
                   :rules="postal_code_rules"
                   variant="solo"
                   required
+                  data-testid="postal-code-field"
+                ></v-text-field
+              ></v-col>
+              <v-col cols="12" sm="6">
+                <label style="font-size: 12px; font-weight: lighter">Complex/Building</label>
+                <v-text-field
+                  density="compact"
+                  color="primary"
+                  placeholder="Complex"
+                  rounded="md"
+                  v-model="req_obj.address.complex"
+                  variant="solo"
+                  required
+                  :rules="complex_or_building_rules"
+                  hint="Complex or Building Name, unit number or floor"
+                  persistent-hint
+                  data-testid="complex-field"
                 ></v-text-field
               ></v-col>
             </v-row>
@@ -335,6 +368,7 @@
               height="35"
               variant="elevated"
               :disabled="click_create_client"
+              data-testid="continue-button"
               >Continue</v-btn
             >
           </v-col>
@@ -347,6 +381,7 @@
               width="60%"
               height="35"
               variant="elevated"
+              data-testid="back-button"
               >Back</v-btn
             >
           </v-col>
@@ -372,8 +407,6 @@ export default {
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       click_create_client: false,
       valid: true,
-      light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
-      dark_theme_text_color: 'color: #DCDBDB',
       dark: '#2b2b2b',
       light: '#FFFFFF',
       localUrl: 'http://localhost:3000/',
@@ -407,6 +440,13 @@ export default {
         (v: string) => !!v || 'Postal code  is required',
         (value: string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
       ],
+      street_rules: [(v: string) => !!v || 'Street is required'],
+      suburb_rules: [(v: string) => !!v || 'Suburb is required'],
+      province_rules: [(v: string) => !!v || 'Province is required'],
+      city_rules: [(v: string) => !!v || 'City is required'],
+      complex_or_building_rules: [(v: string) => !!v || 'Complex/Buidling is required'],
+      business_type_rules: [(v: string) => !!v || 'Business type required'],
+      company_logo_rules: [(v: string) => !!v || 'Company logo is required'],
       req_obj: {
         userId: localStorage.getItem('id'),
         name: '',

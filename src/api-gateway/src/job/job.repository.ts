@@ -8,9 +8,35 @@ import { Company } from '../company/entities/company.entity';
 import { Team } from '../team/entities/team.entity';
 import { isNotDeleted } from '../shared/soft-delete';
 import { Comment } from './entities/job.entity';
+import { currentDate } from '../utils/Utils';
 
 @Injectable()
 export class JobRepository {
+  jobTasks = {
+    path: 'taskList',
+    populate: [
+      {
+        path: 'assignedEmployees',
+        model: Employee.name,
+      },
+    ],
+  };
+
+  jobAssignedEmployees = {
+    path: 'assignedEmployees',
+    populate: [
+      {
+        path: 'employeeIds',
+        model: Employee.name,
+      },
+      {
+        path: 'teamId',
+        model: Team.name,
+      },
+    ],
+  };
+
+  defaultPopulatedFields: string[] = ['tags', 'priorityTag', 'history'];
   constructor(
     @InjectModel(Job.name)
     private jobModel: Model<Job>,
@@ -69,30 +95,6 @@ export class JobRepository {
     ],
   };
 
-  jobTasks = {
-    path: 'taskList',
-    populate: [
-      {
-        path: 'assignedEmployees',
-        model: Employee.name,
-      },
-    ],
-  };
-
-  jobAssignedEmployees = {
-    path: 'assignedEmployees',
-    populate: [
-      {
-        path: 'employeeIds',
-        model: Employee.name,
-      },
-      {
-        path: 'teamId',
-        model: Team.name,
-      },
-    ],
-  };
-
   async findAllInCompanyDetailed(
     companyId: Types.ObjectId,
     fieldsToPopulate: string[] = [
@@ -130,7 +132,7 @@ export class JobRepository {
         {
           $and: [{ _id: id }, isNotDeleted],
         },
-        { $set: { ...updateJobDto }, updatedAt: new Date() },
+        { $set: { ...updateJobDto }, updatedAt: currentDate() },
         { new: true },
       )
       .lean();
@@ -142,7 +144,10 @@ export class JobRepository {
         $and: [{ _id: id }, { companyId: companyId }, isNotDeleted],
       })
       .lean();
-    if (result != null && result.companyId.equals(companyId)) {
+    if (
+      result != null &&
+      result.companyId.toString() === companyId.toString()
+    ) {
       return result;
     } else {
       return null;
@@ -155,7 +160,7 @@ export class JobRepository {
         {
           $and: [{ _id: id }, isNotDeleted],
         },
-        { $set: { deletedAt: new Date() } },
+        { $set: { deletedAt: currentDate() } },
       )
       .lean();
 
@@ -209,7 +214,7 @@ export class JobRepository {
             isNotDeleted,
           ],
         },
-        { $push: { assignedEmployees: employeeId }, updatedAt: new Date() },
+        { $push: { assignedEmployees: employeeId }, updatedAt: currentDate() },
         {
           new: true,
         },
@@ -218,7 +223,7 @@ export class JobRepository {
       .exec();
   }
 
-  async assignEmployees(employeeIds: Types.ObjectId[], jobId: Types.ObjectId) {
+  /*  async assignEmployees(employeeIds: Types.ObjectId[], jobId: Types.ObjectId) {
     return await this.jobModel
       .findOneAndUpdate(
         {
@@ -239,7 +244,7 @@ export class JobRepository {
       )
       .lean()
       .exec();
-  }
+  }*/
 
   async unassignEmployee(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
     return await this.jobModel
@@ -261,6 +266,7 @@ export class JobRepository {
       .exec();
   }
 
+  /*
   async unassignEmployees(
     employeeIds: Types.ObjectId[],
     jobId: Types.ObjectId,
@@ -286,9 +292,9 @@ export class JobRepository {
       .lean()
       .exec();
   }
+*/
 
   async assignEmployeeToTask(
-    //TODO: Speak to Jess and thando
     employeeId: Types.ObjectId,
     jobId: Types.ObjectId,
   ) {
@@ -392,7 +398,7 @@ export class JobRepository {
       .exec();
   }
 
-  async updateTeam(teamId: Types.ObjectId, jobId: Types.ObjectId) {
+  async assignTeam(teamId: Types.ObjectId, jobId: Types.ObjectId) {
     return await this.jobModel
       .findOneAndUpdate(
         {
@@ -404,7 +410,30 @@ export class JobRepository {
           ],
         },
         {
-          $set: { 'assignedEmployees.teamId': teamId },
+          $push: { 'assignedEmployees.teamIds': teamId },
+          updatedAt: new Date(),
+        },
+        {
+          new: true,
+        },
+      )
+      .lean()
+      .exec();
+  }
+
+  async unassignTeam(teamId: Types.ObjectId, jobId: Types.ObjectId) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        {
+          $pull: { 'assignedEmployees.teamIds': teamId },
           updatedAt: new Date(),
         },
         {
@@ -438,49 +467,53 @@ export class JobRepository {
       .exec();
   }
 
-  async removeComment(newComment: Comment, jobId: Types.ObjectId) {
-    return await this.jobModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            {
-              _id: jobId,
-            },
-            isNotDeleted,
-          ],
-        },
-        {
-          $pull: { comments: newComment },
-          updatedAt: new Date(),
-        },
-        {
-          new: true,
-        },
-      )
-      .lean()
-      .exec();
+  async removeComment(jobId: Types.ObjectId, commentId: Types.ObjectId) {
+    const job = await this.jobModel.findById({ _id: jobId });
+    const commentToRemove = job.comments.find(
+      (comment) => comment._id.toString() === commentId.toString(),
+    );
+    job.comments = job.comments.filter((c) => {
+      return c._id.toString() !== commentToRemove._id.toString();
+    });
+    job.updatedAt = new Date();
+    await job.save();
+    return job;
   }
 
-  async editComment(newComment: Comment, jobId: Types.ObjectId) {
-    return await this.jobModel
-      .findOneAndUpdate(
+  async editComment(
+    jobId: Types.ObjectId,
+    commentId: Types.ObjectId,
+    newComment: string,
+  ) {
+    const job = await this.jobModel.findOne({
+      $and: [
         {
-          $and: [
-            {
-              _id: jobId,
-            },
-            isNotDeleted,
-          ],
+          _id: jobId,
         },
         {
-          $pull: { comments: newComment },
-          updatedAt: new Date(),
+          'comments._id': commentId,
         },
-        {
-          new: true,
-        },
-      )
-      .lean()
-      .exec();
+        isNotDeleted,
+      ],
+    });
+
+    const commentToUpdate = job.comments.find(
+      (comment) => comment._id.toString() === commentId.toString(),
+    );
+
+    commentToUpdate.comment = newComment;
+    job.updatedAt = new Date();
+    await job.save();
+    return job.toObject();
+  }
+
+  async addHistory(event: History, jobId: Types.ObjectId) {
+    const newHistory = await this.jobModel.updateOne(
+      { _id: jobId },
+      { $push: { history: event }, updatedAt: Date.now() },
+      { new: true },
+    );
+    console.log(newHistory);
+    return newHistory;
   }
 }

@@ -104,18 +104,45 @@
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
-        <v-row align-self="center"
-          ><v-col>
-            <Toast />
-            <v-btn color="success" width="85%" height="35" variant="text" @click="update">
-              Save
-              <v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon>
-            </v-btn>
-          </v-col>
-          <v-col>
-            <v-btn color="error" width="85%" height="35" variant="text" @click="close">
-              Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon>
-            </v-btn> </v-col></v-row
+        <v-container>
+          <v-row align-self="center" justify="end"
+            ><v-col
+              cols="12"
+              lg="6"
+              md="6"
+              sm="6"
+              order="last"
+              order-lg="first"
+              order-md="first"
+              order-sm="first"
+            >
+              <v-btn color="error" width="85%" height="35" variant="text" @click="close" block>
+                Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon>
+              </v-btn> </v-col
+            ><v-col
+              cols="12"
+              lg="6"
+              md="6"
+              sm="6"
+              order="first"
+              order-lg="last"
+              order-md="last"
+              order-sm="last"
+            >
+              <Toast position="top-center" />
+              <v-btn
+                color="success"
+                width="85%"
+                height="35"
+                variant="text"
+                @click="update"
+                :disabled="!valid"
+                block
+              >
+                Save
+                <v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon>
+              </v-btn>
+            </v-col> </v-row></v-container
       ></v-card-actions>
     </v-card>
   </v-dialog>
@@ -130,7 +157,7 @@ export default {
     colors: Object,
     editedItem: Object,
     item: Object,
-    _clientID: String
+    _clientID: Number
   },
   data() {
     return {
@@ -250,6 +277,18 @@ export default {
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    allRulesPass() {
+      if (
+        this.nameRules.every((rule) => rule(this.localEditedItem.firstName)) &&
+        this.surnameRules.every((rule) => rule(this.localEditedItem.surname)) &&
+        this.emailRules.every((rule) => rule(this.localEditedItem.contactInfo.email)) &&
+        this.phoneRules.every((rule) => rule(this.localEditedItem.contactInfo.phoneNumber))
+      ) {
+        this.valid = true
+      } else {
+        this.valid = false
+      }
     }
   }
 }

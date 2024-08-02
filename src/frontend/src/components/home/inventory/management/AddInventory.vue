@@ -12,7 +12,9 @@
         color="secondary"
         v-bind="activatorProps"
         variant="elevated"
-        ><v-icon icon="fa: fa-solid fa-plus" color=""></v-icon>Add Inventory</v-btn
+        ><v-icon icon="fa:fa-solid fa-plus" color="" size="xs" />
+        <v-icon icon="fa:fa-solid fa-warehouse" color="" />
+        Add Inventory</v-btn
       >
     </template>
     <v-card>
@@ -26,10 +28,11 @@
           <v-col>
             <v-row>
               <v-col>
-                <h6>Name</h6>
+                <h6>Product Name</h6>
                 <v-text-field
                   v-model="name"
                   color="secondary"
+                  :rules="nameRules"
                   required
                   hide-details="auto"
                 ></v-text-field
@@ -39,6 +42,7 @@
                 <v-text-field
                   v-model="description"
                   color="secondary"
+                  :rules="descriptionRules"
                   required
                   hide-details="auto"
                 ></v-text-field></v-col
@@ -50,6 +54,7 @@
                 <v-text-field
                   v-model="costPrice"
                   color="secondary"
+                  :rules="costPriceRules"
                   required
                   hide-details="auto"
                 ></v-text-field
@@ -59,6 +64,7 @@
                 <v-text-field
                   v-model="currentStockLevel"
                   color="secondary"
+                  :rules="currentStockLevelRules"
                   required
                   hide-details="auto"
                 ></v-text-field
@@ -68,22 +74,32 @@
                 <v-text-field
                   v-model="reorderLevel"
                   color="secondary"
+                  :rules="reorderLevelRules"
                   required
                 ></v-text-field></v-col
             ></v-row>
           </v-col>
         </v-form>
       </v-card-text>
+      <Toast position="top-center" />
       <v-divider></v-divider>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <Toast />
-        <v-btn @click="createInventoryItem" color="success"
-          >Create<v-icon icon="fa:fa-solid fa-plus" color="success" size="small" end></v-icon
-        ></v-btn>
-        <v-btn @click="close" color="error"
-          >Cancel <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon
-        ></v-btn>
+      <v-card-actions
+        ><v-container
+          ><v-row justify="end"
+            ><v-col cols="12" lg="6">
+              <v-btn @click="close" color="error" block
+                >Cancel
+                <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon></v-btn
+            ></v-col>
+            <v-col cols="12" lg="6">
+              <v-btn @click="createInventoryItem" color="success" :disabled="!valid" block
+                >Create<v-icon
+                  icon="fa:fa-solid fa-plus"
+                  color="success"
+                  size="small"
+                  end
+                ></v-icon></v-btn></v-col></v-row
+        ></v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -112,7 +128,26 @@ export default defineComponent({
     currentStockLevel: '',
     reorderLevel: '',
     localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+    nameRules: [(v: string) => !!v || 'Name is required'],
+    descriptionRules: [(v: string) => !!v || 'Description is required'],
+    costPriceRules: [
+      (v: string) => !!v || 'Cost Price is required',
+      (v: string) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Cost Price must be a valid number',
+      (v: string) => parseFloat(v) > 0 || 'Cost Price must be greater than 0',
+      (v: string) => !/^0\d/.test(v) || 'Cost Price cannot have leading zeros'
+    ],
+    currentStockLevelRules: [
+      (v: string) => !!v || 'Current Stock Level is required',
+      (v: string) =>
+        /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Current Stock Level must be a valid number',
+      (v: string) => !/^0\d/.test(v) || 'Current Stock Level cannot have leading zeros'
+    ],
+    reorderLevelRules: [
+      (v: string) => !!v || 'Reorder Level is required',
+      (v: string) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Reorder Level must be a valid number',
+      (v: string) => !/^0\d/.test(v) || 'Reorder Level cannot have leading zeros'
+    ]
   }),
   methods: {
     addInventory() {
@@ -138,21 +173,13 @@ export default defineComponent({
       try {
         const response = await axios.post(`${apiURL}inventory/create`, data, config)
         console.log(response)
-        this.addDialog = false
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Inventory Added',
-          life: 3000
-        })
+        alert('Inventory added')
       } catch (error) {
         console.error(error)
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to add inventory',
-          life: 3000
-        })
+        alert('Inventory not added')
+      } finally {
+        this.addDialog = false
+        window.location.reload()
       }
     },
     convertToNumber(value: string) {
@@ -177,6 +204,19 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    allRulesPass() {
+      if (
+        this.nameRules.every((rule) => rule(this.name)) &&
+        this.descriptionRules.every((rule) => rule(this.description)) &&
+        this.costPriceRules.every((rule) => rule(this.costPrice)) &&
+        this.currentStockLevelRules.every((rule) => rule(this.currentStockLevel)) &&
+        this.reorderLevelRules.every((rule) => rule(this.reorderLevel))
+      ) {
+        this.valid = true
+      } else {
+        this.valid = false
+      }
     }
   }
 })

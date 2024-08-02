@@ -12,14 +12,14 @@
         color="warning"
         variant="text"
         v-bind="activatorProps"
-        >Edit</v-btn
-      >
+        >Edit<v-icon icon="fa:fa-solid fa-pencil" end color="warning " size="small"></v-icon
+      ></v-btn>
     </template>
     <v-card>
       <v-form @submit.prevent="validateEdits">
         <v-card-title class="text-center">Edit Employee</v-card-title>
         <v-divider></v-divider>
-        <v-card-text>
+        <v-card-item>
           <v-row
             ><v-col>
               <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
@@ -80,36 +80,36 @@
                 variant="solo"
               ></v-select> </v-col
           ></v-row>
-        </v-card-text>
+        </v-card-item>
         <v-card-actions>
-          <v-col align-self="center"
-            ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
+          <v-row>
+            <v-col>
               <Toast />
               <v-btn
                 color="success"
                 rounded="md"
-                width="85%"
+                width="100%"
                 height="35"
                 variant="text"
                 type="submit"
               >
                 Save
+                <v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon>
               </v-btn>
             </v-col>
-            <v-col cols="12" md="12" xs="3" sm="6" offset="1">
+            <v-col>
               <v-btn
                 color="error"
                 rounded="md"
-                width="85%"
+                width="100%"
                 height="35"
                 variant="text"
                 @click="close"
               >
                 <Toast />
-                Cancel
-              </v-btn>
-            </v-col></v-col
-          >
+                Cancel <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon>
+              </v-btn> </v-col
+          ></v-row>
         </v-card-actions>
       </v-form>
     </v-card>
@@ -118,23 +118,8 @@
 
 <script lang="ts">
 import axios from 'axios'
-import { select } from '@syncfusion/ej2-base'
 import Toast from 'primevue/toast'
-import type {
-  EmployeeInformation2,
-  EmployeeJoined,
-  RoleItem
-} from '@/components/home/employees/types'
-
-type Role = {
-  _id: string
-  roleName: string
-  permissionSuite: string[]
-  companyId: string
-  createdAt: string // ISO 8601 date string
-  __v: number
-  updatedAt: string // ISO 8601 date string
-}
+import type { EmployeeInformation2, RoleItem, Role } from '@/components/home/employees/types'
 
 export default {
   name: 'EditClient',
@@ -191,6 +176,7 @@ export default {
   methods: {
     selected_subordiates() {
       console.log(this.req_obj.subordinates)
+      // console.log(this.editedItem)
     },
     selected_supirior() {
       console.log(this.req_obj.superiorId)
@@ -210,15 +196,13 @@ export default {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       try {
-        const sub_res = await axios(
-          apiURL +
-            `employee/${localStorage.getItem('employeeId')}/company/${localStorage.getItem('currentCompany')}`,
+        const sub_res = await axios.get(
+          apiURL + `employee/listOther/${localStorage.getItem('employeeId')}`,
           config
         )
-        let sub_employees: EmployeeJoined[] = []
         for (let i = 0; i < sub_res.data.data.length; i++) {
           const employee_details = await axios.get(
-            apiURL + `employee/joined/id/${sub_res.data.data[i]._id}`,
+            apiURL + `employee/detailed/id/${sub_res.data.data[i]._id}`,
             config
           )
 
@@ -245,7 +229,6 @@ export default {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       console.log(apiURL)
-      let rolesNames_arr: string[] = []
       try {
         let roles_response = await axios.get(
           apiURL + `role/all/${localStorage['currentCompany']}`,

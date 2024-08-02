@@ -72,11 +72,11 @@ type User = {
 
 export type EmployeeJoined = {
   _id: string
-  roleId: Role[]
+  roleId: Role
   currentJobAssignments: any[]
   subordinates: any[]
   subordinateTeams: any[]
-  userId: User[]
+  userId: User
   companyId: string
   createdAt: string
   __v: number
@@ -136,6 +136,7 @@ export type Card = {
 export type Column = {
   id: number
   status: string
+  color: string
   cards: JobCardDataFormat[]
 }
 

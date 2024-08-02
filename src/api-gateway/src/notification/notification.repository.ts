@@ -10,6 +10,11 @@ export class NotificationRepository {
     private notificationModel: Model<Notification>,
   ) {}
 
+  async save(notification: Notification) {
+    const notificationModel = new this.notificationModel(notification);
+    return await notificationModel.save();
+  }
+
   async findAllWithRecipientId(id: Types.ObjectId): Promise<Notification[]> {
     return await this.notificationModel.find({ recipientId: id }).lean().exec();
   }

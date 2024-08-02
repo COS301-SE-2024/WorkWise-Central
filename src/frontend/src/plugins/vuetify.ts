@@ -59,7 +59,7 @@ const vuetify = createVuetify({
           }
         }
       },
-      VCard: {
+      VCardItem: {
         class: 'bg-cardColor'
       }
     },

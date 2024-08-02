@@ -62,13 +62,7 @@ class Address {
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  complex?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  houseNumber?: string;
+  complexOrBuilding?: string;
 }
 class UpdateAddress extends PartialType(Address) {}
 class ClientDetails {
@@ -125,11 +119,6 @@ export class UpdateClientDto {
   @IsOptional()
   @IsString()
   registrationNumber?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  clientUsername?: string;
 
   @ApiProperty()
   @IsOptional()

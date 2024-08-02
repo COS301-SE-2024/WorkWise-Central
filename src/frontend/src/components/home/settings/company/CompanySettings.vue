@@ -2,20 +2,21 @@
   <v-container :theme="isdarkmode === true ? 'dark' : 'light'">
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
-        <h1>Company Settings</h1>
+        <h1 class="text-xl font-semibold">Company Settings</h1>
         <v-divider></v-divider>
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="8" class="pl-15">
+      <v-col cols="12" lg="8" order="last" order-lg="first">
         <EditCompany v-if="currentSettings === 'Company Details'" />
         <EditRoles v-if="currentSettings === 'Roles'" />
         <EditStructure v-if="currentSettings === 'Structure'" />
       </v-col>
-      <v-col cols="4" class="pl-15">
+
+      <v-col cols="12" lg="4" order="first" order-lg="last">
         <AppMenu
           :model="items"
-          class="bg-secondary"
+          class="bg-cardColor text-primary"
           :theme="isdarkmode === true ? 'dark' : 'light'"
         >
           <template #item="{ item, props }">
@@ -31,8 +32,8 @@
               </a>
             </router-link>
             <a v-else v-ripple :href="item.url" :target="item.target" v-bind="props.action">
-              <span :class="item.icon"></span>
-              <span class="ml-2">{{ item.label }}</span>
+              <v-icon :icon="item.icon"></v-icon>
+              <v-list-item-title>{{ item.label }}</v-list-item-title>
             </a>
           </template>
         </AppMenu>
@@ -54,7 +55,7 @@ export default defineComponent({
   data() {
     return {
       companyDialog: false,
-      currentSettings: '',
+      currentSettings: 'Company Details',
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       items: [
         {

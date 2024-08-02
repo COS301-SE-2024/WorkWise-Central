@@ -2,21 +2,58 @@
   <v-app :theme="isdarkmode ? 'dark' : 'light'">
     <!-- Toolbar -->
     <v-app-bar :theme="isdarkmode ? 'themes.dark' : 'themes.light'" class="bg-background">
-      <v-toolbar-title class="d-flex justify-end">
+      <v-toolbar-title class="d-flex justify-start">
         <v-label class="h4 text-primary">Work</v-label>
         <v-label class="h4 text-secondary">Wise</v-label>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-btn @click="toggleDarkMode"
+      <v-col></v-col>
+      <v-btn
+        color="primary"
+        dark
+        @click="loginDialog = true"
+        rounded="xl"
+        variant="outlined"
+        align-center
+        justify-center
+        class="my-3 text-center"
+        size="large"
+      >
+        Log in
+      </v-btn>
+      <v-btn
+        color="secondary"
+        dark
+        @click="signupDialog = true"
+        rounded="xl"
+        align-center
+        variant="elevated"
+        class="my-3 text-center"
+        size="large"
+      >
+        Sign up
+      </v-btn>
+      <v-btn @click="toggleDarkMode" base-color="background" text
         ><v-icon :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"></v-icon
       ></v-btn>
     </v-app-bar>
     <!-- Main Content -->
     <v-main :theme="isdarkmode ? 'dark' : 'light'">
-      <v-row style="height: 1000px" no-gutters>
+      <v-row style="height: 1000px">
         <!-- Left Half -->
-        <v-col cols="6" sm="3" md="6" align-self="center">
+
+        <v-col
+          cols="12"
+          lg="6"
+          md="6"
+          sm="6"
+          align-self="center"
+          order="last"
+          order-lg="first"
+          order-md="first"
+          order-sm="last"
+        >
           <v-row justify="center"
             ><v-col align-self="center">
               <h1
@@ -34,25 +71,8 @@
           >
 
           <v-col>
-            <v-row justify="center">
-              <v-col cols="12" md="6"
-                ><v-btn
-                  color="primary"
-                  dark
-                  @click="loginDialog = true"
-                  rounded="md"
-                  variant="elevated"
-                  align-center
-                  justify-center
-                  class="my-3 button-width button-height text-center"
-                  size="large"
-                >
-                  Log in
-                </v-btn></v-col
-              ></v-row
-            >
-
-            <v-dialog v-model="loginDialog" max-width="400" @click:outside="resetFields">
+            <v-dialog opacity="" v-model="loginDialog" max-width="400" @click:outside="resetFields">
+              <Toast position="top-center" />
               <v-card
                 width="auto"
                 height="auto"
@@ -113,7 +133,6 @@
                 </v-col>
 
                 <v-col cols="8" offset="2">
-                  <Toast />
                   <v-btn
                     :disabled="!valid"
                     text
@@ -130,7 +149,7 @@
                 <v-col cols="8" offset="2">
                   <v-btn
                     text
-                    @click="(signupDialog = true)((loginDialog = false))"
+                    @click="(signupDialog = true)((loginDialog = false))(resetFields)"
                     rounded="md"
                     color="secondary"
                     size="large"
@@ -149,25 +168,14 @@
                 >
               </v-card>
             </v-dialog>
-            <v-row justify="center"
-              ><v-col cols="12" md="6"
-                ><v-btn
-                  color="secondary"
-                  dark
-                  @click="signupDialog = true"
-                  rounded="md"
-                  align-center
-                  variant="elevated"
-                  class="my-3 button-width button-height text-center"
-                  size="large"
-                >
-                  Sign up
-                </v-btn></v-col
-              ></v-row
-            >
 
             <!-- Flow 1 -->
-            <v-dialog v-model="signupDialog" max-width="400" @click:outside="resetFields">
+            <v-dialog
+              opacity=""
+              v-model="signupDialog"
+              max-width="400"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -205,10 +213,10 @@
                           ><label style="font-size: 14px; font-weight: lighter">Password</label>
                           <v-text-field
                             :theme="isdarkmode ? 'dark' : 'light'"
-                            :label="password ? '' : 'Enter your password'"
+                            :label="signupPassword ? '' : 'Enter your password'"
                             :type="showPassword ? 'text' : 'password'"
                             name="password"
-                            v-model="password"
+                            v-model="signupPassword"
                             :rules="passwordRules"
                             :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                             @click:append="toggleShowPassword"
@@ -230,7 +238,7 @@
                             @click:append="toggleShowPassword"
                             name="confirm_password"
                             v-model="confirm_password"
-                            :rules="[(v) => v === password || 'Passwords do not match']"
+                            :rules="[(v) => v === signupPassword || 'Passwords do not match']"
                             rounded="md"
                             variant="solo"
                             required
@@ -239,7 +247,7 @@
                     </v-form>
                   </v-col>
                   <v-col cols="8" offset="2">
-                    <Toast />
+                    <Toast position="top-center" />
                     <v-btn
                       :disabled="!valid"
                       text
@@ -267,7 +275,12 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 2 -->
-            <v-dialog v-model="signup1Dialog" max-width="400" @click:outside="resetFields">
+            <v-dialog
+              opacity=""
+              v-model="signup1Dialog"
+              max-width="400"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 width="auto"
                 height="auto"
@@ -345,7 +358,12 @@
               </v-sheet>
             </v-dialog>
             <v-col xs="3" align-self="center">
-              <v-dialog v-model="signupUsernameDialog" max-width="400" @click:outside="resetFields">
+              <v-dialog
+                opacity=""
+                v-model="signupUsernameDialog"
+                max-width="400"
+                @click:outside="resetFields"
+              >
                 <v-sheet
                   width="auto"
                   height="auto"
@@ -378,7 +396,7 @@
                     </v-form>
                   </v-col>
                   <v-col cols="8" offset="2">
-                    <Toast />
+                    <Toast position="top-center" />
                     <v-btn
                       :disabled="!valid"
                       text
@@ -408,7 +426,12 @@
               </v-dialog>
             </v-col>
             <!-- Flow 3 -->
-            <v-dialog v-model="signup2Dialog" max-width="400" @click:outside="resetFields">
+            <v-dialog
+              opacity=""
+              v-model="signup2Dialog"
+              max-width="400"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 width="auto"
                 height="auto"
@@ -507,7 +530,12 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 4 -->
-            <v-dialog v-model="signupAddressDialog" max-width="1000" @click:outside="resetFields">
+            <v-dialog
+              opacity=""
+              v-model="signupAddressDialog"
+              max-width="1000"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 width="auto"
                 height="auto"
@@ -559,7 +587,7 @@
                       <v-row
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">City</label
-                          ><v-select
+                          ><v-text-field
                             :label="city ? '' : 'Select your city'"
                             type="input"
                             v-model="city"
@@ -567,9 +595,8 @@
                             :rules="cityRules"
                             rounded="md"
                             variant="solo"
-                            :items="cityList"
                             required
-                          ></v-select></v-col
+                          ></v-text-field></v-col
                       ></v-row>
                       <v-row
                         ><v-col
@@ -646,6 +673,7 @@
             </v-dialog>
             <!-- Flow 5 -->
             <v-dialog
+              opacity=""
               v-model="signup3Dialog"
               max-width="700"
               style="height: 750px"
@@ -683,19 +711,103 @@
         </v-col>
 
         <!-- Right Half -->
-        <v-col cols="6" sm="3" md="6">
+
+        <v-col
+          cols="12"
+          lg="6"
+          md="6"
+          sm="6"
+          order="first"
+          order-lg="last"
+          order-md="last"
+          order-sm="first"
+        >
           <div class="w-full h-full background-image"></div>
         </v-col>
       </v-row>
-      <v-footer :theme="isdarkmode ? 'dark' : 'light'" class="bg-background">
-        <!-- <v-container>
+      <!-- <v-footer :theme="isdarkmode ? 'dark' : 'light'" class="bg-background">
+         <v-container>
           <v-row justify="space-between">
             <v-col cols="12" md="6">
               <span class="h6">&copy; 2024 WorkWise Central</span>
             </v-col>
           </v-row>
-        </v-container> -->
-      </v-footer>
+        </v-container>
+      </v-footer> -->
+      <div>
+        <h1
+          :class="[
+            'splash-title',
+            'header-title',
+            'text-center',
+            { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
+          ]"
+        >
+          What <span class="text-primary">services</span> would you like to
+          <span class="text-secondary">manage</span>
+        </h1>
+        <v-row justify="end" style="height: 500px">
+          <v-col cols="12">
+            <v-sheet class="bg-background mx-auto" elevation="0">
+              <v-slide-group v-model="model" class="pa-4" show-arrows>
+                <v-spacer></v-spacer>
+                <v-slide-group-item v-for="(service, index) in services.slice(0, 3)" :key="index">
+                  <v-col cols="12" lg="4" md="4">
+                    <v-card max-width="500px" rounded="xl">
+                      <v-card-title>{{ service.title }}</v-card-title>
+                      <v-card-text>
+                        <div>{{ service.text1 }}</div>
+                        <div>{{ service.text2 }}</div>
+                        <div>{{ service.text3 }}</div>
+                      </v-card-text>
+                      <v-card-actions class="bg-cardColor">
+                        <v-btn
+                          color="primary"
+                          dark
+                          @click="signupDialog = true"
+                          rounded="xl"
+                          class="my-3 text-center"
+                          size="large"
+                        >
+                          Get Started
+                        </v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-col>
+                </v-slide-group-item>
+              </v-slide-group>
+            </v-sheet>
+          </v-col>
+        </v-row>
+      </div>
+      <h1
+        :class="[
+          'splash-title',
+          'header-title',
+          'text-center',
+          { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
+        ]"
+      >
+        Manage your business <span class="text-primary">effectively</span> and
+        <span class="text-secondary">efficiently</span> using <span class="text-primary">Work</span
+        ><span class="text-secondary">Wise</span> Central
+      </h1>
+      <v-row style="height: 1000px">
+        <v-col cols="12" order="first" order-lg="last" order-md="last" order-sm="first">
+          <v-tabs v-model="tab" align-tabs="center" bg-color="secondary" stacked>
+            <v-tab v-for="(item, index) in tabs" :key="index">
+              {{ item.title }}<v-icon :icon="item.icon" color="primary"></v-icon>
+            </v-tab>
+          </v-tabs>
+          <v-tabs-window v-model="tab">
+            <v-tabs-window-item v-for="item in tabs" :key="item" :value="item">
+              <v-card flat>
+                <v-img> </v-img>
+              </v-card>
+            </v-tabs-window-item>
+          </v-tabs-window>
+        </v-col>
+      </v-row>
     </v-main>
   </v-app>
 </template>
@@ -719,7 +831,17 @@ export default defineComponent({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     click_create_client: false,
+    tabs: [
+      { title: 'Client Management', icon: 'mdi-account-group' },
+      { title: 'Project Management', icon: 'mdi-account-group' },
+      { title: 'Employee Management', icon: 'mdi-account-group' },
+      { title: 'Team Management', icon: 'mdi-account-group' },
+      { title: 'Operations', icon: 'mdi-account-group' },
+      { title: 'Client Projects', icon: 'mdi-account-group' }
+    ],
+    text: 'sidgkbvufteWOARBGADIGU8AjgnWJVG',
     saltRounds: 10,
+    tab: false,
     loginDialog: false,
     alertSignUp: false,
     alertSignUpFailure: false,
@@ -746,6 +868,26 @@ export default defineComponent({
       'Venda',
       'Xhosa',
       'Zulu'
+    ],
+    services: [
+      {
+        title: 'Plumbing Services',
+        text1: 'Manage your plumbing services',
+        text2: 'Project Management, Job Management, Employee Management',
+        text3: 'Team Management, Operations, Client Projects'
+      },
+      {
+        title: 'Electronics Services',
+        text1: 'Manage your electronics services',
+        text2: 'Project Management, Job Management, Employee Management',
+        text3: 'Team Management, Operations, Client Projects'
+      },
+      {
+        title: 'Electricians Services',
+        text1: 'Manage your electricians services',
+        text2: 'Project Management, Job Management, Employee Management',
+        text3: 'Team Management, Operations, Client Projects'
+      }
     ],
     cityList: [
       'Johannesburg',
@@ -785,6 +927,7 @@ export default defineComponent({
     flow: ['year', 'month', 'calendar'],
     access_token: '',
     password: '',
+    signupPassword: '',
     confirm_password: '',
     showPassword: false,
     date: '',
@@ -917,7 +1060,8 @@ export default defineComponent({
     phoneNumberRules: [
       (v) => !!v || 'Phone number is required',
       (v) => (v.length >= 10 && v.length <= 10) || 'Phone number must be 10 characters',
-      (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers'
+      (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers',
+      (v) => /^0[0-9]*$/.test(v) || 'Phone number must start with 0'
     ]
   }),
 
@@ -1004,7 +1148,7 @@ export default defineComponent({
             this.$router.push('/dashboard')
           })
           .catch((error) => {
-            console.log(error.response.data.message)
+            console.log(error)
             this.$toast.add({
               severity: 'error',
               summary: 'Error',
@@ -1023,7 +1167,7 @@ export default defineComponent({
       await axios
         .post(apiURL + 'users/create', {
           username: this.username,
-          password: this.password,
+          password: this.signupPassword,
           personalInfo: {
             firstName: this.name,
             surname: this.surname,
@@ -1075,7 +1219,7 @@ export default defineComponent({
           this.$toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Username already exists',
+            detail: 'Email already exists',
             life: 3000
           })
         } else {
@@ -1100,7 +1244,7 @@ export default defineComponent({
             severity: 'error',
             summary: 'Error',
             detail: 'Username already exists',
-            life: 3000
+            life: 6000
           })
         } else {
           this.signupUsernameDialog = false
@@ -1259,5 +1403,8 @@ export default defineComponent({
     #3a6073,
     #3a7bd5
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.mb-4 {
+  margin-bottom: 1.5rem;
 }
 </style>
