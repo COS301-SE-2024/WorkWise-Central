@@ -14,6 +14,7 @@ import {
   RemoveCommentDto,
   UpdateCommentDto,
   UpdateJobDto,
+  UpdateStatus,
 } from './dto/update-job.dto';
 import { FlattenMaps, Types } from 'mongoose';
 import { Comment, Job } from './entities/job.entity';
@@ -35,7 +36,7 @@ import {
   CreateTagDto,
 } from './dto/create-tag.dto';
 import { JobPriorityTag, JobTag } from './entities/job-tag.entity';
-import { DeleteTagDto } from './dto/edit-tag.dto';
+import { DeleteStatusDto, DeleteTagDto } from './dto/edit-tag.dto';
 import { Employee } from '../employee/entities/employee.entity';
 import { JobStatus } from './entities/job-status.entity';
 
@@ -704,5 +705,87 @@ export class JobService {
     );
     console.log(updateResult);
     return updateResult;
+  }
+
+  ///STATUS
+  async getStatusById(userId: Types.ObjectId, statusId: Types.ObjectId) {
+    if (!(await this.usersService.userIdExists(userId)))
+      throw new NotFoundException('User not found');
+    return this.jobTagRepository.findStatusById(statusId);
+  }
+
+  async findAllStatusesInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ) {
+    if (!(await this.usersService.userIdExists(userId)))
+      throw new NotFoundException('User not found');
+    return this.jobTagRepository.findAllStatusesInCompany(companyId);
+  }
+
+  async createDefaultStatuses(companyId: Types.ObjectId) {
+    ///TODO: Validation CHECK HEX VALIDATION
+    /// User exists, company exists, check for duplicates
+    const noStatus = new JobStatus('No Status', '#FFFFFF', companyId);
+    const archive = new JobStatus('Archive', '#b3b0b0', companyId);
+    const arr: JobStatus[] = [noStatus, archive];
+    for (const js of arr) {
+      const exists = await this.jobTagRepository.statusNameExists(js.status);
+      if (exists)
+        throw new InternalServerErrorException(
+          `Job Status already exists: ${js.status}`,
+        );
+    }
+    return await this.jobTagRepository.createDefaultStatusesInCompany(arr);
+  }
+
+  async createStatus(userId: Types.ObjectId, createStatusDto: CreateStatusDto) {
+    ///TODO: Validation
+    /// User exists, company exists, check for duplicates
+    const userExists = await this.usersService.userIdExists(userId);
+    if (!userExists) throw new NotFoundException('User not found');
+    const companyExists = await this.companyService.companyIdExists(
+      createStatusDto.companyId,
+    );
+    if (!companyExists) throw new NotFoundException('Company not found');
+    const exists = await this.jobTagRepository.statusNameExists(
+      createStatusDto.status,
+    );
+    if (exists)
+      throw new InternalServerErrorException(
+        `Job Status already exists: ${createStatusDto.status}`,
+      );
+
+    ///
+    const newStatus = new JobStatus(
+      createStatusDto.status,
+      createStatusDto.colour,
+      createStatusDto.companyId,
+    );
+    return await this.jobTagRepository.createStatus(newStatus);
+  }
+
+  async updateStatus(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+    statusId: Types.ObjectId,
+    updateStatus: UpdateStatus,
+  ) {
+    const userExists = await this.usersService.userIdExists(userId);
+    if (!userExists) throw new NotFoundException('User not found');
+
+    // Role stuff
+    return await this.jobTagRepository.updateStatus(statusId, updateStatus);
+  }
+
+  async deleteStatus(userId: Types.ObjectId, deleteStatusDto: DeleteStatusDto) {
+    const userExists = await this.usersService.userIdExists(userId);
+    if (!userExists) throw new NotFoundException('User not found');
+
+    // Role stuff
+    return await this.jobTagRepository.deleteStatus(
+      deleteStatusDto.statusId,
+      deleteStatusDto.companyId,
+    );
   }
 }
