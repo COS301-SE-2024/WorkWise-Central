@@ -136,6 +136,7 @@ export type Card = {
 export type Column = {
   id: number
   status: string
+  color: string
   cards: JobCardDataFormat[]
 }
 
