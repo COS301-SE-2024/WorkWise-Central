@@ -120,223 +120,269 @@ export default defineComponent({
 
 <template>
   <v-app :theme="isdarkmode ? 'dark' : 'light'">
-    <v-card class="bg-cardColor">
-      <v-app :theme="isdarkmode ? 'dark' : 'light'">
-        <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-background">
-          <v-app-bar-nav-icon @click="isVisible = !isVisible">
-            <v-icon>{{ isVisible ? 'fa: fa-solid fa-bars' : 'fa: fa-solid fa-bars' }}</v-icon>
-          </v-app-bar-nav-icon>
-          <CompanyMain />
-          <v-spacer></v-spacer>
+    <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-background">
+      <v-app-bar-nav-icon @click="isVisible = !isVisible">
+        <v-icon>{{ isVisible ? 'fa: fa-solid fa-bars' : 'fa: fa-solid fa-bars' }}</v-icon>
+      </v-app-bar-nav-icon>
+      <CompanyMain />
+      <v-spacer></v-spacer>
 
-          <v-toolbar-title class="d-flex justify-center">
-            <v-label class="text-primary h4">Work</v-label>
-            <v-label class="text-secondary h4">Wise</v-label>
-          </v-toolbar-title>
+      <v-toolbar-title class="d-flex justify-center">
+        <v-label class="text-primary h4">Work</v-label>
+        <v-label class="text-secondary h4">Wise</v-label>
+      </v-toolbar-title>
 
-          <v-spacer class="d-none d-sm-flex"></v-spacer>
+      <v-spacer class="d-none d-sm-flex"></v-spacer>
 
-          <div class="d-flex align-center">
-            <UserAvatar />
-            <v-icon
-              class="icon-padding mr-5"
-              @click="toggleDarkMode"
-              :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"
-            ></v-icon>
-          </div>
-        </v-app-bar>
+      <div class="d-flex align-center">
+        <UserAvatar />
+        <v-icon
+          class="icon-padding mr-5"
+          @click="toggleDarkMode"
+          :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"
+        ></v-icon>
+      </div>
+    </v-app-bar>
 
-        <v-navigation-drawer
-          class="bg-background"
-          app
-          v-model="drawer"
-          :rail="isVisible"
-          :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
-        >
-          <v-list v-model:open="open">
-            <v-list-group fluid value="Dashboard">
-              <template v-slot:activator="{ props }">
-                <v-list-item
-                  v-bind="props"
-                  prepend-icon="fa: fa-solid fa-tachometer-alt"
-                  title="Dashboard"
-                  class="list-item-large"
-                ></v-list-item>
-              </template>
+    <v-app :theme="isdarkmode ? 'dark' : 'light'">
+      <v-navigation-drawer
+        class="bg-background"
+        app
+        v-model="drawer"
+        :rail="isVisible"
+        :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
+      >
+        <v-list v-model:open="open">
+          <v-list-group fluid value="Dashboard">
+            <template v-slot:activator="{ props }">
               <v-list-item
-                v-for="(item, i) in dashboardSubItems"
-                :key="i"
-                :to="{ name: item.routeName }"
-                :value="item.title"
-                @click="setInbox(item.title)"
-                :class="{ 'bg-secondary': selected === item.title }"
-                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-              >
-            </v-list-group>
-          </v-list>
-          <v-list v-model:open="open">
-            <v-list-group fluid value="Clients">
-              <template v-slot:activator="{ props }">
-                <v-list-item
-                  v-bind="props"
-                  prepend-icon="fa: fa-solid fa-handshake"
-                  title="Clients"
-                  class="list-item-large"
-                ></v-list-item>
-              </template>
+                v-bind="props"
+                prepend-icon="fa: fa-solid fa-tachometer-alt"
+                title="Dashboard"
+                class="list-item-large"
+              ></v-list-item>
+            </template>
+            <v-list-item
+              v-for="(item, i) in dashboardSubItems"
+              :key="i"
+              :to="{ name: item.routeName }"
+              :value="item.title"
+              @click="setInbox(item.title)"
+              :class="{ 'bg-secondary': selected === item.title }"
+              ><v-icon
+                :icon="item.icon"
+                size="sm"
+                color="primary"
+                start
+                :class="isvisible === true ? '' : 'mr-4'"
+              ></v-icon
+              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
+            >
+          </v-list-group>
+        </v-list>
+        <v-list v-model:open="open">
+          <v-list-group fluid value="Clients">
+            <template v-slot:activator="{ props }">
               <v-list-item
-                v-for="(item, i) in clientSubItems"
-                :key="i"
-                :to="{ name: item.routeName }"
-                :value="item.title"
-                @click="setInbox(item.title)"
-                :class="{ 'bg-secondary': selected === item.title }"
-                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-              >
-            </v-list-group>
-          </v-list>
-          <v-list v-model:open="open">
-            <v-list-group fluid value="Employees">
-              <template v-slot:activator="{ props }">
-                <v-list-item
-                  v-bind="props"
-                  prepend-icon="fa: fa-solid fa-users"
-                  title="Employees"
-                  class="list-item-large"
-                ></v-list-item>
-              </template>
+                v-bind="props"
+                prepend-icon="fa: fa-solid fa-handshake"
+                title="Clients"
+                class="list-item-large"
+              ></v-list-item>
+            </template>
+            <v-list-item
+              v-for="(item, i) in clientSubItems"
+              :key="i"
+              :to="{ name: item.routeName }"
+              :value="item.title"
+              @click="setInbox(item.title)"
+              :class="{ 'bg-secondary': selected === item.title }"
+              ><v-icon
+                :icon="item.icon"
+                size="sm"
+                color="primary"
+                start
+                :class="isvisible === true ? '' : 'mr-4'"
+              ></v-icon
+              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
+            >
+          </v-list-group>
+        </v-list>
+        <v-list v-model:open="open">
+          <v-list-group fluid value="Employees">
+            <template v-slot:activator="{ props }">
+              <v-list-item
+                v-bind="props"
+                prepend-icon="fa: fa-solid fa-users"
+                title="Employees"
+                class="list-item-large"
+              ></v-list-item>
+            </template>
 
+            <v-list-item
+              v-for="(item, i) in employeeSubItems"
+              :key="i"
+              :to="{ name: item.routeName }"
+              :value="item.title"
+              @click="setInbox(item.title)"
+              :class="{ 'bg-secondary': selected === item.title }"
+              ><v-icon
+                :icon="item.icon"
+                size="sm"
+                color="primary"
+                start
+                :class="isVisible === true ? '' : 'mr-4'"
+              ></v-icon
+              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
+            >
+          </v-list-group>
+        </v-list>
+        <v-list v-model:open="open">
+          <v-list-group fluid value="Jobs">
+            <template v-slot:activator="{ props }">
               <v-list-item
-                v-for="(item, i) in employeeSubItems"
-                :key="i"
-                :to="{ name: item.routeName }"
-                :value="item.title"
-                @click="setInbox(item.title)"
-                :class="{ 'bg-secondary': selected === item.title }"
-                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-              >
-            </v-list-group>
-          </v-list>
-          <v-list v-model:open="open">
-            <v-list-group fluid value="Jobs">
-              <template v-slot:activator="{ props }">
-                <v-list-item
-                  v-bind="props"
-                  prepend-icon="fa: fa-solid fa-briefcase"
-                  title="Jobs"
-                  class="list-item-large"
-                ></v-list-item>
-              </template>
+                v-bind="props"
+                prepend-icon="fa: fa-solid fa-briefcase"
+                title="Jobs"
+                class="list-item-large"
+              ></v-list-item>
+            </template>
+            <v-list-item
+              v-for="(item, i) in jobSubItems"
+              :key="i"
+              :to="{ name: item.routeName }"
+              :value="item.title"
+              @click="setInbox(item.title)"
+              :class="{ 'bg-secondary': selected === item.title }"
+              ><v-icon
+                :icon="item.icon"
+                size="sm"
+                color="primary"
+                start
+                :class="isVisible === true ? '' : 'mr-4'"
+              ></v-icon
+              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
+            >
+          </v-list-group>
+        </v-list>
+        <v-list v-model:open="open">
+          <v-list-group fluid value="Inventory">
+            <template v-slot:activator="{ props }">
               <v-list-item
-                v-for="(item, i) in jobSubItems"
-                :key="i"
-                :to="{ name: item.routeName }"
-                :value="item.title"
-                @click="setInbox(item.title)"
-                :class="{ 'bg-secondary': selected === item.title }"
-                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-              >
-            </v-list-group>
-          </v-list>
-          <v-list v-model:open="open">
-            <v-list-group fluid value="Inventory">
-              <template v-slot:activator="{ props }">
-                <v-list-item
-                  v-bind="props"
-                  prepend-icon="fa: fa-solid fa-boxes"
-                  title="Inventory"
-                  class="list-item-large"
-                ></v-list-item>
-              </template>
+                v-bind="props"
+                prepend-icon="fa: fa-solid fa-boxes"
+                title="Inventory"
+                class="list-item-large"
+              ></v-list-item>
+            </template>
+            <v-list-item
+              v-for="(item, i) in inventorySubItems"
+              :key="i"
+              :to="{ name: item.routeName }"
+              :value="item.title"
+              @click="setInbox(item.title)"
+              :class="{ 'bg-secondary': selected === item.title }"
+              ><v-icon
+                :icon="item.icon"
+                size="sm"
+                color="primary"
+                start
+                :class="isVisible === true ? '' : 'mr-4'"
+              ></v-icon
+              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
+            >
+          </v-list-group>
+        </v-list>
+        <v-list v-model:open="open">
+          <v-list-group fluid value="Inbox">
+            <template v-slot:activator="{ props }">
               <v-list-item
-                v-for="(item, i) in inventorySubItems"
-                :key="i"
-                :to="{ name: item.routeName }"
-                :value="item.title"
-                @click="setInbox(item.title)"
-                :class="{ 'bg-secondary': selected === item.title }"
-                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-              >
-            </v-list-group>
-          </v-list>
-          <v-list v-model:open="open">
-            <v-list-group fluid value="Inbox">
-              <template v-slot:activator="{ props }">
-                <v-list-item
-                  v-bind="props"
-                  prepend-icon="fa: fa-solid fa-envelope"
-                  title="Inbox"
-                  class="list-item-large"
-                ></v-list-item>
-              </template>
+                v-bind="props"
+                prepend-icon="fa: fa-solid fa-envelope"
+                title="Inbox"
+                class="list-item-large"
+              ></v-list-item>
+            </template>
+            <v-list-item
+              v-for="(item, i) in inboxSubItems"
+              :key="i"
+              :to="{ name: item.routeName }"
+              :value="item.title"
+              @click="setInbox(item.title)"
+              :class="{ 'bg-secondary': selected === item.title }"
+              ><v-icon
+                :icon="item.icon"
+                size="sm"
+                color="primary"
+                start
+                :class="isVisible === true ? '' : 'mr-4'"
+              ></v-icon
+              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
+            >
+          </v-list-group>
+        </v-list>
+        <v-list v-model:open="open">
+          <v-list-group fluid value="Help">
+            <template v-slot:activator="{ props }">
               <v-list-item
-                v-for="(item, i) in inboxSubItems"
-                :key="i"
-                :to="{ name: item.routeName }"
-                :value="item.title"
-                @click="setInbox(item.title)"
-                :class="{ 'bg-secondary': selected === item.title }"
-                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-              >
-            </v-list-group>
-          </v-list>
-          <v-list v-model:open="open">
-            <v-list-group fluid value="Help">
-              <template v-slot:activator="{ props }">
-                <v-list-item
-                  v-bind="props"
-                  prepend-icon="fa: fa-solid fa-life-ring"
-                  title="Help"
-                  class="list-item-large"
-                ></v-list-item>
-              </template>
-              <v-list-item
-                v-for="(item, i) in supportSubItems"
-                :key="i"
-                :to="{ name: item.routeName }"
-                :value="item.title"
-                @click="setInbox(item.title)"
-                :class="{ 'bg-secondary': selected === item.title }"
-                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-              >
-            </v-list-group>
-          </v-list>
+                v-bind="props"
+                prepend-icon="fa: fa-solid fa-life-ring"
+                title="Help"
+                class="list-item-large"
+              ></v-list-item>
+            </template>
+            <v-list-item
+              v-for="(item, i) in supportSubItems"
+              :key="i"
+              :to="{ name: item.routeName }"
+              :value="item.title"
+              @click="setInbox(item.title)"
+              :class="{ 'bg-secondary': selected === item.title }"
+              ><v-icon
+                :icon="item.icon"
+                size="sm"
+                color="primary"
+                start
+                :class="isVisible === true ? '' : 'mr-4'"
+              ></v-icon
+              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
+            >
+          </v-list-group>
+        </v-list>
 
-          <v-list v-model:open="open">
-            <v-list-group fluid value="More">
-              <template v-slot:activator="{ props }">
-                <v-list-item
-                  v-bind="props"
-                  prepend-icon="fa: fa-solid fa-ellipsis-h"
-                  title="More"
-                  class="list-item-large"
-                ></v-list-item>
-              </template>
+        <v-list v-model:open="open">
+          <v-list-group fluid value="More">
+            <template v-slot:activator="{ props }">
               <v-list-item
-                v-for="(item, i) in moreSubItems"
-                :key="i"
-                :to="{ name: item.routeName }"
-                :value="item.title"
-                @click="setInbox(item.title)"
-                :class="{ 'bg-secondary': selected === item.title }"
-                ><v-icon :icon="item.icon" size="sm" color="primary" start class="ma-4"></v-icon
-                ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-              >
-            </v-list-group>
-          </v-list>
-        </v-navigation-drawer>
-        <v-main>
-          <component :is="component" />
-        </v-main>
-      </v-app>
-    </v-card>
+                v-bind="props"
+                prepend-icon="fa: fa-solid fa-ellipsis-h"
+                title="More"
+                class="list-item-large"
+              ></v-list-item>
+            </template>
+            <v-list-item
+              v-for="(item, i) in moreSubItems"
+              :key="i"
+              :to="{ name: item.routeName }"
+              :value="item.title"
+              @click="setInbox(item.title)"
+              :class="{ 'bg-secondary': selected === item.title }"
+              ><v-icon
+                :icon="item.icon"
+                size="sm"
+                color="primary"
+                start
+                :class="isVisible === true ? '' : 'mr-4'"
+              ></v-icon
+              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
+            >
+          </v-list-group>
+        </v-list>
+      </v-navigation-drawer>
+      <v-main>
+        <component :is="component" />
+      </v-main>
+    </v-app>
   </v-app>
 </template>
 
