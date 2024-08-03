@@ -106,7 +106,7 @@
                           </v-chip>
                         </template>
                         <template v-slot:[`item.actions`]="{ item }">
-                          <v-menu v-model="actionsDialog" max-width="500px">
+                          <v-menu max-width="500px" :theme="isdarkmode === true ? 'dark' : 'light'">
                             <template v-slot:activator="{ props }"
                               ><v-btn
                                 rounded="xl"
@@ -144,36 +144,6 @@
             </v-col>
           </v-row> </v-col
       ></v-row>
-
-      <v-menu v-model="actionsDialog" max-width="500px">
-        <v-list>
-          <v-list-item>
-            <v-list-item-content class="text-h5 font-weight-regular">
-              {{
-                selectedItemName.charAt(0).toUpperCase() +
-                selectedItemName.slice(1) +
-                ' ' +
-                selectedItemSurname.charAt(0).toUpperCase() +
-                selectedItemSurname.slice(1)
-              }}</v-list-item-content
-            >
-          </v-list-item>
-          <v-list-item-content> What would you like to do with this account? </v-list-item-content>
-
-          <v-list-item
-            ><EmployeeDetails
-              v-model="clientDialog"
-              colors="colors"
-              :EmployeeDetails="selectedItem"
-          /></v-list-item>
-
-          <v-list-item>
-            <EditEmployee @update:item="selectedItem = $event" :editedItem="selectedItem"
-          /></v-list-item>
-
-          <v-list-item><DeleteEmployee :details="selectedItem" /></v-list-item>
-        </v-list>
-      </v-menu>
     </v-container>
   </v-app>
 </template>

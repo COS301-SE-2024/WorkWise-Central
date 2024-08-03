@@ -12,8 +12,9 @@
         color="warning"
         variant="text"
         v-bind="activatorProps"
-        >Edit<v-icon icon="fa:fa-solid fa-pencil" end color="warning " size="small"></v-icon
-      ></v-btn>
+        ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon
+        >Edit</v-btn
+      >
     </template>
     <v-card>
       <v-form @submit.prevent="validateEdits">

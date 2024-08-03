@@ -14,29 +14,27 @@
       </v-col>
 
       <v-col cols="12" lg="4" order="first" order-lg="last">
-        <AppMenu
-          :model="items"
-          class="bg-cardColor text-primary"
-          :theme="isdarkmode === true ? 'dark' : 'light'"
+        <v-card class="elevation-0"
+          ><v-list class="bg-cardColor">
+            <v-list-item-group>
+              <template v-for="(item, i) in items" :key="i">
+                <v-list-item
+                  @click="selectSettings(item.label)"
+                  :class="{ 'bg-secondary': currentSettings === item.label }"
+                >
+                  <template v-slot:prepend>
+                    <v-list-item-icon>
+                      <v-icon :icon="item.icon" color="primary"></v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>{{ item.label }}</v-list-item-title>
+                    </v-list-item-content>
+                  </template>
+                </v-list-item>
+              </template>
+            </v-list-item-group></v-list
+          ></v-card
         >
-          <template #item="{ item, props }">
-            <router-link v-if="item.route" :to="item.route" custom>
-              <a
-                v-ripple
-                :href="props.href"
-                v-bind="props.action"
-                @click="selectSettings(item.label)"
-              >
-                <span :class="item.icon"></span>
-                <span class="ml-2">{{ item.label }}</span>
-              </a>
-            </router-link>
-            <a v-else v-ripple :href="item.url" :target="item.target" v-bind="props.action">
-              <v-icon :icon="item.icon"></v-icon>
-              <v-list-item-title>{{ item.label }}</v-list-item-title>
-            </a>
-          </template>
-        </AppMenu>
       </v-col>
     </v-row>
   </v-container>

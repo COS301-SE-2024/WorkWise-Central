@@ -2,7 +2,7 @@
   <v-dialog v-model="clientDialog" max-width="500" :theme="isdarkmode === true ? 'dark' : 'light'">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="success" v-bind="activatorProps">
-        View <v-icon icon="fa:fa-solid fa-eye" end color="success" size="small"></v-icon>
+        <v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon> View
       </v-btn>
     </template>
 
