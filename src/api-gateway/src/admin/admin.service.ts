@@ -8,7 +8,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import {
+  CancelInviteDto,
   CancelRequestDto,
+  RejectInviteDto,
   UserInviteRequestDto,
   UserJoinRequestDto,
 } from '../users/dto/request-to-join.dto';
@@ -17,11 +19,16 @@ import { AdminRepository } from './admin.repository';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
 import { UserJoinRequest } from './entities/request-to-join.entity';
-import { AcceptRequestDto } from '../client/dto/accept-request.dto';
+import {
+  AcceptInviteDto,
+  AcceptRequestDto,
+} from '../client/dto/accept-request.dto';
 import { EmployeeService } from '../employee/employee.service';
 import { RoleService } from '../role/role.service';
 import { NotificationService } from '../notification/notification.service';
 import { Role } from '../role/entity/role.entity';
+import { ciEquals } from '../utils/Utils';
+import { InviteToJoin } from './entities/invite-to-join.entity';
 
 @Injectable()
 export class AdminService {
@@ -88,7 +95,7 @@ export class AdminService {
       userToJoin: userId,
       companyId: requestToJoin.companyId,
     });
-    return await this.adminRepository.save(newRequest);
+    return await this.adminRepository.saveRequest(newRequest);
   }
 
   async createInvite(
@@ -102,6 +109,8 @@ export class AdminService {
     const employee = await this.employeeService.findById(
       userInviteRequestDto.employeeId,
     );
+    if (employee.userId.toString() !== userId.toString())
+      throw new UnauthorizedException('UserId not in employee');
     const company = await this.companyService.getCompanyById(
       employee.companyId,
     );
@@ -110,37 +119,51 @@ export class AdminService {
     // Someone with the email address already exists
     const allUsers = await this.usersService.getAllUsersInCompany(company._id);
     for (const user of allUsers) {
-      //if (ciEqual(user.personalInfo.contactInfo.email))
+      if (
+        ciEquals(
+          user.personalInfo.contactInfo.email,
+          userInviteRequestDto.emailToInvite,
+        )
+      )
+        throw new ConflictException('User with email already in company');
     }
     // get user
 
-    const userIsInCompany = await this.usersService.userIsInCompany(
-      userId,
-      requestToJoin.companyId,
-    );
-    if (userIsInCompany) {
-      throw new BadRequestException('User Already in company');
-    }
-
-    const requestsToCompany: (FlattenMaps<UserJoinRequest> & {
+    const invitesToUser: (FlattenMaps<InviteToJoin> & {
       _id: Types.ObjectId;
-    })[] = await this.adminRepository.findRequestsFromUserForCompany(
-      userId,
-      requestToJoin.companyId,
+    })[] = await this.adminRepository.findInvitesForUser(
+      userInviteRequestDto.emailToInvite,
     );
 
-    if (requestsToCompany.length > 0) {
+    if (invitesToUser.length > 0) {
+      for (const invite of invitesToUser) {
+        //Prevent spam invites
+        if (
+          invite.companyId.toString() === company._id.toString() &&
+          invite.emailBeingInvited == userInviteRequestDto.emailToInvite
+        ) {
+          throw new ConflictException('Invite already exists');
+        }
+      }
       throw new ConflictException(
         'User has already made a request to join this company',
       );
     }
 
+    const role =
+      userInviteRequestDto.roleId == null
+        ? await this.roleService.findOneInCompany('Worker', company._id)
+        : await this.roleService.findById(userInviteRequestDto.roleId);
+
     //
-    const newRequest = new UserJoinRequest({
-      userToJoin: userId,
-      companyId: requestToJoin.companyId,
-    });
-    return await this.adminRepository.save(newRequest);
+    const newInvite = new InviteToJoin(
+      company._id,
+      company.name,
+      role._id,
+      role.roleName,
+      userInviteRequestDto.emailToInvite,
+    );
+    return await this.adminRepository.saveInvite(newInvite);
   }
 
   async cancelRequest(
@@ -369,5 +392,87 @@ export class AdminService {
       );
       return true;
     }
+  }
+
+  async getAllInvitesInCompany(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+  ) {
+    if (!(await this.usersService.userIdExists(userId))) {
+      throw new NotFoundException('userId Invalid');
+    }
+    const employee = await this.employeeService.findById(employeeId);
+    //TODO: Role validation here
+    if (!employee) throw new NotFoundException('Employee Not Found');
+
+    return this.adminRepository.findAllInvitesFromCompany(employee.companyId);
+  }
+
+  //Must have userId
+  async acceptInvite(userId: Types.ObjectId, acceptInviteDto: AcceptInviteDto) {
+    if (!(await this.usersService.userIdExists(userId))) {
+      throw new NotFoundException('userId Invalid');
+    }
+
+    const userExists = await this.usersService.userIdExists(userId);
+    if (!userExists) throw new NotFoundException('UserId not found');
+
+    const invite = await this.adminRepository.findInviteById(
+      acceptInviteDto.inviteId,
+    );
+    const newJoinedCompany = await this.companyService.addEmployeeFromInvite({
+      roleId: invite._id,
+      superiorId: invite.superiorId,
+      companyId: invite.companyId,
+      newUserId: userId,
+    });
+    await this.adminRepository.acceptInvite(
+      invite.emailBeingInvited,
+      invite.companyId,
+    );
+
+    return newJoinedCompany;
+  }
+
+  async cancelInvite(userId: Types.ObjectId, cancelDto: CancelInviteDto) {
+    if (!(await this.usersService.userIdExists(userId))) {
+      throw new NotFoundException('userId Invalid');
+    }
+
+    if (!(await this.companyService.companyIdExists(cancelDto.companyId)))
+      throw new NotFoundException('CompanyId Invalid');
+
+    const employee = await this.employeeService.findById(cancelDto.employeeId);
+    //TODO: Role validation here
+    if (!employee) throw new NotFoundException('Employee Not Found');
+
+    const invite = await this.adminRepository.findInviteById(
+      cancelDto.inviteId,
+    );
+    if (!invite) throw new NotFoundException('InviteId Invalid');
+
+    await this.adminRepository.cancelInvite(
+      invite.emailBeingInvited,
+      invite.companyId,
+    );
+    return true;
+  }
+
+  async rejectInvite(userId: Types.ObjectId, rejectDto: RejectInviteDto) {
+    //userId belongs to invited person
+    if (!(await this.usersService.userIdExists(userId))) {
+      throw new NotFoundException('userId Invalid');
+    }
+
+    const invite = await this.adminRepository.findInviteById(
+      rejectDto.inviteId,
+    );
+    if (!invite) throw new NotFoundException('InviteId Invalid');
+
+    await this.adminRepository.rejectInvite(
+      invite.emailBeingInvited,
+      invite.companyId,
+    );
+    return true;
   }
 }
