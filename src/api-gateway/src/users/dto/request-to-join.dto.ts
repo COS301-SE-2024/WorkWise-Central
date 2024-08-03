@@ -40,7 +40,7 @@ export class UserInviteRequestDto {
   @IsNotEmpty()
   @IsString()
   @IsEmail()
-  emailToInvite: Types.ObjectId;
+  emailToInvite: string;
 
   @IsNotEmpty()
   @IsMongoId()
@@ -52,4 +52,28 @@ export class CancelRequestDto {
   @IsString()
   @IsMongoId()
   companyId: Types.ObjectId;
+}
+
+export class CancelInviteDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsMongoId()
+  companyId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsMongoId()
+  inviteId: Types.ObjectId;
+}
+
+export class RejectInviteDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsMongoId()
+  inviteId: Types.ObjectId;
 }

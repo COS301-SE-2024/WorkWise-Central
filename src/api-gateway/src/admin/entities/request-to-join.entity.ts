@@ -16,7 +16,7 @@ export class UserJoinRequest {
     this.userToJoin = createRequestDto.userToJoin;
   }
 
-  @Prop({ required: false, type: Types.ObjectId, ref: 'Company' })
+  @Prop({ required: false, type: SchemaTypes.ObjectId, ref: 'Company' })
   companyId: Types.ObjectId;
 
   @Prop({ required: false, type: String })
@@ -30,10 +30,10 @@ export class UserJoinRequest {
   })
   roleId?: Types.ObjectId = null; //Still not sure about this...
 
-  @Prop({ required: true, type: String, default: 'Worker' })
+  @Prop({ required: true, type: String, default: 'Worker' }) //TODO: Fix
   roleName?: string = 'Worker';
 
-  @Prop({ required: true, type: Types.ObjectId, ref: User.name })
+  @Prop({ required: true, type: SchemaTypes.ObjectId, ref: User.name })
   userToJoin: Types.ObjectId;
 
   @Prop({ required: true, type: Date, default: currentDate() })
