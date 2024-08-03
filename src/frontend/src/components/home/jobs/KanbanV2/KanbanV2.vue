@@ -26,7 +26,7 @@
             <v-chip class="text-subtitle-1 font-weight-black" variant="tonal">
               {{ column.cards.length }}
             </v-chip>
-            <v-menu align="left">
+            <v-menu align="left" v-if="column.status !== 'No Status'">
               <template v-slot:activator="{ props }">
                 <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
               </template>
@@ -41,10 +41,44 @@
                   >
                 </v-list-item>
                 <v-list-item>
-                  <v-btn :elevation="0" @click="columnDeleteAllJobs(column)"
-                    ><v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon
-                    >{{ 'Delete all' }}</v-btn
-                  >
+                  <v-dialog v-model="delete_all_jobs_dialog" max-width="500px">
+                    <template v-slot:activator="{ props }">
+                      <v-btn :elevation="0" v-bind="props"
+                        ><v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon
+                        >{{ 'Delete all' }}</v-btn
+                      >
+                    </template>
+                    <v-card color="background">
+                      <v-card-title>
+                        <span class="headline">Delete {{ column.status }}</span>
+                      </v-card-title>
+                      <v-card-text>
+                        <v-container>
+                          <v-row>
+                            <p>
+                              Are you sure you want to delete all the jobs in the
+                              <strong>{{
+                                column.status.charAt(0).toUpperCase() + column.status.slice(1)
+                              }}</strong>
+                              column. all the jobs within it will be permanently removed through out
+                              the company.
+                            </p>
+                            <strong> This action cannot be reversed. </strong>
+                          </v-row>
+                        </v-container>
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn @click="columnDeleteAllJobs(column)" color="success" variant="text">
+                          {{ 'Delete' }}
+                        </v-btn>
+
+                        <v-btn color="error" variant="text" @click="delete_all_jobs_dialog = false"
+                          >Cancel</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
                 </v-list-item>
                 <v-list-subheader>Column</v-list-subheader>
 
@@ -55,10 +89,44 @@
                   </v-btn>
                 </v-list-item>
                 <v-list-item>
-                  <v-btn :elevation="0" @click="columnDelete(column)"
-                    ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
-                    >{{ 'Delete' }}</v-btn
-                  >
+                  <v-dialog v-model="delete_column_dialog" max-width="500px">
+                    <template v-slot:activator="{ props }">
+                      <v-btn :elevation="0" v-bind="props"
+                        ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
+                        >{{ 'Delete' }}</v-btn
+                      >
+                    </template>
+                    <v-card color="background">
+                      <v-card-title>
+                        <span class="headline">Delete {{ column.status }}</span>
+                      </v-card-title>
+                      <v-card-text>
+                        <v-container>
+                          <v-row>
+                            <p>
+                              Are you sure you want to delete the
+                              <strong>{{
+                                column.status.charAt(0).toUpperCase() + column.status.slice(1)
+                              }}</strong>
+                              column, all jobs within it will be moved to the
+                              <b>No Status</b> column.
+                            </p>
+                            <strong> This action cannot be reversed. </strong>
+                          </v-row>
+                        </v-container>
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn @click="columnDelete(column)" color="success" variant="text">
+                          {{ 'Delete' }}
+                        </v-btn>
+
+                        <v-btn color="error" variant="text" @click="delete_column_dialog = false"
+                          >Cancel</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -173,9 +241,11 @@
         </v-card>
       </v-col>
       <v-col cols="auto">
-        <v-btn icon="fa: fa-solid fa-plus" @click="add_column_dialog = true"></v-btn>
         <v-dialog max-height="700" max-width="500" v-model="add_column_dialog">
-          <v-card elevation="14" rounded="md" max-height="800" max-width="900">
+          <template v-slot:activator="{ props }">
+            <v-btn icon="fa: fa-solid fa-plus" v-bind="props"></v-btn>
+          </template>
+          <v-card elevation="14" rounded="md" max-height="700" max-width="900">
             <v-card-title class="text-center">New Column</v-card-title>
             <v-card-text>
               <!--              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">-->
@@ -262,7 +332,9 @@ export default {
   },
   data() {
     return {
+      delete_all_jobs_dialog: false,
       add_column_dialog: false,
+      delete_column_dialog: false,
       columns: [
         { id: 0, status: 'No Status', color: 'purple-accent-3', cards: [] },
         { id: 1, status: 'Todo', color: '#FF073A', cards: [] },
@@ -480,11 +552,20 @@ export default {
   },
   methods: {
     columnDelete(col: Column) {
+      for (let i = 0; i < col.cards.length; i++) {
+        this.columns[0].cards.push(col.cards[i])
+        col.cards[i].status = this.columns[0].status
+        console.log(col.cards[i].status)
+      }
+      this.N_M_Sort(this.columns[0].cards, this.order_of_sorting_in_columns)
       this.columns.splice(this.columns.indexOf(col), 1)
+      this.delete_column_dialog = false
     },
     columnDeleteAllJobs(col: Column) {
       //add a modal that will ask the user if they are sure they want to delete all the cards in a job column
       col.cards.splice(0, col.cards.length)
+      this.delete_all_jobs_dialog = false
+      // window.location.reload()
     },
     addColumnButtonClickedSave() {
       if (this.new_column_name === '') {
