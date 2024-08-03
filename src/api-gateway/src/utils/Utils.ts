@@ -14,6 +14,21 @@ export function validateObjectIds(ids: string[] | Types.ObjectId[]): boolean {
   return true;
 }
 
+export function validateObjectId(
+  id: string | Types.ObjectId,
+  entity: string = '',
+): boolean {
+  let data: string;
+  if (entity === '') data = `Invalid ID`;
+  else data = `Invalid ${entity} ID`;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new HttpException(data, HttpStatus.BAD_REQUEST);
+  }
+  console.log('valid ObjectId');
+  return true;
+}
+
 export function extractUserId(
   jwtService: JwtService,
   headers: any,
@@ -28,4 +43,16 @@ export function extractUserId(
   //This attribute is retrieved in the JWT
 
   return decodedJwtAccessToken.sub;
+}
+
+export function currentDate(): Date {
+  const date = new Date();
+  date.setHours(date.getHours() + 2);
+  return date;
+}
+
+export function ciEquals(a: string, b: string) {
+  return typeof a === 'string' && typeof b === 'string'
+    ? a.localeCompare(b, undefined, { sensitivity: 'base' }) === 0
+    : a === b;
 }

@@ -79,7 +79,7 @@
             </v-row>
 
             <v-col cols="12" md="12" xs="3" sm="6" align="center">
-              <Toast />
+              <Toast position="top-center" />
               <v-btn
                 color="success"
                 rounded="md"
@@ -90,7 +90,7 @@
                 variant="text"
                 :disabled="click_create_client"
                 style="font-family: Nunito, sans-serif"
-                >Add
+                >Add<v-icon icon="fa:fa-solid fa-plus" color="success" size="small" end></v-icon>
               </v-btn>
             </v-col>
           </v-col>

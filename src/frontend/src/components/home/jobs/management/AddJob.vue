@@ -1,9 +1,10 @@
 <template>
   <v-dialog
-    max-height="800"
-    max-width="900"
+    :max-height="800"
+    :max-width="900"
     :theme="isdarkmode === true ? 'dark' : 'light'"
     v-model="jobDialog"
+    scrollable
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
@@ -19,7 +20,7 @@
         ></v-btn>
       </v-defaults-provider>
     </template>
-    <v-card elevation="14" rounded="md" max-height="800" max-width="900">
+    <v-card elevation="14" rounded="md" :max-height="800" :max-width="900">
       <v-card-title class="text-center">Job Details</v-card-title>
       <v-card-text>
         <v-form ref="form" v-model="valid" @submit.prevent="validateForm">
@@ -277,32 +278,33 @@
               </v-row>
             </v-col>
           </v-col>
-          <v-col cols="8" offset="2" align="center">
-            <v-btn
-              color="success"
-              rounded="md"
-              type="submit"
-              boarder="md"
-              width="100%"
-              height="35"
-              variant="text"
-              data-testid="create-btn"
-              >Create Job
-            </v-btn>
-            <v-btn
-              color="error"
-              rounded="md"
-              boarder="md"
-              width="100%"
-              height="35"
-              variant="text"
-              @click="close"
-              data-testid="cancel-btn"
-              >Cancel
-            </v-btn>
-          </v-col>
+          <v-col cols="8" offset="2" align="center"> </v-col>
         </v-form>
       </v-card-text>
+      <v-card-actions class="d-flex flex-column">
+        <v-btn
+          color="success"
+          rounded="md"
+          type="submit"
+          boarder="md"
+          width="100%"
+          height="35"
+          variant="text"
+          data-testid="create-btn"
+          >Create Job
+        </v-btn>
+        <v-btn
+          color="error"
+          rounded="md"
+          boarder="md"
+          width="100%"
+          height="35"
+          variant="text"
+          @click="close"
+          data-testid="cancel-btn"
+          >Cancel
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>

@@ -12,8 +12,8 @@
         color="warning"
         variant="text"
         v-bind="activatorProps"
-        >Edit</v-btn
-      >
+        >Edit<v-icon icon="fa:fa-solid fa-pencil" end color="warning " size="small"></v-icon
+      ></v-btn>
     </template>
     <v-card>
       <v-form @submit.prevent="validateEdits">
@@ -82,34 +82,34 @@
           ></v-row>
         </v-card-item>
         <v-card-actions>
-          <v-col align-self="center"
-            ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
+          <v-row>
+            <v-col>
               <Toast />
               <v-btn
                 color="success"
                 rounded="md"
-                width="85%"
+                width="100%"
                 height="35"
                 variant="text"
                 type="submit"
               >
                 Save
+                <v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon>
               </v-btn>
             </v-col>
-            <v-col cols="12" md="12" xs="3" sm="6" offset="1">
+            <v-col>
               <v-btn
                 color="error"
                 rounded="md"
-                width="85%"
+                width="100%"
                 height="35"
                 variant="text"
                 @click="close"
               >
                 <Toast />
-                Cancel
-              </v-btn>
-            </v-col></v-col
-          >
+                Cancel <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon>
+              </v-btn> </v-col
+          ></v-row>
         </v-card-actions>
       </v-form>
     </v-card>

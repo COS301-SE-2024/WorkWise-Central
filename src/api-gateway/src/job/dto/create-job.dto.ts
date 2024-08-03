@@ -1,7 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import {
   IsArray,
+  IsBoolean,
   IsDateString,
   IsMongoId,
   IsNotEmpty,
@@ -15,9 +16,10 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { JobApiDetailedObject, JobApiObject } from '../entities/job.entity';
+import { currentDate } from '../../utils/Utils';
+import { JobApiObject } from './job-responses.dto';
 
-class Address {
+export class Address {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -49,19 +51,19 @@ class Address {
   postalCode: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(255)
-  complex: string;
+  complex?: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(255)
-  houseNumber: string;
+  houseNumber?: string;
 }
 
-class ClientFeedback {
+export class ClientFeedback {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
@@ -82,7 +84,7 @@ class ClientFeedback {
   comments?: string = '';
 }
 
-class Details {
+export class Details {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -109,7 +111,7 @@ class Details {
   endDate?: Date;
 }
 
-class InventoryUsed {
+export class InventoryUsed {
   @ApiProperty()
   @IsNotEmpty()
   inventoryItemId: Types.ObjectId;
@@ -126,7 +128,7 @@ class InventoryUsed {
   quantityUsed: number = 0;
 }
 
-class RecordedDetails {
+export class RecordedDetails {
   @ApiProperty()
   @IsArray()
   @IsString({ each: true })
@@ -140,7 +142,7 @@ class RecordedDetails {
   inventoryUsed?: InventoryUsed[] = [];
 }
 
-class AssignedEmployees {
+export class AssignedEmployees {
   @ApiProperty()
   @IsArray()
   @IsMongoId({ each: true })
@@ -149,11 +151,17 @@ class AssignedEmployees {
 
   @ApiProperty()
   @IsOptional()
-  @IsMongoId()
-  teamId?: Types.ObjectId;
+  @IsArray()
+  @IsMongoId({ each: true })
+  teamIds?: Types.ObjectId[];
 }
 
-class Task {
+export class Task {
+  @ApiHideProperty()
+  @IsOptional()
+  @IsMongoId()
+  _id: Types.ObjectId = new Types.ObjectId();
+
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -170,7 +178,12 @@ class Task {
   assignedEmployees?: Types.ObjectId[] = [];
 }
 
-class Comment {
+export class Comment {
+  @ApiHideProperty()
+  @IsOptional()
+  @IsMongoId()
+  _id: Types.ObjectId = new Types.ObjectId();
+
   @ApiProperty()
   @IsNotEmpty()
   @IsMongoId()
@@ -181,13 +194,19 @@ class Comment {
   @IsString()
   comment: string;
 
+  @ApiHideProperty()
+  @IsOptional()
+  @IsBoolean()
+  edited: boolean = false;
+
   @ApiProperty()
   @IsDateString()
   @IsOptional()
-  date?: Date = new Date();
+  date?: Date = currentDate();
 }
 
 export class CreateJobDto {
+  //TODO: Add optional columnId field, if not given 'No status'
   @ApiProperty()
   @IsNotEmpty()
   @IsMongoId()
@@ -196,12 +215,12 @@ export class CreateJobDto {
   @ApiProperty()
   @IsOptional()
   @IsMongoId()
-  clientId?: Types.ObjectId;
+  status?: Types.ObjectId;
 
   @ApiProperty()
   @IsOptional()
-  @IsString()
-  clientUsername?: string;
+  @IsMongoId()
+  clientId?: Types.ObjectId;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -212,11 +231,6 @@ export class CreateJobDto {
   @Type(() => AssignedEmployees)
   @IsOptional()
   assignedEmployees?: AssignedEmployees;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  status?: string = 'To do';
 
   @ApiProperty()
   @IsNotEmpty()
@@ -247,6 +261,23 @@ export class CreateJobDto {
   @ValidateNested({ each: true })
   @Type(() => Comment)
   comments?: Comment[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  tags?: Types.ObjectId[] = [];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsMongoId()
+  priorityTag?: Types.ObjectId;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  attachments?: string[];
 }
 
 export class CreateJobResponseDto {
@@ -254,18 +285,4 @@ export class CreateJobResponseDto {
   constructor(data: JobApiObject) {
     this.data = data;
   }
-}
-
-export class JobAllResponseDto {
-  constructor(data: JobApiObject[]) {
-    this.data = data;
-  }
-  data: JobApiObject[];
-}
-
-export class JobAllResponseDetailedDto {
-  constructor(data: JobApiDetailedObject[]) {
-    this.data = data;
-  }
-  data: JobApiDetailedObject[];
 }

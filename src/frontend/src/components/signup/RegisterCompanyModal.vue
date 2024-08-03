@@ -205,11 +205,7 @@
               ></v-text-field
             ></v-col>
             <v-col>
-              <small
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
-                class="text-caption"
-                >Company logo</small
-              >
+              <small class="text-caption">Company logo</small>
               <v-file-input
                 :theme="isdarkmode === true ? 'dark' : 'light'"
                 variant="solo"
@@ -411,8 +407,6 @@ export default {
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       click_create_client: false,
       valid: true,
-      light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
-      dark_theme_text_color: 'color: #DCDBDB',
       dark: '#2b2b2b',
       light: '#FFFFFF',
       localUrl: 'http://localhost:3000/',

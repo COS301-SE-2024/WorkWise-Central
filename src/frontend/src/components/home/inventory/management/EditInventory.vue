@@ -4,12 +4,13 @@
     max-height="800"
     max-width="600"
     scrollable
+    color="warning"
     :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
-        >Edit</v-btn
-      >
+        >Edit<v-icon icon="fa:fa-solid fa-pencil" end color="warning " size="small"></v-icon
+      ></v-btn>
     </template>
     <v-card>
       <v-card-title>
@@ -22,10 +23,11 @@
           <v-spacer></v-spacer>
           <v-col>
             <v-col>
-              <small class="text-caption white--text">Name</small
+              <small class="text-caption white--text">Product Name</small
               ><v-text-field
                 v-model="localEditedItem.name"
                 color="secondary"
+                :rules="nameRules"
                 required
               ></v-text-field
             ></v-col>
@@ -34,6 +36,7 @@
               ><v-text-field
                 v-model="localEditedItem.description"
                 color="secondary"
+                :rules="descriptionRules"
                 required
               ></v-text-field
             ></v-col>
@@ -43,6 +46,7 @@
                 ><v-text-field
                   v-model="localEditedItem.costPrice"
                   color="secondary"
+                  :rules="costPriceRules"
                   required
                 ></v-text-field
               ></v-col>
@@ -51,6 +55,7 @@
                 ><v-text-field
                   v-model="localEditedItem.currentStockLevel"
                   color="secondary"
+                  :rules="currentStockLevelRules"
                   required
                 ></v-text-field
               ></v-col>
@@ -59,6 +64,7 @@
                 ><v-text-field
                   v-model="localEditedItem.reorderLevel"
                   color="secondary"
+                  :rules="reorderLevelRules"
                   required
                 ></v-text-field></v-col
             ></v-row>
@@ -66,10 +72,27 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <Toast />
-        <v-btn @click="createInventoryItem" color="success">Create</v-btn>
-        <v-btn @click="close" color="error">Cancel</v-btn>
+        <v-container>
+          <v-row justify="end">
+            <v-col cols="12" lg="6">
+              <v-btn @click="close" color="error" block
+                >Cancel<v-icon
+                  icon="fa:fa-solid fa-cancel"
+                  end
+                  color="error"
+                  size="small"
+                ></v-icon></v-btn
+            ></v-col>
+            <Toast position="top-center" />
+            <v-col cols="12" lg="6">
+              <v-btn @click="createInventoryItem" color="success" :disabled="!valid" block
+                >Save<v-icon
+                  icon="fa:fa-solid fa-floppy-disk"
+                  end
+                  color="success"
+                  size="small"
+                ></v-icon></v-btn></v-col></v-row
+        ></v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -105,8 +128,30 @@ export default {
       currentStockLevel: '',
       reorderLevel: '',
       localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      nameRules: [(v) => !!v || 'Name is required'],
+      descriptionRules: [(v) => !!v || 'Description is required'],
+      costPriceRules: [
+        (v) => !!v || 'Cost Price is required',
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Cost Price must be a valid number',
+        (v) => parseFloat(v) > 0 || 'Cost Price must be greater than 0',
+        (v) => !/^0\d/.test(v) || 'Cost Price cannot have leading zeros'
+      ],
+      currentStockLevelRules: [
+        (v) => !!v || 'Current Stock Level is required',
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Current Stock Level must be a valid number',
+        (v) => !/^0\d/.test(v) || 'Current Stock Level cannot have leading zeros'
+      ],
+      reorderLevelRules: [
+        (v) => !!v || 'Reorder Level is required',
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Reorder Level must be a valid number',
+        (v) => !/^0\d/.test(v) || 'Reorder Level cannot have leading zeros'
+      ]
     }
+  },
+  created() {
+    // Create a deep copy of editedItem
+    this.localEditedItem = this.deepCopy(this.editedItem)
   },
   methods: {
     addInventory() {
@@ -147,24 +192,24 @@ export default {
         const response = await axios.patch(`${apiURL}inventory/${this.inventory_id}`, data, config)
         console.log(response)
         this.addDialog = false
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Inventory Added',
-          life: 3000
-        })
+        alert('Inventory updated')
       } catch (error) {
         console.error(error)
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to add inventory',
-          life: 3000
-        })
+        alert('Failed to update inventory')
       }
     },
-    logInventoryItem() {
-      console.log(this.inventoryItem)
+    allRulesPass() {
+      if (
+        this.nameRules.every((rule) => rule(this.localEditedItem.name)) &&
+        this.descriptionRules.every((rule) => rule(this.localEditedItem.description)) &&
+        this.costPriceRules.every((rule) => rule(this.localEditedItem.costPrice)) &&
+        this.currentStockLevelRules.every((rule) => rule(this.localEditedItem.currentStockLevel)) &&
+        this.reorderLevelRules.every((rule) => rule(this.localEditedItem.reorderLevel))
+      ) {
+        this.valid = true
+      } else {
+        this.valid = false
+      }
     },
     convertToNumber(value) {
       return parseFloat(value)
@@ -188,6 +233,9 @@ export default {
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    deepCopy(obj) {
+      return JSON.parse(JSON.stringify(obj))
     }
   }
 }

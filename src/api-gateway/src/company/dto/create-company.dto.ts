@@ -34,7 +34,7 @@ export class ContactDetails {
   email: string;
 }
 
-class Address {
+export class Address {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -112,16 +112,6 @@ export class CreateCompanyDto {
   @ValidateNested()
   @Type(() => Address)
   address: Address;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsMongoId({ each: true })
-  employees?: Types.ObjectId[] = [];
-
-  @ApiProperty()
-  @IsOptional()
-  @IsMongoId({ each: true })
-  inventoryItems?: Types.ObjectId[] = [];
 
   @ApiProperty()
   @IsOptional()

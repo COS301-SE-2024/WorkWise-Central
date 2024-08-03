@@ -65,13 +65,7 @@ export class Address {
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  complex?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  houseNumber?: string;
+  complexOrBuilding?: string;
 }
 
 export class ClientDetails {
@@ -124,14 +118,14 @@ export class ClientDetails {
 
 export class CreateClientDto {
   @ApiProperty()
-  @IsOptional()
-  @IsString()
-  registrationNumber?: string;
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
 
   @ApiProperty()
   @IsOptional()
   @IsString()
-  clientUsername?: string;
+  registrationNumber?: string;
 
   @ApiProperty()
   @IsNotEmpty()

@@ -23,7 +23,9 @@ import {
 } from './dto/create-company.dto';
 import {
   UpdateCompanyDto,
+  UpdateCompanyJobStatusesDto,
   UpdateCompanyLogoDto,
+  UpdateCompanyJobStatuses,
 } from './dto/update-company.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
@@ -48,10 +50,15 @@ import {
   CompanyResponseDto,
 } from './entities/company.entity';
 import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
-import { validateObjectIds } from '../utils/Utils';
+import {
+  extractUserId,
+  validateObjectId,
+  validateObjectIds,
+} from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { JobStatusAllResponseDto } from '../job/dto/job-responses.dto';
 
 const className = 'Company';
 
@@ -62,7 +69,6 @@ export class CompanyController {
     private readonly companyService: CompanyService,
     private readonly jwtService: JwtService,
   ) {}
-
   validateObjectId(id: string | Types.ObjectId): boolean {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
@@ -168,7 +174,7 @@ export class CompanyController {
   })
   @Get('/all/employees/:cid')
   async getAllEmployeesInCompany(@Param('cid') cid: string) {
-    this.validateObjectId(cid);
+    validateObjectId(cid);
     const objId = new Types.ObjectId(cid);
     try {
       return { data: await this.companyService.getAllEmployees(objId) };
@@ -188,7 +194,7 @@ export class CompanyController {
   @Get('id/:id')
   async findOne(@Param('id') id: string) {
     try {
-      this.validateObjectId(id);
+      validateObjectId(id);
       return {
         data: await this.companyService.getCompanyById(new Types.ObjectId(id)),
       };
@@ -209,7 +215,7 @@ export class CompanyController {
     @Param('id') id: string,
   ): Promise<{ data: FlattenMaps<Company> & { _id: Types.ObjectId } }> {
     try {
-      this.validateObjectId(id);
+      validateObjectId(id);
       return {
         data: await this.companyService.getCompanyByIdDetailed(
           new Types.ObjectId(id),
@@ -261,8 +267,8 @@ export class CompanyController {
     @Body() updateCompanyDto: UpdateCompanyDto,
   ) {
     try {
-      this.validateObjectId(cid);
-      const userId = this.extractUserId(headers);
+      validateObjectId(cid);
+      const userId = extractUserId(this.jwtService, headers);
 
       const companyId = new Types.ObjectId(cid);
       const updatedCompany = await this.companyService.update(
@@ -300,8 +306,8 @@ export class CompanyController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     try {
-      this.validateObjectId(companyId);
-      const userId = this.extractUserId(headers);
+      validateObjectId(companyId);
+      const userId = extractUserId(this.jwtService, headers);
       return {
         data: await this.companyService.updateLogo(
           userId,
@@ -336,8 +342,8 @@ export class CompanyController {
   @Delete(':cid')
   async remove(@Headers() headers: any, @Param('cid') cid: string) {
     try {
-      this.validateObjectId(cid);
-      const userId = this.extractUserId(headers);
+      validateObjectId(cid);
+      const userId = extractUserId(this.jwtService, headers);
       const objectId = new Types.ObjectId(cid);
       await this.companyService.deleteCompany(userId, objectId);
       return { data: true };
@@ -370,7 +376,7 @@ export class CompanyController {
     @Body() deleteEmployeeDto: DeleteEmployeeFromCompanyDto,
   ) {
     try {
-      const userId = this.extractUserId(headers);
+      const userId = extractUserId(this.jwtService, headers);
       await this.companyService.deleteEmployee(userId, deleteEmployeeDto);
       return { data: true };
     } catch (e) {
@@ -381,15 +387,66 @@ export class CompanyController {
     }
   }
 
-  private extractUserId(headers: any) {
-    const authHeader: string = headers.authorization;
-    const decodedJwtAccessToken = this.jwtService.decode(
-      authHeader.replace(/^Bearer\s+/i, ''),
-    );
-    if (!Types.ObjectId.isValid(decodedJwtAccessToken.sub)) {
-      throw new HttpException('Invalid User', HttpStatus.BAD_REQUEST);
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all Statuses in a company`,
+  })
+  @ApiOkResponse({
+    type: JobStatusAllResponseDto,
+    description: `An array of JobsStatuses`,
+  })
+  @Get('status/all/:cid')
+  async findAllStatusInCompany(
+    @Headers() headers: any,
+    @Param('cid') cId: string,
+  ) {
+    try {
+      validateObjectId(cId);
+      const companyId = new Types.ObjectId(cId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.companyService.findAllStatusesInCompany(
+          userId,
+          companyId,
+        ),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
     }
-    const userId: Types.ObjectId = decodedJwtAccessToken.sub; //This attribute is retrieved in the JWT
-    return userId;
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Update the order of Job Statuses in company, this will be used for the kanban`,
+    description: '',
+  })
+  @ApiOkResponse({
+    type: JobStatusAllResponseDto,
+    description: `The updated array`,
+  })
+  @ApiBody({ type: UpdateCompanyJobStatusesDto })
+  @Patch('statuses')
+  async updateStatusOrder(
+    @Headers() headers: any,
+    @Body() updateCompanyJobStatusesDto: UpdateCompanyJobStatusesDto,
+  ) {
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      const statusArr = new UpdateCompanyJobStatuses(
+        updateCompanyJobStatusesDto,
+      );
+      return {
+        data: await this.companyService.updateCompanyStatuses(
+          userId,
+          updateCompanyJobStatusesDto.employeeId,
+          statusArr,
+        ),
+      };
+    } catch (e) {
+      throw e;
+    }
   }
 }

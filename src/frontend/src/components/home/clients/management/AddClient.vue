@@ -21,7 +21,7 @@
       </v-defaults-provider>
     </template>
     <v-card :theme="isdarkmode === true ? 'dark' : 'light'"
-      ><v-card-title>
+      ><v-card-title class="fixed">
         <span class="headline text-center">Create a Client </span>
       </v-card-title>
       <v-card-text>
@@ -216,9 +216,32 @@
           </v-row>
 
           <v-spacer></v-spacer>
-          <v-row>
-            <v-col cols="6">
-              <Toast />
+          <v-row class="fixed">
+            <v-col
+              cols="12"
+              lg="6"
+              md="6"
+              sm="6"
+              order="last"
+              order-lg="first"
+              order-md="first"
+              order-sm="first"
+            >
+              <v-btn color="error" width="100%" height="35" variant="text" @click="close">
+                Cancel <v-icon icon="fa: fa-solid fa-ban" color="error" end></v-icon>
+              </v-btn>
+            </v-col>
+            <v-col
+              cols="12"
+              lg="6"
+              md="6"
+              sm="6"
+              order="last"
+              order-lg="first"
+              order-md="first"
+              order-sm="first"
+            >
+              <Toast position="top-center" />
               <v-btn
                 rounded="md"
                 boarder="xl"
@@ -231,11 +254,7 @@
                 >Create Client <v-icon icon="fa: fa-solid fa-user-plus" color="success" end></v-icon
               ></v-btn>
             </v-col>
-            <v-col cols="6">
-              <v-btn color="error" width="100%" height="35" variant="text" @click="close">
-                Cancel <v-icon icon="fa: fa-solid fa-ban" color="error" end></v-icon>
-              </v-btn> </v-col
-          ></v-row>
+          </v-row>
         </v-form>
       </v-card-text>
     </v-card>
@@ -261,10 +280,6 @@ export default defineComponent({
     addDialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     click_create_client: false,
-    light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
-    dark_theme_text_color: 'color: #DCDBDB',
-    modal_dark_theme_color: '#2b2b2b',
-    modal_light_theme_color: '#FFFFFF',
     email_rules: [(val: string) => email_reg.test(val) || 'Email should contain an @ symbol'],
     first_name_rules: [
       (v: string) => !!v || 'First name is required',

@@ -1,15 +1,15 @@
 <template>
   <v-dialog
     v-model="deleteDialog"
-    max-width="600px"
+    max-width="500px"
     :theme="isdarkmode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
-        >Delete</v-btn
-      >
+      <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
+        >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
+      ></v-btn>
     </template>
-    <v-card min-width="600">
+    <v-card>
       <v-card-title>
         <v-icon>mdi-plus</v-icon>
         <span>Delete Inventory</span>
@@ -24,13 +24,38 @@
           </v-row>
         </v-container></v-card-text
       >
+
+      <Toast position="top-center" />
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <Toast />
-        <v-btn label="Delete" color="error" text :loading="isDeleting" @click="deleteInventory"
-          >Delete</v-btn
-        >
-        <v-btn label="Cancel" color="secondary" text @click="close">Cancel</v-btn>
+        <v-container
+          ><v-row justify="end"
+            ><v-col cols="12" lg="6"
+              ><Toast position="bottom-center" />
+              <v-btn label="Cancel" color="secondary" text @click="close" block
+                >Cancel
+                <v-icon
+                  icon="fa:fa-solid fa-cancel"
+                  end
+                  color="secondary"
+                  size="small"
+                ></v-icon></v-btn
+            ></v-col>
+            <v-col cols="12" lg="6">
+              <v-btn
+                label="Delete"
+                color="error"
+                text
+                :loading="isDeleting"
+                block
+                @click="deleteInventory"
+                >Delete
+                <v-icon
+                  icon="fa:fa-solid fa-trash"
+                  end
+                  color="error"
+                  size="small"
+                ></v-icon></v-btn></v-col></v-row
+        ></v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -71,21 +96,14 @@ export default defineComponent({
       await axios
         .delete(`${apiURL}inventory/${this.inventory_id}`, config)
         .then(() => {
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Inventory Deleted',
-            life: 3000
-          })
+          alert('Inventory deleted')
           this.deleteDialog = false
         })
         .catch(() => {
-          this.$toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Inventory Not Deleted',
-            life: 3000
-          })
+          alert('An error occurred')
+        })
+        .finally(() => {
+          window.location.reload() // Consider removing this for SPA behavior
         })
     },
     close() {

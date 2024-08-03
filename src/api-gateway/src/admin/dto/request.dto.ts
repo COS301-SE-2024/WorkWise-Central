@@ -1,12 +1,13 @@
 import { Types } from 'mongoose';
 import { UserApiObject } from '../../users/entities/user.entity';
 import { RoleApiObject } from '../../role/entity/role.entity';
+import { currentDate } from '../../utils/Utils';
 
 export class UserApiJoinRequestDto {
   companyId: Types.ObjectId;
   companyName?: string;
   userToJoin: Types.ObjectId;
-  createdAt: Date = new Date();
+  createdAt: Date = currentDate();
 }
 
 export class AllJoinRequestsDto {
@@ -22,7 +23,7 @@ export class UserApiDetailedJoinRequestDto {
   companyName?: string;
   roleId: RoleApiObject;
   userToJoin: UserApiObject;
-  createdAt: Date = new Date();
+  createdAt: Date = currentDate();
 }
 
 export class AllJoinDetailedRequestsDto {

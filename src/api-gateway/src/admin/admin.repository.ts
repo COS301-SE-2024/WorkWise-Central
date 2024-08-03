@@ -19,9 +19,11 @@ export class AdminRepository {
   }
 
   async acceptRequest(userId: Types.ObjectId, companyId: Types.ObjectId) {
-    const result = await this.userJoinRequestModel.deleteOne({
-      $and: [{ userToJoin: userId }, { companyId: companyId }],
-    });
+    const result = await this.userJoinRequestModel
+      .deleteOne({
+        $and: [{ userToJoin: userId }, { companyId: companyId }],
+      })
+      .exec();
     console.log('Accept', result);
     return result;
   }

@@ -16,6 +16,7 @@ import { FileModule } from '../file/file.module';
 import { EmployeeService } from '../employee/employee.service';
 import { JobModule } from '../job/job.module';
 import { TeamModule } from '../team/team.module';
+import { JobService } from '../job/job.service';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { TeamModule } from '../team/team.module';
     JwtService,
     UsersService,
     EmployeeService,
+    JobService,
   ],
   exports: [ClientService, MongooseModule],
 })
