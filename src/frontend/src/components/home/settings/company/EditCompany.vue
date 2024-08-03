@@ -301,6 +301,7 @@ export default defineComponent({
             detail: 'Company updated',
             life: 3000
           })
+          window.location.reload()
         })
         .catch((error) => {
           console.log(error)

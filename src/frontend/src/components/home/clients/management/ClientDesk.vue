@@ -253,6 +253,7 @@ export default defineComponent({
   },
   mounted() {
     this.getClients()
+    this.getEmployeeDetails()
     this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
   },
   methods: {
@@ -349,37 +350,55 @@ export default defineComponent({
           console.error('Failed to fetch clients:', error)
         })
     },
-    toggleDarkMode() {
-      console.log(this.isdarkmode)
-      if (this.isdarkmode === true) {
-        this.isdarkmode = false
-        console.log(this.isdarkmode)
-      } else {
-        this.isdarkmode = true
-        console.log(this.isdarkmode)
+    async getEmployeeDetails() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
       }
-    },
-    getColor(value) {
-      if (value == '') return 'red'
-      else return 'green'
-    },
-    getRowProps({ index }) {
-      return {
-        class: index % 2 ? 'bg-secondRowColor' : ''
-      }
-    },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+      axios
+        .get(`http://localhost:3000/users/id/${localStorage.getItem('id')}`, config)
+        .then((response) => {
+          console.log(response.data)
+          this.employees = response.data.data
+          console.log(this.employees)
+        })
+        .catch((error) => {
+          console.error('Failed to fetch employees:', error)
+        })
     }
+  },
+  toggleDarkMode() {
+    console.log(this.isdarkmode)
+    if (this.isdarkmode === true) {
+      this.isdarkmode = false
+      console.log(this.isdarkmode)
+    } else {
+      this.isdarkmode = true
+      console.log(this.isdarkmode)
+    }
+  },
+  getColor(value) {
+    if (value == '') return 'red'
+    else return 'green'
+  },
+  getRowProps({ index }) {
+    return {
+      class: index % 2 ? 'bg-secondRowColor' : ''
+    }
+  },
+  async isLocalAvailable(localUrl) {
+    try {
+      const res = await axios.get(localUrl)
+      return res.status < 300 && res.status > 199
+    } catch (error) {
+      return false
+    }
+  },
+  async getRequestUrl() {
+    const localAvailable = await this.isLocalAvailable(this.localUrl)
+    return localAvailable ? this.localUrl : this.remoteUrl
   }
 })
 </script>
