@@ -83,10 +83,83 @@
                 <v-list-subheader>Column</v-list-subheader>
 
                 <v-list-item>
-                  <v-btn :elevation="0"
-                    ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
-                    >{{ 'Edit details' }}
-                  </v-btn>
+                  <v-dialog max-height="700" max-width="500" v-model="edit_column_details_dialog">
+                    <template v-slot:activator="{ props }">
+                      <v-btn :elevation="0" v-bind="props"
+                        ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
+                        >{{ 'Edit details' }}
+                      </v-btn>
+                    </template>
+                    <v-card elevation="14" rounded="md" max-height="700" max-width="900">
+                      <v-card-title class="text-center">Edit {{ column.status }}</v-card-title>
+                      <v-card-text>
+                        <!--              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">-->
+                        <v-col>
+                          <v-spacer></v-spacer>
+                          <v-col>
+                            <v-col align="center">
+                              <v-icon :color="column_color" :size="40">
+                                {{ 'fa: fa-solid fa-cube' }}
+                              </v-icon>
+                            </v-col>
+                            <v-col>
+                              <label style="font-size: 14px; font-weight: lighter"
+                                >Column Name</label
+                              >
+                              <v-text-field
+                                density="compact"
+                                color="grey-lighten-4"
+                                placeholder="Enter the name of the new column"
+                                rounded="md"
+                                variant="solo"
+                                v-model="new_column_name"
+                                :rules="column_name_rule"
+                                required
+                                data-testid="job-title-field"
+                              ></v-text-field
+                            ></v-col>
+                            <v-col align="center">
+                              <label style="font-size: 14px; font-weight: lighter">Color</label>
+                              <v-color-picker
+                                v-model="column_color"
+                                hide-inputs
+                                show-swatches
+                                @update:modelValue="addColorPickerUpdate"
+                              ></v-color-picker>
+                            </v-col>
+                          </v-col>
+                        </v-col>
+                        <v-col align="center">
+                          <label style="{color:red}">{{ error_message }}</label>
+                        </v-col>
+                        <v-col cols="8" offset="2" align="center">
+                          <v-btn
+                            color="success"
+                            rounded="md"
+                            type="submit"
+                            boarder="md"
+                            width="100%"
+                            height="35"
+                            variant="text"
+                            @click="editColumnButtonClickedSave(column)"
+                            data-testid="create-btn"
+                            >Save
+                          </v-btn>
+                          <v-btn
+                            color="error"
+                            rounded="md"
+                            boarder="md"
+                            width="100%"
+                            height="35"
+                            variant="text"
+                            @click="edit_column_details_dialog = false"
+                            data-testid="cancel-btn"
+                            >Cancel
+                          </v-btn>
+                        </v-col>
+                      </v-card-text>
+                    </v-card>
+                  </v-dialog>
                 </v-list-item>
                 <v-list-item>
                   <v-dialog v-model="delete_column_dialog" max-width="500px">
@@ -266,7 +339,7 @@
                       rounded="md"
                       variant="solo"
                       v-model="new_column_name"
-                      :rule="column_name_rule"
+                      :rules="column_name_rule"
                       required
                       data-testid="job-title-field"
                     ></v-text-field
@@ -335,6 +408,7 @@ export default {
       delete_all_jobs_dialog: false,
       add_column_dialog: false,
       delete_column_dialog: false,
+      edit_column_details_dialog: false,
       columns: [
         { id: 0, status: 'No Status', color: 'purple-accent-3', cards: [] },
         { id: 1, status: 'Todo', color: '#FF073A', cards: [] },
@@ -567,11 +641,34 @@ export default {
       this.delete_all_jobs_dialog = false
       // window.location.reload()
     },
+    editColumnButtonClickedSave(col: Column) {
+      if (this.new_column_name === '' && this.column_color === '') {
+        this.error_message = 'No changes were made'
+        return
+      }
+
+      if (this.new_column_name.length > 20) {
+        this.error_message = 'Column name length should be shorter than 20 characters'
+      }
+      if (this.new_column_name !== '') {
+        col.status = this.new_column_name
+        this.new_column_name = ''
+      }
+      if (this.column_color !== '') {
+        col.color = this.column_color
+        this.column_color = ''
+      }
+      this.edit_column_details_dialog = false
+    },
     addColumnButtonClickedSave() {
+      if (this.new_column_name === '' && this.column_color === '') {
+        this.error_message = 'No changes were made'
+        return
+      }
       if (this.new_column_name === '') {
         this.error_message = 'Column name is empty'
       }
-      if (this.new_column_name.length < 20) {
+      if (this.new_column_name.length > 20) {
         this.error_message = 'Column name length should be shorter than 20 characters'
       }
       if (this.column_color === '') {
@@ -586,6 +683,10 @@ export default {
       }
       this.add_column_dialog = !this.add_column_dialog
       this.columns.push(column)
+
+      this.new_column_name = ''
+      this.column_color = ''
+      this.add_column_dialog = false
     },
     addColorPickerUpdate() {
       console.log(this.column_color)
