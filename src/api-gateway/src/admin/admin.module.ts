@@ -18,6 +18,10 @@ import { UsersRepository } from '../users/users.repository';
 import { JwtService } from '@nestjs/jwt';
 import { AdminRepository } from './admin.repository';
 import { RoleService } from '../role/role.service';
+import {
+  InviteToJoin,
+  InviteToJoinSchema,
+} from './entities/invite-to-join.entity';
 
 @Module({
   imports: [
@@ -30,6 +34,7 @@ import { RoleService } from '../role/role.service';
     forwardRef(() => UsersModule),
     MongooseModule.forFeature([
       { name: UserJoinRequest.name, schema: UserJoinRequestSchema },
+      { name: InviteToJoin.name, schema: InviteToJoinSchema },
     ]),
   ],
   controllers: [AdminController],
