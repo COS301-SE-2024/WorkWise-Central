@@ -152,7 +152,7 @@ const vuetify = createVuetify({
           primary: '#F0984D',
           secondary: '#227D9B',
           accent: '#82B1FF',
-          error: '#e639462',
+          error: '#E63946', // this is one is also wrong, previous = E63946
           info: '#2196F3',
           success: '#1F845A',
           warning: '#E2B203',
@@ -161,7 +161,7 @@ const vuetify = createVuetify({
           headingTextColor: '#091E42',
           n_elementTextColor: '#8C9BAB', // most nonImportant color for text
           highlighter: '#DEE4EA',
-          tableRowColor: '',
+          tableRowColor: '#8C9BAB',
           firstPlace: '#E2B203',
           secondPlace: '#626F86',
           thirdPlace: '#533F04',
@@ -186,7 +186,7 @@ const vuetify = createVuetify({
           headingTextColor: '#DCDFE4',
           n_elementTextColor: '#8C9BAB', // most nonImportant color for text
           highlighter: '#DEE4EA',
-          tableRowColor: '#454f5',
+          tableRowColor: '#454f55', // color value is incorrect, previous = '#454f5'
           firstPlace: '#FFD700',
           secondPlace: '#C0C0C0',
           thirdPlace: '#CD7F32',

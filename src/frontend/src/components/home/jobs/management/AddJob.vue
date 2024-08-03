@@ -17,6 +17,7 @@
           variant="elevated"
           color="secondary"
           v-bind="activatorProps"
+          min-width="40%"
         ></v-btn>
       </v-defaults-provider>
     </template>

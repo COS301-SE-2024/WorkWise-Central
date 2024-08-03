@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="viewJobDialog" :max-height="800" :max-width="1000">
+  <v-dialog v-model="viewJobDialog" :min-height="800" :max-width="1000">
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -11,7 +11,11 @@
       </v-defaults-provider>
     </template>
     <v-card elevation="14" rounded="md">
-      <v-card-title>
+      <v-img
+        src="https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U="
+        aspect-ratio="5.75"
+      ></v-img>
+      <v-card-title >
         {{ props.passedInJob.heading }}
       </v-card-title>
       <v-card-text class="text-center">
@@ -22,92 +26,93 @@
             </v-divider>
             <v-col class="text-center">
               <v-spacer></v-spacer>
-              <small class="text-caption">
+              <p>
                 {{ props.passedInJob.jobDescription }}
-              </small>
+              </p>
             </v-col>
             <v-divider>
               <h5>Status</h5>
             </v-divider>
             <v-col class="text-center">
               <v-spacer></v-spacer>
-              <small class="text-caption">
+              <p >
                 <v-chip :color="getStatusColor(props.passedInJob.status)" dark>
                   {{ props.passedInJob.status }}
                 </v-chip>
-              </small>
+              </p>
             </v-col>
 
             <v-divider>
               <h5>Client Details</h5>
             </v-divider>
 
-            <v-col class="text-center">
-              <label class="font-weight-bold">Client Name</label>
-              <v-spacer></v-spacer>
-              <small class="text-caption"> Holder Name </small>
-            </v-col>
-            <v-col class="text-center">
-              <label class="font-weight-bold">Phone</label>
-              <v-spacer></v-spacer>
-              <small class="text-caption"> Holder phone </small>
-            </v-col>
-            <v-col class="text-center">
-              <label class="font-weight-bold">Email</label>
-              <v-spacer></v-spacer>
-              <small class="text-caption"> Holder Email </small>
-            </v-col>
+            <v-row>
+              <v-col class="text-center" md="4">
+                <label class="font-weight-bold">Client Name</label>
+                <v-spacer></v-spacer>
+                <p > Holder Name </p>
+              </v-col>
+              <v-col class="text-center" md="4">
+                <label class="font-weight-bold">Phone</label>
+                <v-spacer></v-spacer>
+                <p > Holder phone </p>
+              </v-col>
+              <v-col class="text-center" md="4">
+                <label class="font-weight-bold">Email</label>
+                <v-spacer></v-spacer>
+                <p > Holder Email </p>
+              </v-col>
+            </v-row>
+
 
             <v-divider>
               <h5>Address</h5>
             </v-divider>
             <v-col class="text-center">
               <v-row class="text-center">
-                <v-col sm="6" md="3" offset-md="3">
+                <v-col sm="6" md="4" >
                   <label class="font-weight-bold">City</label>
                   <v-spacer></v-spacer>
-                  <small class="text-caption">
+                  <p >
                     {{ props.passedInJob.city }}
-                  </small>
+                  </p>
                 </v-col>
-                <v-col sm="6" md="3">
+                <v-col sm="6" md="4">
                   <label class="font-weight-bold">Suburb</label>
                   <v-spacer></v-spacer>
-                  <small class="text-caption">
+                  <p >
                     {{ props.passedInJob.suburb }}
-                  </small>
+                  </p>
                 </v-col>
-              </v-row>
-              <v-row>
-                <v-col sm="6" md="3" offset-md="3">
+                <v-col sm="6" md="4">
                   <label class="font-weight-bold">Street</label>
                   <v-spacer></v-spacer>
-                  <small class="text-caption">
+                  <p >
                     {{ props.passedInJob.street }}
-                  </small>
-                </v-col>
-                <v-col sm="6" md="3">
-                  <label class="font-weight-bold">Postal Code</label>
-                  <v-spacer></v-spacer>
-                  <small class="text-caption">
-                    {{ props.passedInJob.postalCode }}
-                  </small>
+                  </p>
                 </v-col>
               </v-row>
               <v-row>
-                <v-col sm="6" md="3" offset-md="3">
+                <v-col sm="6" md="4">
+                  <label class="font-weight-bold">Postal Code</label>
+                  <v-spacer></v-spacer>
+                  <p >
+                    {{ props.passedInJob.postalCode }}
+                  </p>
+                </v-col>
+                <v-col sm="6" md="4">
                   <label class="font-weight-bold">Complex</label>
                   <v-spacer></v-spacer>
-                  <small class="text-caption">
+                  <p >
                     {{ props.passedInJob.complex }}
-                  </small>
+                  </p>
                 </v-col>
-                <v-col sm="6" md="3">
+                <v-col sm="6" md="4">
                   <label class="font-weight-bold">House Number</label>
                   <v-spacer></v-spacer>
-                  <small class="text-caption">
+                  <p >
                     {{ props.passedInJob.houseNumber }}
-                  </small>
+                  </p>
                 </v-col>
               </v-row>
               <v-divider>
@@ -129,7 +134,10 @@
             </v-col>
           </v-col>
           <v-col sm="12" md="3">
-            <v-col ref="imagesSection">
+            <v-col class="pb-0">
+              <v-label class="d-flex justify-start pb-0 font-weight-bold">Card Actions</v-label>
+            </v-col>
+            <v-col ref="imagesSection" >
               <AttachImages :passedInJob="props.passedInJob" />
             </v-col>
             <v-col ref="checklistSection">
@@ -142,7 +150,7 @@
         </v-row>
       </v-card-text>
       <v-card-actions>
-        <v-col class="pt-0 d-flex flex-column">
+        <v-col>
           <v-btn color="error" @click="closeView">Close</v-btn>
         </v-col>
       </v-card-actions>

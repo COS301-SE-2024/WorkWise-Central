@@ -155,6 +155,7 @@ export default defineComponent({
         v-model="drawer"
         :rail="isVisible"
         :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
+        min-height="100%"
       >
         <v-list v-model:open="open">
           <v-list-group fluid value="Dashboard">

@@ -1,30 +1,32 @@
 <template>
-  <v-container fluid fill-height>
+  <v-container fluid :max-width="2560" >
     <v-row justify="center" xs="6" sm="6" md="12">
       <v-col cols="12">
         <v-row justify="center">
-          <v-col cols="12" xs="12" sm="12" md="12">
+          <v-col cols="12" xs="12" sm="12" md="12" class="pa-0">
             <v-card
-              height="auto"
-              class="pa-11 ma-0 bg-cardColor"
+              height="auto "
+              class=" ma-0 bg-cardColor md-start"
               rounded="md"
               :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
               border="md"
+              min-height="1000%"
             >
               <v-card-title height="auto" width="100%">
                 <v-row align="center" justify="space-between">
-                  <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
-                    <v-icon icon="fa: fa-solid fa-briefcase"></v-icon>
+                  <v-col order-sm="0" order-md="0" cols="12" md="4" sm="12" xs="12" class="d-flex justify-start">
                     <v-label
                       class="ms-2 text-h4 font-family-lato text-headingTextColor"
                       style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
                       height="auto"
                       width="auto"
-                      >Job Details</v-label
+                      >
+                      <v-icon icon="fa: fa-solid fa-briefcase" size="x-small"></v-icon>
+                      Job Details</v-label
                     >
                   </v-col>
 
-                  <v-col cols="12" md="4" sm="6" xs="12">
+                  <v-col order-sm="1" order-md="1" cols="12" md="4" sm="12" xs="12">
                     <v-text-field
                       v-model="search"
                       density="compact"
@@ -39,7 +41,7 @@
                       single-line
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
+                  <v-col order-sm="2" order-md="2" cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
                     <AddJob />
                   </v-col>
                 </v-row>
@@ -48,7 +50,6 @@
               <v-card-text>
                 <v-divider></v-divider>
                 <v-col cols="12" xs="12" sm="12" md="12">
-                  <div style="height: 700px; overflow-y: auto">
                     <v-data-table
                       :headers="headers"
                       :items="jobClientData"
@@ -58,6 +59,8 @@
                       rounded="xl"
                       class="bg-cardColor"
                       :row-props="getRowProps"
+                      min-width="100%"
+                      min-height
                     >
                       <template v-slot:[`item.heading`]="{ value }">
                         {{ value }}
@@ -112,7 +115,6 @@
                         </v-btn>
                       </template>
                     </v-data-table>
-                  </div>
                 </v-col>
               </v-card-text>
             </v-card>
