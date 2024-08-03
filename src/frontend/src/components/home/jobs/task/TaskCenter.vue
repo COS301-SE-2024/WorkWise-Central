@@ -5,11 +5,11 @@
         <v-card class="mb-5">
           <v-card-title>
             Recently Added Jobs
-            <v-switch
+            <!-- <v-switch
               class="ml-auto"
               v-model="automatedAssignment"
               label="Automated Job Assignment"
-            ></v-switch>
+            ></v-switch> -->
           </v-card-title>
           <v-list>
             <v-list-item v-for="job in recentJobs" :key="job.id">
