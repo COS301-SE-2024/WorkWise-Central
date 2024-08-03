@@ -12,7 +12,9 @@ import {
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import {
+  CancelInviteDto,
   CancelRequestDto,
+  RejectInviteDto,
   UserInviteRequestDto,
   UserJoinRequestDto,
 } from '../users/dto/request-to-join.dto';
@@ -31,10 +33,15 @@ import { AuthGuard } from '../auth/auth.guard';
 import { extractUserId, validateObjectId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import {
+  AllCompanyInvitesDto,
   AllJoinDetailedRequestsDto,
   AllJoinRequestsDto,
+  JoinedCompanyResponseDto,
 } from './dto/request.dto';
-import { AcceptRequestDto } from '../client/dto/accept-request.dto';
+import {
+  AcceptInviteDto,
+  AcceptRequestDto,
+} from '../client/dto/accept-request.dto';
 
 //const className = 'Administration';
 
@@ -191,25 +198,24 @@ export class AdminController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @ApiOperation({
-    summary: `Create a Request to Join a company`,
-    description: 'This is a request created by someone with a WorkWise Account',
+    summary: `Invite a user to join your company`,
+    description: 'This is an created by an administrative employee',
   })
-  @ApiBody({ type: CancelRequestDto })
+  @ApiBody({ type: BooleanResponseDto })
   @ApiResponse({
     status: 201,
     type: BooleanResponseDto,
-    description: `Confirmation that the request was successfully deleted`,
+    description: `Confirmation that the invite was successfully deleted`,
   })
-  @Patch('/request/cancel')
-  async deleteRequest(
+  @Patch('/invite/cancel')
+  async deleteInvite(
     @Headers() headers: any,
-    @Body() cancelRequestDto: CancelRequestDto,
+    @Body() cancelRequestDto: CancelInviteDto,
   ) {
     try {
       const userId = extractUserId(this.jwtService, headers);
-      // if (!userId) throw new BadRequestException('Invalid JWT');
       return {
-        data: await this.adminService.cancelRequest(userId, cancelRequestDto),
+        data: await this.adminService.cancelInvite(userId, cancelRequestDto),
       };
     } catch (Error) {
       throw Error;
@@ -323,6 +329,84 @@ export class AdminController {
         'Something went wrong',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  ///Invites
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all Invites from a Company`,
+  })
+  @ApiOkResponse({
+    type: AllCompanyInvitesDto,
+    description: `An array of mongodb objects in the Invites Collection`,
+  })
+  @Get('/invite/all/e/:eid')
+  async getAllInvitesInCompany(
+    @Headers() headers: any,
+    @Param('eid') empId: string,
+  ) {
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      validateObjectId(empId);
+      const employeeId = new Types.ObjectId(empId);
+      return {
+        data: await this.adminService.getAllInvitesInCompany(
+          userId,
+          employeeId,
+        ),
+      };
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Accept invite from a Company`,
+  })
+  @ApiOkResponse({
+    type: JoinedCompanyResponseDto,
+    description: `A joinedCompany instance belonging to the user that has been added`,
+  })
+  @Post('/invite/accept')
+  async acceptInviteFromCompany(
+    @Headers() headers: any,
+    @Body() acceptInviteDto: AcceptInviteDto,
+  ) {
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.adminService.acceptInvite(userId, acceptInviteDto),
+      };
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Reject invite from a Company`,
+  })
+  @ApiOkResponse({
+    type: BooleanResponseDto,
+    description: `A joinedCompany instance belonging to the user that has been added`,
+  })
+  @Post('/invite/accept')
+  async rejectInviteFromCompany(
+    @Headers() headers: any,
+    @Body() rejectDto: RejectInviteDto,
+  ) {
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.adminService.rejectInvite(userId, rejectDto),
+      };
+    } catch (e) {
+      throw e;
     }
   }
 }
