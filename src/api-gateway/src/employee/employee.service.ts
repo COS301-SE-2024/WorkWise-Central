@@ -704,11 +704,7 @@ export class EmployeeService {
     return found;
   }
 
-  async detailedFindBelowMeInCompany(
-    userId: Types.ObjectId,
-    companyId: Types.ObjectId,
-    currentEmployeeId: Types.ObjectId,
-  ) {
+  async detailedFindBelowMeInCompany(currentEmployeeId: Types.ObjectId) {
     try {
       return await this.deptFirstTraversalDetailed(currentEmployeeId);
     } catch (error) {
@@ -718,11 +714,7 @@ export class EmployeeService {
     }
   }
 
-  async findBelowMeInCompany(
-    userId: Types.ObjectId,
-    companyId: Types.ObjectId,
-    currentEmployeeId: Types.ObjectId,
-  ) {
+  async findBelowMeInCompany(currentEmployeeId: Types.ObjectId) {
     try {
       return await this.deptFirstTraversalObjects(currentEmployeeId);
     } catch (error) {
@@ -731,6 +723,17 @@ export class EmployeeService {
       );
     }
   }
+
+  async findIdsBelowMeInCompany(currentEmployeeId: Types.ObjectId) {
+    try {
+      return await this.deptFirstTraversalId(currentEmployeeId);
+    } catch (error) {
+      throw new Error(
+        'Employee id for given userId and companyId could not be found',
+      );
+    }
+  }
+
   async detailedFindByIdUnderMe(
     userId: Types.ObjectId,
     employeeId: Types.ObjectId,

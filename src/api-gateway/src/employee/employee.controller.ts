@@ -114,7 +114,6 @@ export class EmployeeController {
     @Param('companyId') companyId: Types.ObjectId,
     @Body() body: { currentEmployeeId: Types.ObjectId },
   ) {
-    const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
     );
@@ -132,8 +131,6 @@ export class EmployeeController {
       let data;
       try {
         data = await this.employeeService.detailedFindBelowMeInCompany(
-          userId,
-          companyId,
           body.currentEmployeeId,
         );
       } catch (e) {
@@ -173,7 +170,6 @@ export class EmployeeController {
     @Param('companyId') companyId: Types.ObjectId,
     @Body() body: { currentEmployeeId: Types.ObjectId },
   ) {
-    const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
     );
@@ -191,8 +187,6 @@ export class EmployeeController {
       let data;
       try {
         data = await this.employeeService.findBelowMeInCompany(
-          userId,
-          companyId,
           body.currentEmployeeId,
         );
       } catch (e) {

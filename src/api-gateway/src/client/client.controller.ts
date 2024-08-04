@@ -161,13 +161,23 @@ export class ClientController {
     } else if (
       currentEmployee.role.permissionSuite.includes('view clients under me')
     ) {
-      //TODO
+      //TODO: Add validation for the company id
+      return {
+        data: await this.clientService.getListOfClientObjectsUnderEmployee(
+          body.currentEmployeeId,
+        ),
+      };
     } else if (
       currentEmployee.role.permissionSuite.includes(
         'view clients that are assigned to me',
       )
     ) {
-      //TODO
+      //TODO: Add validation for the company id
+      return {
+        data: await this.clientService.getListOfClientObjectsAssignedToEmployee(
+          body.currentEmployeeId,
+        ),
+      };
     } else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
@@ -186,16 +196,16 @@ export class ClientController {
   @Get('id/:id')
   async findOne(
     @Headers() headers: any,
-    @Param('id') id: string,
+    @Param('id') id: Types.ObjectId,
     @Body() body: { currentEmployeeId: Types.ObjectId },
   ) {
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
     );
+    const userId = extractUserId(this.jwtService, headers);
     if (currentEmployee.role.permissionSuite.includes('view all clients')) {
       validateObjectId(id);
       try {
-        const userId = extractUserId(this.jwtService, headers);
         const response = await this.clientService.getClientById(
           userId,
           new Types.ObjectId(id),
@@ -208,13 +218,51 @@ export class ClientController {
     } else if (
       currentEmployee.role.permissionSuite.includes('view clients under me')
     ) {
-      //TODO
+      validateObjectId(id);
+      try {
+        const response = await this.clientService.getClientById(
+          userId,
+          new Types.ObjectId(id),
+        );
+        if (
+          this.clientService.clientIsBelowCurrentEmployee(
+            body.currentEmployeeId,
+            id,
+          )
+        ) {
+          return new ApiResponseDto(response);
+        } else {
+          throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        }
+      } catch (e) {
+        console.log(e);
+        throw e;
+      }
     } else if (
       currentEmployee.role.permissionSuite.includes(
         'view clients that are assigned to me',
       )
     ) {
-      //TODO
+      validateObjectId(id);
+      try {
+        const response = await this.clientService.getClientById(
+          userId,
+          new Types.ObjectId(id),
+        );
+        if (
+          this.clientService.clientIsAssignedToCurrentEmployee(
+            body.currentEmployeeId,
+            id,
+          )
+        ) {
+          return new ApiResponseDto(response);
+        } else {
+          throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        }
+      } catch (e) {
+        console.log(e);
+        throw e;
+      }
     } else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
@@ -238,12 +286,11 @@ export class ClientController {
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
     );
+    const userId = extractUserId(this.jwtService, headers);
     if (currentEmployee.role.permissionSuite.includes('view all clients')) {
       validateObjectId(compId);
       const companyId = new mongoose.Types.ObjectId(compId);
       try {
-        const userId = extractUserId(this.jwtService, headers);
-
         return {
           data: await this.clientService.getByEmailOrName(
             userId,
@@ -258,13 +305,54 @@ export class ClientController {
     } else if (
       currentEmployee.role.permissionSuite.includes('view clients under me')
     ) {
-      //TODO
+      validateObjectId(compId);
+      const companyId = new mongoose.Types.ObjectId(compId);
+      const list = await this.clientService.getListOfClientIdsUnderEmployee(
+        body.currentEmployeeId,
+      );
+      const clients = await this.clientService.getByEmailOrName(
+        userId,
+        companyId,
+        emailOrName,
+      );
+      const data = [];
+      clients.forEach((client) => {
+        if (list.includes(client._id)) {
+          data.push(client);
+        }
+      });
+      if (data.length !== 0) {
+        return { data: data };
+      } else {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     } else if (
       currentEmployee.role.permissionSuite.includes(
         'view clients that are assigned to me',
       )
     ) {
-      //TODO
+      const list =
+        await this.clientService.getListOfClientIdsAssignedToEmployee(
+          body.currentEmployeeId,
+        );
+      validateObjectId(compId);
+      const companyId = new mongoose.Types.ObjectId(compId);
+      const clients = await this.clientService.getByEmailOrName(
+        userId,
+        companyId,
+        emailOrName,
+      );
+      const data = [];
+      clients.forEach((client) => {
+        if (list.includes(client._id)) {
+          data.push(client);
+        }
+      });
+      if (data.length !== 0) {
+        return { data: data };
+      } else {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     } else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
@@ -288,7 +376,7 @@ export class ClientController {
   @Patch('/:id')
   async update(
     @Headers() headers: any,
-    @Param('id') id: string,
+    @Param('id') id: Types.ObjectId,
     @Body()
     body: {
       currentEmployeeId: Types.ObjectId;
@@ -318,13 +406,55 @@ export class ClientController {
         'edit clients that are under me',
       )
     ) {
-      //TODO
+      if (
+        this.clientService.clientIsBelowCurrentEmployee(
+          body.currentEmployeeId,
+          id,
+        )
+      ) {
+        try {
+          validateObjectId(id);
+          const clientId = new Types.ObjectId(id);
+          const userId = extractUserId(this.jwtService, headers);
+
+          return await this.clientService.updateClient(
+            userId,
+            clientId,
+            body.updateClientDto,
+          );
+        } catch (e) {
+          console.log(e);
+          throw e;
+        }
+      } else {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     } else if (
       currentEmployee.role.permissionSuite.includes(
         'edit clients that are assigned to me',
       )
     ) {
-      //TODO
+      if (
+        this.clientService.clientIsAssignedToCurrentEmployee(
+          body.currentEmployeeId,
+          id,
+        )
+      ) {
+        try {
+          validateObjectId(id);
+          const clientId = new Types.ObjectId(id);
+          const userId = extractUserId(this.jwtService, headers);
+
+          return await this.clientService.updateClient(
+            userId,
+            clientId,
+            body.updateClientDto,
+          );
+        } catch (e) {
+          console.log(e);
+          throw e;
+        }
+      }
     } else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
@@ -345,13 +475,10 @@ export class ClientController {
   async remove(
     @Headers() headers: any,
     @Body()
-    body: {
-      currentEmployeeId: Types.ObjectId;
-      deleteClientDto: DeleteClientDto;
-    },
+    body: { deleteClientDto: DeleteClientDto },
   ) {
     const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
+      body.deleteClientDto.employeeId,
     );
     if (currentEmployee.role.permissionSuite.includes('remove any clients')) {
       try {
@@ -363,13 +490,39 @@ export class ClientController {
     } else if (
       currentEmployee.role.permissionSuite.includes('remove clients under me')
     ) {
-      //TODO
+      if (
+        this.clientService.clientIsBelowCurrentEmployee(
+          body.deleteClientDto.employeeId,
+          body.deleteClientDto.clientId,
+        )
+      ) {
+        try {
+          const userId = extractUserId(this.jwtService, headers);
+          return this.clientService.softDelete(userId, body.deleteClientDto);
+        } catch (e) {
+          throw e;
+        }
+      } else {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
     } else if (
       currentEmployee.role.permissionSuite.includes(
         'remove clients assigned to me',
       )
     ) {
-      //TODO
+      if (
+        this.clientService.clientIsAssignedToCurrentEmployee(
+          body.deleteClientDto.employeeId,
+          body.deleteClientDto.clientId,
+        )
+      ) {
+        try {
+          const userId = extractUserId(this.jwtService, headers);
+          return this.clientService.softDelete(userId, body.deleteClientDto);
+        } catch (e) {
+          throw e;
+        }
+      }
     } else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }

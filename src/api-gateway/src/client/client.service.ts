@@ -297,4 +297,69 @@ export class ClientService {
     if (!employee.userId.equals(userId))
       throw new UnauthorizedException('Inconsistent userId');
   }
+
+  async getListOfClientIdsUnderEmployee(employeeId: Types.ObjectId) {
+    const listUnderMe =
+      await this.employeeService.findIdsBelowMeInCompany(employeeId);
+    const clientsList: Types.ObjectId[] = [];
+    listUnderMe.forEach(async (employee) => {
+      const clients = await this.getListOfClientIdsAssignedToEmployee(employee);
+      clientsList.push(...clients);
+    });
+    return clientsList;
+  }
+
+  async getListOfClientIdsAssignedToEmployee(employeeId: Types.ObjectId) {
+    const employee = await this.employeeService.findById(employeeId);
+    const clientsList: Types.ObjectId[] = [];
+    employee.jobAssignments.forEach(async (jobId) => {
+      const job = await this.jobService.getJobById(jobId);
+      if (job.clientId) {
+        clientsList.push(job.clientId);
+      }
+    });
+    return clientsList;
+  }
+
+  async getListOfClientObjectsUnderEmployee(employeeId: Types.ObjectId) {
+    const listUnderMe =
+      await this.employeeService.findIdsBelowMeInCompany(employeeId);
+    const clientsList = [];
+    listUnderMe.forEach(async (employee) => {
+      const clients =
+        await this.getListOfClientObjectsAssignedToEmployee(employee);
+      clientsList.push(clients);
+    });
+    return clientsList;
+  }
+
+  async getListOfClientObjectsAssignedToEmployee(employeeId: Types.ObjectId) {
+    const employee = await this.employeeService.findById(employeeId);
+    const clientsList = [];
+    employee.jobAssignments.forEach(async (jobId) => {
+      const job = await this.jobService.getJobById(jobId);
+      if (job.clientId) {
+        const client = await this.getClientById(employee.userId, job.clientId);
+        clientsList.push(client);
+      }
+    });
+    return clientsList;
+  }
+
+  async clientIsBelowCurrentEmployee(
+    currentEmployee: Types.ObjectId,
+    clientId: Types.ObjectId,
+  ) {
+    const list = await this.getListOfClientIdsUnderEmployee(currentEmployee);
+    return list.includes(clientId);
+  }
+
+  async clientIsAssignedToCurrentEmployee(
+    currentEmployee: Types.ObjectId,
+    clientId: Types.ObjectId,
+  ) {
+    const list =
+      await this.getListOfClientIdsAssignedToEmployee(currentEmployee);
+    return list.includes(clientId);
+  }
 }

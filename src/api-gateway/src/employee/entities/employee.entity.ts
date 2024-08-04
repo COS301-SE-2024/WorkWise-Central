@@ -59,7 +59,7 @@ export class Employee {
   @ApiProperty()
   @Prop({
     type: [SchemaTypes.ObjectId],
-    required: false,
+    required: true,
     default: [],
     ref: Employee.name,
   })
@@ -68,7 +68,7 @@ export class Employee {
   @ApiProperty()
   @Prop({
     type: [SchemaTypes.ObjectId],
-    required: false,
+    required: true,
     default: [],
     ref: 'Team',
   })
@@ -85,6 +85,15 @@ export class Employee {
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Company' })
   companyId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: true,
+    default: [],
+    ref: 'Job',
+  })
+  jobAssignments?: Types.ObjectId[];
 
   @ApiHideProperty()
   @Prop({ required: true, default: new Date() })
@@ -105,8 +114,8 @@ export class EmployeeApiObject {
   id: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Role' })
-  roleId: Types.ObjectId;
+  @Prop({ required: true })
+  role: roleObject;
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: false, ref: 'Employee' })
@@ -115,7 +124,7 @@ export class EmployeeApiObject {
   @ApiProperty()
   @Prop({
     type: [SchemaTypes.ObjectId],
-    required: false,
+    required: true,
     default: [],
     ref: Employee.name,
   })
@@ -124,7 +133,7 @@ export class EmployeeApiObject {
   @ApiProperty()
   @Prop({
     type: [SchemaTypes.ObjectId],
-    required: false,
+    required: true,
     default: [],
     ref: 'Team',
   })
@@ -141,6 +150,15 @@ export class EmployeeApiObject {
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Company' })
   companyId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: true,
+    default: [],
+    ref: 'Job',
+  })
+  currentJobAssignments?: Types.ObjectId[];
 
   @ApiHideProperty()
   @Prop({ required: true, default: new Date() })
