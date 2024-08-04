@@ -54,6 +54,7 @@
                   :items="clientsArray"
                   item-value="id"
                   item-title="name"
+                  v-model="req_obj.clientId"
                   @update:modelValue="updateClient"
                   required
                   :rules="employees_rules"
@@ -95,11 +96,14 @@
                     required
                     @update:modelValue="updateDates"
                     data-testid="job-start-date-datepicker"
+                    :min="formatDate(new Date())"
                   ></v-date-picker>
                 </v-col>
                 <v-col cols="12" md="6" align="center">
                   <v-time-picker
                     format="24hr"
+                    :allowed-hours="(hr: number) => new Date().getHours() <= hr"
+                    :allowed-minutes="(min: number) => new Date().getMinutes() <= min"
                     v-model="startTime"
                     data-testid="job-start-time-timepicker"
                   ></v-time-picker>
@@ -116,10 +120,13 @@
                     required
                     @update:modelValue="updateDates"
                     data-testid="job-end-date-datepicker"
+                    :min="formatDate(new Date())"
                   ></v-date-picker>
                 </v-col>
                 <v-col cols="12" md="6" align="center">
                   <v-time-picker
+                    :allowed-hours="(hr: number) => new Date().getHours() <= hr"
+                    :allowed-minutes="(min: number) => new Date().getMinutes() <= min"
                     format="24hr"
                     v-model="endTime"
                     data-testid="job-end-time-timepicker"
@@ -145,33 +152,58 @@
                     data-testid="employee-multi-select"
                   ></v-select
                 ></v-col>
-                <v-col>
+                <v-col :cols="6">
+                  <label style="font-size: 14px; font-weight: lighter" :cols="6">Status</label>
+
+                  <v-select
+                    :items="statusOptionsArray"
+                    label="Select the status of the job"
+                    chips
+                    item-value="_id"
+                    item-title="status"
+                    v-model="req_obj.status"
+                    required
+                    color="primary"
+                    variant="solo"
+                    clearable
+                    data-testid="status-select"
+                  ></v-select
+                ></v-col>
+                <v-col :cols="6">
                   <label style="font-size: 14px; font-weight: lighter" :cols="6">Priority</label>
 
                   <v-select
                     :items="priorityOptionsArray"
                     label="Select the priority level of this job"
                     chips
+                    item-value="_id"
+                    item-title="label"
+                    v-model="req_obj.priorityTag"
                     required
                     color="primary"
                     @update:modelValue="updateEmployee"
                     variant="solo"
+                    clearable
                     data-testid="priority-select"
                   ></v-select
                 ></v-col>
 
-                <v-col>
+                <v-col :cols="6">
                   <label style="font-size: 14px; font-weight: lighter" :cols="6">Tags</label>
 
                   <v-select
                     :items="tagOptionsArray"
+                    item-value="_id"
+                    item-title="label"
+                    v-model="req_obj.tags"
                     label="Select some tags you would like to assign to this job"
                     chips
                     multiple
                     required
                     color="primary"
-                    @update:modelValue="updateEmployee"
+                    @update:modelValue="updateTagsArray"
                     variant="solo"
+                    clearable
                     data-testid="tags-multi-select"
                   ></v-select
                 ></v-col>
@@ -285,7 +317,7 @@
         <v-btn
           color="success"
           rounded="md"
-          type="submit"
+          @click="validateForm"
           boarder="md"
           width="100%"
           height="35"
@@ -312,7 +344,14 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import type { EmployeeJoined, EmployeeInformation, ClientInformation } from '../types'
+import type {
+  EmployeeJoined,
+  EmployeeInformation,
+  ClientInformation,
+  JobTag,
+  JobPriorityTag,
+  JobStatuses
+} from '../types'
 
 export default defineComponent({
   name: 'JobDetailsList',
@@ -347,238 +386,18 @@ export default defineComponent({
       startTime: '',
       endDate: null,
       endTime: '',
-      priorityOptionsArray: ['High', 'Medium', 'Low'],
-      tagOptionsArray: [
-        'Cleaning',
-        'Landscaping',
-        'Plumbing',
-        'Electrical',
-        'HVAC',
-        'Pest Control',
-        'Moving',
-        'Delivery',
-        'Courier',
-        'Security',
-        'Maintenance',
-        'Repair',
-        'Installation',
-        'Janitorial',
-        'Painting',
-        'Carpentry',
-        'Roofing',
-        'Gardening',
-        'Window Cleaning',
-        'Flooring',
-        'Carpet Cleaning',
-        'Pool Cleaning',
-        'Handyman',
-        'Waste Removal',
-        'Gutter Cleaning',
-        'Pressure Washing',
-        'Tree Trimming',
-        'Snow Removal',
-        'Lawn Care',
-        'Irrigation',
-        'Appliance Repair',
-        'Drywall',
-        'Masonry',
-        'Fencing',
-        'Paving',
-        'Locksmith',
-        'Home Staging',
-        'Furniture Assembly',
-        'Pest Inspection',
-        'Chimney Sweep',
-        'Duct Cleaning',
-        'Tile Installation',
-        'Cabinet Making',
-        'Glass Repair',
-        'Garage Door Repair',
-        'Solar Panel Installation',
-        'Insulation',
-        'Septic Tank Cleaning',
-        'Waterproofing',
-        'Bathroom Remodeling',
-        'Kitchen Remodeling',
-        'Basement Remodeling',
-        'Attic Remodeling',
-        'Exterior Painting',
-        'Interior Painting',
-        'Fence Painting',
-        'Deck Painting',
-        'Deck Staining',
-        'Fence Staining',
-        'Driveway Sealing',
-        'Siding Installation',
-        'Siding Repair',
-        'Home Theater Installation',
-        'Smart Home Installation',
-        'TV Mounting',
-        'Internet Setup',
-        'Networking',
-        'Computer Repair',
-        'Printer Repair',
-        'Data Recovery',
-        'Virus Removal',
-        'Backup Solutions',
-        'Software Installation',
-        'Hardware Upgrade',
-        'IT Support',
-        'Tech Support',
-        'WiFi Setup',
-        'Cable Installation',
-        'Satellite Installation',
-        'Audio Installation',
-        'Video Surveillance',
-        'Alarm Systems',
-        'Access Control',
-        'Fire Alarm Installation',
-        'Sprinkler Systems',
-        'Emergency Lighting',
-        'First Aid Training',
-        'CPR Training',
-        'Disaster Recovery',
-        'Business Continuity',
-        'Project Management',
-        'Construction Management',
-        'General Contracting',
-        'Subcontracting',
-        'Property Management',
-        'Facility Management',
-        'Real Estate Management',
-        'Event Planning',
-        'Catering',
-        'Wedding Planning',
-        'Birthday Planning',
-        'Conference Planning',
-        'Exhibition Planning',
-        'Promotional Events',
-        'Trade Shows',
-        'Fundraisers',
-        'Community Events',
-        'Corporate Events',
-        'Concerts',
-        'Theater',
-        'Tour Guide',
-        'Travel Planning',
-        'Hotel Booking',
-        'Flight Booking',
-        'Car Rental',
-        'Bus Rental',
-        'Limousine Service',
-        'Shuttle Service',
-        'Pet Sitting',
-        'Dog Walking',
-        'Pet Grooming',
-        'Veterinary Services',
-        'Pet Training',
-        'Aquarium Services',
-        'Horse Training',
-        'Stable Management',
-        'Landscaping Design',
-        'Landscape Maintenance',
-        'Tree Removal',
-        'Stump Grinding',
-        'Weed Control',
-        'Fertilization',
-        'Aeration',
-        'Seeding',
-        'Lawn Mowing',
-        'Mulching',
-        'Soil Testing',
-        'Land Surveying',
-        'Land Clearing',
-        'Excavation',
-        'Grading',
-        'Drainage Solutions',
-        'Retaining Walls',
-        'Stone Work',
-        'Water Features',
-        'Irrigation Systems',
-        'Lighting Installation',
-        'Greenhouse Services',
-        'Nursery Services',
-        'Plant Delivery',
-        'Soil Delivery',
-        'Compost Delivery',
-        'Firewood Delivery',
-        'Junk Removal',
-        'Recycling',
-        'Hazardous Waste Removal',
-        'E-Waste Removal',
-        'Document Shredding',
-        'Vehicle Removal',
-        'Scrap Metal Removal',
-        'Estate Cleanout',
-        'Hoarding Cleanup',
-        'Biohazard Cleanup',
-        'Crime Scene Cleanup',
-        'Water Damage Restoration',
-        'Fire Damage Restoration',
-        'Mold Remediation',
-        'Storm Damage Repair',
-        'Insurance Claims',
-        'Legal Services',
-        'Accounting',
-        'Bookkeeping',
-        'Tax Preparation',
-        'Payroll Services',
-        'HR Services',
-        'Recruitment',
-        'Staffing',
-        'Training',
-        'Consulting',
-        'Marketing',
-        'Advertising',
-        'SEO Services',
-        'Social Media Management',
-        'Content Creation',
-        'Graphic Design',
-        'Web Design',
-        'App Development',
-        'Software Development',
-        'Cloud Services',
-        'Data Analytics',
-        'Cybersecurity',
-        'Compliance',
-        'Auditing',
-        'Risk Management',
-        'Quality Assurance',
-        'Customer Support',
-        'Technical Support',
-        'Virtual Assistant',
-        'Call Center Services',
-        'Telemarketing',
-        'Sales Training',
-        'Lead Generation',
-        'Market Research',
-        'Brand Development',
-        'Public Relations',
-        'Crisis Management',
-        'Media Buying',
-        'Video Production',
-        'Photography',
-        'Animation',
-        'Copywriting',
-        'Editing',
-        'Proofreading',
-        'Translation',
-        'Transcription',
-        'Interpretation',
-        'Voice Over',
-        'Podcasting',
-        'Blogging',
-        'Vlogging'
-      ],
+      priorityOptionsArray: [] as JobPriorityTag[],
+      tagOptionsArray: [] as JobTag[],
+      statusOptionsArray: [] as JobStatuses[],
       req_obj: {
         companyId: localStorage['currentCompany'],
-        // clientId: '',
+        clientId: '',
         assignedBy: localStorage['employeeId'],
         assignedEmployees: {
           employeeIds: [] as string[]
         },
         //default job statuses ['Todo','In Progress','Awaiting Review','Done']
-        status: 'Todo',
+        status: null,
         details: {
           heading: '',
           description: '',
@@ -592,7 +411,9 @@ export default defineComponent({
           },
           startDate: '',
           endDate: ''
-        }
+        },
+        tags: [],
+        priorityTag: null
       },
       jobDialog: false
     }
@@ -613,6 +434,12 @@ export default defineComponent({
       date.setMinutes(min)
       console.log(date.toISOString())
       this.req_obj.details.startDate = date.toISOString()
+    },
+    formatDate(d: Date) {
+      const year = d.getFullYear()
+      const month = `0${d.getMonth() + 1}`.slice(-2) // Add leading zero and slice last 2 digits
+      const day = `0${d.getDate()}`.slice(-2) // Add leading zero and slice last 2 digits
+      return `${year}-${month}-${day}`
     },
     async handleSubmission() {
       console.log(this.req_obj)
@@ -650,7 +477,7 @@ export default defineComponent({
       const apiURL = await this.getRequestUrl()
       console.log(apiURL)
       axios
-        .get(apiURL + 'client/all', config)
+        .get(apiURL + `client/all`, config)
         .then((res) => {
           console.log(res)
 
@@ -663,6 +490,7 @@ export default defineComponent({
               id: res.data.data[i]._id
             })
           }
+          console.log(this.clientsArray)
         })
         .catch((res) => {
           console.log(res)
@@ -678,7 +506,7 @@ export default defineComponent({
       const apiURL = await this.getRequestUrl()
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/joined/all/${localStorage['currentCompany']}`,
+          apiURL + `employee/detailed/all/${localStorage['currentCompany']}`,
           config
         )
 
@@ -720,6 +548,61 @@ export default defineComponent({
         console.log('Error fetching data:', error)
       }
     },
+    async loadPriorities() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const loaded_priorities_response = await axios.get(
+          apiURL + `job/tags/p/${localStorage['currentCompany']}`,
+          config
+        )
+        this.priorityOptionsArray = loaded_priorities_response.data.data
+      } catch (err) {
+        console.log('Error fetching data:', err)
+      }
+    },
+    async loadTags() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const loaded_tags_response = await axios.get(
+          apiURL + `job/tags/${localStorage['currentCompany']}`,
+          config
+        )
+        this.tagOptionsArray = loaded_tags_response.data.data
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
+    },
+    async loadStatues() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const statuses_response = await axios.get(
+          apiURL + `company/status/all/${localStorage['currentCompany']}`,
+          config
+        )
+        this.statusOptionsArray = statuses_response.data.data.jobStatuses
+        console.log(statuses_response.data)
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
+    },
     async isLocalAvailable(localUrl: string) {
       try {
         const res = await axios.get(localUrl)
@@ -733,18 +616,25 @@ export default defineComponent({
       return localAvailable ? this.localUrl : this.remoteUrl
     },
     updateClient() {
-      // console.log(this.req_obj.clientId)
+      console.log(this.req_obj.clientId)
     },
     updateEmployee() {
-      console.log(this.req_obj.assignedEmployees.employeeIds)
+      console.log(this.req_obj.priorityTag)
+      console.log(this.req_obj.tags)
     },
     close() {
       this.jobDialog = false
+    },
+    updateTagsArray() {
+      console.log(this.req_obj.tags)
     }
   },
   mounted: function () {
     this.loadClients()
     this.loadAssignableEmployees()
+    this.loadPriorities()
+    this.loadTags()
+    this.loadStatues()
   }
 })
 
