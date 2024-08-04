@@ -2,7 +2,7 @@
   <div>
     <v-container>
       <v-row v-for="(comment, index) in comments" :key="index" class="d-flex align-center mb-3">
-        <v-col cols="2" class="pt-6">
+        <v-col cols="2" class="pt-2">
           <v-avatar color="secondary" style="width: 38px; height: 36px">
             <span class="text-h6">{{ user.initials }}</span>
           </v-avatar>
@@ -15,12 +15,13 @@
             readonly
             :clearable="false"
             class="pt-4"
-            hide-details
+            :hint="new Date(comment.date).toLocaleDateString()"
+            persistent-hint
           ></v-text-field>
         </v-col>
         <v-col cols="1">
           <v-btn @click="deleteComment(index)">
-            <v-icon color="red" class="fa fa-trash pt-4"></v-icon>
+            <v-icon color="red" class="fa fa-trash pt-1"></v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -36,6 +37,7 @@
       ></v-textarea>
       <v-btn color="success" @click="comment" prepend-icon="mdi-comment-plus">Comment</v-btn>
     </v-container>
+    <Toast />
   </div>
 </template>
 
@@ -47,9 +49,6 @@ import { useToast } from 'primevue/usetoast'
 const toast = useToast()
 const newComment = ref('')
 
-// Comments and new comment
-const comments = ref<{ text: string, employeeId: string, date: string }[]>([])
-
 interface Comment {
   employeeId: string;
   newComment: string;
@@ -60,7 +59,16 @@ const user = ref({
   initials: ''
 })
 
+// Comments and new comment
 const props = defineProps<{ jobComments: Comment[], id: string }>()
+
+const comments = ref<{ text: string, employeeId: string, date: string }[]>(
+  props.jobComments.map(comment => ({
+    text: comment.newComment,
+    employeeId: comment.employeeId,
+    date: comment.date
+  }))
+)
 
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
@@ -116,18 +124,24 @@ const addComment = async () => {
     }
   }
   const apiUrl = await getRequestUrl()
+
+  const updatedComments = [...comments.value, {
+    text: newComment.value,
+    employeeId: localStorage.getItem('employeeId') || '',
+    date: new Date().toISOString()
+  }]
+
+  console.log(updatedComments)
+
   try {
     const response = await axios.patch(`${apiUrl}job/${props.id}`,
-      { newComment: newComment.value },
+      updatedComments,
       config
     )
-    comments.value.push({
-      text: newComment.value,
-      employeeId: localStorage.getItem('employeeId'),
-      date: new Date().toISOString()
-    })
+    comments.value = updatedComments
     newComment.value = ''
     showJobCommentSuccess()
+    console.log(response.data)
   } catch (error) {
     console.error('Error adding comments', error)
     showJobCommentError()
@@ -144,9 +158,14 @@ const deleteComment = async (index: number) => {
     }
   }
   const apiUrl = await getRequestUrl()
+
+  const updatedComments = comments.value.filter((_, i) => i !== index)
   try {
-    await axios.delete(`${apiUrl}job/${props.id}/comments/${commentToDelete.employeeId}`, config)
-    comments.value.splice(index, 1)
+    await axios.patch(`${apiUrl}job/${props.id}`,
+      updatedComments,
+      config
+    )
+    comments.value = updatedComments
     toast.add({
       severity: 'success',
       summary: 'Success',
@@ -194,5 +213,11 @@ onMounted(async () => {
     date: comment.date
   }))
 })
+
+const comment = () => {
+  console.log(props.jobComments)
+  console.log(props.id)
+  addComment();
+}
 
 </script>

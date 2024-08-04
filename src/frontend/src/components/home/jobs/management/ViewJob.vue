@@ -128,7 +128,7 @@
               </v-divider>
               <v-row>
                 <v-col ref="notesSection">
-                  <JobNotes :passedInJob="props.passedInJob" />
+                  <JobNotes :passedInJob="props.passedInJob.notes" />
                 </v-col>
               </v-row>
             </v-col>
