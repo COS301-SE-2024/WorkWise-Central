@@ -128,7 +128,7 @@
               </v-divider>
               <v-row>
                 <v-col ref="notesSection">
-                  <JobNotes :passedInJob="props.passedInJob.notes" />
+                  <JobNotes :passedInJob="props.passedInJob" />
                 </v-col>
               </v-row>
             </v-col>
@@ -147,7 +147,7 @@
               <JobChecklist :passedInJob="props.passedInJob" />
             </v-col>
             <v-col ref="inventorySection">
-              <LogInventory :passedInJob="props.passedInJob" />
+              <LogInventory :recordedDetails="props.passedInJob.recordedDetails" :id="props.passedInJob._id" />
             </v-col>
           </v-col>
         </v-row>
