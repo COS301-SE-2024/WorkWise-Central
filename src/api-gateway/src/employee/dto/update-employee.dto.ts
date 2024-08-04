@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
 import { IsArray, IsMongoId, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { roleObject } from '../entities/employee.entity';
 
 export class UpdateEmployeeUserInfoDto {
   @IsString()
@@ -52,6 +53,9 @@ export class UpdateEmployeeDto {
   @IsOptional()
   @ApiProperty()
   subordinateTeams?: Types.ObjectId[];
+
+  @IsOptional()
+  role?: roleObject;
 }
 
 export class updateEmployeeResponseDto {
