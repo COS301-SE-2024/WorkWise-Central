@@ -132,7 +132,6 @@ export default defineComponent({
     req_obj2: {
       adminId: localStorage['employeeId'],
       currentCompany: localStorage['currentCompany'],
-      newUserUsername: '',
       superiorId: '',
       roleId: ''
     }
@@ -158,8 +157,6 @@ export default defineComponent({
             apiURL + `employee/detailed/id/${sub_res.data.data[i]._id}`,
             config
           )
-
-          console.log(employee_details.data)
 
           let company_employee: EmployeeInformation2 = {
             name:
