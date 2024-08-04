@@ -122,7 +122,7 @@
         </v-row>
       </v-col></v-row
     >
-    <v-dialog v-model="dialog" max-width="500px">
+    <v-dialog v-model="actionsDialog" :max-width="500">
       <v-card>
         <v-card-title>
           {{ selectedJob?.heading }}
@@ -145,7 +145,7 @@
           <v-btn color="error" @click="deleteDialog = true"
             >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
           ></v-btn>
-          <v-dialog v-model="deleteDialog" max-width="500">
+          <v-dialog v-model="deleteDialog" :max-width="500">
             <v-card>
               <v-card-title class="text-h6 font-weight-regular bg-red">
                 <v-icon color="white">mdi-alert-circle-outline</v-icon>
@@ -168,18 +168,43 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <Toast/>
   </v-container>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
 import AddJob from './AddJob.vue'
 import ManagerJobCard from './ManagerJobCard.vue'
 import ViewJob from './ViewJob.vue'
+import { useToast } from 'primevue/usetoast'
 
-const search = ref('')
-const viewJobDialog = ref(false)
+const actionsDialog = ref(false)
+const selectedJob = ref(null)
+const deleteDialog = ref(false)
+const detailedJobData = ref([])
+
+const toast = useToast()
+
+// API URLs
+const localUrl: string = 'http://localhost:3000/'
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
+
+// Utility functions
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url)
+    return res.status < 300 && res.status > 199
+  } catch (error) {
+    return false
+  }
+}
+
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
 
 // set the table headers
 const headers = [
@@ -193,11 +218,7 @@ const headers = [
   { title: 'Actions', key: 'actions', align: 'start', sortable: false, value: 'actions' }
 ]
 
-// Reactive variable to hold job and client data
-const detailedJobData = ref([])
-
 // Function to fetch job data
-
 const fetchJobData = async () => {
   const config = {
     headers: {
@@ -205,13 +226,31 @@ const fetchJobData = async () => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
+  const apiUrl = await getRequestUrl()
 
   try {
-    const response = await axios.get(`http://localhost:3000/job/all/company/detailed/${localStorage.getItem('currentCompany')}`, config)
+    const response = await axios.get(`${apiUrl}job/all/company/detailed/${localStorage.getItem('currentCompany')}`, config)
     return response.data.data
   } catch (error) {
     console.error('Error fetching job data:', error)
     throw error // Re-throw the error for handling elsewhere if needed
+  }
+}
+
+const deleteJob = async () => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+  const apiUrl = await getRequestUrl()
+  try {
+    await axios.delete(`${apiUrl}job/${selectedJob.value._id}`, config)
+    showJobDeleteSuccess()
+  } catch (error) {
+    showJobDeleteFailure()
+    console.error('Failed to delete job', error)
   }
 }
 
@@ -225,36 +264,38 @@ onMounted(async () => {
 })
 
 // Actions
-
-const dialog = ref(false)
-const selectedJob = ref(null)
-const managerJobCardDialog = ref(false)
-
 const openDialog = (item) => {
   selectedJob.value = item
-  dialog.value = true
+  actionsDialog.value = true
 }
 
 const closeDialog = () => {
-  dialog.value = false
+  actionsDialog.value = false
   selectedJob.value = null
 }
 
-// Deleting a job
-
-const deleteDialog = ref(false)
-
 const confirmDelete = () => {
-  console.log('Delete job:', selectedJob.value)
-  // confirm delete dialog activation here
-  // add delete end point and refresh data
-  closeDialog()
+  deleteJob()
+  selectedJob.value = null
+  deleteDialog.value = false
 }
 
-// managers the managerJobCard state
+const showJobDeleteSuccess = () => {
+  toast.add({
+    severity: 'success',
+    summary: 'Success Message',
+    detail: 'Job deleted successfully',
+    life: 3000
+  })
+}
 
-const editJobCardDialog = () => {
-  managerJobCardDialog.value = true
+const showJobDeleteFailure = () => {
+  toast.add({
+    severity: 'error',
+    summary: 'Error Message',
+    detail: 'Failed to delete job',
+    life: 3000
+  })
 }
 
 // Job Status colours
@@ -275,10 +316,6 @@ const getRowProps = ({ index }) => {
   return {
     class: index % 2 ? 'bg-secondRowColor' : ''
   }
-}
-
-const formatDate = (date) => {
-  return new Date(date).toLocaleDateString()
 }
 
 onMounted(() => {
