@@ -51,9 +51,7 @@ export class JobRepository {
     return await newJob.save();
   }
 
-  async findById(
-    identifier: Types.ObjectId,
-  ): Promise<FlattenMaps<Job> & { _id: Types.ObjectId }> {
+  async findById(identifier: Types.ObjectId): Promise<FlattenMaps<Job> & { _id: Types.ObjectId }> {
     const populatedFields: string[] = [
       'clientId',
       'assignedBy',
@@ -97,12 +95,7 @@ export class JobRepository {
 
   async findAllInCompanyDetailed(
     companyId: Types.ObjectId,
-    fieldsToPopulate: string[] = [
-      'assignedEmployees',
-      'assignedBy',
-      'clientId',
-      'comments',
-    ],
+    fieldsToPopulate: string[] = ['assignedEmployees', 'assignedBy', 'clientId', 'comments'],
   ) {
     const filter = {
       $and: [{ companyId: companyId }, isNotDeleted],
@@ -144,10 +137,7 @@ export class JobRepository {
         $and: [{ _id: id }, { companyId: companyId }, isNotDeleted],
       })
       .lean();
-    if (
-      result != null &&
-      result.companyId.toString() === companyId.toString()
-    ) {
+    if (result != null && result.companyId.toString() === companyId.toString()) {
       return result;
     } else {
       return null;
@@ -174,33 +164,31 @@ export class JobRepository {
   //Specific endpoints
 
   async findAllForEmployee(employeeId: Types.ObjectId) {
-    const filter = {
+    console.log('Bruh');
+    /*    const filter = {
       $and: [
-        { 'assignedEmployees.employeeIds': { $in: [employeeId] } },
+        {
+          'assignedEmployees.employeeIds': {
+            $elemMatch: { employeeIds: employeeId },
+          },
+        },
         this.isNotDeleted,
       ],
-    };
-    return await this.jobModel.find(filter).lean().exec();
+    };*/
+    const allJobs = await this.jobModel.find().lean().exec();
+    const result: (FlattenMaps<Job> & { _id: Types.ObjectId })[] = allJobs.filter((x) =>
+      x.assignedEmployees.employeeIds.includes(employeeId),
+    );
+    console.log(result);
+    return result;
   }
 
   async findAllForEmployeeDetailed(employeeId: Types.ObjectId) {
-    const fieldsToPopulate = [
-      'assignedEmployees',
-      'assignedBy',
-      'clientId',
-      'comments',
-    ];
+    const fieldsToPopulate = ['assignedEmployees', 'assignedBy', 'clientId', 'comments'];
     const filter = {
-      $and: [
-        { 'assignedEmployees.employeeIds': { $in: [employeeId] } },
-        this.isNotDeleted,
-      ],
+      $and: [{ 'assignedEmployees.employeeIds': { $in: [employeeId] } }, this.isNotDeleted],
     };
-    return await this.jobModel
-      .find(filter)
-      .populate(fieldsToPopulate)
-      .lean()
-      .exec();
+    return await this.jobModel.find(filter).populate(fieldsToPopulate).lean().exec();
   }
 
   async assignEmployee(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
@@ -214,7 +202,10 @@ export class JobRepository {
             isNotDeleted,
           ],
         },
-        { $push: { assignedEmployees: employeeId }, updatedAt: currentDate() },
+        {
+          $push: { 'assignedEmployees.employeeIds': employeeId },
+          updatedAt: currentDate(),
+        },
         {
           new: true,
         },
@@ -235,7 +226,7 @@ export class JobRepository {
           ],
         },
         {
-          $push: { assignedEmployees: { $each: employeeIds } },
+          $push: { 'assignedEmployees.employeeIds': { $each: employeeIds } },
           updatedAt: new Date(),
         },
         {
@@ -257,7 +248,10 @@ export class JobRepository {
             isNotDeleted,
           ],
         },
-        { $pull: { assignedEmployees: employeeId }, updatedAt: new Date() },
+        {
+          $pull: { 'assignedEmployees.employeeIds': employeeId },
+          updatedAt: new Date(),
+        },
         {
           new: true,
         },
@@ -282,7 +276,7 @@ export class JobRepository {
           ],
         },
         {
-          $pull: { assignedEmployees: { $in: employeeIds } },
+          $pull: { 'assignedEmployees.employeeIds': { $in: employeeIds } },
           updatedAt: new Date(),
         },
         {
@@ -294,10 +288,7 @@ export class JobRepository {
   }
 */
 
-  async assignEmployeeToTask(
-    employeeId: Types.ObjectId,
-    jobId: Types.ObjectId,
-  ) {
+  async assignEmployeeToTask(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
     return await this.jobModel
       .findOneAndUpdate(
         {
@@ -320,10 +311,7 @@ export class JobRepository {
       .exec();
   }
 
-  async assignEmployeesToTask(
-    employeeIds: Types.ObjectId[],
-    jobId: Types.ObjectId,
-  ) {
+  async assignEmployeesToTask(employeeIds: Types.ObjectId[], jobId: Types.ObjectId) {
     return await this.jobModel
       .findOneAndUpdate(
         {
@@ -346,10 +334,7 @@ export class JobRepository {
       .exec();
   }
 
-  async unassignEmployeeFromTask(
-    employeeId: Types.ObjectId,
-    jobId: Types.ObjectId,
-  ) {
+  async unassignEmployeeFromTask(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
     return await this.jobModel
       .findOneAndUpdate(
         {
@@ -372,10 +357,7 @@ export class JobRepository {
       .exec();
   }
 
-  async unassignEmployeesFromTask(
-    employeeIds: Types.ObjectId[],
-    jobId: Types.ObjectId,
-  ) {
+  async unassignEmployeesFromTask(employeeIds: Types.ObjectId[], jobId: Types.ObjectId) {
     return await this.jobModel
       .findOneAndUpdate(
         {
@@ -469,9 +451,7 @@ export class JobRepository {
 
   async removeComment(jobId: Types.ObjectId, commentId: Types.ObjectId) {
     const job = await this.jobModel.findById({ _id: jobId });
-    const commentToRemove = job.comments.find(
-      (comment) => comment._id.toString() === commentId.toString(),
-    );
+    const commentToRemove = job.comments.find((comment) => comment._id.toString() === commentId.toString());
     job.comments = job.comments.filter((c) => {
       return c._id.toString() !== commentToRemove._id.toString();
     });
@@ -480,11 +460,7 @@ export class JobRepository {
     return job;
   }
 
-  async editComment(
-    jobId: Types.ObjectId,
-    commentId: Types.ObjectId,
-    newComment: string,
-  ) {
+  async editComment(jobId: Types.ObjectId, commentId: Types.ObjectId, newComment: string) {
     const job = await this.jobModel.findOne({
       $and: [
         {
@@ -497,9 +473,7 @@ export class JobRepository {
       ],
     });
 
-    const commentToUpdate = job.comments.find(
-      (comment) => comment._id.toString() === commentId.toString(),
-    );
+    const commentToUpdate = job.comments.find((comment) => comment._id.toString() === commentId.toString());
 
     commentToUpdate.comment = newComment;
     job.updatedAt = new Date();

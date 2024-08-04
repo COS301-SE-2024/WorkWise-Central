@@ -24,10 +24,7 @@ export class JobTagRepository {
   }
 
   async findAllPriorityTagsInCompany(companyId: Types.ObjectId) {
-    return this.jobPriorityTagModel
-      .find({ companyId: companyId })
-      .lean()
-      .exec();
+    return this.jobPriorityTagModel.find({ companyId: companyId }).lean().exec();
   }
 
   async addJobTagToCompany(jobTag: JobTag) {
@@ -40,23 +37,14 @@ export class JobTagRepository {
     return await priorityTagModel.save();
   }
 
-  async addJobStatusToCompany(jobStatus: JobStatus) {
-    const jobTagModel = new this.jobStatusModel(jobStatus);
-    return await jobTagModel.save();
-  }
-
   async deleteJobTag(tagId: Types.ObjectId) {
-    const deleteResult = await this.jobTagModel
-      .deleteOne({ _id: tagId })
-      .exec();
+    const deleteResult = await this.jobTagModel.deleteOne({ _id: tagId }).exec();
     console.log(deleteResult);
     return deleteResult;
   }
 
   async deletePriorityTag(tagId: Types.ObjectId) {
-    const deleteResult = await this.jobPriorityTagModel
-      .deleteOne({ _id: tagId })
-      .exec();
+    const deleteResult = await this.jobPriorityTagModel.deleteOne({ _id: tagId }).exec();
     console.log(deleteResult);
     return deleteResult;
   }
@@ -70,7 +58,16 @@ export class JobTagRepository {
   async findStatusById(id: Types.ObjectId) {
     return this.jobStatusModel
       .findOne({
-        $and: [{ _id: id }, { isNotDeleted }],
+        $and: [{ _id: id }, isNotDeleted],
+      })
+      .lean()
+      .exec();
+  }
+
+  async findStatusByLabel(label: string) {
+    return this.jobStatusModel
+      .findOne({
+        $and: [{ status: label }, isNotDeleted],
       })
       .lean()
       .exec();
@@ -79,19 +76,23 @@ export class JobTagRepository {
   async findAllStatusesInCompany(companyId: Types.ObjectId) {
     return this.jobStatusModel
       .find({
-        $and: [{ companyId: companyId }, { isNotDeleted }],
+        $and: [{ companyId: companyId }, isNotDeleted],
       })
       .lean()
       .exec();
   }
 
-  async statusNameExists(status: string) {
+  /*  async statusNameExists(status: string) {
     const regex = `${status}`;
-    const stat = await this.jobStatusModel.findOne({
-      $and: [{ status: { $regex: regex, $options: 'i' } }, isNotDeleted],
-    });
+    const stat = await this.jobStatusModel
+      .findOne({
+        $and: [{ status: { $regex: regex, $options: 'i' } }, isNotDeleted],
+        //$and: [{ status: { $regex: regex, $options: 'i' } }, isNotDeleted],
+      })
+      .lean()
+      .exec();
     return stat != null;
-  }
+  }*/
 
   async createDefaultStatusesInCompany(statusArr: JobStatus[]) {
     //'No status' and 'Archive'
@@ -99,6 +100,12 @@ export class JobTagRepository {
       const newStatus = await this.jobStatusModel.create(jobStatus);
       await newStatus.save();
     }
+  }
+
+  async addJobStatusToCompany(jobStatus: JobStatus) {
+    //TODO: Add endpoint
+    const jobTagModel = new this.jobStatusModel(jobStatus);
+    return await jobTagModel.save();
   }
 
   async updateStatus(statusId: Types.ObjectId, updateStatus: UpdateStatus) {
@@ -122,9 +129,7 @@ export class JobTagRepository {
   }
 
   async removeJobStatus(tagId: Types.ObjectId) {
-    const deleteResult = await this.jobStatusModel
-      .deleteOne({ _id: tagId })
-      .exec();
+    const deleteResult = await this.jobStatusModel.deleteOne({ _id: tagId }).exec();
     console.log(deleteResult);
     return deleteResult;
   }
