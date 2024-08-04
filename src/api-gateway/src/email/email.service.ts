@@ -1,7 +1,6 @@
 import { Global, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UserConfirmation } from '../users/entities/user-confirmation.entity';
-import { UserJoinRequest } from '../admin/entities/request-to-join.entity';
 
 @Global()
 @Injectable()
@@ -28,7 +27,7 @@ export class EmailService {
     // console.log(result);
   }
 
-  async sendRequestEmail(userRequestToJoin: UserJoinRequest) {
+  /*  async sendRequestEmail(userRequestToJoin: UserJoinRequest) {  //TODO: Fix
     console.log('userRequestToJoin', userRequestToJoin);
     const tempUrl = 'http://localhost:3000'; //TODO: Change to deployed url later
     const url = `${tempUrl}/auth/verify?email=${encodeURIComponent(userRequestToJoin.companyName)}`;
@@ -47,12 +46,9 @@ export class EmailService {
     });
     // console.log('sendUserConfirmation');
     // console.log(result);
-  }
+  }*/
 
-  async sendEmailConfirmation(
-    details: { name: string; surname: string; email: string },
-    token: string,
-  ) {
+  async sendEmailConfirmation(details: { name: string; surname: string; email: string }, token: string) {
     const url = `example.com/auth/confirm?token=${token}`; //TODO:confirm
 
     const result = await this.mailerService.sendMail({

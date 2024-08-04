@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  HttpException,
-  HttpStatus,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, HttpException, HttpStatus, Query } from '@nestjs/common';
 import { ApiInternalServerErrorResponse, ApiTags } from '@nestjs/swagger';
 import { NotificationService } from './notification.service';
 import { Types } from 'mongoose';
@@ -29,15 +23,12 @@ export class NotificationController {
     //this.validateObjectId(id);
     const compId = new Types.ObjectId(id);
     try {
-      return await this.notificationService.notifyAllInCompany(
-        compId,
-        'Hello world',
-      );
+      return await this.notificationService.notifyAllInCompany(compId, {
+        title: 'Test',
+        body: 'Hello world',
+      });
     } catch (e) {
-      throw new HttpException(
-        'internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -52,10 +43,7 @@ export class NotificationController {
     try {
       return await this.notificationService.findAllWithEmployeeId(employeeId);
     } catch (e) {
-      throw new HttpException(
-        'internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -66,10 +54,7 @@ export class NotificationController {
     try {
       return await this.notificationService.findAllWithUserId(userId);
     } catch (e) {
-      throw new HttpException(
-        'internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
