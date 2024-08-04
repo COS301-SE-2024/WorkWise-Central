@@ -52,7 +52,7 @@
                 <v-col cols="12" xs="12" sm="12" md="12">
                     <v-data-table
                       :headers="headers"
-                      :items="jobClientData"
+                      :items="detailedJobData"
                       :search="search"
                       label="Jobs"
                       height="auto"
@@ -62,8 +62,8 @@
                       min-width="100%"
                       min-height
                     >
-                      <template v-slot:[`item.heading`]="{ value }">
-                        {{ value }}
+                      <template v-slot:[`item.heading`]="{ item }">
+                        {{ item.details.heading }}
                       </template>
 
                       <template v-slot:[`item.clientPhone`]="{ value }">
@@ -85,8 +85,8 @@
                         </v-chip>
                       </template>
 
-                      <template v-slot:[`item.jobDescription`]="{ value }">
-                        {{ value }}
+                      <template v-slot:[`item.description`]="{ item }">
+                        {{ item.details.description }}
                       </template>
 
                       <template v-slot:[`item.status`]="{ value }">
@@ -95,12 +95,12 @@
                         </v-chip>
                       </template>
 
-                      <template v-slot:[`item.startDate`]="{ value }">
-                        {{ formatDate(value) }}
+                      <template v-slot:[`item.startDate`]="{ item }">
+                        {{  new Date(item.details.startDate).toLocaleDateString() }}
                       </template>
 
-                      <template v-slot:[`item.endDate`]="{ value }">
-                        {{ formatDate(value) }}
+                      <template v-slot:[`item.endDate`]="{ item }">
+                        {{ new Date(item.details.endDate).toLocaleDateString() }}
                       </template>
 
                       <!-- Actions slot -->
@@ -186,7 +186,7 @@ const headers = [
   { title: 'Job Heading', key: 'heading', align: 'start', value: 'heading' },
   { title: 'Client Phone', key: 'clientPhone', align: 'start', value: 'clientPhone' },
   { title: 'Client Mail', key: 'clientMail', align: 'start', value: 'clientMail' },
-  { title: 'Job Description', key: 'jobDescription', align: 'start', value: 'jobDescription' },
+  { title: 'Job Description', key: 'description', align: 'start', value: 'description' },
   { title: 'Status', key: 'status', align: 'start', value: 'status' },
   { title: 'Start Date', key: 'startDate', align: 'start', value: 'startDate' },
   { title: 'End Date', key: 'endDate', align: 'start', value: 'endDate' },
@@ -194,7 +194,7 @@ const headers = [
 ]
 
 // Reactive variable to hold job and client data
-const jobClientData = ref([])
+const detailedJobData = ref([])
 
 // Function to fetch job data
 
@@ -207,99 +207,20 @@ const fetchJobData = async () => {
   }
 
   try {
-    const response = await axios.get('http://localhost:3000/job/all', config)
-    const jobData = response.data.data
-
-    console.log(response.data)
-
-    // Check if jobData is an array or needs conversion
-    const jobs = Array.isArray(jobData) ? jobData : [jobData]
-
-    // Map job data to include necessary details
-    const mappedJobs = jobs.map((job) => ({
-      jobId: job._id,
-      heading: job.details.heading,
-      jobDescription: job.details.description,
-      startDate: job.details.startDate,
-      endDate: job.details.endDate,
-      status: job.status,
-      clientId: job.clientId,
-      street: job.details.address.street,
-      suburb: job.details.address.suburb,
-      city: job.details.address.city,
-      postalCode: job.details.address.postalCode,
-      complex: job.details.address.complex,
-      houseNumber: job.details.address.houseNumber,
-      imagesTaken: job.recordedDetails.imagesTaken, // is an array
-      inventoryUsed: job.recordedDetails.inventoryUsed, // is an array
-      taskList: job.taskList, // is an array
-      comments: job.comments // is an array
-    }))
-
-    // Fetch client data for each job
-    // Return combined job and client data
-    return await fetchClientData(mappedJobs)
+    const response = await axios.get(`http://localhost:3000/job/all/company/detailed/${localStorage.getItem('currentCompany')}`, config)
+    return response.data.data
   } catch (error) {
     console.error('Error fetching job data:', error)
     throw error // Re-throw the error for handling elsewhere if needed
   }
 }
 
-// Function to fetch client data for each job
-const fetchClientData = async (jobs) => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('access_token')}`
-    }
-  }
-
-  try {
-    // Fetch client data for each job asynchronously
-    const promises = jobs.map(async (job) => {
-      const response = await axios.get(`http://localhost:3000/client/id/${job.clientId}`, config)
-      const client = response.data.data
-
-      const clientName = `${client.details.firstName} ${client.details.lastName}`
-
-      // Return complete job details including client name
-      return {
-        jobId: job.jobId,
-        heading: job.heading,
-        jobDescription: job.jobDescription, // Corrected reference to jobDescription
-        startDate: job.startDate,
-        endDate: job.endDate,
-        status: job.status,
-        clientName: clientName,
-        street: job.street,
-        suburb: job.suburb,
-        city: job.city,
-        postalCode: job.postalCode,
-        complex: job.complex,
-        houseNumber: job.houseNumber,
-        imagesTaken: job.imagesTaken,
-        inventoryUsed: job.inventoryUsed,
-        taskList: job.taskList,
-        comments: job.comments
-      }
-    })
-
-    // Wait for all promises to resolve
-    return await Promise.all(promises)
-  } catch (error) {
-    console.error('Error fetching client data:', error)
-    throw error // Re-throw the error for handling elsewhere if needed
-  }
-}
-
-// Fetch data on component mount using onMounted() hook
 onMounted(async () => {
   try {
-    jobClientData.value = await fetchJobData()
-    // Log job and client data for verification
-    console.log('Job and client data fetched successfully:', jobClientData.value)
+    detailedJobData.value = await fetchJobData()
+    console.log('Job data fetched successfully:', detailedJobData.value)
   } catch (error) {
-    console.error('Error fetching job and client data:', error)
+    console.error('Error fetching job data:', error)
   }
 })
 
