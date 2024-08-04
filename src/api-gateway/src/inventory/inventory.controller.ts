@@ -34,7 +34,7 @@ import {
   CreateInventoryResponseDto,
 } from './dto/create-inventory.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { extractUserId } from '../utils/Utils';
+// import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { EmployeeService } from 'src/employee/employee.service';
 
@@ -76,20 +76,21 @@ export class InventoryController {
   @Post('/create')
   async create(
     @Headers() headers: any,
-    @Body() createInventoryDto: CreateInventoryDto,
+    @Body()
+    body: {
+      currentEmployeeId: Types.ObjectId;
+      createInventoryDto: CreateInventoryDto;
+    },
   ) {
-    const userId = extractUserId(this.jwtService, headers);
-    const companyId = createInventoryDto.companyId;
+    const currentEmployee = await this.employeeService.findById(
+      body.currentEmployeeId,
+    );
     if (
-      this.employeeService.validateRole(
-        companyId,
-        userId,
-        'add new inventory item',
-      )
+      currentEmployee.role.permissionSuite.includes('add new inventory item')
     ) {
       let data;
       try {
-        data = await this.inventoryService.create(createInventoryDto);
+        data = await this.inventoryService.create(body.createInventoryDto);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
@@ -99,25 +100,13 @@ export class InventoryController {
     }
   }
 
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT')
-  @ApiInternalServerErrorResponse({
-    type: HttpException,
-    status: HttpStatus.NO_CONTENT,
-  })
-  @ApiOperation({
-    summary: `Get all ${className} instances`,
-    description: `Returns all ${className} instances in the database.`,
-  })
-  @ApiOkResponse({
-    type: InventoryListResponseDto,
-    description: `An array of mongodb objects of the ${className} class.`,
-  })
+  //********Endpoints for test purposes - Start**********/
   @Get('/all')
   async findAll() {
     const data = await await this.inventoryService.findAll();
     return { data: data };
   }
+  //********Endpoints for test purposes - End**********/
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
@@ -145,15 +134,12 @@ export class InventoryController {
   async findAllInCompany(
     @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
+    @Body() body: { currentEmployeeId: Types.ObjectId },
   ) {
-    const userId = extractUserId(this.jwtService, headers);
-    if (
-      await this.employeeService.validateRoleInventoryId(
-        id,
-        userId,
-        'view all inventory',
-      )
-    ) {
+    const currentEmployee = await this.employeeService.findById(
+      body.currentEmployeeId,
+    );
+    if (currentEmployee.role.permissionSuite.includes('view all inventory')) {
       let data;
       try {
         data = await this.inventoryService.findAllInCompany(id);
@@ -185,15 +171,15 @@ export class InventoryController {
     description: `The _id attribute of the ${className} to be retrieved.`,
   })
   @Get('id/:id')
-  async findById(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
-    const userId = extractUserId(this.jwtService, headers);
-    if (
-      await this.employeeService.validateRoleInventoryId(
-        id,
-        userId,
-        'view all inventory',
-      )
-    ) {
+  async findById(
+    @Headers() headers: any,
+    @Param('id') id: Types.ObjectId,
+    @Body() body: { currentEmployeeId: Types.ObjectId },
+  ) {
+    const currentEmployee = await this.employeeService.findById(
+      body.currentEmployeeId,
+    );
+    if (currentEmployee.role.permissionSuite.includes('view all inventory')) {
       const data = await this.inventoryService.findById(id);
       return { data: data };
     } else {
@@ -224,19 +210,19 @@ export class InventoryController {
   async update(
     @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
-    @Body() updateInventoryDto: UpdateInventoryDto,
+    @Body()
+    body: {
+      currentEmployeeId: Types.ObjectId;
+      updateInventoryDto: UpdateInventoryDto;
+    },
   ) {
-    const userId = extractUserId(this.jwtService, headers);
-    if (
-      this.employeeService.validateRoleInventoryId(
-        id,
-        userId,
-        'edit all inventory',
-      )
-    ) {
+    const currentEmployee = await this.employeeService.findById(
+      body.currentEmployeeId,
+    );
+    if (currentEmployee.role.permissionSuite.includes('edit all inventory')) {
       let data;
       try {
-        data = await this.inventoryService.update(id, updateInventoryDto);
+        data = await this.inventoryService.update(id, body.updateInventoryDto);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
@@ -270,14 +256,16 @@ export class InventoryController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete(':id')
-  async remove(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
-    const userId = extractUserId(this.jwtService, headers);
+  async remove(
+    @Headers() headers: any,
+    @Param('id') id: Types.ObjectId,
+    @Body() body: { currentEmployeeId: Types.ObjectId },
+  ) {
+    const currentEmployee = await this.employeeService.findById(
+      body.currentEmployeeId,
+    );
     if (
-      this.employeeService.validateRoleInventoryId(
-        id,
-        userId,
-        'delete inventory item',
-      )
+      currentEmployee.role.permissionSuite.includes('delete inventory item')
     ) {
       let data;
       try {
