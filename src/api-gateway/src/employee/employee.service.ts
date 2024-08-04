@@ -74,7 +74,29 @@ export class EmployeeService {
         ))
       ) {
         return new ValidationResult(false, `Superior not found`);
+      } else {
+        //Checking that the superior is valid
+        const superior = await this.findById(employee.superiorId);
+        if (superior.subordinates) {
+          if (superior.subordinates.includes(employee.superiorId)) {
+            return new ValidationResult(
+              false,
+              `Superior is already a subordinate`,
+            );
+          }
+        }
       }
+    } else {
+      //Adding the owner as the superior if no superior is passed
+      const ownerRole = await this.roleService.findOneInCompany(
+        'Owner',
+        employee.companyId,
+      );
+      const owner = await this.findAllInCompanyWithRole(
+        employee.companyId,
+        ownerRole._id,
+      );
+      employee.superiorId = owner[0]._id;
     }
 
     // checking if the user exists in the company
@@ -87,58 +109,51 @@ export class EmployeeService {
   }
 
   async validateUpdateEmployee(
-    employeeId: Types.ObjectId,
-    employee: UpdateEmployeeDto,
+    employeeToBeUpdatedId: Types.ObjectId,
+    currentemployeeId: Types.ObjectId,
+    updateEmployeeDto: UpdateEmployeeDto,
   ) {
-    const currentEmployee = await this.findById(employeeId);
+    const currentEmployee = await this.findById(currentemployeeId);
+    // const employeeToBeUpdated = await this.findById(employeeToBeUpdatedId);
     const companyId = currentEmployee.companyId;
-    // console.log('In validateUpdateEmployee');
-    // console.log('employee: ', employee);
-    // console.log('companyId: ', companyId);
-    // Check if the roleId is passed and exists for the company
-    if (employee.roleId) {
-      // console.log('employee.roleId: ', employee.roleId);
+    if (updateEmployeeDto.roleId) {
       if (
         !(await this.roleService.roleExistsInCompany(
-          employee.roleId,
+          updateEmployeeDto.roleId,
           companyId,
         ))
       ) {
         return new ValidationResult(false, `Role not found`);
       }
     }
-    // console.log('checkpoint 1');
-
-    if (employee.superiorId) {
+    //Simply checking that the superior exists
+    if (updateEmployeeDto.superiorId) {
       if (
-        !(await this.employeeExistsForCompany(employee.superiorId, companyId))
+        !(await this.employeeExistsForCompany(
+          updateEmployeeDto.superiorId,
+          companyId,
+        ))
       ) {
         return new ValidationResult(false, `Superior not found`);
       }
     }
-
-    // console.log('checkpoint 2');
-
-    // Check if the subordinates is passed and exists for the company
-    if (employee.subordinates) {
-      for (const subordinateId of employee.subordinates) {
+    //Simply checking that the subordinates exists
+    if (updateEmployeeDto.subordinates) {
+      for (const subordinateId of updateEmployeeDto.subordinates) {
         if (!(await this.employeeExistsForCompany(subordinateId, companyId))) {
           return new ValidationResult(false, `Subordinate not found`);
         }
       }
     }
 
-    // console.log('checkpoint 3');
-
     // Check if the subordinateTeams is passed and exists for the company
-    if (employee.subordinateTeams) {
-      for (const teamId of employee.subordinateTeams) {
+    if (updateEmployeeDto.subordinateTeams) {
+      for (const teamId of updateEmployeeDto.subordinateTeams) {
         if (!(await this.teamService.teamExistsInCompany(teamId, companyId))) {
           return new ValidationResult(false, `Team not found`);
         }
       }
     }
-    // console.log('checkpoint 4');
     return new ValidationResult(true, `All good`);
   }
 
@@ -147,12 +162,30 @@ export class EmployeeService {
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
-
+    //Altering the dto to save the role if roleId is given
+    if (createEmployeeDto.roleId) {
+      const role = await this.roleService.findById(createEmployeeDto.roleId);
+      delete createEmployeeDto.roleId;
+      createEmployeeDto.role = {
+        roleId: role._id,
+        permissionSuite: role.permissionSuite,
+      };
+    } else {
+      const role = await this.roleService.findOneInCompany(
+        'Default',
+        createEmployeeDto.companyId,
+      );
+      delete createEmployeeDto.roleId;
+      createEmployeeDto.role = {
+        roleId: role._id,
+        permissionSuite: role.permissionSuite,
+      };
+    }
     const newEmployee = new Employee(createEmployeeDto);
     newEmployee.userId = createEmployeeDto.userId;
     newEmployee.companyId = createEmployeeDto.companyId;
     if (createEmployeeDto.roleId) {
-      newEmployee.roleId = createEmployeeDto.roleId;
+      newEmployee.role.roleId = createEmployeeDto.roleId;
     }
     if (createEmployeeDto.superiorId) {
       newEmployee.superiorId = createEmployeeDto.superiorId;
@@ -167,11 +200,9 @@ export class EmployeeService {
 
   async findAllInCompany(companyId: Types.ObjectId) {
     //checking if the company exists
-    // console.log('In findAllInCompany');
     if (!(await this.companyService.companyIdExists(companyId))) {
       throw new Error('CompanyId does not exist');
     }
-    // console.log('checkpoint 2');
     return await this.employeeRepository.findAllInCompany(companyId);
   }
 
@@ -190,7 +221,6 @@ export class EmployeeService {
   }
 
   async findById(id: Types.ObjectId) {
-    // console.log('In findById service');
     return await this.employeeRepository.findById(id);
   }
 
@@ -223,14 +253,14 @@ export class EmployeeService {
 
   async update(
     employeeId: Types.ObjectId,
+    currentEmployeeId: Types.ObjectId,
     updateEmployeeDto: UpdateEmployeeDto,
   ) {
-    // console.log('In update');
     const validation = await this.validateUpdateEmployee(
       employeeId,
+      currentEmployeeId,
       updateEmployeeDto,
     );
-    // console.log('validation: ', validation);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
@@ -499,17 +529,11 @@ export class EmployeeService {
   async removeUnderMe(
     userId: Types.ObjectId,
     id: Types.ObjectId,
+    currentEmployeeId: Types.ObjectId,
   ): Promise<boolean> {
     if (!(await this.employeeExists(id))) {
       throw new Error('Employee does not exist');
     }
-
-    //checking that the employee is under the requesting employee
-    const companyId = await this.getCompanyIdFromEmployee(id);
-    const currentEmployeeId = await this.getRequestingEmployeeFromCompanyId(
-      companyId,
-      userId,
-    );
     if (!(await this.isBelowMe(currentEmployeeId, id))) {
       throw new Error('Employee not below the requesting employee');
     }
@@ -548,10 +572,7 @@ export class EmployeeService {
   }
 
   async getListOfOtherEmployees(employeeId: Types.ObjectId) {
-    // console.log('In getListOfOtherEmployees');
-    // console.log('employeeId: ', employeeId);
     const currentEmployee = await this.findById(employeeId);
-    // console.log('currentEmployee: ', currentEmployee);
     const listOfEmployees = await this.findAllInCompany(
       currentEmployee.companyId,
     );
@@ -597,230 +618,76 @@ export class EmployeeService {
     return listOfEmployees;
   }
 
-  async getRequestingEmployeeFromCompanyId(
-    companyId: Types.ObjectId,
-    userId: Types.ObjectId,
-  ) {
-    // console.log('In getRequestingEmployeeFromCompanyId');
-    // console.log('companyId: ', companyId);
-    // console.log('userId: ', userId);
-    const user = await this.usersService.getUserById(userId);
-    const companies = user.joinedCompanies;
-    // console.log('companies: ', companies);
-    let employeeId: Types.ObjectId;
-    companies.forEach((company) => {
-      // console.log('In forEach. Company: ', company);
-      // console.log('company.companyId: ', company.companyId);
-      if (company.companyId.toString() === companyId.toString()) {
-        // console.log('In if');
-        employeeId = company.employeeId;
-      }
-    });
-    return employeeId;
-  }
-
-  async validateRoleCompanyId(
-    companyId: Types.ObjectId,
-    userId: Types.ObjectId,
-    permission: string,
-  ) {
-    // console.log('In validateRoleCompanyId');
-    const employeeId = await this.getRequestingEmployeeFromCompanyId(
-      companyId,
-      userId,
-    );
-    // console.log('checkpoint 1');
-    // console.log('permission: .', permission, '.');
-    return this.roleService.hasPermission(permission, employeeId);
-  }
-
-  async validateRoleEmployeeId(
-    id: Types.ObjectId,
-    userId: Types.ObjectId,
-    permission: string,
-  ) {
-    // console.log('In validateRoleEmployeeId');
-    const employee = await this.findById(id);
-    const employeeId = await this.getRequestingEmployeeFromCompanyId(
-      employee.companyId,
-      userId,
-    );
-    // console.log('Permission: ', permission);
-    // console.log('EmployeeId: ', employeeId);
-    return this.roleService.hasPermission(permission, employeeId);
-  }
-
-  async validateRoleJobId(
-    id: Types.ObjectId,
-    userId: Types.ObjectId,
-    permission: string,
-  ) {
-    const job = await this.jobService.findJobById(id);
-    const employeeId = await this.getRequestingEmployeeFromCompanyId(
-      job.companyId,
-      userId,
-    );
-    return this.roleService.hasPermission(permission, employeeId);
-  }
-
-  async validateRoleClientId(
-    id: Types.ObjectId,
-    userId: Types.ObjectId,
-    permission: string,
-  ) {
-    const client = await this.clientService.getClientById(userId, id);
-    const employeeId = await this.getRequestingEmployeeFromCompanyId(
-      client.details.companyId,
-      userId,
-    );
-    return this.roleService.hasPermission(permission, employeeId);
-  }
-
-  async validateRoleTeamId(
-    id: Types.ObjectId,
-    userId: Types.ObjectId,
-    permission: string,
-  ) {
-    const team = await this.teamService.findById(id);
-    const employeeId = await this.getRequestingEmployeeFromCompanyId(
-      team.companyId,
-      userId,
-    );
-    return this.roleService.hasPermission(permission, employeeId);
-  }
-
-  async validateRoleRoleId(
-    id: Types.ObjectId,
-    userId: Types.ObjectId,
-    permission: string,
-  ) {
-    const role = await this.roleService.findById(id);
-    const employeeId = await this.getRequestingEmployeeFromCompanyId(
-      role.companyId,
-      userId,
-    );
-    return this.roleService.hasPermission(permission, employeeId);
-  }
-
-  async validateRoleInventoryId(
-    id: Types.ObjectId,
-    userId: Types.ObjectId,
-    permission: string,
-  ) {
-    const inventory = await this.inventoryService.findById(id);
-    const employeeId = await this.getRequestingEmployeeFromCompanyId(
-      inventory.companyId,
-      userId,
-    );
-    return this.roleService.hasPermission(permission, employeeId);
-  }
-
-  async validateRole(
-    companyId: Types.ObjectId,
-    userId: Types.ObjectId,
-    permission: string,
-  ) {
-    const employeeId = await this.getRequestingEmployeeFromCompanyId(
-      companyId,
-      userId,
-    );
-    return this.roleService.hasPermission(permission, employeeId);
-  }
-
   async deptFirstTraversalId(id: Types.ObjectId) {
-    // console.log('In the depth first traversal function');
-    let currentEmployee = await this.findById(id);
-    let subordinateList = currentEmployee.subordinates;
-    let currentId = id;
+    const currentEmployee = await this.findById(id);
+    const listOfEmployees = await this.findAllInCompany(
+      currentEmployee.companyId,
+    );
+    const employeeList: Types.ObjectId[] = [];
     const open: Types.ObjectId[] = [];
     const closed: Types.ObjectId[] = [];
-
-    if (subordinateList !== null) {
-      subordinateList.forEach((sub) => {
-        open.push(sub);
-      });
-    }
-    closed.push(id);
+    employeeList.push(id);
+    open.push(...currentEmployee.subordinates);
+    closed.push(currentEmployee._id);
 
     while (open.length !== 0) {
-      currentId = open.shift();
-      currentEmployee = await this.findById(currentId);
-      subordinateList = currentEmployee.subordinates;
-      if (subordinateList !== null) {
-        subordinateList.reverse();
-        subordinateList.forEach((sub) => {
-          open.unshift(sub);
-        });
-      }
+      const currentId = open.shift();
+      const currentEmployee = listOfEmployees.find((employee) =>
+        employee._id.equals(currentId),
+      );
+      employeeList.push(currentEmployee._id);
+      open.push(...currentEmployee.subordinates);
       closed.push(currentId);
     }
-    return closed;
+    return employeeList;
   }
 
   async deptFirstTraversalObjects(id: Types.ObjectId) {
-    console.log('In the depth first traversal function');
-    let currentEmployee = await this.findById(id);
-    let subordinateList = currentEmployee.subordinates;
-    let currentId = id;
+    const currentEmployee = await this.findById(id);
+    const listOfEmployees = await this.findAllInCompany(
+      currentEmployee.companyId,
+    );
+    const employeeList: Employee[] = [];
     const open: Types.ObjectId[] = [];
     const closed: Types.ObjectId[] = [];
-    const employees: Employee[] = [];
-    if (subordinateList !== null) {
-      subordinateList.forEach((sub) => {
-        open.push(sub);
-      });
-    }
-    employees.push(currentEmployee);
-    closed.push(id);
+    employeeList.push(currentEmployee);
+    open.push(...currentEmployee.subordinates);
+    closed.push(currentEmployee._id);
 
     while (open.length !== 0) {
-      console.log('In while loop');
-      console.log('open: ', open);
-      currentId = open.shift();
-      currentEmployee = await this.findById(currentId);
-      subordinateList = currentEmployee.subordinates;
-      if (subordinateList !== null) {
-        subordinateList.reverse();
-        subordinateList.forEach((sub) => {
-          open.unshift(sub);
-        });
-      }
-      employees.push(currentEmployee);
+      const currentId = open.shift();
+      const currentEmployee = listOfEmployees.find((employee) =>
+        employee._id.equals(currentId),
+      );
+      employeeList.push(currentEmployee);
+      open.push(...currentEmployee.subordinates);
       closed.push(currentId);
     }
-    return employees;
+    return employeeList;
   }
 
   async deptFirstTraversalDetailed(id: Types.ObjectId) {
-    // console.log('In the depth first traversal function');
-    let currentEmployee = await this.detailedFindById(id);
-    let subordinateList = currentEmployee.subordinates;
-    let currentId = id;
+    const currentEmployee = await this.findById(id);
+    const listOfEmployees = await this.detailedFindAllInCompany(
+      currentEmployee.companyId,
+    );
+    const employeeList: Employee[] = [];
     const open: Types.ObjectId[] = [];
     const closed: Types.ObjectId[] = [];
-    const employees: Employee[] = [];
-    if (subordinateList !== null) {
-      subordinateList.forEach((sub) => {
-        open.push(sub);
-      });
-    }
-    employees.push(currentEmployee);
-    closed.push(id);
+    employeeList.push(currentEmployee);
+    open.push(...currentEmployee.subordinates);
+    closed.push(currentEmployee._id);
 
     while (open.length !== 0) {
-      currentId = open.shift();
-      currentEmployee = await this.detailedFindById(currentId);
-      subordinateList = currentEmployee.subordinates;
-      if (subordinateList !== null) {
-        subordinateList.reverse();
-        subordinateList.forEach((sub) => {
-          open.unshift(sub);
-        });
-      }
-      employees.push(currentEmployee);
+      const currentId = open.shift();
+      const currentEmployee = listOfEmployees.find((employee) =>
+        employee._id.equals(currentId),
+      );
+      employeeList.push(currentEmployee);
+      open.push(...currentEmployee.subordinates);
       closed.push(currentId);
     }
-    return employees;
+    return employeeList;
   }
 
   async isBelowMe(
@@ -828,21 +695,22 @@ export class EmployeeService {
     otherEmployeeId: Types.ObjectId,
   ) {
     const list = await this.deptFirstTraversalId(currentEmployeeId);
-
-    return list.includes(otherEmployeeId);
+    let found = false;
+    list.forEach((employee) => {
+      if (employee.toString() === otherEmployeeId.toString()) {
+        found = true;
+      }
+    });
+    return found;
   }
 
   async detailedFindBelowMeInCompany(
     userId: Types.ObjectId,
     companyId: Types.ObjectId,
+    currentEmployeeId: Types.ObjectId,
   ) {
     try {
-      const employeeId = await this.getRequestingEmployeeFromCompanyId(
-        companyId,
-        userId,
-      );
-      const list = await this.deptFirstTraversalDetailed(employeeId);
-      return list;
+      return await this.deptFirstTraversalDetailed(currentEmployeeId);
     } catch (error) {
       throw new Error(
         'Employee id for given userId and companyId could not be found',
@@ -853,18 +721,10 @@ export class EmployeeService {
   async findBelowMeInCompany(
     userId: Types.ObjectId,
     companyId: Types.ObjectId,
+    currentEmployeeId: Types.ObjectId,
   ) {
-    console.log('In findBelowMeInCompany');
     try {
-      console.log('In try');
-      const employeeId = await this.getRequestingEmployeeFromCompanyId(
-        companyId,
-        userId,
-      );
-      console.log('employeeId: ', employeeId);
-      const list = await this.deptFirstTraversalObjects(employeeId);
-      console.log('list: ', list);
-      return list;
+      return await this.deptFirstTraversalObjects(currentEmployeeId);
     } catch (error) {
       throw new Error(
         'Employee id for given userId and companyId could not be found',
@@ -874,31 +734,43 @@ export class EmployeeService {
   async detailedFindByIdUnderMe(
     userId: Types.ObjectId,
     employeeId: Types.ObjectId,
+    currentEmployeeId: Types.ObjectId,
   ) {
-    const companyId = await this.getCompanyIdFromEmployee(employeeId);
-    const currentEmployeeId = await this.getRequestingEmployeeFromCompanyId(
-      companyId,
-      userId,
-    );
-    const employee = await this.detailedFindById(employeeId);
     if (await this.isBelowMe(currentEmployeeId, employeeId)) {
-      return employee;
+      return await this.detailedFindById(currentEmployeeId);
     } else {
       throw new Error('Employee not below the requesting employee');
     }
   }
 
-  async findByIdUnderMe(userId: Types.ObjectId, employeeId: Types.ObjectId) {
-    const companyId = await this.getCompanyIdFromEmployee(employeeId);
-    const currentEmployeeId = await this.getRequestingEmployeeFromCompanyId(
-      companyId,
-      userId,
-    );
-    const employee = await this.findById(employeeId);
+  async findByIdUnderMe(
+    userId: Types.ObjectId,
+    employeeId: Types.ObjectId,
+    currentEmployeeId: Types.ObjectId,
+  ) {
     if (await this.isBelowMe(currentEmployeeId, employeeId)) {
-      return employee;
+      return await this.findById(employeeId);
     } else {
       throw new Error('Employee not below the requesting employee');
     }
   }
+
+  async findAllInCompanyWithRole(
+    companyId: Types.ObjectId,
+    roleId: Types.ObjectId,
+  ) {
+    return await this.employeeRepository.findAllInCompanyWithRole(
+      companyId,
+      roleId,
+    );
+  }
+
+  // async roleUpdate(roleId: Types.ObjectId, companyId: Types.ObjectId) {
+  //   //finding all employees in a company
+  //   const list = await this.findAllInCompanyWithRole(companyId, roleId);
+  //   //updating the role for all employees
+  //   list.forEach(async (employee) => {
+  //     await this.update(employee._id, { roleId: roleId });
+  //   });
+  // }
 }

@@ -3,18 +3,42 @@ import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
 import { CreateEmployeeDto } from '../dto/create-employee.dto';
 import { currentDate } from '../../utils/Utils';
+import { Role } from 'src/role/entity/role.entity';
 
 export class userInfo {
+  @ApiProperty()
   @Prop({ type: String, required: true })
   username: string;
+
+  @ApiProperty()
   @Prop({ type: String, required: true })
   firstName: string;
+
+  @ApiProperty()
   @Prop({ type: String, required: true })
   surname: string;
+
+  @ApiProperty()
   @Prop({ type: String, required: true })
   displayName: string;
+
+  @ApiProperty()
   @Prop({ type: String, required: true })
   displayImage: string;
+}
+
+export class roleObject {
+  @ApiProperty()
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: true,
+    ref: Role.name,
+  })
+  roleId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: [String], required: true })
+  permissionSuite: string[];
 }
 @Schema()
 export class Employee {
@@ -25,17 +49,8 @@ export class Employee {
   }
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Role' })
-  roleId: Types.ObjectId;
-
-  // @ApiProperty()
-  // @Prop({
-  //   type: [SchemaTypes.ObjectId],
-  //   required: true,
-  //   default: [],
-  //   ref: 'Job',
-  // })
-  // currentJobAssignments: Types.ObjectId[];
+  @Prop({ required: true })
+  role: roleObject;
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: false, ref: 'Employee' })
@@ -92,15 +107,6 @@ export class EmployeeApiObject {
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Role' })
   roleId: Types.ObjectId;
-
-  // @ApiProperty()
-  // @Prop({
-  //   type: [SchemaTypes.ObjectId],
-  //   required: true,
-  //   default: [],
-  //   ref: 'Job',
-  // })
-  // currentJobAssignments: Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: false, ref: 'Employee' })
