@@ -80,7 +80,7 @@ export class EmployeeController {
       }
       return { data: data };
     } else {
-      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -141,7 +141,7 @@ export class EmployeeController {
       }
       return { data: data };
     } else {
-      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -200,7 +200,7 @@ export class EmployeeController {
       }
       return { data: data };
     } else {
-      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -250,7 +250,7 @@ export class EmployeeController {
       }
       return { data: data };
     } else {
-      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -300,7 +300,7 @@ export class EmployeeController {
       }
       return { data: data };
     } else {
-      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -402,7 +402,7 @@ export class EmployeeController {
       }
       return { data: data };
     } else {
-      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -476,7 +476,7 @@ export class EmployeeController {
       }
       return { data: data };
     } else {
-      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 }
