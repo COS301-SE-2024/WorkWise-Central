@@ -3,11 +3,12 @@
     v-model="clientDialog"
     max-width="500px"
     :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :opacity="0"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="error" v-bind="activatorProps"
-        >Delete <v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
-      ></v-btn>
+        ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete
+      </v-btn>
     </template>
     <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
       <v-card-title> Delete {{ client.name + ' ' + client.surname }} </v-card-title>
@@ -27,13 +28,9 @@
             <v-col cols="12" lg="6">
               <Toast position="bottom-center" />
               <v-btn label="Cancel" color="secondary" text @click="clientDialog = false" block
+                ><v-icon icon="fa:fa-solid fa-cancel" start  color="secondary" size="small"></v-icon
                 >Cancel
-                <v-icon
-                  icon="fa:fa-solid fa-cancel"
-                  end
-                  color="secondary"
-                  size="small"
-                ></v-icon></v-btn></v-col
+              </v-btn></v-col
             ><v-col cols="12" lg="6">
               <v-btn
                 label="Delete"
@@ -42,14 +39,12 @@
                 :loading="isDeleting"
                 @click="deleteClient"
                 block
-                >Delete
-                <v-icon
-                  icon="fa:fa-solid fa-trash"
-                  end
-                  color="error"
-                  size="small"
-                ></v-icon></v-btn></v-col></v-row
-        ></v-container>
+              >
+                <v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete
+              </v-btn></v-col
+            ></v-row
+          ></v-container
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -78,7 +73,8 @@ export default {
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
-      modal_light_theme_color: '#FFFFFF'
+      modal_light_theme_color: '#FFFFFF',
+      employeeId: localStorage.getItem('employeeId')
     }
   },
   methods: {
@@ -102,7 +98,10 @@ export default {
         console.log(this.client_id)
         this.isDeleting = true // Indicate the start of the deletion process
 
-        const response = await axios.delete(`${apiURL}client/delete/${this.client_id}`, config)
+        const response = await axios.delete(`${apiURL}client/delete`, config, {
+          clientId: this.client_id,
+          employeeId: this.employeeId
+        })
         console.log(response)
 
         this.$toast.add({

@@ -34,7 +34,9 @@ import InventoryCenter from '@/views/home/inventory/InventoryCenter.vue'
 import TaskCenter from '@/views/home/jobs/TaskCenter.vue'
 import ClientFeedback from '@/views/home/clients/ClientFeedback.vue'
 import ReportView from '@/views/home/inventory/ReportView.vue'
-
+import MessagesView from '@/views/notfications/MessagesView.vue'
+import StockTakeManagementView from '@/views/home/inventory/StockTakeManagementView.vue'
+import AppointmentsView from '@/views/notfications/AppointmentsView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -273,6 +275,21 @@ const router = createRouter({
       path: '/report-view',
       name: 'report-view',
       component: ReportView
+    },
+    {
+      path: '/messages',
+      name: 'messages',
+      component: MessagesView
+    },
+    {
+      path: '/stock-take',
+      name: 'stock-take',
+      component: StockTakeManagementView
+    },
+    {
+      path: '/appointments',
+      name: 'appointments',
+      component: AppointmentsView
     }
   ]
 })

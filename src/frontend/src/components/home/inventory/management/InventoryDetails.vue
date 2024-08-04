@@ -2,8 +2,8 @@
   <v-dialog v-model="dialog" max-width="600" :theme="isdarkmode === true ? 'dark' : 'light'">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="success" v-bind="activatorProps"
-        >View<v-icon icon="fa:fa-solid fa-eye" end color="success" size="small"></v-icon
-      ></v-btn>
+        ><v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>View</v-btn
+      >
     </template>
     <v-card>
       <v-card-title>
@@ -73,13 +73,10 @@
         <Toast position="top-center" />
         <v-col cols="12">
           <v-btn label="Close" color="secondary" text @click="close"
-            >Close<v-icon
-              icon="fa:fa-solid fa-cancel"
-              end
-              color="secondary"
-              size="small"
-            ></v-icon></v-btn
-        ></v-col>
+            ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
+            >Close</v-btn
+          ></v-col
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
