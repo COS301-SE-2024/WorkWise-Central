@@ -4,11 +4,11 @@
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        color="secondary"
+        color="success"
         variant="text"
         v-bind="activatorProps"
       >
-        View <v-icon icon="fa:fa-solid fa-eye" end color="secondary" size="small"></v-icon>
+        <v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon> View
       </v-btn>
     </template>
 

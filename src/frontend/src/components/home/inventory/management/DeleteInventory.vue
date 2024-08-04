@@ -6,8 +6,8 @@
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
-        >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
-      ></v-btn>
+        ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
+      >
     </template>
     <v-card>
       <v-card-title>
@@ -32,14 +32,10 @@
             ><v-col cols="12" lg="6"
               ><Toast position="bottom-center" />
               <v-btn label="Cancel" color="secondary" text @click="close" block
+                ><v-icon icon="fa:fa-solid fa-cancel" end color="secondary" size="small"></v-icon
                 >Cancel
-                <v-icon
-                  icon="fa:fa-solid fa-cancel"
-                  end
-                  color="secondary"
-                  size="small"
-                ></v-icon></v-btn
-            ></v-col>
+              </v-btn></v-col
+            >
             <v-col cols="12" lg="6">
               <v-btn
                 label="Delete"
@@ -48,14 +44,12 @@
                 :loading="isDeleting"
                 block
                 @click="deleteInventory"
+                ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon
                 >Delete
-                <v-icon
-                  icon="fa:fa-solid fa-trash"
-                  end
-                  color="error"
-                  size="small"
-                ></v-icon></v-btn></v-col></v-row
-        ></v-container>
+              </v-btn></v-col
+            ></v-row
+          ></v-container
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>

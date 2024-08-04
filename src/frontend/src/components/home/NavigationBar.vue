@@ -42,14 +42,14 @@ const inventorySubItems = ref([
   {
     title: 'Inventory Stock Take',
     icon: 'fa: fa-solid fa-chart-line',
-    routeName: '404'
+    routeName: 'stock-take'
   }
 ])
 
 const inboxSubItems = ref([
   { title: 'Notifications', icon: 'fa: fa-solid fa-bell', routeName: 'notifications' },
-  { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: '404' },
-  { title: 'Appointments', icon: 'fa: fa-solid fa-calendar-check', routeName: '404' }
+  { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: 'messages' },
+  { title: 'Appointments', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' }
 ])
 
 const supportSubItems = ref([

@@ -21,17 +21,6 @@
           </v-tab-item>
 
           <!-- Employee Activity Report -->
-          <v-tab-item v-if="currentTab === 'Employee Activity Report'">
-            <v-card>
-              <v-card-title>Employee Activity Report</v-card-title>
-              <v-data-table
-                :headers="employeeActivityHeaders"
-                :items="employeeActivities"
-                class="elevation-1 bg-cardColor"
-                :header-props="{ class: 'bg-cardColor h6' }"
-              />
-            </v-card>
-          </v-tab-item>
 
           <!-- Location-Based Inventory Report -->
           <v-tab-item v-if="currentTab === 'Location-Based Inventory Report'">
@@ -67,14 +56,14 @@
           <v-tab-item v-if="currentTab === 'Inventory Forecast Report'">
             <v-card>
               <v-card-title>Inventory Usage Report</v-card-title>
-              <v-data-iterator
+              <v-data-table
                 :items="forecastData"
                 :items-per-page="5"
                 content-tag="v-data-table"
                 :headers="forecastHeaders"
                 class="elevation-1 bg-cardColor"
               >
-              </v-data-iterator>
+              </v-data-table>
               <Chart type="bar" :data="chartData" class="elevation-1 bg-cardColor" />
             </v-card>
           </v-tab-item>
@@ -86,7 +75,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-
+import axios from 'axios'
 import Chart from 'primevue/chart'
 
 export default defineComponent({
@@ -95,13 +84,15 @@ export default defineComponent({
   },
   data() {
     return {
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       activeTab: 0,
       locationTab: null,
       locationName: 'Warehouse A',
       currentTab: 'Stock Movement Report',
       header: [
         'Stock Movement Report',
-        'Employee Activity Report',
+
         'Location-Based Inventory Report',
         'Inventory Forecast Report'
       ],
@@ -165,16 +156,29 @@ export default defineComponent({
         { item: 'Item B', predictedDemand: 150, reorderRecommendation: 30 }
       ],
       chartData: {
-        labels: ['January', 'February', 'March', 'April', 'May'],
+        labels: [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December'
+        ],
         datasets: [
           {
-            label: 'Predicted Demand for Item A',
-            data: [50, 60, 70, 80, 90],
+            label: 'Start of the month stock levels for Item A',
+            data: [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160],
             backgroundColor: '#42A5F5'
           },
           {
-            label: 'Predicted Demand for Item B',
-            data: [30, 40, 50, 60, 70],
+            label: 'End of the month stock levels for Item A',
+            data: [30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140],
             backgroundColor: '#66BB6A'
           }
         ]
@@ -211,7 +215,38 @@ export default defineComponent({
     changeLocationTab(location) {
       this.locationName = location
       console.log('Current location tab:', location)
+    },
+    async getJobs() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      try {
+        const apiURL = await this.getRequestUrl()
+        const response = await axios.get(`${apiURL}jobs/all`, config)
+        console.log(response)
+        this.jobs = response.data
+      } catch (error) {
+        console.error('Error fetching jobs:', error)
+      }
+    },
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
+  },
+  mounted() {
+    this.getJobs()
   }
 })
 </script>

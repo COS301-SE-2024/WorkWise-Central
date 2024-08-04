@@ -10,7 +10,7 @@
           item-value="role"
           class="bg-cardColor elevation-1"
           :row-props="getRowProps"
-          :header-props="{ class: 'bg-secondary h3 bold' }"
+          :header-props="{ class: 'bg-secondary h4 ' }"
         >
           <template v-slot:top> </template>
           <template v-slot:[`item.roleName`]> </template>
@@ -33,19 +33,17 @@
             <Toast position="top-center" />
             <v-col align="center" cols="12" lg="6">
               <v-btn color="success" @click="updateRole" block>
-                Save
-                <v-icon end color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon> </v-btn
-            ></v-col>
+                <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon> </v-btn
+              >Save
+            </v-col>
 
             <v-col align="center" cols="12" lg="6"
               ><v-btn color="error" @click="cancel" block>
-                Cancel
-                <v-icon
-                  end
-                  color="error"
-                  icon="fa: fa-solid fa-cancel"
-                ></v-icon> </v-btn></v-col></v-row
-        ></v-container>
+                <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon> Cancel
+              </v-btn></v-col
+            ></v-row
+          ></v-container
+        >
       </v-card-actions>
     </v-card>
   </v-container>
@@ -178,7 +176,7 @@ export default defineComponent({
     },
     getRowProps({ index }) {
       return {
-        class: (index % 2 ? 'bg-secondRowColor ' : '') + 'h5'
+        class: (index % 2 ? 'bg-secondRowColor ' : '') + 'h6'
       }
     },
     cancel() {

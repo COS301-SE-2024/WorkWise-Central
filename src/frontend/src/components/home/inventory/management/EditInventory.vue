@@ -9,8 +9,9 @@
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
-        >Edit<v-icon icon="fa:fa-solid fa-pencil" end color="warning " size="small"></v-icon
-      ></v-btn>
+        ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon
+        >Edit</v-btn
+      >
     </template>
     <v-card>
       <v-card-title>
@@ -76,23 +77,24 @@
           <v-row justify="end">
             <v-col cols="12" lg="6">
               <v-btn @click="close" color="error" block
-                >Cancel<v-icon
-                  icon="fa:fa-solid fa-cancel"
-                  end
-                  color="error"
-                  size="small"
-                ></v-icon></v-btn
-            ></v-col>
+                ><v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon
+                >Cancel</v-btn
+              ></v-col
+            >
             <Toast position="top-center" />
             <v-col cols="12" lg="6">
               <v-btn @click="createInventoryItem" color="success" :disabled="!valid" block
-                >Save<v-icon
+                ><v-icon
                   icon="fa:fa-solid fa-floppy-disk"
-                  end
+                  start
                   color="success"
                   size="small"
-                ></v-icon></v-btn></v-col></v-row
-        ></v-container>
+                ></v-icon
+                >Save</v-btn
+              ></v-col
+            ></v-row
+          ></v-container
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>

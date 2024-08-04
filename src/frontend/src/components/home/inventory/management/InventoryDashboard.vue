@@ -61,7 +61,7 @@
             >
               <v-icon color="primary">mdi-dots-horizontal</v-icon>
             </v-btn> -->
-            <v-menu max-width="500px">
+            <v-menu max-width="500px" :theme="isdarkmode === true ? 'dark' : 'light'">
               <template v-slot:activator="{ props }">
                 <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)">
                   <v-icon color="primary">mdi-dots-horizontal</v-icon>
