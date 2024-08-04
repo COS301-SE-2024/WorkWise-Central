@@ -41,6 +41,30 @@ export class EmployeeRepository {
     return result;
   }
 
+  async findAllInCompanyWithRole(
+    identifier: Types.ObjectId,
+    roleId: Types.ObjectId,
+  ) {
+    const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] =
+      await this.employeeModel
+        .find({
+          $and: [
+            {
+              companyId: identifier,
+            },
+            {
+              roleId: roleId,
+            },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+
+    return result;
+  }
+
   async DetailedFindAllInCompany(
     identifier: Types.ObjectId,
     fieldsToPouplate: string[],
@@ -168,6 +192,56 @@ export class EmployeeRepository {
             ],
           },
           { $set: { ...updateEmployeeDto }, updatedAt: new Date() },
+        )
+        .lean();
+
+    return previousObject;
+  }
+
+  async updateSuperior(
+    id: Types.ObjectId,
+    superiorIdentifcation: Types.ObjectId,
+  ) {
+    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } =
+      await this.employeeModel
+        .findOneAndUpdate(
+          {
+            $and: [
+              { _id: id },
+              {
+                $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+              },
+            ],
+          },
+          {
+            $set: { superiorId: superiorIdentifcation },
+            updatedAt: new Date(),
+          },
+        )
+        .lean();
+
+    return previousObject;
+  }
+
+  async updateSubordinates(
+    id: Types.ObjectId,
+    subordinatesIdentification: Types.ObjectId[],
+  ) {
+    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } =
+      await this.employeeModel
+        .findOneAndUpdate(
+          {
+            $and: [
+              { _id: id },
+              {
+                $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+              },
+            ],
+          },
+          {
+            $set: { subordinates: subordinatesIdentification },
+            updatedAt: new Date(),
+          },
         )
         .lean();
 
