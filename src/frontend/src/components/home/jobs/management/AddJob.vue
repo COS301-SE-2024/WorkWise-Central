@@ -152,7 +152,7 @@
                     data-testid="employee-multi-select"
                   ></v-select
                 ></v-col>
-                <v-col :cols="6">
+                <v-col :cols="12" :sm="6" :md="6" :lg="6" :xl="6">
                   <label style="font-size: 14px; font-weight: lighter">Status</label>
 
                   <v-select
@@ -169,7 +169,7 @@
                     data-testid="status-select"
                   ></v-select
                 ></v-col>
-                <v-col :cols="6">
+                <v-col :cols="12" :sm="6" :md="6" :lg="6" :xl="6">
                   <label style="font-size: 14px; font-weight: lighter">Priority</label>
 
                   <v-select
@@ -188,7 +188,7 @@
                   ></v-select
                 ></v-col>
 
-                <v-col :cols="6">
+                <v-col :cols="12" :sm="6" :md="6" :lg="6" :xl="6">
                   <label style="font-size: 14px; font-weight: lighter">Tags</label>
 
                   <v-select
@@ -426,6 +426,7 @@ export default defineComponent({
       if (this.endDate !== null && this.endTime !== '') {
         this.formatDateAndTime(this.endDate, this.endTime)
       }
+      console.log(this.req_obj)
       await this.handleSubmission()
     },
     formatDateAndTime(date: Date, time: string) {
@@ -453,7 +454,7 @@ export default defineComponent({
             summary: 'Success',
             detail: 'Job Added Successfully'
           })
-          console.log(res)
+          window.location.reload()
         })
         .catch((res) => {
           this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Job not added' })
