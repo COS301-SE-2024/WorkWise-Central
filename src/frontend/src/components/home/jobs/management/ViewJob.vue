@@ -7,6 +7,7 @@
           prepend-icon="fa:fa-solid fa-eye"
           color="success"
           v-bind="activatorProps"
+          @click="viewJob"
         ></v-btn>
       </v-defaults-provider>
     </template>
@@ -138,7 +139,7 @@
               <v-label class="d-flex justify-start pb-0 font-weight-bold">Card Actions</v-label>
             </v-col>
             <v-col ref="imagesSection" >
-              <AttachImages :passedInJob="props.passedInJob" />
+              <AttachImages :recordedDetails="props.passedInJob.recordedDetails" :jobID="props.passedInJob._id"/>
             </v-col>
             <v-col ref="checklistSection">
               <JobChecklist :passedInJob="props.passedInJob" />
@@ -150,9 +151,8 @@
         </v-row>
       </v-card-text>
       <v-card-actions>
-        <v-col>
           <v-btn color="error" @click="closeView">Close</v-btn>
-        </v-col>
+          <v-btn color="success" @click="closeView">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -173,6 +173,10 @@ const props = defineProps({
   }
 })
 
+const viewJob = () =>{
+  console.log('view start date')
+  console.log(props.passedInJob.startDate)
+}
 const viewJobDialog = ref(false) // Dialog state
 
 const imagesSection = ref(null)

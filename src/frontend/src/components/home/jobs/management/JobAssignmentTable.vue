@@ -350,36 +350,6 @@ const getStatusColor = (status) => {
   }
 }
 
-//
-// const openJobCard = (item) => {
-//   router.push('/jobCard')
-//   console.log('Open job card for:', item)
-// }
-//
-// const confirmDelete = ref(false)
-// const items = ref([
-//   // Your list of items
-// ])
-// let currentItemToDelete = null
-
-// const confirmDeleteItem = (item) => {
-//   currentItemToDelete = item
-//   confirmDelete.value = true
-// }
-//
-// const deleteConfirmed = () => {
-//   const index = items.value.findIndex((i) => i === currentItemToDelete)
-//   if (index !== -1) {
-//     items.value.splice(index, 1)
-//   }
-//   cancelDelete()
-// }
-
-// const cancelDelete = () => {
-//   confirmDelete.value = false
-//   currentItemToDelete = null
-// }
-
 const getRowProps = ({ index }) => {
   return {
     class: index % 2 ? 'bg-secondRowColor' : ''
