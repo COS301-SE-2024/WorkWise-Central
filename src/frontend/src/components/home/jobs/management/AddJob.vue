@@ -153,7 +153,7 @@
                   ></v-select
                 ></v-col>
                 <v-col :cols="6">
-                  <label style="font-size: 14px; font-weight: lighter" :cols="6">Status</label>
+                  <label style="font-size: 14px; font-weight: lighter">Status</label>
 
                   <v-select
                     :items="statusOptionsArray"
@@ -170,7 +170,7 @@
                   ></v-select
                 ></v-col>
                 <v-col :cols="6">
-                  <label style="font-size: 14px; font-weight: lighter" :cols="6">Priority</label>
+                  <label style="font-size: 14px; font-weight: lighter">Priority</label>
 
                   <v-select
                     :items="priorityOptionsArray"
@@ -189,7 +189,7 @@
                 ></v-col>
 
                 <v-col :cols="6">
-                  <label style="font-size: 14px; font-weight: lighter" :cols="6">Tags</label>
+                  <label style="font-size: 14px; font-weight: lighter">Tags</label>
 
                   <v-select
                     :items="tagOptionsArray"
