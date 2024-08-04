@@ -10,7 +10,7 @@
           color="grey-lighten-4"
           rounded="l"
           required
-          :value="props.passedInJob.heading"
+          :value="props.passedInJob.details.heading"
         ></v-text-field>
         <v-label>Job Description</v-label>
         <v-textarea
@@ -21,7 +21,7 @@
           color="grey-lighten-4"
           rounded="l"
           required
-          :value="props.passedInJob.jobDescription"
+          :value="props.passedInJob.details.description"
         ></v-textarea>
         <v-row>
           <v-col cols="6">
@@ -33,7 +33,7 @@
               color="grey-lighten-4"
               rounded="l"
               required
-              :value="props.passedInJob.street"
+              :value="props.passedInJob.details.address.street"
             ></v-text-field>
           </v-col>
           <v-col cols="6">
@@ -45,7 +45,7 @@
               color="grey-lighten-4"
               rounded="l"
               required
-              :value="props.passedInJob.suburb"
+              :value="props.passedInJob.details.address.suburb"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -60,7 +60,7 @@
               color="grey-lighten-4"
               rounded="l"
               required
-              :value="props.passedInJob.city"
+              :value="props.passedInJob.details.address.city"
             ></v-text-field>
           </v-col>
           <v-col cols="6">
@@ -72,7 +72,7 @@
               color="grey-lighten-4"
               rounded="l"
               required
-              :value="props.passedInJob.postalCode"
+              :value="props.passedInJob.details.address.postalCode"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -86,7 +86,7 @@
               density="compact"
               color="grey-lighten-4"
               rounded="l"
-              :value="props.passedInJob.complex"
+              :value="props.passedInJob.details.address.complex"
             ></v-text-field>
           </v-col>
           <v-col cols="6">
@@ -98,7 +98,7 @@
               color="grey-lighten-4"
               rounded="l"
               required
-              :value="props.passedInJob.houseNumber"
+              :value="props.passedInJob.details.address.houseNumber"
             ></v-text-field>
           </v-col>
         </v-row>

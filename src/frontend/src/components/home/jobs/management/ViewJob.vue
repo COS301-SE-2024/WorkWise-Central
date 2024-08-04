@@ -16,8 +16,8 @@
         src="https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U="
         aspect-ratio="5.75"
       ></v-img>
-      <v-card-title >
-        {{ props.passedInJob.heading }}
+      <v-card-title>
+        {{ props.passedInJob.details.heading }}
       </v-card-title>
       <v-card-text class="text-center">
         <v-row>
@@ -28,7 +28,7 @@
             <v-col class="text-center">
               <v-spacer></v-spacer>
               <p>
-                {{ props.passedInJob.jobDescription }}
+                {{ props.passedInJob.details.description }}
               </p>
             </v-col>
             <v-divider>
@@ -36,7 +36,7 @@
             </v-divider>
             <v-col class="text-center">
               <v-spacer></v-spacer>
-              <p >
+              <p>
                 <v-chip :color="getStatusColor(props.passedInJob.status)" dark>
                   {{ props.passedInJob.status }}
                 </v-chip>
@@ -51,45 +51,44 @@
               <v-col class="text-center" md="4">
                 <label class="font-weight-bold">Client Name</label>
                 <v-spacer></v-spacer>
-                <p > Holder Name </p>
+                <p>Holder Name</p>
               </v-col>
               <v-col class="text-center" md="4">
                 <label class="font-weight-bold">Phone</label>
                 <v-spacer></v-spacer>
-                <p > Holder phone </p>
+                <p>Holder phone</p>
               </v-col>
               <v-col class="text-center" md="4">
                 <label class="font-weight-bold">Email</label>
                 <v-spacer></v-spacer>
-                <p > Holder Email </p>
+                <p>Holder Email</p>
               </v-col>
             </v-row>
-
 
             <v-divider>
               <h5>Address</h5>
             </v-divider>
             <v-col class="text-center">
               <v-row class="text-center">
-                <v-col sm="6" md="4" >
+                <v-col sm="6" md="4">
                   <label class="font-weight-bold">City</label>
                   <v-spacer></v-spacer>
-                  <p >
-                    {{ props.passedInJob.city }}
+                  <p>
+                    {{ props.passedInJob.details.address.city }}
                   </p>
                 </v-col>
                 <v-col sm="6" md="4">
                   <label class="font-weight-bold">Suburb</label>
                   <v-spacer></v-spacer>
-                  <p >
-                    {{ props.passedInJob.suburb }}
+                  <p>
+                    {{ props.passedInJob.details.address.suburb }}
                   </p>
                 </v-col>
                 <v-col sm="6" md="4">
                   <label class="font-weight-bold">Street</label>
                   <v-spacer></v-spacer>
-                  <p >
-                    {{ props.passedInJob.street }}
+                  <p>
+                    {{ props.passedInJob.details.address.street }}
                   </p>
                 </v-col>
               </v-row>
@@ -97,22 +96,22 @@
                 <v-col sm="6" md="4">
                   <label class="font-weight-bold">Postal Code</label>
                   <v-spacer></v-spacer>
-                  <p >
-                    {{ props.passedInJob.postalCode }}
+                  <p>
+                    {{ props.passedInJob.details.address.postalCode }}
                   </p>
                 </v-col>
                 <v-col sm="6" md="4">
                   <label class="font-weight-bold">Complex</label>
                   <v-spacer></v-spacer>
-                  <p >
-                    {{ props.passedInJob.complex }}
+                  <p>
+                    {{ props.passedInJob.details.address.complex }}
                   </p>
                 </v-col>
                 <v-col sm="6" md="4">
                   <label class="font-weight-bold">House Number</label>
                   <v-spacer></v-spacer>
-                  <p >
-                    {{ props.passedInJob.houseNumber }}
+                  <p>
+                    {{ props.passedInJob.details.address.houseNumber }}
                   </p>
                 </v-col>
               </v-row>
@@ -121,7 +120,7 @@
               </v-divider>
               <v-row>
                 <v-col ref="commentsSection">
-                  <AddComment :passedInJob="props.passedInJob" />
+                  <AddComment :jobComments="props.passedInJob.comments" :id="props.passedInJob._id"/>
                 </v-col>
               </v-row>
               <v-divider>
@@ -138,8 +137,11 @@
             <v-col class="pb-0">
               <v-label class="d-flex justify-start pb-0 font-weight-bold">Card Actions</v-label>
             </v-col>
-            <v-col ref="imagesSection" >
-              <AttachImages :recordedDetails="props.passedInJob.recordedDetails" :jobID="props.passedInJob._id"/>
+            <v-col ref="imagesSection">
+              <AttachImages
+                :recordedDetails="props.passedInJob.recordedDetails"
+                :jobID="props.passedInJob._id"
+              />
             </v-col>
             <v-col ref="checklistSection">
               <JobChecklist :passedInJob="props.passedInJob" />
@@ -151,8 +153,8 @@
         </v-row>
       </v-card-text>
       <v-card-actions>
-          <v-btn color="error" @click="closeView">Close</v-btn>
-          <v-btn color="success" @click="closeView">Save</v-btn>
+        <v-btn color="error" @click="closeView">Close</v-btn>
+        <v-btn color="success" @click="closeView">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -173,7 +175,7 @@ const props = defineProps({
   }
 })
 
-const viewJob = () =>{
+const viewJob = () => {
   console.log('view start date')
   console.log(props.passedInJob.startDate)
 }

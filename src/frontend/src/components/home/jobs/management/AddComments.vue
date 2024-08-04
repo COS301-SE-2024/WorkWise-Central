@@ -40,53 +40,27 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from 'vue'
+import { defineProps, ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 
-// Define types
-interface Comment {
-  comment: string
-}
-
-interface Job {
-  _id?: string
-  clientId?: string
-  clientUsername?: string
-  assignedBy?: string
-  assignedEmployees?: {
-    employeeIds?: string[]
-  }
-  status?: string
-  details?: {
-    heading?: string
-    description?: string
-    address?: {
-      street?: string
-      province?: string
-      suburb?: string
-      city?: string
-      postalCode?: string
-      complex?: string
-      houseNumber?: string
-    }
-    startDate?: string
-    endDate?: string
-  }
-  recordedDetails?: {
-    imagesTaken?: any[]
-    inventoryUsed?: any[]
-  }
-  taskList?: any[]
-  comments?: Comment[]
-  createdAt?: string
-  updatedAt?: string
-}
-
-const props = defineProps<{ passedInJob: Job }>()
-
-// Toast for notifications
 const toast = useToast()
+const newComment = ref('')
+
+// Comments and new comment
+const comments = ref<{ text: string, employeeId: string, date: string }[]>([])
+
+interface Comment {
+  employeeId: string;
+  newComment: string;
+  date: string;
+}
+
+const user = ref({
+  initials: ''
+})
+
+const props = defineProps<{ jobComments: Comment[], id: string }>()
 
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
@@ -107,20 +81,89 @@ const getRequestUrl = async (): Promise<string> => {
   return localAvailable ? localUrl : remoteUrl
 }
 
-// Initial user data
-const user = {
-  initials: 'JD',
-  fullName: 'John Doe',
-  email: 'john.doe@doe.com'
+const getUserData = async () => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+  const apiUrl = await getRequestUrl()
+  try {
+    const response = await axios.get(`${apiUrl}users/id/${localStorage.getItem('id')}`, config)
+    const userData = response.data.data;
+    user.value.initials = getInitials(userData.personalInfo.firstName, userData.personalInfo.surname);
+  } catch (error) {
+    console.error('Error getting user data', error)
+  }
 }
 
-// Comments and new comment
-const comments = ref<{ text: string }[]>(
-  (props.passedInJob.comments || []).map((comment) => ({ text: comment.comment }))
-)
-const newComment = ref('')
+const addComment = async () => {
+  if (!newComment.value.trim()) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Warning',
+      detail: 'Comment cannot be empty',
+      life: 3000
+    })
+    return
+  }
 
-// Toast messages
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+  const apiUrl = await getRequestUrl()
+  try {
+    const response = await axios.patch(`${apiUrl}job/${props.id}`,
+      { newComment: newComment.value },
+      config
+    )
+    comments.value.push({
+      text: newComment.value,
+      employeeId: localStorage.getItem('employeeId'),
+      date: new Date().toISOString()
+    })
+    newComment.value = ''
+    showJobCommentSuccess()
+  } catch (error) {
+    console.error('Error adding comments', error)
+    showJobCommentError()
+  }
+}
+
+const deleteComment = async (index: number) => {
+  const commentToDelete = comments.value[index]
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+  const apiUrl = await getRequestUrl()
+  try {
+    await axios.delete(`${apiUrl}job/${props.id}/comments/${commentToDelete.employeeId}`, config)
+    comments.value.splice(index, 1)
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Comment deleted successfully',
+      life: 3000
+    })
+  } catch (error) {
+    console.error('Error deleting comment', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'An error occurred while deleting the comment',
+      life: 3000
+    })
+  }
+}
+
 const showJobCommentSuccess = () => {
   toast.add({
     severity: 'success',
@@ -139,121 +182,17 @@ const showJobCommentError = () => {
   })
 }
 
-const restructureJob = (job: Job): Job => {
-  console.log(job)
-  return {
-    _id: job._id || '', // Safe access with optional chaining
-    clientId: job.clientId || '', // Assume clientId is a string; adjust if it's an object
-    clientUsername: job.clientUsername || '',
-    assignedBy: job.assignedBy || '',
-    assignedEmployees: {
-      employeeIds: job.assignedEmployees?.employeeIds || [] // Ensure it's an array
-    },
-    status: job.status || '',
-    details: {
-      heading: job.details?.heading || '',
-      description: job.details?.description || '',
-      address: {
-        street: job.details?.address?.street || '',
-        province: job.details?.address?.province || '',
-        suburb: job.details?.address?.suburb || '',
-        city: job.details?.address?.city || '',
-        postalCode: job.details?.address?.postalCode || '',
-        complex: job.details?.address?.complex || '',
-        houseNumber: job.details?.address?.houseNumber || ''
-      },
-      startDate: job.details?.startDate || '',
-      endDate: job.details?.endDate || ''
-    },
-    recordedDetails: {
-      imagesTaken: job.recordedDetails?.imagesTaken || [],
-      inventoryUsed: job.recordedDetails?.inventoryUsed || []
-    },
-    taskList: job.taskList || [],
-    comments: job.comments || [],
-    createdAt: job.createdAt || '',
-    updatedAt: job.updatedAt || ''
-  }
-}
+const getInitials = (firstName: string, surname: string): string => {
+  return `${firstName.charAt(0)}${surname.charAt(0)}`.toUpperCase();
+};
 
-// Add a comment
-const comment = async () => {
-  if (newComment.value.trim() !== '') {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`
-      }
-    }
-    const apiUrl = await getRequestUrl()
+onMounted(async () => {
+  await getUserData()
+  comments.value = props.jobComments.map((comment) => ({
+    text: comment.newComment,
+    employeeId: comment.employeeId,
+    date: comment.date
+  }))
+})
 
-    try {
-      const job = restructureJob(props.passedInJob)
-      const currentComments = job.comments || []
-
-      // Create the new comment object
-      const commentToAdd = {
-        employeeId: localStorage.getItem('id') || '',
-        comment: newComment.value,
-        date: new Date().toISOString()
-      }
-
-      // Append the new comment to the existing comments array
-      const updatedComments = [...currentComments, commentToAdd]
-
-      // Prepare the payload for the PATCH request
-      const updatedJob = {
-        ...job,
-        comments: updatedComments
-      }
-
-      // Make the PATCH request to update the job
-      const response = await axios.patch(`${apiUrl}job/${job._id}`, updatedJob, config)
-
-      if (response.status < 300 && response.status > 199) {
-        showJobCommentSuccess()
-        comments.value.push({ text: newComment.value.trim() })
-        newComment.value = ''
-      } else {
-        showJobCommentError()
-      }
-    } catch (error) {
-      console.error('Error updating job:', error)
-      showJobCommentError()
-    }
-  }
-}
-
-// Delete a comment
-const deleteComment = async (index: number) => {
-  const job = restructureJob(props.passedInJob)
-  const updatedComments = job.comments?.filter((_, i) => i !== index) || []
-  updatedComments.splice(index, 1)
-
-  const updatedJob = {
-    ...job,
-    comments: updatedComments
-  }
-
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('access_token')}`
-    }
-  }
-
-  try {
-    const apiUrl = await getRequestUrl()
-    const response = await axios.patch(`${apiUrl}job/${job._id}`, updatedJob, config)
-
-    if (response.status < 300 && response.status > 199) {
-      comments.value.splice(index, 1)
-    } else {
-      showJobCommentError()
-    }
-  } catch (error) {
-    console.error('Error deleting comment:', error)
-    showJobCommentError()
-  }
-}
 </script>

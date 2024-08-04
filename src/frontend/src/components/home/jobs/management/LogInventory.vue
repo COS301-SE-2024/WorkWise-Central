@@ -8,7 +8,15 @@
     origin="top center"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn width="100%" class="d-flex justify-start" border="md" elevation="5" outlined @click="openInventoryDialog" v-bind="activatorProps">
+      <v-btn
+        width="100%"
+        class="d-flex justify-start"
+        border="md"
+        elevation="5"
+        outlined
+        @click="openInventoryDialog"
+        v-bind="activatorProps"
+      >
         <v-icon left>
           {{ 'fa: fa-solid fa-box' }}
         </v-icon>
