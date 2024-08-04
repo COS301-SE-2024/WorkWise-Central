@@ -176,15 +176,18 @@ export class RoleController {
     type: createRoleResponseDto,
   })
   @Post('/create')
-  async create(@Headers() headers: any, @Body() createRoleDto: CreateRoleDto) {
-    const userId = extractUserId(this.jwtService, headers);
-    const companyId = createRoleDto.companyId;
-    if (
-      this.employeeService.validateRole(companyId, userId, 'company settings')
-    ) {
+  async create(
+    @Headers() headers: any,
+    @Body()
+    body: { currentEmployeeId: Types.ObjectId; createRoleDto: CreateRoleDto },
+  ) {
+    const currentEmployee = await this.employeeService.findById(
+      body.currentEmployeeId,
+    );
+    if (currentEmployee.role.permissionSuite.includes('company settings')) {
       let data;
       try {
-        data = await this.roleService.create(createRoleDto);
+        data = await this.roleService.create(body.createRoleDto);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
@@ -217,15 +220,17 @@ export class RoleController {
   async update(
     @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
-    @Body() updateRoleDto: UpdateRoleDto,
+    @Body()
+    body: { currentEmployeeId: Types.ObjectId; updateRoleDto: UpdateRoleDto },
   ) {
     const userId = extractUserId(this.jwtService, headers);
-    if (
-      this.employeeService.validateRoleRoleId(id, userId, 'company settings')
-    ) {
+    const currentEmployee = await this.employeeService.findById(
+      body.currentEmployeeId,
+    );
+    if (currentEmployee.role.permissionSuite.includes('company settings')) {
       let data;
       try {
-        data = await this.roleService.update(userId, id, updateRoleDto);
+        data = await this.roleService.update(userId, id, body.updateRoleDto);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
@@ -252,16 +257,28 @@ export class RoleController {
   @ApiBody({ type: BulkUpdateRoleDto })
   async bulkUpdate(
     @Headers() headers: any,
-    @Body() updateRoleDto: BulkUpdateRoleDto,
+    @Param('id') id: Types.ObjectId,
+    @Body()
+    body: {
+      currentEmployeeId: Types.ObjectId;
+      updateRoleDto: BulkUpdateRoleDto;
+    },
   ) {
     const userId = extractUserId(this.jwtService, headers);
-    let data;
-    try {
-      data = await this.roleService.bulkUpdate(userId, updateRoleDto);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    const currentEmployee = await this.employeeService.findById(
+      body.currentEmployeeId,
+    );
+    if (currentEmployee.role.permissionSuite.includes('company settings')) {
+      let data;
+      try {
+        data = await this.roleService.bulkUpdate(userId, body.updateRoleDto);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
-    return { data: data };
   }
 
   @UseGuards(AuthGuard)
@@ -288,11 +305,15 @@ export class RoleController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete(':id')
-  async remove(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
-    const userId = extractUserId(this.jwtService, headers);
-    if (
-      this.employeeService.validateRoleRoleId(id, userId, 'company settings')
-    ) {
+  async remove(
+    @Headers() headers: any,
+    @Param('id') id: Types.ObjectId,
+    @Body() body: { currentEmployeeId: Types.ObjectId },
+  ) {
+    const currentEmployee = await this.employeeService.findById(
+      body.currentEmployeeId,
+    );
+    if (currentEmployee.role.permissionSuite.includes('company settings')) {
       let data;
       try {
         data = await this.roleService.remove(id);
