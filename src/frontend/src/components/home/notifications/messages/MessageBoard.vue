@@ -1,5 +1,10 @@
 <template>
   <v-container>
+    <v-row class="justify-center align-center">
+      <v-col cols="12" class="text-center">
+        <h2 class="text-xl font-semibold">Message Board</h2>
+      </v-col>
+    </v-row>
     <v-card>
       <v-row>
         <v-col cols="12" lg="2">
@@ -83,6 +88,7 @@
                 variant="outlined"
                 color="primary"
               ></v-text-field>
+              <v-btn><v-icon icon="fa: fa-solid fa-paper-plane"></v-icon></v-btn>
             </v-card-actions>
           </v-card>
         </v-col>

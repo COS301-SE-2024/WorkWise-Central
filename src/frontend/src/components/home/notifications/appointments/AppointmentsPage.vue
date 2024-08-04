@@ -1,17 +1,18 @@
 <template>
-  <v-container>
+  <v-container
+    ><v-row class="justify-center align-center">
+      <v-col cols="12" class="text-center">
+        <h2 class="text-xl font-semibold">Appointments</h2> </v-col
+      ><v-col cols="12">
+        <v-btn color="primary" @click="showDialog = true" variant="outlined">
+          Create New Appointment</v-btn
+        >
+      </v-col>
+    </v-row>
     <v-row>
-      <v-col cols="12">
-        <h1>Appointments</h1>
-      </v-col>
-
-      <v-col cols="12">
-        <v-btn color="primary" @click="showDialog = true">Create New Appointment</v-btn>
-      </v-col>
-
       <!-- Recently Created Appointments Section -->
-      <v-col cols="12">
-        <h2>Recently Created Appointments</h2>
+      <v-col cols="12" lg="6" order="last" order-lg="first">
+        <h3>Recently Created Appointments</h3>
         <v-card
           v-for="appointment in recentAppointments"
           :key="appointment.id"
@@ -25,8 +26,8 @@
       </v-col>
 
       <!-- Most Important Appointments Section -->
-      <v-col cols="12">
-        <h2>Most Important Appointments</h2>
+      <v-col cols="12" lg="6" order="first" order-lg="last">
+        <h3>Most Important Appointments</h3>
         <v-card
           v-for="appointment in importantAppointments"
           :key="appointment.id"
@@ -51,10 +52,19 @@
         <v-container>
           <v-row>
             <v-col cols="12">
-              <v-text-field v-model="newAppointment.title" label="Title"></v-text-field>
+              <v-text-field
+                v-model="newAppointment.title"
+                label="Title"
+                :rules="titleRules"
+              ></v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="newAppointment.date" label="Date" type="date"></v-text-field>
+              <v-text-field
+                v-model="newAppointment.date"
+                label="Date"
+                type="date"
+                :rules="dateRules"
+              ></v-text-field>
             </v-col>
             <v-col cols="12">
               <v-text-field v-model="newAppointment.details" label="Details"></v-text-field>
@@ -66,9 +76,21 @@
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="showDialog = false">Cancel</v-btn>
-        <v-btn color="blue darken-1" text @click="addAppointment">Save</v-btn>
+        <v-container
+          ><v-row
+            ><v-col cols="12" lg="6">
+              <v-btn color="error" @click="showDialog = false" block
+                ><v-icon icon="fa: fa-solid fa-cancel" color="error" start></v-icon>Cancel</v-btn
+              ></v-col
+            >
+            <v-col cols="12" lg="6">
+              <v-btn color="success" @click="addAppointment" block
+                ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success" start></v-icon
+                >Save</v-btn
+              ></v-col
+            >
+          </v-row></v-container
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -108,7 +130,9 @@ export default defineComponent({
           date: '2021-10-25',
           details: 'Present new marketing strategy'
         }
-      ]
+      ],
+      titleRules: [(v: string) => !!v || 'Title is required'],
+      dateRules: [(v: string) => !!v || 'Date is required']
     }
   },
   methods: {
