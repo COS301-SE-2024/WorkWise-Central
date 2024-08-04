@@ -6,6 +6,8 @@ import {
   IsString,
 } from 'class-validator';
 import { Types } from 'mongoose';
+import { AddHashtag } from '../../utils/Custom Transformers/add-hashtag.transformer';
+import { CapitalizeWords } from '../../utils/Custom Transformers/capitalise-words.transformer';
 
 export class UpdateTagDto {
   @IsNotEmpty()
@@ -20,11 +22,13 @@ export class UpdateTagDto {
 
   @IsNotEmpty()
   @IsString()
+  @CapitalizeWords()
   label?: string;
 
   @IsOptional()
   @IsString()
   @IsHexColor()
+  @AddHashtag()
   colour?: string; //Will be hex value
 }
 
