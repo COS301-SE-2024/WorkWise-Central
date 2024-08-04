@@ -8,11 +8,6 @@ import {
 } from 'class-validator';
 
 export class UserJoinRequestDto {
-  /*  @IsNotEmpty()
-  @IsString()
-  @IsMongoId()
-  requestingUserId: Types.ObjectId;*/
-
   @IsNotEmpty()
   @IsString()
   @IsMongoId()
@@ -21,14 +16,6 @@ export class UserJoinRequestDto {
   @IsOptional()
   @IsMongoId()
   roleId?: Types.ObjectId; //Should I rather put roleName?🤔
-
-  @IsOptional()
-  @IsString()
-  roleName?: string = 'Worker';
-
-  @IsOptional()
-  @IsString()
-  companyName?: string;
 }
 
 export class UserInviteRequestDto {
