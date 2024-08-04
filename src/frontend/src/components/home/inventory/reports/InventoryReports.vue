@@ -75,7 +75,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-
+import axios from 'axios'
 import Chart from 'primevue/chart'
 
 export default defineComponent({
@@ -84,6 +84,8 @@ export default defineComponent({
   },
   data() {
     return {
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       activeTab: 0,
       locationTab: null,
       locationName: 'Warehouse A',
@@ -213,7 +215,38 @@ export default defineComponent({
     changeLocationTab(location) {
       this.locationName = location
       console.log('Current location tab:', location)
+    },
+    async getJobs() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      try {
+        const apiURL = await this.getRequestUrl()
+        const response = await axios.get(`${apiURL}jobs/all`, config)
+        console.log(response)
+        this.jobs = response.data
+      } catch (error) {
+        console.error('Error fetching jobs:', error)
+      }
+    },
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
+  },
+  mounted() {
+    this.getJobs()
   }
 })
 </script>

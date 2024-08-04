@@ -67,6 +67,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
 import ReportForm from './ReportForm.vue'
 
 interface Job {
@@ -78,8 +79,11 @@ interface Job {
 export default defineComponent({
   data() {
     return {
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       automatedAssignment: false,
       activeTab: 0,
+      jobs: [] as Job[],
       recentJobs: [
         { id: 1, name: 'Fix Leak', status: 'To Do' },
         { id: 2, name: 'Install Light', status: 'To Do' }
@@ -104,7 +108,41 @@ export default defineComponent({
     createReport(job: Job) {
       alert(`Creating report for job: ${job.name}`)
       // Implement the report creation logic here
+    },
+    async getJobs() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      try {
+        const apiURL = await this.getRequestUrl()
+        const response = await axios.get(
+          `${apiURL}job/all/company/${localStorage.getItem('currentCompany')}`,
+          config
+        )
+        console.log(response)
+        this.jobs = response.data
+      } catch (error) {
+        console.error('Error fetching jobs:', error)
+      }
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
+  },
+  mounted() {
+    this.getJobs()
   }
 })
 </script>

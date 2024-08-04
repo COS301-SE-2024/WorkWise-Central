@@ -264,7 +264,9 @@
                   <v-form ref="form" v-model="valid" class="bg-background">
                     <v-row>
                       <v-col>
-                        <label style="font-size: 14px; font-weight: lighter">Enter the code you received from email</label>
+                        <label style="font-size: 14px; font-weight: lighter"
+                          >Enter the code you received from email</label
+                        >
 
                         <v-otp-input v-model="value" />
                       </v-col>
@@ -937,15 +939,13 @@ import { defineComponent } from 'vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import Toast from 'primevue/toast'
-import InputOtp from 'primevue/inputotp'
 
 export default defineComponent({
   components: {
     RegisterCompanyModal,
     JoinCompanyModal,
     VueDatePicker,
-    Toast,
-    InputOtp
+    Toast
   },
   data: () => ({
     localUrl: 'http://localhost:3000/',

@@ -35,6 +35,7 @@ import TaskCenter from '@/views/home/jobs/TaskCenter.vue'
 import ClientFeedback from '@/views/home/clients/ClientFeedback.vue'
 import ReportView from '@/views/home/inventory/ReportView.vue'
 import MessagesView from '@/views/notfications/MessagesView.vue'
+import StockTakeManagementView from '@/views/home/inventory/StockTakeManagementView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -279,6 +280,11 @@ const router = createRouter({
       path: '/messages',
       name: 'messages',
       component: MessagesView
+    },
+    {
+      path: '/stock-take',
+      name: 'stock-take',
+      component: StockTakeManagementView
     }
   ]
 })

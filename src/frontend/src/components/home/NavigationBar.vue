@@ -42,7 +42,7 @@ const inventorySubItems = ref([
   {
     title: 'Inventory Stock Take',
     icon: 'fa: fa-solid fa-chart-line',
-    routeName: '404'
+    routeName: 'stock-take'
   }
 ])
 

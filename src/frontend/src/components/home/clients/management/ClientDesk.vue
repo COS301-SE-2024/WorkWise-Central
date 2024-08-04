@@ -146,6 +146,8 @@ export default defineComponent({
     isDarkMode: Boolean
   },
   data: () => ({
+    localUrl: 'http://localhost:3000/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     dummy: '',
     selectedItem: {},
     windowWidth: window.innerWidth,

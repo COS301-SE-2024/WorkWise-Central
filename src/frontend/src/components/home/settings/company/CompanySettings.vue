@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import AppMenu from 'primevue/menu'
+
 import EditCompany from './EditCompany.vue'
 import EditRoles from './EditRoles.vue'
 import EditStructure from './EditStructure.vue'
@@ -75,7 +75,6 @@ export default defineComponent({
     }
   },
   components: {
-    AppMenu,
     EditCompany,
     EditRoles,
     EditStructure
