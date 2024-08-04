@@ -23,6 +23,8 @@ import {
 } from './entities/job-tag.entity';
 import { JobTagRepository } from './job-tag.repository';
 import { JobStatus, JobStatusSchema } from './entities/job-status.entity';
+import { InventoryModule } from 'src/inventory/inventory.module';
+import { InventoryService } from 'src/inventory/inventory.service';
 
 @Module({
   imports: [

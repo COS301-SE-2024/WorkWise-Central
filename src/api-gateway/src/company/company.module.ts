@@ -20,6 +20,7 @@ import { FileModule } from '../file/file.module';
 import { FileService } from '../file/file.service';
 import { InventoryModule } from 'src/inventory/inventory.module';
 import { InventoryService } from 'src/inventory/inventory.service';
+import { EmployeeRepository } from 'src/employee/employee.repository';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { InventoryService } from 'src/inventory/inventory.service';
     JwtService,
     FileService,
     InventoryService,
+    EmployeeRepository,
   ],
   exports: [CompanyService, CompanyRepository, MongooseModule],
 })

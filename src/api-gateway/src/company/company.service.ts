@@ -346,7 +346,7 @@ export class CompanyService {
       }
     }
     const emp = await this.employeeService.findById(empId);
-    const role = await this.roleService.findById(emp.roleId);
+    const role = await this.roleService.findById(emp.role.roleId);
 
     if (role.roleName !== 'Owner') {
       throw new UnauthorizedException('Only the owner can perform this action');
@@ -542,7 +542,7 @@ export class CompanyService {
     const emp = await this.employeeService.findById(
       deleteEmployee.employeeToDeleteId,
     );
-    const role = await this.roleService.findById(emp.roleId);
+    const role = await this.roleService.findById(emp.role.roleId);
 
     if (role.roleName !== 'Owner') {
       throw new UnauthorizedException('Only the owner can perform this action');
