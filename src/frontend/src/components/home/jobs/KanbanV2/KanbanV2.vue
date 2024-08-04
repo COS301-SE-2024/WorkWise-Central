@@ -398,6 +398,7 @@
 import type { JobCardDataFormat, Column } from '../types'
 import '@mdi/font/css/materialdesignicons.css'
 import JBC from '../management/ManagerJobCard.vue'
+import axios from 'axios'
 
 export default {
   components: {
@@ -405,6 +406,8 @@ export default {
   },
   data() {
     return {
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       delete_all_jobs_dialog: false,
       add_column_dialog: false,
       delete_column_dialog: false,
@@ -716,6 +719,55 @@ export default {
       })
       console.log(this.columns[0].cards.length)
     },
+    async loadJobs() {
+      console.log('load jobs request')
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const loaded_tags_response = await axios.get(
+          apiURL + `job/all/company/detailed/${localStorage['currentCompany']}`,
+          config
+        )
+        let valid_data = []
+        let loaded_tags_res = loaded_tags_response.data.data
+        for (let i = 0; i < loaded_tags_res.length; i++) {
+          if (loaded_tags_res[i].priorityTag === undefined) continue
+          valid_data.push(loaded_tags_res[i])
+        }
+
+        for (let i = 0; i < valid_data.length; i++) {
+          const status_res = await axios.get(apiURL + `job/status/${valid_data[i].status}`, config)
+
+          this.starting_cards.push({
+            jobId: '',
+            heading: '',
+            jobDescription: 'Repainting the office walls with new colors.',
+            startDate: '2024-07-06',
+            endDate: '2024-07-08',
+            status: 'Todo',
+            clientName: 'Wayne Enterprises',
+            street: '300 Industrial Rd',
+            suburb: 'Tech Park',
+            city: 'Metropolis',
+            postalCode: '23456',
+            imagesTaken: [],
+            inventoryUsed: ['Paint', 'Brushes', 'Rollers'],
+            taskList: ['Prepare walls', 'Apply primer', 'Paint walls'],
+            comments: ['Use non-toxic paint', 'Ensure even coverage'],
+            priority: 'Low',
+            tags: ['Painting', 'Office', 'Commercial']
+          })
+        }
+        console.log(valid_data)
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
+    },
     loadCardsInRespectiveColumns(card: JobCardDataFormat, column: Column) {
       column.cards.push(card)
     },
@@ -770,10 +822,23 @@ export default {
 
         return tracker1 - tracker2
       })
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
   },
   mounted() {
     this.loading(this.starting_cards)
+    this.loadJobs()
   }
 }
 </script>
