@@ -4,6 +4,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -57,10 +58,6 @@ export class AdminService {
     requestToJoin: UserJoinRequestDto,
   ) {
     //Validation Section
-    /*    if (userId.toString() !== requestToJoin.requestingUserId.toString()) {
-      throw new BadRequestException('Inconsistent UserId in JWT and Request');
-    }*/
-
     if (!(await this.usersService.userIdExists(userId))) {
       throw new BadRequestException('userId Invalid');
     }
@@ -91,11 +88,53 @@ export class AdminService {
     }
 
     //
-    const newRequest = new UserJoinRequest({
-      userToJoin: userId,
-      companyId: requestToJoin.companyId,
+    const company = await this.companyService.getCompanyById(
+      requestToJoin.companyId,
+    );
+    const desiredRole = requestToJoin.roleId
+      ? await this.roleService.findById(requestToJoin.roleId)
+      : await this.roleService.findOneInCompany('Worker', company._id);
+
+    if (desiredRole == null) {
+      throw new InternalServerErrorException('RoleId Invalid');
+    } else {
+      console.log('Role:', desiredRole);
+    }
+
+    const newRequest = new UserJoinRequest(
+      company._id,
+      desiredRole._id,
+      userId,
+      company.name,
+      desiredRole.roleName,
+    );
+    const savedReq = await this.adminRepository.saveRequest(newRequest);
+
+    const employees = await this.employeeService.findAllInCompany(
+      requestToJoin.companyId,
+    );
+    //TODO: If they have company settings permissions
+    //employees = employees.filter((x) => {x.permissionSuite.includes('can edit company')})
+    const empIds: Types.ObjectId[] = [];
+    for (const employee of employees) {
+      empIds.push(employee._id);
+    }
+
+    //Get needed information for message
+    const user = await this.usersService.getUserById(userId);
+
+    this.notificationService.create({
+      recipientIds: empIds,
+      message: {
+        title: `New Request to join ${company.name}`,
+        body: `${user.personalInfo.firstName} ${user.personalInfo.surname} would like to join ${company.name},
+         in the role of ${desiredRole.roleName}`,
+        data: {
+          type: 'requestToJoin',
+        },
+      },
     });
-    return await this.adminRepository.saveRequest(newRequest);
+    return savedReq;
   }
 
   async createInvite(
@@ -366,7 +405,10 @@ export class AdminService {
       const roleName = userRole.roleName;
       await this.notificationService.createNotificationsFromUser({
         //THIS IS A MOCK
-        message: `Congratulations, ${fName} ${lName}! You have been accepted into ${companyName} in the role: ${roleName}`,
+        message: {
+          title: 'Congrats',
+          body: `Congratulations, ${fName} ${lName}! You have been accepted into ${companyName} in the role: ${roleName}`,
+        },
         recipientIds: [acceptRequestDto.userToJoinId],
       });
       //remove request
@@ -383,7 +425,10 @@ export class AdminService {
       //Reject and delete request
       await this.notificationService.createNotificationsFromUser({
         //THIS IS A MOCK
-        message: `Good day, ${fName} ${lName}. You have unfortunately been rejected from ${companyName}.`,
+        message: {
+          title: 'Rejection',
+          body: `Good day, ${fName} ${lName}. You have unfortunately been rejected from ${companyName}.`,
+        },
         recipientIds: [acceptRequestDto.userToJoinId],
       });
       await this.adminRepository.rejectRequest(
