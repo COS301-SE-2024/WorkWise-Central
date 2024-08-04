@@ -3,6 +3,7 @@
     v-model="clientDialog"
     max-width="600"
     :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :opacity="0"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
