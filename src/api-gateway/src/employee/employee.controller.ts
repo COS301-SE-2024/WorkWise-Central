@@ -114,13 +114,17 @@ export class EmployeeController {
     @Param('companyId') companyId: Types.ObjectId,
     @Body() body: { currentEmployeeId: Types.ObjectId },
   ) {
+    console.log('In findAllInCompanyDetailed');
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
     );
+    console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all employees')) {
       let data;
       try {
+        console.log('In try block');
         data = await this.employeeService.detailedFindAllInCompany(companyId);
+        console.log('data', data);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
@@ -173,6 +177,7 @@ export class EmployeeController {
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
     );
+    console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all employees')) {
       let data;
       try {
@@ -276,6 +281,7 @@ export class EmployeeController {
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
     );
+    console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all employees')) {
       const data = await this.employeeService.findById(id);
       return { data: data };

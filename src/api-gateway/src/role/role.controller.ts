@@ -54,21 +54,7 @@ export class RoleController {
   hello() {
     return { message: 'Refer to /documentation for details on the API' };
   }
-
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT')
-  @ApiInternalServerErrorResponse({
-    type: HttpException,
-    status: HttpStatus.NO_CONTENT,
-  })
-  @ApiOperation({
-    summary: `Get all ${className} instances`,
-    description: `Returns all ${className} instances in the database.`,
-  })
-  @ApiOkResponse({
-    type: RoleListResponseDto,
-    description: `An array of mongodb objects of the ${className} class.`,
-  })
+  //********Endpoints for test purposes - Start**********/
   @Get('/all')
   async findAll() {
     const data = await this.roleService.findAll();
@@ -78,6 +64,18 @@ export class RoleController {
     return { data: data };
   }
 
+  @Get('/createDefault/:id')
+  async createDefault(@Param('id') id: Types.ObjectId) {
+    let data;
+    try {
+      console.log('id', id);
+      data = await this.roleService.createDefaultRoles(id);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
+  }
+  //********Endpoints for test purposes - End**********/
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({

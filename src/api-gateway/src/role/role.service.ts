@@ -138,7 +138,9 @@ export class RoleService {
   }
 
   async create(createRoleDto: CreateRoleDto) {
+    console.log('Creating role');
     const validation = await this.validateCreateRole(createRoleDto);
+    console.log('Validation done. Validation: ', validation);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
@@ -253,6 +255,7 @@ export class RoleService {
   }
 
   async createDefaultRoles(companyId: Types.ObjectId) {
+    console.log('Creating default roles');
     // Owner role
     const ownerRoleDto = new CreateRoleDto();
     ownerRoleDto.companyId = companyId;
@@ -261,10 +264,15 @@ export class RoleService {
 
     await this.create(ownerRoleDto);
 
+    console.log('Owner role created');
+
     // Admin role
     const adminRoleDto = new CreateRoleDto();
+    console.log('checkpoint 1');
     adminRoleDto.companyId = companyId;
+    console.log('checkpoint 2');
     adminRoleDto.roleName = 'Admin';
+    console.log('checkpoint 3');
     adminRoleDto.permissionSuite.push('view all employees');
     adminRoleDto.permissionSuite.push('edit all employees');
     adminRoleDto.permissionSuite.push('add new employees');
@@ -278,9 +286,13 @@ export class RoleService {
     adminRoleDto.permissionSuite.push('add a new clients');
     adminRoleDto.permissionSuite.push('remove any clients');
     adminRoleDto.permissionSuite.push('company settings');
+    console.log('checkpoint 4');
 
     let newRole = await this.create(adminRoleDto);
+    console.log('checkpoint 5');
     await this.roleRepository.save(newRole);
+
+    console.log('Admin role created');
 
     // Foreman
     const foremanRoleDto = new CreateRoleDto();
@@ -306,6 +318,7 @@ export class RoleService {
     newRole = await this.create(foremanRoleDto);
     await this.roleRepository.save(newRole);
 
+    console.log('Foreman role created');
     // Team Leader
     const teamRoleDto = new CreateRoleDto();
     teamRoleDto.companyId = companyId;
@@ -320,6 +333,7 @@ export class RoleService {
     newRole = await this.create(teamRoleDto);
     await this.roleRepository.save(newRole);
 
+    console.log('Team leader role created');
     // Inventory manager
     const inventoryRoleDto = new CreateRoleDto();
     inventoryRoleDto.companyId = companyId;
@@ -333,6 +347,7 @@ export class RoleService {
     newRole = await this.create(inventoryRoleDto);
     await this.roleRepository.save(newRole);
 
+    console.log('Inventory manager role created');
     // Worker
     const workerRoleDto = new CreateRoleDto();
     workerRoleDto.companyId = companyId;
@@ -344,6 +359,7 @@ export class RoleService {
     newRole = await this.create(workerRoleDto);
     await this.roleRepository.save(newRole);
 
+    console.log('Worker role created');
     // Default role
     const defaultRoleDto = new CreateRoleDto();
     defaultRoleDto.companyId = companyId;
@@ -354,5 +370,6 @@ export class RoleService {
 
     newRole = await this.create(defaultRoleDto);
     await this.roleRepository.save(newRole);
+    console.log('Worker role created');
   }
 }

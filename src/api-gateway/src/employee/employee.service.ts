@@ -213,7 +213,6 @@ export class EmployeeService {
     }
     const employees: any =
       await this.employeeRepository.DetailedFindAllInCompany(companyId, [
-        'roleId',
         'userId',
       ]);
 
@@ -226,7 +225,6 @@ export class EmployeeService {
 
   async detailedFindById(id: Types.ObjectId) {
     const employee: any = await this.employeeRepository.DetailedFindById(id, [
-      'roleId',
       'userId',
     ]);
 
