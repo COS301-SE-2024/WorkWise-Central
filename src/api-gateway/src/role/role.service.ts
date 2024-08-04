@@ -89,28 +89,23 @@ export class RoleService {
     roleId: Types.ObjectId,
     updateRoleDto: UpdateRoleDto,
   ) {
-    //Getting the company id from the role
     const roleToBeUpdate = await this.findById(roleId);
-    const companyId = roleToBeUpdate.companyId;
-    const requestingEmployeeId =
-      await this.employeeService.getRequestingEmployeeFromCompanyId(
-        companyId,
-        userId,
-      );
-    //checking that the requesting employee's companyId is equal to the companyId of the role being update
-    if (requestingEmployeeId === null) {
-      return new ValidationResult(false, `CompanyId does not match`);
+    // const requestingEmployee =
+    //   await this.employeeService.findById(currentEmployeeId);
+    if (!roleToBeUpdate) {
+      return new ValidationResult(false, `Role to be updated not found`);
     }
-
-    const requestingEmployee =
-      await this.employeeService.findById(requestingEmployeeId);
-
-    //Checking that the requesting employee has appropriate permission
-    if (
-      !(await this.hasPermission('company settings', requestingEmployee.roleId))
-    ) {
-      return new ValidationResult(false, `Invalid permission`);
-    }
+    // if (!requestingEmployee) {
+    //   return new ValidationResult(false, `Current employee not found`);
+    // }
+    // //checking that the requesting employee's companyId is equal to the companyId of the role being update
+    // if (requestingEmployee.companyId !== roleToBeUpdate.companyId) {
+    //   return new ValidationResult(false, `CompanyId does not match`);
+    // }
+    // //Checking that the requesting employee has appropriate permission
+    // if (requestingEmployee.role.permissionSuite.includes('company settings')) {
+    //   return new ValidationResult(false, `Invalid permission`);
+    // }
 
     //Check if the permissions are valid
     for (const permission of updateRoleDto.permissionSuite) {
@@ -121,7 +116,12 @@ export class RoleService {
 
     //Check if the role already exists
     try {
-      if (await this.findOneInCompany(updateRoleDto.roleName, companyId)) {
+      if (
+        await this.findOneInCompany(
+          updateRoleDto.roleName,
+          roleToBeUpdate.companyId,
+        )
+      ) {
         return new ValidationResult(false, `Role already exists`);
       }
     } catch (error) {}
@@ -208,7 +208,7 @@ export class RoleService {
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
-
+    //Updating all the employees in the company with the new role
     return this.roleRepository.update(roleId, updateRoleDto);
   }
 
@@ -226,24 +226,6 @@ export class RoleService {
 
   async roleExists(id: Types.ObjectId): Promise<boolean> {
     return await this.roleRepository.roleExists(id);
-  }
-
-  async hasPermission(permission: string, employeeId: Types.ObjectId) {
-    //removing any excess spaces from the permission
-    permission = permission.trim();
-    // console.log('In hasPermission. Permission: .', permission, '.');
-    // console.log('id: ', employeeId);
-    const employee = await this.employeeService.findById(employeeId);
-    // console.log('employee: ', employee);
-    // console.log('employee.roleId: ', employee.roleId);
-    const role = await this.findById(employee.roleId);
-    // console.log('role: ', role);
-    if (role.permissionSuite == null) {
-      return false;
-    } else if (role.permissionSuite.includes(permission)) {
-      return true;
-    }
-    return false;
   }
 
   async roleExistsInCompany(
