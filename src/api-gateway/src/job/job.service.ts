@@ -9,13 +9,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
-import {
-  AddCommentDto,
-  RemoveCommentDto,
-  UpdateCommentDto,
-  UpdateJobDto,
-  UpdateStatus,
-} from './dto/update-job.dto';
+import { AddCommentDto, RemoveCommentDto, UpdateCommentDto, UpdateJobDto, UpdateStatus } from './dto/update-job.dto';
 import { FlattenMaps, Types } from 'mongoose';
 import { Comment, Job } from './entities/job.entity';
 import { UsersService } from '../users/users.service';
@@ -24,17 +18,9 @@ import { ClientService } from '../client/client.service';
 import { JobRepository } from './job.repository';
 import { EmployeeService } from '../employee/employee.service';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
-import {
-  JobAssignDto,
-  JobAssignGroupDto,
-  jobAssignResultDto,
-} from './dto/assign-job.dto';
+import { JobAssignDto, JobAssignGroupDto, jobAssignResultDto } from './dto/assign-job.dto';
 import { JobTagRepository } from './job-tag.repository';
-import {
-  CreatePriorityTagDto,
-  CreateStatusDto,
-  CreateTagDto,
-} from './dto/create-tag.dto';
+import { CreatePriorityTagDto, CreateStatusDto, CreateTagDto } from './dto/create-tag.dto';
 import { JobPriorityTag, JobTag } from './entities/job-tag.entity';
 import { DeleteStatusDto, DeleteTagDto } from './dto/edit-tag.dto';
 import { Employee } from '../employee/entities/employee.entity';
@@ -79,11 +65,9 @@ export class JobService {
     console.log('createdJob', createdJob);
     return await this.jobRepository.save(createdJob);
   }
-  async getJobById(
-    identifier: Types.ObjectId,
-  ): Promise<FlattenMaps<Job> & { _id: Types.ObjectId }> {
-    const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
-      await this.jobRepository.findById(identifier);
+
+  async getJobById(identifier: Types.ObjectId): Promise<FlattenMaps<Job> & { _id: Types.ObjectId }> {
+    const result: FlattenMaps<Job> & { _id: Types.ObjectId } = await this.jobRepository.findById(identifier);
 
     if (result == null) {
       throw new NotFoundException('Job not found');
@@ -101,33 +85,20 @@ export class JobService {
   }
 
   async jobExists(id: Types.ObjectId): Promise<boolean> {
-    const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
-      await this.jobRepository.exists(id);
+    const result: FlattenMaps<Job> & { _id: Types.ObjectId } = await this.jobRepository.exists(id);
     //console.log('jobExists -> ', result);
     return result != null;
   }
 
-  async jobExistsInCompany(
-    id: Types.ObjectId,
-    companyId: Types.ObjectId,
-  ): Promise<boolean> {
-    const result: FlattenMaps<Job> & { _id: Types.ObjectId } =
-      await this.jobRepository.existsInCompany(id, companyId);
+  async jobExistsInCompany(id: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
+    const result: FlattenMaps<Job> & { _id: Types.ObjectId } = await this.jobRepository.existsInCompany(id, companyId);
 
     console.log('jobExists -> ', result);
     return result != null;
   }
 
-  async update(
-    userId: Types.ObjectId,
-    id: Types.ObjectId,
-    updateJobDto: UpdateJobDto,
-  ) {
-    const inputValidated = await this.jobUpdateIsValid(
-      userId,
-      id,
-      updateJobDto,
-    );
+  async update(userId: Types.ObjectId, id: Types.ObjectId, updateJobDto: UpdateJobDto) {
+    const inputValidated = await this.jobUpdateIsValid(userId, id, updateJobDto);
     if (!inputValidated.isValid) {
       console.log(inputValidated.message);
       throw new ConflictException(inputValidated.message);
@@ -142,10 +113,7 @@ export class JobService {
     }
   }
 
-  async updateWithoutValidation(
-    jobId: Types.ObjectId,
-    updateJobDto: UpdateJobDto,
-  ) {
+  async updateWithoutValidation(jobId: Types.ObjectId, updateJobDto: UpdateJobDto) {
     try {
       const updated = await this.jobRepository.update(jobId, updateJobDto);
       console.log('updatedJob', updated);
@@ -170,10 +138,7 @@ export class JobService {
     }
 
     const exists = await this.employeeService.employeeExists(job.assignedBy);
-    const isInCompany = await this.companyService.employeeIsInCompany(
-      job.companyId,
-      job.assignedBy,
-    );
+    const isInCompany = await this.companyService.employeeIsInCompany(job.companyId, job.assignedBy);
     if (!isInCompany) {
       return new ValidationResult(false, 'AssignedBy is not in company');
     }
@@ -201,21 +166,14 @@ export class JobService {
     if (job.companyId) {
       const exists = await this.companyService.companyIdExists(job.companyId);
       if (!exists) {
-        return new ValidationResult(
-          false,
-          `Company: ${job.companyId} Not found`,
-        );
+        return new ValidationResult(false, `Company: ${job.companyId} Not found`);
       }
     }
 
     return new ValidationResult(true);
   }
 
-  async jobUpdateIsValid(
-    userId: Types.ObjectId,
-    jobId: Types.ObjectId,
-    job: UpdateJobDto,
-  ): Promise<ValidationResult> {
+  async jobUpdateIsValid(userId: Types.ObjectId, jobId: Types.ObjectId, job: UpdateJobDto): Promise<ValidationResult> {
     const jobInDb = await this.jobRepository.findOne(jobId);
     console.log(job);
     if (!jobInDb) {
@@ -234,10 +192,7 @@ export class JobService {
     }
 
     if (!userCanAccessJob) {
-      return new ValidationResult(
-        false,
-        'Assigned By is invalid or Employee is not in company',
-      );
+      return new ValidationResult(false, 'Assigned By is invalid or Employee is not in company');
     }
 
     if (job.assignedEmployees) {
@@ -267,15 +222,11 @@ export class JobService {
     }
     return await this.jobRepository.findAllInCompany(companyId);
   }
-
   async getAllJobsInCompanyWithoutValidation(companyId: Types.ObjectId) {
     return await this.jobRepository.findAllInCompany(companyId);
   }
 
-  async getAllDetailedJobsInCompany(
-    userId: Types.ObjectId,
-    companyId: Types.ObjectId,
-  ) {
+  async getAllDetailedJobsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
     //Basic Authentication
     //TODO: Add role-related rules if necessary
     if (!(await this.usersService.userIsInCompany(userId, companyId))) {
@@ -285,17 +236,12 @@ export class JobService {
     return await this.jobRepository.findAllInCompanyDetailed(companyId);
   }
 
-  async getAllJobsForUser(
-    userId: Types.ObjectId,
-  ): Promise<(FlattenMaps<Job> & { _id: Types.ObjectId })[]> {
+  async getAllJobsForUser(userId: Types.ObjectId): Promise<(FlattenMaps<Job> & { _id: Types.ObjectId })[]> {
     const user = await this.usersService.getUserById(userId);
     if (!user) throw new NotFoundException('User not found');
     const arrOfJobs: (FlattenMaps<Job> & { _id: Types.ObjectId })[] = [];
     for (const joinedCompany of user.joinedCompanies) {
-      const jobsForEmployee = await this.getAllJobsForEmployee(
-        userId,
-        joinedCompany.employeeId,
-      );
+      const jobsForEmployee = await this.getAllJobsForEmployee(userId, joinedCompany.employeeId);
       arrOfJobs.push.apply(jobsForEmployee);
     }
     return arrOfJobs; //TODO: Test
@@ -308,12 +254,7 @@ export class JobService {
     if (!(await this.usersService.userIdExists(userId))) {
       throw new NotFoundException('User not found');
     }
-    if (
-      !(await this.usersService.userIsInSameCompanyAsEmployee(
-        userId,
-        employeeId,
-      ))
-    ) {
+    if (!(await this.usersService.userIsInSameCompanyAsEmployee(userId, employeeId))) {
       throw new UnauthorizedException('User not in Same Company');
     }
 
@@ -327,12 +268,7 @@ export class JobService {
     if (!(await this.usersService.userIdExists(userId))) {
       throw new NotFoundException('User not found');
     }
-    if (
-      !(await this.usersService.userIsInSameCompanyAsEmployee(
-        userId,
-        employeeId,
-      ))
-    ) {
+    if (!(await this.usersService.userIsInSameCompanyAsEmployee(userId, employeeId))) {
       throw new UnauthorizedException('User not in Same Company');
     }
 
@@ -345,17 +281,22 @@ export class JobService {
 
     const job = await this.getJobById(jobAssignDto.jobId);
     if (!job) throw new NotFoundException('Job not found');
-    const alreadyAssigned = job.assignedEmployees.employeeIds.some(
-      (id) => id.toString() === jobAssignDto.employeeToAssignId.toString(),
-    );
-    if (alreadyAssigned) throw new ConflictException('Already Assigned');
+
+    console.log(job);
+
+    for (const employee of job.assignedEmployees.employeeIds) {
+      if (employee._id.toString() === jobAssignDto.employeeToAssignId.toString()) {
+        throw new ConflictException('Already Assigned');
+      } else {
+        console.log('looks good to me');
+      }
+    }
     /// Role-based stuff
     //TODO: Implement later
 
-    return await this.jobRepository.assignEmployee(
-      jobAssignDto.employeeToAssignId,
-      jobAssignDto.jobId,
-    );
+    await this.employeeService.update(jobAssignDto.employeeToAssignId._id, {});
+
+    return await this.jobRepository.assignEmployee(jobAssignDto.employeeToAssignId, jobAssignDto.jobId);
   }
 
   async unassignEmployee(userId: Types.ObjectId, jobAssignDto: JobAssignDto) {
@@ -365,30 +306,22 @@ export class JobService {
     const job = await this.getJobById(jobAssignDto.jobId);
     if (!job) throw new NotFoundException('Job not found');
     const alreadyAssigned = job.assignedEmployees.employeeIds.some(
-      (id) => id.toString() === jobAssignDto.employeeToAssignId.toString(),
+      (id) => id._id.toString() === jobAssignDto.employeeToAssignId.toString(),
     );
     if (!alreadyAssigned) throw new ConflictException('Employee Not Assigned');
     /// Role-based stuff
     //TODO: Implement later
 
-    return await this.jobRepository.unassignEmployee(
-      jobAssignDto.employeeToAssignId,
-      jobAssignDto.jobId,
-    );
+    return await this.jobRepository.unassignEmployee(jobAssignDto.employeeToAssignId, jobAssignDto.jobId);
   }
 
-  private async userIdMatchesEmployeeId(
-    userId: Types.ObjectId,
-    employeeId: Types.ObjectId,
-  ) {
+  private async userIdMatchesEmployeeId(userId: Types.ObjectId, employeeId: Types.ObjectId) {
     const userExists = await this.usersService.userIdExists(userId);
     if (!userExists) throw new NotFoundException('User not found');
 
-    const employee: FlattenMaps<Employee> & { _id: Types.ObjectId } =
-      await this.employeeService.findById(employeeId);
+    const employee: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeService.findById(employeeId);
     if (!employee) throw new NotFoundException('Employee not found');
-    if (employee.userId.toString() !== userId.toString())
-      throw new UnauthorizedException('Inconsistent userId');
+    if (employee.userId.toString() !== userId.toString()) throw new UnauthorizedException('Inconsistent userId');
   }
 
   async assignEmployees(
@@ -409,22 +342,15 @@ export class JobService {
     const total = jobAssignGroupDto.employeesToAssignIds.length;
 
     //remove duplicates
-    jobAssignGroupDto.employeesToAssignIds = [
-      ...new Set(jobAssignGroupDto.employeesToAssignIds),
-    ];
+    jobAssignGroupDto.employeesToAssignIds = [...new Set(jobAssignGroupDto.employeesToAssignIds)];
     let pass: number = 0;
 
     //const result = [];
     for (const employeeId of jobAssignGroupDto.employeesToAssignIds) {
-      const isInJob = job.assignedEmployees.employeeIds.some(
-        (e) => e.toString() === employeeId.toString(),
-      );
+      const isInJob = job.assignedEmployees.employeeIds.some((e) => e._id.toString() === employeeId.toString());
 
       if (!isInJob) {
-        await this.jobRepository.assignEmployee(
-          employeeId,
-          jobAssignGroupDto.jobId,
-        );
+        await this.jobRepository.assignEmployee(employeeId, jobAssignGroupDto.jobId);
         pass++;
       }
     }
@@ -434,10 +360,7 @@ export class JobService {
     });
   }
 
-  async unassignEmployees(
-    userId: Types.ObjectId,
-    jobAssignGroupDto: JobAssignGroupDto,
-  ) {
+  async unassignEmployees(userId: Types.ObjectId, jobAssignGroupDto: JobAssignGroupDto) {
     ///Validation
     await this.userIdMatchesEmployeeId(userId, jobAssignGroupDto.employeeId);
 
@@ -451,15 +374,10 @@ export class JobService {
     ///
 
     for (const employeeId of jobAssignGroupDto.employeesToAssignIds) {
-      const isInJob = job.assignedEmployees.employeeIds.some(
-        (e) => e.toString() === employeeId.toString(),
-      );
+      const isInJob = job.assignedEmployees.employeeIds.some((e) => e._id.toString() === employeeId.toString());
 
       if (isInJob) {
-        const result = await this.jobRepository.unassignEmployee(
-          employeeId,
-          jobAssignGroupDto.jobId,
-        );
+        const result = await this.jobRepository.unassignEmployee(employeeId, jobAssignGroupDto.jobId);
         console.log(result);
       }
     }
@@ -471,9 +389,7 @@ export class JobService {
     const user = await this.usersService.getUserById(userId);
     if (!user) throw new NotFoundException('User not found');
 
-    const isInCompany = user.joinedCompanies.some(
-      (x) => x.companyId.toString() === companyId.toString(),
-    );
+    const isInCompany = user.joinedCompanies.some((x) => x.companyId.toString() === companyId.toString());
     if (!isInCompany) throw new UnauthorizedException('User not in Company');
 
     const companyExists = await this.companyService.companyIdExists(companyId);
@@ -482,17 +398,12 @@ export class JobService {
     return this.jobTagRepository.findAllTagsInCompany(companyId);
   }
 
-  async getAllPriorityTagsInCompany(
-    userId: Types.ObjectId,
-    companyId: Types.ObjectId,
-  ) {
+  async getAllPriorityTagsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
     /// Validation
     const user = await this.usersService.getUserById(userId);
     if (!user) throw new NotFoundException('User not found');
 
-    const isInCompany = user.joinedCompanies.some(
-      (x) => x.companyId.toString() === companyId.toString(),
-    );
+    const isInCompany = user.joinedCompanies.some((x) => x.companyId.toString() === companyId.toString());
     if (!isInCompany) throw new UnauthorizedException('User not in Company');
 
     const companyExists = await this.companyService.companyIdExists(companyId);
@@ -501,28 +412,19 @@ export class JobService {
     return this.jobTagRepository.findAllPriorityTagsInCompany(companyId);
   }
 
-  async addJobTagToCompany(
-    userId: Types.ObjectId,
-    createTagDto: CreateTagDto,
-  ): Promise<boolean> {
+  async addJobTagToCompany(userId: Types.ObjectId, createTagDto: CreateTagDto): Promise<boolean> {
     /// Validation
     const user = await this.usersService.getUserById(userId);
     if (!user) throw new NotFoundException('User not found');
 
-    const isInCompany = user.joinedCompanies.some(
-      (x) => x.companyId.toString() === createTagDto.companyId.toString(),
-    );
+    const isInCompany = user.joinedCompanies.some((x) => x.companyId.toString() === createTagDto.companyId.toString());
     if (!isInCompany) throw new UnauthorizedException('User not in Company');
 
-    const companyExists = await this.companyService.companyIdExists(
-      createTagDto.companyId,
-    );
+    const companyExists = await this.companyService.companyIdExists(createTagDto.companyId);
     if (!companyExists) throw new NotFoundException('Company not found');
     ///
 
-    const allTags = await this.jobTagRepository.findAllTagsInCompany(
-      createTagDto.companyId,
-    );
+    const allTags = await this.jobTagRepository.findAllTagsInCompany(createTagDto.companyId);
     if (allTags.length > 0) {
       for (const tag of allTags) {
         if (ciEquals(createTagDto.label, tag.label)) {
@@ -531,11 +433,7 @@ export class JobService {
       }
     }
 
-    const newTag = new JobTag(
-      createTagDto.label,
-      createTagDto.colour,
-      createTagDto.companyId,
-    );
+    const newTag = new JobTag(createTagDto.label, createTagDto.colour, createTagDto.companyId);
     const savedDoc = await this.jobTagRepository.addJobTagToCompany(newTag);
     console.log(savedDoc);
     return savedDoc != null;
@@ -581,21 +479,15 @@ export class JobService {
     if (!user) throw new NotFoundException('User not found');
 
     const isInCompany = user.joinedCompanies.some(
-      (x) =>
-        x.companyId.toString() === createPriorityTagDto.companyId.toString(),
+      (x) => x.companyId.toString() === createPriorityTagDto.companyId.toString(),
     );
     if (!isInCompany) throw new UnauthorizedException('User not in Company');
 
-    const companyExists = await this.companyService.companyIdExists(
-      createPriorityTagDto.companyId,
-    );
+    const companyExists = await this.companyService.companyIdExists(createPriorityTagDto.companyId);
     if (!companyExists) throw new NotFoundException('Company not found');
     ///
 
-    const allPriorityTags =
-      await this.jobTagRepository.findAllPriorityTagsInCompany(
-        createPriorityTagDto.companyId,
-      );
+    const allPriorityTags = await this.jobTagRepository.findAllPriorityTagsInCompany(createPriorityTagDto.companyId);
     if (allPriorityTags.length > 0) {
       for (const tag of allPriorityTags) {
         if (ciEquals(createPriorityTagDto.label, tag.label)) {
@@ -610,59 +502,40 @@ export class JobService {
       createPriorityTagDto.colour,
       createPriorityTagDto.companyId,
     );
-    const savedDoc =
-      await this.jobTagRepository.addJobPriorityTagToCompany(newTag);
+    const savedDoc = await this.jobTagRepository.addJobPriorityTagToCompany(newTag);
     console.log(savedDoc);
     return savedDoc != null;
   }
 
-  async removeJobTagFromCompany(
-    userId: Types.ObjectId,
-    deleteTagDto: DeleteTagDto,
-  ) {
+  async removeJobTagFromCompany(userId: Types.ObjectId, deleteTagDto: DeleteTagDto) {
     /// Validation
     const user = await this.usersService.getUserById(userId);
     if (!user) throw new NotFoundException('User not found');
 
-    const isInCompany = user.joinedCompanies.some(
-      (x) => x.companyId.toString() === deleteTagDto.companyId.toString(),
-    );
+    const isInCompany = user.joinedCompanies.some((x) => x.companyId.toString() === deleteTagDto.companyId.toString());
     if (!isInCompany) throw new UnauthorizedException('User not in Company');
 
-    const companyExists = await this.companyService.companyIdExists(
-      deleteTagDto.companyId,
-    );
+    const companyExists = await this.companyService.companyIdExists(deleteTagDto.companyId);
     if (!companyExists) throw new NotFoundException('Company not found');
     ///
     //TODO: Cascade delete
-    const deleteResult = await this.jobTagRepository.deleteJobTag(
-      deleteTagDto.tagId,
-    );
+    const deleteResult = await this.jobTagRepository.deleteJobTag(deleteTagDto.tagId);
     return deleteResult.acknowledged;
   }
 
-  async removeJobPriorityTagFromCompany(
-    userId: Types.ObjectId,
-    deleteTagDto: DeleteTagDto,
-  ) {
+  async removeJobPriorityTagFromCompany(userId: Types.ObjectId, deleteTagDto: DeleteTagDto) {
     /// Validation
     const user = await this.usersService.getUserById(userId);
     if (!user) throw new NotFoundException('User not found');
 
-    const isInCompany = user.joinedCompanies.some(
-      (x) => x.companyId.toString() === deleteTagDto.companyId.toString(),
-    );
+    const isInCompany = user.joinedCompanies.some((x) => x.companyId.toString() === deleteTagDto.companyId.toString());
     if (!isInCompany) throw new UnauthorizedException('User not in Company');
 
-    const companyExists = await this.companyService.companyIdExists(
-      deleteTagDto.companyId,
-    );
+    const companyExists = await this.companyService.companyIdExists(deleteTagDto.companyId);
     if (!companyExists) throw new NotFoundException('Company not found');
     ///
     //TODO: Cascade delete
-    const deleteResult = await this.jobTagRepository.deletePriorityTag(
-      deleteTagDto.tagId,
-    );
+    const deleteResult = await this.jobTagRepository.deletePriorityTag(deleteTagDto.tagId);
     return deleteResult.acknowledged;
   }
 
@@ -672,45 +545,28 @@ export class JobService {
     const jobExists = await this.jobRepository.exists(addCommentDto.jobId);
     if (!jobExists) throw new NotFoundException('Job not found');
 
-    const comment = new Comment(
-      addCommentDto.employeeId,
-      addCommentDto.newComment,
-      false,
-      new Date(),
-    );
+    const comment = new Comment(addCommentDto.employeeId, addCommentDto.newComment, false, new Date());
 
     return this.jobRepository.addComment(comment, addCommentDto.jobId);
   }
 
-  async removeCommentFromJob(
-    userId: Types.ObjectId,
-    removeCommentDto: RemoveCommentDto,
-  ) {
+  async removeCommentFromJob(userId: Types.ObjectId, removeCommentDto: RemoveCommentDto) {
     await this.userIdMatchesEmployeeId(userId, removeCommentDto.employeeId);
 
     const jobExists = await this.jobRepository.exists(removeCommentDto.jobId);
     if (!jobExists) throw new NotFoundException('Job not found');
 
-    return this.jobRepository.removeComment(
-      removeCommentDto.jobId,
-      removeCommentDto.commentId,
-    );
+    return this.jobRepository.removeComment(removeCommentDto.jobId, removeCommentDto.commentId);
   }
 
-  async editCommentInJob(
-    userId: Types.ObjectId,
-    updateCommentDto: UpdateCommentDto,
-  ) {
+  async editCommentInJob(userId: Types.ObjectId, updateCommentDto: UpdateCommentDto) {
     await this.userIdMatchesEmployeeId(userId, updateCommentDto.employeeId);
 
     const job = await this.getJobById(updateCommentDto.jobId);
     if (!job) throw new InternalServerErrorException('JobId not found');
 
-    const commentExists = job.comments.some(
-      (c) => c._id.toString() === updateCommentDto.commentId.toString(),
-    );
-    if (!commentExists)
-      throw new InternalServerErrorException('CommentId not found');
+    const commentExists = job.comments.some((c) => c._id.toString() === updateCommentDto.commentId.toString());
+    if (!commentExists) throw new InternalServerErrorException('CommentId not found');
 
     const updateResult = await this.jobRepository.editComment(
       updateCommentDto.jobId,
@@ -723,21 +579,20 @@ export class JobService {
 
   ///STATUS
   async getStatusById(userId: Types.ObjectId, statusId: Types.ObjectId) {
-    if (!(await this.usersService.userIdExists(userId)))
-      throw new NotFoundException('User not found');
+    if (!(await this.usersService.userIdExists(userId))) throw new NotFoundException('User not found');
     return this.jobTagRepository.findStatusById(statusId);
+  }
+
+  async getStatusByLabel(lbl: string) {
+    return this.jobTagRepository.findStatusByLabel(lbl);
   }
 
   private async getStatusByIdWithoutValidation(statusId: Types.ObjectId) {
     return this.jobTagRepository.findStatusById(statusId);
   }
 
-  async findAllStatusesInCompany(
-    userId: Types.ObjectId,
-    companyId: Types.ObjectId,
-  ) {
-    if (!(await this.usersService.userIdExists(userId)))
-      throw new NotFoundException('User not found');
+  async findAllStatusesInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
+    if (!(await this.usersService.userIdExists(userId))) throw new NotFoundException('User not found');
     return this.jobTagRepository.findAllStatusesInCompany(companyId);
   }
 
@@ -748,13 +603,18 @@ export class JobService {
     const archive = new JobStatus('Archive', '#b3b0b0', companyId);
     const arr: JobStatus[] = [noStatus, archive];
     for (const js of arr) {
-      const exists = await this.jobTagRepository.statusNameExists(js.status);
-      if (exists)
-        throw new InternalServerErrorException(
-          `Job Status already exists: ${js.status}`,
-        );
+      const exists = await this.statusNameExistsInCompany(js.status, companyId);
+      if (exists) throw new InternalServerErrorException(`Job Status already exists: ${js.status}`);
     }
     return await this.jobTagRepository.createDefaultStatusesInCompany(arr);
+  }
+
+  async statusNameExistsInCompany(status: string, companyId: Types.ObjectId) {
+    const allStatus = await this.jobTagRepository.findAllStatusesInCompany(companyId);
+    for (const stat of allStatus) {
+      if (ciEquals(stat.status, status)) return true;
+    }
+    return false;
   }
 
   async createStatus(userId: Types.ObjectId, createStatusDto: CreateStatusDto) {
@@ -762,39 +622,23 @@ export class JobService {
     /// User exists, company exists, check for duplicates
     const userExists = await this.usersService.userIdExists(userId);
     if (!userExists) throw new NotFoundException('User not found');
-    const companyExists = await this.companyService.companyIdExists(
-      createStatusDto.companyId,
-    );
+    const companyExists = await this.companyService.companyIdExists(createStatusDto.companyId);
     if (!companyExists) throw new NotFoundException('Company not found');
-    const exists = await this.jobTagRepository.statusNameExists(
-      createStatusDto.status,
-    );
-    if (exists)
-      throw new InternalServerErrorException(
-        `Job Status already exists: ${createStatusDto.status}`,
-      );
+    const exists = await this.statusNameExistsInCompany(createStatusDto.status, createStatusDto.companyId);
+    if (exists) throw new InternalServerErrorException(`Job Status already exists: ${createStatusDto.status}`);
 
     ///
     const protectedStatuses = ['No status', 'Archive'];
     for (const protectedStatus of protectedStatuses) {
       if (ciEquals(protectedStatus, createStatusDto.status)) {
-        throw new ConflictException(
-          'You cannot alter "No status" and "Archive"',
-        );
+        throw new ConflictException('You cannot alter "No status" and "Archive"');
       }
     }
 
-    const newStatus = new JobStatus(
-      createStatusDto.status,
-      createStatusDto.colour,
-      createStatusDto.companyId,
-    );
+    const newStatus = new JobStatus(createStatusDto.status, createStatusDto.colour, createStatusDto.companyId);
     const result = await this.jobTagRepository.createStatus(newStatus);
     //Update the company Array for kanban
-    await this.companyService.addJobStatus(
-      createStatusDto.companyId,
-      result._id,
-    );
+    await this.companyService.addJobStatus(createStatusDto.companyId, result._id);
     return result;
   }
 
@@ -814,9 +658,7 @@ export class JobService {
     if (status == null) throw new NotFoundException('Status not found');
     for (const protectedStatus of protectedStatuses) {
       if (ciEquals(protectedStatus, status.status)) {
-        throw new ConflictException(
-          'You cannot alter "No status" and "Archive"',
-        );
+        throw new ConflictException('You cannot alter "No status" and "Archive"');
       }
     }
     return await this.jobTagRepository.updateStatus(statusId, updateStatus);
@@ -826,24 +668,34 @@ export class JobService {
     const userExists = await this.usersService.userIdExists(userId);
     if (!userExists) throw new NotFoundException('User not found');
 
+    const employee = await this.employeeService.findById(deleteStatusDto.employeeId);
+    if (employee == null) throw new NotFoundException('Employee not found');
+
+    const companyExists = await this.companyService.companyIdExists(employee.companyId);
+    if (!companyExists) throw new NotFoundException('Company not found');
     // Role stuff
 
     const protectedStatuses = ['No status', 'Archive'];
-    const status = await this.getStatusByIdWithoutValidation(
-      deleteStatusDto.statusId,
-    );
+    const status = await this.getStatusByIdWithoutValidation(deleteStatusDto.statusId);
     if (status == null) throw new NotFoundException('Status not found');
     for (const protectedStatus of protectedStatuses) {
       if (ciEquals(protectedStatus, status.status)) {
-        throw new ConflictException(
-          'You cannot alter "No status" and "Archive"',
-        );
+        throw new ConflictException('You cannot alter "No status" and "Archive"');
       }
     }
 
-    return await this.jobTagRepository.deleteStatus(
+    const resultOfDelete = await this.jobTagRepository.deleteStatus(
       deleteStatusDto.statusId,
       deleteStatusDto.companyId,
     );
+    const allJobsInCompany = await this.getAllJobsInCompanyWithoutValidation(employee.companyId);
+    const noStatus = await this.getStatusByLabel('No Status');
+    const newStatus: Types.ObjectId = noStatus ? noStatus._id : null;
+    for (const job of allJobsInCompany) {
+      await this.updateWithoutValidation(job._id, {
+        status: newStatus,
+      });
+    }
+    return resultOfDelete;
   }
 }

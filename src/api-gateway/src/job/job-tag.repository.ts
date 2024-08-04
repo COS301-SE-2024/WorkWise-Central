@@ -102,12 +102,6 @@ export class JobTagRepository {
     }
   }
 
-  async addJobStatusToCompany(jobStatus: JobStatus) {
-    //TODO: Add endpoint
-    const jobTagModel = new this.jobStatusModel(jobStatus);
-    return await jobTagModel.save();
-  }
-
   async updateStatus(statusId: Types.ObjectId, updateStatus: UpdateStatus) {
     return await this.jobStatusModel
       .findOneAndUpdate(
@@ -126,11 +120,5 @@ export class JobTagRepository {
       $and: [{ _id: statusId }, { companyId: companyId }],
     });
     return deleteResult.acknowledged;
-  }
-
-  async removeJobStatus(tagId: Types.ObjectId) {
-    const deleteResult = await this.jobStatusModel.deleteOne({ _id: tagId }).exec();
-    console.log(deleteResult);
-    return deleteResult;
   }
 }
