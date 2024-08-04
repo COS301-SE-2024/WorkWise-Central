@@ -112,15 +112,26 @@ export class CompanyController {
   @ApiBody({ type: AddUserToCompanyDto })
   @ApiOkResponse({ type: BooleanResponseDto })
   @Post('/add')
-  async addEmployee(@Body() addUserDto: AddUserToCompanyDto) {
-    const arr = [addUserDto.adminId, addUserDto.currentCompany];
-    if (addUserDto.roleId) arr.push(addUserDto.roleId);
-    validateObjectIds(arr);
+  async addEmployee(
+    @Body()
+    body: {
+      currentEmployeeId: Types.ObjectId;
+      addUserDto: AddUserToCompanyDto;
+    },
+  ) {
+    const currentEmployee = await this.employeeService.findById(
+      body.currentEmployeeId,
+    );
+    if (currentEmployee.role.permissionSuite.includes('add new employees')) {
+      const arr = [body.addUserDto.adminId, body.addUserDto.currentCompany];
+      if (body.addUserDto.roleId) arr.push(body.addUserDto.roleId);
+      validateObjectIds(arr);
 
-    try {
-      return { data: await this.companyService.addEmployee(addUserDto) };
-    } catch (Error) {
-      throw new HttpException('Internal server error', HttpStatus.CONFLICT);
+      try {
+        return { data: await this.companyService.addEmployee(body.addUserDto) };
+      } catch (Error) {
+        throw new HttpException('Internal server error', HttpStatus.CONFLICT);
+      }
     }
   }
 
@@ -175,16 +186,30 @@ export class CompanyController {
     description: `The _id attribute of the ${className}`,
   })
   @Get('/all/employees/:cid')
-  async getAllEmployeesInCompany(@Param('cid') cid: string) {
-    validateObjectId(cid);
-    const objId = new Types.ObjectId(cid);
-    try {
-      return { data: await this.companyService.getAllEmployees(objId) };
-    } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+  async getAllEmployeesInCompany(
+    @Param('cid') cid: string,
+    @Body() body: { currentEmployeeId: Types.ObjectId },
+  ) {
+    const currentEmployee = await this.employeeService.findById(
+      body.currentEmployeeId,
+    );
+    if (currentEmployee.role.permissionSuite.includes('view all employees')) {
+      validateObjectId(cid);
+      const objId = new Types.ObjectId(cid);
+      try {
+        return { data: await this.companyService.getAllEmployees(objId) };
+      } catch (Error) {
+        throw new HttpException(
+          'Something went wrong',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    } else if (
+      currentEmployee.role.permissionSuite.includes('view employees under me')
+    ) {
+      //TODO
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -275,7 +300,7 @@ export class CompanyController {
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
     );
-    if (currentEmployee.role.permissionSuite.includes('view all employees')) {
+    if (currentEmployee.role.permissionSuite.includes('company settings')) {
       try {
         validateObjectId(cid);
         const userId = extractUserId(this.jwtService, headers);
