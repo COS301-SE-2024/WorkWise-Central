@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 import { IsArray, IsMongoId, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { UserInfo } from '../entities/employee.entity';
+import { roleObject, UserInfo } from '../entities/employee.entity';
 
 export class UpdateEmployeeUserInfoDto {
   @IsString()
@@ -24,27 +24,10 @@ export class UpdateEmployeeUserInfoDto {
   @IsOptional()
   displayImage?: string;
 }
-
-export class UpdateEmployeeRole {
-  @IsMongoId()
-  @IsString()
-  @IsOptional()
-  roleId?: Types.ObjectId;
-
-  @IsString()
-  @IsOptional()
-  @IsArray()
-  permissionSuite?: string[];
-
-  @IsString()
-  @IsOptional()
-  name?: string;
-}
-
 export class InternalUpdateEmployeeDto {
   @IsMongoId()
   @IsOptional()
-  role?: UpdateEmployeeRole;
+  role?: roleObject;
 
   @IsArray()
   @IsMongoId({ each: true })

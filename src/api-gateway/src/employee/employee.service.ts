@@ -16,6 +16,7 @@ import { TeamService } from '../team/team.service';
 import { EmployeeRepository } from './employee.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { ClientService } from 'src/client/client.service';
+import { UpdateRoleDto } from 'src/role/dto/update-role.dto';
 
 @Injectable()
 export class EmployeeService {
@@ -189,7 +190,7 @@ export class EmployeeService {
       newEmployee.role.roleId = role._id;
       console.log('checkpoint');
       newEmployee.role.permissionSuite = role.permissionSuite;
-      newEmployee.role.name = role.roleName;
+      newEmployee.role.roleName = role.roleName;
       console.log('role added to newEmployee');
     } else {
       console.log('in else');
@@ -374,7 +375,7 @@ export class EmployeeService {
       dto.role.roleId = updateEmployeeDto.roleId;
       const role = await this.roleService.findById(dto.role.roleId);
       dto.role.permissionSuite = role.permissionSuite;
-      dto.role.name = role.roleName;
+      dto.role.roleName = role.roleName;
     }
 
     const previousObject = this.employeeRepository.update(employeeId, dto);
@@ -501,7 +502,7 @@ export class EmployeeService {
       dto.role.roleId = updateEmployeeDto.roleId;
       const role = await this.roleService.findById(dto.role.roleId);
       dto.role.permissionSuite = role.permissionSuite;
-      dto.role.name = role.roleName;
+      dto.role.roleName = role.roleName;
     }
 
     const previousObject = this.employeeRepository.update(employeeId, dto);
@@ -524,14 +525,28 @@ export class EmployeeService {
     return this.employeeRepository.getCompanyIdFromEmployee(employeeId);
   }
 
-  async updateRole(roleId: Types.ObjectId, newPermissionSuite: string[]) {
+  async updateRole(roleId: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
     console.log('In updateRole service');
+    console.log('updateRoleDto: ', updateRoleDto);
     const role = await this.roleService.findById(roleId);
+    console.log('role: ', role);
     const newRole = new roleObject();
-    newRole.roleId = roleId;
-    newRole.permissionSuite = newPermissionSuite;
-    console.log('roleId: ', roleId);
-    console.log('role.companyId: ', role.companyId);
+    newRole.roleId = new Types.ObjectId(roleId);
+    if (updateRoleDto.permissionSuite) {
+      console.log('In if updateRoleDto.permissionSuite');
+      newRole.permissionSuite = updateRoleDto.permissionSuite;
+    } else {
+      console.log('in else');
+      newRole.permissionSuite = role.permissionSuite;
+    }
+
+    if (updateRoleDto.roleName) {
+      console.log('In if updateRoleDto.roleName');
+      newRole.roleName = updateRoleDto.roleName;
+    } else {
+      console.log('In else');
+      newRole.roleName = role.roleName;
+    }
     console.log('newRole: ', newRole);
     return await this.employeeRepository.updateRole(
       roleId,

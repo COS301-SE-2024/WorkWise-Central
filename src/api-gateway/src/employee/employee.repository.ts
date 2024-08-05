@@ -333,6 +333,8 @@ export class EmployeeRepository {
         )
         .lean();
 
+    console.log('Repository response: ', previousObject);
+
     return previousObject;
   }
 

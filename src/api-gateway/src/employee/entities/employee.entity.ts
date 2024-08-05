@@ -42,7 +42,7 @@ export class roleObject {
 
   @ApiProperty()
   @Prop({ type: String, required: true })
-  name: string;
+  roleName: string;
 }
 @Schema()
 export class Employee {
@@ -178,11 +178,7 @@ export class joinedEmployeeApiObject {
 
   @ApiProperty()
   @Prop({ type: Object, required: false })
-  roleId?: object;
-
-  // @ApiProperty()
-  // @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
-  // currentJobAssignments?: Types.ObjectId[];
+  role?: roleObject;
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: false })

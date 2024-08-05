@@ -245,10 +245,7 @@ export class RoleService {
     }
     //Updating all the employees in the company with the new role
     console.log('updating the employees');
-    const result = await this.employeeService.updateRole(
-      roleId,
-      updateRoleDto.permissionSuite,
-    );
+    const result = await this.employeeService.updateRole(roleId, updateRoleDto);
 
     console.log('result: ', result);
 
