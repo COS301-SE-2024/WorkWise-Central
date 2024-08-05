@@ -136,7 +136,6 @@ const uploadFileInput = async (): Promise<string> => {
     const response = await axios.patch(`${apiUrl}job/${props.jobID}`, recordedDetails, config)
     if (response.status < 300 && response.status > 199) {
       showImageUploadSuccess()
-      fileDialog.value = false
     } else {
       showImageUploadError()
     }
@@ -207,6 +206,7 @@ const upload = (): void => {
   if (selectedFiles.value.length > 0) {
     uploadFileInput()
   }
+  isActive.value = false
 }
 
 const closeDialog = (): void => {
