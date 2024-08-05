@@ -34,6 +34,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { currentEmployeeDto } from 'src/shared/dtos/current-employee.dto';
 
 const className = 'Employee';
 
@@ -55,6 +56,7 @@ export class EmployeeController {
   //********Endpoints for test purposes - Start**********/
   @Get('/all')
   async findAll() {
+    console.log('hi');
     const data = await this.employeeService.findAll();
     return { data: data };
   }
@@ -71,17 +73,31 @@ export class EmployeeController {
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
     );
-    if (currentEmployee.role.permissionSuite.includes('add employees')) {
+    console.log('current employee: ', currentEmployee);
+    if (currentEmployee.role.permissionSuite.includes('add new employees')) {
       let data;
       try {
         data = await this.employeeService.create(body.createEmployeeDto);
       } catch (e) {
+        console.log('error:', e);
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
       return { data: data };
     } else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
+  }
+  @Get('/test')
+  async test() {
+    console.log('In allEmployeesInCompanyWithRole');
+  }
+
+  @Get('/employeeWithRole/:roleId')
+  async allEmployeesInCompanyWithRole(@Param('roleId') roleId: Types.ObjectId) {
+    console.log('In allEmployeesInCompanyWithRole');
+    const data =
+      await this.employeeService.allEmployeesInCompanyWithRole(roleId);
+    return { data: data };
   }
 
   //********Endpoints for test purposes - End**********/
@@ -112,7 +128,7 @@ export class EmployeeController {
   async findAllInCompanyDetailed(
     @Headers() headers: any,
     @Param('companyId') companyId: Types.ObjectId,
-    @Body() body: { currentEmployeeId: Types.ObjectId },
+    @Body() body: currentEmployeeDto,
   ) {
     console.log('In findAllInCompanyDetailed');
     const currentEmployee = await this.employeeService.findById(
@@ -172,7 +188,7 @@ export class EmployeeController {
   async findAllInCompany(
     @Headers() headers: any,
     @Param('companyId') companyId: Types.ObjectId,
-    @Body() body: { currentEmployeeId: Types.ObjectId },
+    @Body() body: currentEmployeeDto,
   ) {
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
@@ -225,7 +241,7 @@ export class EmployeeController {
   async findByIdDetailed(
     @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
-    @Body() body: { currentEmployeeId: Types.ObjectId },
+    @Body() body: currentEmployeeDto,
   ) {
     const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(
@@ -275,7 +291,7 @@ export class EmployeeController {
   async findById(
     @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
-    @Body() body: { currentEmployeeId: Types.ObjectId },
+    @Body() body: currentEmployeeDto,
   ) {
     const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(
@@ -433,7 +449,7 @@ export class EmployeeController {
   async remove(
     @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
-    @Body() body: { currentEmployeeId: Types.ObjectId },
+    @Body() body: currentEmployeeDto,
   ) {
     const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(

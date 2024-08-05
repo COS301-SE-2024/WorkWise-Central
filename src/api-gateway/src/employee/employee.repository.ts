@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
-import { Employee } from './entities/employee.entity';
+import { Employee, roleObject } from './entities/employee.entity';
 import {
-  UpdateEmployeeDto,
+  InternalUpdateEmployeeDto,
   UpdateEmployeeUserInfoDto,
-} from './dto/update-employee.dto';
+} from './dto/internal-update-employee.dto';
 import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
@@ -18,9 +18,11 @@ export class EmployeeRepository {
     return this.employeeModel.find().lean().exec();
   }
 
-  async save(company: Employee) {
-    const newCompanyModel = new this.employeeModel(company);
-    return await newCompanyModel.save();
+  async save(employee: Employee) {
+    console.log('in the save function');
+    const newEmployeeModel = new this.employeeModel(employee);
+    console.log('newEmployeeModel: ', newEmployeeModel);
+    return await newEmployeeModel.save();
   }
 
   async findAllInCompany(identifier: Types.ObjectId) {
@@ -41,7 +43,31 @@ export class EmployeeRepository {
     return result;
   }
 
-  async findAllInCompanyWithRole(
+  async findAllInCompanyWithRoleName(
+    identifier: Types.ObjectId,
+    roleName: string,
+  ) {
+    const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] =
+      await this.employeeModel
+        .find({
+          $and: [
+            {
+              companyId: identifier,
+            },
+            {
+              'role.name': roleName,
+            },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        })
+        .lean();
+
+    return result;
+  }
+
+  async findAllInCompanyWithRoleId(
     identifier: Types.ObjectId,
     roleId: Types.ObjectId,
   ) {
@@ -53,7 +79,7 @@ export class EmployeeRepository {
               companyId: identifier,
             },
             {
-              roleId: roleId,
+              'role.roleId': roleId,
             },
             {
               $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
@@ -179,7 +205,10 @@ export class EmployeeRepository {
     return result ? result.companyId : null;
   }
 
-  async update(id: Types.ObjectId, updateEmployeeDto: UpdateEmployeeDto) {
+  async update(
+    id: Types.ObjectId,
+    updateEmployeeDto: InternalUpdateEmployeeDto,
+  ) {
     const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } =
       await this.employeeModel
         .findOneAndUpdate(
@@ -274,6 +303,54 @@ export class EmployeeRepository {
         .lean();
 
     return previousObject;
+  }
+
+  async updateRole(
+    roleId: Types.ObjectId,
+    companyIdentification: Types.ObjectId,
+    newRole: roleObject,
+  ) {
+    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } =
+      await this.employeeModel
+        .findOneAndUpdate(
+          {
+            $and: [
+              { 'role.roleId': roleId },
+              { companyId: companyIdentification },
+              {
+                $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+              },
+            ],
+          },
+          {
+            $set: {
+              role: newRole,
+              updatedAt: new Date(),
+            },
+          },
+          { new: true, lean: true },
+        )
+        .lean();
+
+    return previousObject;
+  }
+
+  async allEmployeesInCompanyWithRole(id: Types.ObjectId) {
+    console.log('Searching for employees with roleId:', id);
+
+    const employees = await this.employeeModel
+      .find({
+        $and: [
+          { role: { $elemMatch: { roleId: id } } },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+
+    console.log('Found employees:', employees);
+    return employees;
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {

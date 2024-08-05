@@ -1,3 +1,4 @@
+import { InternalUpdateEmployeeDto } from './dto/internal-update-employee.dto';
 import { InventoryService } from './../inventory/inventory.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
@@ -6,7 +7,7 @@ import {
   UpdateEmployeeUserInfoDto,
 } from './dto/update-employee.dto';
 import { Types } from 'mongoose';
-import { Employee } from './entities/employee.entity';
+import { Employee, roleObject } from './entities/employee.entity';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
 import { RoleService } from '../role/role.service';
@@ -43,16 +44,17 @@ export class EmployeeService {
   ) {}
 
   async validateCreateEmployee(employee: CreateEmployeeDto) {
+    console.log('\nIn validateCreateEmployee');
     // Checking that the company exists
     if (!(await this.companyService.companyIdExists(employee.companyId))) {
       return new ValidationResult(false, `Company not found`);
     }
-
+    console.log('checkpoint 1');
     // Checking that the user exists
     if (!(await this.usersService.userIdExists(employee.userId))) {
       return new ValidationResult(false, `User not found`);
     }
-
+    console.log('checkpoint 2');
     // Checking if the roleId was passed and if it exists
     if (employee.roleId) {
       if (
@@ -64,17 +66,20 @@ export class EmployeeService {
         return new ValidationResult(false, `Role not found`);
       }
     }
-
+    console.log('checkpoint 3');
     // Checking if the superiorId was passed and if it exists
     if (employee.superiorId) {
+      console.log('In if');
       if (
         !(await this.employeeExistsForCompany(
           employee.superiorId,
           employee.companyId,
         ))
       ) {
+        console.log('** in if');
         return new ValidationResult(false, `Superior not found`);
       } else {
+        console.log('** in else');
         //Checking that the superior is valid
         const superior = await this.findById(employee.superiorId);
         if (superior.subordinates) {
@@ -87,23 +92,22 @@ export class EmployeeService {
         }
       }
     } else {
+      console.log('In else');
       //Adding the owner as the superior if no superior is passed
-      const ownerRole = await this.roleService.findOneInCompany(
+      const owner = await this.findAllInCompanyWithRoleName(
+        employee.companyId,
         'Owner',
-        employee.companyId,
       );
-      const owner = await this.findAllInCompanyWithRole(
-        employee.companyId,
-        ownerRole._id,
-      );
+      console.log('owner: ', owner);
       employee.superiorId = owner[0]._id;
     }
-
+    console.log('checkpoint 4');
     // checking if the user exists in the company
     const user = await this.usersService.getUserById(employee.userId);
     if (await this.usersService.userIsInCompany(user._id, employee.companyId)) {
       return new ValidationResult(false, `User already in company`);
     }
+    console.log('checkpoint 5');
 
     return new ValidationResult(true, `All good`);
   }
@@ -158,38 +162,45 @@ export class EmployeeService {
   }
 
   async create(createEmployeeDto: CreateEmployeeDto) {
+    console.log('\nIn create employee service ');
     const validation = await this.validateCreateEmployee(createEmployeeDto);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
-    //Altering the dto to save the role if roleId is given
+    console.log('validation complete');
+    const newEmployee = new Employee();
+    console.log('newEmployee made');
+    newEmployee.userId = createEmployeeDto.userId;
+    newEmployee.companyId = createEmployeeDto.companyId;
+    newEmployee.superiorId = createEmployeeDto.superiorId;
+    if (createEmployeeDto.userInfo) {
+      newEmployee.userInfo.displayImage =
+        createEmployeeDto.userInfo.displayImage;
+      newEmployee.userInfo.displayName = createEmployeeDto.userInfo.displayName;
+      newEmployee.userInfo.firstName = createEmployeeDto.userInfo.firstName;
+      newEmployee.userInfo.surname = createEmployeeDto.userInfo.surname;
+      newEmployee.userInfo.username = createEmployeeDto.userInfo.username;
+    }
+    console.log('newEmployee info added: ', newEmployee);
     if (createEmployeeDto.roleId) {
+      console.log('in if');
       const role = await this.roleService.findById(createEmployeeDto.roleId);
-      delete createEmployeeDto.roleId;
-      createEmployeeDto.role = {
-        roleId: role._id,
-        permissionSuite: role.permissionSuite,
-      };
+      console.log('role: ', role);
+      newEmployee.role.roleId = role._id;
+      console.log('checkpoint');
+      newEmployee.role.permissionSuite = role.permissionSuite;
+      newEmployee.role.name = role.roleName;
+      console.log('role added to newEmployee');
     } else {
+      console.log('in else');
       const role = await this.roleService.findOneInCompany(
         'Default',
         createEmployeeDto.companyId,
       );
-      delete createEmployeeDto.roleId;
-      createEmployeeDto.role = {
-        roleId: role._id,
-        permissionSuite: role.permissionSuite,
-      };
+      newEmployee.role.roleId = role._id;
+      newEmployee.role.permissionSuite = role.permissionSuite;
     }
-    const newEmployee = new Employee(createEmployeeDto);
-    newEmployee.userId = createEmployeeDto.userId;
-    newEmployee.companyId = createEmployeeDto.companyId;
-    if (createEmployeeDto.roleId) {
-      newEmployee.role.roleId = createEmployeeDto.roleId;
-    }
-    if (createEmployeeDto.superiorId) {
-      newEmployee.superiorId = createEmployeeDto.superiorId;
-    }
+    console.log('newEmployee: ', newEmployee);
 
     return await this.employeeRepository.save(newEmployee);
   }
@@ -263,7 +274,6 @@ export class EmployeeService {
       throw new Error(validation.message);
     }
     //******Updating the structure*********/
-
     if (updateEmployeeDto.superiorId && updateEmployeeDto.subordinates) {
       //Case: the superior and subordinate is being updated
       //Check that the superior is not a subordinate and vice versa
@@ -355,21 +365,19 @@ export class EmployeeService {
     }
 
     //Altering the dto to update the role if roleId is given
+    const dto = new InternalUpdateEmployeeDto();
+    dto.superiorId = updateEmployeeDto.superiorId;
+    dto.subordinates = updateEmployeeDto.subordinates;
+    dto.subordinateTeams = updateEmployeeDto.subordinateTeams;
+    dto.currentJobAssignments = updateEmployeeDto.currentJobAssignments;
     if (updateEmployeeDto.roleId) {
-      const role = await this.roleService.findById(updateEmployeeDto.roleId);
-      delete updateEmployeeDto.roleId;
-      updateEmployeeDto.role = {
-        roleId: role._id,
-        permissionSuite: role.permissionSuite,
-      };
-    } else {
-      delete updateEmployeeDto.roleId;
+      dto.role.roleId = updateEmployeeDto.roleId;
+      const role = await this.roleService.findById(dto.role.roleId);
+      dto.role.permissionSuite = role.permissionSuite;
+      dto.role.name = role.roleName;
     }
 
-    const previousObject = this.employeeRepository.update(
-      employeeId,
-      updateEmployeeDto,
-    );
+    const previousObject = this.employeeRepository.update(employeeId, dto);
     return previousObject;
   }
 
@@ -392,6 +400,7 @@ export class EmployeeService {
     }
     //******Updating the structure*********/
 
+    //******Updating the structure*********/
     if (updateEmployeeDto.superiorId && updateEmployeeDto.subordinates) {
       //Case: the superior and subordinate is being updated
       //Check that the superior is not a subordinate and vice versa
@@ -483,21 +492,19 @@ export class EmployeeService {
     }
 
     //Altering the dto to update the role if roleId is given
+    const dto = new InternalUpdateEmployeeDto();
+    dto.superiorId = updateEmployeeDto.superiorId;
+    dto.subordinates = updateEmployeeDto.subordinates;
+    dto.subordinateTeams = updateEmployeeDto.subordinateTeams;
+    dto.currentJobAssignments = updateEmployeeDto.currentJobAssignments;
     if (updateEmployeeDto.roleId) {
-      const role = await this.roleService.findById(updateEmployeeDto.roleId);
-      delete updateEmployeeDto.roleId;
-      updateEmployeeDto.role = {
-        roleId: role._id,
-        permissionSuite: role.permissionSuite,
-      };
-    } else {
-      delete updateEmployeeDto.roleId;
+      dto.role.roleId = updateEmployeeDto.roleId;
+      const role = await this.roleService.findById(dto.role.roleId);
+      dto.role.permissionSuite = role.permissionSuite;
+      dto.role.name = role.roleName;
     }
 
-    const previousObject = this.employeeRepository.update(
-      employeeId,
-      updateEmployeeDto,
-    );
+    const previousObject = this.employeeRepository.update(employeeId, dto);
     return previousObject;
   }
 
@@ -515,6 +522,27 @@ export class EmployeeService {
       throw new Error('Employee does not exist');
     }
     return this.employeeRepository.getCompanyIdFromEmployee(employeeId);
+  }
+
+  async updateRole(roleId: Types.ObjectId, newPermissionSuite: string[]) {
+    console.log('In updateRole service');
+    const role = await this.roleService.findById(roleId);
+    const newRole = new roleObject();
+    newRole.roleId = roleId;
+    newRole.permissionSuite = newPermissionSuite;
+    console.log('roleId: ', roleId);
+    console.log('role.companyId: ', role.companyId);
+    console.log('newRole: ', newRole);
+    return await this.employeeRepository.updateRole(
+      roleId,
+      role.companyId,
+      newRole,
+    );
+  }
+
+  async allEmployeesInCompanyWithRole(roleId: Types.ObjectId) {
+    console.log('In allEmployeesInCompanyWithRole service');
+    return await this.employeeRepository.allEmployeesInCompanyWithRole(roleId);
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {
@@ -756,13 +784,26 @@ export class EmployeeService {
     }
   }
 
-  async findAllInCompanyWithRole(
+  async findAllInCompanyWithRoleId(
     companyId: Types.ObjectId,
     roleId: Types.ObjectId,
   ) {
-    return await this.employeeRepository.findAllInCompanyWithRole(
+    console.log('In findAllInCompanyWithRole');
+    console.log('companyId: ', companyId);
+    console.log('roleId: ', roleId);
+    return await this.employeeRepository.findAllInCompanyWithRoleId(
       companyId,
       roleId,
+    );
+  }
+
+  async findAllInCompanyWithRoleName(companyId: Types.ObjectId, name: string) {
+    console.log('In findAllInCompanyWithRole');
+    console.log('companyId: ', companyId);
+    console.log('name: ', name);
+    return await this.employeeRepository.findAllInCompanyWithRoleName(
+      companyId,
+      name,
     );
   }
 
