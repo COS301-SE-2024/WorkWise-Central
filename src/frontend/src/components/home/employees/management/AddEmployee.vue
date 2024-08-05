@@ -36,7 +36,7 @@
 
                 <v-text-field
                   bg-color="background"
-                  v-model="req_obj2.newUserUsername"
+                  v-model="req_obj.newUserUsername"
                   placeholder="Employee Username"
                   rounded="md"
                   required
@@ -54,7 +54,7 @@
                   :items="roleItems"
                   item-value="roleId"
                   item-title="roleName"
-                  v-model="req_obj2.roleId"
+                  v-model="req_obj.roleId"
                   bg-color="background"
                   variant="solo"
                   data-testid="role-select"
@@ -68,7 +68,7 @@
                   persistent-hint
                   @update:modelValue="selected_supirior"
                   :items="subordinateItemNames"
-                  v-model="req_obj2.superiorId"
+                  v-model="req_obj.superiorId"
                   item-value="employeeId"
                   item-title="name"
                   bg-color="background"
@@ -124,12 +124,7 @@ export default defineComponent({
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
-
     req_obj: {
-      companyId: localStorage['currentCompany'],
-      userId: ''
-    },
-    req_obj2: {
       adminId: localStorage['employeeId'],
       currentCompany: localStorage['currentCompany'],
       newUserUsername: '',
@@ -139,10 +134,10 @@ export default defineComponent({
   }),
   methods: {
     selected_supirior() {
-      console.log(this.req_obj2.superiorId)
+      console.log(this.req_obj.superiorId)
     },
     change_roles() {
-      console.log(this.req_obj2.roleId)
+      console.log(this.req_obj.roleId)
     },
     async loadSubordinates() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
@@ -158,8 +153,6 @@ export default defineComponent({
             apiURL + `employee/detailed/id/${sub_res.data.data[i]._id}`,
             config
           )
-
-          console.log(employee_details.data)
 
           let company_employee: EmployeeInformation2 = {
             name:
@@ -207,7 +200,7 @@ export default defineComponent({
       }
       const apiURL = await this.getRequestUrl()
       axios
-        .post(apiURL + 'company/add', this.req_obj2, config)
+        .post(apiURL + 'company/add', this.req_obj, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -242,8 +235,8 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.req_obj2.adminId = localStorage['employeeId']
-    this.req_obj2.currentCompany = localStorage['currentCompany']
+    this.req_obj.adminId = localStorage['employeeId']
+    this.req_obj.currentCompany = localStorage['currentCompany']
     this.loadRoles()
     this.loadSubordinates()
   }
