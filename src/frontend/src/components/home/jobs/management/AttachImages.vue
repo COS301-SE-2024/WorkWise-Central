@@ -47,18 +47,19 @@
         </v-card-text>
 
         <v-card-actions class="d-flex flex-column">
-          <Toast />
           <v-btn @click="upload" color="success">Upload</v-btn>
           <v-btn @click="closeDialog" color="error">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </template>
   </v-dialog>
+  <Toast />
 </template>
 
 <script setup lang="ts">
 import { ref, defineProps } from 'vue'
 import axios from 'axios'
+import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 
 const fileDialog = ref<boolean>(false)
@@ -135,6 +136,7 @@ const uploadFileInput = async (): Promise<string> => {
     const response = await axios.patch(`${apiUrl}job/${props.jobID}`, recordedDetails, config)
     if (response.status < 300 && response.status > 199) {
       showImageUploadSuccess()
+      fileDialog.value = false
     } else {
       showImageUploadError()
     }

@@ -54,7 +54,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script setup lang="ts">
 export default {
   data() {
     return {

@@ -44,6 +44,7 @@
 <script setup lang="ts">
 import { defineProps, ref, onMounted } from 'vue'
 import axios from 'axios'
+import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 
 const toast = useToast()

@@ -136,6 +136,7 @@ const addItem = () => {
 
 const deleteItem = (index: number) => {
   if (inventory.value[index].name.trim() !== '' && inventory.value[index].quantity > 0) {
+    console.log('non empty block statement')
   } else {
     inventory.value.splice(index, 1)
   }
