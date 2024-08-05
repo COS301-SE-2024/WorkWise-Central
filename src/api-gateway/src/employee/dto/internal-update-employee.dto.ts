@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
 import { IsArray, IsMongoId, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserInfo } from '../entities/employee.entity';
 
 export class UpdateEmployeeUserInfoDto {
   @IsString()
@@ -9,49 +10,64 @@ export class UpdateEmployeeUserInfoDto {
 
   @IsString()
   @IsOptional()
-  firstName: string;
+  firstName?: string;
 
   @IsString()
   @IsOptional()
-  surname: string;
+  surname?: string;
 
   @IsString()
   @IsOptional()
-  displayName: string;
+  displayName?: string;
 
   @IsString()
   @IsOptional()
-  displayImage: string;
+  displayImage?: string;
 }
 
-export class UpdateEmployeeDto {
+export class UpdateEmployeeRole {
+  @IsMongoId()
+  @IsString()
+  @IsOptional()
+  roleId?: Types.ObjectId;
+
+  @IsString()
+  @IsOptional()
+  @IsArray()
+  permissionSuite?: string[];
+
+  @IsString()
+  @IsOptional()
+  name?: string;
+}
+
+export class InternalUpdateEmployeeDto {
   @IsMongoId()
   @IsOptional()
-  @ApiProperty()
-  roleId?: Types.ObjectId;
+  role?: UpdateEmployeeRole;
 
   @IsArray()
   @IsMongoId({ each: true })
   @IsOptional()
-  @ApiProperty()
   currentJobAssignments?: Types.ObjectId[];
 
   @IsMongoId()
   @IsOptional()
-  @ApiProperty()
   superiorId?: Types.ObjectId;
 
   @IsArray()
   @IsMongoId({ each: true })
   @IsOptional()
-  @ApiProperty()
   subordinates?: Types.ObjectId[];
 
   @IsArray()
   @IsMongoId({ each: true })
   @IsOptional()
-  @ApiProperty()
   subordinateTeams?: Types.ObjectId[];
+
+  @ApiProperty()
+  @IsMongoId()
+  userInfo?: UserInfo;
 }
 
 export class updateEmployeeResponseDto {
