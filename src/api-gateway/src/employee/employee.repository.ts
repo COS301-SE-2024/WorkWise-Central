@@ -310,6 +310,7 @@ export class EmployeeRepository {
     companyIdentification: Types.ObjectId,
     newRole: roleObject,
   ) {
+    roleId = new Types.ObjectId(roleId);
     const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } =
       await this.employeeModel
         .findOneAndUpdate(
@@ -336,12 +337,11 @@ export class EmployeeRepository {
   }
 
   async allEmployeesInCompanyWithRole(id: Types.ObjectId) {
-    console.log('Searching for employees with roleId:', id);
-
+    id = new Types.ObjectId(id);
     const employees = await this.employeeModel
       .find({
         $and: [
-          { role: { $elemMatch: { roleId: id } } },
+          { 'role.roleId': id },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
@@ -349,7 +349,6 @@ export class EmployeeRepository {
       })
       .lean();
 
-    console.log('Found employees:', employees);
     return employees;
   }
 
