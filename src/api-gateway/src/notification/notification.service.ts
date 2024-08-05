@@ -33,15 +33,15 @@ export class NotificationService implements OnModuleInit {
   }
 
   async create(newNotification: CreateNotificationDto) {
-    const listOfNotifications: Notification[] = [];
     const senderId = newNotification.senderId;
     const message = newNotification.message;
     for (const recipient of newNotification.recipientIds) {
       const singularNotification = new Notification(senderId, recipient, message);
-      listOfNotifications.push(singularNotification);
+      // listOfNotifications.push(singularNotification);
+      const result = new this.notificationModel(singularNotification);
+      await result.save();
+      console.log(result);
     }
-    const result = await this.notificationModel.create(listOfNotifications);
-    console.log(result);
     return {
       data: 'success',
     };

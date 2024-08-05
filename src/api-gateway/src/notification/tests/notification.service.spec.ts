@@ -4,6 +4,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 import { userStub } from '../../../test/stubs/user.stub';
 import { NotificationRepository } from '../notification.repository';
+import { Message } from '../entities/notification.entity';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -56,9 +57,7 @@ describe('NotificationService', () => {
         }
 
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token,
-          ) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
@@ -73,12 +72,12 @@ describe('NotificationService', () => {
   });
 
   it('should add a new notification', async () => {
-    const res = service.create({ message: 's', recipientIds: [] });
-    expect(res).toStrictEqual('This action adds a new notification');
+    const res = await service.create({ message: new Message('a', 'a'), recipientIds: [] });
+    expect(res).toStrictEqual({ data: 'success' });
   });
 
   it('should create notifications from users', async () => {
-    const res = service.create({ message: 's', recipientIds: [] });
-    expect(res).toStrictEqual('This action adds a new notification');
+    const res = await service.create({ message: new Message('a', 'a'), recipientIds: [] });
+    expect(res).toStrictEqual({ data: 'success' });
   });
 });
