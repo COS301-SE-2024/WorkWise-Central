@@ -55,20 +55,17 @@
 </template>
 
 <script setup lang="ts">
-export default {
-  data() {
-    return {
-      membersDialog: false,
-      favorites: [],
-      states: [] // Populate with your states data
-    }
-  },
-  methods: {
-    saveSelection() {
-      // Save selection logic here
-      this.membersDialog = false
-    }
-  }
+import { ref } from 'vue'
+
+// State variables
+const membersDialog = ref(false)
+const favorites = ref([])
+const states = ref([]) // Populate with your states data
+
+// Methods
+const saveSelection = () => {
+  // Save selection logic here
+  membersDialog.value = false
 }
 </script>
 
