@@ -124,4 +124,3 @@ const cancelJob = () => {
   emit('close')
 }
 </script>
-

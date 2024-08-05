@@ -97,7 +97,7 @@ interface UpdateRecordedDetails {
   inventoryUsed: InventoryUsed[]
 }
 
-const props = defineProps<{ recordedDetails: UpdateRecordedDetails; id: string }>()
+const props = defineProps<{ recordedDetails: UpdateRecordedDetails; jobID: string }>()
 
 // const inventory = ref<{ inventoryItemId: string, inventoryItemName: string, quantityUsed: number }[]>(
 //   props.jobInventory.map(inventory => ({

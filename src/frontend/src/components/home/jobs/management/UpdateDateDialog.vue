@@ -13,7 +13,8 @@
         border="md"
         elevation="5"
         @click="dueDateDialog = true"
-        v-bind="activatorProps">
+        v-bind="activatorProps"
+      >
         <v-icon left>
           {{ 'fa: fa-solid fa-calendar-alt' }}
         </v-icon>

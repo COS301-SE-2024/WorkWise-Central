@@ -120,7 +120,10 @@
               </v-divider>
               <v-row>
                 <v-col ref="commentsSection">
-                  <AddComment :jobComments="props.passedInJob.comments" :id="props.passedInJob._id"/>
+                  <AddComment
+                    :jobComments="props.passedInJob.comments"
+                    :id="props.passedInJob._id"
+                  />
                 </v-col>
               </v-row>
               <v-divider>
@@ -147,7 +150,10 @@
               <JobChecklist :passedInJob="props.passedInJob" />
             </v-col>
             <v-col ref="inventorySection">
-              <LogInventory :recordedDetails="props.passedInJob.recordedDetails" :id="props.passedInJob._id" />
+              <LogInventory
+                :recordedDetails="props.passedInJob.recordedDetails"
+                :jobID="props.passedInJob._id"
+              />
             </v-col>
           </v-col>
         </v-row>

@@ -317,24 +317,23 @@ const showJobDeleteFailure = () => {
 const getStatusColor = (status) => {
   switch (status.toLowerCase()) {
     case 'todo':
-      return 'red';
+      return 'red'
     case 'in progress':
-      return 'orange';
+      return 'orange'
     case 'paused':
-      return 'yellow';
+      return 'yellow'
     case 'awaiting sign off':
-      return 'blue';
+      return 'blue'
     case 'awaiting invoice':
-      return 'purple';
+      return 'purple'
     case 'awaiting payment':
-      return 'pink';
+      return 'pink'
     case 'completed':
-      return 'green';
+      return 'green'
     default:
-      return 'grey'; // Default color
+      return 'grey' // Default color
   }
 }
-
 
 const getRowProps = ({ index }) => {
   return {

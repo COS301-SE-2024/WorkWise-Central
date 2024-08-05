@@ -13,7 +13,8 @@
         border="md"
         elevation="5"
         @click="statusDialog = true"
-        v-bind="activatorProps">
+        v-bind="activatorProps"
+      >
         <v-icon left>
           {{ 'fa: fa-solid fa-tasks' }}
         </v-icon>

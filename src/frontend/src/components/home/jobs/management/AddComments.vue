@@ -50,9 +50,9 @@ const toast = useToast()
 const newComment = ref('')
 
 interface Comment {
-  employeeId: string;
-  newComment: string;
-  date: string;
+  employeeId: string
+  newComment: string
+  date: string
 }
 
 const user = ref({
@@ -60,10 +60,10 @@ const user = ref({
 })
 
 // Comments and new comment
-const props = defineProps<{ jobComments: Comment[], id: string }>()
+const props = defineProps<{ jobComments: Comment[]; id: string }>()
 
-const comments = ref<{ text: string, employeeId: string, date: string }[]>(
-  props.jobComments.map(comment => ({
+const comments = ref<{ text: string; employeeId: string; date: string }[]>(
+  props.jobComments.map((comment) => ({
     text: comment.newComment,
     employeeId: comment.employeeId,
     date: comment.date
@@ -99,8 +99,11 @@ const getUserData = async () => {
   const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(`${apiUrl}users/id/${localStorage.getItem('id')}`, config)
-    const userData = response.data.data;
-    user.value.initials = getInitials(userData.personalInfo.firstName, userData.personalInfo.surname);
+    const userData = response.data.data
+    user.value.initials = getInitials(
+      userData.personalInfo.firstName,
+      userData.personalInfo.surname
+    )
   } catch (error) {
     console.error('Error getting user data', error)
   }
@@ -125,19 +128,19 @@ const addComment = async () => {
   }
   const apiUrl = await getRequestUrl()
 
-  const updatedComments = [...comments.value, {
-    text: newComment.value,
-    employeeId: localStorage.getItem('employeeId') || '',
-    date: new Date().toISOString()
-  }]
+  const updatedComments = [
+    ...comments.value,
+    {
+      text: newComment.value,
+      employeeId: localStorage.getItem('employeeId') || '',
+      date: new Date().toISOString()
+    }
+  ]
 
   console.log(updatedComments)
 
   try {
-    const response = await axios.patch(`${apiUrl}job/${props.id}`,
-      updatedComments,
-      config
-    )
+    const response = await axios.patch(`${apiUrl}job/${props.id}`, updatedComments, config)
     comments.value = updatedComments
     newComment.value = ''
     showJobCommentSuccess()
@@ -161,10 +164,7 @@ const deleteComment = async (index: number) => {
 
   const updatedComments = comments.value.filter((_, i) => i !== index)
   try {
-    await axios.patch(`${apiUrl}job/${props.id}`,
-      updatedComments,
-      config
-    )
+    await axios.patch(`${apiUrl}job/${props.id}`, updatedComments, config)
     comments.value = updatedComments
     toast.add({
       severity: 'success',
@@ -202,8 +202,8 @@ const showJobCommentError = () => {
 }
 
 const getInitials = (firstName: string, surname: string): string => {
-  return `${firstName.charAt(0)}${surname.charAt(0)}`.toUpperCase();
-};
+  return `${firstName.charAt(0)}${surname.charAt(0)}`.toUpperCase()
+}
 
 onMounted(async () => {
   await getUserData()
@@ -217,7 +217,6 @@ onMounted(async () => {
 const comment = () => {
   console.log(props.jobComments)
   console.log(props.id)
-  addComment();
+  addComment()
 }
-
 </script>
