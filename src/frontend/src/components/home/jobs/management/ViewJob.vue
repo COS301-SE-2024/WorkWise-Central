@@ -175,10 +175,7 @@ import JobChecklist from './JobChecklist.vue'
 import LogInventory from './LogInventory.vue'
 
 const props = defineProps({
-  passedInJob: {
-    type: Object,
-    required: true
-  }
+  passedInJob: Object
 })
 
 const viewJob = () => {

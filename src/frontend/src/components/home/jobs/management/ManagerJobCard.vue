@@ -21,10 +21,10 @@
       </v-card-title>
       <v-card-text class="text-center">
         <v-row>
-          <v-col xs="12" sm="12" md="9" lg="9" xl="9" cols="12">
-            <EditDetails :passedInJob="props.passedInJob" />
+          <v-col xs="12" sm="12" md="8">
+            <EditDetails :jobDetails="props.passedInJob.details" :jobID="props.passedInJob._id" />
           </v-col>
-          <v-col xs="12" sm="12" md="3" lg="3" xl="3">
+          <v-col xs="12" sm="12" md="4">
             <v-col>
               <ChangeClient />
             </v-col>
@@ -42,8 +42,6 @@
       </v-card-text>
       <v-card-actions>
         <v-col class="d-flex flex-column">
-          <Toast />
-          <v-btn class="mb-2" @click="saveJob" color="success">Save</v-btn>
           <v-btn class="mb-4" @click="cancelJob" color="error">Cancel</v-btn>
         </v-col>
       </v-card-actions>
@@ -53,74 +51,23 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import axios from 'axios'
 import { defineProps } from 'vue'
-import { useToast } from 'primevue/usetoast'
 import EditDetails from './EditDetailsJobCard.vue'
 import ChangeClient from './ChangeClientDialog.vue'
 import SelectMembers from './SelectMembers.vue'
 import UpdateJobStatus from './UpdateJobStatus.vue'
 import ChangeDueDate from './UpdateDateDialog.vue'
 
-const toast = useToast()
 const managerJobCard = ref(false) // Dialog state
+
 const props = defineProps({
-  passedInJob: Object
+  passedInJob: {
+    type: Object,
+    required: true
+  }
 })
 
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
-
-const saveJob = () => {
-  const pathJob = async () => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
-      }
-    }
-
-    try {
-      const response = await axios.patch(
-        `http://localhost:3000/job/${props.passedInJob.jobId}`,
-        filteredJobData,
-        config
-      )
-      toast.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Job updated successfully'
-      })
-      console.log('Job updated successfully:', response.data)
-    } catch (error) {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to update job'
-      })
-      console.error('Error updating job:', error)
-    }
-  }
-}
-
-const emit = defineEmits(['close'])
 const cancelJob = () => {
-  emit('close')
+  managerJobCard.value = false;
 }
 </script>

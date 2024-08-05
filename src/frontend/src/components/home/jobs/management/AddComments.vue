@@ -165,7 +165,7 @@ const deleteComment = async (index: number) => {
 
   const updatedComments = comments.value.filter((_, i) => i !== index)
   try {
-    await axios.patch(`${apiUrl}job/${props.id}`, updatedComments, config)
+    await axios.put(`${apiUrl}job/comment`, updatedComments, config)
     comments.value = updatedComments
     toast.add({
       severity: 'success',

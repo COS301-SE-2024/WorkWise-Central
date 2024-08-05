@@ -81,8 +81,10 @@
 
 <script setup lang="ts">
 import { defineProps, ref } from 'vue'
+import { useToast } from 'primevue/usetoast'
 import axios from 'axios'
 
+const toast = useToast()
 const inventoryDialog = ref(false)
 const inventory = ref([{ name: '', quantity: 0 }])
 

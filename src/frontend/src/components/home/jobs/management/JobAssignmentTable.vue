@@ -152,7 +152,6 @@
 
           <ManagerJobCard
             :passedInJob="selectedJob"
-            @close="managerJobCardDialog = false"
           ></ManagerJobCard>
 
           <v-btn color="error" @click="deleteDialog = true"
@@ -346,4 +345,3 @@ onMounted(() => {
 })
 </script>
 
-<style scoped></style>
