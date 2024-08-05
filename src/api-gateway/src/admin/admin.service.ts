@@ -20,16 +20,14 @@ import { AdminRepository } from './admin.repository';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
 import { UserJoinRequest } from './entities/request-to-join.entity';
-import {
-  AcceptInviteDto,
-  AcceptRequestDto,
-} from '../client/dto/accept-request.dto';
+import { AcceptInviteDto, AcceptRequestDto } from '../client/dto/accept-request.dto';
 import { EmployeeService } from '../employee/employee.service';
 import { RoleService } from '../role/role.service';
 import { NotificationService } from '../notification/notification.service';
 import { Role } from '../role/entity/role.entity';
 import { ciEquals } from '../utils/Utils';
 import { InviteToJoin } from './entities/invite-to-join.entity';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AdminService {
@@ -50,6 +48,8 @@ export class AdminService {
 
     @Inject(forwardRef(() => NotificationService))
     private notificationService: NotificationService,
+
+    private emailService: EmailService,
   ) {}
 
   async createRequest(
@@ -66,31 +66,21 @@ export class AdminService {
       throw new BadRequestException('CompanyId Invalid');
     }
 
-    const userIsInCompany = await this.usersService.userIsInCompany(
-      userId,
-      requestToJoin.companyId,
-    );
+    const userIsInCompany = await this.usersService.userIsInCompany(userId, requestToJoin.companyId);
     if (userIsInCompany) {
       throw new BadRequestException('User Already in company');
     }
 
     const requestsToCompany: (FlattenMaps<UserJoinRequest> & {
       _id: Types.ObjectId;
-    })[] = await this.adminRepository.findRequestsFromUserForCompany(
-      userId,
-      requestToJoin.companyId,
-    );
+    })[] = await this.adminRepository.findRequestsFromUserForCompany(userId, requestToJoin.companyId);
 
     if (requestsToCompany.length > 0) {
-      throw new ConflictException(
-        'User has already made a request to join this company',
-      );
+      throw new ConflictException('User has already made a request to join this company');
     }
 
     //
-    const company = await this.companyService.getCompanyById(
-      requestToJoin.companyId,
-    );
+    const company = await this.companyService.getCompanyById(requestToJoin.companyId);
     const desiredRole = requestToJoin.roleId
       ? await this.roleService.findById(requestToJoin.roleId)
       : await this.roleService.findOneInCompany('Worker', company._id);
@@ -101,18 +91,10 @@ export class AdminService {
       console.log('Role:', desiredRole);
     }
 
-    const newRequest = new UserJoinRequest(
-      company._id,
-      desiredRole._id,
-      userId,
-      company.name,
-      desiredRole.roleName,
-    );
+    const newRequest = new UserJoinRequest(company._id, desiredRole._id, userId, company.name, desiredRole.roleName);
     const savedReq = await this.adminRepository.saveRequest(newRequest);
 
-    const employees = await this.employeeService.findAllInCompany(
-      requestToJoin.companyId,
-    );
+    const employees = await this.employeeService.findAllInCompany(requestToJoin.companyId);
     //TODO: If they have company settings permissions
     //employees = employees.filter((x) => {x.permissionSuite.includes('can edit company')})
     const empIds: Types.ObjectId[] = [];
@@ -145,34 +127,22 @@ export class AdminService {
     if (!(await this.usersService.userIdExists(userId))) {
       throw new BadRequestException('userId Invalid');
     }
-    const employee = await this.employeeService.findById(
-      userInviteRequestDto.employeeId,
-    );
-    if (employee.userId.toString() !== userId.toString())
-      throw new UnauthorizedException('UserId not in employee');
-    const company = await this.companyService.getCompanyById(
-      employee.companyId,
-    );
+    const employee = await this.employeeService.findById(userInviteRequestDto.employeeId);
+    if (employee.userId.toString() !== userId.toString()) throw new UnauthorizedException('UserId not in employee');
+    const company = await this.companyService.getCompanyById(employee.companyId);
     if (company == null) throw new NotFoundException('Company Invalid');
 
     // Someone with the email address already exists
     const allUsers = await this.usersService.getAllUsersInCompany(company._id);
     for (const user of allUsers) {
-      if (
-        ciEquals(
-          user.personalInfo.contactInfo.email,
-          userInviteRequestDto.emailToInvite,
-        )
-      )
+      if (ciEquals(user.personalInfo.contactInfo.email, userInviteRequestDto.emailToInvite))
         throw new ConflictException('User with email already in company');
     }
     // get user
 
     const invitesToUser: (FlattenMaps<InviteToJoin> & {
       _id: Types.ObjectId;
-    })[] = await this.adminRepository.findInvitesForUser(
-      userInviteRequestDto.emailToInvite,
-    );
+    })[] = await this.adminRepository.findInvitesForUser(userInviteRequestDto.emailToInvite);
 
     if (invitesToUser.length > 0) {
       for (const invite of invitesToUser) {
@@ -184,9 +154,7 @@ export class AdminService {
           throw new ConflictException('Invite already exists');
         }
       }
-      throw new ConflictException(
-        'User has already made a request to join this company',
-      );
+      throw new ConflictException('User has already made a request to join this company');
     }
 
     const role =
@@ -202,36 +170,29 @@ export class AdminService {
       role.roleName,
       userInviteRequestDto.emailToInvite,
     );
-    return await this.adminRepository.saveInvite(newInvite);
+    const result = await this.adminRepository.saveInvite(newInvite);
+
+    await this.emailService.sendInvite(newInvite, result._id);
+
+    return result;
   }
 
-  async cancelRequest(
-    userId: Types.ObjectId,
-    cancelRequestDto: CancelRequestDto,
-  ) {
+  async cancelRequest(userId: Types.ObjectId, cancelRequestDto: CancelRequestDto) {
     //Validation Section
     if (!(await this.usersService.userIdExists(userId))) {
       throw new BadRequestException('userId Invalid');
     }
 
-    if (
-      !(await this.companyService.companyIdExists(cancelRequestDto.companyId))
-    ) {
+    if (!(await this.companyService.companyIdExists(cancelRequestDto.companyId))) {
       throw new BadRequestException('CompanyId Invalid');
     }
 
-    const userIsInCompany = await this.usersService.userIsInCompany(
-      userId,
-      cancelRequestDto.companyId,
-    );
+    const userIsInCompany = await this.usersService.userIsInCompany(userId, cancelRequestDto.companyId);
     if (userIsInCompany) {
       throw new BadRequestException('User already in company');
     }
     //
-    const req = await this.adminRepository.cancelRequest(
-      userId,
-      cancelRequestDto.companyId,
-    );
+    const req = await this.adminRepository.cancelRequest(userId, cancelRequestDto.companyId);
     console.log(req.deletedCount);
     return req.deletedCount > 0;
   }
@@ -240,10 +201,7 @@ export class AdminService {
     return this.adminRepository.findAllRequests();
   }
 
-  async getAllRequestsInCompany(
-    userId: Types.ObjectId,
-    companyId: Types.ObjectId,
-  ) {
+  async getAllRequestsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
     ///Validation Section
     // User exists
     if (!(await this.usersService.userIdExists(userId))) {
@@ -254,10 +212,7 @@ export class AdminService {
       throw new NotFoundException('CompanyId Invalid');
     }
     //UserInCompany
-    const userIsInCompany = await this.usersService.userIsInCompany(
-      userId,
-      companyId,
-    );
+    const userIsInCompany = await this.usersService.userIsInCompany(userId, companyId);
     if (!userIsInCompany) {
       throw new UnauthorizedException('User not in company');
     }
@@ -268,10 +223,7 @@ export class AdminService {
     return this.adminRepository.findAllRequestsForCompany(companyId);
   }
 
-  async getAllDetailedRequestsInCompany(
-    userId: Types.ObjectId,
-    companyId: Types.ObjectId,
-  ) {
+  async getAllDetailedRequestsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
     ///Validation Section
     // User exists
     if (!(await this.usersService.userIdExists(userId))) {
@@ -282,10 +234,7 @@ export class AdminService {
       throw new NotFoundException('CompanyId Invalid');
     }
     //UserInCompany
-    const userIsInCompany = await this.usersService.userIsInCompany(
-      userId,
-      companyId,
-    );
+    const userIsInCompany = await this.usersService.userIsInCompany(userId, companyId);
     if (!userIsInCompany) {
       throw new UnauthorizedException('User not in company');
     }
@@ -307,31 +256,22 @@ export class AdminService {
   }
 
   ///Company-side
-  async processRequest(
-    adminUserId: Types.ObjectId,
-    acceptRequestDto: AcceptRequestDto,
-  ) {
+  async processRequest(adminUserId: Types.ObjectId, acceptRequestDto: AcceptRequestDto) {
     ///Validation Section
     // User exists
     if ((await this.usersService.userIdExists(adminUserId)) == false) {
       throw new NotFoundException('adminUserId Invalid');
     }
-    const requestingUser = await this.usersService.getUserById(
-      acceptRequestDto.userToJoinId,
-    );
+    const requestingUser = await this.usersService.getUserById(acceptRequestDto.userToJoinId);
 
     if (requestingUser == null) {
       throw new NotFoundException('Joining UserId Invalid');
     }
     //companyId
-    const company = await this.companyService.getCompanyById(
-      acceptRequestDto.companyId,
-    );
+    const company = await this.companyService.getCompanyById(acceptRequestDto.companyId);
     if (company == null) throw new BadRequestException('CompanyId Invalid');
     //superiorId
-    const superior = await this.employeeService.findById(
-      acceptRequestDto.superiorId,
-    );
+    const superior = await this.employeeService.findById(acceptRequestDto.superiorId);
     if (superior == null) throw new BadRequestException('superiorId Invalid');
 
     const isInCompany = await this.companyService.employeeIsInCompany(
@@ -342,13 +282,11 @@ export class AdminService {
     //subordinates?
     if (acceptRequestDto.subordinates.length > 0) {
       for (const subordinateId of acceptRequestDto.subordinates) {
-        const subordinateIsInCompany =
-          await this.companyService.employeeIsInCompany(
-            acceptRequestDto.companyId,
-            subordinateId,
-          );
-        if (!subordinateIsInCompany)
-          throw new BadRequestException('SubordinateId Invalid');
+        const subordinateIsInCompany = await this.companyService.employeeIsInCompany(
+          acceptRequestDto.companyId,
+          subordinateId,
+        );
+        if (!subordinateIsInCompany) throw new BadRequestException('SubordinateId Invalid');
       }
     }
 
@@ -361,28 +299,18 @@ export class AdminService {
     ///
 
     if (acceptRequestDto.accept) {
-      const username: string = (
-        await this.usersService.getUserById(acceptRequestDto.userToJoinId)
-      ).systemDetails.username;
+      const username: string = (await this.usersService.getUserById(acceptRequestDto.userToJoinId)).systemDetails
+        .username;
 
       let userRole: FlattenMaps<Role> & { _id: Types.ObjectId };
       if (acceptRequestDto.assignedRoleId != null)
-        userRole = await this.roleService.findById(
-          acceptRequestDto.assignedRoleId,
-        );
+        userRole = await this.roleService.findById(acceptRequestDto.assignedRoleId);
       else {
-        userRole = await this.roleService.findOneInCompany(
-          'Worker',
-          acceptRequestDto.companyId,
-        );
+        userRole = await this.roleService.findOneInCompany('Worker', acceptRequestDto.companyId);
       }
 
-      const joinedCompany = (
-        await this.usersService.getUserById(adminUserId)
-      ).joinedCompanies.filter(
-        (x) =>
-          x.companyId.toLocaleString() ===
-          acceptRequestDto.companyId.toString(),
+      const joinedCompany = (await this.usersService.getUserById(adminUserId)).joinedCompanies.filter(
+        (x) => x.companyId.toLocaleString() === acceptRequestDto.companyId.toString(),
       )[0];
 
       try {
@@ -412,10 +340,7 @@ export class AdminService {
         recipientIds: [acceptRequestDto.userToJoinId],
       });
       //remove request
-      await this.adminRepository.acceptRequest(
-        acceptRequestDto.userToJoinId,
-        acceptRequestDto.companyId,
-      );
+      await this.adminRepository.acceptRequest(acceptRequestDto.userToJoinId, acceptRequestDto.companyId);
 
       return true;
     } else {
@@ -431,18 +356,12 @@ export class AdminService {
         },
         recipientIds: [acceptRequestDto.userToJoinId],
       });
-      await this.adminRepository.rejectRequest(
-        acceptRequestDto.userToJoinId,
-        acceptRequestDto.companyId,
-      );
+      await this.adminRepository.rejectRequest(acceptRequestDto.userToJoinId, acceptRequestDto.companyId);
       return true;
     }
   }
 
-  async getAllInvitesInCompany(
-    userId: Types.ObjectId,
-    employeeId: Types.ObjectId,
-  ) {
+  async getAllInvitesInCompany(userId: Types.ObjectId, employeeId: Types.ObjectId) {
     if (!(await this.usersService.userIdExists(userId))) {
       throw new NotFoundException('userId Invalid');
     }
@@ -462,19 +381,14 @@ export class AdminService {
     const userExists = await this.usersService.userIdExists(userId);
     if (!userExists) throw new NotFoundException('UserId not found');
 
-    const invite = await this.adminRepository.findInviteById(
-      acceptInviteDto.inviteId,
-    );
+    const invite = await this.adminRepository.findInviteById(acceptInviteDto.inviteId);
     const newJoinedCompany = await this.companyService.addEmployeeFromInvite({
       roleId: invite._id,
       superiorId: invite.superiorId,
       companyId: invite.companyId,
       newUserId: userId,
     });
-    await this.adminRepository.acceptInvite(
-      invite.emailBeingInvited,
-      invite.companyId,
-    );
+    await this.adminRepository.acceptInvite(invite.emailBeingInvited, invite.companyId);
 
     return newJoinedCompany;
   }
@@ -491,15 +405,10 @@ export class AdminService {
     //TODO: Role validation here
     if (!employee) throw new NotFoundException('Employee Not Found');
 
-    const invite = await this.adminRepository.findInviteById(
-      cancelDto.inviteId,
-    );
+    const invite = await this.adminRepository.findInviteById(cancelDto.inviteId);
     if (!invite) throw new NotFoundException('InviteId Invalid');
 
-    await this.adminRepository.cancelInvite(
-      invite.emailBeingInvited,
-      invite.companyId,
-    );
+    await this.adminRepository.cancelInvite(invite.emailBeingInvited, invite.companyId);
     return true;
   }
 
@@ -509,15 +418,10 @@ export class AdminService {
       throw new NotFoundException('userId Invalid');
     }
 
-    const invite = await this.adminRepository.findInviteById(
-      rejectDto.inviteId,
-    );
+    const invite = await this.adminRepository.findInviteById(rejectDto.inviteId);
     if (!invite) throw new NotFoundException('InviteId Invalid');
 
-    await this.adminRepository.rejectInvite(
-      invite.emailBeingInvited,
-      invite.companyId,
-    );
+    await this.adminRepository.rejectInvite(invite.emailBeingInvited, invite.companyId);
     return true;
   }
 }

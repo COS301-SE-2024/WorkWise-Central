@@ -1,6 +1,8 @@
 import { Global, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UserConfirmation } from '../users/entities/user-confirmation.entity';
+import { InviteToJoin } from '../admin/entities/invite-to-join.entity';
+import { Types } from 'mongoose';
 
 @Global()
 @Injectable()
@@ -75,5 +77,25 @@ export class EmailService {
       subject: `How to Send Emails with Nodemailer`,
       text: message,
     });
+  }
+  async sendInvite(inviteDto: InviteToJoin, inviteId: Types.ObjectId) {
+    const subject = `Invite to Join ${inviteDto.companyName}`;
+    const newUserLink = `https://tuksui.sharpsoftwaresolutions.net/?inviteId=${encodeURIComponent(inviteId.toString())}`;
+    const existingUserLink = `https://tuksui.sharpsoftwaresolutions.net/?inviteId=${encodeURIComponent(inviteId.toString())}`;
+    const result = await this.mailerService.sendMail({
+      to: inviteDto.emailBeingInvited,
+      from: '"Support Team" <support@workwise.com>',
+      subject: subject,
+      template: './inviteToCompany',
+      context: {
+        companyName: inviteDto.companyName,
+        userName: 'there',
+        roleName: inviteDto.roleName,
+        supportEmail: 'support@workwise.com',
+        newUserLink: newUserLink,
+        existingUserLink: existingUserLink,
+      },
+    });
+    console.log(result);
   }
 }
