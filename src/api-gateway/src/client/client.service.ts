@@ -312,7 +312,7 @@ export class ClientService {
   async getListOfClientIdsAssignedToEmployee(employeeId: Types.ObjectId) {
     const employee = await this.employeeService.findById(employeeId);
     const clientsList: Types.ObjectId[] = [];
-    employee.jobAssignments.forEach(async (jobId) => {
+    employee.currentJobAssignments.forEach(async (jobId) => {
       const job = await this.jobService.getJobById(jobId);
       if (job.clientId) {
         clientsList.push(job.clientId);
@@ -336,7 +336,7 @@ export class ClientService {
   async getListOfClientObjectsAssignedToEmployee(employeeId: Types.ObjectId) {
     const employee = await this.employeeService.findById(employeeId);
     const clientsList = [];
-    employee.jobAssignments.forEach(async (jobId) => {
+    employee.currentJobAssignments.forEach(async (jobId) => {
       const job = await this.jobService.getJobById(jobId);
       if (job.clientId) {
         const client = await this.getClientById(employee.userId, job.clientId);
