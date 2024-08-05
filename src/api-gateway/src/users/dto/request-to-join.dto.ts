@@ -1,11 +1,5 @@
 import { Types } from 'mongoose';
-import {
-  IsEmail,
-  IsMongoId,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEmail, IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UserJoinRequestDto {
   @IsNotEmpty()

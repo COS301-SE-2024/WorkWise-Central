@@ -2,6 +2,13 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { SchemaTypes, Types } from 'mongoose';
 
 export class Message {
+  constructor(title: string, body: string, data?: any, token?: string) {
+    this.title = title;
+    this.body = body;
+    if (data) this.data = data;
+    if (token) this.token = token;
+  }
+
   @Prop({ type: String, required: true, default: '' })
   token?: string = '';
   @Prop({ type: String, required: true })
