@@ -60,7 +60,9 @@
                   <v-icon color="red" class="pt-4 pr-0 mr-0">{{ 'fa: fa-solid fa-trash' }}</v-icon>
                 </v-btn>
                 <v-btn @click="saveItem(index)">
-                  <v-icon color="success" class="pt-4 pl-0 ml-0">{{ 'fa: fa-solid fa-save' }}</v-icon>
+                  <v-icon color="success" class="pt-4 pl-0 ml-0">{{
+                    'fa: fa-solid fa-save'
+                  }}</v-icon>
                 </v-btn>
               </v-row>
               <v-btn color="success" @click="addItem">Add Item</v-btn>
@@ -84,13 +86,18 @@ import axios from 'axios'
 const inventoryDialog = ref(false)
 const inventory = ref([{ name: '', quantity: 0 }])
 
-interface Inventory {
-  inventoryItemId: string,
-  inventoryItemName: string,
+interface InventoryUsed {
+  inventoryItemId: string
+  inventoryItemName: string
   quantityUsed: number
 }
 
-const props = defineProps<{ jobInventory: Inventory[], id: string }>()
+interface UpdateRecordedDetails {
+  imagesTaken: string[]
+  inventoryUsed: InventoryUsed[]
+}
+
+const props = defineProps<{ recordedDetails: UpdateRecordedDetails; id: string }>()
 
 // const inventory = ref<{ inventoryItemId: string, inventoryItemName: string, quantityUsed: number }[]>(
 //   props.jobInventory.map(inventory => ({
@@ -150,7 +157,7 @@ const saveAllItems = () => {
   inventoryDialog.value = false
 }
 
-const logInventoryItems= async ()  => {
+const logInventoryItems = async () => {
   if (inventory.value.length < 0) {
     toast.add({
       severity: 'warn',
@@ -168,18 +175,20 @@ const logInventoryItems= async ()  => {
   }
   const apiUrl = await getRequestUrl()
 
-  const updatedInventory = [...inventory.value, { // this wrong update
-    inventoryItemId: inventory.inventoryItemId,
-    inventoryItemName: inventory.inventoryItemName,
-    quantityUsed: inventory.quantityUsed
-  }]
+  const updatedInventory = [
+    ...inventory.value,
+    {
+      // this wrong update
+      inventoryItemId: inventory.inventoryItemId,
+      inventoryItemName: inventory.inventoryItemName,
+      quantityUsed: inventory.quantityUsed
+    }
+  ]
 
   try {
-    const response = await axios.patch(`${apiUrl}job/${props.id}`,
-      updatedInventory,
-      config
-    )
-  } catch(error) {
+    const response = await axios.patch(`${apiUrl}job/${props.id}`, updatedInventory, config)
+    console.log(response)
+  } catch (error) {
     console.log('Error while logging inventory', error)
   }
 }
