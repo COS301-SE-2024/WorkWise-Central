@@ -100,9 +100,49 @@ export class RoleController {
   })
   @Get('/all/:id')
   async findAllInCompany(@Param('id') id: Types.ObjectId) {
+    console.log('In findAllInCompany');
     let data;
     try {
+      console.log('In try clause');
       data = await this.roleService.findAllInCompany(id);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    if (data.length === 0) {
+      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
+    }
+    return { data: data };
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @ApiOperation({
+    summary: `Get all ${className} instances for a given company`,
+    description: `Returns all ${className} instances in the database for a given Company.`,
+  })
+  @ApiOkResponse({
+    type: RoleListResponseDto,
+    description: `An array of mongodb objects of the ${className} class for a given Company. It excludes the Owner and Default role since those are not allowed to be edited by anyone`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the Company for which to get all ${className} instances.`,
+  })
+  @Get('/all/editing/:id')
+  async findAllInCompanyForEditing(@Param('id') id: Types.ObjectId) {
+    console.log('In findAllInCompanyForEditing');
+    let data;
+    try {
+      console.log('In try clause');
+      data = await this.roleService.findAllInCompanyForEditing(id);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
@@ -132,13 +172,13 @@ export class RoleController {
   })
   @Get('id/:id')
   async findById(@Param('id') id: Types.ObjectId) {
+    console.log('In findById endpoint');
     const data = await this.roleService.findById(id);
+    console.log('data: ', data);
     if (!data) {
       throw new HttpException('No data found', HttpStatus.NO_CONTENT);
     }
-    if (data.roleName === 'Owner' || data.roleName === 'Owner') {
-      throw new HttpException('No data found', HttpStatus.NO_CONTENT);
-    }
+    console.log('No exception thrown');
     return { data: data };
   }
 
@@ -179,10 +219,13 @@ export class RoleController {
     @Body()
     body: { currentEmployeeId: Types.ObjectId; createRoleDto: CreateRoleDto },
   ) {
+    console.log('In create endpoint');
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
     );
+    console.log('currentEmployee: ', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
+      console.log('In if');
       let data;
       try {
         data = await this.roleService.create(body.createRoleDto);
@@ -221,13 +264,19 @@ export class RoleController {
     @Body()
     body: { currentEmployeeId: Types.ObjectId; updateRoleDto: UpdateRoleDto },
   ) {
+    console.log('In update role function');
     const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
     );
+    console.log('userId: ', userId);
+    console.log('currentEmployee: ', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
+      console.log('In if');
       let data;
       try {
+        console.log('In try');
+        console.log('body.updateRoleDto: ', body.updateRoleDto);
         data = await this.roleService.update(userId, id, body.updateRoleDto);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);

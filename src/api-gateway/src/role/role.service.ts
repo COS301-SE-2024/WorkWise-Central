@@ -89,30 +89,35 @@ export class RoleService {
     roleId: Types.ObjectId,
     updateRoleDto: UpdateRoleDto,
   ) {
+    console.log('In validate UpdateRole');
+    console.log('updateRoleDto: ', updateRoleDto);
     const roleToBeUpdate = await this.findById(roleId);
+    console.log('roleToBeUpdate: ', roleToBeUpdate);
     // const requestingEmployee =
     //   await this.employeeService.findById(currentEmployeeId);
     if (!roleToBeUpdate) {
       return new ValidationResult(false, `Role to be updated not found`);
     }
-    // if (!requestingEmployee) {
-    //   return new ValidationResult(false, `Current employee not found`);
-    // }
-    // //checking that the requesting employee's companyId is equal to the companyId of the role being update
-    // if (requestingEmployee.companyId !== roleToBeUpdate.companyId) {
-    //   return new ValidationResult(false, `CompanyId does not match`);
-    // }
-    // //Checking that the requesting employee has appropriate permission
-    // if (requestingEmployee.role.permissionSuite.includes('company settings')) {
-    //   return new ValidationResult(false, `Invalid permission`);
-    // }
+    console.log('role was found');
+    console.log(
+      'updateRoleDto.permissionSuite: ',
+      updateRoleDto.permissionSuite,
+    );
 
     //Check if the permissions are valid
-    for (const permission of updateRoleDto.permissionSuite) {
-      if (!this.permissionsArray.includes(permission.toString())) {
-        return new ValidationResult(false, `Invalid permission`);
+    if (updateRoleDto.permissionSuite) {
+      console.log('In if');
+      for (const permission of updateRoleDto.permissionSuite) {
+        console.log('In for loop');
+        console.log('permission: ', permission);
+        if (!this.permissionsArray.includes(permission)) {
+          console.log('Invalid permission found');
+          return new ValidationResult(false, `Invalid permission`);
+        }
       }
     }
+
+    console.log('Permissions are valid');
 
     //Check if the role already exists
     try {
@@ -126,6 +131,8 @@ export class RoleService {
       }
     } catch (error) {}
 
+    console.log('role does not exist already');
+
     //Checking that the role is not Default or owner
     if (
       roleToBeUpdate.roleName === 'Owner' ||
@@ -133,6 +140,7 @@ export class RoleService {
     ) {
       return new ValidationResult(false, `Not allowed to edit this role`);
     }
+    console.log('All good');
 
     return new ValidationResult(true, `All good`);
   }
@@ -162,37 +170,59 @@ export class RoleService {
   }
 
   async findAllInCompany(companyId: Types.ObjectId) {
+    console.log('In findAllInCompany service');
     //checking if the company exists
     if (!(await this.companyService.companyIdExists(companyId))) {
       throw new Error('CompanyId does not exist');
     }
+    console.log('Error not thrown from here');
     const roles = await this.roleRepository.findAllInCompany(companyId);
-    let result;
+    console.log('role: ', roles);
+    // let result;
+    // //Remove owner role and default role
+    // roles.forEach((role) => {
+    //   if (role.roleName !== 'Owner' && role.roleName !== 'Default') {
+    //     result.push(role);
+    //   }
+    // });
+    return roles;
+  }
+
+  async findAllInCompanyForEditing(companyId: Types.ObjectId) {
+    console.log('In findAllInCompanyForEditing service');
+    //checking if the company exists
+    if (!(await this.companyService.companyIdExists(companyId))) {
+      throw new Error('CompanyId does not exist');
+    }
+    console.log('Error not thrown from here');
+    const roles = await this.roleRepository.findAllInCompany(companyId);
+    // console.log('role: ', roles);
+    const result = [];
     //Remove owner role and default role
     roles.forEach((role) => {
+      console.log('In for loop');
       if (role.roleName !== 'Owner' && role.roleName !== 'Default') {
+        console.log('In if');
         result.push(role);
       }
     });
+    console.log('result: ', result);
     return result;
   }
 
   async findOneInCompany(name: string, companyId: Types.ObjectId) {
     //checking if the company exists
+    console.log('findOneInCompany service');
     if (!(await this.companyService.companyIdExists(companyId))) {
       throw new Error('CompanyId does not exist');
     }
-    if (name !== 'Owner' && name !== 'Default') {
-      const result = await this.roleRepository.findByIdInCompany(
-        name,
-        companyId,
-      );
-      return result;
-    }
-    return null;
+    console.log('error not thrown in service');
+    const result = await this.roleRepository.findByIdInCompany(name, companyId);
+    return result;
   }
 
   async findById(identifier: Types.ObjectId) {
+    console.log('In findById service');
     const result = await this.roleRepository.findById(identifier);
     return result;
   }
@@ -202,15 +232,26 @@ export class RoleService {
     roleId: Types.ObjectId,
     updateRoleDto: UpdateRoleDto,
   ) {
+    console.log('In role update endpoint');
+    console.log('updateRoleDto: ', updateRoleDto);
     const validation = await this.validateUpdateRole(
       userId,
       roleId,
       updateRoleDto,
     );
+    console.log('validation: ', validation);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
     //Updating all the employees in the company with the new role
+    console.log('updating the employees');
+    const result = await this.employeeService.updateRole(
+      roleId,
+      updateRoleDto.permissionSuite,
+    );
+
+    console.log('result: ', result);
+
     return this.roleRepository.update(roleId, updateRoleDto);
   }
 
