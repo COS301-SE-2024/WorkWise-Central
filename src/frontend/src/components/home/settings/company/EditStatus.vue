@@ -19,6 +19,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
 export default defineComponent({
   data: () => ({
     headers: [
@@ -27,7 +28,9 @@ export default defineComponent({
         key: 'statusName'
       }
     ],
-    items: []
+    items: [],
+    localUrl: 'http://localhost:3000/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   methods: {
     getRowProps(index: number) {
@@ -35,7 +38,28 @@ export default defineComponent({
         class: (index % 2 ? 'bg-secondRowColor ' : '') + 'h6'
       }
     },
-    getStatuses() {}
+    async getStatuses() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      const user_id = localStorage.getItem('id')
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    }
   },
   mounted() {
     this.getStatuses()

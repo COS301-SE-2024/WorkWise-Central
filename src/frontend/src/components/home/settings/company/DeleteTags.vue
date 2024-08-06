@@ -12,13 +12,13 @@
     <v-card>
       <v-card-title>
         <v-icon>mdi-plus</v-icon>
-        <span>Delete Inventory</span>
+        <span>Delete Tag</span>
       </v-card-title>
       <v-card-text
         ><v-container>
           <v-row>
             <p class="font-weight-regular">
-              Are you sure you want to delete <strong>{{ inventoryName }}</strong
+              Are you sure you want to delete <strong>{{ tagName }}</strong
               >? This action cannot be reversed.
             </p>
           </v-row>
@@ -43,7 +43,7 @@
                 text
                 :loading="isDeleting"
                 block
-                @click="deleteInventory"
+                @click="deleteTag"
                 ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon
                 >Delete
               </v-btn></v-col
@@ -54,62 +54,36 @@
     </v-card>
   </v-dialog>
 </template>
-
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue'
-import Toast from 'primevue/toast'
-import axios from 'axios'
 export default defineComponent({
-  name: 'DeleteInventory',
+  name: 'DeleteTags',
   props: {
-    inventory_id: String,
-    inventoryName: String
+    tagName: String
   },
-  components: {
-    Toast
+  data() {
+    return {
+      deleteDialog: false,
+      isDeleting: false,
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false
+    }
   },
-  data: () => ({
-    deleteDialog: false,
-    clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
-    isDeleting: false,
-    isdarkmode: localStorage.getItem('isdarkmode') === 'true' ? true : false
-  }),
   methods: {
-    async deleteInventory() {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
-      }
-      const apiURL = await this.getRequestUrl()
-      await axios
-        .delete(`${apiURL}inventory/${this.inventory_id}`, config)
-        .then(() => {
-          alert('Inventory deleted')
-          this.deleteDialog = false
-        })
-        .catch(() => {
-          alert('An error occurred')
-        })
-        .finally(() => {
-          window.location.reload() // Consider removing this for SPA behavior
-        })
-    },
     close() {
       this.deleteDialog = false
     },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+    deleteTag() {
+      this.isDeleting = true
+      setTimeout(() => {
+        this.isDeleting = false
+        this.deleteDialog = false
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Successful',
+          detail: 'Tag Deleted',
+          life: 3000
+        })
+      }, 1500)
     }
   }
 })

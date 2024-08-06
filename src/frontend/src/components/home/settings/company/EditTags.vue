@@ -27,7 +27,9 @@ export default defineComponent({
         key: 'tagName'
       }
     ],
-    items: []
+    items: [],
+    localUrl: 'http://localhost:3000/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
   }),
   methods: {
     getRowProps(index: number) {
