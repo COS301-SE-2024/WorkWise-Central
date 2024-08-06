@@ -100,6 +100,13 @@ export class EmployeeController {
     return { data: data };
   }
 
+  @Get('/depthFirst/:employeeId')
+  async depthFirst(@Param('employeeId') employeeId: Types.ObjectId) {
+    console.log('In depthFirst');
+    const data = await this.employeeService.deptFirstTraversalId(employeeId);
+    return { data: data };
+  }
+
   //********Endpoints for test purposes - End**********/
 
   @UseGuards(AuthGuard)

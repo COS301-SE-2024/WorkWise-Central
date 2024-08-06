@@ -136,12 +136,17 @@ export class InventoryController {
     @Param('id') id: Types.ObjectId,
     @Body() body: { currentEmployeeId: Types.ObjectId },
   ) {
+    console.log('In findAllInCompany');
+    console.log('id', id);
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
     );
+    console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all inventory')) {
+      console.log('in if');
       let data;
       try {
+        console.log('in try');
         data = await this.inventoryService.findAllInCompany(id);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
