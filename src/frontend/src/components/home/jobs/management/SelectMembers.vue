@@ -8,7 +8,13 @@
     origin="top center"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn class="mb-2" outlined @click="membersDialog = true" v-bind="activatorProps">
+      <v-btn
+        width="100%"
+        border="md"
+        elevation="5"
+        @click="membersDialog = true"
+        v-bind="activatorProps"
+      >
         <v-icon left>
           {{ 'fa: fa-solid fa-users-cog' }}
         </v-icon>
@@ -48,21 +54,18 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      membersDialog: false,
-      favorites: [],
-      states: [] // Populate with your states data
-    }
-  },
-  methods: {
-    saveSelection() {
-      // Save selection logic here
-      this.membersDialog = false
-    }
-  }
+<script setup lang="ts">
+import { ref } from 'vue'
+
+// State variables
+const membersDialog = ref(false)
+const favorites = ref([])
+const states = ref([]) // Populate with your states data
+
+// Methods
+const saveSelection = () => {
+  // Save selection logic here
+  membersDialog.value = false
 }
 </script>
 

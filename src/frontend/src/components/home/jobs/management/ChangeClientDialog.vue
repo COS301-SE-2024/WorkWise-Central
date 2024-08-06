@@ -8,7 +8,13 @@
     origin="top center"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn class="mb-2" outlined @click="openClientDialogAndFetchClients" v-bind="activatorProps">
+      <v-btn
+        width="100%"
+        border="md"
+        elevation="5"
+        @click="openClientDialogAndFetchClients"
+        v-bind="activatorProps"
+      >
         <v-icon left>
           {{ 'fa: fa-solid fa-user-edit' }}
         </v-icon>

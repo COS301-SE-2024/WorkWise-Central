@@ -8,7 +8,13 @@
     origin="top center"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn class="mb-2" outlined @click="statusDialog = true" v-bind="activatorProps">
+      <v-btn
+        width="100%"
+        border="md"
+        elevation="5"
+        @click="statusDialog = true"
+        v-bind="activatorProps"
+      >
         <v-icon left>
           {{ 'fa: fa-solid fa-tasks' }}
         </v-icon>
