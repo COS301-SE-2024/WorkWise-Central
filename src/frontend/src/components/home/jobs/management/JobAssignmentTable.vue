@@ -146,10 +146,10 @@
           ></v-btn>
           <v-spacer></v-spacer>
 
-          <!-- View Job Dialog -->
-          <ViewJob :passedInJob="selectedJob"></ViewJob>
+<!--          &lt;!&ndash; View Job Dialog &ndash;&gt;-->
+<!--          <ViewJob :passedInJob="selectedJob"></ViewJob>-->
 
-          <ManagerJobCard :passedInJob="selectedJob"></ManagerJobCard>
+<!--          <ManagerJobCard :passedInJob="selectedJob"></ManagerJobCard>-->
 
           <v-btn color="error" @click="deleteDialog = true"
           >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
