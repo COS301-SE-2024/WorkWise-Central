@@ -24,20 +24,22 @@
         <v-form v-model="formIsValid" ref="form">
           <v-label>Priority Label</v-label>
           <v-text-field
-            v-model:lazy="priority.label"
+            v-model="priority.label"
             label="Priority Label"
             required
             outlined
             :rules="labelRules"
           />
-          <v-label>Priority Color</v-label>
           <v-text-field
-            v-model:lazy="priority.color"
-            label="Priority Color"
+            v-model="priority.priorityLevel"
+            label="Priority Level"
             required
             outlined
-            :rules="colorRules"
-          />
+            type="number"
+          ></v-text-field>
+          <v-label>Priority Color</v-label>
+          <div><ColorPicker inputId="cp-hex" v-model="priority.color" inline /></div>
+          <span>Hex Code: {{ priority.color }}</span>
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -58,6 +60,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import ColorPicker from 'primevue/colorpicker'
 
 interface Priority {
   label: string
@@ -70,7 +73,9 @@ export default defineComponent({
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       priority: {
         label: '',
-        color: ''
+        color: '',
+        priorityLevel: 0,
+        companyId: localStorage.getItem('currentCompany')
       },
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
@@ -79,11 +84,20 @@ export default defineComponent({
       colorRules: [(v: string) => !!v || 'Color is required']
     }
   },
-
+  components: {
+    ColorPicker
+  },
   methods: {
-    createPriority() {
+    async createPriority() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
       axios
-        .post(`${this.remoteUrl}priority`, this.priority)
+        .post(`${apiURL}job/tags/p`, this.priority, config)
         .then((res) => {
           console.log(res)
           this.$toast.add({

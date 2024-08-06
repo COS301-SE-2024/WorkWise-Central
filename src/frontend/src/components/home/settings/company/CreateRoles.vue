@@ -24,7 +24,7 @@
       <v-card-text>
         <v-form v-model="formIsValid" ref="form">
           <v-label>Role Name</v-label>
-          <v-text-field v-model:lazy="Role.roleName" :rules="nameRules"></v-text-field>
+          <v-text-field v-model="Role.roleName" :rules="nameRules"></v-text-field>
           <v-label>Permission Suite</v-label>
           <v-select
             v-model="Role.permissionSuite"
@@ -81,6 +81,7 @@ export default defineComponent({
     async createRole() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
+      console.log(this.Role)
       await axios
         .post(`${apiURL}role/create`, this.Role, config)
         .then((response) => {
@@ -91,6 +92,8 @@ export default defineComponent({
             detail: 'Role Created',
             life: 3000
           })
+          this.dialog = false
+          window.location.reload()
         })
         .catch((error) => {
           console.log(error)

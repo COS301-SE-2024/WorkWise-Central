@@ -24,7 +24,7 @@
         <v-form v-model="formIsValid" ref="form">
           <v-label>Tag Name</v-label>
           <v-text-field
-            v-model:lazy="tag.label"
+            v-model="tag.label"
             label="Tag Name"
             required
             outlined
@@ -32,13 +32,8 @@
           />
 
           <v-label>Tag Color</v-label>
-          <v-text-field
-            v-model:lazy="tag.color"
-            label="Tag Color"
-            required
-            outlined
-            :rules="colorRules"
-          />
+          <div><ColorPicker inputId="cp-hex" v-model="tag.color" inline /></div>
+          <span>Hex Code: {{ tag.color }}</span>
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -58,6 +53,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import ColorPicker from 'primevue/colorpicker'
 
 interface Tag {
   label: string
@@ -70,7 +66,8 @@ export default defineComponent({
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       tag: {
         label: '',
-        color: ''
+        color: '',
+        companyId: localStorage.getItem('currentCompany')
       } as Tag,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
@@ -80,13 +77,15 @@ export default defineComponent({
       colorRules: [(v: string) => !!v || 'Color is required']
     }
   },
-
+  components: {
+    ColorPicker
+  },
   methods: {
     async createTag() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       await axios
-        .post(`${apiURL}tags`, this.tag, config)
+        .post(`${apiURL}job/tags/add`, this.tag, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({

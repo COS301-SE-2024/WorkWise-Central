@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <v-dialog
     v-model="dialog"
     max-height="800"
@@ -24,20 +25,14 @@
         <v-form v-model="formIsValid" ref="form">
           <v-label>Status Label</v-label>
           <v-text-field
-            v-model:lazy="status.label"
+            v-model="status.status"
             label="Status Label"
             required
             outlined
             :rules="labelRules"
           />
           <v-label>Status Color</v-label>
-          <v-text-field
-            v-model:lazy="status.color"
-            label="Status Color"
-            required
-            outlined
-            :rules="colorRules"
-          />
+          <div><ColorPicker inputId="cp-hex" v-model="status.color" inline /></div>
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -52,9 +47,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-
+import ColorPicker from 'primevue/colorpicker'
+import Toast from 'primevue/toast'
 interface Status {
-  label: string
+  status: string
   color: string
 }
 export default defineComponent({
@@ -63,8 +59,10 @@ export default defineComponent({
       dialog: false,
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       status: {
-        label: '',
-        color: ''
+        status: '',
+        color: '',
+        companyId: localStorage.getItem('currentCompany'),
+        employeeId: localStorage.getItem('employeeId')
       } as Status,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
@@ -73,13 +71,16 @@ export default defineComponent({
       colorRules: [(v: string) => !!v || 'Color is required']
     }
   },
-
+  components: {
+    ColorPicker,
+    Toast
+  },
   methods: {
     async createStatus() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       await axios
-        .post(`${apiURL}status`, this.status, config)
+        .post(`${apiURL}job/status`, this.status, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
