@@ -119,20 +119,21 @@ export class CompanyController {
       addUserDto: AddUserToCompanyDto;
     },
   ) {
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
-    if (currentEmployee.role.permissionSuite.includes('add new employees')) {
-      const arr = [body.addUserDto.adminId, body.addUserDto.currentCompany];
-      if (body.addUserDto.roleId) arr.push(body.addUserDto.roleId);
-      validateObjectIds(arr);
+    // const currentEmployee = await this.employeeService.findById(
+    //   body.currentEmployeeId,
+    // );
+    // if (currentEmployee.role.permissionSuite.includes('add new employees')) {
+    //TODO: Figure out if this enpoint needs role based access
+    const arr = [body.addUserDto.adminId, body.addUserDto.currentCompany];
+    if (body.addUserDto.roleId) arr.push(body.addUserDto.roleId);
+    validateObjectIds(arr);
 
-      try {
-        return { data: await this.companyService.addEmployee(body.addUserDto) };
-      } catch (Error) {
-        throw new HttpException('Internal server error', HttpStatus.CONFLICT);
-      }
+    try {
+      return { data: await this.companyService.addEmployee(body.addUserDto) };
+    } catch (Error) {
+      throw new HttpException('Internal server error', HttpStatus.CONFLICT);
     }
+    // }
   }
 
   @UseGuards(AuthGuard) //It may be accessed by external users
@@ -188,28 +189,54 @@ export class CompanyController {
   @Get('/all/employees/:cid')
   async getAllEmployeesInCompany(
     @Param('cid') cid: string,
-    @Body() body: { currentEmployeeId: Types.ObjectId },
+    // @Body() body: { currentEmployeeId: Types.ObjectId },
   ) {
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
-    if (currentEmployee.role.permissionSuite.includes('view all employees')) {
-      validateObjectId(cid);
-      const objId = new Types.ObjectId(cid);
-      try {
-        return { data: await this.companyService.getAllEmployees(objId) };
-      } catch (Error) {
-        throw new HttpException(
-          'Something went wrong',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    } else if (
-      currentEmployee.role.permissionSuite.includes('view employees under me')
-    ) {
-      //TODO
-    } else {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    // console.log('In getAllEmployeesInCompany');
+    // console.log('body.currentEmployeeId: ', body.currentEmployeeId);
+    // const currentEmployee = await this.employeeService.findById(
+    //   body.currentEmployeeId,
+    // );
+    // console.log('Current Employee:', currentEmployee);
+    // if (currentEmployee.role.permissionSuite.includes('view all employees')) {
+    //   validateObjectId(cid);
+    //   const objId = new Types.ObjectId(cid);
+    //   try {
+    //     return { data: await this.companyService.getAllEmployees(objId) };
+    //   } catch (Error) {
+    //     throw new HttpException(
+    //       'Something went wrong',
+    //       HttpStatus.INTERNAL_SERVER_ERROR,
+    //     );
+    //   }
+    // } else if (
+    //   currentEmployee.role.permissionSuite.includes('view employees under me')
+    // ) {
+    //   validateObjectId(cid);
+    //   try {
+    //     return {
+    //       data: await this.companyService.getAllEmployeeUnderMe(
+    //         body.currentEmployeeId,
+    //       ),
+    //     };
+    //   } catch (Error) {
+    //     throw new HttpException(
+    //       'Something went wrong',
+    //       HttpStatus.INTERNAL_SERVER_ERROR,
+    //     );
+    //   }
+    // } else {
+    //   throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    // }
+    //TODO: Please remove since this is a duplicate of the endpoint that exists in employee.controller.ts
+    validateObjectId(cid);
+    const objId = new Types.ObjectId(cid);
+    try {
+      return { data: await this.companyService.getAllEmployees(objId) };
+    } catch (Error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -432,33 +459,44 @@ export class CompanyController {
     @Headers() headers: any,
     @Body()
     body: {
-      currentEmployeeId: Types.ObjectId;
+      // currentEmployeeId: Types.ObjectId;
       deleteEmployeeDto: DeleteEmployeeFromCompanyDto;
     },
   ) {
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
-    if (currentEmployee.role.permissionSuite.includes('remove any employees')) {
-      try {
-        const userId = extractUserId(this.jwtService, headers);
-        await this.companyService.deleteEmployee(
-          userId,
-          body.deleteEmployeeDto,
-        );
-        return { data: true };
-      } catch (e) {
-        throw new HttpException(
-          'Internal Server Error',
-          HttpStatus.SERVICE_UNAVAILABLE,
-        );
-      }
-    } else if (
-      currentEmployee.role.permissionSuite.includes('remove employees under me')
-    ) {
-      //TODO
-    } else {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    // //TODO: potentially remove the endpoint since there is one in employee.controller.ts
+    // const currentEmployee = await this.employeeService.findById(
+    //   body.currentEmployeeId,
+    // );
+    // if (currentEmployee.role.permissionSuite.includes('remove any employees')) {
+    //   try {
+    //     const userId = extractUserId(this.jwtService, headers);
+    //     await this.companyService.deleteEmployee(
+    //       userId,
+    //       body.deleteEmployeeDto,
+    //     );
+    //     return { data: true };
+    //   } catch (e) {
+    //     throw new HttpException(
+    //       'Internal Server Error',
+    //       HttpStatus.SERVICE_UNAVAILABLE,
+    //     );
+    //   }
+    // } else if (
+    //   currentEmployee.role.permissionSuite.includes('remove employees under me')
+    // ) {
+    //   //TODO
+    // } else {
+    //   throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    // }
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      await this.companyService.deleteEmployee(userId, body.deleteEmployeeDto);
+      return { data: true };
+    } catch (e) {
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.SERVICE_UNAVAILABLE,
+      );
     }
   }
 

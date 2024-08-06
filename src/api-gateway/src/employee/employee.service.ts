@@ -232,6 +232,8 @@ export class EmployeeService {
   }
 
   async findById(id: Types.ObjectId) {
+    console.log('In findById service');
+    console.log('id: ', id);
     return await this.employeeRepository.findById(id);
   }
 
