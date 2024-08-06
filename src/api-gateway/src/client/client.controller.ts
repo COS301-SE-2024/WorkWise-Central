@@ -31,7 +31,7 @@ import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { extractUserId, validateObjectId } from '../utils/Utils';
 import { DeleteClientDto } from './dto/delete-client.dto';
-import { EmployeeService } from 'src/employee/employee.service';
+import { EmployeeService } from '../employee/employee.service';
 
 const className = 'Client';
 
