@@ -153,8 +153,6 @@ const addComment = async () => {
 }
 
 const deleteComment = async (index: number) => {
-  const commentToDelete = comments.value[index]
-
   const config = {
     headers: {
       'Content-Type': 'application/json',

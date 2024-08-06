@@ -457,7 +457,5 @@ const getStatusColor = (status: string) => {
 .font-family-lato {
   font-family: 'Lato', sans-serif;
 }
-.bg-completed {
-  background-color: #d4edda;
-}
+
 </style>
