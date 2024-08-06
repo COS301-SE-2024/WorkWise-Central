@@ -8,7 +8,15 @@
     origin="top center"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn class="mb-2" outlined @click="openInventoryDialog" v-bind="activatorProps">
+      <v-btn
+        width="100%"
+        class="d-flex justify-start"
+        border="md"
+        elevation="5"
+        outlined
+        @click="openInventoryDialog"
+        v-bind="activatorProps"
+      >
         <v-icon left>
           {{ 'fa: fa-solid fa-box' }}
         </v-icon>
@@ -45,13 +53,16 @@
                   dense
                   class="pt-4"
                   hide-details
+                  :width="30"
                 ></v-text-field>
 
                 <v-btn @click="deleteItem(index)">
-                  <v-icon color="red" class="pt-4">{{ 'fa: fa-solid fa-trash' }}</v-icon>
+                  <v-icon color="red" class="pt-4 pr-0 mr-0">{{ 'fa: fa-solid fa-trash' }}</v-icon>
                 </v-btn>
                 <v-btn @click="saveItem(index)">
-                  <v-icon color="success" class="pt-4">{{ 'fa: fa-solid fa-save' }}</v-icon>
+                  <v-icon color="success" class="pt-4 pl-0 ml-0">{{
+                    'fa: fa-solid fa-save'
+                  }}</v-icon>
                 </v-btn>
               </v-row>
               <v-btn color="success" @click="addItem">Add Item</v-btn>
@@ -69,10 +80,45 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { defineProps, ref } from 'vue'
+import { useToast } from 'primevue/usetoast'
+import axios from 'axios'
 
+const toast = useToast()
 const inventoryDialog = ref(false)
-const inventory = ref([{ name: '', quantity: 0 }])
+const inventory = ref<{ name: string; quantity: number }[]>([])
+
+interface InventoryUsed {
+  inventoryItemId: string
+  inventoryItemName: string
+  quantityUsed: number
+}
+
+interface UpdateRecordedDetails {
+  imagesTaken: string[]
+  inventoryUsed: InventoryUsed[]
+}
+
+const props = defineProps<{ recordedDetails: UpdateRecordedDetails; jobID: string }>()
+
+// API URLs
+const localUrl: string = 'http://localhost:3000/'
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
+
+// Utility functions
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url)
+    return res.status < 300 && res.status > 199
+  } catch (error) {
+    return false
+  }
+}
+
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
 
 const openInventoryDialog = () => {
   inventoryDialog.value = true
@@ -83,31 +129,86 @@ const addItem = () => {
 }
 
 const deleteItem = (index: number) => {
-  // if the item is readonly item name and quantity are readonly fields delete the item in the backend else just remove the item from the view
   if (inventory.value[index].name.trim() !== '' && inventory.value[index].quantity > 0) {
-    // delete item in the backend
+    console.log('non empty block statement')
   } else {
     inventory.value.splice(index, 1)
   }
 }
 
 const saveItem = (index: number) => {
-  // checks if both item name field and quantity fields are not empty else the item is not saved and display an error to the user using a toast
   if (inventory.value.length > 0) {
     if (inventory.value[index].name.trim() !== '' && inventory.value[index].quantity > 0) {
       inventory.value[index].name = inventory.value[index].name.trim()
-      // textfield and quantity for the item become index readonly
-      // post the list of inventory items to the backend
+      // Post the list of inventory items to the backend
     } else {
-      // display error toast
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Please provide valid item details',
+        life: 3000
+      })
     }
   }
 }
 
 const saveAllItems = () => {
+  logInventoryItems()
   inventoryDialog.value = false
-  // logic to save all items
+}
+
+const logInventoryItems = async () => {
+  if (inventory.value.length === 0) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Warning',
+      detail: 'Inventory item(s) cannot be empty',
+      life: 3000
+    })
+    return
+  }
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+
+  const apiUrl = await getRequestUrl()
+
+  const updatedInventory = inventory.value.map(item => ({
+    inventoryItemId: '', // Provide or retrieve this from somewhere
+    inventoryItemName: item.name,
+    quantityUsed: item.quantity
+  }))
+
+  try {
+    const response = await axios.patch(`${apiUrl}job/${props.jobID}`, updatedInventory, config)
+    console.log(response)
+    showInventoryLogSuccess()
+  } catch (error) {
+    console.log('Error while logging inventory', error)
+    showInventoryLogError()
+  }
+}
+
+const showInventoryLogSuccess = () => {
+  toast.add({
+    severity: 'success',
+    summary: 'Success Message',
+    detail: 'Successfully logged inventory',
+    life: 3000
+  })
+}
+
+const showInventoryLogError = () => {
+  toast.add({
+    severity: 'error',
+    summary: 'Error Message',
+    detail: 'An error occurred while logging the inventory item',
+    life: 3000
+  })
 }
 </script>
 
-<style scoped></style>
