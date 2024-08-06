@@ -19,9 +19,7 @@ describe('--Inventory Controller--', () => {
     })
       .useMocker((token) => {
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token,
-          ) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
@@ -82,9 +80,7 @@ describe('--Inventory Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'findAll')
-        .mockResolvedValue(returnedResponseFromService);
+      jest.spyOn(service, 'findAll').mockResolvedValue(returnedResponseFromService);
       const result = await controller.findAll();
       expect(result).toEqual(expectedResponse);
     });
@@ -123,10 +119,9 @@ describe('--Inventory Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'findAllInCompany')
-        .mockResolvedValue(returnedResponseFromService);
-      const result = await controller.findAllInCompany(companyId);
+      jest.spyOn(service, 'findAllInCompany').mockResolvedValue(returnedResponseFromService);
+      const currentEmployee = { currentEmployeeId: new Types.ObjectId() };
+      const result = await controller.findAllInCompany('header', companyId, currentEmployee);
       expect(result).toEqual(expectedResponse);
     });
   });
@@ -150,10 +145,9 @@ describe('--Inventory Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'findById')
-        .mockResolvedValue(returnedResponseFromService);
-      const result = await controller.findById(InventoryId);
+      jest.spyOn(service, 'findById').mockResolvedValue(returnedResponseFromService);
+      const currentEmployee = { currentEmployeeId: new Types.ObjectId() };
+      const result = await controller.findById('header', InventoryId, currentEmployee);
       expect(result).toEqual(expectedResponse);
     });
   });
@@ -184,10 +178,12 @@ describe('--Inventory Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'update')
-        .mockResolvedValue(returnedResponseFromService);
-      const result = await controller.update(InventoryId, updateInventoryDto);
+      jest.spyOn(service, 'update').mockResolvedValue(returnedResponseFromService);
+      const body = {
+        currentEmployeeId: new Types.ObjectId(),
+        updateInventoryDto: updateInventoryDto,
+      };
+      const result = await controller.update('header', InventoryId, body);
       expect(result).toEqual(expectedResponse);
     });
   });
@@ -200,10 +196,9 @@ describe('--Inventory Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'remove')
-        .mockResolvedValue(returnedResponseFromService);
-      const result = await controller.remove(InventoryId);
+      jest.spyOn(service, 'remove').mockResolvedValue(returnedResponseFromService);
+      const currentEmployee = { currentEmployeeId: new Types.ObjectId() };
+      const result = await controller.remove('header', InventoryId, currentEmployee);
       expect(result).toEqual(expectedResponse);
     });
 

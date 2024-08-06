@@ -50,11 +50,7 @@ import {
   CompanyResponseDto,
 } from './entities/company.entity';
 import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
-import {
-  extractUserId,
-  validateObjectId,
-  validateObjectIds,
-} from '../utils/Utils';
+import { extractUserId, validateObjectId, validateObjectIds } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -99,9 +95,7 @@ export class CompanyController {
     description: `The access token and ${className}'s Id used for querying.`,
   })
   @Post('/create')
-  async create(
-    @Body() createCompanyDto: CreateCompanyDto,
-  ): Promise<CreateCompanyResponseDto> {
+  async create(@Body() createCompanyDto: CreateCompanyDto): Promise<CreateCompanyResponseDto> {
     return await this.companyService.create(createCompanyDto);
   }
 
@@ -149,10 +143,7 @@ export class CompanyController {
     try {
       return { data: await this.companyService.getAllCompanyNames() };
     } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -169,10 +160,7 @@ export class CompanyController {
     try {
       return { data: await this.companyService.getAllCompanies() };
     } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -233,10 +221,7 @@ export class CompanyController {
     try {
       return { data: await this.companyService.getAllEmployees(objId) };
     } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -265,15 +250,11 @@ export class CompanyController {
     description: `The mongodb 'Detailed' object of the ${className}, with an _id attribute`,
   })
   @Get('id/:id/detailed')
-  async findOneDetailed(
-    @Param('id') id: string,
-  ): Promise<{ data: FlattenMaps<Company> & { _id: Types.ObjectId } }> {
+  async findOneDetailed(@Param('id') id: string): Promise<{ data: FlattenMaps<Company> & { _id: Types.ObjectId } }> {
     try {
       validateObjectId(id);
       return {
-        data: await this.companyService.getCompanyByIdDetailed(
-          new Types.ObjectId(id),
-        ),
+        data: await this.companyService.getCompanyByIdDetailed(new Types.ObjectId(id)),
       };
     } catch (e) {
       throw new HttpException(e, HttpStatus.NOT_FOUND);
@@ -324,28 +305,19 @@ export class CompanyController {
       updateCompanyDto: UpdateCompanyDto;
     },
   ) {
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       try {
         validateObjectId(cid);
         const userId = extractUserId(this.jwtService, headers);
 
         const companyId = new Types.ObjectId(cid);
-        const updatedCompany = await this.companyService.update(
-          userId,
-          companyId,
-          body.updateCompanyDto,
-        );
+        const updatedCompany = await this.companyService.update(userId, companyId, body.updateCompanyDto);
         return {
           data: updatedCompany,
         };
       } catch (e) {
-        throw new HttpException(
-          'internal server error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+        throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
       }
     } else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -371,25 +343,16 @@ export class CompanyController {
     @UploadedFile() file: Express.Multer.File,
     @Body() body: { currentEmployeeId: Types.ObjectId },
   ) {
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       try {
         validateObjectId(companyId);
         const userId = extractUserId(this.jwtService, headers);
         return {
-          data: await this.companyService.updateLogo(
-            userId,
-            new Types.ObjectId(companyId),
-            file,
-          ),
+          data: await this.companyService.updateLogo(userId, new Types.ObjectId(companyId), file),
         };
       } catch (e) {
-        throw new HttpException(
-          'internal server error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+        throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
       }
     } else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -418,9 +381,7 @@ export class CompanyController {
     @Param('cid') cid: string,
     @Body() body: { currentEmployeeId: Types.ObjectId },
   ) {
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       try {
         validateObjectId(cid);
@@ -429,10 +390,7 @@ export class CompanyController {
         await this.companyService.deleteCompany(userId, objectId);
         return { data: true };
       } catch (e) {
-        throw new HttpException(
-          'Internal Server Error',
-          HttpStatus.SERVICE_UNAVAILABLE,
-        );
+        throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
       }
     } else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -455,20 +413,14 @@ export class CompanyController {
     description: '',
   })
   @Delete('/emp')
-  async removeEmployee(
-    @Headers() headers: any,
-    @Body() deleteEmployeeDto: DeleteEmployeeFromCompanyDto,
-  ) {
+  async removeEmployee(@Headers() headers: any, @Body() deleteEmployeeDto: DeleteEmployeeFromCompanyDto) {
     // //TODO: potentially remove the endpoint since there is one in employee.controller.ts
     try {
       const userId = extractUserId(this.jwtService, headers);
       await this.companyService.deleteEmployee(userId, deleteEmployeeDto);
       return { data: true };
     } catch (e) {
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+      throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
     }
   }
 
@@ -482,19 +434,13 @@ export class CompanyController {
     description: `An array of JobsStatuses`,
   })
   @Get('status/all/:cid')
-  async findAllStatusInCompany(
-    @Headers() headers: any,
-    @Param('cid') cId: string,
-  ) {
+  async findAllStatusInCompany(@Headers() headers: any, @Param('cid') cId: string) {
     try {
       validateObjectId(cId);
       const companyId = new Types.ObjectId(cId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
-        data: await this.companyService.findAllStatusesInCompany(
-          userId,
-          companyId,
-        ),
+        data: await this.companyService.findAllStatusesInCompany(userId, companyId),
       };
     } catch (e) {
       console.log(e);
@@ -522,15 +468,11 @@ export class CompanyController {
       updateCompanyJobStatusesDto: UpdateCompanyJobStatusesDto;
     },
   ) {
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       try {
         const userId = extractUserId(this.jwtService, headers);
-        const statusArr = new UpdateCompanyJobStatuses(
-          body.updateCompanyJobStatusesDto,
-        );
+        const statusArr = new UpdateCompanyJobStatuses(body.updateCompanyJobStatusesDto);
         return {
           data: await this.companyService.updateCompanyStatuses(
             userId,

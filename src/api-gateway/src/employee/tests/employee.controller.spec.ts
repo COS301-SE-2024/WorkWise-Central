@@ -18,9 +18,7 @@ describe('--Employee Controller--', () => {
     })
       .useMocker((token) => {
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token,
-          ) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
@@ -68,9 +66,7 @@ describe('--Employee Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'findAll')
-        .mockResolvedValue(returnedResponseFromService as any);
+      jest.spyOn(service, 'findAll').mockResolvedValue(returnedResponseFromService as any);
       const result = await controller.findAll();
       expect(result).toEqual(expectedResponse);
     });
@@ -111,10 +107,9 @@ describe('--Employee Controller--', () => {
         data: undefined,
       };
 
-      jest
-        .spyOn(service, 'findAllInCompany')
-        .mockResolvedValue(returnedResponseFromService as any);
-      const result = await controller.findAllInCompanyDetailed(companyId);
+      jest.spyOn(service, 'findAllInCompany').mockResolvedValue(returnedResponseFromService as any);
+      const currentEmployee = { currentEmployeeId: new Types.ObjectId() };
+      const result = await controller.findAllInCompanyDetailed('header', companyId, currentEmployee);
       expect(result).toEqual(expectedResponse);
     });
   });
@@ -141,10 +136,9 @@ describe('--Employee Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'findAllInCompany')
-        .mockResolvedValue(returnedResponseFromService as any);
-      const result = await controller.findAllInCompany(companyId);
+      jest.spyOn(service, 'findAllInCompany').mockResolvedValue(returnedResponseFromService as any);
+      const currentEmployee = { currentEmployeeId: new Types.ObjectId() };
+      const result = await controller.findAllInCompany('header', companyId, currentEmployee);
       expect(result).toEqual(expectedResponse);
     });
   });
@@ -157,10 +151,9 @@ describe('--Employee Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'findById')
-        .mockResolvedValue(returnedResponseFromService);
-      const result = await controller.findByIdDetailed(employeeId);
+      jest.spyOn(service, 'findById').mockResolvedValue(returnedResponseFromService);
+      const currentEmployee = { currentEmployeeId: new Types.ObjectId() };
+      const result = await controller.findByIdDetailed('header', employeeId, currentEmployee);
       expect(result).toEqual(expectedResponse);
     });
   });
@@ -173,10 +166,9 @@ describe('--Employee Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'findById')
-        .mockResolvedValue(returnedResponseFromService);
-      const result = await controller.findById(employeeId);
+      jest.spyOn(service, 'findById').mockResolvedValue(returnedResponseFromService);
+      const currentEmployee = { currentEmployeeId: new Types.ObjectId() };
+      const result = await controller.findById('header', employeeId, currentEmployee);
       expect(result).toEqual(expectedResponse);
     });
   });
@@ -203,10 +195,8 @@ describe('--Employee Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'getListOfOtherEmployees')
-        .mockResolvedValue(returnedResponseFromService as any);
-      const result = await controller.getOtherEmployees(employeeId);
+      jest.spyOn(service, 'getListOfOtherEmployees').mockResolvedValue(returnedResponseFromService as any);
+      const result = await controller.getOtherEmployees('header', employeeId);
       expect(result).toEqual(expectedResponse);
     });
   });
@@ -240,10 +230,9 @@ describe('--Employee Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'update')
-        .mockResolvedValue(returnedResponseFromService as any);
-      const result = await controller.update(employeeId, updateEmployeeDto);
+      jest.spyOn(service, 'update').mockResolvedValue(returnedResponseFromService as any);
+      const body = { currentEmployeeId: new Types.ObjectId(), updateEmployeeDto: updateEmployeeDto };
+      const result = await controller.update('header', employeeId, body);
       expect(result).toEqual(expectedResponse);
     });
   });
@@ -256,10 +245,9 @@ describe('--Employee Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'remove')
-        .mockResolvedValue(returnedResponseFromService);
-      const result = await controller.remove(employeeId);
+      jest.spyOn(service, 'remove').mockResolvedValue(returnedResponseFromService);
+      const body = { currentEmployeeId: new Types.ObjectId() };
+      const result = await controller.remove('header', employeeId, body);
       expect(result).toEqual(expectedResponse);
     });
 

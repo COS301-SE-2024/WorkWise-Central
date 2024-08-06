@@ -13,11 +13,7 @@ import {
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto, createRoleResponseDto } from './dto/create-role.dto';
-import {
-  UpdateRoleDto,
-  BulkUpdateRoleDto,
-  updateRoleResponseDto,
-} from './dto/update-role.dto';
+import { UpdateRoleDto, BulkUpdateRoleDto, updateRoleResponseDto } from './dto/update-role.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -220,9 +216,7 @@ export class RoleController {
     body: { currentEmployeeId: Types.ObjectId; createRoleDto: CreateRoleDto },
   ) {
     console.log('In create endpoint');
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     console.log('currentEmployee: ', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       console.log('In if');
@@ -266,9 +260,7 @@ export class RoleController {
   ) {
     console.log('In update endpoint');
     const userId = extractUserId(this.jwtService, headers);
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     console.log('currentEmployee: ', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       let data;
@@ -310,20 +302,14 @@ export class RoleController {
   ) {
     console.log('In bulkUpdate endpoint');
     const userId = extractUserId(this.jwtService, headers);
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     console.log('currentEmployee: ', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       let data;
       console.log('In if');
       try {
         console.log('In try clause');
-        data = await this.roleService.bulkUpdate(
-          userId,
-          body.updateRoleDto,
-          companyId,
-        );
+        data = await this.roleService.bulkUpdate(userId, body.updateRoleDto, companyId);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
@@ -362,9 +348,7 @@ export class RoleController {
     @Param('id') id: Types.ObjectId,
     @Body() body: { currentEmployeeId: Types.ObjectId },
   ) {
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       let data;
       try {
@@ -374,10 +358,7 @@ export class RoleController {
       }
 
       if (data === false) {
-        throw new HttpException(
-          'update unsuccessful',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+        throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
       }
       return { data: data };
     } else {

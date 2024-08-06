@@ -19,9 +19,7 @@ describe('--Role Controller--', () => {
     })
       .useMocker((token) => {
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token,
-          ) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
@@ -64,9 +62,7 @@ describe('--Role Controller--', () => {
       const expectedResponse = {
         data: returnedResponseFromService,
       };
-      jest
-        .spyOn(service, 'findAll')
-        .mockResolvedValue(returnedResponseFromService as any);
+      jest.spyOn(service, 'findAll').mockResolvedValue(returnedResponseFromService as any);
       expect(await controller.findAll()).toEqual(expectedResponse);
     });
   });
@@ -88,12 +84,8 @@ describe('--Role Controller--', () => {
       const expectedResponse = {
         data: returnedResponseFromService,
       };
-      jest
-        .spyOn(service, 'findAllInCompany')
-        .mockResolvedValue(returnedResponseFromService as any);
-      expect(await controller.findAllInCompany(companyId)).toEqual(
-        expectedResponse,
-      );
+      jest.spyOn(service, 'findAllInCompany').mockResolvedValue(returnedResponseFromService as any);
+      expect(await controller.findAllInCompany(companyId)).toEqual(expectedResponse);
     });
   });
 
@@ -111,28 +103,18 @@ describe('--Role Controller--', () => {
       const expectedResponse = {
         data: returnedResponseFromService,
       };
-      jest
-        .spyOn(service, 'findById')
-        .mockResolvedValue(returnedResponseFromService);
-      expect(await controller.findById(new Types.ObjectId())).toEqual(
-        expectedResponse,
-      );
+      jest.spyOn(service, 'findById').mockResolvedValue(returnedResponseFromService);
+      expect(await controller.findById(new Types.ObjectId())).toEqual(expectedResponse);
     });
   });
 
   describe('getPermissionsArray', () => {
     it('should return an array of strings', async () => {
-      const returnedResponseFromService = [
-        'permission1',
-        'permission2',
-        'permission3',
-      ];
+      const returnedResponseFromService = ['permission1', 'permission2', 'permission3'];
       const expectedResponse = {
         data: returnedResponseFromService,
       };
-      jest
-        .spyOn(service, 'getPermissionsArray')
-        .mockResolvedValue(returnedResponseFromService as never);
+      jest.spyOn(service, 'getPermissionsArray').mockResolvedValue(returnedResponseFromService as never);
       expect(await controller.getPermissionsArray()).toEqual(expectedResponse);
     });
   });
@@ -156,10 +138,9 @@ describe('--Role Controller--', () => {
       const expectedResponse = {
         data: returnedResponseFromService,
       };
-      jest
-        .spyOn(service, 'create')
-        .mockResolvedValue(returnedResponseFromService as any);
-      expect(await controller.create(createRoleDto)).toEqual(expectedResponse);
+      jest.spyOn(service, 'create').mockResolvedValue(returnedResponseFromService as any);
+      const body = { currentEmployeeId: new Types.ObjectId(), createRoleDto: createRoleDto };
+      expect(await controller.create('header', body)).toEqual(expectedResponse);
     });
   });
 
@@ -182,12 +163,9 @@ describe('--Role Controller--', () => {
       const expectedResponse = {
         data: returnedResponseFromService,
       };
-      jest
-        .spyOn(service, 'update')
-        .mockResolvedValue(returnedResponseFromService);
-      expect(await controller.update(roleId, updateRoleDto)).toEqual(
-        expectedResponse,
-      );
+      jest.spyOn(service, 'update').mockResolvedValue(returnedResponseFromService);
+      const body = { currentEmployeeId: new Types.ObjectId(), updateRoleDto: updateRoleDto };
+      expect(await controller.update('header', roleId, body)).toEqual(expectedResponse);
     });
   });
 
@@ -197,12 +175,9 @@ describe('--Role Controller--', () => {
       const expectedResponse = {
         data: returnedResponseFromService,
       };
-      jest
-        .spyOn(service, 'remove')
-        .mockResolvedValue(returnedResponseFromService);
-      expect(await controller.remove(new Types.ObjectId())).toEqual(
-        expectedResponse,
-      );
+      jest.spyOn(service, 'remove').mockResolvedValue(returnedResponseFromService);
+      const currentEmployee = { currentEmployeeId: new Types.ObjectId() };
+      expect(await controller.remove('header', new Types.ObjectId(), currentEmployee)).toEqual(expectedResponse);
     });
     // it('should return false if role is not deleted', async () => {
     //   const returnedResponseFromService = false;

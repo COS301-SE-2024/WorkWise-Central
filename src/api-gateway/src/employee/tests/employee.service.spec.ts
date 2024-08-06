@@ -120,13 +120,9 @@ describe('--Employee Service--', () => {
       ];
 
       jest.spyOn(mockCompanyService, 'companyIdExists').mockResolvedValue(true);
-      mockEmployeeRepository.findAllInCompany.mockResolvedValue(
-        expectedResponse,
-      );
+      mockEmployeeRepository.findAllInCompany.mockResolvedValue(expectedResponse);
 
-      expect(await employeeService.findAllInCompany(companyId)).toEqual(
-        expectedResponse,
-      );
+      expect(await employeeService.findAllInCompany(companyId)).toEqual(expectedResponse);
     });
   });
 
@@ -178,9 +174,7 @@ describe('--Employee Service--', () => {
       jest.spyOn(mockCompanyService, 'companyIdExists').mockResolvedValue(true);
       mockEmployeeRepository.employeeExistsForCompany.mockResolvedValue(true);
 
-      expect(
-        await employeeService.employeeExistsForCompany(id, companyId),
-      ).toBe(true);
+      expect(await employeeService.employeeExistsForCompany(id, companyId)).toBe(true);
     });
 
     it('should return false if employee does not exist in a given company', async () => {
@@ -190,9 +184,7 @@ describe('--Employee Service--', () => {
       jest.spyOn(mockCompanyService, 'companyIdExists').mockResolvedValue(true);
       mockEmployeeRepository.employeeExistsForCompany.mockResolvedValue(false);
 
-      expect(
-        await employeeService.employeeExistsForCompany(id, companyId),
-      ).toBe(false);
+      expect(await employeeService.employeeExistsForCompany(id, companyId)).toBe(false);
     });
   });
 
@@ -206,13 +198,9 @@ describe('--Employee Service--', () => {
       const expectedResponse = new Types.ObjectId();
 
       jest.spyOn(employeeService, 'employeeExists').mockResolvedValue(true);
-      mockEmployeeRepository.getCompanyIdFromEmployee.mockResolvedValue(
-        expectedResponse,
-      );
+      mockEmployeeRepository.getCompanyIdFromEmployee.mockResolvedValue(expectedResponse);
 
-      expect(await employeeService.getCompanyIdFromEmployee(id)).toBe(
-        expectedResponse,
-      );
+      expect(await employeeService.getCompanyIdFromEmployee(id)).toBe(expectedResponse);
     });
 
     it('should return null if the employee id does not exist', async () => {
@@ -220,13 +208,9 @@ describe('--Employee Service--', () => {
       const expectedResponse = null;
 
       jest.spyOn(employeeService, 'employeeExists').mockResolvedValue(true);
-      mockEmployeeRepository.getCompanyIdFromEmployee.mockResolvedValue(
-        expectedResponse,
-      );
+      mockEmployeeRepository.getCompanyIdFromEmployee.mockResolvedValue(expectedResponse);
 
-      expect(await employeeService.getCompanyIdFromEmployee(id)).toBe(
-        expectedResponse,
-      );
+      expect(await employeeService.getCompanyIdFromEmployee(id)).toBe(expectedResponse);
     });
   });
 

@@ -38,15 +38,13 @@ export class Company {
   constructor(createCompanyDto: CreateCompanyDto) {
     if (createCompanyDto.name) this.name = createCompanyDto.name;
 
-    if (createCompanyDto.registrationNumber)
-      this.registrationNumber = createCompanyDto.registrationNumber;
+    if (createCompanyDto.registrationNumber) this.registrationNumber = createCompanyDto.registrationNumber;
 
     if (createCompanyDto.vatNumber) this.vatNumber = createCompanyDto.vatNumber;
     if (createCompanyDto.type) this.type = createCompanyDto.type;
     if (createCompanyDto.logo) this.logo = createCompanyDto.logo;
 
-    if (createCompanyDto.contactDetails)
-      this.contactDetails = createCompanyDto.contactDetails;
+    if (createCompanyDto.contactDetails) this.contactDetails = createCompanyDto.contactDetails;
 
     if (createCompanyDto.address) this.address = createCompanyDto.address;
 
@@ -81,11 +79,9 @@ export class Company {
   @ApiProperty()
   @Prop({
     required: false,
-    default:
-      'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
+    default: 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
   })
-  logo?: string =
-    'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
+  logo?: string = 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
 
   @ApiProperty()
   @Prop({ required: true })
@@ -129,8 +125,7 @@ export class CompanyApiObject {
   type?: string;
 
   @ApiProperty()
-  logo?: string =
-    'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
+  logo?: string = 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
 
   @ApiProperty()
   contactDetails: ContactDetails;
@@ -168,8 +163,7 @@ export class CompanyApiDetailedObject {
   type?: string;
 
   @ApiProperty()
-  logo?: string =
-    'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
+  logo?: string = 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
 
   @ApiProperty()
   contactDetails: ContactDetails;

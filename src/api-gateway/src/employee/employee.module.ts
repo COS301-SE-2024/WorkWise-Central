@@ -17,9 +17,7 @@ import { InventoryService } from 'src/inventory/inventory.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: Employee.name, schema: EmployeeSchema },
-    ]),
+    MongooseModule.forFeature([{ name: Employee.name, schema: EmployeeSchema }]),
     forwardRef(() => UsersModule),
     forwardRef(() => CompanyModule),
     forwardRef(() => RoleModule),
@@ -30,12 +28,7 @@ import { InventoryService } from 'src/inventory/inventory.service';
     forwardRef(() => InventoryModule),
   ],
   controllers: [EmployeeController],
-  providers: [
-    EmployeeService,
-    EmployeeRepository,
-    JobService,
-    InventoryService,
-  ],
+  providers: [EmployeeService, EmployeeRepository, JobService, InventoryService],
   exports: [EmployeeService, EmployeeRepository, MongooseModule],
 })
 export class EmployeeModule {}

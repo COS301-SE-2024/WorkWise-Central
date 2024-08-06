@@ -3,7 +3,7 @@ import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
 // import { CreateEmployeeDto } from '../dto/create-employee.dto';
 // import { currentDate } from '../../utils/Utils';
-import { Role } from 'src/role/entity/role.entity';
+import { Role } from '../../role/entity/role.entity';
 
 export class UserInfo {
   @ApiProperty()
