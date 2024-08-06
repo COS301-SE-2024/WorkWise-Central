@@ -66,7 +66,7 @@
                 <v-divider></v-divider>
                 <v-col cols="12" xs="12" sm="12" md="12">
                   <v-data-table
-                    :headers="headers"
+                    :headers="headers as any"
                     :items="detailedJobData"
                     :search="search"
                     label="Jobs"
@@ -351,7 +351,7 @@ const getRequestUrl = async (): Promise<string> => {
 
 
 // Set the table headers
-const headers = [
+const headers : any[] = [
   { title: 'Job Heading', key: 'heading', align: 'start', value: 'heading' },
   { title: 'Client Phone', key: 'clientPhone', align: 'start', value: 'clientPhone' },
   { title: 'Client Mail', key: 'clientMail', align: 'start', value: 'clientMail' },
