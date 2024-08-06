@@ -1,23 +1,9 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import {
-  AssignedEmployees,
-  ClientFeedback,
-  Details,
-  RecordedDetails,
-  Comment,
-  Task,
-} from './create-job.dto';
-import {
-  IsArray,
-  IsHexColor,
-  IsMongoId,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
+import { AssignedEmployees, ClientFeedback, Details, RecordedDetails, Comment, Task } from './create-job.dto';
+import { IsArray, IsHexColor, IsMongoId, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Types } from 'mongoose';
 import { Type } from 'class-transformer';
+import { AddHashtag } from '../../utils/Custom Transformers/add-hashtag.transformer';
 
 class UpdateAssignedEmployees extends PartialType(AssignedEmployees) {}
 class UpdateDetails extends PartialType(Details) {}
@@ -40,8 +26,8 @@ export class UpdateJobDto {
 
   @ApiProperty()
   @IsOptional()
-  @IsString()
-  status?: string;
+  @IsMongoId()
+  status?: Types.ObjectId;
 
   @ApiProperty()
   @ValidateNested()
@@ -153,6 +139,7 @@ export class UpdateStatusDto {
   @IsNotEmpty()
   @IsString()
   @IsHexColor()
+  @AddHashtag()
   colour: string;
 }
 
@@ -169,6 +156,7 @@ export class UpdateStatus {
   @IsNotEmpty()
   @IsString()
   @IsHexColor()
+  @AddHashtag()
   colour: string;
 }
 

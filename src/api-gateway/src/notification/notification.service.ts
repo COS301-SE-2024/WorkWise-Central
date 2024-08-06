@@ -1,14 +1,8 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  OnModuleInit,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable, InternalServerErrorException, OnModuleInit } from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Notification } from './entities/notification.entity';
+import { Message, Notification } from './entities/notification.entity';
 import { NotificationRepository } from './notification.repository';
 import { EmployeeService } from '../employee/employee.service';
 import { CompanyService } from '../company/company.service';
@@ -38,10 +32,19 @@ export class NotificationService implements OnModuleInit {
     this.watchDatabase();
   }
 
-  create(createNotificationDto: CreateNotificationDto) {
-    //TODO: Implement
-    console.log(createNotificationDto);
-    return 'This action adds a new notification';
+  async create(newNotification: CreateNotificationDto) {
+    const senderId = newNotification.senderId;
+    const message = newNotification.message;
+    for (const recipient of newNotification.recipientIds) {
+      const singularNotification = new Notification(senderId, recipient, message);
+      // listOfNotifications.push(singularNotification);
+      const result = new this.notificationModel(singularNotification);
+      await result.save();
+      console.log(result);
+    }
+    return {
+      data: 'success',
+    };
   }
 
   watchDatabase() {
@@ -49,11 +52,9 @@ export class NotificationService implements OnModuleInit {
       console.log(change);
       const document: Notification = change.fullDocument;
       console.log(document);
-      this.fcmNotificationService
-        .sendingNotificationOneUser('rand')
-        .then((r) => {
-          console.log('message sent', r);
-        });
+      this.fcmNotificationService.sendingNotificationOneUser('rand').then((r) => {
+        console.log('message sent', r);
+      });
     });
   }
 
@@ -62,11 +63,7 @@ export class NotificationService implements OnModuleInit {
     const senderId = newNotification.senderId;
     const message = newNotification.message;
     for (const recipient of newNotification.recipientIds) {
-      const singularNotification = new Notification(
-        senderId,
-        recipient,
-        message,
-      );
+      const singularNotification = new Notification(senderId, recipient, message);
       listOfNotifications.push(singularNotification);
     }
     const result = await this.notificationModel.create(listOfNotifications);
@@ -78,8 +75,7 @@ export class NotificationService implements OnModuleInit {
 
   async findAllWithEmployeeId(id: Types.ObjectId) {
     try {
-      const result =
-        await this.notificationRepository.findAllWithRecipientId(id);
+      const result = await this.notificationRepository.findAllWithRecipientId(id);
       console.log(result);
       return result;
     } catch (error) {
@@ -90,8 +86,7 @@ export class NotificationService implements OnModuleInit {
   async findAllWithUserId(id: Types.ObjectId) {
     //logic will change later
     try {
-      const result =
-        await this.notificationRepository.findAllWithRecipientId(id);
+      const result = await this.notificationRepository.findAllWithRecipientId(id);
       console.log(result);
       return result;
     } catch (error) {
@@ -99,19 +94,13 @@ export class NotificationService implements OnModuleInit {
     }
   }
 
-  async notifyAllInCompany(companyId: Types.ObjectId, message: string) {
+  async notifyAllInCompany(companyId: Types.ObjectId, message: Message) {
     const company = await this.companyService.getCompanyById(companyId);
-    if (company == null)
-      throw new InternalServerErrorException('Invalid CompanyId');
-    const employeesInCompany =
-      await this.employeeService.findAllInCompany(companyId);
+    if (company == null) throw new InternalServerErrorException('Invalid CompanyId');
+    const employeesInCompany = await this.employeeService.findAllInCompany(companyId);
     for (const employee of employeesInCompany) {
       const user = employee.userId;
-      const notification = new Notification(
-        new Types.ObjectId(),
-        user,
-        message,
-      );
+      const notification = new Notification(new Types.ObjectId(), user, message);
       this.notificationRepository.save(notification);
     }
   }

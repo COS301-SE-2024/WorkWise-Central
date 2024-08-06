@@ -1,15 +1,17 @@
 import { IsBoolean, IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
-import { IsObjectId } from 'class-validator-mongo-object-id';
 import { Types } from 'mongoose';
 
 export class AcceptRequestDto {
-  @IsObjectId()
+  @IsNotEmpty()
+  @IsMongoId()
   companyId: Types.ObjectId;
 
-  @IsObjectId()
+  @IsNotEmpty()
+  @IsMongoId()
   userToJoinId: Types.ObjectId;
 
-  @IsObjectId()
+  @IsNotEmpty()
+  @IsMongoId()
   superiorId: Types.ObjectId;
 
   @IsOptional()
@@ -21,6 +23,16 @@ export class AcceptRequestDto {
   accept: boolean;
 
   @IsOptional()
-  @IsObjectId()
+  @IsMongoId()
   assignedRoleId?: Types.ObjectId;
+}
+
+export class AcceptInviteDto {
+  @IsOptional()
+  @IsMongoId()
+  userId?: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  inviteId: Types.ObjectId;
 }

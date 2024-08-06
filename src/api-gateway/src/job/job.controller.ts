@@ -40,11 +40,7 @@ import mongoose, { Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
-import {
-  CreatePriorityTagDto,
-  CreateStatusDto,
-  CreateTagDto,
-} from './dto/create-tag.dto';
+import { CreatePriorityTagDto, CreateStatusDto, CreateTagDto } from './dto/create-tag.dto';
 import { extractUserId, validateObjectId } from '../utils/Utils';
 import { DeleteStatusDto, DeleteTagDto } from './dto/edit-tag.dto';
 import {
@@ -94,8 +90,7 @@ export class JobController {
   @ApiOperation({
     summary: `Create a new ${className}`,
     description:
-      'Jobs relate to one or more employees in a company, they may be scheduled and' +
-      ' are also linked to clients',
+      'Jobs relate to one or more employees in a company, they may be scheduled and' + ' are also linked to clients',
   })
   @ApiBody({ type: CreateJobDto })
   @ApiResponse({
@@ -106,8 +101,7 @@ export class JobController {
   @Post('/create')
   async create(@Body() createJobDto: CreateJobDto) {
     validateObjectId(createJobDto.assignedBy, 'assignedBy');
-    if (createJobDto.companyId)
-      validateObjectId(createJobDto.companyId, 'Company');
+    if (createJobDto.companyId) validateObjectId(createJobDto.companyId, 'Company');
 
     try {
       return { data: await this.jobService.create(createJobDto) };
@@ -130,10 +124,7 @@ export class JobController {
     try {
       return { data: await this.jobService.findAllJobs() };
     } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -147,18 +138,12 @@ export class JobController {
     description: `An array of mongodb objects of the ${className} class`,
   })
   @Get('all/company/:cid')
-  async findAllInCompany(
-    @Headers() headers: any,
-    @Param('cid') companyId: string,
-  ) {
+  async findAllInCompany(@Headers() headers: any, @Param('cid') companyId: string) {
     try {
       validateObjectId(companyId);
       const userId = extractUserId(this.jwtService, headers);
       return {
-        data: await this.jobService.getAllJobsInCompany(
-          userId,
-          new Types.ObjectId(companyId),
-        ),
+        data: await this.jobService.getAllJobsInCompany(userId, new Types.ObjectId(companyId)),
       };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -175,18 +160,12 @@ export class JobController {
     description: `An array of mongodb objects of the ${className} class`,
   })
   @Get('all/company/detailed/:cid')
-  async findDetailedAllInCompany(
-    @Headers() headers: any,
-    @Param('cid') companyId: string,
-  ) {
+  async findDetailedAllInCompany(@Headers() headers: any, @Param('cid') companyId: string) {
     try {
       const userId = extractUserId(this.jwtService, headers);
       validateObjectId(companyId);
       return {
-        data: await this.jobService.getAllDetailedJobsInCompany(
-          userId,
-          new Types.ObjectId(companyId),
-        ),
+        data: await this.jobService.getAllDetailedJobsInCompany(userId, new Types.ObjectId(companyId)),
       };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -225,20 +204,14 @@ export class JobController {
     description: `An array of mongodb objects of the ${className} class`,
   })
   @Get('all/employee/:eid')
-  async findAllForEmployee(
-    @Headers() headers: any,
-    @Param('eid') empId: string,
-  ) {
+  async findAllForEmployee(@Headers() headers: any, @Param('eid') empId: string) {
     try {
       const userId = extractUserId(this.jwtService, headers);
       validateObjectId(userId);
       validateObjectId(empId);
 
       return {
-        data: await this.jobService.getAllJobsForEmployee(
-          userId,
-          new Types.ObjectId(empId),
-        ),
+        data: await this.jobService.getAllJobsForEmployee(userId, new Types.ObjectId(empId)),
       };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -255,10 +228,7 @@ export class JobController {
     description: `An array of mongodb objects of the ${className} class`,
   })
   @Get('all/employee/:eid/detailed')
-  async findAllForEmployeeDetailed(
-    @Headers() headers: any,
-    @Param('eid') empId: string,
-  ) {
+  async findAllForEmployeeDetailed(@Headers() headers: any, @Param('eid') empId: string) {
     const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
     if (!userId) {
       throw new UnauthorizedException('Unauthorized, JWT required');
@@ -268,10 +238,7 @@ export class JobController {
       validateObjectId(empId);
 
       return {
-        data: await this.jobService.getAllDetailedJobsForEmployee(
-          userId,
-          new Types.ObjectId(empId),
-        ),
+        data: await this.jobService.getAllDetailedJobsForEmployee(userId, new Types.ObjectId(empId)),
       };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -318,22 +285,14 @@ export class JobController {
     description: `The updated ${className} object`,
   })
   @ApiBody({ type: UpdateJobDto })
-  @Patch(':id')
-  async update(
-    @Headers() headers: any,
-    @Param('id') jobId: string,
-    @Body() updateJobDto: UpdateJobDto,
-  ) {
+  @Patch('update/:id')
+  async update(@Headers() headers: any, @Param('id') jobId: string, @Body() updateJobDto: UpdateJobDto) {
     try {
       validateObjectId(jobId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       // console.log(userId);
       // console.log(new Types.ObjectId(jobId));
-      const success = await this.jobService.update(
-        userId,
-        new Types.ObjectId(jobId),
-        updateJobDto,
-      );
+      const success = await this.jobService.update(userId, new Types.ObjectId(jobId), updateJobDto);
       return new UpdateDtoResponse(success);
     } catch (e) {
       console.log(e);
@@ -359,16 +318,12 @@ export class JobController {
   @Delete('/:id')
   async remove(@Param('id') id: string, @Body() pass: { pass: string }) {
     console.log(pass); //Will be implemented later
-    if (!mongoose.Types.ObjectId.isValid(id))
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+    if (!mongoose.Types.ObjectId.isValid(id)) throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
 
     try {
       return { data: await this.jobService.softDelete(new Types.ObjectId(id)) };
     } catch (e) {
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+      throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
     }
   }
   // Specific
@@ -383,10 +338,7 @@ export class JobController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Put('/comment')
-  async addComment(
-    @Headers() headers: any,
-    @Body() addCommentDto: AddCommentDto,
-  ) {
+  async addComment(@Headers() headers: any, @Body() addCommentDto: AddCommentDto) {
     try {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
@@ -407,17 +359,11 @@ export class JobController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Delete('/comment')
-  async removeComment(
-    @Headers() headers: any,
-    @Body() removeCommentDto: RemoveCommentDto,
-  ) {
+  async removeComment(@Headers() headers: any, @Body() removeCommentDto: RemoveCommentDto) {
     try {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
-        data: await this.jobService.removeCommentFromJob(
-          userId,
-          removeCommentDto,
-        ),
+        data: await this.jobService.removeCommentFromJob(userId, removeCommentDto),
       };
     } catch (e) {
       console.log(e);
@@ -436,10 +382,7 @@ export class JobController {
   })
   @ApiBody({ type: UpdateCommentDto })
   @Patch('/comment')
-  async editComment(
-    @Headers() headers: any,
-    @Body() updateCommentDto: UpdateCommentDto,
-  ) {
+  async editComment(@Headers() headers: any, @Body() updateCommentDto: UpdateCommentDto) {
     try {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
@@ -463,10 +406,7 @@ export class JobController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Get('/tags/:cid')
-  async getAllTagsInCompany(
-    @Headers() headers: any,
-    @Param('cid') companyId: string,
-  ) {
+  async getAllTagsInCompany(@Headers() headers: any, @Param('cid') companyId: string) {
     try {
       validateObjectId(companyId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
@@ -490,10 +430,7 @@ export class JobController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Get('/tags/p/:cid')
-  async getAllPriorityTagsInCompany(
-    @Headers() headers: any,
-    @Param('cid') companyId: string,
-  ) {
+  async getAllPriorityTagsInCompany(@Headers() headers: any, @Param('cid') companyId: string) {
     try {
       validateObjectId(companyId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
@@ -517,10 +454,7 @@ export class JobController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Post('/tags/add')
-  addJobTagToCompany(
-    @Headers() headers: any,
-    @Body() createTagDto: CreateTagDto,
-  ) {
+  addJobTagToCompany(@Headers() headers: any, @Body() createTagDto: CreateTagDto) {
     try {
       validateObjectId(createTagDto.companyId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
@@ -541,18 +475,12 @@ export class JobController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Post('/tags/p')
-  async addJobPriorityTagToCompany(
-    @Headers() headers: any,
-    @Body() createPriorityTagDto: CreatePriorityTagDto,
-  ) {
+  async addJobPriorityTagToCompany(@Headers() headers: any, @Body() createPriorityTagDto: CreatePriorityTagDto) {
     try {
       validateObjectId(createPriorityTagDto.companyId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
-        data: await this.jobService.addJobPriorityTagToCompany(
-          userId,
-          createPriorityTagDto,
-        ),
+        data: await this.jobService.addJobPriorityTagToCompany(userId, createPriorityTagDto),
       };
     } catch (e) {
       console.log(e);
@@ -570,17 +498,11 @@ export class JobController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Delete('tags/')
-  async removeJobTagFromCompany(
-    @Headers() headers: any,
-    @Body() deleteTagDto: DeleteTagDto,
-  ) {
+  async removeJobTagFromCompany(@Headers() headers: any, @Body() deleteTagDto: DeleteTagDto) {
     try {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
-        data: await this.jobService.removeJobTagFromCompany(
-          userId,
-          deleteTagDto,
-        ),
+        data: await this.jobService.removeJobTagFromCompany(userId, deleteTagDto),
       };
     } catch (e) {
       console.log(e);
@@ -598,18 +520,12 @@ export class JobController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Delete('tags/p/')
-  async removePriorityTagFromCompany(
-    @Headers() headers: any,
-    @Body() deleteTagDto: DeleteTagDto,
-  ) {
+  async removePriorityTagFromCompany(@Headers() headers: any, @Body() deleteTagDto: DeleteTagDto) {
     try {
       validateObjectId(deleteTagDto.tagId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
-        data: await this.jobService.removeJobPriorityTagFromCompany(
-          userId,
-          deleteTagDto,
-        ),
+        data: await this.jobService.removeJobPriorityTagFromCompany(userId, deleteTagDto),
       };
     } catch (e) {
       console.log(e);
@@ -624,10 +540,7 @@ export class JobController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Put('/employee')
-  async assignEmployee(
-    @Headers() headers: any,
-    @Body() jobAssignDto: JobAssignDto,
-  ) {
+  async assignEmployee(@Headers() headers: any, @Body() jobAssignDto: JobAssignDto) {
     try {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
@@ -644,12 +557,9 @@ export class JobController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Patch('/employee')
-  async unassignEmployee(
-    @Headers() headers: any,
-    @Body() jobAssignDto: JobAssignDto,
-  ) {
+  async unassignEmployee(@Headers() headers: any, @Body() jobAssignDto: JobAssignDto) {
     try {
-      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      const userId = extractUserId(this.jwtService, headers);
       return {
         data: await this.jobService.unassignEmployee(userId, jobAssignDto),
       };
@@ -664,10 +574,7 @@ export class JobController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Put('/employees')
-  async assignEmployees(
-    @Headers() headers: any,
-    @Body() jobAssignGroupDto: JobAssignGroupDto,
-  ) {
+  async assignEmployees(@Headers() headers: any, @Body() jobAssignGroupDto: JobAssignGroupDto) {
     try {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
@@ -684,17 +591,11 @@ export class JobController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Patch('/employees')
-  async unassignEmployees(
-    @Headers() headers: any,
-    @Body() jobAssignGroupDto: JobAssignGroupDto,
-  ) {
+  async unassignEmployees(@Headers() headers: any, @Body() jobAssignGroupDto: JobAssignGroupDto) {
     try {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
-        data: await this.jobService.unassignEmployees(
-          userId,
-          jobAssignGroupDto,
-        ),
+        data: await this.jobService.unassignEmployees(userId, jobAssignGroupDto),
       };
     } catch (e) {
       console.log(e);
@@ -742,10 +643,7 @@ export class JobController {
     description: `An array of JobsStatuses`,
   })
   @Get('status/all/:cid')
-  async findAllStatusInCompany(
-    @Headers() headers: any,
-    @Param('cid') cId: string,
-  ) {
+  async findAllStatusInCompany(@Headers() headers: any, @Param('cid') cId: string) {
     try {
       validateObjectId(cId);
       const companyId = new Types.ObjectId(cId);
@@ -769,10 +667,7 @@ export class JobController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Post('status/')
-  async createStatus(
-    @Headers() headers: any,
-    @Body() createStatusDto: CreateStatusDto,
-  ) {
+  async createStatus(@Headers() headers: any, @Body() createStatusDto: CreateStatusDto) {
     try {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
@@ -795,22 +690,14 @@ export class JobController {
   })
   @ApiBody({ type: UpdateStatusDto })
   @Patch('status/')
-  async updateStatus(
-    @Headers() headers: any,
-    @Body() updateStatusDto: UpdateStatusDto,
-  ) {
+  async updateStatus(@Headers() headers: any, @Body() updateStatusDto: UpdateStatusDto) {
     try {
       const employeeId = new Types.ObjectId(updateStatusDto.employeeId);
       const statusId = new Types.ObjectId(updateStatusDto.statusId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       const updateStatus: UpdateStatus = new UpdateStatus(updateStatusDto);
       return {
-        data: await this.jobService.updateStatus(
-          userId,
-          employeeId,
-          statusId,
-          updateStatus,
-        ),
+        data: await this.jobService.updateStatus(userId, employeeId, statusId, updateStatus),
       };
     } catch (e) {
       console.log(e);
@@ -828,10 +715,7 @@ export class JobController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Delete('status')
-  async deleteStatus(
-    @Headers() headers: any,
-    @Body() deleteStatusDto: DeleteStatusDto,
-  ) {
+  async deleteStatus(@Headers() headers: any, @Body() deleteStatusDto: DeleteStatusDto) {
     try {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {

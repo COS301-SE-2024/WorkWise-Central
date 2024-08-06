@@ -17,6 +17,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { SignInResponseDto } from './dto/sign-in-response.dto';
+
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -56,6 +57,11 @@ export class AuthController {
   ) {
     const userIsVerified = await this.authService.verifyEmail(email, token);
     const status: string = userIsVerified ? 'successful' : 'failed';
-    return { message: `Email verification ${status}` };
+    return {
+      data: {
+        success: userIsVerified,
+        message: `Email verification ${status}`,
+      },
+    };
   }
 }
