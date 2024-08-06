@@ -94,7 +94,8 @@ export default defineComponent({
             detail: 'Tag Created',
             life: 3000
           })
-          this.dialog = false
+
+          window.location.reload()
         })
         .catch((error) => {
           this.$toast.add({

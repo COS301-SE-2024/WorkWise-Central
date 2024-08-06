@@ -89,6 +89,7 @@ export default defineComponent({
             detail: 'Status Created',
             life: 3000
           })
+          window.location.reload()
         })
         .catch((error) => {
           console.log(error)

@@ -33,8 +33,9 @@
             <Toast position="top-center" />
             <v-col align="center" cols="12" lg="6">
               <v-btn color="success" @click="updateRole" block>
-                <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon> </v-btn
-              >Save
+                <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>
+                Save</v-btn
+              >
             </v-col>
 
             <v-col align="center" cols="12" lg="6"

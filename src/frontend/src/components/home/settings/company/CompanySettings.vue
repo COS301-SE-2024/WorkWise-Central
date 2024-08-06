@@ -20,10 +20,7 @@
         <CreateRoles v-if="currentSettings === 'Roles'" />
         <CreateStatus v-if="currentSettings === 'Status'" />
         <CreateTags v-if="currentSettings === 'Tags'" />
-        <DeletePriority v-if="currentSettings === 'Priority'" />
-        <DeleteRole v-if="currentSettings === 'Roles'" />
-        <DeleteStatus v-if="currentSettings === 'Status'" />
-        <DeleteTags v-if="currentSettings === 'Tags'" />
+
         <v-card class="elevation-0"
           ><v-list class="bg-cardColor">
             <v-list-item-group>
@@ -63,10 +60,7 @@ import CreatePriority from './CreatePriority.vue'
 import CreateRoles from './CreateRoles.vue'
 import CreateStatus from './CreateStatus.vue'
 import CreateTags from './CreateTags.vue'
-import DeletePriority from './DeletePriority.vue'
-import DeleteRole from './DeleteRole.vue'
-import DeleteStatus from './DeleteStatus.vue'
-import DeleteTags from './DeleteTags.vue'
+
 export default defineComponent({
   name: 'CompanySettings',
 
@@ -120,11 +114,7 @@ export default defineComponent({
     CreatePriority,
     CreateRoles,
     CreateStatus,
-    CreateTags,
-    DeletePriority,
-    DeleteRole,
-    DeleteStatus,
-    DeleteTags
+    CreateTags
   },
   methods: {
     close() {
