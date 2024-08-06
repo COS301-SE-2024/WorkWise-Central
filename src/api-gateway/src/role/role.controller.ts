@@ -191,10 +191,7 @@ export class RoleController {
   })
   @ApiBody({ type: UpdateRoleDto })
   @Patch(':id')
-  async update(
-    @Param('id') id: Types.ObjectId,
-    @Body() updateRoleDto: UpdateRoleDto,
-  ) {
+  async update(@Param('id') id: Types.ObjectId, @Body() updateRoleDto: UpdateRoleDto) {
     let data;
     try {
       data = await this.roleService.update(id, updateRoleDto);
@@ -237,10 +234,7 @@ export class RoleController {
     }
 
     if (data === false) {
-      throw new HttpException(
-        'update unsuccessful',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return { data: data };
   }

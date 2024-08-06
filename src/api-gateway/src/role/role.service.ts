@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Types } from 'mongoose';
@@ -150,10 +145,7 @@ export class RoleService {
     return await this.roleRepository.roleExists(id);
   }
 
-  async roleExistsInCompany(
-    id: Types.ObjectId,
-    companyId: Types.ObjectId,
-  ): Promise<boolean> {
+  async roleExistsInCompany(id: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
     //checking if the company exists
     if (!(await this.companyService.companyIdExists(companyId))) {
       throw new Error('CompanyId does not exist');
@@ -195,14 +187,10 @@ export class RoleService {
     adminRoleDto.permissionSuite.push('add a new job');
     adminRoleDto.permissionSuite.push('view all clients');
     adminRoleDto.permissionSuite.push('view all clients under me');
-    adminRoleDto.permissionSuite.push(
-      'view all clients that are assigned to me',
-    );
+    adminRoleDto.permissionSuite.push('view all clients that are assigned to me');
     adminRoleDto.permissionSuite.push('edit all clients');
     adminRoleDto.permissionSuite.push('edit all clients that are under me');
-    adminRoleDto.permissionSuite.push(
-      'edit all clients that are assigned to me',
-    );
+    adminRoleDto.permissionSuite.push('edit all clients that are assigned to me');
     adminRoleDto.permissionSuite.push('view all inventory');
     adminRoleDto.permissionSuite.push('record inventory use');
 
@@ -221,13 +209,9 @@ export class RoleService {
     foremanRoleDto.permissionSuite.push('edit jobs that are assigned to me');
     foremanRoleDto.permissionSuite.push('add a new job');
     foremanRoleDto.permissionSuite.push('view all clients under me');
-    foremanRoleDto.permissionSuite.push(
-      'view all clients that are assigned to me',
-    );
+    foremanRoleDto.permissionSuite.push('view all clients that are assigned to me');
     foremanRoleDto.permissionSuite.push('edit all clients that are under me');
-    foremanRoleDto.permissionSuite.push(
-      'edit all clients that are assigned to me',
-    );
+    foremanRoleDto.permissionSuite.push('edit all clients that are assigned to me');
     foremanRoleDto.permissionSuite.push('view all inventory');
     foremanRoleDto.permissionSuite.push('record inventory use');
 
@@ -243,13 +227,9 @@ export class RoleService {
     teamRoleDto.permissionSuite.push('edit all jobs');
     teamRoleDto.permissionSuite.push('edit jobs that are assigned to me');
     teamRoleDto.permissionSuite.push('view all clients');
-    teamRoleDto.permissionSuite.push(
-      'view all clients that are assigned to me',
-    );
+    teamRoleDto.permissionSuite.push('view all clients that are assigned to me');
     teamRoleDto.permissionSuite.push('edit all clients');
-    teamRoleDto.permissionSuite.push(
-      'edit all clients that are assigned to me',
-    );
+    teamRoleDto.permissionSuite.push('edit all clients that are assigned to me');
     teamRoleDto.permissionSuite.push('view all inventory');
     teamRoleDto.permissionSuite.push('record inventory use');
 
@@ -274,14 +254,10 @@ export class RoleService {
     workerRoleDto.roleName = 'Worker';
     workerRoleDto.permissionSuite.push('view all jobs assigned to me');
     workerRoleDto.permissionSuite.push('edit jobs that are assigned to me');
-    workerRoleDto.permissionSuite.push(
-      'view all clients that are assigned to me',
-    );
+    workerRoleDto.permissionSuite.push('view all clients that are assigned to me');
     workerRoleDto.permissionSuite.push('edit all clients');
     workerRoleDto.permissionSuite.push('edit all clients that are under me');
-    workerRoleDto.permissionSuite.push(
-      'edit all clients that are assigned to me',
-    );
+    workerRoleDto.permissionSuite.push('edit all clients that are assigned to me');
     workerRoleDto.permissionSuite.push('view all inventory');
     workerRoleDto.permissionSuite.push('record inventory use');
 

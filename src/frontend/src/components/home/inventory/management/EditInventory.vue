@@ -193,11 +193,23 @@ export default {
       try {
         const response = await axios.patch(`${apiURL}inventory/${this.inventory_id}`, data, config)
         console.log(response)
-        this.addDialog = false
-        alert('Inventory updated')
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Inventory updated successfully',
+          life: 3000
+        })
       } catch (error) {
         console.error(error)
-        alert('Failed to update inventory')
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'An error occurred while updating the inventory',
+          life: 3000
+        })
+      } finally {
+        this.addDialog = false
+        window.location.reload()
       }
     },
     allRulesPass() {

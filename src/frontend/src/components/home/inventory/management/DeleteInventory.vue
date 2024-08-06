@@ -31,7 +31,7 @@
           ><v-row justify="end"
             ><v-col cols="12" lg="6"
               ><Toast position="bottom-center" />
-              <v-btn label="Cancel" color="secondary" text @click="close" block
+              <v-btn label="Cancel" color="secondary" @click="close" block
                 ><v-icon icon="fa:fa-solid fa-cancel" end color="secondary" size="small"></v-icon
                 >Cancel
               </v-btn></v-col
@@ -72,11 +72,7 @@ export default defineComponent({
     deleteDialog: false,
     clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
     isDeleting: false,
-    isdarkmode: localStorage.getItem('isdarkmode') === 'true' ? true : false,
-    light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
-    dark_theme_text_color: 'color: #DCDBDB',
-    modal_dark_theme_color: '#2b2b2b',
-    modal_light_theme_color: '#FFFFFF'
+    isdarkmode: localStorage.getItem('isdarkmode') === 'true' ? true : false
   }),
   methods: {
     async deleteInventory() {

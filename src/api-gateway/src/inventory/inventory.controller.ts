@@ -22,16 +22,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  InventoryListResponseDto,
-  InventoryResponseDto,
-} from './entities/inventory.entity';
+import { InventoryListResponseDto, InventoryResponseDto } from './entities/inventory.entity';
 import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
-import {
-  CreateInventoryDto,
-  CreateInventoryResponseDto,
-} from './dto/create-inventory.dto';
+import { CreateInventoryDto, CreateInventoryResponseDto } from './dto/create-inventory.dto';
 import { AuthGuard } from '../auth/auth.guard';
 
 const className = 'Inventory';
@@ -173,10 +167,7 @@ export class InventoryController {
   })
   @ApiBody({ type: UpdateInventoryDto })
   @Patch(':id')
-  async update(
-    @Param('id') id: Types.ObjectId,
-    @Body() updateInventoryDto: UpdateInventoryDto,
-  ) {
+  async update(@Param('id') id: Types.ObjectId, @Body() updateInventoryDto: UpdateInventoryDto) {
     let data;
     try {
       data = await this.inventoryService.update(id, updateInventoryDto);
@@ -219,10 +210,7 @@ export class InventoryController {
     }
 
     if (data === false) {
-      throw new HttpException(
-        'update unsuccessful',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return { data: data };
   }

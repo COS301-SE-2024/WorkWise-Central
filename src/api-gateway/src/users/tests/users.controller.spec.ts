@@ -5,11 +5,7 @@ import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
 import { Types } from 'mongoose';
 import { UserApiObject } from '../entities/user.entity';
 import { CreateUserDto, CreateUserResponseDto } from '../dto/create-user.dto';
-import {
-  HttpException,
-  HttpStatus,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, InternalServerErrorException } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { UpdateUserDto } from '../dto/update-user.dto';
 
@@ -49,9 +45,7 @@ describe('UsersController', () => {
           };
         }*/
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token,
-          ) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
@@ -80,9 +74,7 @@ describe('UsersController', () => {
   });
 
   it('should reject invalid ObjectIds before processing any request with an ID', async function () {
-    expect(() => usersController.validateObjectId('failure')).toThrowError(
-      'Invalid ID',
-    );
+    expect(() => usersController.validateObjectId('failure')).toThrowError('Invalid ID');
   });
 
   it('should accept valid ObjectIds before processing any request with an ID', async function () {
@@ -131,10 +123,7 @@ describe('UsersController', () => {
         contactInfo: { email: 'a.gmail.com', phoneNumber: '+27 67 234 6534' },
       };
 
-      const expectedError = new HttpException(
-        'Invalid user data',
-        HttpStatus.CONFLICT,
-      );
+      const expectedError = new HttpException('Invalid user data', HttpStatus.CONFLICT);
       jest.spyOn(usersService, 'create').mockRejectedValue(expectedError);
 
       try {
@@ -168,9 +157,7 @@ describe('UsersController', () => {
       const username = 'errorUsername';
       jest
         .spyOn(usersService, 'usernameExists')
-        .mockRejectedValue(
-          new InternalServerErrorException('Something went wrong'),
-        );
+        .mockRejectedValue(new InternalServerErrorException('Something went wrong'));
 
       try {
         await usersController.usernameExists(username);
@@ -201,9 +188,7 @@ describe('UsersController', () => {
       const username = 'errorUsername';
       jest
         .spyOn(usersService, 'usernameExists')
-        .mockRejectedValue(
-          new InternalServerErrorException('Something went wrong'),
-        );
+        .mockRejectedValue(new InternalServerErrorException('Something went wrong'));
 
       try {
         await usersController.usernameExists(username);
@@ -234,9 +219,7 @@ describe('UsersController', () => {
       const username = 'errorUsername';
       jest
         .spyOn(usersService, 'phoneExists')
-        .mockRejectedValue(
-          new InternalServerErrorException('Something went wrong'),
-        );
+        .mockRejectedValue(new InternalServerErrorException('Something went wrong'));
 
       try {
         await usersController.usernameExists(username);
@@ -275,9 +258,7 @@ describe('UsersController', () => {
       const userId = 'invalidUserId';
       const updateUserDto: UpdateUserDto = { skills: ['NewSkill'] };
 
-      jest
-        .spyOn(usersService, 'updateUser')
-        .mockRejectedValue(new Error('DB error'));
+      jest.spyOn(usersService, 'updateUser').mockRejectedValue(new Error('DB error'));
 
       try {
         await usersController.update({ userId }, updateUserDto);
@@ -292,12 +273,10 @@ describe('UsersController', () => {
     it('should delete a user if ID is valid', async () => {
       const userId = new Types.ObjectId();
 
-      jest
-        .spyOn(usersController, 'validateObjectId')
-        .mockImplementation((a: Types.ObjectId) => {
-          console.log(a);
-          return true;
-        });
+      jest.spyOn(usersController, 'validateObjectId').mockImplementation((a: Types.ObjectId) => {
+        console.log(a);
+        return true;
+      });
 
       jest.spyOn(usersService, 'softDelete').mockResolvedValue(true);
 
@@ -309,12 +288,10 @@ describe('UsersController', () => {
       const userId = new Types.ObjectId();
       const invalidIdParam = 'invalidIdParam';
 
-      jest
-        .spyOn(usersController, 'validateObjectId')
-        .mockImplementation((a: Types.ObjectId) => {
-          console.log(a);
-          return true;
-        });
+      jest.spyOn(usersController, 'validateObjectId').mockImplementation((a: Types.ObjectId) => {
+        console.log(a);
+        return true;
+      });
 
       try {
         await usersController.remove({ userId }, invalidIdParam);
@@ -329,16 +306,12 @@ describe('UsersController', () => {
       const userId = new Types.ObjectId();
       const idParam = new Types.ObjectId().toString();
 
-      jest
-        .spyOn(usersController, 'validateObjectId')
-        .mockImplementation((a: Types.ObjectId) => {
-          console.log(a);
-          return true;
-        });
+      jest.spyOn(usersController, 'validateObjectId').mockImplementation((a: Types.ObjectId) => {
+        console.log(a);
+        return true;
+      });
 
-      jest
-        .spyOn(usersService, 'softDelete')
-        .mockRejectedValue(new Error('DB error'));
+      jest.spyOn(usersService, 'softDelete').mockRejectedValue(new Error('DB error'));
 
       try {
         await usersController.remove({ userId }, idParam);

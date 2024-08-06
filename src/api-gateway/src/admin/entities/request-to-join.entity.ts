@@ -46,7 +46,6 @@ export class UserJoinRequest {
   createdAt: Date = new Date();
 }
 
-export const UserJoinRequestSchema =
-  SchemaFactory.createForClass(UserJoinRequest);
+export const UserJoinRequestSchema = SchemaFactory.createForClass(UserJoinRequest);
 
 UserJoinRequestSchema.index({ createdAt: 1 }, { expireAfterSeconds: ONEWEEK });

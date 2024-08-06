@@ -31,15 +31,7 @@ import { JobService } from '../job/job.service';
     forwardRef(() => TeamModule),
   ],
   controllers: [ClientController],
-  providers: [
-    ClientService,
-    ClientRepository,
-    CompanyService,
-    JwtService,
-    UsersService,
-    EmployeeService,
-    JobService,
-  ],
+  providers: [ClientService, ClientRepository, CompanyService, JwtService, UsersService, EmployeeService, JobService],
   exports: [ClientService, MongooseModule],
 })
 export class ClientModule {}

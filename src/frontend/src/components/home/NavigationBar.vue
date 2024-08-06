@@ -177,7 +177,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
@@ -205,7 +205,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
@@ -234,7 +234,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
@@ -262,7 +262,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
@@ -290,7 +290,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
@@ -318,7 +318,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
@@ -346,7 +346,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
@@ -375,7 +375,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon

@@ -276,6 +276,7 @@ export default {
         return false
       } finally {
         this.clientDialog = false
+        window.location.reload()
       }
     },
     async isLocalAvailable(localUrl) {
