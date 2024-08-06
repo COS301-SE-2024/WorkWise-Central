@@ -85,7 +85,7 @@ export default defineComponent({
         }
       }
       await axios
-        .get(`http://localhost:3000/role/all/${this.companyID}`, config)
+        .get(`http://localhost:3000/role/all/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           console.log(response.data.data.length)
           for (let i = 0; i < response.data.data.length; i++) {

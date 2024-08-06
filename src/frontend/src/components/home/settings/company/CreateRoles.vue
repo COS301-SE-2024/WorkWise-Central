@@ -4,6 +4,7 @@
     max-height="800"
     max-width="600"
     :theme="isdarkmode ? 'dark' : 'light'"
+    :opacity="0.1"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
@@ -20,14 +21,31 @@
     <v-card>
       <v-card-title> Create new Role</v-card-title>
       <v-card-text>
-        <v-form></v-form>
+        <v-form v-model="formIsValid" ref="form">
+          <v-label>Role Name</v-label>
+          <v-text-field v-model:lazy="Role.roleName" :rules="nameRules"></v-text-field>
+          <v-label>Permission Suite</v-label>
+          <v-select
+            v-model="Role.permissionSuite"
+            :items="permissions"
+            multiple
+            :rules="permissionRules"
+            outlined
+          ></v-select>
+        </v-form>
       </v-card-text>
+      <v-card-actions>
+        <v-btn @click="createRole" :disabled="!formIsValid" color="primary" variant="elevated"
+          >Create Role</v-btn
+        >
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import Toast from 'primevue/toast'
 interface Role {
   roleName: string
   permissionSuite: string[]
@@ -39,25 +57,44 @@ export default defineComponent({
       dialog: false,
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      formIsValid: false,
+      Role: {
+        roleName: '',
+        permissionSuite: [],
+        companyId: localStorage.getItem('currentCompany') as string
+      },
+      permissions: [] as string[],
+      nameRules: [(v: string) => !!v || 'Role Name is required'],
+      permissionRules: [(v: string) => !!v || 'Permission Suite is required']
     }
+  },
+  components: {
+    Toast
   },
   methods: {
     async createRole() {
-      const role: Role = {
-        roleName: 'Admin',
-        permissionSuite: ['create', 'read', 'update', 'delete'],
-        companyId: '1234'
-      }
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       await axios
-        .post(`${apiURL}role/create`, role)
+        .post(`${apiURL}role/create`, this.Role, config)
         .then((response) => {
           console.log(response)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Role Created',
+            life: 3000
+          })
         })
         .catch((error) => {
           console.log(error)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Role not created',
+            life: 3000
+          })
         })
     },
     async isLocalAvailable(localUrl: string) {
@@ -71,7 +108,35 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async getPermissions() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      await axios
+        .get(`http://localhost:3000/role/all/${localStorage.getItem('currentCompany')}`, config)
+        .then((response) => {
+          console.log(response)
+          for (let i = 0; i < response.data.data.length; i++) {
+            if (response.data.data[i].roleName === 'Owner') {
+              for (let j = 0; j < response.data.data[i].permissionSuite.length; j++) {
+                this.permissions.push(response.data.data[i].permissionSuite[j])
+                console.log(response.data.data[i].permissionSuite[j])
+              }
+              break
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
+  },
+  mounted() {
+    this.getPermissions()
   }
 })
 </script>
