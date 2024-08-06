@@ -10,7 +10,7 @@
           item-value="role"
           class="bg-cardColor elevation-1"
           :row-props="getRowProps"
-          :header-props="{ class: 'bg-secondary h4 ' }"
+          :header-props="{ class: 'bg-secondary h5 ' }"
         >
           <template v-slot:top> </template>
           <template v-slot:[`item.roleName`]> </template>
