@@ -38,12 +38,12 @@ export class BulkUpdateRoleDto {
   @IsNotEmpty()
   @IsMongoId()
   @ApiProperty()
-  ids: Types.ObjectId[];
+  roleIds: Types.ObjectId[];
 }
 
-export class BulkUpdateRoleResponseDto {
-  response: { access_token: string; id: Types.ObjectId };
-  constructor(message: { access_token: string; id: Types.ObjectId }) {
-    this.response = message;
-  }
-}
+// export class BulkUpdateRoleResponseDto {
+//   response: { access_token: string; id: Types.ObjectId }[];
+//   constructor(message: { access_token: string; id: Types.ObjectId }) {
+//     this.response = [message];
+//   }
+// }

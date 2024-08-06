@@ -16,7 +16,7 @@ import { CreateRoleDto, createRoleResponseDto } from './dto/create-role.dto';
 import {
   UpdateRoleDto,
   BulkUpdateRoleDto,
-  BulkUpdateRoleResponseDto,
+  updateRoleResponseDto,
 } from './dto/update-role.dto';
 import {
   ApiBearerAuth,
@@ -249,7 +249,7 @@ export class RoleController {
     description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
   })
   @ApiOkResponse({
-    type: RoleResponseDto,
+    type: updateRoleResponseDto,
     description: `The updated ${className} object`,
   })
   @ApiParam({
@@ -264,19 +264,13 @@ export class RoleController {
     @Body()
     body: { currentEmployeeId: Types.ObjectId; updateRoleDto: UpdateRoleDto },
   ) {
-    console.log('In update role function');
     const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
     );
-    console.log('userId: ', userId);
-    console.log('currentEmployee: ', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
-      console.log('In if');
       let data;
       try {
-        console.log('In try');
-        console.log('body.updateRoleDto: ', body.updateRoleDto);
         data = await this.roleService.update(userId, id, body.updateRoleDto);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
@@ -298,27 +292,36 @@ export class RoleController {
     description: `Send array of ${className} ObjectIds and an array of updated objects, and then they get updated if the id is valid.`,
   })
   @ApiOkResponse({
-    type: BulkUpdateRoleResponseDto,
+    type: [updateRoleResponseDto],
     description: `The updated ${className} object`,
   })
   @ApiBody({ type: BulkUpdateRoleDto })
+  @Patch('/bulkUpdate/:companyId')
   async bulkUpdate(
     @Headers() headers: any,
-    @Param('id') id: Types.ObjectId,
+    @Param('companyId') companyId: Types.ObjectId,
     @Body()
     body: {
       currentEmployeeId: Types.ObjectId;
       updateRoleDto: BulkUpdateRoleDto;
     },
   ) {
+    console.log('In bulkUpdate endpoint');
     const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
     );
+    console.log('currentEmployee: ', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       let data;
+      console.log('In if');
       try {
-        data = await this.roleService.bulkUpdate(userId, body.updateRoleDto);
+        console.log('In try clause');
+        data = await this.roleService.bulkUpdate(
+          userId,
+          body.updateRoleDto,
+          companyId,
+        );
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
