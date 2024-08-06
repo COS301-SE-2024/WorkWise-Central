@@ -151,6 +151,7 @@ export default {
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       req_obj: {
+        id: localStorage['employeeId'],
         roleId: '',
         subordinates: [] as string[],
         superiorId: ''
