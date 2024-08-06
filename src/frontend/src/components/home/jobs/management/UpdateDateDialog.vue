@@ -83,37 +83,39 @@
 <script setup lang="ts">
 import { defineProps, ref, computed, watch, defineEmits } from 'vue'
 
-// Define the interface for the passedInJob prop
-interface Job {
-  startDate?: Date | null
-  endDate?: Date | null
-  comments?: Array<{ comment: string }>
+interface Address {
+  street: string;
+  province: string;
+  suburb: string;
+  city: string;
+  postalCode: string;
+  complex: string;
+  houseNumber: string;
 }
 
-interface Props {
-  passedInJob: Job
+interface JobDetails {
+  heading: string;
+  description: string;
+  address: Address;
+  startDate: string;
+  endDate: string;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<{
+  jobDetails: JobDetails;
+  jobID: string
+}>()
+
 const emit = defineEmits(['updateJob'])
 
 const dueDateDialog = ref(false)
 const currentDate = ref<Date | null>(null)
-const startDate = ref<Date | null>(props.passedInJob.startDate || null)
-const endDate = ref<Date | null>(props.passedInJob.endDate || null)
+const startDate = ref<Date | null>((new Date(props.jobDetails.startDate)) || null)
+const endDate = ref<Date | null>((new Date(props.jobDetails.endDate)) || null)
 const isStartDatePicked = ref(false)
 const isEndDatePicked = ref(false)
 const errorMessage = ref<string | null>('')
 
-// Watch for changes in props and update local state
-watch(
-  () => props.passedInJob,
-  (newJob) => {
-    startDate.value = newJob.startDate || null
-    endDate.value = newJob.endDate || null
-  },
-  { immediate: true }
-)
 
 const updateDates = (value: Date | null) => {
   if (value) {
@@ -143,19 +145,19 @@ const setDates = (value: Date) => {
   }
 
   // Emit updated job object
-  emit('updateJob', { ...props.passedInJob, startDate: startDate.value, endDate: endDate.value })
+  emit('updateJob', { ...props.jobDetails, startDate: startDate.value, endDate: endDate.value })
 }
 
 const toggleStartDate = () => {
   isStartDatePicked.value = !isStartDatePicked.value
   startDate.value = null
-  emit('updateJob', { ...props.passedInJob, startDate: null })
+  emit('updateJob', { ...props.jobDetails, startDate: null })
 }
 
 const toggleEndDate = () => {
   isEndDatePicked.value = !isEndDatePicked.value
   endDate.value = null
-  emit('updateJob', { ...props.passedInJob, endDate: null })
+  emit('updateJob', { ...props.jobDetails, endDate: null })
 }
 
 const formatDate = (date: Date | null): string => {
@@ -176,7 +178,7 @@ const formattedEndDate = computed(() => formatDate(endDate.value))
 
 const saveDate = () => {
   dueDateDialog.value = false
-  console.log('Saved job:', props.passedInJob)
+  console.log('Saved job:', props.jobDetails)
 }
 
 const removeDates = () => {
@@ -187,10 +189,7 @@ const removeDates = () => {
   isEndDatePicked.value = false
 
   // Emit updated job object
-  emit('updateJob', { ...props.passedInJob, startDate: null, endDate: null })
+  emit('updateJob', { ...props.jobDetails, startDate: null, endDate: null })
 }
 </script>
 
-<style scoped>
-/* Add your styles here */
-</style>

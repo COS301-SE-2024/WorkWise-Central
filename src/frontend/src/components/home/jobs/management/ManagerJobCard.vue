@@ -17,12 +17,12 @@
       ></v-img>
       <!--      <v-img :src="props.passedInJob.imageUrl" aspect-ratio="2.75"></v-img>-->
       <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-        <h2 class="flex-grow-1">{{ props.passedInJob.details.heading }}</h2>
+        <h2 class="flex-grow-1">{{ props.passedInJob?.details?.heading }}</h2>
       </v-card-title>
       <v-card-text class="text-center">
         <v-row>
           <v-col xs="12" sm="12" md="8">
-            <EditDetails :jobDetails="props.passedInJob.details" :jobID="props.passedInJob._id" />
+            <EditDetails :jobDetails="props?.passedInJob?.details" :jobID="props.passedInJob?._id" />
           </v-col>
           <v-col xs="12" sm="12" md="4">
             <v-col>
@@ -35,7 +35,7 @@
               <UpdateJobStatus :passedInJob="props.passedInJob" />
             </v-col>
             <v-col>
-              <ChangeDueDate :passedInJob="props.passedInJob" />
+<!--              <ChangeDueDate :jobDetails="props.passedInJob?.details" :jobID="props.passedInJob?._id"  />-->
             </v-col>
           </v-col>
         </v-row>
@@ -61,10 +61,7 @@ import ChangeDueDate from './UpdateDateDialog.vue'
 const managerJobCard = ref(false) // Dialog state
 
 const props = defineProps({
-  passedInJob: {
-    type: Object,
-    required: true
-  }
+  passedInJob: Object
 })
 
 const cancelJob = () => {

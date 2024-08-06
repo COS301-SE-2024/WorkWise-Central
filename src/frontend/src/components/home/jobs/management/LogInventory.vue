@@ -86,7 +86,7 @@ import axios from 'axios'
 
 const toast = useToast()
 const inventoryDialog = ref(false)
-const inventory = ref([{ name: '', quantity: 0 }])
+const inventory = ref<{ name: string; quantity: number }[]>([])
 
 interface InventoryUsed {
   inventoryItemId: string
@@ -100,14 +100,6 @@ interface UpdateRecordedDetails {
 }
 
 const props = defineProps<{ recordedDetails: UpdateRecordedDetails; jobID: string }>()
-
-// const inventory = ref<{ inventoryItemId: string, inventoryItemName: string, quantityUsed: number }[]>(
-//   props.jobInventory.map(inventory => ({
-//     inventoryItemId: inventory.inventoryItemId,
-//     inventoryItemName: inventory.inventoryItemName,
-//     quantityUsed: inventory.quantityUsed
-//   }))
-// )
 
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
@@ -148,20 +140,25 @@ const saveItem = (index: number) => {
   if (inventory.value.length > 0) {
     if (inventory.value[index].name.trim() !== '' && inventory.value[index].quantity > 0) {
       inventory.value[index].name = inventory.value[index].name.trim()
-      // textfield and quantity for the item become index readonly
-      // post the list of inventory items to the backend
+      // Post the list of inventory items to the backend
     } else {
-      // display error toast
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Please provide valid item details',
+        life: 3000
+      })
     }
   }
 }
 
 const saveAllItems = () => {
+  logInventoryItems()
   inventoryDialog.value = false
 }
 
 const logInventoryItems = async () => {
-  if (inventory.value.length < 0) {
+  if (inventory.value.length === 0) {
     toast.add({
       severity: 'warn',
       summary: 'Warning',
@@ -170,29 +167,29 @@ const logInventoryItems = async () => {
     })
     return
   }
+
   const config = {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
+
   const apiUrl = await getRequestUrl()
 
-  const updatedInventory = [
-    ...inventory.value,
-    {
-      // this wrong update
-      inventoryItemId: inventory.inventoryItemId,
-      inventoryItemName: inventory.inventoryItemName,
-      quantityUsed: inventory.quantityUsed
-    }
-  ]
+  const updatedInventory = inventory.value.map(item => ({
+    inventoryItemId: '', // Provide or retrieve this from somewhere
+    inventoryItemName: item.name,
+    quantityUsed: item.quantity
+  }))
 
   try {
-    const response = await axios.patch(`${apiUrl}job/${props.id}`, updatedInventory, config)
+    const response = await axios.patch(`${apiUrl}job/${props.jobID}`, updatedInventory, config)
     console.log(response)
+    showInventoryLogSuccess()
   } catch (error) {
     console.log('Error while logging inventory', error)
+    showInventoryLogError()
   }
 }
 
@@ -209,10 +206,9 @@ const showInventoryLogError = () => {
   toast.add({
     severity: 'error',
     summary: 'Error Message',
-    detail: 'An error occurred while loggin the inventory item',
+    detail: 'An error occurred while logging the inventory item',
     life: 3000
   })
 }
 </script>
 
-<style scoped></style>

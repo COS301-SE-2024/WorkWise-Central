@@ -17,7 +17,7 @@
         aspect-ratio="5.75"
       ></v-img>
       <v-card-title>
-        {{ props.passedInJob.details.heading }}
+        {{ props.passedInJob?.details?.heading }}
       </v-card-title>
       <v-card-text class="text-center">
         <v-row>
@@ -28,7 +28,7 @@
             <v-col class="text-center">
               <v-spacer></v-spacer>
               <p>
-                {{ props.passedInJob.details.description }}
+                {{ props.passedInJob?.details?.description }}
               </p>
             </v-col>
             <v-divider>
@@ -37,8 +37,8 @@
             <v-col class="text-center">
               <v-spacer></v-spacer>
               <p>
-                <v-chip :color="getStatusColor(props.passedInJob.status)" dark>
-                  {{ props.passedInJob.status }}
+                <v-chip :color="getStatusColor(props.passedInJob?.status)" dark>
+                  {{ props.passedInJob?.status }}
                 </v-chip>
               </p>
             </v-col>
@@ -74,21 +74,21 @@
                   <label class="font-weight-bold">City</label>
                   <v-spacer></v-spacer>
                   <p>
-                    {{ props.passedInJob.details.address.city }}
+                    {{ props.passedInJob?.details?.address?.city }}
                   </p>
                 </v-col>
                 <v-col sm="6" md="4">
                   <label class="font-weight-bold">Suburb</label>
                   <v-spacer></v-spacer>
                   <p>
-                    {{ props.passedInJob.details.address.suburb }}
+                    {{ props.passedInJob?.details?.address?.suburb }}
                   </p>
                 </v-col>
                 <v-col sm="6" md="4">
                   <label class="font-weight-bold">Street</label>
                   <v-spacer></v-spacer>
                   <p>
-                    {{ props.passedInJob.details.address.street }}
+                    {{ props.passedInJob?.details?.address?.street }}
                   </p>
                 </v-col>
               </v-row>
@@ -97,21 +97,21 @@
                   <label class="font-weight-bold">Postal Code</label>
                   <v-spacer></v-spacer>
                   <p>
-                    {{ props.passedInJob.details.address.postalCode }}
+                    {{ props.passedInJob?.details?.address?.postalCode }}
                   </p>
                 </v-col>
                 <v-col sm="6" md="4">
                   <label class="font-weight-bold">Complex</label>
                   <v-spacer></v-spacer>
                   <p>
-                    {{ props.passedInJob.details.address.complex }}
+                    {{ props.passedInJob?.details?.address?.complex }}
                   </p>
                 </v-col>
                 <v-col sm="6" md="4">
                   <label class="font-weight-bold">House Number</label>
                   <v-spacer></v-spacer>
                   <p>
-                    {{ props.passedInJob.details.address.houseNumber }}
+                    {{ props.passedInJob?.details?.address?.houseNumber }}
                   </p>
                 </v-col>
               </v-row>
@@ -121,8 +121,8 @@
               <v-row>
                 <v-col ref="commentsSection">
                   <AddComment
-                    :jobComments="props.passedInJob.comments"
-                    :id="props.passedInJob._id"
+                    :jobComments="props.passedInJob?.comments"
+                    :id="props.passedInJob?._id"
                   />
                 </v-col>
               </v-row>
@@ -142,8 +142,8 @@
             </v-col>
             <v-col ref="imagesSection">
               <AttachImages
-                :recordedDetails="props.passedInJob.recordedDetails"
-                :jobID="props.passedInJob._id"
+                :recordedDetails="props.passedInJob?.recordedDetails"
+                :jobID="props.passedInJob?._id"
               />
             </v-col>
             <v-col ref="checklistSection">
@@ -151,8 +151,8 @@
             </v-col>
             <v-col ref="inventorySection">
               <LogInventory
-                :recordedDetails="props.passedInJob.recordedDetails"
-                :jobID="props.passedInJob._id"
+                :recordedDetails="props.passedInJob?.recordedDetails"
+                :jobID="props.passedInJob?._id"
               />
             </v-col>
           </v-col>
@@ -179,18 +179,15 @@ const props = defineProps({
 })
 
 const viewJob = () => {
-  console.log('view start date')
-  console.log(props.passedInJob.startDate)
+  console.log('click click')
 }
 const viewJobDialog = ref(false) // Dialog state
-
 const imagesSection = ref(null)
 const commentsSection = ref(null)
 const notesSection = ref(null)
 const checklistSection = ref(null)
 const inventorySection = ref(null)
 
-// Function to get the color based on job status
 const getStatusColor = (status: string): string => {
   switch (status.toLowerCase()) {
     case 'to do':
@@ -208,7 +205,6 @@ const getStatusColor = (status: string): string => {
   }
 }
 
-// Function to scroll to a section
 const scrollToSection = (sectionRef: Ref<HTMLElement | null>) => {
   const section = sectionRef.value
   if (section) {
@@ -218,7 +214,6 @@ const scrollToSection = (sectionRef: Ref<HTMLElement | null>) => {
   }
 }
 
-// Function to close the dialog
 const closeView = () => {
   viewJobDialog.value = false
 }

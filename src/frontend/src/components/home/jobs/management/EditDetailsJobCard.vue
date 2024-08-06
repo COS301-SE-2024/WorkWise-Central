@@ -133,6 +133,8 @@ interface JobDetails {
   heading: string;
   description: string;
   address: Address;
+  startDate: string;
+  endDate: string;
 }
 
 const props = defineProps<{
@@ -181,8 +183,12 @@ const patchJobDetails = async () => {
   const apiUrl = await getRequestUrl()
   try {
     console.log(job.value.details)
-    // const response = await axios.patch(`${apiUrl}job/${props.jobID}`, job.value.details, config)
-    showEditSuccess()
+    const response = await axios.patch(`${apiUrl}job/${props.jobID}`, job.value.details, config)
+    if (response.status < 300 && response.status > 199) {
+      showEditSuccess()
+    } else {
+      showEditError()
+    }
   } catch (error) {
     console.error('Error getting editing job details', error)
     showEditError()
@@ -201,7 +207,9 @@ const job = ref({
       complex: props.jobDetails.address.complex,
       houseNumber: props.jobDetails.address.houseNumber,
       province: props.jobDetails.address.province
-    }
+    },
+    startDate: props.jobDetails.startDate,
+    endDate: props.jobDetails.endDate
   }
 })
 

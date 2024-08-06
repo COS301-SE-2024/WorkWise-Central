@@ -5,10 +5,9 @@
         <v-row justify="center">
           <v-col cols="12" xs="12" sm="12" md="12" class="pa-0">
             <v-card
-              height="auto "
+              height="auto"
               class="ma-0 bg-cardColor md-start"
               rounded="md"
-              :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
               border="md"
               min-height="1000%"
             >
@@ -109,11 +108,11 @@
                     </template>
 
                     <template v-slot:[`item.startDate`]="{ item }">
-                      {{ new Date(item.details.startDate).toLocaleDateString() }}
+                      {{ item.details.startDate }}
                     </template>
 
                     <template v-slot:[`item.endDate`]="{ item }">
-                      {{ new Date(item.details.endDate).toLocaleDateString() }}
+                      {{ item.details.endDate }}
                     </template>
 
                     <!-- Actions slot -->
@@ -133,8 +132,8 @@
             </v-card>
           </v-col>
         </v-row>
-      </v-col></v-row
-    >
+      </v-col>
+    </v-row>
     <v-dialog v-model="actionsDialog" :max-width="500">
       <v-card>
         <v-card-title>
@@ -143,19 +142,17 @@
         <v-card-text> What would you like to do with this job? </v-card-text>
         <v-card-actions>
           <v-btn @click="closeDialog"
-            >Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="primary" size="small"></v-icon
+          >Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="primary" size="small"></v-icon
           ></v-btn>
           <v-spacer></v-spacer>
 
           <!-- View Job Dialog -->
-          <ViewJob :passedInJob="selectedJob" @close="viewJobDialog"></ViewJob>
+          <ViewJob :passedInJob="selectedJob"></ViewJob>
 
-          <ManagerJobCard
-            :passedInJob="selectedJob"
-          ></ManagerJobCard>
+          <ManagerJobCard :passedInJob="selectedJob"></ManagerJobCard>
 
           <v-btn color="error" @click="deleteDialog = true"
-            >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
+          >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
           ></v-btn>
           <v-dialog v-model="deleteDialog" :max-width="500">
             <v-card>
@@ -167,12 +164,12 @@
               <v-card-actions>
                 <v-btn color="error" @click="confirmDelete">Confirm</v-btn>
                 <v-btn @click="deleteDialog = false"
-                  >Cancel<v-icon
-                    icon="fa:fa-solid fa-cancel"
-                    end
-                    color="error"
-                    size="small"
-                  ></v-icon
+                >Cancel<v-icon
+                  icon="fa:fa-solid fa-cancel"
+                  end
+                  color="error"
+                  size="small"
+                ></v-icon
                 ></v-btn>
               </v-card-actions>
             </v-card>
@@ -192,10 +189,144 @@ import ManagerJobCard from './ManagerJobCard.vue'
 import ViewJob from './ViewJob.vue'
 import { useToast } from 'primevue/usetoast'
 
+// Define the type for the job object
+interface Job {
+  _id: string;
+  company: {
+    registrationNumber: string;
+    vatNumber: string;
+    name: string;
+    type?: string;
+    jobStatuses?: string[];
+    logo?: string;
+    contactDetails: {
+      phoneNumber: string;
+      email: string;
+    };
+    address: {
+      street: string;
+      province: string;
+      suburb: string;
+      city: string;
+      postalCode: string;
+      complex?: string;
+      houseNumber?: string;
+    };
+    private: boolean;
+  };
+  client: {
+    registrationNumber?: string;
+    details: {
+      firstName: string;
+      lastName: string;
+      preferredLanguage?: string;
+      contactInfo: {
+        phoneNumber: string;
+        email: string;
+      };
+      address?: {
+        street: string;
+        province: string;
+        suburb: string;
+        city: string;
+        postalCode: string;
+        complex?: string;
+        houseNumber?: string;
+      };
+      vatNumber?: string;
+      companyId: string;
+      idNumber?: string;
+      type?: string;
+    };
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string;
+  };
+  assignedBy: {
+    roleId: string;
+    superiorId?: string;
+    subordinates?: string[];
+    subordinateTeams?: string[];
+    userId: string;
+    userInfo: {
+      username: string;
+      firstName: string;
+      surname: string;
+      displayName: string;
+      displayImage?: string;
+    };
+    companyId: string;
+  };
+  assignedEmployees?: {
+    employeeIds?: string[];
+    teamIds?: string[];
+  };
+  status: string;
+  tags?: string[];
+  priorityTag?: string;
+  attachments: string[];
+  details: {
+    heading: string;
+    description: string;
+    address: {
+      street: string;
+      province: string;
+      suburb: string;
+      city: string;
+      postalCode: string;
+      complex?: string;
+      houseNumber?: string;
+    };
+    startDate: string;
+    endDate?: string;
+  };
+  recordedDetails?: {
+    imagesTaken?: string[];
+    inventoryUsed?: {
+      inventoryItemId: string;
+      inventoryItemName: string;
+      quantityUsed: number;
+    }[];
+  };
+  clientFeedback?: {
+    rating?: number;
+    comment?: string;
+  };
+  taskList: {
+    name: string;
+    status: string;
+    assignedEmployees?: {
+      roleId: string;
+      superiorId?: string;
+      subordinates?: string[];
+      subordinateTeams?: string[];
+      userId: string;
+      userInfo: {
+        username: string;
+        firstName: string;
+        surname: string;
+        displayName: string;
+        displayImage?: string;
+      };
+      companyId: string;
+    }[];
+  }[];
+  comments: string[];
+  history?: {
+    event: string;
+    timestamp: string;
+  }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+
+// Define state variables with types
 const actionsDialog = ref(false)
-const selectedJob = ref(null)
+const selectedJob = ref<Job | null>(null)
 const deleteDialog = ref(false)
-const detailedJobData = ref([])
+const detailedJobData = ref<Job[]>([])
+const search = ref('')
 
 const toast = useToast()
 
@@ -218,20 +349,21 @@ const getRequestUrl = async (): Promise<string> => {
   return localAvailable ? localUrl : remoteUrl
 }
 
-// set the table headers
+
+// Set the table headers
 const headers = [
   { title: 'Job Heading', key: 'heading', align: 'start', value: 'heading' },
   { title: 'Client Phone', key: 'clientPhone', align: 'start', value: 'clientPhone' },
   { title: 'Client Mail', key: 'clientMail', align: 'start', value: 'clientMail' },
   { title: 'Job Description', key: 'description', align: 'start', value: 'description' },
-  { title: 'Status', key: 'status', align: 'start', value: 'status' },
+  { title: 'Job Status', key: 'status', align: 'start', value: 'status' },
   { title: 'Start Date', key: 'startDate', align: 'start', value: 'startDate' },
   { title: 'End Date', key: 'endDate', align: 'start', value: 'endDate' },
-  { title: 'Actions', key: 'actions', align: 'start', sortable: false, value: 'actions' }
+  { title: 'Actions', key: 'actions', align: 'end', value: 'actions' }
 ]
 
-// Function to fetch job data
-const fetchJobData = async () => {
+// Fetch data and populate the table
+const fetchData = async () => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -239,109 +371,93 @@ const fetchJobData = async () => {
     }
   }
   const apiUrl = await getRequestUrl()
-
   try {
-    const response = await axios.get(
-      `${apiUrl}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
+    const response = await axios.get(`${apiUrl}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
       config
     )
-    return response.data.data
+    detailedJobData.value = response.data.data
   } catch (error) {
-    console.error('Error fetching job data:', error)
-    throw error // Re-throw the error for handling elsewhere if needed
+    toast.add({
+      severity: 'error',
+      summary: 'Fetch Data Error',
+      detail: 'Failed to fetch data',
+      life: 3000
+    })
   }
 }
 
-const deleteJob = async () => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('access_token')}`
-    }
-  }
-  const apiUrl = await getRequestUrl()
-  try {
-    await axios.delete(`${apiUrl}job/${selectedJob.value._id}`, config)
-    showJobDeleteSuccess()
-  } catch (error) {
-    showJobDeleteFailure()
-    console.error('Failed to delete job', error)
-  }
-}
-
-onMounted(async () => {
-  try {
-    detailedJobData.value = await fetchJobData()
-    console.log('Job data fetched successfully:', detailedJobData.value)
-  } catch (error) {
-    console.error('Error fetching job data:', error)
-  }
-})
-
-// Actions
-const openDialog = (item) => {
-  selectedJob.value = item
+// Dialog management
+const openDialog = (job: Job) => {
+  selectedJob.value = job
   actionsDialog.value = true
 }
 
 const closeDialog = () => {
   actionsDialog.value = false
-  selectedJob.value = null
 }
 
-const confirmDelete = () => {
-  deleteJob()
-  selectedJob.value = null
-  deleteDialog.value = false
+const confirmDelete = async () => {
+  if (selectedJob.value) {
+    try {
+      const url = await getRequestUrl()
+      await axios.delete(`${url}job/${selectedJob.value._id}`)
+      detailedJobData.value = detailedJobData.value.filter(
+        (job) => job._id !== selectedJob.value!._id
+      )
+      toast.add({
+        severity: 'success',
+        summary: 'Job Deleted',
+        detail: 'Job deleted successfully',
+        life: 3000
+      })
+    } catch (error) {
+      toast.add({
+        severity: 'error',
+        summary: 'Delete Error',
+        detail: 'Failed to delete job',
+        life: 3000
+      })
+    } finally {
+      deleteDialog.value = false
+    }
+  }
 }
 
-const showJobDeleteSuccess = () => {
-  toast.add({
-    severity: 'success',
-    summary: 'Success Message',
-    detail: 'Job deleted successfully',
-    life: 3000
-  })
+onMounted(fetchData)
+
+const getRowProps = (item: Job) => {
+  return {
+    class: item.status === 'completed' ? 'bg-completed' : ''
+  }
 }
 
-const showJobDeleteFailure = () => {
-  toast.add({
-    severity: 'error',
-    summary: 'Error Message',
-    detail: 'Failed to delete job',
-    life: 3000
-  })
-}
-
-const getStatusColor = (status) => {
-  switch (status.toLowerCase()) {
-    case 'todo':
-      return 'red'
+const getStatusColor = (status: string) => {
+  switch (status) {
     case 'in progress':
-      return 'orange'
-    case 'paused':
-      return 'yellow'
-    case 'awaiting sign off':
       return 'blue'
-    case 'awaiting invoice':
-      return 'purple'
-    case 'awaiting payment':
-      return 'pink'
     case 'completed':
       return 'green'
+    case 'on hold':
+      return 'yellow'
+    case 'cancelled':
+      return 'red'
     default:
-      return 'grey' // Default color
+      return 'gray'
   }
 }
-
-const getRowProps = ({ index }) => {
-  return {
-    class: index % 2 ? 'bg-secondRowColor' : ''
-  }
-}
-
-onMounted(() => {
-  fetchJobData()
-})
 </script>
 
+<style scoped>
+.bg-cardColor {
+  background-color: #e3e3e3;
+}
+.text-headingTextColor {
+  color: #333;
+}
+.font-family-lato {
+  font-family: 'Lato', sans-serif;
+}
+.bg-completed {
+  background-color: #d4edda;
+}
+</style>

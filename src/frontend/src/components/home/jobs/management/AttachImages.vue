@@ -139,8 +139,10 @@ const uploadFileInput = async (): Promise<string> => {
     } else {
       showImageUploadError()
     }
+    return 'success'
   } catch (error) {
     console.error('Error updating job:', error)
+    return 'fail'
   }
 }
 
