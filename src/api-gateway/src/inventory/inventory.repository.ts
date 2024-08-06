@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { Inventory } from './entities/inventory.entity';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class InventoryRepository {

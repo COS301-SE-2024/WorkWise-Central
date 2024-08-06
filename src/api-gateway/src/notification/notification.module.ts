@@ -20,11 +20,11 @@ import { RoleModule } from '../role/role.module';
 import { JobModule } from '../job/job.module';
 import { TeamModule } from '../team/team.module';
 import { FcmNotificationService } from './fcm-notification.service';
-import { ClientService } from 'src/client/client.service';
-import { ClientModule } from 'src/client/client.module';
-import { InventoryService } from 'src/inventory/inventory.service';
-import { InventoryModule } from 'src/inventory/inventory.module';
-import { ClientRepository } from 'src/client/client.repository';
+import { ClientService } from '../client/client.service';
+import { ClientModule } from '../client/client.module';
+import { InventoryService } from '../inventory/inventory.service';
+import { InventoryModule } from '../inventory/inventory.module';
+import { ClientRepository } from '../client/client.repository';
 
 @Global()
 @Module({

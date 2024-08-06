@@ -23,20 +23,14 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  InventoryListResponseDto,
-  InventoryResponseDto,
-} from './entities/inventory.entity';
+import { InventoryListResponseDto, InventoryResponseDto } from './entities/inventory.entity';
 import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
-import {
-  CreateInventoryDto,
-  CreateInventoryResponseDto,
-} from './dto/create-inventory.dto';
+import { CreateInventoryDto, CreateInventoryResponseDto } from './dto/create-inventory.dto';
 import { AuthGuard } from '../auth/auth.guard';
 // import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
-import { EmployeeService } from 'src/employee/employee.service';
+import { EmployeeService } from '../employee/employee.service';
 
 const className = 'Inventory';
 
@@ -82,12 +76,8 @@ export class InventoryController {
       createInventoryDto: CreateInventoryDto;
     },
   ) {
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
-    if (
-      currentEmployee.role.permissionSuite.includes('add new inventory item')
-    ) {
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('add new inventory item')) {
       let data;
       try {
         data = await this.inventoryService.create(body.createInventoryDto);
@@ -138,9 +128,7 @@ export class InventoryController {
   ) {
     console.log('In findAllInCompany');
     console.log('id', id);
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all inventory')) {
       console.log('in if');
@@ -181,9 +169,7 @@ export class InventoryController {
     @Param('id') id: Types.ObjectId,
     @Body() body: { currentEmployeeId: Types.ObjectId },
   ) {
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('view all inventory')) {
       const data = await this.inventoryService.findById(id);
       return { data: data };
@@ -221,9 +207,7 @@ export class InventoryController {
       updateInventoryDto: UpdateInventoryDto;
     },
   ) {
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('edit all inventory')) {
       let data;
       try {
@@ -266,12 +250,8 @@ export class InventoryController {
     @Param('id') id: Types.ObjectId,
     @Body() body: { currentEmployeeId: Types.ObjectId },
   ) {
-    const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
-    );
-    if (
-      currentEmployee.role.permissionSuite.includes('delete inventory item')
-    ) {
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('delete inventory item')) {
       let data;
       try {
         data = await this.inventoryService.remove(id);
@@ -280,10 +260,7 @@ export class InventoryController {
       }
 
       if (data === false) {
-        throw new HttpException(
-          'update unsuccessful',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+        throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
       }
       return { data: data };
     } else {

@@ -18,9 +18,9 @@ import { EmailModule } from '../email/email.module';
 import { JwtService } from '@nestjs/jwt';
 import { FileModule } from '../file/file.module';
 import { FileService } from '../file/file.service';
-import { InventoryModule } from 'src/inventory/inventory.module';
-import { InventoryService } from 'src/inventory/inventory.service';
-import { EmployeeRepository } from 'src/employee/employee.repository';
+import { InventoryModule } from '../inventory/inventory.module';
+import { InventoryService } from '../inventory/inventory.service';
+import { EmployeeRepository } from '../employee/employee.repository';
 
 @Module({
   imports: [

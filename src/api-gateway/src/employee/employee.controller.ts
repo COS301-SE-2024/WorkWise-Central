@@ -34,7 +34,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { currentEmployeeDto } from 'src/shared/dtos/current-employee.dto';
+import { currentEmployeeDto } from '../shared/dtos/current-employee.dto';
 
 const className = 'Employee';
 

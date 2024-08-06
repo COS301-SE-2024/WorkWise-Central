@@ -13,13 +13,11 @@ import { ClientModule } from '../client/client.module';
 import { InventoryRepository } from './inventory.repository';
 import { FileModule } from '../file/file.module';
 import { EmployeeModule } from '../employee/employee.module';
-import { EmployeeService } from 'src/employee/employee.service';
+import { EmployeeService } from '../employee/employee.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: Inventory.name, schema: InventorySchema },
-    ]),
+    MongooseModule.forFeature([{ name: Inventory.name, schema: InventorySchema }]),
     forwardRef(() => UsersModule),
     forwardRef(() => CompanyModule),
     forwardRef(() => RoleModule),
@@ -30,12 +28,7 @@ import { EmployeeService } from 'src/employee/employee.service';
     forwardRef(() => EmployeeModule),
   ],
   controllers: [InventoryController],
-  providers: [
-    InventoryService,
-    InventoryRepository,
-    JobService,
-    EmployeeService,
-  ],
+  providers: [InventoryService, InventoryRepository, JobService, EmployeeService],
   exports: [InventoryService, InventoryRepository, MongooseModule],
 })
 export class InventoryModule {}

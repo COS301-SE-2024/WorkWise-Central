@@ -12,8 +12,8 @@ import { JobService } from '../job/job.service';
 import { ClientModule } from '../client/client.module';
 import { EmployeeRepository } from './employee.repository';
 import { FileModule } from '../file/file.module';
-import { InventoryModule } from 'src/inventory/inventory.module';
-import { InventoryService } from 'src/inventory/inventory.service';
+import { InventoryModule } from '../inventory/inventory.module';
+import { InventoryService } from '../inventory/inventory.service';
 
 @Module({
   imports: [

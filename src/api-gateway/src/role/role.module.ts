@@ -15,11 +15,11 @@ import { JobModule } from '../job/job.module';
 import { ClientModule } from '../client/client.module';
 import { Team, TeamSchema } from '../team/entities/team.entity';
 import { RoleRepository } from './role.repository';
-import { EmployeeRepository } from 'src/employee/employee.repository';
-import { TeamRepository } from 'src/team/team.repository';
+import { EmployeeRepository } from '../employee/employee.repository';
+import { TeamRepository } from '../team/team.repository';
 import { FileModule } from '../file/file.module';
-import { InventoryService } from 'src/inventory/inventory.service';
-import { InventoryModule } from 'src/inventory/inventory.module';
+import { InventoryService } from '../inventory/inventory.service';
+import { InventoryModule } from '../inventory/inventory.module';
 
 @Module({
   imports: [

@@ -30,7 +30,7 @@ import { RoleListResponseDto, RoleResponseDto } from './entity/role.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
-import { EmployeeService } from 'src/employee/employee.service';
+import { EmployeeService } from '../employee/employee.service';
 
 const className = 'Role';
 
