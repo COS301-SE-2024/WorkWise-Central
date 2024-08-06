@@ -114,21 +114,26 @@ export class EmployeeRepository {
   }
 
   async findById(identifier: Types.ObjectId) {
-    return this.employeeModel
+    identifier = new Types.ObjectId(identifier);
+    const result = this.employeeModel
       .findOne({
         $and: [
-          { _id: identifier },
+          {
+            _id: identifier,
+          },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
         ],
       })
       .lean();
+    console.log('result from repository: ', result);
+    return result;
   }
 
   async DetailedFindById(
     identifier: Types.ObjectId,
-    fieldsToPouplate: string[],
+    fieldsToPopulate: string[],
   ) {
     return this.employeeModel
       .findOne({
@@ -139,7 +144,7 @@ export class EmployeeRepository {
           },
         ],
       })
-      .populate(fieldsToPouplate)
+      .populate(fieldsToPopulate)
       .lean();
   }
 
@@ -313,7 +318,7 @@ export class EmployeeRepository {
     roleId = new Types.ObjectId(roleId);
     const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } =
       await this.employeeModel
-        .findOneAndUpdate(
+        .updateMany(
           {
             $and: [
               { 'role.roleId': roleId },

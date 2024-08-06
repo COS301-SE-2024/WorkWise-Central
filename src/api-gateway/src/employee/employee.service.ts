@@ -234,7 +234,9 @@ export class EmployeeService {
   async findById(id: Types.ObjectId) {
     console.log('In findById service');
     console.log('id: ', id);
-    return await this.employeeRepository.findById(id);
+    const data = await this.employeeRepository.findById(id);
+    console.log('data: ', data);
+    return data;
   }
 
   async detailedFindById(id: Types.ObjectId) {

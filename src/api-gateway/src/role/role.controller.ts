@@ -264,10 +264,12 @@ export class RoleController {
     @Body()
     body: { currentEmployeeId: Types.ObjectId; updateRoleDto: UpdateRoleDto },
   ) {
+    console.log('In update endpoint');
     const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(
       body.currentEmployeeId,
     );
+    console.log('currentEmployee: ', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       let data;
       try {
