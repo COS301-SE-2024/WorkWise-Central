@@ -84,22 +84,18 @@ export class ClientController {
   @Post('/create')
   async create(
     @Headers() headers: any,
-    @Body()
-    body: {
-      currentEmployeeId: Types.ObjectId;
-      createClientDto: CreateClientDto;
-    },
+    @Body() createClientDto: CreateClientDto,
   ): Promise<CreateClientResponseDto> {
+    console.log('Creating client');
     const currentEmployee = await this.employeeService.findById(
-      body.currentEmployeeId,
+      createClientDto.employeeId,
     );
+    console.log(currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('add a new clients')) {
+      console.log('in if');
       try {
         const userId = extractUserId(this.jwtService, headers);
-        const result = await this.clientService.create(
-          userId,
-          body.createClientDto,
-        );
+        const result = await this.clientService.create(userId, createClientDto);
         return new CreateClientResponseDto(result);
       } catch (e) {
         throw e;
@@ -288,6 +284,7 @@ export class ClientController {
     );
     const userId = extractUserId(this.jwtService, headers);
     if (currentEmployee.role.permissionSuite.includes('view all clients')) {
+      console.log('in if');
       validateObjectId(compId);
       const companyId = new mongoose.Types.ObjectId(compId);
       try {
@@ -387,6 +384,7 @@ export class ClientController {
       body.currentEmployeeId,
     );
     if (currentEmployee.role.permissionSuite.includes('edit all clients')) {
+      console.log('in if');
       try {
         validateObjectId(id);
         const clientId = new Types.ObjectId(id);
@@ -474,16 +472,16 @@ export class ClientController {
   @Delete('/delete/')
   async remove(
     @Headers() headers: any,
-    @Body()
-    body: { deleteClientDto: DeleteClientDto },
+    @Body() deleteClientDto: DeleteClientDto,
   ) {
     const currentEmployee = await this.employeeService.findById(
-      body.deleteClientDto.employeeId,
+      deleteClientDto.employeeId,
     );
     if (currentEmployee.role.permissionSuite.includes('remove any clients')) {
+      console.log('in if');
       try {
         const userId = extractUserId(this.jwtService, headers);
-        return this.clientService.softDelete(userId, body.deleteClientDto);
+        return this.clientService.softDelete(userId, deleteClientDto);
       } catch (e) {
         throw e;
       }
@@ -492,13 +490,13 @@ export class ClientController {
     ) {
       if (
         this.clientService.clientIsBelowCurrentEmployee(
-          body.deleteClientDto.employeeId,
-          body.deleteClientDto.clientId,
+          deleteClientDto.employeeId,
+          deleteClientDto.clientId,
         )
       ) {
         try {
           const userId = extractUserId(this.jwtService, headers);
-          return this.clientService.softDelete(userId, body.deleteClientDto);
+          return this.clientService.softDelete(userId, deleteClientDto);
         } catch (e) {
           throw e;
         }
@@ -512,13 +510,13 @@ export class ClientController {
     ) {
       if (
         this.clientService.clientIsAssignedToCurrentEmployee(
-          body.deleteClientDto.employeeId,
-          body.deleteClientDto.clientId,
+          deleteClientDto.employeeId,
+          deleteClientDto.clientId,
         )
       ) {
         try {
           const userId = extractUserId(this.jwtService, headers);
-          return this.clientService.softDelete(userId, body.deleteClientDto);
+          return this.clientService.softDelete(userId, deleteClientDto);
         } catch (e) {
           throw e;
         }

@@ -457,40 +457,12 @@ export class CompanyController {
   @Delete('/emp')
   async removeEmployee(
     @Headers() headers: any,
-    @Body()
-    body: {
-      // currentEmployeeId: Types.ObjectId;
-      deleteEmployeeDto: DeleteEmployeeFromCompanyDto;
-    },
+    @Body() deleteEmployeeDto: DeleteEmployeeFromCompanyDto,
   ) {
     // //TODO: potentially remove the endpoint since there is one in employee.controller.ts
-    // const currentEmployee = await this.employeeService.findById(
-    //   body.currentEmployeeId,
-    // );
-    // if (currentEmployee.role.permissionSuite.includes('remove any employees')) {
-    //   try {
-    //     const userId = extractUserId(this.jwtService, headers);
-    //     await this.companyService.deleteEmployee(
-    //       userId,
-    //       body.deleteEmployeeDto,
-    //     );
-    //     return { data: true };
-    //   } catch (e) {
-    //     throw new HttpException(
-    //       'Internal Server Error',
-    //       HttpStatus.SERVICE_UNAVAILABLE,
-    //     );
-    //   }
-    // } else if (
-    //   currentEmployee.role.permissionSuite.includes('remove employees under me')
-    // ) {
-    //   //TODO
-    // } else {
-    //   throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-    // }
     try {
       const userId = extractUserId(this.jwtService, headers);
-      await this.companyService.deleteEmployee(userId, body.deleteEmployeeDto);
+      await this.companyService.deleteEmployee(userId, deleteEmployeeDto);
       return { data: true };
     } catch (e) {
       throw new HttpException(
