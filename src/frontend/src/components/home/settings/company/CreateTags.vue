@@ -4,6 +4,7 @@
     max-height="800"
     max-width="600"
     :theme="isdarkmode ? 'dark' : 'light'"
+    persistent
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
@@ -38,17 +39,19 @@
             outlined
             :rules="colorRules"
           />
-
-          <v-btn
-            @click="createTag"
-            :disabled="!formIsValid"
-            color="primary"
-            rounded="md"
-            variant="elevated"
-            >Create Tag</v-btn
-          >
         </v-form>
       </v-card-text>
+      <v-card-actions>
+        <v-btn
+          @click="createTag"
+          :disabled="!formIsValid"
+          color="success"
+          rounded="md"
+          variant="text"
+          >Create Tag</v-btn
+        >
+        <v-btn color="error" rounded="md" variant="text" @click="close"> Cancel </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -77,7 +80,7 @@ export default defineComponent({
       colorRules: [(v: string) => !!v || 'Color is required']
     }
   },
-  components:{
+  components: {
     Toast
   },
   methods: {
@@ -118,6 +121,9 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    close() {
+      this.dialog = false
     }
   }
 })

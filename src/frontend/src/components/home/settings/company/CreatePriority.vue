@@ -4,6 +4,7 @@
     max-height="800"
     max-width="600"
     :theme="isdarkmode ? 'dark' : 'light'"
+    persistent
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
@@ -20,18 +21,105 @@
     <v-card>
       <v-card-title> Create new Priority</v-card-title>
       <v-card-text>
-        <v-form></v-form>
+        <v-form v-model="formIsValid" ref="form">
+          <v-label>Priority Label</v-label>
+          <v-text-field
+            v-model:lazy="priority.label"
+            label="Priority Label"
+            required
+            outlined
+            :rules="labelRules"
+          />
+          <v-label>Priority Color</v-label>
+          <v-text-field
+            v-model:lazy="priority.color"
+            label="Priority Color"
+            required
+            outlined
+            :rules="colorRules"
+          />
+        </v-form>
       </v-card-text>
+      <v-card-actions>
+        <v-btn
+          @click="createPriority"
+          color="success"
+          rounded="md"
+          variant="text"
+          :disabled="!formIsValid"
+        >
+          Create Priority</v-btn
+        >
+        <v-btn color="error" rounded="md" variant="text" @click="close"> Cancel </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
+import Toast from 'primevue/toast'
+interface Priority {
+  label: string
+  color: string
+}
 export default defineComponent({
   data() {
     return {
       dialog: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      priority: {
+        label: '',
+        color: ''
+      },
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      formIsValid: false,
+      labelRules: [(v: string) => !!v || 'Label is required'],
+      colorRules: [(v: string) => !!v || 'Color is required']
+    }
+  },
+  components: {
+    Toast
+  },
+  methods: {
+    createPriority() {
+      axios
+        .post(`${this.remoteUrl}priority`, this.priority)
+        .then((res) => {
+          console.log(res)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Priority created successfully',
+            life: 3000
+          })
+          this.dialog = false
+        })
+        .catch((err) => {
+          console.error(err)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'An error occurred while creating priority',
+            life: 3000
+          })
+        })
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    close() {
+      this.dialog = false
     }
   }
 })

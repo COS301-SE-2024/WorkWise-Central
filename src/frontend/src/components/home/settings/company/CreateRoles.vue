@@ -5,6 +5,7 @@
     max-width="600"
     :theme="isdarkmode ? 'dark' : 'light'"
     :opacity="0.1"
+    persistent
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
@@ -35,9 +36,15 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-btn @click="createRole" :disabled="!formIsValid" color="primary" variant="elevated"
+        <v-btn
+          @click="createRole"
+          :disabled="!formIsValid"
+          color="success"
+          variant="text"
+          rounded="md"
           >Create Role</v-btn
         >
+        <v-btn color="error" rounded="md" variant="text" @click="close"> Cancel </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -133,6 +140,9 @@ export default defineComponent({
         .catch((error) => {
           console.log(error)
         })
+    },
+    close() {
+      this.dialog = false
     }
   },
   mounted() {

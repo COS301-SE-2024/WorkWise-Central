@@ -4,6 +4,7 @@
     max-height="800"
     max-width="600"
     :theme="isdarkmode ? 'dark' : 'light'"
+    persistent
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
@@ -20,8 +21,31 @@
     <v-card>
       <v-card-title> Create new Status</v-card-title>
       <v-card-text>
-        <v-form></v-form>
+        <v-form v-model="formIsValid" ref="form">
+          <v-label>Status Label</v-label>
+          <v-text-field
+            v-model:lazy="status.label"
+            label="Status Label"
+            required
+            outlined
+            :rules="labelRules"
+          />
+          <v-label>Status Color</v-label>
+          <v-text-field
+            v-model:lazy="status.color"
+            label="Status Color"
+            required
+            outlined
+            :rules="colorRules"
+          />
+        </v-form>
       </v-card-text>
+      <v-card-actions>
+        <v-btn @click="createStatus" :disabled="!formIsValid" color="success" variant="text"
+          >Create Status</v-btn
+        >
+        <v-btn color="error" rounded="md" variant="text" @click="close"> Cancel </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -44,7 +68,9 @@ export default defineComponent({
       } as Status,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
-      formIsValid: false
+      formIsValid: false,
+      labelRules: [(v: string) => !!v || 'Label is required'],
+      colorRules: [(v: string) => !!v || 'Color is required']
     }
   },
   components: {
@@ -87,6 +113,9 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    close() {
+      this.dialog = false
     }
   }
 })

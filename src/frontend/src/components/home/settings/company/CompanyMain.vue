@@ -91,11 +91,13 @@ export default defineComponent({
         'Company 8',
         'Company 9',
         'Company 10'
-      ]
+      ],
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     }
   },
   methods: {
-    closeCompanyDialog() {
+    closeCompanyDialog() {s
       this.companyDialog = false
     },
     switchCompany(companyName) {
