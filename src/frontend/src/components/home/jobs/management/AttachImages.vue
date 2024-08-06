@@ -49,7 +49,7 @@
         <v-card-actions class="d-flex flex-column">
           <v-btn
             @click="
-              upload
+              upload,
               isActive.value = false
             "
             color="success"
