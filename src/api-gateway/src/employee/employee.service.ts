@@ -12,8 +12,8 @@ import { JobService } from '../job/job.service';
 import { TeamService } from '../team/team.service';
 import { EmployeeRepository } from './employee.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
-import { ClientService } from 'src/client/client.service';
-import { UpdateRoleDto } from 'src/role/dto/update-role.dto';
+import { ClientService } from '../client/client.service';
+import { UpdateRoleDto } from '../role/dto/update-role.dto';
 
 @Injectable()
 export class EmployeeService {

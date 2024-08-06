@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto, BulkUpdateRoleDto } from './dto/update-role.dto';
 import { Types } from 'mongoose';
@@ -84,11 +79,7 @@ export class RoleService {
     return new ValidationResult(true, `All good`);
   }
 
-  async validateUpdateRole(
-    userId: Types.ObjectId,
-    roleId: Types.ObjectId,
-    updateRoleDto: UpdateRoleDto,
-  ) {
+  async validateUpdateRole(userId: Types.ObjectId, roleId: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
     console.log('In validate UpdateRole');
     console.log('updateRoleDto: ', updateRoleDto);
     const roleToBeUpdate = await this.findById(roleId);
@@ -99,10 +90,7 @@ export class RoleService {
       return new ValidationResult(false, `Role to be updated not found`);
     }
     console.log('role was found');
-    console.log(
-      'updateRoleDto.permissionSuite: ',
-      updateRoleDto.permissionSuite,
-    );
+    console.log('updateRoleDto.permissionSuite: ', updateRoleDto.permissionSuite);
 
     //Check if the permissions are valid
     if (updateRoleDto.permissionSuite) {
@@ -121,12 +109,7 @@ export class RoleService {
 
     //Check if the role already exists
     try {
-      if (
-        await this.findOneInCompany(
-          updateRoleDto.roleName,
-          roleToBeUpdate.companyId,
-        )
-      ) {
+      if (await this.findOneInCompany(updateRoleDto.roleName, roleToBeUpdate.companyId)) {
         return new ValidationResult(false, `Role already exists`);
       }
     } catch (error) {}
@@ -134,10 +117,7 @@ export class RoleService {
     console.log('role does not exist already');
 
     //Checking that the role is not Default or owner
-    if (
-      roleToBeUpdate.roleName === 'Owner' ||
-      roleToBeUpdate.roleName === 'Default'
-    ) {
+    if (roleToBeUpdate.roleName === 'Owner' || roleToBeUpdate.roleName === 'Default') {
       return new ValidationResult(false, `Not allowed to edit this role`);
     }
     console.log('All good');
@@ -227,18 +207,10 @@ export class RoleService {
     return result;
   }
 
-  async update(
-    userId: Types.ObjectId,
-    roleId: Types.ObjectId,
-    updateRoleDto: UpdateRoleDto,
-  ) {
+  async update(userId: Types.ObjectId, roleId: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
     console.log('In role update service');
     console.log('updateRoleDto: ', updateRoleDto);
-    const validation = await this.validateUpdateRole(
-      userId,
-      roleId,
-      updateRoleDto,
-    );
+    const validation = await this.validateUpdateRole(userId, roleId, updateRoleDto);
     console.log('validation: ', validation);
     if (!validation.isValid) {
       throw new Error(validation.message);
@@ -252,11 +224,7 @@ export class RoleService {
     return this.roleRepository.update(roleId, updateRoleDto);
   }
 
-  async bulkUpdate(
-    userId: Types.ObjectId,
-    bulkUpdateRoleDto: BulkUpdateRoleDto,
-    companyId: Types.ObjectId,
-  ) {
+  async bulkUpdate(userId: Types.ObjectId, bulkUpdateRoleDto: BulkUpdateRoleDto, companyId: Types.ObjectId) {
     console.log('In bulk update');
     //Checking that the roles exist for the given company
     const roles = await this.roleRepository.findAllInCompany(companyId);
@@ -290,10 +258,7 @@ export class RoleService {
     return await this.roleRepository.roleExists(id);
   }
 
-  async roleExistsInCompany(
-    id: Types.ObjectId,
-    companyId: Types.ObjectId,
-  ): Promise<boolean> {
+  async roleExistsInCompany(id: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
     //checking if the company exists
     if (!(await this.companyService.companyIdExists(companyId))) {
       throw new Error('CompanyId does not exist');
