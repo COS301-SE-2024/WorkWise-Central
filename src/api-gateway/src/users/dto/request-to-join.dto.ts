@@ -1,12 +1,7 @@
 import { Types } from 'mongoose';
-import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UserJoinRequestDto {
-  /*  @IsNotEmpty()
-  @IsString()
-  @IsMongoId()
-  requestingUserId: Types.ObjectId;*/
-
   @IsNotEmpty()
   @IsString()
   @IsMongoId()
@@ -15,14 +10,22 @@ export class UserJoinRequestDto {
   @IsOptional()
   @IsMongoId()
   roleId?: Types.ObjectId; //Should I rather put roleName?🤔
+}
 
-  @IsOptional()
+export class UserInviteRequestDto {
+  @IsNotEmpty()
   @IsString()
-  roleName?: string = 'Worker';
+  @IsMongoId()
+  employeeId: Types.ObjectId;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  companyName?: string;
+  @IsEmail()
+  emailToInvite: string;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  roleId: Types.ObjectId;
 }
 
 export class CancelRequestDto {
@@ -30,4 +33,28 @@ export class CancelRequestDto {
   @IsString()
   @IsMongoId()
   companyId: Types.ObjectId;
+}
+
+export class CancelInviteDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsMongoId()
+  companyId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsMongoId()
+  inviteId: Types.ObjectId;
+}
+
+export class RejectInviteDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsMongoId()
+  inviteId: Types.ObjectId;
 }

@@ -18,7 +18,10 @@ import {
 import { FlattenMaps, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
 import { JoinedCompany } from '../users/entities/user.entity';
-import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
+import {
+  AddUserFromInviteDto,
+  AddUserToCompanyDto,
+} from './dto/add-user-to-company.dto';
 import { CompanyRepository } from './company.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { EmployeeService } from '../employee/employee.service';
@@ -229,7 +232,6 @@ export class CompanyService {
     if (company == null || user == null)
       throw new NotFoundException('User or Company not found');
 
-    //TODO: Ask about superiorId
     //CreateEmployee and link them to the company
     let addedEmployee: Employee & { _id: Types.ObjectId };
     if (addUserDto.roleId) {
@@ -250,6 +252,63 @@ export class CompanyService {
         userId: user._id,
         roleId: defaultRole._id,
         superiorId: addUserDto.superiorId,
+      });
+
+      await this.employeeService.updateUserInfo(addedEmployee._id, {
+        //Add user details
+        firstName: user.personalInfo.firstName,
+        surname: user.personalInfo.surname,
+        displayImage: user.profile.displayImage,
+        displayName: user.profile.displayName,
+        username: user.systemDetails.username,
+      });
+    }
+
+    const newJoinedCompany: JoinedCompany = {
+      companyId: company._id,
+      employeeId: addedEmployee._id,
+      companyName: company.name,
+    };
+
+    const updatedUser = await this.usersService.addJoinedCompany(
+      user._id,
+      newJoinedCompany,
+    );
+    console.log('Add New Employee ID');
+    await this.addNewEmployeeId(company._id, addedEmployee._id);
+    console.log(updatedUser);
+    return newJoinedCompany;
+  }
+
+  async addEmployeeFromInvite(inviteDto: AddUserFromInviteDto) {
+    console.log('addUserDto', inviteDto);
+    //Get company and user
+    const company = await this.getCompanyById(inviteDto.companyId);
+    const user = await this.usersService.getUserById(inviteDto.newUserId);
+    // null checks
+    if (company == null || user == null)
+      throw new NotFoundException('User or Company not found');
+
+    //CreateEmployee and link them to the company
+    let addedEmployee: Employee & { _id: Types.ObjectId };
+    if (inviteDto.roleId) {
+      addedEmployee = await this.employeeService.create({
+        companyId: company._id,
+        userId: user._id,
+        roleId: inviteDto.roleId,
+        superiorId: inviteDto.superiorId,
+      });
+    } else {
+      const defaultRole = await this.roleService.findOneInCompany(
+        'Worker',
+        company._id,
+      );
+
+      addedEmployee = await this.employeeService.create({
+        companyId: company._id,
+        userId: user._id,
+        roleId: defaultRole._id,
+        superiorId: inviteDto.superiorId,
       });
 
       await this.employeeService.updateUserInfo(addedEmployee._id, {

@@ -5,6 +5,7 @@
     max-width="600"
     scrollable
     :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :opacity="0"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
@@ -49,10 +50,10 @@
               hide-details="auto"
             ></v-text-field></v-col
           ><v-col>
-            <small class="text-caption white--text">ID of client*</small>
+            <small class="text-caption white--text">ID of client</small>
             <v-text-field
               placeholder="Enter the ID number of the client"
-              v-model="req_obj.idNumber"
+              v-model="req_obj.details.idNumber"
               required
               :rules="south_africa_id_rules"
               hide-details="auto"
@@ -342,7 +343,7 @@ export default defineComponent({
     ],
 
     req_obj: {
-      clientUsername: '',
+      employeeId: localStorage['employeeId'],
       details: {
         firstName: '',
         lastName: '',
@@ -359,10 +360,10 @@ export default defineComponent({
           postalCode: '',
           complex: '',
           houseNumber: ''
-        }
-      },
-      companyId: localStorage['currentCompany'],
-      idNumber: ''
+        },
+        companyId: localStorage['currentCompany'],
+        idNumber: ''
+      }
     }
   }),
   methods: {
@@ -420,7 +421,7 @@ export default defineComponent({
             detail: 'Client created successfully',
             life: 3000
           })
-          this.$router.push('/client-desk-view')
+          window.location.reload()
         })
         .catch((res) => {
           console.log('Client creation failed')

@@ -1,16 +1,8 @@
-import {
-  IsHexColor,
-  IsMongoId,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
-import {
-  defaultPriorityColour,
-  defaultTagColour,
-} from '../entities/job-tag.entity';
+import { IsHexColor, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { defaultPriorityColour, defaultTagColour } from '../entities/job-tag.entity';
 import { Types } from 'mongoose';
+import { AddHashtag } from '../../utils/Custom Transformers/add-hashtag.transformer';
+import { CapitalizeWords } from '../../utils/Custom Transformers/capitalise-words.transformer';
 
 export class CreateTagDto {
   @IsNotEmpty()
@@ -19,11 +11,13 @@ export class CreateTagDto {
 
   @IsNotEmpty()
   @IsString()
+  @CapitalizeWords()
   label: string;
 
   @IsOptional()
   @IsString()
   @IsHexColor()
+  @AddHashtag()
   colour?: string = defaultTagColour; //Will be hex value
 }
 
@@ -34,6 +28,7 @@ export class CreatePriorityTagDto {
 
   @IsNotEmpty()
   @IsString()
+  @CapitalizeWords()
   label: string;
 
   @IsNotEmpty()
@@ -43,6 +38,7 @@ export class CreatePriorityTagDto {
   @IsOptional()
   @IsString()
   @IsHexColor()
+  @AddHashtag()
   colour?: string = defaultPriorityColour; //Will be hex value
 }
 
@@ -57,10 +53,12 @@ export class CreateStatusDto {
 
   @IsNotEmpty()
   @IsString()
+  @CapitalizeWords()
   status: string;
 
   @IsOptional()
   @IsString()
   @IsHexColor()
+  @AddHashtag()
   colour?: string = defaultTagColour; //Will be hex value
 }

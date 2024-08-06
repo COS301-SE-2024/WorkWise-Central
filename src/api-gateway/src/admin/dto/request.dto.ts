@@ -10,6 +10,20 @@ export class UserApiJoinRequestDto {
   createdAt: Date = currentDate();
 }
 
+export class InviteToCompanyResponseDto {
+  companyId: Types.ObjectId;
+  superiorId: Types.ObjectId;
+  companyName: string;
+  roleIdForInvite: Types.ObjectId;
+  roleName: string = 'Worker';
+  emailBeingInvited: string;
+  createdAt: Date;
+}
+
+export class AllCompanyInvitesDto {
+  data: InviteToCompanyResponseDto;
+}
+
 export class AllJoinRequestsDto {
   constructor(data: UserApiJoinRequestDto) {
     this.data = data;
@@ -32,4 +46,12 @@ export class AllJoinDetailedRequestsDto {
   }
 
   data: UserApiDetailedJoinRequestDto;
+}
+
+export class JoinedCompanyResponseDto {
+  data: {
+    employeeId: Types.ObjectId;
+    companyId: Types.ObjectId;
+    companyName: string;
+  };
 }

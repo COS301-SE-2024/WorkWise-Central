@@ -3,11 +3,12 @@
     v-model="clientDialog"
     max-width="600"
     :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :opacity="0"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
-        >Edit <v-icon icon="fa:fa-solid fa-pencil" end color="warning " size="small"></v-icon
-      ></v-btn>
+        ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon>Edit
+      </v-btn>
     </template>
     <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
       <v-card-title class="text-center"> Edit Client </v-card-title>
@@ -117,7 +118,8 @@
               order-sm="first"
             >
               <v-btn color="error" width="85%" height="35" variant="text" @click="close" block>
-                Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon>
+                <v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon>
+                Cancel
               </v-btn> </v-col
             ><v-col
               cols="12"
@@ -136,14 +138,20 @@
                 height="35"
                 variant="text"
                 @click="update"
-                :disabled="!valid"
+                :disabled="allRulesPass()"
                 block
-              >
+                ><v-icon
+                  icon="fa:fa-solid fa-floppy-disk"
+                  start
+                  color="success"
+                  size="small"
+                ></v-icon>
                 Save
-                <v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon>
               </v-btn>
-            </v-col> </v-row></v-container
-      ></v-card-actions>
+            </v-col>
+          </v-row></v-container
+        ></v-card-actions
+      >
     </v-card>
   </v-dialog>
 </template>
@@ -201,6 +209,10 @@ export default {
     editedItem(newVal) {
       this.localEditedItem = newVal
     }
+  },
+  created() {
+    // Create a deep copy of editedItem
+    this.localEditedItem = this.deepCopy(this.editedItem)
   },
   methods: {
     close() {
@@ -289,6 +301,9 @@ export default {
       } else {
         this.valid = false
       }
+    },
+    deepCopy(obj) {
+      return JSON.parse(JSON.stringify(obj))
     }
   }
 }

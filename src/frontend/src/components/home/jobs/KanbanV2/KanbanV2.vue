@@ -26,7 +26,7 @@
             <v-chip class="text-subtitle-1 font-weight-black" variant="tonal">
               {{ column.cards.length }}
             </v-chip>
-            <v-menu align="left">
+            <v-menu align="left" v-if="column.status !== 'No Status'">
               <template v-slot:activator="{ props }">
                 <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
               </template>
@@ -41,24 +41,165 @@
                   >
                 </v-list-item>
                 <v-list-item>
-                  <v-btn :elevation="0" @click="columnDeleteAllJobs(column)"
-                    ><v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon
-                    >{{ 'Delete all' }}</v-btn
-                  >
+                  <v-dialog v-model="delete_all_jobs_dialog" max-width="500px">
+                    <template v-slot:activator="{ props }">
+                      <v-btn :elevation="0" v-bind="props"
+                        ><v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon
+                        >{{ 'Delete all' }}</v-btn
+                      >
+                    </template>
+                    <v-card color="background">
+                      <v-card-title>
+                        <span class="headline">Delete {{ column.status }}</span>
+                      </v-card-title>
+                      <v-card-text>
+                        <v-container>
+                          <v-row>
+                            <p>
+                              Are you sure you want to delete all the jobs in the
+                              <strong>{{
+                                column.status.charAt(0).toUpperCase() + column.status.slice(1)
+                              }}</strong>
+                              column. all the jobs within it will be permanently removed through out
+                              the company.
+                            </p>
+                            <strong> This action cannot be reversed. </strong>
+                          </v-row>
+                        </v-container>
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn @click="columnDeleteAllJobs(column)" color="success" variant="text">
+                          {{ 'Delete' }}
+                        </v-btn>
+
+                        <v-btn color="error" variant="text" @click="delete_all_jobs_dialog = false"
+                          >Cancel</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
                 </v-list-item>
                 <v-list-subheader>Column</v-list-subheader>
 
                 <v-list-item>
-                  <v-btn :elevation="0"
-                    ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
-                    >{{ 'Edit details' }}
-                  </v-btn>
+                  <v-dialog max-height="700" max-width="500" v-model="edit_column_details_dialog">
+                    <template v-slot:activator="{ props }">
+                      <v-btn :elevation="0" v-bind="props"
+                        ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
+                        >{{ 'Edit details' }}
+                      </v-btn>
+                    </template>
+                    <v-card elevation="14" rounded="md" max-height="700" max-width="900">
+                      <v-card-title class="text-center">Edit {{ column.status }}</v-card-title>
+                      <v-card-text>
+                        <!--              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">-->
+                        <v-col>
+                          <v-spacer></v-spacer>
+                          <v-col>
+                            <v-col align="center">
+                              <v-icon :color="column_color" :size="40">
+                                {{ 'fa: fa-solid fa-cube' }}
+                              </v-icon>
+                            </v-col>
+                            <v-col>
+                              <label style="font-size: 14px; font-weight: lighter"
+                                >Column Name</label
+                              >
+                              <v-text-field
+                                density="compact"
+                                color="grey-lighten-4"
+                                placeholder="Enter the name of the new column"
+                                rounded="md"
+                                variant="solo"
+                                v-model="new_column_name"
+                                :rules="column_name_rule"
+                                required
+                                data-testid="job-title-field"
+                              ></v-text-field
+                            ></v-col>
+                            <v-col align="center">
+                              <label style="font-size: 14px; font-weight: lighter">Color</label>
+                              <v-color-picker
+                                v-model="column_color"
+                                hide-inputs
+                                show-swatches
+                                @update:modelValue="addColorPickerUpdate"
+                              ></v-color-picker>
+                            </v-col>
+                          </v-col>
+                        </v-col>
+                        <v-col align="center">
+                          <label style="{color:red}">{{ error_message }}</label>
+                        </v-col>
+                        <v-col cols="8" offset="2" align="center">
+                          <v-btn
+                            color="success"
+                            rounded="md"
+                            type="submit"
+                            boarder="md"
+                            width="100%"
+                            height="35"
+                            variant="text"
+                            @click="editColumnButtonClickedSave(column)"
+                            data-testid="create-btn"
+                            >Save
+                          </v-btn>
+                          <v-btn
+                            color="error"
+                            rounded="md"
+                            boarder="md"
+                            width="100%"
+                            height="35"
+                            variant="text"
+                            @click="edit_column_details_dialog = false"
+                            data-testid="cancel-btn"
+                            >Cancel
+                          </v-btn>
+                        </v-col>
+                      </v-card-text>
+                    </v-card>
+                  </v-dialog>
                 </v-list-item>
                 <v-list-item>
-                  <v-btn :elevation="0" @click="columnDelete(column)"
-                    ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
-                    >{{ 'Delete' }}</v-btn
-                  >
+                  <v-dialog v-model="delete_column_dialog" max-width="500px">
+                    <template v-slot:activator="{ props }">
+                      <v-btn :elevation="0" v-bind="props"
+                        ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
+                        >{{ 'Delete' }}</v-btn
+                      >
+                    </template>
+                    <v-card color="background">
+                      <v-card-title>
+                        <span class="headline">Delete {{ column.status }}</span>
+                      </v-card-title>
+                      <v-card-text>
+                        <v-container>
+                          <v-row>
+                            <p>
+                              Are you sure you want to delete the
+                              <strong>{{
+                                column.status.charAt(0).toUpperCase() + column.status.slice(1)
+                              }}</strong>
+                              column, all jobs within it will be moved to the
+                              <b>No Status</b> column.
+                            </p>
+                            <strong> This action cannot be reversed. </strong>
+                          </v-row>
+                        </v-container>
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn @click="columnDelete(column)" color="success" variant="text">
+                          {{ 'Delete' }}
+                        </v-btn>
+
+                        <v-btn color="error" variant="text" @click="delete_column_dialog = false"
+                          >Cancel</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -173,9 +314,11 @@
         </v-card>
       </v-col>
       <v-col cols="auto">
-        <v-btn icon="fa: fa-solid fa-plus" @click="add_column_dialog = true"></v-btn>
         <v-dialog max-height="700" max-width="500" v-model="add_column_dialog">
-          <v-card elevation="14" rounded="md" max-height="800" max-width="900">
+          <template v-slot:activator="{ props }">
+            <v-btn icon="fa: fa-solid fa-plus" v-bind="props"></v-btn>
+          </template>
+          <v-card elevation="14" rounded="md" max-height="700" max-width="900">
             <v-card-title class="text-center">New Column</v-card-title>
             <v-card-text>
               <!--              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">-->
@@ -196,7 +339,7 @@
                       rounded="md"
                       variant="solo"
                       v-model="new_column_name"
-                      :rule="column_name_rule"
+                      :rules="column_name_rule"
                       required
                       data-testid="job-title-field"
                     ></v-text-field
@@ -255,6 +398,7 @@
 import type { JobCardDataFormat, Column } from '../types'
 import '@mdi/font/css/materialdesignicons.css'
 import JBC from '../management/ManagerJobCard.vue'
+import axios from 'axios'
 
 export default {
   components: {
@@ -262,7 +406,12 @@ export default {
   },
   data() {
     return {
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      delete_all_jobs_dialog: false,
       add_column_dialog: false,
+      delete_column_dialog: false,
+      edit_column_details_dialog: false,
       columns: [
         { id: 0, status: 'No Status', color: 'purple-accent-3', cards: [] },
         { id: 1, status: 'Todo', color: '#FF073A', cards: [] },
@@ -480,17 +629,49 @@ export default {
   },
   methods: {
     columnDelete(col: Column) {
+      for (let i = 0; i < col.cards.length; i++) {
+        this.columns[0].cards.push(col.cards[i])
+        col.cards[i].status = this.columns[0].status
+        console.log(col.cards[i].status)
+      }
+      this.N_M_Sort(this.columns[0].cards, this.order_of_sorting_in_columns)
       this.columns.splice(this.columns.indexOf(col), 1)
+      this.delete_column_dialog = false
     },
     columnDeleteAllJobs(col: Column) {
       //add a modal that will ask the user if they are sure they want to delete all the cards in a job column
       col.cards.splice(0, col.cards.length)
+      this.delete_all_jobs_dialog = false
+      // window.location.reload()
+    },
+    editColumnButtonClickedSave(col: Column) {
+      if (this.new_column_name === '' && this.column_color === '') {
+        this.error_message = 'No changes were made'
+        return
+      }
+
+      if (this.new_column_name.length > 20) {
+        this.error_message = 'Column name length should be shorter than 20 characters'
+      }
+      if (this.new_column_name !== '') {
+        col.status = this.new_column_name
+        this.new_column_name = ''
+      }
+      if (this.column_color !== '') {
+        col.color = this.column_color
+        this.column_color = ''
+      }
+      this.edit_column_details_dialog = false
     },
     addColumnButtonClickedSave() {
+      if (this.new_column_name === '' && this.column_color === '') {
+        this.error_message = 'No changes were made'
+        return
+      }
       if (this.new_column_name === '') {
         this.error_message = 'Column name is empty'
       }
-      if (this.new_column_name.length < 20) {
+      if (this.new_column_name.length > 20) {
         this.error_message = 'Column name length should be shorter than 20 characters'
       }
       if (this.column_color === '') {
@@ -505,6 +686,10 @@ export default {
       }
       this.add_column_dialog = !this.add_column_dialog
       this.columns.push(column)
+
+      this.new_column_name = ''
+      this.column_color = ''
+      this.add_column_dialog = false
     },
     addColorPickerUpdate() {
       console.log(this.column_color)
@@ -533,6 +718,55 @@ export default {
         this.N_M_Sort(col.cards, this.order_of_sorting_in_columns)
       })
       console.log(this.columns[0].cards.length)
+    },
+    async loadJobs() {
+      console.log('load jobs request')
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const loaded_tags_response = await axios.get(
+          apiURL + `job/all/company/detailed/${localStorage['currentCompany']}`,
+          config
+        )
+        let valid_data = []
+        let loaded_tags_res = loaded_tags_response.data.data
+        for (let i = 0; i < loaded_tags_res.length; i++) {
+          if (loaded_tags_res[i].priorityTag === undefined) continue
+          valid_data.push(loaded_tags_res[i])
+        }
+
+        for (let i = 0; i < valid_data.length; i++) {
+          const status_res = await axios.get(apiURL + `job/status/${valid_data[i].status}`, config)
+
+          this.starting_cards.push({
+            jobId: '',
+            heading: '',
+            jobDescription: 'Repainting the office walls with new colors.',
+            startDate: '2024-07-06',
+            endDate: '2024-07-08',
+            status: 'Todo',
+            clientName: 'Wayne Enterprises',
+            street: '300 Industrial Rd',
+            suburb: 'Tech Park',
+            city: 'Metropolis',
+            postalCode: '23456',
+            imagesTaken: [],
+            inventoryUsed: ['Paint', 'Brushes', 'Rollers'],
+            taskList: ['Prepare walls', 'Apply primer', 'Paint walls'],
+            comments: ['Use non-toxic paint', 'Ensure even coverage'],
+            priority: 'Low',
+            tags: ['Painting', 'Office', 'Commercial']
+          })
+        }
+        console.log(valid_data)
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
     },
     loadCardsInRespectiveColumns(card: JobCardDataFormat, column: Column) {
       column.cards.push(card)
@@ -588,10 +822,23 @@ export default {
 
         return tracker1 - tracker2
       })
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
   },
   mounted() {
     this.loading(this.starting_cards)
+    this.loadJobs()
   }
 }
 </script>

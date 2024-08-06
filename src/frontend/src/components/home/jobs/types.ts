@@ -140,6 +140,30 @@ export type Column = {
   cards: JobCardDataFormat[]
 }
 
+export type JobTag = {
+  _id: string
+  label: string
+  colour: string
+  companyId: string
+  __v: number
+}
+
+export type JobPriorityTag = {
+  _id: string
+  label: string
+  priorityLevel: number
+  colour: string
+  companyId: string
+  __v: number
+}
+export type JobStatuses = {
+  _id: string
+  status: string
+  colour: string
+  companyId: string
+  __v: number
+}
+
 export type JobCardDataFormat = {
   jobId: string
   heading: string

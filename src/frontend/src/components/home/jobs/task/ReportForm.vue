@@ -14,7 +14,7 @@
           color="secondary"
           v-bind="activatorProps"
         >
-          Create Report
+          Generate Report
         </v-btn>
       </template>
       <v-card :theme="isdarkmode ? 'dark' : 'light'">

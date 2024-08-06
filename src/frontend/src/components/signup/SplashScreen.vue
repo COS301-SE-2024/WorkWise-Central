@@ -8,7 +8,7 @@
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-col></v-col>
+
       <v-btn
         color="primary"
         dark
@@ -69,9 +69,51 @@
               </h1>
             </v-col></v-row
           >
+          <v-container>
+            <v-row
+              ><v-col cols="12" lg="6" order="last" order-lg="first">
+                <v-btn
+                  color="primary"
+                  dark
+                  @click="loginDialog = true"
+                  rounded="md"
+                  variant="outlined"
+                  align-center
+                  width="50%"
+                  justify-center
+                  class="my-3 text-center"
+                  size="large"
+                  block
+                >
+                  Log in
+                </v-btn></v-col
+              >
+              <v-col cols="12" lg="6" order="first" order-lg="last">
+                <v-btn
+                  color="secondary"
+                  dark
+                  @click="signupDialog = true"
+                  rounded="md"
+                  align-center
+                  variant="outlined"
+                  class="my-3 text-center"
+                  width="50%"
+                  block
+                  size="large"
+                >
+                  Get Started
+                </v-btn></v-col
+              ></v-row
+            ></v-container
+          >
 
           <v-col>
-            <v-dialog opacity="" v-model="loginDialog" max-width="400" @click:outside="resetFields">
+            <v-dialog
+              :opacity="0"
+              v-model="loginDialog"
+              max-width="400"
+              @click:outside="resetFields"
+            >
               <Toast position="top-center" />
               <v-card
                 width="auto"
@@ -130,6 +172,9 @@
                         ></v-text-field></v-col
                     ></v-row>
                   </v-form>
+                  <v-col cols="8" offset="2">
+                    <v-btn variant="text" @click="forgotPassword"> Forgot Password?</v-btn></v-col
+                  >
                 </v-col>
 
                 <v-col cols="8" offset="2">
@@ -168,10 +213,89 @@
                 >
               </v-card>
             </v-dialog>
+            <!-- Forgot Password -->
+            <v-dialog :opacity="0" v-model="forgotPasswordDialog" max-width="400">
+              <v-sheet
+                elevation="14"
+                rounded="md"
+                width="auto"
+                height="auto"
+                :theme="isdarkmode ? 'dark' : 'light'"
+                class="bg-background"
+              >
+                <v-col>
+                  <v-form ref="form" v-model="valid" class="bg-background">
+                    <v-row>
+                      <v-col>
+                        <label style="font-size: 14px; font-weight: lighter">Rest password</label>
+                        <v-text-field
+                          :label="email ? '' : 'Enter your email'"
+                          type="email"
+                          v-model="email"
+                          :rules="emailRules"
+                          rounded="md"
+                          variant="solo"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-form>
+                  <v-col>
+                    <v-btn
+                      :disabled="!valid"
+                      text
+                      rounded="md"
+                      width="100%"
+                      size="large"
+                      variant="elevated"
+                      color="primary"
+                      @click="showOTP"
+                      >Reset</v-btn
+                    >
+                  </v-col>
+                </v-col>
+              </v-sheet>
+            </v-dialog>
+            <v-dialog :opacity="0" v-model="OTPDialog" max-width="400">
+              <v-sheet
+                elevation="14"
+                rounded="md"
+                width="auto"
+                height="auto"
+                :theme="isdarkmode ? 'dark' : 'light'"
+                class="bg-background"
+              >
+                <v-col>
+                  <v-form ref="form" v-model="valid" class="bg-background">
+                    <v-row>
+                      <v-col>
+                        <label style="font-size: 14px; font-weight: lighter"
+                          >Enter the code you received from email</label
+                        >
+
+                        <v-otp-input v-model="value" />
+                      </v-col>
+                    </v-row>
+                  </v-form>
+                  <v-col>
+                    <v-btn
+                      :disabled="!valid"
+                      text
+                      rounded="md"
+                      width="100%"
+                      size="large"
+                      variant="elevated"
+                      color="primary"
+                      >Change Password</v-btn
+                    >
+                  </v-col>
+                </v-col>
+              </v-sheet>
+            </v-dialog>
 
             <!-- Flow 1 -->
             <v-dialog
-              opacity=""
+              :opacity="0"
               v-model="signupDialog"
               max-width="400"
               @click:outside="resetFields"
@@ -276,7 +400,7 @@
             </v-dialog>
             <!-- Flow 2 -->
             <v-dialog
-              opacity=""
+              :opacity="0"
               v-model="signup1Dialog"
               max-width="400"
               @click:outside="resetFields"
@@ -359,7 +483,7 @@
             </v-dialog>
             <v-col xs="3" align-self="center">
               <v-dialog
-                opacity=""
+                :opacity="0"
                 v-model="signupUsernameDialog"
                 max-width="400"
                 @click:outside="resetFields"
@@ -427,7 +551,7 @@
             </v-col>
             <!-- Flow 3 -->
             <v-dialog
-              opacity=""
+              :opacity="0"
               v-model="signup2Dialog"
               max-width="400"
               @click:outside="resetFields"
@@ -531,7 +655,7 @@
             </v-dialog>
             <!-- Flow 4 -->
             <v-dialog
-              opacity=""
+              :opacity="0"
               v-model="signupAddressDialog"
               max-width="1000"
               @click:outside="resetFields"
@@ -673,7 +797,7 @@
             </v-dialog>
             <!-- Flow 5 -->
             <v-dialog
-              opacity=""
+              :opacity="0"
               v-model="signup3Dialog"
               max-width="700"
               style="height: 750px"
@@ -734,6 +858,35 @@
           </v-row>
         </v-container>
       </v-footer> -->
+
+      <h1
+        :class="[
+          'splash-title',
+          'header-title',
+          'text-center',
+          { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
+        ]"
+      >
+        Manage your business <span class="text-primary">effectively</span> and
+        <span class="text-secondary">efficiently</span> using <span class="text-primary">Work</span
+        ><span class="text-secondary">Wise</span> Central
+      </h1>
+      <v-row style="height: 1000px">
+        <v-col cols="12" order="first" order-lg="last" order-md="last" order-sm="first">
+          <v-tabs v-model="tab" align-tabs="center" bg-color="secondary" stacked>
+            <v-tab v-for="(item, index) in tabs" :key="index">
+              {{ item.title }}<v-icon :icon="item.icon" color="primary"></v-icon>
+            </v-tab>
+          </v-tabs>
+          <v-tabs-window v-model="tab">
+            <v-tabs-window-item v-for="item in tabs" :key="item" :value="item">
+              <v-card flat>
+                <v-img> </v-img>
+              </v-card>
+            </v-tabs-window-item>
+          </v-tabs-window>
+        </v-col>
+      </v-row>
       <div>
         <h1
           :class="[
@@ -780,34 +933,6 @@
           </v-col>
         </v-row>
       </div>
-      <h1
-        :class="[
-          'splash-title',
-          'header-title',
-          'text-center',
-          { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
-        ]"
-      >
-        Manage your business <span class="text-primary">effectively</span> and
-        <span class="text-secondary">efficiently</span> using <span class="text-primary">Work</span
-        ><span class="text-secondary">Wise</span> Central
-      </h1>
-      <v-row style="height: 1000px">
-        <v-col cols="12" order="first" order-lg="last" order-md="last" order-sm="first">
-          <v-tabs v-model="tab" align-tabs="center" bg-color="secondary" stacked>
-            <v-tab v-for="(item, index) in tabs" :key="index">
-              {{ item.title }}<v-icon :icon="item.icon" color="primary"></v-icon>
-            </v-tab>
-          </v-tabs>
-          <v-tabs-window v-model="tab">
-            <v-tabs-window-item v-for="item in tabs" :key="item" :value="item">
-              <v-card flat>
-                <v-img> </v-img>
-              </v-card>
-            </v-tabs-window-item>
-          </v-tabs-window>
-        </v-col>
-      </v-row>
     </v-main>
   </v-app>
 </template>
@@ -854,6 +979,8 @@ export default defineComponent({
     alertLoginFailure: false,
     joinDialog: false,
     registerDialog: false,
+    forgotPasswordDialog: false,
+    OTPDialog: false,
     exists: false,
     signupAddressDialog: false,
     genderList: ['Male', 'Female', 'Other'],
@@ -1103,6 +1230,14 @@ export default defineComponent({
           this.usernameList.push(this.username)
         }
       }
+    },
+    forgotPassword() {
+      this.loginDialog = false
+      this.forgotPasswordDialog = true
+    },
+    showOTP() {
+      this.forgotPasswordDialog = false
+      this.OTPDialog = true
     },
     format(date) {
       const day = date.getDate()

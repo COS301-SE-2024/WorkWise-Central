@@ -7,8 +7,8 @@
         color="error"
         variant="text"
         v-bind="activatorProps"
-        >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
-      ></v-btn>
+        ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
+      >
     </template>
     <v-card :color="isdarkmode === true ? 'dark' : 'light'">
       <v-card-title>
