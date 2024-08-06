@@ -1,9 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
-import {
-  UpdateEmployeeDto,
-  UpdateEmployeeUserInfoDto,
-} from './dto/update-employee.dto';
+import { UpdateEmployeeDto, UpdateEmployeeUserInfoDto } from './dto/update-employee.dto';
 import { Types } from 'mongoose';
 import { Employee } from './entities/employee.entity';
 import { UsersService } from '../users/users.service';
@@ -47,24 +44,14 @@ export class EmployeeService {
 
     // Checking if the roleId was passed and if it exists
     if (employee.roleId) {
-      if (
-        !(await this.roleService.roleExistsInCompany(
-          employee.roleId,
-          employee.companyId,
-        ))
-      ) {
+      if (!(await this.roleService.roleExistsInCompany(employee.roleId, employee.companyId))) {
         return new ValidationResult(false, `Role not found`);
       }
     }
 
     // Checking if the superiorId was passed and if it exists
     if (employee.superiorId) {
-      if (
-        !(await this.employeeExistsForCompany(
-          employee.superiorId,
-          employee.companyId,
-        ))
-      ) {
+      if (!(await this.employeeExistsForCompany(employee.superiorId, employee.companyId))) {
         return new ValidationResult(false, `Superior not found`);
       }
     }
@@ -78,26 +65,16 @@ export class EmployeeService {
     return new ValidationResult(true, `All good`);
   }
 
-  async validateUpdateEmployee(
-    companyId: Types.ObjectId,
-    employee: UpdateEmployeeDto,
-  ) {
+  async validateUpdateEmployee(companyId: Types.ObjectId, employee: UpdateEmployeeDto) {
     // Check if the roleId is passed and exists for the company
     if (employee.roleId) {
-      if (
-        !(await this.roleService.roleExistsInCompany(
-          employee.roleId,
-          companyId,
-        ))
-      ) {
+      if (!(await this.roleService.roleExistsInCompany(employee.roleId, companyId))) {
         return new ValidationResult(false, `Role not found`);
       }
     }
 
     if (employee.superiorId) {
-      if (
-        !(await this.employeeExistsForCompany(employee.superiorId, companyId))
-      ) {
+      if (!(await this.employeeExistsForCompany(employee.superiorId, companyId))) {
         return new ValidationResult(false, `Superior not found`);
       }
     }
@@ -158,11 +135,7 @@ export class EmployeeService {
     if (!(await this.companyService.companyIdExists(companyId))) {
       throw new Error('CompanyId does not exist');
     }
-    const employees: any =
-      await this.employeeRepository.DetailedFindAllInCompany(companyId, [
-        'roleId',
-        'userId',
-      ]);
+    const employees: any = await this.employeeRepository.DetailedFindAllInCompany(companyId, ['roleId', 'userId']);
 
     // for (let employee in employees) {
     // employee.role = employee.roleId;
@@ -178,10 +151,7 @@ export class EmployeeService {
   }
 
   async detailedFindById(id: Types.ObjectId) {
-    const employee: any = await this.employeeRepository.DetailedFindById(id, [
-      'roleId',
-      'userId',
-    ]);
+    const employee: any = await this.employeeRepository.DetailedFindById(id, ['roleId', 'userId']);
 
     // employee.role = employee.roleId;
     // employee.user = employee.userId;
@@ -196,18 +166,12 @@ export class EmployeeService {
     return await this.employeeRepository.employeeExists(id);
   }
 
-  async employeeExistsForCompany(
-    id: Types.ObjectId,
-    companyId: Types.ObjectId,
-  ): Promise<boolean> {
+  async employeeExistsForCompany(id: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
     //checking if the company exists
     if (!(await this.companyService.companyIdExists(companyId))) {
       throw new Error('CompanyId does not exist');
     }
-    return await this.employeeRepository.employeeExistsForCompany(
-      id,
-      companyId,
-    );
+    return await this.employeeRepository.employeeExistsForCompany(id, companyId);
   }
 
   async update(id: Types.ObjectId, updateEmployeeDto: UpdateEmployeeDto) {
@@ -216,17 +180,11 @@ export class EmployeeService {
       throw new Error(validation.message);
     }
 
-    const previousObject = this.employeeRepository.update(
-      id,
-      updateEmployeeDto,
-    );
+    const previousObject = this.employeeRepository.update(id, updateEmployeeDto);
     return previousObject;
   }
 
-  async updateUserInfo(
-    id: Types.ObjectId,
-    userInfo: UpdateEmployeeUserInfoDto,
-  ) {
+  async updateUserInfo(id: Types.ObjectId, userInfo: UpdateEmployeeUserInfoDto) {
     const previousObject = this.employeeRepository.updateUserInfo(id, userInfo);
     return previousObject;
   }
@@ -279,9 +237,7 @@ export class EmployeeService {
 
   async getListOfOtherEmployees(id) {
     const currentEmployee = await this.findById(id);
-    const listOfEmployees = await this.findAllInCompany(
-      currentEmployee.companyId,
-    );
+    const listOfEmployees = await this.findAllInCompany(currentEmployee.companyId);
 
     //checking if the employee exists
     if (!(await this.employeeExists(id))) {
@@ -289,32 +245,23 @@ export class EmployeeService {
     }
 
     //Removing the current employee from the list
-    const index = listOfEmployees.findIndex((employee) =>
-      employee._id.equals(currentEmployee._id),
-    );
+    const index = listOfEmployees.findIndex((employee) => employee._id.equals(currentEmployee._id));
     if (index !== -1) {
       listOfEmployees.splice(index, 1);
     }
 
     // Remove the superior from the list if it exists
     if (currentEmployee.superiorId) {
-      const index = listOfEmployees.findIndex((employee) =>
-        employee._id.equals(currentEmployee.superiorId),
-      );
+      const index = listOfEmployees.findIndex((employee) => employee._id.equals(currentEmployee.superiorId));
       if (index !== -1) {
         listOfEmployees.splice(index, 1);
       }
     }
 
     // Remove subordinates from the list if they exist
-    if (
-      currentEmployee.subordinates &&
-      currentEmployee.subordinates.length > 0
-    ) {
+    if (currentEmployee.subordinates && currentEmployee.subordinates.length > 0) {
       currentEmployee.subordinates.forEach((subordinateId) => {
-        const index = listOfEmployees.findIndex((employee) =>
-          employee._id.equals(subordinateId),
-        );
+        const index = listOfEmployees.findIndex((employee) => employee._id.equals(subordinateId));
         if (index !== -1) {
           listOfEmployees.splice(index, 1);
         }

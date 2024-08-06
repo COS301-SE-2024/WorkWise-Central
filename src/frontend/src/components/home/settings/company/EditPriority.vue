@@ -47,7 +47,6 @@ export default defineComponent({
       }
       const apiURL = await this.getRequestUrl()
       const user_id = localStorage.getItem('id')
-      
     },
     async isLocalAvailable(localUrl: string) {
       try {

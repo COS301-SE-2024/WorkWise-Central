@@ -133,10 +133,7 @@ export class TeamController {
   })
   @ApiBody({ type: UpdateTeamDto })
   @Patch(':id')
-  async update(
-    @Param('id') id: Types.ObjectId,
-    @Body() updateTeamDto: UpdateTeamDto,
-  ) {
+  async update(@Param('id') id: Types.ObjectId, @Body() updateTeamDto: UpdateTeamDto) {
     let data;
     try {
       data = await this.teamService.update(id, updateTeamDto);

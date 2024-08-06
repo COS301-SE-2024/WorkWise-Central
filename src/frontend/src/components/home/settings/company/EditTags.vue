@@ -29,7 +29,7 @@ export default defineComponent({
     ],
     items: [],
     localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   methods: {
     getRowProps(index: number) {

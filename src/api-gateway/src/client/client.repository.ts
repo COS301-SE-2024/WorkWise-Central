@@ -7,9 +7,7 @@ import { currentDate } from '../utils/Utils';
 
 @Injectable()
 export class ClientRepository {
-  constructor(
-    @InjectModel('Client') private readonly clientModel: Model<Client>,
-  ) {}
+  constructor(@InjectModel('Client') private readonly clientModel: Model<Client>) {}
 
   async saveClient(client: Client) {
     const newClient = new this.clientModel(client);
@@ -17,9 +15,7 @@ export class ClientRepository {
   }
 
   async findAll() {
-    return this.clientModel
-      .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
-      .lean();
+    return this.clientModel.find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] }).lean();
   }
 
   async findAllInCompany(companyId: Types.ObjectId) {

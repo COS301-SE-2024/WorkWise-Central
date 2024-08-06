@@ -31,7 +31,7 @@
           ><v-row justify="end"
             ><v-col cols="12" lg="6"
               ><Toast position="bottom-center" />
-              <v-btn label="Cancel" color="secondary" text @click="close" block
+              <v-btn label="Cancel" color="secondary" @click="close" block
                 ><v-icon icon="fa:fa-solid fa-cancel" end color="secondary" size="small"></v-icon
                 >Cancel
               </v-btn></v-col
@@ -40,7 +40,6 @@
               <v-btn
                 label="Delete"
                 color="error"
-                text
                 :loading="isDeleting"
                 block
                 @click="deletePriority"

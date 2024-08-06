@@ -15,9 +15,7 @@ import { FileModule } from '../file/file.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: Employee.name, schema: EmployeeSchema },
-    ]),
+    MongooseModule.forFeature([{ name: Employee.name, schema: EmployeeSchema }]),
     forwardRef(() => UsersModule),
     forwardRef(() => CompanyModule),
     forwardRef(() => RoleModule),

@@ -15,5 +15,4 @@ export class UserConfirmation {
   key: string;
 }
 
-export const UserConfirmationSchema =
-  SchemaFactory.createForClass(UserConfirmation);
+export const UserConfirmationSchema = SchemaFactory.createForClass(UserConfirmation);

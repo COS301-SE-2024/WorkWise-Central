@@ -52,7 +52,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import Toast from 'primevue/toast'
+
 interface Status {
   label: string
   color: string
@@ -73,9 +73,7 @@ export default defineComponent({
       colorRules: [(v: string) => !!v || 'Color is required']
     }
   },
-  components: {
-    Toast
-  },
+
   methods: {
     async createStatus() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }

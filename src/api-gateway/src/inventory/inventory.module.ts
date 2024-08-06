@@ -16,9 +16,7 @@ import { EmployeeModule } from '../employee/employee.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: Inventory.name, schema: InventorySchema },
-    ]),
+    MongooseModule.forFeature([{ name: Inventory.name, schema: InventorySchema }]),
     forwardRef(() => UsersModule),
     forwardRef(() => CompanyModule),
     forwardRef(() => RoleModule),

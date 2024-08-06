@@ -19,9 +19,7 @@ describe('--Inventory Controller--', () => {
     })
       .useMocker((token) => {
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token,
-          ) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
@@ -82,9 +80,7 @@ describe('--Inventory Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'findAll')
-        .mockResolvedValue(returnedResponseFromService);
+      jest.spyOn(service, 'findAll').mockResolvedValue(returnedResponseFromService);
       const result = await controller.findAll();
       expect(result).toEqual(expectedResponse);
     });
@@ -123,9 +119,7 @@ describe('--Inventory Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'findAllInCompany')
-        .mockResolvedValue(returnedResponseFromService);
+      jest.spyOn(service, 'findAllInCompany').mockResolvedValue(returnedResponseFromService);
       const result = await controller.findAllInCompany(companyId);
       expect(result).toEqual(expectedResponse);
     });
@@ -150,9 +144,7 @@ describe('--Inventory Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'findById')
-        .mockResolvedValue(returnedResponseFromService);
+      jest.spyOn(service, 'findById').mockResolvedValue(returnedResponseFromService);
       const result = await controller.findById(InventoryId);
       expect(result).toEqual(expectedResponse);
     });
@@ -184,9 +176,7 @@ describe('--Inventory Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'update')
-        .mockResolvedValue(returnedResponseFromService);
+      jest.spyOn(service, 'update').mockResolvedValue(returnedResponseFromService);
       const result = await controller.update(InventoryId, updateInventoryDto);
       expect(result).toEqual(expectedResponse);
     });
@@ -200,9 +190,7 @@ describe('--Inventory Controller--', () => {
         data: returnedResponseFromService,
       };
 
-      jest
-        .spyOn(service, 'remove')
-        .mockResolvedValue(returnedResponseFromService);
+      jest.spyOn(service, 'remove').mockResolvedValue(returnedResponseFromService);
       const result = await controller.remove(InventoryId);
       expect(result).toEqual(expectedResponse);
     });

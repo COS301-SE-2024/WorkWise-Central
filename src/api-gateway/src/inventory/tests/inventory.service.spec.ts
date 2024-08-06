@@ -117,13 +117,9 @@ describe('--Inventory Service--', () => {
       ];
 
       mockCompanyService.companyIdExists.mockResolvedValue(true);
-      mockInventoryRepository.findAllInCompany.mockResolvedValue(
-        expectedResponse,
-      );
+      mockInventoryRepository.findAllInCompany.mockResolvedValue(expectedResponse);
 
-      expect(await inventoryService.findAllInCompany(companyId)).toEqual(
-        expectedResponse,
-      );
+      expect(await inventoryService.findAllInCompany(companyId)).toEqual(expectedResponse);
     });
   });
 
@@ -174,9 +170,7 @@ describe('--Inventory Service--', () => {
       mockCompanyService.companyIdExists.mockResolvedValue(true);
       mockInventoryRepository.InventoryExistsForCompany.mockResolvedValue(true);
 
-      expect(
-        await inventoryService.InventoryExistsForCompany(id, companyId),
-      ).toBe(true);
+      expect(await inventoryService.InventoryExistsForCompany(id, companyId)).toBe(true);
     });
 
     it('should return false if the Inventory item does not exist in a given company', async () => {
@@ -184,13 +178,9 @@ describe('--Inventory Service--', () => {
       const companyId = new Types.ObjectId();
 
       mockCompanyService.companyIdExists.mockResolvedValue(true);
-      mockInventoryRepository.InventoryExistsForCompany.mockResolvedValue(
-        false,
-      );
+      mockInventoryRepository.InventoryExistsForCompany.mockResolvedValue(false);
 
-      expect(
-        await inventoryService.InventoryExistsForCompany(id, companyId),
-      ).toBe(false);
+      expect(await inventoryService.InventoryExistsForCompany(id, companyId)).toBe(false);
     });
   });
 

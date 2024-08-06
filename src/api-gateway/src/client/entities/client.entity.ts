@@ -70,8 +70,7 @@ export class ClientDetails {
 export class Client {
   constructor(createClientDto: CreateClientDto) {
     if (createClientDto.details) this.details = createClientDto.details;
-    if (createClientDto.registrationNumber)
-      this.registrationNumber = createClientDto.registrationNumber;
+    if (createClientDto.registrationNumber) this.registrationNumber = createClientDto.registrationNumber;
     this.createdAt = currentDate();
   }
 

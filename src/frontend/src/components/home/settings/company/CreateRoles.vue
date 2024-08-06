@@ -52,7 +52,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import Toast from 'primevue/toast'
+
 interface Role {
   roleName: string
   permissionSuite: string[]
@@ -76,9 +76,7 @@ export default defineComponent({
       permissionRules: [(v: string) => !!v || 'Permission Suite is required']
     }
   },
-  components: {
-    Toast
-  },
+
   methods: {
     async createRole() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }

@@ -13,10 +13,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
-import {
-  CreateClientDto,
-  findClientResponseDto,
-} from './dto/create-client.dto';
+import { CreateClientDto, findClientResponseDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import {
   ApiBearerAuth,
@@ -29,12 +26,7 @@ import {
 } from '@nestjs/swagger';
 import mongoose, { FlattenMaps, Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
-import {
-  ApiResponseDto,
-  Client,
-  ClientApiObject,
-  CreateClientResponseDto,
-} from './entities/client.entity';
+import { ApiResponseDto, Client, ClientApiObject, CreateClientResponseDto } from './entities/client.entity';
 import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { extractUserId, validateObjectId } from '../utils/Utils';
@@ -80,10 +72,7 @@ export class ClientController {
     currentCompany Will also be added soon*`,
   })
   @Post('/create')
-  async create(
-    @Headers() headers: any,
-    @Body() createClientDto: CreateClientDto,
-  ): Promise<CreateClientResponseDto> {
+  async create(@Headers() headers: any, @Body() createClientDto: CreateClientDto): Promise<CreateClientResponseDto> {
     try {
       const userId = extractUserId(this.jwtService, headers);
       const result = await this.clientService.create(userId, createClientDto);
@@ -126,10 +115,7 @@ export class ClientController {
       validateObjectId(cid);
       const userId = extractUserId(this.jwtService, headers);
       return {
-        data: await this.clientService.getAllClientsInCompany(
-          userId,
-          new Types.ObjectId(cid),
-        ),
+        data: await this.clientService.getAllClientsInCompany(userId, new Types.ObjectId(cid)),
       };
     } catch (e) {
       throw e;
@@ -151,10 +137,7 @@ export class ClientController {
     validateObjectId(id);
     try {
       const userId = extractUserId(this.jwtService, headers);
-      const response = await this.clientService.getClientById(
-        userId,
-        new Types.ObjectId(id),
-      );
+      const response = await this.clientService.getClientById(userId, new Types.ObjectId(id));
       return new ApiResponseDto(response);
     } catch (e) {
       console.log(e);
@@ -182,11 +165,7 @@ export class ClientController {
       const userId = extractUserId(this.jwtService, headers);
 
       return {
-        data: await this.clientService.getByEmailOrName(
-          userId,
-          companyId,
-          emailOrName,
-        ),
+        data: await this.clientService.getByEmailOrName(userId, companyId, emailOrName),
       };
     } catch (e) {
       console.log(e);
@@ -210,21 +189,13 @@ export class ClientController {
     description: `${className} objectId for ${className} that you wish to delete`,
   })
   @Patch('/:id')
-  async update(
-    @Headers() headers: any,
-    @Param('id') id: string,
-    @Body() updateClientDto: UpdateClientDto,
-  ) {
+  async update(@Headers() headers: any, @Param('id') id: string, @Body() updateClientDto: UpdateClientDto) {
     try {
       validateObjectId(id);
       const clientId = new Types.ObjectId(id);
       const userId = extractUserId(this.jwtService, headers);
 
-      return await this.clientService.updateClient(
-        userId,
-        clientId,
-        updateClientDto,
-      );
+      return await this.clientService.updateClient(userId, clientId, updateClientDto);
     } catch (e) {
       console.log(e);
       throw e;

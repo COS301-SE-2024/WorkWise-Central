@@ -15,12 +15,7 @@ import { EmployeeRepository } from 'src/employee/employee.repository';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { FileService } from '../file/file.service';
 import { FileModule } from '../file/file.module';
-import {
-  JobPriorityTag,
-  JobPriorityTagSchema,
-  JobTag,
-  JobTagSchema,
-} from './entities/job-tag.entity';
+import { JobPriorityTag, JobPriorityTagSchema, JobTag, JobTagSchema } from './entities/job-tag.entity';
 import { JobTagRepository } from './job-tag.repository';
 import { JobStatus, JobStatusSchema } from './entities/job-status.entity';
 

@@ -107,9 +107,7 @@ describe('UsersService', () => {
         }*/
 
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token,
-          ) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
@@ -187,11 +185,7 @@ describe('UsersService', () => {
   });
 
   it("should change the user's joinedCompanies", async function () {
-    const jC = new JoinedCompany(
-      new Types.ObjectId(),
-      new Types.ObjectId(),
-      'Test Company',
-    );
+    const jC = new JoinedCompany(new Types.ObjectId(), new Types.ObjectId(), 'Test Company');
     const updatedJC = jC;
     updatedJC.companyName = 'Updated Company';
     expect(updatedJC.companyId).toEqual(jC.companyId);

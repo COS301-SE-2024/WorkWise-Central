@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  HttpException,
-  HttpStatus,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import {
@@ -88,9 +78,7 @@ export class EmployeeController {
     description: `The _id attribute of the Company for which to get all ${className} instances.`,
   })
   @Get('/detailed/all/:companyId')
-  async findAllInCompanyDetailed(
-    @Param('companyId') companyId: Types.ObjectId,
-  ) {
+  async findAllInCompanyDetailed(@Param('companyId') companyId: Types.ObjectId) {
     let data;
     try {
       data = await this.employeeService.detailedFindAllInCompany(companyId);
@@ -235,10 +223,7 @@ export class EmployeeController {
   })
   @ApiBody({ type: UpdateEmployeeDto })
   @Patch(':id')
-  async update(
-    @Param('id') id: Types.ObjectId,
-    @Body() updateEmployeeDto: UpdateEmployeeDto,
-  ) {
+  async update(@Param('id') id: Types.ObjectId, @Body() updateEmployeeDto: UpdateEmployeeDto) {
     let data;
     try {
       data = await this.employeeService.update(id, updateEmployeeDto);
@@ -281,10 +266,7 @@ export class EmployeeController {
     }
 
     if (data === false) {
-      throw new HttpException(
-        'update unsuccessful',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return { data: data };
   }

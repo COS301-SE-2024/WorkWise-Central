@@ -70,8 +70,7 @@ export const mockUserObject = {
   },
   profile: {
     displayName: 'John Doe2',
-    displayImage:
-      'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
+    displayImage: 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
   },
   roles: {
     role: 'user',

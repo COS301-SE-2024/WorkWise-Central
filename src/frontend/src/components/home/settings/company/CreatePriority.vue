@@ -58,7 +58,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import Toast from 'primevue/toast'
+
 interface Priority {
   label: string
   color: string
@@ -79,9 +79,7 @@ export default defineComponent({
       colorRules: [(v: string) => !!v || 'Color is required']
     }
   },
-  components: {
-    Toast
-  },
+
   methods: {
     createPriority() {
       axios
