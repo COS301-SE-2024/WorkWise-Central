@@ -47,6 +47,7 @@ export class CompanyService {
   async create(createCompanyDto: CreateCompanyDto) {
     const inputValidated = await this.companyCreateIsValid(createCompanyDto);
     if (!inputValidated.isValid) throw new ConflictException(inputValidated.message);
+    if (!inputValidated.isValid) throw new ConflictException(inputValidated.message);
 
     //Save files In Bucket, and store URLs (if provided)
     if (createCompanyDto.logo) {
@@ -335,7 +336,7 @@ export class CompanyService {
       }
     }
     const emp = await this.employeeService.findById(empId);
-    const role = await this.roleService.findById(emp.roleId);
+    const role = await this.roleService.findById(emp.role.roleId);
 
     if (role.roleName !== 'Owner') {
       throw new UnauthorizedException('Only the owner can perform this action');
@@ -415,9 +416,11 @@ export class CompanyService {
 
     if (await this.companyVatNumberExists(company.vatNumber)) {
       return new ValidationResult(false, `Company with ${company.vatNumber} already exists`);
+      return new ValidationResult(false, `Company with ${company.vatNumber} already exists`);
     }
 
     if (await this.companyRegNumberExists(company.registrationNumber)) {
+      return new ValidationResult(false, `Company with ${company.registrationNumber} already exists`);
       return new ValidationResult(false, `Company with ${company.registrationNumber} already exists`);
     }
 
@@ -468,7 +471,6 @@ export class CompanyService {
       deleteEmployeeDto.companyId,
     );
     if (!valid) return new ValidationResult(false, 'Employee ID is invalid');
-
     valid = await this.employeeService.employeeExistsForCompany(deleteEmployeeDto.adminId, deleteEmployeeDto.companyId);
     if (!valid) return new ValidationResult(false, 'Admin ID is invalid');
 
@@ -491,7 +493,7 @@ export class CompanyService {
 
     let user = await this.usersService.getUserById(userId);
     const emp = await this.employeeService.findById(deleteEmployee.employeeToDeleteId);
-    const role = await this.roleService.findById(emp.roleId);
+    const role = await this.roleService.findById(emp.role.roleId);
 
     if (role.roleName !== 'Owner') {
       throw new UnauthorizedException('Only the owner can perform this action');

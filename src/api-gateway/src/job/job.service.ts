@@ -294,7 +294,7 @@ export class JobService {
     /// Role-based stuff
     //TODO: Implement later
 
-    await this.employeeService.update(jobAssignDto.employeeToAssignId._id, {});
+    await this.employeeService.update(jobAssignDto.employeeId, jobAssignDto.employeeToAssignId._id, {});
 
     return await this.jobRepository.assignEmployee(jobAssignDto.employeeToAssignId, jobAssignDto.jobId);
   }

@@ -86,9 +86,13 @@ describe('ClientController', () => {
       //jest.spyOn(clientService,'getClientById')
 
       try {
-        await clientController.update({ userId }, clientId.toString(), {
-          registrationNumber: 'test',
-        });
+        const body = {
+          currentEmployeeId: new Types.ObjectId(),
+          updateClientDto: {
+            registrationNumber: 'test',
+          },
+        };
+        await clientController.update({ userId }, clientId, body);
       } catch (error) {
         expect(error).toBeInstanceOf(TypeError);
         //expect(error.getStatus()).toBe(HttpStatus.BAD_REQUEST);
@@ -126,9 +130,13 @@ describe('ClientController', () => {
         });*/
 
       try {
-        await clientController.update({ userId }, clientId.toString(), {
-          registrationNumber: '123/12351/52132',
-        });
+        const body = {
+          currentEmployeeId: new Types.ObjectId(),
+          updateClientDto: {
+            registrationNumber: '123/12351/52132',
+          },
+        };
+        await clientController.update({ userId }, clientId, body);
       } catch (error) {
         expect(error).toBeInstanceOf(TypeError);
         //expect(error.message).toBe('Internal Server Error');

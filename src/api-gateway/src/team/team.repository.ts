@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { Team } from './entities/team.entity';
 import { UpdateTeamDto } from './dto/update-team.dto';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class TeamRepository {

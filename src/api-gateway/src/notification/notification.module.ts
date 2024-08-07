@@ -17,6 +17,11 @@ import { RoleModule } from '../role/role.module';
 import { JobModule } from '../job/job.module';
 import { TeamModule } from '../team/team.module';
 import { FcmNotificationService } from './fcm-notification.service';
+import { ClientService } from '../client/client.service';
+import { ClientModule } from '../client/client.module';
+import { InventoryService } from '../inventory/inventory.service';
+import { InventoryModule } from '../inventory/inventory.module';
+import { ClientRepository } from '../client/client.repository';
 
 @Global()
 @Module({
@@ -30,6 +35,8 @@ import { FcmNotificationService } from './fcm-notification.service';
     forwardRef(() => RoleModule),
     forwardRef(() => JobModule),
     forwardRef(() => TeamModule),
+    forwardRef(() => ClientModule),
+    forwardRef(() => InventoryModule),
   ],
   providers: [
     NotificationGateway,
@@ -39,6 +46,9 @@ import { FcmNotificationService } from './fcm-notification.service';
     CompanyService,
     EmployeeService,
     FcmNotificationService,
+    ClientService,
+    InventoryService,
+    ClientRepository,
   ],
   controllers: [NotificationController],
   exports: [NotificationService],
