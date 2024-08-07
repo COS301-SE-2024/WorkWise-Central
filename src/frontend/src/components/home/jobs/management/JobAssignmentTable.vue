@@ -146,10 +146,9 @@
           ></v-btn>
           <v-spacer></v-spacer>
 
-<!--          &lt;!&ndash; View Job Dialog &ndash;&gt;-->
-<!--          <ViewJob :passedInJob="selectedJob"></ViewJob>-->
+          <ViewJob :passedInJob="selectedJob"></ViewJob>
 
-<!--          <ManagerJobCard :passedInJob="selectedJob"></ManagerJobCard>-->
+          <ManagerJobCard :passedInJob="selectedJob"></ManagerJobCard>
 
           <v-btn color="error" @click="deleteDialog = true"
           >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
@@ -320,7 +319,6 @@ interface Job {
   updatedAt: string;
 }
 
-
 // Define state variables with types
 const actionsDialog = ref(false)
 const selectedJob = ref<Job | null>(null)
@@ -348,7 +346,6 @@ const getRequestUrl = async (): Promise<string> => {
   const localAvailable = await isLocalAvailable(localUrl)
   return localAvailable ? localUrl : remoteUrl
 }
-
 
 // Set the table headers
 const headers : any[] = [

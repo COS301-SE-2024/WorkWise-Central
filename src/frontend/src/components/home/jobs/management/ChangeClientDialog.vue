@@ -56,32 +56,94 @@
       </v-card>
     </template>
   </v-dialog>
+  <Toast/>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      clientDialog: false,
-      selectedClientName: '',
-      clientNames: []
-    }
-  },
-  methods: {
-    openClientDialogAndFetchClients() {
-      this.clientDialog = true
-      // Fetch clients logic here
-    },
-    saveClient() {
-      // Save client logic here
-      this.clientDialog = false
-    }
+<script setup lang="ts">
+import {ref, defineProps, onMounted} from 'vue'
+import axios from 'axios'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
+
+const props = defineProps<{
+  jobID: string
+}>()
+
+const toast = useToast()
+const clientDialog = ref<boolean>(false)
+const selectedClientName = ref<string>('')
+const clientNames = ref<string[]>([])
+
+// API URLs
+const localUrl: string = 'http://localhost:3000/'
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
+
+// Utility functions
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url)
+    return res.status < 300 && res.status > 199
+  } catch (error) {
+    return false
   }
 }
+
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
+
+const showClientChangeSuccess = () => {
+  toast.add({
+    severity: 'success',
+    summary: 'Success Message',
+    detail: 'Changed client successfully',
+    life: 3000
+  })
+}
+
+const showClientChangeError = () => {
+  toast.add({
+    severity: 'error',
+    summary: 'Error Message',
+    detail: 'Failed to change client',
+    life: 3000
+  })
+}
+
+const getClients = async (): Promise<string> => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+  const apiUrl = await getRequestUrl()
+  try {
+    const response = await axios.get(`${apiUrl}client/all/${localStorage.getItem('currentCompany')}`)
+    if (response.status < 300 && response.status > 199) {
+      console.log('Got client data')
+      console.log(response.data.data)
+    } else {
+      console.log('failed')
+    }
+  } catch(error) {
+    console.error('Error updating job:', error)
+  }
+  return 'cheese'
+}
+
+const openClientDialogAndFetchClients = () => {
+  clientDialog.value = true
+}
+
+const saveClient = () => {
+  clientDialog.value = false
+}
+
+onMounted(() => {
+  getClients()
+})
+
 </script>
 
-<style scoped>
-.my-custom-autocomplete {
-  /* Custom styles here */
-}
-</style>
