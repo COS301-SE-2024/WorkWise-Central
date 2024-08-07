@@ -36,26 +36,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 // Placeholder types
 interface Note {
-  text: string;
+  text: string
 }
 
 // Reactive properties
-const notes = ref<Note[]>([]);
-const newNote = ref<string>('');
+const notes = ref<Note[]>([])
+const newNote = ref<string>('')
 
 // Placeholder methods
 const addNote = () => {
   if (newNote.value.trim()) {
-    notes.value.push({ text: newNote.value });
-    newNote.value = '';
+    notes.value.push({ text: newNote.value })
+    newNote.value = ''
   }
-};
+}
 
 const deleteNote = (index: number) => {
-  notes.value.splice(index, 1);
-};
+  notes.value.splice(index, 1)
+}
 </script>

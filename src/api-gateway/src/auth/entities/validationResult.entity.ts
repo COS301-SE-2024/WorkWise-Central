@@ -1,9 +1,5 @@
 import { Exception } from 'handlebars';
-import {
-  ConflictException,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 
 export class ValidationResult {
   public _isValid: boolean;
@@ -33,19 +29,11 @@ export class ValidationResult {
 
 export class ValidationResultWithException {
   public _isValid: boolean;
-  public _exception?:
-    | Exception
-    | NotFoundException
-    | ConflictException
-    | InternalServerErrorException;
+  public _exception?: Exception | NotFoundException | ConflictException | InternalServerErrorException;
 
   constructor(
     isValid: boolean,
-    exception?:
-      | Exception
-      | NotFoundException
-      | ConflictException
-      | InternalServerErrorException,
+    exception?: Exception | NotFoundException | ConflictException | InternalServerErrorException,
   ) {
     this._isValid = isValid;
     if (exception) this._exception = exception;
@@ -59,21 +47,11 @@ export class ValidationResultWithException {
     this._isValid = value;
   }
 
-  get message():
-    | Exception
-    | NotFoundException
-    | ConflictException
-    | InternalServerErrorException {
+  get message(): Exception | NotFoundException | ConflictException | InternalServerErrorException {
     return this._exception;
   }
 
-  set exception(
-    value:
-      | Exception
-      | NotFoundException
-      | ConflictException
-      | InternalServerErrorException,
-  ) {
+  set exception(value: Exception | NotFoundException | ConflictException | InternalServerErrorException) {
     this._exception = value;
   }
 }

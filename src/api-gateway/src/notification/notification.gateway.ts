@@ -1,14 +1,6 @@
-import {
-  WebSocketGateway,
-  SubscribeMessage,
-  MessageBody,
-  WebSocketServer,
-} from '@nestjs/websockets';
+import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer } from '@nestjs/websockets';
 import { NotificationService } from './notification.service';
-import {
-  CreateAccountDto,
-  CreateNotificationDto,
-} from './dto/create-notification.dto';
+import { CreateAccountDto, CreateNotificationDto } from './dto/create-notification.dto';
 import { Server } from 'socket.io';
 import { EmailService } from '../email/email.service';
 import { ConflictException } from '@nestjs/common';
@@ -42,9 +34,7 @@ export class NotificationGateway {
       return new ConflictException('Message body is Empty');
     }
     console.log(createNotificationDto);
-    const result = await this.notificationService.createNotificationsFromUser(
-      createNotificationDto,
-    );
+    const result = await this.notificationService.createNotificationsFromUser(createNotificationDto);
     this.server.emit('newNotification');
     return result;
   }

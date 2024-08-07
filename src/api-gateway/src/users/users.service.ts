@@ -42,15 +42,12 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const inputValidated = await this.createUserValid(createUserDto);
-    if (!inputValidated.isValid)
-      throw new ConflictException(inputValidated.message);
+    if (!inputValidated.isValid) throw new ConflictException(inputValidated.message);
 
     //Save files In Bucket, and store URLs (if provided)
     if (createUserDto.profile.displayImage) {
       console.log('Uploading image');
-      const picture = await this.fileService.uploadBase64Image(
-        createUserDto.profile.displayImage,
-      );
+      const picture = await this.fileService.uploadBase64Image(createUserDto.profile.displayImage);
       if (picture.secure_url != null) {
         createUserDto.profile.displayImage = picture.secure_url;
       } else throw new InternalServerErrorException('file upload failed');
@@ -60,10 +57,7 @@ export class UsersService {
     const result = await this.userRepository.save(newUserObj);
     await this.createUserConfirmation(newUserObj); //sends email
 
-    const jwt: SignInUserDto = await this.authService.signIn(
-      result.systemDetails.username,
-      createUserDto.password,
-    );
+    const jwt: SignInUserDto = await this.authService.signIn(result.systemDetails.username, createUserDto.password);
     return new CreateUserResponseDto(jwt);
   }
 
@@ -75,8 +69,7 @@ export class UsersService {
       email: newUser.personalInfo.contactInfo.email,
       key: randomStringGenerator(),
     };
-    const confirmation =
-      await this.userConfirmationModel.create(userConfirmation);
+    const confirmation = await this.userConfirmationModel.create(userConfirmation);
     await confirmation.save();
     //console.log(result);
     await this.emailService.sendUserConfirmation(userConfirmation);
@@ -86,22 +79,16 @@ export class UsersService {
     return this.userRepository.verifyUser(email);
   }
 
-  async getAllUsers(): Promise<
-    (FlattenMaps<User> & { _id: Types.ObjectId })[]
-  > {
+  async getAllUsers(): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
     return this.userRepository.findAll();
   }
 
-  async getAllUsersDetailed(): Promise<
-    (FlattenMaps<User> & { _id: Types.ObjectId })[]
-  > {
+  async getAllUsersDetailed(): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
     const populatedFields = ['currentEmployee'];
     return this.userRepository.findAll(populatedFields);
   }
 
-  async getAllUsersInCompany(
-    companyId: Types.ObjectId,
-  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+  async getAllUsersInCompany(companyId: Types.ObjectId): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
     return this.userRepository.findAllInCompany(companyId);
   }
 
@@ -138,10 +125,7 @@ export class UsersService {
     id: Types.ObjectId,
     joinUserDto: JoinUserDto,
   ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
-    const updatedUser = await this.userRepository.updateJoinedCompany(
-      id,
-      joinUserDto,
-    );
+    const updatedUser = await this.userRepository.updateJoinedCompany(id, joinUserDto);
     if (updatedUser == null) {
       throw new NotFoundException('failed to update user');
     }
@@ -167,10 +151,7 @@ export class UsersService {
       return user;
     }
 
-    const updatedUser = await this.userRepository.addJoinedCompany(
-      userId,
-      joinedCompany,
-    );
+    const updatedUser = await this.userRepository.addJoinedCompany(userId, joinedCompany);
     if (updatedUser == null) {
       throw new NotFoundException('failed to update user');
     }
@@ -185,28 +166,20 @@ export class UsersService {
     const user = await this.getUserById(userId);
     if (user == null) throw new NotFoundException('User not found');
 
-    const userInCompany = user.joinedCompanies.some((company) =>
-      company.companyId.equals(companyId),
-    );
+    const userInCompany = user.joinedCompanies.some((company) => company.companyId.equals(companyId));
 
     if (!userInCompany) {
       return user; //Return unchanged user
     }
 
-    const updatedUser = await this.userRepository.removeJoinedCompany(
-      userId,
-      companyId,
-    );
+    const updatedUser = await this.userRepository.removeJoinedCompany(userId, companyId);
     if (updatedUser == null) {
       throw new NotFoundException('failed to update user');
     }
     return updatedUser;
   }
 
-  async changeCurrentEmployee(
-    userId: Types.ObjectId,
-    companyId: Types.ObjectId,
-  ) {
+  async changeCurrentEmployee(userId: Types.ObjectId, companyId: Types.ObjectId) {
     const user = await this.userRepository.findById(userId);
     const joinedCompany = user.joinedCompanies.filter(
       (company) => company.companyId.toString() === companyId.toString(),
@@ -229,8 +202,10 @@ export class UsersService {
       throw new NotFoundException(inputValidated.message);
     }
 
-    const updatedUser: FlattenMaps<User> & { _id: Types.ObjectId } =
-      await this.userRepository.update(userId, updateUserDto);
+    const updatedUser: FlattenMaps<User> & { _id: Types.ObjectId } = await this.userRepository.update(
+      userId,
+      updateUserDto,
+    );
     if (updatedUser == null) {
       throw new NotFoundException('failed to update user');
     }
@@ -252,10 +227,7 @@ export class UsersService {
 
     const user = await this.getUserById(id);
     user.profile.displayImage = newUrl;
-    const updatedUser = await this.userRepository.updateProfilePicture(
-      id,
-      user.profile,
-    );
+    const updatedUser = await this.userRepository.updateProfilePicture(id, user.profile);
     if (updatedUser == null) {
       throw new NotFoundException('failed to update user');
     }
@@ -265,9 +237,7 @@ export class UsersService {
   async softDelete(id: Types.ObjectId): Promise<boolean> {
     const userToDelete = await this.userRepository.findById(id);
     if (!userToDelete) {
-      throw new NotFoundException(
-        'Error: User not found, please verify your user',
-      );
+      throw new NotFoundException('Error: User not found, please verify your user');
     }
     const result = await this.userRepository.delete(id);
     if (result == null) {
@@ -280,17 +250,11 @@ export class UsersService {
     return true;
   }
 
-  async createUserValid(
-    createUserDto: CreateUserDto,
-  ): Promise<ValidationResult> {
+  async createUserValid(createUserDto: CreateUserDto): Promise<ValidationResult> {
     console.log('createValidation', createUserDto);
 
     const usernameTaken = await this.usernameExists(createUserDto.username);
-    if (usernameTaken)
-      return new ValidationResult(
-        false,
-        `Username "${createUserDto.username}" already in use`,
-      );
+    if (usernameTaken) return new ValidationResult(false, `Username "${createUserDto.username}" already in use`);
 
     /*    const phoneNumberTaken = await this.phoneExists(
       createUserDto.contactInfo.phoneNumber,
@@ -304,10 +268,7 @@ export class UsersService {
     return new ValidationResult(true);
   }
 
-  async userIsInCompany(
-    userId: Types.ObjectId,
-    companyId: Types.ObjectId,
-  ): Promise<boolean> {
+  async userIsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
     const user = await this.getUserById(userId);
     const company = await this.companyService.getCompanyById(companyId);
 
@@ -333,32 +294,17 @@ export class UsersService {
   async userIsValid(user: User): Promise<ValidationResult> {
     if (user.joinedCompanies) {
       for (const joinedCompany of user.joinedCompanies) {
-        const exists = await this.employeeService.employeeExists(
-          joinedCompany.employeeId,
-        );
-        if (!exists)
-          return new ValidationResult(
-            false,
-            `Invalid Employee ID: ${joinedCompany.employeeId}`,
-          );
+        const exists = await this.employeeService.employeeExists(joinedCompany.employeeId);
+        if (!exists) return new ValidationResult(false, `Invalid Employee ID: ${joinedCompany.employeeId}`);
       }
     }
     if (user.currentEmployee) {
-      const exists = await this.employeeService.employeeExists(
-        user.currentEmployee,
-      );
-      if (!exists)
-        return new ValidationResult(
-          false,
-          `Invalid currentEmployee: ${user.currentEmployee}`,
-        );
+      const exists = await this.employeeService.employeeExists(user.currentEmployee);
+      if (!exists) return new ValidationResult(false, `Invalid currentEmployee: ${user.currentEmployee}`);
     }
   }
 
-  async updateUserValid(
-    id: Types.ObjectId,
-    user: UpdateUserDto,
-  ): Promise<ValidationResult> {
+  async updateUserValid(id: Types.ObjectId, user: UpdateUserDto): Promise<ValidationResult> {
     if (!user) {
       return new ValidationResult(false, `user cannot be undefined`);
     }
@@ -381,26 +327,16 @@ export class UsersService {
     }*/
 
     if (user.currentEmployee) {
-      const exists = await this.employeeService.employeeExists(
-        user.currentEmployee,
-      );
-      if (!exists)
-        return new ValidationResult(
-          false,
-          `Invalid currentEmployee: ${user.currentEmployee}`,
-        );
+      const exists = await this.employeeService.employeeExists(user.currentEmployee);
+      if (!exists) return new ValidationResult(false, `Invalid currentEmployee: ${user.currentEmployee}`);
     }
 
     return new ValidationResult(true);
   }
 
-  async userIsInSameCompanyAsEmployee(
-    userId: Types.ObjectId,
-    employeeId: Types.ObjectId,
-  ) {
+  async userIsInSameCompanyAsEmployee(userId: Types.ObjectId, employeeId: Types.ObjectId) {
     const user = await this.getUserById(userId);
-    const companyWithEmployee =
-      await this.companyService.getCompanyWithEmployee(employeeId);
+    const companyWithEmployee = await this.companyService.getCompanyWithEmployee(employeeId);
 
     if (!companyWithEmployee || !user) {
       throw new ConflictException('User or Employee is Null');

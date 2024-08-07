@@ -23,12 +23,7 @@ export class JobTag {
 
 @Schema()
 export class JobPriorityTag {
-  constructor(
-    label: string,
-    priorityLevel: number,
-    colour: string,
-    companyId: Types.ObjectId,
-  ) {
+  constructor(label: string, priorityLevel: number, colour: string, companyId: Types.ObjectId) {
     this.label = label;
     this.priorityLevel = priorityLevel;
     this.colour = colour;
@@ -46,8 +41,7 @@ export class JobPriorityTag {
 }
 
 export const JobTagSchema = SchemaFactory.createForClass(JobTag);
-export const JobPriorityTagSchema =
-  SchemaFactory.createForClass(JobPriorityTag);
+export const JobPriorityTagSchema = SchemaFactory.createForClass(JobPriorityTag);
 
 export class JobTagObject {
   _id: Types.ObjectId;

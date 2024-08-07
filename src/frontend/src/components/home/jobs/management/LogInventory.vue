@@ -177,7 +177,7 @@ const logInventoryItems = async () => {
 
   const apiUrl = await getRequestUrl()
 
-  const updatedInventory = inventory.value.map(item => ({
+  const updatedInventory = inventory.value.map((item) => ({
     inventoryItemId: '', // Provide or retrieve this from somewhere
     inventoryItemName: item.name,
     quantityUsed: item.quantity
@@ -211,4 +211,3 @@ const showInventoryLogError = () => {
   })
 }
 </script>
-

@@ -60,18 +60,12 @@ export class InventoryService {
     return await this.inventoryRepository.InventoryExists(id);
   }
 
-  async InventoryExistsForCompany(
-    id: Types.ObjectId,
-    companyId: Types.ObjectId,
-  ): Promise<boolean> {
+  async InventoryExistsForCompany(id: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
     //checking if the company exist
     if (!(await this.companyService.companyIdExists(companyId))) {
       throw new Error('CompanyId does not exist');
     }
-    return await this.inventoryRepository.InventoryExistsForCompany(
-      id,
-      companyId,
-    );
+    return await this.inventoryRepository.InventoryExistsForCompany(id, companyId);
   }
 
   async update(id: Types.ObjectId, updateInventoryDto: UpdateInventoryDto) {

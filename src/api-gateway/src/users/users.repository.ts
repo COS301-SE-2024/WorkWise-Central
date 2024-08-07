@@ -13,9 +13,7 @@ import { currentDate } from '../utils/Utils';
 
 @Injectable()
 export class UsersRepository {
-  constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
-  ) {}
+  constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
 
   async save(newUserObj: User) {
     const newUser = new this.userModel(newUserObj);
@@ -24,9 +22,7 @@ export class UsersRepository {
     return result;
   }
 
-  async findAll(
-    fieldsToPopulate?: string[],
-  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+  async findAll(fieldsToPopulate?: string[]): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
     if (fieldsToPopulate) {
       const result = await this.userModel
         .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
@@ -47,9 +43,7 @@ export class UsersRepository {
     return result;
   }
 
-  async findAllInCompany(
-    companyId: Types.ObjectId,
-  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+  async findAllInCompany(companyId: Types.ObjectId): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
     const filter = {
       $and: [
         { 'joinedCompanies.companyId': companyId },
@@ -119,17 +113,16 @@ export class UsersRepository {
   }
 
   async userIdExists(userId: Types.ObjectId): Promise<boolean> {
-    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
-      await this.userModel
-        .findOne({
-          $and: [
-            { id: userId },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
+    const result: FlattenMaps<User> & { _id: Types.ObjectId } = await this.userModel
+      .findOne({
+        $and: [
+          { id: userId },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
     //console.log('userIdExists -> ', result);
     return result == null;
   }

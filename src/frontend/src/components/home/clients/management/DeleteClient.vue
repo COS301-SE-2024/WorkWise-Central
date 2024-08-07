@@ -125,7 +125,7 @@ export default {
         })
       } finally {
         this.isDeleting = false // Reset the deletion indicator
-        // window.location.reload(); // Consider removing this for SPA behavior
+        window.location.reload() // Consider removing this for SPA behavior
       }
     },
     async isLocalAvailable(localUrl) {

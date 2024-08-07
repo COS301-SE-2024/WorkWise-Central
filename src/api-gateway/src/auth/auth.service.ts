@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  Global,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, Global, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
@@ -36,11 +30,7 @@ export class AuthService {
     }
 
     const payload = { sub: user._id, username: user.systemDetails.username };
-    return new SignInUserDto(
-      await this.jwtService.signAsync(payload),
-      user._id,
-      user,
-    );
+    return new SignInUserDto(await this.jwtService.signAsync(payload), user._id, user);
   }
 
   async verifyEmail(email: string, token: string) {

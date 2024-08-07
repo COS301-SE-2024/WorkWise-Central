@@ -1,8 +1,4 @@
-import {
-  ValidationArguments,
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
-} from 'class-validator';
+import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
 
 @ValidatorConstraint({ name: 'Base64ContentIsImage' })
 export class Base64ContentIsImage implements ValidatorConstraintInterface {

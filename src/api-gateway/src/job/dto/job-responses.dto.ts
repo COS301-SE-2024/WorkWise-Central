@@ -1,9 +1,4 @@
-import {
-  JobPriorityTag,
-  JobPriorityTagApiObject,
-  JobTag,
-  JobTagObject,
-} from '../entities/job-tag.entity';
+import { JobPriorityTag, JobPriorityTagApiObject, JobTag, JobTagObject } from '../entities/job-tag.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { Employee } from '../../employee/entities/employee.entity';

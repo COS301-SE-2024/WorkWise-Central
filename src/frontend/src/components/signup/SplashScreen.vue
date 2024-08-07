@@ -109,7 +109,7 @@
 
           <v-col>
             <v-dialog
-              :opacity="0"
+              :opacity="0.1"
               v-model="loginDialog"
               max-width="400"
               @click:outside="resetFields"
@@ -214,7 +214,7 @@
               </v-card>
             </v-dialog>
             <!-- Forgot Password -->
-            <v-dialog :opacity="0" v-model="forgotPasswordDialog" max-width="400">
+            <v-dialog :opacity="0.1" v-model="forgotPasswordDialog" max-width="400">
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -256,7 +256,7 @@
                 </v-col>
               </v-sheet>
             </v-dialog>
-            <v-dialog :opacity="0" v-model="OTPDialog" max-width="400">
+            <v-dialog :opacity="0.1" v-model="OTPDialog" max-width="400">
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -295,7 +295,7 @@
 
             <!-- Flow 1 -->
             <v-dialog
-              :opacity="0"
+              :opacity="0.1"
               v-model="signupDialog"
               max-width="400"
               @click:outside="resetFields"
@@ -400,7 +400,7 @@
             </v-dialog>
             <!-- Flow 2 -->
             <v-dialog
-              :opacity="0"
+              :opacity="0.1"
               v-model="signup1Dialog"
               max-width="400"
               @click:outside="resetFields"
@@ -483,7 +483,7 @@
             </v-dialog>
             <v-col xs="3" align-self="center">
               <v-dialog
-                :opacity="0"
+                :opacity="0.1"
                 v-model="signupUsernameDialog"
                 max-width="400"
                 @click:outside="resetFields"
@@ -551,7 +551,7 @@
             </v-col>
             <!-- Flow 3 -->
             <v-dialog
-              :opacity="0"
+              :opacity="0.1"
               v-model="signup2Dialog"
               max-width="400"
               @click:outside="resetFields"
@@ -655,7 +655,7 @@
             </v-dialog>
             <!-- Flow 4 -->
             <v-dialog
-              :opacity="0"
+              :opacity="0.1"
               v-model="signupAddressDialog"
               max-width="1000"
               @click:outside="resetFields"
@@ -797,7 +797,7 @@
             </v-dialog>
             <!-- Flow 5 -->
             <v-dialog
-              :opacity="0"
+              :opacity="0.1"
               v-model="signup3Dialog"
               max-width="700"
               style="height: 750px"

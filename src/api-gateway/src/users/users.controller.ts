@@ -81,9 +81,7 @@ export class UsersController {
     currentCompany Will also be added soon*`,
   })
   @Post('/create')
-  async create(
-    @Body() createUserDto: CreateUserDto,
-  ): Promise<CreateUserResponseDto> {
+  async create(@Body() createUserDto: CreateUserDto): Promise<CreateUserResponseDto> {
     console.log('createUserController');
     try {
       return await this.usersService.create(createUserDto);
@@ -107,10 +105,7 @@ export class UsersController {
       console.log(headers);
       return { data: await this.usersService.getAllUsers() };
     } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -129,10 +124,7 @@ export class UsersController {
       console.log(headers);
       return { data: await this.usersService.getAllUsersDetailed() };
     } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -152,9 +144,7 @@ export class UsersController {
       const userId = this.extractUserId(headers);
       console.log(userId, 'is searching'); //Add Guard here as well
       return {
-        data: await this.usersService.getUserById(
-          new Types.ObjectId(identifier),
-        ),
+        data: await this.usersService.getUserById(new Types.ObjectId(identifier)),
       };
     } catch (e) {
       console.log(e);
@@ -252,10 +242,7 @@ export class UsersController {
         data: await this.usersService.updateUser(userId, updateUserDto),
       };
     } catch (e) {
-      throw new HttpException(
-        'internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -275,20 +262,14 @@ export class UsersController {
   @ApiBody({ type: UpdateProfilePicDto })
   @UseInterceptors(FileInterceptor('profilePicture'))
   @Patch('/update/profilePic')
-  async updateProfilePic(
-    @Headers() headers: any,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
+  async updateProfilePic(@Headers() headers: any, @UploadedFile() file: Express.Multer.File) {
     try {
       const userId = this.extractUserId(headers);
       return {
         data: await this.usersService.updateProfilePic(userId, file),
       };
     } catch (e) {
-      throw new HttpException(
-        'internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -315,14 +296,10 @@ export class UsersController {
     }
     try {
       const userId = this.extractUserId(headers);
-      if (userId.equals(new Types.ObjectId(id)))
-        return this.usersService.softDelete(userId);
+      if (userId.equals(new Types.ObjectId(id))) return this.usersService.softDelete(userId);
       else return new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
     } catch (e) {
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+      throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
     }
   }
 
@@ -331,32 +308,21 @@ export class UsersController {
     type: Types.ObjectId,
     description: 'Id of Company you want to change to',
   })
-  changeCompany(
-    @Headers() headers: any,
-    @Param('companyId') companyId: string,
-  ) {
+  changeCompany(@Headers() headers: any, @Param('companyId') companyId: string) {
     if (!mongoose.Types.ObjectId.isValid(companyId)) {
       throw new HttpException('Invalid CompanyId', HttpStatus.BAD_REQUEST);
     }
     try {
       const userId = this.extractUserId(headers);
-      return this.usersService.changeCurrentEmployee(
-        userId,
-        new Types.ObjectId(companyId),
-      );
+      return this.usersService.changeCurrentEmployee(userId, new Types.ObjectId(companyId));
     } catch (e) {
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+      throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
     }
   }
 
   public extractUserId(headers: any) {
     const authHeader: string = headers.authorization;
-    const decodedJwtAccessToken = this.jwtService.decode(
-      authHeader.replace(/^Bearer\s+/i, ''),
-    );
+    const decodedJwtAccessToken = this.jwtService.decode(authHeader.replace(/^Bearer\s+/i, ''));
     if (!Types.ObjectId.isValid(decodedJwtAccessToken.sub)) {
       throw new HttpException('Invalid User', HttpStatus.BAD_REQUEST);
     }

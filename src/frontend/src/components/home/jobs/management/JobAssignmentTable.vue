@@ -142,17 +142,17 @@
         <v-card-text> What would you like to do with this job? </v-card-text>
         <v-card-actions>
           <v-btn @click="closeDialog"
-          >Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="primary" size="small"></v-icon
+            >Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="primary" size="small"></v-icon
           ></v-btn>
           <v-spacer></v-spacer>
 
-<!--          &lt;!&ndash; View Job Dialog &ndash;&gt;-->
-<!--          <ViewJob :passedInJob="selectedJob"></ViewJob>-->
+          <!--          &lt;!&ndash; View Job Dialog &ndash;&gt;-->
+          <!--          <ViewJob :passedInJob="selectedJob"></ViewJob>-->
 
-<!--          <ManagerJobCard :passedInJob="selectedJob"></ManagerJobCard>-->
+          <!--          <ManagerJobCard :passedInJob="selectedJob"></ManagerJobCard>-->
 
           <v-btn color="error" @click="deleteDialog = true"
-          >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
+            >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
           ></v-btn>
           <v-dialog v-model="deleteDialog" :max-width="500">
             <v-card>
@@ -164,12 +164,12 @@
               <v-card-actions>
                 <v-btn color="error" @click="confirmDelete">Confirm</v-btn>
                 <v-btn @click="deleteDialog = false"
-                >Cancel<v-icon
-                  icon="fa:fa-solid fa-cancel"
-                  end
-                  color="error"
-                  size="small"
-                ></v-icon
+                  >Cancel<v-icon
+                    icon="fa:fa-solid fa-cancel"
+                    end
+                    color="error"
+                    size="small"
+                  ></v-icon
                 ></v-btn>
               </v-card-actions>
             </v-card>
@@ -191,135 +191,134 @@ import { useToast } from 'primevue/usetoast'
 
 // Define the type for the job object
 interface Job {
-  _id: string;
+  _id: string
   company: {
-    registrationNumber: string;
-    vatNumber: string;
-    name: string;
-    type?: string;
-    jobStatuses?: string[];
-    logo?: string;
+    registrationNumber: string
+    vatNumber: string
+    name: string
+    type?: string
+    jobStatuses?: string[]
+    logo?: string
     contactDetails: {
-      phoneNumber: string;
-      email: string;
-    };
+      phoneNumber: string
+      email: string
+    }
     address: {
-      street: string;
-      province: string;
-      suburb: string;
-      city: string;
-      postalCode: string;
-      complex?: string;
-      houseNumber?: string;
-    };
-    private: boolean;
-  };
+      street: string
+      province: string
+      suburb: string
+      city: string
+      postalCode: string
+      complex?: string
+      houseNumber?: string
+    }
+    private: boolean
+  }
   client: {
-    registrationNumber?: string;
+    registrationNumber?: string
     details: {
-      firstName: string;
-      lastName: string;
-      preferredLanguage?: string;
+      firstName: string
+      lastName: string
+      preferredLanguage?: string
       contactInfo: {
-        phoneNumber: string;
-        email: string;
-      };
+        phoneNumber: string
+        email: string
+      }
       address?: {
-        street: string;
-        province: string;
-        suburb: string;
-        city: string;
-        postalCode: string;
-        complex?: string;
-        houseNumber?: string;
-      };
-      vatNumber?: string;
-      companyId: string;
-      idNumber?: string;
-      type?: string;
-    };
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: string;
-  };
+        street: string
+        province: string
+        suburb: string
+        city: string
+        postalCode: string
+        complex?: string
+        houseNumber?: string
+      }
+      vatNumber?: string
+      companyId: string
+      idNumber?: string
+      type?: string
+    }
+    createdAt: string
+    updatedAt: string
+    deletedAt: string
+  }
   assignedBy: {
-    roleId: string;
-    superiorId?: string;
-    subordinates?: string[];
-    subordinateTeams?: string[];
-    userId: string;
+    roleId: string
+    superiorId?: string
+    subordinates?: string[]
+    subordinateTeams?: string[]
+    userId: string
     userInfo: {
-      username: string;
-      firstName: string;
-      surname: string;
-      displayName: string;
-      displayImage?: string;
-    };
-    companyId: string;
-  };
+      username: string
+      firstName: string
+      surname: string
+      displayName: string
+      displayImage?: string
+    }
+    companyId: string
+  }
   assignedEmployees?: {
-    employeeIds?: string[];
-    teamIds?: string[];
-  };
-  status: string;
-  tags?: string[];
-  priorityTag?: string;
-  attachments: string[];
+    employeeIds?: string[]
+    teamIds?: string[]
+  }
+  status: string
+  tags?: string[]
+  priorityTag?: string
+  attachments: string[]
   details: {
-    heading: string;
-    description: string;
+    heading: string
+    description: string
     address: {
-      street: string;
-      province: string;
-      suburb: string;
-      city: string;
-      postalCode: string;
-      complex?: string;
-      houseNumber?: string;
-    };
-    startDate: string;
-    endDate?: string;
-  };
+      street: string
+      province: string
+      suburb: string
+      city: string
+      postalCode: string
+      complex?: string
+      houseNumber?: string
+    }
+    startDate: string
+    endDate?: string
+  }
   recordedDetails?: {
-    imagesTaken?: string[];
+    imagesTaken?: string[]
     inventoryUsed?: {
-      inventoryItemId: string;
-      inventoryItemName: string;
-      quantityUsed: number;
-    }[];
-  };
+      inventoryItemId: string
+      inventoryItemName: string
+      quantityUsed: number
+    }[]
+  }
   clientFeedback?: {
-    rating?: number;
-    comment?: string;
-  };
+    rating?: number
+    comment?: string
+  }
   taskList: {
-    name: string;
-    status: string;
+    name: string
+    status: string
     assignedEmployees?: {
-      roleId: string;
-      superiorId?: string;
-      subordinates?: string[];
-      subordinateTeams?: string[];
-      userId: string;
+      roleId: string
+      superiorId?: string
+      subordinates?: string[]
+      subordinateTeams?: string[]
+      userId: string
       userInfo: {
-        username: string;
-        firstName: string;
-        surname: string;
-        displayName: string;
-        displayImage?: string;
-      };
-      companyId: string;
-    }[];
-  }[];
-  comments: string[];
+        username: string
+        firstName: string
+        surname: string
+        displayName: string
+        displayImage?: string
+      }
+      companyId: string
+    }[]
+  }[]
+  comments: string[]
   history?: {
-    event: string;
-    timestamp: string;
-  }[];
-  createdAt: string;
-  updatedAt: string;
+    event: string
+    timestamp: string
+  }[]
+  createdAt: string
+  updatedAt: string
 }
-
 
 // Define state variables with types
 const actionsDialog = ref(false)
@@ -349,9 +348,8 @@ const getRequestUrl = async (): Promise<string> => {
   return localAvailable ? localUrl : remoteUrl
 }
 
-
 // Set the table headers
-const headers : any[] = [
+const headers: any[] = [
   { title: 'Job Heading', key: 'heading', align: 'start', value: 'heading' },
   { title: 'Client Phone', key: 'clientPhone', align: 'start', value: 'clientPhone' },
   { title: 'Client Mail', key: 'clientMail', align: 'start', value: 'clientMail' },
@@ -372,7 +370,8 @@ const fetchData = async () => {
   }
   const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
+    const response = await axios.get(
+      `${apiUrl}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
       config
     )
     detailedJobData.value = response.data.data
@@ -457,5 +456,4 @@ const getStatusColor = (status: string) => {
 .font-family-lato {
   font-family: 'Lato', sans-serif;
 }
-
 </style>

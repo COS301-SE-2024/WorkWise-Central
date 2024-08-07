@@ -165,7 +165,10 @@ export default defineComponent({
         }
       }
       try {
-        const response = await axios.get('http://localhost:3000/inventory/all', config)
+        const response = await axios.get(
+          `http://localhost:3000/inventory/all/${localStorage.getItem('currentCompany')}`,
+          config
+        )
         console.log(response.data.data)
         this.inventoryItems = response.data.data
       } catch (error) {

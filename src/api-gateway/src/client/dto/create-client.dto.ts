@@ -17,9 +17,7 @@ import { Types } from 'mongoose';
 export class ContactInfo {
   @ApiProperty()
   @IsString()
-  @Transform(({ value }) =>
-    value.startsWith('0') ? `+27${value.slice(1)}` : value,
-  )
+  @Transform(({ value }) => (value.startsWith('0') ? `+27${value.slice(1)}` : value))
   //@IsPhoneNumber(null)
   phoneNumber: string;
 
