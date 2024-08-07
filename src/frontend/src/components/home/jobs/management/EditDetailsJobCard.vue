@@ -11,21 +11,23 @@
           rounded="l"
           required
         ></v-text-field>
-<!--        <v-label>Job Description</v-label>-->
-<!--        <v-textarea-->
-<!--          v-model="job.details.description"-->
-<!--          clearable-->
-<!--          variant="solo"-->
-<!--          density="compact"-->
-<!--          color="grey-lighten-4"-->
-<!--          rounded="l"-->
-<!--          required-->
-<!--        ></v-textarea>-->
+        <!--        <v-label>Job Description</v-label>-->
+        <!--        <v-textarea-->
+        <!--          v-model="job.details.description"-->
+        <!--          clearable-->
+        <!--          variant="solo"-->
+        <!--          density="compact"-->
+        <!--          color="grey-lighten-4"-->
+        <!--          rounded="l"-->
+        <!--          required-->
+        <!--        ></v-textarea>-->
         <v-row>
-          <v-col cols="5">
-          </v-col>
-          <v-label >Description</v-label>
-          <Editor v-model="job.details.description" editorStyle="height: 300px; color: grey-lighten-4"/>
+          <v-col cols="5"> </v-col>
+          <v-label>Description</v-label>
+          <Editor
+            v-model="job.details.description"
+            editorStyle="height: 300px; color: grey-lighten-4"
+          />
         </v-row>
         <v-row>
           <v-col cols="6">
@@ -128,25 +130,25 @@ const toast = useToast()
 
 const cheese = ref('')
 interface Address {
-  street: string;
-  province: string;
-  suburb: string;
-  city: string;
-  postalCode: string;
-  complex: string;
-  houseNumber: string;
+  street: string
+  province: string
+  suburb: string
+  city: string
+  postalCode: string
+  complex: string
+  houseNumber: string
 }
 
 interface JobDetails {
-  heading: string;
-  description: string;
-  address: Address;
-  startDate: string;
-  endDate: string;
+  heading: string
+  description: string
+  address: Address
+  startDate: string
+  endDate: string
 }
 
 const props = defineProps<{
-  jobDetails: JobDetails;
+  jobDetails: JobDetails
   jobID: string
 }>()
 

@@ -56,14 +56,49 @@
       </v-card>
     </template>
   </v-dialog>
-  <Toast/>
+  <Toast />
 </template>
 
 <script setup lang="ts">
-import {ref, defineProps, onMounted} from 'vue'
+import { ref, defineProps, onMounted } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+
+interface Address {
+  street: string
+  province: string
+  suburb: string
+  city: string
+  postalCode: string
+  complex?: string
+  houseNumber?: string
+}
+
+interface ContactInfo {
+  phoneNumber: string
+  email: string
+}
+
+interface Details {
+  firstName: string
+  lastName: string
+  preferredLanguage?: string
+  contactInfo: ContactInfo
+  address: Address
+  vatNumber?: string
+  companyId: any // Replace with appropriate type if known
+  idNumber?: string
+  type?: string
+}
+
+interface Client {
+  _id: any // Replace with appropriate type if known
+  registrationNumber?: string
+  details: Details
+  createdAt: string
+  updatedAt: string
+}
 
 const props = defineProps<{
   jobID: string
@@ -73,6 +108,7 @@ const toast = useToast()
 const clientDialog = ref<boolean>(false)
 const selectedClientName = ref<string>('')
 const clientNames = ref<string[]>([])
+const clientData = ref<Client[]>([])
 
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
@@ -120,14 +156,15 @@ const getClients = async (): Promise<string> => {
   }
   const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}client/all/${localStorage.getItem('currentCompany')}`)
+    const response = await axios.get(`${apiUrl}client/all`, config)
     if (response.status < 300 && response.status > 199) {
       console.log('Got client data')
       console.log(response.data.data)
+      clientData.value = response.data.data
     } else {
       console.log('failed')
     }
-  } catch(error) {
+  } catch (error) {
     console.error('Error updating job:', error)
   }
   return 'cheese'
@@ -144,6 +181,4 @@ const saveClient = () => {
 onMounted(() => {
   getClients()
 })
-
 </script>
-

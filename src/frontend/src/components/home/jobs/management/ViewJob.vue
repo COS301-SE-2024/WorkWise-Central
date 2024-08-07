@@ -134,6 +134,12 @@
                   <JobNotes :passedInJob="props.passedInJob" />
                 </v-col>
               </v-row>
+              <v-row>
+                <CheckOffItems
+                  :jobComments="props.passedInJob?.comments"
+                  :id="props.passedInJob?._id"
+                />
+              </v-row>
             </v-col>
           </v-col>
           <v-col sm="12" md="3">
@@ -173,6 +179,7 @@ import AddComment from './AddComments.vue'
 import JobNotes from './JobNotes.vue'
 import JobChecklist from './JobChecklist.vue'
 import LogInventory from './LogInventory.vue'
+import CheckOffItems from './CheckOffItems.vue'
 
 const props = defineProps({
   passedInJob: Object
