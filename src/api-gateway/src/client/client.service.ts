@@ -13,7 +13,6 @@ import { Client } from './entities/client.entity';
 import { CreateClientDto } from './dto/create-client.dto';
 import { ClientRepository } from './client.repository';
 import { ValidationResult, ValidationResultWithException } from '../auth/entities/validationResult.entity';
-import { ValidationResult, ValidationResultWithException } from '../auth/entities/validationResult.entity';
 import { CompanyService } from '../company/company.service';
 import { UsersService } from '../users/users.service';
 import { Employee } from '../employee/entities/employee.entity';
@@ -40,7 +39,6 @@ export class ClientService {
   ) {}
 
   async create(userId: Types.ObjectId, createClientDto: CreateClientDto): Promise<Client & { _id: Types.ObjectId }> {
-  async create(userId: Types.ObjectId, createClientDto: CreateClientDto): Promise<Client & { _id: Types.ObjectId }> {
     await this.userIdMatchesEmployeeId(userId, createClientDto.employeeId);
     const check = await this.validateCreate(userId, createClientDto);
     if (!check.isValid) {
@@ -61,8 +59,6 @@ export class ClientService {
 
   async getAllClientsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
     const userIsInCompany = await this.usersService.userIsInCompany(userId, companyId);
-  async getAllClientsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
-    const userIsInCompany = await this.usersService.userIsInCompany(userId, companyId);
     if (!userIsInCompany) {
       throw new UnauthorizedException('User or Employee is Null');
     }
@@ -78,7 +74,6 @@ export class ClientService {
     if (!client) throw new NotFoundException('Client does not exist');
 
     if (!(await this.usersService.userIsInCompany(userId, client.details.companyId)))
-    if (!(await this.usersService.userIsInCompany(userId, client.details.companyId)))
       throw new UnauthorizedException('User not in Same Company');
 
     const result = await this.clientRepository.findClientById(clientId);
@@ -89,8 +84,6 @@ export class ClientService {
     return result;
   }
 
-  async getByEmailOrName(userId: Types.ObjectId, companyId: Types.ObjectId, emailOrName: string) {
-    const clients = await this.clientRepository.findClientByEmailOrName(companyId, emailOrName);
   async getByEmailOrName(userId: Types.ObjectId, companyId: Types.ObjectId, emailOrName: string) {
     const clients = await this.clientRepository.findClientByEmailOrName(companyId, emailOrName);
     if (!clients) throw new NotFoundException('Client does not exist');
@@ -109,7 +102,6 @@ export class ClientService {
   }
 
   async updateClient(userId: Types.ObjectId, clientId: Types.ObjectId, updateClientDto: UpdateClientDto) {
-  async updateClient(userId: Types.ObjectId, clientId: Types.ObjectId, updateClientDto: UpdateClientDto) {
     const inputValidated = await this.clientUpdateIsValid(updateClientDto);
     if (!inputValidated.isValid) {
       throw inputValidated.exception;
@@ -118,25 +110,19 @@ export class ClientService {
     const client = await this.getClientById(userId, clientId);
 
     if (!(await this.usersService.userIsInCompany(userId, client.details.companyId)))
-    if (!(await this.usersService.userIsInCompany(userId, client.details.companyId)))
       throw new UnauthorizedException('User not in Same Company');
 
-    const result = await this.clientRepository.update(clientId, updateClientDto);
     const result = await this.clientRepository.update(clientId, updateClientDto);
     console.log('updatedClient', result);
     return result;
   }
 
   async softDelete(userId: Types.ObjectId, deleteClientDto: DeleteClientDto): Promise<boolean> {
-  async softDelete(userId: Types.ObjectId, deleteClientDto: DeleteClientDto): Promise<boolean> {
     await this.userIdMatchesEmployeeId(userId, deleteClientDto.employeeId);
     const client = await this.getClientById(userId, deleteClientDto.clientId);
     if (!(await this.usersService.userIsInCompany(userId, client.details.companyId)))
-    if (!(await this.usersService.userIsInCompany(userId, client.details.companyId)))
       throw new UnauthorizedException('User not in Company');
 
-    const employee: Employee = await this.employeeService.findById(deleteClientDto.employeeId);
-    const allJobs = await this.jobService.getAllJobsInCompanyWithoutValidation(employee.companyId);
     const employee: Employee = await this.employeeService.findById(deleteClientDto.employeeId);
     const allJobs = await this.jobService.getAllJobsInCompanyWithoutValidation(employee.companyId);
 
@@ -156,9 +142,7 @@ export class ClientService {
   }
 
   private async clientUpdateIsValid(client: UpdateClientDto): Promise<ValidationResultWithException> {
-  private async clientUpdateIsValid(client: UpdateClientDto): Promise<ValidationResultWithException> {
     if (!client) {
-      return new ValidationResultWithException(false, new NotFoundException('Null Reference'));
       return new ValidationResultWithException(false, new NotFoundException('Null Reference'));
     }
 
@@ -179,11 +163,9 @@ export class ClientService {
 
       if (client.details.companyId) {
         const exists = await this.companyService.companyIdExists(client.details.companyId);
-        const exists = await this.companyService.companyIdExists(client.details.companyId);
         if (!exists)
           return new ValidationResultWithException(
             false,
-            new ConflictException(`Invalid Company ID: ${client.details.companyId}`),
             new ConflictException(`Invalid Company ID: ${client.details.companyId}`),
           );
       }
@@ -199,15 +181,12 @@ export class ClientService {
       if (client.details.companyId) {
         const exists = await this.companyService.companyIdExists(client.details.companyId);
         if (!exists) return new ValidationResult(false, `Invalid Company ID: ${client.details.companyId}`);
-        const exists = await this.companyService.companyIdExists(client.details.companyId);
-        if (!exists) return new ValidationResult(false, `Invalid Company ID: ${client.details.companyId}`);
       }
     }
 
     return new ValidationResult(true);
   }
 
-  private async validateCreate(userId: Types.ObjectId, createClientDto: CreateClientDto): Promise<ValidationResult> {
   private async validateCreate(userId: Types.ObjectId, createClientDto: CreateClientDto): Promise<ValidationResult> {
     if (!createClientDto.details || !createClientDto.details.companyId) {
       return new ValidationResult(false, `There are are no details`);
@@ -217,7 +196,6 @@ export class ClientService {
     let userIsInCompany = false;
     for (const joinedCompany of user.joinedCompanies) {
       if (joinedCompany.companyId.toString() === createClientDto.details.companyId.toString()) {
-      if (joinedCompany.companyId.toString() === createClientDto.details.companyId.toString()) {
         userIsInCompany = true;
       }
     }
@@ -226,20 +204,16 @@ export class ClientService {
     }
     //Check companyId
     const companyIdIsValid = await this.companyService.companyIdExists(createClientDto.details.companyId);
-    const companyIdIsValid = await this.companyService.companyIdExists(createClientDto.details.companyId);
     if (!companyIdIsValid) {
-      return new ValidationResult(false, `Invalid Company ID: ${createClientDto.details.companyId}`);
       return new ValidationResult(false, `Invalid Company ID: ${createClientDto.details.companyId}`);
     }
 
     return new ValidationResult(true);
   }
   private async userIdMatchesEmployeeId(userId: Types.ObjectId, employeeId: Types.ObjectId) {
-  private async userIdMatchesEmployeeId(userId: Types.ObjectId, employeeId: Types.ObjectId) {
     const userExists = await this.usersService.userIdExists(userId);
     if (!userExists) throw new NotFoundException('User not found');
 
-    const employee: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeService.findById(employeeId);
     const employee: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeService.findById(employeeId);
     if (!employee) throw new NotFoundException('Employee not found');
     if (!employee.userId.equals(userId)) throw new UnauthorizedException('Inconsistent userId');

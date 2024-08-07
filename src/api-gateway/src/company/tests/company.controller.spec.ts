@@ -9,7 +9,6 @@ import { UpdateCompanyDto } from '../dto/update-company.dto';
 import { UsersService } from '../../users/users.service';
 import { UsersController } from '../../users/users.controller';
 import { CreateCompanyDto, CreateCompanyResponseDto } from '../dto/create-company.dto';
-import { CreateCompanyDto, CreateCompanyResponseDto } from '../dto/create-company.dto';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -39,7 +38,6 @@ describe('CompanyController', () => {
     })
       .useMocker((token) => {
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
@@ -105,7 +103,6 @@ describe('CompanyController', () => {
       };
 
       const expectedError = new HttpException('Invalid company data', HttpStatus.CONFLICT);
-      const expectedError = new HttpException('Invalid company data', HttpStatus.CONFLICT);
       jest.spyOn(companyService, 'create').mockRejectedValue(expectedError);
 
       try {
@@ -148,7 +145,6 @@ describe('CompanyController', () => {
       const updateCompanyDto: UpdateCompanyDto = { name: 'TestCo' };
 
       jest.spyOn(companyService, 'update').mockRejectedValue(new Error('DB error'));
-      jest.spyOn(companyService, 'update').mockRejectedValue(new Error('DB error'));
       try {
         const body = { currentEmployeeId: new Types.ObjectId(), updateCompanyDto: updateCompanyDto };
         await companyController.update({ userId }, 'compId', body);
@@ -166,10 +162,6 @@ describe('CompanyController', () => {
         console.log(a);
         return true;
       });
-      jest.spyOn(companyController, 'validateObjectId').mockImplementation((a: string) => {
-        console.log(a);
-        return true;
-      });
 
       jest.spyOn(usersService, 'softDelete').mockResolvedValue(true);
 
@@ -181,10 +173,6 @@ describe('CompanyController', () => {
       const companyId = new Types.ObjectId();
       const invalidIdParam = 'invalidIdParam';
 
-      jest.spyOn(companyController, 'validateObjectId').mockImplementation((a: string) => {
-        console.log(a);
-        return true;
-      });
       jest.spyOn(companyController, 'validateObjectId').mockImplementation((a: string) => {
         console.log(a);
         return true;
@@ -207,12 +195,7 @@ describe('CompanyController', () => {
         console.log(a);
         return true;
       });
-      jest.spyOn(companyController, 'validateObjectId').mockImplementation((a: string) => {
-        console.log(a);
-        return true;
-      });
 
-      jest.spyOn(usersService, 'softDelete').mockRejectedValue(new Error('DB error'));
       jest.spyOn(usersService, 'softDelete').mockRejectedValue(new Error('DB error'));
 
       try {

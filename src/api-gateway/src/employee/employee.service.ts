@@ -3,7 +3,6 @@ import { InventoryService } from './../inventory/inventory.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto, UpdateEmployeeUserInfoDto } from './dto/update-employee.dto';
-import { UpdateEmployeeDto, UpdateEmployeeUserInfoDto } from './dto/update-employee.dto';
 import { Types } from 'mongoose';
 import { Employee, roleObject } from './entities/employee.entity';
 import { UsersService } from '../users/users.service';
@@ -56,7 +55,6 @@ export class EmployeeService {
     console.log('checkpoint 2');
     // Checking if the roleId was passed and if it exists
     if (employee.roleId) {
-      if (!(await this.roleService.roleExistsInCompany(employee.roleId, employee.companyId))) {
       if (!(await this.roleService.roleExistsInCompany(employee.roleId, employee.companyId))) {
         return new ValidationResult(false, `Role not found`);
       }
@@ -215,7 +213,6 @@ export class EmployeeService {
     return await this.employeeRepository.employeeExists(id);
   }
 
-  async employeeExistsForCompany(id: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
   async employeeExistsForCompany(id: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
     //checking if the company exists
     if (!(await this.companyService.companyIdExists(companyId))) {
@@ -524,14 +521,12 @@ export class EmployeeService {
 
     //Removing the current employee from the list
     const index = listOfEmployees.findIndex((employee) => employee._id.equals(currentEmployee._id));
-    const index = listOfEmployees.findIndex((employee) => employee._id.equals(currentEmployee._id));
     if (index !== -1) {
       listOfEmployees.splice(index, 1);
     }
 
     // Remove the superior from the list if it exists
     if (currentEmployee.superiorId) {
-      const index = listOfEmployees.findIndex((employee) => employee._id.equals(currentEmployee.superiorId));
       const index = listOfEmployees.findIndex((employee) => employee._id.equals(currentEmployee.superiorId));
       if (index !== -1) {
         listOfEmployees.splice(index, 1);
@@ -540,9 +535,7 @@ export class EmployeeService {
 
     // Remove subordinates from the list if they exist
     if (currentEmployee.subordinates && currentEmployee.subordinates.length > 0) {
-    if (currentEmployee.subordinates && currentEmployee.subordinates.length > 0) {
       currentEmployee.subordinates.forEach((subordinateId) => {
-        const index = listOfEmployees.findIndex((employee) => employee._id.equals(subordinateId));
         const index = listOfEmployees.findIndex((employee) => employee._id.equals(subordinateId));
         if (index !== -1) {
           listOfEmployees.splice(index, 1);

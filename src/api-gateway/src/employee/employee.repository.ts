@@ -8,7 +8,6 @@ import { User } from '../users/entities/user.entity';
 @Injectable()
 export class EmployeeRepository {
   constructor(@InjectModel(Employee.name) private readonly employeeModel: Model<Employee>) {}
-  constructor(@InjectModel(Employee.name) private readonly employeeModel: Model<Employee>) {}
 
   async findAll() {
     return this.employeeModel.find().lean().exec();
@@ -22,18 +21,6 @@ export class EmployeeRepository {
   }
 
   async findAllInCompany(identifier: Types.ObjectId) {
-    const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] = await this.employeeModel
-      .find({
-        $and: [
-          {
-            companyId: identifier,
-          },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      })
-      .lean();
     const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] = await this.employeeModel
       .find({
         $and: [
@@ -153,16 +140,6 @@ export class EmployeeRepository {
         ],
       })
       .lean();
-    const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] = await this.employeeModel
-      .find({
-        $and: [
-          { _id: { $in: ids } },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      })
-      .lean();
     return result;
   }
 
@@ -177,31 +154,9 @@ export class EmployeeRepository {
         ],
       })
       .lean();
-    const result: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
-      .findOne({
-        $and: [
-          { _id: id },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      })
-      .lean();
     return result != null;
   }
 
-  async employeeExistsForCompany(id: Types.ObjectId, companyIdentification: Types.ObjectId): Promise<boolean> {
-    const result: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
-      .findOne({
-        $and: [
-          { _id: new Types.ObjectId(id) },
-          { companyId: companyIdentification },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      })
-      .lean();
   async employeeExistsForCompany(id: Types.ObjectId, companyIdentification: Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
       .findOne({
@@ -361,7 +316,6 @@ export class EmployeeRepository {
       return false;
     }
 
-    const result: Document<unknown, NonNullable<unknown>, User> & User & { _id: Types.ObjectId } =
     const result: Document<unknown, NonNullable<unknown>, User> & User & { _id: Types.ObjectId } =
       await this.employeeModel.findOneAndUpdate(
         {

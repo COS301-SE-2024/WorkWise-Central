@@ -24,10 +24,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { InventoryListResponseDto, InventoryResponseDto } from './entities/inventory.entity';
-import { InventoryListResponseDto, InventoryResponseDto } from './entities/inventory.entity';
 import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
-import { CreateInventoryDto, CreateInventoryResponseDto } from './dto/create-inventory.dto';
 import { CreateInventoryDto, CreateInventoryResponseDto } from './dto/create-inventory.dto';
 import { AuthGuard } from '../auth/auth.guard';
 // import { extractUserId } from '../utils/Utils';

@@ -14,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { CreateClientDto, findClientResponseDto } from './dto/create-client.dto';
-import { CreateClientDto, findClientResponseDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import {
   ApiBearerAuth,
@@ -27,7 +26,6 @@ import {
 } from '@nestjs/swagger';
 import mongoose, { FlattenMaps, Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
-import { ApiResponseDto, Client, ClientApiObject, CreateClientResponseDto } from './entities/client.entity';
 import { ApiResponseDto, Client, ClientApiObject, CreateClientResponseDto } from './entities/client.entity';
 import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
