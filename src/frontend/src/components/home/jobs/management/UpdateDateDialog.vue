@@ -81,28 +81,28 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, computed,  defineEmits } from 'vue'
+import { defineProps, ref, computed, defineEmits } from 'vue'
 
 interface Address {
-  street: string;
-  province: string;
-  suburb: string;
-  city: string;
-  postalCode: string;
-  complex: string;
-  houseNumber: string;
+  street: string
+  province: string
+  suburb: string
+  city: string
+  postalCode: string
+  complex: string
+  houseNumber: string
 }
 
 interface JobDetails {
-  heading: string;
-  description: string;
-  address: Address;
-  startDate: string;
-  endDate: string;
+  heading: string
+  description: string
+  address: Address
+  startDate: string
+  endDate: string
 }
 
 const props = defineProps<{
-  jobDetails: JobDetails;
+  jobDetails: JobDetails
   jobID: string
 }>()
 
@@ -110,12 +110,11 @@ const emit = defineEmits(['updateJob'])
 
 const dueDateDialog = ref(false)
 const currentDate = ref<Date | null>(null)
-const startDate = ref<Date | null>((new Date(props.jobDetails.startDate)) || null)
-const endDate = ref<Date | null>((new Date(props.jobDetails.endDate)) || null)
+const startDate = ref<Date | null>(new Date(props.jobDetails.startDate) || null)
+const endDate = ref<Date | null>(new Date(props.jobDetails.endDate) || null)
 const isStartDatePicked = ref(false)
 const isEndDatePicked = ref(false)
 const errorMessage = ref<string | null>('')
-
 
 const updateDates = (value: Date | null) => {
   if (value) {
@@ -192,4 +191,3 @@ const removeDates = () => {
   emit('updateJob', { ...props.jobDetails, startDate: null, endDate: null })
 }
 </script>
-

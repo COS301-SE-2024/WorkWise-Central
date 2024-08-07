@@ -1,4 +1,5 @@
 import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto, BulkUpdateRoleDto } from './dto/update-role.dto';
 import { Types } from 'mongoose';
@@ -258,6 +259,7 @@ export class RoleService {
     return await this.roleRepository.roleExists(id);
   }
 
+  async roleExistsInCompany(id: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
   async roleExistsInCompany(id: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
     //checking if the company exists
     if (!(await this.companyService.companyIdExists(companyId))) {

@@ -1,17 +1,7 @@
-import {
-  JoinedCompany,
-  PersonalInfo,
-  Profile,
-  SystemDetails,
-} from '../entities/user.entity';
+import { JoinedCompany, PersonalInfo, Profile, SystemDetails } from '../entities/user.entity';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Types } from 'mongoose';
-import {
-  IsArray,
-  IsMongoId,
-  IsOptional,
-  ValidateNested,
-} from 'class-validator';
+import { IsArray, IsMongoId, IsOptional, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class UpdateJoinedCompanyDto extends PartialType(JoinedCompany) {}

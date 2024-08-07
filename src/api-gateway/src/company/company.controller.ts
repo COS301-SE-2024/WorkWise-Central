@@ -51,6 +51,7 @@ import {
 } from './entities/company.entity';
 import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
 import { extractUserId, validateObjectId, validateObjectIds } from '../utils/Utils';
+import { extractUserId, validateObjectId, validateObjectIds } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -95,6 +96,7 @@ export class CompanyController {
     description: `The access token and ${className}'s Id used for querying.`,
   })
   @Post('/create')
+  async create(@Body() createCompanyDto: CreateCompanyDto): Promise<CreateCompanyResponseDto> {
   async create(@Body() createCompanyDto: CreateCompanyDto): Promise<CreateCompanyResponseDto> {
     return await this.companyService.create(createCompanyDto);
   }
@@ -144,6 +146,7 @@ export class CompanyController {
       return { data: await this.companyService.getAllCompanyNames() };
     } catch (Error) {
       throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -160,6 +163,7 @@ export class CompanyController {
     try {
       return { data: await this.companyService.getAllCompanies() };
     } catch (Error) {
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
       throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -222,6 +226,7 @@ export class CompanyController {
       return { data: await this.companyService.getAllEmployees(objId) };
     } catch (Error) {
       throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -251,9 +256,11 @@ export class CompanyController {
   })
   @Get('id/:id/detailed')
   async findOneDetailed(@Param('id') id: string): Promise<{ data: FlattenMaps<Company> & { _id: Types.ObjectId } }> {
+  async findOneDetailed(@Param('id') id: string): Promise<{ data: FlattenMaps<Company> & { _id: Types.ObjectId } }> {
     try {
       validateObjectId(id);
       return {
+        data: await this.companyService.getCompanyByIdDetailed(new Types.ObjectId(id)),
         data: await this.companyService.getCompanyByIdDetailed(new Types.ObjectId(id)),
       };
     } catch (e) {
@@ -421,6 +428,7 @@ export class CompanyController {
       return { data: true };
     } catch (e) {
       throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
+      throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
     }
   }
 
@@ -435,11 +443,13 @@ export class CompanyController {
   })
   @Get('status/all/:cid')
   async findAllStatusInCompany(@Headers() headers: any, @Param('cid') cId: string) {
+  async findAllStatusInCompany(@Headers() headers: any, @Param('cid') cId: string) {
     try {
       validateObjectId(cId);
       const companyId = new Types.ObjectId(cId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
+        data: await this.companyService.findAllStatusesInCompany(userId, companyId),
         data: await this.companyService.findAllStatusesInCompany(userId, companyId),
       };
     } catch (e) {

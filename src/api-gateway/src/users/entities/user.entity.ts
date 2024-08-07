@@ -89,19 +89,13 @@ export class Profile {
   @Prop({
     type: String,
     required: false,
-    default:
-      'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
+    default: 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
   })
-  displayImage?: string =
-    'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
+  displayImage?: string = 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
 }
 
 export class JoinedCompany {
-  constructor(
-    employeeId: Types.ObjectId,
-    companyId: Types.ObjectId,
-    companyName: string,
-  ) {
+  constructor(employeeId: Types.ObjectId, companyId: Types.ObjectId, companyName: string) {
     this.employeeId = employeeId;
     this.companyId = companyId;
     this.companyName = companyName;
@@ -141,8 +135,7 @@ export class User {
     } else {
       this.profile = {
         displayName: createUserDto.profile.displayImage,
-        displayImage:
-          'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
+        displayImage: 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
       };
     }
 
@@ -248,11 +241,7 @@ export class UserApiDetailedObject {
 }
 
 export class SignInUserDto {
-  constructor(
-    access_token: string,
-    id: Types.ObjectId,
-    user: UserApiObject = null,
-  ) {
+  constructor(access_token: string, id: Types.ObjectId, user: UserApiObject = null) {
     this.access_token = access_token;
     this.id = id;
     this.user = user;
@@ -298,10 +287,7 @@ export const UserSchema = SchemaFactory.createForClass(User);
 UserSchema.pre('save', async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);
-    this.systemDetails.password = await bcrypt.hash(
-      this.systemDetails.password,
-      salt,
-    );
+    this.systemDetails.password = await bcrypt.hash(this.systemDetails.password, salt);
     next();
   } catch (error) {
     next(error);
