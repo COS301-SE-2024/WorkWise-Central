@@ -48,7 +48,7 @@ const inventorySubItems = ref([
 
 const inboxSubItems = ref([
   { title: 'Notifications', icon: 'fa: fa-solid fa-bell', routeName: 'notifications' },
-  { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: 'messages' },
+  // { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: 'messages' },
   { title: 'Appointments', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' }
 ])
 

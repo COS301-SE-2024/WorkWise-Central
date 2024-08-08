@@ -3,7 +3,8 @@
     ><v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
         <h2 class="text-xl font-semibold">Appointments</h2> </v-col
-      ><v-col cols="12">
+      ><v-divider></v-divider>
+      <v-col cols="12">
         <v-btn color="primary" @click="showDialog = true" variant="outlined">
           Create New Appointment</v-btn
         >

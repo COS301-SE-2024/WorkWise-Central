@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title class="text-primary font-bold text-center">Edit Tags</v-card-title>
+      <v-card-title class="text-primary font-bold text-center">Tags</v-card-title>
       <v-card-text>
         <v-data-table
           :headers="headers"
@@ -19,13 +19,13 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item @click="selectItem(item)">
+                <!-- <v-list-item @click="selectItem(item)">
                   <v-btn color="success" block @click="dialog = true"
                     ><v-icon icon="fa:fa-solid fa-pencil" color="success"></v-icon>Edit</v-btn
                   >
-                </v-list-item>
+                </v-list-item> -->
                 <v-list-item @click="selectItem(item)">
-                  <DeleteTags />
+                  <DeleteTags :tagId="item._id" />
                 </v-list-item>
               </v-list>
             </v-menu>

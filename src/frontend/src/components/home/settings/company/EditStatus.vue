@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title class="text-primary font-bold text-center">Edit Status</v-card-title>
+      <v-card-title class="text-primary font-bold text-center">Statuses</v-card-title>
       <v-card-text>
         <v-data-table
           :headers="headers"
@@ -19,13 +19,13 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item @click="selectItem(item)">
+                <!-- <v-list-item @click="selectItem(item)">
                   <v-btn color="success" block @click="dialog = true"
                     ><v-icon icon="fa:fa-solid fa-pencil" color="success"></v-icon>Edit</v-btn
                   >
-                </v-list-item>
+                </v-list-item> -->
                 <v-list-item @click="selectItem(item)">
-                  <DeleteStatus />
+                  <DeleteStatus :statusId="item._id" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -33,10 +33,13 @@
         </v-data-table>
       </v-card-text>
     </v-card>
-    <v-dialog v-model="dialog" max-height="800"
-    max-width="600"
-    :theme="isdarkmode ? 'dark' : 'light'"
-    persistent>
+    <v-dialog
+      v-model="dialog"
+      max-height="800"
+      max-width="600"
+      :theme="isdarkmode ? 'dark' : 'light'"
+      persistent
+    >
       <v-card>
         <v-card-title> Edit</v-card-title>
         <v-card-text>
@@ -80,12 +83,21 @@ export default defineComponent({
     headers: [
       {
         title: 'Status Name',
-        key: 'statusName'
+        key: 'status'
+      },
+      {
+        title: 'Color',
+        key: 'colour'
+      },
+      {
+        title: 'Actions',
+        key: 'actions'
       }
     ],
     items: [],
     dialog: false,
     selectedItem: {
+      _id: '',
       status: '',
       color: '',
       companyId: localStorage.getItem('currentCompany'),
@@ -121,7 +133,7 @@ export default defineComponent({
           config
         )
         console.log(res)
-        this.items = res.data.data
+        
       } catch (error) {
         console.error(error)
       }
@@ -141,7 +153,22 @@ export default defineComponent({
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     },
-    updateStatus() {
+    async updateStatus() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = this.getRequestUrl()
+      await axios
+        .patch(`${apiURL}job/status`, this.selectedItem, config)
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
       console.log('Updating Status')
     },
     close() {
