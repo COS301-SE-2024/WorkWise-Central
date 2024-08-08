@@ -34,6 +34,7 @@
         hint="Enter your comment here"
         hide-details
         prepend-icon="fa: fa-solid fa-comment"
+        rows="3"
       ></v-textarea>
       <v-btn color="success" @click="comment" prepend-icon="mdi-comment-plus">Comment</v-btn>
     </v-container>

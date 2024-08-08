@@ -134,11 +134,16 @@
                   <JobNotes :passedInJob="props.passedInJob" />
                 </v-col>
               </v-row>
+                <v-divider>
+                  <h5>Check Off Tasks</h5>
+                </v-divider>
               <v-row>
-                <CheckOffItems
-                  :jobComments="props.passedInJob?.comments"
-                  :id="props.passedInJob?._id"
-                />
+                <v-col>
+                  <CheckOffItems
+                    :jobComments="props.passedInJob?.comments"
+                    :id="props.passedInJob?._id"
+                  />
+                </v-col>
               </v-row>
             </v-col>
           </v-col>
