@@ -91,6 +91,20 @@ export class AddCommentDto {
   newComment: string;
 }
 
+export class AddTaskDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  jobId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+}
+
 export class RemoveCommentDto {
   @IsNotEmpty()
   @IsMongoId()
@@ -103,6 +117,20 @@ export class RemoveCommentDto {
   @IsNotEmpty()
   @IsMongoId()
   commentId: Types.ObjectId;
+}
+
+export class RemoveTaskDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  jobId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  taskId: Types.ObjectId;
 }
 
 export class UpdateCommentDto {
@@ -121,6 +149,24 @@ export class UpdateCommentDto {
   @IsNotEmpty()
   @IsString()
   comment: string;
+}
+
+export class UpdateTaskDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  jobId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  taskId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  title: string;
 }
 
 export class UpdateStatusDto {
