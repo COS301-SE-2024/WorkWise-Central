@@ -58,9 +58,9 @@
                   </v-col>
                 </v-row>
               </v-card-title>
+              <v-divider></v-divider>
 
               <v-card-text>
-                <v-divider></v-divider>
                 <v-col cols="12" xs="12" sm="12" md="12">
                   <v-data-table
                     :headers="headers as any"
@@ -420,11 +420,11 @@ const confirmDelete = async () => {
 
 onMounted(fetchData)
 
-const getRowProps = (item: Job) => {
+const getRowProps = ({ index }: any) => {
   return {
-    class: item.status === 'completed' ? 'bg-completed' : ''
-  }
-}
+    class: index % 2 ? 'bg-secondRowColor' : ''
+  };
+};
 
 const getStatusColor = (status: string) => {
   switch (status) {
