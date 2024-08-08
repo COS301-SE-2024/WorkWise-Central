@@ -1,36 +1,33 @@
 <template>
-  <v-container fluid :max-width="2560">
+  <v-container fluid fill-height>
     <v-row justify="center" xs="6" sm="6" md="12">
       <v-col cols="12">
         <v-row justify="center">
           <v-col cols="12" xs="12" sm="12" md="12" class="pa-0">
             <v-card
               height="auto"
-              class="ma-0 bg-cardColor md-start"
+              class="pa-11 ma-0 bg-cardColor"
               rounded="md"
               border="md"
-              min-height="1000%"
             >
-              <v-card-title height="auto" width="100%">
+              <v-card-title
+                class="d-flex align-center pe-2"
+                style="font-family: Nunito, sans-serif; font-size: 25px; font-weight: lighter"
+              >
                 <v-row align="center" justify="space-between">
-                  <v-col
-                    order-sm="0"
-                    order-md="0"
-                    cols="12"
-                    md="4"
-                    sm="12"
-                    xs="12"
-                    class="d-flex justify-start"
-                  >
+                  <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+                    <v-icon icon="fa: fa-solid fa-briefcase" size="x-small"></v-icon>
                     <v-label
-                      class="ms-2 text-h4 font-family-lato text-headingTextColor"
-                      style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+                      class="ms-2 text-h4 text-headingTextColor"
+                      style="
+                          font-size: 15px;
+                          font-family: Nunito, sans-serif;
+                          font-weight: lighter;
+                        "
                       height="auto"
                       width="auto"
-                    >
-                      <v-icon icon="fa: fa-solid fa-briefcase" size="x-small"></v-icon>
-                      Job Details</v-label
-                    >
+                    >Job Details
+                    </v-label>
                   </v-col>
 
                   <v-col order-sm="1" order-md="1" cols="12" md="4" sm="12" xs="12">

@@ -2,13 +2,18 @@
   <v-container>
     <v-row v-for="(image, index) in images" :key="index" class="mb-3">
       <v-col cols="12">
-        <v-img :src="image.src" max-height="200" max-width="200" @click="openImageOverlay(index)"></v-img>
-        <v-btn @click="openImageActionsDialog(index)">
-          <v-icon>
-            {{ 'fa: fa-solid fa-ellipsis-h' }}
-          </v-icon>
-        </v-btn>
-
+        <v-row>
+          <v-col offset="1" cols="10" class="pt-0">
+            <v-img :src="image.src" :min-height="auto" :min-width="auto" @click="openImageOverlay(index)"></v-img>
+          </v-col>
+          <v-col cols="1" class="pt-0">
+            <v-btn @click="openImageActionsDialog(index)">
+              <v-icon>
+                {{ 'fa: fa-solid fa-ellipsis-h' }}
+              </v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
         <v-dialog
           v-model="image.dialog"
           max-width="300px"
