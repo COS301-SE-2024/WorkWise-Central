@@ -8,6 +8,7 @@
         <v-checkbox
           v-model="item.checked"
           :label="item.text"
+          :class="{ 'strikethrough': item.checked }"
           class="pt-0 pb-0"
           dense
           hide-details
@@ -28,7 +29,7 @@
                 @click="openCheckActionsDialog(index)"
                 v-bind="activatorProps"
               >
-                <v-icon left>
+                <v-icon right>
                   {{ 'fa: fa-solid fa-ellipsis-h' }}
                 </v-icon>
               </v-btn>
@@ -108,8 +109,7 @@ function deleteItem(index) {
 </script>
 
 <style scoped>
-h5 {
-  display: flex;
-  align-items: center;
+.strikethrough {
+  text-decoration: line-through;
 }
 </style>

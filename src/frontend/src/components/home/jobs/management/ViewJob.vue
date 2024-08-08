@@ -145,6 +145,12 @@
                   />
                 </v-col>
               </v-row>
+              <v-divider>
+                <h5>Attach Images</h5>
+              </v-divider>
+              <v-col>
+                <GetJobImages/>
+              </v-col>
             </v-col>
           </v-col>
           <v-col sm="12" md="3">
@@ -185,6 +191,7 @@ import JobNotes from './JobNotes.vue'
 import JobChecklist from './JobChecklist.vue'
 import LogInventory from './LogInventory.vue'
 import CheckOffItems from './CheckOffItems.vue'
+import GetJobImages from './GetJobImages.vue'
 
 const props = defineProps({
   passedInJob: Object
