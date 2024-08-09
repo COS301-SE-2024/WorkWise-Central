@@ -24,9 +24,7 @@ const employeeSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'manageremployees' },
   { title: 'Teams', icon: 'fa: fa-solid fa-users', routeName: 'teams' }
 ])
-const teamSubItems= ref([
-  {title:'Management'}
-])
+const teamSubItems = ref([{ title: 'Management' }])
 const jobSubItems = ref([
   { title: 'Job Center', icon: 'fa: fa-solid fa-list-check', routeName: 'task-center' },
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'jobAssignmentView' },

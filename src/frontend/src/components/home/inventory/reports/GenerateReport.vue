@@ -96,7 +96,7 @@ export default {
       })
 
       // AutoTable plugin for jsPDF to generate tables
-      autoTable(doc,{
+      autoTable(doc, {
         head: [tableColumn],
         body: tableRows,
         startY: 30

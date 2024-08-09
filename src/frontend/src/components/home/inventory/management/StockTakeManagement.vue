@@ -43,8 +43,7 @@ export default {
     return {
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
-      inventoryItems: [] as InventoryItem[],
-      
+      inventoryItems: [] as InventoryItem[]
     }
   },
   components: {
@@ -104,7 +103,7 @@ export default {
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
-    },
+    }
   },
   mounted() {
     this.getInventoryItems()
