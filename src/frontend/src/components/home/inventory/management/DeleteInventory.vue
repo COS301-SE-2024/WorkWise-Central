@@ -32,7 +32,7 @@
             ><v-col cols="12" lg="6"
               ><Toast position="bottom-center" />
               <v-btn label="Cancel" color="secondary" @click="close" block
-                ><v-icon icon="fa:fa-solid fa-cancel" end color="secondary" size="small"></v-icon
+                ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
                 >Cancel
               </v-btn></v-col
             >
@@ -40,7 +40,6 @@
               <v-btn
                 label="Delete"
                 color="error"
-                text
                 :loading="isDeleting"
                 block
                 @click="deleteInventory"
@@ -55,10 +54,11 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import axios from 'axios'
+
 export default defineComponent({
   name: 'DeleteInventory',
   props: {
@@ -72,34 +72,35 @@ export default defineComponent({
     deleteDialog: false,
     clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
     isDeleting: false,
-    isdarkmode: localStorage.getItem('isdarkmode') === 'true' ? true : false
+    isdarkmode: localStorage.getItem('isdarkmode') === 'true' ? true : false,
+    localUrl: 'http://localhost:3000/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   methods: {
     async deleteInventory() {
+      console.log('meow', this.inventory_id)
+      console.log(localStorage.getItem('employeeId'))
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        data: {
+          currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
       const apiURL = await this.getRequestUrl()
-      await axios
-        .delete(`${apiURL}inventory/${this.inventory_id}`, config)
-        .then(() => {
-          alert('Inventory deleted')
-          this.deleteDialog = false
-        })
-        .catch(() => {
-          alert('An error occurred')
-        })
-        .finally(() => {
-          window.location.reload() // Consider removing this for SPA behavior
-        })
+      try {
+        await axios.delete(`${apiURL}inventory/${this.inventory_id}`, config)
+        console.log('Inventory item deleted successfully')
+      } catch (error) {
+        console.error(error)
+      }
     },
     close() {
       this.deleteDialog = false
     },
-    async isLocalAvailable(localUrl) {
+    async isLocalAvailable(localUrl: string) {
       try {
         const res = await axios.get(localUrl)
         return res.status >= 200 && res.status < 300
