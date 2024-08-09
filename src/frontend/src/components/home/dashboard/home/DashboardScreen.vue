@@ -89,6 +89,12 @@ export default {
         default:
           return ''
       }
+    },
+    created() {
+      const isLogged = !!localStorage.getItem('access_token')
+      if (!isLogged) {
+        this.$router.push({ name: 'splash' })
+      }
     }
   }
 }

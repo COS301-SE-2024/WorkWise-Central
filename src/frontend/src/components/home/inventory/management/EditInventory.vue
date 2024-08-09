@@ -119,10 +119,7 @@ export default {
       localEditedItem: this.editedItem,
       addDialog: false,
       isdarkmode: localStorage.getItem('isdarkmode') === 'true',
-      light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
-      dark_theme_text_color: 'color: #DCDBDB',
-      modal_dark_theme_color: '#2b2b2b',
-      modal_light_theme_color: '#FFFFFF',
+
       valid: false,
       name: '',
       description: '',
@@ -179,17 +176,26 @@ export default {
         return
       }
       console.log(this.inventory_id)
-      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
       const apiURL = await this.getRequestUrl()
 
       const data = {
-        name: this.localEditedItem.name,
-        description: this.localEditedItem.description,
-        costPrice: this.convertToNumber(this.localEditedItem.costPrice),
-        currentStockLevel: this.convertToNumber(this.localEditedItem.currentStockLevel),
-        reorderLevel: this.convertToNumber(this.localEditedItem.reorderLevel),
-        companyId: localStorage.getItem('currentCompany')
+        updateInventoryDto: {
+          name: this.localEditedItem.name,
+          description: this.localEditedItem.description,
+          costPrice: this.convertToNumber(this.localEditedItem.costPrice),
+          currentStockLevel: this.convertToNumber(this.localEditedItem.currentStockLevel),
+          reorderLevel: this.convertToNumber(this.localEditedItem.reorderLevel),
+          companyId: localStorage.getItem('currentCompany')
+        },
+        currentEmployeeId: localStorage.getItem('employeeId')
       }
+      console.log(data)
       try {
         const response = await axios.patch(`${apiURL}inventory/${this.inventory_id}`, data, config)
         console.log(response)
@@ -199,6 +205,7 @@ export default {
           detail: 'Inventory updated successfully',
           life: 3000
         })
+        this.addDialog = false
       } catch (error) {
         console.error(error)
         this.$toast.add({
@@ -207,9 +214,6 @@ export default {
           detail: 'An error occurred while updating the inventory',
           life: 3000
         })
-      } finally {
-        this.addDialog = false
-        window.location.reload()
       }
     },
     allRulesPass() {

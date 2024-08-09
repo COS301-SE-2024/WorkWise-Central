@@ -159,27 +159,31 @@ export default defineComponent({
       })
     },
     async createInventoryItem() {
-      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+      }
       const apiURL = await this.getRequestUrl()
 
       const data = {
-        name: this.name,
-        description: this.description,
-        costPrice: this.convertToNumber(this.costPrice),
-        currentStockLevel: this.convertToNumber(this.currentStockLevel),
-        reorderLevel: this.convertToNumber(this.reorderLevel),
-        companyId: localStorage.getItem('currentCompany')
+        createInventoryDto: {
+          name: this.name,
+          description: this.description,
+          costPrice: this.convertToNumber(this.costPrice),
+          currentStockLevel: this.convertToNumber(this.currentStockLevel),
+          reorderLevel: this.convertToNumber(this.reorderLevel),
+          companyId: localStorage.getItem('currentCompany') || ''
+        },
+        currentEmployeeId: localStorage.getItem('employeeId') || '' // Ensure a fallback if the item doesn't exist
       }
       try {
+        console.log(data)
         const response = await axios.post(`${apiURL}inventory/create`, data, config)
         console.log(response)
         alert('Inventory added')
+        this.addDialog = false
       } catch (error) {
         console.error(error)
         alert('Inventory not added')
-      } finally {
-        this.addDialog = false
-        window.location.reload()
       }
     },
     convertToNumber(value: string) {
