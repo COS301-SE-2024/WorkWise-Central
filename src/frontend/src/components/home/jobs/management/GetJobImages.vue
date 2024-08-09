@@ -4,7 +4,12 @@
       <v-col cols="12">
         <v-row>
           <v-col offset="1" cols="10" class="pt-0">
-            <v-img :src="image.src" :min-height="auto" :min-width="auto" @click="openImageOverlay(index)"></v-img>
+            <v-img
+              :src="image.src"
+              :min-height="auto"
+              :min-width="auto"
+              @click="openImageOverlay(index)"
+            ></v-img>
           </v-col>
           <v-col cols="1" class="pt-0">
             <v-btn @click="openImageActionsDialog(index)">
@@ -90,71 +95,71 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
-const images = ref([]);
-const newFile = ref(null);
-const imageOverlay = ref(false);
-const overlayImageSrc = ref('');
+const images = ref([])
+const newFile = ref(null)
+const imageOverlay = ref(false)
+const overlayImageSrc = ref('')
 
 const handleFileChange = () => {
-  const file = newFile.value;
+  const file = newFile.value
   if (file) {
-    const reader = new FileReader();
+    const reader = new FileReader()
     reader.onload = (e) => {
       images.value.push({
         src: e.target.result,
-        dialog: false,
-      });
-    };
-    reader.readAsDataURL(file);
-    newFile.value = null;
+        dialog: false
+      })
+    }
+    reader.readAsDataURL(file)
+    newFile.value = null
   }
-};
+}
 
 const openImageActionsDialog = (index) => {
-  images.value[index].dialog = true;
-};
+  images.value[index].dialog = true
+}
 
 const openImageOverlay = (index) => {
-  overlayImageSrc.value = images.value[index].src;
-  imageOverlay.value = true;
-};
+  overlayImageSrc.value = images.value[index].src
+  imageOverlay.value = true
+}
 
 const commentOnImage = (index) => {
-  alert(`Comment on Image ${index + 1}`);
-};
+  alert(`Comment on Image ${index + 1}`)
+}
 
 const changeImage = (index) => {
-  images.value[index].dialog = false;
-  const fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.accept = 'image/*';
+  images.value[index].dialog = false
+  const fileInput = document.createElement('input')
+  fileInput.type = 'file'
+  fileInput.accept = 'image/*'
   fileInput.onchange = (event) => {
-    const file = event.target.files[0];
+    const file = event.target.files[0]
     if (file) {
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onload = (e) => {
-        images.value[index].src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+        images.value[index].src = e.target.result
+      }
+      reader.readAsDataURL(file)
     }
-  };
-  fileInput.click();
-};
+  }
+  fileInput.click()
+}
 
 const downloadImage = (index) => {
-  const link = document.createElement('a');
-  link.href = images.value[index].src;
-  link.download = `downloaded-image-${index + 1}`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
+  const link = document.createElement('a')
+  link.href = images.value[index].src
+  link.download = `downloaded-image-${index + 1}`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
 
 const deleteImage = (index) => {
-  images.value.splice(index, 1);
-};
+  images.value.splice(index, 1)
+}
 </script>
 
 <style scoped>

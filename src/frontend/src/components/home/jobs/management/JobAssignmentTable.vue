@@ -4,12 +4,7 @@
       <v-col cols="12">
         <v-row justify="center">
           <v-col cols="12" xs="12" sm="12" md="12" class="pa-0">
-            <v-card
-              height="auto"
-              class="pa-11 ma-0 bg-cardColor"
-              rounded="md"
-              border="md"
-            >
+            <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
               <v-card-title
                 class="d-flex align-center pe-2"
                 style="font-family: Nunito, sans-serif; font-size: 25px; font-weight: lighter"
@@ -19,14 +14,10 @@
                     <v-icon icon="fa: fa-solid fa-briefcase" size="x-small"></v-icon>
                     <v-label
                       class="ms-2 text-h4 text-headingTextColor"
-                      style="
-                          font-size: 15px;
-                          font-family: Nunito, sans-serif;
-                          font-weight: lighter;
-                        "
+                      style="font-size: 15px; font-family: Nunito, sans-serif; font-weight: lighter"
                       height="auto"
                       width="auto"
-                    >Job Details
+                      >Job Details
                     </v-label>
                   </v-col>
 
@@ -210,34 +201,28 @@ interface Job {
     }
     private: boolean
   }
-  client: {
-    registrationNumber?: string
+  clientId:{
+    createdAt: string
     details: {
-      firstName: string
-      lastName: string
-      preferredLanguage?: string
-      contactInfo: {
-        phoneNumber: string
-        email: string
-      }
-      address?: {
-        street: string
-        province: string
-        suburb: string
+      address: {
         city: string
         postalCode: string
-        complex?: string
-        houseNumber?: string
+        province: string
+        street: string
+        suburb: string
       }
-      vatNumber?: string
       companyId: string
-      idNumber?: string
-      type?: string
+      contactInfo: {
+        email: string
+        phoneNumber: string
+      }
+      firstName: string
+      idNumber: string
+      lastName: string
+      preferredLanguage: string
     }
-    createdAt: string
-    updatedAt: string
-    deletedAt: string
   }
+
   assignedBy: {
     roleId: string
     superiorId?: string
@@ -370,7 +355,17 @@ const fetchData = async () => {
       `${apiUrl}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
       config
     )
-    detailedJobData.value = response.data.data
+    if (response.status > 199 && response.status < 300) {
+      detailedJobData.value = response.data.data
+      console.log(response)
+    } else {
+      toast.add({
+        severity: 'error',
+        summary: 'Fetch Data Error',
+        detail: 'Failed to fetch data',
+        life: 3000
+      })
+    }
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -393,9 +388,15 @@ const closeDialog = () => {
 
 const confirmDelete = async () => {
   if (selectedJob.value) {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+      }
+    }
+    const apiUrl = await getRequestUrl()
     try {
-      const url = await getRequestUrl()
-      await axios.delete(`${url}job/${selectedJob.value._id}`)
+      await axios.delete(`${apiUrl}job/${selectedJob.value._id}`, config)
       detailedJobData.value = detailedJobData.value.filter(
         (job) => job._id !== selectedJob.value!._id
       )
@@ -423,8 +424,8 @@ onMounted(fetchData)
 const getRowProps = ({ index }: any) => {
   return {
     class: index % 2 ? 'bg-secondRowColor' : ''
-  };
-};
+  }
+}
 
 const getStatusColor = (status: string) => {
   switch (status) {

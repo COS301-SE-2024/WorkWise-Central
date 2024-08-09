@@ -8,7 +8,7 @@
         <v-checkbox
           v-model="item.checked"
           :label="item.text"
-          :class="{ 'strikethrough': item.checked }"
+          :class="{ strikethrough: item.checked }"
           class="pt-0 pb-0"
           dense
           hide-details
@@ -25,10 +25,7 @@
             origin="top center"
           >
             <template v-slot:activator="{ props: activatorProps }">
-              <v-btn
-                @click="openCheckActionsDialog(index)"
-                v-bind="activatorProps"
-              >
+              <v-btn @click="openCheckActionsDialog(index)" v-bind="activatorProps">
                 <v-icon right>
                   {{ 'fa: fa-solid fa-ellipsis-h' }}
                 </v-icon>
@@ -76,20 +73,20 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed } from 'vue'
 
-const checklistItems = ref([]);
-const newItemText = ref('');
+const checklistItems = ref([])
+const newItemText = ref('')
 
 const progress = computed(() => {
-  const totalTasks = checklistItems.value.length;
-  const completedTasks = checklistItems.value.filter(item => item.checked).length;
-  return totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100;
-});
+  const totalTasks = checklistItems.value.length
+  const completedTasks = checklistItems.value.filter((item) => item.checked).length
+  return totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100
+})
 
 const openCheckActionsDialog = (index) => {
-  checklistItems.value[index].dialog = true;
-};
+  checklistItems.value[index].dialog = true
+}
 
 function addItem() {
   if (newItemText.value.trim() !== '') {
@@ -97,14 +94,14 @@ function addItem() {
       text: newItemText.value,
       checked: false,
       date: new Date().toISOString(),
-      dialog: false,
-    });
-    newItemText.value = '';
+      dialog: false
+    })
+    newItemText.value = ''
   }
 }
 
 function deleteItem(index) {
-  checklistItems.value.splice(index, 1);
+  checklistItems.value.splice(index, 1)
 }
 </script>
 
