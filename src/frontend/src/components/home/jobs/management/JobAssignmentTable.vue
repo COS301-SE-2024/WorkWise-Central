@@ -164,8 +164,8 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <Toast />
   </v-container>
+  <Toast />
 </template>
 
 <script setup lang="ts">
@@ -174,7 +174,10 @@ import axios from 'axios'
 import AddJob from './AddJob.vue'
 import ManagerJobCard from './ManagerJobCard.vue'
 import ViewJob from './ViewJob.vue'
+import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+
+const toast = useToast()
 
 // Define the type for the job object
 interface Job {
@@ -308,8 +311,6 @@ const deleteDialog = ref(false)
 const detailedJobData = ref<Job[]>([])
 const search = ref('')
 
-const toast = useToast()
-
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
 const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
@@ -400,12 +401,7 @@ const confirmDelete = async () => {
       detailedJobData.value = detailedJobData.value.filter(
         (job) => job._id !== selectedJob.value!._id
       )
-      toast.add({
-        severity: 'success',
-        summary: 'Job Deleted',
-        detail: 'Job deleted successfully',
-        life: 3000
-      })
+      closeDialog()
     } catch (error) {
       toast.add({
         severity: 'error',
@@ -414,12 +410,26 @@ const confirmDelete = async () => {
         life: 3000
       })
     } finally {
-      deleteDialog.value = false
+      localStorage.setItem('jobDeleted', 'true')
+      window.location.reload()
     }
   }
 }
 
-onMounted(fetchData)
+onMounted(() => {
+  fetchData();
+  const jobDeleted = localStorage.getItem('jobDeleted');
+
+  if (jobDeleted === 'true') {
+    toast.add({
+      severity: 'success',
+      summary: 'Job Deleted',
+      detail: 'Job deleted successfully',
+      life: 3000
+    });
+    localStorage.removeItem('jobDeleted');
+  }
+});
 
 const getRowProps = ({ index }: any) => {
   return {

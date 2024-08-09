@@ -11,18 +11,8 @@
 
     <!-- Label List -->
     <v-list>
-      <v-list-item v-for="label in filteredLabels" :key="label.id" class="d-flex align-center">
+      <v-list-item v-for="label in filteredLabels" :key="label.label" class="d-flex align-center">
         <v-row align="center" no-gutters class="w-100">
-          <!-- Checkbox -->
-          <v-col cols="auto">
-            <v-checkbox
-              v-model="label.active"
-              class="ma-0"
-              @change="toggleLabel(label)"
-              hide-details
-            ></v-checkbox>
-          </v-col>
-
           <!-- Color Block with Label Text -->
           <v-col cols="auto">
             <div
@@ -43,7 +33,7 @@
                   font-weight: bold;
                 "
               >
-                {{ label.title }}
+                {{ label.label }} - Priority: {{ label.priorityLevel }}
               </span>
             </div>
           </v-col>
@@ -73,6 +63,9 @@
           <!-- Title Input -->
           <v-label class="pb-0">Title</v-label>
           <v-text-field v-model="labelTitle" outlined dense class="mt-4 pt-0"></v-text-field>
+
+          <v-label class="pb-0">Priority Level (Optional)</v-label>
+          <v-text-field v-model.number="labelPriority" outlined dense class="mt-4 pt-0"></v-text-field>
 
           <!-- Color Palette -->
           <v-row>
@@ -118,22 +111,54 @@
   </v-card>
 </template>
 
-<script setup>
+
+<script setup lang="ts">
 import { ref, computed } from 'vue'
+import axios from 'axios'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
 
-const searchQuery = ref('')
-const dialog = ref(false)
-const dialogTitle = ref('Create Label')
-const labelTitle = ref('')
-const selectedColor = ref('#ffffff')
+const toast = useToast()
 
-const labels = ref([
-  { id: 1, title: 'Label 1', color: '#ff0000', active: false },
-  { id: 2, title: 'Label 2', color: '#00ff00', active: true }
+// Define types for the label and color
+interface Label {
+  companyId: string
+  label: string
+  priorityLevel?: number
+  color: string
+}
+
+const searchQuery = ref<string>('')
+const dialog = ref<boolean>(false)
+const dialogTitle = ref<string>('Create Label')
+const labelTitle = ref<string>('')
+const labelPriority = ref<number | undefined>(undefined) // Allow undefined for optional field
+const selectedColor = ref<string>('#ffffff')
+
+// API URLs
+const localUrl: string = 'http://localhost:3000/'
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
+
+// Utility functions
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url)
+    return res.status < 300 && res.status > 199
+  } catch (error) {
+    return false
+  }
+}
+
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
+
+const labels = ref<Label[]>([
   // Add more labels here
 ])
 
-const colorOptions = ref([
+const colorOptions = ref<string[]>([
   '#FFB74D',
   '#FFD54F',
   '#FFF176',
@@ -166,55 +191,99 @@ const colorOptions = ref([
   '#FFEE58'
 ])
 
-const filteredLabels = computed(() =>
+const filteredLabels = computed<Label[]>(() =>
   labels.value.filter((label) =>
-    label.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+    label.label.toLowerCase().includes(searchQuery.value.toLowerCase())
   )
 )
 
 const openCreateDialog = () => {
   dialogTitle.value = 'Create Label'
   labelTitle.value = ''
+  labelPriority.value = undefined
   selectedColor.value = '#ffffff'
   dialog.value = true
 }
 
-const openEditDialog = (label) => {
+const openEditDialog = (label: Label) => {
   dialogTitle.value = 'Edit Label'
-  labelTitle.value = label.title
+  labelTitle.value = label.label
+  labelPriority.value = label.priorityLevel
   selectedColor.value = label.color
   dialog.value = true
 }
 
-const saveLabel = () => {
+const saveLabel = async () => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+  const apiUrl = await getRequestUrl()
+
   if (dialogTitle.value === 'Create Label') {
-    labels.value.push({
-      id: labels.value.length + 1,
-      title: labelTitle.value,
-      color: selectedColor.value,
-      active: false
-    })
+    try {
+      const tag: Label = {
+        companyId: localStorage.getItem('currentCompany') || '',
+        label: labelTitle.value,
+        color: selectedColor.value,
+        priorityLevel: labelPriority.value
+      }
+
+      let response;
+      if (typeof labelPriority.value === 'number') {
+        response = await axios.post(`${apiUrl}job/tags/p`, tag, config)
+      } else {
+        response = await axios.post(`${apiUrl}job/tags/add`, tag, config)
+      }
+      console.log(response)
+
+      if (response.status > 199 && response.status < 300) {
+        labels.value.push(tag)
+        addTagSuccess()
+      } else {
+        addTagFailure()
+      }
+    } catch (error) {
+      console.log('Failed to create tag', error)
+    }
   } else {
-    // Find the label being edited and update its properties
-    const label = labels.value.find((l) => l.id === labels.value.length + 1)
+    // Find the label being edited by its name and update its properties
+    const label = labels.value.find((l) => l.label === labelTitle.value)
     if (label) {
-      label.title = labelTitle.value
+      label.label = labelTitle.value
       label.color = selectedColor.value
+      label.priorityLevel = labelPriority.value // Update priorityLevel
     }
   }
   dialog.value = false
 }
 
-const toggleLabel = (label) => {
-  label.active = !label.active
+const addTagSuccess = () => {
+  toast.add({
+    severity: 'success',
+    summary: 'Tag added successfully',
+    detail: 'Tag added successfully',
+    life: 300
+  })
 }
 
-const deleteLabel = (label) => {
-  labels.value = labels.value.filter((l) => l.id !== label.id)
+const addTagFailure = () => {
+  toast.add({
+    severity: 'error',
+    summary: 'Failed to add tag',
+    detail: 'Failed to add tag',
+    life: 300
+  })
+}
+
+const deleteLabel = (label: Label) => {
+  labels.value = labels.value.filter((l) => l.label !== label.label)
 }
 
 // Utility function to determine the best text color for the selected background
-const getContrastingColor = (bgColor) => {
+const getContrastingColor = (bgColor: string): string => {
   const color = bgColor.slice(1) // Remove '#'
   const rgb = parseInt(color, 16) // Convert hex to RGB
   const r = (rgb >> 16) & 0xff
@@ -224,7 +293,3 @@ const getContrastingColor = (bgColor) => {
   return brightness > 125 ? '#000' : '#fff' // Return black or white
 }
 </script>
-
-<style scoped>
-/* Add any additional styles here */
-</style>
