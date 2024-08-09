@@ -78,7 +78,7 @@
                       <v-label
                         class="h5 font-weight-regular d-flex justify-center bg-cardColor text-secondary"
                       ></v-label>
-                      <Panel style="background-color: ">
+                      <Panel style="background-color:">
                         <template #header>
                           <div class="flex items-center gap-2">
                             <v-icon
@@ -148,7 +148,6 @@
                           {{ notification.company }}
                         </p>
                       </Panel>
-                      <v-divider></v-divider>
                     </v-list-item>
                   </v-list>
                 </v-card-text>
@@ -168,7 +167,7 @@
           </v-row>
         </v-col>
         <v-col cols="12" lg="2">
-          <v-card class="pa-0 ma-2" elevation="1">
+          <v-card class="pa-0 ma-2" elevation="0" border="sm">
             <v-list class="bg-cardColor">
               <v-list-item
                 v-for="(item, index) in items"
@@ -223,6 +222,7 @@ import axios from 'axios'
 export default {
   data() {
     return {
+      menu: false,
       notifications: [
         {
           id: 1,
