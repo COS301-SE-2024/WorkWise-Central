@@ -116,8 +116,8 @@ export class RoleService {
 
     console.log('role does not exist already');
 
-    //Checking that the role is not Default or owner
-    if (roleToBeUpdate.roleName === 'Owner' || roleToBeUpdate.roleName === 'Default') {
+    //Checking that the role is not Worker or owner
+    if (roleToBeUpdate.roleName === 'Owner' || roleToBeUpdate.roleName === 'Worker') {
       return new ValidationResult(false, `Not allowed to edit this role`);
     }
     console.log('All good');
@@ -159,9 +159,9 @@ export class RoleService {
     const roles = await this.roleRepository.findAllInCompany(companyId);
     console.log('role: ', roles);
     // let result;
-    // //Remove owner role and default role
+    // //Remove owner role and Worker role
     // roles.forEach((role) => {
-    //   if (role.roleName !== 'Owner' && role.roleName !== 'Default') {
+    //   if (role.roleName !== 'Owner' && role.roleName !== 'Worker') {
     //     result.push(role);
     //   }
     // });
@@ -178,10 +178,10 @@ export class RoleService {
     const roles = await this.roleRepository.findAllInCompany(companyId);
     // console.log('role: ', roles);
     const result = [];
-    //Remove owner role and default role
+    //Remove owner role and Worker role
     roles.forEach((role) => {
       console.log('In for loop');
-      if (role.roleName !== 'Owner' && role.roleName !== 'Default') {
+      if (role.roleName !== 'Owner' && role.roleName !== 'Worker') {
         console.log('In if');
         result.push(role);
       }
@@ -272,15 +272,15 @@ export class RoleService {
     if (!role) {
       throw new NotFoundException('Role not found');
     }
-    //Checking that the role is not Owner or Default
-    if (role.roleName === 'Owner' || role.roleName === 'Default') {
+    //Checking that the role is not Owner or Worker
+    if (role.roleName === 'Owner' || role.roleName === 'Worker') {
       throw new Error('Not allowed to remove this role');
     }
     return this.roleRepository.remove(id);
   }
 
   async createDefaultRoles(companyId: Types.ObjectId) {
-    console.log('Creating default roles');
+    console.log('Creating Worker roles');
     // Owner role
     const ownerRoleDto = new CreateRoleDto();
     ownerRoleDto.companyId = companyId;
@@ -310,6 +310,8 @@ export class RoleService {
     adminRoleDto.permissionSuite.push('edit all clients');
     adminRoleDto.permissionSuite.push('add a new clients');
     adminRoleDto.permissionSuite.push('remove any clients');
+    adminRoleDto.permissionSuite.push('view all inventory');
+    adminRoleDto.permissionSuite.push('record job details');
     adminRoleDto.permissionSuite.push('company settings');
     console.log('checkpoint 4');
 
@@ -325,21 +327,14 @@ export class RoleService {
     foremanRoleDto.roleName = 'Foreman';
     foremanRoleDto.permissionSuite.push('view employees under me');
     foremanRoleDto.permissionSuite.push('edit employees under me');
-    foremanRoleDto.permissionSuite.push('remove employees under me');
     foremanRoleDto.permissionSuite.push('view jobs under me');
-    foremanRoleDto.permissionSuite.push('view jobs assigned to me');
     foremanRoleDto.permissionSuite.push('edit jobs that are under me');
-    foremanRoleDto.permissionSuite.push('edit jobs that are assigned to me');
-    foremanRoleDto.permissionSuite.push('remove job under me');
-    foremanRoleDto.permissionSuite.push('remove job assigned to me');
+    foremanRoleDto.permissionSuite.push('add a new job');
     foremanRoleDto.permissionSuite.push('view clients under me');
-    foremanRoleDto.permissionSuite.push('view clients that are assigned to me');
     foremanRoleDto.permissionSuite.push('edit clients that are under me');
-    foremanRoleDto.permissionSuite.push('edit clients that are assigned to me');
-    foremanRoleDto.permissionSuite.push('remove clients under me');
-    foremanRoleDto.permissionSuite.push('remove clients assigned to me');
+    foremanRoleDto.permissionSuite.push('add a new clients');
+    foremanRoleDto.permissionSuite.push('view all inventory');
     foremanRoleDto.permissionSuite.push('record job details');
-
     newRole = await this.create(foremanRoleDto);
     await this.roleRepository.save(newRole);
 
@@ -348,6 +343,7 @@ export class RoleService {
     const teamRoleDto = new CreateRoleDto();
     teamRoleDto.companyId = companyId;
     teamRoleDto.roleName = 'Team leader';
+
     teamRoleDto.permissionSuite.push('view employees under me');
     teamRoleDto.permissionSuite.push('view jobs under me');
     teamRoleDto.permissionSuite.push('view jobs assigned to me');
@@ -363,6 +359,7 @@ export class RoleService {
     const inventoryRoleDto = new CreateRoleDto();
     inventoryRoleDto.companyId = companyId;
     inventoryRoleDto.roleName = 'Inventory manager';
+
     inventoryRoleDto.permissionSuite.push('view all inventory');
     inventoryRoleDto.permissionSuite.push('edit all inventory');
     inventoryRoleDto.permissionSuite.push('delete inventory item');
@@ -384,17 +381,6 @@ export class RoleService {
     newRole = await this.create(workerRoleDto);
     await this.roleRepository.save(newRole);
 
-    console.log('Worker role created');
-    // Default role
-    const defaultRoleDto = new CreateRoleDto();
-    defaultRoleDto.companyId = companyId;
-    defaultRoleDto.roleName = 'Default';
-    defaultRoleDto.permissionSuite.push('view jobs assigned to me');
-    defaultRoleDto.permissionSuite.push('view clients that are assigned to me');
-    defaultRoleDto.permissionSuite.push('record job details');
-
-    newRole = await this.create(defaultRoleDto);
-    await this.roleRepository.save(newRole);
     console.log('Worker role created');
   }
 }
