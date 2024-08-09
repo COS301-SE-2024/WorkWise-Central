@@ -217,7 +217,7 @@
 <script lang="ts">
 import Toast from 'primevue/toast'
 import Panel from 'primevue/panel'
-import Avatar from 'primevue/avatar'
+
 import axios from 'axios'
 export default {
   data() {
@@ -437,7 +437,7 @@ export default {
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
   },
-  components: { Toast, Panel, Avatar },
+  components: { Toast, Panel },
   computed: {
     filteredNotifications() {
       // Filter notifications based on the current inbox

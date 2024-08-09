@@ -85,6 +85,7 @@ import CreateTeam from './CreateTeam.vue'
 import ViewTeam from './ViewTeam.vue'
 import UpdateTeam from './UpdateTeam.vue'
 import DeleteTeam from './DeleteTeam.vue'
+import axios from 'axios'
 interface Team {
   id: string
   companyId: string
@@ -107,32 +108,7 @@ export default defineComponent({
         { text: 'Current Job Assignments', value: 'currentJobAssignments' },
         { text: 'Actions', value: 'actions', sortable: false }
       ],
-      teamItems: [
-        {
-          id: 1,
-          companyId: 1,
-          teamName: 'Development Team',
-          teamMembers: [
-            /* Member objects here */
-          ],
-          teamLeaderId: 101,
-          currentJobAssignments: [
-            /* Assignment objects here */
-          ]
-        },
-        {
-          id: 2,
-          companyId: 1,
-          teamName: 'Marketing Team',
-          teamMembers: [
-            /* Member objects here */
-          ],
-          teamLeaderId: 102,
-          currentJobAssignments: [
-            /* Assignment objects here */
-          ]
-        }
-      ],
+      teamItems: [],
 
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       selectedItem: {},
@@ -154,7 +130,38 @@ export default defineComponent({
       this.selectedItem = item
       this.selectedItemName = item.teamName
       this.selectedItemID = item.id
+    },
+    async getTeams() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const response = await axios.get(`${apiURL}team/all`, config)
+        console.log(response.data.data)
+        this.teamItems = response.data.data
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
+  },
+  mounted() {
+    this.getTeams()
   }
 })
 </script>

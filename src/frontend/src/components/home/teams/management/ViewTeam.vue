@@ -5,7 +5,7 @@
         ><v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>View</v-btn
       >
     </template>
-    <v-card>
+    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
       <v-card-title>
         <v-icon icon="fa:fa-solid fa-users"></v-icon>
         <span>Team Details</span>
@@ -81,7 +81,7 @@ export default defineComponent({
   data() {
     return {
       dialog: false,
-      isdarkmode: localStorage.getItem('isdarkmode') === 'true'
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false
     }
   },
   methods: {

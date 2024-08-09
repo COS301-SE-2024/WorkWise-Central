@@ -18,7 +18,7 @@
         Create Team</v-btn
       >
     </template>
-    <v-card>
+    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-users"></v-icon>
         Create Team
@@ -105,7 +105,7 @@ export default defineComponent({
   },
   data: () => ({
     addDialog: false,
-    isdarkmode: localStorage.getItem('isdarkmode') === 'true' ? true : false,
+    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     valid: false,
     teamName: '',
     teamMembers: '',

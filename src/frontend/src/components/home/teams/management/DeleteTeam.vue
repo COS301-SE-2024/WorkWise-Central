@@ -10,7 +10,7 @@
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
       >
     </template>
-    <v-card>
+    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
       <v-card-title>
         <v-icon icon="fa:fa-solid fa-users"></v-icon>
         <span>Delete Team</span>
@@ -65,7 +65,7 @@ export default defineComponent({
   data: () => ({
     deleteDialog: false,
     isDeleting: false,
-    isdarkmode: localStorage.getItem('isdarkmode') === 'true',
+    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),

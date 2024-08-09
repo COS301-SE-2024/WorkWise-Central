@@ -14,7 +14,7 @@
         >Edit</v-btn
       >
     </template>
-    <v-card>
+    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
         Edit Inventory
@@ -119,7 +119,7 @@ export default {
     return {
       localEditedItem: this.editedItem,
       addDialog: false,
-      isdarkmode: localStorage.getItem('isdarkmode') === 'true',
+      isdarkmode: localStorage.getItem('theme') === 'true',
 
       valid: false,
       name: '',
