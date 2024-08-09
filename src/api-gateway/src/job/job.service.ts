@@ -16,7 +16,9 @@ import {
   RemoveTaskDto,
   UpdateCommentDto,
   UpdateJobDto,
+  UpdatePriorityTag,
   UpdateStatus,
+  UpdateTag,
   UpdateTaskDto,
 } from './dto/update-job.dto';
 import { FlattenMaps, Types } from 'mongoose';
@@ -31,7 +33,7 @@ import { JobAssignDto, JobAssignGroupDto, jobAssignResultDto, TaskAssignDto } fr
 import { JobTagRepository } from './job-tag.repository';
 import { CreatePriorityTagDto, CreateStatusDto, CreateTagDto } from './dto/create-tag.dto';
 import { JobPriorityTag, JobTag } from './entities/job-tag.entity';
-import { DeleteStatusDto, DeleteTagDto } from './dto/edit-tag.dto';
+import { DeleteStatusDto, DeleteTagDto, UpdatePriorityTagDto, UpdateTagDto } from './dto/edit-tag.dto';
 import { Employee } from '../employee/entities/employee.entity';
 import { JobStatus } from './entities/job-status.entity';
 import { ciEquals } from '../utils/Utils';
@@ -515,7 +517,7 @@ export class JobService {
     return this.jobTagRepository.findAllPriorityTagsInCompany(companyId);
   }
 
-  async addJobTagToCompany(userId: Types.ObjectId, createTagDto: CreateTagDto): Promise<boolean> {
+  async addJobTagToCompany(userId: Types.ObjectId, createTagDto: CreateTagDto): Promise<Job & { _id: Types.ObjectId }> {
     /// Validation
     const user = await this.usersService.getUserById(userId);
     if (!user) throw new NotFoundException('User not found');
@@ -539,7 +541,7 @@ export class JobService {
     const newTag = new JobTag(createTagDto.label, createTagDto.colour, createTagDto.companyId);
     const savedDoc = await this.jobTagRepository.addJobTagToCompany(newTag);
     console.log(savedDoc);
-    return savedDoc != null;
+    return savedDoc.toObject();
   }
 
   /*  async addJobStatusToCompany(
@@ -823,12 +825,22 @@ export class JobService {
     return this.jobRepository.removeTask(removeTaskDto.jobId, removeTaskDto.taskId);
   }
 
-  async editTaskInJob(userId: Types.ObjectId, updateTaskDto: UpdateTaskDto) {
+  async editTaskInJob(userId: Types.ObjectId, updateTaskDto: UpdateTaskDto): Promise<Job & { _id: Types.ObjectId }> {
     await this.userIdMatchesEmployeeId(userId, updateTaskDto.employeeId);
 
     const jobExists = await this.jobRepository.exists(updateTaskDto.jobId);
     if (!jobExists) throw new NotFoundException('Job not found');
 
     return this.jobRepository.editTask(updateTaskDto.jobId, updateTaskDto.taskId, updateTaskDto.title);
+  }
+
+  async updateTag(userId: Types.ObjectId, updateTagDto: UpdateTagDto) {
+    const updates: UpdateTag = new UpdateTag(updateTagDto);
+    return this.jobTagRepository.updateTag(updateTagDto.tagId, updates);
+  }
+
+  async updatePriorityTag(userId: Types.ObjectId, updatePriorityTagDto: UpdatePriorityTagDto) {
+    const updates: UpdatePriorityTag = new UpdatePriorityTag(updatePriorityTagDto);
+    return this.jobTagRepository.updatePriorityTag(updatePriorityTagDto.priorityTagId, updates);
   }
 }
