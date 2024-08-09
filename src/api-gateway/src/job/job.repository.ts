@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
-import { Job } from './entities/job.entity';
+import { Comment, Job, Task } from './entities/job.entity';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { Employee } from '../employee/entities/employee.entity';
 import { Company } from '../company/entities/company.entity';
 import { Team } from '../team/entities/team.entity';
 import { isNotDeleted } from '../shared/soft-delete';
-import { Comment } from './entities/job.entity';
 import { currentDate } from '../utils/Utils';
 
 @Injectable()
@@ -214,28 +213,28 @@ export class JobRepository {
       .exec();
   }
 
-  /*  async assignEmployees(employeeIds: Types.ObjectId[], jobId: Types.ObjectId) {
-    return await this.jobModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            {
-              _id: jobId,
-            },
-            isNotDeleted,
-          ],
-        },
-        {
-          $push: { 'assignedEmployees.employeeIds': { $each: employeeIds } },
-          updatedAt: new Date(),
-        },
-        {
-          new: true,
-        },
-      )
-      .lean()
+  async assignEmployeeToTaskItem(
+    employeeId: Types.ObjectId,
+    jobId: Types.ObjectId,
+    taskId: Types.ObjectId,
+    itemId: Types.ObjectId,
+  ) {
+    const job = await this.jobModel
+      .findOne({
+        $and: [
+          {
+            _id: jobId,
+          },
+          isNotDeleted,
+        ],
+      })
       .exec();
-  }*/
+
+    const task = job.taskList.find((t) => t._id.toString() === taskId.toString());
+    const item = task.items.find((i) => i._id.toString() === itemId.toString());
+    item.assignedEmployees.push(employeeId);
+    return (await job.save()).toObject();
+  }
 
   async unassignEmployee(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
     return await this.jobModel
@@ -288,96 +287,27 @@ export class JobRepository {
   }
 */
 
-  async assignEmployeeToTask(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
-    return await this.jobModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            {
-              _id: jobId,
-            },
-            isNotDeleted,
-          ],
-        },
-        {
-          $push: { 'taskList.assignedEmployees': employeeId },
-          updatedAt: new Date(),
-        },
-        {
-          new: true,
-        },
-      )
-      .lean()
+  async unassignEmployeeFromTaskItem(
+    employeeId: Types.ObjectId,
+    jobId: Types.ObjectId,
+    taskId: Types.ObjectId,
+    itemId: Types.ObjectId,
+  ) {
+    const job = await this.jobModel
+      .findOne({
+        $and: [
+          {
+            _id: jobId,
+          },
+          isNotDeleted,
+        ],
+      })
       .exec();
-  }
 
-  async assignEmployeesToTask(employeeIds: Types.ObjectId[], jobId: Types.ObjectId) {
-    return await this.jobModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            {
-              _id: jobId,
-            },
-            isNotDeleted,
-          ],
-        },
-        {
-          $push: { 'taskList.assignedEmployees': { $each: employeeIds } },
-          updatedAt: new Date(),
-        },
-        {
-          new: true,
-        },
-      )
-      .lean()
-      .exec();
-  }
-
-  async unassignEmployeeFromTask(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
-    return await this.jobModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            {
-              _id: jobId,
-            },
-            isNotDeleted,
-          ],
-        },
-        {
-          $pull: { 'taskList.assignedEmployees': employeeId },
-          updatedAt: new Date(),
-        },
-        {
-          new: true,
-        },
-      )
-      .lean()
-      .exec();
-  }
-
-  async unassignEmployeesFromTask(employeeIds: Types.ObjectId[], jobId: Types.ObjectId) {
-    return await this.jobModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            {
-              _id: jobId,
-            },
-            isNotDeleted,
-          ],
-        },
-        {
-          $pull: { 'taskList.assignedEmployees': { $in: employeeIds } },
-          updatedAt: new Date(),
-        },
-        {
-          new: true,
-        },
-      )
-      .lean()
-      .exec();
+    const task = job.taskList.find((t) => t._id.toString() === taskId.toString());
+    const item = task.items.find((i) => i._id.toString() === itemId.toString());
+    item.assignedEmployees = item.assignedEmployees.filter((e) => e._id.toString() !== employeeId.toString());
+    return (await job.save()).toObject();
   }
 
   async assignTeam(teamId: Types.ObjectId, jobId: Types.ObjectId) {
@@ -489,5 +419,57 @@ export class JobRepository {
     );
     console.log(newHistory);
     return newHistory;
+  }
+
+  async addTask(task: Task, jobId: Types.ObjectId) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        {
+          $push: { taskList: task },
+          updatedAt: new Date(),
+        },
+        {
+          new: true,
+        },
+      )
+      .lean()
+      .exec();
+  }
+
+  async removeTask(jobId: Types.ObjectId, taskId: Types.ObjectId) {
+    const job = await this.jobModel.findById({ _id: jobId });
+    const taskToRemove = job.taskList.find((t) => t._id.toString() === taskId.toString());
+    job.taskList = job.taskList.filter((t) => {
+      return t._id.toString() !== taskToRemove._id.toString();
+    });
+    job.updatedAt = new Date();
+    await job.save();
+    return job;
+  }
+
+  async editTask(jobId: Types.ObjectId, taskId: Types.ObjectId, newTitle: string) {
+    const job = await this.jobModel.findOne({
+      $and: [
+        {
+          _id: jobId,
+        },
+        isNotDeleted,
+      ],
+    });
+
+    const taskToUpdate = job.taskList.find((t) => t._id.toString() === taskId.toString());
+
+    taskToUpdate.title = newTitle;
+    job.updatedAt = new Date();
+    await job.save();
+    return job.toObject();
   }
 }

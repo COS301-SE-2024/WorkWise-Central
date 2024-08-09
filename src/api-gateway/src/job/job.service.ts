@@ -9,20 +9,31 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
-import { AddCommentDto, RemoveCommentDto, UpdateCommentDto, UpdateJobDto, UpdateStatus } from './dto/update-job.dto';
+import {
+  AddCommentDto,
+  AddTaskDto,
+  RemoveCommentDto,
+  RemoveTaskDto,
+  UpdateCommentDto,
+  UpdateJobDto,
+  UpdatePriorityTag,
+  UpdateStatus,
+  UpdateTag,
+  UpdateTaskDto,
+} from './dto/update-job.dto';
 import { FlattenMaps, Types } from 'mongoose';
-import { Comment, Job } from './entities/job.entity';
+import { Comment, Job, Task } from './entities/job.entity';
 import { UsersService } from '../users/users.service';
 import { CompanyService } from '../company/company.service';
 import { ClientService } from '../client/client.service';
 import { JobRepository } from './job.repository';
 import { EmployeeService } from '../employee/employee.service';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
-import { JobAssignDto, JobAssignGroupDto, jobAssignResultDto } from './dto/assign-job.dto';
+import { JobAssignDto, JobAssignGroupDto, jobAssignResultDto, TaskAssignDto } from './dto/assign-job.dto';
 import { JobTagRepository } from './job-tag.repository';
 import { CreatePriorityTagDto, CreateStatusDto, CreateTagDto } from './dto/create-tag.dto';
 import { JobPriorityTag, JobTag } from './entities/job-tag.entity';
-import { DeleteStatusDto, DeleteTagDto } from './dto/edit-tag.dto';
+import { DeleteStatusDto, DeleteTagDto, UpdatePriorityTagDto, UpdateTagDto } from './dto/edit-tag.dto';
 import { Employee } from '../employee/entities/employee.entity';
 import { JobStatus } from './entities/job-status.entity';
 import { ciEquals } from '../utils/Utils';
@@ -293,10 +304,102 @@ export class JobService {
     }
     /// Role-based stuff
     //TODO: Implement later
-
-    await this.employeeService.update(jobAssignDto.employeeId, jobAssignDto.employeeToAssignId._id, {});
-
+    await this.employeeService.addJobAssignment(jobAssignDto.employeeId, jobAssignDto.jobId);
     return await this.jobRepository.assignEmployee(jobAssignDto.employeeToAssignId, jobAssignDto.jobId);
+  }
+
+  async assignEmployeeToTaskItem(userId: Types.ObjectId, taskAssignDto: TaskAssignDto) {
+    ///Validation
+    await this.userIdMatchesEmployeeId(userId, taskAssignDto.employeeId);
+
+    const job = await this.getJobById(taskAssignDto.jobId);
+    if (!job) throw new NotFoundException('Job not found');
+
+    console.log(job);
+
+    if (!job.taskList) {
+      throw new ConflictException('Tasklist is Empty');
+    }
+
+    if (job.taskList) {
+      //This may break💀
+      for (const task of job.taskList) {
+        console.log(task);
+        if (task._id.toString() === taskAssignDto.taskId.toString()) {
+          for (const item of task.items) {
+            if (item.assignedEmployees) {
+              for (const assignedEmployee of item.assignedEmployees) {
+                if (assignedEmployee.toString() === taskAssignDto.employeeToAssignId.toString()) {
+                  throw new ConflictException('Already Assigned');
+                } else {
+                  console.log('looks good to me');
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    /// Role-based stuff
+    //TODO: Implement later
+
+    //TODO: Add Assigned Tasks
+    await this.employeeService.update(taskAssignDto.employeeId, taskAssignDto.employeeToAssignId._id, {});
+
+    return await this.jobRepository.assignEmployeeToTaskItem(
+      taskAssignDto.employeeToAssignId,
+      taskAssignDto.jobId,
+      taskAssignDto.taskId,
+      taskAssignDto.itemId,
+    );
+  }
+
+  async unassignEmployeeFromTaskItem(userId: Types.ObjectId, taskAssignDto: TaskAssignDto) {
+    ///Validation
+    await this.userIdMatchesEmployeeId(userId, taskAssignDto.employeeId);
+
+    const job = await this.getJobById(taskAssignDto.jobId);
+    if (!job) throw new NotFoundException('Job not found');
+
+    console.log(job);
+
+    if (!job.taskList) {
+      throw new ConflictException('Tasklist is Empty');
+    }
+
+    if (job.taskList) {
+      //This may break💀
+      for (const task of job.taskList) {
+        console.log(task);
+        if (task._id.toString() === taskAssignDto.taskId.toString()) {
+          for (const item of task.items) {
+            if (item.assignedEmployees) {
+              for (const assignedEmployee of item.assignedEmployees) {
+                if (assignedEmployee.toString() === taskAssignDto.employeeToAssignId.toString()) {
+                  throw new ConflictException('Already Assigned');
+                } else {
+                  console.log('looks good to me');
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    /// Role-based stuff
+    //TODO: Implement later
+
+    //TODO: Add Assigned Tasks
+    await this.employeeService.update(taskAssignDto.employeeId, taskAssignDto.employeeToAssignId._id, {});
+
+    return await this.jobRepository.unassignEmployeeFromTaskItem(
+      taskAssignDto.employeeToAssignId,
+      taskAssignDto.jobId,
+      taskAssignDto.taskId,
+      taskAssignDto.itemId,
+    );
   }
 
   async unassignEmployee(userId: Types.ObjectId, jobAssignDto: JobAssignDto) {
@@ -311,7 +414,7 @@ export class JobService {
     if (!alreadyAssigned) throw new ConflictException('Employee Not Assigned');
     /// Role-based stuff
     //TODO: Implement later
-
+    await this.employeeService.removeJobAssignment(jobAssignDto.employeeId, jobAssignDto.jobId);
     return await this.jobRepository.unassignEmployee(jobAssignDto.employeeToAssignId, jobAssignDto.jobId);
   }
 
@@ -412,7 +515,7 @@ export class JobService {
     return this.jobTagRepository.findAllPriorityTagsInCompany(companyId);
   }
 
-  async addJobTagToCompany(userId: Types.ObjectId, createTagDto: CreateTagDto): Promise<boolean> {
+  async addJobTagToCompany(userId: Types.ObjectId, createTagDto: CreateTagDto): Promise<Job & { _id: Types.ObjectId }> {
     /// Validation
     const user = await this.usersService.getUserById(userId);
     if (!user) throw new NotFoundException('User not found');
@@ -436,7 +539,7 @@ export class JobService {
     const newTag = new JobTag(createTagDto.label, createTagDto.colour, createTagDto.companyId);
     const savedDoc = await this.jobTagRepository.addJobTagToCompany(newTag);
     console.log(savedDoc);
-    return savedDoc != null;
+    return savedDoc.toObject();
   }
 
   /*  async addJobStatusToCompany(
@@ -697,5 +800,45 @@ export class JobService {
       });
     }
     return resultOfDelete;
+  }
+
+  async addJobTask(userId: Types.ObjectId, addTaskDto: AddTaskDto) {
+    await this.userIdMatchesEmployeeId(userId, addTaskDto.employeeId);
+
+    const jobExists = await this.jobRepository.exists(addTaskDto.jobId);
+    if (!jobExists) throw new NotFoundException('Job not found');
+
+    const task = new Task();
+    task.title = addTaskDto.title;
+
+    return this.jobRepository.addTask(task, addTaskDto.jobId);
+  }
+
+  async removeTaskFromJob(userId: Types.ObjectId, removeTaskDto: RemoveTaskDto) {
+    await this.userIdMatchesEmployeeId(userId, removeTaskDto.employeeId);
+
+    const jobExists = await this.jobRepository.exists(removeTaskDto.jobId);
+    if (!jobExists) throw new NotFoundException('Job not found');
+
+    return this.jobRepository.removeTask(removeTaskDto.jobId, removeTaskDto.taskId);
+  }
+
+  async editTaskInJob(userId: Types.ObjectId, updateTaskDto: UpdateTaskDto): Promise<Job & { _id: Types.ObjectId }> {
+    await this.userIdMatchesEmployeeId(userId, updateTaskDto.employeeId);
+
+    const jobExists = await this.jobRepository.exists(updateTaskDto.jobId);
+    if (!jobExists) throw new NotFoundException('Job not found');
+
+    return this.jobRepository.editTask(updateTaskDto.jobId, updateTaskDto.taskId, updateTaskDto.title);
+  }
+
+  async updateTag(userId: Types.ObjectId, updateTagDto: UpdateTagDto) {
+    const updates: UpdateTag = new UpdateTag(updateTagDto);
+    return this.jobTagRepository.updateTag(updateTagDto.tagId, updates);
+  }
+
+  async updatePriorityTag(userId: Types.ObjectId, updatePriorityTagDto: UpdatePriorityTagDto) {
+    const updates: UpdatePriorityTag = new UpdatePriorityTag(updatePriorityTagDto);
+    return this.jobTagRepository.updatePriorityTag(updatePriorityTagDto.priorityTagId, updates);
   }
 }
