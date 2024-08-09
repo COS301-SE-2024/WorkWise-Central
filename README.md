@@ -21,7 +21,7 @@
 ## Table of Contents
 [Project Description](#project-description) <br>
 [Demo Video](#demo-video) <br>
-[Functional Requirements (SRS)](#functional-requirements-srs) <br>
+[Documentation](#functional-requirements-srs) <br>
 [GitHub Project Board](#github-project-board) <br>
 [Team Members](#team-members) <br>
 
@@ -51,9 +51,9 @@ By harnessing modern technology, WorkWise Central transforms business operations
 
 [Watch our demo video - Boolean Hooligans Demo2](https://drive.google.com/file/d/1z4bgTkJ-NSnSJUdBeRTijx4pgcQHyxTD/view?usp=drive_link)
 
-## Functional Requirements (SRS)
+## Documentation 
 
-[Read the full Functional Requirements (SRS) document](https://work-wise-central-1.vercel.app/)
+[Read the full documentation for this project](https://work-wise-central-1.vercel.app/)
 
 ## GitHub Project Board
 
