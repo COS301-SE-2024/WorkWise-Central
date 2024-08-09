@@ -5,6 +5,7 @@
     max-width="600"
     scrollable
     :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :opacity="0.1"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
@@ -179,11 +180,22 @@ export default defineComponent({
         console.log(data)
         const response = await axios.post(`${apiURL}inventory/create`, data, config)
         console.log(response)
-        alert('Inventory added')
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Inventory Added',
+          life: 3000
+        })
         this.addDialog = false
+        window.location.reload()
       } catch (error) {
         console.error(error)
-        alert('Inventory not added')
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to add inventory',
+          life: 3000
+        })
       }
     },
     convertToNumber(value: string) {

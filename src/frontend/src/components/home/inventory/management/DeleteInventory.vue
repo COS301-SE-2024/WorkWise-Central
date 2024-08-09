@@ -3,6 +3,7 @@
     v-model="deleteDialog"
     max-width="500px"
     :theme="isdarkmode === true ? 'dark' : 'light'"
+    :opacity="0.1"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"

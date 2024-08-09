@@ -5,6 +5,7 @@
     max-width="600"
     scrollable
     color="warning"
+    :opacity="0.1"
     :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
