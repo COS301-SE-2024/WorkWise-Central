@@ -4,6 +4,7 @@ import { IsArray, IsHexColor, IsMongoId, IsNotEmpty, IsOptional, IsString, Valid
 import { Types } from 'mongoose';
 import { Type } from 'class-transformer';
 import { AddHashtag } from '../../utils/Custom Transformers/add-hashtag.transformer';
+import { UpdatePriorityTagDto, UpdateTagDto } from './edit-tag.dto';
 
 class UpdateAssignedEmployees extends PartialType(AssignedEmployees) {}
 class UpdateDetails extends PartialType(Details) {}
@@ -91,6 +92,20 @@ export class AddCommentDto {
   newComment: string;
 }
 
+export class AddTaskDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  jobId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+}
+
 export class RemoveCommentDto {
   @IsNotEmpty()
   @IsMongoId()
@@ -103,6 +118,20 @@ export class RemoveCommentDto {
   @IsNotEmpty()
   @IsMongoId()
   commentId: Types.ObjectId;
+}
+
+export class RemoveTaskDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  jobId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  taskId: Types.ObjectId;
 }
 
 export class UpdateCommentDto {
@@ -121,6 +150,24 @@ export class UpdateCommentDto {
   @IsNotEmpty()
   @IsString()
   comment: string;
+}
+
+export class UpdateTaskDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  jobId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  taskId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  title: string;
 }
 
 export class UpdateStatusDto {
@@ -158,6 +205,38 @@ export class UpdateStatus {
   @IsHexColor()
   @AddHashtag()
   colour: string;
+}
+
+export class UpdateTag {
+  constructor(u: UpdateTagDto) {
+    if (u.label) {
+      this.label = u.label;
+    }
+    if (u.colour) {
+      this.colour = u.colour;
+    }
+  }
+
+  label?: string;
+  colour?: string;
+}
+
+export class UpdatePriorityTag {
+  constructor(u: UpdatePriorityTagDto) {
+    if (u.label) {
+      this.label = u.label;
+    }
+    if (u.colour) {
+      this.colour = u.colour;
+    }
+    if (u.priorityLevel) {
+      this.priorityLevel = u.priorityLevel;
+    }
+  }
+
+  label?: string;
+  colour?: string;
+  priorityLevel?: number;
 }
 
 export class UpdateDtoResponse {
