@@ -168,6 +168,14 @@ export default defineUserConfig({
           link: '/demo3/guide/',
         },
         {
+          text: 'Manuals',
+          link: '/demo3/manuals/',
+          children: [
+            { text: 'User Manual', link: '/demo3/manuals/userManual.md' },
+            { text: 'Technical installation Manual', link: '/demo3/manuals/installationManual.md' },
+          ],
+        },
+        {
           text: 'Design Documentation',
           link: '/demo3/designDocs/',
           children: [
@@ -185,7 +193,6 @@ export default defineUserConfig({
             { text: 'Functional requirement specifications', link: '/demo3/businessDocs/functionalRequirements.md' },
             { text: 'Service contract', link: '/demo3/businessDocs/serviceContract.md' },
             { text: 'Market Research', link: '/demo3/businessDocs/marketResearch.md' },
-            { text: 'User Manual', link: '/demo3/businessDocs/userManual.md' },
           ],
         },
         {
