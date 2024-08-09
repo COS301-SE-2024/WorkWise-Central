@@ -18,13 +18,6 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-## Table of Contents
-[Project Description](#project-description) <br>
-[Demo Video](#demo-video) <br>
-[Documentation](#functional-requirements-srs) <br>
-[GitHub Project Board](#github-project-board) <br>
-[Team Members](#team-members) <br>
-
 ---
 
 </div>
