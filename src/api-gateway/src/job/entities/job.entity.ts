@@ -241,10 +241,6 @@ export class Job {
   })
   assignedEmployees?: AssignedEmployees = new AssignedEmployees();
 
-  /*  @ApiProperty()
-  @Prop({ type: String, required: true, default: 'To do' })
-  status: string = 'To do';*/
-
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: false, default: null })
   status: Types.ObjectId = null;
@@ -314,7 +310,7 @@ export class Job {
 
 export const JobSchema = SchemaFactory.createForClass(Job);
 
-const defaultPopulatedFields = ['tags', 'priorityTag', 'history'];
+const defaultPopulatedFields = ['tags', 'priorityTag', 'status', 'clientId'];
 
 const jobAssignedEmployees = {
   path: 'assignedEmployees',
@@ -353,11 +349,22 @@ const jobTaskLists = {
   ],
 };
 
+const jobTaskListItems = {
+  path: 'taskList',
+  populate: [
+    {
+      path: 'items.assignedEmployees',
+      model: Employee.name,
+    },
+  ],
+};
+
 const autoPopulatedFields = function (next: any) {
   this.populate(defaultPopulatedFields);
   this.populate(jobAssignedEmployees);
   this.populate(employeeComments);
   this.populate(jobTaskLists);
+  this.populate(jobTaskListItems);
   next();
 };
 

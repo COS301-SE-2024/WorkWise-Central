@@ -4,7 +4,6 @@ import { AddHashtag } from '../../utils/Custom Transformers/add-hashtag.transfor
 import { CapitalizeWords } from '../../utils/Custom Transformers/capitalise-words.transformer';
 
 export class UpdateTagDto {
-  //TODO: Add updateTag endpoint
   @IsNotEmpty()
   @IsString()
   @IsMongoId()
@@ -28,7 +27,6 @@ export class UpdateTagDto {
 }
 
 export class UpdatePriorityTagDto {
-  //TODO: Add updateTag endpoint
   @IsNotEmpty()
   @IsString()
   @IsMongoId()
