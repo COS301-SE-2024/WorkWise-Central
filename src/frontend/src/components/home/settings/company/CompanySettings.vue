@@ -52,7 +52,7 @@ import { defineComponent } from 'vue'
 
 import EditCompany from './EditCompany.vue'
 import EditRoles from './EditRoles.vue'
-import EditStructure from './EditStructure.vue'
+
 import EditPriority from './EditPriority.vue'
 import EditTags from './EditTags.vue'
 import EditStatus from './EditStatus.vue'
@@ -107,7 +107,6 @@ export default defineComponent({
   components: {
     EditCompany,
     EditRoles,
-    EditStructure,
     EditPriority,
     EditTags,
     EditStatus,

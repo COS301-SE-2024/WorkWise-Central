@@ -166,7 +166,7 @@ export default defineComponent({
     fuga() {
       this.actionsMenu = true
     },
-    async getInventory() {
+    async getInventoryItems() {
       // Fetch inventory items from the backend
       const config = {
         headers: {
@@ -179,10 +179,8 @@ export default defineComponent({
       }
       const apiURL = await this.getRequestUrl()
       try {
-        const response = await axios.get(
-          `${apiURL}inventory/all/${localStorage.getItem('currentCompany')}`,
-          config
-        )
+        const response = await axios.get(`${apiURL}inventory/all`, config)
+        console.log(response.data.data)
         this.inventoryItems = response.data.data
       } catch (error) {
         console.error(error)
@@ -202,7 +200,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.getInventory()
+    this.getInventoryItems()
   }
 })
 </script>

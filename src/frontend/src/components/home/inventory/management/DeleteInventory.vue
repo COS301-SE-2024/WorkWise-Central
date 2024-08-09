@@ -40,7 +40,6 @@
               <v-btn
                 label="Delete"
                 color="error"
-                text
                 :loading="isDeleting"
                 block
                 @click="deleteInventory"
@@ -86,7 +85,7 @@ export default defineComponent({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         },
-        params: {
+        data: {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }

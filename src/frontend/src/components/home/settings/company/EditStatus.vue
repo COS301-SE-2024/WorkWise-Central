@@ -25,7 +25,7 @@
                   >
                 </v-list-item> -->
                 <v-list-item @click="selectItem(item)">
-                  <DeleteStatus :statusId="item._id" />
+                  <DeleteStatus :statusId="selectedItem._id" />
                 </v-list-item>
               </v-list>
             </v-menu>

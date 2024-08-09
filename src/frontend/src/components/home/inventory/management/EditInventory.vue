@@ -214,7 +214,6 @@ export default {
           detail: 'An error occurred while updating the inventory',
           life: 3000
         })
-      } finally {
       }
     },
     allRulesPass() {

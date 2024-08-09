@@ -25,7 +25,7 @@
                   >
                 </v-list-item> -->
                 <v-list-item @click="selectItem(item)">
-                  <DeleteTags :tagId="item._id" />
+                  <DeleteTags :tagId="selectedItem._id" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -99,6 +99,7 @@ export default defineComponent({
     dialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     selectedItem: {
+      _id: '',
       label: '',
       color: '',
       companyId: localStorage.getItem('currentCompany')

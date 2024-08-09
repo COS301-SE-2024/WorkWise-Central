@@ -25,7 +25,7 @@
                   >
                 </v-list-item> -->
                 <v-list-item @click="selectItem(item)">
-                  <DeletePriority :tag-id="item._id" />
+                  <DeletePriority :tag-id="selectedItem._id" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -102,6 +102,7 @@ export default defineComponent({
     dialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     selectedItem: {
+      _id: '',
       label: '',
       color: '',
       priorityLevel: 0,

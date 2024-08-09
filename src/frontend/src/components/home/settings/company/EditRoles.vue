@@ -90,7 +90,7 @@ export default defineComponent({
   data: () => ({
     dialog: false,
     items: [],
-    roleIds: [],
+
     roleNames: [],
     rolePermissions: [],
     permissions: [],
