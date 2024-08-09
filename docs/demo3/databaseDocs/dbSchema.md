@@ -2,689 +2,908 @@
 
 ## User
 
-The Employee entity stores information for users.
+### System Details
+- **username**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Unique:** Yes
+  - **Description:** The username of the user.
 
-#### _id
+- **password**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Unique:** No
+  - **Description:** The password for the user, which will be hashed before storage.
 
-- **Data Type:** ObjectId
-- **Reasoning:** Unique identifier for each user.
-- **Example:** "_id": "60d21b4667d0d8992e610c85"
+### Personal Info
+- **firstName**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The first name of the user.
 
-#### systemDetails
+- **surname**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The surname of the user.
 
-- **Data Type:** Object
-- **Attributes:**
-  - **password:** string
-    - **Reasoning:** Hashed password for account security.
-    - **Example:** "hashed_password_string"
-  - **username:** string
-    - **Reasoning:** Unique identifier for the user's profile.
-    - **Example:** "user123"
-- **Example:** "systemDetails": {"username":"thando", "password":"hashed password"}
+- **dateOfBirth**
+  - **Data Type:** Date
+  - **Required:** Yes
+  - **Description:** The date of birth of the user.
 
-#### profile
+- **gender**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Default:** "Rather Not Say"
+  - **Description:** The gender of the user.
 
-- **Data Type:** Object
-- **Attributes:**
-  - **displayImage:** string
-    - **Reasoning:** URL or base64 image string for profile picture.
-    - **Example:** "data:image/png;base64,iVBORw0KGgoAAAANS..."
-  - **displayName:** string
-    - **Reasoning:** Display name for user profile.
-    - **Example:** "JohnDoe"
-- **Example:** "profile": {"displayName":"thando", "displayImage":"base64 image"}
+- **preferredLanguage**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Default:** "English"
+  - **Description:** The preferred language of the user.
 
-#### personalInfo
+- **contactInfo**
+  - **Data Type:** ContactInfo
+  - **Required:** No
+  - **Description:** The contact information of the user, including phone number and email.
 
-- **Data Type:** Object
-- **Attributes:**
-  - **firstName:** string
-    - **Reasoning:** User's first name for personal identification.
-    - **Example:** "John"
-  - **surname:** string
-    - **Example:** "Doe"
-  - **dateOfBirth:** Date (as a string)
-    - **Reasoning:** User's date of birth for age verification and personalization.
-    - **Example:** "1990-01-01"
-  - **gender:** string
-    - **Reasoning:** User's gender for demographic purposes.
-    - **Example:** "Male"
-  - **preferredLanguage:** string
-    - **Reasoning:** Language preference for communication.
-    - **Example:** "English"
-  - **contactInfo:** Object
-    - **phone:** string
-      - **Reasoning:** Phone number for contact.
-      - **Example:** "+1234567890"
-    - **email:** string
-      - **Reasoning:** Email for contact.
-      - **Example:** "contact@example.com"
-  - **address:** Object
-    - **street:** string
-      - **Reasoning:** Street address for mailing purposes.
-      - **Example:** "123 Main St"
-    - **suburb:** string
-      - **Reasoning:** Suburb for geographical information.
-      - **Example:** "Central"
-    - **city:** string
-      - **Reasoning:** City for geographical information.
-      - **Example:** "Metropolis"
-    - **postalCode:** string
-      - **Reasoning:** Postal code for mailing purposes.
-      - **Example:** "12345"
-    - **complex:** string
-      - **Reasoning:** Complex name if applicable.
-      - **Example:** "Sunny Apartments"
-    - **houseNumber:** string
-      - **Reasoning:** House number for precise address.
-      - **Example:** "10B"
-- **Example:**: "personalInfo":{"firstName":"John","surname":"Doe","dateOfBirth":"1990-01-01","gender":"Male","preferredLanguage":"English","contactInfo":{"phone":"+1234567890","email":"contact@example.com"},"address":{"street":"123 Main St","suburb":"Central","city":"Metropolis","postalCode":"12345","complex":"Sunny Apartments","houseNumber":"10B"}}
+- **address**
+  - **Data Type:** Address
+  - **Required:** No
+  - **Description:** The address of the user.
 
-#### joinedCompanies
+### Profile
+- **displayName**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The display name of the user.
 
-- **Data Type:** Array of Objects
-- **Reasoning:** References companies the user is associated with.
-- **Attributes:**
-  - **employeeId:** ObjectId
-    - **Reasoning:** Stores a reference to the employee collection
-    - **Example:** "employeeId": "60d21b4667d0d8992e610c85"
-  - **companyName:** string
-    - **Reasoning:** stores the name of the company the employeeId links to
-    - **Example:** "companyName": "Work Wise Central"
-- **Example:** "joinedComapanies": [ {"employeeId": "60d21b4667d0d8992e610c85", "companyName": "Work Wise Central"}...]
+- **displayImage**
+  - **Data Type:** String
+  - **Required:** No
+  - **Default:** "https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp"
+  - **Description:** The URL of the display image of the user.
 
-#### skills
-- **Data Type:** Array
-- **Attributes:**
-  - **skillName:** string
-    - **Reasoning:** List of skills the user possesses.
-- **Example:** "skills": ["JavaScript", "Python"]
+### Joined Companies
+- **employeeId**
+  - **Data Type:** ObjectId (Reference to Employee)
+  - **Description:** The ID of the employee associated with the user.
 
-#### currentEmployeeId
+- **companyId**
+  - **Data Type:** ObjectId (Reference to Company)
+  - **Description:** The ID of the company associated with the user.
 
-- **Data Type:** ObjectId
-- **Reasoning:** Unique identifier the current employee the user is logged in as.
-- **Example:** "currentEmployeeId": "60d21b4667d0d8992e610c85"
+- **companyName**
+  - **Data Type:** String
+  - **Description:** The name of the company associated with the user.
+
+### Skills
+- **skills**
+  - **Data Type:** Array of Strings
+  - **Required:** No
+  - **Default:** []
+  - **Description:** A list of skills associated with the user.
+
+### Device IDs
+- **deviceIds**
+  - **Data Type:** Array of Strings
+  - **Required:** No
+  - **Default:** []
+  - **Description:** A list of device IDs associated with the user.
+
+### Current Employee
+- **currentEmployee**
+  - **Data Type:** ObjectId (Reference to Employee)
+  - **Required:** No
+  - **Description:** The current employee ID associated with the user.
+
+### Is Validated
+- **isValidated**
+  - **Data Type:** Boolean
+  - **Required:** No
+  - **Default:** false
+  - **Description:** Indicates whether the user has been validated.
+
+### Timestamps
+- **createdAt**
+  - **Data Type:** Date
+  - **Required:** Yes
+  - **Default:** Current Date
+  - **Description:** The date the user was created.
+
+- **updatedAt**
+  - **Data Type:** Date
+  - **Required:** No
+  - **Description:** The date the user was last updated.
+
+- **deletedAt**
+  - **Data Type:** Date
+  - **Required:** No
+  - **Description:** The date the user was deleted (soft delete).
+
+
+### ContactInfo
+- **phoneNumber**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Unique:** Yes
+  - **Description:** The user's phone number.
+
+- **email**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Unique:** Yes
+  - **Description:** The user's email address, stored in lowercase.
+
+### Address
+- **street**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The street address of the user.
+
+- **province**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The province of the user.
+
+- **suburb**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The suburb of the user.
+
+- **city**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The city of the user.
+
+- **postalCode**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The postal code of the user.
+
+- **complex**
+  - **Data Type:** String
+  - **Required:** No
+  - **Description:** The complex name of the user, if applicable.
+
+- **houseNumber**
+  - **Data Type:** String
+  - **Required:** No
+  - **Description:** The house number of the user, if applicable.
+
+### Profile
+- **displayName**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The display name of the user.
+
+- **displayImage**
+  - **Data Type:** String
+  - **Required:** No
+  - **Default:** "https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp"
+  - **Description:** The URL of the display image of the user.
+
+### JoinedCompany
+- **employeeId**
+  - **Data Type:** ObjectId
+  - **Description:** The employee ID associated with the joined company.
+
+- **companyId**
+  - **Data Type:** ObjectId
+  - **Description:** The company ID associated with the joined company.
+
+- **companyName**
+  - **Data Type:** String
+  - **Description:** The company name associated with the joined company.
+
 
 ## Employee
 
-The Employee entity stores information for employees.
+- **id**
+  - **Data Type:** ObjectId
+  - **Required:** Yes
+  - **Unique:** Yes
+  - **Description:** The unique ID of the employee.
 
-#### _id
+- **superiorId**
+  - **Data Type:** ObjectId (Reference to `Employee`)
+  - **Required:** No
+  - **Description:** The ID of the superior employee.
 
-- **Data Type:** ObjectId
-- **Reasoning:** Unique identifier for each employee.
-- **Example:** "_id": "60d21b4667d0d8992e610c85"
+- **subordinates**
+  - **Data Type:** Array of ObjectIds (Reference to `Employee`)
+  - **Required:** Yes
+  - **Default:** []
+  - **Description:** A list of subordinate employees.
 
-#### role
+- **subordinateTeams**
+  - **Data Type:** Array of ObjectIds (Reference to `Team`)
+  - **Required:** Yes
+  - **Default:** []
+  - **Description:** A list of subordinate teams.
 
-- **Data Type:** Objects
-- **Attributes:**
-  - **role:** string
-    - **Reasoning:** Defines the user's role (e.g., admin, employee).
-    - **Example:**"admin"
-  - **permissions:** Array
-    - **Reasoning:** Permissions associated with the role.
-    - **Example:** ["read", "write", "delete"]
-- **Example:** "role": {"role":"admin","permissions":["read","write","delete"]}
+- **userId**
+  - **Data Type:** ObjectId (Reference to `User`)
+  - **Required:** Yes
+  - **Description:** The ID of the associated user.
 
-#### availability
+- **companyId**
+  - **Data Type:** ObjectId (Reference to `Company`)
+  - **Required:** Yes
+  - **Description:** The ID of the company.
 
-- **Data Type:** Object
-- **Attributes:**
-  - **status:** string
-    - **Reasoning:** Current availability status of the user.
-    - **Example:** "Available"
-  - **schedule:** Object
-    - **Reasoning:** Weekly schedule for the user.
-    - **Example:** {"Monday": "9:00-17:00", "Tuesday": "9:00-17:00"} 
+- **currentJobAssignments**
+  - **Data Type:** Array of ObjectIds (Reference to `Job`)
+  - **Required:** Yes
+  - **Default:** []
+  - **Description:** A list of current job assignments.
 
-#### skills
-- **Data Type:** Array
-- **Attributes:**
-  - **skillName:** string
-    - **Reasoning:** List of skills the user possesses.
-    - **Example:** ["JavaScript", "Python"]
+- **createdAt**
+  - **Data Type:** Date
+  - **Required:** Yes
+  - **Default:** New `Date()`
+  - **Description:** The date the employee was created.
 
-#### currentJobAssignments
+- **updatedAt**
+  - **Data Type:** Date
+  - **Required:** No
+  - **Description:** The date the employee was last updated.
 
-- **Data Type:** Array of Object ids
-- **Reasoning:** References jobs the employee is currently assigned to.
-- **Example:** ["60d21b4667d0d8992e610c87"...]
-  
-#### superior 
+- **deletedAt**
+  - **Data Type:** Date
+  - **Required:** No
+  - **Description:** The date the employee was deleted (soft delete).
 
-- **Data Type:** ObjectId
-- **Reasoning:** References the employee's superior.
-- **Attributes:**
-  - **employeeId:** ObjectId
-    - **Reasoning:** Stores a reference to the employeeId in the Employee collection
-- **Example:** "superior": "60d21b4667d0d8992e610c87"
+### role
 
-#### subordinates
+- **roleId**
+  - **Data Type:** ObjectId (Reference to `Role`)
+  - **Required:** Yes
+  - **Description:** The ID of the role.
 
-- **Data Type:** Array of Object ids
-- **Reasoning:** References the employees under the employee.
-- **Attributes:** 
-  - **employeeId:** ObjectId
-    - **Reasoning:** Stores a reference to the employeeId in the Employee collection
-- **Example:** "subordinates": ["60d21b4667d0d8992e610c87"...]
+- **permissionSuite**
+  - **Data Type:** Array of Strings
+  - **Required:** Yes
+  - **Description:** A list of permissions associated with the role.
 
-#### createdAt
+- **roleName**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The name of the role.
 
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was created.
-- **Example:** "createdAt" : "2024-06-01T10:00:00Z"
+### UserInfo
 
-#### updatedAt
+- **username**
+  - **Data Type:** String
+  - **Required:** No
+  - **Description:** The username of the user.
 
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was updated.
-- **Example:** "updatedAt: "2024-06-01T10:00:00Z"
+- **firstName**
+  - **Data Type:** String
+  - **Required:** No
+  - **Description:** The first name of the user.
 
-#### deletedAt
+- **surname**
+  - **Data Type:** String
+  - **Required:** No
+  - **Description:** The surname of the user.
 
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was deleted.
-- **Example:** "deletedAt": "2024-06-01T10:00:00Z"
+- **displayName**
+  - **Data Type:** String
+  - **Required:** No
+  - **Description:** The display name of the user.
+
+- **displayImage**
+  - **Data Type:** String
+  - **Required:** No
+  - **Description:** The display image URL of the user.
 
 ## Team
 
-#### _id
+- **id**
+  - **Data Type:** ObjectId
+  - **Required:** Yes
+  - **Unique:** Yes
+  - **Description:** The unique ID of the team.
 
-- **Data Type:** ObjectId
-- **Reasoning:** Unique identifier for each team.
-- **Example:** "_id": "60d21b4667d0d8992e610c85"
+- **companyId**
+  - **Data Type:** ObjectId
+  - **Required:** Yes
+  - **Description:** The ID of the company associated with the team.
 
-#### teamName
+- **teamName**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The name of the team.
 
-- **Data Type:** string
-- **Reasoning:** Use of string is logical.
-- **Example:** "teamName": "Boolean Hooligans"
+- **teamMembers**
+  - **Data Type:** Array of ObjectIds
+  - **Required:** Yes
+  - **Description:** A list of team member IDs.
 
-#### companyId
+- **teamLeaderId**
+  - **Data Type:** ObjectId (Optional)
+  - **Required:** No
+  - **Description:** The ID of the team leader, if applicable.
 
-- **Data Type:** ObjectId
-- **Relationship:** References Company
-- **Reasoning:** Associates the job with a specific company.
-- **Example:** "companyId": "60d21b4667d0d8992e610c8c"
+- **currentJobAssignments**
+  - **Data Type:** Array of ObjectIds
+  - **Required:** Yes
+  - **Default:** []
+  - **Description:** A list of current job assignments associated with the team.
 
-#### teamMembers
+- **createdAt**
+  - **Data Type:** Date
+  - **Required:** Yes
+  - **Default:** New `Date()`
+  - **Description:** The date the team was created.
 
-- **Data Type:** Array of Objects ids
-- **Reasoning:** Stores employeeIds
-- **Attributes:**
-  - **employeeId:** ObjectId
-    - **Reasoning:** Stores the reference to the employee in the Employee collection
-- **Example:** "teamMembers": ["60d21b4667d0d8992e610c87"...]
+- **updatedAt**
+  - **Data Type:** Date (Optional)
+  - **Required:** No
+  - **Description:** The date the team was last updated.
 
-#### teamLeaderId 
+- **deletedAt**
+  - **Data Type:** Date (Optional)
+  - **Required:** No
+  - **Description:** The date the team was deleted (soft delete).
 
-- **Data Type:** ObjectId
-- **Reasoning:** References the employeeId in the employee collection.
-- **Example:** "_id": "60d21b4667d0d8992e610c85"
-- 
-#### assignedJobs
-
-- **Data Type:** Array of Object ids
-- **Reasoning:** Stores a list of jobs the teams has been assigned 
-- **Example:** "assignedJobs": ["60d21b4667d0d8992e610c85", ...]
-- 
-#### createdAt
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was created.
-- **Example:** "createdAt": "2024-06-01T10:00:00Z"
-
-#### updatedAt
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was updated.
-- **Example:** "updatedAt": "2024-06-01T10:00:00Z"
-
-#### deletedAt
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was deleted.
-- **Example:** "deletedAt": "2024-06-01T10:00:00Z"
 
 ## Company
 
-The Company entity stores information about companies associated with users and jobs.
+- **id**
+  - **Data Type:** ObjectId
+  - **Description:** The unique ID of the company.
 
-#### _id (Primary Key)
+- **registrationNumber**
+  - **Data Type:** String
+  - **Description:** The registration number of the company.
 
-- **Data Type:** ObjectId
-- **Reasoning:** Unique identifier for each company.
-- **Example:** "_id": "60d21b4667d0d8992e610c89"
+- **vatNumber**
+  - **Data Type:** String
+  - **Description:** The VAT number of the company.
 
-#### registrationNumber
+- **name**
+  - **Data Type:** String
+  - **Description:** The name of the company.
 
-- **Data Type:** string
-- **Reasoning:** Unique registration number for the company.
-- **Example:** "registrationNumber": "REG123456"
+- **type**
+  - **Data Type:** String (Optional)
+  - **Description:** The type or category of the company.
 
-#### name
+- **logo**
+  - **Data Type:** String
+  - **Default:** `'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp'`
+  - **Description:** The URL of the company's logo.
 
-- **Data Type:** string
-- **Reasoning:** Name of the company.
-- **Example:** "name": "Tech Solutions Inc."
+- **contactDetails**
+  - **Data Type:** `ContactDetails`
+  - **Description:** The contact details of the company.
 
-#### type
+- **private**
+  - **Data Type:** Boolean
+  - **Description:** Indicates whether the company is private.
 
-- **Data Type:** string
-- **Reasoning:** Type or industry of the company.
-- **Example:** "type": "IT Services"
+- **createdAt**
+  - **Data Type:** Date
+  - **Description:** The date the company was created.
 
-#### vatNumber
+- **updatedAt**
+  - **Data Type:** Date (Optional)
+  - **Description:** The date the company was last updated.
 
-- **Data Type:** string
-- **Reasoning:** VAT number for tax purposes.
-- **Example:** "vatNumber": "VAT789012"
-
-#### logo
-
-- **Data Type:** string
-- **Reasoning:** URL or base64 image string for the company logo.
-- **Example:** "logo": "data:image/png;base64,iVBORw0KGgoAAAANS..."
-
-#### contactDetails
-
-- **Data Type:** Object
-- **Attributes:**
-  - **phone:** string
-    - **Reasoning:** Phone number for contact.
-    - **Example:** "+1234567890"
-  - **email:** string
-    - **Reasoning:** Email for contact.
-    - **Example:** "contact@techsolutions.com"
-- **Example:** "contactDetails": {"phone":"+1234567890","email":"contact@techsolutions.com"}
-
-#### address
-
-- **Data Type:** Object
-- **Attributes:**
-  - **street:** string
-    - **Reasoning:** Street address for mailing purposes.
-    - **Example:** "456 Business St"
-  - **suburb:** string
-    - **Reasoning:** Suburb for geographical information.
-    - **Example:** "Central"
-  - **city:** string
-    - **Reasoning:** City for geographical information.
-    - **Example:** "Metropolis"
-  - **postalCode:** string
-    - **Reasoning:** Postal code for mailing purposes.
-    - **Example:** "67890"
-- **Example:** "address": {"street":"456 Business St","suburb":"Central","city":"Metropolis","postalCode":"67890"}
-
-#### employees
-
-- **Data Type:** Array of Objects
-- **Reasoning:** References employees (Users) associated with the company.
-- **Attributes:** 
-  - **employeeId:** ObjectId
-    - **Reasoning:** Stores a reference to the employeeId in the Employee collection
-- **Example:** "employees": ["60d21b4667d0d8992e610c85",...]
-
-#### inventoryItems
-
-- **Data Type:** Array of Object ids
-- **Reasoning:** References inventory items owned by the company to track and manage stock efficiently.
-- **Attributes:**
-  - **inventoryItemId:** ObjectId
-    - **Reasoning:** Unique identifier for each inventory item to ensure accurate tracking and referencing.
-- **Example:** "inventoryItems": ["60d21b4667d0d8992e610c8a",...]
-
-#### createdAt
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was created.
-- **Example:** "createdAt": "2024-06-01T10:00:00Z"
-
-#### updatedAt
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was updated.
-- **Example:** "updatedAt": "2024-06-01T10:00:00Z"
-
-#### deletedAt
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was deleted.
-- **Example:** "deletedAt": "2024-06-01T10:00:00Z"
+- **deletedAt**
+  - **Data Type:** Date (Optional)
+  - **Description:** The date the company was deleted (soft delete).
 
 ## Client
 
-The Client entity stores information about clients who have jobs or appointments.
+- **_id**
+  - **Data Type:** ObjectId (Optional)
+  - **Description:** The unique ID of the client.
 
-#### _id (Primary Key)
+- **registrationNumber**
+  - **Data Type:** String (Optional)
+  - **Description:** The registration number of the client.
 
-- **Data Type:** ObjectId
-- **Reasoning:** Unique identifier for each client.
-- **Example:** "_id": "60d21b4667d0d8992e610c8c"
+- **createdAt**
+  - **Data Type:** Date
+  - **Description:** The date when the client was created.
 
-#### personalInfo
+- **updatedAt**
+  - **Data Type:** Date (Optional)
+  - **Description:** The date when the client was last updated.
 
-- **Data Type:** Object
-- **Attributes:**
-  - **firstName:** string
-    - **Reasoning:** Client's first name for personal identification.
-    - **Example:** "Jane"
-  - **surname:** string
-    - **Reasoning:** Client's surname for personal identification.
-    - **Example:** "Smith"
-  - **preferredLanguage:** string
-    - **Reasoning:** Client's preferred language.
-    - **Example:** "English"
-  - **dateOfBirth** Object
-    - **phone:** string
-      - **Reasoning:** Phone number for contact.
-      - **Example:** "+1234567890"
-  - **contactInfo**:
-    - **email:** string
-      - **Reasoning:** Email for contact.
-      - **Example:** "jane.smith@example.com"
-    - **address:** Object
-      - **street:** string
-        - **Reasoning:** Street address for mailing purposes.
-        - **Example:** "789 Client Rd"
-      - **suburb:** string
-        - **Reasoning:** Suburb for geographical information.
-        - **Example:** "Eastside"
-      - **city:** string
-        - **Reasoning:** City for geographical information.
-        - **Example:** "Metropolis"
-      - **postalCode:** string
-        - **Reasoning:** Postal code for mailing purposes.
-        - **Example:** "12345"
-      - **complex:** string
-        - **Reasoning:** Complex name if applicable.
-        - **Example:** "Client Apartments"
-      - **houseNumber:** string
-        - **Reasoning:** House number for precise address.
-        - **Example:** "3A"
-- **Example:** "personalInfo": {"firstName":"Jane","surname":"Smith","preferredLanguage":"English","dateOfBirth":{"phone":"+1234567890"},"contactInfo":{"email":"jane.smith@example.com","address":{"street":"789 Client Rd","suburb":"Eastside","city":"Metropolis","postalCode":"12345","complex":"Client Apartments","houseNumber":"3A"}}}
+## ClientDetails
 
-#### createdAt
+- **firstName**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The first name of the client.
 
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was created.
-- **Example:** "createdAt": "2024-06-01T10:00:00Z"
+- **lastName**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The last name of the client.
 
-#### updatedAt
+- **preferredLanguage**
+  - **Data Type:** String (Optional)
+  - **Required:** No
+  - **Default:** `'English'`
+  - **Description:** The preferred language of the client.
 
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was updated.
-- **Example:** "updatedAt": "2024-06-01T10:00:00Z"
+- **contactInfo**
+  - **Data Type:** `ContactInfo` (Optional)
+  - **Required:** No
+  - **Description:** The contact information of the client, including phone number and email.
 
-#### deletedAt
+- **vatNumber**
+  - **Data Type:** String (Optional)
+  - **Required:** No
+  - **Description:** The VAT number of the client (if applicable).
 
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was deleted.
-- **Example:** "deletedAt": "2024-06-01T10:00:00Z"
+- **companyId**
+  - **Data Type:** ObjectId
+  - **Required:** Yes
+  - **Description:** The ID of the company to which the client belongs.
+
+- **idNumber**
+  - **Data Type:** String (Optional)
+  - **Required:** No
+  - **Description:** The ID number of the client (if applicable).
+
+- **type**
+  - **Data Type:** String (Optional)
+  - **Required:** No
+  - **Description:** The type or category of the client.
+
+#### Address
+
+- **street**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The street address of the company.
+
+- **province**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The province where the company is located.
+
+- **suburb**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The suburb where the company is located.
+
+- **city**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The city where the company is located.
+
+- **postalCode**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The postal code of the company's location.
+
+#### ContactInfo
+
+- **phoneNumber**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The phone number of the client.
+
+- **email**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Unique:** Yes (within the company)
+  - **Lowercase:** Yes
+  - **Trim:** Yes
+  - **Description:** The email address of the client. Unique within the company, rather than the entire database.
+
 
 ## Job
 
-The Job entity stores information about jobs assigned to employees and clients.
-
-#### _id (Primary Key)
-- **Data Type:** ObjectId
-- **Reasoning:** Unique identifier for each job.
-- **Example:** "_id": "60d21b4667d0d8992e610c8d"
-
-#### companyId
-
-- **Data Type:** ObjectId
-- **Relationship:** References Company 
-- **Reasoning:** Associates the job with a specific company.
-- **Example:** "companyId": "60d21b4667d0d8992e610c8c"
-
-#### clientId (Foreign Key)
-
-- **Data Type:** ObjectId
-- **Relationship:** References Client
-- **Reasoning:** Associates the job with a specific client.
-- **Example:** "clientId": "60d21b4667d0d8992e610c8c"
-
-#### assignedEmployees
-
-- **Data Type:** Object of Employee ids and Team id
-- **Relationship:** References employees and teams
-- **Reasoning:** Employees and team assigned to the job.
-- **Example:** "assignedEmployees": {"employeesIds": ["60d21b4667d0d8992e610c85",...], "teamId": "60d21b4667d0d8992e610c85"} 
-
-#### assignedBy (@Jess may you please add this field to er diagram)
-
-- **Data Type:** Object id
-- **Relationship:** References Employees table
-- **Reasoning:** Assignee of a job.
-- **Example:** "assignedBy": "60d21b4667d0d8992e610c85" 
-
-#### status (@Jess may you please add this field to er diagram, I've just made status it's own attribute)
-
-- **Data Type:** string
-- **Reasoning:** stores the status of the job
-- **Example:** "status": "complete"
-
-#### recordedDetails
-
-- **Data Type:** Object
-- **Attributes:** 
-  - **imagesTaken** 
-    - **Data Type**: Array of strings (base64 images)
-    - **Reasoning:** Images related to the job.
-    - **Example:** ["data:image/png;base64,iVBORw0KGgoAAAANS...", "data:image/png;base64,iVBORw0KGgoAAAANS..."] 
-  - **inventoryUsed**
-    - **Data Type:** Array of Object
-    - **Reasoning:** Inventory items used for the job.
-    - **Example:** [{ "InventoryItem": "60d21b4667d0d8992e610c8a", "QuantityUsed": 2 }]
-- **Example:** "recordedDetails": {"imagesTaken":["data:image/png;base64,iVBORw0KGgoAAAANS...","data:image/png;base64,iVBORw0KGgoAAAANS..."],"inventoryUsed":[{"InventoryItem":"60d21b4667d0d8992e610c8a","QuantityUsed":2}]}
-
-#### jobDetails
-
-- **Data Type:** Object
-- **Attributes:**
-  - **jobName:** string
-    - **Reasoning:** Name of the job.
-    - **Example:** "UP Merensky library revamp"
-  - **jobDescription:** string   (@Jess may you please add this field to er diagram)
-    - **Reasoning:** Description of the job.
-    - **Example:** "Fixing plumbing issues."
-  - **jobStartDate:** Date
-    - **Reasoning:** Start date of the job.
-    - **Example:** "2024-06-01"
-  - **jobEndDate:** Date
-    - **Reasoning:** End date of the job.
-    - **Example:** "2024-06-05"
-  - **jobAddress:** Object
-    - **street:** string
-      - **Reasoning:** Street address for the job location.
-      - **Example:** "123 Job St"
-    - **suburb:** string
-      - **Reasoning:** Suburb for the job location.
-      - **Example:** "Westside"
-    - **city:** string
-      - **Reasoning:** City for the job location.
-      - **Example:** "Metropolis"
-    - **postalCode:** string
-      - **Reasoning:** Postal code for the job location.
-      - **Example:** "67890"
-    - **complex:** string
-      - **Reasoning:** Complex name if applicable.
-      - **Example:** "Workplace Plaza"
-    - **houseNumber:** string
-      - **Reasoning:** House number for the job location.
-      - **Example:** "5C"
-- **Example:** "jobDetails": {"jobDescription": "Fixing plumbing issues.","jobStartDate":"2024-06-01","jobEndDate": "2024-06-05","status": "pending","jobAddress": {"street": "123 Job St","suburb": "Westside","city": "Metropolis","postalCode": "67890","complex": "Workplace Plaza","houseNumber": "5C"} }
-
-#### clientFeedback
-
-- **Data Type:** Object
-- **Attributes:**
-  - **jobRating:** number (out of 5)
-    - **Reasoning:** Overall job rating by the client.
-    - **Example:** 4.5
-  - **customerServiceRating:** number
-    - **Reasoning:** Rating of the customer service by the client.
-    - **Example:** 5
-  - **comments:** string
-    - **Reasoning:** Additional feedback comments from the client.
-    - **Example:** "Great service!"
-- **Example:** "clientFeedback": {"jobRating": 5, "customerServiceRating": 5, "comments": "Great service!"}
-
-#### taskList
-
-- **Data Type:** Array of Objects
-- **Reasoning:** Stores task given to employees for a job
-- **Attributes:**
-  - **task**: Object
-  - **Reasoning:** stores the task name, status and employee assigned to it
-  - **Example:** "task" : {"taskName":"Paint north facing wall", "status": "complete", "assignedEmployees" : ["60d21b4667d0d8992e610c8a", ...]}
-- **Example:** "taskList": ["task1" : {"taskName":"Paint north facing wall", "status": "complete", "assignedEmployees" : ["60d21b4667d0d8992e610c8a", ...]}, ...]
-
-#### comments
-
-- **Data Type:** Array of Objects
-- **Reasoning:** Stores comments made by employees for the job
-- **Attributes:**
-  - **commentItem**: Object
-  - **Reasoning:** stores the comment, employee that made it and the status
-  - **Example:** "commentItem" : {"comment":"Roofing needs adjusting", "employeeId" : "60d21b4667d0d8992e610c8a", "commentDate": "2024-06-12" }
-- **Example:** "comments": [{"commentItem1" : {"comment":"Roofing needs adjusting", "employeeId" : "60d21b4667d0d8992e610c8a", "commentDate": "2024-06-12" }, ...]
-
-#### createdAt
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was created.
-- **Example:** "createdAt": "2024-06-01T10:00:00Z"
-
-#### updatedAt
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was updated.
-- **Example:** "updatedAt": "2024-06-01T10:00:00Z"
-
-#### deletedAt
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was deleted.
-- **Example:** "deletedAt": "2024-06-01T10:00:00Z"
-
-<!-- ## Appointment 
-
-The Appointment entity stores information about appointments between clients and jobs.
-
-#### _id (Primary Key)
-
-- **Data Type:** ObjectId
-- **Reasoning:** Unique identifier for each appointment.
-- **Example:** "60d21b4667d0d8992e610c8e"
-
-#### clientId (Foreign Key)
-
-- **Data Type:** ObjectId
-- **Relationship:** References Client
-- **Reasoning:** Associates the appointment with a specific client.
-- **Example:** "60d21b4667d0d8992e610c8c"
-
-#### jobId (Foreign Key)
-
-- **Data Type:** ObjectId
-- **Relationship:** References Job
-- **Reasoning:** Associates the appointment with a specific job.
-- **Example:** "60d21b4667d0d8992e610c8d"
-
-#### scheduledDateTime
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Scheduled date and time for the appointment.
-- **Example:** "2024-06-01T10:00:00Z"
-
-#### duration
-
-- **Data Type:** integer
-- **Reasoning:** Duration of the appointment in minutes.
-- **Example:** 60
-
-#### status
-
-- **Data Type:** string
-- **Reasoning:** Current status of the appointment (e.g., pending, confirmed, cancelled).
-- **Example:** "confirmed"
-
-#### createdAt
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was created.
-- **Example:** "createdAt": "2024-06-01T10:00:00Z"
-
-#### updatedAt
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was updated.
-- **Example:** "updatedAt": "2024-06-01T10:00:00Z"
-
-#### deletedAt
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was deleted.
-- **Example:** "deletedAt": "2024-06-01T10:00:00Z"  -->
-
-## InventoryItem
-
-The InventoryItem entity stores information about items in the company's inventory.
-
-#### _id (Primary Key)
-
-- **Data Type:** ObjectId
-- **Reasoning:** Unique identifier for each inventory item.
-- **Example:** "_id": "60d21b4667d0d8992e610c8f"
-
-#### name
-
-- **Data Type:** string
-- **Reasoning:** Name of the inventory item.
-- **Example:** "name": "Wrench"
-
-#### itemImage
-
-- **Data Type:** string (base64)
-- **Reasoning:** Image or icon representing the inventory item.
-- **Example:** "itemImage": "data:image/png;base64,iVBORw0KGgoAAAANS..."
-
-#### costPrice
-
-- **Data Type:** double
-- **Reasoning:** Cost price of the inventory item.
-- **Example:** "costPrice": 15.99
-
-#### currentStockLevel
-
-- **Data Type:** integer
-- **Reasoning:** Current stock level of the inventory item.
-- **Example:** "currentStockLevel": 50
-
-#### lowStockThreshold
-
-- **Data Type:** integer
-- **Reasoning:** Threshold to indicate low stock level.
-- **Example:** "lowStockThreshold": 10
-
-#### createdAt
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was created.
-- **Example:** "createdAt": "2024-06-01T10:00:00Z"
-
-#### updatedAt
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was updated.
-- **Example:** "updatedAt": "2024-06-01T10:00:00Z"
-
-#### deletedAt
-
-- **Data Type:** Date (in string format)
-- **Reasoning:** Timestamp of when the document was deleted.
-- **Example:** "deletedAt": "2024-06-01T10:00:00Z"
+- **_id**
+  - **Data Type:** ObjectId (Optional)
+  - **Description:** The unique ID of the client.
+
+- **companyId**
+  - **Data Type:** ObjectId
+  - **Required:** Yes
+  - **Description:** The ID of the company to which the job belongs.
+
+- **clientId**
+  - **Data Type:** ObjectId (Optional)
+  - **Default:** `null`
+  - **Description:** The ID of the client for whom the job is performed.
+
+- **assignedBy**
+  - **Data Type:** ObjectId
+  - **Required:** Yes
+  - **Description:** The ID of the employee who assigned the job.
+
+- **assignedEmployees**
+  - **Data Type:** `AssignedEmployees` (Optional)
+  - **Default:** New `AssignedEmployees()`
+  - **Description:** The employees and teams assigned to the job.
+
+- **status**
+  - **Data Type:** ObjectId (Optional)
+  - **Default:** `null`
+  - **Description:** The current status of the job.
+
+- **tags**
+  - **Data Type:** Array of ObjectIds (Optional)
+  - **Default:** `[]`
+  - **Description:** Tags associated with the job.
+
+- **priorityTag**
+  - **Data Type:** ObjectId (Optional)
+  - **Default:** `null`
+  - **Description:** The priority tag associated with the job.
+
+- **attachments**
+  - **Data Type:** Array of Strings (Optional)
+  - **Default:** `null`
+  - **Description:** File attachments related to the job.
+
+- **details**
+  - **Data Type:** `Details`
+  - **Required:** Yes
+  - **Description:** Detailed information about the job.
+
+- **recordedDetails**
+  - **Data Type:** `RecordedDetails` (Optional)
+  - **Default:** New `RecordedDetails()`
+  - **Description:** Recorded details such as images and inventory used during the job.
+
+- **clientFeedback**
+  - **Data Type:** `ClientFeedback` (Optional)
+  - **Description:** Feedback from the client regarding the job.
+
+- **taskList**
+  - **Data Type:** Array of `Task` (Optional)
+  - **Default:** `[]`
+  - **Description:** A list of tasks associated with the job.
+
+- **history**
+  - **Data Type:** Array of `History`
+  - **Required:** Yes
+  - **Default:** `[]`
+  - **Description:** The history of events related to the job.
+
+- **comments**
+  - **Data Type:** Array of `Comment` (Optional)
+  - **Default:** `[]`
+  - **Description:** Comments made by employees on the job.
+
+- **createdAt**
+  - **Data Type:** Date
+  - **Required:** Yes
+  - **Default:** Current date
+  - **Description:** The date when the job was created.
+
+- **updatedAt**
+  - **Data Type:** Date (Optional)
+  - **Description:** The date when the job was last updated.
+
+- **deletedAt**
+  - **Data Type:** Date (Optional)
+  - **Description:** The date when the job was deleted (soft delete).
+
+### ClientFeedback
+
+- **jobRating**
+  - **Data Type:** Number (Optional)
+  - **Default:** 10
+  - **Description:** The rating given by the client for the job itself.
+
+- **customerServiceRating**
+  - **Data Type:** Number (Optional)
+  - **Default:** 10
+  - **Description:** The rating given by the client for customer service.
+
+- **comments**
+  - **Data Type:** String (Optional)
+  - **Default:** `''`
+  - **Description:** Additional comments from the client about the job.
+
+### Details
+
+- **heading**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The heading or title of the job.
+
+- **description**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** A detailed description of the job.
+
+- **address**
+  - **Data Type:** `Address`
+  - **Required:** Yes
+  - **Description:** The address where the job will take place.
+
+- **startDate**
+  - **Data Type:** Date
+  - **Required:** Yes
+  - **Description:** The start date of the job.
+
+- **endDate**
+  - **Data Type:** Date (Optional)
+  - **Description:** The end date of the job (if applicable).
+
+#### Address
+
+- **street**
+  - **Data Type:** String (Optional)
+  - **Description:** The street address where the job is located.
+
+- **province**
+  - **Data Type:** String (Optional)
+  - **Description:** The province where the job is located.
+
+- **suburb**
+  - **Data Type:** String (Optional)
+  - **Description:** The suburb where the job is located.
+
+- **city**
+  - **Data Type:** String (Optional)
+  - **Description:** The city where the job is located.
+
+- **postalCode**
+  - **Data Type:** String (Optional)
+  - **Description:** The postal code of the job's location.
+
+- **complex**
+  - **Data Type:** String (Optional)
+  - **Description:** The complex name (if applicable).
+
+- **houseNumber**
+  - **Data Type:** String (Optional)
+  - **Description:** The house number (if applicable).
+
+### RecordedDetails
+
+- **imagesTaken**
+  - **Data Type:** Array of Strings (Optional)
+  - **Default:** `[]`
+  - **Description:** An array of image URLs taken during the job.
+
+- **inventoryUsed**
+  - **Data Type:** Array of `InventoryUsed` (Optional)
+  - **Default:** `[]`
+  - **Description:** A list of inventory items used during the job.
+
+#### InventoryUsed
+
+- **inventoryItemId**
+  - **Data Type:** ObjectId
+  - **Required:** Yes
+  - **Description:** The ID of the inventory item used in the job.
+
+- **inventoryItemName**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The name of the inventory item used.
+
+- **quantityUsed**
+  - **Data Type:** Number
+  - **Required:** Yes
+  - **Default:** 0
+  - **Description:** The quantity of the inventory item used.
+
+### AssignedEmployees
+
+- **employeeIds**
+  - **Data Type:** Array of ObjectIds (Optional)
+  - **Default:** `[]`
+  - **Description:** A list of IDs of employees assigned to the job.
+
+- **teamIds**
+  - **Data Type:** Array of ObjectIds (Optional)
+  - **Default:** `[]`
+  - **Description:** A list of IDs of teams assigned to the job.
+
+### Task
+
+- **_id**
+  - **Data Type:** ObjectId
+  - **Required:** Yes
+  - **Default:** New `ObjectId()`
+  - **Description:** The unique ID of the task.
+
+- **name**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The name of the task.
+
+- **status**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Default:** `'To do'`
+  - **Description:** The current status of the task (e.g., To do, In progress, Done).
+
+- **assignedEmployees**
+  - **Data Type:** Array of ObjectIds (Optional)
+  - **Default:** `[]`
+  - **Description:** A list of employee IDs assigned to this task.
+
+### History
+
+- **event**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** A description of the event in the job's history.
+
+- **timestamp**
+  - **Data Type:** Date
+  - **Required:** Yes
+  - **Description:** The timestamp when the event occurred.
+
+### Comment
+
+- **_id**
+  - **Data Type:** ObjectId
+  - **Required:** Yes
+  - **Default:** New `ObjectId()`
+  - **Description:** The unique ID of the comment.
+
+- **employeeId**
+  - **Data Type:** ObjectId
+  - **Required:** Yes
+  - **Description:** The ID of the employee who made the comment.
+
+- **comment**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The text of the comment.
+
+- **edited**
+  - **Data Type:** Boolean
+  - **Required:** Yes
+  - **Default:** `false`
+  - **Description:** Whether the comment has been edited.
+
+- **date**
+  - **Data Type:** Date (Optional)
+  - **Default:** Current date
+  - **Description:** The date when the comment was made or last edited.
+
+## Inventory
+- **id**
+  - **Data Type:** ObjectId
+  - **Required:** Yes
+  - **Description:** The unique ID of the inventory item.
+
+- **name**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The name of the inventory item.
+
+- **description**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** A brief description of the inventory item.
+
+- **costPrice**
+  - **Data Type:** Number
+  - **Required:** Yes
+  - **Description:** The cost price of the inventory item.
+
+- **currentStockLevel**
+  - **Data Type:** Number
+  - **Required:** Yes
+  - **Description:** The current stock level of the inventory item.
+
+- **reorderLevel**
+  - **Data Type:** Number
+  - **Required:** Yes
+  - **Description:** The stock level at which the inventory item needs to be reordered.
+
+- **companyId**
+  - **Data Type:** ObjectId
+  - **Required:** Yes
+  - **Description:** The ID of the company to which the inventory item belongs.
+
+- **createdAt**
+  - **Data Type:** Date
+  - **Required:** Yes
+  - **Default:** Current date
+  - **Description:** The date when the inventory item was created.
+
+- **updatedAt**
+  - **Data Type:** Date (Optional)
+  - **Description:** The date when the inventory item was last updated.
+
+- **deletedAt**
+  - **Data Type:** Date (Optional)
+  - **Description:** The date when the inventory item was deleted (soft delete).
+
+## Role
+
+- **id**
+  - **Data Type:** ObjectId
+  - **Required:** Yes
+  - **Description:** The unique ID of the role.
+
+- **roleName**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The name of the role.
+
+- **permissionSuite**
+  - **Data Type:** Array of Strings
+  - **Required:** Yes
+  - **Default:** ['view all jobs assigned to me', 'view all clients that are assigned to me', 'record inventory use']
+  - **Description:** The set of permissions associated with the role.
+
+- **companyId**
+  - **Data Type:** ObjectId
+  - **Required:** Yes
+  - **Description:** The ID of the company to which the role belongs.
+
+- **createdAt**
+  - **Data Type:** Date
+  - **Required:** Yes
+  - **Default:** Current date
+  - **Description:** The date when the role was created.
+
+- **updatedAt**
+  - **Data Type:** Date (Optional)
+  - **Description:** The date when the role was last updated.
+
+- **deletedAt**
+  - **Data Type:** Date (Optional)
+  - **Description:** The date when the role was deleted (soft delete).
+
+## Message
+
+### Properties
+
+- **token**
+  - **Data Type:** String (Optional)
+  - **Default:** ''
+  - **Description:** A token associated with the message.
+
+- **title**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The title of the message.
+
+- **body**
+  - **Data Type:** String
+  - **Required:** Yes
+  - **Description:** The body content of the message.
+
+- **data**
+  - **Data Type:** Any (Optional)
+  - **Description:** Additional data associated with the message.
+
+## Notification
+
+- **senderId**
+  - **Data Type:** ObjectId (Optional)
+  - **Description:** The ID of the sender. This can reference an `Employee` entity but is not required.
+
+- **recipientId**
+  - **Data Type:** ObjectId
+  - **Required:** Yes
+  - **Description:** The ID of the recipient. This must reference an `Employee` entity.
+
+- **message**
+  - **Data Type:** `Message`
+  - **Required:** Yes
+  - **Description:** The message details, including title, body, token, and additional data.
+
+- **isRead**
+  - **Data Type:** Boolean
+  - **Required:** Yes
+  - **Default:** false
+  - **Description:** Indicates whether the notification has been read.
+
+- **createdAt**
+  - **Data Type:** Date
+  - **Default:** Current date
+  - **Description:** The date when the notification was created.
