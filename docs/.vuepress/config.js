@@ -178,10 +178,10 @@ export default defineUserConfig({
         {
           text: 'Design Documentation',
           link: '/demo3/designDocs/',
-          children: [
-            { text: 'Wireframes', link: '/demo3/designDocs/wireframes.md' },
-            { text: 'Style document', link: '/demo3/designDocs/styles.md' },
-          ],
+          // children: [
+          //   { text: 'Wireframes', link: '/demo3/designDocs/wireframes.md' },
+          //   { text: 'Style document', link: '/demo3/designDocs/styles.md' },
+          // ],
         },
         {
           text: 'Business Documentation',
