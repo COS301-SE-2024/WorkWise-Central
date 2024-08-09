@@ -45,14 +45,16 @@ import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { CreatePriorityTagDto, CreateStatusDto, CreateTagDto } from './dto/create-tag.dto';
 import { extractUserId, validateObjectId } from '../utils/Utils';
-import { DeleteStatusDto, DeleteTagDto } from './dto/edit-tag.dto';
+import { DeleteStatusDto, DeleteTagDto, UpdatePriorityTagDto, UpdateTagDto } from './dto/edit-tag.dto';
 import {
   JobAllResponseDetailedDto,
   JobAllResponseDto,
   JobResponseDto,
   JobStatusAllResponseDto,
   JobStatusResponseDto,
+  JobTagResponseDto,
   PriorityTagsAllResponseDto,
+  TagResponseDto,
   TagsAllResponseDto,
 } from './dto/job-responses.dto';
 import { JobAssignDto, JobAssignGroupDto, TaskAssignDto } from './dto/assign-job.dto';
@@ -451,17 +453,17 @@ export class JobController {
     summary: 'Add a Job Tag to a company',
   })
   @ApiCreatedResponse({
-    type: BooleanResponseDto,
+    type: JobTagResponseDto,
     description: 'Confirmation of success of request',
   })
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Post('/tags/add')
-  addJobTagToCompany(@Headers() headers: any, @Body() createTagDto: CreateTagDto) {
+  async addJobTagToCompany(@Headers() headers: any, @Body() createTagDto: CreateTagDto) {
     try {
       validateObjectId(createTagDto.companyId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
-      return this.jobService.addJobTagToCompany(userId, createTagDto);
+      return { data: await this.jobService.addJobTagToCompany(userId, createTagDto) };
     } catch (e) {
       console.log(e);
       throw e;
@@ -529,6 +531,50 @@ export class JobController {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
         data: await this.jobService.removeJobPriorityTagFromCompany(userId, deleteTagDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Update the name or colour of a Tag, within a company',
+  })
+  @ApiResponse({
+    type: TagResponseDto,
+    description: 'Tag successfully updated',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Patch('tags/')
+  async updateTag(@Headers() headers: any, @Body() updateTagDto: UpdateTagDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.updateTag(userId, updateTagDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Update the name, colour, or PriorityLevel of a PriorityTag, within a company',
+  })
+  @ApiResponse({
+    type: TagResponseDto,
+    description: 'PriorityTag successfully updated',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Patch('tags/p')
+  async updatePriorityTag(@Headers() headers: any, @Body() updatePriorityTagDto: UpdatePriorityTagDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.updatePriorityTag(userId, updatePriorityTagDto),
       };
     } catch (e) {
       console.log(e);
@@ -655,6 +701,10 @@ export class JobController {
   }*/
 
   ///STATUS
+  @ApiOperation({ summary: 'Get a Status using its Id' })
+  @ApiResponse({ type: JobStatusResponseDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @Get('status/:sid')
   async getStatusById(@Headers() headers: any, @Param('sid') statusId: string) {
     try {
