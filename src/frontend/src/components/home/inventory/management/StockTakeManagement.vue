@@ -31,7 +31,7 @@
 
 <script lang="ts">
 import axios from 'axios'
-import GenerateReport from './GenerateReport.vue'
+import GenerateReport from '../reports/GenerateReport.vue'
 interface InventoryItem {
   _id: string
   name: string
@@ -104,7 +104,7 @@ export default {
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
-    }
+    },
   },
   mounted() {
     this.getInventoryItems()
