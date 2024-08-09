@@ -18,9 +18,7 @@ describe('--Team Controller--', () => {
     })
       .useMocker((token) => {
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token,
-          ) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
@@ -65,9 +63,7 @@ describe('--Team Controller--', () => {
       const expectedResponse = {
         data: returnedResponseFromService,
       };
-      jest
-        .spyOn(service, 'findAll')
-        .mockResolvedValue(returnedResponseFromService as any);
+      jest.spyOn(service, 'findAll').mockResolvedValue(returnedResponseFromService as any);
       expect(await controller.findAll()).toEqual(expectedResponse);
     });
   });
@@ -89,9 +85,7 @@ describe('--Team Controller--', () => {
       const expectedResponse = {
         data: returnedResponseFromService,
       };
-      jest
-        .spyOn(service, 'findById')
-        .mockResolvedValue(returnedResponseFromService as any);
+      jest.spyOn(service, 'findById').mockResolvedValue(returnedResponseFromService as any);
       expect(await controller.findById(id)).toEqual(expectedResponse);
     });
   });
@@ -116,9 +110,7 @@ describe('--Team Controller--', () => {
       const expectedResponse = {
         data: returnedResponseFromService,
       };
-      jest
-        .spyOn(service, 'create')
-        .mockResolvedValue(returnedResponseFromService as any);
+      jest.spyOn(service, 'create').mockResolvedValue(returnedResponseFromService as any);
       expect(await controller.create(createTeamDto)).toEqual(expectedResponse);
     });
   });
@@ -146,12 +138,8 @@ describe('--Team Controller--', () => {
       const expectedResponse = {
         data: returnedResponseFromService,
       };
-      jest
-        .spyOn(service, 'update')
-        .mockResolvedValue(returnedResponseFromService as any);
-      expect(await controller.update(id, updateTeamDto)).toEqual(
-        expectedResponse,
-      );
+      jest.spyOn(service, 'update').mockResolvedValue(returnedResponseFromService as any);
+      expect(await controller.update(id, updateTeamDto)).toEqual(expectedResponse);
     });
   });
 
@@ -162,9 +150,7 @@ describe('--Team Controller--', () => {
       const expectedResponse = {
         data: returnedResponseFromService,
       };
-      jest
-        .spyOn(service, 'remove')
-        .mockResolvedValue(returnedResponseFromService as any);
+      jest.spyOn(service, 'remove').mockResolvedValue(returnedResponseFromService as any);
       expect(await controller.remove(id)).toEqual(expectedResponse);
     });
 
@@ -174,9 +160,7 @@ describe('--Team Controller--', () => {
       const expectedResponse = {
         data: returnedResponseFromService,
       };
-      jest
-        .spyOn(service, 'remove')
-        .mockResolvedValue(returnedResponseFromService as any);
+      jest.spyOn(service, 'remove').mockResolvedValue(returnedResponseFromService as any);
       expect(await controller.remove(id)).toEqual(expectedResponse);
     });
   });

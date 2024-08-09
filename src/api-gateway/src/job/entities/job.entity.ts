@@ -134,12 +134,7 @@ export class History {
 
 @Schema()
 export class Comment {
-  constructor(
-    employeeId: Types.ObjectId,
-    comment: string,
-    edited: boolean,
-    date: Date,
-  ) {
+  constructor(employeeId: Types.ObjectId, comment: string, edited: boolean, date: Date) {
     this.employeeId = employeeId;
     this.comment = comment;
     this.edited = edited;
@@ -178,14 +173,11 @@ export class Job {
     if (createJobDto.companyId) this.companyId = createJobDto.companyId;
     if (createJobDto.clientId) this.clientId = createJobDto.clientId;
     if (createJobDto.assignedBy) this.assignedBy = createJobDto.assignedBy;
-    if (createJobDto.assignedEmployees)
-      this.assignedEmployees = createJobDto.assignedEmployees;
+    if (createJobDto.assignedEmployees) this.assignedEmployees = createJobDto.assignedEmployees;
     if (createJobDto.status) this.status = createJobDto.status;
     if (createJobDto.details) this.details = createJobDto.details;
-    if (createJobDto.recordedDetails)
-      this.recordedDetails = createJobDto.recordedDetails;
-    if (createJobDto.clientFeedback)
-      this.clientFeedback = createJobDto.clientFeedback;
+    if (createJobDto.recordedDetails) this.recordedDetails = createJobDto.recordedDetails;
+    if (createJobDto.clientFeedback) this.clientFeedback = createJobDto.clientFeedback;
     if (createJobDto.taskList) this.taskList = createJobDto.taskList;
     if (createJobDto.comments) this.comments = createJobDto.comments;
     if (createJobDto.tags) this.tags = createJobDto.tags;

@@ -4,11 +4,7 @@ import { JobService } from '../job.service';
 import { JwtService } from '@nestjs/jwt';
 import { ClientService } from '../../client/client.service';
 import { CreateJobDto } from '../dto/create-job.dto';
-import {
-  HttpException,
-  HttpStatus,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, InternalServerErrorException } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { UpdateJobDto } from '../dto/update-job.dto';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
@@ -47,9 +43,7 @@ describe('JobController', () => {
     })
       .useMocker((token) => {
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token,
-          ) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
@@ -70,9 +64,7 @@ describe('JobController', () => {
   });
 
   it('should reject invalid ObjectIds before processing any request with an ID', async function () {
-    expect(() => jobController.validateObjectId('failure')).toThrowError(
-      'Invalid ID',
-    );
+    expect(() => jobController.validateObjectId('failure')).toThrowError('Invalid ID');
   });
 
   it('should accept valid ObjectIds before processing any request with an ID', async function () {
@@ -121,10 +113,7 @@ describe('JobController', () => {
         taskList: [],
       };
 
-      const expectedError = new HttpException(
-        'Invalid job data',
-        HttpStatus.CONFLICT,
-      );
+      const expectedError = new HttpException('Invalid job data', HttpStatus.CONFLICT);
       jest.spyOn(jobService, 'create').mockRejectedValue(expectedError);
 
       try {
@@ -166,7 +155,7 @@ describe('JobController', () => {
     it('should handle exceptions and return an internal server error', async () => {
       const jobId = 'invalidJobId';
       const updateJobDto: UpdateJobDto = {
-        status: 'To do',
+        status: new Types.ObjectId(),
       };
       jest.spyOn(jobService, 'update').mockRejectedValue(new Error('DB error'));
 
@@ -183,12 +172,10 @@ describe('JobController', () => {
     it('should delete a Job if ID is valid', async () => {
       const jobId = new Types.ObjectId();
 
-      jest
-        .spyOn(jobController, 'validateObjectId')
-        .mockImplementation((a: Types.ObjectId) => {
-          console.log(a);
-          return true;
-        });
+      jest.spyOn(jobController, 'validateObjectId').mockImplementation((a: Types.ObjectId) => {
+        console.log(a);
+        return true;
+      });
 
       jest.spyOn(jobService, 'softDelete').mockResolvedValue(true);
 
@@ -200,12 +187,10 @@ describe('JobController', () => {
       const jobId = new Types.ObjectId();
       const invalidIdParam = 'invalidIdParam';
 
-      jest
-        .spyOn(jobController, 'validateObjectId')
-        .mockImplementation((a: Types.ObjectId) => {
-          console.log(a);
-          return true;
-        });
+      jest.spyOn(jobController, 'validateObjectId').mockImplementation((a: Types.ObjectId) => {
+        console.log(a);
+        return true;
+      });
 
       try {
         await jobController.remove(jobId.toString(), { pass: invalidIdParam });
@@ -219,18 +204,12 @@ describe('JobController', () => {
       const jobId = new Types.ObjectId();
       const idParam = new Types.ObjectId().toString();
 
-      jest
-        .spyOn(jobController, 'validateObjectId')
-        .mockImplementation((a: Types.ObjectId) => {
-          console.log(a);
-          return true;
-        });
+      jest.spyOn(jobController, 'validateObjectId').mockImplementation((a: Types.ObjectId) => {
+        console.log(a);
+        return true;
+      });
 
-      jest
-        .spyOn(jobService, 'softDelete')
-        .mockRejectedValue(
-          new InternalServerErrorException('Internal Server Error'),
-        );
+      jest.spyOn(jobService, 'softDelete').mockRejectedValue(new InternalServerErrorException('Internal Server Error'));
 
       try {
         await jobController.remove(jobId.toString(), { pass: idParam });

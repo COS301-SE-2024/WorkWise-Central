@@ -29,32 +29,20 @@ export class TeamService {
 
     // Check if the team members exist in the company
     for (const memberId of team.teamMembers) {
-      if (
-        !(await this.employeeService.employeeExistsForCompany(
-          memberId,
-          team.companyId,
-        ))
-      ) {
+      if (!(await this.employeeService.employeeExistsForCompany(memberId, team.companyId))) {
         return new ValidationResult(false, `Team member not found`);
       }
     }
 
     // Check if the team leader exists in the company
     if ('teamLeaderId' in team && team.teamLeaderId) {
-      if (
-        !(await this.employeeService.employeeExistsForCompany(
-          team.teamLeaderId,
-          team.companyId,
-        ))
-      ) {
+      if (!(await this.employeeService.employeeExistsForCompany(team.teamLeaderId, team.companyId))) {
         return new ValidationResult(false, `Team leader not found`);
       }
     }
 
     // Check if the team already exists in the company
-    if (
-      (await this.findByNameInCompany(team.teamName, team.companyId)) != null
-    ) {
+    if ((await this.findByNameInCompany(team.teamName, team.companyId)) != null) {
       return new ValidationResult(false, `Team already exists`);
     }
 
@@ -74,12 +62,7 @@ export class TeamService {
     // Check if the team exists in the company
     if ('teamMembers' in team && team.teamMembers) {
       for (const memberId of team.teamMembers) {
-        if (
-          !(await this.employeeService.employeeExistsForCompany(
-            memberId,
-            companyId,
-          ))
-        ) {
+        if (!(await this.employeeService.employeeExistsForCompany(memberId, companyId))) {
           return new ValidationResult(false, `Team member not found`);
         }
       }
@@ -137,10 +120,7 @@ export class TeamService {
       throw new Error('Company not found');
     }
 
-    const result = await this.teamRepository.findByNameInCompany(
-      name,
-      companyId,
-    );
+    const result = await this.teamRepository.findByNameInCompany(name, companyId);
     return result;
   }
 
@@ -148,10 +128,7 @@ export class TeamService {
     return await this.teamRepository.teamExists(id);
   }
 
-  async teamExistsInCompany(
-    id: Types.ObjectId,
-    companyId: Types.ObjectId,
-  ): Promise<boolean> {
+  async teamExistsInCompany(id: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
     //checking if the company exists
     if (!(await this.companyService.companyIdExists(companyId))) {
       throw new Error('Company not found');

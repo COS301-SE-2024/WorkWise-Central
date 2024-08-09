@@ -24,10 +24,7 @@ export class CompanyRepository {
     if (populatedFields) {
       return this.companyModel
         .findOne({
-          $and: [
-            { _id: identifier },
-            { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] },
-          ],
+          $and: [{ _id: identifier }, { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] }],
         })
         .populate(populatedFields)
         .lean()
@@ -36,18 +33,13 @@ export class CompanyRepository {
 
     return this.companyModel
       .findOne({
-        $and: [
-          { _id: identifier },
-          { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] },
-        ],
+        $and: [{ _id: identifier }, { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] }],
       })
       .lean()
       .exec();
   }
 
-  async findByRegistrationNumber(
-    registrationNumber: string,
-  ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+  async findByRegistrationNumber(registrationNumber: string): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
     return this.companyModel
       .findOne({
         $and: [
@@ -60,9 +52,7 @@ export class CompanyRepository {
       .lean();
   }
 
-  async findByEmailOrName(
-    identifier: string,
-  ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+  async findByEmailOrName(identifier: string): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
     const regex = `${identifier}`;
     return this.companyModel
       .find({
@@ -92,9 +82,7 @@ export class CompanyRepository {
         .lean();
     }
 
-    return this.companyModel
-      .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
-      .lean();
+    return this.companyModel.find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] }).lean();
   }
 
   async registrationNumberExists(registrationNumber: string): Promise<boolean> {

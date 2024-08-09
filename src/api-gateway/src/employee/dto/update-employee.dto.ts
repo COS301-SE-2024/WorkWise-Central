@@ -30,11 +30,11 @@ export class UpdateEmployeeDto {
   @ApiProperty()
   roleId?: Types.ObjectId;
 
-  // @IsArray()
-  // @IsMongoId({ each: true })
-  // @IsOptional()
-  // @ApiProperty()
-  // currentJobAssignments?: Types.ObjectId[];
+  @IsArray()
+  @IsMongoId({ each: true })
+  @IsOptional()
+  @ApiProperty()
+  currentJobAssignments?: Types.ObjectId[];
 
   @IsMongoId()
   @IsOptional()

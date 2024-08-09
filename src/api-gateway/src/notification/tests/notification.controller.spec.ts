@@ -39,18 +39,14 @@ describe('NotificationController', () => {
         }*/
 
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token,
-          ) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
       })
       .compile();
 
-    notificationController = module.get<NotificationController>(
-      NotificationController,
-    );
+    notificationController = module.get<NotificationController>(NotificationController);
     notificationService = module.get<NotificationService>(NotificationService);
   });
 

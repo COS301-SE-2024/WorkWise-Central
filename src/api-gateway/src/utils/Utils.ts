@@ -14,10 +14,7 @@ export function validateObjectIds(ids: string[] | Types.ObjectId[]): boolean {
   return true;
 }
 
-export function validateObjectId(
-  id: string | Types.ObjectId,
-  entity: string = '',
-): boolean {
+export function validateObjectId(id: string | Types.ObjectId, entity: string = ''): boolean {
   let data: string;
   if (entity === '') data = `Invalid ID`;
   else data = `Invalid ${entity} ID`;
@@ -29,14 +26,9 @@ export function validateObjectId(
   return true;
 }
 
-export function extractUserId(
-  jwtService: JwtService,
-  headers: any,
-): Types.ObjectId {
+export function extractUserId(jwtService: JwtService, headers: any): Types.ObjectId {
   const authHeader: string = headers.authorization;
-  const decodedJwtAccessToken = jwtService.decode(
-    authHeader.replace(/^Bearer\s+/i, ''),
-  );
+  const decodedJwtAccessToken = jwtService.decode(authHeader.replace(/^Bearer\s+/i, ''));
   if (!Types.ObjectId.isValid(decodedJwtAccessToken.sub)) {
     throw new HttpException('Invalid User', HttpStatus.BAD_REQUEST);
   }

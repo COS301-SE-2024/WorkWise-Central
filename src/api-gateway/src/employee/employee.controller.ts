@@ -8,6 +8,8 @@ import {
   HttpException,
   HttpStatus,
   UseGuards,
+  Headers,
+  Post,
 } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
@@ -29,13 +31,20 @@ import {
 import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { extractUserId } from '../utils/Utils';
+import { JwtService } from '@nestjs/jwt';
+import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { currentEmployeeDto } from '../shared/dtos/current-employee.dto';
 
 const className = 'Employee';
 
 @ApiTags('Employee')
 @Controller('employee')
 export class EmployeeController {
-  constructor(private readonly employeeService: EmployeeService) {}
+  constructor(
+    private readonly employeeService: EmployeeService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @ApiOperation({
     summary: `Refer to Documentation`,
@@ -44,26 +53,58 @@ export class EmployeeController {
   hello() {
     return { message: 'Refer to /documentation for details on the API' };
   }
-
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT')
-  @ApiInternalServerErrorResponse({
-    type: HttpException,
-    status: HttpStatus.NO_CONTENT,
-  })
-  @ApiOperation({
-    summary: `Get all ${className} instances`,
-    description: `Returns all ${className} instances in the database.`,
-  })
-  @ApiOkResponse({
-    type: EmployeeListResponseDto,
-    description: `An array of mongodb objects of the ${className} class.`,
-  })
+  //********Endpoints for test purposes - Start**********/
   @Get('/all')
   async findAll() {
+    console.log('hi');
     const data = await this.employeeService.findAll();
     return { data: data };
   }
+
+  @Post('/create')
+  async create(
+    @Headers() headers: any,
+    @Body()
+    body: {
+      currentEmployeeId: Types.ObjectId;
+      createEmployeeDto: CreateEmployeeDto;
+    },
+  ) {
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    console.log('current employee: ', currentEmployee);
+    if (currentEmployee.role.permissionSuite.includes('add new employees')) {
+      let data;
+      try {
+        data = await this.employeeService.create(body.createEmployeeDto);
+      } catch (e) {
+        console.log('error:', e);
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+  }
+  @Get('/test')
+  async test() {
+    console.log('In allEmployeesInCompanyWithRole');
+  }
+
+  @Get('/employeeWithRole/:roleId')
+  async allEmployeesInCompanyWithRole(@Param('roleId') roleId: Types.ObjectId) {
+    console.log('In allEmployeesInCompanyWithRole');
+    const data = await this.employeeService.allEmployeesInCompanyWithRole(roleId);
+    return { data: data };
+  }
+
+  @Get('/depthFirst/:employeeId')
+  async depthFirst(@Param('employeeId') employeeId: Types.ObjectId) {
+    console.log('In depthFirst');
+    const data = await this.employeeService.deptFirstTraversalId(employeeId);
+    return { data: data };
+  }
+
+  //********Endpoints for test purposes - End**********/
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
@@ -89,15 +130,34 @@ export class EmployeeController {
   })
   @Get('/detailed/all/:companyId')
   async findAllInCompanyDetailed(
+    @Headers() headers: any,
     @Param('companyId') companyId: Types.ObjectId,
+    @Body() body: currentEmployeeDto,
   ) {
-    let data;
-    try {
-      data = await this.employeeService.detailedFindAllInCompany(companyId);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    console.log('In findAllInCompanyDetailed');
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    console.log('currentEmployee', currentEmployee);
+    if (currentEmployee.role.permissionSuite.includes('view all employees')) {
+      let data;
+      try {
+        console.log('In try block');
+        data = await this.employeeService.detailedFindAllInCompany(companyId);
+        console.log('data', data);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
+      let data;
+      try {
+        data = await this.employeeService.detailedFindBelowMeInCompany(body.currentEmployeeId);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
-    return { data: data };
   }
 
   @UseGuards(AuthGuard)
@@ -123,14 +183,32 @@ export class EmployeeController {
     description: `The _id attribute of the Company for which to get all ${className} instances.`,
   })
   @Get('/all/:companyId')
-  async findAllInCompany(@Param('companyId') companyId: Types.ObjectId) {
-    let data;
-    try {
-      data = await this.employeeService.findAllInCompany(companyId);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+  async findAllInCompany(
+    @Headers() headers: any,
+    @Param('companyId') companyId: Types.ObjectId,
+    @Body() body: currentEmployeeDto,
+  ) {
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    console.log('currentEmployee', currentEmployee);
+    if (currentEmployee.role.permissionSuite.includes('view all employees')) {
+      let data;
+      try {
+        data = await this.employeeService.findAllInCompany(companyId);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
+      let data;
+      try {
+        data = await this.employeeService.findBelowMeInCompany(body.currentEmployeeId);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
-    return { data: data };
   }
 
   @UseGuards(AuthGuard)
@@ -152,9 +230,23 @@ export class EmployeeController {
     description: `The _id attribute of the ${className} to be retrieved.`,
   })
   @Get('/detailed/id/:id')
-  async findByIdDetailed(@Param('id') id: Types.ObjectId) {
-    const data = await this.employeeService.detailedFindById(id);
-    return { data: data };
+  async findByIdDetailed(@Headers() headers: any, @Param('id') id: Types.ObjectId, @Body() body: currentEmployeeDto) {
+    const userId = extractUserId(this.jwtService, headers);
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('view all employees')) {
+      const data = await this.employeeService.detailedFindById(id);
+      return { data: data };
+    } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
+      let data;
+      try {
+        data = await this.employeeService.detailedFindByIdUnderMe(userId, id, body.currentEmployeeId);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
   }
 
   @UseGuards(AuthGuard)
@@ -176,9 +268,24 @@ export class EmployeeController {
     description: `The _id attribute of the ${className} to be retrieved.`,
   })
   @Get('id/:id')
-  async findById(@Param('id') id: Types.ObjectId) {
-    const data = await this.employeeService.findById(id);
-    return { data: data };
+  async findById(@Headers() headers: any, @Param('id') id: Types.ObjectId, @Body() body: currentEmployeeDto) {
+    const userId = extractUserId(this.jwtService, headers);
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    console.log('currentEmployee', currentEmployee);
+    if (currentEmployee.role.permissionSuite.includes('view all employees')) {
+      const data = await this.employeeService.findById(id);
+      return { data: data };
+    } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
+      let data;
+      try {
+        data = await this.employeeService.findByIdUnderMe(userId, id, body.currentEmployeeId);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
   }
 
   @UseGuards(AuthGuard)
@@ -203,7 +310,7 @@ export class EmployeeController {
     description: `The _id attribute of the Company.`,
   })
   @Get('/listOther/:id')
-  async getOtherEmployees(@Param('id') id: Types.ObjectId) {
+  async getOtherEmployees(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
     let data;
     try {
       data = await this.employeeService.getListOfOtherEmployees(id);
@@ -234,18 +341,42 @@ export class EmployeeController {
     description: `The _id attribute of the ${className} to be updated.`,
   })
   @ApiBody({ type: UpdateEmployeeDto })
-  @Patch(':id')
+  @Patch(':employeeId')
   async update(
-    @Param('id') id: Types.ObjectId,
-    @Body() updateEmployeeDto: UpdateEmployeeDto,
+    @Headers() headers: any,
+    @Param('employeeId') employeeId: Types.ObjectId,
+    @Body()
+    body: {
+      currentEmployeeId: Types.ObjectId;
+      updateEmployeeDto: UpdateEmployeeDto;
+    },
   ) {
-    let data;
-    try {
-      data = await this.employeeService.update(id, updateEmployeeDto);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    const userId = extractUserId(this.jwtService, headers);
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('edit all employees')) {
+      let data;
+      try {
+        data = await this.employeeService.update(employeeId, body.currentEmployeeId, body.updateEmployeeDto);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else if (currentEmployee.role.permissionSuite.includes('edit employees under me')) {
+      let data;
+      try {
+        data = await this.employeeService.updateUnderMe(
+          userId,
+          employeeId,
+          body.updateEmployeeDto,
+          body.currentEmployeeId,
+        );
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
-    return { data: data };
   }
 
   @UseGuards(AuthGuard)
@@ -272,20 +403,35 @@ export class EmployeeController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete(':id')
-  async remove(@Param('id') id: Types.ObjectId) {
-    let data;
-    try {
-      data = await this.employeeService.remove(id);
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-    }
+  async remove(@Headers() headers: any, @Param('id') id: Types.ObjectId, @Body() body: currentEmployeeDto) {
+    const userId = extractUserId(this.jwtService, headers);
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('remove any employees')) {
+      let data;
+      try {
+        data = await this.employeeService.remove(id);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
 
-    if (data === false) {
-      throw new HttpException(
-        'update unsuccessful',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      if (data === false) {
+        throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+      return { data: data };
+    } else if (currentEmployee.role.permissionSuite.includes('remove employees under me')) {
+      let data;
+      try {
+        data = await this.employeeService.removeUnderMe(userId, id, body.currentEmployeeId);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+
+      if (data === false) {
+        throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
-    return { data: data };
   }
 }

@@ -41,9 +41,7 @@ describe('ClientController', () => {
     })
       .useMocker((token) => {
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token,
-          ) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
@@ -62,23 +60,17 @@ describe('ClientController', () => {
     it('should update a client if ID is valid', async () => {
       const userId = new Types.ObjectId();
 
-      jest
-        .spyOn(clientController, 'validateObjectId')
-        .mockImplementation((a: string) => {
-          console.log(a);
-          return true;
-        });
+      jest.spyOn(clientController, 'validateObjectId').mockImplementation((a: string) => {
+        console.log(a);
+        return true;
+      });
 
       jest.spyOn(clientService, 'updateClient').mockImplementation((a: any) => {
         console.log(a);
         return null;
       });
 
-      const result = await clientService.updateClient(
-        userId,
-        new Types.ObjectId(),
-        { registrationNumber: 'test' },
-      );
+      const result = await clientService.updateClient(userId, new Types.ObjectId(), { registrationNumber: 'test' });
       expect(result).toBeDefined();
     });
 
@@ -86,19 +78,21 @@ describe('ClientController', () => {
       const userId = new Types.ObjectId();
       const clientId = new Types.ObjectId();
 
-      jest
-        .spyOn(clientController, 'validateObjectId')
-        .mockImplementation((a: string) => {
-          console.log(a);
-          return true;
-        });
+      jest.spyOn(clientController, 'validateObjectId').mockImplementation((a: string) => {
+        console.log(a);
+        return true;
+      });
 
       //jest.spyOn(clientService,'getClientById')
 
       try {
-        await clientController.update({ userId }, clientId.toString(), {
-          registrationNumber: 'test',
-        });
+        const body = {
+          currentEmployeeId: new Types.ObjectId(),
+          updateClientDto: {
+            registrationNumber: 'test',
+          },
+        };
+        await clientController.update({ userId }, clientId, body);
       } catch (error) {
         expect(error).toBeInstanceOf(TypeError);
         //expect(error.getStatus()).toBe(HttpStatus.BAD_REQUEST);
@@ -121,16 +115,12 @@ describe('ClientController', () => {
           return new Types.ObjectId();
         });*/
 
-      jest
-        .spyOn(clientController, 'validateObjectId')
-        .mockImplementation((a: string) => {
-          console.log(a);
-          return true;
-        });
+      jest.spyOn(clientController, 'validateObjectId').mockImplementation((a: string) => {
+        console.log(a);
+        return true;
+      });
 
-      jest
-        .spyOn(clientService, 'updateClient')
-        .mockRejectedValue(new Error('Internal Server Error'));
+      jest.spyOn(clientService, 'updateClient').mockRejectedValue(new Error('Internal Server Error'));
 
       /*      jest
         .spyOn(clientController, 'extractUserId')
@@ -140,9 +130,13 @@ describe('ClientController', () => {
         });*/
 
       try {
-        await clientController.update({ userId }, clientId.toString(), {
-          registrationNumber: '123/12351/52132',
-        });
+        const body = {
+          currentEmployeeId: new Types.ObjectId(),
+          updateClientDto: {
+            registrationNumber: '123/12351/52132',
+          },
+        };
+        await clientController.update({ userId }, clientId, body);
       } catch (error) {
         expect(error).toBeInstanceOf(TypeError);
         //expect(error.message).toBe('Internal Server Error');
@@ -155,12 +149,10 @@ describe('ClientController', () => {
     it('should delete a client if ID is valid', async () => {
       const userId = new Types.ObjectId();
 
-      jest
-        .spyOn(clientController, 'validateObjectId')
-        .mockImplementation((a: string) => {
-          console.log(a);
-          return true;
-        });
+      jest.spyOn(clientController, 'validateObjectId').mockImplementation((a: string) => {
+        console.log(a);
+        return true;
+      });
 
       jest.spyOn(clientService, 'softDelete').mockResolvedValue(true);
 
@@ -174,18 +166,13 @@ describe('ClientController', () => {
     it('should handle invalid ID and return a bad request error', async () => {
       const userId = 'new Types.ObjectId()';
 
-      jest
-        .spyOn(clientController, 'validateObjectId')
-        .mockImplementation((a: string) => {
-          console.log(a);
-          return true;
-        });
+      jest.spyOn(clientController, 'validateObjectId').mockImplementation((a: string) => {
+        console.log(a);
+        return true;
+      });
 
       try {
-        await clientController.remove(
-          { userId },
-          { clientId: new Types.ObjectId(), employeeId: new Types.ObjectId() },
-        );
+        await clientController.remove({ userId }, { clientId: new Types.ObjectId(), employeeId: new Types.ObjectId() });
       } catch (error) {
         expect(error).toBeInstanceOf(TypeError);
         //expect(error.getStatus()).toBe(HttpStatus.BAD_REQUEST);
@@ -195,22 +182,15 @@ describe('ClientController', () => {
     it('should handle exceptions and return an internal server error', async () => {
       const userId = new Types.ObjectId();
 
-      jest
-        .spyOn(clientController, 'validateObjectId')
-        .mockImplementation((a: string) => {
-          console.log(a);
-          return true;
-        });
+      jest.spyOn(clientController, 'validateObjectId').mockImplementation((a: string) => {
+        console.log(a);
+        return true;
+      });
 
-      jest
-        .spyOn(clientService, 'softDelete')
-        .mockRejectedValue(new Error('Internal Server Error'));
+      jest.spyOn(clientService, 'softDelete').mockRejectedValue(new Error('Internal Server Error'));
 
       try {
-        await clientController.remove(
-          { userId },
-          { clientId: new Types.ObjectId(), employeeId: new Types.ObjectId() },
-        );
+        await clientController.remove({ userId }, { clientId: new Types.ObjectId(), employeeId: new Types.ObjectId() });
       } catch (error) {
         expect(error).toBeInstanceOf(TypeError);
         //expect(error.message).toBe('Internal Server Error');

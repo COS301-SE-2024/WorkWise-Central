@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { Inventory } from './entities/inventory.entity';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class InventoryRepository {
@@ -48,45 +48,39 @@ export class InventoryRepository {
   async findByIds(identifiers: Types.ObjectId[]) {
     const ids = identifiers.map((id) => new Types.ObjectId(id));
 
-    const result: (FlattenMaps<Inventory> & { _id: Types.ObjectId })[] =
-      await this.InventoryModel.find({
-        $and: [
-          { _id: { $in: ids } },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      }).lean();
+    const result: (FlattenMaps<Inventory> & { _id: Types.ObjectId })[] = await this.InventoryModel.find({
+      $and: [
+        { _id: { $in: ids } },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    }).lean();
     return result;
   }
 
   async InventoryExists(id: Types.ObjectId): Promise<boolean> {
-    const result: FlattenMaps<Inventory> & { _id: Types.ObjectId } =
-      await this.InventoryModel.findOne({
-        $and: [
-          { _id: id },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      }).lean();
+    const result: FlattenMaps<Inventory> & { _id: Types.ObjectId } = await this.InventoryModel.findOne({
+      $and: [
+        { _id: id },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    }).lean();
     return result != null;
   }
 
-  async InventoryExistsForCompany(
-    id: Types.ObjectId,
-    companyIdentification: Types.ObjectId,
-  ): Promise<boolean> {
-    const result: FlattenMaps<Inventory> & { _id: Types.ObjectId } =
-      await this.InventoryModel.findOne({
-        $and: [
-          { _id: new Types.ObjectId(id) },
-          { companyId: companyIdentification },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      }).lean();
+  async InventoryExistsForCompany(id: Types.ObjectId, companyIdentification: Types.ObjectId): Promise<boolean> {
+    const result: FlattenMaps<Inventory> & { _id: Types.ObjectId } = await this.InventoryModel.findOne({
+      $and: [
+        { _id: new Types.ObjectId(id) },
+        { companyId: companyIdentification },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    }).lean();
     return result != null;
   }
 
@@ -100,18 +94,17 @@ export class InventoryRepository {
   }
 
   async update(id: Types.ObjectId, updateInventoryDto: UpdateInventoryDto) {
-    const previousObject: FlattenMaps<Inventory> & { _id: Types.ObjectId } =
-      await this.InventoryModel.findOneAndUpdate(
-        {
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        },
-        { $set: { ...updateInventoryDto }, updatedAt: new Date() },
-      ).lean();
+    const previousObject: FlattenMaps<Inventory> & { _id: Types.ObjectId } = await this.InventoryModel.findOneAndUpdate(
+      {
+        $and: [
+          { _id: id },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      },
+      { $set: { ...updateInventoryDto }, updatedAt: new Date() },
+    ).lean();
 
     return previousObject;
   }
@@ -123,8 +116,7 @@ export class InventoryRepository {
       return false;
     }
 
-    const result: Document<unknown, NonNullable<unknown>, User> &
-      User & { _id: Types.ObjectId } =
+    const result: Document<unknown, NonNullable<unknown>, User> & User & { _id: Types.ObjectId } =
       await this.InventoryModel.findOneAndUpdate(
         {
           $and: [

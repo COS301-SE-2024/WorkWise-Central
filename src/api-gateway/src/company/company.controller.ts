@@ -50,15 +50,12 @@ import {
   CompanyResponseDto,
 } from './entities/company.entity';
 import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
-import {
-  extractUserId,
-  validateObjectId,
-  validateObjectIds,
-} from '../utils/Utils';
+import { extractUserId, validateObjectId, validateObjectIds } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JobStatusAllResponseDto } from '../job/dto/job-responses.dto';
+import { EmployeeService } from '../employee/employee.service';
 
 const className = 'Company';
 
@@ -68,6 +65,7 @@ export class CompanyController {
   constructor(
     private readonly companyService: CompanyService,
     private readonly jwtService: JwtService,
+    private readonly employeeService: EmployeeService,
   ) {}
   validateObjectId(id: string | Types.ObjectId): boolean {
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -97,9 +95,7 @@ export class CompanyController {
     description: `The access token and ${className}'s Id used for querying.`,
   })
   @Post('/create')
-  async create(
-    @Body() createCompanyDto: CreateCompanyDto,
-  ): Promise<CreateCompanyResponseDto> {
+  async create(@Body() createCompanyDto: CreateCompanyDto): Promise<CreateCompanyResponseDto> {
     return await this.companyService.create(createCompanyDto);
   }
 
@@ -110,16 +106,28 @@ export class CompanyController {
   @ApiBody({ type: AddUserToCompanyDto })
   @ApiOkResponse({ type: BooleanResponseDto })
   @Post('/add')
-  async addEmployee(@Body() addUserDto: AddUserToCompanyDto) {
-    const arr = [addUserDto.adminId, addUserDto.currentCompany];
-    if (addUserDto.roleId) arr.push(addUserDto.roleId);
+  async addEmployee(
+    @Body()
+    body: {
+      currentEmployeeId: Types.ObjectId;
+      addUserDto: AddUserToCompanyDto;
+    },
+  ) {
+    // const currentEmployee = await this.employeeService.findById(
+    //   body.currentEmployeeId,
+    // );
+    // if (currentEmployee.role.permissionSuite.includes('add new employees')) {
+    //TODO: Figure out if this enpoint needs role based access
+    const arr = [body.addUserDto.adminId, body.addUserDto.currentCompany];
+    if (body.addUserDto.roleId) arr.push(body.addUserDto.roleId);
     validateObjectIds(arr);
 
     try {
-      return { data: await this.companyService.addEmployee(addUserDto) };
+      return { data: await this.companyService.addEmployee(body.addUserDto) };
     } catch (Error) {
       throw new HttpException('Internal server error', HttpStatus.CONFLICT);
     }
+    // }
   }
 
   @UseGuards(AuthGuard) //It may be accessed by external users
@@ -135,10 +143,7 @@ export class CompanyController {
     try {
       return { data: await this.companyService.getAllCompanyNames() };
     } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -155,10 +160,7 @@ export class CompanyController {
     try {
       return { data: await this.companyService.getAllCompanies() };
     } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -173,16 +175,54 @@ export class CompanyController {
     description: `The _id attribute of the ${className}`,
   })
   @Get('/all/employees/:cid')
-  async getAllEmployeesInCompany(@Param('cid') cid: string) {
+  async getAllEmployeesInCompany(
+    @Param('cid') cid: string,
+    // @Body() body: { currentEmployeeId: Types.ObjectId },
+  ) {
+    // console.log('In getAllEmployeesInCompany');
+    // console.log('body.currentEmployeeId: ', body.currentEmployeeId);
+    // const currentEmployee = await this.employeeService.findById(
+    //   body.currentEmployeeId,
+    // );
+    // console.log('Current Employee:', currentEmployee);
+    // if (currentEmployee.role.permissionSuite.includes('view all employees')) {
+    //   validateObjectId(cid);
+    //   const objId = new Types.ObjectId(cid);
+    //   try {
+    //     return { data: await this.companyService.getAllEmployees(objId) };
+    //   } catch (Error) {
+    //     throw new HttpException(
+    //       'Something went wrong',
+    //       HttpStatus.INTERNAL_SERVER_ERROR,
+    //     );
+    //   }
+    // } else if (
+    //   currentEmployee.role.permissionSuite.includes('view employees under me')
+    // ) {
+    //   validateObjectId(cid);
+    //   try {
+    //     return {
+    //       data: await this.companyService.getAllEmployeeUnderMe(
+    //         body.currentEmployeeId,
+    //       ),
+    //     };
+    //   } catch (Error) {
+    //     throw new HttpException(
+    //       'Something went wrong',
+    //       HttpStatus.INTERNAL_SERVER_ERROR,
+    //     );
+    //   }
+    // } else {
+    //   throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    // }
+    //TODO: Please remove since this is a duplicate of the endpoint that exists in employee.controller.ts
     validateObjectId(cid);
     const objId = new Types.ObjectId(cid);
     try {
       return { data: await this.companyService.getAllEmployees(objId) };
     } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -211,15 +251,11 @@ export class CompanyController {
     description: `The mongodb 'Detailed' object of the ${className}, with an _id attribute`,
   })
   @Get('id/:id/detailed')
-  async findOneDetailed(
-    @Param('id') id: string,
-  ): Promise<{ data: FlattenMaps<Company> & { _id: Types.ObjectId } }> {
+  async findOneDetailed(@Param('id') id: string): Promise<{ data: FlattenMaps<Company> & { _id: Types.ObjectId } }> {
     try {
       validateObjectId(id);
       return {
-        data: await this.companyService.getCompanyByIdDetailed(
-          new Types.ObjectId(id),
-        ),
+        data: await this.companyService.getCompanyByIdDetailed(new Types.ObjectId(id)),
       };
     } catch (e) {
       throw new HttpException(e, HttpStatus.NOT_FOUND);
@@ -264,26 +300,28 @@ export class CompanyController {
   async update(
     @Headers() headers: any,
     @Param('cid') cid: string,
-    @Body() updateCompanyDto: UpdateCompanyDto,
+    @Body()
+    body: {
+      currentEmployeeId: Types.ObjectId;
+      updateCompanyDto: UpdateCompanyDto;
+    },
   ) {
-    try {
-      validateObjectId(cid);
-      const userId = extractUserId(this.jwtService, headers);
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('company settings')) {
+      try {
+        validateObjectId(cid);
+        const userId = extractUserId(this.jwtService, headers);
 
-      const companyId = new Types.ObjectId(cid);
-      const updatedCompany = await this.companyService.update(
-        userId,
-        companyId,
-        updateCompanyDto,
-      );
-      return {
-        data: updatedCompany,
-      };
-    } catch (e) {
-      throw new HttpException(
-        'internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+        const companyId = new Types.ObjectId(cid);
+        const updatedCompany = await this.companyService.update(userId, companyId, body.updateCompanyDto);
+        return {
+          data: updatedCompany,
+        };
+      } catch (e) {
+        throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -304,22 +342,21 @@ export class CompanyController {
     @Headers() headers: any,
     @Param('cid') companyId: string,
     @UploadedFile() file: Express.Multer.File,
+    @Body() body: { currentEmployeeId: Types.ObjectId },
   ) {
-    try {
-      validateObjectId(companyId);
-      const userId = extractUserId(this.jwtService, headers);
-      return {
-        data: await this.companyService.updateLogo(
-          userId,
-          new Types.ObjectId(companyId),
-          file,
-        ),
-      };
-    } catch (e) {
-      throw new HttpException(
-        'internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('company settings')) {
+      try {
+        validateObjectId(companyId);
+        const userId = extractUserId(this.jwtService, headers);
+        return {
+          data: await this.companyService.updateLogo(userId, new Types.ObjectId(companyId), file),
+        };
+      } catch (e) {
+        throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -340,18 +377,24 @@ export class CompanyController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete(':cid')
-  async remove(@Headers() headers: any, @Param('cid') cid: string) {
-    try {
-      validateObjectId(cid);
-      const userId = extractUserId(this.jwtService, headers);
-      const objectId = new Types.ObjectId(cid);
-      await this.companyService.deleteCompany(userId, objectId);
-      return { data: true };
-    } catch (e) {
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+  async remove(
+    @Headers() headers: any,
+    @Param('cid') cid: string,
+    @Body() body: { currentEmployeeId: Types.ObjectId },
+  ) {
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('company settings')) {
+      try {
+        validateObjectId(cid);
+        const userId = extractUserId(this.jwtService, headers);
+        const objectId = new Types.ObjectId(cid);
+        await this.companyService.deleteCompany(userId, objectId);
+        return { data: true };
+      } catch (e) {
+        throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
+      }
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -371,19 +414,14 @@ export class CompanyController {
     description: '',
   })
   @Delete('/emp')
-  async removeEmployee(
-    @Headers() headers: any,
-    @Body() deleteEmployeeDto: DeleteEmployeeFromCompanyDto,
-  ) {
+  async removeEmployee(@Headers() headers: any, @Body() deleteEmployeeDto: DeleteEmployeeFromCompanyDto) {
+    // //TODO: potentially remove the endpoint since there is one in employee.controller.ts
     try {
       const userId = extractUserId(this.jwtService, headers);
       await this.companyService.deleteEmployee(userId, deleteEmployeeDto);
       return { data: true };
     } catch (e) {
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+      throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
     }
   }
 
@@ -397,19 +435,13 @@ export class CompanyController {
     description: `An array of JobsStatuses`,
   })
   @Get('status/all/:cid')
-  async findAllStatusInCompany(
-    @Headers() headers: any,
-    @Param('cid') cId: string,
-  ) {
+  async findAllStatusInCompany(@Headers() headers: any, @Param('cid') cId: string) {
     try {
       validateObjectId(cId);
       const companyId = new Types.ObjectId(cId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
-        data: await this.companyService.findAllStatusesInCompany(
-          userId,
-          companyId,
-        ),
+        data: await this.companyService.findAllStatusesInCompany(userId, companyId),
       };
     } catch (e) {
       console.log(e);
@@ -431,22 +463,29 @@ export class CompanyController {
   @Patch('statuses')
   async updateStatusOrder(
     @Headers() headers: any,
-    @Body() updateCompanyJobStatusesDto: UpdateCompanyJobStatusesDto,
+    @Body()
+    body: {
+      currentEmployeeId: Types.ObjectId;
+      updateCompanyJobStatusesDto: UpdateCompanyJobStatusesDto;
+    },
   ) {
-    try {
-      const userId = extractUserId(this.jwtService, headers);
-      const statusArr = new UpdateCompanyJobStatuses(
-        updateCompanyJobStatusesDto,
-      );
-      return {
-        data: await this.companyService.updateCompanyStatuses(
-          userId,
-          updateCompanyJobStatusesDto.employeeId,
-          statusArr,
-        ),
-      };
-    } catch (e) {
-      throw e;
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('company settings')) {
+      try {
+        const userId = extractUserId(this.jwtService, headers);
+        const statusArr = new UpdateCompanyJobStatuses(body.updateCompanyJobStatusesDto);
+        return {
+          data: await this.companyService.updateCompanyStatuses(
+            userId,
+            body.updateCompanyJobStatusesDto.employeeId,
+            statusArr,
+          ),
+        };
+      } catch (e) {
+        throw e;
+      }
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 }

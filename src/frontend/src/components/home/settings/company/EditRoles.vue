@@ -10,7 +10,7 @@
           item-value="role"
           class="bg-cardColor elevation-1"
           :row-props="getRowProps"
-          :header-props="{ class: 'bg-secondary h4 ' }"
+          :header-props="{ class: 'bg-secondary h5 ' }"
         >
           <template v-slot:top> </template>
           <template v-slot:[`item.roleName`]> </template>
@@ -33,8 +33,9 @@
             <Toast position="top-center" />
             <v-col align="center" cols="12" lg="6">
               <v-btn color="success" @click="updateRole" block>
-                <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon> </v-btn
-              >Save
+                <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>
+                Save</v-btn
+              >
             </v-col>
 
             <v-col align="center" cols="12" lg="6"
@@ -85,7 +86,7 @@ export default defineComponent({
         }
       }
       await axios
-        .get(`http://localhost:3000/role/all/${this.companyID}`, config)
+        .get(`http://localhost:3000/role/all/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           console.log(response.data.data.length)
           for (let i = 0; i < response.data.data.length; i++) {
