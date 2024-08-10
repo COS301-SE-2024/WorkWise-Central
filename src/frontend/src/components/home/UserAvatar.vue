@@ -113,10 +113,8 @@ const getUserData = async () => {
 
 const logout = () => {
   // Perform logout logic, then redirect to login page
-  localStorage.removeItem('access_token')
-  localStorage.removeItem('id')
-  localStorage.removeItem('email')
-  router.push('/')
+  localStorage.clear()
+  router.replace('/')
 }
 
 onMounted(() => {

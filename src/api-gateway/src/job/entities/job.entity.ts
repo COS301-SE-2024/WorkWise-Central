@@ -6,8 +6,9 @@ import { Client } from '../../client/entities/client.entity';
 import { Company } from '../../company/entities/company.entity';
 import { Employee } from '../../employee/entities/employee.entity';
 import { Team } from '../../team/entities/team.entity';
-import { JobTag } from './job-tag.entity';
+import { JobPriorityTag, JobTag } from './job-tag.entity';
 import { currentDate } from '../../utils/Utils';
+import { JobStatus } from './job-status.entity';
 
 export class Address {
   //They are optional for flexibility
@@ -99,6 +100,41 @@ export class AssignedEmployees {
   teamIds?: Types.ObjectId[] = [];
 }
 
+export class TaskItem {
+  @ApiProperty()
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: true,
+    default: new Types.ObjectId(),
+  })
+  _id: Types.ObjectId = new Types.ObjectId();
+
+  @ApiProperty()
+  @Prop({ type: String, required: true })
+  description: string;
+
+  /*  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: JobStatus.name })
+  status?: Types.ObjectId;*/
+
+  @ApiProperty()
+  @Prop({ type: Date, required: false })
+  dueDate?: Date;
+
+  @ApiProperty()
+  @Prop({ type: Boolean, required: true })
+  done: boolean = false;
+
+  @ApiProperty()
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: false,
+    default: [],
+    ref: Employee.name,
+  })
+  assignedEmployees?: Types.ObjectId[] = [];
+}
+
 @Schema()
 export class Task {
   @ApiProperty()
@@ -110,21 +146,12 @@ export class Task {
   _id: Types.ObjectId = new Types.ObjectId();
 
   @ApiProperty()
-  @Prop({ type: String, required: true })
-  name: string;
+  @Prop({ type: String, required: false })
+  title?: string;
 
   @ApiProperty()
-  @Prop({ type: String, required: true, default: 'To do' })
-  status: string = 'To do';
-
-  @ApiProperty()
-  @Prop({
-    type: [SchemaTypes.ObjectId],
-    required: false,
-    default: [],
-    ref: Employee.name,
-  })
-  assignedEmployees?: Types.ObjectId[] = [];
+  @Prop({ type: TaskItem, required: false, default: [] })
+  items?: TaskItem[] = [];
 }
 
 export class History {
@@ -211,15 +238,12 @@ export class Job {
     type: AssignedEmployees,
     required: false,
     default: new AssignedEmployees(), //Will this work?💀
+    ref: Employee.name,
   })
   assignedEmployees?: AssignedEmployees = new AssignedEmployees();
 
-  /*  @ApiProperty()
-  @Prop({ type: String, required: true, default: 'To do' })
-  status: string = 'To do';*/
-
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: false, default: null })
+  @Prop({ type: SchemaTypes.ObjectId, required: false, default: null, ref: JobStatus.name })
   status: Types.ObjectId = null;
 
   @ApiProperty()
@@ -235,7 +259,7 @@ export class Job {
   @Prop({
     type: SchemaTypes.ObjectId,
     required: false,
-    ref: JobTag.name,
+    ref: JobPriorityTag.name,
     default: null,
   })
   priorityTag?: Types.ObjectId = null;
@@ -287,16 +311,8 @@ export class Job {
 
 export const JobSchema = SchemaFactory.createForClass(Job);
 
-const defaultPopulatedFields = ['tags', 'priorityTag', 'history'];
-const jobTasks = {
-  path: 'taskList',
-  populate: [
-    {
-      path: 'assignedEmployees',
-      model: Employee.name,
-    },
-  ],
-};
+const defaultPopulatedFields = ['tags', 'priorityTag', 'status', 'clientId'];
+
 const jobAssignedEmployees = {
   path: 'assignedEmployees',
   populate: [
@@ -320,11 +336,36 @@ const employeeComments = {
   ],
 };
 
+const jobTaskLists = {
+  path: 'taskList',
+  populate: [
+    {
+      path: 'assignedEmployees',
+      model: Employee.name,
+    },
+    {
+      path: 'status',
+      model: JobStatus.name,
+    },
+  ],
+};
+
+const jobTaskListItems = {
+  path: 'taskList',
+  populate: [
+    {
+      path: 'items.assignedEmployees',
+      model: Employee.name,
+    },
+  ],
+};
+
 const autoPopulatedFields = function (next: any) {
   this.populate(defaultPopulatedFields);
-  this.populate(jobTasks);
   this.populate(jobAssignedEmployees);
   this.populate(employeeComments);
+  this.populate(jobTaskLists);
+  this.populate(jobTaskListItems);
   next();
 };
 

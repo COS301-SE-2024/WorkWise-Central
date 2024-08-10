@@ -56,24 +56,41 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
 export default defineComponent({
   name: 'DeleteTags',
   props: {
-    pritorityName: String
+    pritorityName: String,
+    tagId: String
   },
   data() {
     return {
       deleteDialog: false,
       isDeleting: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
   },
   methods: {
     close() {
       this.deleteDialog = false
     },
-    deletePriority() {
+    async deletePriority() {
       this.isDeleting = true
+      console.log(this.tagId)
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        data: {
+          tagId: this.tagId,
+          companyId: localStorage.getItem('currentCompany')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      axios.delete(`${apiURL}job/tags/p`, config)
       setTimeout(() => {
         this.isDeleting = false
         this.deleteDialog = false
@@ -84,6 +101,18 @@ export default defineComponent({
           life: 3000
         })
       }, 1500)
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
     }
   }
 })

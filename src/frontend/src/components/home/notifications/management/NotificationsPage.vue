@@ -6,22 +6,34 @@
         <h2 class="text-xl font-semibold">Notifications</h2>
       </v-col>
     </v-row>
-    <v-card rounded="md">
+    <v-card rounded="md" class="bg-cardColor">
       <v-row>
         <v-col cols="12" lg="10">
           <v-row>
             <v-col cols="12" lg="2">
-              <v-btn @click="setInbox('All')" :class="{ 'bg-cardColor': currentInbox === 'All' }"
-                ><v-icon icon="fa: fa-solid fa-bells"></v-icon>All</v-btn
-              >
-              <v-btn
-                @click="setInbox('Unread')"
-                :class="{ 'bg-cardColor': currentInbox === 'Unread' }"
-                ><v-icon icon="fa: fa-solid fa-bell"></v-icon>Unread</v-btn
-              >
-              <v-btn @click="setInbox('Read')" :class="{ 'bg-cardColor': currentInbox === 'Read' }"
-                ><v-icon icon="fa: fa-regular fa-bell"></v-icon>Read</v-btn
-              >
+              <v-row
+                ><v-col cols="12"
+                  ><v-btn
+                    @click="setInbox('All')"
+                    :class="{ 'bg-cardColor': currentInbox === 'All' }"
+                    ><v-icon icon="fa: fa-solid fa-inbox"></v-icon>All</v-btn
+                  ></v-col
+                >
+                <v-col cols="12">
+                  <v-btn
+                    @click="setInbox('Unread')"
+                    :class="{ 'bg-cardColor': currentInbox === 'Unread' }"
+                    ><v-icon icon="fa: fa-regular fa-bell"></v-icon>Unread</v-btn
+                  ></v-col
+                >
+                <v-col cols="12"
+                  ><v-btn
+                    @click="setInbox('Read')"
+                    :class="{ 'bg-cardColor': currentInbox === 'Read' }"
+                    ><v-icon icon="fa: fa-solid fa-bell"></v-icon>Read</v-btn
+                  ></v-col
+                >
+              </v-row>
             </v-col>
             <v-col cols="12" lg="8">
               <v-text-field
@@ -48,55 +60,27 @@
           </v-row>
           <v-row>
             <v-col cols="12" order="last" justify="center">
-              <v-card class="pa-0 ma-3" elevation="1">
-                <v-list class="bg-cardColor" rounded="md">
-                  <v-label>
-                    <v-checkbox v-model="selectAllNotifications" @click="selectAll"> </v-checkbox>
-                    Select All
-                  </v-label>
-                  <v-divider></v-divider>
-                  <v-list-item
-                    v-for="notification in filteredNotifications"
-                    :key="notification.id"
-                    @click="handleNotificationClick(notification.id)"
-                    :class="{
-                      'bg-cardColor':
-                        clickedNotificationId === notification.id ||
-                        clickedNotfiicationIds.includes(notification.id)
-                    }"
-                  >
-                    <v-label
-                      class="h5 font-weight-regular d-flex justify-center bg-cardColor text-secondary"
-                    ></v-label>
-                    <v-card-text>
-                      <v-icon
-                        :icon="
-                          notification.read === false
-                            ? 'fa: fa-regular fa-bell'
-                            : 'fa: fa-solid fa-bell'
-                        "
-                      >
-                      </v-icon>
-                      <span>{{ notification.title }}</span>
-                      <br />
-                      {{ notification.message }}
-                      <br />
-                      {{ notification.type }}
-                      <br />
-                      {{ notification.company }}
-                      <br />
-                      {{ notification.date }}
-                    </v-card-text>
-                    <v-divider></v-divider>
-                    <v-list-item-action>
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{ props }">
-                          <v-btn
-                            v-if="showActionButtons"
-                            @click="handleAction('mark as read', notification.id)"
-                            color="primary"
-                            v-bind="props"
-                          >
+              <v-card class="pa-0 ma-3" elevation="0">
+                <v-card-title class="text-h4">{{ currentInbox }}</v-card-title>
+                <v-divider></v-divider>
+                <v-card-text>
+                  <v-list class="bg-cardColor" rounded="md">
+                    <v-list-item
+                      v-for="notification in filteredNotifications"
+                      :key="notification.id"
+                      @click="handleNotificationClick(notification.id)"
+                      :class="{
+                        'bg-background':
+                          clickedNotificationId === notification.id ||
+                          clickedNotfiicationIds.includes(notification.id)
+                      }"
+                    >
+                      <v-label
+                        class="h5 font-weight-regular d-flex justify-center bg-cardColor text-secondary"
+                      ></v-label>
+                      <Panel style="background-color:">
+                        <template #header>
+                          <div class="flex items-center gap-2">
                             <v-icon
                               :icon="
                                 notification.read === false
@@ -105,56 +89,85 @@
                               "
                             >
                             </v-icon>
-                          </v-btn>
+                            <span class="font-bold">{{ notification.title }}</span>
+                          </div>
                         </template>
-                        <span>Mark as Read</span>
-                      </v-tooltip>
-                      <v-tooltip bottom
-                        ><template v-slot:activator="{ props }">
-                          <v-btn
-                            v-if="showActionButtons"
-                            @click="handleAction('save', notification.id)"
-                            color="primary"
-                            v-bind="props"
-                          >
-                            <v-icon
-                              :icon="
-                                notification.saved === false
-                                  ? 'fa: fa-regular fa-bookmark'
-                                  : 'fa: fa-solid fa-bookmark'
-                              "
+                        <template #footer>
+                          <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex items-center gap-2"></div>
+                            <span class="text-surface-500 dark:text-surface-400">
+                              {{ notification.date }}</span
                             >
-                            </v-icon> </v-btn></template
-                        ><span>Save</span></v-tooltip
-                      >
-                      <v-tooltip bottom
-                        ><template v-slot:activator="{ props }">
-                          <v-btn
-                            v-if="showActionButtons"
-                            @click="handleAction('add to done', notification.id)"
-                            color="primary"
-                            v-bind="props"
-                          >
-                            <v-icon
-                              :icon="
-                                notification.done === false
-                                  ? 'fa: fa-solid fa-check'
-                                  : 'fa: fa-solid fa-check'
-                              "
-                            >
-                            </v-icon> </v-btn
-                        ></template>
-                        <span>Add to Done</span>
-                      </v-tooltip>
-                    </v-list-item-action>
-                  </v-list-item>
-                </v-list>
+                          </div>
+                        </template>
+                        <template #icons>
+                          <v-menu>
+                            <template #activator="{ props }">
+                              <v-btn icon v-bind="props">
+                                <v-icon icon="fa: fa-solid fa-ellipsis-v" color="primary"></v-icon>
+                              </v-btn>
+                            </template>
+                            <v-list>
+                              <v-list-item @click="handleAction('add to done', notification.id)">
+                                <v-btn color="success" block>
+                                  <v-icon icon="fa:fa-solid fa-check" color="success"></v-icon>
+                                  Done
+                                </v-btn>
+                              </v-list-item>
+                              <v-list-item @click="handleAction('save', notification.id)">
+                                <v-btn color="primary" block>
+                                  <v-icon icon="fa:fa-solid fa-bookmark" color="primary"></v-icon>
+                                  Save
+                                </v-btn>
+                              </v-list-item>
+                              <v-list-item @click="handleAction('mark as read', notification.id)">
+                                <v-btn color="secondary" block>
+                                  <v-icon
+                                    icon="fa:fa-solid fa-envelope-open"
+                                    color="secondary"
+                                  ></v-icon>
+                                  Mark as Read
+                                </v-btn>
+                              </v-list-item>
+                              <v-list-item @click="handleAction('delete', notification.id)">
+                                <v-btn color="error" block>
+                                  <v-icon icon="fa:fa-solid fa-trash" color="error"></v-icon>
+                                  Delete
+                                </v-btn>
+                              </v-list-item>
+                            </v-list>
+                          </v-menu>
+                        </template>
+                        <p class="m-0">
+                          <span>{{ notification.title }}</span>
+                          <br />
+                          {{ notification.message }}
+                          <br />
+                          {{ notification.type }}
+                          <br />
+                          {{ notification.company }}
+                        </p>
+                      </Panel>
+                    </v-list-item>
+                  </v-list>
+                </v-card-text>
+                <v-card-actions>
+                  <v-row>
+                    <v-col cols="12" lg="6">
+                      <v-pagination
+                        v-model="currentPage"
+                        :length="pages"
+                        color="primary"
+                      ></v-pagination>
+                    </v-col>
+                  </v-row>
+                </v-card-actions>
               </v-card>
             </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="2">
-          <v-card class="pa-0 ma-2" elevation="1">
+          <v-card class="pa-0 ma-2" elevation="0" border="sm">
             <v-list class="bg-cardColor">
               <v-list-item
                 v-for="(item, index) in items"
@@ -203,37 +216,184 @@
 
 <script lang="ts">
 import Toast from 'primevue/toast'
+import Panel from 'primevue/panel'
+
+import axios from 'axios'
 export default {
   data() {
     return {
+      menu: false,
       notifications: [
         {
           id: 1,
-          title: 'Notification 1',
-          message: 'This is the first notification.',
-          action: 'action1',
-          actionText: 'Action 1',
+          title: 'Job Assignment: Tire Replacement at Warehouse',
+          message:
+            'You have been assigned to replace tires on all forklifts at the Wielding Tires warehouse.',
+          action: 'viewJobDetails',
+          actionText: 'View Job Details',
           type: 'Job Oriented',
           company: 'Wielding Tires',
           date: '2021-09-01',
           read: false,
           done: false,
-          saved: false
+          saved: false,
+          trash: false
         },
         {
           id: 2,
-          title: 'Notification 2',
-          message: 'This is the second notification.',
-          action: 'action2',
-          actionText: 'Action 2',
+          title: 'Admin: System Maintenance Scheduled',
+          message:
+            'Scheduled system maintenance will occur on September 3rd from 2:00 AM to 4:00 AM. Please ensure all critical tasks are completed beforehand.',
+          action: 'reviewSchedule',
+          actionText: 'Review Schedule',
           type: 'Admin',
           company: 'Plumbing Bros',
           date: '2021-09-02',
           read: false,
           done: false,
-          saved: false
+          saved: false,
+          trash: false
+        },
+        {
+          id: 3,
+          title: 'Job Assignment: Replace HVAC System',
+          message: 'You have been assigned to replace the HVAC system at Sunrise Apartments.',
+          action: 'viewDetails',
+          actionText: 'View Details',
+          type: 'Job Oriented',
+          company: 'Sunrise Apartments',
+          date: '2021-09-03',
+          read: false,
+          done: false,
+          saved: false,
+          trash: false
+        },
+        {
+          id: 4,
+          title: 'Admin: Quarterly Report Submission',
+          message: 'Reminder to submit the quarterly financial report by the end of the week.',
+          action: 'submitReport',
+          actionText: 'Submit Report',
+          type: 'Admin',
+          company: 'Urban Developments Inc.',
+          date: '2021-09-04',
+          read: false,
+          done: false,
+          saved: false,
+          trash: false
+        },
+        {
+          id: 5,
+          title: 'Job Update: Electrical Wiring Inspection',
+          message: 'Electrical wiring inspection has been completed at Midtown Office Complex.',
+          action: 'viewReport',
+          actionText: 'View Report',
+          type: 'Job Oriented',
+          company: 'Midtown Office Complex',
+          date: '2021-09-05',
+          read: false,
+          done: false,
+          saved: false,
+          trash: false
+        },
+        {
+          id: 6,
+          title: 'Admin: Staff Meeting Reminder',
+          message: 'Staff meeting scheduled for tomorrow at 10:00 AM in Conference Room B.',
+          action: 'addToCalendar',
+          actionText: 'Add to Calendar',
+          type: 'Admin',
+          company: 'Plumbing Bros',
+          date: '2021-09-06',
+          read: false,
+          done: false,
+          saved: false,
+          trash: false
+        },
+        {
+          id: 7,
+          title: 'Job Assignment: Roof Repair',
+          message: 'Assigned to repair the roof at Grandview Shopping Center.',
+          action: 'viewDetails',
+          actionText: 'View Details',
+          type: 'Job Oriented',
+          company: 'Grandview Shopping Center',
+          date: '2021-09-07',
+          read: false,
+          done: false,
+          saved: false,
+          trash: false
+        },
+        {
+          id: 8,
+          title: 'Admin: Client Feedback Request',
+          message: 'Request feedback from clients after completion of recent jobs.',
+          action: 'sendRequest',
+          actionText: 'Send Request',
+          type: 'Admin',
+          company: 'Wielding Tires',
+          date: '2021-09-08',
+          read: false,
+          done: false,
+          saved: false,
+          trash: false
+        },
+        {
+          id: 9,
+          title: 'Job Completion: Plumbing Repair',
+          message: 'Plumbing repair completed at Lakeside Residential.',
+          action: 'viewInvoice',
+          actionText: 'View Invoice',
+          type: 'Job Oriented',
+          company: 'Lakeside Residential',
+          date: '2021-09-09',
+          read: false,
+          done: false,
+          saved: false,
+          trash: false
+        },
+        {
+          id: 10,
+          title: 'Admin: New Policy Update',
+          message: 'Please review the updated company policies regarding health and safety.',
+          action: 'reviewPolicy',
+          actionText: 'Review Policy',
+          type: 'Admin',
+          company: 'Urban Developments Inc.',
+          date: '2021-09-10',
+          read: false,
+          done: false,
+          saved: false,
+          trash: false
+        },
+        {
+          id: 11,
+          title: 'Job Assignment: Install Security System',
+          message: 'You have been assigned to install a security system at Riverside Mall.',
+          action: 'viewDetails',
+          actionText: 'View Details',
+          type: 'Job Oriented',
+          company: 'Riverside Mall',
+          date: '2021-09-11',
+          read: false,
+          done: false,
+          saved: false,
+          trash: false
+        },
+        {
+          id: 12,
+          title: 'Admin: Payroll Processing Deadline',
+          message: 'Ensure payroll is processed by Friday to meet the payment schedule.',
+          action: 'processPayroll',
+          actionText: 'Process Payroll',
+          type: 'Admin',
+          company: 'Plumbing Bros',
+          date: '2021-09-12',
+          read: false,
+          done: false,
+          saved: false,
+          trash: false
         }
-        // Add more notifications here
       ],
       items: [
         { title: 'Inbox', icon: 'fa: fa-solid fa-inbox' },
@@ -248,12 +408,10 @@ export default {
         { title: 'Admin' }
         // Add more items here
       ],
-      companies: [
-        { title: 'Wielding Tires' },
-        { title: 'Plumbing Bros' },
-        { title: 'We Buy Tweaks' }
-        // Add more items here
-      ],
+      companies: [] as any[],
+      currentPage: 1,
+      pages: 10,
+
       groupBy: ['Date', 'Company', 'Type'],
       filteredNotificationsArray: [] as number[],
       search: '',
@@ -263,16 +421,23 @@ export default {
       selectAllNotifications: false, // Track the select all checkbox
       showActionButtons: false,
       read: [] as number[],
+      joinedCompanies: [] as any[],
+      joinedCompaniesNames: [] as any[],
+      joinedCompaniesIds: [] as string[],
+      joinedCompaniesEmployeeIds: [] as number[],
+      companyName: '',
       unread: [] as number[],
       done: [] as number[],
       saved: [] as number[],
       filterOn: false,
       currentInbox: 'Inbox', // Track the current inbox
       currentCompany: '', // Track the current company
-      currentFilter: '' // Track the current filter
+      currentFilter: '', // Track the current filter
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
   },
-  components: { Toast },
+  components: { Toast, Panel },
   computed: {
     filteredNotifications() {
       // Filter notifications based on the current inbox
@@ -302,13 +467,79 @@ export default {
       return filtered
     }
   },
+  mounted() {
+    this.getNotifications()
+    this.getCompanies()
+    this.populateCompanies()
+  },
   methods: {
+    async getCompanies() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      const user_id = localStorage.getItem('id')
+      await axios
+        .get(`${apiURL}users/id/${user_id}`, config)
+        .then((response) => {
+          console.log(response.data.data.joinedCompanies)
+          console.log(response.data.data)
+          this.joinedCompanies = response.data.data.joinedCompanies
+          this.joinedCompanies.forEach((company) => {
+            this.joinedCompaniesNames.push(company.companyName)
+            this.joinedCompaniesIds.push(company.companyId)
+            this.joinedCompaniesEmployeeIds.push(company.employeeId)
+          })
+          const currentCompanyID = localStorage.getItem('currentCompany')
+          console.log(this.joinedCompanies.length)
+          console.log(this.joinedCompanies[0].companyId)
+          console.log(currentCompanyID)
+          for (let i = 0; i < this.joinedCompanies.length; i++) {
+            if (this.joinedCompaniesIds[i] == currentCompanyID) {
+              this.companyName = this.joinedCompaniesNames[i]
+              console.log(this.companyName)
+            } else {
+              this.companyName = 'No company selected'
+              console.log(this.companyName)
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
     setInbox(inbox: string) {
       this.currentInbox = inbox
     },
     switchCompany(company: string) {
       console.log('Switch Company:', company)
       this.currentCompany = company
+    },
+    populateCompanies() {
+      console.log('Populate Companies')
+      for (let i = 0; i < this.joinedCompanies.length; i++) {
+        this.companies.push({ title: this.joinedCompaniesNames[i] })
+      }
+      for (let j = 0; j < this.notifications.length; j++) {
+        if (!this.companies.find((company) => company.title === this.notifications[j].company)) {
+          this.companies.push({ title: this.notifications[j].company })
+        }
+      }
     },
     handleNotificationClick(id: number) {
       if (this.clickedNotificationId === id) {
@@ -343,6 +574,14 @@ export default {
         this.notifications.find((notification) => notification.id === id)?.read === false
           ? this.markAsRead(id)
           : this.markAsUnread(id)
+      } else if (action === 'delete') {
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Success',
+          detail: 'Notification deleted',
+          life: 3000
+        })
+        this.removeFromInbox(id)
       }
     },
     selectAll() {
@@ -356,6 +595,10 @@ export default {
         this.deselectAll()
       }
       console.log('Select All')
+    },
+    removeFromInbox(id: number) {
+      this.notifications = this.notifications.filter((notification) => notification.id !== id)
+      console.log('Remove from Inbox')
     },
     deselectAll() {
       this.selectAllNotifications = false
@@ -378,7 +621,7 @@ export default {
           this.read.push(this.notifications[i].id)
           this.notifications[i].read = true
           this.$toast.add({
-            severity: 'success',
+            severity: 'info',
             summary: 'Success',
             detail: 'Notification marked as read',
             life: 3000
@@ -408,7 +651,7 @@ export default {
           this.saved.push(this.notifications[i].id)
           this.notifications[i].saved = true
           this.$toast.add({
-            severity: 'success',
+            severity: 'warn',
             summary: 'Success',
             detail: 'Notification saved',
             life: 3000
@@ -438,7 +681,7 @@ export default {
           this.done = this.done.filter((done) => done !== this.notifications[i].id)
           this.notifications[i].done = false
           this.$toast.add({
-            severity: 'success',
+            severity: 'error',
             summary: 'Success',
             detail: 'Notification removed from done',
             life: 3000
@@ -496,6 +739,27 @@ export default {
     },
     groupBySelection(how: string) {
       console.log(`Group By: ${how}`)
+    },
+    async getNotifications() {
+      console.log('Get Notifications')
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          employeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      const user_id = localStorage.getItem('id')
+      try {
+        const res = await axios.get(`${apiURL}notification`, config)
+        console.log(res)
+        this.items = res.data.data
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 }
