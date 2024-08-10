@@ -12,44 +12,37 @@
     </template>
     <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
       <v-card-title>
-        <v-icon>mdi-plus</v-icon>
-        <span>Delete Inventory</span>
+        <v-icon icon="fa:fa-solid fa-users"></v-icon>
+        <span>Delete Team</span>
       </v-card-title>
-      <v-card-text
-        ><v-container>
+      <v-card-text>
+        <v-container>
           <v-row>
             <p class="font-weight-regular">
-              Are you sure you want to delete <strong>{{ inventoryName }}</strong
+              Are you sure you want to delete the team <strong>{{ teamName }}</strong
               >? This action cannot be reversed.
             </p>
           </v-row>
-        </v-container></v-card-text
-      >
-
+        </v-container>
+      </v-card-text>
       <Toast position="top-center" />
       <v-card-actions>
-        <v-container
-          ><v-row justify="end"
-            ><v-col cols="12" lg="6"
-              ><Toast position="bottom-center" />
-              <v-btn label="Cancel" color="secondary" @click="close" block
-                ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
-                >Cancel
-              </v-btn></v-col
-            >
+        <v-container>
+          <v-row justify="end">
             <v-col cols="12" lg="6">
-              <v-btn
-                label="Delete"
-                color="error"
-                :loading="isDeleting"
-                block
-                @click="deleteInventory"
-                ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon
-                >Delete
-              </v-btn></v-col
-            ></v-row
-          ></v-container
-        >
+              <v-btn color="secondary" @click="close" block>
+                <v-icon icon="fa:fa-solid fa-times" start color="secondary" size="small"></v-icon>
+                Cancel
+              </v-btn>
+            </v-col>
+            <v-col cols="12" lg="6">
+              <v-btn color="error" :loading="isDeleting" block @click="deleteTeam">
+                <v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>
+                Delete
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -61,26 +54,24 @@ import Toast from 'primevue/toast'
 import axios from 'axios'
 
 export default defineComponent({
-  name: 'DeleteInventory',
+  name: 'DeleteTeam',
   props: {
-    inventory_id: String,
-    inventoryName: String
+    team_id: String,
+    teamName: String
   },
   components: {
     Toast
   },
   data: () => ({
     deleteDialog: false,
-    clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
     isDeleting: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   methods: {
-    async deleteInventory() {
-      console.log('meow', this.inventory_id)
-      console.log(localStorage.getItem('employeeId'))
+    async deleteTeam() {
+      console.log('Deleting team with ID:', this.team_id)
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -92,10 +83,26 @@ export default defineComponent({
       }
       const apiURL = await this.getRequestUrl()
       try {
-        await axios.delete(`${apiURL}inventory/${this.inventory_id}`, config)
-        console.log('Inventory item deleted successfully')
+        this.isDeleting = true
+        await axios.delete(`${apiURL}teams/${this.team_id}`, config)
+        console.log('Team deleted successfully')
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Team deleted successfully',
+          life: 3000
+        })
+        this.deleteDialog = false
       } catch (error) {
-        console.error(error)
+        console.error('Error deleting team:', error)
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to delete team',
+          life: 3000
+        })
+      } finally {
+        this.isDeleting = false
       }
     },
     close() {

@@ -133,7 +133,6 @@ export default defineComponent({
           config
         )
         console.log(res)
-        
       } catch (error) {
         console.error(error)
       }

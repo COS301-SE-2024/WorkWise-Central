@@ -12,10 +12,12 @@
             ></v-switch> -->
           </v-card-title>
           <v-list>
-            <v-list-item v-for="job in recentJobs" :key="job.id">
+            <v-list-item v-for="job in recentJobs" :key="job.details.heading">
               <v-list-item-content>
-                <v-list-item-title>{{ job.name }}</v-list-item-title>
-                <v-list-item-subtitle>{{ job.status }}</v-list-item-subtitle>
+                <v-list-item-title>{{ job.details.heading }}</v-list-item-title>
+                <v-list-item-subtitle>{{
+                  job.taskList.map((task) => task.name).join(', ')
+                }}</v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
                 <ReportForm />
@@ -27,6 +29,7 @@
 
       <v-col cols="12" md="8">
         <v-tabs v-model="activeTab" bg-color="secondary">
+          <v-tab>All Jobs</v-tab>
           <v-tab>Completed Jobs</v-tab>
           <v-tab>Ongoing Jobs</v-tab>
         </v-tabs>
@@ -34,10 +37,27 @@
         <v-tabs-items v-model="activeTab">
           <v-tab-item>
             <v-list>
-              <v-list-item v-for="job in completedJobs" :key="job.id">
+              <v-list-item v-for="job in jobs" :key="job.details.heading">
                 <v-list-item-content>
-                  <v-list-item-title>{{ job.name }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ job.status }}</v-list-item-subtitle>
+                  <v-list-item-title>{{ job.details.heading }}</v-list-item-title>
+                  <v-list-item-subtitle>{{
+                    job.taskList.map((task) => task.name).join(', ')
+                  }}</v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-action>
+                  <ReportForm />
+                </v-list-item-action>
+              </v-list-item>
+            </v-list>
+          </v-tab-item>
+          <v-tab-item>
+            <v-list>
+              <v-list-item v-for="job in completedJobs" :key="job.details.heading">
+                <v-list-item-content>
+                  <v-list-item-title>{{ job.details.heading }}</v-list-item-title>
+                  <v-list-item-subtitle>{{
+                    job.taskList.map((task) => task.name).join(', ')
+                  }}</v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
                   <ReportForm />
@@ -48,10 +68,12 @@
 
           <v-tab-item>
             <v-list>
-              <v-list-item v-for="job in ongoingJobs" :key="job.id">
+              <v-list-item v-for="job in ongoingJobs" :key="job.details.heading">
                 <v-list-item-content>
-                  <v-list-item-title>{{ job.name }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ job.status }}</v-list-item-subtitle>
+                  <v-list-item-title>{{ job.details.heading }}</v-list-item-title>
+                  <v-list-item-subtitle>{{
+                    job.taskList.map((task) => task.name).join(', ')
+                  }}</v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
                   <ReportForm />
@@ -71,9 +93,51 @@ import axios from 'axios'
 import ReportForm from './ReportForm.vue'
 
 interface Job {
-  id: number
-  name: string
+  companyId: {}
   status: string
+  clientId: {}
+  assignedBy: {}
+  assignedEmployees: {
+    employeeIds: {}[]
+    teamIds: {}[]
+  }
+  details: {
+    heading: string
+    description: string
+    address: {
+      street: string
+      province: string
+      suburb: string
+      city: string
+      postalCode: string
+      complex: string
+      houseNumber: string
+    }
+    startDate: string
+    endDate: string
+  }
+  recordedDetails: {
+    imagesTaken: any[]
+    inventoryUsed: any[]
+  }
+  clientFeedback: {
+    jobRating: number
+    customerServiceRating: number
+    comments: string
+  }
+  taskList: {
+    name: string
+    status: 'To do' | 'In progress' | 'Done'
+    assignedEmployees: any[]
+  }[]
+  comments: {
+    employeeId: {}
+    comment: string
+    date: string
+  }[]
+  tags: any[]
+  priorityTag: {}
+  attachments: string[]
 }
 
 export default defineComponent({
@@ -84,29 +148,16 @@ export default defineComponent({
       automatedAssignment: false,
       activeTab: 0,
       jobs: [] as Job[],
-      recentJobs: [
-        { id: 1, name: 'Fix Leak', status: 'To Do' },
-        { id: 2, name: 'Install Light', status: 'To Do' }
-        // Add more recent jobs here
-      ] as Job[],
-      completedJobs: [
-        { id: 3, name: 'Paint Wall', status: 'Completed' },
-        { id: 4, name: 'Replace Pipe', status: 'Completed' }
-        // Add more completed jobs here
-      ] as Job[],
-      ongoingJobs: [
-        { id: 5, name: 'Repair Roof', status: 'In Progress' },
-        { id: 6, name: 'Install Sink', status: 'In Progress' }
-        // Add more ongoing jobs here
-      ] as Job[]
+      recentJobs: [] as Job[],
+      completedJobs: [] as Job[],
+      ongoingJobs: [] as Job[]
     }
   },
   components: {
     ReportForm
   },
   methods: {
-    createReport(job: Job) {
-      alert(`Creating report for job: ${job.name}`)
+    async createReport(job: Job) {
       // Implement the report creation logic here
     },
     async getJobs() {
@@ -116,16 +167,21 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
+      const apiUrl = await this.getRequestUrl()
       try {
-        const apiURL = await this.getRequestUrl()
         const response = await axios.get(
-          `${apiURL}job/all/company/${localStorage.getItem('currentCompany')}`,
+          `${apiUrl}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
           config
         )
-        console.log(response)
-        this.jobs = response.data
+        console.log(response.data.data)
+        this.jobs = response.data.data
       } catch (error) {
-        console.error('Error fetching jobs:', error)
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Fetch Data Error',
+          detail: 'Failed to fetch data',
+          life: 3000
+        })
       }
     },
     async isLocalAvailable(localUrl: string) {

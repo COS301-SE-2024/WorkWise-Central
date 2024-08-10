@@ -5,6 +5,7 @@
     max-width="600"
     scrollable
     :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :opacity="0.1"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
@@ -17,7 +18,7 @@
         Add Inventory</v-btn
       >
     </template>
-    <v-card>
+    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
         Add Inventory
@@ -116,7 +117,7 @@ export default defineComponent({
   },
   data: () => ({
     addDialog: false,
-    isdarkmode: localStorage.getItem('isdarkmode') === 'true' ? true : false,
+    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
@@ -179,11 +180,22 @@ export default defineComponent({
         console.log(data)
         const response = await axios.post(`${apiURL}inventory/create`, data, config)
         console.log(response)
-        alert('Inventory added')
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Inventory Added',
+          life: 3000
+        })
         this.addDialog = false
+        window.location.reload()
       } catch (error) {
         console.error(error)
-        alert('Inventory not added')
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to add inventory',
+          life: 3000
+        })
       }
     },
     convertToNumber(value: string) {
