@@ -149,7 +149,7 @@ type UserId = {
 
 export type EmployeeJoinResponse2 = {
   _id: string
-  roleId: Role
+  role: Role
   currentJobAssignments: any[]
   subordinates: any[]
   subordinateTeams: any[]
@@ -170,11 +170,7 @@ export type RoleItem = {
 }
 
 export type Role = {
-  _id: string
+  roleId: string
   roleName: string
   permissionSuite: string[]
-  companyId: string
-  createdAt: string // ISO 8601 date string
-  __v: number
-  updatedAt: string // ISO 8601 date string
 }
