@@ -69,7 +69,7 @@ export class UpdateJobDto {
   @ApiProperty()
   @IsOptional()
   @IsMongoId()
-  priorityTag?: Types.ObjectId[];
+  priorityTag?: Types.ObjectId;
 
   @ApiProperty()
   @IsOptional()

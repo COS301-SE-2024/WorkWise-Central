@@ -87,10 +87,11 @@ export class AssignedEmployees {
   @Prop({
     type: [SchemaTypes.ObjectId],
     required: false,
-    ref: Employee.name,
     default: [],
+    ref: Employee.name,
   })
   employeeIds?: Types.ObjectId[] = [];
+
   @Prop({
     type: [SchemaTypes.ObjectId],
     required: false,
@@ -112,10 +113,6 @@ export class TaskItem {
   @ApiProperty()
   @Prop({ type: String, required: true })
   description: string;
-
-  /*  @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: JobStatus.name })
-  status?: Types.ObjectId;*/
 
   @ApiProperty()
   @Prop({ type: Date, required: false })
@@ -238,13 +235,12 @@ export class Job {
     type: AssignedEmployees,
     required: false,
     default: new AssignedEmployees(), //Will this work?💀
-    ref: Employee.name,
   })
   assignedEmployees?: AssignedEmployees = new AssignedEmployees();
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: false, default: null, ref: JobStatus.name })
-  status: Types.ObjectId = null;
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: JobStatus.name })
+  status: Types.ObjectId;
 
   @ApiProperty()
   @Prop({
@@ -326,26 +322,13 @@ const jobAssignedEmployees = {
     },
   ],
 };
+
 const employeeComments = {
   path: 'comments',
   populate: [
     {
       path: 'employeeId',
       model: Employee.name,
-    },
-  ],
-};
-
-const jobTaskLists = {
-  path: 'taskList',
-  populate: [
-    {
-      path: 'assignedEmployees',
-      model: Employee.name,
-    },
-    {
-      path: 'status',
-      model: JobStatus.name,
     },
   ],
 };
@@ -364,7 +347,6 @@ const autoPopulatedFields = function (next: any) {
   this.populate(defaultPopulatedFields);
   this.populate(jobAssignedEmployees);
   this.populate(employeeComments);
-  this.populate(jobTaskLists);
   this.populate(jobTaskListItems);
   next();
 };
