@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 import { IsMongoId, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class currentEmployeeDto {
+export class CurrentEmployeeDto {
   @IsNotEmpty()
   @IsMongoId()
   @ApiProperty()

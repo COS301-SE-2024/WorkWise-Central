@@ -2,19 +2,11 @@ import { JobPriorityTag, JobPriorityTagApiObject, JobTag, JobTagObject } from '.
 import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { Employee } from '../../employee/entities/employee.entity';
-import {
-  AssignedEmployees,
-  ClientFeedback,
-  Comment,
-  Details,
-  History,
-  Job,
-  RecordedDetails,
-  Task,
-} from '../entities/job.entity';
+import { ClientFeedback, Details, History, Job, RecordedDetails, Task } from '../entities/job.entity';
 import { JobStatus } from '../entities/job-status.entity';
 import { Company } from '../../company/entities/company.entity';
 import { Client } from '../../client/entities/client.entity';
+import { currentDate } from '../../utils/Utils';
 export type JobTagWithId = JobTag & { _id: string };
 
 export class JobResponseDto {
@@ -77,6 +69,23 @@ export class AssignedEmployeesApiObject {
   teamIds: Types.ObjectId[];
 }
 
+export class CommentApiObject {
+  @ApiProperty()
+  _id: Types.ObjectId = new Types.ObjectId();
+
+  @ApiProperty()
+  employeeId: EmployeeWithId;
+
+  @ApiProperty()
+  comment: string;
+
+  @ApiProperty()
+  edited: boolean = false;
+
+  @ApiProperty()
+  date?: Date = currentDate();
+}
+
 export class JobApiObject {
   @ApiProperty()
   _id: Types.ObjectId;
@@ -121,7 +130,7 @@ export class JobApiObject {
   history: History[];
 
   @ApiProperty()
-  comments?: Comment[];
+  comments?: CommentApiObject[];
 
   @ApiProperty()
   public createdAt: Date;
@@ -144,7 +153,7 @@ export class JobApiDetailedObject {
   assignedBy: Employee;
 
   @ApiProperty()
-  assignedEmployees?: AssignedEmployees;
+  assignedEmployees?: AssignedEmployeesApiObject;
 
   @ApiProperty()
   status: string = 'To do';
@@ -175,11 +184,7 @@ export class JobApiDetailedObject {
   };
 
   @ApiProperty()
-  comments?: {
-    employeeId: Employee;
-    comment: string;
-    date?: Date;
-  }[];
+  comments?: CommentApiObject[];
 
   @ApiProperty()
   history: History[];
