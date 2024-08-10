@@ -77,7 +77,7 @@ export default defineComponent({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         },
-        data: {
+        params: {
           companyId: localStorage.getItem('currentCompany'),
           employeeId: localStorage.getItem('employeeId'),
           statusId: this.statusId
@@ -85,8 +85,9 @@ export default defineComponent({
       }
       const apiURL = await this.getRequestUrl()
       try {
-        const res = await axios.delete(`${apiURL}status/${this.statusId}`, config)
+        const res = await axios.delete(`${apiURL}job/status/${this.statusId}`, config)
         if (res.status === 200) {
+          console.log(res.data)
           this.isDeleting = false
           this.deleteDialog = false
           this.$toast.add({
@@ -97,6 +98,7 @@ export default defineComponent({
           })
         }
       } catch (error) {
+        console.error(error)
         this.isDeleting = false
         this.$toast.add({
           severity: 'error',
@@ -105,17 +107,7 @@ export default defineComponent({
           life: 3000
         })
       }
-      this.isDeleting = true
-      setTimeout(() => {
-        this.isDeleting = false
-        this.deleteDialog = false
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Tag Deleted',
-          life: 3000
-        })
-      }, 1500)
+      
     },
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)

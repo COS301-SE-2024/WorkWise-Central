@@ -2,19 +2,19 @@
   <v-container>
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
-        <h2 class="text-xl font-semibold">Appointments</h2>
+        <h2 class="text-xl font-semibold">Meetings</h2>
       </v-col>
       <v-divider></v-divider>
       <v-col cols="12">
         <v-btn color="primary" @click="openDialog" variant="outlined">
-          Create New Appointment
+          Create New Meeting
         </v-btn>
       </v-col>
     </v-row>
     <v-row>
       <!-- Recently Created Appointments Section -->
       <v-col cols="12" lg="6" order="last" order-lg="first">
-        <h3>Recently Created Appointments</h3>
+        <h3>Recently Created Meetings</h3>
         <v-card
           v-for="appointment in recentAppointments"
           :key="appointment.id"
@@ -37,7 +37,7 @@
 
       <!-- Most Important Appointments Section -->
       <v-col cols="12" lg="6" order="first" order-lg="last">
-        <h3>Most Important Appointments</h3>
+        <h3>Most Important Meetings</h3>
         <v-card
           v-for="appointment in importantAppointments"
           :key="appointment.id"
