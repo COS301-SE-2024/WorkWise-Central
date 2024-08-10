@@ -44,3 +44,4 @@ functions/node_modules/
 commands.js
 component.js
 component-index.html
+/src/api-gateway/uploads/
