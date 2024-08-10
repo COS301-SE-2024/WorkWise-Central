@@ -140,7 +140,7 @@
               <v-row>
                 <v-col>
                   <CheckOffItems
-                    :jobComments="props.passedInJob?.comments"
+                    :jobTaskList="props.passedInJob?.taskList"
                     :id="props.passedInJob?._id"
                   />
                 </v-col>
@@ -332,6 +332,7 @@ const getStatusColor = (status: string): string => {
 }
 
 const closeView = () => {
+  console.log('Passed in job', props.passedInJob)
   viewJobDialog.value = false
 }
 </script>

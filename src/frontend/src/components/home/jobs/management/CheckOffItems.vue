@@ -3,12 +3,12 @@
     <div>{{ progress.toFixed(0) }}%</div>
     <v-progress-linear :model-value="progress" color="primary" :height="10"></v-progress-linear>
     <v-col></v-col>
-    <v-row v-for="(item, index) in checklistItems" :key="index" class="d-flex align-center mb-3">
+    <v-row v-for="(item, index) in taskList.items" :key="index" class="d-flex align-center mb-3">
       <v-col md="10">
         <v-checkbox
-          v-model="item.checked"
-          :label="item.text"
-          :class="{ strikethrough: item.checked }"
+          v-model="item.done"
+          :label="item.description"
+          :class="{ strikethrough: item.done }"
           class="pt-0 pb-0"
           dense
           hide-details
@@ -72,38 +72,66 @@
   </v-container>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue'
 
-const checklistItems = ref([])
-const newItemText = ref('')
+<script setup lang="ts">
+import { ref, computed, defineProps } from 'vue'
+
+// Props
+const props = defineProps<{ jobTaskList: TaskList[]; id: string }>()
+
+
+// Define the type for a TaskItem and TaskList
+interface TaskItem {
+  description: string;
+  assignedEmployees: string[]; // Array of ObjectIds as strings
+  dueDate: string; // Date in string format (ISO 8601)
+  done: boolean; // Completion status
+}
+
+interface TaskList {
+  title: string;
+  items: TaskItem[];
+}
+
+// Initialize the task list
+const taskList = ref<TaskList>({
+  title: 'My Task List',
+  items: []
+})
+
+const newItemText = ref<string>('') // Define the type for newItemText
 
 const progress = computed(() => {
-  const totalTasks = checklistItems.value.length
-  const completedTasks = checklistItems.value.filter((item) => item.checked).length
+  const totalTasks = taskList.value.items.length
+  const completedTasks = taskList.value.items.filter((item) => item.done).length
   return totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100
 })
 
-const openCheckActionsDialog = (index) => {
-  checklistItems.value[index].dialog = true
+// Define the parameter type as a number (index)
+const openCheckActionsDialog = (index: number) => {
+  taskList.value.items[index].dialog = true
 }
 
 function addItem() {
   if (newItemText.value.trim() !== '') {
-    checklistItems.value.push({
-      text: newItemText.value,
-      checked: false,
-      date: new Date().toISOString(),
-      dialog: false
-    })
+    taskList.value.items.push({
+      description: newItemText.value,
+      assignedEmployees: [],
+      dueDate: new Date().toISOString(),
+      done: false,
+      dialog: false // Temporarily adding a `dialog` property to maintain existing structure
+    } as TaskItem & { dialog: boolean }) // Temporary type assertion to include `dialog`
     newItemText.value = ''
   }
 }
 
-function deleteItem(index) {
-  checklistItems.value.splice(index, 1)
+// Define the parameter type as a number (index)
+function deleteItem(index: number) {
+  taskList.value.items.splice(index, 1)
 }
 </script>
+
+
 
 <style scoped>
 .strikethrough {
