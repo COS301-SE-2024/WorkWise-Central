@@ -19,7 +19,7 @@ Service-Oriented Architecture (SOA) is an architectural style that promotes the 
 <h2 id="gatekeeper-pattern" tabindex="-1"><a class="header-anchor" href="#gatekeeper-pattern"><span>Gatekeeper pattern</span></a></h2>
 <p>We plan to use the Gatekeeper pattern to prevent malicious requests from entering the controllers in the backend.
 The gatekeeper validates all requests, and rejects requests that don't meet validation requirements. It provides an additional layer of security and limit the system's attack surface.</p>
-<p>In order to alleviate the weakness of having a single point of failure, we chose to couple the gatekeeper from the trusted host.</p>
+<p>In order to alleviate the weakness of having a single point of failure, we chose to couple the gatekeeper from the trusted host.</p>
 <h2 id="the-repository-pattern" tabindex="-1"><a class="header-anchor" href="#the-repository-pattern"><span>The Repository Pattern</span></a></h2>
 <p>Repositories are bridges between data and operations that are in different domains. We leveraged this to maximise the effectiveness of our automated unit tests.</p>
 <p>This pattern allows us to separate business logic, within our service, from the database layer. Using the repository pattern reduces code duplication, reduces the likelihood of programmer error and allows us to centralise data-related policies such as caching.</p>
