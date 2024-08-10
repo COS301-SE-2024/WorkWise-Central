@@ -6,7 +6,7 @@ import { Client } from '../../client/entities/client.entity';
 import { Company } from '../../company/entities/company.entity';
 import { Employee } from '../../employee/entities/employee.entity';
 import { Team } from '../../team/entities/team.entity';
-import { JobTag } from './job-tag.entity';
+import { JobPriorityTag, JobTag } from './job-tag.entity';
 import { currentDate } from '../../utils/Utils';
 import { JobStatus } from './job-status.entity';
 
@@ -238,11 +238,12 @@ export class Job {
     type: AssignedEmployees,
     required: false,
     default: new AssignedEmployees(), //Will this work?💀
+    ref: Employee.name,
   })
   assignedEmployees?: AssignedEmployees = new AssignedEmployees();
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: false, default: null })
+  @Prop({ type: SchemaTypes.ObjectId, required: false, default: null, ref: JobStatus.name })
   status: Types.ObjectId = null;
 
   @ApiProperty()
@@ -258,7 +259,7 @@ export class Job {
   @Prop({
     type: SchemaTypes.ObjectId,
     required: false,
-    ref: JobTag.name,
+    ref: JobPriorityTag.name,
     default: null,
   })
   priorityTag?: Types.ObjectId = null;
