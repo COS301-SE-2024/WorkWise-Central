@@ -214,9 +214,9 @@ export default defineUserConfig({
             { text: 'Database functional requirements', link: '/demo3/databaseDocs/dbFunctionalRequirements.md' },
             { text: 'Database non-functional requirements', link: '/demo3/databaseDocs/dbNonFunctionalRequirements.md' },
             { text: 'Constraints', link: '/demo3/databaseDocs/constraints.md' },
-            { text: 'Data Model', link: '/demo3/databaseDocs/dataModel.md' },
-            { text: 'ER Diagram', link: '/demo3/databaseDocs/ERDiagrams.md' },
+            // { text: 'Data Model', link: '/demo3/databaseDocs/dataModel.md' },
             { text: 'Database Schema', link: '/demo3/databaseDocs/dbSchema.md' },
+            { text: 'Diagram', link: '/demo3/databaseDocs/ERDiagrams.md' },
           ],
         },
         {
