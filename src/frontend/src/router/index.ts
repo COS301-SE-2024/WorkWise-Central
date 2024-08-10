@@ -290,6 +290,11 @@ const router = createRouter({
       path: '/appointments',
       name: 'appointments',
       component: AppointmentsView
+    },
+    {
+      path: '/tutorial',
+      name: 'tutorial',
+      component: () => import('@/components/home/help/tutorial/Tutorial.vue')
     }
   ]
 })
