@@ -129,9 +129,10 @@ export default defineComponent({
       const user_id = localStorage.getItem('id')
       try {
         const res = await axios.get(
-          `${apiURL}job/status/${localStorage.getItem('currentCompany')}`,
+          `${apiURL}job/status/all/${localStorage.getItem('currentCompany')}`,
           config
         )
+        this.items = res.data.data
         console.log(res)
       } catch (error) {
         console.error(error)

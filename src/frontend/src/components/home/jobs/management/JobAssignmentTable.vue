@@ -9,7 +9,7 @@
               class="ma-0 bg-cardColor md-start"
               rounded="md"
               border="md"
-              min-height="1000%"
+              min-height="100%"
             >
               <v-card-title height="auto" width="100%">
                 <v-row align="center" justify="space-between">
