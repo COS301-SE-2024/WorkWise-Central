@@ -1,5 +1,5 @@
 <template><div><h1 id="architectural-design-pattern" tabindex="-1"><a class="header-anchor" href="#architectural-design-pattern"><span>Architectural design &amp; pattern</span></a></h1>
-<p><img src="/archetecturalDiagram.jpg" alt="Database"></p>
+<p><img src="/WizeWorksArchitecturalDiagram-v3.webp" alt="Database"></p>
 <h2 id="model-view-controller-mvc" tabindex="-1"><a class="header-anchor" href="#model-view-controller-mvc"><span>Model-View-Controller (MVC)</span></a></h2>
 <p>The MVC pattern was chosen because it emphasizes a separation of the system's business logic and user interfaces. This separation of concerns allows for a better division of labour and improves the maintainability of the system. The three components of MVC play the following roles:</p>
 <p><strong>Model:</strong> The model in our system is the Nest.js backend, which encapsulates the business logic and communicates with the database. It comprises of all the services that control all business logic, and uses the specific repository classes to query the database.</p>

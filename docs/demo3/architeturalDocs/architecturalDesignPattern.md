@@ -1,6 +1,6 @@
 # Architectural design & pattern
 
-![Database](/archetecturalDiagram.jpg)
+![Database](/WizeWorksArchitecturalDiagram-v3.webp)
 
 ## Model-View-Controller (MVC)
 
