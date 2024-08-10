@@ -33,7 +33,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { extractUserId, validateObjectId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { CurrentEmployeeDto } from '../shared/dtos/current-employee.dto';
+// import { CurrentEmployeeDto } from '../shared/dtos/current-employee.dto';
 
 const className = 'Employee';
 
