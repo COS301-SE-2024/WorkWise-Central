@@ -40,6 +40,7 @@ import AppointmentsView from '@/views/notfications/AppointmentsView.vue'
 import EditTags from '@/components/home/settings/company/EditTags.vue'
 import EditPriority from '@/components/home/settings/company/EditPriority.vue'
 import EditStatus from '@/components/home/settings/company/EditStatus.vue'
+import TeamView from '@/views/home/teams/TeamView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -295,6 +296,11 @@ const router = createRouter({
       component: AppointmentsView
     },
     {
+      path: '/tutorial',
+      name: 'tutorial',
+      component: () => import('@/components/home/help/tutorial/Tutorial.vue')
+},
+                            {
       path: '/edit-tags',
       name: 'edit-tags',
       component: EditTags
@@ -308,6 +314,11 @@ const router = createRouter({
       path: '/edit-status',
       name: 'edit-status',
       component: EditStatus
+    },
+    {
+      path: '/teams',
+      name: 'teams',
+      component: TeamView
     }
   ]
 })

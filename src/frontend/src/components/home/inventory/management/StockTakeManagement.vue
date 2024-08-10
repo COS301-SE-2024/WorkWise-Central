@@ -2,12 +2,15 @@
   <v-container>
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
-        <h1 class="text-xl font-semibold">Company Settings</h1>
+        <h1 class="text-xl font-semibold">Stock Take Management</h1>
         <v-divider></v-divider>
       </v-col>
     </v-row>
     <v-row>
-      <v-col v-for="item in inventoryItems" :key="item.id" cols="12" md="6">
+      <v-col cols="12"> <GenerateReport :inventory="inventoryItems" /></v-col>
+    </v-row>
+    <v-row>
+      <v-col v-for="item in inventoryItems" :key="item._id" cols="12" md="6">
         <v-card>
           <v-card-title>{{ item.name }}</v-card-title>
           <v-card-text>
@@ -18,7 +21,7 @@
               type="number"
               min="0"
             ></v-text-field>
-            <v-btn @click="updateStock(item)">Update</v-btn>
+            <v-btn @click="updateStock(item)" variant="outlined">Update</v-btn>
           </v-card-text>
         </v-card>
       </v-col>
@@ -26,20 +29,29 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import axios from 'axios'
+import GenerateReport from '../reports/GenerateReport.vue'
+interface InventoryItem {
+  _id: string
+  name: string
+  currentStockLevel: number
+  updatedStock: number
+}
 export default {
   data() {
     return {
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
-      inventoryItems: []
+      inventoryItems: [] as InventoryItem[]
     }
   },
+  components: {
+    GenerateReport
+  },
   methods: {
-    async updateStock(item) {
+    async updateStock(item: InventoryItem) {
       console.log(item._id)
-      item.stock = item.updatedStock
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +70,7 @@ export default {
         console.error(error)
       }
       // Optionally, you can send the updated stock to your server here
-      console.log(`Updated stock for ${item.name}: ${item.stock}`)
+      console.log(`Updated stock for ${item.name}: ${item.updatedStock}`)
     },
     async getInventoryItems() {
       // Fetch inventory items from the backend
@@ -80,7 +92,7 @@ export default {
         console.error(error)
       }
     },
-    async isLocalAvailable(localUrl) {
+    async isLocalAvailable(localUrl: string) {
       try {
         const res = await axios.get(localUrl)
         return res.status < 300 && res.status > 199
