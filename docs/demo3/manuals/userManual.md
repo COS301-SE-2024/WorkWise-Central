@@ -7,7 +7,7 @@ This is the user manual for WorkWise Central. The manual currently only reflects
 To access the system click [here](https://tuksui.sharpsoftwaresolutions.net/)
 ## Tutorials
 <iframe
-src="http://localhost:5173/support"
+src="http://localhost:5173/tutorial"
 width="1000"
 height="800"
 style="border:1px solid black;">
