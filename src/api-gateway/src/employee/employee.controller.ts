@@ -35,7 +35,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { extractUserId, validateObjectId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { currentEmployeeDto } from '../shared/dtos/current-employee.dto';
+import { CurrentEmployeeDto } from '../shared/dtos/current-employee.dto';
 
 const className = 'Employee';
 
@@ -417,7 +417,7 @@ export class EmployeeController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete(':id')
-  async remove(@Headers() headers: any, @Param('id') id: Types.ObjectId, @Body() body: currentEmployeeDto) {
+  async remove(@Headers() headers: any, @Param('id') id: Types.ObjectId, @Body() body: CurrentEmployeeDto) {
     const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('remove any employees')) {
