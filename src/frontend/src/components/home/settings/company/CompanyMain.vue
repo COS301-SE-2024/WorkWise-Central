@@ -91,11 +91,14 @@ export default defineComponent({
         'Company 8',
         'Company 9',
         'Company 10'
-      ]
+      ],
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
   },
   methods: {
     closeCompanyDialog() {
+      s
       this.companyDialog = false
     },
     switchCompany(companyName) {
@@ -123,7 +126,7 @@ export default defineComponent({
       const apiURL = await this.getRequestUrl()
       const user_id = localStorage.getItem('id')
       await axios
-        .get(`http://localhost:3000/users/id/${user_id}`, config)
+        .get(`${apiURL}users/id/${user_id}`, config)
         .then((response) => {
           console.log(response.data.data.joinedCompanies)
           console.log(response.data.data)

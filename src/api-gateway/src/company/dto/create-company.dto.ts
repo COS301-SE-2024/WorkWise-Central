@@ -22,9 +22,7 @@ import { Base64ContentIsImage } from '../../utils/Custom Validators/Base64Conten
 export class ContactDetails {
   @IsNotEmpty()
   @IsString()
-  @Transform(({ value }) =>
-    value.startsWith('0') ? `+27${value.slice(1)}` : value,
-  )
+  @Transform(({ value }) => (value.startsWith('0') ? `+27${value.slice(1)}` : value))
   //@IsPhoneNumber(null)
   phoneNumber: string;
 

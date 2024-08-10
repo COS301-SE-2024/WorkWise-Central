@@ -47,7 +47,7 @@
         </v-card-text>
 
         <v-card-actions class="d-flex flex-column">
-          <v-btn @click="upload; isActive.value=false" color="success">Upload</v-btn>
+          <v-btn @click="upload, (isActive.value = false)" color="success">Upload</v-btn>
           <v-btn @click="closeDialog" color="error">Cancel</v-btn>
         </v-card-actions>
       </v-card>

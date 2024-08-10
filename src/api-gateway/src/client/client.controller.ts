@@ -13,10 +13,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
-import {
-  CreateClientDto,
-  findClientResponseDto,
-} from './dto/create-client.dto';
+import { CreateClientDto, findClientResponseDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import {
   ApiBearerAuth,
@@ -29,16 +26,12 @@ import {
 } from '@nestjs/swagger';
 import mongoose, { FlattenMaps, Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
-import {
-  ApiResponseDto,
-  Client,
-  ClientApiObject,
-  CreateClientResponseDto,
-} from './entities/client.entity';
+import { ApiResponseDto, Client, ClientApiObject, CreateClientResponseDto } from './entities/client.entity';
 import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { extractUserId, validateObjectId } from '../utils/Utils';
 import { DeleteClientDto } from './dto/delete-client.dto';
+import { EmployeeService } from '../employee/employee.service';
 
 const className = 'Client';
 
@@ -48,6 +41,7 @@ export class ClientController {
   constructor(
     private readonly clientService: ClientService,
     private readonly jwtService: JwtService,
+    private readonly employeeService: EmployeeService,
   ) {}
   validateObjectId(id: string): boolean {
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -80,16 +74,21 @@ export class ClientController {
     currentCompany Will also be added soon*`,
   })
   @Post('/create')
-  async create(
-    @Headers() headers: any,
-    @Body() createClientDto: CreateClientDto,
-  ): Promise<CreateClientResponseDto> {
-    try {
-      const userId = extractUserId(this.jwtService, headers);
-      const result = await this.clientService.create(userId, createClientDto);
-      return new CreateClientResponseDto(result);
-    } catch (e) {
-      throw e;
+  async create(@Headers() headers: any, @Body() createClientDto: CreateClientDto): Promise<CreateClientResponseDto> {
+    console.log('Creating client');
+    const currentEmployee = await this.employeeService.findById(createClientDto.employeeId);
+    console.log(currentEmployee);
+    if (currentEmployee.role.permissionSuite.includes('add a new clients')) {
+      console.log('in if');
+      try {
+        const userId = extractUserId(this.jwtService, headers);
+        const result = await this.clientService.create(userId, createClientDto);
+        return new CreateClientResponseDto(result);
+      } catch (e) {
+        throw e;
+      }
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -121,18 +120,34 @@ export class ClientController {
     description: `The mongodb ${className} objects in an array, with _id attribute included`,
   })
   @Get('all/:cid')
-  async findAllInCompany(@Headers() headers: any, @Param('cid') cid: string) {
-    try {
-      validateObjectId(cid);
-      const userId = extractUserId(this.jwtService, headers);
+  async findAllInCompany(
+    @Headers() headers: any,
+    @Param('cid') cid: string,
+    @Body() body: { currentEmployeeId: Types.ObjectId },
+  ) {
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('view all clients')) {
+      try {
+        validateObjectId(cid);
+        const userId = extractUserId(this.jwtService, headers);
+        return {
+          data: await this.clientService.getAllClientsInCompany(userId, new Types.ObjectId(cid)),
+        };
+      } catch (e) {
+        throw e;
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('view clients under me')) {
+      //TODO: Add validation for the company id
       return {
-        data: await this.clientService.getAllClientsInCompany(
-          userId,
-          new Types.ObjectId(cid),
-        ),
+        data: await this.clientService.getListOfClientObjectsUnderEmployee(body.currentEmployeeId),
       };
-    } catch (e) {
-      throw e;
+    } else if (currentEmployee.role.permissionSuite.includes('view clients that are assigned to me')) {
+      //TODO: Add validation for the company id
+      return {
+        data: await this.clientService.getListOfClientObjectsAssignedToEmployee(body.currentEmployeeId),
+      };
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -147,18 +162,50 @@ export class ClientController {
     description: `The _id attribute of the ${className}`,
   })
   @Get('id/:id')
-  async findOne(@Headers() headers: any, @Param('id') id: string) {
-    validateObjectId(id);
-    try {
-      const userId = extractUserId(this.jwtService, headers);
-      const response = await this.clientService.getClientById(
-        userId,
-        new Types.ObjectId(id),
-      );
-      return new ApiResponseDto(response);
-    } catch (e) {
-      console.log(e);
-      throw e;
+  async findOne(
+    @Headers() headers: any,
+    @Param('id') id: Types.ObjectId,
+    @Body() body: { currentEmployeeId: Types.ObjectId },
+  ) {
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    const userId = extractUserId(this.jwtService, headers);
+    if (currentEmployee.role.permissionSuite.includes('view all clients')) {
+      validateObjectId(id);
+      try {
+        const response = await this.clientService.getClientById(userId, new Types.ObjectId(id));
+        return new ApiResponseDto(response);
+      } catch (e) {
+        console.log(e);
+        throw e;
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('view clients under me')) {
+      validateObjectId(id);
+      try {
+        const response = await this.clientService.getClientById(userId, new Types.ObjectId(id));
+        if (this.clientService.clientIsBelowCurrentEmployee(body.currentEmployeeId, id)) {
+          return new ApiResponseDto(response);
+        } else {
+          throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        }
+      } catch (e) {
+        console.log(e);
+        throw e;
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('view clients that are assigned to me')) {
+      validateObjectId(id);
+      try {
+        const response = await this.clientService.getClientById(userId, new Types.ObjectId(id));
+        if (this.clientService.clientIsAssignedToCurrentEmployee(body.currentEmployeeId, id)) {
+          return new ApiResponseDto(response);
+        } else {
+          throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        }
+      } catch (e) {
+        console.log(e);
+        throw e;
+      }
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -175,22 +222,56 @@ export class ClientController {
     @Query('compId')
     compId: string,
     @Query('term') emailOrName: string,
+    @Body() body: { currentEmployeeId: Types.ObjectId },
   ): Promise<{ data: (FlattenMaps<Client> & { _id: Types.ObjectId })[] }> {
-    validateObjectId(compId);
-    const companyId = new mongoose.Types.ObjectId(compId);
-    try {
-      const userId = extractUserId(this.jwtService, headers);
-
-      return {
-        data: await this.clientService.getByEmailOrName(
-          userId,
-          companyId,
-          emailOrName,
-        ),
-      };
-    } catch (e) {
-      console.log(e);
-      throw e;
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    const userId = extractUserId(this.jwtService, headers);
+    if (currentEmployee.role.permissionSuite.includes('view all clients')) {
+      console.log('in if');
+      validateObjectId(compId);
+      const companyId = new mongoose.Types.ObjectId(compId);
+      try {
+        return {
+          data: await this.clientService.getByEmailOrName(userId, companyId, emailOrName),
+        };
+      } catch (e) {
+        console.log(e);
+        throw e;
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('view clients under me')) {
+      validateObjectId(compId);
+      const companyId = new mongoose.Types.ObjectId(compId);
+      const list = await this.clientService.getListOfClientIdsUnderEmployee(body.currentEmployeeId);
+      const clients = await this.clientService.getByEmailOrName(userId, companyId, emailOrName);
+      const data = [];
+      clients.forEach((client) => {
+        if (list.includes(client._id)) {
+          data.push(client);
+        }
+      });
+      if (data.length !== 0) {
+        return { data: data };
+      } else {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('view clients that are assigned to me')) {
+      const list = await this.clientService.getListOfClientIdsAssignedToEmployee(body.currentEmployeeId);
+      validateObjectId(compId);
+      const companyId = new mongoose.Types.ObjectId(compId);
+      const clients = await this.clientService.getByEmailOrName(userId, companyId, emailOrName);
+      const data = [];
+      clients.forEach((client) => {
+        if (list.includes(client._id)) {
+          data.push(client);
+        }
+      });
+      if (data.length !== 0) {
+        return { data: data };
+      } else {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -212,22 +293,56 @@ export class ClientController {
   @Patch('/:id')
   async update(
     @Headers() headers: any,
-    @Param('id') id: string,
-    @Body() updateClientDto: UpdateClientDto,
+    @Param('id') id: Types.ObjectId,
+    @Body()
+    body: {
+      currentEmployeeId: Types.ObjectId;
+      updateClientDto: UpdateClientDto;
+    },
   ) {
-    try {
-      validateObjectId(id);
-      const clientId = new Types.ObjectId(id);
-      const userId = extractUserId(this.jwtService, headers);
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('edit all clients')) {
+      console.log('in if');
+      try {
+        validateObjectId(id);
+        const clientId = new Types.ObjectId(id);
+        const userId = extractUserId(this.jwtService, headers);
 
-      return await this.clientService.updateClient(
-        userId,
-        clientId,
-        updateClientDto,
-      );
-    } catch (e) {
-      console.log(e);
-      throw e;
+        return await this.clientService.updateClient(userId, clientId, body.updateClientDto);
+      } catch (e) {
+        console.log(e);
+        throw e;
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('edit clients that are under me')) {
+      if (this.clientService.clientIsBelowCurrentEmployee(body.currentEmployeeId, id)) {
+        try {
+          validateObjectId(id);
+          const clientId = new Types.ObjectId(id);
+          const userId = extractUserId(this.jwtService, headers);
+
+          return await this.clientService.updateClient(userId, clientId, body.updateClientDto);
+        } catch (e) {
+          console.log(e);
+          throw e;
+        }
+      } else {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('edit clients that are assigned to me')) {
+      if (this.clientService.clientIsAssignedToCurrentEmployee(body.currentEmployeeId, id)) {
+        try {
+          validateObjectId(id);
+          const clientId = new Types.ObjectId(id);
+          const userId = extractUserId(this.jwtService, headers);
+
+          return await this.clientService.updateClient(userId, clientId, body.updateClientDto);
+        } catch (e) {
+          console.log(e);
+          throw e;
+        }
+      }
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -243,12 +358,38 @@ export class ClientController {
     description: `A boolean value indicating whether or not the deletion was a success`,
   })
   @Delete('/delete/')
-  remove(@Headers() headers: any, @Body() deleteClientDto: DeleteClientDto) {
-    try {
-      const userId = extractUserId(this.jwtService, headers);
-      return this.clientService.softDelete(userId, deleteClientDto);
-    } catch (e) {
-      throw e;
+  async remove(@Headers() headers: any, @Body() deleteClientDto: DeleteClientDto) {
+    const currentEmployee = await this.employeeService.findById(deleteClientDto.employeeId);
+    if (currentEmployee.role.permissionSuite.includes('remove any clients')) {
+      console.log('in if');
+      try {
+        const userId = extractUserId(this.jwtService, headers);
+        return this.clientService.softDelete(userId, deleteClientDto);
+      } catch (e) {
+        throw e;
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('remove clients under me')) {
+      if (this.clientService.clientIsBelowCurrentEmployee(deleteClientDto.employeeId, deleteClientDto.clientId)) {
+        try {
+          const userId = extractUserId(this.jwtService, headers);
+          return this.clientService.softDelete(userId, deleteClientDto);
+        } catch (e) {
+          throw e;
+        }
+      } else {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('remove clients assigned to me')) {
+      if (this.clientService.clientIsAssignedToCurrentEmployee(deleteClientDto.employeeId, deleteClientDto.clientId)) {
+        try {
+          const userId = extractUserId(this.jwtService, headers);
+          return this.clientService.softDelete(userId, deleteClientDto);
+        } catch (e) {
+          throw e;
+        }
+      }
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 }

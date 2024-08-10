@@ -1,9 +1,4 @@
-import {
-  JobPriorityTag,
-  JobPriorityTagApiObject,
-  JobTag,
-  JobTagObject,
-} from '../entities/job-tag.entity';
+import { JobPriorityTag, JobPriorityTagApiObject, JobTag, JobTagObject } from '../entities/job-tag.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { Employee } from '../../employee/entities/employee.entity';
@@ -13,13 +8,14 @@ import {
   Comment,
   Details,
   History,
+  Job,
   RecordedDetails,
   Task,
 } from '../entities/job.entity';
 import { JobStatus } from '../entities/job-status.entity';
 import { Company } from '../../company/entities/company.entity';
 import { Client } from '../../client/entities/client.entity';
-type jobTagWithId = JobTag & { _id: string };
+export type JobTagWithId = JobTag & { _id: string };
 
 export class JobResponseDto {
   constructor(data: JobApiObject) {
@@ -43,8 +39,13 @@ export class JobAllResponseDetailedDto {
 }
 
 export class TagsAllResponseDto {
-  @ApiProperty() //TODO: Find solution to show in swagger
-  data: jobTagWithId[];
+  @ApiProperty()
+  data: JobTagWithId[];
+}
+
+export class TagResponseDto {
+  @ApiProperty()
+  data: JobTagWithId;
 }
 
 export class JobStatusResponseDto extends JobStatus {
@@ -188,4 +189,8 @@ export class JobApiDetailedObject {
 
   @ApiProperty()
   public updatedAt: Date;
+}
+
+export class JobTagResponseDto {
+  data: Job & { _id: Types.ObjectId };
 }

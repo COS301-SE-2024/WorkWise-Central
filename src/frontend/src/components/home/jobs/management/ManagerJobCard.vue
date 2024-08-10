@@ -22,7 +22,10 @@
       <v-card-text class="text-center">
         <v-row>
           <v-col xs="12" sm="12" md="8">
-            <EditDetails :jobDetails="props?.passedInJob?.details" :jobID="props.passedInJob?._id" />
+            <EditDetails
+              :jobDetails="props?.passedInJob?.details"
+              :jobID="props.passedInJob?._id"
+            />
           </v-col>
           <v-col xs="12" sm="12" md="4">
             <v-col>
@@ -35,7 +38,7 @@
               <UpdateJobStatus :passedInJob="props.passedInJob" />
             </v-col>
             <v-col>
-<!--              <ChangeDueDate :jobDetails="props.passedInJob?.details" :jobID="props.passedInJob?._id"  />-->
+              <!--              <ChangeDueDate :jobDetails="props.passedInJob?.details" :jobID="props.passedInJob?._id"  />-->
             </v-col>
           </v-col>
         </v-row>
@@ -65,6 +68,6 @@ const props = defineProps({
 })
 
 const cancelJob = () => {
-  managerJobCard.value = false;
+  managerJobCard.value = false
 }
 </script>

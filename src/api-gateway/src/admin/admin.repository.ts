@@ -55,10 +55,7 @@ export class AdminRepository {
     return result;
   }
 
-  async findRequestsFromUserForCompany(
-    userId: Types.ObjectId,
-    companyId: Types.ObjectId,
-  ) {
+  async findRequestsFromUserForCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
     return this.userJoinRequestModel
       .find({
         $and: [{ userToJoin: userId }, { companyId: companyId }],
@@ -170,9 +167,7 @@ export class AdminRepository {
     companyId: Types.ObjectId,
   ): Promise<(FlattenMaps<InviteToJoin> & { _id: Types.ObjectId })[]> {
     console.log('findAllInvitesFromCompany');
-    const result = await this.inviteToJoinModel
-      .find({ companyId: companyId })
-      .lean();
+    const result = await this.inviteToJoinModel.find({ companyId: companyId }).lean();
     console.log(result);
     return result;
   }

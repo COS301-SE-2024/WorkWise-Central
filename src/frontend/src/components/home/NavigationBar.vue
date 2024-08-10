@@ -22,9 +22,9 @@ const clientSubItems = ref([
 const employeeSubItems = ref([
   { title: 'Employee Center', icon: 'fa: fa-solid fa-circle-user', routeName: 'employee-center' },
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'manageremployees' },
-  { title: 'Team Workload', icon: 'fa: fa-solid fa-users', routeName: 'teamwork-load' }
+  { title: 'Teams', icon: 'fa: fa-solid fa-users', routeName: 'teams' }
 ])
-
+const teamSubItems = ref([{ title: 'Management' }])
 const jobSubItems = ref([
   { title: 'Job Center', icon: 'fa: fa-solid fa-list-check', routeName: 'task-center' },
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'jobAssignmentView' },
@@ -48,7 +48,7 @@ const inventorySubItems = ref([
 
 const inboxSubItems = ref([
   { title: 'Notifications', icon: 'fa: fa-solid fa-bell', routeName: 'notifications' },
-  { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: 'messages' },
+  // { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: 'messages' },
   { title: 'Appointments', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' }
 ])
 
@@ -177,7 +177,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
@@ -205,7 +205,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
@@ -234,7 +234,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
@@ -262,7 +262,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
@@ -290,7 +290,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
@@ -318,7 +318,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
@@ -346,7 +346,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon
@@ -375,7 +375,7 @@ export default defineComponent({
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                color="primary"
+                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
                 :class="isVisible === true ? '' : 'mr-4'"
               ></v-icon

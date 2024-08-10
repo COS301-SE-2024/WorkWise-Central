@@ -1,10 +1,4 @@
-import {
-  IsHexColor,
-  IsMongoId,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsHexColor, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Types } from 'mongoose';
 import { AddHashtag } from '../../utils/Custom Transformers/add-hashtag.transformer';
 import { CapitalizeWords } from '../../utils/Custom Transformers/capitalise-words.transformer';
@@ -29,7 +23,35 @@ export class UpdateTagDto {
   @IsString()
   @IsHexColor()
   @AddHashtag()
-  colour?: string; //Will be hex value
+  colour?: string;
+}
+
+export class UpdatePriorityTagDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsMongoId()
+  companyId: Types.ObjectId;
+
+  @IsOptional()
+  @IsString()
+  @IsMongoId()
+  priorityTagId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  @CapitalizeWords()
+  label?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsHexColor()
+  @AddHashtag()
+  colour?: string;
+
+  @IsNotEmpty()
+  @IsOptional()
+  @IsNumber()
+  priorityLevel?: number;
 }
 
 export class DeleteTagDto {

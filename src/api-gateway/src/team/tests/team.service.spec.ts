@@ -136,10 +136,7 @@ describe('--Team Service--', () => {
 
       mockCompanyService.companyIdExists.mockResolvedValue(true);
       mockTeamRepository.findByNameInCompany.mockResolvedValue(team);
-      const result = await service.findByNameInCompany(
-        team.teamName,
-        team.companyId,
-      );
+      const result = await service.findByNameInCompany(team.teamName, team.companyId);
       expect(result).toEqual(team);
     });
   });
@@ -161,19 +158,13 @@ describe('--Team Service--', () => {
     it('should return true if team exists for a company', async () => {
       mockCompanyService.companyIdExists.mockResolvedValue(true);
       mockTeamRepository.teamExistsInCompany.mockResolvedValue(true);
-      const result = await service.teamExistsInCompany(
-        new Types.ObjectId(),
-        new Types.ObjectId(),
-      );
+      const result = await service.teamExistsInCompany(new Types.ObjectId(), new Types.ObjectId());
       expect(result).toEqual(true);
     });
     it('should return true if team exists for a company', async () => {
       mockCompanyService.companyIdExists.mockResolvedValue(true);
       mockTeamRepository.teamExistsInCompany.mockResolvedValue(true);
-      const result = await service.teamExistsInCompany(
-        new Types.ObjectId(),
-        new Types.ObjectId(),
-      );
+      const result = await service.teamExistsInCompany(new Types.ObjectId(), new Types.ObjectId());
       expect(result).toEqual(true);
     });
   });

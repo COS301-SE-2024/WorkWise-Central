@@ -120,25 +120,25 @@ import { useToast } from 'primevue/usetoast'
 const toast = useToast()
 
 interface Address {
-  street: string;
-  province: string;
-  suburb: string;
-  city: string;
-  postalCode: string;
-  complex: string;
-  houseNumber: string;
+  street: string
+  province: string
+  suburb: string
+  city: string
+  postalCode: string
+  complex: string
+  houseNumber: string
 }
 
 interface JobDetails {
-  heading: string;
-  description: string;
-  address: Address;
-  startDate: string;
-  endDate: string;
+  heading: string
+  description: string
+  address: Address
+  startDate: string
+  endDate: string
 }
 
 const props = defineProps<{
-  jobDetails: JobDetails;
+  jobDetails: JobDetails
   jobID: string
 }>()
 

@@ -17,10 +17,7 @@ export class FcmNotificationService {
     });
   }
 
-  async sendNotification(
-    token: string,
-    payload: admin.messaging.MessagingPayload,
-  ) {
+  async sendNotification(token: string, payload: admin.messaging.MessagingPayload) {
     try {
       await admin.messaging().sendToDevice(token, payload);
     } catch (error) {

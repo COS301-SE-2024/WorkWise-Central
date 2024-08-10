@@ -86,10 +86,16 @@ export default {
       window.location.reload() // Consider removing this for SPA behavior
     },
     async deleteClient() {
+      console.log('meow', this.client_id)
+      console.log(localStorage.getItem('employeeId'))
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        data: {
+          employeeId: localStorage.getItem('employeeId'),
+          clientId: this.client_id
         }
       }
 
@@ -98,10 +104,7 @@ export default {
         console.log(this.client_id)
         this.isDeleting = true // Indicate the start of the deletion process
 
-        const response = await axios.delete(`${apiURL}client/delete`, config, {
-          clientId: this.client_id,
-          employeeId: this.employeeId
-        })
+        const response = await axios.delete(`${apiURL}client/delete`, config)
         console.log(response)
 
         this.$toast.add({
@@ -113,6 +116,7 @@ export default {
 
         this.clientDialog = false
         this.$emit('clientDeleted')
+        window.location.reload() // Consider removing this for SPA behavior
         // Consider using a more SPA-friendly way of updating the view instead of reloading
       } catch (error) {
         console.error('Error deleting client:', error)
@@ -125,7 +129,6 @@ export default {
         })
       } finally {
         this.isDeleting = false // Reset the deletion indicator
-        // window.location.reload(); // Consider removing this for SPA behavior
       }
     },
     async isLocalAvailable(localUrl) {
