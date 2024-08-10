@@ -1,9 +1,12 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col cols="12">
-        <h1>Inventory Stock Take</h1>
+    <v-row class="justify-center align-center">
+      <v-col cols="12" class="text-center">
+        <h1 class="text-xl font-semibold">Company Settings</h1>
+        <v-divider></v-divider>
       </v-col>
+    </v-row>
+    <v-row>
       <v-col v-for="item in inventoryItems" :key="item.id" cols="12" md="6">
         <v-card>
           <v-card-title>{{ item.name }}</v-card-title>
@@ -34,28 +37,48 @@ export default {
     }
   },
   methods: {
-    updateStock(item) {
+    async updateStock(item) {
+      console.log(item._id)
       item.stock = item.updatedStock
-      // Optionally, you can send the updated stock to your server here
-      console.log(`Updated stock for ${item.name}: ${item.stock}`)
-    },
-    getInventoryItems() {
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = this.getRequestUrl()
-      axios
-        .get(`${url}/inventory/all/${localStorage.getItem('currentCompany')}`, config)
-        .then((response) => {
-          console.log(response)
-          this.inventoryItems = response.data
-        })
-        .catch((error) => {
-          console.error(error)
-        })
+      const data = {
+        currentStockLevel: item.updatedStock,
+        companyID: localStorage.getItem('currentCompany'),
+        currentEmployee: localStorage.getItem('employeeId')
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        await axios.patch(`${apiURL}inventory/${item._id}`, data, config)
+      } catch (error) {
+        console.error(error)
+      }
+      // Optionally, you can send the updated stock to your server here
+      console.log(`Updated stock for ${item.name}: ${item.stock}`)
+    },
+    async getInventoryItems() {
+      // Fetch inventory items from the backend
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployee: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const response = await axios.get(`${apiURL}inventory/all`, config)
+        console.log(response.data.data)
+        this.inventoryItems = response.data.data
+      } catch (error) {
+        console.error(error)
+      }
     },
     async isLocalAvailable(localUrl) {
       try {

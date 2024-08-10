@@ -56,4 +56,4 @@ Docker is a powerful tool for containerization, allowing developers to package a
   
 **Cons:**
 - It has the potential to strain resources when running many containers
-- Misconfigured containers can pose security risks
+- Misconfigured containers can pose security risks

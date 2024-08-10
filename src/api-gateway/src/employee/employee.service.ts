@@ -1,5 +1,5 @@
 import { InternalUpdateEmployeeDto } from './dto/internal-update-employee.dto';
-import { InventoryService } from './../inventory/inventory.service';
+import { InventoryService } from '../inventory/inventory.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto, UpdateEmployeeUserInfoDto } from './dto/update-employee.dto';
@@ -219,7 +219,6 @@ export class EmployeeService {
       throw new Error('CompanyId does not exist');
     }
     return await this.employeeRepository.employeeExistsForCompany(id, companyId);
-    return await this.employeeRepository.employeeExistsForCompany(id, companyId);
   }
 
   async update(employeeId: Types.ObjectId, currentEmployeeId: Types.ObjectId, updateEmployeeDto: UpdateEmployeeDto) {
@@ -313,6 +312,14 @@ export class EmployeeService {
 
     const previousObject = this.employeeRepository.update(employeeId, dto);
     return previousObject;
+  }
+
+  async addJobAssignment(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
+    return this.employeeRepository.addAssignedJob(employeeId, jobId);
+  }
+
+  async removeJobAssignment(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
+    return this.employeeRepository.removeAssignedJob(employeeId, jobId);
   }
 
   async updateUnderMe(

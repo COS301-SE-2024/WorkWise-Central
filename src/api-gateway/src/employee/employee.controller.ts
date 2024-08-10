@@ -4,7 +4,6 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   HttpException,
   HttpStatus,
   UseGuards,
@@ -29,7 +28,6 @@ import {
   joinedEmployeeResponseDto,
 } from './entities/employee.entity';
 import { Types } from 'mongoose';
-import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
@@ -379,7 +377,7 @@ export class EmployeeController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  /*  @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
@@ -433,5 +431,5 @@ export class EmployeeController {
     } else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
-  }
+  }*/
 }

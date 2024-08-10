@@ -3,21 +3,21 @@
 The quality requirements, in order of priority, that have been identified are as follows:
 
 ## Usability 
-Useability is an extremely important consideration for our system. From market research done, it is clear that one of the most important things for potential users is that the system is easy an intuitive to use, even if the user is not tech savvy. It is therefore important that we design our frontend in such a way that allows the user to utilise the system proficiently even if they just started working with the system for the first time.
+Usability is an extremely important consideration for our system. From market research done, it is clear that one of the most important things for potential users is that the system is easy an intuitive to use, even if the user is not tech-savvy. It is therefore important that we design our frontend to have high learnability, i.e. it should allow the user to utilise the system proficiently even if they just started working with the system for the first time.
 
 The usability of our frontend is measured by how easily users can interact with it. The users should be able to navigate through the application with ease.
 
-User error rates and task completion time will be measured through usability tests, and  maintain specific thresholds. The tests will be conducted with a variety of the identified user-groups.
+User error rates and task completion time will be measured through usability tests, and  maintain specific thresholds. The tests have been conducted with a variety of the identified user-groups.
 
 ### Quantification
 - **User Error Rate:** Number of errors made by users during specific tasks.
-- T**ask Completion Time:** Time taken by users to complete predefined tasks.
+- **Task Completion Time:** Time taken by users to complete predefined tasks.
 - **Satisfaction Score**: User satisfaction measured through surveys on a scale of 1-5.
 
 ### Target
 - **User Error Rate:** Less than 5% for common tasks.
-- T**ask Completion Time:** 90% of users should complete tasks within 2 minutes.
-- **Satisfaction Score:** Average satisfaction score of at least 4 out of 5.
+- **Task Completion Time:** 90% of users should complete tasks in less than 2 minutes.
+- **Satisfaction Score:** Average satisfaction score of at least 3.5 out of 5.
 
 
 ## Reliability
@@ -34,7 +34,7 @@ Asynchronous messaging between components in the system will allow the system to
 
 ### Target
 - **MTBF:** At least 500 hours.
-- **MTTR:** Less than 1 hour.
+- **MTTR:** Less than 2 hours.
 - **Critical Failures per Month:** 0.
 
 ## Security
@@ -44,7 +44,7 @@ Security will be quantified through measuring the confidentiality and integrity 
 
 <!-- As such, we plan to implement a Gatekeeper that will serve as a broker between the client requests and the services, to sanitize and validate the requests. -->
 
-Confidentiality will be provided through the use of Authentication and Authorisation in he API Gateway, as well as a role-based system. Each role is associated with a set of permissions, which ensures that crucial endpoints are well-secured. It will be measured by the amount of security measures that are established, and the number of policy violations that occur. 
+Confidentiality will be provided through the use of Authentication and Authorisation in the API Gateway, as well as a role-based system. Each role is associated with a set of permissions, which ensures that crucial endpoints are well-secured. It will be measured by the amount of security measures that are established, and the number of policy violations that occur. 
 
 Lastly, the system will provide full transparency on policies regarding user rights and data protection.
 
