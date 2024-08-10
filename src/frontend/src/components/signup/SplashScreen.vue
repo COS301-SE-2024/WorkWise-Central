@@ -503,7 +503,7 @@
                     >
                     <v-form ref="form" v-model="valid">
                       <v-row
-                        ><v-col align-self="center"
+                        ><v-col align-self="center" cols="12"
                           ><label style="font-size: 14px; font-weight: lighter">Username</label>
                           <v-combobox
                             :theme="isdarkmode ? 'dark' : 'light'"
@@ -515,7 +515,25 @@
                             variant="solo"
                             clearable
                             required
-                          ></v-combobox></v-col
+                          ></v-combobox
+                        ></v-col>
+                        <v-col cols="12">
+                          <small class="text-caption">Profile Picture</small>
+                          <v-file-input
+                            :theme="isdarkmode === true ? 'dark' : 'light'"
+                            variant="solo"
+                            accept="image/*"
+                            width="100%"
+                            placeholder="Profile Picture"
+                            @change="handleImageUpload"
+                            hint="Image size limit of  5MB"
+                            persistent-hint
+                            color="black"
+                            rounded="md"
+                            required
+                            :rules="company_logo_rules"
+                            data-testid="company-logo-file-input"
+                          ></v-file-input> </v-col
                       ></v-row>
                     </v-form>
                   </v-col>
@@ -1189,7 +1207,8 @@ export default defineComponent({
       (v) => (v.length >= 10 && v.length <= 10) || 'Phone number must be 10 characters',
       (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers',
       (v) => /^0[0-9]*$/.test(v) || 'Phone number must start with 0'
-    ]
+    ],
+    company_logo_rules: [(v) => !!v || 'Profile picture is required']
   }),
 
   methods: {
@@ -1245,6 +1264,21 @@ export default defineComponent({
       const year = date.getFullYear()
 
       return `Selected date is ${day}/${month}/${year}`
+    },
+    handleImageUpload(event) {
+      const target = event.target
+      if (target.files && target.files[0]) {
+        const file = target.files[0]
+        const reader = new FileReader()
+
+        reader.onload = (e) => {
+          if (e.target && typeof e.target.result === 'string') {
+            this.req_obj.logo = e.target.result
+          }
+        }
+        reader.readAsDataURL(file)
+      }
+      console.log(this.req_obj.logo)
     },
     mounted() {
       setTimeout(() => {

@@ -216,7 +216,7 @@ export default {
               ' ' +
               employee_details.data.data.userId.personalInfo.surname +
               ' (' +
-              employee_details.data.data.roleId.roleName +
+              employee_details.data.data.role.roleName +
               ')',
             employeeId: employee_details.data.data._id
           }
@@ -241,7 +241,7 @@ export default {
           if (roles_data[i].roleName === this.localEditedItem.roleName) continue
           this.roleItems.push({
             roleName: roles_data[i].roleName,
-            roleId: roles_data[i]._id
+            roleId: roles_data[i].roleId
           })
         }
       } catch (error) {

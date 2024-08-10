@@ -5,7 +5,7 @@
         ><v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>View</v-btn
       >
     </template>
-    <v-card>
+    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
       <v-card-title>
         <v-icon>mdi-plus</v-icon>
         <span>Inventory Details</span>
@@ -96,7 +96,8 @@ export default defineComponent({
   },
   data() {
     return {
-      dialog: false
+      dialog: false,
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false
     }
   },
   methods: {
