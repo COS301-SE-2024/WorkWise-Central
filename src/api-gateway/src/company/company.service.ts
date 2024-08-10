@@ -316,7 +316,7 @@ export class CompanyService {
       throw new ConflictException('User not in company');
     }
     //
-    const uploadApiResponse = await this.fileService.uploadImage(file);
+    const uploadApiResponse = await this.fileService.uploadFile(file);
     if (uploadApiResponse.secure_url) {
       const company = await this.getCompanyById(companyId);
       company.logo = uploadApiResponse.secure_url;
@@ -414,14 +414,16 @@ export class CompanyService {
       return new ValidationResult(false, `User not found`);
     }
 
-    if (await this.companyVatNumberExists(company.vatNumber)) {
-      return new ValidationResult(false, `Company with ${company.vatNumber} already exists`);
-      return new ValidationResult(false, `Company with ${company.vatNumber} already exists`);
+    if (company.vatNumber) {
+      if (await this.companyVatNumberExists(company.vatNumber)) {
+        return new ValidationResult(false, `Company with ${company.vatNumber} already exists`);
+      }
     }
 
-    if (await this.companyRegNumberExists(company.registrationNumber)) {
-      return new ValidationResult(false, `Company with ${company.registrationNumber} already exists`);
-      return new ValidationResult(false, `Company with ${company.registrationNumber} already exists`);
+    if (company.registrationNumber) {
+      if (await this.companyRegNumberExists(company.registrationNumber)) {
+        return new ValidationResult(false, `Company with ${company.registrationNumber} already exists`);
+      }
     }
 
     return new ValidationResult(true);
