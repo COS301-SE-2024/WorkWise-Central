@@ -320,7 +320,7 @@ export class JobController {
     name: 'id',
     description: `The _id attribute of the ${className}`,
   })
-  @Delete('/:id')
+  @Delete('full/:id')
   async remove(@Param('id') id: string, @Body() pass: { pass: string }) {
     console.log(pass); //Will be implemented later
     if (!mongoose.Types.ObjectId.isValid(id)) throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);

@@ -71,11 +71,34 @@ const props = defineProps<{ jobComments: Comment[]; id: string }>()
 
 // Interfaces
 interface Comment {
-  employeeId: string
+  employeeId: EmployeeId
   comment: string
   date: string
   _id: string
 }
+
+interface EmployeeId {
+  companyId: string;
+  createdAt: string;
+  currentJobAssignments: string[];
+  role: {
+    permissionSuite: string[];
+    roleId: string;
+    roleName: string;
+  };
+  subordinateTeams: string[];
+  subordinates: string[];
+  superiorId: string;
+  updatedAt: string;
+  userId: string;
+  userInfo: {
+    displayName: string;
+    firstName: string;
+    surname: string;
+  };
+  _id: string;
+}
+
 
 // Data
 const newComment = ref('')
@@ -83,7 +106,7 @@ const userInitials = ref<{ employeeId: string; initials: string }[]>([])
 const comments = ref<{ text: string; employeeId: string; date: string; initials?: string; _id: string }[]>(
   props.jobComments.map(comment => ({
     text: comment.comment,
-    employeeId: comment.employeeId,
+    employeeId: comment.employeeId._id,
     date: comment.date,
     _id: comment._id
   }))
@@ -132,6 +155,7 @@ const getAllEmployeeData = async () => {
   const apiUrl = await getRequestUrl()
   try {
     const employeeResponse = await axios.get(`${apiUrl}employee/all/${localStorage.getItem('currentCompany')}`,config)
+    console.log(employeeResponse)
     const employeeIds = employeeResponse.data.map((employee: { _id: string }) => employee._id)
 
     for (const id of employeeIds) {
@@ -218,15 +242,15 @@ const deleteComment = async (index: number) => {
       commentId: commentToBeRemoved._id
     }
   )
-  const data = {
-    headers: config.headers,
-    comment: commentBody
-  }
   const updatedComments = comments.value.filter((_, i) => i !== index)
 
   try {
-    const response = await axios.delete(`${apiUrl}job/comment`, data)
-    console.log('Delete response', response)
+    console.log('Comment body', commentBody)
+    const response = await axios.delete(`${apiUrl}job/comment`,{
+      data: commentBody.value,
+      headers: config.headers
+    })
+    console.log('Delete response', response.data)
     comments.value = updatedComments
     toast.add({
       severity: 'success',
@@ -235,7 +259,7 @@ const deleteComment = async (index: number) => {
       life: 3000
     })
   } catch (error) {
-    //   console.error('Error deleting comment', error)
+      console.error('Error deleting comment', error)
     //   toast.add({
     //     severity: 'error',
     //     summary: 'Error',
