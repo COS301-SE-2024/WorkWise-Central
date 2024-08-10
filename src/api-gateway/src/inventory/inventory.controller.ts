@@ -32,7 +32,7 @@ import { AuthGuard } from '../auth/auth.guard';
 // import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { EmployeeService } from '../employee/employee.service';
-import { validateObjectId } from 'src/utils/Utils';
+import { validateObjectId } from '../utils/Utils';
 
 const className = 'Inventory';
 
