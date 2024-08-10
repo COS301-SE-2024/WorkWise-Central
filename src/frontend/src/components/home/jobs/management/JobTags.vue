@@ -113,7 +113,7 @@
 
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, defineProps } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
@@ -127,6 +127,8 @@ interface Label {
   priorityLevel?: number
   color: string
 }
+
+const props = defineProps<{tags: Label[]; jobID: string}>()
 
 const searchQuery = ref<string>('')
 const dialog = ref<boolean>(false)
@@ -241,7 +243,19 @@ const saveLabel = async () => {
 
       if (response.status > 199 && response.status < 300) {
         labels.value.push(tag)
-        addTagSuccess()
+        try {
+          console.log('Job id', props.jobID)
+          console.log('Tag body', tag)
+          let response = await axios.patch(`${apiUrl}job/${props.jobID}`, tag, config)
+          if (response.status > 199 && response.status < 300) {
+            addTagSuccess()
+            console.log('Tag added to the job', response)
+          } else {
+            console.log('Failed to add tag to job', response)
+          }
+        } catch(error) {
+          console.log(error)
+        }
       } else {
         addTagFailure()
       }

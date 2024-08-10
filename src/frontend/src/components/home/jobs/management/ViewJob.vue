@@ -155,7 +155,7 @@
                 <h5 ref="tagsSection">Add Job Tags</h5>
               </v-divider>
               <v-col>
-                <JobTags />
+                <JobTags :tags="props.passedInJob?.tags" :jobID="props.passedInJob?._id"/>
               </v-col>
               <v-divider>
                 <h5 ref="historySection">View Job History</h5>
