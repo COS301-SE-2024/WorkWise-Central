@@ -1,3 +1,3 @@
-# Entity Relationship Diagram 
+# Database Diagram 
 
 ![ER Diagram](/ERDiagram.svg)
