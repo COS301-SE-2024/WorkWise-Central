@@ -160,7 +160,7 @@ export default defineComponent({
               ' ' +
               employee_details.data.data.userId.personalInfo.surname +
               ' (' +
-              employee_details.data.data.roleId.roleName +
+              employee_details.data.data.role.roleName +
               ')',
             employeeId: employee_details.data.data._id
           }
@@ -184,7 +184,7 @@ export default defineComponent({
         for (let i = 0; i < roles_data.length; i++) {
           this.roleItems.push({
             roleName: roles_data[i].roleName,
-            roleId: roles_data[i]._id
+            roleId: roles_data[i].roleId
           })
         }
       } catch (error) {
