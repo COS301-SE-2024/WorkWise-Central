@@ -1363,14 +1363,9 @@ export default defineComponent({
         skills: this.skills,
         currentCompany: this.company
       }
-      const formData = new FormData()
-      formData.append('body', JSON.stringify(jsonData))
 
-      if (this.profilePicture !== '') formData.append('profilePicture', this.profilePicture)
       await axios
-        .post(apiURL + 'users/create', jsonData, {
-          'Content-Type': 'multipart/form-data'
-        })
+        .post(apiURL + 'users/create', jsonData)
         .then((response) => {
           console.log(response)
           this.alertSignUpFailure = false
@@ -1380,6 +1375,7 @@ export default defineComponent({
           localStorage.setItem('email', this.email)
           localStorage.setItem('username', this.username)
 
+          this.sendImage()
           // this.resetForm()
         })
         .catch((error) => {
@@ -1387,6 +1383,26 @@ export default defineComponent({
           this.alertSignUp = false
           this.alertSignUpFailure = true
         })
+    },
+    async sendImage() {
+      if (this.profilePicture === '') {
+        return
+      }
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      let formData = new FormData()
+      formData.append('profilePicture', this.profilePicture)
+
+      const apiURL = await this.getRequestUrl()
+      const url = apiURL + `users/update/profilePic/`
+
+      await axios.patch(url, formData, config).then((response) => {
+        console.log(response)
+      })
     },
     async nextFlow1() {
       try {

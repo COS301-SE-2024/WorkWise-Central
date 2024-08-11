@@ -10,6 +10,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -101,12 +102,8 @@ export class UsersController {
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('profilePicture'), BodyInterceptor)
   @Post('/create')
-  async create(
-    @Body() createUserDto: CreateUserDto,
-    @UploadedFile('profilePicture' /*, GetImageValidator()*/) profilePicture?: Express.Multer.File,
-  ): Promise<CreateUserResponseDto> {
+  async create(@Body() createUserDto: CreateUserDto): Promise<CreateUserResponseDto> {
     console.log('createUserController', createUserDto);
-    console.log('profilePicture', profilePicture);
     try {
       return await this.usersService.create(createUserDto, createUserDto.profilePicture);
     } catch (Error) {

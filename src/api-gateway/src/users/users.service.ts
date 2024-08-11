@@ -46,10 +46,11 @@ export class UsersService {
     if (!inputValidated.isValid) throw new ConflictException(inputValidated.message);
 
     //Save files In Bucket, and store URLs (if provided)
+    console.log(profilePicture);
     let secureUrl: string = '';
-    if (profilePicture) {
+    if (createUserDto.profilePicture) {
       console.log('Uploading image');
-      const picture = await this.fileService.uploadFile(profilePicture);
+      const picture = await this.fileService.uploadFile(createUserDto.profilePicture);
       if (picture.secure_url != null) {
         secureUrl = picture.secure_url;
       } else throw new InternalServerErrorException('file upload failed');
