@@ -76,11 +76,20 @@ export default {
       this.clientDialog = false
     },
     async deleteEmployee() {
+      const employee_to_be_deleted = {
+        adminId: localStorage['employeeId'],
+        companyId: localStorage['currentCompany'],
+        employeeToDeleteId: this.details.employeeId
+      }
       this.isDeleting = true // Indicate the start of the deletion process
-      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
+        data: employee_to_be_deleted,
+        params: employee_to_be_deleted
+      }
       const apiURL = await this.getRequestUrl()
       axios
-        .delete(apiURL + 'employee/' + this.details.employeeId, config)
+        .delete(apiURL + 'company/emp', config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
