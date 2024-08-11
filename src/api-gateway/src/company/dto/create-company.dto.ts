@@ -71,17 +71,17 @@ export class CreateCompanyDto {
   userId: Types.ObjectId;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Validate(RegistrationNumber)
-  registrationNumber: string;
+  registrationNumber?: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @MinLength(10)
   @MaxLength(10)
-  vatNumber: string;
+  vatNumber?: string;
 
   @ApiProperty()
   @IsString()
@@ -132,8 +132,8 @@ export class CreateCompanyResponseDto {
 class FilteredAddress extends OmitType(Address, ['street']) {}
 
 class CompanyAllType {
-  registrationNumber: string;
-  vatNumber: string;
+  registrationNumber?: string;
+  vatNumber?: string;
   name: string;
   logo: string;
   address: FilteredAddress;

@@ -30,6 +30,8 @@
     "bcryptjs": "^2.4.3",
     "chart.js": "^4.4.3",
     "dagre": "^0.8.5",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
     "mdi": "^2.2.43",
     "primevue": "^4.0.0",
     "quill": "^2.0.2",

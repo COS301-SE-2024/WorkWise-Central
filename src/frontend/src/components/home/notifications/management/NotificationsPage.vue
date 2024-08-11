@@ -6,7 +6,7 @@
         <h2 class="text-xl font-semibold">Notifications</h2>
       </v-col>
     </v-row>
-    <v-card rounded="md">
+    <v-card rounded="md" class="bg-cardColor">
       <v-row>
         <v-col cols="12" lg="10">
           <v-row>
@@ -23,14 +23,14 @@
                   <v-btn
                     @click="setInbox('Unread')"
                     :class="{ 'bg-cardColor': currentInbox === 'Unread' }"
-                    ><v-icon icon="fa: fa-solid fa-bell"></v-icon>Unread</v-btn
+                    ><v-icon icon="fa: fa-regular fa-bell"></v-icon>Unread</v-btn
                   ></v-col
                 >
                 <v-col cols="12"
                   ><v-btn
                     @click="setInbox('Read')"
                     :class="{ 'bg-cardColor': currentInbox === 'Read' }"
-                    ><v-icon icon="fa: fa-regular fa-bell"></v-icon>Read</v-btn
+                    ><v-icon icon="fa: fa-solid fa-bell"></v-icon>Read</v-btn
                   ></v-col
                 >
               </v-row>
@@ -60,7 +60,7 @@
           </v-row>
           <v-row>
             <v-col cols="12" order="last" justify="center">
-              <v-card class="pa-0 ma-3" elevation="1">
+              <v-card class="pa-0 ma-3" elevation="0">
                 <v-card-title class="text-h4">{{ currentInbox }}</v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>
@@ -78,104 +78,76 @@
                       <v-label
                         class="h5 font-weight-regular d-flex justify-center bg-cardColor text-secondary"
                       ></v-label>
-                      <v-card-text>
-                        <v-icon
-                          :icon="
-                            notification.read === false
-                              ? 'fa: fa-regular fa-bell'
-                              : 'fa: fa-solid fa-bell'
-                          "
-                        >
-                        </v-icon>
-                        <span>{{ notification.title }}</span>
-                        <br />
-                        {{ notification.message }}
-                        <br />
-                        {{ notification.type }}
-                        <br />
-                        {{ notification.company }}
-                        <!-- <br />
-                        {{ notification.date }} -->
-                      </v-card-text>
-                      <v-divider></v-divider>
-                      <v-list-item-action>
-                        <v-tooltip bottom>
-                          <template v-slot:activator="{ props }">
-                            <v-btn
-                              v-if="showActionButtons"
-                              @click="handleAction('mark as read', notification.id)"
-                              color="primary"
-                              v-bind="props"
+                      <Panel style="background-color:">
+                        <template #header>
+                          <div class="flex items-center gap-2">
+                            <v-icon
+                              :icon="
+                                notification.read === false
+                                  ? 'fa: fa-regular fa-bell'
+                                  : 'fa: fa-solid fa-bell'
+                              "
                             >
-                              <v-icon
-                                :icon="
-                                  notification.read === false
-                                    ? 'fa: fa-regular fa-bell'
-                                    : 'fa: fa-solid fa-bell'
-                                "
-                              >
-                              </v-icon>
-                            </v-btn>
-                          </template>
-                          <span>Mark as Read</span>
-                        </v-tooltip>
-                        <v-tooltip bottom
-                          ><template v-slot:activator="{ props }">
-                            <v-btn
-                              v-if="showActionButtons"
-                              @click="handleAction('save', notification.id)"
-                              color="primary"
-                              v-bind="props"
+                            </v-icon>
+                            <span class="font-bold">{{ notification.title }}</span>
+                          </div>
+                        </template>
+                        <template #footer>
+                          <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex items-center gap-2"></div>
+                            <span class="text-surface-500 dark:text-surface-400">
+                              {{ notification.date }}</span
                             >
-                              <v-icon
-                                :icon="
-                                  notification.saved === false
-                                    ? 'fa: fa-regular fa-bookmark'
-                                    : 'fa: fa-solid fa-bookmark'
-                                "
-                              >
-                              </v-icon> </v-btn></template
-                          ><span>Save</span></v-tooltip
-                        >
-                        <v-tooltip bottom
-                          ><template v-slot:activator="{ props }">
-                            <v-btn
-                              v-if="showActionButtons"
-                              @click="handleAction('add to done', notification.id)"
-                              color="primary"
-                              v-bind="props"
-                            >
-                              <v-icon
-                                :icon="
-                                  notification.done === false
-                                    ? 'fa: fa-solid fa-check'
-                                    : 'fa: fa-solid fa-check'
-                                "
-                              >
-                              </v-icon> </v-btn
-                          ></template>
-                          <span>Add to Done</span>
-                        </v-tooltip>
-                        <v-tooltip bottom
-                          ><template v-slot:activator="{ props }">
-                            <v-btn
-                              v-if="showActionButtons"
-                              @click="handleAction('delete', notification.id)"
-                              color="primary"
-                              v-bind="props"
-                            >
-                              <v-icon
-                                :icon="
-                                  notification.trash === false
-                                    ? 'fa: fa-solid fa-trash'
-                                    : 'fa: fa-solid fa-trash'
-                                "
-                              >
-                              </v-icon> </v-btn
-                          ></template>
-                          <span>Delete</span>
-                        </v-tooltip>
-                      </v-list-item-action>
+                          </div>
+                        </template>
+                        <template #icons>
+                          <v-menu>
+                            <template #activator="{ props }">
+                              <v-btn icon v-bind="props">
+                                <v-icon icon="fa: fa-solid fa-ellipsis-v" color="primary"></v-icon>
+                              </v-btn>
+                            </template>
+                            <v-list>
+                              <v-list-item @click="handleAction('add to done', notification.id)">
+                                <v-btn color="success" block>
+                                  <v-icon icon="fa:fa-solid fa-check" color="success"></v-icon>
+                                  Done
+                                </v-btn>
+                              </v-list-item>
+                              <v-list-item @click="handleAction('save', notification.id)">
+                                <v-btn color="primary" block>
+                                  <v-icon icon="fa:fa-solid fa-bookmark" color="primary"></v-icon>
+                                  Save
+                                </v-btn>
+                              </v-list-item>
+                              <v-list-item @click="handleAction('mark as read', notification.id)">
+                                <v-btn color="secondary" block>
+                                  <v-icon
+                                    icon="fa:fa-solid fa-envelope-open"
+                                    color="secondary"
+                                  ></v-icon>
+                                  Mark as Read
+                                </v-btn>
+                              </v-list-item>
+                              <v-list-item @click="handleAction('delete', notification.id)">
+                                <v-btn color="error" block>
+                                  <v-icon icon="fa:fa-solid fa-trash" color="error"></v-icon>
+                                  Delete
+                                </v-btn>
+                              </v-list-item>
+                            </v-list>
+                          </v-menu>
+                        </template>
+                        <p class="m-0">
+                          <span>{{ notification.title }}</span>
+                          <br />
+                          {{ notification.message }}
+                          <br />
+                          {{ notification.type }}
+                          <br />
+                          {{ notification.company }}
+                        </p>
+                      </Panel>
                     </v-list-item>
                   </v-list>
                 </v-card-text>
@@ -195,7 +167,7 @@
           </v-row>
         </v-col>
         <v-col cols="12" lg="2">
-          <v-card class="pa-0 ma-2" elevation="1">
+          <v-card class="pa-0 ma-2" elevation="0" border="sm">
             <v-list class="bg-cardColor">
               <v-list-item
                 v-for="(item, index) in items"
@@ -244,10 +216,13 @@
 
 <script lang="ts">
 import Toast from 'primevue/toast'
+import Panel from 'primevue/panel'
+
 import axios from 'axios'
 export default {
   data() {
     return {
+      menu: false,
       notifications: [
         {
           id: 1,
@@ -433,12 +408,7 @@ export default {
         { title: 'Admin' }
         // Add more items here
       ],
-      companies: [
-        { title: 'Wielding Tires' },
-        { title: 'Plumbing Bros' },
-        { title: 'We Buy Tweaks' }
-        // Add more items here
-      ],
+      companies: [] as any[],
       currentPage: 1,
       pages: 10,
 
@@ -451,6 +421,11 @@ export default {
       selectAllNotifications: false, // Track the select all checkbox
       showActionButtons: false,
       read: [] as number[],
+      joinedCompanies: [] as any[],
+      joinedCompaniesNames: [] as any[],
+      joinedCompaniesIds: [] as string[],
+      joinedCompaniesEmployeeIds: [] as number[],
+      companyName: '',
       unread: [] as number[],
       done: [] as number[],
       saved: [] as number[],
@@ -462,7 +437,7 @@ export default {
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
   },
-  components: { Toast },
+  components: { Toast, Panel },
   computed: {
     filteredNotifications() {
       // Filter notifications based on the current inbox
@@ -494,14 +469,77 @@ export default {
   },
   mounted() {
     this.getNotifications()
+    this.getCompanies()
+    this.populateCompanies()
   },
   methods: {
+    async getCompanies() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      const user_id = localStorage.getItem('id')
+      await axios
+        .get(`${apiURL}users/id/${user_id}`, config)
+        .then((response) => {
+          console.log(response.data.data.joinedCompanies)
+          console.log(response.data.data)
+          this.joinedCompanies = response.data.data.joinedCompanies
+          this.joinedCompanies.forEach((company) => {
+            this.joinedCompaniesNames.push(company.companyName)
+            this.joinedCompaniesIds.push(company.companyId)
+            this.joinedCompaniesEmployeeIds.push(company.employeeId)
+          })
+          const currentCompanyID = localStorage.getItem('currentCompany')
+          console.log(this.joinedCompanies.length)
+          console.log(this.joinedCompanies[0].companyId)
+          console.log(currentCompanyID)
+          for (let i = 0; i < this.joinedCompanies.length; i++) {
+            if (this.joinedCompaniesIds[i] == currentCompanyID) {
+              this.companyName = this.joinedCompaniesNames[i]
+              console.log(this.companyName)
+            } else {
+              this.companyName = 'No company selected'
+              console.log(this.companyName)
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
     setInbox(inbox: string) {
       this.currentInbox = inbox
     },
     switchCompany(company: string) {
       console.log('Switch Company:', company)
       this.currentCompany = company
+    },
+    populateCompanies() {
+      console.log('Populate Companies')
+      for (let i = 0; i < this.joinedCompanies.length; i++) {
+        this.companies.push({ title: this.joinedCompaniesNames[i] })
+      }
+      for (let j = 0; j < this.notifications.length; j++) {
+        if (!this.companies.find((company) => company.title === this.notifications[j].company)) {
+          this.companies.push({ title: this.notifications[j].company })
+        }
+      }
     },
     handleNotificationClick(id: number) {
       if (this.clickedNotificationId === id) {
@@ -538,7 +576,7 @@ export default {
           : this.markAsUnread(id)
       } else if (action === 'delete') {
         this.$toast.add({
-          severity: 'success',
+          severity: 'error',
           summary: 'Success',
           detail: 'Notification deleted',
           life: 3000
@@ -583,7 +621,7 @@ export default {
           this.read.push(this.notifications[i].id)
           this.notifications[i].read = true
           this.$toast.add({
-            severity: 'success',
+            severity: 'info',
             summary: 'Success',
             detail: 'Notification marked as read',
             life: 3000
@@ -613,7 +651,7 @@ export default {
           this.saved.push(this.notifications[i].id)
           this.notifications[i].saved = true
           this.$toast.add({
-            severity: 'success',
+            severity: 'warn',
             summary: 'Success',
             detail: 'Notification saved',
             life: 3000
@@ -643,7 +681,7 @@ export default {
           this.done = this.done.filter((done) => done !== this.notifications[i].id)
           this.notifications[i].done = false
           this.$toast.add({
-            severity: 'success',
+            severity: 'error',
             summary: 'Success',
             detail: 'Notification removed from done',
             life: 3000
@@ -709,7 +747,7 @@ export default {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         },
-        params: {
+        data: {
           employeeId: localStorage.getItem('employeeId')
         }
       }
@@ -722,18 +760,6 @@ export default {
       } catch (error) {
         console.error(error)
       }
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     }
   }
 }

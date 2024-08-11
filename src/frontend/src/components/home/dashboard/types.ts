@@ -36,124 +36,103 @@ export type JobCardDataFormat = {
 
 export type Job = {
   _id: string
-  company: {
-    registrationNumber: string
-    vatNumber: string
-    name: string
-    type?: string
-    jobStatuses?: string[]
-    logo?: string
-    contactDetails: {
-      phoneNumber: string
-      email: string
-    }
-    address: {
-      street: string
-      province: string
-      suburb: string
-      city: string
-      postalCode: string
-      complex?: string
-      houseNumber?: string
-    }
-    private: boolean
-  }
+  companyId: string
   clientId: {
-    createdAt: string
+    _id: string
     details: {
-      address: {
-        city: string
-        postalCode: string
-        province: string
-        street: string
-        suburb: string
-      }
-      companyId: string
+      firstName: string
+      lastName: string
+      preferredLanguage: string
       contactInfo: {
         email: string
         phoneNumber: string
       }
-      firstName: string
+      address: {
+        street: string
+        suburb: string
+        city: string
+        province: string
+        postalCode: string
+      }
+      companyId: string
       idNumber: string
-      lastName: string
-      preferredLanguage: string
     }
-  }
-
+    createdAt: string
+    __v: number
+  } | null
   assignedBy: {
-    roleId: string
-    superiorId?: string
-    subordinates?: string[]
-    subordinateTeams?: string[]
+    _id: string
+    currentJobAssignments: any[]
+    subordinates: any[]
+    subordinateTeams: any[]
     userId: string
-    userInfo: {
-      username: string
-      firstName: string
-      surname: string
-      displayName: string
-      displayImage?: string
-    }
     companyId: string
+    createdAt: string
+    __v: number
+    updatedAt: string
+    role: {
+      roleId: string
+      permissionSuite: string[]
+      roleName: string
+    }
+    userInfo: {
+      displayName: string
+    }
+    superiorId: string
   }
-  assignedEmployees?: {
-    employeeIds?: string[]
-    teamIds?: string[]
+  assignedEmployees: {
+    employeeIds: {
+      _id: string
+      currentJobAssignments: any[]
+      subordinates: any[]
+      subordinateTeams: any[]
+      userId: string
+      companyId: string
+      createdAt: string
+      __v: number
+      updatedAt: string
+      role: {
+        roleId: string
+        permissionSuite: string[]
+        roleName: string
+      }
+      userInfo: {
+        displayName: string
+      }
+      superiorId: string
+    }[]
   }
   status: string
-  tags?: string[]
-  priorityTag?: string
-  attachments: string[]
+  tags: {
+    _id: string
+    label: string
+    colour: string
+    companyId: string
+    __v: number
+  }[]
+  priorityTag: string | null
+  attachments: string | null
   details: {
     heading: string
     description: string
     address: {
-      street: string
       province: string
+      street: string
       suburb: string
       city: string
       postalCode: string
-      complex?: string
-      houseNumber?: string
+      complex: string
     }
     startDate: string
-    endDate?: string
+    endDate: string
   }
-  recordedDetails?: {
-    imagesTaken?: string[]
-    inventoryUsed?: {
-      inventoryItemId: string
-      inventoryItemName: string
-      quantityUsed: number
-    }[]
+  recordedDetails: {
+    imagesTaken: any[]
+    inventoryUsed: any[]
   }
-  clientFeedback?: {
-    rating?: number
-    comment?: string
-  }
-  taskList: {
-    name: string
-    status: string
-    assignedEmployees?: {
-      roleId: string
-      superiorId?: string
-      subordinates?: string[]
-      subordinateTeams?: string[]
-      userId: string
-      userInfo: {
-        username: string
-        firstName: string
-        surname: string
-        displayName: string
-        displayImage?: string
-      }
-      companyId: string
-    }[]
-  }[]
-  comments: string[]
-  history?: {
-    event: string
-    timestamp: string
-  }[]
+  taskList: any[]
+  history: any[]
+  comments: any[]
   createdAt: string
-  updatedAt: string
+  __v: number
 }

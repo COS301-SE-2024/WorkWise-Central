@@ -10,14 +10,13 @@ import {
   //IsPhoneNumber,
   IsString,
   MaxLength,
-  Validate,
   ValidateNested,
   //Validator,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { SignInUserDto } from '../entities/user.entity';
-import { Base64ContentIsImage } from '../../utils/Custom Validators/Base64ContentIsImage';
+//import { Base64ContentIsImage } from '../../utils/Custom Validators/Base64ContentIsImage';
 //import { PasswordRules } from '../../utils/Custom Decorators/PasswordRules';
 
 class ContactInfo {
@@ -116,10 +115,10 @@ class Profile {
   @MaxLength(35)
   displayName: string;
 
-  @IsOptional()
+  /*  @IsOptional()
   @IsString()
   @Validate(Base64ContentIsImage)
-  displayImage?: string;
+  displayImage?: string;*/
 }
 
 export class CreateUserDto {
@@ -160,6 +159,9 @@ export class CreateUserDto {
   @IsArray()
   @Type(() => String)
   skills?: string[] = [];
+
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
+  profilePicture?: Express.Multer.File;
 }
 
 export class CreateUserResponseDto {
