@@ -95,18 +95,18 @@
                       {{ item.details.description }}
                     </template>
 
-                    <template v-slot:[`item.status`]="{ value }">
-                      <v-chip :color="getStatusColor(value)">
-                        <v-icon>mdi-progress-clock</v-icon>{{ value.status }}
+                    <template v-slot:[`item.status`]="{ item }">
+                      <v-chip :color="getStatusColor(item.status.status)">
+                        <v-icon>mdi-progress-clock</v-icon>{{ item.status.status }}
                       </v-chip>
                     </template>
 
                     <template v-slot:[`item.startDate`]="{ item }">
-                      {{ new Date(item.details.startDate).toLocaleDateString() }}
+                      {{ formatDate(item.details.startDate) }}
                     </template>
 
                     <template v-slot:[`item.endDate`]="{ item }">
-                      {{ new Date(item.details.endDate).toLocaleDateString() }}
+                      {{ formatDate(item.details.endDate) }}
                     </template>
 
                     <!-- Actions slot -->
@@ -394,6 +394,12 @@ const closeDialog = () => {
   actionsDialog.value = false
 }
 
+const formatDate = (dateString: string): string => {
+  const options: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', year: '2-digit' };
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', options);
+};
+
 const confirmDelete = async () => {
   if (selectedJob.value) {
     const config = {
@@ -466,8 +472,5 @@ const getStatusColor = (status: string) => {
 }
 .text-headingTextColor {
   color: #333;
-}
-.font-family-lato {
-  font-family: 'Lato', sans-serif;
 }
 </style>
