@@ -97,16 +97,16 @@
 
                     <template v-slot:[`item.status`]="{ value }">
                       <v-chip :color="getStatusColor(value)">
-                        <v-icon>mdi-progress-clock</v-icon>{{ value }}
+                        <v-icon>mdi-progress-clock</v-icon>{{ value.status }}
                       </v-chip>
                     </template>
 
                     <template v-slot:[`item.startDate`]="{ item }">
-                      {{ item.details.startDate }}
+                      {{ new Date(item.details.startDate).toLocaleDateString() }}
                     </template>
 
                     <template v-slot:[`item.endDate`]="{ item }">
-                      {{ item.details.endDate }}
+                      {{ new Date(item.details.endDate).toLocaleDateString() }}
                     </template>
 
                     <!-- Actions slot -->
