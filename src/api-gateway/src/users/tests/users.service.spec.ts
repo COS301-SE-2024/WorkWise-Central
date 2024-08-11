@@ -153,7 +153,6 @@ describe('UsersService', () => {
 
     a.profile = {
       displayName: 'John Doe',
-      displayImage: 'https://example.com/profile-image.jpg',
     };
 
     a.skills = ['JavaScript', 'TypeScript', 'NestJS', 'Vue.js'];

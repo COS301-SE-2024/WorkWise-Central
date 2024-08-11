@@ -6,7 +6,7 @@ import { Client } from '../../client/entities/client.entity';
 import { Company } from '../../company/entities/company.entity';
 import { Employee } from '../../employee/entities/employee.entity';
 import { Team } from '../../team/entities/team.entity';
-import { JobTag } from './job-tag.entity';
+import { JobPriorityTag, JobTag } from './job-tag.entity';
 import { currentDate } from '../../utils/Utils';
 import { JobStatus } from './job-status.entity';
 
@@ -87,10 +87,11 @@ export class AssignedEmployees {
   @Prop({
     type: [SchemaTypes.ObjectId],
     required: false,
-    ref: Employee.name,
     default: [],
+    ref: Employee.name,
   })
   employeeIds?: Types.ObjectId[] = [];
+
   @Prop({
     type: [SchemaTypes.ObjectId],
     required: false,
@@ -112,10 +113,6 @@ export class TaskItem {
   @ApiProperty()
   @Prop({ type: String, required: true })
   description: string;
-
-  /*  @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: JobStatus.name })
-  status?: Types.ObjectId;*/
 
   @ApiProperty()
   @Prop({ type: Date, required: false })
@@ -143,7 +140,7 @@ export class Task {
     required: true,
     default: new Types.ObjectId(),
   })
-  _id: Types.ObjectId = new Types.ObjectId();
+  _id: Types.ObjectId = new Types.ObjectId()
 
   @ApiProperty()
   @Prop({ type: String, required: false })
@@ -242,8 +239,8 @@ export class Job {
   assignedEmployees?: AssignedEmployees = new AssignedEmployees();
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: false, default: null })
-  status: Types.ObjectId = null;
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: JobStatus.name })
+  status: Types.ObjectId;
 
   @ApiProperty()
   @Prop({
@@ -258,7 +255,7 @@ export class Job {
   @Prop({
     type: SchemaTypes.ObjectId,
     required: false,
-    ref: JobTag.name,
+    ref: JobPriorityTag.name,
     default: null,
   })
   priorityTag?: Types.ObjectId = null;
@@ -325,26 +322,13 @@ const jobAssignedEmployees = {
     },
   ],
 };
+
 const employeeComments = {
   path: 'comments',
   populate: [
     {
       path: 'employeeId',
       model: Employee.name,
-    },
-  ],
-};
-
-const jobTaskLists = {
-  path: 'taskList',
-  populate: [
-    {
-      path: 'assignedEmployees',
-      model: Employee.name,
-    },
-    {
-      path: 'status',
-      model: JobStatus.name,
     },
   ],
 };
@@ -363,7 +347,6 @@ const autoPopulatedFields = function (next: any) {
   this.populate(defaultPopulatedFields);
   this.populate(jobAssignedEmployees);
   this.populate(employeeComments);
-  this.populate(jobTaskLists);
   this.populate(jobTaskListItems);
   next();
 };

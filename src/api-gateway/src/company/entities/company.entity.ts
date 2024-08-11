@@ -12,7 +12,7 @@ export class ContactDetails {
 
   @Prop({
     type: String,
-    unique: true,
+    unique: false,
     index: true,
     required: true,
     lowercase: true,
@@ -52,12 +52,12 @@ export class Company {
   }
 
   @ApiProperty()
-  @Prop({ required: true, unique: true })
-  registrationNumber: string;
+  @Prop({ required: false, unique: true })
+  registrationNumber?: string;
 
   @ApiProperty()
-  @Prop({ required: true, unique: true })
-  vatNumber: string;
+  @Prop({ required: false, unique: false })
+  vatNumber?: string;
 
   @ApiProperty()
   @Prop({ required: true, unique: true })
@@ -113,10 +113,10 @@ export class CompanyApiObject {
   id: Types.ObjectId;
 
   @ApiProperty()
-  registrationNumber: string;
+  registrationNumber?: string;
 
   @ApiProperty()
-  vatNumber: string;
+  vatNumber?: string;
 
   @ApiProperty()
   name: string;
@@ -151,10 +151,10 @@ export class CompanyApiDetailedObject {
   _id: Types.ObjectId;
 
   @ApiProperty()
-  registrationNumber: string;
+  registrationNumber?: string;
 
   @ApiProperty()
-  vatNumber: string;
+  vatNumber?: string;
 
   @ApiProperty()
   name: string;

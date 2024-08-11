@@ -9,9 +9,9 @@
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="primary" class="h6" v-bind="activatorProps">{{ companyName }}</v-btn>
     </template>
-    <v-card class="bg-background" :theme="isdarkmode === true ? 'dark' : 'light'">
-      <v-card-title>User's Companies</v-card-title>
-      <v-card-text>
+    <v-card class="bg-background" :theme="isdarkmode === true ? 'dark' : 'light'" rounded="md">
+      <v-card-title class="bg-background">User's Companies</v-card-title>
+      <v-card-text class="bg-background">
         <v-container>
           <v-col>
             <v-row
@@ -20,37 +20,42 @@
                 bg-color="background"
                 density="compact"
                 :items="joinedCompaniesNames"
-                :label="companyName === '' ? 'No company selected' : companyName"
                 persistent
                 combobox
-                v-model="company"
+                v-model="companyName"
               ></v-combobox
               ><v-col></v-col
             ></v-row>
           </v-col>
         </v-container>
       </v-card-text>
-      <v-actions @click="closeCompanyDialog" class="bg-cardColor">
-        <v-col cols="12" align-self="center">
-          <Toast position="top-center" />
-          <v-btn
-            color="success"
-            width="100%"
-            height="35"
-            variant="outlined"
-            @click="switchCompany(company)"
-            >Save</v-btn
-          ></v-col
-        >
-        <v-col cols="12" align-self="center">
-          <v-btn
-            color="error"
-            width="100%"
-            height="35"
-            variant="outlined"
-            @click="closeCompanyDialog"
-            >Close</v-btn
-          ></v-col
+      <v-actions @click="closeCompanyDialog" class="bg-background">
+        <v-container>
+          <v-row>
+            <v-col cols="12" lg="6" align-self="center">
+              <Toast position="top-center" />
+              <v-btn
+                color="success"
+                width="100%"
+                height="35"
+                variant="elevated"
+                @click="switchCompany(company)"
+                block
+                >Save</v-btn
+              ></v-col
+            >
+            <v-col cols="12" lg="6" align-self="center">
+              <v-btn
+                color="error"
+                width="100%"
+                height="35"
+                variant="elevated"
+                @click="closeCompanyDialog"
+                block
+                >Close</v-btn
+              ></v-col
+            ></v-row
+          ></v-container
         >
       </v-actions>
     </v-card>
@@ -98,7 +103,6 @@ export default defineComponent({
   },
   methods: {
     closeCompanyDialog() {
-      s
       this.companyDialog = false
     },
     switchCompany(companyName) {
@@ -112,9 +116,11 @@ export default defineComponent({
         detail: `Switched to ${companyName}`
       })
       this.companyName = companyName
+      this.company = companyName
       localStorage.setItem('currentCompany', companyId)
       localStorage.setItem('currentEmployee', employeeId)
       this.companyDialog = false
+      
     },
     async getCompanies() {
       const config = {

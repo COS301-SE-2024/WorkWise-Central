@@ -43,27 +43,29 @@
             <v-row>
               <v-col>
                 <h6>Team Leader ID</h6>
-                <v-text-field
+                <v-select
                   v-model="teamLeaderId"
                   color="secondary"
                   :rules="teamLeaderIdRules"
+                  :items="teamLeaderIds"
                   required
                   hide-details="auto"
-                ></v-text-field>
+                ></v-select>
               </v-col>
             </v-row>
 
             <v-row>
               <v-col>
                 <h6>Team Members</h6>
-                <v-textarea
-                  v-model="teamMembers"
+                <v-select
+                  v-model="model"
                   color="secondary"
+                  :items="teamMemberNames"
                   :rules="teamMembersRules"
                   required
                   hide-details="auto"
                   hint="Enter team members as JSON"
-                ></v-textarea>
+                ></v-select>
               </v-col>
             </v-row>
           </v-col>
@@ -108,7 +110,15 @@ export default defineComponent({
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     valid: false,
     teamName: '',
-    teamMembers: '',
+    model: '',
+    teamMemberNames: [] as string[],
+    teamLeaderIds: [] as string[],
+    teamMembers: [
+      {
+        id: '',
+        name: ''
+      }
+    ],
     teamLeaderId: '',
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
@@ -139,7 +149,7 @@ export default defineComponent({
       const data = {
         createTeamDto: {
           teamName: this.teamName,
-          teamMembers: JSON.parse(this.teamMembers),
+          // teamMembers: JSON.parse(this.teamMembers),
           teamLeaderId: parseInt(this.teamLeaderId),
           companyId: localStorage.getItem('currentCompany') || ''
         },
@@ -167,6 +177,25 @@ export default defineComponent({
         })
       }
     },
+    async getEmployees() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const response = await axios.get(`${apiURL}employee/all`, config)
+        console.log(response.data.data)
+        for (const employee of response.data.data) {
+          this.teamMemberNames.push(employee.userInfo.displayName)
+          this.teamLeaderIds.push(employee._id)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    },
     handleSubmission() {
       if (this.valid) {
         this.createTeam()
@@ -187,6 +216,9 @@ export default defineComponent({
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     }
+  },
+  mounted() {
+    this.getEmployees()
   }
 })
 </script>

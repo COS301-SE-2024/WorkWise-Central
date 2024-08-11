@@ -5,37 +5,12 @@ import { Comment, Job, Task } from './entities/job.entity';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { Employee } from '../employee/entities/employee.entity';
 import { Company } from '../company/entities/company.entity';
-import { Team } from '../team/entities/team.entity';
+//import { Team } from '../team/entities/team.entity';
 import { isNotDeleted } from '../shared/soft-delete';
 import { currentDate } from '../utils/Utils';
 
 @Injectable()
 export class JobRepository {
-  jobTasks = {
-    path: 'taskList',
-    populate: [
-      {
-        path: 'assignedEmployees',
-        model: Employee.name,
-      },
-    ],
-  };
-
-  jobAssignedEmployees = {
-    path: 'assignedEmployees',
-    populate: [
-      {
-        path: 'employeeIds',
-        model: Employee.name,
-      },
-      {
-        path: 'teamId',
-        model: Team.name,
-      },
-    ],
-  };
-
-  defaultPopulatedFields: string[] = ['tags', 'priorityTag', 'history'];
   constructor(
     @InjectModel(Job.name)
     private jobModel: Model<Job>,
@@ -103,9 +78,6 @@ export class JobRepository {
     return this.jobModel //TODO: Test
       .find(filter)
       .populate(fieldsToPopulate)
-      .populate(this.jobComments)
-      .populate(this.jobAssignedEmployees)
-      .populate(this.jobTasks)
       .lean()
       .exec();
   }

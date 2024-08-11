@@ -126,18 +126,10 @@ export class User {
       gender: createUserDto.personalInfo.gender,
     };
 
-    if (createUserDto.profile.displayImage != null) {
-      this.profile = {
-        displayName: createUserDto.profile.displayImage,
-        //This must be a URL from Storage bucket
-        displayImage: createUserDto.profile.displayImage,
-      };
-    } else {
-      this.profile = {
-        displayName: createUserDto.profile.displayImage,
-        displayImage: 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
-      };
-    }
+    this.profile = {
+      displayName: createUserDto.profile.displayName,
+      displayImage: 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
+    };
 
     this.profile.displayName = createUserDto.profile.displayName;
     this.skills = createUserDto.skills;

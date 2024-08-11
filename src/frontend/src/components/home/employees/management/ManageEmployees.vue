@@ -284,6 +284,10 @@ export default {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+
+        data: {
+          currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
       const apiURL = await this.getRequestUrl()
