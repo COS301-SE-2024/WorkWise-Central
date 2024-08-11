@@ -37,6 +37,7 @@ import { BooleanResponseDto, FileResponseDto } from '../shared/dtos/api-response
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserAllResponseDetailedDto } from './dto/user-response.dto';
 import { GetImageValidator } from '../utils/Custom Validators/GetImageValidator';
+import { BodyInterceptor } from '../utils/Custom Interceptors/body.interceptor';
 // import { diskStorage } from 'multer';
 // import e from 'express';
 // import firebase from 'firebase/compat';
@@ -98,15 +99,16 @@ export class UsersController {
     currentCompany Will also be added soon*`,
   })
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('profilePicture'))
+  @UseInterceptors(FileInterceptor('profilePicture'), BodyInterceptor)
   @Post('/create')
   async create(
     @Body() createUserDto: CreateUserDto,
-    @UploadedFile('profilePicture', GetImageValidator()) profilePicture?: Express.Multer.File,
+    @UploadedFile('profilePicture' /*, GetImageValidator()*/) profilePicture?: Express.Multer.File,
   ): Promise<CreateUserResponseDto> {
-    console.log('createUserController');
+    console.log('createUserController', createUserDto);
+    console.log('profilePicture', profilePicture);
     try {
-      return await this.usersService.create(createUserDto, profilePicture);
+      return await this.usersService.create(createUserDto, createUserDto.profilePicture);
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
@@ -123,7 +125,7 @@ export class UsersController {
   @ApiBody({ type: UpdateProfilePicDto })
   @UseInterceptors(FileInterceptor('profilePicture'))
   @Post('/newUser/profilePic')
-  async uploadProfilePic(@UploadedFile(GetImageValidator()) file: Express.Multer.File): Promise<FileResponseDto> {
+  async uploadProfilePic(@UploadedFile(/*GetImageValidator()*/) file: Express.Multer.File): Promise<FileResponseDto> {
     try {
       return this.usersService.uploadProfilePic(file);
     } catch (e) {
