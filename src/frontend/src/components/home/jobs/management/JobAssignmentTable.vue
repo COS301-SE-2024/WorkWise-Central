@@ -96,17 +96,17 @@
                     </template>
 
                     <template v-slot:[`item.status`]="{ item }">
-                      <v-chip :color="getStatusColor(item.status.status)">
-                        <v-icon>mdi-progress-clock</v-icon>{{ item.status.status }}
+                      <v-chip :color="getStatusColor(item.status)">
+                        <v-icon>mdi-progress-clock</v-icon>{{ item.status }}
                       </v-chip>
                     </template>
 
                     <template v-slot:[`item.startDate`]="{ item }">
-                      {{ formatDate(item.details.startDate) }}
+                      {{ item.details.startDate }}
                     </template>
 
                     <template v-slot:[`item.endDate`]="{ item }">
-                      {{ formatDate(item.details.endDate) }}
+                      {{ item.details.endDate }}
                     </template>
 
                     <!-- Actions slot -->
