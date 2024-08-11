@@ -5,6 +5,187 @@ pageClass: functionalDocDemo2
 
 # Functional Requirements
 
+## Job Subsystem
+
+- The system must be able to store information pertaining to a job, such as the title of the job, the client for whom the job is, the date the job must be completed, etc.
+- The system must allow the user to create a new job on the system.
+  - The system must associate a client with the job.
+  - The system must allow the user to create a new client to associate with the job when creating the job.
+- The system must allow the user to update any of the information pertaining to a job.
+- The system must allow the user to assign any jobs that have not been assigned when they were created.
+- The system must allow a job to be deleted.
+  - The delete must be a soft delete
+- This subsystem must have role based access (refer to the role and permission subsystem).
+
+#### Statuses subsystem
+- Each job must have a status.
+- The jobs must be able to change statuses.
+- The system must provide default statuses for companies:
+    - Todo - the job has not been started.
+    - In progress - the job in being completed at the moment.
+    - Completed - the payment has been received.
+- The system must also allow the statuses available for the company to be edited (refer to company settings subsystem).
+
+#### Tags subsystem
+- The system must allow the user to add tags to a job.
+- The system must provide default tags for a company based on the type of company it is .
+- The user must be able to add a new tag to a job from the list of tags in the company.
+- The user must be able to remove a tag from a job.
+
+
+#### View Job Subsystem
+
+- The system must show the user all the jobs they have access to.
+    - The user should be able to sort the jobs.
+    - The user should be able to filter the jobs.
+    - The user should be able to search for a job using any of the attributes associated with a job.
+- The system must allow the user to view each job individually via a job card.
+- The job card must show all the information pertaining to the job.
+- The user must be able to record details of the job on the job card.
+  - The user must be able to change the status of the job.
+  - The user must be able to upload images of the job.
+  - The job card must provide inventory functionality.
+    - The user must be ale to record the inventory items used for the job.
+    - The user must be able to edit the amount of the inventory items used for the job.
+    - The user should be able to remove any item they recorded.
+    - Any inventory used must be updated in the company's inventory.
+    - The user must also be able to log any job-specific orders.
+  - The user must be able to record the time they spent on the job.
+    - The user must be able to pause the timer.
+    - The user must be able to resume the timer.
+  - The card must provide comment functionality.
+    - The user must be able to see the comments.
+    - The user must be able to add comments.
+    - The user must be able to edit the comments.
+- The system must generate an invoice for the job.
+  - The system must provide the user with a preview of the generated invoice.
+  - The user must be able to edit the generated invoice.
+  - The user must be able to download the invoice.
+  - The user must be able to send the invoice to the client.
+- The system must provide an overview of the job to the user.
+
+## Inventory Subsystem
+
+- The system must store all the information pertaining to the inventory.
+- The system must allow an inventory item to be added.
+- The system must allow an inventory item to be deleted.
+- - The subsystem must display all the items in the inventory.
+  - The user must be able to search for a particular item.
+  - The user must be able to sort the items.
+  - The user must be able to filter the items.
+- The system must highlight the items that are low in stock.
+- This subsystem must implement role-based access control (refer to the role and permission subsystem).
+
+#### Stock Take Subsystem
+- The user should be able to conduct a stock take
+    - The user must be able to record the date of the stock take.
+    - The user must be able to record the amount of each item in stock.
+- The system must show a generate a report of the stock take.
+  - The user must be able to download the report.
+
+## Settings Subsystem
+#### Account and Profile Settings Subsystem
+- The system must allow the user to view their personal information.
+- The system must allow the user to edit their personal information.
+- The system must allow the user to log out of their account.
+- The system must allow the user to delete their account.
+- The system must allow the user to manage the companies they are part of.
+  - The system must allow the user to leave a company.
+    - The system must allow the user to revert the leave action within a month of leaving a company.
+  - The system must allow the user to join a company.
+- The system must allow the user to edit their preferences:
+    - They must be able to change their themes.
+    - They must be able to change their preferred language.
+    - They must be able to change their notification settings.
+    - They must be able to change their default home page.
+
+#### Company Settings Subsystem
+- The system must show all the current settings for a given company.
+- The system must allow the roles in the company to be changed.
+    - The system must allow the number of roles to be increased or decreased.
+    - The system must allow the labels for each role to be altered.
+    - The system must allow the permissions associated with a role to be changed.
+- The system must allow the statuses available for the jobs to change.
+    - The system must allow the labels for each status to be changed.
+- The system must allow the tags available for the jobs to change.
+  - The system must allow the labels for each status to be changed.
+- The system must show the current structure of the company.
+- - The system must allow the structure of the company to be changed.
+- The system must implement role-based access control (refer to the role and permission subsystem).
+
+## Company Subsystem
+- A user must be able to register a company on the system.
+- The registration process needs to prompt the user to enter the business details.
+- The user that registered the company should automatically be a part of the company.
+- A user must be able to join a company.
+    - They must be able to join using the company name.
+    - They must be able to join using the company ID.
+    - They must be able to join by using a dynamic link for joining that company.
+- The system must allow the user to change for which company they are using the system (if they are part of multiple companies).
+
+
+## Roles and Permissions
+Roles are commonly used groupings of permissions that can be assigned to a user.
+- The system must provide the following permissions:
+    - view all employees
+    - view employees under me
+    - edit all employees
+    - edit employees under me
+    - add new employees
+    - remove any employees
+    - remove employees under me
+    - view all jobs
+    - view jobs under me
+    - view jobs assigned to me
+    - edit all jobs
+    - edit jobs that are under me
+    - edit jobs that are assigned to me
+    - add a new job
+    - remove any job
+    - remove job under me
+    - remove job assigned to me
+    - view all clients
+    - view clients under me
+    - view clients that are assigned to me
+    - edit all clients
+    - edit clients that are under me
+    - edit clients that are assigned to me
+    - add a new clients
+    - remove any clients
+    - remove clients under me
+    - remove clients assigned to me
+    - view all inventory
+    - edit all inventory
+    - add new inventory item
+    - delete inventory item
+    - record inventory use
+    - record job details
+    - company settings
+- The system must provide a super user, which represents the owner of the company. This user must have full permissions by default.
+- The system must protect the permissions of the owner such that no-one can change their permissions.
+- The system must assign the user who registered the company as the owner.
+- The system must provide a set of default roles:
+    - The system must provide an admin role and by default the role must have full permissions.
+    - The system must provide a supervisor role and provide the following default permissions:
+        - View all jobs under the user.
+        - Edit all jobs under the user.
+        - View all employees under the user.
+        - Edit all employees under the user.
+        - View client for all the jobs under the user.
+        - Edit all clients for jobs under the user.
+    - Team leader. Must have the following permissions:
+        - View all jobs under the user.
+        - Edit all jobs under the user.
+        - View all employees under the user.
+        - Edit all employees under the user.
+        - View client for all the jobs under the user.
+        - Edit all clients for jobs under the user.
+    - Worker. Must have the following permissions:
+        - View all the jobs the user has been assigned to.
+        - View client who are associated with a job the user has been assigned to.
+- The roles of a given company must be able to change (refer to the company setting subsystem
+  above)
+
 ## Employee Subsystem
 All users (except owners) are employees of companies. Each employee has information associated with them.
 
@@ -27,8 +208,9 @@ All users (except owners) are employees of companies. Each employee has informat
 #### Delete Employees Subsystem
 - The system must only allow employees with delete permission to access this sub system.
 - The system must allow the user to delete any of the employees that they can view.
-- Once a a user deleted an employee the system must set the deleted flag for that employee (soft delete).
+- Once a user deleted an employee the system must set the deleted flag for that employee (soft delete).
   
+
 ## Client Subsystem
 The system must allow data pertaining to a client to be stored.
 
@@ -48,75 +230,7 @@ The system must allow data pertaining to a client to be stored.
 #### Delete Client Subsystem
 - The system must only allow employees with delete permission to access this sub system.
 - The system must allow the user to delete any of the client that they can view.
-- Once a a user deleted an client the system must set the deleted flag for that client (soft delete).
-
-
-## Job Subsystem
-
-- The system must be able to store information pertaining to a job.
-- The system must allow a job to have a status.
-- The system must provide default statuses:
-   - Todo - the job has not been started.
-   - In progress - the job in being completed at the moment.
-   - Paused - The job has been paused (for cases where jobs run over multiple days).
-   - Awaiting sign off - the employee completed their part of the job. The job needs to be reviewed by a superior.
-   - Awaiting invoice - an invoice needs to be sent (refer to the automatic invoicing system).
-   - Awaiting payment - The invoice has been sent.
-   - Completed - the payment has been received.
-- The system must also allow the user to edit the statuses available on the system (refer to company settings subsystem).
-
-#### View Job Subsystem
-
-- The system must show the user all the jobs they have access to.
-   - The user should be able to sort the jobs.
-   - The user should be able to filter the jobs.
-   - The user should be able to search for a job using any of the attributes associated with a job.
-- The system must allow the user to view each job individually.
-- On each individual job, the system must provide a different view based on the status of the job.
-- If the job status is Todo:
-   - The system must show all the information pertaining to the job.
-   - The user must be able to change the status to in progress.
-- When the job status is In Progress:
-   - The user must be able to upload images of the job.
-   - The user must be able to record details of the job.
-   - The user must be able to record all the inventory they used.
-   - The user must be able to change the status of the job to review (i.e., indicate that they are done).
-- When the job status is Paused, the user must be able to resume the job.
-- When the job status is Awaiting invoice:
-   - The system must provide the user with a preview of the generated invoice.
-   - The user must be able to edit the generated invoice.
-   - The user must be able to download the invoice.
-   - The user must be able to send the invoice to the client.
-   - The user must be able to change the status of the job to Awaiting payment (i.e., indicate the invoice has been sent).
-- When the job status is Awaiting payment:
-   - The system must display all the information pertaining to the job. This includes the details provided by the client, the details about the work added by the employees, and the invoice sent.
-   - The user must be able to change the status of the job to complete (i.e., indicate the payment has been received).
-- When the job status is Awaiting sign off:
-   - The user must be able to see all the information they added during the job.
-   - The user must be able to leave comments.
-   - The user must be able to see the comments.
-   - The user must be able to edit the comments if they have permission (i.e., they worked on the job or they are a superior).
-   - The user must be able to change the status of the job to complete (i.e., indicate the job has been signed off).
-- When the job status is complete, the system must show an overview of the job.
-- At any point, the system must allow the user to access an overview of the job.
-
-#### Edit Job Subsystem
-
-- Everything available for the View Job Subsystem must also be available to this subsystem.
-- The system must allow the user to create a job.
-   - The system must allow the user to enter the date the job was received.
-   - The system must allow the user to enter the date on which the job must be complete.
-   - The system must allow the user to enter the client for whom the job is.
-     - If the client does not exist, the user must be able to create a client and then create the job for that client.
-     - The system must ensure that the client field is filled in.
-   - The system must allow the user to assign an employee or to leave the assignment for later.
-- The system must allow the user to assign any jobs that have not been assigned when they were created.
-
-#### Delete Job Subsystem
-
-- The system must only allow employees with delete permission to access this sub system.
-- The system must allow the user to delete any of the jobs that they can view.
-- Once a a user deleted a job the system must set the deleted flag for that job (soft delete).
+- Once a user deleted a client the system must set the deleted flag for that client (soft delete).
 
 
 ## Authorization and Authentication Subsystem
@@ -130,116 +244,6 @@ The system must allow data pertaining to a client to be stored.
 
 - The system must allow a user to log in to an existing account.
    - The system must allow a user to log in using their username and password.
-
-  
-## Roles and Permissions
-Roles are commonly used groupings of permissions that can be assigned to a user.
-- The system must provide the following permissions:
-   - Allow the user to view all employees.
-   - Allow the user to edit employees.
-   - Allow the user to add new employees.
-   - Allow the user to view all job.
-   - Allow the user to view all jobs that are assigned to employees that work under the user.
-   - Allow the user to view all jobs assigned to the current user.
-   - Allow the user to edit all jobs.
-   - Allow the user to edit jobs that are assigned to employees that work under the user.
-   - Allow the user to edit jobs that are assigned to them.
-   - Allow the user to add a new job.
-   - Allow the user to view all clients.
-   - Allow the user to view all client that are associated with a job that is assigned to a employee that works under the user.
-   - Allow the user to view all client that are associated with a job that is assigned to the user.
-   - Allow the user to edit all clients.
-   - Allow the user to edit all client that are associated with a job that is assigned to a employee that works under the user.
-   - Allow the user to edit all client that are associated with a job that is assigned to the user.
-   - Allow the user to view all inventory.
-   - Allow the user to edit all inventory.
-   - Allow the user to add a new inventory item.
-   - The system must allow all employees that have been allocated to a job, to record the inventory they have used and thus change the amount of a certain item(/s) in the inventory.
-- The system must provide a super user, which represents the owner of the company. This user must have full permissions by default. 
-- The system must protect the permissions of the owner such that no-one can change their permissions.
-- The system must assign the user who registered the company as the owner.
-- The system must provide a set of default roles:
-   - The system must provide an admin role and by default the role must have full permissions.
-   - The system must provide a supervisor role and provide the following default permissions:
-     - View all jobs under the user.
-     - Edit all jobs under the user.
-     - View all employees under the user.
-     - Edit all employees under the user.
-     - View client for all the jobs under the user.
-     - Edit all clients for jobs under the user.
-   - Team leader. Must have the following permissions:
-     - View all jobs under the user.
-     - Edit all jobs under the user.
-     - View all employees under the user.
-     - Edit all employees under the user.
-     - View client for all the jobs under the user.
-     - Edit all clients for jobs under the user.
-   - Worker. Must have the following permissions:
-     - View all the jobs the user has been assigned to.
-     - View client who are associated with a job the user has been assigned to.
-- The roles of a given company must be able to change (refer to the company setting subsystem 
-above)
-
-## Settings Subsystem
-#### Account and Profile Settings Subsystem
-- The system must allow the user to view their personal information.
-- The system must allow the user to edit their personal information.
-- The system must allow the user to log out of their account.
-- The system must allow the user to delete their account.
-- The system must allow the user to leave a company.
-- The system must allow the user to join a company.
-- The system must allow the user to edit their preferences:
-   - They must be able to change their themes.
-   - They must be able to change their preferred language.
-   - They must be able to change their notification settings.
-   - They must be able to change their default home page.
-  
-#### Company Settings Subsystem
-- The system must allow the user to view all the settings for the company if they have permission.
-- The system must allow the roles in the company to be changed.
-   - The system must allow the number of roles to be increased or decreased.
-   - The system must allow the labels for each role to be altered.
-   - The system must allow the permissions associated with a role to be changed.
-- The system must allow the statuses available for the jobs to change.
-   - The system must allow the labels for each status to be changed.
-- The system must display all the information of to the company.
-- The user (if given permission) must be able to edit the information pertaining to the company.
-
-## Company Subsystem
-- A user must be able to register a company on the system.
-- The registration process needs to prompt the user to enter the business details.
-- The user that registered the company should automatically be a part of the company.
-- A user must be able to join a company.
-   - They must be able to join using the company name.
-   - They must be able to join using the company ID.
-   - They must be able to join by using a dynamic link for joining that company.
-- The system must allow the user to change for which company they are using the system (if they are part of multiple companies).
-
-## Inventory Subsystem
-#### On The Job Inventory Subsystem
-This is how anyone on site will be able to track the inventory they used.
-- The system should allow any on-site employee to add an item to the list of items used for a job.
-- The user should be able to add multiple items at once.
-- The user should be able to remove any item they added.
-- Any inventory used must be updated in the company's inventory.
-- The user must also be able to log any job-specific orders.
-
-#### View Inventory Subsystem
-- The subsystem must allow the user to view all the inventory items the company has, if the user has the relevant permission.
-   - The user must be able to search for a particular item.
-   - The user must be able to sort the items.
-   - The user must be able to filter the items.
-- The system must highlight the items that are low in stock.
-
-#### Edit Inventory Subsystem
-- Everything that is available to the View Inventory Subsystem must also be available for this subsystem.
-- The user should be able to add new items to the inventory:
-   - The system should allow the user to add all the information pertaining to the item.
-- The user should be able to update an existing item. They must be able to edit any of the information for that item.
-- The user should be able to delete an item from the inventory.
-- The user should be able to conduct a stock take at the end of the day.
-   - The system should then generate a report based on the day.
-   - The report should specify if there were any discrepancies in the amount of stock used and the stock take.
 
 ## Communication and Notification Subsystem
 #### Push Notifications
