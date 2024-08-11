@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="managerJobCard" :max-height="700" :max-width="1000" scrollable>
+  <v-dialog v-model="managerJobCard" :max-height="500" :max-width="1000" scrollable>
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -45,7 +45,7 @@
       </v-card-text>
       <v-card-actions>
         <v-col class="d-flex flex-column">
-          <v-btn class="mb-4" @click="cancelJob" color="error">Cancel</v-btn>
+          <v-btn class="mb-4" @click="cancelJob" color="error">Close</v-btn>
         </v-col>
       </v-card-actions>
     </v-card>
