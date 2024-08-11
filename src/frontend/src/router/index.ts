@@ -41,6 +41,9 @@ import EditTags from '@/components/home/settings/company/EditTags.vue'
 import EditPriority from '@/components/home/settings/company/EditPriority.vue'
 import EditStatus from '@/components/home/settings/company/EditStatus.vue'
 import TeamView from '@/views/home/teams/TeamView.vue'
+import CompanyRequestView from '@/views/home/company/CompanyRequestView.vue'
+import InvitesCompanyView from '@/views/home/company/InvitesCompanyView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -299,8 +302,8 @@ const router = createRouter({
       path: '/tutorial',
       name: 'tutorial',
       component: () => import('@/components/home/help/tutorial/Tutorial.vue')
-},
-                            {
+    },
+    {
       path: '/edit-tags',
       name: 'edit-tags',
       component: EditTags
@@ -319,6 +322,16 @@ const router = createRouter({
       path: '/teams',
       name: 'teams',
       component: TeamView
+    },
+    {
+      path: '/company-requests',
+      name: 'company-requests',
+      component: CompanyRequestView
+    },
+    {
+      path: '/company-invites',
+      name: 'company-invites',
+      component: InvitesCompanyView
     }
   ]
 })

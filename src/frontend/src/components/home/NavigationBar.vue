@@ -56,7 +56,12 @@ const supportSubItems = ref([
   { title: 'Support', icon: 'fa: fa-solid fa-headset', routeName: 'support' }
 ])
 const moreSubItems = ref([
-  { title: 'Company Settings', icon: 'fa: fa-solid fa-cog', routeName: 'companySettingsView' }
+  { title: 'Company Settings', icon: 'fa: fa-solid fa-cog', routeName: 'companySettingsView' },
+  {
+    title: 'Company Requests',
+    icon: 'fa: fa-solid fa-envelope',
+    routeName: 'company-requests'
+  }
 ])
 </script>
 
