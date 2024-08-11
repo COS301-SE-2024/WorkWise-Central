@@ -37,8 +37,8 @@
             <v-col class="text-center">
               <v-spacer></v-spacer>
               <p>
-                <v-chip :color="getStatusColor(props.passedInJob?.status.status)" dark>
-                  {{ props.passedInJob?.status.status }}
+                <v-chip :color="getStatusColor(props.passedInJob?.status?.status)" dark>
+                  {{ props.passedInJob?.status?.status }}
                 </v-chip>
               </p>
             </v-col>
@@ -51,17 +51,17 @@
               <v-col class="text-center" md="4">
                 <label class="font-weight-bold">Client Name</label>
                 <v-spacer></v-spacer>
-                <p>Holder Name</p>
+                <p>{{props.passedInJob?.clientId?.details?.firstName + ' ' + props.passedInJob?.clientId?.details?.lastName}}</p>
               </v-col>
               <v-col class="text-center" md="4">
                 <label class="font-weight-bold">Phone</label>
                 <v-spacer></v-spacer>
-                <p>Holder phone</p>
+                <p>{{props.passedInJob?.clientId?.details?.contactInfo?.phoneNumber}}</p>
               </v-col>
               <v-col class="text-center" md="4">
                 <label class="font-weight-bold">Email</label>
                 <v-spacer></v-spacer>
-                <p>Holder Email</p>
+                <p>{{props.passedInJob?.clientId?.details?.contactInfo?.email}}</p>
               </v-col>
             </v-row>
 
@@ -111,7 +111,7 @@
                   <label class="font-weight-bold">House Number</label>
                   <v-spacer></v-spacer>
                   <p>
-                    {{ props.passedInJob?.details?.address?.houseNumber }}
+                    {{ props.passedInJob?.details?.address?.houseNumber || 'House number is not available' }}
                   </p>
                 </v-col>
               </v-row>
@@ -126,14 +126,14 @@
                   />
                 </v-col>
               </v-row>
-              <v-divider>
-                <h5 ref="notesSection">Add Job Notes</h5>
-              </v-divider>
-              <v-row>
-                <v-col>
-                  <JobNotes :passedInJob="props.passedInJob" />
-                </v-col>
-              </v-row>
+<!--              <v-divider>-->
+<!--                <h5 ref="notesSection">Add Job Notes</h5>-->
+<!--              </v-divider>-->
+<!--              <v-row>-->
+<!--                <v-col>-->
+<!--                  <JobNotes :passedInJob="props.passedInJob" />-->
+<!--                </v-col>-->
+<!--              </v-row>-->
               <v-divider>
                 <h5 ref="tasksSection">Check Off Tasks</h5>
               </v-divider>
@@ -183,20 +183,20 @@
                 Add Comment
               </v-btn>
             </v-col>
-            <v-col>
-              <v-btn
-                width="100%"
-                class="d-flex justify-start"
-                border="md"
-                elevation="5"
-                @click="scrollToSection('notesSection')"
-              >
-                <v-icon left>
-                  {{ 'fa: fa-solid fa-sticky-note' }}
-                </v-icon>
-                Add Note
-              </v-btn>
-            </v-col>
+<!--            <v-col>-->
+<!--              <v-btn-->
+<!--                width="100%"-->
+<!--                class="d-flex justify-start"-->
+<!--                border="md"-->
+<!--                elevation="5"-->
+<!--                @click="scrollToSection('notesSection')"-->
+<!--              >-->
+<!--                <v-icon left>-->
+<!--                  {{ 'fa: fa-solid fa-sticky-note' }}-->
+<!--                </v-icon>-->
+<!--                Add Note-->
+<!--              </v-btn>-->
+<!--            </v-col>-->
             <v-col>
               <v-btn
                 width="100%"
@@ -258,7 +258,6 @@
       </v-card-text>
       <v-card-actions>
         <v-btn color="error" @click="closeView">Close</v-btn>
-        <v-btn color="success" @click="closeView">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

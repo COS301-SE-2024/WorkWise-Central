@@ -1,5 +1,5 @@
 <template>
-  <v-card flat class="text-center elevation-0" :min-height="1000">
+  <v-card flat class="text-center elevation-0" >
     <v-card-text>
       <v-form ref="jobForm">
         <v-label>Job Name</v-label>
