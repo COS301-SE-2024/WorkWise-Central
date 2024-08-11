@@ -96,6 +96,7 @@ export default defineComponent({
             detail: 'Status Deleted',
             life: 3000
           })
+          window.location.reload()
         }
       } catch (error) {
         console.error(error)
@@ -107,7 +108,6 @@ export default defineComponent({
           life: 3000
         })
       }
-      
     },
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)

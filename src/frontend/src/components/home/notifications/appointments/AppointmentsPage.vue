@@ -6,9 +6,7 @@
       </v-col>
       <v-divider></v-divider>
       <v-col cols="12">
-        <v-btn color="primary" @click="openDialog" variant="outlined">
-          Create New Meeting
-        </v-btn>
+        <v-btn color="primary" @click="openDialog" variant="outlined"> Create New Meeting </v-btn>
       </v-col>
     </v-row>
     <v-row>

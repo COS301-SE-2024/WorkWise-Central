@@ -1,7 +1,7 @@
 # User Stories
 
 #### User story: Help desk
-As a general user user,
+As a general user,
 I want to have access to a help desk,
 so that I may sort out any issue I encounter when using the system
 
@@ -31,7 +31,7 @@ so that I can keep track of all the clients and their jobs
 Acceptance criteria:
 
 -The ability to add clients should only be available to users with appropriate permissions
--The user must be click on a add client button
+-The user must be click on an add client button
 -The user must be able to input the clients details
 -The details must be saved to the database
 
@@ -44,7 +44,7 @@ Acceptance criteria:
 
 -The ability to edit clients should only be available to users with appropriate permissions
 -The user must be click on the client they want to edit
--The user must be able update the clients details
+-The user must be able to update the clients details
 -The details must be updated in the database
 
 ##### User story: Delete Client
@@ -158,7 +158,7 @@ Acceptance criteria:
  There must be a button to allow a user to sign up.
  There must be a form that allows the user to enter their email and create a password.
  The form must validate the data (make sure the email is actually an email address and ensure that the password is strong)
- If the email is not an valid email or the password is too weak, an error message must be displayed
+ If the email is not a valid email or the password is too weak, an error message must be displayed
  After the user has entered their details, they should be able to click on a "sign-up" button that takes them to the sign-up flow page.
  A verification email must also be sent out to the user.
 
@@ -174,12 +174,12 @@ Acceptance criteria:
  After they input their credentials, they must be able to click a log in button
  After they click the log in button, their credentials must be checked.
  If they entered the wrong information, an error message must be displayed.
- Otherwise they must be redirected to their homepage.
+ Otherwise, they must be redirected to their homepage.
 
  ##### User story: Sign-up flow
  
 As a new user,
-I want be taken through a sign up flow,
+I want to be taken through a sign-up flow,
 so that I add my personal information to my account
 
 Acceptance criteria:
@@ -214,7 +214,7 @@ Acceptance criteria:
  Given a user that is already part of another company, they must be able to join company using the company ID or searching for the company by name or by clicking a link sent by the company.
 
  ##### User story: settings - profile
- As a signed in user,
+ As a signed-in user,
 I want to be able to view and edit my profile information,
 so that I may ensure their correctness
 

@@ -97,6 +97,7 @@ export default defineComponent({
               life: 3000
             })
           }, 1500)
+          window.location.reload()
         })
         .catch((err) => {
           console.error(err)
@@ -108,16 +109,6 @@ export default defineComponent({
           })
         })
       this.isDeleting = true
-      setTimeout(() => {
-        this.isDeleting = false
-        this.deleteDialog = false
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Tag Deleted',
-          life: 3000
-        })
-      }, 1500)
     },
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
