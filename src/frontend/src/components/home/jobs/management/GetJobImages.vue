@@ -57,6 +57,12 @@
                   </v-icon>
                   Delete
                 </v-btn>
+                <v-btn color="error" @click="isActive.value = false">
+                  <v-icon>
+                    {{ 'fa: fa-solid fa-times' }}
+                  </v-icon>
+                  Cancel
+                </v-btn>
               </v-card-actions>
             </v-card>
           </template>
