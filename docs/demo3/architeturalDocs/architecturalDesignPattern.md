@@ -1,6 +1,6 @@
 # Architectural design & pattern
 
-![Database](/archetecturalDiagram.jpg)
+![Database](/WizeWorksArchitecturalDiagram-v3.webp)
 
 ## Model-View-Controller (MVC)
 
@@ -38,7 +38,7 @@ The main benefit of using SOA is that there is less code duplication and loose c
 We plan to use the Gatekeeper pattern to prevent malicious requests from entering the controllers in the backend.
 The gatekeeper validates all requests, and rejects requests that don't meet validation requirements. It provides an additional layer of security and limit the system's attack surface.
 
-In order to alleviate the weakness of having a single point of failure, we chose to couple the gatekeeper from the trusted host.
+In order to alleviate the weakness of having a single point of failure, we chose to couple the gatekeeper from the trusted host.
 
 ## The Repository Pattern
 

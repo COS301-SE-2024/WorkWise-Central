@@ -1,5 +1,5 @@
 <template><div><h1 id="architectural-design-pattern" tabindex="-1"><a class="header-anchor" href="#architectural-design-pattern"><span>Architectural design &amp; pattern</span></a></h1>
-<p><img src="/archetecturalDiagram.jpg" alt="Database"></p>
+<p><img src="/WizeWorksArchitecturalDiagram-v3.webp" alt="Database"></p>
 <h2 id="model-view-controller-mvc" tabindex="-1"><a class="header-anchor" href="#model-view-controller-mvc"><span>Model-View-Controller (MVC)</span></a></h2>
 <p>The MVC pattern was chosen because it emphasizes a separation of the system's business logic and user interfaces. This separation of concerns allows for a better division of labour and improves the maintainability of the system. The three components of MVC play the following roles:</p>
 <p><strong>Model:</strong> The model in our system is the Nest.js backend, which encapsulates the business logic and communicates with the database. It comprises of all the services that control all business logic, and uses the specific repository classes to query the database.</p>
@@ -19,7 +19,7 @@ Service-Oriented Architecture (SOA) is an architectural style that promotes the 
 <h2 id="gatekeeper-pattern" tabindex="-1"><a class="header-anchor" href="#gatekeeper-pattern"><span>Gatekeeper pattern</span></a></h2>
 <p>We plan to use the Gatekeeper pattern to prevent malicious requests from entering the controllers in the backend.
 The gatekeeper validates all requests, and rejects requests that don't meet validation requirements. It provides an additional layer of security and limit the system's attack surface.</p>
-<p>In order to alleviate the weakness of having a single point of failure, we chose to couple the gatekeeper from the trusted host.</p>
+<p>In order to alleviate the weakness of having a single point of failure, we chose to couple the gatekeeper from the trusted host.</p>
 <h2 id="the-repository-pattern" tabindex="-1"><a class="header-anchor" href="#the-repository-pattern"><span>The Repository Pattern</span></a></h2>
 <p>Repositories are bridges between data and operations that are in different domains. We leveraged this to maximise the effectiveness of our automated unit tests.</p>
 <p>This pattern allows us to separate business logic, within our service, from the database layer. Using the repository pattern reduces code duplication, reduces the likelihood of programmer error and allows us to centralise data-related policies such as caching.</p>
