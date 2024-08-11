@@ -58,7 +58,7 @@ export type Job = {
     }
     private: boolean
   }
-  clientId:{
+  clientId: {
     createdAt: string
     details: {
       address: {

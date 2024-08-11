@@ -65,7 +65,12 @@
           <v-text-field v-model="labelTitle" outlined dense class="mt-4 pt-0"></v-text-field>
 
           <v-label class="pb-0">Priority Level (Optional)</v-label>
-          <v-text-field v-model.number="labelPriority" outlined dense class="mt-4 pt-0"></v-text-field>
+          <v-text-field
+            v-model.number="labelPriority"
+            outlined
+            dense
+            class="mt-4 pt-0"
+          ></v-text-field>
 
           <!-- Color Palette -->
           <v-row>
@@ -111,7 +116,6 @@
   </v-card>
 </template>
 
-
 <script setup lang="ts">
 import { ref, computed, defineProps } from 'vue'
 import axios from 'axios'
@@ -128,7 +132,7 @@ interface Label {
   color: string
 }
 
-const props = defineProps<{tags: Label[]; jobID: string}>()
+const props = defineProps<{ tags: Label[]; jobID: string }>()
 
 const searchQuery = ref<string>('')
 const dialog = ref<boolean>(false)
@@ -233,7 +237,7 @@ const saveLabel = async () => {
         priorityLevel: labelPriority.value
       }
 
-      let response;
+      let response
       if (typeof labelPriority.value === 'number') {
         response = await axios.post(`${apiUrl}job/tags/p`, tag, config)
       } else {
@@ -253,7 +257,7 @@ const saveLabel = async () => {
           } else {
             console.log('Failed to add tag to job', response)
           }
-        } catch(error) {
+        } catch (error) {
           console.log(error)
         }
       } else {

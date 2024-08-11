@@ -155,7 +155,7 @@
                 <h5 ref="tagsSection">Add Job Tags</h5>
               </v-divider>
               <v-col>
-                <JobTags :tags="props.passedInJob?.tags" :jobID="props.passedInJob?._id"/>
+                <JobTags :tags="props.passedInJob?.tags" :jobID="props.passedInJob?._id" />
               </v-col>
               <v-divider>
                 <h5 ref="historySection">View Job History</h5>
@@ -297,7 +297,7 @@ interface Job {
     }
     private: boolean
   }
-  clientId:{
+  clientId: {
     createdAt: string
     details: {
       address: {
@@ -397,46 +397,51 @@ interface Job {
   updatedAt: string
 }
 
-
-const props = defineProps<{passedInJob: any}>()
-
+const props = defineProps<{ passedInJob: any }>()
 
 const viewJob = () => {
   console.log('click click')
 }
 
-const commentsSection = ref<HTMLElement | null>(null);
-const notesSection = ref<HTMLElement | null>(null);
-const tasksSection = ref<HTMLElement | null>(null);
-const imagesSection = ref<HTMLElement | null>(null);
-const tagsSection = ref<HTMLElement | null>(null);
-const historySection = ref<HTMLElement | null>(null);
+const commentsSection = ref<HTMLElement | null>(null)
+const notesSection = ref<HTMLElement | null>(null)
+const tasksSection = ref<HTMLElement | null>(null)
+const imagesSection = ref<HTMLElement | null>(null)
+const tagsSection = ref<HTMLElement | null>(null)
+const historySection = ref<HTMLElement | null>(null)
 const viewJobDialog = ref(false) // Dialog state
 const checklistSection = ref(null)
 const inventorySection = ref(null)
 
-function scrollToSection(section: 'commentsSection' | 'notesSection' | 'tasksSection' | 'imagesSection' | 'tagsSection' | 'historySection') {
-  let sectionRef = null;
+function scrollToSection(
+  section:
+    | 'commentsSection'
+    | 'notesSection'
+    | 'tasksSection'
+    | 'imagesSection'
+    | 'tagsSection'
+    | 'historySection'
+) {
+  let sectionRef = null
 
   if (section === 'commentsSection') {
-    sectionRef = commentsSection;
+    sectionRef = commentsSection
   } else if (section === 'notesSection') {
-    sectionRef = notesSection;
+    sectionRef = notesSection
   } else if (section === 'tasksSection') {
-    sectionRef = tasksSection;
+    sectionRef = tasksSection
   } else if (section === 'imagesSection') {
-    sectionRef = imagesSection;
+    sectionRef = imagesSection
   } else if (section === 'tagsSection') {
-    sectionRef = tagsSection;
+    sectionRef = tagsSection
   } else if (section === 'historySection') {
-    sectionRef = historySection;
+    sectionRef = historySection
   }
 
   if (sectionRef && sectionRef.value) {
-    sectionRef.value.scrollIntoView({ behavior: 'smooth' });
+    sectionRef.value.scrollIntoView({ behavior: 'smooth' })
   }
 }
-
 
 const getStatusColor = (status: string): string => {
   switch (status.toLowerCase()) {

@@ -4,7 +4,7 @@
       <v-col class="d-flex justify-center">
         <v-btn @click="showHistory = !showHistory" color="success" :icon="true">
           <v-icon>
-            {{ showHistory ? 'fa: fa-solid fa-eye-slash' : 'fa: fa-solid fa-eye'  }}
+            {{ showHistory ? 'fa: fa-solid fa-eye-slash' : 'fa: fa-solid fa-eye' }}
           </v-icon>
           {{ showHistory ? 'Hide History' : 'Show History' }}
         </v-btn>
@@ -36,8 +36,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { formatDistanceToNow } from 'date-fns';
+import { ref } from 'vue'
+import { formatDistanceToNow } from 'date-fns'
 
 // // Props for the component
 // const props = defineProps({
@@ -48,17 +48,17 @@ import { formatDistanceToNow } from 'date-fns';
 // });
 
 const events = [
-  { event: "Task started", timestamp: "2024-08-08T14:05:11.173Z" },
-  { event: "Task completed", timestamp: "2024-08-08T15:00:00.000Z" },
-];
+  { event: 'Task started', timestamp: '2024-08-08T14:05:11.173Z' },
+  { event: 'Task completed', timestamp: '2024-08-08T15:00:00.000Z' }
+]
 
 // Local state to toggle history visibility
-const showHistory = ref(false);
+const showHistory = ref(false)
 
 // Format timestamp to a human-readable string
 const formatTimestamp = (timestamp) => {
-  return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
-};
+  return formatDistanceToNow(new Date(timestamp), { addSuffix: true })
+}
 </script>
 
 <style scoped>

@@ -79,33 +79,34 @@ interface Comment {
 }
 
 interface EmployeeId {
-  companyId: string;
-  createdAt: string;
-  currentJobAssignments: string[];
+  companyId: string
+  createdAt: string
+  currentJobAssignments: string[]
   role: {
-    permissionSuite: string[];
-    roleId: string;
-    roleName: string;
-  };
-  subordinateTeams: string[];
-  subordinates: string[];
-  superiorId: string;
-  updatedAt: string;
-  userId: string;
+    permissionSuite: string[]
+    roleId: string
+    roleName: string
+  }
+  subordinateTeams: string[]
+  subordinates: string[]
+  superiorId: string
+  updatedAt: string
+  userId: string
   userInfo: {
-    displayName: string;
-    firstName: string;
-    surname: string;
-  };
-  _id: string;
+    displayName: string
+    firstName: string
+    surname: string
+  }
+  _id: string
 }
-
 
 // Data
 const newComment = ref('')
 const userInitials = ref<{ employeeId: string; initials: string }[]>([])
-const comments = ref<{ text: string; employeeId: string; date: string; initials?: string; _id: string }[]>(
-  props.jobComments.map(comment => ({
+const comments = ref<
+  { text: string; employeeId: string; date: string; initials?: string; _id: string }[]
+>(
+  props.jobComments.map((comment) => ({
     text: comment.comment,
     employeeId: comment.employeeId._id,
     date: comment.date,
@@ -115,7 +116,7 @@ const comments = ref<{ text: string; employeeId: string; date: string; initials?
 
 // Utility Functions
 const getInitials = (employeeId: string): string => {
-  const user = userInitials.value.find(user => user.employeeId === employeeId)
+  const user = userInitials.value.find((user) => user.employeeId === employeeId)
   return user ? user.initials : ''
 }
 
@@ -155,7 +156,10 @@ const getUserData = async () => {
 const getAllEmployeeData = async () => {
   const apiUrl = await getRequestUrl()
   try {
-    const employeeResponse = await axios.get(`${apiUrl}employee/all/${localStorage.getItem('currentCompany')}`,config)
+    const employeeResponse = await axios.get(
+      `${apiUrl}employee/all/${localStorage.getItem('currentCompany')}`,
+      config
+    )
     console.log(employeeResponse)
     const employeeIds = employeeResponse.data.map((employee: { _id: string }) => employee._id)
 
@@ -176,8 +180,8 @@ const getAllEmployeeData = async () => {
 }
 
 const populateCommentsWithInitials = () => {
-  comments.value.forEach(comment => {
-    const user = userInitials.value.find(user => user.employeeId === comment.employeeId)
+  comments.value.forEach((comment) => {
+    const user = userInitials.value.find((user) => user.employeeId === comment.employeeId)
     if (user) {
       comment.initials = user.initials
     }
@@ -196,7 +200,7 @@ const addComment = async () => {
   }
 
   const apiUrl = await getRequestUrl()
-  const newId = uuidv4(); // Generate a unique ID
+  const newId = uuidv4() // Generate a unique ID
   const updatedComments = [
     ...comments.value,
     {
@@ -206,7 +210,7 @@ const addComment = async () => {
       _id: newId // Assign the generated ID
     }
   ]
-  const addedComment = ref<{employeeId: string; jobId: string; newComment: string}>({
+  const addedComment = ref<{ employeeId: string; jobId: string; newComment: string }>({
     employeeId: localStorage.getItem('employeeId') || '',
     jobId: props.id,
     newComment: newComment.value
@@ -237,17 +241,15 @@ const addComment = async () => {
 const deleteComment = async (index: number) => {
   const apiUrl = await getRequestUrl()
   const commentToBeRemoved = comments.value[index]
-  const commentBody = ref<{employeeId: string; jobId: string; commentId: string}>(
-    {
-      employeeId: commentToBeRemoved.employeeId,
-      jobId: props.id,
-      commentId: commentToBeRemoved._id
-    }
-  )
+  const commentBody = ref<{ employeeId: string; jobId: string; commentId: string }>({
+    employeeId: commentToBeRemoved.employeeId,
+    jobId: props.id,
+    commentId: commentToBeRemoved._id
+  })
   const updatedComments = comments.value.filter((_, i) => i !== index)
 
   try {
-    const response = await axios.delete(`${apiUrl}job/comment`,{
+    const response = await axios.delete(`${apiUrl}job/comment`, {
       data: commentBody.value,
       headers: config.headers
     })
@@ -259,8 +261,8 @@ const deleteComment = async (index: number) => {
       life: 3000
     })
   } catch (error) {
-      console.error('Error deleting comment', error)
-    }
+    console.error('Error deleting comment', error)
+  }
 }
 
 // On Mounted
@@ -268,5 +270,4 @@ onMounted(async () => {
   await getUserData()
   await getAllEmployeeData()
 })
-
 </script>

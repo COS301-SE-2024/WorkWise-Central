@@ -45,15 +45,15 @@ import { ref, computed, defineProps } from 'vue'
 const props = defineProps<{ jobTaskList: TaskList[]; id: string }>()
 
 interface TaskItem {
-  description: string;
-  assignedEmployees: string[];
-  dueDate: string;
-  done: boolean;
+  description: string
+  assignedEmployees: string[]
+  dueDate: string
+  done: boolean
 }
 
 interface TaskList {
-  title: string;
-  items: TaskItem[];
+  title: string
+  items: TaskItem[]
 }
 
 // Initialize the task list
@@ -107,4 +107,3 @@ const saveItem = (index: number) => {
   text-decoration: line-through;
 }
 </style>
-

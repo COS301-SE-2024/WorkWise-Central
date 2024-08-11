@@ -63,7 +63,7 @@ import ChangeDueDate from './UpdateDateDialog.vue'
 
 const managerJobCard = ref(false) // Dialog state
 
-const props = defineProps<{passedInJob: any}>()
+const props = defineProps<{ passedInJob: any }>()
 
 const cancelJob = () => {
   managerJobCard.value = false

@@ -204,7 +204,7 @@ interface Job {
     }
     private: boolean
   }
-  clientId:{
+  clientId: {
     createdAt: string
     details: {
       address: {
@@ -417,8 +417,8 @@ const confirmDelete = async () => {
 }
 
 onMounted(() => {
-  fetchData();
-  const jobDeleted = localStorage.getItem('jobDeleted');
+  fetchData()
+  const jobDeleted = localStorage.getItem('jobDeleted')
 
   if (jobDeleted === 'true') {
     toast.add({
@@ -426,10 +426,10 @@ onMounted(() => {
       summary: 'Job Deleted',
       detail: 'Job deleted successfully',
       life: 3000
-    });
-    localStorage.removeItem('jobDeleted');
+    })
+    localStorage.removeItem('jobDeleted')
   }
-});
+})
 
 const getRowProps = ({ index }: any) => {
   return {
