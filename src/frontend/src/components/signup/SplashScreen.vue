@@ -1269,6 +1269,7 @@ export default defineComponent({
       const target = event.target
       if (target.files && target.files[0]) {
         const file = target.files[0]
+        this.profilePicture = file
         const reader = new FileReader()
 
         reader.onload = (e) => {
@@ -1333,35 +1334,42 @@ export default defineComponent({
     async signup() {
       const apiURL = await this.getRequestUrl()
       this.birthDateFormatter(this.birthDate)
+      const jsonData = {
+        username: this.username,
+        password: this.signupPassword,
+        personalInfo: {
+          firstName: this.name,
+          surname: this.surname,
+          dateOfBirth: this.date,
+          gender: this.gender,
+          preferredLanguage: this.language
+        },
+        address: {
+          street: this.street,
+          suburb: this.suburb,
+          province: this.province,
+          city: this.city,
+          postalCode: this.postal_code,
+          complex: this.complex,
+          houseNumber: this.houseNumber
+        },
+        contactInfo: {
+          phoneNumber: this.phone_number,
+          email: this.email
+        },
+        profile: {
+          displayName: this.name + ' ' + this.surname
+        },
+        skills: this.skills,
+        currentCompany: this.company
+      }
+      const formData = new FormData()
+      formData.append('body', JSON.stringify(jsonData))
+
+      if (this.profilePicture !== '') formData.append('profilePicture', this.profilePicture)
       await axios
-        .post(apiURL + 'users/create', {
-          username: this.username,
-          password: this.signupPassword,
-          personalInfo: {
-            firstName: this.name,
-            surname: this.surname,
-            dateOfBirth: this.date,
-            gender: this.gender,
-            preferredLanguage: this.language
-          },
-          address: {
-            street: this.street,
-            suburb: this.suburb,
-            province: this.province,
-            city: this.city,
-            postalCode: this.postal_code,
-            complex: this.complex,
-            houseNumber: this.houseNumber
-          },
-          contactInfo: {
-            phoneNumber: this.phone_number,
-            email: this.email
-          },
-          profile: {
-            displayName: this.name + ' ' + this.surname
-          },
-          skills: this.skills,
-          currentCompany: this.company
+        .post(apiURL + 'users/create', jsonData, {
+          'Content-Type': 'multipart/form-data'
         })
         .then((response) => {
           console.log(response)
