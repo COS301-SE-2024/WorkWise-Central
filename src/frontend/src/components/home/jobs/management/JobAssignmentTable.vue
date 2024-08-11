@@ -66,47 +66,47 @@
                     min-height
                   >
                     <template v-slot:[`item.heading`]="{ item }">
-                      {{ item.details.heading }}
+                      {{ item?.details?.heading }}
                     </template>
 
-<!--                    <template v-slot:[`item.clientPhone`]="{ item }">-->
-<!--                      <v-chip color="secondary">-->
-<!--                        <a :href="`tel:${item.clientId.details.contactInfo.phoneNumber}`" style="color: inherit; text-decoration: none">-->
-<!--                          <v-icon>-->
-<!--                            {{'fa: fa-solid fa-phone'}}-->
-<!--                          </v-icon>-->
-<!--                          {{ item.clientId.details.contactInfo.phoneNumber }}-->
-<!--                        </a>-->
-<!--                      </v-chip>-->
-<!--                    </template>-->
+                    <template v-slot:[`item.clientPhone`]="{ item }">
+                      <v-chip color="secondary">
+                        <a :href="`tel:${item?.clientId?.details?.contactInfo?.phoneNumber}`" style="color: inherit; text-decoration: none">
+                          <v-icon>
+                            {{'fa: fa-solid fa-phone'}}
+                          </v-icon>
+                          {{ item?.clientId?.details?.contactInfo?.phoneNumber }}
+                        </a>
+                      </v-chip>
+                    </template>
 
-<!--                    <template v-slot:[`item.clientMail`]="{ item }">-->
-<!--                      <v-chip color="secondary">-->
-<!--                        <a :href="`mailto:${item.clientId.details.contactInfo.email}`" style="color: inherit; text-decoration: none">-->
-<!--                          <v-icon>-->
-<!--                            {{'fa: fa-solid fa-envelope'}}-->
-<!--                          </v-icon>-->
-<!--                          {{ item.clientId.details.contactInfo.email }}-->
-<!--                        </a>-->
-<!--                      </v-chip>-->
-<!--                    </template>-->
+                    <template v-slot:[`item.clientMail`]="{ item }">
+                      <v-chip color="secondary">
+                        <a :href="`mailto:${item?.clientId?.details?.contactInfo?.email}`" style="color: inherit; text-decoration: none">
+                          <v-icon>
+                            {{'fa: fa-solid fa-envelope'}}
+                          </v-icon>
+                          {{ item?.clientId?.details?.contactInfo?.email }}
+                        </a>
+                      </v-chip>
+                    </template>
 
                     <template v-slot:[`item.description`]="{ item }">
-                      {{ item.details.description }}
+                      {{ item?.details?.description }}
                     </template>
 
                     <template v-slot:[`item.status`]="{ item }">
-                      <v-chip :color="getStatusColor(item.status.status)">
-                        <v-icon>mdi-progress-clock</v-icon>{{ item.status.status }}
+                      <v-chip :color="getStatusColor(item?.status?.status)">
+                        <v-icon>mdi-progress-clock</v-icon>{{ item?.status?.status }}
                       </v-chip>
                     </template>
 
                     <template v-slot:[`item.startDate`]="{ item }">
-                      {{ item.details.startDate }}
+                      {{ item?.details?.startDate }}
                     </template>
 
                     <template v-slot:[`item.endDate`]="{ item }">
-                      {{ item.details.endDate }}
+                      {{ item?.details?.endDate }}
                     </template>
 
                     <!-- Actions slot -->
