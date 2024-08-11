@@ -69,27 +69,27 @@
                       {{ item.details.heading }}
                     </template>
 
-                    <template v-slot:[`item.clientPhone`]="{ item }">
-                      <v-chip color="secondary">
-                        <a :href="`tel:${item.clientId.details.contactInfo.phoneNumber}`" style="color: inherit; text-decoration: none">
-                          <v-icon>
-                            {{'fa: fa-solid fa-phone'}}
-                          </v-icon>
-                          {{ item.clientId.details.contactInfo.phoneNumber }}
-                        </a>
-                      </v-chip>
-                    </template>
+<!--                    <template v-slot:[`item.clientPhone`]="{ item }">-->
+<!--                      <v-chip color="secondary">-->
+<!--                        <a :href="`tel:${item.clientId.details.contactInfo.phoneNumber}`" style="color: inherit; text-decoration: none">-->
+<!--                          <v-icon>-->
+<!--                            {{'fa: fa-solid fa-phone'}}-->
+<!--                          </v-icon>-->
+<!--                          {{ item.clientId.details.contactInfo.phoneNumber }}-->
+<!--                        </a>-->
+<!--                      </v-chip>-->
+<!--                    </template>-->
 
-                    <template v-slot:[`item.clientMail`]="{ item }">
-                      <v-chip color="secondary">
-                        <a :href="`mailto:${item.clientId.details.contactInfo.email}`" style="color: inherit; text-decoration: none">
-                          <v-icon>
-                            {{'fa: fa-solid fa-envelope'}}
-                          </v-icon>
-                          {{ item.clientId.details.contactInfo.email }}
-                        </a>
-                      </v-chip>
-                    </template>
+<!--                    <template v-slot:[`item.clientMail`]="{ item }">-->
+<!--                      <v-chip color="secondary">-->
+<!--                        <a :href="`mailto:${item.clientId.details.contactInfo.email}`" style="color: inherit; text-decoration: none">-->
+<!--                          <v-icon>-->
+<!--                            {{'fa: fa-solid fa-envelope'}}-->
+<!--                          </v-icon>-->
+<!--                          {{ item.clientId.details.contactInfo.email }}-->
+<!--                        </a>-->
+<!--                      </v-chip>-->
+<!--                    </template>-->
 
                     <template v-slot:[`item.description`]="{ item }">
                       {{ item.details.description }}
@@ -185,30 +185,49 @@ import { useToast } from 'primevue/usetoast'
 
 const toast = useToast()
 
+interface EmployeeId {
+  companyId: string
+  createdAt: string
+  currentJobAssignments: string[]
+  role: {
+    permissionSuite: string[]
+    roleId: string
+    roleName: string
+  }
+  subordinateTeams: string[]
+  subordinates: string[]
+  superiorId: string
+  updatedAt: string
+  userId: string
+  userInfo: {
+    displayName: string
+    firstName: string
+    surname: string
+  }
+  _id: string
+}
+
 // Define the type for the job object
 interface Job {
   _id: string
-  company: {
-    registrationNumber: string
-    vatNumber: string
-    name: string
-    type?: string
-    jobStatuses?: string[]
-    logo?: string
-    contactDetails: {
-      phoneNumber: string
-      email: string
+  assignedBy: {
+    companyId: string
+    roleId: string
+    superiorId?: string
+    subordinates?: string[]
+    subordinateTeams?: string[]
+    userId: string
+    userInfo: {
+      username: string
+      firstName: string
+      surname: string
+      displayName: string
+      displayImage?: string
     }
-    address: {
-      street: string
-      province: string
-      suburb: string
-      city: string
-      postalCode: string
-      complex?: string
-      houseNumber?: string
-    }
-    private: boolean
+  }
+  assignedEmployees?: {
+    employeeIds?: string[]
+    teamIds?: string[]
   }
   clientId: {
     createdAt: string
@@ -231,34 +250,15 @@ interface Job {
       preferredLanguage: string
     }
   }
-  status : {
-    status: string
+  companyId: string
+  priorityTag?: {
     colour: string
     companyId: string
+    label: string
+    priorityLevel: number
     _v: number
     _id: string
   }
-  assignedBy: {
-    roleId: string
-    superiorId?: string
-    subordinates?: string[]
-    subordinateTeams?: string[]
-    userId: string
-    userInfo: {
-      username: string
-      firstName: string
-      surname: string
-      displayName: string
-      displayImage?: string
-    }
-    companyId: string
-  }
-  assignedEmployees?: {
-    employeeIds?: string[]
-    teamIds?: string[]
-  }
-  tags?: string[]
-  priorityTag?: string
   attachments: string[]
   details: {
     heading: string
@@ -283,30 +283,39 @@ interface Job {
       quantityUsed: number
     }[]
   }
+  status : {
+    status: string
+    colour: string
+    companyId: string
+    _v: number
+    _id: string
+  }
+  tags?: {
+    colour: string
+    companyId: string
+    label: string
+    _v: number
+    _id: string
+  }[]
   clientFeedback?: {
     rating?: number
     comment?: string
   }
   taskList: {
-    name: string
-    status: string
-    assignedEmployees?: {
-      roleId: string
-      superiorId?: string
-      subordinates?: string[]
-      subordinateTeams?: string[]
-      userId: string
-      userInfo: {
-        username: string
-        firstName: string
-        surname: string
-        displayName: string
-        displayImage?: string
-      }
-      companyId: string
+    title: string
+    items: {
+      description: string
+      assignedEmployees: string[]
+      dueDate: string
+      done: boolean
     }[]
+  }
+  comments: {
+    employeeId: EmployeeId
+    comment: string
+    date: string
+    _id: string
   }[]
-  comments: string[]
   history?: {
     event: string
     timestamp: string

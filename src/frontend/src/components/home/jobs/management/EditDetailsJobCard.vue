@@ -11,24 +11,26 @@
           rounded="l"
           required
         ></v-text-field>
-        <!--        <v-label>Job Description</v-label>-->
-        <!--        <v-textarea-->
-        <!--          v-model="job.details.description"-->
-        <!--          clearable-->
-        <!--          variant="solo"-->
-        <!--          density="compact"-->
-        <!--          color="grey-lighten-4"-->
-        <!--          rounded="l"-->
-        <!--          required-->
-        <!--        ></v-textarea>-->
-        <v-row>
-          <v-col cols="5"> </v-col>
-          <v-label>Description</v-label>
-          <Editor
-            v-model="job.details.description"
-            editorStyle="height: 300px; color: grey-lighten-4"
-          />
-        </v-row>
+        <v-label>Job Description</v-label>
+        <v-textarea
+          v-model="job.details.description"
+          clearable
+          variant="solo"
+          density="compact"
+          color="grey-lighten-4"
+          rounded="l"
+          required
+        ></v-textarea>
+<!--        <v-row>-->
+<!--          <v-col cols="5"> </v-col>-->
+<!--          <v-label>Description</v-label>-->
+<!--          <Editor-->
+<!--            v-model="job.details.description"-->
+<!--            editorStyle="height: 300px;"-->
+<!--            contentStyle="color: #f5f5f5;"-->
+<!--          />-->
+
+<!--        </v-row>-->
         <v-row>
           <v-col cols="6">
             <v-label>Street</v-label>
