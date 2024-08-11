@@ -101,7 +101,7 @@ export default defineComponent({
         key: 'actions'
       }
     ],
-    items: [],
+    items: [] as any[],
     dialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     selectedItem: {
