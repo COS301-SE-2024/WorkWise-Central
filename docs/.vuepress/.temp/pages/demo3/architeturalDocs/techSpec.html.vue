@@ -61,7 +61,7 @@
 <p><strong>Cons:</strong></p>
 <ul>
 <li>It has the potential to strain resources when running many containers</li>
-<li>Misconfigured containers can pose security risks</li>
+<li>Misconfigured containers can pose security risks</li>
 </ul>
 </div></template>
 

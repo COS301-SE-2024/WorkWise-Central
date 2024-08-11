@@ -6,9 +6,9 @@
 <h4 id="component-based" tabindex="-1"><a class="header-anchor" href="#component-based"><span>Component-based</span></a></h4>
 <p>The component-based architectural style is being used to make the system <strong>more modular</strong>, while also <strong>reducing coupling</strong>.</p>
 <h4 id="publish-subscribe" tabindex="-1"><a class="header-anchor" href="#publish-subscribe"><span>Publish-subscribe</span></a></h4>
-<p>The publish-subscribe style is being used to implement the notification subsystem. Users will be subscribers of relevant notifications and events.</p>
+<p>The publish-subscribe style is being used to implement the notification subsystem. Furthermore, Users will be subscribers of relevant notifications and events.</p>
 <h4 id="service-oriented" tabindex="-1"><a class="header-anchor" href="#service-oriented"><span>Service-oriented</span></a></h4>
-<p>The service-oriented style is used to compartmentalise the business logic of the system. Each subsystem constitutes it's own service. These services then provide the business logic needed.</p>
+<p>The service-oriented style is used to compartmentalise the business logic of the system. Each subsystem constitutes its own service. These services then provide the business logic needed.</p>
 </div></template>
 
 

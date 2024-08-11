@@ -1,6 +1,6 @@
 <template><div><h1 id="user-stories" tabindex="-1"><a class="header-anchor" href="#user-stories"><span>User Stories</span></a></h1>
 <h4 id="user-story-help-desk" tabindex="-1"><a class="header-anchor" href="#user-story-help-desk"><span>User story: Help desk</span></a></h4>
-<p>As a general user user,
+<p>As a general user,
 I want to have access to a help desk,
 so that I may sort out any issue I encounter when using the system</p>
 <p>Acceptance criteria:</p>
@@ -21,7 +21,7 @@ I want to be able to add clients to the system,
 so that I can keep track of all the clients and their jobs</p>
 <p>Acceptance criteria:</p>
 <p>-The ability to add clients should only be available to users with appropriate permissions
--The user must be click on a add client button
+-The user must be click on an add client button
 -The user must be able to input the clients details
 -The details must be saved to the database</p>
 <h5 id="user-story-edit-client" tabindex="-1"><a class="header-anchor" href="#user-story-edit-client"><span>User story: Edit Client</span></a></h5>
@@ -31,7 +31,7 @@ so that I make necessary changes to their info</p>
 <p>Acceptance criteria:</p>
 <p>-The ability to edit clients should only be available to users with appropriate permissions
 -The user must be click on the client they want to edit
--The user must be able update the clients details
+-The user must be able to update the clients details
 -The details must be updated in the database</p>
 <h5 id="user-story-delete-client" tabindex="-1"><a class="header-anchor" href="#user-story-delete-client"><span>User story: Delete Client</span></a></h5>
 <p>As a managerial user,
@@ -114,7 +114,7 @@ so that I can access the system.</p>
 <p>There must be a button to allow a user to sign up.
 There must be a form that allows the user to enter their email and create a password.
 The form must validate the data (make sure the email is actually an email address and ensure that the password is strong)
-If the email is not an valid email or the password is too weak, an error message must be displayed
+If the email is not a valid email or the password is too weak, an error message must be displayed
 After the user has entered their details, they should be able to click on a &quot;sign-up&quot; button that takes them to the sign-up flow page.
 A verification email must also be sent out to the user.</p>
 <h5 id="user-story-log-in" tabindex="-1"><a class="header-anchor" href="#user-story-log-in"><span>User story: Log in</span></a></h5>
@@ -127,10 +127,10 @@ When the user clicks on the button it must display a form that allows them to in
 After they input their credentials, they must be able to click a log in button
 After they click the log in button, their credentials must be checked.
 If they entered the wrong information, an error message must be displayed.
-Otherwise they must be redirected to their homepage.</p>
+Otherwise, they must be redirected to their homepage.</p>
 <h5 id="user-story-sign-up-flow" tabindex="-1"><a class="header-anchor" href="#user-story-sign-up-flow"><span>User story: Sign-up flow</span></a></h5>
 <p>As a new user,
-I want be taken through a sign up flow,
+I want to be taken through a sign-up flow,
 so that I add my personal information to my account</p>
 <p>Acceptance criteria:</p>
 <p>Once the user has created their account the user must be redirected to the sign up flow modal/page
@@ -156,7 +156,7 @@ so that I may use the system for all the companies I work for</p>
 <p>Given a new user has gone through sign-up flow, they must be able to join a company using the company ID or searching for the company by name or by clicking a link sent by the company.
 Given a user that is already part of another company, they must be able to join company using the company ID or searching for the company by name or by clicking a link sent by the company.</p>
 <h5 id="user-story-settings-profile" tabindex="-1"><a class="header-anchor" href="#user-story-settings-profile"><span>User story: settings - profile</span></a></h5>
-<p>As a signed in user,
+<p>As a signed-in user,
 I want to be able to view and edit my profile information,
 so that I may ensure their correctness</p>
 <p>Acceptance criteria:</p>
