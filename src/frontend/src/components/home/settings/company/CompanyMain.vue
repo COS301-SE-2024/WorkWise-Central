@@ -120,7 +120,6 @@ export default defineComponent({
       localStorage.setItem('currentCompany', companyId)
       localStorage.setItem('currentEmployee', employeeId)
       this.companyDialog = false
-      
     },
     async getCompanies() {
       const config = {

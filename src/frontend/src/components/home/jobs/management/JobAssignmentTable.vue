@@ -71,9 +71,12 @@
 
                     <template v-slot:[`item.clientPhone`]="{ item }">
                       <v-chip color="secondary">
-                        <a :href="`tel:${item?.clientId?.details?.contactInfo?.phoneNumber}`" style="color: inherit; text-decoration: none">
+                        <a
+                          :href="`tel:${item?.clientId?.details?.contactInfo?.phoneNumber}`"
+                          style="color: inherit; text-decoration: none"
+                        >
                           <v-icon>
-                            {{'fa: fa-solid fa-phone'}}
+                            {{ 'fa: fa-solid fa-phone' }}
                           </v-icon>
                           {{ item?.clientId?.details?.contactInfo?.phoneNumber }}
                         </a>
@@ -82,9 +85,12 @@
 
                     <template v-slot:[`item.clientMail`]="{ item }">
                       <v-chip color="secondary">
-                        <a :href="`mailto:${item?.clientId?.details?.contactInfo?.email}`" style="color: inherit; text-decoration: none">
+                        <a
+                          :href="`mailto:${item?.clientId?.details?.contactInfo?.email}`"
+                          style="color: inherit; text-decoration: none"
+                        >
                           <v-icon>
-                            {{'fa: fa-solid fa-envelope'}}
+                            {{ 'fa: fa-solid fa-envelope' }}
                           </v-icon>
                           {{ item?.clientId?.details?.contactInfo?.email }}
                         </a>
@@ -283,7 +289,7 @@ interface Job {
       quantityUsed: number
     }[]
   }
-  status : {
+  status: {
     status: string
     colour: string
     companyId: string
@@ -409,10 +415,10 @@ const closeDialog = () => {
 }
 
 const formatDate = (dateString: string): string => {
-  const options: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', year: '2-digit' };
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', options);
-};
+  const options: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', year: '2-digit' }
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', options)
+}
 
 const confirmDelete = async () => {
   if (selectedJob.value) {

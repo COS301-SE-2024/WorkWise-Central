@@ -15,7 +15,6 @@
       <v-img
         src="https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U="
         aspect-ratio="5.75"
-        @load="setCardBackgroundColor"
       ></v-img>
       <v-card-title>
         {{ props.passedInJob?.details?.heading }}
@@ -52,17 +51,23 @@
               <v-col class="text-center" md="4">
                 <label class="font-weight-bold">Client Name</label>
                 <v-spacer></v-spacer>
-                <p>{{props.passedInJob?.clientId?.details?.firstName + ' ' + props.passedInJob?.clientId?.details?.lastName}}</p>
+                <p>
+                  {{
+                    props.passedInJob?.clientId?.details?.firstName +
+                    ' ' +
+                    props.passedInJob?.clientId?.details?.lastName
+                  }}
+                </p>
               </v-col>
               <v-col class="text-center" md="4">
                 <label class="font-weight-bold">Phone</label>
                 <v-spacer></v-spacer>
-                <p>{{props.passedInJob?.clientId?.details?.contactInfo?.phoneNumber}}</p>
+                <p>{{ props.passedInJob?.clientId?.details?.contactInfo?.phoneNumber }}</p>
               </v-col>
               <v-col class="text-center" md="4">
                 <label class="font-weight-bold">Email</label>
                 <v-spacer></v-spacer>
-                <p>{{props.passedInJob?.clientId?.details?.contactInfo?.email}}</p>
+                <p>{{ props.passedInJob?.clientId?.details?.contactInfo?.email }}</p>
               </v-col>
             </v-row>
 
@@ -112,7 +117,10 @@
                   <label class="font-weight-bold">House Number</label>
                   <v-spacer></v-spacer>
                   <p>
-                    {{ props.passedInJob?.details?.address?.houseNumber || 'House number is not available' }}
+                    {{
+                      props.passedInJob?.details?.address?.houseNumber ||
+                      'House number is not available'
+                    }}
                   </p>
                 </v-col>
               </v-row>
@@ -127,14 +135,14 @@
                   />
                 </v-col>
               </v-row>
-<!--              <v-divider>-->
-<!--                <h5 ref="notesSection">Add Job Notes</h5>-->
-<!--              </v-divider>-->
-<!--              <v-row>-->
-<!--                <v-col>-->
-<!--                  <JobNotes :passedInJob="props.passedInJob" />-->
-<!--                </v-col>-->
-<!--              </v-row>-->
+              <!--              <v-divider>-->
+              <!--                <h5 ref="notesSection">Add Job Notes</h5>-->
+              <!--              </v-divider>-->
+              <!--              <v-row>-->
+              <!--                <v-col>-->
+              <!--                  <JobNotes :passedInJob="props.passedInJob" />-->
+              <!--                </v-col>-->
+              <!--              </v-row>-->
               <v-divider>
                 <h5 ref="tasksSection">Check Off Tasks</h5>
               </v-divider>
@@ -184,20 +192,20 @@
                 Add Comment
               </v-btn>
             </v-col>
-<!--            <v-col>-->
-<!--              <v-btn-->
-<!--                width="100%"-->
-<!--                class="d-flex justify-start"-->
-<!--                border="md"-->
-<!--                elevation="5"-->
-<!--                @click="scrollToSection('notesSection')"-->
-<!--              >-->
-<!--                <v-icon left>-->
-<!--                  {{ 'fa: fa-solid fa-sticky-note' }}-->
-<!--                </v-icon>-->
-<!--                Add Note-->
-<!--              </v-btn>-->
-<!--            </v-col>-->
+            <!--            <v-col>-->
+            <!--              <v-btn-->
+            <!--                width="100%"-->
+            <!--                class="d-flex justify-start"-->
+            <!--                border="md"-->
+            <!--                elevation="5"-->
+            <!--                @click="scrollToSection('notesSection')"-->
+            <!--              >-->
+            <!--                <v-icon left>-->
+            <!--                  {{ 'fa: fa-solid fa-sticky-note' }}-->
+            <!--                </v-icon>-->
+            <!--                Add Note-->
+            <!--              </v-btn>-->
+            <!--            </v-col>-->
             <v-col>
               <v-btn
                 width="100%"
@@ -275,7 +283,6 @@ import JobHistory from './JobHistory.vue'
 
 const props = defineProps<{ passedInJob: any }>()
 
-
 const viewJob = () => {
   console.log('click click')
 }
@@ -342,7 +349,6 @@ const closeView = () => {
   viewJobDialog.value = false
 }
 
-
 const cardBackgroundColor = ref('')
 
 const setCardBackgroundColor = (event: Event) => {
@@ -358,7 +364,10 @@ const setCardBackgroundColor = (event: Event) => {
       context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight)
       const imageData = context.getImageData(0, 0, img.naturalWidth, img.naturalHeight).data
 
-      let r = 0, g = 0, b = 0, count = 0
+      let r = 0,
+        g = 0,
+        b = 0,
+        count = 0
       for (let i = 0; i < imageData.length; i += 4) {
         r += imageData[i]
         g += imageData[i + 1]

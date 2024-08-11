@@ -22,11 +22,20 @@
       <v-row>
         <v-col>
           <div class="mb-3">{{ progress.toFixed(0) }}%</div>
-          <v-progress-linear :model-value="progress" color="primary" :height="10" class="mb-4"></v-progress-linear>
+          <v-progress-linear
+            :model-value="progress"
+            color="primary"
+            :height="10"
+            class="mb-4"
+          ></v-progress-linear>
         </v-col>
       </v-row>
 
-      <v-row v-for="(item, index) in taskList[0].items" :key="index" class="d-flex align-center mb-3">
+      <v-row
+        v-for="(item, index) in taskList[0].items"
+        :key="index"
+        class="d-flex align-center mb-3"
+      >
         <v-col md="10" class="pr-4">
           <v-checkbox
             v-model="item.done"
@@ -40,7 +49,6 @@
         <v-col md="2" cols="2">
           <v-row>
             <v-dialog
-              v-model="item.dialog"
               max-width="300px"
               location="bottom"
               location-strategy="connected"
@@ -62,7 +70,10 @@
                   </v-card-title>
                   <v-card-actions class="d-flex flex-column">
                     <v-defaults-provider :defaults="{ VIcon: { color: 'info' } }">
-                      <v-btn color="info" @click="assignDialog = true">
+                      <v-btn
+                        color="info"
+                        @click="assignDialog = true; getEmployees()"
+                      >
                         <v-icon>
                           {{ 'fa: fa-solid fa-user-plus' }}
                         </v-icon>
@@ -76,18 +87,28 @@
                           <v-label>Assigned Employees</v-label>
                           <v-select
                             label="Select"
-                            :items=assignableEmployees
+                            :items="assignableEmployees"
                             multiple
                             variant="solo"
                             hide-details
+                            v-model="selectedEmployees"
                           ></v-select>
                         </v-card-text>
                         <v-card-actions class="d-flex flex-column">
                           <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
-                            <v-btn color="success" @click="getEmployees()" prepend-icon="fa: fa-solid fa-save">Save</v-btn>
+                            <v-btn
+                              color="success"
+                              prepend-icon="fa: fa-solid fa-save"
+                              >Save</v-btn
+                            >
                           </v-defaults-provider>
                           <v-defaults-provider :defaults="{ VIcon: { color: 'error' } }">
-                            <v-btn color="error" @click="assignDialog = false" prepend-icon="fa: fa-solid fa-trash">Cancel</v-btn>
+                            <v-btn
+                              color="error"
+                              @click="assignDialog = false"
+                              prepend-icon="fa: fa-solid fa-times"
+                              >Cancel</v-btn
+                            >
                           </v-defaults-provider>
                         </v-card-actions>
                       </v-card>
@@ -109,7 +130,7 @@
                       </v-btn>
                     </v-defaults-provider>
                     <v-defaults-provider :defaults="{ VIcon: { color: 'warning' } }">
-                      <v-btn color="warning" @click="isActive.value=false">
+                      <v-btn color="warning" @click="isActive.value = false">
                         <v-icon>
                           {{ 'fa: fa-solid fa-times' }}
                         </v-icon>
@@ -143,13 +164,14 @@
       </v-row>
       <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
         <v-row class="justify-center">
-          <v-btn color="success" @click="putTask(index)" prepend-icon="fa: fa-solid fa-save">Save Task</v-btn>
+          <v-btn color="success" @click="putTask()" prepend-icon="fa: fa-solid fa-save"
+            >Save Task</v-btn
+          >
         </v-row>
       </v-defaults-provider>
     </template>
   </v-container>
 </template>
-
 
 <script setup lang="ts">
 import { ref, computed, defineProps, onMounted } from 'vue'
@@ -168,6 +190,9 @@ const config = {
     Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
 }
+// Assignable employees
+const assignableEmployees = ref([])
+const selectedEmployees = ref([])
 
 interface TaskItem {
   description: string
@@ -242,16 +267,42 @@ const saveItem = (index: number) => {
 }
 
 const getEmployees = async () => {
-  const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}/employee/all/${localStorage.getItem('employeeId')}`, config)
-    console.log(response)
-  } catch(error) {
-    console.log(error)
+    const apiUrl = await getRequestUrl()
+    const employeeId = localStorage.getItem('employeeId')
+    if (!employeeId) {
+      throw new Error('Employee ID not found in localStorage')
+    }
+    const response = await axios.get(`${apiUrl}employee/detailed/all/${employeeId}`, config)
+    assignableEmployees.value = response.data.data.map((employee: any) => ({
+      text: `${employee.userId.personalInfo.firstName} ${employee.userId.personalInfo.surname}`,
+      value: employee._id
+    }))
+    console.log(assignableEmployees)
+    console.log('Employees fetched successfully', response.data)
+  } catch (error) {
+    console.error('Error fetching employees', error)
   }
 }
 
-const putTask = async (index: number) => {
+const createEmployeeAssignmentObjects = () => {
+  const jobId = props.id
+  const taskId = 'someTaskId' // Replace with actual task ID
+  const itemId = 'someItemId' // Replace with actual item ID
+  const employeeId = localStorage.getItem('employeeId') || ''
+
+  const assignments = selectedEmployees.value.map((employeeToAssignId: string) => ({
+    employeeId,
+    employeeToAssignId,
+    jobId,
+    taskId,
+    itemId
+  }))
+
+  console.log(assignments)
+}
+
+const putTask = async () => {
   try {
     const apiUrl = await getRequestUrl()
     const payload = {
@@ -272,9 +323,7 @@ const putTask = async (index: number) => {
   }
 }
 
-const saveTask = async (index: number) => {
-
-}
+const saveTask = async (index: number) => {}
 
 onMounted(() => {
   console.log('Tasklist: ', props.jobTaskList)

@@ -299,8 +299,8 @@ const router = createRouter({
       path: '/tutorial',
       name: 'tutorial',
       component: () => import('@/components/home/help/tutorial/Tutorial.vue')
-},
-                            {
+    },
+    {
       path: '/edit-tags',
       name: 'edit-tags',
       component: EditTags
