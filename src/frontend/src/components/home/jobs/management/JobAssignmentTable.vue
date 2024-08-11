@@ -69,18 +69,24 @@
                       {{ item.details.heading }}
                     </template>
 
-                    <template v-slot:[`item.clientPhone`]="{ value }">
-                      <v-chip color="primary">
-                        <a :href="`tel:${value}`" style="color: inherit; text-decoration: none">
-                          <v-icon>fa-solid fa-phone</v-icon>{{ value }}
+                    <template v-slot:[`item.clientPhone`]="{ item }">
+                      <v-chip color="secondary">
+                        <a :href="`tel:${item.clientId.details.contactInfo.phoneNumber}`" style="color: inherit; text-decoration: none">
+                          <v-icon>
+                            {{'fa: fa-solid fa-phone'}}
+                          </v-icon>
+                          {{ item.clientId.details.contactInfo.phoneNumber }}
                         </a>
                       </v-chip>
                     </template>
 
-                    <template v-slot:[`item.clientMail`]="{ value }">
-                      <v-chip color="primary">
-                        <a :href="`mailto:${value}`" style="color: inherit; text-decoration: none">
-                          <v-icon>fa-solid fa-envelope</v-icon>{{ value }}
+                    <template v-slot:[`item.clientMail`]="{ item }">
+                      <v-chip color="secondary">
+                        <a :href="`mailto:${item.clientId.details.contactInfo.email}`" style="color: inherit; text-decoration: none">
+                          <v-icon>
+                            {{'fa: fa-solid fa-envelope'}}
+                          </v-icon>
+                          {{ item.clientId.details.contactInfo.email }}
                         </a>
                       </v-chip>
                     </template>
@@ -358,6 +364,7 @@ const fetchData = async () => {
     )
     if (response.status > 199 && response.status < 300) {
       detailedJobData.value = response.data.data
+      console.log('Detailed Job Data', detailedJobData.value)
       console.log(response)
     } else {
       toast.add({
