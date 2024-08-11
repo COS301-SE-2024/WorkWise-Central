@@ -54,7 +54,7 @@ export class UsersService {
         secureUrl = picture.secure_url;
       } else throw new InternalServerErrorException('file upload failed');
     }
-    // else default
+    // Create the user
     const newUserObj = new User(createUserDto);
     if (secureUrl !== '') newUserObj.profile.displayImage = secureUrl;
     const result = await this.userRepository.save(newUserObj);
