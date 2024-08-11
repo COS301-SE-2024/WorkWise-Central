@@ -75,16 +75,26 @@ export class CompanyService {
     const ownerRoleId = (await this.roleService.findOneInCompany('Owner', createdCompany._id))._id;
     console.log('ownerRoleId ', ownerRoleId);
 
+    ///
+    const user = await this.usersService.getUserById(createCompanyDto.userId);
+    ///
+
     console.log('Create Employee');
     const employee = await this.employeeService.create({
       userId: createCompanyDto.userId,
       companyId: createdCompany._id,
       superiorId: null,
       roleId: ownerRoleId,
+      userInfo: {
+        firstName: user.personalInfo.firstName,
+        surname: user.personalInfo.surname,
+        displayImage: user.profile.displayImage,
+        displayName: user.profile.displayImage,
+        username: user.systemDetails.username,
+      },
     });
 
     console.log('Make User JoinedCompany');
-    const user = await this.usersService.getUserById(createCompanyDto.userId);
     const newJoinedCompany = new JoinedCompany(employee._id, createdCompany._id, createdCompany.name);
     console.log('Perform Update');
     await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
@@ -205,6 +215,13 @@ export class CompanyService {
         userId: user._id,
         roleId: addUserDto.roleId,
         superiorId: addUserDto.superiorId,
+        userInfo: {
+          firstName: user.personalInfo.firstName,
+          surname: user.personalInfo.surname,
+          displayImage: user.profile.displayImage,
+          displayName: user.profile.displayName,
+          username: user.systemDetails.username,
+        },
       });
     } else {
       const defaultRole = await this.roleService.findOneInCompany('Worker', company._id);
@@ -214,6 +231,13 @@ export class CompanyService {
         userId: user._id,
         roleId: defaultRole._id,
         superiorId: addUserDto.superiorId,
+        userInfo: {
+          firstName: user.personalInfo.firstName,
+          surname: user.personalInfo.surname,
+          displayImage: user.profile.displayImage,
+          displayName: user.profile.displayName,
+          username: user.systemDetails.username,
+        },
       });
 
       await this.employeeService.updateUserInfo(addedEmployee._id, {
@@ -255,6 +279,13 @@ export class CompanyService {
         userId: user._id,
         roleId: inviteDto.roleId,
         superiorId: inviteDto.superiorId,
+        userInfo: {
+          firstName: user.personalInfo.firstName,
+          surname: user.personalInfo.surname,
+          displayImage: user.profile.displayImage,
+          displayName: user.profile.displayName,
+          username: user.systemDetails.username,
+        },
       });
     } else {
       const defaultRole = await this.roleService.findOneInCompany('Worker', company._id);
@@ -264,6 +295,13 @@ export class CompanyService {
         userId: user._id,
         roleId: defaultRole._id,
         superiorId: inviteDto.superiorId,
+        userInfo: {
+          firstName: user.personalInfo.firstName,
+          surname: user.personalInfo.surname,
+          displayImage: user.profile.displayImage,
+          displayName: user.profile.displayName,
+          username: user.systemDetails.username,
+        },
       });
 
       await this.employeeService.updateUserInfo(addedEmployee._id, {
