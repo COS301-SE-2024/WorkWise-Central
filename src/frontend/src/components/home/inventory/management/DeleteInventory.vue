@@ -93,7 +93,12 @@ export default defineComponent({
       const apiURL = await this.getRequestUrl()
       try {
         await axios.delete(`${apiURL}inventory/${this.inventory_id}`, config)
-        console.log('Inventory item deleted successfully')
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Inventory deleted successfully',
+          life: 3000
+        })
       } catch (error) {
         console.error(error)
       }

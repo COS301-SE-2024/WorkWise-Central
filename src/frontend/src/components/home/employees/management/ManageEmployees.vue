@@ -286,7 +286,7 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         },
         data: {
-          currentEmployeeId: localStorage['currentEmployee']
+          currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
       console.log(localStorage['employeeId'])

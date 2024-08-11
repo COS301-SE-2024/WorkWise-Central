@@ -29,7 +29,7 @@
           </v-col>
           <v-col xs="12" sm="12" md="4">
             <v-col>
-              <ChangeClient />
+              <ChangeClient :jobID="props.passedInJob?._id" />
             </v-col>
             <v-col>
               <SelectMembers />
@@ -63,9 +63,7 @@ import ChangeDueDate from './UpdateDateDialog.vue'
 
 const managerJobCard = ref(false) // Dialog state
 
-const props = defineProps({
-  passedInJob: Object
-})
+const props = defineProps<{ passedInJob: any }>()
 
 const cancelJob = () => {
   managerJobCard.value = false
