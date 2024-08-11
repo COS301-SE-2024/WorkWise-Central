@@ -97,7 +97,7 @@
 
                     <template v-slot:[`item.status`]="{ item }">
                       <v-chip :color="getStatusColor(item.status)">
-                        <v-icon>mdi-progress-clock</v-icon>{{ item.status }}
+                        <v-icon>mdi-progress-clock</v-icon>{{ item.status.status }}
                       </v-chip>
                     </template>
 
