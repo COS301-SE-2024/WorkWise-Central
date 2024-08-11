@@ -138,33 +138,30 @@ export default defineComponent({
     },
     change_roles() {
       console.log(this.req_obj.roleId)
+      console.log(this.roleItems)
     },
     async loadSubordinates() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       try {
-        const sub_res = await axios(
-          apiURL + `company/all/employees/${localStorage.getItem('currentCompany')}`,
+        const sub_res = await axios.get(
+          apiURL + `employee/detailed/all/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(sub_res)
         for (let i = 0; i < sub_res.data.data.length; i++) {
-          const employee_details = await axios.get(
-            apiURL + `employee/detailed/id/${sub_res.data.data[i]._id}`,
-            config
-          )
-
           let company_employee: EmployeeInformation2 = {
             name:
-              employee_details.data.data.userId.personalInfo.firstName +
+              sub_res.data.data[i].userId.personalInfo.firstName +
               ' ' +
-              employee_details.data.data.userId.personalInfo.surname +
+              sub_res.data.data[i].userId.personalInfo.surname +
               ' (' +
-              employee_details.data.data.role.roleName +
+              sub_res.data.data[i].role.roleName +
               ')',
-            employeeId: employee_details.data.data._id
+            employeeId: sub_res.data.data[i]._id
           }
 
+          console.log(company_employee)
           this.subordinateItemNames.push(company_employee)
         }
       } catch (error) {
@@ -180,11 +177,12 @@ export default defineComponent({
           apiURL + `role/all/${localStorage['currentCompany']}`,
           config
         )
+        console.log(roles_response)
         let roles_data: Role[] = roles_response.data.data
         for (let i = 0; i < roles_data.length; i++) {
           this.roleItems.push({
             roleName: roles_data[i].roleName,
-            roleId: roles_data[i].roleId
+            roleId: roles_data[i]._id
           })
         }
       } catch (error) {
@@ -192,6 +190,11 @@ export default defineComponent({
       }
     },
     async handleSubmit() {
+      this.req_obj.adminId = localStorage['employeeId']
+      this.req_obj.currentCompany = localStorage['currentCompany']
+
+      console.log(this.req_obj)
+
       const config = {
         headers: {
           'Content-Type': 'application/json',

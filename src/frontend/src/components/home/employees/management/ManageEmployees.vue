@@ -285,16 +285,16 @@ export default {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         },
-
         data: {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
+      console.log(localStorage['employeeId'])
       const apiURL = await this.getRequestUrl()
 
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/detailed/all/${localStorage['currentCompany']}`,
+          apiURL + `employee/detailed/all/${localStorage['employeeId']}`,
           config
         )
 
@@ -328,7 +328,7 @@ export default {
               preferredLanguage: employee_all_data[i].userId.personalInfo.preferredLanguage,
               dateOfBirth: employee_all_data[i].userId.personalInfo.dateOfBirth,
               gender: employee_all_data[i].userId.personalInfo.gender,
-              roleId: employee_all_data[i].role.roleId,
+              roleId: employee_all_data[i].role._id,
               roleName: employee_all_data[i].role.roleName,
               employeeId: employee_all_data[i]._id,
               userId: employee_all_data[i].userId._id
@@ -368,90 +368,6 @@ export default {
       } catch (error) {
         console.log('Error fetching data:', error)
       }
-
-      // try {
-      //   const employee_response = await axios.get(
-      //     apiURL + `employee/all/${localStorage['currentCompany']}`,
-      //     config
-      //   )
-      //   let employee_all_data: Employee[] = employee_response.data.data
-      //
-      //   let company_employee_arr: EmployeePersonalInfo[] = []
-      //   for (let i = 0; i < employee_all_data.length; i++) {
-      //     let users_response = await axios.get(
-      //       apiURL + `users/id/${employee_all_data[i].userId}`,
-      //       config
-      //     )
-      //
-      //     const user_data: User = users_response.data
-      //
-      //     if (user_data.data.personalInfo.address === undefined) continue
-      //
-      //     if (employee_all_data[i].roleId !== undefined) {
-      //       let role = await axios.get(apiURL + `role/id/${employee_all_data[i].roleId}`, config)
-      //
-      //       if (role.status < 300 && role.status > 199) {
-      //         let company_employee: EmployeePersonalInfo = {
-      //           address: {
-      //             street: user_data.data.personalInfo.address.street,
-      //             suburb: user_data.data.personalInfo.address.suburb,
-      //             city: user_data.data.personalInfo.address.city,
-      //             postalCode: user_data.data.personalInfo.address.postalCode,
-      //             complex: user_data.data.personalInfo.address.complex,
-      //             houseNumber: user_data.data.personalInfo.address.houseNumber
-      //           },
-      //           contactInfo: {
-      //             phoneNumber: user_data.data.personalInfo.contactInfo.phoneNumber,
-      //             email: user_data.data.personalInfo.contactInfo.email
-      //           },
-      //           firstName: user_data.data.personalInfo.firstName,
-      //           surname: user_data.data.personalInfo.surname,
-      //           preferredLanguage: user_data.data.personalInfo.preferredLanguage,
-      //           dateOfBirth: user_data.data.personalInfo.dateOfBirth,
-      //           gender: user_data.data.personalInfo.gender,
-      //           roleId: employee_all_data[i].roleId,
-      //           roleName: role.data.data.roleName,
-      //           employeeId: employee_all_data[i]._id,
-      //           userId: employee_all_data[i].userId
-      //         }
-      //
-      //         company_employee_arr.push(company_employee)
-      //       } else {
-      //         console.log('And unsuccessfull requets was made')
-      //       }
-      //     } else {
-      //       let company_employee: EmployeePersonalInfo = {
-      //         address: {
-      //           street: user_data.data.personalInfo.address.street,
-      //           suburb: user_data.data.personalInfo.address.suburb,
-      //           city: user_data.data.personalInfo.address.city,
-      //           postalCode: user_data.data.personalInfo.address.postalCode,
-      //           complex: user_data.data.personalInfo.address.complex,
-      //           houseNumber: user_data.data.personalInfo.address.houseNumber
-      //         },
-      //         contactInfo: {
-      //           phoneNumber: user_data.data.personalInfo.contactInfo.phoneNumber,
-      //           email: user_data.data.personalInfo.contactInfo.email
-      //         },
-      //         firstName: user_data.data.personalInfo.firstName,
-      //         surname: user_data.data.personalInfo.surname,
-      //         preferredLanguage: user_data.data.personalInfo.preferredLanguage,
-      //         dateOfBirth: user_data.data.personalInfo.dateOfBirth,
-      //         gender: user_data.data.personalInfo.gender,
-      //         roleId: '',
-      //         roleName: '',
-      //         employeeId: employee_all_data[i]._id,
-      //         userId: employee_all_data[i].userId
-      //       }
-
-      //       company_employee_arr.push(company_employee)
-      //     }
-      //   }
-      //   console.log(company_employee_arr)
-      //   this.EmployeeDetails2 = company_employee_arr
-      // } catch (error) {
-      //   console.log('Error fetching data:', error)
-      // }
     },
     toggleExpand(item: never) {
       // Check if the item is already expanded

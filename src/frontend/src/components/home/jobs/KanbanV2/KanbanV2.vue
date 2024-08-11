@@ -263,15 +263,15 @@
                   <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
                     ><b>{{ item.heading }}</b></v-card-item
                   >
-                  <v-card-subtitle v-if="item.status === column.status"
+                  <v-card-item v-if="item.status.status === column.status"
                     ><v-chip
                       :color="column.color"
                       variant="elevated"
                       rounded="sm"
                       density="comfortable"
                     >
-                      <b>{{ item.status }}</b></v-chip
-                    ></v-card-subtitle
+                      <b>{{ item.status.status }}</b></v-chip
+                    ></v-card-item
                   >
 
                   <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
@@ -285,26 +285,27 @@
                     {{ item.city + ', ' + item.suburb }}</v-card-item
                   >
 
-                  <v-card-subtitle v-if="item.priority === 'High'"
-                    ><v-chip color="#FF0000" variant="tonal" density="comfortable"
-                      ><b>Priority: {{ item.priority }}</b></v-chip
-                    ></v-card-subtitle
-                  ><v-card-subtitle v-if="item.priority === 'Medium'"
-                    ><v-chip color="amber-darken-4" variant="tonal" density="comfortable"
-                      ><b>Priority: {{ item.priority }}</b></v-chip
-                    ></v-card-subtitle
-                  ><v-card-subtitle v-if="item.priority === 'Low'"
-                    ><v-chip color="#008000" variant="tonal" density="comfortable"
-                      ><b>Priority: {{ item.priority }}</b></v-chip
-                    ></v-card-subtitle
+                  <v-card-item
+                    ><v-chip :color="item.priorityTag.colour" variant="tonal" density="comfortable"
+                      ><b>Priority: {{ item.priorityTag.label }}</b></v-chip
+                    ></v-card-item
                   >
+                  <!--                  <v-card-subtitle v-if="item.priority === 'Medium'"-->
+                  <!--                    ><v-chip color="amber-darken-4" variant="tonal" density="comfortable"-->
+                  <!--                      ><b>Priority: {{ item.priority }}</b></v-chip-->
+                  <!--                    ></v-card-subtitle-->
+                  <!--                  ><v-card-subtitle v-if="item.priority === 'Low'"-->
+                  <!--                    ><v-chip color="#008000" variant="tonal" density="comfortable"-->
+                  <!--                      ><b>Priority: {{ item.priority }}</b></v-chip-->
+                  <!--                    ></v-card-subtitle-->
+                  <!--                  >-->
                   <v-card-text>
                     <v-chip
-                      color="light-blue-accent-4"
+                      :color="item.tags[i].colour"
                       class=""
                       v-for="(n, i) in item.tags.length"
                       :key="i"
-                      ><b>{{ item.tags[i] }}</b></v-chip
+                      ><b>{{ item.tags[i].label }}</b></v-chip
                     >
                   </v-card-text>
                 </v-card>
@@ -314,7 +315,7 @@
         </v-card>
       </v-col>
       <v-col cols="auto">
-        <v-dialog max-height="700" max-width="500" v-model="add_column_dialog">
+        <v-dialog max-height="600" max-width="500" v-model="add_column_dialog">
           <template v-slot:activator="{ props }">
             <v-btn icon="fa: fa-solid fa-plus" v-bind="props"></v-btn>
           </template>
@@ -390,19 +391,22 @@
     </v-row>
   </v-container>
   <v-dialog v-model="JobCardVisibility" max-width="1000px">
-    <JBC @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
+    <ViewJob @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
   </v-dialog>
 </template>
 
 <script lang="ts">
 import type { JobCardDataFormat, Column } from '../types'
 import '@mdi/font/css/materialdesignicons.css'
-import JBC from '../management/ManagerJobCard.vue'
+// import JBC from '../management/ManagerJobCard.vue'
+import ViewJob from '@/components/home/jobs/management/ViewJob.vue'
+
 import axios from 'axios'
 
 export default {
   components: {
-    JBC
+    // JBC,
+    ViewJob
   },
   data() {
     return {
@@ -412,215 +416,24 @@ export default {
       add_column_dialog: false,
       delete_column_dialog: false,
       edit_column_details_dialog: false,
-      columns: [
-        { id: 0, status: 'No Status', color: 'purple-accent-3', cards: [] },
-        { id: 1, status: 'Todo', color: '#FF073A', cards: [] },
-        { id: 2, status: 'In Progress', color: '#39FF14', cards: [] },
-        { id: 3, status: 'Awaiting review', color: '#0FF0FC', cards: [] },
-        { id: 4, status: 'Done', color: '#FFFF33', cards: [] }
-      ] as Column[],
+      // columns: [
+      //   { id: 0, status: 'No Status', color: 'purple-accent-3', cards: [] },
+      //   { id: 1, status: 'Todo', color: '#FF073A', cards: [] },
+      //   { id: 2, status: 'In Progress', color: '#39FF14', cards: [] },
+      //   { id: 3, status: 'Awaiting review', color: '#0FF0FC', cards: [] },
+      //   { id: 4, status: 'Done', color: '#FFFF33', cards: [] }
+      // ] as Column[],
+      columns: [] as Column[],
       new_column_name: '',
       error_message: '',
       column_color: '',
-      SelectedEvent: {},
+      SelectedEvent: {} as JobCardDataFormat,
       JobCardVisibility: false,
       order_of_sorting_in_columns: ['High', 'Medium', 'Low'],
       draggedCard: null as JobCardDataFormat | null,
       sourceColumn: null as Column | null,
       dropTarget: null as Column | null,
-      starting_cards: [
-        {
-          jobId: 'J12348',
-          heading: 'Roof Inspection',
-          jobDescription: 'Inspection of roof for potential leaks and damages.',
-          startDate: '2024-07-04',
-          endDate: '2024-07-04',
-          status: 'Done',
-          clientName: 'Peter Parker',
-          street: '100 Queens Blvd',
-          suburb: 'Sunnyvale',
-          city: 'Gotham',
-          postalCode: '54321',
-          imagesTaken: ['roof_before.jpg', 'roof_after.jpg'],
-          inventoryUsed: ['Ladder', 'Camera'],
-          taskList: ['Inspect roof', 'Document findings', 'Provide recommendations'],
-          comments: ['Check for any loose tiles', 'Ensure all gutters are clear'],
-          priority: 'High',
-          tags: ['Roofing', 'Inspection', 'Residential']
-        },
-        {
-          jobId: 'J12349',
-          heading: 'Garden Landscaping',
-          jobDescription: 'Landscaping the garden area with new plants and a water feature.',
-          startDate: '2024-07-05',
-          endDate: '2024-07-07',
-          status: 'In Progress',
-          clientName: 'Bruce Wayne',
-          street: '200 Wayne Manor',
-          suburb: 'Richville',
-          city: 'Gotham',
-          postalCode: '67891',
-          imagesTaken: ['garden_before.jpg', 'landscaping_progress.jpg'],
-          inventoryUsed: ['Plants', 'Soil', 'Water Feature Kit'],
-          taskList: ['Remove old plants', 'Plant new ones', 'Install water feature'],
-          comments: ['Ensure proper irrigation', 'Use organic soil'],
-          priority: 'Medium',
-          tags: ['Landscaping', 'Gardening', 'Residential']
-        },
-        {
-          jobId: 'J12350',
-          heading: 'Office Painting',
-          jobDescription: 'Repainting the office walls with new colors.',
-          startDate: '2024-07-06',
-          endDate: '2024-07-08',
-          status: 'Todo',
-          clientName: 'Wayne Enterprises',
-          street: '300 Industrial Rd',
-          suburb: 'Tech Park',
-          city: 'Metropolis',
-          postalCode: '23456',
-          imagesTaken: [],
-          inventoryUsed: ['Paint', 'Brushes', 'Rollers'],
-          taskList: ['Prepare walls', 'Apply primer', 'Paint walls'],
-          comments: ['Use non-toxic paint', 'Ensure even coverage'],
-          priority: 'Low',
-          tags: ['Painting', 'Office', 'Commercial']
-        },
-        {
-          jobId: 'J12351',
-          heading: 'Pool Cleaning',
-          jobDescription: 'Thorough cleaning of the swimming pool.',
-          startDate: '2024-07-07',
-          endDate: '2024-07-07',
-          status: 'Done',
-          clientName: 'Clark Kent',
-          street: '400 Kent Farm',
-          suburb: 'Smallville',
-          city: 'Metropolis',
-          postalCode: '98765',
-          imagesTaken: ['pool_before.jpg', 'pool_after.jpg'],
-          inventoryUsed: ['Pool Cleaner', 'Chemicals', 'Brushes'],
-          taskList: ['Remove debris', 'Clean pool surface', 'Add chemicals'],
-          comments: ['Check water pH levels', 'Ensure filter is working'],
-          priority: 'Medium',
-          tags: ['Pool', 'Cleaning', 'Residential']
-        },
-        {
-          jobId: 'J12352',
-          heading: 'AC Installation',
-          jobDescription: 'Installation of a new air conditioning system.',
-          startDate: '2024-07-08',
-          endDate: '2024-07-09',
-          status: 'In Progress',
-          clientName: 'Tony Stark',
-          street: '500 Stark Tower',
-          suburb: 'Downtown',
-          city: 'New York',
-          postalCode: '10101',
-          imagesTaken: ['ac_unit.jpg', 'installation_progress.jpg'],
-          inventoryUsed: ['AC Unit', 'Ducts', 'Thermostat'],
-          taskList: ['Remove old unit', 'Install new unit', 'Test system'],
-          comments: ['Check duct connections', 'Ensure system efficiency'],
-          priority: 'High',
-          tags: ['HVAC', 'Installation', 'Commercial']
-        },
-        {
-          jobId: 'J12353',
-          heading: 'Window Replacement',
-          jobDescription: 'Replacing old windows with energy-efficient ones.',
-          startDate: '2024-07-10',
-          endDate: '2024-07-11',
-          status: 'Todo',
-          clientName: 'Natasha Romanoff',
-          street: '600 Widow Street',
-          suburb: 'East Side',
-          city: 'New York',
-          postalCode: '20202',
-          imagesTaken: [],
-          inventoryUsed: ['Windows', 'Sealant', 'Tools'],
-          taskList: ['Remove old windows', 'Install new windows', 'Seal edges'],
-          comments: ['Ensure proper insulation', 'Dispose of old windows'],
-          priority: 'Medium',
-          tags: ['Windows', 'Replacement', 'Residential']
-        },
-        {
-          jobId: 'J12354',
-          heading: 'Security System Upgrade',
-          jobDescription: 'Upgrading the security system with new cameras and sensors.',
-          startDate: '2024-07-11',
-          endDate: '2024-07-12',
-          status: 'In Progress',
-          clientName: 'Steve Rogers',
-          street: '700 Shield Avenue',
-          suburb: 'West Side',
-          city: 'Brooklyn',
-          postalCode: '30303',
-          imagesTaken: ['old_system.jpg', 'new_system.jpg'],
-          inventoryUsed: ['Cameras', 'Sensors', 'Control Panel'],
-          taskList: ['Remove old system', 'Install new system', 'Test sensors'],
-          comments: ['Ensure all areas are covered', 'Test system functionality'],
-          priority: 'High',
-          tags: ['Security', 'Upgrade', 'Residential']
-        },
-        {
-          jobId: 'J12355',
-          heading: 'Kitchen Renovation',
-          jobDescription:
-            'Complete renovation of the kitchen including new cabinets and appliances.',
-          startDate: '2024-07-13',
-          endDate: '2024-07-20',
-          status: 'Todo',
-          clientName: 'Bruce Banner',
-          street: '800 Hulk Street',
-          suburb: 'Uptown',
-          city: 'San Francisco',
-          postalCode: '40404',
-          imagesTaken: [],
-          inventoryUsed: ['Cabinets', 'Appliances', 'Tiles'],
-          taskList: ['Remove old kitchen', 'Install cabinets', 'Fit appliances'],
-          comments: ['Ensure electrical safety', 'Check plumbing connections'],
-          priority: 'High',
-          tags: ['Renovation', 'Kitchen', 'Residential']
-        },
-        {
-          jobId: 'J12356',
-          heading: 'Fence Installation',
-          jobDescription: 'Installing a new wooden fence around the property.',
-          startDate: '2024-07-14',
-          endDate: '2024-07-16',
-          status: 'Done',
-          clientName: 'Diana Prince',
-          street: '900 Amazon Lane',
-          suburb: 'Westfield',
-          city: 'Themyscira',
-          postalCode: '50505',
-          imagesTaken: ['old_fence.jpg', 'new_fence.jpg'],
-          inventoryUsed: ['Wooden Panels', 'Nails', 'Tools'],
-          taskList: ['Remove old fence', 'Install new fence', 'Paint fence'],
-          comments: ['Ensure fence is level', 'Use weather-resistant paint'],
-          priority: 'Medium',
-          tags: ['Fence', 'Installation', 'Residential']
-        },
-        {
-          jobId: 'J12357',
-          heading: 'Basement Waterproofing',
-          jobDescription: 'Waterproofing the basement to prevent future leaks.',
-          startDate: '2024-07-17',
-          endDate: '2024-07-19',
-          status: 'Todo',
-          clientName: 'Barry Allen',
-          street: '1000 Speedster Drive',
-          suburb: 'Central City',
-          city: 'Keystone',
-          postalCode: '60606',
-          imagesTaken: [],
-          inventoryUsed: ['Sealant', 'Membrane', 'Tools'],
-          taskList: ['Clean basement', 'Apply sealant', 'Install waterproof membrane'],
-          comments: ['Check for existing leaks', 'Ensure proper drainage'],
-          priority: 'High',
-          tags: ['Basement', 'Waterproofing', 'Residential']
-        }
-      ] as JobCardDataFormat[],
+      starting_cards: [] as JobCardDataFormat[],
       column_name_rule: [
         (v: string) => !!v || 'Column name is required',
         (v: string) => (v && v.length <= 20) || 'Column name must be less than 20 characters'
@@ -631,7 +444,7 @@ export default {
     columnDelete(col: Column) {
       for (let i = 0; i < col.cards.length; i++) {
         this.columns[0].cards.push(col.cards[i])
-        col.cards[i].status = this.columns[0].status
+        col.cards[i].status.status = this.columns[0].status
         console.log(col.cards[i].status)
       }
       this.N_M_Sort(this.columns[0].cards, this.order_of_sorting_in_columns)
@@ -644,7 +457,7 @@ export default {
       this.delete_all_jobs_dialog = false
       // window.location.reload()
     },
-    editColumnButtonClickedSave(col: Column) {
+    async editColumnButtonClickedSave(col: Column) {
       if (this.new_column_name === '' && this.column_color === '') {
         this.error_message = 'No changes were made'
         return
@@ -653,17 +466,102 @@ export default {
       if (this.new_column_name.length > 20) {
         this.error_message = 'Column name length should be shorter than 20 characters'
       }
+      if (this.new_column_name !== '' && this.column_color !== '') {
+        try {
+          const config = {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            }
+          }
+          const apiURL = await this.getRequestUrl()
+          let res = await axios.patch(
+            apiURL + 'job/status',
+            {
+              statusId: col.id,
+              status: this.new_column_name,
+              colour: this.column_color,
+              companyId: localStorage['currentCompany'],
+              employeeId: localStorage['employeeId']
+            },
+            config
+          )
+          console.log(res)
+
+          this.new_column_name = ''
+          this.column_color = ''
+          this.add_column_dialog = false
+
+          window.location.reload()
+        } catch (error) {
+          console.log(error)
+        }
+      }
       if (this.new_column_name !== '') {
         col.status = this.new_column_name
-        this.new_column_name = ''
+        try {
+          const config = {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            }
+          }
+          const apiURL = await this.getRequestUrl()
+          let res = await axios.patch(
+            apiURL + 'job/status',
+            {
+              statusId: col.id,
+              status: this.new_column_name,
+              companyId: localStorage['currentCompany'],
+              employeeId: localStorage['employeeId']
+            },
+            config
+          )
+          console.log(res)
+
+          this.new_column_name = ''
+          this.column_color = ''
+          this.add_column_dialog = false
+
+          window.location.reload()
+        } catch (error) {
+          console.log(error)
+        }
       }
       if (this.column_color !== '') {
         col.color = this.column_color
-        this.column_color = ''
+        try {
+          const config = {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            }
+          }
+          const apiURL = await this.getRequestUrl()
+          let res = await axios.patch(
+            apiURL + 'job/status',
+            {
+              statusId: col.id,
+              colour: this.column_color,
+              companyId: localStorage['currentCompany'],
+              employeeId: localStorage['employeeId']
+            },
+            config
+          )
+          console.log(res)
+
+          this.new_column_name = ''
+          this.column_color = ''
+          this.add_column_dialog = false
+
+          window.location.reload()
+        } catch (error) {
+          console.log(error)
+        }
       }
       this.edit_column_details_dialog = false
     },
-    addColumnButtonClickedSave() {
+    async addColumnButtonClickedSave() {
       if (this.new_column_name === '' && this.column_color === '') {
         this.error_message = 'No changes were made'
         return
@@ -678,18 +576,42 @@ export default {
         this.error_message = 'A color should be selected'
         return
       }
-      const column: Column = {
-        id: this.columns.length + 1,
-        status: this.new_column_name,
-        color: this.column_color,
-        cards: []
+      // const column: Column = {
+      //   id: this.columns.length + 1,
+      //   status: this.new_column_name,
+      //   color: this.column_color,
+      //   cards: []
+      // }
+      try {
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
+        const apiURL = await this.getRequestUrl()
+        let res = await axios.post(
+          apiURL + 'job/status',
+          {
+            status: this.new_column_name,
+            colour: this.column_color,
+            companyId: localStorage['currentCompany'],
+            employeeId: localStorage['employeeId']
+          },
+          config
+        )
+        console.log(res)
+
+        this.new_column_name = ''
+        this.column_color = ''
+        this.add_column_dialog = false
+
+        window.location.reload()
+      } catch (error) {
+        console.log(error)
       }
       this.add_column_dialog = !this.add_column_dialog
-      this.columns.push(column)
-
-      this.new_column_name = ''
-      this.column_color = ''
-      this.add_column_dialog = false
+      // this.columns.push(column)
     },
     addColorPickerUpdate() {
       console.log(this.column_color)
@@ -697,27 +619,87 @@ export default {
     addColumnButtonClicked() {
       console.log('Add button clicked')
     },
-    clickedEvent(payload: JobCardDataFormat) {
-      this.SelectedEvent = payload
-      this.openJobCard()
+    async clickedEvent(payload: JobCardDataFormat) {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+
+      const apiURL = await this.getRequestUrl()
+
+      try {
+        const response = await axios.get(apiURL + `job/id/${payload.jobId}`, config)
+        console.log(response)
+        this.SelectedEvent = response.data.data
+        this.openJobCard()
+      } catch (error) {
+        console.log('Error fetching data: ' + error)
+      }
     },
     openJobCard() {
       console.log('edit button clicked')
       this.JobCardVisibility = true
     },
     loading(cards: JobCardDataFormat[]) {
+      console.log(cards.length)
+      let hit = false
       for (let i = 0; i < cards.length; i++) {
         this.columns.forEach((value: Column) => {
-          if (value.status === cards[i].status) {
+          if (value.status === cards[i].status.status) {
             console.log('hit')
+            hit = true
             this.loadCardsInRespectiveColumns(cards[i], value)
           }
         })
+        if (!hit) this.loadCardsInRespectiveColumns(cards[i], this.columns[0])
+
+        hit = false
       }
       this.columns.forEach((col: Column) => {
-        this.N_M_Sort(col.cards, this.order_of_sorting_in_columns)
+        // this.N_M_Sort(col.cards, this.order_of_sorting_in_columns)
+        col.cards.sort(
+          (a: JobCardDataFormat, b: JobCardDataFormat) =>
+            a.priorityTag.priorityLevel - b.priorityTag.priorityLevel
+        )
       })
       console.log(this.columns[0].cards.length)
+    },
+    async loadColumns() {
+      console.log('load Column request')
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const loaded_tags_response = await axios.get(
+          apiURL + `job/status/all/${localStorage['currentCompany']}`,
+          config
+        )
+        console.log(loaded_tags_response)
+        this.columns.push({
+          id: '0',
+          status: 'No Status',
+          color: 'purple-accent-3',
+          cards: [],
+          companyId: localStorage['currentCompany']
+        })
+        loaded_tags_response.data.data.forEach((status: any) => {
+          this.columns.push({
+            id: status._id,
+            status: status.status,
+            color: status.colour,
+            companyId: status.companyId,
+            cards: [] as JobCardDataFormat[]
+          })
+        })
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
     },
     async loadJobs() {
       console.log('load jobs request')
@@ -733,43 +715,51 @@ export default {
           apiURL + `job/all/company/detailed/${localStorage['currentCompany']}`,
           config
         )
+        console.log(loaded_tags_response)
         let valid_data = []
         let loaded_tags_res = loaded_tags_response.data.data
         for (let i = 0; i < loaded_tags_res.length; i++) {
-          if (loaded_tags_res[i].priorityTag === undefined) continue
-          valid_data.push(loaded_tags_res[i])
-        }
-
-        for (let i = 0; i < valid_data.length; i++) {
-          const status_res = await axios.get(apiURL + `job/status/${valid_data[i].status}`, config)
-
           this.starting_cards.push({
-            jobId: '',
-            heading: '',
-            jobDescription: 'Repainting the office walls with new colors.',
-            startDate: '2024-07-06',
-            endDate: '2024-07-08',
-            status: 'Todo',
-            clientName: 'Wayne Enterprises',
-            street: '300 Industrial Rd',
-            suburb: 'Tech Park',
-            city: 'Metropolis',
-            postalCode: '23456',
-            imagesTaken: [],
-            inventoryUsed: ['Paint', 'Brushes', 'Rollers'],
-            taskList: ['Prepare walls', 'Apply primer', 'Paint walls'],
-            comments: ['Use non-toxic paint', 'Ensure even coverage'],
-            priority: 'Low',
-            tags: ['Painting', 'Office', 'Commercial']
+            jobId: loaded_tags_res[i]._id,
+            heading: loaded_tags_res[i].details.heading,
+            jobDescription: loaded_tags_res[i].details.description,
+            startDate: this.formatDate(loaded_tags_res[i].details.startDate),
+            endDate: this.formatDate(loaded_tags_res[i].details.endDate),
+            status: loaded_tags_res[i].status,
+            clientName:
+              loaded_tags_res[i].clientId.details.firstName +
+              ' ' +
+              loaded_tags_res[i].clientId.details.lastName,
+            street: loaded_tags_res[i].details.address.street,
+            suburb: loaded_tags_res[i].details.address.suburb,
+            city: loaded_tags_res[i].details.address.city,
+            postalCode: loaded_tags_res[i].details.address.street.postalCode,
+            imagesTaken: loaded_tags_res[i].recordedDetails.imagesTaken,
+            inventoryUsed: loaded_tags_res[i].recordedDetails.inventoryUsed,
+            taskList: loaded_tags_res[i].taskList,
+            comments: loaded_tags_res[i].comments,
+            priorityTag: loaded_tags_res[i].priorityTag,
+            tags: loaded_tags_res[i].tags
           })
         }
-        console.log(valid_data)
+        console.log(this.starting_cards)
       } catch (error) {
         console.log('Error fetching data:', error)
       }
     },
     loadCardsInRespectiveColumns(card: JobCardDataFormat, column: Column) {
       column.cards.push(card)
+    },
+    formatDate(date: string) {
+      const date_passed_in = new Date(date)
+      const y = date_passed_in.getFullYear()
+      const m = String(date_passed_in.getMonth() + 1).padStart(2, '0')
+      const d = String(date_passed_in.getDate()).padStart(2, '0')
+      const h = String(date_passed_in.getHours()).padStart(2, '0')
+      const mn = String(date_passed_in.getMinutes()).padStart(2, '0')
+      const f_date = `${y}-${m}-${d} ${h}:${mn}`
+      // console.log(f_date)
+      return f_date
     },
     onDragStart(card: JobCardDataFormat, column: Column) {
       this.draggedCard = card
@@ -785,14 +775,41 @@ export default {
     onDragLeave() {
       this.dropTarget = null
     },
-    onDrop(targetColumn: Column) {
+    async onDrop(targetColumn: Column) {
       if (this.draggedCard && this.sourceColumn) {
         this.sourceColumn.cards = this.sourceColumn.cards.filter(
           (c) => c.jobId !== this.draggedCard!.jobId
         )
-        this.draggedCard.status = targetColumn.status
-        targetColumn.cards.push(this.draggedCard)
-        this.N_M_Sort(targetColumn.cards, this.order_of_sorting_in_columns)
+        {
+          const jobid = this.draggedCard.jobId
+          this.draggedCard.status.status = targetColumn.status
+          const apiURL = await this.getRequestUrl()
+          const config = {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            }
+          }
+          console.log(jobid)
+          try {
+            let res = await axios.patch(
+              apiURL + `job/update/${jobid}`,
+              { status: targetColumn.id },
+              config
+            )
+            console.log(res)
+
+            targetColumn.cards.push(this.draggedCard)
+
+            targetColumn.cards.sort((a: JobCardDataFormat, b: JobCardDataFormat) => {
+              return a.priorityTag.priorityLevel - b.priorityTag.priorityLevel
+            })
+          } catch (error) {
+            console.log(error)
+          }
+        }
+        // this.N_M_Sort(targetColumn.cards, this.order_of_sorting_in_columns)
+
         this.makeRequest()
         this.draggedCard = null
         this.sourceColumn = null
@@ -813,8 +830,8 @@ export default {
         if (!tracker.has(sortee[i])) tracker.set(sortee[i], i + 1)
 
       sorted.sort((x: JobCardDataFormat, y: JobCardDataFormat) => {
-        let tracker1: number = tracker.get(x.priority) || 0
-        let tracker2: number = tracker.get(y.priority) || 0
+        let tracker1: number = tracker.get(x.priorityTag.priorityLevel) || 0
+        let tracker2: number = tracker.get(y.priorityTag.priorityLevel) || 0
 
         if (tracker1 === 0 && tracker2 === 0) return 0
         else if (tracker1 === 0) return 1
@@ -837,8 +854,7 @@ export default {
     }
   },
   mounted() {
-    this.loading(this.starting_cards)
-    this.loadJobs()
+    this.loadColumns().then(() => this.loadJobs().then(() => this.loading(this.starting_cards)))
   }
 }
 </script>
