@@ -61,11 +61,13 @@ export default {
       const data = {
         currentStockLevel: item.updatedStock,
         companyID: localStorage.getItem('currentCompany'),
-        currentEmployee: localStorage.getItem('employeeId')
+        currentEmployeeId: localStorage.getItem('employeeId')
       }
       const apiURL = await this.getRequestUrl()
       try {
-        await axios.patch(`${apiURL}inventory/${item._id}`, data, config)
+        await axios.patch(`${apiURL}inventory/${item._id}`, data, config).then((response) => {
+          console.log(response)
+        })
       } catch (error) {
         console.error(error)
       }

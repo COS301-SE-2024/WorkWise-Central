@@ -87,7 +87,7 @@ import UpdateTeam from './UpdateTeam.vue'
 import DeleteTeam from './DeleteTeam.vue'
 import axios from 'axios'
 interface Team {
-  id: string
+  _id: string
   companyId: string
   teamName: string
   teamMembers: []
@@ -129,7 +129,7 @@ export default defineComponent({
       console.log(item)
       this.selectedItem = item
       this.selectedItemName = item.teamName
-      this.selectedItemID = item.id
+      this.selectedItemID = item._id
     },
     async getTeams() {
       const config = {

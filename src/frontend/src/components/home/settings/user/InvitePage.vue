@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <v-container fluid fill-height>
     <v-card
       height="auto"
@@ -157,7 +158,7 @@ export default defineComponent({
       const url = this.getRequestUrl()
       await axios
         .patch(
-          `${url}admin/invite/decide`,
+          `${url}admin/invite/accept`,
           {
             companyId: invite.companyId,
             emailBeingInvited: invite.emailBeingInvited,
@@ -231,7 +232,7 @@ export default defineComponent({
       const url = await this.getRequestUrl()
       await axios
         .get(
-          `${url}admin/invite/all/company/${localStorage.getItem('currentCompany')}/detailed`,
+          `${url}admin/invite/all/e/${localStorage.getItem('employeeId')}`,
           config
         )
         .then((response) => {

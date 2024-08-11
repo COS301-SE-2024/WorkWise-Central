@@ -60,9 +60,10 @@
                 <v-select
                   v-model="model"
                   color="secondary"
-                  :items="teamMemberNames"
+                  :items="teamLeaderIds"
                   :rules="teamMembersRules"
                   required
+                  multiple
                   hide-details="auto"
                   hint="Enter team members as JSON"
                 ></v-select>
@@ -113,47 +114,30 @@ export default defineComponent({
     model: '',
     teamMemberNames: [] as string[],
     teamLeaderIds: [] as string[],
-    teamMembers: [
-      {
-        id: '',
-        name: ''
-      }
-    ],
+    teamMembers: [] as string[],
     teamLeaderId: '',
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     teamNameRules: [(v: string) => !!v || 'Team Name is required'],
-    teamMembersRules: [
-      (v: string) => !!v || 'Team Members are required',
-      (v: string) => {
-        try {
-          JSON.parse(v)
-          return true
-        } catch (e) {
-          return 'Team Members must be a valid JSON'
-        }
-      }
-    ],
-    teamLeaderIdRules: [
-      (v: string) => !!v || 'Team Leader ID is required',
-      (v: string) => /^\d+$/.test(v) || 'Team Leader ID must be a valid number'
-    ]
+    teamMembersRules: [(v: string) => !!v || 'Team Members are required'],
+    teamLeaderIdRules: [(v: string) => !!v || 'Team Leader ID is required']
   }),
   methods: {
     async createTeam() {
+      console.log(this.model)
+      console.log(this.teamLeaderId)
+      console.log(this.teamName)
+      console.log(localStorage.getItem('currentCompany'))
       const config = {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       }
       const apiURL = await this.getRequestUrl()
 
       const data = {
-        createTeamDto: {
-          teamName: this.teamName,
-          // teamMembers: JSON.parse(this.teamMembers),
-          teamLeaderId: parseInt(this.teamLeaderId),
-          companyId: localStorage.getItem('currentCompany') || ''
-        },
-        currentEmployeeId: localStorage.getItem('employeeId') || '' // Ensure a fallback if the item doesn't exist
+        teamName: this.teamName,
+        teamMembers: this.teamMembers,
+        teamLeaderId: this.teamLeaderId,
+        companyId: localStorage.getItem('currentCompany')
       }
       try {
         console.log(data)
@@ -189,8 +173,8 @@ export default defineComponent({
         const response = await axios.get(`${apiURL}employee/all`, config)
         console.log(response.data.data)
         for (const employee of response.data.data) {
-          this.teamMemberNames.push(employee.userInfo.displayName)
-          this.teamLeaderIds.push(employee._id)
+          console.log(employee._id)
+          this.teamLeaderIds.push(employee._id as string)
         }
       } catch (error) {
         console.error(error)

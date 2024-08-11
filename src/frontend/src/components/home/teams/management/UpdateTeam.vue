@@ -109,7 +109,7 @@ export default {
     }
   },
   created() {
-    this.localEditedItem = this.deepCopy(this.editedItem)
+    this.localEditedItem = this.editedItem
   },
   methods: {
     updateTeam() {
