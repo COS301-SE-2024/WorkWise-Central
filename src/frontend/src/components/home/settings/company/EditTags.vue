@@ -11,6 +11,9 @@
           :row-props="getRowProps"
           :header-props="{ class: 'bg-secondary h5 ' }"
         >
+          <template v-slot:[`item.colour`]="{ item }">
+            <v-chip :color="item.colour" >{{ item.colour }}</v-chip>
+          </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu>
               <template v-slot:activator="{ props }">
@@ -119,6 +122,13 @@ export default defineComponent({
       return {
         class: (index % 2 ? 'bg-secondRowColor ' : '') + 'h6'
       }
+    },
+    convertHexToRgb(hex: string) {
+      const hexCode = hex.replace('#', '')
+      const r = parseInt(hexCode.substring(0, 2), 16)
+      const g = parseInt(hexCode.substring(2, 4), 16)
+      const b = parseInt(hexCode.substring(4, 6), 16)
+      return `rgb(${r}, ${g}, ${b})`
     },
     async getTags() {
       const config = {

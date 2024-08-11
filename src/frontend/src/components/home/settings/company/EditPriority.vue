@@ -11,6 +11,9 @@
           :row-props="getRowProps"
           :header-props="{ class: 'bg-secondary h5 ' }"
         >
+          <template v-slot:[`item.colour`]="{ item }">
+            <v-chip :color="item.colour">{{ item.colour }}</v-chip>
+          </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu>
               <template v-slot:activator="{ props }">

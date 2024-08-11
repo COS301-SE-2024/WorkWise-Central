@@ -32,7 +32,8 @@
             :rules="labelRules"
           />
           <v-label>Status Color</v-label>
-          <div><ColorPicker inputId="cp-hex" v-model="status.color" inline /></div>
+          <div><ColorPicker inputId="cp-hex" v-model="status.colour" inline /></div>
+          <span>Hex Code: {{ status.colour }}</span>
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -51,7 +52,7 @@ import ColorPicker from 'primevue/colorpicker'
 import Toast from 'primevue/toast'
 interface Status {
   status: string
-  color: string
+  colour: string
 }
 export default defineComponent({
   data() {
@@ -60,7 +61,7 @@ export default defineComponent({
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       status: {
         status: '',
-        color: '',
+        colour: '',
         companyId: localStorage.getItem('currentCompany'),
         employeeId: localStorage.getItem('employeeId')
       } as Status,
