@@ -61,6 +61,34 @@
                     Item actions
                   </v-card-title>
                   <v-card-actions class="d-flex flex-column">
+                    <v-defaults-provider :defaults="{ VIcon: { color: 'info' } }">
+                      <v-btn color="info" @click="assignDialog = true">
+                        <v-icon>
+                          {{ 'fa: fa-solid fa-user-plus' }}
+                        </v-icon>
+                        Assign
+                      </v-btn>
+                    </v-defaults-provider>
+                    <v-dialog v-model="assignDialog" max-width="400px">
+                      <v-card>
+                        <v-card-title class="text-h5">Assign Employees</v-card-title>
+                        <v-card-text class="text-center">
+                          <v-label>Assigned Employees</v-label>
+                          <v-select
+                            label="Select"
+                            :items=assignableEmployees
+                            multiple
+                            variant="solo"
+                            hide-details
+                          ></v-select>
+                        </v-card-text>
+                        <v-card-actions class="d-flex flex-column">
+                          <v-spacer></v-spacer>
+                          <v-btn color="success" @click="assignDialog = false">Save</v-btn>
+                          <v-btn color="error" @click="assignDialog = false">Cancel</v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
                     <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
                       <v-btn color="success" @click="saveItem(index)" class="mb-2">
                         <v-icon>
@@ -125,6 +153,8 @@ import { ref, computed, defineProps, onMounted } from 'vue'
 import axios from 'axios'
 // Define props and interfaces
 const props = defineProps<{ jobTaskList: TaskList[]; id: string }>()
+// Dialog
+const assignDialog = ref(false)
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
 const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
@@ -151,7 +181,7 @@ interface TaskList {
 // Initialize the task list
 const taskList = ref<TaskList[]>([
   {
-    title: 'My Task List',
+    title: 'Create a new task list',
     items: []
   }
 ])
@@ -208,22 +238,28 @@ const saveItem = (index: number) => {
   }
 }
 
+const getEmployees = async () => {
+
+}
+
 const putTask = async (index: number) => {
-  const apiUrl = getRequestUrl()
-  const payload = {
-    employeeId: localStorage.getItem('employeeId') || '',
-    jobId: props.id,
-    title: taskList.value[0].title
-  }
   try {
+    const apiUrl = await getRequestUrl()
+    const payload = {
+      employeeId: localStorage.getItem('employeeId') || '',
+      jobId: props.id,
+      title: taskList.value[0].title
+    }
     console.log('Payload', payload)
     const response = await axios.put(`${apiUrl}job/task`, payload, config)
-    consoloe.log('Task update successfully', response.data)
+    console.log('Task updated successfully', response.data)
     if (response.status > 199 && response.status < 300) {
-      console.log('put task')
+      if (taskList.value[0].items.length > 0) {
+        console.log('smile')
+      }
     }
   } catch (error) {
-    console.log(error)
+    console.error('Error updating task', error)
   }
 }
 
@@ -232,6 +268,7 @@ const saveTask = async (index: number) => {
 }
 
 onMounted(() => {
+  console.log('Tasklist: ', props.jobTaskList)
   if (props.jobTaskList && props.jobTaskList.length > 0) {
     taskList.value = props.jobTaskList
   }
