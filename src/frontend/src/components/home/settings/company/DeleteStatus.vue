@@ -108,7 +108,6 @@ export default defineComponent({
           life: 3000
         })
       }
-      
     },
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
