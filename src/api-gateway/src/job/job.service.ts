@@ -702,9 +702,15 @@ export class JobService {
   async createDefaultStatuses(companyId: Types.ObjectId) {
     ///TODO: Validation CHECK HEX VALIDATION
     /// User exists, company exists, check for duplicates
+    //  const protectedStatuses = ['No status', 'Archive', 'To Do', 'In Progress', 'Complete'];
+
     const noStatus = new JobStatus('No Status', '#FFFFFF', companyId);
     const archive = new JobStatus('Archive', '#b3b0b0', companyId);
-    const arr: JobStatus[] = [noStatus, archive];
+    const toDo = new JobStatus('To Do', '#9f4e22', companyId);
+    const inProgress = new JobStatus('In Progress', '#31864d', companyId);
+    const complete = new JobStatus('Complete', '#23d923', companyId);
+
+    const arr: JobStatus[] = [noStatus, archive, toDo, inProgress, complete];
     for (const js of arr) {
       const exists = await this.statusNameExistsInCompany(js.status, companyId);
       if (exists) throw new InternalServerErrorException(`Job Status already exists: ${js.status}`);
@@ -731,7 +737,7 @@ export class JobService {
     if (exists) throw new InternalServerErrorException(`Job Status already exists: ${createStatusDto.status}`);
 
     ///
-    const protectedStatuses = ['No status', 'Archive'];
+    const protectedStatuses = ['No status', 'Archive', 'To Do', 'In Progress', 'Complete'];
     for (const protectedStatus of protectedStatuses) {
       if (ciEquals(protectedStatus, createStatusDto.status)) {
         throw new ConflictException('You cannot alter "No status" and "Archive"');
