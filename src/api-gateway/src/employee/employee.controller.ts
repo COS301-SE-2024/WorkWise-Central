@@ -363,13 +363,20 @@ export class EmployeeController {
       updateEmployeeDto: UpdateEmployeeDto;
     },
   ) {
+    console.log('In update');
     const userId = extractUserId(this.jwtService, headers);
+    console.log('userId', userId);
     const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('edit all employees')) {
+      console.log('In edit all employees');
       let data;
       try {
+        console.log('In try block');
         data = await this.employeeService.update(employeeId, body.currentEmployeeId, body.updateEmployeeDto);
+        console.log('data', data);
       } catch (e) {
+        console.log('error:', e);
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
       return { data: data };
