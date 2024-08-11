@@ -11,13 +11,12 @@
         <v-btn
           rounded="md"
           class="text-none font-weight-regular hello"
-          style="font-size: 20px"
+          style="font-size: 20px; font-family: Nunito, sans-serif"
           text="Add Job"
           prepend-icon="mdi-briefcase-plus"
           variant="elevated"
           color="secondary"
           v-bind="activatorProps"
-          min-width="40%"
         ></v-btn>
       </v-defaults-provider>
     </template>

@@ -29,6 +29,7 @@
         hint="Add a job note"
         hide-details
         prepend-icon="fa: fa-solid fa-sticky-note"
+        rows="3"
       ></v-textarea>
       <v-btn color="success" @click="addNote" prepend-icon="mdi-note-plus">Add Note</v-btn>
     </v-container>

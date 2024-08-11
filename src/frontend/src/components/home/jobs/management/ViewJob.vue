@@ -23,7 +23,7 @@
         <v-row>
           <v-col sm="12" md="9">
             <v-divider>
-              <h5>Description</h5>
+              <h5 ref="descriptionSection">Description</h5>
             </v-divider>
             <v-col class="text-center">
               <v-spacer></v-spacer>
@@ -32,7 +32,7 @@
               </p>
             </v-col>
             <v-divider>
-              <h5>Status</h5>
+              <h5 ref="statusSection">Status</h5>
             </v-divider>
             <v-col class="text-center">
               <v-spacer></v-spacer>
@@ -44,7 +44,7 @@
             </v-col>
 
             <v-divider>
-              <h5>Client Details</h5>
+              <h5 ref="clientDetailsSection">Client Details</h5>
             </v-divider>
 
             <v-row>
@@ -66,7 +66,7 @@
             </v-row>
 
             <v-divider>
-              <h5>Address</h5>
+              <h5 ref="addressSection">Address</h5>
             </v-divider>
             <v-col class="text-center">
               <v-row class="text-center">
@@ -116,10 +116,10 @@
                 </v-col>
               </v-row>
               <v-divider>
-                <h5>Add Job Comments</h5>
+                <h5 ref="commentsSection">Add Job Comments</h5>
               </v-divider>
               <v-row>
-                <v-col ref="commentsSection">
+                <v-col>
                   <AddComment
                     :jobComments="props.passedInJob?.comments"
                     :id="props.passedInJob?._id"
@@ -127,33 +127,131 @@
                 </v-col>
               </v-row>
               <v-divider>
-                <h5>Add Job Notes</h5>
+                <h5 ref="notesSection">Add Job Notes</h5>
               </v-divider>
               <v-row>
-                <v-col ref="notesSection">
+                <v-col>
                   <JobNotes :passedInJob="props.passedInJob" />
                 </v-col>
               </v-row>
+              <v-divider>
+                <h5 ref="tasksSection">Check Off Tasks</h5>
+              </v-divider>
+              <v-row>
+                <v-col>
+                  <CheckOffItems
+                    :jobTaskList="props.passedInJob?.taskList"
+                    :id="props.passedInJob?._id"
+                  />
+                </v-col>
+              </v-row>
+              <v-divider>
+                <h5 ref="imagesSection">Attach Images</h5>
+              </v-divider>
+              <v-col>
+                <GetJobImages />
+              </v-col>
+              <v-divider>
+                <h5 ref="tagsSection">Add Job Tags</h5>
+              </v-divider>
+              <v-col>
+                <JobTags :tags="props.passedInJob?.tags" :jobID="props.passedInJob?._id" />
+              </v-col>
+              <v-divider>
+                <h5 ref="historySection">View Job History</h5>
+              </v-divider>
+              <v-col>
+                <JobHistory />
+              </v-col>
             </v-col>
           </v-col>
           <v-col sm="12" md="3">
             <v-col class="pb-0">
               <v-label class="d-flex justify-start pb-0 font-weight-bold">Card Actions</v-label>
             </v-col>
-            <v-col ref="imagesSection">
-              <AttachImages
-                :recordedDetails="props.passedInJob?.recordedDetails"
-                :jobID="props.passedInJob?._id"
-              />
+            <v-col>
+              <v-btn
+                width="100%"
+                class="d-flex justify-start"
+                border="md"
+                elevation="5"
+                @click="scrollToSection('commentsSection')"
+              >
+                <v-icon left>
+                  {{ 'fa: fa-solid fa-comment' }}
+                </v-icon>
+                Add Comment
+              </v-btn>
             </v-col>
-            <v-col ref="checklistSection">
-              <JobChecklist :passedInJob="props.passedInJob" />
+            <v-col>
+              <v-btn
+                width="100%"
+                class="d-flex justify-start"
+                border="md"
+                elevation="5"
+                @click="scrollToSection('notesSection')"
+              >
+                <v-icon left>
+                  {{ 'fa: fa-solid fa-sticky-note' }}
+                </v-icon>
+                Add Note
+              </v-btn>
             </v-col>
-            <v-col ref="inventorySection">
-              <LogInventory
-                :recordedDetails="props.passedInJob?.recordedDetails"
-                :jobID="props.passedInJob?._id"
-              />
+            <v-col>
+              <v-btn
+                width="100%"
+                class="d-flex justify-start"
+                border="md"
+                elevation="5"
+                @click="scrollToSection('tasksSection')"
+              >
+                <v-icon left>
+                  {{ 'fa: fa-solid fa-tasks' }}
+                </v-icon>
+                Check Off Task
+              </v-btn>
+            </v-col>
+            <v-col>
+              <v-btn
+                width="100%"
+                class="d-flex justify-start"
+                border="md"
+                elevation="5"
+                @click="scrollToSection('imagesSection')"
+              >
+                <v-icon left>
+                  {{ 'fa: fa-solid fa-upload' }}
+                </v-icon>
+                Attach Images
+              </v-btn>
+            </v-col>
+            <v-col>
+              <v-btn
+                width="100%"
+                class="d-flex justify-start"
+                border="md"
+                elevation="5"
+                @click="scrollToSection('tagsSection')"
+              >
+                <v-icon left>
+                  {{ 'fa: fa-solid fa-box' }}
+                </v-icon>
+                Log Inventory
+              </v-btn>
+            </v-col>
+            <v-col>
+              <v-btn
+                width="100%"
+                class="d-flex justify-start"
+                border="md"
+                elevation="5"
+                @click="scrollToSection('historySection')"
+              >
+                <v-icon left>
+                  {{ 'fa: fa-solid fa-eye' }}
+                </v-icon>
+                View History
+              </v-btn>
             </v-col>
           </v-col>
         </v-row>
@@ -168,25 +266,182 @@
 
 <script setup lang="ts">
 import { defineProps, ref, type Ref } from 'vue'
-import AttachImages from './AttachImages.vue'
 import AddComment from './AddComments.vue'
 import JobNotes from './JobNotes.vue'
-import JobChecklist from './JobChecklist.vue'
-import LogInventory from './LogInventory.vue'
+import CheckOffItems from './CheckOffItems.vue'
+import GetJobImages from './GetJobImages.vue'
+import JobTags from './JobTags.vue'
+import JobHistory from './JobHistory.vue'
 
-const props = defineProps({
-  passedInJob: Object
-})
+interface Job {
+  _id: string
+  company: {
+    registrationNumber: string
+    vatNumber: string
+    name: string
+    type?: string
+    jobStatuses?: string[]
+    logo?: string
+    contactDetails: {
+      phoneNumber: string
+      email: string
+    }
+    address: {
+      street: string
+      province: string
+      suburb: string
+      city: string
+      postalCode: string
+      complex?: string
+      houseNumber?: string
+    }
+    private: boolean
+  }
+  clientId: {
+    createdAt: string
+    details: {
+      address: {
+        city: string
+        postalCode: string
+        province: string
+        street: string
+        suburb: string
+      }
+      companyId: string
+      contactInfo: {
+        email: string
+        phoneNumber: string
+      }
+      firstName: string
+      idNumber: string
+      lastName: string
+      preferredLanguage: string
+    }
+  }
+
+  assignedBy: {
+    roleId: string
+    superiorId?: string
+    subordinates?: string[]
+    subordinateTeams?: string[]
+    userId: string
+    userInfo: {
+      username: string
+      firstName: string
+      surname: string
+      displayName: string
+      displayImage?: string
+    }
+    companyId: string
+  }
+  assignedEmployees?: {
+    employeeIds?: string[]
+    teamIds?: string[]
+  }
+  status: string
+  tags?: string[]
+  priorityTag?: string
+  attachments: string[]
+  details: {
+    heading: string
+    description: string
+    address: {
+      street: string
+      province: string
+      suburb: string
+      city: string
+      postalCode: string
+      complex?: string
+      houseNumber?: string
+    }
+    startDate: string
+    endDate?: string
+  }
+  recordedDetails?: {
+    imagesTaken?: string[]
+    inventoryUsed?: {
+      inventoryItemId: string
+      inventoryItemName: string
+      quantityUsed: number
+    }[]
+  }
+  clientFeedback?: {
+    rating?: number
+    comment?: string
+  }
+  taskList: {
+    name: string
+    status: string
+    assignedEmployees?: {
+      roleId: string
+      superiorId?: string
+      subordinates?: string[]
+      subordinateTeams?: string[]
+      userId: string
+      userInfo: {
+        username: string
+        firstName: string
+        surname: string
+        displayName: string
+        displayImage?: string
+      }
+      companyId: string
+    }[]
+  }[]
+  comments: string[]
+  history?: {
+    event: string
+    timestamp: string
+  }[]
+  createdAt: string
+  updatedAt: string
+}
+
+const props = defineProps<{ passedInJob: any }>()
 
 const viewJob = () => {
   console.log('click click')
 }
+
+const commentsSection = ref<HTMLElement | null>(null)
+const notesSection = ref<HTMLElement | null>(null)
+const tasksSection = ref<HTMLElement | null>(null)
+const imagesSection = ref<HTMLElement | null>(null)
+const tagsSection = ref<HTMLElement | null>(null)
+const historySection = ref<HTMLElement | null>(null)
 const viewJobDialog = ref(false) // Dialog state
-const imagesSection = ref(null)
-const commentsSection = ref(null)
-const notesSection = ref(null)
 const checklistSection = ref(null)
 const inventorySection = ref(null)
+
+function scrollToSection(
+  section:
+    | 'commentsSection'
+    | 'notesSection'
+    | 'tasksSection'
+    | 'imagesSection'
+    | 'tagsSection'
+    | 'historySection'
+) {
+  let sectionRef = null
+
+  if (section === 'commentsSection') {
+    sectionRef = commentsSection
+  } else if (section === 'notesSection') {
+    sectionRef = notesSection
+  } else if (section === 'tasksSection') {
+    sectionRef = tasksSection
+  } else if (section === 'imagesSection') {
+    sectionRef = imagesSection
+  } else if (section === 'tagsSection') {
+    sectionRef = tagsSection
+  } else if (section === 'historySection') {
+    sectionRef = historySection
+  }
+
+  if (sectionRef && sectionRef.value) {
+    sectionRef.value.scrollIntoView({ behavior: 'smooth' })
+  }
+}
 
 const getStatusColor = (status: string): string => {
   switch (status.toLowerCase()) {
@@ -205,16 +460,8 @@ const getStatusColor = (status: string): string => {
   }
 }
 
-const scrollToSection = (sectionRef: Ref<HTMLElement | null>) => {
-  const section = sectionRef.value
-  if (section) {
-    section.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  } else {
-    console.log('Section not found')
-  }
-}
-
 const closeView = () => {
+  console.log('Passed in job', props.passedInJob)
   viewJobDialog.value = false
 }
 </script>
