@@ -441,16 +441,16 @@ export default {
     }
   },
   methods: {
-    // columnDelete(col: Column) {
-    //   for (let i = 0; i < col.cards.length; i++) {
-    //     this.columns[0].cards.push(col.cards[i])
-    //     col.cards[i].status = this.columns[0].status
-    //     console.log(col.cards[i].status)
-    //   }
-    //   this.N_M_Sort(this.columns[0].cards, this.order_of_sorting_in_columns)
-    //   this.columns.splice(this.columns.indexOf(col), 1)
-    //   this.delete_column_dialog = false
-    // },
+    columnDelete(col: Column) {
+      for (let i = 0; i < col.cards.length; i++) {
+        this.columns[0].cards.push(col.cards[i])
+        col.cards[i].status.status = this.columns[0].status
+        console.log(col.cards[i].status)
+      }
+      this.N_M_Sort(this.columns[0].cards, this.order_of_sorting_in_columns)
+      this.columns.splice(this.columns.indexOf(col), 1)
+      this.delete_column_dialog = false
+    },
     columnDeleteAllJobs(col: Column) {
       //add a modal that will ask the user if they are sure they want to delete all the cards in a job column
       col.cards.splice(0, col.cards.length)
@@ -611,7 +611,7 @@ export default {
         console.log(error)
       }
       this.add_column_dialog = !this.add_column_dialog
-      this.columns.push(column)
+      // this.columns.push(column)
     },
     addColorPickerUpdate() {
       console.log(this.column_color)
