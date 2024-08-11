@@ -33,7 +33,8 @@
 <h2 id="continuous-delivery-continuous-deployment-cd" tabindex="-1"><a class="header-anchor" href="#continuous-delivery-continuous-deployment-cd"><span>Continuous Delivery/Continuous Deployment (CD)</span></a></h2>
 <h3 id="deployment" tabindex="-1"><a class="header-anchor" href="#deployment"><span>Deployment</span></a></h3>
 <ul>
-<li>Our client has provided us a secured Virtual Machine to deploy/host our entire system. Due to <strong>security concerns</strong> brought up by the client, we will be unable to implement continuous deployment.</li>
+<li>As of now, we have not implemented the continuous delivery or deployment phase. No deployments have taken place, and our focus has primarily been on establishing a robust CI process.</li>
+<li>The CD will be implemented during our second sprint</li>
 </ul>
 </div></template>
 

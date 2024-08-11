@@ -1,20 +1,20 @@
 <template><div><h1 id="architectural-quality-requirements" tabindex="-1"><a class="header-anchor" href="#architectural-quality-requirements"><span>Architectural quality requirements</span></a></h1>
 <p>The quality requirements, in order of priority, that have been identified are as follows:</p>
 <h2 id="usability" tabindex="-1"><a class="header-anchor" href="#usability"><span>Usability</span></a></h2>
-<p>Usability is an extremely important consideration for our system. From market research done, it is clear that one of the most important things for potential users is that the system is easy an intuitive to use, even if the user is not tech-savvy. It is therefore important that we design our frontend to have high learnability, i.e. it should allow the user to utilise the system proficiently even if they just started working with the system for the first time.</p>
+<p>Useability is an extremely important consideration for our system. From market research done, it is clear that one of the most important things for potential users is that the system is easy an intuitive to use, even if the user is not tech savvy. It is therefore important that we design our frontend in such a way that allows the user to utilise the system proficiently even if they just started working with the system for the first time.</p>
 <p>The usability of our frontend is measured by how easily users can interact with it. The users should be able to navigate through the application with ease.</p>
-<p>User error rates and task completion time will be measured through usability tests, and  maintain specific thresholds. The tests have been conducted with a variety of the identified user-groups.</p>
+<p>User error rates and task completion time will be measured through usability tests, and  maintain specific thresholds. The tests will be conducted with a variety of the identified user-groups.</p>
 <h3 id="quantification" tabindex="-1"><a class="header-anchor" href="#quantification"><span>Quantification</span></a></h3>
 <ul>
 <li><strong>User Error Rate:</strong> Number of errors made by users during specific tasks.</li>
-<li><strong>Task Completion Time:</strong> Time taken by users to complete predefined tasks.</li>
+<li>T<strong>ask Completion Time:</strong> Time taken by users to complete predefined tasks.</li>
 <li><strong>Satisfaction Score</strong>: User satisfaction measured through surveys on a scale of 1-5.</li>
 </ul>
 <h3 id="target" tabindex="-1"><a class="header-anchor" href="#target"><span>Target</span></a></h3>
 <ul>
 <li><strong>User Error Rate:</strong> Less than 5% for common tasks.</li>
-<li><strong>Task Completion Time:</strong> 90% of users should complete tasks in less than 2 minutes.</li>
-<li><strong>Satisfaction Score:</strong> Average satisfaction score of at least 3.5 out of 5.</li>
+<li>T<strong>ask Completion Time:</strong> 90% of users should complete tasks within 2 minutes.</li>
+<li><strong>Satisfaction Score:</strong> Average satisfaction score of at least 4 out of 5.</li>
 </ul>
 <h2 id="reliability" tabindex="-1"><a class="header-anchor" href="#reliability"><span>Reliability</span></a></h2>
 <p>The reliability of the system depends on its ability to prevent and recover from failures. In the event of a user losing internet access, the application must retain its basic functionality, such that the user does not lose their recorded information. Basic functionality includes the ability to write notes and take pictures while completing a job. Additionally, the system must ensure that the inventory tracking remains in a consistent state.</p>
@@ -29,14 +29,14 @@
 <h3 id="target-1" tabindex="-1"><a class="header-anchor" href="#target-1"><span>Target</span></a></h3>
 <ul>
 <li><strong>MTBF:</strong> At least 500 hours.</li>
-<li><strong>MTTR:</strong> Less than 2 hours.</li>
+<li><strong>MTTR:</strong> Less than 1 hour.</li>
 <li><strong>Critical Failures per Month:</strong> 0.</li>
 </ul>
 <h2 id="security" tabindex="-1"><a class="header-anchor" href="#security"><span>Security</span></a></h2>
 <p>Security is crucial in our system, due to the application's access to sensitive data related to clients, employees and businesses. The system must prevent and be capable of easily recovering from a data breach. The system must enforce authorisation through a role-based management system to ensure confidentiality of user data.</p>
 <p>Security will be quantified through measuring the confidentiality and integrity of the system.</p>
 <!-- As such, we plan to implement a Gatekeeper that will serve as a broker between the client requests and the services, to sanitize and validate the requests. -->
-<p>Confidentiality will be provided through the use of Authentication and Authorisation in the API Gateway, as well as a role-based system. Each role is associated with a set of permissions, which ensures that crucial endpoints are well-secured. It will be measured by the amount of security measures that are established, and the number of policy violations that occur.</p>
+<p>Confidentiality will be provided through the use of Authentication and Authorisation in he API Gateway, as well as a role-based system. Each role is associated with a set of permissions, which ensures that crucial endpoints are well-secured. It will be measured by the amount of security measures that are established, and the number of policy violations that occur.</p>
 <p>Lastly, the system will provide full transparency on policies regarding user rights and data protection.</p>
 <h3 id="quantification-2" tabindex="-1"><a class="header-anchor" href="#quantification-2"><span>Quantification</span></a></h3>
 <ul>

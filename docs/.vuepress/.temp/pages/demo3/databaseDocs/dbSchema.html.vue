@@ -1,1458 +1,950 @@
 <template><div><h1 id="database-schema" tabindex="-1"><a class="header-anchor" href="#database-schema"><span>Database Schema</span></a></h1>
 <h2 id="user" tabindex="-1"><a class="header-anchor" href="#user"><span>User</span></a></h2>
-<h3 id="system-details" tabindex="-1"><a class="header-anchor" href="#system-details"><span>System Details</span></a></h3>
-<ul>
-<li>
-<p><strong>username</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Unique:</strong> Yes</li>
-<li><strong>Description:</strong> The username of the user.</li>
-</ul>
-</li>
-<li>
-<p><strong>password</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Unique:</strong> No</li>
-<li><strong>Description:</strong> The password for the user, which will be hashed before storage.</li>
-</ul>
-</li>
-</ul>
-<h3 id="personal-info" tabindex="-1"><a class="header-anchor" href="#personal-info"><span>Personal Info</span></a></h3>
-<ul>
-<li>
-<p><strong>firstName</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The first name of the user.</li>
-</ul>
-</li>
-<li>
-<p><strong>surname</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The surname of the user.</li>
-</ul>
-</li>
-<li>
-<p><strong>dateOfBirth</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The date of birth of the user.</li>
-</ul>
-</li>
-<li>
-<p><strong>gender</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> &quot;Rather Not Say&quot;</li>
-<li><strong>Description:</strong> The gender of the user.</li>
-</ul>
-</li>
-<li>
-<p><strong>preferredLanguage</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> &quot;English&quot;</li>
-<li><strong>Description:</strong> The preferred language of the user.</li>
-</ul>
-</li>
-<li>
-<p><strong>contactInfo</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ContactInfo</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The contact information of the user, including phone number and email.</li>
-</ul>
-</li>
-<li>
-<p><strong>address</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Address</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The address of the user.</li>
-</ul>
-</li>
-</ul>
-<h3 id="profile" tabindex="-1"><a class="header-anchor" href="#profile"><span>Profile</span></a></h3>
-<ul>
-<li>
-<p><strong>displayName</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The display name of the user.</li>
-</ul>
-</li>
-<li>
-<p><strong>displayImage</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Default:</strong> &quot;https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp&quot;</li>
-<li><strong>Description:</strong> The URL of the display image of the user.</li>
-</ul>
-</li>
-</ul>
-<h3 id="joined-companies" tabindex="-1"><a class="header-anchor" href="#joined-companies"><span>Joined Companies</span></a></h3>
-<ul>
-<li>
-<p><strong>employeeId</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId (Reference to Employee)</li>
-<li><strong>Description:</strong> The ID of the employee associated with the user.</li>
-</ul>
-</li>
-<li>
-<p><strong>companyId</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId (Reference to Company)</li>
-<li><strong>Description:</strong> The ID of the company associated with the user.</li>
-</ul>
-</li>
-<li>
-<p><strong>companyName</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Description:</strong> The name of the company associated with the user.</li>
-</ul>
-</li>
-</ul>
-<h3 id="skills" tabindex="-1"><a class="header-anchor" href="#skills"><span>Skills</span></a></h3>
-<ul>
-<li><strong>skills</strong>
-<ul>
-<li><strong>Data Type:</strong> Array of Strings</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Default:</strong> []</li>
-<li><strong>Description:</strong> A list of skills associated with the user.</li>
-</ul>
-</li>
-</ul>
-<h3 id="device-ids" tabindex="-1"><a class="header-anchor" href="#device-ids"><span>Device IDs</span></a></h3>
-<ul>
-<li><strong>deviceIds</strong>
-<ul>
-<li><strong>Data Type:</strong> Array of Strings</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Default:</strong> []</li>
-<li><strong>Description:</strong> A list of device IDs associated with the user.</li>
-</ul>
-</li>
-</ul>
-<h3 id="current-employee" tabindex="-1"><a class="header-anchor" href="#current-employee"><span>Current Employee</span></a></h3>
-<ul>
-<li><strong>currentEmployee</strong>
-<ul>
-<li><strong>Data Type:</strong> ObjectId (Reference to Employee)</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The current employee ID associated with the user.</li>
-</ul>
-</li>
-</ul>
-<h3 id="is-validated" tabindex="-1"><a class="header-anchor" href="#is-validated"><span>Is Validated</span></a></h3>
-<ul>
-<li><strong>isValidated</strong>
-<ul>
-<li><strong>Data Type:</strong> Boolean</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Default:</strong> false</li>
-<li><strong>Description:</strong> Indicates whether the user has been validated.</li>
-</ul>
-</li>
-</ul>
-<h3 id="timestamps" tabindex="-1"><a class="header-anchor" href="#timestamps"><span>Timestamps</span></a></h3>
-<ul>
-<li>
-<p><strong>createdAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> Current Date</li>
-<li><strong>Description:</strong> The date the user was created.</li>
-</ul>
-</li>
-<li>
-<p><strong>updatedAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The date the user was last updated.</li>
-</ul>
-</li>
-<li>
-<p><strong>deletedAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The date the user was deleted (soft delete).</li>
-</ul>
-</li>
-</ul>
-<h3 id="contactinfo" tabindex="-1"><a class="header-anchor" href="#contactinfo"><span>ContactInfo</span></a></h3>
-<ul>
-<li>
-<p><strong>phoneNumber</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Unique:</strong> Yes</li>
-<li><strong>Description:</strong> The user's phone number.</li>
-</ul>
-</li>
-<li>
-<p><strong>email</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Unique:</strong> Yes</li>
-<li><strong>Description:</strong> The user's email address, stored in lowercase.</li>
-</ul>
-</li>
-</ul>
-<h3 id="address" tabindex="-1"><a class="header-anchor" href="#address"><span>Address</span></a></h3>
-<ul>
-<li>
-<p><strong>street</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The street address of the user.</li>
-</ul>
-</li>
-<li>
-<p><strong>province</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The province of the user.</li>
-</ul>
-</li>
-<li>
-<p><strong>suburb</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The suburb of the user.</li>
-</ul>
-</li>
-<li>
-<p><strong>city</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The city of the user.</li>
-</ul>
-</li>
-<li>
-<p><strong>postalCode</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The postal code of the user.</li>
-</ul>
-</li>
-<li>
-<p><strong>complex</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The complex name of the user, if applicable.</li>
-</ul>
-</li>
-<li>
-<p><strong>houseNumber</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The house number of the user, if applicable.</li>
-</ul>
-</li>
-</ul>
-<h3 id="profile-1" tabindex="-1"><a class="header-anchor" href="#profile-1"><span>Profile</span></a></h3>
-<ul>
-<li>
-<p><strong>displayName</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The display name of the user.</li>
-</ul>
-</li>
-<li>
-<p><strong>displayImage</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Default:</strong> &quot;https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp&quot;</li>
-<li><strong>Description:</strong> The URL of the display image of the user.</li>
-</ul>
-</li>
-</ul>
-<h3 id="joinedcompany" tabindex="-1"><a class="header-anchor" href="#joinedcompany"><span>JoinedCompany</span></a></h3>
-<ul>
-<li>
-<p><strong>employeeId</strong></p>
+<p>The Employee entity stores information for users.</p>
+<h4 id="id" tabindex="-1"><a class="header-anchor" href="#id"><span>_id</span></a></h4>
 <ul>
 <li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Description:</strong> The employee ID associated with the joined company.</li>
+<li><strong>Reasoning:</strong> Unique identifier for each user.</li>
+<li><strong>Example:</strong> &quot;_id&quot;: &quot;60d21b4667d0d8992e610c85&quot;</li>
+</ul>
+<h4 id="systemdetails" tabindex="-1"><a class="header-anchor" href="#systemdetails"><span>systemDetails</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Object</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>password:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Hashed password for account security.</li>
+<li><strong>Example:</strong> &quot;hashed_password_string&quot;</li>
 </ul>
 </li>
-<li>
-<p><strong>companyId</strong></p>
+<li><strong>username:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Unique identifier for the user's profile.</li>
+<li><strong>Example:</strong> &quot;user123&quot;</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Example:</strong> &quot;systemDetails&quot;: {&quot;username&quot;:&quot;thando&quot;, &quot;password&quot;:&quot;hashed password&quot;}</li>
+</ul>
+<h4 id="profile" tabindex="-1"><a class="header-anchor" href="#profile"><span>profile</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Object</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>displayImage:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> URL or base64 image string for profile picture.</li>
+<li><strong>Example:</strong> &quot;data:image/png;base64,iVBORw0KGgoAAAANS...&quot;</li>
+</ul>
+</li>
+<li><strong>displayName:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Display name for user profile.</li>
+<li><strong>Example:</strong> &quot;JohnDoe&quot;</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Example:</strong> &quot;profile&quot;: {&quot;displayName&quot;:&quot;thando&quot;, &quot;displayImage&quot;:&quot;base64 image&quot;}</li>
+</ul>
+<h4 id="personalinfo" tabindex="-1"><a class="header-anchor" href="#personalinfo"><span>personalInfo</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Object</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>firstName:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> User's first name for personal identification.</li>
+<li><strong>Example:</strong> &quot;John&quot;</li>
+</ul>
+</li>
+<li><strong>surname:</strong> string
+<ul>
+<li><strong>Example:</strong> &quot;Doe&quot;</li>
+</ul>
+</li>
+<li><strong>dateOfBirth:</strong> Date (as a string)
+<ul>
+<li><strong>Reasoning:</strong> User's date of birth for age verification and personalization.</li>
+<li><strong>Example:</strong> &quot;1990-01-01&quot;</li>
+</ul>
+</li>
+<li><strong>gender:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> User's gender for demographic purposes.</li>
+<li><strong>Example:</strong> &quot;Male&quot;</li>
+</ul>
+</li>
+<li><strong>preferredLanguage:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Language preference for communication.</li>
+<li><strong>Example:</strong> &quot;English&quot;</li>
+</ul>
+</li>
+<li><strong>contactInfo:</strong> Object
+<ul>
+<li><strong>phone:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Phone number for contact.</li>
+<li><strong>Example:</strong> &quot;+1234567890&quot;</li>
+</ul>
+</li>
+<li><strong>email:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Email for contact.</li>
+<li><strong>Example:</strong> &quot;contact@example.com&quot;</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>address:</strong> Object
+<ul>
+<li><strong>street:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Street address for mailing purposes.</li>
+<li><strong>Example:</strong> &quot;123 Main St&quot;</li>
+</ul>
+</li>
+<li><strong>suburb:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Suburb for geographical information.</li>
+<li><strong>Example:</strong> &quot;Central&quot;</li>
+</ul>
+</li>
+<li><strong>city:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> City for geographical information.</li>
+<li><strong>Example:</strong> &quot;Metropolis&quot;</li>
+</ul>
+</li>
+<li><strong>postalCode:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Postal code for mailing purposes.</li>
+<li><strong>Example:</strong> &quot;12345&quot;</li>
+</ul>
+</li>
+<li><strong>complex:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Complex name if applicable.</li>
+<li><strong>Example:</strong> &quot;Sunny Apartments&quot;</li>
+</ul>
+</li>
+<li><strong>houseNumber:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> House number for precise address.</li>
+<li><strong>Example:</strong> &quot;10B&quot;</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Example:</strong>: &quot;personalInfo&quot;:{&quot;firstName&quot;:&quot;John&quot;,&quot;surname&quot;:&quot;Doe&quot;,&quot;dateOfBirth&quot;:&quot;1990-01-01&quot;,&quot;gender&quot;:&quot;Male&quot;,&quot;preferredLanguage&quot;:&quot;English&quot;,&quot;contactInfo&quot;:{&quot;phone&quot;:&quot;+1234567890&quot;,&quot;email&quot;:&quot;contact@example.com&quot;},&quot;address&quot;:{&quot;street&quot;:&quot;123 Main St&quot;,&quot;suburb&quot;:&quot;Central&quot;,&quot;city&quot;:&quot;Metropolis&quot;,&quot;postalCode&quot;:&quot;12345&quot;,&quot;complex&quot;:&quot;Sunny Apartments&quot;,&quot;houseNumber&quot;:&quot;10B&quot;}}</li>
+</ul>
+<h4 id="joinedcompanies" tabindex="-1"><a class="header-anchor" href="#joinedcompanies"><span>joinedCompanies</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Array of Objects</li>
+<li><strong>Reasoning:</strong> References companies the user is associated with.</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>employeeId:</strong> ObjectId
+<ul>
+<li><strong>Reasoning:</strong> Stores a reference to the employee collection</li>
+<li><strong>Example:</strong> &quot;employeeId&quot;: &quot;60d21b4667d0d8992e610c85&quot;</li>
+</ul>
+</li>
+<li><strong>companyName:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> stores the name of the company the employeeId links to</li>
+<li><strong>Example:</strong> &quot;companyName&quot;: &quot;Work Wise Central&quot;</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Example:</strong> &quot;joinedComapanies&quot;: [ {&quot;employeeId&quot;: &quot;60d21b4667d0d8992e610c85&quot;, &quot;companyName&quot;: &quot;Work Wise Central&quot;}...]</li>
+</ul>
+<h4 id="skills" tabindex="-1"><a class="header-anchor" href="#skills"><span>skills</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Array</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>skillName:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> List of skills the user possesses.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Example:</strong> &quot;skills&quot;: [&quot;JavaScript&quot;, &quot;Python&quot;]</li>
+</ul>
+<h4 id="currentemployeeid" tabindex="-1"><a class="header-anchor" href="#currentemployeeid"><span>currentEmployeeId</span></a></h4>
 <ul>
 <li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Description:</strong> The company ID associated with the joined company.</li>
-</ul>
-</li>
-<li>
-<p><strong>companyName</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Description:</strong> The company name associated with the joined company.</li>
-</ul>
-</li>
+<li><strong>Reasoning:</strong> Unique identifier the current employee the user is logged in as.</li>
+<li><strong>Example:</strong> &quot;currentEmployeeId&quot;: &quot;60d21b4667d0d8992e610c85&quot;</li>
 </ul>
 <h2 id="employee" tabindex="-1"><a class="header-anchor" href="#employee"><span>Employee</span></a></h2>
-<ul>
-<li>
-<p><strong>id</strong></p>
+<p>The Employee entity stores information for employees.</p>
+<h4 id="id-1" tabindex="-1"><a class="header-anchor" href="#id-1"><span>_id</span></a></h4>
 <ul>
 <li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Unique:</strong> Yes</li>
-<li><strong>Description:</strong> The unique ID of the employee.</li>
+<li><strong>Reasoning:</strong> Unique identifier for each employee.</li>
+<li><strong>Example:</strong> &quot;_id&quot;: &quot;60d21b4667d0d8992e610c85&quot;</li>
+</ul>
+<h4 id="role" tabindex="-1"><a class="header-anchor" href="#role"><span>role</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Objects</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>role:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Defines the user's role (e.g., admin, employee).</li>
+<li><strong>Example:</strong>&quot;admin&quot;</li>
 </ul>
 </li>
-<li>
-<p><strong>superiorId</strong></p>
+<li><strong>permissions:</strong> Array
 <ul>
-<li><strong>Data Type:</strong> ObjectId (Reference to <code v-pre>Employee</code>)</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The ID of the superior employee.</li>
-</ul>
-</li>
-<li>
-<p><strong>subordinates</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Array of ObjectIds (Reference to <code v-pre>Employee</code>)</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> []</li>
-<li><strong>Description:</strong> A list of subordinate employees.</li>
-</ul>
-</li>
-<li>
-<p><strong>subordinateTeams</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Array of ObjectIds (Reference to <code v-pre>Team</code>)</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> []</li>
-<li><strong>Description:</strong> A list of subordinate teams.</li>
-</ul>
-</li>
-<li>
-<p><strong>userId</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId (Reference to <code v-pre>User</code>)</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The ID of the associated user.</li>
-</ul>
-</li>
-<li>
-<p><strong>companyId</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId (Reference to <code v-pre>Company</code>)</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The ID of the company.</li>
-</ul>
-</li>
-<li>
-<p><strong>currentJobAssignments</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Array of ObjectIds (Reference to <code v-pre>Job</code>)</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> []</li>
-<li><strong>Description:</strong> A list of current job assignments.</li>
-</ul>
-</li>
-<li>
-<p><strong>createdAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> New <code v-pre>Date()</code></li>
-<li><strong>Description:</strong> The date the employee was created.</li>
-</ul>
-</li>
-<li>
-<p><strong>updatedAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The date the employee was last updated.</li>
-</ul>
-</li>
-<li>
-<p><strong>deletedAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The date the employee was deleted (soft delete).</li>
+<li><strong>Reasoning:</strong> Permissions associated with the role.</li>
+<li><strong>Example:</strong> [&quot;read&quot;, &quot;write&quot;, &quot;delete&quot;]</li>
 </ul>
 </li>
 </ul>
-<h3 id="role" tabindex="-1"><a class="header-anchor" href="#role"><span>role</span></a></h3>
+</li>
+<li><strong>Example:</strong> &quot;role&quot;: {&quot;role&quot;:&quot;admin&quot;,&quot;permissions&quot;:[&quot;read&quot;,&quot;write&quot;,&quot;delete&quot;]}</li>
+</ul>
+<h4 id="availability" tabindex="-1"><a class="header-anchor" href="#availability"><span>availability</span></a></h4>
 <ul>
-<li>
-<p><strong>roleId</strong></p>
+<li><strong>Data Type:</strong> Object</li>
+<li><strong>Attributes:</strong>
 <ul>
-<li><strong>Data Type:</strong> ObjectId (Reference to <code v-pre>Role</code>)</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The ID of the role.</li>
+<li><strong>status:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Current availability status of the user.</li>
+<li><strong>Example:</strong> &quot;Available&quot;</li>
 </ul>
 </li>
-<li>
-<p><strong>permissionSuite</strong></p>
+<li><strong>schedule:</strong> Object
 <ul>
-<li><strong>Data Type:</strong> Array of Strings</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> A list of permissions associated with the role.</li>
-</ul>
-</li>
-<li>
-<p><strong>roleName</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The name of the role.</li>
+<li><strong>Reasoning:</strong> Weekly schedule for the user.</li>
+<li><strong>Example:</strong> {&quot;Monday&quot;: &quot;9:00-17:00&quot;, &quot;Tuesday&quot;: &quot;9:00-17:00&quot;}</li>
 </ul>
 </li>
 </ul>
-<h3 id="userinfo" tabindex="-1"><a class="header-anchor" href="#userinfo"><span>UserInfo</span></a></h3>
+</li>
+</ul>
+<h4 id="skills-1" tabindex="-1"><a class="header-anchor" href="#skills-1"><span>skills</span></a></h4>
 <ul>
-<li>
-<p><strong>username</strong></p>
+<li><strong>Data Type:</strong> Array</li>
+<li><strong>Attributes:</strong>
 <ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The username of the user.</li>
+<li><strong>skillName:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> List of skills the user possesses.</li>
+<li><strong>Example:</strong> [&quot;JavaScript&quot;, &quot;Python&quot;]</li>
 </ul>
 </li>
-<li>
-<p><strong>firstName</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The first name of the user.</li>
 </ul>
 </li>
-<li>
-<p><strong>surname</strong></p>
+</ul>
+<h4 id="currentjobassignments" tabindex="-1"><a class="header-anchor" href="#currentjobassignments"><span>currentJobAssignments</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The surname of the user.</li>
+<li><strong>Data Type:</strong> Array of Object ids</li>
+<li><strong>Reasoning:</strong> References jobs the employee is currently assigned to.</li>
+<li><strong>Example:</strong> [&quot;60d21b4667d0d8992e610c87&quot;...]</li>
+</ul>
+<h4 id="superior" tabindex="-1"><a class="header-anchor" href="#superior"><span>superior</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> ObjectId</li>
+<li><strong>Reasoning:</strong> References the employee's superior.</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>employeeId:</strong> ObjectId
+<ul>
+<li><strong>Reasoning:</strong> Stores a reference to the employeeId in the Employee collection</li>
 </ul>
 </li>
-<li>
-<p><strong>displayName</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The display name of the user.</li>
 </ul>
 </li>
-<li>
-<p><strong>displayImage</strong></p>
+<li><strong>Example:</strong> &quot;superior&quot;: &quot;60d21b4667d0d8992e610c87&quot;</li>
+</ul>
+<h4 id="subordinates" tabindex="-1"><a class="header-anchor" href="#subordinates"><span>subordinates</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The display image URL of the user.</li>
+<li><strong>Data Type:</strong> Array of Object ids</li>
+<li><strong>Reasoning:</strong> References the employees under the employee.</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>employeeId:</strong> ObjectId
+<ul>
+<li><strong>Reasoning:</strong> Stores a reference to the employeeId in the Employee collection</li>
 </ul>
 </li>
+</ul>
+</li>
+<li><strong>Example:</strong> &quot;subordinates&quot;: [&quot;60d21b4667d0d8992e610c87&quot;...]</li>
+</ul>
+<h4 id="createdat" tabindex="-1"><a class="header-anchor" href="#createdat"><span>createdAt</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was created.</li>
+<li><strong>Example:</strong> &quot;createdAt&quot; : &quot;2024-06-01T10:00:00Z&quot;</li>
+</ul>
+<h4 id="updatedat" tabindex="-1"><a class="header-anchor" href="#updatedat"><span>updatedAt</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was updated.</li>
+<li><strong>Example:</strong> &quot;updatedAt: &quot;2024-06-01T10:00:00Z&quot;</li>
+</ul>
+<h4 id="deletedat" tabindex="-1"><a class="header-anchor" href="#deletedat"><span>deletedAt</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was deleted.</li>
+<li><strong>Example:</strong> &quot;deletedAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
 </ul>
 <h2 id="team" tabindex="-1"><a class="header-anchor" href="#team"><span>Team</span></a></h2>
-<ul>
-<li>
-<p><strong>id</strong></p>
+<h4 id="id-2" tabindex="-1"><a class="header-anchor" href="#id-2"><span>_id</span></a></h4>
 <ul>
 <li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Unique:</strong> Yes</li>
-<li><strong>Description:</strong> The unique ID of the team.</li>
+<li><strong>Reasoning:</strong> Unique identifier for each team.</li>
+<li><strong>Example:</strong> &quot;_id&quot;: &quot;60d21b4667d0d8992e610c85&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>companyId</strong></p>
+<h4 id="teamname" tabindex="-1"><a class="header-anchor" href="#teamname"><span>teamName</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> string</li>
+<li><strong>Reasoning:</strong> Use of string is logical.</li>
+<li><strong>Example:</strong> &quot;teamName&quot;: &quot;Boolean Hooligans&quot;</li>
+</ul>
+<h4 id="companyid" tabindex="-1"><a class="header-anchor" href="#companyid"><span>companyId</span></a></h4>
 <ul>
 <li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The ID of the company associated with the team.</li>
+<li><strong>Relationship:</strong> References Company</li>
+<li><strong>Reasoning:</strong> Associates the job with a specific company.</li>
+<li><strong>Example:</strong> &quot;companyId&quot;: &quot;60d21b4667d0d8992e610c8c&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>teamName</strong></p>
+<h4 id="teammembers" tabindex="-1"><a class="header-anchor" href="#teammembers"><span>teamMembers</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The name of the team.</li>
-</ul>
-</li>
-<li>
-<p><strong>teamMembers</strong></p>
+<li><strong>Data Type:</strong> Array of Objects ids</li>
+<li><strong>Reasoning:</strong> Stores employeeIds</li>
+<li><strong>Attributes:</strong>
 <ul>
-<li><strong>Data Type:</strong> Array of ObjectIds</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> A list of team member IDs.</li>
-</ul>
-</li>
-<li>
-<p><strong>teamLeaderId</strong></p>
+<li><strong>employeeId:</strong> ObjectId
 <ul>
-<li><strong>Data Type:</strong> ObjectId (Optional)</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The ID of the team leader, if applicable.</li>
+<li><strong>Reasoning:</strong> Stores the reference to the employee in the Employee collection</li>
 </ul>
 </li>
-<li>
-<p><strong>currentJobAssignments</strong></p>
+</ul>
+</li>
+<li><strong>Example:</strong> &quot;teamMembers&quot;: [&quot;60d21b4667d0d8992e610c87&quot;...]</li>
+</ul>
+<h4 id="teamleaderid" tabindex="-1"><a class="header-anchor" href="#teamleaderid"><span>teamLeaderId</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> Array of ObjectIds</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> []</li>
-<li><strong>Description:</strong> A list of current job assignments associated with the team.</li>
+<li><strong>Data Type:</strong> ObjectId</li>
+<li><strong>Reasoning:</strong> References the employeeId in the employee collection.</li>
+<li><strong>Example:</strong> &quot;_id&quot;: &quot;60d21b4667d0d8992e610c85&quot;</li>
+<li></li>
 </ul>
-</li>
-<li>
-<p><strong>createdAt</strong></p>
+<h4 id="assignedjobs" tabindex="-1"><a class="header-anchor" href="#assignedjobs"><span>assignedJobs</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> New <code v-pre>Date()</code></li>
-<li><strong>Description:</strong> The date the team was created.</li>
+<li><strong>Data Type:</strong> Array of Object ids</li>
+<li><strong>Reasoning:</strong> Stores a list of jobs the teams has been assigned</li>
+<li><strong>Example:</strong> &quot;assignedJobs&quot;: [&quot;60d21b4667d0d8992e610c85&quot;, ...]</li>
+<li></li>
 </ul>
-</li>
-<li>
-<p><strong>updatedAt</strong></p>
+<h4 id="createdat-1" tabindex="-1"><a class="header-anchor" href="#createdat-1"><span>createdAt</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> Date (Optional)</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The date the team was last updated.</li>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was created.</li>
+<li><strong>Example:</strong> &quot;createdAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>deletedAt</strong></p>
+<h4 id="updatedat-1" tabindex="-1"><a class="header-anchor" href="#updatedat-1"><span>updatedAt</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> Date (Optional)</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The date the team was deleted (soft delete).</li>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was updated.</li>
+<li><strong>Example:</strong> &quot;updatedAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
 </ul>
-</li>
+<h4 id="deletedat-1" tabindex="-1"><a class="header-anchor" href="#deletedat-1"><span>deletedAt</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was deleted.</li>
+<li><strong>Example:</strong> &quot;deletedAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
 </ul>
 <h2 id="company" tabindex="-1"><a class="header-anchor" href="#company"><span>Company</span></a></h2>
-<ul>
-<li>
-<p><strong>id</strong></p>
+<p>The Company entity stores information about companies associated with users and jobs.</p>
+<h4 id="id-primary-key" tabindex="-1"><a class="header-anchor" href="#id-primary-key"><span>_id (Primary Key)</span></a></h4>
 <ul>
 <li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Description:</strong> The unique ID of the company.</li>
+<li><strong>Reasoning:</strong> Unique identifier for each company.</li>
+<li><strong>Example:</strong> &quot;_id&quot;: &quot;60d21b4667d0d8992e610c89&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>registrationNumber</strong></p>
+<h4 id="registrationnumber" tabindex="-1"><a class="header-anchor" href="#registrationnumber"><span>registrationNumber</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Description:</strong> The registration number of the company.</li>
+<li><strong>Data Type:</strong> string</li>
+<li><strong>Reasoning:</strong> Unique registration number for the company.</li>
+<li><strong>Example:</strong> &quot;registrationNumber&quot;: &quot;REG123456&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>vatNumber</strong></p>
+<h4 id="name" tabindex="-1"><a class="header-anchor" href="#name"><span>name</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Description:</strong> The VAT number of the company.</li>
+<li><strong>Data Type:</strong> string</li>
+<li><strong>Reasoning:</strong> Name of the company.</li>
+<li><strong>Example:</strong> &quot;name&quot;: &quot;Tech Solutions Inc.&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>name</strong></p>
+<h4 id="type" tabindex="-1"><a class="header-anchor" href="#type"><span>type</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Description:</strong> The name of the company.</li>
+<li><strong>Data Type:</strong> string</li>
+<li><strong>Reasoning:</strong> Type or industry of the company.</li>
+<li><strong>Example:</strong> &quot;type&quot;: &quot;IT Services&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>type</strong></p>
+<h4 id="vatnumber" tabindex="-1"><a class="header-anchor" href="#vatnumber"><span>vatNumber</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> String (Optional)</li>
-<li><strong>Description:</strong> The type or category of the company.</li>
+<li><strong>Data Type:</strong> string</li>
+<li><strong>Reasoning:</strong> VAT number for tax purposes.</li>
+<li><strong>Example:</strong> &quot;vatNumber&quot;: &quot;VAT789012&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>logo</strong></p>
+<h4 id="logo" tabindex="-1"><a class="header-anchor" href="#logo"><span>logo</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Default:</strong> <code v-pre>'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp'</code></li>
-<li><strong>Description:</strong> The URL of the company's logo.</li>
+<li><strong>Data Type:</strong> string</li>
+<li><strong>Reasoning:</strong> URL or base64 image string for the company logo.</li>
+<li><strong>Example:</strong> &quot;logo&quot;: &quot;data:image/png;base64,iVBORw0KGgoAAAANS...&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>contactDetails</strong></p>
+<h4 id="contactdetails" tabindex="-1"><a class="header-anchor" href="#contactdetails"><span>contactDetails</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> <code v-pre>ContactDetails</code></li>
-<li><strong>Description:</strong> The contact details of the company.</li>
-</ul>
-</li>
-<li>
-<p><strong>private</strong></p>
+<li><strong>Data Type:</strong> Object</li>
+<li><strong>Attributes:</strong>
 <ul>
-<li><strong>Data Type:</strong> Boolean</li>
-<li><strong>Description:</strong> Indicates whether the company is private.</li>
-</ul>
-</li>
-<li>
-<p><strong>createdAt</strong></p>
+<li><strong>phone:</strong> string
 <ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Description:</strong> The date the company was created.</li>
+<li><strong>Reasoning:</strong> Phone number for contact.</li>
+<li><strong>Example:</strong> &quot;+1234567890&quot;</li>
 </ul>
 </li>
-<li>
-<p><strong>updatedAt</strong></p>
+<li><strong>email:</strong> string
 <ul>
-<li><strong>Data Type:</strong> Date (Optional)</li>
-<li><strong>Description:</strong> The date the company was last updated.</li>
+<li><strong>Reasoning:</strong> Email for contact.</li>
+<li><strong>Example:</strong> &quot;contact@techsolutions.com&quot;</li>
 </ul>
 </li>
-<li>
-<p><strong>deletedAt</strong></p>
+</ul>
+</li>
+<li><strong>Example:</strong> &quot;contactDetails&quot;: {&quot;phone&quot;:&quot;+1234567890&quot;,&quot;email&quot;:&quot;contact@techsolutions.com&quot;}</li>
+</ul>
+<h4 id="address" tabindex="-1"><a class="header-anchor" href="#address"><span>address</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> Date (Optional)</li>
-<li><strong>Description:</strong> The date the company was deleted (soft delete).</li>
+<li><strong>Data Type:</strong> Object</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>street:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Street address for mailing purposes.</li>
+<li><strong>Example:</strong> &quot;456 Business St&quot;</li>
 </ul>
 </li>
+<li><strong>suburb:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Suburb for geographical information.</li>
+<li><strong>Example:</strong> &quot;Central&quot;</li>
+</ul>
+</li>
+<li><strong>city:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> City for geographical information.</li>
+<li><strong>Example:</strong> &quot;Metropolis&quot;</li>
+</ul>
+</li>
+<li><strong>postalCode:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Postal code for mailing purposes.</li>
+<li><strong>Example:</strong> &quot;67890&quot;</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Example:</strong> &quot;address&quot;: {&quot;street&quot;:&quot;456 Business St&quot;,&quot;suburb&quot;:&quot;Central&quot;,&quot;city&quot;:&quot;Metropolis&quot;,&quot;postalCode&quot;:&quot;67890&quot;}</li>
+</ul>
+<h4 id="employees" tabindex="-1"><a class="header-anchor" href="#employees"><span>employees</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Array of Objects</li>
+<li><strong>Reasoning:</strong> References employees (Users) associated with the company.</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>employeeId:</strong> ObjectId
+<ul>
+<li><strong>Reasoning:</strong> Stores a reference to the employeeId in the Employee collection</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Example:</strong> &quot;employees&quot;: [&quot;60d21b4667d0d8992e610c85&quot;,...]</li>
+</ul>
+<h4 id="inventoryitems" tabindex="-1"><a class="header-anchor" href="#inventoryitems"><span>inventoryItems</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Array of Object ids</li>
+<li><strong>Reasoning:</strong> References inventory items owned by the company to track and manage stock efficiently.</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>inventoryItemId:</strong> ObjectId
+<ul>
+<li><strong>Reasoning:</strong> Unique identifier for each inventory item to ensure accurate tracking and referencing.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Example:</strong> &quot;inventoryItems&quot;: [&quot;60d21b4667d0d8992e610c8a&quot;,...]</li>
+</ul>
+<h4 id="createdat-2" tabindex="-1"><a class="header-anchor" href="#createdat-2"><span>createdAt</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was created.</li>
+<li><strong>Example:</strong> &quot;createdAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
+</ul>
+<h4 id="updatedat-2" tabindex="-1"><a class="header-anchor" href="#updatedat-2"><span>updatedAt</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was updated.</li>
+<li><strong>Example:</strong> &quot;updatedAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
+</ul>
+<h4 id="deletedat-2" tabindex="-1"><a class="header-anchor" href="#deletedat-2"><span>deletedAt</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was deleted.</li>
+<li><strong>Example:</strong> &quot;deletedAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
 </ul>
 <h2 id="client" tabindex="-1"><a class="header-anchor" href="#client"><span>Client</span></a></h2>
-<ul>
-<li>
-<p><strong>_id</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId (Optional)</li>
-<li><strong>Description:</strong> The unique ID of the client.</li>
-</ul>
-</li>
-<li>
-<p><strong>registrationNumber</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String (Optional)</li>
-<li><strong>Description:</strong> The registration number of the client.</li>
-</ul>
-</li>
-<li>
-<p><strong>createdAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Description:</strong> The date when the client was created.</li>
-</ul>
-</li>
-<li>
-<p><strong>updatedAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date (Optional)</li>
-<li><strong>Description:</strong> The date when the client was last updated.</li>
-</ul>
-</li>
-</ul>
-<h2 id="clientdetails" tabindex="-1"><a class="header-anchor" href="#clientdetails"><span>ClientDetails</span></a></h2>
-<ul>
-<li>
-<p><strong>firstName</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The first name of the client.</li>
-</ul>
-</li>
-<li>
-<p><strong>lastName</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The last name of the client.</li>
-</ul>
-</li>
-<li>
-<p><strong>preferredLanguage</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String (Optional)</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Default:</strong> <code v-pre>'English'</code></li>
-<li><strong>Description:</strong> The preferred language of the client.</li>
-</ul>
-</li>
-<li>
-<p><strong>contactInfo</strong></p>
-<ul>
-<li><strong>Data Type:</strong> <code v-pre>ContactInfo</code> (Optional)</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The contact information of the client, including phone number and email.</li>
-</ul>
-</li>
-<li>
-<p><strong>vatNumber</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String (Optional)</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The VAT number of the client (if applicable).</li>
-</ul>
-</li>
-<li>
-<p><strong>companyId</strong></p>
+<p>The Client entity stores information about clients who have jobs or appointments.</p>
+<h4 id="id-primary-key-1" tabindex="-1"><a class="header-anchor" href="#id-primary-key-1"><span>_id (Primary Key)</span></a></h4>
 <ul>
 <li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The ID of the company to which the client belongs.</li>
+<li><strong>Reasoning:</strong> Unique identifier for each client.</li>
+<li><strong>Example:</strong> &quot;_id&quot;: &quot;60d21b4667d0d8992e610c8c&quot;</li>
+</ul>
+<h4 id="personalinfo-1" tabindex="-1"><a class="header-anchor" href="#personalinfo-1"><span>personalInfo</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Object</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>firstName:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Client's first name for personal identification.</li>
+<li><strong>Example:</strong> &quot;Jane&quot;</li>
 </ul>
 </li>
-<li>
-<p><strong>idNumber</strong></p>
+<li><strong>surname:</strong> string
 <ul>
-<li><strong>Data Type:</strong> String (Optional)</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The ID number of the client (if applicable).</li>
+<li><strong>Reasoning:</strong> Client's surname for personal identification.</li>
+<li><strong>Example:</strong> &quot;Smith&quot;</li>
 </ul>
 </li>
-<li>
-<p><strong>type</strong></p>
+<li><strong>preferredLanguage:</strong> string
 <ul>
-<li><strong>Data Type:</strong> String (Optional)</li>
-<li><strong>Required:</strong> No</li>
-<li><strong>Description:</strong> The type or category of the client.</li>
+<li><strong>Reasoning:</strong> Client's preferred language.</li>
+<li><strong>Example:</strong> &quot;English&quot;</li>
 </ul>
 </li>
-</ul>
-<h4 id="address-1" tabindex="-1"><a class="header-anchor" href="#address-1"><span>Address</span></a></h4>
+<li><strong>dateOfBirth</strong> Object
 <ul>
-<li>
-<p><strong>street</strong></p>
+<li><strong>phone:</strong> string
 <ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The street address of the company.</li>
-</ul>
-</li>
-<li>
-<p><strong>province</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The province where the company is located.</li>
-</ul>
-</li>
-<li>
-<p><strong>suburb</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The suburb where the company is located.</li>
-</ul>
-</li>
-<li>
-<p><strong>city</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The city where the company is located.</li>
-</ul>
-</li>
-<li>
-<p><strong>postalCode</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The postal code of the company's location.</li>
+<li><strong>Reasoning:</strong> Phone number for contact.</li>
+<li><strong>Example:</strong> &quot;+1234567890&quot;</li>
 </ul>
 </li>
 </ul>
-<h4 id="contactinfo-1" tabindex="-1"><a class="header-anchor" href="#contactinfo-1"><span>ContactInfo</span></a></h4>
+</li>
+<li><strong>contactInfo</strong>:
 <ul>
-<li>
-<p><strong>phoneNumber</strong></p>
+<li><strong>email:</strong> string
 <ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The phone number of the client.</li>
+<li><strong>Reasoning:</strong> Email for contact.</li>
+<li><strong>Example:</strong> &quot;jane.smith@example.com&quot;</li>
 </ul>
 </li>
-<li>
-<p><strong>email</strong></p>
+<li><strong>address:</strong> Object
 <ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Unique:</strong> Yes (within the company)</li>
-<li><strong>Lowercase:</strong> Yes</li>
-<li><strong>Trim:</strong> Yes</li>
-<li><strong>Description:</strong> The email address of the client. Unique within the company, rather than the entire database.</li>
+<li><strong>street:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Street address for mailing purposes.</li>
+<li><strong>Example:</strong> &quot;789 Client Rd&quot;</li>
 </ul>
 </li>
+<li><strong>suburb:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Suburb for geographical information.</li>
+<li><strong>Example:</strong> &quot;Eastside&quot;</li>
+</ul>
+</li>
+<li><strong>city:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> City for geographical information.</li>
+<li><strong>Example:</strong> &quot;Metropolis&quot;</li>
+</ul>
+</li>
+<li><strong>postalCode:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Postal code for mailing purposes.</li>
+<li><strong>Example:</strong> &quot;12345&quot;</li>
+</ul>
+</li>
+<li><strong>complex:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Complex name if applicable.</li>
+<li><strong>Example:</strong> &quot;Client Apartments&quot;</li>
+</ul>
+</li>
+<li><strong>houseNumber:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> House number for precise address.</li>
+<li><strong>Example:</strong> &quot;3A&quot;</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Example:</strong> &quot;personalInfo&quot;: {&quot;firstName&quot;:&quot;Jane&quot;,&quot;surname&quot;:&quot;Smith&quot;,&quot;preferredLanguage&quot;:&quot;English&quot;,&quot;dateOfBirth&quot;:{&quot;phone&quot;:&quot;+1234567890&quot;},&quot;contactInfo&quot;:{&quot;email&quot;:&quot;jane.smith@example.com&quot;,&quot;address&quot;:{&quot;street&quot;:&quot;789 Client Rd&quot;,&quot;suburb&quot;:&quot;Eastside&quot;,&quot;city&quot;:&quot;Metropolis&quot;,&quot;postalCode&quot;:&quot;12345&quot;,&quot;complex&quot;:&quot;Client Apartments&quot;,&quot;houseNumber&quot;:&quot;3A&quot;}}}</li>
+</ul>
+<h4 id="createdat-3" tabindex="-1"><a class="header-anchor" href="#createdat-3"><span>createdAt</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was created.</li>
+<li><strong>Example:</strong> &quot;createdAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
+</ul>
+<h4 id="updatedat-3" tabindex="-1"><a class="header-anchor" href="#updatedat-3"><span>updatedAt</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was updated.</li>
+<li><strong>Example:</strong> &quot;updatedAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
+</ul>
+<h4 id="deletedat-3" tabindex="-1"><a class="header-anchor" href="#deletedat-3"><span>deletedAt</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was deleted.</li>
+<li><strong>Example:</strong> &quot;deletedAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
 </ul>
 <h2 id="job" tabindex="-1"><a class="header-anchor" href="#job"><span>Job</span></a></h2>
-<ul>
-<li>
-<p><strong>_id</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId (Optional)</li>
-<li><strong>Description:</strong> The unique ID of the client.</li>
-</ul>
-</li>
-<li>
-<p><strong>companyId</strong></p>
+<p>The Job entity stores information about jobs assigned to employees and clients.</p>
+<h4 id="id-primary-key-2" tabindex="-1"><a class="header-anchor" href="#id-primary-key-2"><span>_id (Primary Key)</span></a></h4>
 <ul>
 <li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The ID of the company to which the job belongs.</li>
+<li><strong>Reasoning:</strong> Unique identifier for each job.</li>
+<li><strong>Example:</strong> &quot;_id&quot;: &quot;60d21b4667d0d8992e610c8d&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>clientId</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId (Optional)</li>
-<li><strong>Default:</strong> <code v-pre>null</code></li>
-<li><strong>Description:</strong> The ID of the client for whom the job is performed.</li>
-</ul>
-</li>
-<li>
-<p><strong>assignedBy</strong></p>
+<h4 id="companyid-1" tabindex="-1"><a class="header-anchor" href="#companyid-1"><span>companyId</span></a></h4>
 <ul>
 <li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The ID of the employee who assigned the job.</li>
+<li><strong>Relationship:</strong> References Company</li>
+<li><strong>Reasoning:</strong> Associates the job with a specific company.</li>
+<li><strong>Example:</strong> &quot;companyId&quot;: &quot;60d21b4667d0d8992e610c8c&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>assignedEmployees</strong></p>
-<ul>
-<li><strong>Data Type:</strong> <code v-pre>AssignedEmployees</code> (Optional)</li>
-<li><strong>Default:</strong> New <code v-pre>AssignedEmployees()</code></li>
-<li><strong>Description:</strong> The employees and teams assigned to the job.</li>
-</ul>
-</li>
-<li>
-<p><strong>status</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId (Optional)</li>
-<li><strong>Default:</strong> <code v-pre>null</code></li>
-<li><strong>Description:</strong> The current status of the job.</li>
-</ul>
-</li>
-<li>
-<p><strong>tags</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Array of ObjectIds (Optional)</li>
-<li><strong>Default:</strong> <code v-pre>[]</code></li>
-<li><strong>Description:</strong> Tags associated with the job.</li>
-</ul>
-</li>
-<li>
-<p><strong>priorityTag</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId (Optional)</li>
-<li><strong>Default:</strong> <code v-pre>null</code></li>
-<li><strong>Description:</strong> The priority tag associated with the job.</li>
-</ul>
-</li>
-<li>
-<p><strong>attachments</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Array of Strings (Optional)</li>
-<li><strong>Default:</strong> <code v-pre>null</code></li>
-<li><strong>Description:</strong> File attachments related to the job.</li>
-</ul>
-</li>
-<li>
-<p><strong>details</strong></p>
-<ul>
-<li><strong>Data Type:</strong> <code v-pre>Details</code></li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> Detailed information about the job.</li>
-</ul>
-</li>
-<li>
-<p><strong>recordedDetails</strong></p>
-<ul>
-<li><strong>Data Type:</strong> <code v-pre>RecordedDetails</code> (Optional)</li>
-<li><strong>Default:</strong> New <code v-pre>RecordedDetails()</code></li>
-<li><strong>Description:</strong> Recorded details such as images and inventory used during the job.</li>
-</ul>
-</li>
-<li>
-<p><strong>clientFeedback</strong></p>
-<ul>
-<li><strong>Data Type:</strong> <code v-pre>ClientFeedback</code> (Optional)</li>
-<li><strong>Description:</strong> Feedback from the client regarding the job.</li>
-</ul>
-</li>
-<li>
-<p><strong>taskList</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Array of <code v-pre>Task</code> (Optional)</li>
-<li><strong>Default:</strong> <code v-pre>[]</code></li>
-<li><strong>Description:</strong> A list of tasks associated with the job.</li>
-</ul>
-</li>
-<li>
-<p><strong>history</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Array of <code v-pre>History</code></li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> <code v-pre>[]</code></li>
-<li><strong>Description:</strong> The history of events related to the job.</li>
-</ul>
-</li>
-<li>
-<p><strong>comments</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Array of <code v-pre>Comment</code> (Optional)</li>
-<li><strong>Default:</strong> <code v-pre>[]</code></li>
-<li><strong>Description:</strong> Comments made by employees on the job.</li>
-</ul>
-</li>
-<li>
-<p><strong>createdAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> Current date</li>
-<li><strong>Description:</strong> The date when the job was created.</li>
-</ul>
-</li>
-<li>
-<p><strong>updatedAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date (Optional)</li>
-<li><strong>Description:</strong> The date when the job was last updated.</li>
-</ul>
-</li>
-<li>
-<p><strong>deletedAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date (Optional)</li>
-<li><strong>Description:</strong> The date when the job was deleted (soft delete).</li>
-</ul>
-</li>
-</ul>
-<h3 id="clientfeedback" tabindex="-1"><a class="header-anchor" href="#clientfeedback"><span>ClientFeedback</span></a></h3>
-<ul>
-<li>
-<p><strong>jobRating</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Number (Optional)</li>
-<li><strong>Default:</strong> 10</li>
-<li><strong>Description:</strong> The rating given by the client for the job itself.</li>
-</ul>
-</li>
-<li>
-<p><strong>customerServiceRating</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Number (Optional)</li>
-<li><strong>Default:</strong> 10</li>
-<li><strong>Description:</strong> The rating given by the client for customer service.</li>
-</ul>
-</li>
-<li>
-<p><strong>comments</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String (Optional)</li>
-<li><strong>Default:</strong> <code v-pre>''</code></li>
-<li><strong>Description:</strong> Additional comments from the client about the job.</li>
-</ul>
-</li>
-</ul>
-<h3 id="details" tabindex="-1"><a class="header-anchor" href="#details"><span>Details</span></a></h3>
-<ul>
-<li>
-<p><strong>heading</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The heading or title of the job.</li>
-</ul>
-</li>
-<li>
-<p><strong>description</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> A detailed description of the job.</li>
-</ul>
-</li>
-<li>
-<p><strong>address</strong></p>
-<ul>
-<li><strong>Data Type:</strong> <code v-pre>Address</code></li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The address where the job will take place.</li>
-</ul>
-</li>
-<li>
-<p><strong>startDate</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The start date of the job.</li>
-</ul>
-</li>
-<li>
-<p><strong>endDate</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date (Optional)</li>
-<li><strong>Description:</strong> The end date of the job (if applicable).</li>
-</ul>
-</li>
-</ul>
-<h4 id="address-2" tabindex="-1"><a class="header-anchor" href="#address-2"><span>Address</span></a></h4>
-<ul>
-<li>
-<p><strong>street</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String (Optional)</li>
-<li><strong>Description:</strong> The street address where the job is located.</li>
-</ul>
-</li>
-<li>
-<p><strong>province</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String (Optional)</li>
-<li><strong>Description:</strong> The province where the job is located.</li>
-</ul>
-</li>
-<li>
-<p><strong>suburb</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String (Optional)</li>
-<li><strong>Description:</strong> The suburb where the job is located.</li>
-</ul>
-</li>
-<li>
-<p><strong>city</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String (Optional)</li>
-<li><strong>Description:</strong> The city where the job is located.</li>
-</ul>
-</li>
-<li>
-<p><strong>postalCode</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String (Optional)</li>
-<li><strong>Description:</strong> The postal code of the job's location.</li>
-</ul>
-</li>
-<li>
-<p><strong>complex</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String (Optional)</li>
-<li><strong>Description:</strong> The complex name (if applicable).</li>
-</ul>
-</li>
-<li>
-<p><strong>houseNumber</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String (Optional)</li>
-<li><strong>Description:</strong> The house number (if applicable).</li>
-</ul>
-</li>
-</ul>
-<h3 id="recordeddetails" tabindex="-1"><a class="header-anchor" href="#recordeddetails"><span>RecordedDetails</span></a></h3>
-<ul>
-<li>
-<p><strong>imagesTaken</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Array of Strings (Optional)</li>
-<li><strong>Default:</strong> <code v-pre>[]</code></li>
-<li><strong>Description:</strong> An array of image URLs taken during the job.</li>
-</ul>
-</li>
-<li>
-<p><strong>inventoryUsed</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Array of <code v-pre>InventoryUsed</code> (Optional)</li>
-<li><strong>Default:</strong> <code v-pre>[]</code></li>
-<li><strong>Description:</strong> A list of inventory items used during the job.</li>
-</ul>
-</li>
-</ul>
-<h4 id="inventoryused" tabindex="-1"><a class="header-anchor" href="#inventoryused"><span>InventoryUsed</span></a></h4>
-<ul>
-<li>
-<p><strong>inventoryItemId</strong></p>
+<h4 id="clientid-foreign-key" tabindex="-1"><a class="header-anchor" href="#clientid-foreign-key"><span>clientId (Foreign Key)</span></a></h4>
 <ul>
 <li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The ID of the inventory item used in the job.</li>
+<li><strong>Relationship:</strong> References Client</li>
+<li><strong>Reasoning:</strong> Associates the job with a specific client.</li>
+<li><strong>Example:</strong> &quot;clientId&quot;: &quot;60d21b4667d0d8992e610c8c&quot;</li>
+</ul>
+<h4 id="assignedemployees" tabindex="-1"><a class="header-anchor" href="#assignedemployees"><span>assignedEmployees</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Object of Employee ids and Team id</li>
+<li><strong>Relationship:</strong> References employees and teams</li>
+<li><strong>Reasoning:</strong> Employees and team assigned to the job.</li>
+<li><strong>Example:</strong> &quot;assignedEmployees&quot;: {&quot;employeesIds&quot;: [&quot;60d21b4667d0d8992e610c85&quot;,...], &quot;teamId&quot;: &quot;60d21b4667d0d8992e610c85&quot;}</li>
+</ul>
+<h4 id="assignedby-jess-may-you-please-add-this-field-to-er-diagram" tabindex="-1"><a class="header-anchor" href="#assignedby-jess-may-you-please-add-this-field-to-er-diagram"><span>assignedBy (@Jess may you please add this field to er diagram)</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Object id</li>
+<li><strong>Relationship:</strong> References Employees table</li>
+<li><strong>Reasoning:</strong> Assignee of a job.</li>
+<li><strong>Example:</strong> &quot;assignedBy&quot;: &quot;60d21b4667d0d8992e610c85&quot;</li>
+</ul>
+<h4 id="status-jess-may-you-please-add-this-field-to-er-diagram-i-ve-just-made-status-it-s-own-attribute" tabindex="-1"><a class="header-anchor" href="#status-jess-may-you-please-add-this-field-to-er-diagram-i-ve-just-made-status-it-s-own-attribute"><span>status (@Jess may you please add this field to er diagram, I've just made status it's own attribute)</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> string</li>
+<li><strong>Reasoning:</strong> stores the status of the job</li>
+<li><strong>Example:</strong> &quot;status&quot;: &quot;complete&quot;</li>
+</ul>
+<h4 id="recordeddetails" tabindex="-1"><a class="header-anchor" href="#recordeddetails"><span>recordedDetails</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Object</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>imagesTaken</strong>
+<ul>
+<li><strong>Data Type</strong>: Array of strings (base64 images)</li>
+<li><strong>Reasoning:</strong> Images related to the job.</li>
+<li><strong>Example:</strong> [&quot;data:image/png;base64,iVBORw0KGgoAAAANS...&quot;, &quot;data:image/png;base64,iVBORw0KGgoAAAANS...&quot;]</li>
 </ul>
 </li>
-<li>
-<p><strong>inventoryItemName</strong></p>
+<li><strong>inventoryUsed</strong>
 <ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The name of the inventory item used.</li>
-</ul>
-</li>
-<li>
-<p><strong>quantityUsed</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Number</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> 0</li>
-<li><strong>Description:</strong> The quantity of the inventory item used.</li>
+<li><strong>Data Type:</strong> Array of Object</li>
+<li><strong>Reasoning:</strong> Inventory items used for the job.</li>
+<li><strong>Example:</strong> [{ &quot;InventoryItem&quot;: &quot;60d21b4667d0d8992e610c8a&quot;, &quot;QuantityUsed&quot;: 2 }]</li>
 </ul>
 </li>
 </ul>
-<h3 id="assignedemployees" tabindex="-1"><a class="header-anchor" href="#assignedemployees"><span>AssignedEmployees</span></a></h3>
+</li>
+<li><strong>Example:</strong> &quot;recordedDetails&quot;: {&quot;imagesTaken&quot;:[&quot;data:image/png;base64,iVBORw0KGgoAAAANS...&quot;,&quot;data:image/png;base64,iVBORw0KGgoAAAANS...&quot;],&quot;inventoryUsed&quot;:[{&quot;InventoryItem&quot;:&quot;60d21b4667d0d8992e610c8a&quot;,&quot;QuantityUsed&quot;:2}]}</li>
+</ul>
+<h4 id="jobdetails" tabindex="-1"><a class="header-anchor" href="#jobdetails"><span>jobDetails</span></a></h4>
 <ul>
-<li>
-<p><strong>employeeIds</strong></p>
+<li><strong>Data Type:</strong> Object</li>
+<li><strong>Attributes:</strong>
 <ul>
-<li><strong>Data Type:</strong> Array of ObjectIds (Optional)</li>
-<li><strong>Default:</strong> <code v-pre>[]</code></li>
-<li><strong>Description:</strong> A list of IDs of employees assigned to the job.</li>
+<li><strong>jobName:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Name of the job.</li>
+<li><strong>Example:</strong> &quot;UP Merensky library revamp&quot;</li>
 </ul>
 </li>
-<li>
-<p><strong>teamIds</strong></p>
+<li><strong>jobDescription:</strong> string   (@Jess may you please add this field to er diagram)
 <ul>
-<li><strong>Data Type:</strong> Array of ObjectIds (Optional)</li>
-<li><strong>Default:</strong> <code v-pre>[]</code></li>
-<li><strong>Description:</strong> A list of IDs of teams assigned to the job.</li>
+<li><strong>Reasoning:</strong> Description of the job.</li>
+<li><strong>Example:</strong> &quot;Fixing plumbing issues.&quot;</li>
+</ul>
+</li>
+<li><strong>jobStartDate:</strong> Date
+<ul>
+<li><strong>Reasoning:</strong> Start date of the job.</li>
+<li><strong>Example:</strong> &quot;2024-06-01&quot;</li>
+</ul>
+</li>
+<li><strong>jobEndDate:</strong> Date
+<ul>
+<li><strong>Reasoning:</strong> End date of the job.</li>
+<li><strong>Example:</strong> &quot;2024-06-05&quot;</li>
+</ul>
+</li>
+<li><strong>jobAddress:</strong> Object
+<ul>
+<li><strong>street:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Street address for the job location.</li>
+<li><strong>Example:</strong> &quot;123 Job St&quot;</li>
+</ul>
+</li>
+<li><strong>suburb:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Suburb for the job location.</li>
+<li><strong>Example:</strong> &quot;Westside&quot;</li>
+</ul>
+</li>
+<li><strong>city:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> City for the job location.</li>
+<li><strong>Example:</strong> &quot;Metropolis&quot;</li>
+</ul>
+</li>
+<li><strong>postalCode:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Postal code for the job location.</li>
+<li><strong>Example:</strong> &quot;67890&quot;</li>
+</ul>
+</li>
+<li><strong>complex:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Complex name if applicable.</li>
+<li><strong>Example:</strong> &quot;Workplace Plaza&quot;</li>
+</ul>
+</li>
+<li><strong>houseNumber:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> House number for the job location.</li>
+<li><strong>Example:</strong> &quot;5C&quot;</li>
 </ul>
 </li>
 </ul>
-<h3 id="task" tabindex="-1"><a class="header-anchor" href="#task"><span>Task</span></a></h3>
+</li>
+</ul>
+</li>
+<li><strong>Example:</strong> &quot;jobDetails&quot;: {&quot;jobDescription&quot;: &quot;Fixing plumbing issues.&quot;,&quot;jobStartDate&quot;:&quot;2024-06-01&quot;,&quot;jobEndDate&quot;: &quot;2024-06-05&quot;,&quot;status&quot;: &quot;pending&quot;,&quot;jobAddress&quot;: {&quot;street&quot;: &quot;123 Job St&quot;,&quot;suburb&quot;: &quot;Westside&quot;,&quot;city&quot;: &quot;Metropolis&quot;,&quot;postalCode&quot;: &quot;67890&quot;,&quot;complex&quot;: &quot;Workplace Plaza&quot;,&quot;houseNumber&quot;: &quot;5C&quot;} }</li>
+</ul>
+<h4 id="clientfeedback" tabindex="-1"><a class="header-anchor" href="#clientfeedback"><span>clientFeedback</span></a></h4>
 <ul>
-<li>
-<p><strong>_id</strong></p>
+<li><strong>Data Type:</strong> Object</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>jobRating:</strong> number (out of 5)
+<ul>
+<li><strong>Reasoning:</strong> Overall job rating by the client.</li>
+<li><strong>Example:</strong> 4.5</li>
+</ul>
+</li>
+<li><strong>customerServiceRating:</strong> number
+<ul>
+<li><strong>Reasoning:</strong> Rating of the customer service by the client.</li>
+<li><strong>Example:</strong> 5</li>
+</ul>
+</li>
+<li><strong>comments:</strong> string
+<ul>
+<li><strong>Reasoning:</strong> Additional feedback comments from the client.</li>
+<li><strong>Example:</strong> &quot;Great service!&quot;</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Example:</strong> &quot;clientFeedback&quot;: {&quot;jobRating&quot;: 5, &quot;customerServiceRating&quot;: 5, &quot;comments&quot;: &quot;Great service!&quot;}</li>
+</ul>
+<h4 id="tasklist" tabindex="-1"><a class="header-anchor" href="#tasklist"><span>taskList</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Array of Objects</li>
+<li><strong>Reasoning:</strong> Stores task given to employees for a job</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>task</strong>: Object</li>
+<li><strong>Reasoning:</strong> stores the task name, status and employee assigned to it</li>
+<li><strong>Example:</strong> &quot;task&quot; : {&quot;taskName&quot;:&quot;Paint north facing wall&quot;, &quot;status&quot;: &quot;complete&quot;, &quot;assignedEmployees&quot; : [&quot;60d21b4667d0d8992e610c8a&quot;, ...]}</li>
+</ul>
+</li>
+<li><strong>Example:</strong> &quot;taskList&quot;: [&quot;task1&quot; : {&quot;taskName&quot;:&quot;Paint north facing wall&quot;, &quot;status&quot;: &quot;complete&quot;, &quot;assignedEmployees&quot; : [&quot;60d21b4667d0d8992e610c8a&quot;, ...]}, ...]</li>
+</ul>
+<h4 id="comments" tabindex="-1"><a class="header-anchor" href="#comments"><span>comments</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Array of Objects</li>
+<li><strong>Reasoning:</strong> Stores comments made by employees for the job</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><strong>commentItem</strong>: Object</li>
+<li><strong>Reasoning:</strong> stores the comment, employee that made it and the status</li>
+<li><strong>Example:</strong> &quot;commentItem&quot; : {&quot;comment&quot;:&quot;Roofing needs adjusting&quot;, &quot;employeeId&quot; : &quot;60d21b4667d0d8992e610c8a&quot;, &quot;commentDate&quot;: &quot;2024-06-12&quot; }</li>
+</ul>
+</li>
+<li><strong>Example:</strong> &quot;comments&quot;: [{&quot;commentItem1&quot; : {&quot;comment&quot;:&quot;Roofing needs adjusting&quot;, &quot;employeeId&quot; : &quot;60d21b4667d0d8992e610c8a&quot;, &quot;commentDate&quot;: &quot;2024-06-12&quot; }, ...]</li>
+</ul>
+<h4 id="createdat-4" tabindex="-1"><a class="header-anchor" href="#createdat-4"><span>createdAt</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was created.</li>
+<li><strong>Example:</strong> &quot;createdAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
+</ul>
+<h4 id="updatedat-4" tabindex="-1"><a class="header-anchor" href="#updatedat-4"><span>updatedAt</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was updated.</li>
+<li><strong>Example:</strong> &quot;updatedAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
+</ul>
+<h4 id="deletedat-4" tabindex="-1"><a class="header-anchor" href="#deletedat-4"><span>deletedAt</span></a></h4>
+<ul>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was deleted.</li>
+<li><strong>Example:</strong> &quot;deletedAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
+</ul>
+<!-- ## Appointment 
+
+The Appointment entity stores information about appointments between clients and jobs.
+
+#### _id (Primary Key)
+
+- **Data Type:** ObjectId
+- **Reasoning:** Unique identifier for each appointment.
+- **Example:** "60d21b4667d0d8992e610c8e"
+
+#### clientId (Foreign Key)
+
+- **Data Type:** ObjectId
+- **Relationship:** References Client
+- **Reasoning:** Associates the appointment with a specific client.
+- **Example:** "60d21b4667d0d8992e610c8c"
+
+#### jobId (Foreign Key)
+
+- **Data Type:** ObjectId
+- **Relationship:** References Job
+- **Reasoning:** Associates the appointment with a specific job.
+- **Example:** "60d21b4667d0d8992e610c8d"
+
+#### scheduledDateTime
+
+- **Data Type:** Date (in string format)
+- **Reasoning:** Scheduled date and time for the appointment.
+- **Example:** "2024-06-01T10:00:00Z"
+
+#### duration
+
+- **Data Type:** integer
+- **Reasoning:** Duration of the appointment in minutes.
+- **Example:** 60
+
+#### status
+
+- **Data Type:** string
+- **Reasoning:** Current status of the appointment (e.g., pending, confirmed, cancelled).
+- **Example:** "confirmed"
+
+#### createdAt
+
+- **Data Type:** Date (in string format)
+- **Reasoning:** Timestamp of when the document was created.
+- **Example:** "createdAt": "2024-06-01T10:00:00Z"
+
+#### updatedAt
+
+- **Data Type:** Date (in string format)
+- **Reasoning:** Timestamp of when the document was updated.
+- **Example:** "updatedAt": "2024-06-01T10:00:00Z"
+
+#### deletedAt
+
+- **Data Type:** Date (in string format)
+- **Reasoning:** Timestamp of when the document was deleted.
+- **Example:** "deletedAt": "2024-06-01T10:00:00Z"  -->
+<h2 id="inventoryitem" tabindex="-1"><a class="header-anchor" href="#inventoryitem"><span>InventoryItem</span></a></h2>
+<p>The InventoryItem entity stores information about items in the company's inventory.</p>
+<h4 id="id-primary-key-3" tabindex="-1"><a class="header-anchor" href="#id-primary-key-3"><span>_id (Primary Key)</span></a></h4>
 <ul>
 <li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> New <code v-pre>ObjectId()</code></li>
-<li><strong>Description:</strong> The unique ID of the task.</li>
+<li><strong>Reasoning:</strong> Unique identifier for each inventory item.</li>
+<li><strong>Example:</strong> &quot;_id&quot;: &quot;60d21b4667d0d8992e610c8f&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>name</strong></p>
+<h4 id="name-1" tabindex="-1"><a class="header-anchor" href="#name-1"><span>name</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The name of the task.</li>
+<li><strong>Data Type:</strong> string</li>
+<li><strong>Reasoning:</strong> Name of the inventory item.</li>
+<li><strong>Example:</strong> &quot;name&quot;: &quot;Wrench&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>status</strong></p>
+<h4 id="itemimage" tabindex="-1"><a class="header-anchor" href="#itemimage"><span>itemImage</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> <code v-pre>'To do'</code></li>
-<li><strong>Description:</strong> The current status of the task (e.g., To do, In progress, Done).</li>
+<li><strong>Data Type:</strong> string (base64)</li>
+<li><strong>Reasoning:</strong> Image or icon representing the inventory item.</li>
+<li><strong>Example:</strong> &quot;itemImage&quot;: &quot;data:image/png;base64,iVBORw0KGgoAAAANS...&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>assignedEmployees</strong></p>
+<h4 id="costprice" tabindex="-1"><a class="header-anchor" href="#costprice"><span>costPrice</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> Array of ObjectIds (Optional)</li>
-<li><strong>Default:</strong> <code v-pre>[]</code></li>
-<li><strong>Description:</strong> A list of employee IDs assigned to this task.</li>
+<li><strong>Data Type:</strong> double</li>
+<li><strong>Reasoning:</strong> Cost price of the inventory item.</li>
+<li><strong>Example:</strong> &quot;costPrice&quot;: 15.99</li>
 </ul>
-</li>
-</ul>
-<h3 id="history" tabindex="-1"><a class="header-anchor" href="#history"><span>History</span></a></h3>
+<h4 id="currentstocklevel" tabindex="-1"><a class="header-anchor" href="#currentstocklevel"><span>currentStockLevel</span></a></h4>
 <ul>
-<li>
-<p><strong>event</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> A description of the event in the job's history.</li>
+<li><strong>Data Type:</strong> integer</li>
+<li><strong>Reasoning:</strong> Current stock level of the inventory item.</li>
+<li><strong>Example:</strong> &quot;currentStockLevel&quot;: 50</li>
 </ul>
-</li>
-<li>
-<p><strong>timestamp</strong></p>
+<h4 id="lowstockthreshold" tabindex="-1"><a class="header-anchor" href="#lowstockthreshold"><span>lowStockThreshold</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The timestamp when the event occurred.</li>
+<li><strong>Data Type:</strong> integer</li>
+<li><strong>Reasoning:</strong> Threshold to indicate low stock level.</li>
+<li><strong>Example:</strong> &quot;lowStockThreshold&quot;: 10</li>
 </ul>
-</li>
-</ul>
-<h3 id="comment" tabindex="-1"><a class="header-anchor" href="#comment"><span>Comment</span></a></h3>
+<h4 id="createdat-5" tabindex="-1"><a class="header-anchor" href="#createdat-5"><span>createdAt</span></a></h4>
 <ul>
-<li>
-<p><strong>_id</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> New <code v-pre>ObjectId()</code></li>
-<li><strong>Description:</strong> The unique ID of the comment.</li>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was created.</li>
+<li><strong>Example:</strong> &quot;createdAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>employeeId</strong></p>
+<h4 id="updatedat-5" tabindex="-1"><a class="header-anchor" href="#updatedat-5"><span>updatedAt</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The ID of the employee who made the comment.</li>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was updated.</li>
+<li><strong>Example:</strong> &quot;updatedAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
 </ul>
-</li>
-<li>
-<p><strong>comment</strong></p>
+<h4 id="deletedat-5" tabindex="-1"><a class="header-anchor" href="#deletedat-5"><span>deletedAt</span></a></h4>
 <ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The text of the comment.</li>
-</ul>
-</li>
-<li>
-<p><strong>edited</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Boolean</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> <code v-pre>false</code></li>
-<li><strong>Description:</strong> Whether the comment has been edited.</li>
-</ul>
-</li>
-<li>
-<p><strong>date</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date (Optional)</li>
-<li><strong>Default:</strong> Current date</li>
-<li><strong>Description:</strong> The date when the comment was made or last edited.</li>
-</ul>
-</li>
-</ul>
-<h2 id="inventory" tabindex="-1"><a class="header-anchor" href="#inventory"><span>Inventory</span></a></h2>
-<ul>
-<li>
-<p><strong>id</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The unique ID of the inventory item.</li>
-</ul>
-</li>
-<li>
-<p><strong>name</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The name of the inventory item.</li>
-</ul>
-</li>
-<li>
-<p><strong>description</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> A brief description of the inventory item.</li>
-</ul>
-</li>
-<li>
-<p><strong>costPrice</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Number</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The cost price of the inventory item.</li>
-</ul>
-</li>
-<li>
-<p><strong>currentStockLevel</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Number</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The current stock level of the inventory item.</li>
-</ul>
-</li>
-<li>
-<p><strong>reorderLevel</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Number</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The stock level at which the inventory item needs to be reordered.</li>
-</ul>
-</li>
-<li>
-<p><strong>companyId</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The ID of the company to which the inventory item belongs.</li>
-</ul>
-</li>
-<li>
-<p><strong>createdAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> Current date</li>
-<li><strong>Description:</strong> The date when the inventory item was created.</li>
-</ul>
-</li>
-<li>
-<p><strong>updatedAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date (Optional)</li>
-<li><strong>Description:</strong> The date when the inventory item was last updated.</li>
-</ul>
-</li>
-<li>
-<p><strong>deletedAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date (Optional)</li>
-<li><strong>Description:</strong> The date when the inventory item was deleted (soft delete).</li>
-</ul>
-</li>
-</ul>
-<h2 id="role-1" tabindex="-1"><a class="header-anchor" href="#role-1"><span>Role</span></a></h2>
-<ul>
-<li>
-<p><strong>id</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The unique ID of the role.</li>
-</ul>
-</li>
-<li>
-<p><strong>roleName</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The name of the role.</li>
-</ul>
-</li>
-<li>
-<p><strong>permissionSuite</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Array of Strings</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> ['view all jobs assigned to me', 'view all clients that are assigned to me', 'record inventory use']</li>
-<li><strong>Description:</strong> The set of permissions associated with the role.</li>
-</ul>
-</li>
-<li>
-<p><strong>companyId</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The ID of the company to which the role belongs.</li>
-</ul>
-</li>
-<li>
-<p><strong>createdAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> Current date</li>
-<li><strong>Description:</strong> The date when the role was created.</li>
-</ul>
-</li>
-<li>
-<p><strong>updatedAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date (Optional)</li>
-<li><strong>Description:</strong> The date when the role was last updated.</li>
-</ul>
-</li>
-<li>
-<p><strong>deletedAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date (Optional)</li>
-<li><strong>Description:</strong> The date when the role was deleted (soft delete).</li>
-</ul>
-</li>
-</ul>
-<h2 id="message" tabindex="-1"><a class="header-anchor" href="#message"><span>Message</span></a></h2>
-<h3 id="properties" tabindex="-1"><a class="header-anchor" href="#properties"><span>Properties</span></a></h3>
-<ul>
-<li>
-<p><strong>token</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String (Optional)</li>
-<li><strong>Default:</strong> ''</li>
-<li><strong>Description:</strong> A token associated with the message.</li>
-</ul>
-</li>
-<li>
-<p><strong>title</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The title of the message.</li>
-</ul>
-</li>
-<li>
-<p><strong>body</strong></p>
-<ul>
-<li><strong>Data Type:</strong> String</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The body content of the message.</li>
-</ul>
-</li>
-<li>
-<p><strong>data</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Any (Optional)</li>
-<li><strong>Description:</strong> Additional data associated with the message.</li>
-</ul>
-</li>
-</ul>
-<h2 id="notification" tabindex="-1"><a class="header-anchor" href="#notification"><span>Notification</span></a></h2>
-<ul>
-<li>
-<p><strong>senderId</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId (Optional)</li>
-<li><strong>Description:</strong> The ID of the sender. This can reference an <code v-pre>Employee</code> entity but is not required.</li>
-</ul>
-</li>
-<li>
-<p><strong>recipientId</strong></p>
-<ul>
-<li><strong>Data Type:</strong> ObjectId</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The ID of the recipient. This must reference an <code v-pre>Employee</code> entity.</li>
-</ul>
-</li>
-<li>
-<p><strong>message</strong></p>
-<ul>
-<li><strong>Data Type:</strong> <code v-pre>Message</code></li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Description:</strong> The message details, including title, body, token, and additional data.</li>
-</ul>
-</li>
-<li>
-<p><strong>isRead</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Boolean</li>
-<li><strong>Required:</strong> Yes</li>
-<li><strong>Default:</strong> false</li>
-<li><strong>Description:</strong> Indicates whether the notification has been read.</li>
-</ul>
-</li>
-<li>
-<p><strong>createdAt</strong></p>
-<ul>
-<li><strong>Data Type:</strong> Date</li>
-<li><strong>Default:</strong> Current date</li>
-<li><strong>Description:</strong> The date when the notification was created.</li>
-</ul>
-</li>
+<li><strong>Data Type:</strong> Date (in string format)</li>
+<li><strong>Reasoning:</strong> Timestamp of when the document was deleted.</li>
+<li><strong>Example:</strong> &quot;deletedAt&quot;: &quot;2024-06-01T10:00:00Z&quot;</li>
 </ul>
 </div></template>
 

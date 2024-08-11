@@ -1,8 +1,7 @@
-<template><div><h1 id="branching-strategy" tabindex="-1"><a class="header-anchor" href="#branching-strategy"><span>Branching strategy</span></a></h1>
+<template><div><h1 id="brancing-strategy" tabindex="-1"><a class="header-anchor" href="#brancing-strategy"><span>Brancing strategy</span></a></h1>
 <p><img src="/gitflow.png" alt="GitFlow"></p>
-<p>For this project, we are utilising the GitFlow branching strategy.
-Gitflow is a well-defined workflow that enhances collaboration, ensures a structured development process, and facilitates smooth release management.
-By following this strategy, we aim to maintain a stable codebase, manage features efficiently, and handle releases and hotfixes systematically.</p>
+<p>For this project we are utilising the gitFlow branching strategy.
+Gitflow is a well-defined workflow that enhances collaboration, ensures a structured development process, and facilitates smooth release management. By following this strategy, we aim to maintain a stable codebase, manage features efficiently, and handle releases and hotfixes systematically.</p>
 <h4 id="from-our-repo" tabindex="-1"><a class="header-anchor" href="#from-our-repo"><span>From our repo</span></a></h4>
 <p><img src="/branching.png" alt="Branching">
 <img src="/branches.png" alt="Branches"></p>
@@ -13,32 +12,32 @@ By following this strategy, we aim to maintain a stable codebase, manage feature
 <li>Stability: Must always be stable and deployable.</li>
 <li>Releases: Each merge into main represents a new release version, tagged accordingly.</li>
 </ul>
-<h3 id="develop" tabindex="-1"><a class="header-anchor" href="#develop"><span>Develop</span></a></h3>
+<h3 id="dev" tabindex="-1"><a class="header-anchor" href="#dev"><span>Dev</span></a></h3>
 <ul>
 <li>Purpose: Serves as the integration branch for feature development.</li>
 <li>Stability: Should remain stable with integrated features ready for the next release.</li>
 </ul>
-<h2 id="supporting-branches" tabindex="-1"><a class="header-anchor" href="#supporting-branches"><span>Supporting Branches</span></a></h2>
+<h2 id="suporting-branches" tabindex="-1"><a class="header-anchor" href="#suporting-branches"><span>Suporting Branches</span></a></h2>
 <h3 id="feature-branch" tabindex="-1"><a class="header-anchor" href="#feature-branch"><span>Feature branch</span></a></h3>
 <ul>
 <li>Purpose: Used to develop new features.</li>
-<li>Naming Convention: <code v-pre>feature/feature-name</code> (e.g., feature/user-authentication).</li>
-<li>Creation: Branch off from <code v-pre>develop</code>.</li>
-<li>Merge: Merged back into <code v-pre>develop</code> after completion and testing.</li>
+<li>Naming Convention: feature/feature-name (e.g., feature/user-authentication).</li>
+<li>Creation: Branch off from develop.</li>
+<li>Merge: Merged back into develop after completion and testing.</li>
 </ul>
 <h3 id="release-branch" tabindex="-1"><a class="header-anchor" href="#release-branch"><span>Release branch</span></a></h3>
 <ul>
 <li>Purpose: Used to prepare for a new production release, allowing for minor bug fixes and final tweaks.</li>
-<li>Naming Convention: <code v-pre>release/release-version</code> (e.g., release/1.0.0).</li>
-<li>Creation: Branch off from <code v-pre>develop</code> when the codebase is ready for a new release.
-Merge: Merged into <code v-pre>main</code> and <code v-pre>develop</code> after finalization.</li>
+<li>Naming Convention: release/release-version (e.g., release/1.0.0).</li>
+<li>Creation: Branch off from develop when the codebase is ready for a new release.
+Merge: Merged into main and develop after finalization</li>
 </ul>
 <h3 id="hotfix-branch" tabindex="-1"><a class="header-anchor" href="#hotfix-branch"><span>Hotfix branch</span></a></h3>
 <ul>
 <li>Purpose: Used to quickly address critical issues found in the production environment.</li>
-<li>Naming Convention: <code v-pre>hotfix/hotfix-name</code> (e.g., hotfix/security-patch).</li>
-<li>Creation: Branch off from <code v-pre>main</code>.</li>
-<li>Merge: Merged into <code v-pre>main</code> and <code v-pre>develop</code> after the fix is applied.</li>
+<li>Naming Convention: hotfix/hotfix-name (e.g., hotfix/security-patch).</li>
+<li>Creation: Branch off from main.</li>
+<li>Merge: Merged into main and develop after the fix is applied</li>
 </ul>
 <h2 id="workflow" tabindex="-1"><a class="header-anchor" href="#workflow"><span>Workflow</span></a></h2>
 <h3 id="feature-development" tabindex="-1"><a class="header-anchor" href="#feature-development"><span>Feature Development</span></a></h3>
@@ -46,7 +45,7 @@ Merge: Merged into <code v-pre>main</code> and <code v-pre>develop</code> after 
 <li>Creating a Feature Branch:</li>
 </ol>
 <ul>
-<li>Create a new branch from develop using the naming convention <code v-pre>feature/feature-name</code>.</li>
+<li>Create a new branch from develop using the naming convention feature/feature-name.</li>
 <li>Work on the feature, committing changes regularly.</li>
 </ul>
 <ol start="2">
@@ -63,8 +62,8 @@ Merge: Merged into <code v-pre>main</code> and <code v-pre>develop</code> after 
 <li>Creating a Release Branch:</li>
 </ol>
 <ul>
-<li>When develop has accumulated enough changes, create a release branch from <code v-pre>develop</code>.</li>
-<li>Name the branch <code v-pre>release/release-version</code>.</li>
+<li>When develop has accumulated enough changes, create a release branch from develop.</li>
+<li>Name the branch release/release-version.</li>
 </ul>
 <ol start="2">
 <li>Finalizing the Release:</li>
@@ -86,7 +85,7 @@ Merge: Merged into <code v-pre>main</code> and <code v-pre>develop</code> after 
 <li>Creating a Hotfix Branch:</li>
 </ol>
 <ul>
-<li>Create a hotfix branch from main using the naming convention <code v-pre>hotfix/hotfix-name</code>.</li>
+<li>Create a hotfix branch from main using the naming convention hotfix/hotfix-name.</li>
 <li>Implement the necessary fixes, committing changes regularly.</li>
 </ul>
 <ol start="2">
