@@ -133,13 +133,6 @@ export type Card = {
   status: string
 }
 
-export type Column = {
-  id: number
-  status: string
-  color: string
-  cards: JobCardDataFormat[]
-}
-
 export type JobTag = {
   _id: string
   label: string
@@ -316,3 +309,18 @@ export type Job = {
   createdAt: string
   updatedAt: string
 }
+
+export type Column = {
+  id: string
+  status: string
+  color: string
+  companyId: string
+  cards: JobCardDataFormat[]
+}
+
+// export type Column = {
+//   id: number
+//   status: string
+//   color: string
+//   cards: JobCardDataFormat[]
+// }

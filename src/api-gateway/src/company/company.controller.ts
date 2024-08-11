@@ -105,24 +105,18 @@ export class CompanyController {
   @ApiBody({ type: AddUserToCompanyDto })
   @ApiOkResponse({ type: BooleanResponseDto })
   @Post('/add')
-  async addEmployee(
-    @Body()
-    body: {
-      currentEmployeeId: Types.ObjectId;
-      addUserDto: AddUserToCompanyDto;
-    },
-  ) {
+  async addEmployee(@Body() addUserDto: AddUserToCompanyDto) {
     // const currentEmployee = await this.employeeService.findById(
     //   body.currentEmployeeId,
     // );
     // if (currentEmployee.role.permissionSuite.includes('add new employees')) {
     //TODO: Figure out if this endpoint needs role based access
-    const arr = [body.addUserDto.adminId, body.addUserDto.currentCompany];
-    if (body.addUserDto.roleId) arr.push(body.addUserDto.roleId);
+    const arr = [addUserDto.adminId, addUserDto.currentCompany];
+    if (addUserDto.roleId) arr.push(addUserDto.roleId);
     validateObjectIds(arr);
 
     try {
-      return { data: await this.companyService.addEmployee(body.addUserDto) };
+      return { data: await this.companyService.addEmployee(addUserDto) };
     } catch (Error) {
       throw new HttpException('Internal server error', HttpStatus.CONFLICT);
     }
