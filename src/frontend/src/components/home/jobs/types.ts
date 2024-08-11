@@ -157,13 +157,37 @@ export type JobStatuses = {
   __v: number
 }
 
+type Tag = {
+  _id: string
+  label: string
+  colour: string
+  companyId: string
+  __v: number
+}
+
+type Status = {
+  _id: string
+  status: string
+  colour: string
+  companyId: string
+  __v: number
+}
+
+type PriorityTag = {
+  _id: string
+  label: string
+  priorityLevel: number
+  colour: string
+  companyId: string
+  __v: number
+}
+
 export type JobCardDataFormat = {
   jobId: string
   heading: string
   jobDescription: string
   startDate: string
   endDate: string
-  status: string
   clientName: string
   street: string
   suburb: string
@@ -175,9 +199,9 @@ export type JobCardDataFormat = {
   inventoryUsed: string[]
   taskList: string[]
   comments: string[]
-  //tell hamza to add these new one here
-  priority: string
-  tags: string[]
+  tags: Tag[]
+  status: Status
+  priorityTag: PriorityTag
 }
 
 export type Job = {
