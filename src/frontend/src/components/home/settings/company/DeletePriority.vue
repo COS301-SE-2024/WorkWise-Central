@@ -90,17 +90,31 @@ export default defineComponent({
         }
       }
       const apiURL = await this.getRequestUrl()
-      axios.delete(`${apiURL}job/tags/p`, config)
-      setTimeout(() => {
-        this.isDeleting = false
-        this.deleteDialog = false
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Tag Deleted',
-          life: 3000
+      axios
+        .delete(`${apiURL}job/tags/p`, config)
+        .then(() => {
+          this.isDeleting = true
+          setTimeout(() => {
+            this.isDeleting = false
+            this.deleteDialog = false
+            this.$toast.add({
+              severity: 'success',
+              summary: 'Successful',
+              detail: 'Priority Deleted',
+              life: 3000
+            })
+          }, 1500)
+          window.location.reload()
         })
-      }, 1500)
+        .catch((err) => {
+          console.error(err)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'An error occurred',
+            life: 3000
+          })
+        })
     },
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)

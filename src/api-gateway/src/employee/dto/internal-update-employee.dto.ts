@@ -27,7 +27,7 @@ export class UpdateEmployeeUserInfoDto {
 export class InternalUpdateEmployeeDto {
   @IsMongoId()
   @IsOptional()
-  role?: roleObject;
+  role?: roleObject = new roleObject();
 
   @IsArray()
   @IsMongoId({ each: true })

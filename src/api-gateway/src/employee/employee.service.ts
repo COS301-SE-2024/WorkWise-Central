@@ -199,7 +199,7 @@ export class EmployeeService {
     console.log('In findById service');
     console.log('id: ', id);
     const data = await this.employeeRepository.findById(id);
-    console.log('data: ', data);
+    // console.log('data: ', data);
     return data;
   }
 
@@ -222,10 +222,13 @@ export class EmployeeService {
   }
 
   async update(employeeId: Types.ObjectId, currentEmployeeId: Types.ObjectId, updateEmployeeDto: UpdateEmployeeDto) {
+    console.log('In update service');
     const validation = await this.validateUpdateEmployee(employeeId, currentEmployeeId, updateEmployeeDto);
+    console.log('validation: ', validation);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
+    console.log('validation complete');
     //******Updating the structure*********/
     if (updateEmployeeDto.superiorId && updateEmployeeDto.subordinates) {
       //Case: the superior and subordinate is being updated
@@ -296,6 +299,7 @@ export class EmployeeService {
         await this.employeeRepository.updateSuperior(subordinateId, employeeId);
       });
     }
+    console.log('structure updated');
 
     //Altering the dto to update the role if roleId is given
     const dto = new InternalUpdateEmployeeDto();
@@ -304,12 +308,14 @@ export class EmployeeService {
     dto.subordinateTeams = updateEmployeeDto.subordinateTeams;
     dto.currentJobAssignments = updateEmployeeDto.currentJobAssignments;
     if (updateEmployeeDto.roleId) {
+      console.log('in if. updateEmployeeDto.roleId: ', updateEmployeeDto.roleId);
       dto.role.roleId = updateEmployeeDto.roleId;
+      console.log('checkpoint 1');
       const role = await this.roleService.findById(dto.role.roleId);
+      console.log('role: ', role);
       dto.role.permissionSuite = role.permissionSuite;
       dto.role.roleName = role.roleName;
     }
-
     const previousObject = this.employeeRepository.update(employeeId, dto);
     return previousObject;
   }

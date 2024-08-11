@@ -123,7 +123,7 @@ export default defineComponent({
   },
   data: () => ({
     isdarkmode: false,
-    localUrl: 'http://localhost:3000',
+    localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     currentCompanyID: localStorage.getItem('currentCompany'),
     valid: false,
@@ -300,9 +300,14 @@ export default defineComponent({
         }
       }
       const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      const data = {
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        updateCompanyDto: this.company
+      }
       const company_id = localStorage.getItem('currentCompany')
       await axios
-        .patch(`http://localhost:3000/company/update/${company_id}`, this.company, config)
+        .patch(`${apiURL}company/update/${company_id}`, data, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({

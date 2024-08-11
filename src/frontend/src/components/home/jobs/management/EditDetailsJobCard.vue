@@ -1,5 +1,5 @@
 <template>
-  <v-card flat class="text-center elevation-0" :max-height="750">
+  <v-card flat class="text-center elevation-0">
     <v-card-text>
       <v-form ref="jobForm">
         <v-label>Job Name</v-label>
@@ -21,6 +21,16 @@
           rounded="l"
           required
         ></v-textarea>
+        <!--        <v-row>-->
+        <!--          <v-col cols="5"> </v-col>-->
+        <!--          <v-label>Description</v-label>-->
+        <!--          <Editor-->
+        <!--            v-model="job.details.description"-->
+        <!--            editorStyle="height: 300px;"-->
+        <!--            contentStyle="color: #f5f5f5;"-->
+        <!--          />-->
+
+        <!--        </v-row>-->
         <v-row>
           <v-col cols="6">
             <v-label>Street</v-label>
@@ -116,9 +126,11 @@ import { defineProps, ref } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import Editor from 'primevue/editor'
 
 const toast = useToast()
 
+const cheese = ref('')
 interface Address {
   street: string
   province: string

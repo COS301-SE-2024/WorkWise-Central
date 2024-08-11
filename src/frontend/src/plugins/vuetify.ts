@@ -159,7 +159,8 @@ const vuetify = createVuetify({
           cardColor: '#F1F2F4',
           elementTextColor: '#4C9FC3', // most important color for text
           headingTextColor: '#091E42',
-          n_elementTextColor: '#8C9BAB', // most nonImportant color for text
+          n_elementTextColor: '#8C9BAB',
+          chip:'#FAF9F6', // most nonImportant color for text
           highlighter: '#DEE4EA',
           tableRowColor: '#8C9BAB',
           firstPlace: '#E2B203',

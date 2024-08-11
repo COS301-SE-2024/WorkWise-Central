@@ -74,10 +74,11 @@ export default defineComponent({
         this.$toast.add({
           severity: 'success',
           summary: 'Successful',
-          detail: 'Tag Deleted',
+          detail: 'Role Deleted',
           life: 3000
         })
       }, 1500)
+      window.location.reload()
     }
   }
 })

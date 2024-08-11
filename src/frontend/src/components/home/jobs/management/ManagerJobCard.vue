@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="managerJobCard" :max-height="700" :max-width="1000" scrollable>
+  <v-dialog v-model="managerJobCard" :max-height="500" :max-width="1000" scrollable>
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -29,7 +29,7 @@
           </v-col>
           <v-col xs="12" sm="12" md="4">
             <v-col>
-              <ChangeClient />
+              <ChangeClient :jobID="props.passedInJob?._id" />
             </v-col>
             <v-col>
               <SelectMembers />
@@ -45,7 +45,7 @@
       </v-card-text>
       <v-card-actions>
         <v-col class="d-flex flex-column">
-          <v-btn class="mb-4" @click="cancelJob" color="error">Cancel</v-btn>
+          <v-btn class="mb-4" @click="cancelJob" color="error">Close</v-btn>
         </v-col>
       </v-card-actions>
     </v-card>
@@ -63,9 +63,7 @@ import ChangeDueDate from './UpdateDateDialog.vue'
 
 const managerJobCard = ref(false) // Dialog state
 
-const props = defineProps({
-  passedInJob: Object
-})
+const props = defineProps<{ passedInJob: any }>()
 
 const cancelJob = () => {
   managerJobCard.value = false

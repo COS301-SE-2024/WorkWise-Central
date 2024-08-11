@@ -32,8 +32,8 @@
           />
 
           <v-label>Tag Color</v-label>
-          <div><ColorPicker inputId="cp-hex" v-model="tag.color" inline /></div>
-          <span>Hex Code: {{ tag.color }}</span>
+          <div><ColorPicker inputId="cp-hex" v-model="tag.colour" inline /></div>
+          <span>Hex Code: {{ tag.colour }}</span>
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -57,7 +57,7 @@ import ColorPicker from 'primevue/colorpicker'
 
 interface Tag {
   label: string
-  color: string
+  colour: string
 }
 export default defineComponent({
   data() {
@@ -66,7 +66,7 @@ export default defineComponent({
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       tag: {
         label: '',
-        color: '',
+        colour: '',
         companyId: localStorage.getItem('currentCompany')
       } as Tag,
       localUrl: 'http://localhost:3000/',
@@ -82,6 +82,7 @@ export default defineComponent({
   },
   methods: {
     async createTag() {
+      console.log(this.tag)
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       await axios
@@ -94,7 +95,6 @@ export default defineComponent({
             detail: 'Tag Created',
             life: 3000
           })
-
           window.location.reload()
         })
         .catch((error) => {

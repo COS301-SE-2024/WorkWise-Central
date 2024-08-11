@@ -109,7 +109,7 @@ export class EmployeeRepository {
         ],
       })
       .lean();
-    console.log('result from repository: ', result);
+    // console.log('result from repository: ', result);
     return result;
   }
 
@@ -182,6 +182,7 @@ export class EmployeeRepository {
   }
 
   async update(id: Types.ObjectId, updateEmployeeDto: InternalUpdateEmployeeDto) {
+    id = new Types.ObjectId(id);
     const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
       .findOneAndUpdate(
         {
@@ -195,7 +196,7 @@ export class EmployeeRepository {
         { $set: { ...updateEmployeeDto }, updatedAt: new Date() },
       )
       .lean();
-
+    console.log('Repository response: ', previousObject);
     return previousObject;
   }
 

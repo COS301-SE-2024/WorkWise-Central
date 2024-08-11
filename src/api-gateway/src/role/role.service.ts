@@ -14,12 +14,12 @@ export class RoleService {
   private permissionsArray: string[] = [];
 
   constructor(
-    @Inject(forwardRef(() => EmployeeService))
-    private employeeService: EmployeeService,
-    @Inject(forwardRef(() => CompanyService))
-    private companyService: CompanyService,
-    @Inject(forwardRef(() => RoleRepository))
-    private roleRepository: RoleRepository,
+      @Inject(forwardRef(() => EmployeeService))
+      private employeeService: EmployeeService,
+      @Inject(forwardRef(() => CompanyService))
+      private companyService: CompanyService,
+      @Inject(forwardRef(() => RoleRepository))
+      private roleRepository: RoleRepository,
   ) {
     this.permissionsArray.push('view all employees');
     this.permissionsArray.push('view employees under me');
@@ -133,6 +133,15 @@ export class RoleService {
       throw new Error(validation.message);
     }
 
+    const newRole = new Role(createRoleDto);
+    newRole.roleName = createRoleDto.roleName;
+    newRole.companyId = createRoleDto.companyId;
+    newRole.permissionSuite = createRoleDto.permissionSuite;
+
+    return await this.roleRepository.save(newRole);
+  }
+
+  async internalCreate(createRoleDto: CreateRoleDto) {
     const newRole = new Role(createRoleDto);
     newRole.roleName = createRoleDto.roleName;
     newRole.companyId = createRoleDto.companyId;
@@ -287,7 +296,7 @@ export class RoleService {
     ownerRoleDto.roleName = 'Owner';
     ownerRoleDto.permissionSuite = this.permissionsArray; //Full permissions
 
-    await this.create(ownerRoleDto);
+    await this.internalCreate(ownerRoleDto);
 
     console.log('Owner role created');
 
@@ -315,9 +324,8 @@ export class RoleService {
     adminRoleDto.permissionSuite.push('company settings');
     console.log('checkpoint 4');
 
-    let newRole = await this.create(adminRoleDto);
+    await this.internalCreate(adminRoleDto);
     console.log('checkpoint 5');
-    await this.roleRepository.save(newRole);
 
     console.log('Admin role created');
 
@@ -335,8 +343,7 @@ export class RoleService {
     foremanRoleDto.permissionSuite.push('add a new clients');
     foremanRoleDto.permissionSuite.push('view all inventory');
     foremanRoleDto.permissionSuite.push('record job details');
-    newRole = await this.create(foremanRoleDto);
-    await this.roleRepository.save(newRole);
+    await this.internalCreate(foremanRoleDto);
 
     console.log('Foreman role created');
     // Team Leader
@@ -351,8 +358,7 @@ export class RoleService {
     teamRoleDto.permissionSuite.push('view clients that are assigned to me');
     teamRoleDto.permissionSuite.push('record job details');
 
-    newRole = await this.create(teamRoleDto);
-    await this.roleRepository.save(newRole);
+    await this.internalCreate(teamRoleDto);
 
     console.log('Team leader role created');
     // Inventory manager
@@ -366,8 +372,7 @@ export class RoleService {
     inventoryRoleDto.permissionSuite.push('add new inventory item');
     inventoryRoleDto.permissionSuite.push('record inventory use');
 
-    newRole = await this.create(inventoryRoleDto);
-    await this.roleRepository.save(newRole);
+    await this.internalCreate(inventoryRoleDto);
 
     console.log('Inventory manager role created');
     // Worker
@@ -378,8 +383,7 @@ export class RoleService {
     workerRoleDto.permissionSuite.push('view clients that are assigned to me');
     workerRoleDto.permissionSuite.push('record job details');
 
-    newRole = await this.create(workerRoleDto);
-    await this.roleRepository.save(newRole);
+    await this.internalCreate(workerRoleDto);
 
     console.log('Worker role created');
   }

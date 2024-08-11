@@ -140,7 +140,7 @@ export class Task {
     required: true,
     default: new Types.ObjectId(),
   })
-  _id: Types.ObjectId = new Types.ObjectId();
+  _id: Types.ObjectId = new Types.ObjectId()
 
   @ApiProperty()
   @Prop({ type: String, required: false })
