@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue'
+import {defineEmits } from 'vue'
 import { defineProps } from 'vue'
 import EditDetails from './EditDetailsJobCard.vue'
 import ChangeClient from './ChangeClientDialog.vue'
