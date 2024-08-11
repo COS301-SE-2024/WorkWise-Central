@@ -107,9 +107,14 @@
             rows="3"
             class="mb-4"
           ></v-textarea>
-          <v-btn color="success" @click="addItem" prepend-icon="mdi-plus">Add task</v-btn>
+          <v-btn color="success" @click="addItem" prepend-icon="mdi-plus">Add Item</v-btn>
         </v-col>
       </v-row>
+      <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
+        <v-row class="justify-center">
+          <v-btn color="success" @click="putTask(index)" prepend-icon="fa: fa-solid fa-save">Save Task</v-btn>
+        </v-row>
+      </v-defaults-provider>
     </template>
   </v-container>
 </template>
@@ -117,7 +122,7 @@
 
 <script setup lang="ts">
 import { ref, computed, defineProps, onMounted } from 'vue'
-
+import axios from 'axios'
 // Define props and interfaces
 const props = defineProps<{ jobTaskList: TaskList[]; id: string }>()
 // API URLs
@@ -203,13 +208,27 @@ const saveItem = (index: number) => {
   }
 }
 
-const putTask = async (index) => {
+const putTask = async (index: number) => {
   const apiUrl = getRequestUrl()
+  const payload = {
+    employeeId: localStorage.getItem('employeeId') || '',
+    jobId: props.id,
+    title: taskList.value[0].title
+  }
   try {
-
+    console.log('Payload', payload)
+    const response = await axios.put(`${apiUrl}job/task`, payload, config)
+    consoloe.log('Task update successfully', response.data)
+    if (response.status > 199 && response.status < 300) {
+      console.log('put task')
+    }
   } catch (error) {
     console.log(error)
   }
+}
+
+const saveTask = async (index: number) => {
+
 }
 
 onMounted(() => {
