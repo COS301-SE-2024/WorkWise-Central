@@ -96,7 +96,7 @@
                     </template>
 
                     <template v-slot:[`item.status`]="{ item }">
-                      <v-chip :color="getStatusColor(item.status)">
+                      <v-chip :color="getStatusColor(item.status.status)">
                         <v-icon>mdi-progress-clock</v-icon>{{ item.status.status }}
                       </v-chip>
                     </template>
@@ -231,7 +231,13 @@ interface Job {
       preferredLanguage: string
     }
   }
-
+  status : {
+    status: string
+    colour: string
+    companyId: string
+    _v: number
+    _id: string
+  }
   assignedBy: {
     roleId: string
     superiorId?: string
@@ -251,7 +257,6 @@ interface Job {
     employeeIds?: string[]
     teamIds?: string[]
   }
-  status: string
   tags?: string[]
   priorityTag?: string
   attachments: string[]
