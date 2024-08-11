@@ -412,13 +412,14 @@ export default {
       add_column_dialog: false,
       delete_column_dialog: false,
       edit_column_details_dialog: false,
-      columns: [
-        { id: 0, status: 'No Status', color: 'purple-accent-3', cards: [] },
-        { id: 1, status: 'Todo', color: '#FF073A', cards: [] },
-        { id: 2, status: 'In Progress', color: '#39FF14', cards: [] },
-        { id: 3, status: 'Awaiting review', color: '#0FF0FC', cards: [] },
-        { id: 4, status: 'Done', color: '#FFFF33', cards: [] }
-      ] as Column[],
+      // columns: [
+      //   { id: 0, status: 'No Status', color: 'purple-accent-3', cards: [] },
+      //   { id: 1, status: 'Todo', color: '#FF073A', cards: [] },
+      //   { id: 2, status: 'In Progress', color: '#39FF14', cards: [] },
+      //   { id: 3, status: 'Awaiting review', color: '#0FF0FC', cards: [] },
+      //   { id: 4, status: 'Done', color: '#FFFF33', cards: [] }
+      // ] as Column[],
+      columns: [] as Column[],
       new_column_name: '',
       error_message: '',
       column_color: '',
@@ -628,16 +629,16 @@ export default {
     }
   },
   methods: {
-    columnDelete(col: Column) {
-      for (let i = 0; i < col.cards.length; i++) {
-        this.columns[0].cards.push(col.cards[i])
-        col.cards[i].status = this.columns[0].status
-        console.log(col.cards[i].status)
-      }
-      this.N_M_Sort(this.columns[0].cards, this.order_of_sorting_in_columns)
-      this.columns.splice(this.columns.indexOf(col), 1)
-      this.delete_column_dialog = false
-    },
+    // columnDelete(col: Column) {
+    //   for (let i = 0; i < col.cards.length; i++) {
+    //     this.columns[0].cards.push(col.cards[i])
+    //     col.cards[i].status = this.columns[0].status
+    //     console.log(col.cards[i].status)
+    //   }
+    //   this.N_M_Sort(this.columns[0].cards, this.order_of_sorting_in_columns)
+    //   this.columns.splice(this.columns.indexOf(col), 1)
+    //   this.delete_column_dialog = false
+    // },
     columnDeleteAllJobs(col: Column) {
       //add a modal that will ask the user if they are sure they want to delete all the cards in a job column
       col.cards.splice(0, col.cards.length)
@@ -678,14 +679,14 @@ export default {
         this.error_message = 'A color should be selected'
         return
       }
-      const column: Column = {
-        id: this.columns.length + 1,
-        status: this.new_column_name,
-        color: this.column_color,
-        cards: []
-      }
-      this.add_column_dialog = !this.add_column_dialog
-      this.columns.push(column)
+      // const column: Column = {
+      //   id: this.columns.length + 1,
+      //   status: this.new_column_name,
+      //   color: this.column_color,
+      //   cards: []
+      // }
+      // this.add_column_dialog = !this.add_column_dialog
+      // this.columns.push(column)
 
       this.new_column_name = ''
       this.column_color = ''
@@ -705,19 +706,54 @@ export default {
       console.log('edit button clicked')
       this.JobCardVisibility = true
     },
-    loading(cards: JobCardDataFormat[]) {
-      for (let i = 0; i < cards.length; i++) {
-        this.columns.forEach((value: Column) => {
-          if (value.status === cards[i].status) {
-            console.log('hit')
-            this.loadCardsInRespectiveColumns(cards[i], value)
-          }
-        })
+    // loading(cards: JobCardDataFormat[]) {
+    //   for (let i = 0; i < cards.length; i++) {
+    //     this.columns.forEach((value: Column) => {
+    //       if (value.status === cards[i].status) {
+    //         console.log('hit')
+    //         this.loadCardsInRespectiveColumns(cards[i], value)
+    //       }
+    //     })
+    //   }
+    //   this.columns.forEach((col: Column) => {
+    //     this.N_M_Sort(col.cards, this.order_of_sorting_in_columns)
+    //   })
+    //   console.log(this.columns[0].cards.length)
+    // },
+    async loadColumns() {
+      console.log('load Column request')
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
       }
-      this.columns.forEach((col: Column) => {
-        this.N_M_Sort(col.cards, this.order_of_sorting_in_columns)
-      })
-      console.log(this.columns[0].cards.length)
+      const apiURL = await this.getRequestUrl()
+      try {
+        const loaded_tags_response = await axios.get(
+          apiURL + `job/status/all/${localStorage['currentCompany']}`,
+          config
+        )
+        console.log(loaded_tags_response)
+        this.columns.push({
+          id: '0',
+          status: 'No Status',
+          color: 'purple-accent-3',
+          cards: [],
+          companyId: localStorage['currentCompany']
+        })
+        loaded_tags_response.data.data.forEach((status: any) => {
+          this.columns.push({
+            id: status._id,
+            status: status.status,
+            color: status.colour,
+            companyId: status.companyId,
+            cards: [] as JobCardDataFormat[]
+          })
+        })
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
     },
     async loadJobs() {
       console.log('load jobs request')
@@ -837,8 +873,9 @@ export default {
     }
   },
   mounted() {
-    this.loading(this.starting_cards)
-    this.loadJobs()
+    // this.loading(this.starting_cards)
+    this.loadColumns()
+    // this.loadJobs()
   }
 }
 </script>
