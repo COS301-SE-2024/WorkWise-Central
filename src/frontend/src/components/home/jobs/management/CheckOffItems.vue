@@ -3,7 +3,7 @@
     <div>{{ progress.toFixed(0) }}%</div>
     <v-progress-linear :model-value="progress" color="primary" :height="10"></v-progress-linear>
     <v-col></v-col>
-    <v-row v-for="(item, index) in taskList.items" :key="index" class="d-flex align-center mb-3">
+    <v-row v-for="(item, index) in taskList[0].items" :key="index" class="d-flex align-center mb-3">
       <v-col md="10">
         <v-checkbox
           v-model="item.done"
@@ -16,44 +16,11 @@
       </v-col>
       <v-col md="2" cols="2">
         <v-row>
-          <v-dialog
-            v-model="item.dialog"
-            max-width="300px"
-            location="bottom"
-            location-strategy="connected"
-            opacity="0"
-            origin="top center"
-          >
-            <template v-slot:activator="{ props: activatorProps }">
-              <v-btn @click="openCheckActionsDialog(index)" v-bind="activatorProps">
-                <v-icon right>
-                  {{ 'fa: fa-solid fa-ellipsis-h' }}
-                </v-icon>
-              </v-btn>
-            </template>
-
-            <template v-slot:default="{ isActive }">
-              <v-card>
-                <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-                  Item actions
-                </v-card-title>
-                <v-card-actions class="d-flex flex-column">
-                  <v-btn color="success">
-                    <v-icon>
-                      {{ 'fa: fa-solid fa-th' }}
-                    </v-icon>
-                    Convert to card
-                  </v-btn>
-                  <v-btn color="error" @click="deleteItem(index)">
-                    <v-icon>
-                      {{ 'fa: fa-solid fa-trash' }}
-                    </v-icon>
-                    Delete
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </template>
-          </v-dialog>
+          <v-btn @click="openCheckActionsDialog(index)">
+            <v-icon right>
+              {{ 'fa: fa-solid fa-ellipsis-h' }}
+            </v-icon>
+          </v-btn>
         </v-row>
       </v-col>
     </v-row>
@@ -71,21 +38,17 @@
     <v-btn color="success" @click="addItem" prepend-icon="mdi-plus">Add task</v-btn>
   </v-container>
 </template>
-
-
 <script setup lang="ts">
 import { ref, computed, defineProps } from 'vue'
 
-// Props
+// Define props and interfaces
 const props = defineProps<{ jobTaskList: TaskList[]; id: string }>()
 
-
-// Define the type for a TaskItem and TaskList
 interface TaskItem {
   description: string;
-  assignedEmployees: string[]; // Array of ObjectIds as strings
-  dueDate: string; // Date in string format (ISO 8601)
-  done: boolean; // Completion status
+  assignedEmployees: string[];
+  dueDate: string;
+  done: boolean;
 }
 
 interface TaskList {
@@ -94,47 +57,54 @@ interface TaskList {
 }
 
 // Initialize the task list
-const taskList = ref<TaskList>({
-  title: 'My Task List',
-  items: []
-})
+const taskList = ref<TaskList[]>([
+  {
+    title: 'My Task List',
+    items: []
+  }
+])
 
-const newItemText = ref<string>('') // Define the type for newItemText
+const newItemText = ref<string>('')
 
+// Compute the progress based on tasks
 const progress = computed(() => {
-  const totalTasks = taskList.value.items.length
-  const completedTasks = taskList.value.items.filter((item) => item.done).length
+  const firstTaskList = taskList.value[0]
+  const totalTasks = firstTaskList.items.length
+  const completedTasks = firstTaskList.items.filter((item) => item.done).length
   return totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100
 })
 
-// Define the parameter type as a number (index)
+// Handle actions without the dialog property
 const openCheckActionsDialog = (index: number) => {
-  taskList.value.items[index].dialog = true
+  // Handle the click without relying on the 'dialog' property
 }
 
 function addItem() {
   if (newItemText.value.trim() !== '') {
-    taskList.value.items.push({
+    taskList.value[0].items.push({
       description: newItemText.value,
       assignedEmployees: [],
       dueDate: new Date().toISOString(),
-      done: false,
-      dialog: false // Temporarily adding a `dialog` property to maintain existing structure
-    } as TaskItem & { dialog: boolean }) // Temporary type assertion to include `dialog`
+      done: false
+    })
     newItemText.value = ''
   }
 }
 
-// Define the parameter type as a number (index)
 function deleteItem(index: number) {
-  taskList.value.items.splice(index, 1)
+  taskList.value[0].items.splice(index, 1)
+}
+
+const saveItem = (index: number) => {
+  if (taskList.value[0].items.length > 0) {
+    // Save the item to the database or handle the save logic
+  }
 }
 </script>
-
-
 
 <style scoped>
 .strikethrough {
   text-decoration: line-through;
 }
 </style>
+

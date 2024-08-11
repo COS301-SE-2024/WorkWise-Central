@@ -51,6 +51,7 @@
 import { defineProps, ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
+import { v4 as uuidv4 } from 'uuid'
 
 const toast = useToast()
 
@@ -195,12 +196,14 @@ const addComment = async () => {
   }
 
   const apiUrl = await getRequestUrl()
+  const newId = uuidv4(); // Generate a unique ID
   const updatedComments = [
     ...comments.value,
     {
       text: newComment.value,
       employeeId: localStorage.getItem('employeeId') || '',
-      date: new Date().toISOString()
+      date: new Date().toISOString(),
+      _id: newId // Assign the generated ID
     }
   ]
   const addedComment = ref<{employeeId: string; jobId: string; newComment: string}>({
@@ -208,11 +211,10 @@ const addComment = async () => {
     jobId: props.id,
     newComment: newComment.value
   })
-  console.log('Added comment', addedComment.value)
-  console.log('All comments', props.jobComments)
 
   try {
-    await axios.put(`${apiUrl}job/comment`, addedComment.value, config)
+    const response = await axios.put(`${apiUrl}job/comment`, addedComment.value, config)
+    // You can update the _id here if the server returns it
     comments.value = updatedComments
     newComment.value = ''
     toast.add({
@@ -245,12 +247,10 @@ const deleteComment = async (index: number) => {
   const updatedComments = comments.value.filter((_, i) => i !== index)
 
   try {
-    console.log('Comment body', commentBody)
     const response = await axios.delete(`${apiUrl}job/comment`,{
       data: commentBody.value,
       headers: config.headers
     })
-    console.log('Delete response', response.data)
     comments.value = updatedComments
     toast.add({
       severity: 'success',
@@ -260,12 +260,6 @@ const deleteComment = async (index: number) => {
     })
   } catch (error) {
       console.error('Error deleting comment', error)
-    //   toast.add({
-    //     severity: 'error',
-    //     summary: 'Error',
-    //     detail: 'An error occurred while deleting the comment',
-    //     life: 3000
-    //   })
     }
 }
 
