@@ -83,9 +83,12 @@
                           ></v-select>
                         </v-card-text>
                         <v-card-actions class="d-flex flex-column">
-                          <v-spacer></v-spacer>
-                          <v-btn color="success" @click="assignDialog = false">Save</v-btn>
-                          <v-btn color="error" @click="assignDialog = false">Cancel</v-btn>
+                          <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
+                            <v-btn color="success" @click="getEmployees()" prepend-icon="fa: fa-solid fa-save">Save</v-btn>
+                          </v-defaults-provider>
+                          <v-defaults-provider :defaults="{ VIcon: { color: 'error' } }">
+                            <v-btn color="error" @click="assignDialog = false" prepend-icon="fa: fa-solid fa-trash">Cancel</v-btn>
+                          </v-defaults-provider>
                         </v-card-actions>
                       </v-card>
                     </v-dialog>
@@ -239,7 +242,13 @@ const saveItem = (index: number) => {
 }
 
 const getEmployees = async () => {
-
+  const apiUrl = await getRequestUrl()
+  try {
+    const response = await axios.get(`${apiUrl}/employee/all/${localStorage.getItem('employeeId')}`, config)
+    console.log(response)
+  } catch(error) {
+    console.log(error)
+  }
 }
 
 const putTask = async (index: number) => {
