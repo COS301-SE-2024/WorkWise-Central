@@ -10,7 +10,7 @@ import {
   //IsPhoneNumber,
   IsString,
   MaxLength,
-  MinLength,
+  //MinLength,
   Validate,
   ValidateNested,
 } from 'class-validator';
