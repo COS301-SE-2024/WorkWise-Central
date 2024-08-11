@@ -1,16 +1,4 @@
 <template>
-  <v-dialog v-model="viewJobDialog" :min-height="800" :max-width="1000">
-    <template v-slot:activator="{ props: activatorProps }">
-      <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
-        <v-btn
-          text="View"
-          prepend-icon="fa:fa-solid fa-eye"
-          color="success"
-          v-bind="activatorProps"
-          @click="viewJob"
-        ></v-btn>
-      </v-defaults-provider>
-    </template>
     <v-card elevation="14" rounded="md" :style="{ backgroundColor: cardBackgroundColor }">
       <v-img
         src="https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U="
@@ -266,14 +254,13 @@
         </v-row>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="error" @click="closeView">Close</v-btn>
+        <v-btn color="error" @click="closeView" width="100%">Close</v-btn>
       </v-card-actions>
     </v-card>
-  </v-dialog>
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, type Ref } from 'vue'
+import { defineProps, ref, type Ref, defineEmits } from 'vue'
 import AddComment from './AddComments.vue'
 // import JobNotes from './JobNotes.vue'
 import CheckOffItems from './CheckOffItems.vue'
@@ -282,10 +269,7 @@ import JobTags from './JobTags.vue'
 import JobHistory from './JobHistory.vue'
 
 const props = defineProps<{ passedInJob: any }>()
-
-const viewJob = () => {
-  console.log('click click')
-}
+const emits = defineEmits(['close'])
 
 const commentsSection = ref<HTMLElement | null>(null)
 const notesSection = ref<HTMLElement | null>(null)
@@ -345,8 +329,7 @@ const getStatusColor = (status: string): string => {
 }
 
 const closeView = () => {
-  console.log('Passed in job', props.passedInJob)
-  viewJobDialog.value = false
+  emits('close')
 }
 
 const cardBackgroundColor = ref('')
