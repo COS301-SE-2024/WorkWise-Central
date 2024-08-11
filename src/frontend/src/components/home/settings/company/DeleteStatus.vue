@@ -96,6 +96,7 @@ export default defineComponent({
             detail: 'Status Deleted',
             life: 3000
           })
+          window.location.reload()
         }
       } catch (error) {
         console.error(error)

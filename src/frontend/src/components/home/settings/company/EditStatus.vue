@@ -11,6 +11,9 @@
           :row-props="getRowProps"
           :header-props="{ class: 'bg-secondary h5 ' }"
         >
+        <template v-slot:[`item.colour`]="{ item }">
+            <v-chip :color="item.colour" >{{ item.colour }}</v-chip>
+          </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu>
               <template v-slot:activator="{ props }">
@@ -78,6 +81,10 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import DeleteStatus from './DeleteStatus.vue'
+interface Status {
+  status: string
+  colour: string
+}
 export default defineComponent({
   data: () => ({
     headers: [
@@ -94,7 +101,7 @@ export default defineComponent({
         key: 'actions'
       }
     ],
-    items: [],
+    items: [] as any[],
     dialog: false,
     selectedItem: {
       _id: '',

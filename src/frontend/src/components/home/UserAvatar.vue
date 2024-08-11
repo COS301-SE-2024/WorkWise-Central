@@ -30,6 +30,10 @@
               <i class="fas fa-building"></i> Manage Companies
             </v-btn>
           </router-link>
+          <v-divider class="my-3"></v-divider>
+          <router-link to="/company-invites" class="text-decoration-none">
+            <v-btn variant="text" width="100%"> <i class="fas fa-envelope"></i> Invites </v-btn>
+          </router-link>
 
           <v-divider class="my-3"></v-divider>
 

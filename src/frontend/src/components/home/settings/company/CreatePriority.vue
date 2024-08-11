@@ -38,8 +38,8 @@
             type="number"
           ></v-text-field>
           <v-label>Priority Color</v-label>
-          <div><ColorPicker inputId="cp-hex" v-model="priority.color" inline /></div>
-          <span>Hex Code: {{ priority.color }}</span>
+          <div><ColorPicker inputId="cp-hex" v-model="priority.colour" inline /></div>
+          <span>Hex Code: {{ priority.colour }}</span>
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -64,7 +64,7 @@ import ColorPicker from 'primevue/colorpicker'
 
 interface Priority {
   label: string
-  color: string
+  colour: string
 }
 export default defineComponent({
   data() {
@@ -73,7 +73,7 @@ export default defineComponent({
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       priority: {
         label: '',
-        color: '',
+        colour: '',
         priorityLevel: 0,
         companyId: localStorage.getItem('currentCompany')
       },
@@ -107,6 +107,7 @@ export default defineComponent({
             life: 3000
           })
           this.dialog = false
+          window.location.reload()
         })
         .catch((err) => {
           console.error(err)
