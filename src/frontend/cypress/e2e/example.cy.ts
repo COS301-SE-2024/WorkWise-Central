@@ -1,35 +1,42 @@
 // https://on.cypress.io/api
 
-describe('My First Test', () => {
-  it('visits the app root url and checks if it renders correctly', () => {
-    // Visit the root URL
-    cy.visit('')
-  })
-})
-
-describe('My Second Test', () => {
+describe('Calendar and dashboard test', () => {
   it('visits the app root url and checks if it renders correctly', () => {
     // Visit the root URL
     cy.visit('/dashboard')
   })
 })
 
-describe('My Third Test', () => {
-  it('visits the app root url and checks if it renders correctly', () => {
+describe('Stat view checker', () => {
+  it("'visits the app root url and checks if it render and checks the right values", () => {
+    // Visit the root URL
+    cy.visit('statisticView')
+  })
+})
+
+describe('Clients management check  ', () => {
+  it("'visits the app root url and checks if it render and checks the right values", () => {
     // Visit the root URL
     cy.visit('/client-desk-view')
   })
 })
 
-describe('My Fourth Test', () => {
-  it('visits the app root url and checks if it renders correctly', () => {
+describe('Clients Center  ', () => {
+  it('visits the app root url and checks if it render and checks the right values', () => {
+    // Visit the root URL
+    cy.visit('/client-desk-view')
+  })
+})
+
+describe('Employeees management checking', () => {
+  it('visits the app root url and checks if it render and checks the right values', () => {
     // Visit the root URL
     cy.visit('/manager-employees')
   })
 })
 
-describe('My Fifth Test', () => {
-  it('visits the app root url and checks if it renders correctly', () => {
+describe('Job Assignment view check', () => {
+  it("'visits the app root url and checks if it render and checks the right values", () => {
     // Visit the root URL
     cy.visit('/jobAssignmentView')
   })
@@ -73,6 +80,6 @@ describe('My Tenth Test', () => {
 describe('My Eleventh Test', () => {
   it('visits the app root url and checks if it renders correctly', () => {
     // Visit the root URL
-    cy.visit('/kanban')
+    cy.visit('/backlog')
   })
 })
