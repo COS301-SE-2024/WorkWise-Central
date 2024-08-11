@@ -16,7 +16,7 @@ import {
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { Company } from '../entities/company.entity';
-import { RegistrationNumber } from '../../utils/Custom Validators/RegistrationNumber';
+import { RegistrationNumber, VatNumber } from '../../utils/Custom Validators/RegistrationNumber';
 import { Base64ContentIsImage } from '../../utils/Custom Validators/Base64ContentIsImage';
 
 export class ContactDetails {
@@ -77,9 +77,9 @@ export class CreateCompanyDto {
   registrationNumber?: string;
 
   @ApiProperty()
-  @IsString()
   @IsOptional()
-  @MinLength(10)
+  @IsString()
+  @Validate(VatNumber)
   @MaxLength(10)
   vatNumber?: string;
 
@@ -132,6 +132,7 @@ export class CreateCompanyResponseDto {
 class FilteredAddress extends OmitType(Address, ['street']) {}
 
 class CompanyAllType {
+  _id: Types.ObjectId;
   registrationNumber?: string;
   vatNumber?: string;
   name: string;
