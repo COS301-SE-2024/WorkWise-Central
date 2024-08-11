@@ -104,12 +104,13 @@ export class JobController {
     description: `The ${className}'s Object of the created job`,
   })
   @Post('/create')
-  async create(@Body() createJobDto: CreateJobDto) {
+  async create(@Headers() headers: any, @Body() createJobDto: CreateJobDto) {
     validateObjectId(createJobDto.assignedBy, 'assignedBy');
     if (createJobDto.companyId) validateObjectId(createJobDto.companyId, 'Company');
 
     try {
-      return { data: await this.jobService.create(createJobDto) };
+      const userId = extractUserId(this.jwtService, headers);
+      return { data: await this.jobService.create(userId, createJobDto) };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }

@@ -37,7 +37,7 @@ import { DeleteStatusDto, DeleteTagDto, UpdatePriorityTagDto, UpdateTagDto } fro
 import { Employee } from '../employee/entities/employee.entity';
 import { JobStatus } from './entities/job-status.entity';
 import { ciEquals } from '../utils/Utils';
-
+//import { History } from './entities/job.entity';
 @Injectable()
 export class JobService {
   constructor(
@@ -60,11 +60,13 @@ export class JobService {
     // private readonly fileService: FileService,
   ) {}
 
-  async create(createJobDto: CreateJobDto) {
+  async create(userId: Types.ObjectId, createJobDto: CreateJobDto) {
     const inputValidated = await this.jobCreateIsValid(createJobDto);
     if (!inputValidated.isValid) {
       throw new ConflictException(inputValidated.message);
     }
+
+    //const
 
     //Save files In Bucket, and store URLs (if provided)
     //
@@ -73,6 +75,7 @@ export class JobService {
     //   createdJob.status = this.jobRepository.find;
 
     const createdJob = new Job(createJobDto);
+    //createdJob.history.push(new History(`${user.} ${}`));
     console.log('createdJob', createdJob);
     return await this.jobRepository.save(createdJob);
   }
