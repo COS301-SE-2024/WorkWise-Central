@@ -10,16 +10,28 @@ import {
   HttpStatus,
   UseGuards,
   InternalServerErrorException,
+  Headers,
+  UnauthorizedException,
+  Put,
 } from '@nestjs/common';
 import { JobService } from './job.service';
+import { CreateJobDto, CreateJobResponseDto } from './dto/create-job.dto';
 import {
-  CreateJobDto,
-  CreateJobResponseDto,
-  JobAllResponseDto,
-} from './dto/create-job.dto';
-import { UpdateDtoResponse, UpdateJobDto } from './dto/update-job.dto';
+  AddCommentDto,
+  AddTaskDto,
+  RemoveCommentDto,
+  RemoveTaskDto,
+  UpdateCommentDto,
+  UpdateDtoResponse,
+  UpdateJobDto,
+  UpdateStatus,
+  UpdateStatusDto,
+  UpdateTaskDto,
+} from './dto/update-job.dto';
 import {
+  ApiBearerAuth,
   ApiBody,
+  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
@@ -29,15 +41,33 @@ import {
 } from '@nestjs/swagger';
 import mongoose, { Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
-import { BooleanResponseDto } from '../users/dto/create-user.dto';
-import { JobResponseDto } from './entities/job.entity';
+import { JwtService } from '@nestjs/jwt';
+import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
+import { CreatePriorityTagDto, CreateStatusDto, CreateTagDto } from './dto/create-tag.dto';
+import { extractUserId, validateObjectId } from '../utils/Utils';
+import { DeleteStatusDto, DeleteTagDto, UpdatePriorityTagDto, UpdateTagDto } from './dto/edit-tag.dto';
+import {
+  JobAllResponseDetailedDto,
+  JobAllResponseDto,
+  JobResponseDto,
+  JobStatusAllResponseDto,
+  JobStatusResponseDto,
+  JobTagResponseDto,
+  PriorityTagsAllResponseDto,
+  TagResponseDto,
+  TagsAllResponseDto,
+} from './dto/job-responses.dto';
+import { JobAssignDto, JobAssignGroupDto, TaskAssignDto } from './dto/assign-job.dto';
 
 const className = 'Job';
 
 @ApiTags('Job')
 @Controller('job')
 export class JobController {
-  constructor(private readonly jobService: JobService) {}
+  constructor(
+    private readonly jobService: JobService,
+    private jwtService: JwtService,
+  ) {}
   validateObjectId(id: string | Types.ObjectId, entity: string = ''): boolean {
     let data: string;
     if (entity === '') data = `Invalid ID`;
@@ -46,6 +76,7 @@ export class JobController {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException(data, HttpStatus.BAD_REQUEST);
     }
+    console.log('valid');
     return true;
   }
 
@@ -53,7 +84,7 @@ export class JobController {
   @Get()
   lookAtDocumentation() {
     return {
-      message: 'Refer to localhost:3000/documentation for details on the API',
+      message: 'Refer to /documentation for details on the API',
     };
   }
 
@@ -64,8 +95,7 @@ export class JobController {
   @ApiOperation({
     summary: `Create a new ${className}`,
     description:
-      'Jobs relate to one or more employees in a company, they may be scheduled and' +
-      ' are also linked to clients',
+      'Jobs relate to one or more employees in a company, they may be scheduled and' + ' are also linked to clients',
   })
   @ApiBody({ type: CreateJobDto })
   @ApiResponse({
@@ -74,28 +104,19 @@ export class JobController {
     description: `The ${className}'s Object of the created job`,
   })
   @Post('/create')
-  async create(
-    @Body() createJobDto: CreateJobDto,
-  ): Promise<CreateJobResponseDto> {
-    this.validateObjectId(createJobDto.assignedBy, 'assignedBy');
-    this.validateObjectId(createJobDto.companyId, 'Company');
-
-    if (
-      createJobDto.recordedDetails.inventoryUsed != undefined &&
-      createJobDto.recordedDetails.inventoryUsed.length > 0
-    )
-      for (const item of createJobDto.recordedDetails.inventoryUsed) {
-        this.validateObjectId(item.inventoryItemId, 'inventoryUsed');
-      }
+  async create(@Body() createJobDto: CreateJobDto) {
+    validateObjectId(createJobDto.assignedBy, 'assignedBy');
+    if (createJobDto.companyId) validateObjectId(createJobDto.companyId, 'Company');
 
     try {
-      return await this.jobService.create(createJobDto);
+      return { data: await this.jobService.create(createJobDto) };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Get all ${className}s`,
   })
@@ -108,10 +129,124 @@ export class JobController {
     try {
       return { data: await this.jobService.findAllJobs() };
     } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all ${className}s in a specific Company`,
+  })
+  @ApiOkResponse({
+    type: JobAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class`,
+  })
+  @Get('all/company/:cid')
+  async findAllInCompany(@Headers() headers: any, @Param('cid') companyId: string) {
+    try {
+      validateObjectId(companyId);
+      const userId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.getAllJobsInCompany(userId, new Types.ObjectId(companyId)),
+      };
+    } catch (Error) {
+      throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all ${className}s in a specific Company`,
+  })
+  @ApiOkResponse({
+    type: JobAllResponseDetailedDto,
+    description: `An array of mongodb objects of the ${className} class`,
+  })
+  @Get('all/company/detailed/:cid')
+  async findDetailedAllInCompany(@Headers() headers: any, @Param('cid') companyId: string) {
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      validateObjectId(companyId);
+      return {
+        data: await this.jobService.getAllDetailedJobsInCompany(userId, new Types.ObjectId(companyId)),
+      };
+    } catch (Error) {
+      throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all ${className}s for a specific user`,
+  })
+  @ApiOkResponse({
+    type: JobAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class`,
+  })
+  @Get('all/user/')
+  async findAllForUser(@Headers() headers: any) {
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      validateObjectId(userId);
+      return {
+        data: await this.jobService.getAllJobsForUser(userId),
+      };
+    } catch (Error) {
+      throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all ${className}s for a specific Employee`,
+  })
+  @ApiOkResponse({
+    type: JobAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class`,
+  })
+  @Get('all/employee/:eid')
+  async findAllForEmployee(@Headers() headers: any, @Param('eid') empId: string) {
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      validateObjectId(userId);
+      validateObjectId(empId);
+
+      return {
+        data: await this.jobService.getAllJobsForEmployee(userId, new Types.ObjectId(empId)),
+      };
+    } catch (Error) {
+      throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all ${className}s for a specific Employee, but with populated fields`,
+  })
+  @ApiOkResponse({
+    type: JobAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class`,
+  })
+  @Get('all/employee/:eid/detailed')
+  async findAllForEmployeeDetailed(@Headers() headers: any, @Param('eid') empId: string) {
+    const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+    if (!userId) {
+      throw new UnauthorizedException('Unauthorized, JWT required');
+    }
+    try {
+      validateObjectId(userId);
+      validateObjectId(empId);
+
+      return {
+        data: await this.jobService.getAllDetailedJobsForEmployee(userId, new Types.ObjectId(empId)),
+      };
+    } catch (Error) {
+      throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -126,9 +261,11 @@ export class JobController {
   })
   @Get('id/:id')
   async findOne(@Param('id') id: string) {
-    this.validateObjectId(id);
+    validateObjectId(id);
     try {
-      return { data: await this.jobService.findJobById(id) };
+      return {
+        data: await this.jobService.getJobById(new Types.ObjectId(id)),
+      };
     } catch (e) {
       console.log(e);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
@@ -136,12 +273,12 @@ export class JobController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Change the attributes of a ${className}`,
     description: `
     You may send the entire ${className} object that was sent to you, in your request body.\r\n
     You may also send a singular attribute `,
-    // /security: [],
   })
   @ApiInternalServerErrorResponse({
     type: HttpException,
@@ -153,17 +290,23 @@ export class JobController {
     description: `The updated ${className} object`,
   })
   @ApiBody({ type: UpdateJobDto })
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
+  @Patch('update/:id')
+  async update(@Headers() headers: any, @Param('id') jobId: string, @Body() updateJobDto: UpdateJobDto) {
     try {
-      const success = await this.jobService.update(id, updateJobDto);
+      validateObjectId(jobId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      // console.log(userId);
+      // console.log(new Types.ObjectId(jobId));
+      const success = await this.jobService.update(userId, new Types.ObjectId(jobId), updateJobDto);
       return new UpdateDtoResponse(success);
     } catch (e) {
-      throw new InternalServerErrorException(`User could not be updated`);
+      console.log(e);
+      throw new InternalServerErrorException(`Job could not be updated`);
     }
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Delete a ${className}`,
     description: `You send the ${className} ObjectId, and then they get deleted if the id is valid.\n 
@@ -177,19 +320,562 @@ export class JobController {
     name: 'id',
     description: `The _id attribute of the ${className}`,
   })
-  @Delete()
-  remove(@Param('id') id: string, @Body() pass: { pass: string }) {
+  @Delete('full/:id')
+  async remove(@Param('id') id: string, @Body() pass: { pass: string }) {
     console.log(pass); //Will be implemented later
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-    }
+    if (!mongoose.Types.ObjectId.isValid(id)) throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+
     try {
-      return this.jobService.softDelete(id);
+      return { data: await this.jobService.softDelete(new Types.ObjectId(id)) };
     } catch (e) {
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+      throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
+    }
+  }
+  // Specific
+
+  /// Comments
+  @ApiOperation({ summary: 'Add a comment to a Job' })
+  @ApiResponse({
+    type: JobResponseDto,
+    description: 'The updated Job',
+  })
+  @ApiBody({ type: AddCommentDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Put('/comment')
+  async addComment(@Headers() headers: any, @Body() addCommentDto: AddCommentDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.addCommentToJob(userId, addCommentDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({ summary: 'Remove a comment within a Job' })
+  @ApiResponse({
+    type: JobResponseDto,
+    description: 'The updated Job',
+  })
+  @ApiBody({ type: RemoveCommentDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Delete('/comment')
+  async removeComment(@Headers() headers: any, @Body() removeCommentDto: RemoveCommentDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.removeCommentFromJob(userId, removeCommentDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Change the contents a Comment`,
+  })
+  @ApiOkResponse({
+    type: JobResponseDto,
+    description: `The updated Job object, with a new comment`,
+  })
+  @ApiBody({ type: UpdateCommentDto })
+  @Patch('/comment')
+  async editComment(@Headers() headers: any, @Body() updateCommentDto: UpdateCommentDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.editCommentInJob(userId, updateCommentDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+  /// Comments
+
+  /// Tags
+  @ApiOperation({
+    summary: 'Get all Tags in a company',
+  })
+  @ApiOkResponse({
+    type: TagsAllResponseDto,
+    description: 'An array of tags',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Get('/tags/:cid')
+  async getAllTagsInCompany(@Headers() headers: any, @Param('cid') companyId: string) {
+    try {
+      validateObjectId(companyId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      const compId = new Types.ObjectId(companyId);
+      return {
+        data: await this.jobService.getAllTagsInCompany(userId, compId),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Get all Priority Tags in a company',
+  })
+  @ApiOkResponse({
+    type: PriorityTagsAllResponseDto,
+    description: 'An array of Priority tags',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Get('/tags/p/:cid')
+  async getAllPriorityTagsInCompany(@Headers() headers: any, @Param('cid') companyId: string) {
+    try {
+      validateObjectId(companyId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      const compId = new Types.ObjectId(companyId);
+      return {
+        data: await this.jobService.getAllPriorityTagsInCompany(userId, compId),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Add a Job Tag to a company',
+  })
+  @ApiCreatedResponse({
+    type: JobTagResponseDto,
+    description: 'Confirmation of success of request',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Post('/tags/add')
+  async addJobTagToCompany(@Headers() headers: any, @Body() createTagDto: CreateTagDto) {
+    try {
+      validateObjectId(createTagDto.companyId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return { data: await this.jobService.addJobTagToCompany(userId, createTagDto) };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Add a job Priority Tag to a company',
+  })
+  @ApiCreatedResponse({
+    type: BooleanResponseDto,
+    description: 'Confirmation of success of request',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Post('/tags/p')
+  async addJobPriorityTagToCompany(@Headers() headers: any, @Body() createPriorityTagDto: CreatePriorityTagDto) {
+    try {
+      validateObjectId(createPriorityTagDto.companyId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.addJobPriorityTagToCompany(userId, createPriorityTagDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Remove a Job Tag from a company',
+  })
+  @ApiResponse({
+    type: BooleanResponseDto,
+    description: 'Tag successfully removed',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Delete('tags/')
+  async removeJobTagFromCompany(@Headers() headers: any, @Body() deleteTagDto: DeleteTagDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.removeJobTagFromCompany(userId, deleteTagDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Remove a Job Priority Tag from a company',
+  })
+  @ApiResponse({
+    type: BooleanResponseDto,
+    description: 'Tag successfully removed',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Delete('tags/p/')
+  async removePriorityTagFromCompany(@Headers() headers: any, @Body() deleteTagDto: DeleteTagDto) {
+    try {
+      validateObjectId(deleteTagDto.tagId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.removeJobPriorityTagFromCompany(userId, deleteTagDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Update the name or colour of a Tag, within a company',
+  })
+  @ApiResponse({
+    type: TagResponseDto,
+    description: 'Tag successfully updated',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Patch('tags/')
+  async updateTag(@Headers() headers: any, @Body() updateTagDto: UpdateTagDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.updateTag(userId, updateTagDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Update the name, colour, or PriorityLevel of a PriorityTag, within a company',
+  })
+  @ApiResponse({
+    type: TagResponseDto,
+    description: 'PriorityTag successfully updated',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Patch('tags/p')
+  async updatePriorityTag(@Headers() headers: any, @Body() updatePriorityTagDto: UpdatePriorityTagDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.updatePriorityTag(userId, updatePriorityTagDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+  /// Tags
+
+  ///Employees
+  @ApiOperation({ summary: 'Assign an employee to a job' })
+  @ApiResponse({ type: JobResponseDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Put('/employee')
+  async assignEmployee(@Headers() headers: any, @Body() jobAssignDto: JobAssignDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.assignEmployee(userId, jobAssignDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({ summary: 'Unassign an employee to a job' })
+  @ApiResponse({ type: JobResponseDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Patch('/employee')
+  async unassignEmployee(@Headers() headers: any, @Body() jobAssignDto: JobAssignDto) {
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.unassignEmployee(userId, jobAssignDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({ summary: "Assign an employee to a job's taskList Item" })
+  @ApiResponse({ type: JobResponseDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Put('/employee/task')
+  async assignEmployeeToTaskItem(@Headers() headers: any, @Body() taskAssignDto: TaskAssignDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.assignEmployeeToTaskItem(userId, taskAssignDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({ summary: "Unassign an employee to a job's taskList Item" })
+  @ApiResponse({ type: JobResponseDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Patch('employee/task/item')
+  async unassignEmployeeFromTaskItem(@Headers() headers: any, @Body() taskAssignDto: TaskAssignDto) {
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.unassignEmployeeFromTaskItem(userId, taskAssignDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({ summary: 'Assign multiple employees to a job at once' })
+  @ApiResponse({ type: JobResponseDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Put('/employees')
+  async assignEmployees(@Headers() headers: any, @Body() jobAssignGroupDto: JobAssignGroupDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.assignEmployees(userId, jobAssignGroupDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({ summary: 'Unassign multiple employees to a job at once' })
+  @ApiResponse({ type: JobResponseDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Patch('/employees')
+  async unassignEmployees(@Headers() headers: any, @Body() jobAssignGroupDto: JobAssignGroupDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.unassignEmployees(userId, jobAssignGroupDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  ///Employees
+
+  /*  addAttachmentToJob(@Headers() headers: any, @Param('cid') companyId: string) {
+    try {
+      validateObjectId(companyId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      const compId = new Types.ObjectId(companyId);
+      return this.jobService.addAttachmentToJob(userId, compId);
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException(`Job could not be updated`);
+    }
+  }*/
+
+  ///STATUS
+  @ApiOperation({ summary: 'Get a Status using its Id' })
+  @ApiResponse({ type: JobStatusResponseDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Get('status/:sid')
+  async getStatusById(@Headers() headers: any, @Param('sid') statusId: string) {
+    try {
+      validateObjectId(statusId);
+      const sId = new Types.ObjectId(statusId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.getStatusById(userId, sId),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all Statuses in a company. Should not be used in kanban`,
+  })
+  @ApiOkResponse({
+    type: JobStatusAllResponseDto,
+    description: `An array of JobsStatuses`,
+  })
+  @Get('status/all/:cid')
+  async findAllStatusInCompany(@Headers() headers: any, @Param('cid') cId: string) {
+    try {
+      validateObjectId(cId);
+      const companyId = new Types.ObjectId(cId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.findAllStatusesInCompany(userId, companyId),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Add a Job Status to a company',
+  })
+  @ApiCreatedResponse({
+    type: JobStatusResponseDto,
+    description: 'The created JobStatus object',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Post('status/')
+  async createStatus(@Headers() headers: any, @Body() createStatusDto: CreateStatusDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.createStatus(userId, createStatusDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Change the attributes of a Status within a company`,
+  })
+  @ApiOkResponse({
+    type: JobResponseDto,
+    description: `The updated Status object`,
+  })
+  @ApiBody({ type: UpdateStatusDto })
+  @Patch('status/')
+  async updateStatus(@Headers() headers: any, @Body() updateStatusDto: UpdateStatusDto) {
+    try {
+      const employeeId = new Types.ObjectId(updateStatusDto.employeeId);
+      const statusId = new Types.ObjectId(updateStatusDto.statusId);
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      const updateStatus: UpdateStatus = new UpdateStatus(updateStatusDto);
+      return {
+        data: await this.jobService.updateStatus(userId, employeeId, statusId, updateStatus),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Remove a Job Status from a company',
+  })
+  @ApiResponse({
+    type: BooleanResponseDto,
+    description: 'Status successfully removed',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Delete('status')
+  async deleteStatus(@Headers() headers: any, @Body() deleteStatusDto: DeleteStatusDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.deleteStatus(userId, deleteStatusDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({ summary: 'Add a ask to a Job' })
+  @ApiResponse({
+    type: JobResponseDto,
+    description: 'The updated Job',
+  })
+  @ApiBody({ type: AddTaskDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Put('/task')
+  async addTask(@Headers() headers: any, @Body() addTaskDto: AddTaskDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.addJobTask(userId, addTaskDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({ summary: 'Remove a task within a Job, including all its Items' })
+  @ApiResponse({
+    type: JobResponseDto,
+    description: 'The updated Job',
+  })
+  @ApiBody({ type: RemoveTaskDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Delete('/task')
+  async removeTask(@Headers() headers: any, @Body() removeTaskDto: RemoveTaskDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.removeTaskFromJob(userId, removeTaskDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Change the Title a Task`,
+  })
+  @ApiOkResponse({
+    type: JobResponseDto,
+    description: `The updated Job object, with a new comment`,
+  })
+  @ApiBody({ type: UpdateTaskDto })
+  @Patch('/task')
+  async editTask(@Headers() headers: any, @Body() updateTaskDto: UpdateTaskDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.editTaskInJob(userId, updateTaskDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
     }
   }
 }

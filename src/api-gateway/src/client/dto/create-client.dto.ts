@@ -17,9 +17,7 @@ import { Types } from 'mongoose';
 export class ContactInfo {
   @ApiProperty()
   @IsString()
-  @Transform(({ value }) =>
-    value.startsWith('0') ? `+27${value.slice(1)}` : value,
-  )
+  @Transform(({ value }) => (value.startsWith('0') ? `+27${value.slice(1)}` : value))
   //@IsPhoneNumber(null)
   phoneNumber: string;
 
@@ -36,6 +34,12 @@ export class Address {
   @IsString()
   @MaxLength(255)
   street: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(255)
+  province: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -59,20 +63,19 @@ export class Address {
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  complex?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  houseNumber?: string;
+  complexOrBuilding?: string;
 }
 
 export class ClientDetails {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  name: string;
+  firstName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  lastName: string;
 
   @ApiProperty()
   @IsOptional()
@@ -96,9 +99,9 @@ export class ClientDetails {
   vatNumber?: string;
 
   @ApiProperty()
-  @IsOptional()
+  @IsNotEmpty()
   @IsMongoId()
-  companyId?: Types.ObjectId;
+  companyId: Types.ObjectId;
 
   @ApiProperty()
   @IsOptional()
@@ -113,14 +116,14 @@ export class ClientDetails {
 
 export class CreateClientDto {
   @ApiProperty()
-  @IsOptional()
-  @IsString()
-  registrationNumber?: string;
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
 
   @ApiProperty()
   @IsOptional()
   @IsString()
-  clientUsername?: string;
+  registrationNumber?: string;
 
   @ApiProperty()
   @IsNotEmpty()

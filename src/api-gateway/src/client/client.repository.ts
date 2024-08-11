@@ -3,22 +3,40 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { Client } from './entities/client.entity';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { currentDate } from '../utils/Utils';
 
 @Injectable()
 export class ClientRepository {
-  constructor(
-    @InjectModel('Client') private readonly clientModel: Model<Client>,
-  ) {}
+  constructor(@InjectModel('Client') private readonly clientModel: Model<Client>) {}
 
-  async findAll() {
-    return this.clientModel.find().lean().exec();
+  async saveClient(client: Client) {
+    const newClient = new this.clientModel(client);
+    return await newClient.save();
   }
 
-  async findClientById(identifier: string): Promise<FlattenMaps<Client>> {
+  async findAll() {
+    return this.clientModel.find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] }).lean();
+  }
+
+  async findAllInCompany(companyId: Types.ObjectId) {
+    return this.clientModel
+      .find({
+        $and: [
+          { 'details.companyId': companyId },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean()
+      .exec();
+  }
+
+  async findClientById(id: Types.ObjectId): Promise<FlattenMaps<Client>> {
     return this.clientModel
       .findOne({
         $and: [
-          { _id: identifier },
+          { _id: id },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
@@ -27,18 +45,17 @@ export class ClientRepository {
       .lean();
   }
 
-  async findByEmailOrName(companyId: Types.ObjectId, identifier: string) {
-    const regex = `*${identifier}*`;
-    const searchTerm = new RegExp(regex, 'i');
+  async findClientByEmailOrName(companyId: Types.ObjectId, identifier: string) {
+    const regex = `${identifier}`;
     return this.clientModel
       .find({
         $and: [
           { companyId: companyId },
           {
             $or: [
-              { 'clientInfo.email': { $regex: searchTerm } },
-              { 'details.name': { $regex: searchTerm } },
-              // { 'details.surname': { $regex: searchTerm } },
+              { 'clientInfo.email': { $regex: regex, $options: 'i' } },
+              { 'details.firstName': { $regex: regex, $options: 'i' } },
+              { 'details.lastName': { $regex: regex, $options: 'i' } },
             ],
           },
           {
@@ -49,7 +66,7 @@ export class ClientRepository {
       .lean();
   }
 
-  async exists(id: string | Types.ObjectId) {
+  async exists(id: Types.ObjectId) {
     const result = await this.clientModel
       .findOne({
         $and: [
@@ -74,13 +91,13 @@ export class ClientRepository {
             },
           ],
         },
-        { $set: { ...updateClientDto }, updatedAt: new Date() },
+        { $set: { ...updateClientDto }, updatedAt: currentDate() },
         { new: true },
       )
       .lean();
   }
 
-  async delete(id: string | Types.ObjectId) {
+  async delete(id: Types.ObjectId) {
     return this.clientModel.findOneAndUpdate(
       {
         $and: [
@@ -90,7 +107,7 @@ export class ClientRepository {
           },
         ],
       },
-      { $set: { deletedAt: new Date() } },
+      { $set: { deletedAt: currentDate() } },
     );
   }
 }

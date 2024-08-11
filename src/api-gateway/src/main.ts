@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerTheme, SwaggerThemeNameEnum } from 'swagger-themes';
+import * as compression from 'compression';
+import { urlencoded, json } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,17 +16,17 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   const theme = new SwaggerTheme();
   const options = {
-    explorer: true,
     customCss: theme.getBuffer(SwaggerThemeNameEnum.ONE_DARK),
   };
   SwaggerModule.setup('documentation', app, document, options);
   app.useGlobalPipes(
     new ValidationPipe({
-      //stopAtFirstError: true,
-      //transform: true,
       whitelist: true,
     }),
   );
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ limit: '50mb', extended: true }));
+  app.use(compression());
   app.enableCors();
   await app.listen(3000);
 }

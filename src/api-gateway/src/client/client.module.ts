@@ -8,6 +8,16 @@ import { CompanyService } from '../company/company.service';
 import { CompanyModule } from '../company/company.module';
 import { EmployeeModule } from '../employee/employee.module';
 import { RoleModule } from '../role/role.module';
+import { UsersModule } from '../users/users.module';
+import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '../users/users.service';
+import { EmailModule } from '../email/email.module';
+import { FileModule } from '../file/file.module';
+import { EmployeeService } from '../employee/employee.service';
+import { JobModule } from '../job/job.module';
+import { TeamModule } from '../team/team.module';
+import { InventoryModule } from '../inventory/inventory.module';
+import { InventoryService } from '../inventory/inventory.service';
 
 @Module({
   imports: [
@@ -15,9 +25,23 @@ import { RoleModule } from '../role/role.module';
     forwardRef(() => CompanyModule),
     forwardRef(() => EmployeeModule),
     forwardRef(() => RoleModule),
+    forwardRef(() => UsersModule),
+    forwardRef(() => EmailModule),
+    forwardRef(() => FileModule),
+    forwardRef(() => JobModule),
+    forwardRef(() => TeamModule),
+    forwardRef(() => InventoryModule),
   ],
   controllers: [ClientController],
-  providers: [ClientService, ClientRepository, CompanyService],
+  providers: [
+    ClientService,
+    ClientRepository,
+    CompanyService,
+    JwtService,
+    UsersService,
+    EmployeeService,
+    InventoryService,
+  ],
   exports: [ClientService, MongooseModule],
 })
 export class ClientModule {}

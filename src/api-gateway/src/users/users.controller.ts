@@ -3,24 +3,25 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   HttpException,
   HttpStatus,
+  InternalServerErrorException,
   Param,
   Patch,
   Post,
-  Request,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import {
-  CreateUserDto,
-  CreateUserResponseDto,
-  BooleanResponseDto,
-} from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto, CreateUserResponseDto } from './dto/create-user.dto';
+import { UpdateProfilePicDto, UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
+  ApiBearerAuth,
   ApiBody,
+  ApiConsumes,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
@@ -30,13 +31,39 @@ import {
 } from '@nestjs/swagger';
 import mongoose, { Types } from 'mongoose';
 import { UserAllResponseDto, UserResponseDto } from './entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
+import { UserEmailVerificationDTO } from './dto/user-validation.dto';
+import { BooleanResponseDto, FileResponseDto } from '../shared/dtos/api-response.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UserAllResponseDetailedDto } from './dto/user-response.dto';
+import { GetImageValidator } from '../utils/Custom Validators/GetImageValidator';
+// import { diskStorage } from 'multer';
+// import e from 'express';
+// import firebase from 'firebase/compat';
+// import Error = firebase.auth.Error;
+// import { v4 as uuidv4 } from 'uuid';
+// import * as path from 'path';
+
+/*const storage = {
+  storage: diskStorage({
+    destination: './uploads',
+    filename(req: e.Request, file: Express.Multer.File, callback: (error: Error | null, filename: string) => void) {
+      const fileName: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+      const extension: string = path.parse(file.originalname).ext;
+      callback(null, `${fileName}${extension}`);
+    },
+  }),
+};*/
 
 const className = 'User';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   validateObjectId(id: string | Types.ObjectId, entity: string = ''): boolean {
     let data: string;
@@ -61,8 +88,7 @@ export class UsersController {
   })
   @ApiOperation({
     summary: `Create a new ${className}`,
-    description: 'Further details',
-    security: [],
+    description: 'You may also pass an image for their profile Picture',
   })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({
@@ -71,18 +97,42 @@ export class UsersController {
     description: `The access token and ${className}'s Id used for querying. 
     currentCompany Will also be added soon*`,
   })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('profilePicture'))
   @Post('/create')
   async create(
     @Body() createUserDto: CreateUserDto,
+    @UploadedFile('profilePicture', GetImageValidator()) profilePicture?: Express.Multer.File,
   ): Promise<CreateUserResponseDto> {
+    console.log('createUserController');
     try {
-      return await this.usersService.create(createUserDto);
+      return await this.usersService.create(createUserDto, profilePicture);
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
   }
 
+  @ApiOperation({
+    summary: `Upload a new User's Profile Picture, and receive the image url`,
+  })
+  @ApiOkResponse({
+    type: FileResponseDto,
+    description: `The URL of the image`,
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UpdateProfilePicDto })
+  @UseInterceptors(FileInterceptor('profilePicture'))
+  @Post('/newUser/profilePic')
+  async uploadProfilePic(@UploadedFile(GetImageValidator()) file: Express.Multer.File): Promise<FileResponseDto> {
+    try {
+      return this.usersService.uploadProfilePic(file);
+    } catch (e) {
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   //@UseGuards(AuthGuard)
+  //@ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Get all ${className}s`,
   })
@@ -91,14 +141,31 @@ export class UsersController {
     description: `An array of mongodb objects of the ${className} class`,
   })
   @Get('all')
-  async findAll() {
+  async findAll(@Headers() headers: any) {
     try {
+      console.log(headers);
       return { data: await this.usersService.getAllUsers() };
     } catch (Error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Get all ${className}s, But with more detailed fields`,
+  })
+  @ApiOkResponse({
+    type: UserAllResponseDetailedDto,
+    description: `An array of Detailed mongodb objects of the ${className} class`,
+  })
+  @Get('all/detailed')
+  async findAllDetailed(@Headers() headers: any) {
+    try {
+      console.log(headers);
+      return { data: await this.usersService.getAllUsersDetailed() };
+    } catch (Error) {
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -112,11 +179,13 @@ export class UsersController {
     description: `The _id attribute of the ${className}`,
   })
   @Get('id/:id')
-  async findOne(@Param('id') identifier: string) {
-    this.validateObjectId(identifier);
+  async findOne(@Headers() headers: any, @Param('id') identifier: string) {
     try {
+      this.validateObjectId(identifier);
+      const userId = this.extractUserId(headers);
+      console.log(userId, 'is searching'); //Add Guard here as well
       return {
-        data: await this.usersService.getUserById(identifier),
+        data: await this.usersService.getUserById(new Types.ObjectId(identifier)),
       };
     } catch (e) {
       console.log(e);
@@ -131,13 +200,47 @@ export class UsersController {
     type: BooleanResponseDto,
     description: 'Response is a Boolean value',
   })
-  @Post('/exists')
-  async usernameAvailable(@Body('username') username: string) {
+  @Post('/exists/username')
+  async usernameExists(@Body('username') username: string) {
     try {
-      return { data: !(await this.usersService.usernameExists(username)) };
+      return { data: await this.usersService.usernameExists(username) };
     } catch (e) {
       console.log(e);
-      throw new HttpException('Username Taken', HttpStatus.CONFLICT);
+      throw new InternalServerErrorException('Something went wrong ');
+    }
+  }
+
+  @ApiOperation({
+    summary: `${className} Email exists or not`,
+  })
+  @ApiOkResponse({
+    type: BooleanResponseDto,
+    description: 'Response is a Boolean value',
+  })
+  @Post('/exists/email')
+  async emailExists(@Body() dto: UserEmailVerificationDTO) {
+    try {
+      return { data: await this.usersService.emailExists(dto.email) };
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException('Something went wrong ');
+    }
+  }
+
+  @ApiOperation({
+    summary: `${className} Phone Number exists or not`,
+  })
+  @ApiOkResponse({
+    type: BooleanResponseDto,
+    description: 'Response is a Boolean value',
+  })
+  @Post('/exists/phone')
+  async phoneExists(@Body('phone') phone: string) {
+    try {
+      return { data: await this.usersService.phoneExists(phone) };
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException('Something went wrong ');
     }
   }
 
@@ -148,10 +251,10 @@ export class UsersController {
     type: BooleanResponseDto,
     description: 'Response is a Boolean value',
   })
-  @Get('/phone')
-  async isValidPhoneNumber(@Param('phoneNum') phoneNum: string) {
+  @Get('/isValid/phone')
+  async isValidPhoneNumber(@Body('phone') phone: string) {
     try {
-      return { data: this.usersService.isValidPhoneNumber(phoneNum) };
+      return { data: this.usersService.isValidPhoneNumber(phone) };
     } catch (e) {
       console.log(e);
       throw new HttpException('Username Taken', HttpStatus.CONFLICT);
@@ -159,6 +262,7 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Change the attributes of a ${className}`,
     description: `
@@ -172,26 +276,62 @@ export class UsersController {
   })
   @ApiBody({ type: UpdateUserDto })
   @Patch('/update')
-  async update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
-    /*
-    console.log('Update');
-    console.log(req);
-    */
-    const id: Types.ObjectId = req.user.sub; //This attribute is retrieved in the JWT
-    console.log(id);
+  async update(@Headers() headers: any, @Body() updateUserDto: UpdateUserDto) {
     try {
+      const userId = this.extractUserId(headers);
       return {
-        data: await this.usersService.updateUser(id, updateUserDto),
+        data: await this.usersService.updateUser(userId, updateUserDto),
       };
     } catch (e) {
-      throw new HttpException(
-        'internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Change the Profile Picture of a ${className}`,
+    /*    description: `
+    You may send the entire ${className} object that was sent to you, in your request body.\r\n
+    You may also send a singular attribute `,*/
+  })
+  @ApiOkResponse({
+    type: UserResponseDto,
+    description: `The updated ${className} instance`,
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UpdateProfilePicDto })
+  @UseInterceptors(FileInterceptor('profilePicture'))
+  @Patch('/update/profilePic')
+  async updateProfilePic(@Headers() headers: any, @UploadedFile(GetImageValidator()) file: Express.Multer.File) {
+    try {
+      const userId = this.extractUserId(headers);
+      return {
+        data: await this.usersService.updateProfilePic(userId, file),
+      };
+    } catch (e) {
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  /*  @Post('upload')
+  @UseInterceptors(FileInterceptor('file', storage))
+  @ApiConsumes('multipart/form-data')
+  async uploadFile(@Headers() headers: any, @UploadedFile('file') file: Express.Multer.File) {
+    console.log(file);
+    //return { data: file.filename };
+    try {
+      const userId = this.extractUserId(headers);
+      return {
+        data: await this.usersService.updateProfilePic(userId, file),
+      };
+    } catch (e) {
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }*/
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Delete a ${className}`,
     description: `You send the ${className} ObjectId, and then they get deleted if the id is valid.\n 
@@ -207,17 +347,43 @@ export class UsersController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete('/delete/:id')
-  remove(@Param('id') id: string) {
+  remove(@Headers() headers: any, @Param('id') id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
     }
     try {
-      return this.usersService.softDelete(id);
+      const userId = this.extractUserId(headers);
+      if (userId.equals(new Types.ObjectId(id))) return this.usersService.softDelete(userId);
+      else return new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
     } catch (e) {
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+      throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
     }
+  }
+
+  @ApiParam({
+    name: 'companyId',
+    type: Types.ObjectId,
+    description: 'Id of Company you want to change to',
+  })
+  changeCompany(@Headers() headers: any, @Param('companyId') companyId: string) {
+    if (!mongoose.Types.ObjectId.isValid(companyId)) {
+      throw new HttpException('Invalid CompanyId', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      const userId = this.extractUserId(headers);
+      return this.usersService.changeCurrentEmployee(userId, new Types.ObjectId(companyId));
+    } catch (e) {
+      throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
+    }
+  }
+
+  public extractUserId(headers: any) {
+    const authHeader: string = headers.authorization;
+    const decodedJwtAccessToken = this.jwtService.decode(authHeader.replace(/^Bearer\s+/i, ''));
+    if (!Types.ObjectId.isValid(decodedJwtAccessToken.sub)) {
+      throw new HttpException('Invalid User', HttpStatus.BAD_REQUEST);
+    }
+    const userId: Types.ObjectId = decodedJwtAccessToken.sub; //This attribute is retrieved in the JWT
+    return userId;
   }
 }

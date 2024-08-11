@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+import { SchemaTypes, Types } from 'mongoose';
 import { CreateTeamDto } from '../dto/create-team.dto';
 
 @Schema()
@@ -13,23 +13,23 @@ export class Team {
     this.createdAt = new Date();
   }
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true })
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ required: false })
+  @Prop({ type: String, required: true })
   teamName: string;
 
   @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: false, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true })
   teamMembers: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ required: false })
-  teamLeaderId: Types.ObjectId;
+  @Prop({ type: SchemaTypes.ObjectId, required: false })
+  teamLeaderId?: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: true, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
   currentJobAssignments: Types.ObjectId[];
 
   @ApiHideProperty()
@@ -38,11 +38,63 @@ export class Team {
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public updatedAt: Date;
+  public updatedAt?: Date;
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public deletedAt: Date;
+  public deletedAt?: Date;
+}
+
+export class teamApiObject {
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: true, unique: true })
+  id: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: true })
+  companyId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: String, required: true })
+  teamName: string;
+
+  @ApiProperty()
+  @Prop({ type: [SchemaTypes.ObjectId], required: true })
+  teamMembers: Types.ObjectId[];
+
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: false })
+  teamLeaderId?: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: true, default: [] })
+  currentJobAssignments: Types.ObjectId[];
+
+  @ApiHideProperty()
+  @Prop({ required: true, default: new Date() })
+  public createdAt: Date;
+
+  @ApiHideProperty()
+  @Prop({ required: false })
+  public updatedAt?: Date;
+
+  @ApiHideProperty()
+  @Prop({ required: false })
+  public deletedAt?: Date;
 }
 
 export const TeamSchema = SchemaFactory.createForClass(Team);
+
+export class teamListResponseDto {
+  constructor(data: teamApiObject[]) {
+    this.data = data;
+  }
+  data: teamApiObject[];
+}
+
+export class teamResponseDto {
+  constructor(data: teamApiObject) {
+    this.data = data;
+  }
+  data: teamApiObject;
+}

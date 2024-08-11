@@ -1,0 +1,273 @@
+<template>
+  <div>
+    <v-container>
+      <!-- Display comments -->
+      <v-row v-for="(comment, index) in comments" :key="index" class="d-flex align-center mb-3">
+        <v-col cols="2" class="pt-2">
+          <v-avatar color="secondary" style="width: 38px; height: 36px">
+            <!-- Display initials of the comment's employee -->
+            <span class="text-h6">{{ getInitials(comment.employeeId) }}</span>
+          </v-avatar>
+        </v-col>
+        <v-col md="9">
+          <v-text-field
+            v-model="comment.text"
+            label="Comment"
+            dense
+            readonly
+            :clearable="false"
+            class="pt-4"
+            :hint="new Date(comment.date).toLocaleDateString()"
+            persistent-hint
+          ></v-text-field>
+        </v-col>
+        <v-col cols="1">
+          <!-- Delete comment button -->
+          <v-btn @click="deleteComment(index)">
+            <v-icon color="red" class="fa fa-trash pt-1"></v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+      <!-- Add new comment textarea -->
+      <v-textarea
+        v-model="newComment"
+        label="Add a comment"
+        clearable
+        auto-grow
+        variant="solo"
+        hint="Enter your comment here"
+        hide-details
+        prepend-icon="fa: fa-solid fa-comment"
+        rows="3"
+      ></v-textarea>
+      <!-- Submit button -->
+      <v-btn color="success" @click="addComment" prepend-icon="mdi-comment-plus">Comment</v-btn>
+    </v-container>
+    <Toast />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { defineProps, ref, onMounted } from 'vue'
+import axios from 'axios'
+import { useToast } from 'primevue/usetoast'
+import { v4 as uuidv4 } from 'uuid'
+
+const toast = useToast()
+
+// API URLs
+const localUrl = 'http://localhost:3000/'
+const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
+
+// Request Config
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`
+  }
+}
+
+// Props
+const props = defineProps<{ jobComments: Comment[]; id: string }>()
+
+// Interfaces
+interface Comment {
+  employeeId: EmployeeId
+  comment: string
+  date: string
+  _id: string
+}
+
+interface EmployeeId {
+  companyId: string
+  createdAt: string
+  currentJobAssignments: string[]
+  role: {
+    permissionSuite: string[]
+    roleId: string
+    roleName: string
+  }
+  subordinateTeams: string[]
+  subordinates: string[]
+  superiorId: string
+  updatedAt: string
+  userId: string
+  userInfo: {
+    displayName: string
+    firstName: string
+    surname: string
+  }
+  _id: string
+}
+
+// Data
+const newComment = ref('')
+const userInitials = ref<{ employeeId: string; initials: string }[]>([])
+const comments = ref<
+  { text: string; employeeId: string; date: string; initials?: string; _id: string }[]
+>(
+  props.jobComments.map((comment) => ({
+    text: comment.comment,
+    employeeId: comment.employeeId._id,
+    date: comment.date,
+    _id: comment._id
+  }))
+)
+
+// Utility Functions
+const getInitials = (employeeId: string): string => {
+  const user = userInitials.value.find((user) => user.employeeId === employeeId)
+  return user ? user.initials : ''
+}
+
+const getInitialsS = (firstName: string, surname: string): string => {
+  return `${firstName.charAt(0)}${surname.charAt(0)}`.toUpperCase()
+}
+
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url)
+    return res.status >= 200 && res.status < 300
+  } catch {
+    return false
+  }
+}
+
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
+
+const getUserData = async () => {
+  const apiUrl = await getRequestUrl()
+  try {
+    const response = await axios.get(`${apiUrl}users/id/${localStorage.getItem('id')}`, config)
+    const userData = response.data.data
+
+    userInitials.value.push({
+      employeeId: localStorage.getItem('id') || '',
+      initials: getInitialsS(userData.personalInfo.firstName, userData.personalInfo.surname)
+    })
+  } catch (error) {
+    console.error('Error getting user data', error)
+  }
+}
+
+const getAllEmployeeData = async () => {
+  const apiUrl = await getRequestUrl()
+  try {
+    const employeeResponse = await axios.get(
+      `${apiUrl}employee/all/${localStorage.getItem('currentCompany')}`,
+      config
+    )
+    console.log(employeeResponse)
+    const employeeIds = employeeResponse.data.map((employee: { _id: string }) => employee._id)
+
+    for (const id of employeeIds) {
+      const response = await axios.get(`${apiUrl}users/id/${id}`, config)
+      const userData = response.data.data
+
+      userInitials.value.push({
+        employeeId: id,
+        initials: getInitialsS(userData.personalInfo.firstName, userData.personalInfo.surname)
+      })
+    }
+
+    populateCommentsWithInitials()
+  } catch (error) {
+    console.error('Failed to get employee data', error)
+  }
+}
+
+const populateCommentsWithInitials = () => {
+  comments.value.forEach((comment) => {
+    const user = userInitials.value.find((user) => user.employeeId === comment.employeeId)
+    if (user) {
+      comment.initials = user.initials
+    }
+  })
+}
+
+const addComment = async () => {
+  if (!newComment.value.trim()) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Warning',
+      detail: 'Comment cannot be empty',
+      life: 3000
+    })
+    return
+  }
+
+  const apiUrl = await getRequestUrl()
+  const newId = uuidv4() // Generate a unique ID
+  const updatedComments = [
+    ...comments.value,
+    {
+      text: newComment.value,
+      employeeId: localStorage.getItem('employeeId') || '',
+      date: new Date().toISOString(),
+      _id: newId // Assign the generated ID
+    }
+  ]
+  const addedComment = ref<{ employeeId: string; jobId: string; newComment: string }>({
+    employeeId: localStorage.getItem('employeeId') || '',
+    jobId: props.id,
+    newComment: newComment.value
+  })
+
+  try {
+    const response = await axios.put(`${apiUrl}job/comment`, addedComment.value, config)
+    // You can update the _id here if the server returns it
+    comments.value = updatedComments
+    newComment.value = ''
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Successfully commented on job',
+      life: 3000
+    })
+  } catch (error) {
+    console.error('Error adding comment', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'An error occurred while commenting on this job',
+      life: 3000
+    })
+  }
+}
+
+const deleteComment = async (index: number) => {
+  const apiUrl = await getRequestUrl()
+  const commentToBeRemoved = comments.value[index]
+  const commentBody = ref<{ employeeId: string; jobId: string; commentId: string }>({
+    employeeId: commentToBeRemoved.employeeId,
+    jobId: props.id,
+    commentId: commentToBeRemoved._id
+  })
+  const updatedComments = comments.value.filter((_, i) => i !== index)
+
+  try {
+    const response = await axios.delete(`${apiUrl}job/comment`, {
+      data: commentBody.value,
+      headers: config.headers
+    })
+    comments.value = updatedComments
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Comment deleted successfully',
+      life: 3000
+    })
+  } catch (error) {
+    console.error('Error deleting comment', error)
+  }
+}
+
+// On Mounted
+onMounted(async () => {
+  await getUserData()
+  await getAllEmployeeData()
+})
+</script>

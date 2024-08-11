@@ -21,5 +21,4 @@
 ## Continuous Delivery/Continuous Deployment (CD)
 
 ### Deployment
-   - As of now, we have not implemented the continuous delivery or deployment phase. No deployments have taken place, and our focus has primarily been on establishing a robust CI process.
-   - The CD will be implemented during our second sprint
+   - Our client has provided us a secured Virtual Machine to deploy/host our entire system. Due to **security concerns** brought up by the client, we will be unable to implement continuous deployment.

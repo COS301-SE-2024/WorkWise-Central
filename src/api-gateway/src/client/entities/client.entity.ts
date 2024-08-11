@@ -1,7 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+import { ApiProperty } from '@nestjs/swagger';
+import { SchemaTypes, Types } from 'mongoose';
 import { CreateClientDto } from '../dto/create-client.dto';
+import { Company } from '../../company/entities/company.entity';
+import { currentDate } from '../../utils/Utils';
 
 export class Address {
   @Prop({ type: String, required: true })
@@ -9,37 +11,41 @@ export class Address {
   @Prop({ type: String, required: true })
   suburb: string;
   @Prop({ type: String, required: true })
+  province: string;
+  @Prop({ type: String, required: true })
   city: string;
   @Prop({ type: String, required: true })
   postalCode: string;
   @Prop({ type: String, required: false })
-  complex?: string;
-  @Prop({ type: String, required: false })
-  houseNumber?: string;
+  complexOrBuilding?: string;
 }
 
 export class ContactInfo {
   @Prop({ type: String, required: true })
   phoneNumber: string;
 
-  @Prop({ type: String, unique: true, required: true, lowercase: true })
-  email: string;
+  @Prop({ type: String, unique: true, lowercase: true, trim: true })
+  email: string; //TODO: Make unique within company, instead of within DB
 }
 
 export class ClientDetails {
   @ApiProperty()
-  @Prop({ type: String, required: false })
-  name?: string;
+  @Prop({ type: String, required: true })
+  firstName: string;
+
+  @ApiProperty()
+  @Prop({ type: String, required: true })
+  lastName: string;
 
   @Prop({ type: String, required: false, default: 'English' })
   @ApiProperty()
   preferredLanguage?: string;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: ContactInfo, required: false })
   contactInfo: ContactInfo;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: Address, required: false })
   address?: Address;
 
@@ -48,8 +54,8 @@ export class ClientDetails {
   vatNumber?: string;
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: false, ref: 'Company' })
-  companyId?: Types.ObjectId;
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Company.name })
+  companyId: Types.ObjectId;
 
   @ApiProperty()
   @Prop({ type: String, required: false })
@@ -64,11 +70,8 @@ export class ClientDetails {
 export class Client {
   constructor(createClientDto: CreateClientDto) {
     if (createClientDto.details) this.details = createClientDto.details;
-    if (createClientDto.clientUsername)
-      this.clientUsername = createClientDto.clientUsername;
-    if (createClientDto.registrationNumber)
-      this.registrationNumber = createClientDto.registrationNumber;
-    this.createdAt = new Date();
+    if (createClientDto.registrationNumber) this.registrationNumber = createClientDto.registrationNumber;
+    this.createdAt = currentDate();
   }
 
   @ApiProperty()
@@ -76,15 +79,11 @@ export class Client {
   registrationNumber?: string;
 
   @ApiProperty()
-  @Prop({ type: String, required: false, default: 'none' })
-  clientUsername?: string;
-
-  @ApiProperty()
   @Prop({ required: true })
   details: ClientDetails;
 
   @ApiProperty()
-  @Prop({ required: false, default: new Date() })
+  @Prop({ required: false, default: currentDate() })
   public createdAt: Date;
 
   @ApiProperty()
@@ -98,32 +97,19 @@ export class Client {
 
 export class ClientApiObject {
   @ApiProperty()
-  @Prop({ type: String, required: false })
   _id?: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: String, required: false })
   registrationNumber?: string;
 
   @ApiProperty()
-  @Prop({ type: String, required: false, default: 'none' })
-  clientUsername?: string;
-
-  @ApiProperty()
-  @Prop({ required: true })
   details: ClientDetails;
 
   @ApiProperty()
-  @Prop({ required: false, default: new Date() })
   public createdAt: Date;
 
   @ApiProperty()
-  @Prop({ required: false })
   public updatedAt: Date;
-
-  @ApiProperty()
-  @Prop({ required: false })
-  public deletedAt: Date;
 }
 
 export const ClientSchema = SchemaFactory.createForClass(Client);

@@ -4,7 +4,7 @@
 
 ![WorkWise Central Logo](/res/img/logo/WorkWiseLogo.png)
 
-[![codecov](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/Hamza-Mokiwa/WorkWise-Central-1)&ensp;
+[![codecov](https://codecov.io/github/COS301-SE-2024/WorkWise-Central/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/COS301-SE-2024/WorkWise-Central)&ensp;
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/WorkWise-Central/build.yml)&ensp;
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/COS301-SE-2024/WorkWise-Central)&ensp;
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/COS301-SE-2024/WorkWise-Central)&ensp;
@@ -17,13 +17,6 @@
 ![OAuth](https://img.shields.io/badge/OAuth-4285F4?style=for-the-badge&logo=oauth&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-
-## Table of Contents
-[Project Description](#project-description) <br>
-[Demo Video](#demo-video) <br>
-[Functional Requirements (SRS)](#functional-requirements-srs) <br>
-[GitHub Project Board](#github-project-board) <br>
-[Team Members](#team-members) <br>
 
 ---
 
@@ -51,9 +44,9 @@ By harnessing modern technology, WorkWise Central transforms business operations
 
 [Watch our demo video - Boolean Hooligans Demo2](https://drive.google.com/file/d/1z4bgTkJ-NSnSJUdBeRTijx4pgcQHyxTD/view?usp=drive_link)
 
-## Functional Requirements (SRS)
+## Documentation 
 
-[Read the full Functional Requirements (SRS) document](https://work-wise-central-1.vercel.app/)
+[Read the full documentation for this project](https://work-wise-central-1.vercel.app/)
 
 ## GitHub Project Board
 

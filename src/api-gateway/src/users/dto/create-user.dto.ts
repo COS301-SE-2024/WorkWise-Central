@@ -16,14 +16,13 @@ import {
 import { Transform, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { SignInUserDto } from '../entities/user.entity';
+//import { Base64ContentIsImage } from '../../utils/Custom Validators/Base64ContentIsImage';
 //import { PasswordRules } from '../../utils/Custom Decorators/PasswordRules';
 
 class ContactInfo {
   @ApiProperty()
   @IsString()
-  @Transform(({ value }) =>
-    value.startsWith('0') ? `+27${value.slice(1)}` : value,
-  )
+  @Transform(({ value }) => (value.startsWith('0') ? `+27${value.slice(1)}` : value))
   //@IsPhoneNumber(null)
   phoneNumber: string;
 
@@ -40,6 +39,12 @@ class Address {
   @IsString()
   @MaxLength(255)
   street: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(255)
+  province: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -110,9 +115,10 @@ class Profile {
   @MaxLength(35)
   displayName: string;
 
-  @IsOptional()
+  /*  @IsOptional()
   @IsString()
-  displayImage?: string;
+  @Validate(Base64ContentIsImage)
+  displayImage?: string;*/
 }
 
 export class CreateUserDto {
@@ -154,9 +160,8 @@ export class CreateUserDto {
   @Type(() => String)
   skills?: string[] = [];
 
-  /*  @IsOptional()
-  @IsMongoId()
-  public currentEmployee?: Types.ObjectId;*/
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
+  profilePicture?: Express.Multer.File;
 }
 
 export class CreateUserResponseDto {
@@ -164,8 +169,4 @@ export class CreateUserResponseDto {
   constructor(data: SignInUserDto) {
     this.data = data;
   }
-}
-
-export class BooleanResponseDto {
-  data: boolean;
 }

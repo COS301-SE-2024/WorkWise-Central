@@ -1,10 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+import { ApiHideProperty, ApiProperty, OmitType } from '@nestjs/swagger';
+import { SchemaTypes, Types } from 'mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { Company } from '../../company/entities/company.entity';
 import { Employee } from '../../employee/entities/employee.entity';
+import { currentDate } from '../../utils/Utils';
 
 export class SystemDetails {
   @Prop({ required: true, unique: true })
@@ -14,7 +15,7 @@ export class SystemDetails {
 }
 
 export class ContactInfo {
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: true, unique: true })
   phoneNumber: string;
 
   @Prop({ type: String, unique: true, required: true, lowercase: true })
@@ -22,44 +23,61 @@ export class ContactInfo {
 }
 
 export class Address {
+  @ApiProperty({ type: String })
   @Prop({ type: String, required: true })
   street: string;
+
+  @ApiProperty()
+  @Prop({ type: String, required: true })
+  province: string;
+
+  @ApiProperty()
   @Prop({ type: String, required: true })
   suburb: string;
+
+  @ApiProperty()
   @Prop({ type: String, required: true })
   city: string;
+
+  @ApiProperty()
   @Prop({ type: String, required: true })
   postalCode: string;
+
+  @ApiProperty()
   @Prop({ type: String, required: false })
   complex?: string;
+
+  @ApiProperty()
   @Prop({ type: String, required: false })
   houseNumber?: string;
 }
 
 export class PersonalInfo {
+  @ApiProperty()
   @Prop({ type: String, required: true })
   firstName: string;
 
+  @ApiProperty()
   @Prop({ type: String, required: true })
   surname: string;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: Date, required: true })
   dateOfBirth: Date;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: String, required: true, default: 'Rather Not Say' })
   gender: string = 'Rather Not Say';
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: String, required: true, default: 'English' })
   preferredLanguage: string;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: ContactInfo, required: false })
   contactInfo: ContactInfo;
 
-  @ApiHideProperty()
+  @ApiProperty({ type: () => Address })
   @Prop({ type: Address, required: false })
   address: Address;
 }
@@ -71,17 +89,21 @@ export class Profile {
   @Prop({
     type: String,
     required: false,
-    default:
-      'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
+    default: 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
   })
-  displayImage?: string =
-    'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
+  displayImage?: string = 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
 }
 
 export class JoinedCompany {
-  @Prop({ type: Types.ObjectId, ref: Employee.name })
+  constructor(employeeId: Types.ObjectId, companyId: Types.ObjectId, companyName: string) {
+    this.employeeId = employeeId;
+    this.companyId = companyId;
+    this.companyName = companyName;
+  }
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: Employee.name })
   employeeId: Types.ObjectId;
-  @Prop({ type: Types.ObjectId, ref: Company.name })
+  @Prop({ type: SchemaTypes.ObjectId, ref: Company.name })
   companyId: Types.ObjectId;
   @Prop({ type: String })
   companyName: string;
@@ -104,33 +126,22 @@ export class User {
       gender: createUserDto.personalInfo.gender,
     };
 
-    if (createUserDto.profile.displayImage != null) {
-      this.profile = {
-        displayName: createUserDto.profile.displayImage,
-        displayImage: createUserDto.profile.displayImage,
-      };
-    } else {
-      this.profile = {
-        displayName: createUserDto.profile.displayImage,
-        displayImage:
-          'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
-      };
-    }
+    this.profile = {
+      displayName: createUserDto.profile.displayName,
+      displayImage: 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
+    };
 
     this.profile.displayName = createUserDto.profile.displayName;
     this.skills = createUserDto.skills;
-    this.createdAt = new Date();
+    this.createdAt = currentDate();
     //this.deletedAt = new Date(); //logically deleted until confirmed
   }
-
-  /*  @Prop({ type: Types.ObjectId })
-  _id: Types.ObjectId;*/
 
   @ApiProperty()
   @Prop({ required: true })
   systemDetails: SystemDetails;
 
-  @ApiProperty()
+  @ApiProperty({ type: PersonalInfo })
   @Prop({ required: true })
   personalInfo: PersonalInfo;
 
@@ -142,7 +153,7 @@ export class User {
   @Prop({
     type: [JoinedCompany],
     required: true,
-    ref: 'Company',
+    ref: Company.name,
     default: [],
   })
   joinedCompanies: JoinedCompany[] = [];
@@ -152,14 +163,11 @@ export class User {
   skills: string[] = [];
 
   @ApiProperty()
-  @Prop({
-    type: [{ type: Types.ObjectId, required: true, ref: 'Employee' }],
-    default: [],
-  })
-  public employeeIds: Types.ObjectId[] = [];
+  @Prop({ type: [String], required: false, default: [] })
+  deviceIds?: string[] = [];
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
+  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Employee.name })
   public currentEmployee?: Types.ObjectId;
 
   @ApiProperty()
@@ -167,8 +175,8 @@ export class User {
   public isValidated?: boolean = false;
 
   @ApiHideProperty()
-  @Prop({ type: Date, required: true, default: new Date() })
-  public createdAt: Date = new Date();
+  @Prop({ type: Date, required: true, default: currentDate() })
+  public createdAt: Date = currentDate();
 
   @ApiHideProperty()
   @Prop({ type: Date, required: false })
@@ -179,70 +187,53 @@ export class User {
   public deletedAt?: Date;
 }
 
-export class UserApiObject {
+export class UserApiObject extends OmitType(User, ['deviceIds', 'deletedAt']) {
   @ApiProperty()
-  @Prop({ type: Types.ObjectId })
+  _id: Types.ObjectId;
+
+  @ApiHideProperty()
+  public createdAt: Date = new Date();
+}
+
+export class UserApiDetailedObject {
+  @ApiProperty()
   _id: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ required: true })
   systemDetails: SystemDetails;
 
-  @ApiProperty()
+  @ApiProperty({ type: PersonalInfo })
   @Prop({ required: true })
   personalInfo: PersonalInfo;
 
   @ApiProperty()
-  @Prop({ required: true })
   profile: Profile;
 
   @ApiProperty()
-  @Prop({
-    type: [JoinedCompany],
-    required: false,
-    ref: 'Company',
-    default: [],
-  })
   joinedCompanies: JoinedCompany[] = [];
 
   @ApiProperty()
-  @Prop({ type: [String], required: false, default: [] })
   skills: string[] = [];
 
   @ApiProperty()
-  @Prop({
-    type: [{ type: Types.ObjectId, required: true, ref: 'Employee' }],
-    default: [],
-  })
-  public employeeIds: Types.ObjectId[] = [];
+  public currentEmployee?: Employee;
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, required: false, ref: 'Employee' })
-  public currentEmployee?: Types.ObjectId;
+  @Prop({ type: [String], required: false, default: [] })
+  deviceIds: string[];
 
   @ApiProperty()
-  @Prop({ type: Boolean, required: false, default: false })
   public isValidated?: boolean = false;
 
   @ApiHideProperty()
-  @Prop({ type: Date, required: true, default: new Date() })
-  public createdAt: Date = new Date();
+  public createdAt: Date = currentDate();
 
   @ApiHideProperty()
-  @Prop({ type: Date, required: false })
   public updatedAt?: Date;
-
-  @ApiHideProperty()
-  @Prop({ type: Date, required: false })
-  public deletedAt?: Date;
 }
 
 export class SignInUserDto {
-  constructor(
-    access_token: string,
-    id: Types.ObjectId,
-    user: UserApiObject = null,
-  ) {
+  constructor(access_token: string, id: Types.ObjectId, user: UserApiObject = null) {
     this.access_token = access_token;
     this.id = id;
     this.user = user;
@@ -267,7 +258,7 @@ export class UserAllResponseDto {
   data: UserApiObject[];
 }
 
-export const userEmployeeFields: string[] = ['employeeIds', 'currentEmployee'];
+export const userEmployeeFields: string[] = ['currentEmployee'];
 
 export const userJoinedCompaniesField = {
   path: 'joinedCompanies',
@@ -288,10 +279,7 @@ export const UserSchema = SchemaFactory.createForClass(User);
 UserSchema.pre('save', async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);
-    this.systemDetails.password = await bcrypt.hash(
-      this.systemDetails.password,
-      salt,
-    );
+    this.systemDetails.password = await bcrypt.hash(this.systemDetails.password, salt);
     next();
   } catch (error) {
     next(error);

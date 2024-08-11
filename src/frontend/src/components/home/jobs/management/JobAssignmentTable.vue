@@ -1,0 +1,490 @@
+<template>
+  <v-container fluid fill-height>
+    <v-row justify="center" xs="6" sm="6" md="12">
+      <v-col cols="12">
+        <v-row justify="center">
+          <v-col cols="12" xs="12" sm="12" md="12" class="pa-0">
+            <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
+              <v-card-title
+                class="d-flex align-center pe-2"
+                style="font-family: Nunito, sans-serif; font-size: 25px; font-weight: lighter"
+              >
+                <v-row align="center" justify="space-between">
+                  <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+                    <v-icon icon="fa: fa-solid fa-briefcase" size="x-small"></v-icon>
+                    <v-label
+                      class="ms-2 text-h4 text-headingTextColor"
+                      style="font-size: 15px; font-family: Nunito, sans-serif; font-weight: lighter"
+                      height="auto"
+                      width="auto"
+                      >Job Details
+                    </v-label>
+                  </v-col>
+
+                  <v-col order-sm="1" order-md="1" cols="12" md="4" sm="12" xs="12">
+                    <v-text-field
+                      v-model="search"
+                      density="compact"
+                      label="Search"
+                      prepend-inner-icon="mdi-magnify"
+                      variant="outlined"
+                      color="primary"
+                      flat
+                      width="100%"
+                      style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+                      hide-details
+                      single-line
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    order-sm="2"
+                    order-md="2"
+                    cols="12"
+                    md="4"
+                    sm="12"
+                    xs="12"
+                    class="d-flex justify-end"
+                  >
+                    <AddJob />
+                  </v-col>
+                </v-row>
+              </v-card-title>
+              <v-divider></v-divider>
+
+              <v-card-text>
+                <v-col cols="12" xs="12" sm="12" md="12">
+                  <v-data-table
+                    :headers="headers as any"
+                    :items="detailedJobData"
+                    :search="search"
+                    label="Jobs"
+                    height="auto"
+                    rounded="xl"
+                    class="bg-cardColor"
+                    :row-props="getRowProps"
+                    min-width="100%"
+                    min-height
+                  >
+                    <template v-slot:[`item.heading`]="{ item }">
+                      {{ item.details.heading }}
+                    </template>
+
+<!--                    <template v-slot:[`item.clientPhone`]="{ item }">-->
+<!--                      <v-chip color="secondary">-->
+<!--                        <a :href="`tel:${item.clientId.details.contactInfo.phoneNumber}`" style="color: inherit; text-decoration: none">-->
+<!--                          <v-icon>-->
+<!--                            {{'fa: fa-solid fa-phone'}}-->
+<!--                          </v-icon>-->
+<!--                          {{ item.clientId.details.contactInfo.phoneNumber }}-->
+<!--                        </a>-->
+<!--                      </v-chip>-->
+<!--                    </template>-->
+
+<!--                    <template v-slot:[`item.clientMail`]="{ item }">-->
+<!--                      <v-chip color="secondary">-->
+<!--                        <a :href="`mailto:${item.clientId.details.contactInfo.email}`" style="color: inherit; text-decoration: none">-->
+<!--                          <v-icon>-->
+<!--                            {{'fa: fa-solid fa-envelope'}}-->
+<!--                          </v-icon>-->
+<!--                          {{ item.clientId.details.contactInfo.email }}-->
+<!--                        </a>-->
+<!--                      </v-chip>-->
+<!--                    </template>-->
+
+                    <template v-slot:[`item.description`]="{ item }">
+                      {{ item.details.description }}
+                    </template>
+
+                    <template v-slot:[`item.status`]="{ item }">
+                      <v-chip :color="getStatusColor(item.status.status)">
+                        <v-icon>mdi-progress-clock</v-icon>{{ item.status.status }}
+                      </v-chip>
+                    </template>
+
+                    <template v-slot:[`item.startDate`]="{ item }">
+                      {{ item.details.startDate }}
+                    </template>
+
+                    <template v-slot:[`item.endDate`]="{ item }">
+                      {{ item.details.endDate }}
+                    </template>
+
+                    <!-- Actions slot -->
+                    <template v-slot:[`item.actions`]="{ item }">
+                      <v-btn
+                        rounded="xl"
+                        variant="plain"
+                        style="transform: rotate(0deg)"
+                        @click="openDialog(item)"
+                      >
+                        <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                      </v-btn>
+                    </template>
+                  </v-data-table>
+                </v-col>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+    <v-dialog v-model="actionsDialog" :max-width="500">
+      <v-card>
+        <v-card-title>
+          {{ selectedJob?.details.heading }}
+        </v-card-title>
+        <v-card-text> What would you like to do with this job? </v-card-text>
+        <v-card-actions>
+          <v-btn @click="closeDialog"
+            >Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="primary" size="small"></v-icon
+          ></v-btn>
+          <v-spacer></v-spacer>
+
+          <ViewJob :passedInJob="selectedJob"></ViewJob>
+
+          <ManagerJobCard :passedInJob="selectedJob"></ManagerJobCard>
+
+          <v-btn color="error" @click="deleteDialog = true"
+            >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
+          ></v-btn>
+          <v-dialog v-model="deleteDialog" :max-width="500">
+            <v-card>
+              <v-card-title class="text-h6 font-weight-regular bg-red">
+                <v-icon color="white">mdi-alert-circle-outline</v-icon>
+                Confirm Deletion
+              </v-card-title>
+              <v-card-text> Are you sure you want to delete this job? </v-card-text>
+              <v-card-actions>
+                <v-btn color="error" @click="confirmDelete">Confirm</v-btn>
+                <v-btn @click="deleteDialog = false"
+                  >Cancel<v-icon
+                    icon="fa:fa-solid fa-cancel"
+                    end
+                    color="error"
+                    size="small"
+                  ></v-icon
+                ></v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-container>
+  <Toast />
+</template>
+
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import axios from 'axios'
+import AddJob from './AddJob.vue'
+import ManagerJobCard from './ManagerJobCard.vue'
+import ViewJob from './ViewJob.vue'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
+
+const toast = useToast()
+
+interface EmployeeId {
+  companyId: string
+  createdAt: string
+  currentJobAssignments: string[]
+  role: {
+    permissionSuite: string[]
+    roleId: string
+    roleName: string
+  }
+  subordinateTeams: string[]
+  subordinates: string[]
+  superiorId: string
+  updatedAt: string
+  userId: string
+  userInfo: {
+    displayName: string
+    firstName: string
+    surname: string
+  }
+  _id: string
+}
+
+// Define the type for the job object
+interface Job {
+  _id: string
+  assignedBy: {
+    companyId: string
+    roleId: string
+    superiorId?: string
+    subordinates?: string[]
+    subordinateTeams?: string[]
+    userId: string
+    userInfo: {
+      username: string
+      firstName: string
+      surname: string
+      displayName: string
+      displayImage?: string
+    }
+  }
+  assignedEmployees?: {
+    employeeIds?: string[]
+    teamIds?: string[]
+  }
+  clientId: {
+    createdAt: string
+    details: {
+      address: {
+        city: string
+        postalCode: string
+        province: string
+        street: string
+        suburb: string
+      }
+      companyId: string
+      contactInfo: {
+        email: string
+        phoneNumber: string
+      }
+      firstName: string
+      idNumber: string
+      lastName: string
+      preferredLanguage: string
+    }
+  }
+  companyId: string
+  priorityTag?: {
+    colour: string
+    companyId: string
+    label: string
+    priorityLevel: number
+    _v: number
+    _id: string
+  }
+  attachments: string[]
+  details: {
+    heading: string
+    description: string
+    address: {
+      street: string
+      province: string
+      suburb: string
+      city: string
+      postalCode: string
+      complex?: string
+      houseNumber?: string
+    }
+    startDate: string
+    endDate?: string
+  }
+  recordedDetails?: {
+    imagesTaken?: string[]
+    inventoryUsed?: {
+      inventoryItemId: string
+      inventoryItemName: string
+      quantityUsed: number
+    }[]
+  }
+  status : {
+    status: string
+    colour: string
+    companyId: string
+    _v: number
+    _id: string
+  }
+  tags?: {
+    colour: string
+    companyId: string
+    label: string
+    _v: number
+    _id: string
+  }[]
+  clientFeedback?: {
+    rating?: number
+    comment?: string
+  }
+  taskList: {
+    title: string
+    items: {
+      description: string
+      assignedEmployees: string[]
+      dueDate: string
+      done: boolean
+    }[]
+  }
+  comments: {
+    employeeId: EmployeeId
+    comment: string
+    date: string
+    _id: string
+  }[]
+  history?: {
+    event: string
+    timestamp: string
+  }[]
+  createdAt: string
+  updatedAt: string
+}
+
+// Define state variables with types
+const actionsDialog = ref(false)
+const selectedJob = ref<Job | null>(null)
+const deleteDialog = ref(false)
+const detailedJobData = ref<Job[]>([])
+const search = ref('')
+
+// API URLs
+const localUrl: string = 'http://localhost:3000/'
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
+
+// Utility functions
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url)
+    return res.status < 300 && res.status > 199
+  } catch (error) {
+    return false
+  }
+}
+
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
+
+// Set the table headers
+const headers: any[] = [
+  { title: 'Job Heading', key: 'heading', align: 'start', value: 'heading' },
+  { title: 'Client Phone', key: 'clientPhone', align: 'start', value: 'clientPhone' },
+  { title: 'Client Mail', key: 'clientMail', align: 'start', value: 'clientMail' },
+  { title: 'Job Description', key: 'description', align: 'start', value: 'description' },
+  { title: 'Job Status', key: 'status', align: 'start', value: 'status' },
+  { title: 'Start Date', key: 'startDate', align: 'start', value: 'startDate' },
+  { title: 'End Date', key: 'endDate', align: 'start', value: 'endDate' },
+  { title: 'Actions', key: 'actions', align: 'end', value: 'actions' }
+]
+
+// Fetch data and populate the table
+const fetchData = async () => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+  const apiUrl = await getRequestUrl()
+  try {
+    const response = await axios.get(
+      `${apiUrl}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
+      config
+    )
+    if (response.status > 199 && response.status < 300) {
+      detailedJobData.value = response.data.data
+      console.log('Detailed Job Data', detailedJobData.value)
+      console.log(response)
+    } else {
+      toast.add({
+        severity: 'error',
+        summary: 'Fetch Data Error',
+        detail: 'Failed to fetch data',
+        life: 3000
+      })
+    }
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Fetch Data Error',
+      detail: 'Failed to fetch data',
+      life: 3000
+    })
+  }
+}
+
+// Dialog management
+const openDialog = (job: Job) => {
+  selectedJob.value = job
+  actionsDialog.value = true
+}
+
+const closeDialog = () => {
+  actionsDialog.value = false
+}
+
+const formatDate = (dateString: string): string => {
+  const options: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', year: '2-digit' };
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', options);
+};
+
+const confirmDelete = async () => {
+  if (selectedJob.value) {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+      }
+    }
+    const apiUrl = await getRequestUrl()
+    try {
+      await axios.delete(`${apiUrl}job/${selectedJob.value._id}`, config)
+      detailedJobData.value = detailedJobData.value.filter(
+        (job) => job._id !== selectedJob.value!._id
+      )
+      closeDialog()
+    } catch (error) {
+      toast.add({
+        severity: 'error',
+        summary: 'Delete Error',
+        detail: 'Failed to delete job',
+        life: 3000
+      })
+    } finally {
+      localStorage.setItem('jobDeleted', 'true')
+      window.location.reload()
+    }
+  }
+}
+
+onMounted(() => {
+  fetchData()
+  const jobDeleted = localStorage.getItem('jobDeleted')
+
+  if (jobDeleted === 'true') {
+    toast.add({
+      severity: 'success',
+      summary: 'Job Deleted',
+      detail: 'Job deleted successfully',
+      life: 3000
+    })
+    localStorage.removeItem('jobDeleted')
+  }
+})
+
+const getRowProps = ({ index }: any) => {
+  return {
+    class: index % 2 ? 'bg-secondRowColor' : ''
+  }
+}
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'in progress':
+      return 'blue'
+    case 'completed':
+      return 'green'
+    case 'on hold':
+      return 'yellow'
+    case 'cancelled':
+      return 'red'
+    default:
+      return 'gray'
+  }
+}
+</script>
+
+<style scoped>
+.bg-cardColor {
+  background-color: #e3e3e3;
+}
+.text-headingTextColor {
+  color: #333;
+}
+</style>
