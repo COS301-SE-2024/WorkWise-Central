@@ -49,18 +49,18 @@ settings ensure a consistent and visually appealing design.
 
 ### Theme Configuration
 
-| Light Theme | Hex Code | Dark Theme | Hex Code |
-|----------------------|--------------|----------------------|--------------|
-| background | #F7F8F9 | background | #161A1D |
-| primary | #F0984D | primary | #F38A3F |
-| secondary | #227D9B | secondary | #4C9FC3 |
-| accent | #82B1FF | accent | #448AFF |
-| error | #e63946 | error | #E63946 |
-| info | #2196F3 | info | #64B5F6 |
-| success | #37471F | success | #81C784 |
-| warning | #FFC107 | warning | #FFD54F |
-| cardColor | #F1F2F4 | cardColor | #22272B |
-| elementTextColor | #4C9FC3 | elementTextColor | #B6C2CF |
-| headingTextColor | #091E42 | headingTextColor | #DCDFE4 |
-| n_elementTextColor | #8C9BAB | n_elementTextColor | #8C9BAB |
-| highlighter | #DEE4EA | highlighter | #DEE4EA |
+| Light Theme | Hex Code                                                                            | Dark Theme | Hex Code |
+|----------------------|-------------------------------------------------------------------------------------|----------------------|--------------|
+| background | <div style="width: 100px; height: 100px; background-color: #F7F8F9;"></div>         | background |<div style="width: 100px; height: 100px; background-color: #161A1D;"></div>  |
+| primary | <div style="width: 100px; height: 100px; background-color: #F0984D;"></div>  | primary | <div style="width: 100px; height: 100px; background-color: #F38A3F;"></div> |
+| secondary | <div style="width: 100px; height: 100px; background-color: #227D9B;"></div>| secondary |<div style="width: 100px; height: 100px; background-color: #4C9FC3;"></div>  |
+| accent | <div style="width: 100px; height: 100px; background-color: #82B1FF;"></div>| accent | <div style="width: 100px; height: 100px; background-color: #448AFF;"></div> |
+| error | <div style="width: 100px; height: 100px; background-color: #e63946;"></div>| error |<div style="width: 100px; height: 100px; background-color: #E63946;"></div> |
+| info | <div style="width: 100px; height: 100px; background-color: #2196F3;"></div>| info | <div style="width: 100px; height: 100px; background-color: #64B5F6;"></div> |
+| success | <div style="width: 100px; height: 100px; background-color: #37471F;"></div>| success | <div style="width: 100px; height: 100px; background-color: #81C784;"></div> |
+| warning | <div style="width: 100px; height: 100px; background-color: #FFC107;"></div>| warning |<div style="width: 100px; height: 100px; background-color: #FFD54F;"></div>  |
+| cardColor | <div style="width: 100px; height: 100px; background-color: #F1F2F4;"></div>| cardColor |<div style="width: 100px; height: 100px; background-color: #22272B;"></div>  |
+| elementTextColor | <div style="width: 100px; height: 100px; background-color: #4C9FC3;"></div>| elementTextColor | <div style="width: 100px; height: 100px; background-color: #B6C2CF;"></div> |
+| headingTextColor | <div style="width: 100px; height: 100px; background-color: #091E42;"></div>| headingTextColor | <div style="width: 100px; height: 100px; background-color: #DCDFE4;"></div> |
+| n_elementTextColor | <div style="width: 100px; height: 100px; background-color: #8C9BAB;"></div>| n_elementTextColor | <div style="width: 100px; height: 100px; background-color: #8C9BAB;"></div> |
+| highlighter | <div style="width: 100px; height: 100px; background-color: #DEE4EA;"></div>| highlighter | <div style="width: 100px; height: 100px; background-color: #DEE4EA;"></div> |

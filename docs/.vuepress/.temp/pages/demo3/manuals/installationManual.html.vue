@@ -3,7 +3,7 @@
 <p>WorkWise is a PWA designed to be a management tool for service delivery businesses. This is the technical installation manual for the project</p>
 <h2 id="prerequisites" tabindex="-1"><a class="header-anchor" href="#prerequisites"><span>Prerequisites</span></a></h2>
 <h3 id="node-js-npm" tabindex="-1"><a class="header-anchor" href="#node-js-npm"><span>Node.js &amp; npm</span></a></h3>
-<p>To be able to run this project you will need to install <a href="https://nodejs.org/en" target="_blank" rel="noopener noreferrer">node</a> &amp; <a href="https://www.npmjs.com/" target="_blank" rel="noopener noreferrer">npm</a>.</p>
+<p>To be able to run this project you will need to install <a href="https://nodejs.org/en" target="_blank" rel="noopener noreferrer">node 18.18.0</a> &amp; <a href="https://www.npmjs.com/" target="_blank" rel="noopener noreferrer">npm</a>.</p>
 <h4 id="on-windows" tabindex="-1"><a class="header-anchor" href="#on-windows"><span>On Windows</span></a></h4>
 <ol>
 <li>Download Node.js Installer

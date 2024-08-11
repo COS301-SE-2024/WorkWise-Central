@@ -146,81 +146,81 @@ settings ensure a consistent and visually appealing design.</p>
 <tbody>
 <tr>
 <td>background</td>
-<td>#F7F8F9</td>
+<td><div style="width: 100px; height: 100px; background-color: #F7F8F9;"></div></td>
 <td>background</td>
-<td>#161A1D</td>
+<td><div style="width: 100px; height: 100px; background-color: #161A1D;"></div></td>
 </tr>
 <tr>
 <td>primary</td>
-<td>#F0984D</td>
+<td><div style="width: 100px; height: 100px; background-color: #F0984D;"></div></td>
 <td>primary</td>
-<td>#F38A3F</td>
+<td><div style="width: 100px; height: 100px; background-color: #F38A3F;"></div></td>
 </tr>
 <tr>
 <td>secondary</td>
-<td>#227D9B</td>
+<td><div style="width: 100px; height: 100px; background-color: #227D9B;"></div></td>
 <td>secondary</td>
-<td>#4C9FC3</td>
+<td><div style="width: 100px; height: 100px; background-color: #4C9FC3;"></div></td>
 </tr>
 <tr>
 <td>accent</td>
-<td>#82B1FF</td>
+<td><div style="width: 100px; height: 100px; background-color: #82B1FF;"></div></td>
 <td>accent</td>
-<td>#448AFF</td>
+<td><div style="width: 100px; height: 100px; background-color: #448AFF;"></div></td>
 </tr>
 <tr>
 <td>error</td>
-<td>#e63946</td>
+<td><div style="width: 100px; height: 100px; background-color: #e63946;"></div></td>
 <td>error</td>
-<td>#E63946</td>
+<td><div style="width: 100px; height: 100px; background-color: #E63946;"></div></td>
 </tr>
 <tr>
 <td>info</td>
-<td>#2196F3</td>
+<td><div style="width: 100px; height: 100px; background-color: #2196F3;"></div></td>
 <td>info</td>
-<td>#64B5F6</td>
+<td><div style="width: 100px; height: 100px; background-color: #64B5F6;"></div></td>
 </tr>
 <tr>
 <td>success</td>
-<td>#37471F</td>
+<td><div style="width: 100px; height: 100px; background-color: #37471F;"></div></td>
 <td>success</td>
-<td>#81C784</td>
+<td><div style="width: 100px; height: 100px; background-color: #81C784;"></div></td>
 </tr>
 <tr>
 <td>warning</td>
-<td>#FFC107</td>
+<td><div style="width: 100px; height: 100px; background-color: #FFC107;"></div></td>
 <td>warning</td>
-<td>#FFD54F</td>
+<td><div style="width: 100px; height: 100px; background-color: #FFD54F;"></div></td>
 </tr>
 <tr>
 <td>cardColor</td>
-<td>#F1F2F4</td>
+<td><div style="width: 100px; height: 100px; background-color: #F1F2F4;"></div></td>
 <td>cardColor</td>
-<td>#22272B</td>
+<td><div style="width: 100px; height: 100px; background-color: #22272B;"></div></td>
 </tr>
 <tr>
 <td>elementTextColor</td>
-<td>#4C9FC3</td>
+<td><div style="width: 100px; height: 100px; background-color: #4C9FC3;"></div></td>
 <td>elementTextColor</td>
-<td>#B6C2CF</td>
+<td><div style="width: 100px; height: 100px; background-color: #B6C2CF;"></div></td>
 </tr>
 <tr>
 <td>headingTextColor</td>
-<td>#091E42</td>
+<td><div style="width: 100px; height: 100px; background-color: #091E42;"></div></td>
 <td>headingTextColor</td>
-<td>#DCDFE4</td>
+<td><div style="width: 100px; height: 100px; background-color: #DCDFE4;"></div></td>
 </tr>
 <tr>
 <td>n_elementTextColor</td>
-<td>#8C9BAB</td>
+<td><div style="width: 100px; height: 100px; background-color: #8C9BAB;"></div></td>
 <td>n_elementTextColor</td>
-<td>#8C9BAB</td>
+<td><div style="width: 100px; height: 100px; background-color: #8C9BAB;"></div></td>
 </tr>
 <tr>
 <td>highlighter</td>
-<td>#DEE4EA</td>
+<td><div style="width: 100px; height: 100px; background-color: #DEE4EA;"></div></td>
 <td>highlighter</td>
-<td>#DEE4EA</td>
+<td><div style="width: 100px; height: 100px; background-color: #DEE4EA;"></div></td>
 </tr>
 </tbody>
 </table>

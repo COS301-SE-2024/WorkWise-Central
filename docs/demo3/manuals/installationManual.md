@@ -5,7 +5,7 @@ WorkWise is a PWA designed to be a management tool for service delivery business
 
 ## Prerequisites
 ### Node.js & npm
-To be able to run this project you will need to install [node](https://nodejs.org/en) & [npm](https://www.npmjs.com/).
+To be able to run this project you will need to install [node 18.18.0](https://nodejs.org/en) & [npm](https://www.npmjs.com/).
 
 #### On Windows
 1. Download Node.js Installer

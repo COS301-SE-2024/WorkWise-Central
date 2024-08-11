@@ -194,7 +194,6 @@ All users are employees of companies. Each employee has information associated w
 - An employee must be associated with a company.
 - An employee must have a superior when added to the company.
   - The default superior is the owner of the company.
-- This subsystem must implement role-based access control (refer to the role and permission subsystem).
 - The system must display the employees in a company.
   - The user must be able to search for a specific employee.
   - The user must be able to sort the list of employees.
@@ -202,7 +201,24 @@ All users are employees of companies. Each employee has information associated w
 - The system must allow any of the details pertaining to an employee to be edited.
 - The system must allow an employee to be deleted from a company.
   - This must be a soft delete.
-  
+- This subsystem must implement role-based access control (refer to the role and permission subsystem).
+
+## Teams Subsystem
+Teams are a grouping of employees in a company. Each team has a team leader.
+
+- The system must store all information associated with a team.
+- The system must allow a new team to be created from the existing employees in the company.
+- A team must have a leader
+- The system must display the teams in a company.
+  - The user must be able to search for a specific team.
+  - The user must be able to sort the list of teams.
+  - The user must be able to filter the list of teams.
+- The system must allow any of the details pertaining to a team to be edited.
+- The system must allow a team to be deleted from a company.
+  - This must be a soft delete.
+- The system must allow a team to be assigned a job
+  - Each member of the team must be assigned the job.
+- This subsystem must implement role-based access control (refer to the role and permission subsystem).
 
 ## Client Subsystem
 The system must allow data pertaining to a client to be stored.

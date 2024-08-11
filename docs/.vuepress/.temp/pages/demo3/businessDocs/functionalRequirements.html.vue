@@ -275,7 +275,6 @@ above)</li>
 <li>The default superior is the owner of the company.</li>
 </ul>
 </li>
-<li>This subsystem must implement role-based access control (refer to the role and permission subsystem).</li>
 <li>The system must display the employees in a company.
 <ul>
 <li>The user must be able to search for a specific employee.</li>
@@ -289,6 +288,33 @@ above)</li>
 <li>This must be a soft delete.</li>
 </ul>
 </li>
+<li>This subsystem must implement role-based access control (refer to the role and permission subsystem).</li>
+</ul>
+<h2 id="teams-subsystem" tabindex="-1"><a class="header-anchor" href="#teams-subsystem"><span>Teams Subsystem</span></a></h2>
+<p>Teams are a grouping of employees in a company. Each team has a team leader.</p>
+<ul>
+<li>The system must store all information associated with a team.</li>
+<li>The system must allow a new team to be created from the existing employees in the company.</li>
+<li>A team must have a leader</li>
+<li>The system must display the teams in a company.
+<ul>
+<li>The user must be able to search for a specific team.</li>
+<li>The user must be able to sort the list of teams.</li>
+<li>The user must be able to filter the list of teams.</li>
+</ul>
+</li>
+<li>The system must allow any of the details pertaining to a team to be edited.</li>
+<li>The system must allow a team to be deleted from a company.
+<ul>
+<li>This must be a soft delete.</li>
+</ul>
+</li>
+<li>The system must allow a team to be assigned a job
+<ul>
+<li>Each member of the team must be assigned the job.</li>
+</ul>
+</li>
+<li>This subsystem must implement role-based access control (refer to the role and permission subsystem).</li>
 </ul>
 <h2 id="client-subsystem" tabindex="-1"><a class="header-anchor" href="#client-subsystem"><span>Client Subsystem</span></a></h2>
 <p>The system must allow data pertaining to a client to be stored.</p>
