@@ -5,7 +5,7 @@
 <p>To access the system click <a href="https://tuksui.sharpsoftwaresolutions.net/" target="_blank" rel="noopener noreferrer">here</a></p>
 <h2 id="tutorials" tabindex="-1"><a class="header-anchor" href="#tutorials"><span>Tutorials</span></a></h2>
 <iframe
-src="http://localhost:5173/tutorial"
+src="https://work-wise-central-1-u57v.vercel.app/tutorial"
 width="1000"
 height="800"
 style="border:1px solid black;">

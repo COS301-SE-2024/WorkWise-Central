@@ -7,7 +7,7 @@ This is the user manual for WorkWise Central. The manual currently only reflects
 To access the system click [here](https://tuksui.sharpsoftwaresolutions.net/)
 ## Tutorials
 <iframe
-src="https://tuksui.sharpsoftwaresolutions.net/tutorial"
+src="https://work-wise-central-1-u57v.vercel.app/tutorial"
 width="1000"
 height="800"
 style="border:1px solid black;">
