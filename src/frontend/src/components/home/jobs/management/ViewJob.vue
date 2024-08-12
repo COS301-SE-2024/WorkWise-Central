@@ -1,6 +1,6 @@
 <template>
     <v-card elevation="14" rounded="md" :style="{ backgroundColor: cardBackgroundColor }">
-      <v-img :src="imageSrc" aspect-ratio="5.75" @load="() => setCardBackgroundColor(imageSrc.value)"></v-img>
+      <v-img :src="imageSrc" aspect-ratio="5.75" @load="() => setCardBackgroundColor(imageSrc)"></v-img>
       <v-row class="position-relative">
         <v-col class="d-flex justify-end">
           <v-btn color="primary" class="position-absolute bottom-right">
@@ -382,7 +382,6 @@ const setCardBackgroundColor = (src: string) => {
     }
   }
 }
-
 </script>
 
 <style scoped>
