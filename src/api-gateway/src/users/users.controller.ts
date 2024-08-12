@@ -36,7 +36,7 @@ import { UserEmailVerificationDTO } from './dto/user-validation.dto';
 import { BooleanResponseDto, FileResponseDto } from '../shared/dtos/api-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserAllResponseDetailedDto } from './dto/user-response.dto';
-import { GetImageValidator } from '../utils/Custom Validators/GetImageValidator';
+//import { GetImageValidator } from '../utils/Custom Validators/GetImageValidator';
 import { BodyInterceptor } from '../utils/Custom Interceptors/body.interceptor';
 // import { diskStorage } from 'multer';
 // import e from 'express';
@@ -301,7 +301,7 @@ export class UsersController {
   @ApiBody({ type: UpdateProfilePicDto })
   @UseInterceptors(FileInterceptor('profilePicture'))
   @Patch('/update/profilePic')
-  async updateProfilePic(@Headers() headers: any, @UploadedFile(GetImageValidator()) file: Express.Multer.File) {
+  async updateProfilePic(@Headers() headers: any, @UploadedFile(/*GetImageValidator()*/) file: Express.Multer.File) {
     try {
       const userId = this.extractUserId(headers);
       return {

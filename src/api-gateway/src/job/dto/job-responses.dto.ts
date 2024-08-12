@@ -115,6 +115,9 @@ export class JobApiObject {
   attachments: string[];
 
   @ApiProperty()
+  coverImage: string;
+
+  @ApiProperty()
   details: Details;
 
   @ApiProperty()
@@ -166,6 +169,9 @@ export class JobApiDetailedObject {
 
   @ApiProperty()
   attachments: string[];
+
+  @ApiProperty()
+  coverImage: string;
 
   @ApiProperty()
   details: Details;
