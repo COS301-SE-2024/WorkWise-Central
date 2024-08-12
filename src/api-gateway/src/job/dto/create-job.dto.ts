@@ -308,6 +308,10 @@ export class CreateJobDto {
   @IsArray()
   @IsString({ each: true })
   attachments?: string[];
+
+  @ApiProperty()
+  @IsOptional()
+  coverImage?: string;
 }
 
 export class CreateJobResponseDto {
