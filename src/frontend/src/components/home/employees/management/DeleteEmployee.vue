@@ -81,11 +81,11 @@ export default {
         companyId: localStorage['currentCompany'],
         employeeToDeleteId: this.details.employeeId
       }
+      console.log(employee_to_be_deleted)
       this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` },
-        data: employee_to_be_deleted,
-        params: employee_to_be_deleted
+        data: employee_to_be_deleted
       }
       const apiURL = await this.getRequestUrl()
       axios
