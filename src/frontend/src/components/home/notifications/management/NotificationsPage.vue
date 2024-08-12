@@ -8,25 +8,25 @@
     </v-row>
     <v-card rounded="md" class="bg-cardColor">
       <v-row>
-        <v-col cols="12" lg="10">
+        <v-col cols="12" lg="10"  order-lg="first" order="first">
           <v-row>
-            <v-col cols="12" lg="2">
+            <v-col cols="12" lg="4">
               <v-row
-                ><v-col cols="12"
+                ><v-col lg="4" cols="12"
                   ><v-btn
                     @click="setInbox('All')"
                     :class="{ 'bg-cardColor': currentInbox === 'All' }"
                     ><v-icon icon="fa: fa-solid fa-inbox"></v-icon>All</v-btn
                   ></v-col
                 >
-                <v-col cols="12">
+                <v-col lg="4" cols="12">
                   <v-btn
                     @click="setInbox('Unread')"
                     :class="{ 'bg-cardColor': currentInbox === 'Unread' }"
                     ><v-icon icon="fa: fa-regular fa-bell"></v-icon>Unread</v-btn
                   ></v-col
                 >
-                <v-col cols="12"
+                <v-col lg="4" cols="12"
                   ><v-btn
                     @click="setInbox('Read')"
                     :class="{ 'bg-cardColor': currentInbox === 'Read' }"
@@ -48,18 +48,9 @@
                 @input="searchEmails"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" lg="2">
-              <v-select
-                label="Sort By"
-                :items="groupBy"
-                density="compact"
-                class="pa-0 ma-2"
-                @change="groupBySelection($event)"
-              ></v-select>
-            </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12" order="last" justify="center">
+            <v-col cols="12"  order-lg="second" order="last" justify="center">
               <v-card class="pa-0 ma-3" elevation="0">
                 <v-card-title class="text-h4">{{ currentInbox }}</v-card-title>
                 <v-divider></v-divider>
@@ -166,7 +157,7 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-col cols="12" lg="2">
+        <v-col cols="12" lg="2" order-lg="last" order="second">
           <v-card class="pa-0 ma-2" elevation="0" border="sm">
             <v-list class="bg-cardColor">
               <v-list-item

@@ -25,12 +25,16 @@
               label="Permissions"
               chips
               multiple
+              :disabled="item.roleName === 'Owner' || item.roleName === 'Worker'"
               variant="default"
             ></v-select>
           </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu>
-              <template v-slot:activator="{ props }" v-if="item.roleName !== 'Owner'">
+              <template
+                v-slot:activator="{ props }"
+                v-if="item.roleName !== 'Owner' || item.roleName !== 'Worker'"
+              >
                 <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)">
                   <v-icon color="primary">mdi-dots-horizontal</v-icon>
                 </v-btn>

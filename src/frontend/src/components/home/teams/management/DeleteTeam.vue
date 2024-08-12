@@ -36,7 +36,7 @@
               </v-btn>
             </v-col>
             <v-col cols="12" lg="6">
-              <v-btn color="error" :loading="isDeleting" block @click="deleteTeam">
+              <v-btn color="error" :loading="isDeleting" block @click="mockDeleteTeam">
                 <v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>
                 Delete
               </v-btn>
@@ -70,6 +70,16 @@ export default defineComponent({
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   methods: {
+    mockDeleteTeam() {
+      this.$toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Team deleted successfully',
+        life: 3000
+      })
+      alert('Team deleted successfully')
+      window.location.reload()
+    },
     async deleteTeam() {
       console.log('Deleting team with ID:', this.team_id)
       const config = {

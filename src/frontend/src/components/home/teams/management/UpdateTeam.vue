@@ -35,21 +35,23 @@
             </v-col>
             <v-col>
               <small class="text-caption">Team Members</small>
-              <v-textarea
-                v-model="localEditedItem.teamMembers"
+              <v-text-field
+                v-for="member in localEditedItem.teamMembers"
+                :key="member.id"
+                v-model="member.name"
                 color="secondary"
-                :rules="teamMembersRules"
                 required
-              ></v-textarea>
+              ></v-text-field>
             </v-col>
             <v-col>
               <small class="text-caption">Team Leader ID</small>
-              <v-text-field
+              <v-select
+                :items="teamLeaderIds"
                 v-model="localEditedItem.teamLeaderId"
                 color="secondary"
                 :rules="teamLeaderIdRules"
                 required
-              ></v-text-field>
+              ></v-select>
             </v-col>
           </v-col>
         </v-form>
@@ -65,7 +67,7 @@
             </v-col>
             <Toast position="top-center" />
             <v-col cols="12" lg="6">
-              <v-btn @click="updateTeam" color="success" :disabled="!valid" block>
+              <v-btn @click="mockUpdateTeam" color="success" :disabled="!valid" block>
                 <v-icon
                   icon="fa:fa-solid fa-floppy-disk"
                   start
@@ -82,36 +84,55 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import Toast from 'primevue/toast'
 import axios from 'axios'
-
+interface Team {
+  _id: string
+  companyId: string
+  teamName: string
+  teamMembers: []
+  teamLeaderId: string
+  currentJobAssignments: []
+}
 export default {
   name: 'UpdateTeam',
   props: {
     editedItem: Object,
-    teamId: String
+    teamId: String,
+    teamLeaderIds: Array
   },
   components: {
     Toast
   },
   data() {
     return {
-      localEditedItem: this.editedItem,
+      localEditedItem: {} as Team,
       editDialog: false,
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       valid: false,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
-      teamNameRules: [(v) => !!v || 'Team Name is required'],
-      teamMembersRules: [(v) => (Array.isArray(v) && v.length > 0) || 'Team Members are required'],
-      teamLeaderIdRules: [(v) => !!v || 'Team Leader ID is required']
+      teamNameRules: [(v: any) => !!v || 'Team Name is required'],
+      teamMembersRules: [
+        (v: any) => (Array.isArray(v) && v.length > 0) || 'Team Members are required'
+      ],
+      teamLeaderIdRules: [(v: any) => !!v || 'Team Leader ID is required']
     }
   },
   created() {
-    this.localEditedItem = this.editedItem
+    this.localEditedItem = this.deepCopy(this.editedItem)
   },
   methods: {
+    mockUpdateTeam() {
+      this.$toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Team updated successfully',
+        life: 3000
+      })
+      this.editDialog = false
+    },
     updateTeam() {
       if (!this.localEditedItem) {
         this.$toast.add({
@@ -162,7 +183,7 @@ export default {
           })
         })
     },
-    deepCopy(obj) {
+    deepCopy(obj: any) {
       return JSON.parse(JSON.stringify(obj))
     },
     handleSubmission() {
@@ -173,7 +194,7 @@ export default {
     close() {
       this.editDialog = false
     },
-    async isLocalAvailable(localUrl) {
+    async isLocalAvailable(localUrl: string) {
       try {
         const res = await axios.get(localUrl)
         return res.status >= 200 && res.status < 300

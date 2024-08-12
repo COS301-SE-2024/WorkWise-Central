@@ -30,27 +30,36 @@
             ><v-spacer></v-spacer
             ><small class="text-caption" style="font-size: 12px">
               <ul>
-                <li v-for="member in team.teamMembers" :key="member.id">{{ member.name }}</li>
+                <v-chip
+                  v-for="member in team.teamMembers"
+                  :key="member.id"
+                  color="secondary"
+                  variant="text"
+                  class="mr-2"
+                  >{{ member.name }}</v-chip
+                >
               </ul>
             </small>
           </v-col>
         </v-row>
         <v-divider></v-divider>
         <v-row>
-          <v-col cols="6">
+          <v-col cols="12">
             <label class="font-weight-light" style="font-size: 20px"> Current Job Assignments</label
             ><v-spacer></v-spacer
-            ><small class="text-caption" style="font-size: 12px">{{
-              team.currentJobAssignments
-            }}</small>
-          </v-col>
-          <v-col cols="6">
-            <label class="font-weight-light" style="font-size: 20px"> Date Created</label
-            ><v-spacer></v-spacer
-            ><small class="text-caption" style="font-size: 12px">{{ team.createdAt }}</small>
+            ><small class="text-caption" style="font-size: 12px">
+              <ul>
+                <v-chip
+                  v-for="job in team.currentJobAssignments"
+                  color="primary"
+                  class="mr-2"
+                  :key="job.id"
+                  >{{ job.jobTitle }}</v-chip
+                >
+              </ul>
+            </small>
           </v-col>
         </v-row>
-        <v-divider></v-divider>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>

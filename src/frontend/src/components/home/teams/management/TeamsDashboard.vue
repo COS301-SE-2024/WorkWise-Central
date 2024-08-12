@@ -47,12 +47,21 @@
       <v-card-text>
         <v-data-table
           :headers="teamHeaders"
-          :items="teamItems"
+          :items="teamItemMockData"
           :search="search"
           height="auto"
           class="bg-cardColor"
           :row-props="getRowProps"
         >
+          <template v-slot:[`item.currentJobAssignments`] ="{item}">
+            <v-chip
+              v-for="job in item.currentJobAssignments"
+              :key="job.jobId"
+              color="primary"
+              class="mr-2"
+              >{{ job.jobTitle }}</v-chip
+            >
+          </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu max-width="500px" :theme="isdarkmode === true ? 'dark' : 'light'">
               <template v-slot:activator="{ props }">
@@ -65,7 +74,7 @@
                   <ViewTeam :team="selectedItem" />
                 </v-list-item>
                 <v-list-item>
-                  <UpdateTeam :team_id="selectedItemID" :team="selectedItem" />
+                  <UpdateTeam :team_id="selectedItemID" :editedItem="selectedItem" :teamLeaderIds="ids" />
                 </v-list-item>
                 <v-list-item>
                   <DeleteTeam :team_id="selectedItemID" :teamName="selectedItemName" />
@@ -101,15 +110,109 @@ export default defineComponent({
   data() {
     return {
       search: '',
-
+      ids:[1,2,4,5,6,7,8,9,10],
       teamHeaders: [
-        { text: 'Team Name', value: 'teamName' },
-        { text: 'Team Leader', value: 'teamLeaderId' },
-        { text: 'Current Job Assignments', value: 'currentJobAssignments' },
-        { text: 'Actions', value: 'actions', sortable: false }
+        { title: 'Team Name', value: 'teamName' },
+        { title: 'Team Leader', value: 'teamLeaderId' },
+        { title: 'Current Job Assignments', value: 'currentJobAssignments' },
+        { title: 'Actions', value: 'actions', sortable: false }
       ],
       teamItems: [],
-
+      teamItemMockData: [
+        {
+          _id: '1',
+          companyId: '1',
+          teamName: 'Alpha Team',
+          teamMembers: [
+            {
+              id: '1',
+              name: 'John Doe',
+              role: 'Software Engineer',
+              email: 'johndoe@company.com',
+              contactNumber: '123-456-7890'
+            },
+            {
+              id: '2',
+              name: 'Jane Doe',
+              role: 'UI/UX Designer',
+              email: 'janedoe@company.com',
+              contactNumber: '234-567-8901'
+            },
+            {
+              id: '3',
+              name: 'John Smith',
+              role: 'Project Manager',
+              email: 'johnsmith@company.com',
+              contactNumber: '345-678-9012'
+            },
+            {
+              id: '4',
+              name: 'Jane Smith',
+              role: 'QA Engineer',
+              email: 'janesmith@company.com',
+              contactNumber: '456-789-0123'
+            }
+          ],
+          teamLeaderId: '1',
+          currentJobAssignments: [
+            {
+              jobId: '101',
+              jobTitle: 'Website Redesign',
+              status: 'In Progress'
+            },
+            {
+              jobId: '102',
+              jobTitle: 'Mobile App Development',
+              status: 'Completed'
+            }
+          ]
+        },
+        {
+          _id: '2',
+          companyId: '1',
+          teamName: 'Beta Team',
+          teamMembers: [
+            {
+              id: '5',
+              name: 'Emily Davis',
+              role: 'Software Engineer',
+              email: 'emilydavis@company.com',
+              contactNumber: '567-890-1234'
+            },
+            {
+              id: '6',
+              name: 'Michael Brown',
+              role: 'DevOps Engineer',
+              email: 'michaelbrown@company.com',
+              contactNumber: '678-901-2345'
+            }
+          ],
+          teamLeaderId: '2',
+          currentJobAssignments: [
+            {
+              jobId: '103',
+              jobTitle: 'Cloud Infrastructure Setup',
+              status: 'Pending'
+            }
+          ]
+        },
+        {
+          _id: '3',
+          companyId: '1',
+          teamName: 'Gamma Team',
+          teamMembers: [
+            {
+              id: '7',
+              name: 'Chris Green',
+              role: 'Data Scientist',
+              email: 'chrisgreen@company.com',
+              contactNumber: '789-012-3456'
+            }
+          ],
+          teamLeaderId: '3',
+          currentJobAssignments: []
+        }
+      ],
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       selectedItem: {},
       selectedItemName: '',
