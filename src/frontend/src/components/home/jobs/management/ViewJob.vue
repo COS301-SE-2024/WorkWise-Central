@@ -1,21 +1,15 @@
 <template>
-  <v-dialog v-model="viewJobDialog" :min-height="800" :max-width="1000">
-    <template v-slot:activator="{ props: activatorProps }">
-      <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
-        <v-btn
-          text="View"
-          prepend-icon="fa:fa-solid fa-eye"
-          color="success"
-          v-bind="activatorProps"
-          @click="viewJob"
-        ></v-btn>
-      </v-defaults-provider>
-    </template>
-    <v-card elevation="14" rounded="md">
-      <v-img
-        src="https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U="
-        aspect-ratio="5.75"
-      ></v-img>
+    <v-card elevation="14" rounded="md" :style="{ backgroundColor: cardBackgroundColor }">
+      <v-img :src="imageSrc" aspect-ratio="5.75" @load="() => setCardBackgroundColor(imageSrc)"></v-img>
+      <v-row class="position-relative">
+        <v-col class="d-flex justify-end">
+          <v-btn color="primary" class="position-absolute bottom-right">
+            <v-icon left>mdi-image</v-icon>
+            <label for="imageInput" class="m-0">Cover</label>
+            <input type="file" id="imageInput" @change="changeImage" accept="image/*" style="display: none;" />
+          </v-btn>
+        </v-col>
+      </v-row>
       <v-card-title>
         {{ props.passedInJob?.details?.heading }}
       </v-card-title>
@@ -37,8 +31,8 @@
             <v-col class="text-center">
               <v-spacer></v-spacer>
               <p>
-                <v-chip :color="getStatusColor(props.passedInJob?.status.status)" dark>
-                  {{ props.passedInJob?.status.status }}
+                <v-chip :color="getStatusColor(props.passedInJob?.status?.status)" dark>
+                  {{ props.passedInJob?.status?.status }}
                 </v-chip>
               </p>
             </v-col>
@@ -51,17 +45,23 @@
               <v-col class="text-center" md="4">
                 <label class="font-weight-bold">Client Name</label>
                 <v-spacer></v-spacer>
-                <p>Holder Name</p>
+                <p>
+                  {{
+                    props.passedInJob?.clientId?.details?.firstName +
+                    ' ' +
+                    props.passedInJob?.clientId?.details?.lastName
+                  }}
+                </p>
               </v-col>
               <v-col class="text-center" md="4">
                 <label class="font-weight-bold">Phone</label>
                 <v-spacer></v-spacer>
-                <p>Holder phone</p>
+                <p>{{ props.passedInJob?.clientId?.details?.contactInfo?.phoneNumber }}</p>
               </v-col>
               <v-col class="text-center" md="4">
                 <label class="font-weight-bold">Email</label>
                 <v-spacer></v-spacer>
-                <p>Holder Email</p>
+                <p>{{ props.passedInJob?.clientId?.details?.contactInfo?.email }}</p>
               </v-col>
             </v-row>
 
@@ -111,7 +111,10 @@
                   <label class="font-weight-bold">House Number</label>
                   <v-spacer></v-spacer>
                   <p>
-                    {{ props.passedInJob?.details?.address?.houseNumber }}
+                    {{
+                      props.passedInJob?.details?.address?.houseNumber ||
+                      'House number is not available'
+                    }}
                   </p>
                 </v-col>
               </v-row>
@@ -126,14 +129,14 @@
                   />
                 </v-col>
               </v-row>
-              <v-divider>
-                <h5 ref="notesSection">Add Job Notes</h5>
-              </v-divider>
-              <v-row>
-                <v-col>
-                  <JobNotes :passedInJob="props.passedInJob" />
-                </v-col>
-              </v-row>
+              <!--              <v-divider>-->
+              <!--                <h5 ref="notesSection">Add Job Notes</h5>-->
+              <!--              </v-divider>-->
+              <!--              <v-row>-->
+              <!--                <v-col>-->
+              <!--                  <JobNotes :passedInJob="props.passedInJob" />-->
+              <!--                </v-col>-->
+              <!--              </v-row>-->
               <v-divider>
                 <h5 ref="tasksSection">Check Off Tasks</h5>
               </v-divider>
@@ -183,20 +186,20 @@
                 Add Comment
               </v-btn>
             </v-col>
-            <v-col>
-              <v-btn
-                width="100%"
-                class="d-flex justify-start"
-                border="md"
-                elevation="5"
-                @click="scrollToSection('notesSection')"
-              >
-                <v-icon left>
-                  {{ 'fa: fa-solid fa-sticky-note' }}
-                </v-icon>
-                Add Note
-              </v-btn>
-            </v-col>
+            <!--            <v-col>-->
+            <!--              <v-btn-->
+            <!--                width="100%"-->
+            <!--                class="d-flex justify-start"-->
+            <!--                border="md"-->
+            <!--                elevation="5"-->
+            <!--                @click="scrollToSection('notesSection')"-->
+            <!--              >-->
+            <!--                <v-icon left>-->
+            <!--                  {{ 'fa: fa-solid fa-sticky-note' }}-->
+            <!--                </v-icon>-->
+            <!--                Add Note-->
+            <!--              </v-btn>-->
+            <!--            </v-col>-->
             <v-col>
               <v-btn
                 width="100%"
@@ -225,20 +228,20 @@
                 Attach Images
               </v-btn>
             </v-col>
-            <v-col>
-              <v-btn
-                width="100%"
-                class="d-flex justify-start"
-                border="md"
-                elevation="5"
-                @click="scrollToSection('tagsSection')"
-              >
-                <v-icon left>
-                  {{ 'fa: fa-solid fa-box' }}
-                </v-icon>
-                Log Inventory
-              </v-btn>
-            </v-col>
+<!--            <v-col>-->
+<!--              <v-btn-->
+<!--                width="100%"-->
+<!--                class="d-flex justify-start"-->
+<!--                border="md"-->
+<!--                elevation="5"-->
+<!--                @click="scrollToSection('tagsSection')"-->
+<!--              >-->
+<!--                <v-icon left>-->
+<!--                  {{ 'fa: fa-solid fa-box' }}-->
+<!--                </v-icon>-->
+<!--                Log Inventory-->
+<!--              </v-btn>-->
+<!--            </v-col>-->
             <v-col>
               <v-btn
                 width="100%"
@@ -257,28 +260,22 @@
         </v-row>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="error" @click="closeView">Close</v-btn>
-        <v-btn color="success" @click="closeView">Save</v-btn>
+        <v-btn color="error" @click="closeView" width="100%">Close</v-btn>
       </v-card-actions>
     </v-card>
-  </v-dialog>
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, type Ref } from 'vue'
+import { defineProps, ref, type Ref, defineEmits } from 'vue'
 import AddComment from './AddComments.vue'
-import JobNotes from './JobNotes.vue'
+// import JobNotes from './JobNotes.vue'
 import CheckOffItems from './CheckOffItems.vue'
 import GetJobImages from './GetJobImages.vue'
 import JobTags from './JobTags.vue'
 import JobHistory from './JobHistory.vue'
 
 const props = defineProps<{ passedInJob: any }>()
-
-
-const viewJob = () => {
-  console.log('click click')
-}
+const emits = defineEmits(['close'])
 
 const commentsSection = ref<HTMLElement | null>(null)
 const notesSection = ref<HTMLElement | null>(null)
@@ -338,7 +335,68 @@ const getStatusColor = (status: string): string => {
 }
 
 const closeView = () => {
-  console.log('Passed in job', props.passedInJob)
-  viewJobDialog.value = false
+  emits('close')
+}
+
+const imageSrc = ref('https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U=')
+const cardBackgroundColor = ref('')
+
+const changeImage = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  if (input.files && input.files[0]) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      imageSrc.value = e.target?.result as string
+      setCardBackgroundColor(imageSrc.value)
+    }
+    reader.readAsDataURL(input.files[0])
+  }
+}
+
+const setCardBackgroundColor = (src: string) => {
+  const img = new Image()
+  img.src = src
+  img.onload = () => {
+    const canvas = document.createElement('canvas')
+    const context = canvas.getContext('2d')
+
+    if (context) {
+      canvas.width = img.naturalWidth
+      canvas.height = img.naturalHeight
+      context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight)
+      const imageData = context.getImageData(0, 0, img.naturalWidth, img.naturalHeight).data
+
+      let r = 0, g = 0, b = 0, count = 0
+      for (let i = 0; i < imageData.length; i += 4) {
+        r += imageData[i]
+        g += imageData[i + 1]
+        b += imageData[i + 2]
+        count++
+      }
+
+      r = Math.floor(r / count)
+      g = Math.floor(g / count)
+      b = Math.floor(b / count)
+
+      cardBackgroundColor.value = `rgb(${r}, ${g}, ${b})`
+    }
+  }
 }
 </script>
+
+<style scoped>
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+}
+
+.bottom-right {
+  bottom: 0;
+  right: 0;
+  margin-bottom: 8px; /* Adjust as needed */
+  margin-right: 8px; /* Adjust as needed */
+}
+</style>

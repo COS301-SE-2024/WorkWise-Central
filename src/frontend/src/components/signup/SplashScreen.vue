@@ -1269,6 +1269,7 @@ export default defineComponent({
       const target = event.target
       if (target.files && target.files[0]) {
         const file = target.files[0]
+        this.profilePicture = file
         const reader = new FileReader()
 
         reader.onload = (e) => {
@@ -1333,36 +1334,38 @@ export default defineComponent({
     async signup() {
       const apiURL = await this.getRequestUrl()
       this.birthDateFormatter(this.birthDate)
+      const jsonData = {
+        username: this.username,
+        password: this.signupPassword,
+        personalInfo: {
+          firstName: this.name,
+          surname: this.surname,
+          dateOfBirth: this.date,
+          gender: this.gender,
+          preferredLanguage: this.language
+        },
+        address: {
+          street: this.street,
+          suburb: this.suburb,
+          province: this.province,
+          city: this.city,
+          postalCode: this.postal_code,
+          complex: this.complex,
+          houseNumber: this.houseNumber
+        },
+        contactInfo: {
+          phoneNumber: this.phone_number,
+          email: this.email
+        },
+        profile: {
+          displayName: this.name + ' ' + this.surname
+        },
+        skills: this.skills,
+        currentCompany: this.company
+      }
+
       await axios
-        .post(apiURL + 'users/create', {
-          username: this.username,
-          password: this.signupPassword,
-          personalInfo: {
-            firstName: this.name,
-            surname: this.surname,
-            dateOfBirth: this.date,
-            gender: this.gender,
-            preferredLanguage: this.language
-          },
-          address: {
-            street: this.street,
-            suburb: this.suburb,
-            province: this.province,
-            city: this.city,
-            postalCode: this.postal_code,
-            complex: this.complex,
-            houseNumber: this.houseNumber
-          },
-          contactInfo: {
-            phoneNumber: this.phone_number,
-            email: this.email
-          },
-          profile: {
-            displayName: this.name + ' ' + this.surname
-          },
-          skills: this.skills,
-          currentCompany: this.company
-        })
+        .post(apiURL + 'users/create', jsonData)
         .then((response) => {
           console.log(response)
           this.alertSignUpFailure = false
@@ -1372,6 +1375,7 @@ export default defineComponent({
           localStorage.setItem('email', this.email)
           localStorage.setItem('username', this.username)
 
+          this.sendImage()
           // this.resetForm()
         })
         .catch((error) => {
@@ -1379,6 +1383,26 @@ export default defineComponent({
           this.alertSignUp = false
           this.alertSignUpFailure = true
         })
+    },
+    async sendImage() {
+      if (this.profilePicture === '') {
+        return
+      }
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      let formData = new FormData()
+      formData.append('profilePicture', this.profilePicture)
+
+      const apiURL = await this.getRequestUrl()
+      const url = apiURL + `users/update/profilePic/`
+
+      await axios.patch(url, formData, config).then((response) => {
+        console.log(response)
+      })
     },
     async nextFlow1() {
       try {

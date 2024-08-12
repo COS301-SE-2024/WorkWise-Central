@@ -17,7 +17,7 @@
                       style="font-size: 15px; font-family: Nunito, sans-serif; font-weight: lighter"
                       height="auto"
                       width="auto"
-                      >Job Details
+                    >Job Details
                     </v-label>
                   </v-col>
 
@@ -66,59 +66,91 @@
                     min-height
                   >
                     <template v-slot:[`item.heading`]="{ item }">
-                      {{ item.details.heading }}
+                      {{ item?.details?.heading }}
                     </template>
 
-<!--                    <template v-slot:[`item.clientPhone`]="{ item }">-->
-<!--                      <v-chip color="secondary">-->
-<!--                        <a :href="`tel:${item.clientId.details.contactInfo.phoneNumber}`" style="color: inherit; text-decoration: none">-->
-<!--                          <v-icon>-->
-<!--                            {{'fa: fa-solid fa-phone'}}-->
-<!--                          </v-icon>-->
-<!--                          {{ item.clientId.details.contactInfo.phoneNumber }}-->
-<!--                        </a>-->
-<!--                      </v-chip>-->
-<!--                    </template>-->
+                    <template v-slot:[`item.clientPhone`]="{ item }">
+                      <v-chip color="secondary">
+                        <a
+                          :href="`tel:${item?.clientId?.details?.contactInfo?.phoneNumber}`"
+                          style="color: inherit; text-decoration: none"
+                        >
+                          <v-icon>
+                            {{ 'fa: fa-solid fa-phone' }}
+                          </v-icon>
+                          {{ item?.clientId?.details?.contactInfo?.phoneNumber }}
+                        </a>
+                      </v-chip>
+                    </template>
 
-<!--                    <template v-slot:[`item.clientMail`]="{ item }">-->
-<!--                      <v-chip color="secondary">-->
-<!--                        <a :href="`mailto:${item.clientId.details.contactInfo.email}`" style="color: inherit; text-decoration: none">-->
-<!--                          <v-icon>-->
-<!--                            {{'fa: fa-solid fa-envelope'}}-->
-<!--                          </v-icon>-->
-<!--                          {{ item.clientId.details.contactInfo.email }}-->
-<!--                        </a>-->
-<!--                      </v-chip>-->
-<!--                    </template>-->
+                    <template v-slot:[`item.clientMail`]="{ item }">
+                      <v-chip color="secondary">
+                        <a
+                          :href="`mailto:${item?.clientId?.details?.contactInfo?.email}`"
+                          style="color: inherit; text-decoration: none"
+                        >
+                          <v-icon>
+                            {{ 'fa: fa-solid fa-envelope' }}
+                          </v-icon>
+                          {{ item?.clientId?.details?.contactInfo?.email }}
+                        </a>
+                      </v-chip>
+                    </template>
 
                     <template v-slot:[`item.description`]="{ item }">
-                      {{ item.details.description }}
+                      {{ item?.details?.description }}
                     </template>
 
                     <template v-slot:[`item.status`]="{ item }">
-                      <v-chip :color="getStatusColor(item.status.status)">
-                        <v-icon>mdi-progress-clock</v-icon>{{ item.status.status }}
+                      <v-chip :color="getStatusColor(item?.status?.status)">
+                        <v-icon>mdi-progress-clock</v-icon>{{ item?.status?.status }}
                       </v-chip>
                     </template>
 
                     <template v-slot:[`item.startDate`]="{ item }">
-                      {{ item.details.startDate }}
+                      {{ item?.details?.startDate }}
                     </template>
 
                     <template v-slot:[`item.endDate`]="{ item }">
-                      {{ item.details.endDate }}
+                      {{ item?.details?.endDate }}
                     </template>
 
                     <!-- Actions slot -->
                     <template v-slot:[`item.actions`]="{ item }">
-                      <v-btn
-                        rounded="xl"
-                        variant="plain"
-                        style="transform: rotate(0deg)"
-                        @click="openDialog(item)"
-                      >
-                        <v-icon color="primary">mdi-dots-horizontal</v-icon>
-                      </v-btn>
+                      <v-menu max-width="500px" :theme="isdarkmode === true ? 'dark' : 'light'">
+                        <template v-slot:activator="{ props }">
+                          <v-btn
+                            rounded="xl"
+                            variant="plain"
+                            v-bind="props"
+                            @click="openDialog(item)"
+                          >
+                            <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                          </v-btn>
+                        </template>
+                        <v-list class="bg-background">
+                          <v-list-item>
+                            <v-btn color="success" @click="openViewDialog(selectedJob)">
+                              <v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>View
+                            </v-btn>
+                            <v-dialog v-model="viewJobDialogVisible" :max-height="800" :max-width="1000">
+                              <ViewJob :passedInJob="selectedJob" @close="viewJobDialogVisible = false"></ViewJob>
+                            </v-dialog>
+                          </v-list-item>
+                          <v-list-item>
+                            <v-btn color="warning" @click="openJobCardDialog(selectedJob)">
+                              <v-icon icon="fa:fa-solid fa-pencil" start color="warning" size="small"></v-icon>Edit
+                            </v-btn>
+                            <v-dialog v-model="viewManagerJobCardVisible" :max-height="800" :max-width="1000">
+                              <ManagerJobCard :passedInJob="selectedJob" @close="viewManagerJobCardVisible= false"></ManagerJobCard>
+                            </v-dialog>
+                          </v-list-item>
+                          <v-list-item>
+                            <v-btn color="error" @click="deleteDialog = true"
+                            ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn>
+                          </v-list-item>
+                        </v-list>
+                      </v-menu>
                     </template>
                   </v-data-table>
                 </v-col>
@@ -128,45 +160,17 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-dialog v-model="actionsDialog" :max-width="500">
+    <v-dialog v-model="deleteDialog" :max-width="500">
       <v-card>
-        <v-card-title>
-          {{ selectedJob?.details.heading }}
+        <v-card-title class="text-h6 font-weight-regular bg-red">
+          <v-icon color="white">mdi-alert-circle-outline</v-icon>
+          Confirm Deletion
         </v-card-title>
-        <v-card-text> What would you like to do with this job? </v-card-text>
+        <v-card-text> Are you sure you want to delete this job? </v-card-text>
         <v-card-actions>
-          <v-btn @click="closeDialog"
-            >Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="primary" size="small"></v-icon
-          ></v-btn>
-          <v-spacer></v-spacer>
-
-          <ViewJob :passedInJob="selectedJob"></ViewJob>
-
-          <ManagerJobCard :passedInJob="selectedJob"></ManagerJobCard>
-
-          <v-btn color="error" @click="deleteDialog = true"
-            >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
-          ></v-btn>
-          <v-dialog v-model="deleteDialog" :max-width="500">
-            <v-card>
-              <v-card-title class="text-h6 font-weight-regular bg-red">
-                <v-icon color="white">mdi-alert-circle-outline</v-icon>
-                Confirm Deletion
-              </v-card-title>
-              <v-card-text> Are you sure you want to delete this job? </v-card-text>
-              <v-card-actions>
-                <v-btn color="error" @click="confirmDelete">Confirm</v-btn>
-                <v-btn @click="deleteDialog = false"
-                  >Cancel<v-icon
-                    icon="fa:fa-solid fa-cancel"
-                    end
-                    color="error"
-                    size="small"
-                  ></v-icon
-                ></v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+          <v-btn color="error" @click="confirmDelete">Confirm</v-btn>
+          <v-btn @click="deleteDialog = false"
+          >Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -283,7 +287,7 @@ interface Job {
       quantityUsed: number
     }[]
   }
-  status : {
+  status: {
     status: string
     colour: string
     companyId: string
@@ -330,6 +334,19 @@ const selectedJob = ref<Job | null>(null)
 const deleteDialog = ref(false)
 const detailedJobData = ref<Job[]>([])
 const search = ref('')
+const isdarkmode = ref(localStorage.getItem('theme') === 'true' ? true : false)
+const viewJobDialogVisible = ref(false)
+const viewManagerJobCardVisible = ref(false)
+
+const openJobCardDialog = (job: any) => {
+  selectedJob.value = job
+  viewManagerJobCardVisible.value = true
+}
+
+const openViewDialog = (job : any) => {
+  selectedJob.value = job
+  viewJobDialogVisible.value = true
+}
 
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
@@ -409,10 +426,10 @@ const closeDialog = () => {
 }
 
 const formatDate = (dateString: string): string => {
-  const options: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', year: '2-digit' };
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', options);
-};
+  const options: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', year: '2-digit' }
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', options)
+}
 
 const confirmDelete = async () => {
   if (selectedJob.value) {

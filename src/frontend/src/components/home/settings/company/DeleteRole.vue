@@ -78,6 +78,7 @@ export default defineComponent({
           life: 3000
         })
       }, 1500)
+      window.location.reload()
     }
   }
 })
