@@ -1,5 +1,6 @@
 import mongoose, { Types } from 'mongoose';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 export function validateObjectIds(ids: string[] | Types.ObjectId[]): boolean {
   if (ids.length < 1) {
@@ -11,4 +12,39 @@ export function validateObjectIds(ids: string[] | Types.ObjectId[]): boolean {
     }
   }
   return true;
+}
+
+export function validateObjectId(id: string | Types.ObjectId, entity: string = ''): boolean {
+  let data: string;
+  if (entity === '') data = `Invalid ID`;
+  else data = `Invalid ${entity} ID`;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new HttpException(data, HttpStatus.BAD_REQUEST);
+  }
+  console.log('valid ObjectId');
+  return true;
+}
+
+export function extractUserId(jwtService: JwtService, headers: any): Types.ObjectId {
+  const authHeader: string = headers.authorization;
+  const decodedJwtAccessToken = jwtService.decode(authHeader.replace(/^Bearer\s+/i, ''));
+  if (!Types.ObjectId.isValid(decodedJwtAccessToken.sub)) {
+    throw new HttpException('Invalid User', HttpStatus.BAD_REQUEST);
+  }
+  //This attribute is retrieved in the JWT
+
+  return decodedJwtAccessToken.sub;
+}
+
+export function currentDate(): Date {
+  const date = new Date();
+  date.setHours(date.getHours() + 2);
+  return date;
+}
+
+export function ciEquals(a: string, b: string) {
+  return typeof a === 'string' && typeof b === 'string'
+    ? a.localeCompare(b, undefined, { sensitivity: 'base' }) === 0
+    : a === b;
 }

@@ -3,12 +3,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { Client } from './entities/client.entity';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { currentDate } from '../utils/Utils';
 
 @Injectable()
 export class ClientRepository {
-  constructor(
-    @InjectModel('Client') private readonly clientModel: Model<Client>,
-  ) {}
+  constructor(@InjectModel('Client') private readonly clientModel: Model<Client>) {}
 
   async saveClient(client: Client) {
     const newClient = new this.clientModel(client);
@@ -16,9 +15,7 @@ export class ClientRepository {
   }
 
   async findAll() {
-    return this.clientModel
-      .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
-      .lean();
+    return this.clientModel.find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] }).lean();
   }
 
   async findAllInCompany(companyId: Types.ObjectId) {
@@ -94,7 +91,7 @@ export class ClientRepository {
             },
           ],
         },
-        { $set: { ...updateClientDto }, updatedAt: new Date() },
+        { $set: { ...updateClientDto }, updatedAt: currentDate() },
         { new: true },
       )
       .lean();
@@ -110,7 +107,7 @@ export class ClientRepository {
           },
         ],
       },
-      { $set: { deletedAt: new Date() } },
+      { $set: { deletedAt: currentDate() } },
     );
   }
 }

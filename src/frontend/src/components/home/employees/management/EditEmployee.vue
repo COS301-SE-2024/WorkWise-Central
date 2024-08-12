@@ -12,76 +12,115 @@
         color="warning"
         variant="text"
         v-bind="activatorProps"
+        ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon
         >Edit</v-btn
       >
     </template>
     <v-card>
-      <v-card-title class="text-center">Edit Employee</v-card-title>
-      <v-divider></v-divider>
-      <v-card-text>
-        <v-row
-          ><v-col>
-            <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-              {{ localEditedItem.firstName }}
-              {{ localEditedItem.surname }}
-            </h4>
-            <h3 class="text-center">Role: {{ localEditedItem.roleName }}</h3>
-          </v-col></v-row
-        >
-        <v-row
-          ><v-col>
-            <v-select
-              clearable
-              label="Company Role"
-              @update:modelValue="change_roles"
-              :items="roleItemNames"
-              v-model="selectedRole"
-              bg-color="background"
-              variant="solo"
-            ></v-select> </v-col
-        ></v-row>
-      </v-card-text>
-      <v-card-action>
-        <v-col align-self="center"
-          ><v-col cols="12" md="12" xs="3" sm="6" offset="1">
-            <Toast />
-            <v-btn
-              color="success"
-              rounded="md"
-              width="85%"
-              height="35"
-              variant="text"
-              @click="savechanges"
-            >
-              Save
-            </v-btn>
-          </v-col>
-          <v-col cols="12" md="12" xs="3" sm="6" offset="1">
-            <v-btn color="error" rounded="md" width="85%" height="35" variant="text" @click="close">
+      <v-form @submit.prevent="validateEdits">
+        <v-card-title class="text-center">Edit Employee</v-card-title>
+        <v-divider></v-divider>
+        <v-card-item>
+          <v-row
+            ><v-col>
+              <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
+                {{
+                  localEditedItem.firstName.charAt(0).toUpperCase() +
+                  localEditedItem.firstName.slice(1)
+                }}
+                {{
+                  localEditedItem.surname.charAt(0).toUpperCase() + localEditedItem.surname.slice(1)
+                }}
+              </h4>
+              <h3 class="text-center">Role: {{ localEditedItem.roleName }}</h3>
+            </v-col></v-row
+          >
+          <v-row
+            ><v-col :cols="12">
+              <v-select
+                clearable
+                label="Company Role"
+                hint="Select the role you'd like to change this employee to"
+                persistent-hint
+                @update:modelValue="change_roles"
+                :items="roleItems"
+                item-value="roleId"
+                item-title="roleName"
+                v-model="req_obj.updateEmployeeDto.roleId"
+                bg-color="background"
+                variant="solo"
+              ></v-select>
+            </v-col>
+            <v-col :cols="12">
+              <v-select
+                clearable
+                label="Subordinates"
+                hint="Select the employees you'd like to be subordinates of this employee"
+                persistent-hint
+                @update:modelValue="selected_subordiates"
+                :items="subordinateItemNames"
+                v-model="req_obj.updateEmployeeDto.subordinates"
+                item-value="employeeId"
+                item-title="name"
+                bg-color="background"
+                variant="solo"
+                multiple
+              ></v-select> </v-col
+            ><v-col :cols="12">
+              <v-select
+                clearable
+                label="Superior"
+                hint="Select the employee you'd like to be superior of this employee"
+                persistent-hint
+                @update:modelValue="selected_supirior"
+                :items="subordinateItemNames"
+                v-model="req_obj.updateEmployeeDto.superiorId"
+                item-value="employeeId"
+                item-title="name"
+                bg-color="background"
+                variant="solo"
+              ></v-select> </v-col
+          ></v-row>
+        </v-card-item>
+        <v-card-actions>
+          <v-row>
+            <v-col>
               <Toast />
-              Cancel
-            </v-btn>
-          </v-col></v-col
-        >
-      </v-card-action>
+              <v-btn
+                color="success"
+                rounded="md"
+                width="100%"
+                height="35"
+                variant="text"
+                type="submit"
+              >
+                Save
+                <v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon>
+              </v-btn>
+            </v-col>
+            <v-col>
+              <v-btn
+                color="error"
+                rounded="md"
+                width="100%"
+                height="35"
+                variant="text"
+                @click="close"
+              >
+                <Toast />
+                Cancel <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon>
+              </v-btn> </v-col
+          ></v-row>
+        </v-card-actions>
+      </v-form>
     </v-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
 import axios from 'axios'
-import { select } from '@syncfusion/ej2-base'
 import Toast from 'primevue/toast'
-
-type Role = {
-  _id: string
-  roleName: string
-  permissionSuite: string[]
-  companyId: string
-  createdAt: string // ISO 8601 date string
-  __v: number
-  updatedAt: string // ISO 8601 date string
-}
+import type { EmployeeInformation2, RoleItem, Role } from '@/components/home/employees/types'
 
 export default {
   name: 'EditClient',
@@ -98,11 +137,11 @@ export default {
     return {
       selectedRole: '',
       localEditedItem: this.editedItem,
-      isdarkmode: sessionStorage['theme'] !== 'false',
+      isdarkmode: localStorage['theme'] !== 'false',
       role_change: false,
       employeeDialog: false,
-      roleItemNames: [] as string[],
-      roleItems: [] as Role[],
+      roleItems: [] as RoleItem[],
+      subordinateItemNames: [] as EmployeeInformation2[],
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
@@ -111,6 +150,14 @@ export default {
       modal_light_theme_color: '#FFFFFF',
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      req_obj: {
+        currentEmployeeId: localStorage['employeeId'],
+        updateEmployeeDto: {
+          roleId: '',
+          subordinates: [] as string[],
+          superiorId: ''
+        }
+      },
       nameRules: [
         (v: string) => !!v || 'Name is required',
         (v: string) => (v && v.length >= 2) || 'Name must be at least 2 characters'
@@ -131,32 +178,78 @@ export default {
     }
   },
   methods: {
-    select,
+    selected_subordiates() {
+      console.log(this.req_obj.updateEmployeeDto.subordinates)
+      // console.log(this.editedItem)
+    },
+    selected_supirior() {
+      console.log(this.req_obj.updateEmployeeDto.superiorId)
+    },
     change_roles() {
       this.role_change = true
-      console.log(this.selectedRole)
+      console.log(this.req_obj.updateEmployeeDto.roleId)
     },
-    showlcalvalues() {
+    showlocalvalues() {
       console.log(this.localEditedItem)
     },
+    async validateEdits() {
+      console.log('Validate called')
+      await this.savechanges()
+    },
+    async loadSubordinates() {
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
+        params: { currentEmployeeId: localStorage['employeeId'] }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const sub_res = await axios.get(
+          apiURL + `employee/listOther/${localStorage.getItem('employeeId')}`,
+          config
+        )
+        console.log(sub_res)
+        for (let i = 0; i < sub_res.data.data.length; i++) {
+          const employee_details = await axios.get(
+            apiURL + `employee/detailed/id/${sub_res.data.data[i]._id}`,
+            config
+          )
+
+          console.log(employee_details.data)
+
+          let company_employee: EmployeeInformation2 = {
+            name:
+              employee_details.data.data.userId.personalInfo.firstName +
+              ' ' +
+              employee_details.data.data.userId.personalInfo.surname +
+              ' (' +
+              employee_details.data.data.role.roleName +
+              ')',
+            employeeId: employee_details.data.data._id
+          }
+
+          this.subordinateItemNames.push(company_employee)
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    },
     async loadRoles() {
-      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       console.log(apiURL)
-      let rolesNames_arr: string[] = []
       try {
         let roles_response = await axios.get(
-          apiURL + `role/all/${sessionStorage['currentCompany']}`,
+          apiURL + `role/all/${localStorage['currentCompany']}`,
           config
         )
         let roles_data: Role[] = roles_response.data.data
         for (let i = 0; i < roles_data.length; i++) {
           if (roles_data[i].roleName === this.localEditedItem.roleName) continue
-          rolesNames_arr.push(roles_data[i].roleName)
+          this.roleItems.push({
+            roleName: roles_data[i].roleName,
+            roleId: roles_data[i]._id
+          })
         }
-        this.roleItemNames = rolesNames_arr
-        this.roleItems = roles_data
-        console.log(roles_data)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
@@ -165,24 +258,12 @@ export default {
       this.employeeDialog = false
     },
     async savechanges() {
-      // alert('Employee updated')
-      let employee_req_obj = {
-        roleId: ''
-      }
-      console.log(this.selectedRole)
-      for (let i = 0; i < this.roleItems.length; i++) {
-        console.log(this.roleItems[i].roleName)
-        if (this.roleItems[i].roleName === this.selectedRole) {
-          employee_req_obj.roleId = this.roleItems[i]._id
-          break
-        }
-      }
-      console.log(employee_req_obj.roleId)
-      let config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      console.log(this.req_obj)
+      let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       let apiURL = await this.getRequestUrl()
-      console.log(this.localEditedItem)
+      console.log(this.localEditedItem.employeeId)
       axios
-        .patch(apiURL + `employee/${this.localEditedItem.employeeId}`, employee_req_obj, config)
+        .patch(apiURL + `employee/${this.localEditedItem.employeeId}`, this.req_obj, config)
         .then((res) => {
           this.$toast.add({
             severity: 'success',
@@ -235,8 +316,9 @@ export default {
     }
   },
   mounted() {
-    this.showlcalvalues()
+    this.showlocalvalues()
     this.loadRoles()
+    this.loadSubordinates()
   }
 }
 </script>

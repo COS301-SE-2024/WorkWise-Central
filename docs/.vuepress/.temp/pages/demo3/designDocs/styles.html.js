@@ -1,5 +1,5 @@
 import comp from "/home/jessica/University/WorkWise-Central/docs/.vuepress/.temp/pages/demo3/designDocs/styles.html.vue"
-const data = JSON.parse("{\"path\":\"/demo3/designDocs/styles.html\",\"title\":\"Style Document\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[{\"level\":2,\"title\":\"Description\",\"slug\":\"description\",\"link\":\"#description\",\"children\":[]}],\"git\":{\"updatedTime\":null,\"contributors\":[]},\"filePathRelative\":\"demo3/designDocs/styles.md\"}")
+const data = JSON.parse("{\"path\":\"/demo3/designDocs/styles.html\",\"title\":\"Style Document\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[{\"level\":2,\"title\":\"Description\",\"slug\":\"description\",\"link\":\"#description\",\"children\":[]}],\"git\":{\"updatedTime\":1719996783000,\"contributors\":[{\"name\":\"JessicaBloem\",\"email\":\"jessicabloem8@gmail.com\",\"commits\":1}]},\"filePathRelative\":\"demo3/designDocs/styles.md\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {

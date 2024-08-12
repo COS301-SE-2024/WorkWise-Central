@@ -1,14 +1,7 @@
-import {
-  IsArray,
-  IsEmail,
-  IsMongoId,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MinLength,
-} from 'class-validator';
+import { IsArray, IsEmail, IsMongoId, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { Types } from 'mongoose';
+import { Message } from '../entities/notification.entity';
 
 export class CreateNotificationDto {
   @IsNotEmpty()
@@ -28,7 +21,7 @@ export class CreateNotificationDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(1)
-  message: string;
+  message: Message;
 }
 
 export class CreateAccountDto {

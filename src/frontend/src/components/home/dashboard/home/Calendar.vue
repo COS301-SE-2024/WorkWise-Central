@@ -29,7 +29,7 @@ https://github.com/tomosterlund/qalendar/blob/master/development/QalendarView.vu
     </template>
   </Qalendar>
   <v-dialog v-model="JobCardVisibility" max-width="1000px">
-    <JBC @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
+    <ViewJob @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
   </v-dialog>
 </template>
 
@@ -39,22 +39,31 @@ https://github.com/tomosterlund/qalendar/blob/master/development/QalendarView.vu
 import { Qalendar } from 'qalendar'
 import axios from 'axios'
 import type { Event, JobCardDataFormat } from '@/components/home/dashboard/types'
-import JBC from '@/components/home/jobs/management/ManagerJobCard.vue'
-
+import ViewJob from '@/components/home/jobs/management/ViewJob.vue'
+import type { Job } from '../types'
 export default {
   name: 'CalendarComponent',
   components: {
     Qalendar,
-    JBC
+    ViewJob
   },
   data() {
     return {
       isdarkmode: localStorage['theme'] === 'true',
-      available_event_colors: ['blue', 'yellow', 'green', 'red', 'pink', 'purple', 'turquoise'],
+      available_event_colors: [
+        'blue',
+        'yellow',
+        'green',
+        'pink',
+        'red',
+        'purple',
+        'turquoise',
+        'brown'
+      ],
       are_events_loading: true,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
-      SelectedEvent: {} as JobCardDataFormat,
+      SelectedEvent: {} as Job,
       JobCardVisibility: false,
       request_config: {
         headers: {
@@ -934,6 +943,7 @@ export default {
           __v: 0
         }
       ],
+      jobs2: [] as Job[],
       events2: [] as Event[],
       config: {
         week: {
@@ -945,10 +955,10 @@ export default {
           fontFamily: 'Nunito, sans-serif'
         },
         defaultMode: 'week',
-        showCurrentTime: true
-        // eventDialog: {
-        //   isCustom: true
-        // }
+        showCurrentTime: true,
+        eventDialog: {
+          isDisabled: true
+        }
       }
     }
   },
@@ -992,36 +1002,64 @@ export default {
       //   })
       //   .catch((res) => {})
     },
-    clickedEvent(ev: any) {
+    async clickedEvent(ev: any) {
       console.log('event clickedEvent')
       console.log(ev.clickedEvent.id)
-      for (let i = 0; i < this.jobs.length; i++) {
-        if (this.jobs[i].id === ev.clickedEvent.id) {
-          this.SelectedEvent = {
-            jobId: this.jobs[i].id,
-            heading: this.jobs[i].details.heading,
-            jobDescription: this.jobs[i].details.description,
-            startDate: this.jobs[i].details.startDate,
-            endDate: this.jobs[i].details.endDate,
-            status: this.jobs[i].status,
-            clientName: this.jobs[i].client.details.name,
-            street: this.jobs[i].details.address.street,
-            suburb: this.jobs[i].details.address.suburb,
-            city: this.jobs[i].details.address.city,
-            postalCode: this.jobs[i].details.address.postalCode,
-            complex: this.jobs[i].details.address.complex,
-            houseNumber: this.jobs[i].details.address.houseNumber,
-            imagesTaken: [],
-            inventoryUsed: [],
-            taskList: [],
-            comments: []
-          }
-          console.log(this.SelectedEvent)
-          break
-        }
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const sub_res = await axios.get(apiURL + `job/id/${ev.clickedEvent.id}`, config)
+        this.SelectedEvent = sub_res.data.data
+        this.openJobCard()
+      } catch (error) {
+        console.log('Fetch error: ' + error)
       }
     },
-    loadJobs() {},
+    async loadJobs() {
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const employee_jobs = await axios(
+          apiURL + `job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
+          config
+        )
+
+        let jobs: Job[] = employee_jobs.data.data
+        jobs.forEach((job: Job) => {
+          if (job.clientId != null) {
+            const evnt: Event = {
+              title: job.details.heading,
+              with: job.clientId.details.firstName + ' ' + job.clientId.details.lastName,
+              time: {
+                start: this.formatDate(job.details.startDate),
+                end: this.formatDate(job.details.endDate)
+              },
+              color:
+                this.available_event_colors[this.randNum(0, this.available_event_colors.length)],
+              location:
+                job.details.address.province +
+                ', ' +
+                job.details.address.suburb +
+                ', ' +
+                job.details.address.city +
+                ', ' +
+                job.details.address.street +
+                ', ' +
+                job.details.address.postalCode +
+                ', ' +
+                job.details.address.complex,
+              isEditable: false,
+              id: job._id,
+              description: job.details.description
+            }
+            this.events2.push(evnt)
+          }
+        })
+        console.log(this.events2)
+      } catch (error) {
+        console.log('Fetch error: ' + error)
+      }
+    },
     loadJobsMockData() {
       this.jobs.forEach((job) => {
         const event: Event = {
@@ -1050,30 +1088,6 @@ export default {
         }
         this.events2.push(event)
       })
-    },
-    formatDate2(date: string) {
-      const d = new Date(date)
-      const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        timeZone: 'Africa/Johannesburg',
-        hour12: false
-      }
-      const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(d)
-
-      const [day, month, year] = formattedDate.split('/')[0].split('/')
-      const time = formattedDate.split(', ')[1]
-      const finalFormattedDate = `${year}-${month}-${day} ${time}`
-    },
-    toLocalISOString(date: Date) {
-      const timezoneOffset = date.getTimezoneOffset() * 60000
-      const localDate = new Date(date.getTime() - timezoneOffset)
-      const localISO = localDate.toISOString().slice(0, -1)
-      console.log(localISO)
-      return localISO
     },
 
     formatDate(date: string) {
@@ -1106,8 +1120,7 @@ export default {
     }
   },
   mounted() {
-    // this.formatDate(this.toLocalISOString(new Date('2024-07-10T23:00:00.000Z')))
-    this.loadJobsMockData()
+    this.loadJobs()
     this.are_events_loading = false
   }
 }

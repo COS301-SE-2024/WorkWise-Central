@@ -1,8 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
 import { CreateClientDto } from '../dto/create-client.dto';
 import { Company } from '../../company/entities/company.entity';
+import { currentDate } from '../../utils/Utils';
 
 export class Address {
   @Prop({ type: String, required: true })
@@ -16,9 +17,7 @@ export class Address {
   @Prop({ type: String, required: true })
   postalCode: string;
   @Prop({ type: String, required: false })
-  complex?: string;
-  @Prop({ type: String, required: false })
-  houseNumber?: string;
+  complexOrBuilding?: string;
 }
 
 export class ContactInfo {
@@ -26,7 +25,7 @@ export class ContactInfo {
   phoneNumber: string;
 
   @Prop({ type: String, unique: true, lowercase: true, trim: true })
-  email: string;
+  email: string; //TODO: Make unique within company, instead of within DB
 }
 
 export class ClientDetails {
@@ -42,11 +41,11 @@ export class ClientDetails {
   @ApiProperty()
   preferredLanguage?: string;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: ContactInfo, required: false })
   contactInfo: ContactInfo;
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Prop({ type: Address, required: false })
   address?: Address;
 
@@ -71,11 +70,8 @@ export class ClientDetails {
 export class Client {
   constructor(createClientDto: CreateClientDto) {
     if (createClientDto.details) this.details = createClientDto.details;
-    if (createClientDto.clientUsername)
-      this.clientUsername = createClientDto.clientUsername;
-    if (createClientDto.registrationNumber)
-      this.registrationNumber = createClientDto.registrationNumber;
-    this.createdAt = new Date();
+    if (createClientDto.registrationNumber) this.registrationNumber = createClientDto.registrationNumber;
+    this.createdAt = currentDate();
   }
 
   @ApiProperty()
@@ -83,15 +79,11 @@ export class Client {
   registrationNumber?: string;
 
   @ApiProperty()
-  @Prop({ type: String, required: false, default: 'none' })
-  clientUsername?: string = 'none';
-
-  @ApiProperty()
   @Prop({ required: true })
   details: ClientDetails;
 
   @ApiProperty()
-  @Prop({ required: false, default: new Date() })
+  @Prop({ required: false, default: currentDate() })
   public createdAt: Date;
 
   @ApiProperty()
@@ -109,9 +101,6 @@ export class ClientApiObject {
 
   @ApiProperty()
   registrationNumber?: string;
-
-  @ApiProperty()
-  clientUsername?: string;
 
   @ApiProperty()
   details: ClientDetails;

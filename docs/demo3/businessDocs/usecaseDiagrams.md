@@ -1,17 +1,13 @@
 # Usecase Diagrams
 
+## Job subsystem
+<img src="/UseCaseJobsSubsystem.drawio.svg"/>
 
 ## Client subsystem
-<img src="/UseCaseclientsubsystem.png"/>
+<img src="/UseCaseClientSubsystem.drawio.svg"/>
 
 ## Employee subsystem
-<img src="/UseCaseEmployeesubsytem.png"/>
-
-## Job subsystem
-<img src="/UseCasejobssubsystem.png"/>
+<img src="/UseCaseEmployeeSubsytem.drawio.svg"/>
 
 ## Authentication subsystem
-<img src="/UseCaseclientsubsystem.png"/>
-
-## System overview
-<img src="/WorkWizesystemoverview.png"/>
+<img src="/UseCaseAuthenticationAutherisation.drawio.svg"/>

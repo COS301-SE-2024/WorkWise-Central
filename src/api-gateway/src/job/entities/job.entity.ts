@@ -6,6 +6,9 @@ import { Client } from '../../client/entities/client.entity';
 import { Company } from '../../company/entities/company.entity';
 import { Employee } from '../../employee/entities/employee.entity';
 import { Team } from '../../team/entities/team.entity';
+import { JobPriorityTag, JobTag } from './job-tag.entity';
+import { currentDate } from '../../utils/Utils';
+import { JobStatus } from './job-status.entity';
 
 export class Address {
   //They are optional for flexibility
@@ -77,38 +80,106 @@ export class RecordedDetails {
 
   @ApiProperty()
   @Prop({ type: [InventoryUsed], required: false, default: [] })
-  inventoryUsed?: InventoryUsed[] = [];
+  inventoryUsed?: InventoryUsed[] = []; //TODO: Flesh out
 }
 
 export class AssignedEmployees {
   @Prop({
     type: [SchemaTypes.ObjectId],
     required: false,
-    ref: 'Employee',
     default: [],
+    ref: Employee.name,
   })
   employeeIds?: Types.ObjectId[] = [];
-  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Team.name })
-  teamId?: Types.ObjectId;
+
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: false,
+    ref: Team.name,
+    default: [],
+  })
+  teamIds?: Types.ObjectId[] = [];
 }
 
-export class Task {
+export class TaskItem {
+  @ApiProperty()
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: true,
+    default: new Types.ObjectId(),
+  })
+  _id: Types.ObjectId = new Types.ObjectId();
+
   @ApiProperty()
   @Prop({ type: String, required: true })
-  name: string;
+  description: string;
 
   @ApiProperty()
-  @Prop({ type: String, required: true, default: 'To do' })
-  status: string = 'To do';
+  @Prop({ type: Date, required: false })
+  dueDate?: Date;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: false, default: [] })
+  @Prop({ type: Boolean, required: true })
+  done: boolean = false;
+
+  @ApiProperty()
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: false,
+    default: [],
+    ref: Employee.name,
+  })
   assignedEmployees?: Types.ObjectId[] = [];
 }
 
-export class Comment {
+@Schema()
+export class Task {
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: true })
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: true,
+    default: new Types.ObjectId(),
+  })
+  _id: Types.ObjectId = new Types.ObjectId();
+
+  @ApiProperty()
+  @Prop({ type: String, required: false })
+  title?: string;
+
+  @ApiProperty()
+  @Prop({ type: TaskItem, required: false, default: [] })
+  items?: TaskItem[] = [];
+}
+
+export class History {
+  event: string;
+  timestamp: Date;
+  constructor(event: string, timestamp?: Date) {
+    this.event = event;
+    this.timestamp = currentDate();
+    if (timestamp) this.timestamp = timestamp;
+  }
+}
+
+@Schema()
+export class Comment {
+  constructor(employeeId: Types.ObjectId, comment: string, edited: boolean, date: Date) {
+    this.employeeId = employeeId;
+    this.comment = comment;
+    this.edited = edited;
+    this.date = date;
+  }
+
+  @ApiProperty()
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: true,
+    default: new Types.ObjectId(),
+  })
+  _id: Types.ObjectId = new Types.ObjectId();
+
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Employee.name })
   employeeId: Types.ObjectId;
 
   @ApiProperty()
@@ -116,8 +187,12 @@ export class Comment {
   comment: string;
 
   @ApiProperty()
-  @Prop({ type: Date, required: false, default: new Date() })
-  date?: Date = new Date();
+  @Prop({ type: Boolean, required: true, default: false })
+  edited: boolean = false;
+
+  @ApiProperty()
+  @Prop({ type: Date, required: false, default: currentDate() })
+  date?: Date = currentDate();
 }
 
 @Schema()
@@ -126,20 +201,19 @@ export class Job {
     //Object.assign(this, createJobDto);
     if (createJobDto.companyId) this.companyId = createJobDto.companyId;
     if (createJobDto.clientId) this.clientId = createJobDto.clientId;
-    if (createJobDto.clientUsername)
-      this.clientUsername = createJobDto.clientUsername;
     if (createJobDto.assignedBy) this.assignedBy = createJobDto.assignedBy;
-    if (createJobDto.assignedEmployees)
-      this.assignedEmployees = createJobDto.assignedEmployees;
+    if (createJobDto.assignedEmployees) this.assignedEmployees = createJobDto.assignedEmployees;
     if (createJobDto.status) this.status = createJobDto.status;
     if (createJobDto.details) this.details = createJobDto.details;
-    if (createJobDto.recordedDetails)
-      this.recordedDetails = createJobDto.recordedDetails;
-    if (createJobDto.clientFeedback)
-      this.clientFeedback = createJobDto.clientFeedback;
+    if (createJobDto.recordedDetails) this.recordedDetails = createJobDto.recordedDetails;
+    if (createJobDto.clientFeedback) this.clientFeedback = createJobDto.clientFeedback;
     if (createJobDto.taskList) this.taskList = createJobDto.taskList;
     if (createJobDto.comments) this.comments = createJobDto.comments;
-    this.createdAt = new Date();
+    if (createJobDto.tags) this.tags = createJobDto.tags;
+    if (createJobDto.priorityTag) this.priorityTag = createJobDto.priorityTag;
+    if (createJobDto.attachments) this.attachments = createJobDto.attachments;
+    if (createJobDto.coverImage) this.coverImage = createJobDto.coverImage;
+    this.createdAt = currentDate();
   }
 
   @ApiProperty()
@@ -151,12 +225,13 @@ export class Job {
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Client.name })
-  clientId?: Types.ObjectId;
-
-  @ApiProperty()
-  @Prop({ required: false, default: `Client-${Date.now()}` })
-  clientUsername?: string;
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: false,
+    ref: Client.name,
+    default: null,
+  })
+  clientId?: Types.ObjectId = null;
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Employee.name })
@@ -167,17 +242,38 @@ export class Job {
     type: AssignedEmployees,
     required: false,
     default: new AssignedEmployees(), //Will this work?💀
-    ref: Employee.name,
   })
   assignedEmployees?: AssignedEmployees = new AssignedEmployees();
 
-  /*  @ApiProperty()
-  @Prop({ type: [Types.ObjectId], required: true })
-  assignedEmployees: Types.ObjectId[];*/
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: JobStatus.name })
+  status: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: String, required: true, default: 'To do' })
-  status: string = 'To do';
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: false,
+    ref: JobTag.name,
+    default: [],
+  })
+  tags?: Types.ObjectId[] = [];
+
+  @ApiProperty()
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: false,
+    ref: JobPriorityTag.name,
+    default: null,
+  })
+  priorityTag?: Types.ObjectId = null;
+
+  @ApiProperty()
+  @Prop({ type: [String], required: false, default: [] })
+  attachments: string[];
+
+  @ApiProperty()
+  @Prop({ type: String, required: false, default: '' })
+  coverImage: string = '';
 
   @ApiProperty()
   @Prop({ type: Details, required: true })
@@ -200,12 +296,16 @@ export class Job {
   taskList?: Task[] = [];
 
   @ApiProperty()
+  @Prop({ type: [History], required: true, default: [] })
+  history: History[];
+
+  @ApiProperty()
   @Prop({ type: [Comment], required: false, default: [] })
   comments?: Comment[] = [];
 
   @ApiProperty()
-  @Prop({ required: false, default: new Date() })
-  public createdAt: Date;
+  @Prop({ required: false, default: currentDate() })
+  public createdAt: Date = currentDate();
 
   @ApiProperty()
   @Prop({ required: false })
@@ -213,110 +313,55 @@ export class Job {
 
   @ApiProperty()
   @Prop({ required: false })
-  public deletedAt: Date;
-}
-
-export class JobApiObject {
-  @ApiProperty()
-  _id: Types.ObjectId;
-
-  @ApiProperty()
-  companyId: Types.ObjectId;
-
-  @ApiProperty()
-  clientId?: Types.ObjectId;
-
-  @ApiProperty()
-  clientUsername?: string;
-
-  @ApiProperty()
-  assignedBy: Types.ObjectId;
-
-  @ApiProperty()
-  assignedEmployees?: AssignedEmployees;
-
-  @ApiProperty()
-  status: string = 'To do';
-
-  @ApiProperty()
-  details: Details;
-
-  @ApiProperty()
-  recordedDetails?: RecordedDetails;
-
-  @ApiProperty()
-  clientFeedback?: ClientFeedback;
-
-  @ApiProperty()
-  taskList?: Task[];
-
-  @ApiProperty()
-  comments?: Comment[];
-
-  @ApiProperty()
-  public createdAt: Date;
-
-  @ApiProperty()
-  public updatedAt: Date;
-}
-
-export class JobApiDetailedObject {
-  @ApiProperty()
-  _id: Types.ObjectId;
-
-  @ApiProperty()
-  company: Company;
-
-  @ApiProperty()
-  client?: Client;
-
-  @ApiProperty()
-  clientUsername?: string;
-
-  @ApiProperty()
-  assignedBy: Employee;
-
-  @ApiProperty()
-  assignedEmployees?: AssignedEmployees;
-
-  @ApiProperty()
-  status: string = 'To do';
-
-  @ApiProperty()
-  details: Details;
-
-  @ApiProperty()
-  recordedDetails?: RecordedDetails;
-
-  @ApiProperty()
-  clientFeedback?: ClientFeedback;
-
-  @ApiProperty()
-  taskList?: {
-    name: string;
-    status: string;
-    assignedEmployees?: Employee[];
-  };
-
-  @ApiProperty()
-  comments?: {
-    employeeId: Employee;
-    comment: string;
-    date?: Date;
-  }[];
-
-  @ApiProperty()
-  public createdAt: Date;
-
-  @ApiProperty()
-  public updatedAt: Date;
-}
-
-export class JobResponseDto {
-  constructor(data: JobApiObject) {
-    this.data = data;
-  }
-  data: JobApiObject;
+  public deletedAt?: Date;
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);
+
+const defaultPopulatedFields = ['tags', 'priorityTag', 'status', 'clientId'];
+
+const jobAssignedEmployees = {
+  path: 'assignedEmployees',
+  populate: [
+    {
+      path: 'employeeIds',
+      model: Employee.name,
+    },
+    {
+      path: 'teamId',
+      model: Team.name,
+    },
+  ],
+};
+
+const employeeComments = {
+  path: 'comments',
+  populate: [
+    {
+      path: 'employeeId',
+      model: Employee.name,
+    },
+  ],
+};
+
+const jobTaskListItems = {
+  path: 'taskList',
+  populate: [
+    {
+      path: 'items.assignedEmployees',
+      model: Employee.name,
+    },
+  ],
+};
+
+const autoPopulatedFields = function (next: any) {
+  this.populate(defaultPopulatedFields);
+  this.populate(jobAssignedEmployees);
+  this.populate(employeeComments);
+  this.populate(jobTaskListItems);
+  next();
+};
+
+JobSchema.pre('find', autoPopulatedFields)
+  .pre('findOne', autoPopulatedFields)
+  .pre('findOneAndUpdate', autoPopulatedFields);

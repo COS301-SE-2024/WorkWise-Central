@@ -18,11 +18,13 @@ const vuetify = createVuetify({
   },
   defaults: {
     VDialog: {
+      scrollable: true,
       VCard: {
+        height: '70vh',
         VCardTitle: {
           class: 'text-h5 font-weight-regular bg-secondary justify-end text-center'
         },
-        VCardText: { class: 'text-h7 font-weight-regular justify-center bg-cardColor' },
+        VCardText: { class: 'text-h7 font-weight-regular justify-center bg-cardColor fill-height' },
         VCardActions: { class: 'text-h6 font-weight-regular justify-center bg-cardColor' }
       },
       VSheet: {
@@ -41,7 +43,7 @@ const vuetify = createVuetify({
     },
 
     VCard: {
-      elevation: 14,
+      elevation: 2,
       rounded: 'md',
       height: 'auto',
 
@@ -57,7 +59,7 @@ const vuetify = createVuetify({
           }
         }
       },
-      VCard: {
+      VCardItem: {
         class: 'bg-cardColor'
       }
     },
@@ -109,9 +111,7 @@ const vuetify = createVuetify({
     VCalender: {
       class: 'bg-cardColor'
     },
-    VSelect: {
-      color: 'background'
-    },
+
     VExpansionPanel: {
       class: 'bg-cardColor'
     },
@@ -152,21 +152,24 @@ const vuetify = createVuetify({
           primary: '#F0984D',
           secondary: '#227D9B',
           accent: '#82B1FF',
-          error: '#e639462',
+          error: '#E63946', // this is one is also wrong, previous = E63946
           info: '#2196F3',
           success: '#1F845A',
           warning: '#E2B203',
           cardColor: '#F1F2F4',
           elementTextColor: '#4C9FC3', // most important color for text
           headingTextColor: '#091E42',
-          n_elementTextColor: '#8C9BAB', // most nonImportant color for text
+          n_elementTextColor: '#8C9BAB',
+          chip:'#FAF9F6', // most nonImportant color for text
           highlighter: '#DEE4EA',
-          tableRowColor: '',
+          tableRowColor: '#8C9BAB',
           firstPlace: '#E2B203',
           secondPlace: '#626F86',
           thirdPlace: '#533F04',
-          secondRowColor: '#dcdfe4',
-          buttonText: '#F7F8F9'
+          kanbanIconColor: '#161A1D',
+          secondRowColor: '#F7F8F9',
+          buttonText: '#F7F8F9',
+          faqQuestion: '#E8E9EB'
         }
       },
       dark: {
@@ -184,12 +187,14 @@ const vuetify = createVuetify({
           headingTextColor: '#DCDFE4',
           n_elementTextColor: '#8C9BAB', // most nonImportant color for text
           highlighter: '#DEE4EA',
-          tableRowColor: '#454f5',
+          tableRowColor: '#454f55', // color value is incorrect, previous = '#454f5'
           firstPlace: '#FFD700',
           secondPlace: '#C0C0C0',
           thirdPlace: '#CD7F32',
-          secondRowColor: '#454f59',
-          buttonText: '#F7F8F9'
+          kanbanIconColor: '#DCDFE4',
+          secondRowColor: '#161A1D',
+          buttonText: '#F7F8F9',
+          faqQuestion: '#2C3135'
         }
       }
     }

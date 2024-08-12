@@ -11,21 +11,24 @@ import { TeamModule } from '../team/team.module';
 import { JobService } from '../job/job.service';
 import { ClientModule } from '../client/client.module';
 import { EmployeeRepository } from './employee.repository';
+import { FileModule } from '../file/file.module';
+import { InventoryModule } from '../inventory/inventory.module';
+import { InventoryService } from '../inventory/inventory.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: Employee.name, schema: EmployeeSchema },
-    ]),
+    MongooseModule.forFeature([{ name: Employee.name, schema: EmployeeSchema }]),
     forwardRef(() => UsersModule),
     forwardRef(() => CompanyModule),
     forwardRef(() => RoleModule),
     forwardRef(() => JobModule),
     forwardRef(() => TeamModule),
     forwardRef(() => ClientModule),
+    forwardRef(() => FileModule),
+    forwardRef(() => InventoryModule),
   ],
   controllers: [EmployeeController],
-  providers: [EmployeeService, EmployeeRepository, JobService],
-  exports: [EmployeeService, MongooseModule],
+  providers: [EmployeeService, EmployeeRepository, JobService, InventoryService],
+  exports: [EmployeeService, EmployeeRepository, MongooseModule],
 })
 export class EmployeeModule {}

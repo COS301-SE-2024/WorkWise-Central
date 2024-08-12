@@ -1,8 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import mongoose, { SchemaTypes, Types } from 'mongoose';
+import { SchemaTypes, Types } from 'mongoose';
 import { CreateCompanyDto } from '../dto/create-company.dto';
 import { Employee } from '../../employee/entities/employee.entity';
+import { currentDate } from '../../utils/Utils';
+import { JobStatus } from '../../job/entities/job-status.entity';
 
 export class ContactDetails {
   @Prop({ type: String, required: true, trim: true })
@@ -10,7 +12,7 @@ export class ContactDetails {
 
   @Prop({
     type: String,
-    unique: true,
+    unique: false,
     index: true,
     required: true,
     lowercase: true,
@@ -36,40 +38,26 @@ export class Company {
   constructor(createCompanyDto: CreateCompanyDto) {
     if (createCompanyDto.name) this.name = createCompanyDto.name;
 
-    if (createCompanyDto.registrationNumber)
-      this.registrationNumber = createCompanyDto.registrationNumber;
+    if (createCompanyDto.registrationNumber) this.registrationNumber = createCompanyDto.registrationNumber;
 
     if (createCompanyDto.vatNumber) this.vatNumber = createCompanyDto.vatNumber;
     if (createCompanyDto.type) this.type = createCompanyDto.type;
     if (createCompanyDto.logo) this.logo = createCompanyDto.logo;
 
-    if (createCompanyDto.contactDetails)
-      this.contactDetails = createCompanyDto.contactDetails;
+    if (createCompanyDto.contactDetails) this.contactDetails = createCompanyDto.contactDetails;
 
     if (createCompanyDto.address) this.address = createCompanyDto.address;
-    if (createCompanyDto.employees) this.employees = createCompanyDto.employees;
 
-    if (createCompanyDto.inventoryItems)
-      this.inventoryItems = createCompanyDto.inventoryItems;
-
-    this.createdAt = new Date();
+    this.createdAt = currentDate();
   }
 
-  /*  mapFromDto(dto: CreateCompanyDto) {
-    for (const key in dto) {
-      if (Object.prototype.hasOwnProperty.call(dto, key)) {
-        this[key] = dto[key];
-      }
-    }
-  }*/
+  @ApiProperty()
+  @Prop({ required: false, unique: true })
+  registrationNumber?: string;
 
   @ApiProperty()
-  @Prop({ required: true, unique: true })
-  registrationNumber: string;
-
-  @ApiProperty()
-  @Prop({ required: true, unique: true })
-  vatNumber: string;
+  @Prop({ required: false, unique: false })
+  vatNumber?: string;
 
   @ApiProperty()
   @Prop({ required: true, unique: true })
@@ -81,12 +69,19 @@ export class Company {
 
   @ApiProperty()
   @Prop({
-    required: false,
-    default:
-      'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
+    type: [SchemaTypes.ObjectId],
+    required: true,
+    default: [],
+    ref: JobStatus.name,
   })
-  logo?: string =
-    'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
+  jobStatuses: Types.ObjectId[] = [];
+
+  @ApiProperty()
+  @Prop({
+    required: false,
+    default: 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp',
+  })
+  logo?: string = 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
 
   @ApiProperty()
   @Prop({ required: true })
@@ -97,29 +92,11 @@ export class Company {
   address: Address;
 
   @ApiProperty()
-  @Prop({
-    type: [SchemaTypes.ObjectId],
-    required: true,
-    default: [],
-    ref: Employee.name,
-  })
-  employees: Types.ObjectId[];
-
-  @ApiHideProperty()
-  @Prop({
-    type: [SchemaTypes.ObjectId],
-    required: true,
-    default: [],
-    /*    ref: Inventory.name,*/ //TODO: Add ref to Inventory
-  })
-  inventoryItems: Types.ObjectId[];
-
-  @ApiProperty()
   @Prop({ type: Boolean, required: true, default: false })
   private: boolean = false;
 
   @ApiHideProperty()
-  @Prop({ required: false, default: new Date() })
+  @Prop({ required: false, default: currentDate() })
   public createdAt: Date;
 
   @ApiHideProperty()
@@ -136,10 +113,10 @@ export class CompanyApiObject {
   id: Types.ObjectId;
 
   @ApiProperty()
-  registrationNumber: string;
+  registrationNumber?: string;
 
   @ApiProperty()
-  vatNumber: string;
+  vatNumber?: string;
 
   @ApiProperty()
   name: string;
@@ -148,8 +125,7 @@ export class CompanyApiObject {
   type?: string;
 
   @ApiProperty()
-  logo?: string =
-    'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
+  logo?: string = 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
 
   @ApiProperty()
   contactDetails: ContactDetails;
@@ -158,10 +134,42 @@ export class CompanyApiObject {
   address: Address;
 
   @ApiProperty()
-  employees: mongoose.Types.ObjectId[];
+  private: boolean;
 
   @ApiHideProperty()
-  inventoryItems: mongoose.Types.ObjectId[];
+  public createdAt: Date;
+
+  @ApiHideProperty()
+  public updatedAt: Date;
+
+  @ApiHideProperty()
+  public deletedAt: Date;
+}
+
+export class CompanyApiDetailedObject {
+  @ApiProperty()
+  _id: Types.ObjectId;
+
+  @ApiProperty()
+  registrationNumber?: string;
+
+  @ApiProperty()
+  vatNumber?: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  type?: string;
+
+  @ApiProperty()
+  logo?: string = 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
+
+  @ApiProperty()
+  contactDetails: ContactDetails;
+
+  @ApiProperty()
+  address: Address;
 
   @ApiProperty()
   private: boolean;
@@ -193,9 +201,23 @@ export class CompanyAllResponseDto {
   data: CompanyApiObject[];
 }
 
+export class CompanyAllDetailedResponseDto {
+  constructor(data: CompanyApiDetailedObject[]) {
+    this.data = data;
+  }
+  data: CompanyApiDetailedObject[];
+}
+
 export class CompanyResponseDto {
   constructor(data: CompanyApiObject) {
     this.data = data;
   }
   data: CompanyApiObject;
+}
+
+export class CompanyDetailedResponseDto {
+  constructor(data: CompanyApiDetailedObject) {
+    this.data = data;
+  }
+  data: CompanyApiDetailedObject;
 }

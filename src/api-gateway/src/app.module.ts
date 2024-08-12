@@ -12,8 +12,16 @@ import { EmployeeModule } from './employee/employee.module';
 import { NotificationModule } from './notification/notification.module';
 import { EmailModule } from './email/email.module';
 import { FileModule } from './file/file.module';
+import { InventoryModule } from './inventory/inventory.module';
+import { AdminModule } from './admin/admin.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+
+const rootPath = join(__dirname, '..', '../../uploads');
 
 @Module({
+  controllers: [AppController],
+  providers: [AppService],
   imports: [
     ConfigModule.forRoot({ envFilePath: [`../.env`, `.env`], isGlobal: true }),
     MongooseModule.forRoot(`${process.env.SERVER_LOGIN}`),
@@ -26,8 +34,11 @@ import { FileModule } from './file/file.module';
     NotificationModule,
     EmailModule,
     FileModule,
+    InventoryModule,
+    AdminModule,
+    ServeStaticModule.forRoot({
+      rootPath: rootPath,
+    }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

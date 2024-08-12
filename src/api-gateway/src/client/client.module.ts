@@ -13,6 +13,11 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { EmailModule } from '../email/email.module';
 import { FileModule } from '../file/file.module';
+import { EmployeeService } from '../employee/employee.service';
+import { JobModule } from '../job/job.module';
+import { TeamModule } from '../team/team.module';
+import { InventoryModule } from '../inventory/inventory.module';
+import { InventoryService } from '../inventory/inventory.service';
 
 @Module({
   imports: [
@@ -23,6 +28,9 @@ import { FileModule } from '../file/file.module';
     forwardRef(() => UsersModule),
     forwardRef(() => EmailModule),
     forwardRef(() => FileModule),
+    forwardRef(() => JobModule),
+    forwardRef(() => TeamModule),
+    forwardRef(() => InventoryModule),
   ],
   controllers: [ClientController],
   providers: [
@@ -31,6 +39,8 @@ import { FileModule } from '../file/file.module';
     CompanyService,
     JwtService,
     UsersService,
+    EmployeeService,
+    InventoryService,
   ],
   exports: [ClientService, MongooseModule],
 })

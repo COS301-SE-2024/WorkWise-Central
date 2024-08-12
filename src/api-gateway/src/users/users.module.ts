@@ -5,10 +5,7 @@ import { User, UserSchema } from './entities/user.entity';
 import { UsersController } from './users.controller';
 import { AuthModule } from '../auth/auth.module';
 import { EmployeeModule } from '../employee/employee.module';
-import {
-  UserConfirmation,
-  UserConfirmationSchema,
-} from './entities/user-confirmation.entity';
+import { UserConfirmation, UserConfirmationSchema } from './entities/user-confirmation.entity';
 import { EmailService } from '../email/email.service';
 import { UsersRepository } from './users.repository';
 import { EmailModule } from '../email/email.module';
@@ -18,6 +15,7 @@ import { RoleModule } from '../role/role.module';
 import { JwtService } from '@nestjs/jwt';
 import { FileModule } from '../file/file.module';
 import { FileService } from '../file/file.service';
+import { JobModule } from '../job/job.module';
 
 @Module({
   imports: [
@@ -27,6 +25,7 @@ import { FileService } from '../file/file.service';
     forwardRef(() => CompanyModule),
     forwardRef(() => RoleModule),
     forwardRef(() => FileModule),
+    forwardRef(() => JobModule),
 
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
@@ -34,14 +33,7 @@ import { FileService } from '../file/file.service';
     ]),
   ],
   controllers: [UsersController],
-  providers: [
-    UsersService,
-    UsersRepository,
-    EmailService,
-    CompanyService,
-    JwtService,
-    FileService,
-  ],
+  providers: [UsersService, UsersRepository, EmailService, CompanyService, JwtService, FileService],
   exports: [UsersService, UsersRepository, MongooseModule],
 })
 export class UsersModule {}

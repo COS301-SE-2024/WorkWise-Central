@@ -8,11 +8,13 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateTeamDto, createTeamResponseDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { TeamService } from './team.service';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
@@ -24,6 +26,7 @@ import {
 import { Types } from 'mongoose';
 import { teamListResponseDto, teamResponseDto } from './entities/team.entity';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 const className = 'Team';
 
@@ -39,6 +42,57 @@ export class TeamController {
   hello() {
     return { message: 'Refer to /documentation for details on the API' };
   }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiOperation({
+    summary: `Get all ${className} instances`,
+    description: `Returns all ${className} instances in the database.`,
+  })
+  @ApiOkResponse({
+    type: teamListResponseDto,
+    description: `An array of mongodb objects of the ${className} class.`,
+  })
+  @Get('/all')
+  async findAll() {
+    const data = await this.teamService.findAll();
+    return { data: data };
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiOperation({
+    summary: `Find an ${className}`,
+    description: `Returns the ${className} instance with the given id.`,
+  })
+  @ApiOkResponse({
+    type: teamResponseDto,
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className} to be retrieved.`,
+  })
+  @Get('id/:id')
+  async findById(@Param('id') id: Types.ObjectId) {
+    const data = await this.teamService.findById(id);
+    return { data: data };
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -53,49 +107,18 @@ export class TeamController {
     type: createTeamResponseDto,
   })
   @Post('/create')
-  create(@Body() createTeamDto: CreateTeamDto) {
-    console.log('In endpoint\ncreateTeamDto: ', createTeamDto);
-    return this.teamService.create(createTeamDto);
+  async create(@Body() createTeamDto: CreateTeamDto) {
+    let data;
+    try {
+      data = await this.teamService.create(createTeamDto);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
   }
 
-  @ApiOperation({
-    summary: `Get all ${className} instances`,
-    description: `Returns all ${className} instances in the database.`,
-  })
-  @ApiOkResponse({
-    type: teamListResponseDto,
-    description: `An array of mongodb objects of the ${className} class.`,
-  })
-  @Get('/all')
-  findAll() {
-    return this.teamService.findAll();
-  }
-
-  @ApiOperation({
-    summary: `Find an ${className}`,
-    description: `Returns the ${className} instance with the given id.`,
-  })
-  @ApiOkResponse({
-    type: teamResponseDto,
-    description: `The mongodb object of the ${className}, with an _id attribute`,
-  })
-  @ApiParam({
-    name: 'id',
-    description: `The _id attribute of the ${className} to be retrieved.`,
-  })
-  @Get('id/:id')
-  findById(@Param('id') id: Types.ObjectId) {
-    return this.teamService.findById(id);
-  }
-
-  // @Get('name/:name/company/:company')
-  // findByNameInCompany(
-  //   @Param('name') name: string,
-  //   @Param('company') company: Types.ObjectId,
-  // ) {
-  //   return this.teamService.findByNameInCompany(name, company);
-  // }
-
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Update an ${className} instances`,
     description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
@@ -110,14 +133,18 @@ export class TeamController {
   })
   @ApiBody({ type: UpdateTeamDto })
   @Patch(':id')
-  update(
-    @Param('id') id: Types.ObjectId,
-    @Body() updateTeamDto: UpdateTeamDto,
-  ) {
-    console.log('In the update controller');
-    return this.teamService.update(id, updateTeamDto);
+  async update(@Param('id') id: Types.ObjectId, @Body() updateTeamDto: UpdateTeamDto) {
+    let data;
+    try {
+      data = await this.teamService.update(id, updateTeamDto);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Delete an ${className}`,
     description: `Send the ${className} ObjectId, and then they get deleted if the id is valid.\n `,
@@ -132,8 +159,13 @@ export class TeamController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete(':id')
-  remove(@Param('id') id: Types.ObjectId) {
-    console.log('In the delete controller');
-    return this.teamService.remove(id);
+  async remove(@Param('id') id: Types.ObjectId) {
+    let data;
+    try {
+      data = await this.teamService.remove(id);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
   }
 }

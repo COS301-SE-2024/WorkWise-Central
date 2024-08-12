@@ -1,26 +1,28 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title class="text-center"> Edit Company </v-card-title>
+      <v-card-title class="text-primary font-bold text-center"> Company Details</v-card-title>
       <v-divider></v-divider>
       <v-card-text>
-        <v-form>
+        <v-form ref="form" v-model="valid">
           <v-row>
-            <v-col cols="5" class="pl-15">
+            <v-col cols="12" lg="5" class="d-flex justify-center">
               <v-avatar color="grey" size="150">
                 <v-img
+                  size="50"
                   src="https://cdn.vuetifyjs.com/docs/images/brand-kit/v-logo-circle.png"
                   cover
                 ></v-img>
               </v-avatar>
             </v-col>
-            <v-col cols="7" class="pl-15">
+            <v-col cols="12" lg="7">
               <v-label> Name</v-label>
               <v-text-field
                 v-model="company.name"
                 label=" Name"
                 :rules="nameRules"
                 bg-color="background"
+                required
               ></v-text-field>
               <v-label>Type</v-label>
               <v-select
@@ -28,6 +30,7 @@
                 label="Type"
                 :items="type"
                 bg-color="background"
+                required
               ></v-select>
               <v-label>Email</v-label>
               <v-text-field
@@ -35,6 +38,7 @@
                 label="Email"
                 :rules="emailRules"
                 bg-color="background"
+                required
               ></v-text-field>
               <v-label>Phone</v-label>
               <v-text-field
@@ -42,18 +46,21 @@
                 label="Phone"
                 :rules="phone_number_rules"
                 bg-color="background"
+                required
               ></v-text-field>
               <v-label>Street</v-label>
               <v-text-field
                 v-model="company.address.street"
                 label="Street"
                 bg-color="background"
+                required
               ></v-text-field>
               <v-label>Suburb</v-label>
               <v-text-field
                 v-model="company.address.suburb"
                 label="Suburb"
                 bg-color="background"
+                required
               ></v-text-field>
 
               <v-label>Province</v-label>
@@ -61,31 +68,43 @@
                 :items="provinces"
                 v-model="company.address.province"
                 bg-color="background"
+                required
               ></v-select>
               <v-label>City</v-label>
               <v-text-field
                 v-model="company.address.city"
                 label="City"
                 bg-color="background"
+                required
               ></v-text-field>
               <v-label>Postal Code</v-label>
               <v-text-field
                 v-model="company.address.postalCode"
                 label="Postal Code"
                 bg-color="background"
+                required
               ></v-text-field>
             </v-col> </v-row></v-form
       ></v-card-text>
       <v-divider></v-divider>
       <v-card-actions class="bg-cardColor">
-        <v-col align="center">
-          <Toast />
-          <v-btn color="success" @click="saveChanges"> Save </v-btn></v-col
-        >
-        <v-col align="center">
-          <Toast />
-          <v-btn color="error" @click="cancel"> Cancel </v-btn></v-col
-        >
+        <v-container
+          ><v-row justify="end">
+            <v-col align="center" cols="12" lg="6">
+              <Toast position="top-center" />
+              <v-btn color="success" @click="updateCompanyDetails" :disabled="!valid" block>
+                Save
+                <v-icon end color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon> </v-btn
+            ></v-col>
+            <v-col align="center" cols="12" lg="6">
+              <Toast />
+              <v-btn color="error" @click="cancel" block>
+                Cancel<v-icon
+                  end
+                  color="error"
+                  icon="fa: fa-solid fa-cancel"
+                ></v-icon> </v-btn></v-col></v-row
+        ></v-container>
       </v-card-actions>
       <div class="card flex justify-center"></div>
     </v-card>
@@ -104,9 +123,10 @@ export default defineComponent({
   },
   data: () => ({
     isdarkmode: false,
-    localUrl: 'http://localhost:3000',
+    localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
-    currentCompanyID: sessionStorage.getItem('currentCompany'),
+    currentCompanyID: localStorage.getItem('currentCompany'),
+    valid: false,
     company: {
       name: '',
       type: '',
@@ -213,7 +233,8 @@ export default defineComponent({
     phone_number_rules: [
       (v: string) => !!v || 'Phone number is required',
       (v: string) => /^0\d{9}$/.test(v) || 'Phone number must be a valid South African number',
-      (v: string) => (v && v.length === 10) || 'Phone number must be 10 digits'
+      (v: string) => (v && v.length === 10) || 'Phone number must be 10 digits',
+      (v: string) => (v && v.startsWith('0')) || 'Phone number must start with 0'
     ],
     emailRules: [
       (v: string) => !!v || 'E-mail is required',
@@ -242,6 +263,7 @@ export default defineComponent({
         detail: 'Company update cancelled',
         life: 3000
       })
+      window.location.reload()
     },
     saveChanges() {
       this.$toast.add({
@@ -255,11 +277,11 @@ export default defineComponent({
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
-      const company_id = sessionStorage.getItem('currentCompany')
+      // const apiURL = await this.getRequestUrl()
+      const company_id = localStorage.getItem('currentCompany')
       await axios
         .get(`http://localhost:3000/company/id/${company_id}`, config)
         .then((response) => {
@@ -268,6 +290,42 @@ export default defineComponent({
         })
         .catch((error) => {
           console.log(error)
+        })
+    },
+    async updateCompanyDetails() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      const data = {
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        updateCompanyDto: this.company
+      }
+      const company_id = localStorage.getItem('currentCompany')
+      await axios
+        .patch(`${apiURL}company/update/${company_id}`, data, config)
+        .then((response) => {
+          console.log(response)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Company updated',
+            life: 3000
+          })
+          window.location.reload()
+        })
+        .catch((error) => {
+          console.log(error)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Sticky Message',
+            detail: 'Company update failed',
+            life: 3000
+          })
         })
     },
     async isLocalAvailable(localUrl: string) {
@@ -282,10 +340,24 @@ export default defineComponent({
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     },
-    toast() {}
+    toast() {},
+    rulesPassed() {
+      if (
+        this.nameRules &&
+        this.phone_number_rules &&
+        this.emailRules &&
+        this.postalCodeRules &&
+        this.vatNumberRules &&
+        this.company_registration_number_rules
+      ) {
+        this.valid = true
+      } else {
+        this.valid = false
+      }
+    }
   },
   mounted() {
-    this.isdarkmode = sessionStorage.getItem('theme') === 'true' ? true : false
+    this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
     this.getCompanyDetails()
   }
 })

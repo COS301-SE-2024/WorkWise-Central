@@ -3,11 +3,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { currentDate } from '../utils/Utils';
+import { isNotDeleted } from '../shared/soft-delete';
 
 @Injectable()
 export class CompanyRepository {
   constructor(
     @InjectModel(Company.name) private readonly companyModel: Model<Company>,
+
+    /*    @InjectModel(JobStatus.name)
+    private jobStatusModel: Model<JobStatus>,*/
   ) {}
 
   async save(company: Company) {
@@ -15,23 +20,26 @@ export class CompanyRepository {
     return await newCompanyModel.save();
   }
 
-  async findById(
-    identifier: Types.ObjectId,
-  ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+  async findById(identifier: Types.ObjectId, populatedFields?: string[]) {
+    if (populatedFields) {
+      return this.companyModel
+        .findOne({
+          $and: [{ _id: identifier }, { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] }],
+        })
+        .populate(populatedFields)
+        .lean()
+        .exec();
+    }
+
     return this.companyModel
       .findOne({
-        $and: [
-          { _id: identifier },
-          { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] },
-        ],
+        $and: [{ _id: identifier }, { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] }],
       })
       .lean()
       .exec();
   }
 
-  async findByRegistrationNumber(
-    registrationNumber: string,
-  ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+  async findByRegistrationNumber(registrationNumber: string): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
     return this.companyModel
       .findOne({
         $and: [
@@ -44,9 +52,7 @@ export class CompanyRepository {
       .lean();
   }
 
-  async findByEmailOrName(
-    identifier: string,
-  ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+  async findByEmailOrName(identifier: string): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
     const regex = `${identifier}`;
     return this.companyModel
       .find({
@@ -69,10 +75,14 @@ export class CompanyRepository {
   }
 
   async findAll(fields?: string[]) {
-    return this.companyModel
-      .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
-      .populate(fields)
-      .lean();
+    if (fields) {
+      return this.companyModel
+        .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
+        .populate(fields)
+        .lean();
+    }
+
+    return this.companyModel.find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] }).lean();
   }
 
   async registrationNumberExists(registrationNumber: string): Promise<boolean> {
@@ -119,7 +129,7 @@ export class CompanyRepository {
     return result != null;
   }
 
-  async employeeExists(
+  /*  async employeeExists(
     compId: Types.ObjectId,
     empId: Types.ObjectId,
   ): Promise<boolean> {
@@ -144,7 +154,7 @@ export class CompanyRepository {
     }
 
     return false;
-  }
+  }*/
 
   async update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
     return this.companyModel.findOneAndUpdate(
@@ -156,7 +166,7 @@ export class CompanyRepository {
           },
         ],
       },
-      { $set: { ...updateCompanyDto }, updatedAt: new Date() },
+      { $set: { ...updateCompanyDto }, updatedAt: currentDate() },
       { new: true },
     );
   }
@@ -171,7 +181,7 @@ export class CompanyRepository {
           },
         ],
       },
-      { $push: { employees: employeeId }, updatedAt: new Date() },
+      { $push: { employees: employeeId }, updatedAt: currentDate() },
       { new: true },
     );
   }
@@ -187,7 +197,7 @@ export class CompanyRepository {
           },
         ],
       },
-      { $pull: { employees: employeeId }, updatedAt: new Date() },
+      { $pull: { employees: employeeId }, updatedAt: currentDate() },
       { new: true },
     );
   }
@@ -202,7 +212,7 @@ export class CompanyRepository {
           },
         ],
       },
-      { $set: { deletedAt: new Date() } },
+      { $set: { deletedAt: currentDate() } },
     );
 
     return result != null;
@@ -230,6 +240,7 @@ export class CompanyRepository {
     return await this.companyModel
       .find(filter)
       .select([
+        '_id',
         'registrationNumber',
         'vatNumber',
         'name',
@@ -242,5 +253,39 @@ export class CompanyRepository {
       ])
       .lean()
       .exec();
+  }
+
+  async updateStatuses(
+    companyId: Types.ObjectId,
+    jobStatuses: Types.ObjectId[],
+  ): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+    return this.companyModel
+      .findOneAndUpdate(
+        { $and: [{ _id: companyId }, isNotDeleted] },
+        { $set: { jobStatuses: jobStatuses } },
+        { new: true },
+      )
+      .lean()
+      .exec();
+  }
+
+  async findAllStatusesInCompany(companyId: Types.ObjectId) {
+    return this.companyModel
+      .findOne({
+        $and: [{ _id: companyId }, isNotDeleted],
+      })
+      .select(['jobStatuses'])
+      .populate('jobStatuses')
+      .lean()
+      .exec();
+  }
+
+  async addJobStatus(companyId: Types.ObjectId, statusId: Types.ObjectId) {
+    return this.companyModel.findOneAndUpdate(
+      {
+        $and: [{ _id: companyId }, isNotDeleted],
+      },
+      { $push: { jobStatuses: statusId } },
+    );
   }
 }

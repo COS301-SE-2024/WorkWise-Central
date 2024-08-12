@@ -2,21 +2,58 @@
   <v-app :theme="isdarkmode ? 'dark' : 'light'">
     <!-- Toolbar -->
     <v-app-bar :theme="isdarkmode ? 'themes.dark' : 'themes.light'" class="bg-background">
-      <v-toolbar-title class="d-flex justify-end">
+      <v-toolbar-title class="d-flex justify-start">
         <v-label class="h4 text-primary">Work</v-label>
         <v-label class="h4 text-secondary">Wise</v-label>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-btn @click="toggleDarkMode"
+
+      <v-btn
+        color="primary"
+        dark
+        @click="loginDialog = true"
+        rounded="xl"
+        variant="outlined"
+        align-center
+        justify-center
+        class="my-3 text-center"
+        size="large"
+      >
+        Log in
+      </v-btn>
+      <v-btn
+        color="secondary"
+        dark
+        @click="signupDialog = true"
+        rounded="xl"
+        align-center
+        variant="elevated"
+        class="my-3 text-center"
+        size="large"
+      >
+        Sign up
+      </v-btn>
+      <v-btn @click="toggleDarkMode" base-color="background" text
         ><v-icon :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"></v-icon
       ></v-btn>
     </v-app-bar>
     <!-- Main Content -->
     <v-main :theme="isdarkmode ? 'dark' : 'light'">
-      <v-row style="height: 800px" no-gutters>
+      <v-row style="height: 1000px">
         <!-- Left Half -->
-        <v-col cols="6" sm="3" md="6" align-self="center">
+
+        <v-col
+          cols="12"
+          lg="6"
+          md="6"
+          sm="6"
+          align-self="center"
+          order="last"
+          order-lg="first"
+          order-md="first"
+          order-sm="last"
+        >
           <v-row justify="center"
             ><v-col align-self="center">
               <h1
@@ -32,27 +69,52 @@
               </h1>
             </v-col></v-row
           >
-
-          <v-col>
-            <v-row justify="center">
-              <v-col cols="12" md="6"
-                ><v-btn
+          <v-container>
+            <v-row
+              ><v-col cols="12" lg="6" order="last" order-lg="first">
+                <v-btn
                   color="primary"
                   dark
                   @click="loginDialog = true"
                   rounded="md"
-                  variant="elevated"
+                  variant="outlined"
                   align-center
+                  width="50%"
                   justify-center
-                  class="my-3 button-width button-height text-center"
+                  class="my-3 text-center"
                   size="large"
+                  block
                 >
                   Log in
                 </v-btn></v-col
+              >
+              <v-col cols="12" lg="6" order="first" order-lg="last">
+                <v-btn
+                  color="secondary"
+                  dark
+                  @click="signupDialog = true"
+                  rounded="md"
+                  align-center
+                  variant="outlined"
+                  class="my-3 text-center"
+                  width="50%"
+                  block
+                  size="large"
+                >
+                  Get Started
+                </v-btn></v-col
               ></v-row
-            >
+            ></v-container
+          >
 
-            <v-dialog v-model="loginDialog" max-width="400" @click:outside="resetFields">
+          <v-col>
+            <v-dialog
+              :opacity="0.1"
+              v-model="loginDialog"
+              max-width="400"
+              @click:outside="resetFields"
+            >
+              <Toast position="top-center" />
               <v-card
                 width="auto"
                 height="auto"
@@ -110,10 +172,12 @@
                         ></v-text-field></v-col
                     ></v-row>
                   </v-form>
+                  <v-col cols="8" offset="2">
+                    <v-btn variant="text" @click="forgotPassword"> Forgot Password?</v-btn></v-col
+                  >
                 </v-col>
 
                 <v-col cols="8" offset="2">
-                  <Toast />
                   <v-btn
                     :disabled="!valid"
                     text
@@ -130,7 +194,7 @@
                 <v-col cols="8" offset="2">
                   <v-btn
                     text
-                    @click="(signupDialog = true)((loginDialog = false))"
+                    @click="(signupDialog = true)((loginDialog = false))(resetFields)"
                     rounded="md"
                     color="secondary"
                     size="large"
@@ -149,25 +213,93 @@
                 >
               </v-card>
             </v-dialog>
-            <v-row justify="center"
-              ><v-col cols="12" md="6"
-                ><v-btn
-                  color="secondary"
-                  dark
-                  @click="signupDialog = true"
-                  rounded="md"
-                  align-center
-                  variant="elevated"
-                  class="my-3 button-width button-height text-center"
-                  size="large"
-                >
-                  Sign up
-                </v-btn></v-col
-              ></v-row
-            >
+            <!-- Forgot Password -->
+            <v-dialog :opacity="0.1" v-model="forgotPasswordDialog" max-width="400">
+              <v-sheet
+                elevation="14"
+                rounded="md"
+                width="auto"
+                height="auto"
+                :theme="isdarkmode ? 'dark' : 'light'"
+                class="bg-background"
+              >
+                <v-col>
+                  <v-form ref="form" v-model="valid" class="bg-background">
+                    <v-row>
+                      <v-col>
+                        <label style="font-size: 14px; font-weight: lighter">Rest password</label>
+                        <v-text-field
+                          :label="email ? '' : 'Enter your email'"
+                          type="email"
+                          v-model="email"
+                          :rules="emailRules"
+                          rounded="md"
+                          variant="solo"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-form>
+                  <v-col>
+                    <v-btn
+                      :disabled="!valid"
+                      text
+                      rounded="md"
+                      width="100%"
+                      size="large"
+                      variant="elevated"
+                      color="primary"
+                      @click="showOTP"
+                      >Reset</v-btn
+                    >
+                  </v-col>
+                </v-col>
+              </v-sheet>
+            </v-dialog>
+            <v-dialog :opacity="0.1" v-model="OTPDialog" max-width="400">
+              <v-sheet
+                elevation="14"
+                rounded="md"
+                width="auto"
+                height="auto"
+                :theme="isdarkmode ? 'dark' : 'light'"
+                class="bg-background"
+              >
+                <v-col>
+                  <v-form ref="form" v-model="valid" class="bg-background">
+                    <v-row>
+                      <v-col>
+                        <label style="font-size: 14px; font-weight: lighter"
+                          >Enter the code you received from email</label
+                        >
+
+                        <v-otp-input v-model="value" />
+                      </v-col>
+                    </v-row>
+                  </v-form>
+                  <v-col>
+                    <v-btn
+                      :disabled="!valid"
+                      text
+                      rounded="md"
+                      width="100%"
+                      size="large"
+                      variant="elevated"
+                      color="primary"
+                      >Change Password</v-btn
+                    >
+                  </v-col>
+                </v-col>
+              </v-sheet>
+            </v-dialog>
 
             <!-- Flow 1 -->
-            <v-dialog v-model="signupDialog" max-width="400" @click:outside="resetFields">
+            <v-dialog
+              :opacity="0.1"
+              v-model="signupDialog"
+              max-width="400"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -205,10 +337,10 @@
                           ><label style="font-size: 14px; font-weight: lighter">Password</label>
                           <v-text-field
                             :theme="isdarkmode ? 'dark' : 'light'"
-                            :label="password ? '' : 'Enter your password'"
+                            :label="signupPassword ? '' : 'Enter your password'"
                             :type="showPassword ? 'text' : 'password'"
                             name="password"
-                            v-model="password"
+                            v-model="signupPassword"
                             :rules="passwordRules"
                             :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                             @click:append="toggleShowPassword"
@@ -230,7 +362,7 @@
                             @click:append="toggleShowPassword"
                             name="confirm_password"
                             v-model="confirm_password"
-                            :rules="[(v) => v === password || 'Passwords do not match']"
+                            :rules="[(v) => v === signupPassword || 'Passwords do not match']"
                             rounded="md"
                             variant="solo"
                             required
@@ -239,6 +371,7 @@
                     </v-form>
                   </v-col>
                   <v-col cols="8" offset="2">
+                    <Toast position="top-center" />
                     <v-btn
                       :disabled="!valid"
                       text
@@ -266,7 +399,12 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 2 -->
-            <v-dialog v-model="signup1Dialog" max-width="400" @click:outside="resetFields">
+            <v-dialog
+              :opacity="0.1"
+              v-model="signup1Dialog"
+              max-width="400"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 width="auto"
                 height="auto"
@@ -344,7 +482,12 @@
               </v-sheet>
             </v-dialog>
             <v-col xs="3" align-self="center">
-              <v-dialog v-model="signupUsernameDialog" max-width="400" @click:outside="resetFields">
+              <v-dialog
+                :opacity="0.1"
+                v-model="signupUsernameDialog"
+                max-width="400"
+                @click:outside="resetFields"
+              >
                 <v-sheet
                   width="auto"
                   height="auto"
@@ -360,7 +503,7 @@
                     >
                     <v-form ref="form" v-model="valid">
                       <v-row
-                        ><v-col align-self="center"
+                        ><v-col align-self="center" cols="12"
                           ><label style="font-size: 14px; font-weight: lighter">Username</label>
                           <v-combobox
                             :theme="isdarkmode ? 'dark' : 'light'"
@@ -372,11 +515,30 @@
                             variant="solo"
                             clearable
                             required
-                          ></v-combobox></v-col
+                          ></v-combobox
+                        ></v-col>
+                        <v-col cols="12">
+                          <small class="text-caption">Profile Picture</small>
+                          <v-file-input
+                            :theme="isdarkmode === true ? 'dark' : 'light'"
+                            variant="solo"
+                            accept="image/*"
+                            width="100%"
+                            placeholder="Profile Picture"
+                            @change="handleImageUpload"
+                            hint="Image size limit of  5MB"
+                            persistent-hint
+                            color="black"
+                            rounded="md"
+                            required
+                            :rules="company_logo_rules"
+                            data-testid="company-logo-file-input"
+                          ></v-file-input> </v-col
                       ></v-row>
                     </v-form>
                   </v-col>
                   <v-col cols="8" offset="2">
+                    <Toast position="top-center" />
                     <v-btn
                       :disabled="!valid"
                       text
@@ -406,7 +568,12 @@
               </v-dialog>
             </v-col>
             <!-- Flow 3 -->
-            <v-dialog v-model="signup2Dialog" max-width="400" @click:outside="resetFields">
+            <v-dialog
+              :opacity="0.1"
+              v-model="signup2Dialog"
+              max-width="400"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 width="auto"
                 height="auto"
@@ -505,7 +672,12 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 4 -->
-            <v-dialog v-model="signupAddressDialog" max-width="1000" @click:outside="resetFields">
+            <v-dialog
+              :opacity="0.1"
+              v-model="signupAddressDialog"
+              max-width="1000"
+              @click:outside="resetFields"
+            >
               <v-sheet
                 width="auto"
                 height="auto"
@@ -557,7 +729,7 @@
                       <v-row
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">City</label
-                          ><v-select
+                          ><v-text-field
                             :label="city ? '' : 'Select your city'"
                             type="input"
                             v-model="city"
@@ -565,9 +737,8 @@
                             :rules="cityRules"
                             rounded="md"
                             variant="solo"
-                            :items="cityList"
                             required
-                          ></v-select></v-col
+                          ></v-text-field></v-col
                       ></v-row>
                       <v-row
                         ><v-col
@@ -644,6 +815,7 @@
             </v-dialog>
             <!-- Flow 5 -->
             <v-dialog
+              :opacity="0.1"
               v-model="signup3Dialog"
               max-width="700"
               style="height: 750px"
@@ -681,19 +853,104 @@
         </v-col>
 
         <!-- Right Half -->
-        <v-col cols="6" sm="3" md="6">
+
+        <v-col
+          cols="12"
+          lg="6"
+          md="6"
+          sm="6"
+          order="first"
+          order-lg="last"
+          order-md="last"
+          order-sm="first"
+        >
           <div class="w-full h-full background-image"></div>
         </v-col>
       </v-row>
-      <v-footer :theme="isdarkmode ? 'dark' : 'light'" class="bg-background">
-        <!-- <v-container>
+      <!-- <v-footer :theme="isdarkmode ? 'dark' : 'light'" class="bg-background">
+         <v-container>
           <v-row justify="space-between">
             <v-col cols="12" md="6">
               <span class="h6">&copy; 2024 WorkWise Central</span>
             </v-col>
           </v-row>
-        </v-container> -->
-      </v-footer>
+        </v-container>
+      </v-footer> -->
+
+      <h1
+        :class="[
+          'splash-title',
+          'header-title',
+          'text-center',
+          { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
+        ]"
+      >
+        Manage your business <span class="text-primary">effectively</span> and
+        <span class="text-secondary">efficiently</span> using <span class="text-primary">Work</span
+        ><span class="text-secondary">Wise</span> Central
+      </h1>
+      <v-row style="height: 1000px">
+        <v-col cols="12" order="first" order-lg="last" order-md="last" order-sm="first">
+          <v-tabs v-model="tab" align-tabs="center" bg-color="secondary" stacked>
+            <v-tab v-for="(item, index) in tabs" :key="index">
+              {{ item.title }}<v-icon :icon="item.icon" color="primary"></v-icon>
+            </v-tab>
+          </v-tabs>
+          <v-tabs-window v-model="tab">
+            <v-tabs-window-item v-for="item in tabs" :key="item" :value="item">
+              <v-card flat>
+                <v-img> </v-img>
+              </v-card>
+            </v-tabs-window-item>
+          </v-tabs-window>
+        </v-col>
+      </v-row>
+      <div>
+        <h1
+          :class="[
+            'splash-title',
+            'header-title',
+            'text-center',
+            { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
+          ]"
+        >
+          What <span class="text-primary">services</span> would you like to
+          <span class="text-secondary">manage</span>
+        </h1>
+        <v-row justify="end" style="height: 500px">
+          <v-col cols="12">
+            <v-sheet class="bg-background mx-auto" elevation="0">
+              <v-slide-group v-model="model" class="pa-4" show-arrows>
+                <v-spacer></v-spacer>
+                <v-slide-group-item v-for="(service, index) in services.slice(0, 3)" :key="index">
+                  <v-col cols="12" lg="4" md="4">
+                    <v-card max-width="500px" rounded="xl">
+                      <v-card-title>{{ service.title }}</v-card-title>
+                      <v-card-text>
+                        <div>{{ service.text1 }}</div>
+                        <div>{{ service.text2 }}</div>
+                        <div>{{ service.text3 }}</div>
+                      </v-card-text>
+                      <v-card-actions class="bg-cardColor">
+                        <v-btn
+                          color="primary"
+                          dark
+                          @click="signupDialog = true"
+                          rounded="xl"
+                          class="my-3 text-center"
+                          size="large"
+                        >
+                          Get Started
+                        </v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-col>
+                </v-slide-group-item>
+              </v-slide-group>
+            </v-sheet>
+          </v-col>
+        </v-row>
+      </div>
     </v-main>
   </v-app>
 </template>
@@ -714,8 +971,20 @@ export default defineComponent({
     Toast
   },
   data: () => ({
+    localUrl: 'http://localhost:3000/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     click_create_client: false,
+    tabs: [
+      { title: 'Client Management', icon: 'mdi-account-group' },
+      { title: 'Project Management', icon: 'mdi-account-group' },
+      { title: 'Employee Management', icon: 'mdi-account-group' },
+      { title: 'Team Management', icon: 'mdi-account-group' },
+      { title: 'Operations', icon: 'mdi-account-group' },
+      { title: 'Client Projects', icon: 'mdi-account-group' }
+    ],
+    text: 'sidgkbvufteWOARBGADIGU8AjgnWJVG',
     saltRounds: 10,
+    tab: false,
     loginDialog: false,
     alertSignUp: false,
     alertSignUpFailure: false,
@@ -728,6 +997,8 @@ export default defineComponent({
     alertLoginFailure: false,
     joinDialog: false,
     registerDialog: false,
+    forgotPasswordDialog: false,
+    OTPDialog: false,
     exists: false,
     signupAddressDialog: false,
     genderList: ['Male', 'Female', 'Other'],
@@ -742,6 +1013,26 @@ export default defineComponent({
       'Venda',
       'Xhosa',
       'Zulu'
+    ],
+    services: [
+      {
+        title: 'Plumbing Services',
+        text1: 'Manage your plumbing services',
+        text2: 'Project Management, Job Management, Employee Management',
+        text3: 'Team Management, Operations, Client Projects'
+      },
+      {
+        title: 'Electronics Services',
+        text1: 'Manage your electronics services',
+        text2: 'Project Management, Job Management, Employee Management',
+        text3: 'Team Management, Operations, Client Projects'
+      },
+      {
+        title: 'Electricians Services',
+        text1: 'Manage your electricians services',
+        text2: 'Project Management, Job Management, Employee Management',
+        text3: 'Team Management, Operations, Client Projects'
+      }
     ],
     cityList: [
       'Johannesburg',
@@ -781,9 +1072,11 @@ export default defineComponent({
     flow: ['year', 'month', 'calendar'],
     access_token: '',
     password: '',
+    signupPassword: '',
     confirm_password: '',
     showPassword: false,
     date: '',
+    emailExists: false,
     name: '',
     surname: '',
     username: '',
@@ -912,8 +1205,10 @@ export default defineComponent({
     phoneNumberRules: [
       (v) => !!v || 'Phone number is required',
       (v) => (v.length >= 10 && v.length <= 10) || 'Phone number must be 10 characters',
-      (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers'
-    ]
+      (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers',
+      (v) => /^0[0-9]*$/.test(v) || 'Phone number must start with 0'
+    ],
+    company_logo_rules: [(v) => !!v || 'Profile picture is required']
   }),
 
   methods: {
@@ -955,6 +1250,14 @@ export default defineComponent({
         }
       }
     },
+    forgotPassword() {
+      this.loginDialog = false
+      this.forgotPasswordDialog = true
+    },
+    showOTP() {
+      this.forgotPasswordDialog = false
+      this.OTPDialog = true
+    },
     format(date) {
       const day = date.getDate()
       const month = date.getMonth() + 1
@@ -962,19 +1265,36 @@ export default defineComponent({
 
       return `Selected date is ${day}/${month}/${year}`
     },
+    handleImageUpload(event) {
+      const target = event.target
+      if (target.files && target.files[0]) {
+        const file = target.files[0]
+        this.profilePicture = file
+        const reader = new FileReader()
+
+        reader.onload = (e) => {
+          if (e.target && typeof e.target.result === 'string') {
+            this.req_obj.logo = e.target.result
+          }
+        }
+        reader.readAsDataURL(file)
+      }
+      console.log(this.req_obj.logo)
+    },
     mounted() {
       setTimeout(() => {
         this.loading = false
       }, 3000)
-      isdarkmode = sessionStorage.getItem('theme')
+      isdarkmode = localStorage.getItem('theme')
     },
     companyLogoHandler() {
       console.log('')
     },
     async login() {
+      const apiURL = await this.getRequestUrl()
       if (this.$refs.form.validate()) {
         await axios
-          .post('http://localhost:3000/auth/login', {
+          .post(apiURL + 'auth/login', {
             identifier: this.username,
             password: this.password
           })
@@ -982,23 +1302,23 @@ export default defineComponent({
             console.log(response)
             console.log(response.data.access_token)
             console.log(response.data.user.joinedCompanies[0].companyId)
-            sessionStorage.setItem('access_token', response.data.access_token)
-            sessionStorage.setItem('id', response.data.id)
-            sessionStorage.setItem(
-              'currentCompany',
-              response.data.user.joinedCompanies[0].companyId
-            )
+            localStorage.setItem('access_token', response.data.access_token)
+            localStorage.setItem('id', response.data.id)
+            localStorage.setItem('currentCompany', response.data.user.joinedCompanies[0].companyId)
+            localStorage.setItem('employeeId', response.data.user.joinedCompanies[0].employeeId)
+            localStorage.setItem('email', this.email)
+            localStorage.setItem('username', this.username)
             this.$toast.add({
               severity: 'success',
               summary: 'Success',
               detail: 'User successfully logged in',
               life: 3000
             })
-            this.resetForm()
+            // this.resetForm()
             this.$router.push('/dashboard')
           })
           .catch((error) => {
-            console.log(error.response.data.message)
+            console.log(error)
             this.$toast.add({
               severity: 'error',
               summary: 'Error',
@@ -1012,48 +1332,51 @@ export default defineComponent({
       this.date = new Date(date).toISOString()
     },
     async signup() {
+      const apiURL = await this.getRequestUrl()
       this.birthDateFormatter(this.birthDate)
+      const jsonData = {
+        username: this.username,
+        password: this.signupPassword,
+        personalInfo: {
+          firstName: this.name,
+          surname: this.surname,
+          dateOfBirth: this.date,
+          gender: this.gender,
+          preferredLanguage: this.language
+        },
+        address: {
+          street: this.street,
+          suburb: this.suburb,
+          province: this.province,
+          city: this.city,
+          postalCode: this.postal_code,
+          complex: this.complex,
+          houseNumber: this.houseNumber
+        },
+        contactInfo: {
+          phoneNumber: this.phone_number,
+          email: this.email
+        },
+        profile: {
+          displayName: this.name + ' ' + this.surname
+        },
+        skills: this.skills,
+        currentCompany: this.company
+      }
+
       await axios
-        .post('http://localhost:3000/users/create', {
-          username: this.username,
-          password: this.password,
-          personalInfo: {
-            firstName: this.name,
-            surname: this.surname,
-            dateOfBirth: this.date,
-            gender: this.gender,
-            preferredLanguage: this.language
-          },
-          address: {
-            street: this.street,
-            suburb: this.suburb,
-            province: this.province,
-            city: this.city,
-            postalCode: this.postal_code,
-            complex: this.complex,
-            houseNumber: this.houseNumber
-          },
-          contactInfo: {
-            phoneNumber: this.phone_number,
-            email: this.email
-          },
-          profile: {
-            displayName: this.name + ' ' + this.surname,
-            displayImage: this.profilePicture
-          },
-          skills: this.skills,
-          currentCompany: this.company
-        })
+        .post(apiURL + 'users/create', jsonData)
         .then((response) => {
           console.log(response)
           this.alertSignUpFailure = false
           this.alertSignUp = true
-          sessionStorage.setItem('access_token', response.data.data.access_token)
-          sessionStorage.setItem('id', response.data.data.id)
+          localStorage.setItem('access_token', response.data.data.access_token)
+          localStorage.setItem('id', response.data.data.id)
           localStorage.setItem('email', this.email)
           localStorage.setItem('username', this.username)
 
-          this.resetForm()
+          this.sendImage()
+          // this.resetForm()
         })
         .catch((error) => {
           console.log(error)
@@ -1061,21 +1384,67 @@ export default defineComponent({
           this.alertSignUpFailure = true
         })
     },
-    nextFlow1() {
-      this.signupDialog = false
-      this.signup1Dialog = true
+    async sendImage() {
+      if (this.profilePicture === '') {
+        return
+      }
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      let formData = new FormData()
+      formData.append('profilePicture', this.profilePicture)
+
+      const apiURL = await this.getRequestUrl()
+      const url = apiURL + `users/update/profilePic/`
+
+      await axios.patch(url, formData, config).then((response) => {
+        console.log(response)
+      })
+    },
+    async nextFlow1() {
+      try {
+        this.emailExists = await this.emailExist()
+        console.log(this.emailExists)
+        if (this.emailExists === true) {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Email already exists',
+            life: 3000
+          })
+        } else {
+          // Handle the case where the email does not exist
+          this.signupDialog = false
+          this.signup1Dialog = true
+        }
+      } catch (error) {
+        console.error('Error during next flow:', error)
+      }
     },
     nextFlow2() {
       this.signup1Dialog = false
       this.signupUsernameDialog = true
       this.populateUsernameList()
     },
-    nextFlowUsername() {
-      if (this.checkUsernameExist() === true) {
-        alert('Username already exists')
-      } else {
-        this.signupUsernameDialog = false
-        this.signup2Dialog = true
+    async nextFlowUsername() {
+      try {
+        this.exists = await this.usernameExist()
+        if (this.exists === true) {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Username already exists',
+            life: 6000
+          })
+        } else {
+          this.signupUsernameDialog = false
+          this.signup2Dialog = true
+        }
+      } catch (error) {
+        console.error('Error during next flow for username:', error)
       }
     },
     nextFlow3() {
@@ -1096,26 +1465,47 @@ export default defineComponent({
       this.joinDialog = true
       this.signup()
     },
+    async emailExist() {
+      try {
+        const apiURL = await this.getRequestUrl()
+        const response = await axios.post(`${apiURL}users/exists/email`, {
+          email: this.email
+        })
+        console.log(response.data.data)
+        return response.data.data
+      } catch (error) {
+        console.error('Error checking email existence:', error)
+        return null // Return null or handle the error as needed
+      }
+    },
     async usernameExist() {
-      await axios
-        .post('http://localhost:3000/users/exists', {
-          params: {
-            username: this.username
-          }
+      try {
+        const apiURL = await this.getRequestUrl()
+        const response = await axios.post(`${apiURL}users/exists/username`, {
+          username: this.username
         })
-        .then((response) => {
-          console.log(response)
-          console.log(this.username)
-          this.exists = response
-        })
-        .catch((error) => {
-          console.log(error)
-        })
+        console.log(response.data.data)
+        return response.data.data
+      } catch (error) {
+        console.error('Error checking username existence:', error)
+        return null // Return null or handle the error as needed
+      }
     },
     checkUsernameExist() {
+      console.log('Checking if username exists')
       this.usernameExist()
+      console.log(this.exists)
       if (this.exists === true) {
         alert('Username already exists')
+        return true
+      }
+      return false
+    },
+    checkEmailExist() {
+      this.emailExist()
+      console.log(this.emailExists)
+      if (this.emailExists === true) {
+        alert('Email already exists')
         return true
       }
       return false
@@ -1133,7 +1523,19 @@ export default defineComponent({
         this.isdarkmode = true
         console.log(this.isdarkmode)
       }
-      sessionStorage.setItem('theme', this.isdarkmode) // save the theme to session storage
+      localStorage.setItem('theme', this.isdarkmode) // save the theme to session storage
+    },
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
   }
 })
@@ -1194,5 +1596,8 @@ export default defineComponent({
     #3a6073,
     #3a7bd5
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.mb-4 {
+  margin-bottom: 1.5rem;
 }
 </style>

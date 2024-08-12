@@ -1,6 +1,7 @@
 import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
 import 'vuetify/styles'
+import 'vuetify/dist/vuetify.min.css'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import 'mdi/css/materialdesignicons.css'
 

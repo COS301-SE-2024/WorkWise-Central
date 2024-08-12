@@ -7,9 +7,7 @@ import toStream = require('buffer-to-stream');
 export class FileService {
   constructor() {}
 
-  async uploadBase64Image(
-    base64Image: string,
-  ): Promise<UploadApiResponse | UploadApiErrorResponse> {
+  async uploadBase64Image(base64Image: string): Promise<UploadApiResponse | UploadApiErrorResponse> {
     return new Promise((resolve, reject) => {
       const upload = v2.uploader.upload_stream((error, result) => {
         if (error) {
@@ -23,9 +21,7 @@ export class FileService {
     });
   }
 
-  async uploadImage(
-    file: Express.Multer.File,
-  ): Promise<UploadApiResponse | UploadApiErrorResponse> {
+  async uploadFile(file: Express.Multer.File): Promise<UploadApiResponse | UploadApiErrorResponse> {
     return new Promise((resolve, reject) => {
       const upload = v2.uploader.upload_stream((error, result) => {
         if (error) return reject(error);

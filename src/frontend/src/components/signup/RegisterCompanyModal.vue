@@ -36,8 +36,12 @@
           <v-spacer></v-spacer>
           <v-col>
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Company Name</label>
+              <label style="font-size: 14px; font-weight: lighter"
+                >Company Name
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
               <v-text-field
+                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's name"
@@ -46,17 +50,22 @@
                 rounded="md"
                 variant="solo"
                 required
+                data-testid="company-name-field"
               ></v-text-field
             ></v-col>
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Type of business*</label>
+              <label style="font-size: 14px; font-weight: lighter"
+                >Type of business
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
               <v-autocomplete
                 density="compact"
-                color="cardColor"
+                color="primary"
                 placeholder="Select Job Type"
                 v-model="req_obj.type"
                 rounded="md"
                 variant="solo"
+                :rules="business_type_rules"
                 :items="[
                   'Agricultural Labor',
                   'Automotive Repair',
@@ -129,13 +138,18 @@
                   'Welding',
                   'Window Cleaning'
                 ]"
+                data-testid="type-of-company-autocomplete"
               ></v-autocomplete>
             </v-col>
 
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Company email address</label>
+              <label style="font-size: 14px; font-weight: lighter"
+                >Company email address
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
 
               <v-text-field
+                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's email adress"
@@ -145,12 +159,17 @@
                 rounded="md"
                 variant="solo"
                 required
+                data-testid="company-email-address-field"
               ></v-text-field
             ></v-col>
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Company phone number*</label>
+              <label style="font-size: 14px; font-weight: lighter"
+                >Company phone number
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
 
               <v-text-field
+                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's phone number"
@@ -159,14 +178,16 @@
                 v-model="req_obj.contactDetails.phoneNumber"
                 :rules="phone_number_rules"
                 required
+                data-testid="company-phone-number-field"
               ></v-text-field
             ></v-col>
             <v-col>
               <label style="font-size: 14px; font-weight: lighter"
-                >Company registration number*</label
+                >Company registration number</label
               >
 
               <v-text-field
+                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's registration number"
@@ -175,13 +196,15 @@
                 rounded="md"
                 variant="solo"
                 required
+                data-testid="company-registration-number-field"
               ></v-text-field
             ></v-col>
 
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Company VAT number*</label>
+              <label style="font-size: 14px; font-weight: lighter">Company VAT number</label>
 
               <v-text-field
+                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's VAT number"
@@ -190,31 +213,40 @@
                 v-model="req_obj.vatNumber"
                 variant="solo"
                 required
+                data-testid="company-VAT-field"
               ></v-text-field
             ></v-col>
-            <!--            <v-col>-->
-            <!--              <small-->
-            <!--                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"-->
-            <!--                class="text-caption"-->
-            <!--                >Company logo</small-->
-            <!--              >-->
-            <!--              <v-file-input-->
-            <!--                :theme="isdarkmode === true ? 'dark' : 'light'"-->
-            <!--                variant="solo"-->
-            <!--                accept="image/*"-->
-            <!--                width="100%"-->
-            <!--                placeholder="Company Logo"-->
-            <!--                @change="companyLogoHandler"-->
-            <!--                color="black"-->
-            <!--                rounded="md"-->
-            <!--              ></v-file-input>-->
-            <!--            </v-col>-->
-            <label style="font-size: 14px; font-weight: lighter">Company address*</label>
+            <v-col>
+              <small class="text-caption">Company logo</small>
+              <v-file-input
+                :theme="isdarkmode === true ? 'dark' : 'light'"
+                variant="solo"
+                accept="image/*"
+                width="100%"
+                placeholder="Company Logo"
+                @change="handleImageUpload"
+                hint="Image size limit of  5MB"
+                persistent-hint
+                color="black"
+                rounded="md"
+                required
+                :rules="company_logo_rules"
+                data-testid="company-logo-file-input"
+              ></v-file-input>
+            </v-col>
+            <label style="font-size: 14px; font-weight: lighter"
+              >Company address
+              <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+            </label>
 
             <v-row class="d-flex flex-wrap">
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">Street</label>
+                <label style="font-size: 11px; font-weight: lighter"
+                  >Street
+                  <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+                </label>
                 <v-text-field
+                  @update:focused="setUserId"
                   density="compact"
                   color="cardColor"
                   placeholder="Street"
@@ -222,11 +254,17 @@
                   v-model="req_obj.address.street"
                   variant="solo"
                   required
+                  :rules="street_rules"
+                  data-testid="street-field"
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">Suburb</label>
+                <label style="font-size: 11px; font-weight: lighter"
+                  >Suburb
+                  <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+                </label>
                 <v-text-field
+                  @update:focused="setUserId"
                   density="compact"
                   color="cardColor"
                   placeholder="Suburb"
@@ -234,10 +272,15 @@
                   v-model="req_obj.address.suburb"
                   variant="solo"
                   required
+                  :rules="suburb_rules"
+                  data-testid="suburb-field"
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">Province</label>
+                <label style="font-size: 11px; font-weight: lighter"
+                  >Province
+                  <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+                </label>
                 <v-autocomplete
                   density="compact"
                   placeholder="Province"
@@ -258,11 +301,17 @@
                     'Western Cape'
                   ]"
                   required
+                  :rules="province_rules"
+                  data-testid="province-autocomplete"
                 ></v-autocomplete
               ></v-col>
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">City</label>
+                <label style="font-size: 11px; font-weight: lighter"
+                  >City/Town
+                  <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+                </label>
                 <v-text-field
+                  @update:focused="setUserId"
                   density="compact"
                   placeholder="City"
                   rounded="md"
@@ -270,11 +319,17 @@
                   variant="solo"
                   required
                   color="cardColor"
+                  :rules="city_rules"
+                  data-testid="city-town-field"
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">Postal Code</label>
+                <label style="font-size: 11px; font-weight: lighter"
+                  >Postal Code
+                  <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+                </label>
                 <v-text-field
+                  @update:focused="setUserId"
                   density="compact"
                   color="cardColor"
                   placeholder="Postal Code"
@@ -283,12 +338,29 @@
                   :rules="postal_code_rules"
                   variant="solo"
                   required
+                  data-testid="postal-code-field"
+                ></v-text-field
+              ></v-col>
+              <v-col cols="12" sm="6">
+                <label style="font-size: 12px; font-weight: lighter">Complex/Building</label>
+                <v-text-field
+                  density="compact"
+                  color="primary"
+                  placeholder="Complex"
+                  rounded="md"
+                  v-model="req_obj.address.complex"
+                  variant="solo"
+                  required
+                  hint="Complex or Building Name, unit number or floor"
+                  persistent-hint
+                  data-testid="complex-field"
                 ></v-text-field
               ></v-col>
             </v-row>
             <!--            <v-row>-->
             <!--              <v-col-->
-            <!--                ><v-text-field-->
+            <!--                > <v-text-field
+                @update:focused = "setUserId"-->
             <!--                  :theme="isdarkmode === true ? 'dark' : 'light'"-->
             <!--                  density="compact"-->
             <!--                  color="grey-lighten-4"-->
@@ -300,7 +372,8 @@
             <!--                ></v-text-field-->
             <!--              ></v-col>-->
             <!--              <v-col-->
-            <!--                ><v-text-field-->
+            <!--                > <v-text-field
+                @update:focused = "setUserId"-->
             <!--                  :theme="isdarkmode === true ? 'dark' : 'light'"-->
             <!--                  density="compact"-->
             <!--                  color="grey-lighten-4"-->
@@ -324,6 +397,7 @@
               height="35"
               variant="elevated"
               :disabled="click_create_client"
+              data-testid="continue-button"
               >Continue</v-btn
             >
           </v-col>
@@ -336,6 +410,7 @@
               width="60%"
               height="35"
               variant="elevated"
+              data-testid="back-button"
               >Back</v-btn
             >
           </v-col>
@@ -348,6 +423,8 @@
 <script lang="ts">
 import axios from 'axios'
 import Toast from 'primevue/toast'
+const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
+
 export default {
   name: 'RegisterCompanyModal',
   components: {
@@ -356,11 +433,9 @@ export default {
   data() {
     return {
       dialog: false,
-      isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       click_create_client: false,
       valid: true,
-      light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
-      dark_theme_text_color: 'color: #DCDBDB',
       dark: '#2b2b2b',
       light: '#FFFFFF',
       localUrl: 'http://localhost:3000/',
@@ -375,16 +450,11 @@ export default {
           /^[A-Z][a-zA-Z &-]{0,48}[a-zA-Z]$/.test(v) ||
           'Company name can contain both capital and lowercase letters, spaces, "&", or "-"'
       ],
-      email_rules: [
-        (v: string) => !!v || 'E-mail is required',
-        (v: string) => /.+@.+\..+/.test(v) || 'E-mail must be valid'
-      ],
+      email_rules: [(val: string) => email_reg.test(val) || 'Email should contain an @ symbol'],
       vat_number_rules: [
-        (v: string) => !!v || 'VAT number is required',
         (v: string) => /^\d{10}$/.test(v) || 'VAT number must be a valid South African VAT number'
       ],
       company_registration_number_rules: [
-        (v: string) => !!v || 'Company registration number is required',
         (v: string) =>
           /^\d{4}\/\d{6}\/\d{2}$/.test(v) ||
           'Company registration number must be a valid South African number format: YYYY/NNNNNN/XX'
@@ -397,12 +467,20 @@ export default {
         (v: string) => !!v || 'Postal code  is required',
         (value: string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
       ],
+      street_rules: [(v: string) => !!v || 'Street is required'],
+      suburb_rules: [(v: string) => !!v || 'Suburb is required'],
+      province_rules: [(v: string) => !!v || 'Province is required'],
+      city_rules: [(v: string) => !!v || 'City is required'],
+      // complex_or_building_rules: [(v: string) => !!v || 'Complex/Building is required'],
+      business_type_rules: [(v: string) => !!v || 'Business type required'],
+      company_logo_rules: [(v: string) => !!v || 'Company logo is required'],
       req_obj: {
-        userId: sessionStorage.getItem('id'),
+        userId: localStorage.getItem('id'),
         name: '',
         type: '',
         registrationNumber: '',
         vatNumber: '',
+        logo: '',
         contactDetails: {
           email: '',
           phoneNumber: ''
@@ -415,39 +493,55 @@ export default {
           postalCode: '',
           complex: '',
           houseNumber: ''
-        },
-        employees: [],
-        inventoryItems: [],
-        private: false
+        }
+        // employees: [],
+        // inventoryItems: [],
+        // private: false
       }
     }
   },
   methods: {
-    companyLogoHandler() {
-      console.log('')
-    },
     async registrationHandler() {
       console.log(JSON.stringify(this.req_obj))
       console.log(this.req_obj)
-      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       console.log(apiURL)
       axios
         .post(apiURL + 'company/create', this.req_obj, config)
         .then((res) => {
-          console.log(res.data.data.id)
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
             detail: 'Company registered successfully',
             life: 3000
           })
-          sessionStorage['currentCompany'] = res.data.data.id._id
+          console.log(res.data.data.id)
+
+          localStorage['currentCompany'] = res.data.data._id
+          // localStorage['employeeId'] = res.data.data.employees[0]
+
           console.log(res.data)
+
+          axios
+            .get(apiURL + 'company/id/' + res.data.data._id, config)
+            .then((res) => {
+              console.log(res.data.data)
+              localStorage['employeeId'] = res.data.data.employees[0]
+            })
+            .catch((error) => {
+              console.log('Error occured when storing employeeId: ', error)
+            })
+
           this.$router.push('/dashboard')
         })
         .catch((res) => {
-          alert('The Company was not registered successfully')
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed Company Registration',
+            life: 3000
+          })
           console.log(res)
         })
     },
@@ -466,6 +560,28 @@ export default {
     },
     close() {
       this.dialog = false
+    },
+    handleImageUpload(event: Event) {
+      const target = event.target as HTMLInputElement
+      if (target.files && target.files[0]) {
+        const file: File = target.files[0]
+        const reader = new FileReader()
+
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          if (e.target && typeof e.target.result === 'string') {
+            this.req_obj.logo = e.target.result
+          }
+        }
+        reader.readAsDataURL(file)
+      }
+      console.log(this.req_obj.logo)
+    },
+    print_base64_link() {
+      console.log(this.req_obj.logo)
+    },
+    setUserId() {
+      this.req_obj.userId = localStorage['id']
+      console.log('userid set')
     }
 
     // base64image() {
@@ -475,6 +591,9 @@ export default {
     //     this.req_obj.image = read.result
     //   }
     // }
+  },
+  mounted() {
+    this.req_obj.userId = localStorage['id']
   }
 }
 </script>

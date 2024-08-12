@@ -10,21 +10,19 @@ import {
   //IsPhoneNumber,
   IsString,
   MaxLength,
-  MinLength,
+  //MinLength,
   Validate,
   ValidateNested,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { Company } from '../entities/company.entity';
-import { RegistrationNumber } from '../../utils/Custom Validators/RegistrationNumber';
+import { RegistrationNumber, VatNumber } from '../../utils/Custom Validators/RegistrationNumber';
 import { Base64ContentIsImage } from '../../utils/Custom Validators/Base64ContentIsImage';
 
 export class ContactDetails {
   @IsNotEmpty()
   @IsString()
-  @Transform(({ value }) =>
-    value.startsWith('0') ? `+27${value.slice(1)}` : value,
-  )
+  @Transform(({ value }) => (value.startsWith('0') ? `+27${value.slice(1)}` : value))
   //@IsPhoneNumber(null)
   phoneNumber: string;
 
@@ -34,7 +32,7 @@ export class ContactDetails {
   email: string;
 }
 
-class Address {
+export class Address {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -73,17 +71,17 @@ export class CreateCompanyDto {
   userId: Types.ObjectId;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Validate(RegistrationNumber)
-  registrationNumber: string;
+  registrationNumber?: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  @MinLength(10)
+  @Validate(VatNumber)
   @MaxLength(10)
-  vatNumber: string;
+  vatNumber?: string;
 
   @ApiProperty()
   @IsString()
@@ -91,10 +89,12 @@ export class CreateCompanyDto {
   name: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   type?: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   @Validate(Base64ContentIsImage)
   logo?: string;
@@ -110,16 +110,6 @@ export class CreateCompanyDto {
   @ValidateNested()
   @Type(() => Address)
   address: Address;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsMongoId({ each: true })
-  employees?: Types.ObjectId[] = [];
-
-  @ApiProperty()
-  @IsOptional()
-  @IsMongoId({ each: true })
-  inventoryItems?: Types.ObjectId[] = [];
 
   @ApiProperty()
   @IsOptional()
@@ -142,8 +132,9 @@ export class CreateCompanyResponseDto {
 class FilteredAddress extends OmitType(Address, ['street']) {}
 
 class CompanyAllType {
-  registrationNumber: string;
-  vatNumber: string;
+  _id: Types.ObjectId;
+  registrationNumber?: string;
+  vatNumber?: string;
   name: string;
   logo: string;
   address: FilteredAddress;

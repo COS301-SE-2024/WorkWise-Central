@@ -3,7 +3,7 @@
     max-height="800"
     max-width="600"
     style="font-family: Nunito, sans-serif"
-    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :theme="isdarkmode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
@@ -26,8 +26,8 @@
       <v-card-text>
         <v-form ref="form" v-model="valid" @submit.prevent="handleSubmit">
           <v-col>
-            <v-col>
-              <v-col>
+            <v-row>
+              <v-col :cols="12">
                 <small
                   class="text-caption font-weight-regular"
                   style="font-family: Nunito, sans-serif"
@@ -36,16 +36,50 @@
 
                 <v-text-field
                   bg-color="background"
-                  v-model="req_obj2.userName"
+                  v-model="req_obj.newUserUsername"
                   placeholder="Employee Username"
                   rounded="md"
                   required
+                  data-testid="username-textfield"
                 ></v-text-field>
               </v-col>
-            </v-col>
+
+              <v-col :cols="12">
+                <v-select
+                  clearable
+                  label="Company Role"
+                  hint="Select the role you'd like to change this employee to"
+                  persistent-hint
+                  @update:modelValue="change_roles"
+                  :items="roleItems"
+                  item-value="roleId"
+                  item-title="roleName"
+                  v-model="req_obj.roleId"
+                  bg-color="background"
+                  variant="solo"
+                  data-testid="role-select"
+                ></v-select>
+              </v-col>
+              <v-col :cols="12">
+                <v-select
+                  clearable
+                  label="Superior"
+                  hint="Select the employee you'd like to be superior of this employee"
+                  persistent-hint
+                  @update:modelValue="selected_supirior"
+                  :items="subordinateItemNames"
+                  v-model="req_obj.superiorId"
+                  item-value="employeeId"
+                  item-title="name"
+                  bg-color="background"
+                  variant="solo"
+                  data-testid="superior-select"
+                ></v-select>
+              </v-col>
+            </v-row>
 
             <v-col cols="12" md="12" xs="3" sm="6" align="center">
-              <Toast />
+              <Toast position="top-center" />
               <v-btn
                 color="success"
                 rounded="md"
@@ -56,7 +90,7 @@
                 variant="text"
                 :disabled="click_create_client"
                 style="font-family: Nunito, sans-serif"
-                >Add
+                >Add<v-icon icon="fa:fa-solid fa-plus" color="success" size="small" end></v-icon>
               </v-btn>
             </v-col>
           </v-col>
@@ -70,6 +104,7 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
+import type { EmployeeInformation2, RoleItem, Role } from '@/components/home/employees/types'
 // import router from '@/router'
 export default defineComponent({
   name: 'RegisterCompanyModal',
@@ -81,53 +116,113 @@ export default defineComponent({
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     valid: false,
     dialog: false,
+    roleItems: [] as RoleItem[],
+    subordinateItemNames: [] as EmployeeInformation2[],
     isdarkmode: localStorage['theme'] !== 'false',
     click_create_client: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
-
     req_obj: {
-      companyId: sessionStorage['currentCompany'],
-      userId: ''
-    },
-    req_obj2: {
-      userName: '',
-      companyId: sessionStorage['currentCompany']
+      adminId: localStorage['employeeId'],
+      currentCompany: localStorage['currentCompany'],
+      newUserUsername: '',
+      superiorId: '',
+      roleId: ''
     }
   }),
   methods: {
+    selected_supirior() {
+      console.log(this.req_obj.superiorId)
+    },
+    change_roles() {
+      console.log(this.req_obj.roleId)
+      console.log(this.roleItems)
+    },
+    async loadSubordinates() {
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const sub_res = await axios.get(
+          apiURL + `employee/detailed/all/${localStorage.getItem('employeeId')}`,
+          config
+        )
+        console.log(sub_res)
+        for (let i = 0; i < sub_res.data.data.length; i++) {
+          let company_employee: EmployeeInformation2 = {
+            name:
+              sub_res.data.data[i].userId.personalInfo.firstName +
+              ' ' +
+              sub_res.data.data[i].userId.personalInfo.surname +
+              ' (' +
+              sub_res.data.data[i].role.roleName +
+              ')',
+            employeeId: sub_res.data.data[i]._id
+          }
+
+          console.log(company_employee)
+          this.subordinateItemNames.push(company_employee)
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    },
+    async loadRoles() {
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      try {
+        let roles_response = await axios.get(
+          apiURL + `role/all/${localStorage['currentCompany']}`,
+          config
+        )
+        console.log(roles_response)
+        let roles_data: Role[] = roles_response.data.data
+        for (let i = 0; i < roles_data.length; i++) {
+          this.roleItems.push({
+            roleName: roles_data[i].roleName,
+            roleId: roles_data[i]._id
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    },
     async handleSubmit() {
+      this.req_obj.adminId = localStorage['employeeId']
+      this.req_obj.currentCompany = localStorage['currentCompany']
+
+      console.log(this.req_obj)
+
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
       const apiURL = await this.getRequestUrl()
-      try {
-        const employee_response = await axios.get(apiURL + `users/all`, config)
-        const emp_lst = employee_response.data.data
-        console.log(emp_lst)
-        for (let i = 0; i < emp_lst.length; i++) {
-          if (emp_lst[i].systemDetails.username === this.req_obj2.userName) {
-            this.req_obj.userId = emp_lst[i]._id
-            let response = await axios.post(apiURL + 'employee/create', this.req_obj, config)
-            console.log(response)
-            this.$toast.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Employee added successfully',
-              life: 3000
-            })
-            this.$router.push('/manager-employees-t')
-            break
-          }
-        }
-      } catch (error) {
-        console.log('Error fetching data:', error)
-      }
+      axios
+        .post(apiURL + 'company/add', this.req_obj, config)
+        .then((response) => {
+          console.log(response)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Employee Added Successfully',
+            life: 3000
+          })
+          window.location.reload()
+        })
+        .catch((error) => {
+          console.log(error)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to add employee',
+            life: 3000
+          })
+        })
     },
     async isLocalAvailable(localUrl: string) {
       try {
@@ -141,6 +236,12 @@ export default defineComponent({
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     }
+  },
+  mounted() {
+    this.req_obj.adminId = localStorage['employeeId']
+    this.req_obj.currentCompany = localStorage['currentCompany']
+    this.loadRoles()
+    this.loadSubordinates()
   }
 })
 </script>

@@ -13,32 +13,33 @@
         width="100%"
       >
         <v-row align="center" justify="space-between">
-          <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+          <v-col cols="12" lg="4" md="4" sm="4" class="d-flex justify-start align-center">
             <v-icon icon="mdi-account"></v-icon>
             <v-label
-              class="ms-2 h4 font-family-Nunito text-headingTextColor"
+              class="ms-2 h2 font-family-Nunito text-headingTextColor"
               height="auto"
               width="auto"
               >Client Details</v-label
             >
           </v-col>
 
-          <v-col cols="12" md="4" sm="6" xs="12">
+          <v-col cols="12" lg="4" md="4" sm="4" class="d-flex justify-center">
             <v-text-field
               v-model="search"
               density="compact"
               label="Search"
               prepend-inner-icon="mdi-magnify"
-              variant="solo-inverted"
+              variant="outlined"
               flat
-              width="100%"
+              color="primary"
+              width="80%"
               style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
               hide-details
               single-line
             ></v-text-field>
           </v-col>
 
-          <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
+          <v-col cols="12" lg="4" md="4" sm="4" :class="{ 'd-flex justify-end': !isSmallScreen }">
             <AddClient />
           </v-col>
         </v-row>
@@ -46,7 +47,7 @@
 
       <v-card-text>
         <v-divider></v-divider>
-        <v-col cols="12" xs="12" sm="12" md="12">
+        <v-col cols="12">
           <div style="height: auto; overflow-y: auto">
             <v-data-table
               :headers="headers"
@@ -57,15 +58,15 @@
               rounded="xl"
               class="bg-cardColor"
               :row-props="getRowProps"
-              :header-props="getHeaderProps"
+              :header-props="{ class: 'bg-cardColor h6' }"
             >
               <template #[`item.firstName`]="{ value }">
-                <v-chip variant="text" color="elementTextColor">
+                <v-chip variant="text">
                   <v-icon icon="fa:fa-solid fa-user "></v-icon>{{ value }}</v-chip
                 >
               </template>
               <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                <v-chip @click="callPhone" color="primary" text-color="elementTextColor" border="md"
+                <v-chip @click="callPhone" text- border="md"
                   ><v-icon icon="fa:fa-solid fa-phone"></v-icon> {{ value }}</v-chip
                 >
               </template>
@@ -73,20 +74,15 @@
                 <v-chip :color="getColor(value)"> {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip>
               </template>
               <template v-slot:[`item.lastName`]="{ value }">
-                <v-chip variant="text" color="elementTextColor"> {{ value }}</v-chip>
+                <v-chip variant="text"> {{ value }}</v-chip>
               </template>
               <template v-slot:[`item.contactInfo.email`]="{ value }">
-                <v-chip
-                  @click="sendEmail"
-                  color="primary"
-                  text-color="elementTextColor"
-                  border="md"
-                >
+                <v-chip @click="sendEmail" text- border="md">
                   <v-icon icon="fa:fa-solid fa-envelope"></v-icon>{{ value }}</v-chip
                 >
               </template>
               <template v-slot:[`item.address.street`]="{ value }">
-                <v-chip variant="text" color="elementTextColor">
+                <v-chip variant="text">
                   <v-icon icon="fa:fa-solid fa-location-dot"></v-icon>{{ value }}</v-chip
                 >
               </template>
@@ -94,42 +90,44 @@
 
               <!-- Actions slot -->
               <template v-slot:[`item.actions`]="{ item }">
-                <v-btn
-                  rounded="xl"
-                  variant="plain"
-                  @click="(actionsDialog = true), selectItem(item)"
-                >
-                  <v-icon color="primary">mdi-dots-horizontal</v-icon>
-                </v-btn>
+                <v-menu max-width="500px" :theme="isdarkmode === true ? 'dark' : 'light'">
+                  <template v-slot:activator="{ props }">
+                    <v-btn
+                      rounded="xl"
+                      variant="plain"
+                      v-bind="props"
+                      @click="(actionsDialog = true), selectItem(item)"
+                    >
+                      <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list class="bg-background">
+                    <v-list-item
+                      ><ClientDetails :colors="colors" :clientDetails="selectedItem"
+                    /></v-list-item>
+
+                    <v-list-item
+                      ><EditClient
+                        @update:item="selectedItem = $event"
+                        :editedItem="selectedItem"
+                        :_clientID="selectedItemId"
+                    /></v-list-item>
+
+                    <v-list-item>
+                      <DeleteClient
+                        :details="selectedItem"
+                        :client_id="selectedItemId"
+                        :client="selectedItem"
+                        :company_id="clientCompanyID"
+                    /></v-list-item>
+                  </v-list>
+                </v-menu>
               </template>
             </v-data-table>
           </div>
         </v-col>
       </v-card-text>
     </v-card>
-
-    <v-dialog v-model="actionsDialog" max-width="500px">
-      <v-card>
-        <v-card-title class="text-h5 font-weight-regular bg-primary text-center">
-          {{ selectedItemName + ' ' + selectedItemSurname }}
-        </v-card-title>
-        <v-card-text> What would you like to do with this client? </v-card-text>
-        <v-card-actions>
-          <ClientDetails :colors="colors" :ClientDetails="selectedItem" />
-          <EditClient
-            @update:item="selectedItem = $event"
-            :editedItem="selectedItem"
-            :_clientID="selectedItemId"
-          /><DeleteClient
-            :details="selectedItem"
-            :client_id="selectedItemId"
-            :client="selectedItem"
-          />
-          <v-spacer></v-spacer>
-          <v-btn @click="actionsDialog = false" color="primary">Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
@@ -148,8 +146,11 @@ export default defineComponent({
     isDarkMode: Boolean
   },
   data: () => ({
+    localUrl: 'http://localhost:3000/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     dummy: '',
     selectedItem: {},
+    windowWidth: window.innerWidth,
     selectedItemName: '',
     selectedItemSurname: '',
     isdarkmode: true,
@@ -177,7 +178,7 @@ export default defineComponent({
         sortable: true,
         value: 'firstName',
         key: 'firstName',
-        class: 'my-header-style'
+        class: 'text-h3'
       },
       {
         title: 'Surname',
@@ -185,32 +186,33 @@ export default defineComponent({
         sortable: true,
         value: 'lastName',
         key: 'lastName',
-        class: 'my-header-style'
+        class: 'h3'
       },
       {
         title: 'Phone',
         value: 'contactInfo.phoneNumber',
         key: 'contactInfo.phoneNumber',
-        class: 'my-header-style'
+        class: 'h3'
       },
       {
         title: 'Email',
         value: 'contactInfo.email',
         key: 'contactInfo.email',
-        class: 'my-header-style'
+        class: 'h3'
       },
       {
         title: 'Address',
         value: 'address.street',
         key: 'address.street',
-        class: 'my-header-style'
+        class: 'h3'
       },
-      { title: '', value: 'actions', key: 'actions', sortable: false, class: 'my-header-style' }
+      { title: '', value: 'actions', key: 'actions', sortable: false, class: 'h3' }
     ],
     search: '',
     clients: [],
     clientDetails: [],
     clientIds: [],
+    clientCompanyID: '',
     expanded: [],
     selectedItemId: ''
   }),
@@ -240,11 +242,21 @@ export default defineComponent({
     },
     globalTheme() {
       return this.$theme.global // Adjust based on actual implementation
+    },
+    isSmallScreen() {
+      return this.windowWidth < 960 // adjust this value based on your breakpoint
     }
+  },
+  created() {
+    window.addEventListener('resize', this.handleResize)
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize)
   },
   mounted() {
     this.getClients()
-    this.isdarkmode = sessionStorage.getItem('theme') === 'true' ? true : false
+    this.getEmployeeDetails()
+    this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
   },
   methods: {
     getRowClass(index) {
@@ -258,6 +270,7 @@ export default defineComponent({
       for (let i = 0; i < this.clientDetails.length; i++) {
         if (this.clientDetails[i] === item) {
           this.selectedItemId = this.clientIds[i]
+          this.clientCompanyID = this.clientDetails[i].companyId
         }
       }
       console.log('Deleting client' + this.selectedItemId)
@@ -319,7 +332,7 @@ export default defineComponent({
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
       axios
@@ -339,37 +352,55 @@ export default defineComponent({
           console.error('Failed to fetch clients:', error)
         })
     },
-    toggleDarkMode() {
-      console.log(this.isdarkmode)
-      if (this.isdarkmode === true) {
-        this.isdarkmode = false
-        console.log(this.isdarkmode)
-      } else {
-        this.isdarkmode = true
-        console.log(this.isdarkmode)
+    async getEmployeeDetails() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
       }
-    },
-    getColor(value) {
-      if (value == '') return 'red'
-      else return 'green'
-    },
-    getRowProps({ index }) {
-      return {
-        class: index % 2 ? 'bg-secondRowColor' : ''
-      }
-    },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+      axios
+        .get(`http://localhost:3000/users/id/${localStorage.getItem('id')}`, config)
+        .then((response) => {
+          console.log(response.data)
+          this.employees = response.data.data
+          console.log(this.employees)
+        })
+        .catch((error) => {
+          console.error('Failed to fetch employees:', error)
+        })
     }
+  },
+  toggleDarkMode() {
+    console.log(this.isdarkmode)
+    if (this.isdarkmode === true) {
+      this.isdarkmode = false
+      console.log(this.isdarkmode)
+    } else {
+      this.isdarkmode = true
+      console.log(this.isdarkmode)
+    }
+  },
+  getColor(value) {
+    if (value == '') return 'red'
+    else return 'green'
+  },
+  getRowProps({ index }) {
+    return {
+      class: index % 2 ? 'bg-secondRowColor' : ''
+    }
+  },
+  async isLocalAvailable(localUrl) {
+    try {
+      const res = await axios.get(localUrl)
+      return res.status < 300 && res.status > 199
+    } catch (error) {
+      return false
+    }
+  },
+  async getRequestUrl() {
+    const localAvailable = await this.isLocalAvailable(this.localUrl)
+    return localAvailable ? this.localUrl : this.remoteUrl
   }
 })
 </script>
@@ -428,7 +459,7 @@ export default defineComponent({
 
 /* Light mode */
 
-.my-header-style {
+.h3 {
   background: red;
 }
 .font-family-lato {

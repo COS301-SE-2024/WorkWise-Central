@@ -20,9 +20,30 @@ import ProfilePage from '@/components/home/settings/profile/ProfilePage.vue'
 import CompanySettings from '@/components/home/settings/company/CompanySettings.vue'
 import EditCompany from '@/components/home/settings/company/EditCompany.vue'
 import EditRoles from '@/components/home/settings/company/EditRoles.vue'
-// import EditStructure from '@/components/home/settings/company/EditStructure.vue'
+import EditStructure from '@/components/home/settings/company/EditStructure.vue'
 import CompanySettingsView from '../views/settings/CompanySettings.vue'
 import LoadingScreen from '@/components/misc/LoadingScreen.vue'
+import StatisticsDashboard from '@/components/home/statistics/StatisticsDashboard.vue'
+import StatisticView from '@/views/home/dashboard/StatisticView.vue'
+import InventoryView from '@/views/home/inventory/InventoryView.vue'
+import NotificationView from '@/views/notfications/NotificationView.vue'
+import TeamworkLoad from '@/views/home/employees/TeamworkLoad.vue'
+import ClientCenter from '@/views/home/clients/ClientCenter.vue'
+import EmployeeCenter from '@/views/home/employees/EmployeeCenter.vue'
+import InventoryCenter from '@/views/home/inventory/InventoryCenter.vue'
+import TaskCenter from '@/views/home/jobs/TaskCenter.vue'
+import ClientFeedback from '@/views/home/clients/ClientFeedback.vue'
+import ReportView from '@/views/home/inventory/ReportView.vue'
+import MessagesView from '@/views/notfications/MessagesView.vue'
+import StockTakeManagementView from '@/views/home/inventory/StockTakeManagementView.vue'
+import AppointmentsView from '@/views/notfications/AppointmentsView.vue'
+import EditTags from '@/components/home/settings/company/EditTags.vue'
+import EditPriority from '@/components/home/settings/company/EditPriority.vue'
+import EditStatus from '@/components/home/settings/company/EditStatus.vue'
+import TeamView from '@/views/home/teams/TeamView.vue'
+import CompanyRequestView from '@/views/home/company/CompanyRequestView.vue'
+import InvitesCompanyView from '@/views/home/company/InvitesCompanyView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -95,7 +116,7 @@ const router = createRouter({
     {
       path: '/manager-employees-t',
       name: 'manageremployees',
-      component: () => import('@/views/home/employees/ManageEmployeesT.vue')
+      component: () => import('@/views/home/employees/ManageEmployees.vue')
     },
     {
       path: '/support',
@@ -106,11 +127,6 @@ const router = createRouter({
       path: '/manager',
       name: 'manager-view',
       component: ManagerView
-    },
-    {
-      path: '/manager-edit-employee',
-      name: 'managereditemployee',
-      component: () => import('@/views/home/employees/ManagerEditEmployee.vue')
     },
     {
       path: '/client-desk-view',
@@ -172,11 +188,11 @@ const router = createRouter({
       name: 'editRoles',
       component: EditRoles
     },
-    // {
-    //   path: '/companySettingsView/editStructure',
-    //   name: 'editStructure',
-    //   component: EditStructure
-    // },
+    {
+      path: '/companySettingsView/editStructure',
+      name: 'editStructure',
+      component: EditStructure
+    },
     {
       path: '/companySettingsView',
       name: 'companySettingsView',
@@ -201,6 +217,121 @@ const router = createRouter({
       path: '/preferenceSettings',
       name: 'preferenceSettings',
       component: () => import('@/views/settings/PreferenceSettings.vue')
+    },
+    {
+      path: '/statistics',
+      name: 'statistics',
+      component: StatisticsDashboard
+    },
+    {
+      path: '/statisticView',
+      name: 'statisticView',
+      component: StatisticView
+    },
+    {
+      path: '/dummy-kanban',
+      name: 'dummy-kanban',
+      component: () => import('@/components/home/jobs/KanbanV2/KanbanV2.vue')
+    },
+    {
+      path: '/inventory',
+      name: 'inventory',
+      component: InventoryView
+    },
+    {
+      path: '/notifications',
+      name: 'notifications',
+      component: NotificationView
+    },
+    {
+      path: '/manageCompanies',
+      name: 'manageCompanies',
+      component: () => import('@/views/settings/ManageCompanies.vue')
+    },
+    {
+      path: '/teamwork-load',
+      name: 'teamwork-load',
+      component: TeamworkLoad
+    },
+    {
+      path: '/client-center',
+      name: 'client-center',
+      component: ClientCenter
+    },
+    {
+      path: '/employee-center',
+      name: 'employee-center',
+      component: EmployeeCenter
+    },
+    {
+      path: '/inventory-center',
+      name: 'inventory-center',
+      component: InventoryCenter
+    },
+    {
+      path: '/task-center',
+      name: 'task-center',
+      component: TaskCenter
+    },
+    {
+      path: '/client-feedback',
+      name: 'client-feedback',
+      component: ClientFeedback
+    },
+    {
+      path: '/report-view',
+      name: 'report-view',
+      component: ReportView
+    },
+    {
+      path: '/messages',
+      name: 'messages',
+      component: MessagesView
+    },
+    {
+      path: '/stock-take',
+      name: 'stock-take',
+      component: StockTakeManagementView
+    },
+    {
+      path: '/appointments',
+      name: 'appointments',
+      component: AppointmentsView
+    },
+    {
+      path: '/tutorial',
+      name: 'tutorial',
+      component: () => import('@/components/home/help/tutorial/Tutorial.vue')
+    },
+    {
+      path: '/edit-tags',
+      name: 'edit-tags',
+      component: EditTags
+    },
+    {
+      path: '/edit-priority',
+      name: 'edit-priority',
+      component: EditPriority
+    },
+    {
+      path: '/edit-status',
+      name: 'edit-status',
+      component: EditStatus
+    },
+    {
+      path: '/teams',
+      name: 'teams',
+      component: TeamView
+    },
+    {
+      path: '/company-requests',
+      name: 'company-requests',
+      component: CompanyRequestView
+    },
+    {
+      path: '/company-invites',
+      name: 'company-invites',
+      component: InvitesCompanyView
     }
   ]
 })

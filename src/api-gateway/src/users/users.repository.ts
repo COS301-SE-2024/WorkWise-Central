@@ -3,17 +3,17 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import {
   JoinedCompany,
+  Profile,
   User,
   /*  userEmployeeFields,
   userJoinedCompaniesField,*/
 } from './entities/user.entity';
 import { JoinUserDto, UpdateUserDto } from './dto/update-user.dto';
+import { currentDate } from '../utils/Utils';
 
 @Injectable()
 export class UsersRepository {
-  constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
-  ) {}
+  constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
 
   async save(newUserObj: User) {
     const newUser = new this.userModel(newUserObj);
@@ -22,7 +22,17 @@ export class UsersRepository {
     return result;
   }
 
-  async findAll(): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+  async findAll(fieldsToPopulate?: string[]): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+    if (fieldsToPopulate) {
+      const result = await this.userModel
+        .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
+        .populate(fieldsToPopulate)
+        .lean()
+        .exec();
+      console.log(`Retrieving All users` /*, result*/);
+      return result;
+    }
+
     const result = await this.userModel
       .find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] })
       /*      .populate(userEmployeeFields)
@@ -33,9 +43,7 @@ export class UsersRepository {
     return result;
   }
 
-  async findAllInCompany(
-    companyId: Types.ObjectId,
-  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+  async findAllInCompany(companyId: Types.ObjectId): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
     const filter = {
       $and: [
         { 'joinedCompanies.companyId': companyId },
@@ -105,17 +113,16 @@ export class UsersRepository {
   }
 
   async userIdExists(userId: Types.ObjectId): Promise<boolean> {
-    const result: FlattenMaps<User> & { _id: Types.ObjectId } =
-      await this.userModel
-        .findOne({
-          $and: [
-            { id: userId },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        })
-        .lean();
+    const result: FlattenMaps<User> & { _id: Types.ObjectId } = await this.userModel
+      .findOne({
+        $and: [
+          { id: userId },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
     //console.log('userIdExists -> ', result);
     return result == null;
   }
@@ -157,7 +164,24 @@ export class UsersRepository {
             },
           ],
         },
-        { $set: { ...updateUserDto }, updatedAt: new Date() },
+        { $set: { ...updateUserDto }, updatedAt: currentDate() },
+        { new: true },
+      )
+      .lean();
+  }
+
+  async updateProfilePicture(id: Types.ObjectId, profile: Profile) {
+    return this.userModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            { _id: id },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        { $set: { profile: profile }, updatedAt: currentDate() },
         { new: true },
       )
       .lean();
@@ -174,13 +198,14 @@ export class UsersRepository {
             },
           ],
         },
-        { $set: { ...joinUserDto }, updatedAt: new Date() },
+        { $set: { ...joinUserDto }, updatedAt: currentDate() },
         { new: true },
       )
       .lean();
   }
 
   async addJoinedCompany(id: Types.ObjectId, joinedCompany: JoinedCompany) {
+    console.log('addJoinedCompany', joinedCompany);
     return this.userModel
       .findOneAndUpdate(
         {
@@ -193,7 +218,7 @@ export class UsersRepository {
         },
         {
           $push: { joinedCompanies: joinedCompany },
-          updatedAt: new Date(),
+          updatedAt: currentDate(),
         },
         { new: true },
       )
@@ -213,7 +238,7 @@ export class UsersRepository {
         },
         {
           $pull: { joinedCompanies: { companyId: companyId } },
-          updatedAt: new Date(),
+          updatedAt: currentDate(),
         },
         { new: true },
       )
@@ -232,7 +257,7 @@ export class UsersRepository {
           },
         ],
       },
-      { $set: { deletedAt: new Date() } },
+      { $set: { deletedAt: currentDate() } },
     );
   }
 }

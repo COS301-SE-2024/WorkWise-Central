@@ -16,9 +16,39 @@ export class AddUserToCompanyDto {
 
   @IsOptional()
   @IsMongoId()
-  superiorId?: Types.ObjectId; //TODO: Add check
+  superiorId?: Types.ObjectId;
 
   @IsNotEmpty()
   @IsString()
   newUserUsername: string;
+}
+
+export class AddUserFromInviteDto {
+  constructor(
+    companyId: Types.ObjectId,
+    roleId: Types.ObjectId,
+    superiorId: Types.ObjectId,
+    newUserId: Types.ObjectId,
+  ) {
+    this.companyId = companyId;
+    this.roleId = roleId;
+    this.superiorId = superiorId;
+    this.newUserId = newUserId;
+  }
+
+  @IsNotEmpty()
+  @IsMongoId()
+  companyId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  roleId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  superiorId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  newUserId: Types.ObjectId;
 }

@@ -7,7 +7,7 @@
         color="error"
         variant="text"
         v-bind="activatorProps"
-        >Delete</v-btn
+        ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
       >
     </template>
     <v-card :color="isdarkmode === true ? 'dark' : 'light'">
@@ -19,8 +19,14 @@
           <v-row>
             <p>
               Are you sure you want to delete
-              <strong>{{ details.firstName + ' ' + details.surname }}</strong> as an employee of
-              this company?
+              <strong>{{
+                details.firstName.charAt(0).toUpperCase() +
+                details.firstName.slice(1) +
+                ' ' +
+                details.surname.charAt(0).toUpperCase() +
+                details.surname.slice(1)
+              }}</strong>
+              as an employee of this company?
             </p>
             <strong> This action cannot be reversed. </strong>
           </v-row>
@@ -29,11 +35,12 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <Toast />
-        <v-btn color="success" variant="text" :loading="isDeleting" @click="deleteEmployee"
-          >Delete</v-btn
-        >
-        <Toast />
-        <v-btn color="error" variant="text" @click="clientDialog = false">Cancel</v-btn>
+        <v-btn color="primary" variant="text" @click="clientDialog = false"
+          >Cancel<v-icon icon="fa:fa-solid fa-cancel" end color="primary" size="small"></v-icon
+        ></v-btn>
+        <v-btn color="error" variant="text" :loading="isDeleting" @click="deleteEmployee"
+          >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
+        ></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -69,11 +76,20 @@ export default {
       this.clientDialog = false
     },
     async deleteEmployee() {
+      const employee_to_be_deleted = {
+        adminId: localStorage['employeeId'],
+        companyId: localStorage['currentCompany'],
+        employeeToDeleteId: this.details.employeeId
+      }
+      console.log(employee_to_be_deleted)
       this.isDeleting = true // Indicate the start of the deletion process
-      const config = { headers: { Authorization: `Bearer ${sessionStorage['access_token']}` } }
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
+        data: employee_to_be_deleted
+      }
       const apiURL = await this.getRequestUrl()
       axios
-        .delete(apiURL + 'employee/' + this.details.employeeId, config)
+        .delete(apiURL + 'company/emp', config)
         .then((response) => {
           console.log(response)
           this.$toast.add({

@@ -1,22 +1,12 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import {
-  IsEmail,
-  IsMongoId,
-  IsNumberString,
-  IsOptional,
-  IsString,
-  MaxLength,
-  ValidateNested,
-} from 'class-validator';
+import { IsEmail, IsMongoId, IsNumberString, IsOptional, IsString, MaxLength, ValidateNested } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { Types } from 'mongoose';
 
 class ContactInfo {
   @ApiProperty()
   @IsString()
-  @Transform(({ value }) =>
-    value.startsWith('0') ? `+27${value.slice(1)}` : value,
-  )
+  @Transform(({ value }) => (value.startsWith('0') ? `+27${value.slice(1)}` : value))
   //@IsPhoneNumber(null)
   phoneNumber?: string;
 
@@ -62,13 +52,7 @@ class Address {
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  complex?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  houseNumber?: string;
+  complexOrBuilding?: string;
 }
 class UpdateAddress extends PartialType(Address) {}
 class ClientDetails {
@@ -125,11 +109,6 @@ export class UpdateClientDto {
   @IsOptional()
   @IsString()
   registrationNumber?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  clientUsername?: string;
 
   @ApiProperty()
   @IsOptional()

@@ -6,17 +6,12 @@ import { jwtConstants } from './constants';
 import { JwtModule } from '@nestjs/jwt';
 import { EmailModule } from '../email/email.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import {
-  UserConfirmation,
-  UserConfirmationSchema,
-} from '../users/entities/user-confirmation.entity';
+import { UserConfirmation, UserConfirmationSchema } from '../users/entities/user-confirmation.entity';
 
 @Global()
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: UserConfirmation.name, schema: UserConfirmationSchema },
-    ]),
+    MongooseModule.forFeature([{ name: UserConfirmation.name, schema: UserConfirmationSchema }]),
     forwardRef(() => UsersModule),
     JwtModule.register({
       global: true,

@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IsArray, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsNotEmptyObject, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateRoleDto {
@@ -21,3 +21,22 @@ export class updateRoleResponseDto {
     this.response = message;
   }
 }
+
+export class BulkUpdateRoleDto {
+  @IsArray()
+  @IsNotEmptyObject()
+  @ApiProperty()
+  roleUpdates: UpdateRoleDto[];
+
+  @IsNotEmpty()
+  @IsMongoId()
+  @ApiProperty()
+  roleIds: Types.ObjectId[];
+}
+
+// export class BulkUpdateRoleResponseDto {
+//   response: { access_token: string; id: Types.ObjectId }[];
+//   constructor(message: { access_token: string; id: Types.ObjectId }) {
+//     this.response = [message];
+//   }
+// }

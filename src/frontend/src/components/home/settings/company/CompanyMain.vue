@@ -7,11 +7,11 @@
     :close-on-content-click="false"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn color="secondary" class="h6" v-bind="activatorProps">{{ companyName }}</v-btn>
+      <v-btn color="primary" class="h6" v-bind="activatorProps">{{ companyName }}</v-btn>
     </template>
-    <v-card class="bg-background" :theme="isdarkmode === true ? 'dark' : 'light'">
-      <v-card-title>User's Companies</v-card-title>
-      <v-card-text>
+    <v-card class="bg-background" :theme="isdarkmode === true ? 'dark' : 'light'" rounded="md">
+      <v-card-title class="bg-background">User's Companies</v-card-title>
+      <v-card-text class="bg-background">
         <v-container>
           <v-col>
             <v-row
@@ -22,34 +22,40 @@
                 :items="joinedCompaniesNames"
                 persistent
                 combobox
-                v-model="company"
+                v-model="companyName"
               ></v-combobox
               ><v-col></v-col
             ></v-row>
           </v-col>
         </v-container>
       </v-card-text>
-      <v-actions @click="closeCompanyDialog">
-        <v-col cols="12" align-self="center">
-          <Toast />
-          <v-btn
-            color="success"
-            width="100%"
-            height="35"
-            variant="outlined"
-            @click="switchCompany(company)"
-            >Save</v-btn
-          ></v-col
-        >
-        <v-col cols="12" align-self="center">
-          <v-btn
-            color="error"
-            width="100%"
-            height="35"
-            variant="outlined"
-            @click="closeCompanyDialog"
-            >Close</v-btn
-          ></v-col
+      <v-actions @click="closeCompanyDialog" class="bg-background">
+        <v-container>
+          <v-row>
+            <v-col cols="12" lg="6" align-self="center">
+              <Toast position="top-center" />
+              <v-btn
+                color="success"
+                width="100%"
+                height="35"
+                variant="elevated"
+                @click="switchCompany(company)"
+                block
+                >Save</v-btn
+              ></v-col
+            >
+            <v-col cols="12" lg="6" align-self="center">
+              <v-btn
+                color="error"
+                width="100%"
+                height="35"
+                variant="elevated"
+                @click="closeCompanyDialog"
+                block
+                >Close</v-btn
+              ></v-col
+            ></v-row
+          ></v-container
         >
       </v-actions>
     </v-card>
@@ -77,7 +83,8 @@ export default defineComponent({
       joinedCompanies: [],
       joinedCompaniesNames: [],
       joinedCompaniesIds: [],
-      isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
+      joinedCompaniesEmployeeIds: [],
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       companyList: [
         'Company 1',
         'Company 2',
@@ -89,7 +96,9 @@ export default defineComponent({
         'Company 8',
         'Company 9',
         'Company 10'
-      ]
+      ],
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
   },
   methods: {
@@ -99,6 +108,7 @@ export default defineComponent({
     switchCompany(companyName) {
       const index = this.joinedCompaniesNames.indexOf(companyName)
       const companyId = this.joinedCompaniesIds[index]
+      const employeeId = this.joinedCompaniesEmployeeIds[index]
       this.$emit('switchCompany', companyId)
       this.$toast.add({
         severity: 'success',
@@ -106,28 +116,32 @@ export default defineComponent({
         detail: `Switched to ${companyName}`
       })
       this.companyName = companyName
-      sessionStorage.setItem('currentCompany', companyId)
+      this.company = companyName
+      localStorage.setItem('currentCompany', companyId)
+      localStorage.setItem('currentEmployee', employeeId)
       this.companyDialog = false
     },
     async getCompanies() {
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
       const apiURL = await this.getRequestUrl()
-      const user_id = sessionStorage.getItem('id')
+      const user_id = localStorage.getItem('id')
       await axios
-        .get(`http://localhost:3000/users/id/${user_id}`, config)
+        .get(`${apiURL}users/id/${user_id}`, config)
         .then((response) => {
           console.log(response.data.data.joinedCompanies)
+          console.log(response.data.data)
           this.joinedCompanies = response.data.data.joinedCompanies
           this.joinedCompanies.forEach((company) => {
             this.joinedCompaniesNames.push(company.companyName)
             this.joinedCompaniesIds.push(company.companyId)
+            this.joinedCompaniesEmployeeIds.push(company.employeeId)
           })
-          const currentCompanyID = sessionStorage.getItem('currentCompany')
+          const currentCompanyID = localStorage.getItem('currentCompany')
           console.log(this.joinedCompanies.length)
           console.log(this.joinedCompanies[0].companyId)
           console.log(currentCompanyID)
@@ -158,7 +172,7 @@ export default defineComponent({
       return localAvailable ? this.localUrl : this.remoteUrl
     },
     async getCurrentCompanyName() {
-      const currentCompanyID = sessionStorage.getItem('currentCompany')
+      const currentCompanyID = localStorage.getItem('currentCompany')
       console.log(this.joinedCompanies.length)
     }
   },
