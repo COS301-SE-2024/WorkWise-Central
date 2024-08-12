@@ -1,15 +1,4 @@
 <template>
-  <v-dialog v-model="managerJobCard" :max-height="500" :max-width="1000" scrollable>
-    <template v-slot:activator="{ props: activatorProps }">
-      <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
-        <v-btn
-          text="Edit"
-          prepend-icon="fa:fa-solid fa-pencil"
-          color="warning"
-          v-bind="activatorProps"
-        ></v-btn>
-      </v-defaults-provider>
-    </template>
     <v-card elevation="14" rounded="md" :min-height="1000" :max-width="900">
       <v-img
         src="https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U="
@@ -49,23 +38,20 @@
         </v-col>
       </v-card-actions>
     </v-card>
-  </v-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import {defineEmits } from 'vue'
 import { defineProps } from 'vue'
 import EditDetails from './EditDetailsJobCard.vue'
 import ChangeClient from './ChangeClientDialog.vue'
 import SelectMembers from './SelectMembers.vue'
 import UpdateJobStatus from './UpdateJobStatus.vue'
-import ChangeDueDate from './UpdateDateDialog.vue'
+// import ChangeDueDate from './UpdateDateDialog.vue'
 
-const managerJobCard = ref(false) // Dialog state
-
+const emits = defineEmits(['close'])
 const props = defineProps<{ passedInJob: any }>()
-
 const cancelJob = () => {
-  managerJobCard.value = false
+  emits('close')
 }
 </script>
