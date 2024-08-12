@@ -33,6 +33,7 @@
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",
     "mdi": "^2.2.43",
+    "mongoose": "^8.5.2",
     "primevue": "^4.0.0",
     "quill": "^2.0.2",
     "uuid": "^10.0.0",
@@ -47,6 +48,7 @@
     "webpack-plugin-vuetify": "^3.0.3"
   },
   "devDependencies": {
+    "@cypress/webpack-preprocessor": "^6.0.2",
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
@@ -65,10 +67,12 @@
     "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-vue": "^9.23.0",
     "jsdom": "^24.0.0",
+    "node-sass": "^9.0.0",
     "npm-run-all2": "^6.1.2",
     "prettier": "^3.2.5",
     "qalendar": "^3.8.1",
     "sass": "^1.77.4",
+    "sass-loader": "^16.0.0",
     "start-server-and-test": "^2.0.3",
     "typescript": "~5.4.0",
     "vite": "^5.2.8",
@@ -76,6 +80,7 @@
     "vite-plugin-vuetify": "^2.0.3",
     "vitest": "^1.4.0",
     "vue-kanban": "^1.8.0",
+    "vue-loader": "^17.4.2",
     "vue-mq": "^1.0.1",
     "vue-tsc": "^2.0.11",
     "vuetify": "^3.6.8"

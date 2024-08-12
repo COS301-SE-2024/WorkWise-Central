@@ -22,4 +22,6 @@ export class JobStatus {
   companyId: Types.ObjectId;
 }
 
+//export const protectedStatuses = ['No status', 'Archive', 'To Do', 'In Progress', 'Complete'];
+
 export const JobStatusSchema = SchemaFactory.createForClass(JobStatus);

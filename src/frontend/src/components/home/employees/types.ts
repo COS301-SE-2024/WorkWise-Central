@@ -170,7 +170,7 @@ export type RoleItem = {
 }
 
 export type Role = {
-  roleId: string
+  _id: string
   roleName: string
   permissionSuite: string[]
 }

@@ -11,6 +11,8 @@
     <ClientDetails />
     <br /><br />
     <JobDetailsList />
+    <br /><br />
+    <JoinCompanyModal />
   </div>
 </template>
 
@@ -18,13 +20,15 @@
 import AddEmployee from '../components/home/employees/management/AddEmployee.vue'
 import ClientDetails from '../components/home/clients/management/AddClient.vue'
 import JobDetailsList from '../components/home/jobs/management/AddJob.vue'
-// import JoinCompanyModal from '../components/JoinCompanyModal.vue'
+import JoinCompanyModal from '@/components/signup/JoinCompanyModal.vue'
 import RegisterCompanyModal from '../components/signup/RegisterCompanyModal.vue'
 import { defineComponent } from 'vue'
+
 export default defineComponent({
   name: 'ModaLs',
   components: {
     RegisterCompanyModal,
+    JoinCompanyModal,
     AddEmployee,
     ClientDetails,
     JobDetailsList
