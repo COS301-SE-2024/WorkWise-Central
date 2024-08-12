@@ -78,7 +78,7 @@ export class Employee {
 
   @ApiProperty()
   @Prop({ required: false })
-  userInfo?: UserInfo;
+  userInfo?: UserInfo = new UserInfo();
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Company' })
