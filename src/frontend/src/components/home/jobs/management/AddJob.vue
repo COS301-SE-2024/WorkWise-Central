@@ -94,16 +94,17 @@
                     v-model="startDate"
                     elevation="5"
                     required
-                    @update:modelValue="updateDates"
+                    @input="updateAllowedTimes"
+                    @update:modelValue="updateAllowedTimes"
                     data-testid="job-start-date-datepicker"
-                    :min="formatDate(new Date())"
+                    :min="minDate"
                   ></v-date-picker>
                 </v-col>
                 <v-col cols="12" md="6" align="center">
                   <v-time-picker
                     format="24hr"
-                    :allowed-hours="(hr: number) => new Date().getHours() <= hr"
-                    :allowed-minutes="(min: number) => new Date().getMinutes() <= min"
+                    :allowed-hours="allowedHours"
+                    :allowed-minutes="allowedMinutes"
                     v-model="startTime"
                     data-testid="job-start-time-timepicker"
                   ></v-time-picker>
@@ -118,15 +119,15 @@
                     v-model="endDate"
                     elevation="5"
                     required
-                    @update:modelValue="updateDates"
+                    @update:modelValue="updateAllowedTimesEnd"
                     data-testid="job-end-date-datepicker"
-                    :min="formatDate(new Date())"
+                    :min="minDate"
                   ></v-date-picker>
                 </v-col>
                 <v-col cols="12" md="6" align="center">
                   <v-time-picker
-                    :allowed-hours="(hr: number) => new Date().getHours() <= hr"
-                    :allowed-minutes="(min: number) => new Date().getMinutes() <= min"
+                    :allowed-hours="allowedHours2"
+                    :allowed-minutes="allowedMinutes2"
                     format="24hr"
                     v-model="endTime"
                     data-testid="job-end-time-timepicker"
@@ -357,11 +358,23 @@ export default defineComponent({
   name: 'JobDetailsList',
 
   data() {
+    const now = new Date()
+    const currentHour = now.getHours()
+    const currentMinute = now.getMinutes()
     return {
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       click_create_employee: false,
       valid: false,
+      selectedDate: '',
+      selectedTime: '',
+      minDate: new Date().toISOString().substr(0, 10),
+      currentHour,
+      currentMinute,
+      allowedHours: ((hour: number) => true) as (hour: number) => boolean,
+      allowedMinutes: ((minute: number) => true) as (minute: number) => boolean,
+      allowedHours2: ((hour: number) => true) as (hour: number) => boolean,
+      allowedMinutes2: ((minute: number) => true) as (minute: number) => boolean,
       isdarkmode: localStorage['theme'] !== 'false',
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
@@ -418,7 +431,46 @@ export default defineComponent({
       jobDialog: false
     }
   },
+  watch: {
+    selectedDate() {
+      this.updateAllowedTimes()
+    }
+  },
   methods: {
+    updateAllowedTimes() {
+      const isToday = this.startDate === this.minDate
+
+      console.log('updateAllowedTimes')
+      if (isToday) {
+        this.allowedHours = (hour: number) => hour > this.currentHour
+        this.allowedMinutes = (minute: number) => {
+          return this.startTime
+            ? minute > this.currentMinute ||
+                parseInt(this.startTime.split(':')[0]) !== this.currentHour
+            : true
+        }
+      } else {
+        this.allowedHours = () => true
+        this.allowedMinutes = () => true
+      }
+    },
+    updateAllowedTimesEnd() {
+      const isToday = this.endDate === this.minDate
+
+      console.log('updateAllowedTimes')
+      if (isToday) {
+        this.allowedHours2 = (hour: number) => hour > this.currentHour
+        this.allowedMinutes2 = (minute: number) => {
+          return this.endTime
+            ? minute > this.currentMinute ||
+                parseInt(this.endTime.split(':')[0]) !== this.currentHour
+            : true
+        }
+      } else {
+        this.allowedHours2 = () => true
+        this.allowedMinutes2 = () => true
+      }
+    },
     async validateForm() {
       if (this.startDate !== null && this.startTime !== '') {
         this.formatDateAndTime(this.startDate, this.startTime)
@@ -427,6 +479,7 @@ export default defineComponent({
         this.formatDateAndTime(this.endDate, this.endTime)
       }
       console.log(this.req_obj)
+      this.updateDates()
       await this.handleSubmission()
     },
     formatDateAndTime(date: Date, time: string) {
@@ -502,12 +555,15 @@ export default defineComponent({
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        data: {
+          currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
       const apiURL = await this.getRequestUrl()
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/detailed/all/${localStorage['currentCompany']}`,
+          apiURL + `employee/detailed/all/${localStorage['employeeId']}`,
           config
         )
 
@@ -518,14 +574,14 @@ export default defineComponent({
         let company_employee_arr: EmployeeInformation[] = []
 
         for (let i = 0; i < employee_all_data.length; i++) {
-          if (employee_all_data[i].roleId !== undefined) {
+          if (employee_all_data[i].role !== undefined) {
             let company_employee: EmployeeInformation = {
               name:
                 employee_all_data[i].userId.personalInfo.firstName +
                 ' ' +
                 employee_all_data[i].userId.personalInfo.surname +
                 ' (' +
-                employee_all_data[i].roleId.roleName +
+                employee_all_data[i].role.roleName +
                 ')',
               employeeId: employee_all_data[i]._id
             }
