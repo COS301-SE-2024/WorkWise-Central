@@ -240,6 +240,7 @@ export class CompanyRepository {
     return await this.companyModel
       .find(filter)
       .select([
+        '_id',
         'registrationNumber',
         'vatNumber',
         'name',

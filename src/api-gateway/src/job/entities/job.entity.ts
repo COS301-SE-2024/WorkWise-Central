@@ -154,6 +154,11 @@ export class Task {
 export class History {
   event: string;
   timestamp: Date;
+  constructor(event: string, timestamp?: Date) {
+    this.event = event;
+    this.timestamp = currentDate();
+    if (timestamp) this.timestamp = timestamp;
+  }
 }
 
 @Schema()

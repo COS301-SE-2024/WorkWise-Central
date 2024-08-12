@@ -33,6 +33,7 @@
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",
     "mdi": "^2.2.43",
+    "mongoose": "^8.5.2",
     "primevue": "^4.0.0",
     "quill": "^2.0.2",
     "uuid": "^10.0.0",

@@ -343,7 +343,25 @@ export class CompanyController {
     type: DeleteEmployeeFromCompanyDto,
   })
   @Delete('/emp')
-  async removeEmployee(@Headers() headers: any, @Body() deleteEmployeeDto: DeleteEmployeeFromCompanyDto) {
+  async removeEmployee(
+    @Headers() headers: any,
+
+    @Query('adminId') adminId: Types.ObjectId,
+    @Query('companyId') companyId: Types.ObjectId,
+    @Query('employeeToDeleteId') employeeToDeleteId: Types.ObjectId,
+  ) {
+    try {
+      validateObjectId(adminId, 'employee');
+      validateObjectId(companyId, 'company');
+      validateObjectId(employeeToDeleteId, 'employeeToDelete');
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    const deleteEmployeeDto: DeleteEmployeeFromCompanyDto = new DeleteEmployeeFromCompanyDto(
+      adminId,
+      companyId,
+      employeeToDeleteId,
+    );
     //await this.companyService.deleteEmployee(userId, deleteEmployeeDto); //TODO: Use with cascading delete
     const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(deleteEmployeeDto.adminId);
