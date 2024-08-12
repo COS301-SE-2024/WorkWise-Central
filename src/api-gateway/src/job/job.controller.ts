@@ -13,14 +13,19 @@ import {
   Headers,
   UnauthorizedException,
   Put,
+  UseInterceptors,
+  //UploadedFile,
+  UploadedFiles,
 } from '@nestjs/common';
 import { JobService } from './job.service';
 import { CreateJobDto, CreateJobResponseDto } from './dto/create-job.dto';
 import {
+  AddAttachmentDto,
   AddCommentDto,
   AddTaskDto,
   RemoveCommentDto,
   RemoveTaskDto,
+  UpdateAttachmentDto,
   UpdateCommentDto,
   UpdateDtoResponse,
   UpdateJobDto,
@@ -31,6 +36,7 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
@@ -58,6 +64,8 @@ import {
   TagsAllResponseDto,
 } from './dto/job-responses.dto';
 import { JobAssignDto, JobAssignGroupDto, TaskAssignDto } from './dto/assign-job.dto';
+//import { UpdateProfilePicDto } from '../users/dto/update-user.dto';
+import { FileFieldsInterceptor /*, FileInterceptor*/ } from '@nestjs/platform-express';
 
 const className = 'Job';
 
@@ -104,12 +112,13 @@ export class JobController {
     description: `The ${className}'s Object of the created job`,
   })
   @Post('/create')
-  async create(@Body() createJobDto: CreateJobDto) {
+  async create(@Headers() headers: any, @Body() createJobDto: CreateJobDto) {
     validateObjectId(createJobDto.assignedBy, 'assignedBy');
     if (createJobDto.companyId) validateObjectId(createJobDto.companyId, 'Company');
 
     try {
-      return { data: await this.jobService.create(createJobDto) };
+      const userId = extractUserId(this.jwtService, headers);
+      return { data: await this.jobService.create(userId, createJobDto) };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
@@ -699,6 +708,55 @@ export class JobController {
       throw new InternalServerErrorException(`Job could not be updated`);
     }
   }*/
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Add an attachment to a ${className}`,
+  })
+  @ApiOkResponse({
+    type: JobResponseDto,
+    description: `The updated ${className} instance`,
+  })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'files', maxCount: 20 }]))
+  @Patch('/add/attachments')
+  async addAttachments(
+    @Headers() headers: any,
+    @Body() attachmentDto: AddAttachmentDto,
+    @UploadedFiles() files: { files?: Express.Multer.File[] },
+  ) {
+    console.log(files);
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.addAttachments(userId, attachmentDto, files.files),
+      };
+    } catch (e) {
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Update the attachment array in a ${className}`,
+  })
+  @ApiOkResponse({
+    type: JobResponseDto,
+    description: `The updated ${className} instance`,
+  })
+  @Patch('/update/attachments')
+  async updateAttachments(@Headers() headers: any, @Body() updateAttachmentDto: UpdateAttachmentDto) {
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.updateAttachments(userId, updateAttachmentDto),
+      };
+    } catch (e) {
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 
   ///STATUS
   @ApiOperation({ summary: 'Get a Status using its Id' })

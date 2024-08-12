@@ -140,7 +140,7 @@ export class Task {
     required: true,
     default: new Types.ObjectId(),
   })
-  _id: Types.ObjectId = new Types.ObjectId()
+  _id: Types.ObjectId = new Types.ObjectId();
 
   @ApiProperty()
   @Prop({ type: String, required: false })
@@ -154,6 +154,11 @@ export class Task {
 export class History {
   event: string;
   timestamp: Date;
+  constructor(event: string, timestamp?: Date) {
+    this.event = event;
+    this.timestamp = currentDate();
+    if (timestamp) this.timestamp = timestamp;
+  }
 }
 
 @Schema()
@@ -206,6 +211,8 @@ export class Job {
     if (createJobDto.comments) this.comments = createJobDto.comments;
     if (createJobDto.tags) this.tags = createJobDto.tags;
     if (createJobDto.priorityTag) this.priorityTag = createJobDto.priorityTag;
+    if (createJobDto.attachments) this.attachments = createJobDto.attachments;
+    if (createJobDto.coverImage) this.coverImage = createJobDto.coverImage;
     this.createdAt = currentDate();
   }
 
@@ -261,8 +268,12 @@ export class Job {
   priorityTag?: Types.ObjectId = null;
 
   @ApiProperty()
-  @Prop({ type: String, required: false, default: null })
+  @Prop({ type: [String], required: false, default: [] })
   attachments: string[];
+
+  @ApiProperty()
+  @Prop({ type: String, required: false, default: '' })
+  coverImage: string = '';
 
   @ApiProperty()
   @Prop({ type: Details, required: true })

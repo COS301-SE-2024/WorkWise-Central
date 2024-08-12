@@ -10,10 +10,12 @@ import {
 } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import {
+  AddAttachmentDto,
   AddCommentDto,
   AddTaskDto,
   RemoveCommentDto,
   RemoveTaskDto,
+  UpdateAttachmentDto,
   UpdateCommentDto,
   UpdateJobDto,
   UpdatePriorityTag,
@@ -37,7 +39,8 @@ import { DeleteStatusDto, DeleteTagDto, UpdatePriorityTagDto, UpdateTagDto } fro
 import { Employee } from '../employee/entities/employee.entity';
 import { JobStatus } from './entities/job-status.entity';
 import { ciEquals } from '../utils/Utils';
-
+import { FileService } from '../file/file.service';
+//import { History } from './entities/job.entity';
 @Injectable()
 export class JobService {
   constructor(
@@ -56,15 +59,17 @@ export class JobService {
     @Inject(forwardRef(() => ClientService))
     private readonly clientService: ClientService,
 
-    // @Inject(forwardRef(() => FileService))
-    // private readonly fileService: FileService,
+    @Inject(forwardRef(() => FileService))
+    private readonly fileService: FileService,
   ) {}
 
-  async create(createJobDto: CreateJobDto) {
+  async create(userId: Types.ObjectId, createJobDto: CreateJobDto) {
     const inputValidated = await this.jobCreateIsValid(createJobDto);
     if (!inputValidated.isValid) {
       throw new ConflictException(inputValidated.message);
     }
+
+    //const
 
     //Save files In Bucket, and store URLs (if provided)
     //
@@ -73,6 +78,7 @@ export class JobService {
     //   createdJob.status = this.jobRepository.find;
 
     const createdJob = new Job(createJobDto);
+    //createdJob.history.push(new History(`${user.} ${}`));
     console.log('createdJob', createdJob);
     return await this.jobRepository.save(createdJob);
   }
@@ -702,9 +708,15 @@ export class JobService {
   async createDefaultStatuses(companyId: Types.ObjectId) {
     ///TODO: Validation CHECK HEX VALIDATION
     /// User exists, company exists, check for duplicates
+    //  const protectedStatuses = ['No status', 'Archive', 'To Do', 'In Progress', 'Complete'];
+
     const noStatus = new JobStatus('No Status', '#FFFFFF', companyId);
     const archive = new JobStatus('Archive', '#b3b0b0', companyId);
-    const arr: JobStatus[] = [noStatus, archive];
+    const toDo = new JobStatus('To Do', '#9f4e22', companyId);
+    const inProgress = new JobStatus('In Progress', '#31864d', companyId);
+    const complete = new JobStatus('Complete', '#23d923', companyId);
+
+    const arr: JobStatus[] = [noStatus, archive, toDo, inProgress, complete];
     for (const js of arr) {
       const exists = await this.statusNameExistsInCompany(js.status, companyId);
       if (exists) throw new InternalServerErrorException(`Job Status already exists: ${js.status}`);
@@ -731,7 +743,7 @@ export class JobService {
     if (exists) throw new InternalServerErrorException(`Job Status already exists: ${createStatusDto.status}`);
 
     ///
-    const protectedStatuses = ['No status', 'Archive'];
+    const protectedStatuses = ['No status', 'Archive', 'To Do', 'In Progress', 'Complete'];
     for (const protectedStatus of protectedStatuses) {
       if (ciEquals(protectedStatus, createStatusDto.status)) {
         throw new ConflictException('You cannot alter "No status" and "Archive"');
@@ -834,11 +846,48 @@ export class JobService {
 
   async updateTag(userId: Types.ObjectId, updateTagDto: UpdateTagDto) {
     const updates: UpdateTag = new UpdateTag(updateTagDto);
-    return this.jobTagRepository.updateTag(updateTagDto.tagId, updates);
+    const tag = await this.jobTagRepository.updateTag(updateTagDto.tagId, updates);
+    console.log(tag);
+    return tag;
   }
 
   async updatePriorityTag(userId: Types.ObjectId, updatePriorityTagDto: UpdatePriorityTagDto) {
     const updates: UpdatePriorityTag = new UpdatePriorityTag(updatePriorityTagDto);
     return this.jobTagRepository.updatePriorityTag(updatePriorityTagDto.priorityTagId, updates);
+  }
+
+  async addAttachments(userId: Types.ObjectId, attachmentDto: AddAttachmentDto, files: Express.Multer.File[]) {
+    await this.userIdMatchesEmployeeId(userId, attachmentDto.employeeId);
+
+    const jobExists = await this.jobRepository.exists(attachmentDto.jobId);
+    if (!jobExists) throw new NotFoundException('Job not found');
+
+    const newUrls: string[] = [];
+    for (const file of files) {
+      const uploadApiResponse = await this.fileService.uploadFile(file);
+      if (uploadApiResponse.secure_url) {
+        console.log('Upload successful');
+        const newUrl = uploadApiResponse.secure_url;
+        console.log(newUrl);
+        newUrls.push(newUrl);
+      } else {
+        console.log('Failed to upload image.', 'Keep it pushing');
+        //return null;
+      }
+    }
+    if (newUrls.length == 0) {
+      return await this.jobRepository.findById(attachmentDto.jobId);
+    }
+
+    return this.jobRepository.addAttachments(attachmentDto.jobId, newUrls);
+  }
+
+  async updateAttachments(userId: Types.ObjectId, updateAttachmentDto: UpdateAttachmentDto) {
+    await this.userIdMatchesEmployeeId(userId, updateAttachmentDto.employeeId);
+
+    const jobExists = await this.jobRepository.exists(updateAttachmentDto.jobId);
+    if (!jobExists) throw new NotFoundException('Job not found');
+
+    return this.jobRepository.updateAttachments(updateAttachmentDto.jobId, updateAttachmentDto.attachments);
   }
 }

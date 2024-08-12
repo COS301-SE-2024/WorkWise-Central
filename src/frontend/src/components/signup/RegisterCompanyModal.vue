@@ -36,7 +36,10 @@
           <v-spacer></v-spacer>
           <v-col>
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Company Name</label>
+              <label style="font-size: 14px; font-weight: lighter"
+                >Company Name
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
               <v-text-field
                 @update:focused="setUserId"
                 density="compact"
@@ -51,7 +54,10 @@
               ></v-text-field
             ></v-col>
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Type of business*</label>
+              <label style="font-size: 14px; font-weight: lighter"
+                >Type of business
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
               <v-autocomplete
                 density="compact"
                 color="primary"
@@ -137,7 +143,10 @@
             </v-col>
 
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Company email address</label>
+              <label style="font-size: 14px; font-weight: lighter"
+                >Company email address
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
 
               <v-text-field
                 @update:focused="setUserId"
@@ -154,7 +163,10 @@
               ></v-text-field
             ></v-col>
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Company phone number*</label>
+              <label style="font-size: 14px; font-weight: lighter"
+                >Company phone number
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
 
               <v-text-field
                 @update:focused="setUserId"
@@ -171,7 +183,7 @@
             ></v-col>
             <v-col>
               <label style="font-size: 14px; font-weight: lighter"
-                >Company registration number*</label
+                >Company registration number</label
               >
 
               <v-text-field
@@ -189,7 +201,7 @@
             ></v-col>
 
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Company VAT number*</label>
+              <label style="font-size: 14px; font-weight: lighter">Company VAT number</label>
 
               <v-text-field
                 @update:focused="setUserId"
@@ -222,11 +234,17 @@
                 data-testid="company-logo-file-input"
               ></v-file-input>
             </v-col>
-            <label style="font-size: 14px; font-weight: lighter">Company address*</label>
+            <label style="font-size: 14px; font-weight: lighter"
+              >Company address
+              <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+            </label>
 
             <v-row class="d-flex flex-wrap">
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">Street</label>
+                <label style="font-size: 11px; font-weight: lighter"
+                  >Street
+                  <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+                </label>
                 <v-text-field
                   @update:focused="setUserId"
                   density="compact"
@@ -241,7 +259,10 @@
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">Suburb</label>
+                <label style="font-size: 11px; font-weight: lighter"
+                  >Suburb
+                  <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+                </label>
                 <v-text-field
                   @update:focused="setUserId"
                   density="compact"
@@ -256,7 +277,10 @@
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">Province</label>
+                <label style="font-size: 11px; font-weight: lighter"
+                  >Province
+                  <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+                </label>
                 <v-autocomplete
                   density="compact"
                   placeholder="Province"
@@ -282,7 +306,10 @@
                 ></v-autocomplete
               ></v-col>
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">City/Town</label>
+                <label style="font-size: 11px; font-weight: lighter"
+                  >City/Town
+                  <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+                </label>
                 <v-text-field
                   @update:focused="setUserId"
                   density="compact"
@@ -297,7 +324,10 @@
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">Postal Code</label>
+                <label style="font-size: 11px; font-weight: lighter"
+                  >Postal Code
+                  <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+                </label>
                 <v-text-field
                   @update:focused="setUserId"
                   density="compact"
@@ -321,7 +351,6 @@
                   v-model="req_obj.address.complex"
                   variant="solo"
                   required
-                  :rules="complex_or_building_rules"
                   hint="Complex or Building Name, unit number or floor"
                   persistent-hint
                   data-testid="complex-field"
@@ -423,11 +452,9 @@ export default {
       ],
       email_rules: [(val: string) => email_reg.test(val) || 'Email should contain an @ symbol'],
       vat_number_rules: [
-        (v: string) => !!v || 'VAT number is required',
         (v: string) => /^\d{10}$/.test(v) || 'VAT number must be a valid South African VAT number'
       ],
       company_registration_number_rules: [
-        (v: string) => !!v || 'Company registration number is required',
         (v: string) =>
           /^\d{4}\/\d{6}\/\d{2}$/.test(v) ||
           'Company registration number must be a valid South African number format: YYYY/NNNNNN/XX'
@@ -444,7 +471,7 @@ export default {
       suburb_rules: [(v: string) => !!v || 'Suburb is required'],
       province_rules: [(v: string) => !!v || 'Province is required'],
       city_rules: [(v: string) => !!v || 'City is required'],
-      complex_or_building_rules: [(v: string) => !!v || 'Complex/Buidling is required'],
+      // complex_or_building_rules: [(v: string) => !!v || 'Complex/Building is required'],
       business_type_rules: [(v: string) => !!v || 'Business type required'],
       company_logo_rules: [(v: string) => !!v || 'Company logo is required'],
       req_obj: {

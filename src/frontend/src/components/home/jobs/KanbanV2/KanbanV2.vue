@@ -441,15 +441,42 @@ export default {
     }
   },
   methods: {
-    columnDelete(col: Column) {
-      for (let i = 0; i < col.cards.length; i++) {
-        this.columns[0].cards.push(col.cards[i])
-        col.cards[i].status.status = this.columns[0].status
-        console.log(col.cards[i].status)
+    async columnDelete(col: Column) {
+      try {
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          },
+          data: {
+            statusId: col.id,
+            companyId: localStorage['currentCompany'],
+            employeeId: localStorage['employeeId']
+          }
+        }
+        const apiURL = await this.getRequestUrl()
+        let res = await axios.delete(apiURL + 'job/status', config)
+
+        for (let i = 0; i < col.cards.length; i++) {
+          this.columns[0].cards.push(col.cards[i])
+          col.cards[i].status.status = this.columns[0].status
+          console.log(col.cards[i].status)
+        }
+
+        this.columns[0].cards.sort(
+          (a: JobCardDataFormat, b: JobCardDataFormat) =>
+            a.priorityTag.priorityLevel - b.priorityTag.priorityLevel
+        )
+
+        this.columns.splice(this.columns.indexOf(col), 1)
+        this.delete_column_dialog = false
+
+        console.log(res)
+
+        window.location.reload()
+      } catch (error) {
+        console.log(error)
       }
-      this.N_M_Sort(this.columns[0].cards, this.order_of_sorting_in_columns)
-      this.columns.splice(this.columns.indexOf(col), 1)
-      this.delete_column_dialog = false
     },
     columnDeleteAllJobs(col: Column) {
       //add a modal that will ask the user if they are sure they want to delete all the cards in a job column
@@ -781,6 +808,10 @@ export default {
           (c) => c.jobId !== this.draggedCard!.jobId
         )
         {
+          targetColumn.cards.push(this.draggedCard)
+          targetColumn.cards.sort((a: JobCardDataFormat, b: JobCardDataFormat) => {
+            return a.priorityTag.priorityLevel - b.priorityTag.priorityLevel
+          })
           const jobid = this.draggedCard.jobId
           this.draggedCard.status.status = targetColumn.status
           const apiURL = await this.getRequestUrl()
@@ -798,12 +829,6 @@ export default {
               config
             )
             console.log(res)
-
-            targetColumn.cards.push(this.draggedCard)
-
-            targetColumn.cards.sort((a: JobCardDataFormat, b: JobCardDataFormat) => {
-              return a.priorityTag.priorityLevel - b.priorityTag.priorityLevel
-            })
           } catch (error) {
             console.log(error)
           }

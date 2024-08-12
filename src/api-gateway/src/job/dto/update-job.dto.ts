@@ -76,6 +76,10 @@ export class UpdateJobDto {
   @IsArray()
   @IsString({ each: true })
   attachments?: string[];
+
+  @ApiProperty()
+  @IsOptional()
+  coverImage?: string;
 }
 
 export class AddCommentDto {
@@ -104,6 +108,16 @@ export class AddTaskDto {
   @IsNotEmpty()
   @IsString()
   title: string;
+}
+
+export class AddAttachmentDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  jobId: Types.ObjectId;
 }
 
 export class RemoveCommentDto {
@@ -188,6 +202,21 @@ export class UpdateStatusDto {
   @IsHexColor()
   @AddHashtag()
   colour: string;
+}
+
+export class UpdateAttachmentDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  jobId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsArray()
+  @IsString({ each: true })
+  attachments: string[];
 }
 
 export class UpdateStatus {

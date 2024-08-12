@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 import { IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { UserInfo } from '../entities/employee.entity';
 
 export class CreateEmployeeDto {
@@ -19,7 +19,7 @@ export class CreateEmployeeDto {
   @ApiProperty()
   userId: Types.ObjectId;
 
-  @ApiProperty()
+  @ApiHideProperty()
   @IsMongoId()
   userInfo?: UserInfo;
 
