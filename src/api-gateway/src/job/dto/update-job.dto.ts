@@ -110,6 +110,20 @@ export class AddTaskDto {
   title: string;
 }
 
+export class AddTaskItemDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  jobId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+}
+
 export class AddAttachmentDto {
   @IsNotEmpty()
   @IsMongoId()
