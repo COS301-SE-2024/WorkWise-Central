@@ -10,10 +10,12 @@ import {
 } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import {
+  AddAttachmentDto,
   AddCommentDto,
   AddTaskDto,
   RemoveCommentDto,
   RemoveTaskDto,
+  UpdateAttachmentDto,
   UpdateCommentDto,
   UpdateJobDto,
   UpdatePriorityTag,
@@ -37,6 +39,7 @@ import { DeleteStatusDto, DeleteTagDto, UpdatePriorityTagDto, UpdateTagDto } fro
 import { Employee } from '../employee/entities/employee.entity';
 import { JobStatus } from './entities/job-status.entity';
 import { ciEquals } from '../utils/Utils';
+import { FileService } from '../file/file.service';
 //import { History } from './entities/job.entity';
 @Injectable()
 export class JobService {
@@ -56,8 +59,8 @@ export class JobService {
     @Inject(forwardRef(() => ClientService))
     private readonly clientService: ClientService,
 
-    // @Inject(forwardRef(() => FileService))
-    // private readonly fileService: FileService,
+    @Inject(forwardRef(() => FileService))
+    private readonly fileService: FileService,
   ) {}
 
   async create(userId: Types.ObjectId, createJobDto: CreateJobDto) {
@@ -843,11 +846,48 @@ export class JobService {
 
   async updateTag(userId: Types.ObjectId, updateTagDto: UpdateTagDto) {
     const updates: UpdateTag = new UpdateTag(updateTagDto);
-    return this.jobTagRepository.updateTag(updateTagDto.tagId, updates);
+    const tag = await this.jobTagRepository.updateTag(updateTagDto.tagId, updates);
+    console.log(tag);
+    return tag;
   }
 
   async updatePriorityTag(userId: Types.ObjectId, updatePriorityTagDto: UpdatePriorityTagDto) {
     const updates: UpdatePriorityTag = new UpdatePriorityTag(updatePriorityTagDto);
     return this.jobTagRepository.updatePriorityTag(updatePriorityTagDto.priorityTagId, updates);
+  }
+
+  async addAttachments(userId: Types.ObjectId, attachmentDto: AddAttachmentDto, files: Express.Multer.File[]) {
+    await this.userIdMatchesEmployeeId(userId, attachmentDto.employeeId);
+
+    const jobExists = await this.jobRepository.exists(attachmentDto.jobId);
+    if (!jobExists) throw new NotFoundException('Job not found');
+
+    const newUrls: string[] = [];
+    for (const file of files) {
+      const uploadApiResponse = await this.fileService.uploadFile(file);
+      if (uploadApiResponse.secure_url) {
+        console.log('Upload successful');
+        const newUrl = uploadApiResponse.secure_url;
+        console.log(newUrl);
+        newUrls.push(newUrl);
+      } else {
+        console.log('Failed to upload image.', 'Keep it pushing');
+        //return null;
+      }
+    }
+    if (newUrls.length == 0) {
+      return await this.jobRepository.findById(attachmentDto.jobId);
+    }
+
+    return this.jobRepository.addAttachments(attachmentDto.jobId, newUrls);
+  }
+
+  async updateAttachments(userId: Types.ObjectId, updateAttachmentDto: UpdateAttachmentDto) {
+    await this.userIdMatchesEmployeeId(userId, updateAttachmentDto.employeeId);
+
+    const jobExists = await this.jobRepository.exists(updateAttachmentDto.jobId);
+    if (!jobExists) throw new NotFoundException('Job not found');
+
+    return this.jobRepository.updateAttachments(updateAttachmentDto.jobId, updateAttachmentDto.attachments);
   }
 }
