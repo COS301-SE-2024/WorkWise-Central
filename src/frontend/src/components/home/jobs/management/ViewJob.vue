@@ -266,7 +266,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, type Ref, defineEmits } from 'vue'
+import { defineProps, ref, type Ref, defineEmits, onMounted } from 'vue'
 import AddComment from './AddComments.vue'
 // import JobNotes from './JobNotes.vue'
 import CheckOffItems from './CheckOffItems.vue'
@@ -338,7 +338,7 @@ const closeView = () => {
   emits('close')
 }
 
-const imageSrc = ref('https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U=')
+const imageSrc = ref('')
 const cardBackgroundColor = ref('')
 
 const changeImage = (event: Event) => {
@@ -382,6 +382,16 @@ const setCardBackgroundColor = (src: string) => {
     }
   }
 }
+
+onMounted(() => {
+  if (props.passedInJob.coverImage === '') {
+    imageSrc.value = 'https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U='
+  } else {
+    imageSrc.value = props.passedInJob.coverImage
+  }
+  setCardBackgroundColor(imageSrc.value)
+})
+
 </script>
 
 <style scoped>
