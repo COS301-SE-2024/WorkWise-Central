@@ -152,7 +152,7 @@
                 <h5 ref="imagesSection">Attach Images</h5>
               </v-divider>
               <v-col>
-                <GetJobImages />
+                <GetJobImages :attachments="props.passedInJob?.attachments"/>
               </v-col>
               <v-divider>
                 <h5 ref="tagsSection">Add Job Tags</h5>
@@ -273,6 +273,7 @@ import CheckOffItems from './CheckOffItems.vue'
 import GetJobImages from './GetJobImages.vue'
 import JobTags from './JobTags.vue'
 import JobHistory from './JobHistory.vue'
+import axios from 'axios'
 
 const props = defineProps<{ passedInJob: any }>()
 const emits = defineEmits(['close'])
@@ -286,6 +287,31 @@ const historySection = ref<HTMLElement | null>(null)
 const viewJobDialog = ref(false) // Dialog state
 const checklistSection = ref(null)
 const inventorySection = ref(null)
+// API URLs
+const localUrl: string = 'http://localhost:3000/'
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
+
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`
+  }
+}
+
+// Utility functions
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url)
+    return res.status < 300 && res.status > 199
+  } catch (error) {
+    return false
+  }
+}
+
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
 
 function scrollToSection(
   section:
@@ -341,17 +367,27 @@ const closeView = () => {
 const imageSrc = ref('')
 const cardBackgroundColor = ref('')
 
-const changeImage = (event: Event) => {
+const changeImage = async (event: Event) => {
   const input = event.target as HTMLInputElement
   if (input.files && input.files[0]) {
     const reader = new FileReader()
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       imageSrc.value = e.target?.result as string
       setCardBackgroundColor(imageSrc.value)
+      const apiUrl = getRequestUrl()
+      try {
+        await axios.patch(`${apiUrl}job/update/${props.passedInJob._id}`, {
+          coverImage: imageSrc.value
+        }, config)
+        console.log('Image updated successfully')
+      } catch (error) {
+        console.error('Error updating image:', error)
+      }
     }
     reader.readAsDataURL(input.files[0])
   }
 }
+
 
 const setCardBackgroundColor = (src: string) => {
   const img = new Image()

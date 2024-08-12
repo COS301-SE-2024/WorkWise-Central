@@ -33,11 +33,11 @@
                 Image Actions
               </v-card-title>
               <v-card-actions class="d-flex flex-column">
-                <v-btn color="primary" @click="commentOnImage(index)">
+                <v-btn color="primary" @click="uploadImage(index)">
                   <v-icon>
-                    {{ 'fa: fa-solid fa-comment' }}
+                    {{ 'fa: fa-solid fa-upload' }}
                   </v-icon>
-                  Comment
+                  Upload
                 </v-btn>
                 <v-btn color="info" @click="changeImage(index)">
                   <v-icon>
@@ -101,12 +101,19 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, defineProps, onMounted } from 'vue'
 
 const images = ref([])
 const newFile = ref(null)
 const imageOverlay = ref(false)
 const overlayImageSrc = ref('')
+
+// onMounted(() => {
+//   images.value = props.attachments.map(attachment => ({
+//     src: attachment,
+//     dialog: false
+//   }))
+// })
 
 const handleFileChange = () => {
   const file = newFile.value
@@ -132,8 +139,7 @@ const openImageOverlay = (index) => {
   imageOverlay.value = true
 }
 
-const commentOnImage = (index) => {
-  alert(`Comment on Image ${index + 1}`)
+const uploadImage = (index) => {
 }
 
 const changeImage = (index) => {
