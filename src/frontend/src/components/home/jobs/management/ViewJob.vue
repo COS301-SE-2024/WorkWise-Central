@@ -1,6 +1,6 @@
 <template>
     <v-card elevation="14" rounded="md" :style="{ backgroundColor: cardBackgroundColor }">
-      <v-img :src="imageSrc" aspect-ratio="5.75" @load="setCardBackgroundColor"></v-img>
+      <v-img :src="imageSrc" aspect-ratio="5.75" @load="() => setCardBackgroundColor(imageSrc.value)"></v-img>
       <v-row class="position-relative">
         <v-col class="d-flex justify-end">
           <v-btn color="primary" class="position-absolute bottom-right">
@@ -347,15 +347,16 @@ const changeImage = (event: Event) => {
     const reader = new FileReader()
     reader.onload = (e) => {
       imageSrc.value = e.target?.result as string
+      setCardBackgroundColor(imageSrc.value)
     }
     reader.readAsDataURL(input.files[0])
   }
 }
 
-const setCardBackgroundColor = (event: Event) => {
-  const img = event.target as HTMLImageElement
-
-  if (img && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+const setCardBackgroundColor = (src: string) => {
+  const img = new Image()
+  img.src = src
+  img.onload = () => {
     const canvas = document.createElement('canvas')
     const context = canvas.getContext('2d')
 
@@ -379,10 +380,9 @@ const setCardBackgroundColor = (event: Event) => {
 
       cardBackgroundColor.value = `rgb(${r}, ${g}, ${b})`
     }
-  } else {
-    console.error('Image properties are not accessible')
   }
 }
+
 </script>
 
 <style scoped>
