@@ -44,6 +44,8 @@ By harnessing modern technology, WorkWise Central transforms business operations
 
 [Watch our demo video - Boolean Hooligans Demo2](https://drive.google.com/file/d/1z4bgTkJ-NSnSJUdBeRTijx4pgcQHyxTD/view?usp=drive_link)
 
+[Watch our demo video - Boolean Hooligans Demo3](https://drive.google.com/file/d/1rWXOmel3e3uGDIRimC8dW93tZXijGoxv/view?usp=drive_link)
+
 ## Documentation 
 
 [Read the full documentation for this project](https://work-wise-central-1.vercel.app/)
