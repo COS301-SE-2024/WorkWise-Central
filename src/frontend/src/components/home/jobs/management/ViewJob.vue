@@ -1,9 +1,15 @@
 <template>
     <v-card elevation="14" rounded="md" :style="{ backgroundColor: cardBackgroundColor }">
-      <v-img
-        src="https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U="
-        aspect-ratio="5.75"
-      ></v-img>
+      <v-img :src="imageSrc" aspect-ratio="5.75" @load="setCardBackgroundColor"></v-img>
+      <v-row class="position-relative">
+        <v-col class="d-flex justify-end">
+          <v-btn color="primary" class="position-absolute bottom-right">
+            <v-icon left>mdi-image</v-icon>
+            <label for="imageInput" class="m-0">Cover</label>
+            <input type="file" id="imageInput" @change="changeImage" accept="image/*" style="display: none;" />
+          </v-btn>
+        </v-col>
+      </v-row>
       <v-card-title>
         {{ props.passedInJob?.details?.heading }}
       </v-card-title>
@@ -222,20 +228,20 @@
                 Attach Images
               </v-btn>
             </v-col>
-            <v-col>
-              <v-btn
-                width="100%"
-                class="d-flex justify-start"
-                border="md"
-                elevation="5"
-                @click="scrollToSection('tagsSection')"
-              >
-                <v-icon left>
-                  {{ 'fa: fa-solid fa-box' }}
-                </v-icon>
-                Log Inventory
-              </v-btn>
-            </v-col>
+<!--            <v-col>-->
+<!--              <v-btn-->
+<!--                width="100%"-->
+<!--                class="d-flex justify-start"-->
+<!--                border="md"-->
+<!--                elevation="5"-->
+<!--                @click="scrollToSection('tagsSection')"-->
+<!--              >-->
+<!--                <v-icon left>-->
+<!--                  {{ 'fa: fa-solid fa-box' }}-->
+<!--                </v-icon>-->
+<!--                Log Inventory-->
+<!--              </v-btn>-->
+<!--            </v-col>-->
             <v-col>
               <v-btn
                 width="100%"
@@ -332,7 +338,19 @@ const closeView = () => {
   emits('close')
 }
 
+const imageSrc = ref('https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U=')
 const cardBackgroundColor = ref('')
+
+const changeImage = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  if (input.files && input.files[0]) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      imageSrc.value = e.target?.result as string
+    }
+    reader.readAsDataURL(input.files[0])
+  }
+}
 
 const setCardBackgroundColor = (event: Event) => {
   const img = event.target as HTMLImageElement
@@ -347,10 +365,7 @@ const setCardBackgroundColor = (event: Event) => {
       context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight)
       const imageData = context.getImageData(0, 0, img.naturalWidth, img.naturalHeight).data
 
-      let r = 0,
-        g = 0,
-        b = 0,
-        count = 0
+      let r = 0, g = 0, b = 0, count = 0
       for (let i = 0; i < imageData.length; i += 4) {
         r += imageData[i]
         g += imageData[i + 1]
@@ -369,3 +384,20 @@ const setCardBackgroundColor = (event: Event) => {
   }
 }
 </script>
+
+<style scoped>
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+}
+
+.bottom-right {
+  bottom: 0;
+  right: 0;
+  margin-bottom: 8px; /* Adjust as needed */
+  margin-right: 8px; /* Adjust as needed */
+}
+</style>
