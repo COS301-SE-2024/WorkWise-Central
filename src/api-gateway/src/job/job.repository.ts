@@ -444,4 +444,31 @@ export class JobRepository {
     await job.save();
     return job.toObject();
   }
+
+  async addAttachments(jobId: Types.ObjectId, newUrls: string[]) {
+    const job = await this.jobModel.updateOne(
+      { _id: jobId },
+      { $push: { attachments: newUrls }, updatedAt: Date.now() },
+      { new: true },
+    );
+    console.log(job);
+    return job;
+  }
+
+  async updateAttachments(jobId: Types.ObjectId, newAttachments: string[]) {
+    const job = await this.jobModel
+      .findOne({
+        $and: [
+          {
+            _id: jobId,
+          },
+          isNotDeleted,
+        ],
+      })
+      .exec();
+    job.attachments = newAttachments;
+    job.updatedAt = new Date();
+    await job.save();
+    return job.toObject();
+  }
 }
