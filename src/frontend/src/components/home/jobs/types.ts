@@ -72,7 +72,7 @@ type User = {
 
 export type EmployeeJoined = {
   _id: string
-  roleId: Role
+  role: Role
   currentJobAssignments: any[]
   subordinates: any[]
   subordinateTeams: any[]
