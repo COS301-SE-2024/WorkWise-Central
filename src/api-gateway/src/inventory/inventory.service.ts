@@ -69,10 +69,13 @@ export class InventoryService {
   }
 
   async update(id: Types.ObjectId, updateInventoryDto: UpdateInventoryDto) {
+    console.log('In update. Id: ', id);
     const validation = await this.validateUpdateInventory(id);
+    console.log('validation: ', validation);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
+    console.log('validation is done');
     return await this.inventoryRepository.update(id, updateInventoryDto);
   }
 
