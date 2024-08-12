@@ -10,7 +10,7 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_login" show-actions>
+                ><v-stepper v-model="activeSteps.stepper1" :items="items.items_login" show-actions>
                   <template #[`item.1`]>
                     <h3 class="text-h6">Splash Page</h3>
 
@@ -40,7 +40,7 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_signup" show-actions>
+                ><v-stepper v-model="activeSteps.stepper2" :items="items.items_signup" show-actions>
                   <template #[`item.1`]>
                     <h3 class="text-h6">Splash Page Click Signup Button</h3>
 
@@ -93,7 +93,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_calendar" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper3"
+                  :items="items.items_calendar"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Calendar Navigation Bar</h3>
 
@@ -122,7 +126,7 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_tables" show-actions>
+                ><v-stepper v-model="activeSteps.stepper4" :items="items.items_tables" show-actions>
                   <template #[`item.1`]>
                     <h3 class="text-h6">Splash Page</h3>
 
@@ -169,7 +173,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_newClients" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper5"
+                  :items="items.items_newClients"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Click Add Client Button</h3>
 
@@ -193,7 +201,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_viewClientDetails" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper6"
+                  :items="items.items_viewClientDetails"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Client Action Button</h3>
 
@@ -224,7 +236,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_inventoryAdd" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper7"
+                  :items="items.items_inventoryAdd"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Action Button</h3>
 
@@ -255,7 +271,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_editClient" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper7"
+                  :items="items.items_editClient"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Action Button</h3>
 
@@ -286,7 +306,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_newEmployee" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper8"
+                  :items="items.items_newEmployee"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Click Add Employee Button</h3>
 
@@ -317,7 +341,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_editEmployee" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper9"
+                  :items="items.items_editEmployee"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Employee Action Button</h3>
 
@@ -347,7 +375,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_inventoryAdd" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper10"
+                  :items="items.items_inventoryAdd"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Action Button</h3>
 
@@ -378,7 +410,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_viewEmployeeDetails" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper11"
+                  :items="items.items_viewEmployeeDetails"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Employee Action Button</h3>
 
@@ -409,7 +445,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_addJob" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper12"
+                  :items="items.items_addJob"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Click Add Employees Button</h3>
 
@@ -451,7 +491,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_editJob" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper14"
+                  :items="items.items_editJob"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Job Card</h3>
 
@@ -529,7 +573,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_inventoryAdd" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper15"
+                  :items="items.items_inventoryAdd"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Action Button</h3>
 
@@ -560,7 +608,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_viewJobDetails" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper16"
+                  :items="items.items_viewJobDetails"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Job action</h3>
 
@@ -591,7 +643,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_useUserSettings" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper17"
+                  :items="items.items_useUserSettings"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Click User Button</h3>
 
@@ -628,7 +684,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_useCompanySettings" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper18"
+                  :items="items.items_useCompanySettings"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Click More & Company Settings On Nav Bar</h3>
 
@@ -670,7 +730,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_changeTheme" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper19"
+                  :items="items.items_changeTheme"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Click Moon Icon to Switch to Dark Mode</h3>
 
@@ -694,7 +758,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_manageCompanies" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper20"
+                  :items="items.items_manageCompanies"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Manage Companies Navigation-Bar</h3>
 
@@ -730,7 +798,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_inventoryAdd" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper24"
+                  :items="items.items_inventoryAdd"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Add Inventory Button</h3>
 
@@ -760,7 +832,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_editInventory" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper25"
+                  :items="items.items_editInventory"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Action Button</h3>
 
@@ -790,7 +866,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_editInventory" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper27"
+                  :items="items.items_editInventory"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Action Button</h3>
 
@@ -820,7 +900,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_editInventory" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper28"
+                  :items="items.items_editInventory"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">Action Button</h3>
 
@@ -850,7 +934,11 @@
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
-                ><v-stepper v-model="step" :items="items.items_logout" show-actions>
+                ><v-stepper
+                  v-model="activeSteps.stepper30"
+                  :items="items.items_logout"
+                  show-actions
+                >
                   <template #[`item.1`]>
                     <h3 class="text-h6">User Button</h3>
 
@@ -1040,7 +1128,14 @@ import inventory_delete_menu_clicked from '@/assets/images/tutorial/deleteInvent
 export default defineComponent({
   name: 'TutorialComponent',
   data() {
+    const stepperCount = 35
+    const activeSteps: Record<string, number> = {}
+    for (let i = 1; i <= stepperCount; i++) {
+      activeSteps[`stepper${i}`] = 1
+    }
+
     return {
+      activeSteps,
       isdarkmode: sessionStorage['theme'] === 'true',
       tab: null,
       login: {

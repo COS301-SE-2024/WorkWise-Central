@@ -209,7 +209,7 @@ export default {
       },
       { title: 'Phone', value: 'contactInfo.phoneNumber', key: 'contactInfo.phoneNumber' },
       { title: 'Email', value: 'contactInfo.email', key: 'contactInfo.email' },
-      { title: 'Role', value: 'role.', key: 'roleName' },
+      { title: 'Role', value: 'roleName', key: 'roleName' },
       { title: '', value: 'actions', key: 'actions', sortable: false }
     ] as any[],
     search: '',
