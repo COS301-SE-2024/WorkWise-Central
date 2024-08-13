@@ -1,7 +1,21 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title class="text-primary font-bold text-center"> Roles </v-card-title>
+      <v-card-title
+        class="d-flex align-center pe-2 text-h5 font-weight-regular"
+        height="auto"
+        width="100%"
+        ><v-row align="center" justify="space-between"
+          ><v-col cols="12" lg="6">
+            <v-label
+              class="ms-2 h2 font-family-Nunito text-headingTextColor"
+              height="auto"
+              width="auto"
+              >Roles</v-label
+            ></v-col
+          ><v-col cols="12" lg="6"><CreateRoles /></v-col
+        ></v-row>
+      </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
         <v-data-table
@@ -86,6 +100,7 @@ import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import DeleteRole from './DeleteRole.vue'
 import ColorPicker from 'primevue/colorpicker'
+import CreateRoles from './CreateRoles.vue'
 export default defineComponent({
   props: {
     Company: Object,
@@ -95,7 +110,8 @@ export default defineComponent({
     Toast,
     DeleteRole,
     ColorPicker,
-    Toast
+    Toast,
+    CreateRoles
   },
   data: () => ({
     dialog: false,

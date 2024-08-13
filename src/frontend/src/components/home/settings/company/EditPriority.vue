@@ -2,8 +2,22 @@
   <v-container>
     <Toast />
     <v-card>
-      <v-card-title class="text-primary font-bold text-center">Priorities</v-card-title>
-      <CreatePriority />
+      <v-card-title
+        class="d-flex align-center pe-2 text-h5 font-weight-regular"
+        height="auto"
+        width="100%"
+        ><v-row align="center" justify="space-between"
+          ><v-col cols="12" lg="6">
+            <v-label
+              class="ms-2 h2 font-family-Nunito text-headingTextColor"
+              height="auto"
+              width="auto"
+              >Priorities</v-label
+            ></v-col
+          ><v-col cols="12" lg="6"><CreatePriority /></v-col
+        ></v-row>
+      </v-card-title>
+
       <v-card-text>
         <v-data-table
           :headers="headers"

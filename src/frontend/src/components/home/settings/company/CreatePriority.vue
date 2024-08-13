@@ -10,9 +10,10 @@
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        variant="outlined"
-        color="primary"
+        variant="elevated"
+        color="secondary"
         v-bind="activatorProps"
+        block
       >
         <v-icon icon="fa: fa-solid fa-exclamation-circle" color="primary"></v-icon>
         Create Priority

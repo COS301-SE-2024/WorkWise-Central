@@ -2,7 +2,21 @@
   <v-container>
     <Toast/>
     <v-card>
-      <v-card-title class="text-primary font-bold text-center">Statuses</v-card-title>
+      <v-card-title
+        class="d-flex align-center pe-2 text-h5 font-weight-regular"
+        height="auto"
+        width="100%"
+        ><v-row align="center" justify="space-between"
+          ><v-col cols="12" lg="6">
+            <v-label
+              class="ms-2 h2 font-family-Nunito text-headingTextColor"
+              height="auto"
+              width="auto"
+              >Statuses</v-label
+            ></v-col
+          ><v-col cols="12" lg="6"><CreateStatus /></v-col
+        ></v-row>
+      </v-card-title>
       <v-card-text>
         <v-data-table
           :headers="headers"
@@ -84,6 +98,7 @@ import axios from 'axios'
 import ColorPicker from 'primevue/colorpicker'
 import DeleteStatus from './DeleteStatus.vue'
 import Toast from 'primevue/toast'
+import CreateStatus from './CreateStatus.vue'
 interface Status {
   status: string
   colour: string
@@ -121,7 +136,9 @@ export default defineComponent({
   }),
   components: {
     DeleteStatus,
-    ColorPicker
+    ColorPicker,
+    Toast,
+    CreateStatus
   },
   methods: {
     getRowProps(index: number) {
