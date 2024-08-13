@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
-import { Comment, Job, Task } from './entities/job.entity';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { Employee } from '../employee/entities/employee.entity';
 import { Company } from '../company/entities/company.entity';
 //import { Team } from '../team/entities/team.entity';
 import { isNotDeleted } from '../shared/soft-delete';
 import { currentDate } from '../utils/Utils';
+import { Comment, History, Job, Task } from './entities/job.entity';
 
 @Injectable()
 export class JobRepository {
