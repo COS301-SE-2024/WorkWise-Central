@@ -436,6 +436,11 @@ export class EmployeeService {
     return previousObject;
   }
 
+  async internalUpdate(id: Types.ObjectId, userInfo: InternalUpdateEmployeeDto) {
+    const previousObject = this.employeeRepository.update(id, userInfo);
+    return previousObject;
+  }
+
   async getCompanyIdFromEmployee(employeeId: Types.ObjectId) {
     //check if the employee exists
     if (!(await this.employeeExists(employeeId))) {
