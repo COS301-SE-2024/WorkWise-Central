@@ -72,7 +72,7 @@ import '@mdi/font/css/materialdesignicons.css' // icon import
 import ProfilePage from './settings/profile/ProfilePage.vue'
 import DarkModeToggleVue from './settings/DarkModeToggle.vue'
 import CompanyMain from './settings/company/CompanyMain.vue'
-// import { mapGetters } from 'vuex'
+import axios from 'axios'
 
 export default defineComponent({
   name: 'NavigationBar',
@@ -89,7 +89,10 @@ export default defineComponent({
   data: () => ({
     isdarkmode: localStorage.getItem('theme') === 'true',
     logoutDialog: false,
-    selected: ''
+    selected: '',
+    employeePermissions: [],
+    localUrl: 'http://localhost:3000/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   // computed: {
   //   ...mapGetters(['isDarkMode'])
@@ -109,21 +112,37 @@ export default defineComponent({
     setInbox(inbox: string) {
       this.selected = inbox
     },
-    fuga() {
-      this.logoutDialog = true
+    async getEmployeePermissions() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      axios
+        .get(`http://localhost:3000/users/id/${localStorage.getItem('id')}`, config)
+        .then((response) => {
+          console.log(response.data.data)
+        })
+        .catch((error) => {
+          console.error('Failed to fetch employees:', error)
+        })
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
-    // logout(name: string) {
-    //   if (name === 'splash') {
-    //     // Clear local storage
-    //     localStorage.clear()
-
-    //     // Replace current history state to prevent back navigation
-    //     window.history.replaceState({}, document.title, window.location.pathname)
-
-    //     // Redirect to login page
-    //     this.$router.push({ name: 'splash' })
-    //   }
-    // }
+  },
+  mounted() {
+    this.getEmployeePermissions()
   }
 })
 </script>

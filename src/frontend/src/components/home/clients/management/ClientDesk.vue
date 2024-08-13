@@ -389,10 +389,14 @@ export default defineComponent({
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params:{
+          currentEmployeeId : localStorage.getItem('employeeId')
         }
       }
+      const apiURL = await this.getRequestUrl()
       axios
-        .get('http://localhost:3000/client/all', config)
+        .get(`${apiURL}client/all/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           console.log(response.data)
           this.clients = response.data.data
@@ -425,6 +429,18 @@ export default defineComponent({
         .catch((error) => {
           console.error('Failed to fetch employees:', error)
         })
+    },
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
   },
   toggleDarkMode() {
@@ -445,18 +461,6 @@ export default defineComponent({
     return {
       class: index % 2 ? 'bg-secondRowColor' : ''
     }
-  },
-  async isLocalAvailable(localUrl) {
-    try {
-      const res = await axios.get(localUrl)
-      return res.status < 300 && res.status > 199
-    } catch (error) {
-      return false
-    }
-  },
-  async getRequestUrl() {
-    const localAvailable = await this.isLocalAvailable(this.localUrl)
-    return localAvailable ? this.localUrl : this.remoteUrl
   }
 })
 </script>
