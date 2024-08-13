@@ -16,6 +16,7 @@ import {
   UseInterceptors,
   //UploadedFile,
   UploadedFiles,
+  Query,
 } from '@nestjs/common';
 import { JobService } from './job.service';
 import { CreateJobDto, CreateJobResponseDto } from './dto/create-job.dto';
@@ -50,7 +51,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { CreatePriorityTagDto, CreateStatusDto, CreateTagDto } from './dto/create-tag.dto';
-import { extractUserId, validateObjectId } from '../utils/Utils';
+import { extractUserId, validateObjectId, validateObjectIds } from '../utils/Utils';
 import { DeleteStatusDto, DeleteTagDto, UpdatePriorityTagDto, UpdateTagDto } from './dto/edit-tag.dto';
 import {
   JobAllResponseDetailedDto,
@@ -631,7 +632,7 @@ export class JobController {
   @ApiResponse({ type: JobResponseDto })
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
-  @Put('/employee/task')
+  @Put('/employee/taskItem')
   async assignEmployeeToTaskItem(@Headers() headers: any, @Body() taskAssignDto: TaskAssignDto) {
     try {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
@@ -720,15 +721,20 @@ export class JobController {
   })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'files', maxCount: 20 }]))
-  @Patch('/add/attachments')
+  @Patch('/add/attachments/')
   async addAttachments(
     @Headers() headers: any,
-    @Body() attachmentDto: AddAttachmentDto,
+    @Query('jId') jId: string,
+    @Query('eId') empId: string,
     @UploadedFiles() files: { files?: Express.Multer.File[] },
   ) {
     console.log(files);
     try {
       const userId = extractUserId(this.jwtService, headers);
+      validateObjectIds([empId, jId]);
+      const employeeId = new Types.ObjectId(empId);
+      const jobId = new Types.ObjectId(jId);
+      const attachmentDto = new AddAttachmentDto(employeeId, jobId);
       return {
         data: await this.jobService.addAttachments(userId, attachmentDto, files.files),
       };
@@ -741,6 +747,7 @@ export class JobController {
   @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Update the attachment array in a ${className}`,
+    description: 'All you need to do is pass me the updated array of strings',
   })
   @ApiOkResponse({
     type: JobResponseDto,

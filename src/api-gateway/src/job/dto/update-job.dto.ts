@@ -111,6 +111,10 @@ export class AddTaskDto {
 }
 
 export class AddAttachmentDto {
+  constructor(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
+    this.employeeId = employeeId;
+    this.jobId = jobId;
+  }
   @IsNotEmpty()
   @IsMongoId()
   employeeId: Types.ObjectId;
