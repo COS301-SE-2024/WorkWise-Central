@@ -42,24 +42,24 @@ export class EmployeeService {
   ) {}
 
   async validateCreateEmployee(employee: CreateEmployeeDto) {
-    console.log('\nIn validateCreateEmployee');
+    // console.log('\nIn validateCreateEmployee');
     // Checking that the company exists
     if (!(await this.companyService.companyIdExists(employee.companyId))) {
       return new ValidationResult(false, `Company not found`);
     }
-    console.log('checkpoint 1');
+    // console.log('checkpoint 1');
     // Checking that the user exists
     if (!(await this.usersService.userIdExists(employee.userId))) {
       return new ValidationResult(false, `User not found`);
     }
-    console.log('checkpoint 2');
+    // console.log('checkpoint 2');
     // Checking if the roleId was passed and if it exists
     if (employee.roleId) {
       if (!(await this.roleService.roleExistsInCompany(employee.roleId, employee.companyId))) {
         return new ValidationResult(false, `Role not found`);
       }
     }
-    console.log('checkpoint 3');
+    // console.log('checkpoint 3');
     // Checking if the superiorId was passed and if it exists
     if (employee.superiorId) {
       console.log('In if');
@@ -79,9 +79,13 @@ export class EmployeeService {
     } else {
       console.log('In else');
       //Adding the owner as the superior if no superior is passed
-      const owner = await this.findAllInCompanyWithRoleName(employee.companyId, 'Owner');
-      console.log('owner: ', owner);
-      employee.superiorId = owner[0]._id;
+      try {
+        const owner = await this.findAllInCompanyWithRoleName(employee.companyId, 'Owner');
+        console.log('owner: ', owner);
+        employee.superiorId = owner[0]._id;
+      } catch (e) {
+        console.log('The owner is being created, therefore they do not have a superiorId');
+      }
     }
     console.log('checkpoint 4');
     // checking if the user exists in the company

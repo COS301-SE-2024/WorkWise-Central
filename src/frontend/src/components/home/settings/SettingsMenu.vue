@@ -54,11 +54,6 @@ const items = ref([
         route: '/userSettings'
       },
       {
-        label: 'Preferences',
-        icon: 'fa: fa-solid fa-sliders-h',
-        route: '/preferenceSettings'
-      },
-      {
         label: 'Notifications',
         icon: 'fa: fa-solid fa-bell',
         route: '/notificationSettings'

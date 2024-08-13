@@ -179,7 +179,7 @@ export default defineComponent({
       }
       const apiURL = await this.getRequestUrl()
       try {
-        const response = await axios.get(`${apiURL}inventory/all`, config)
+        const response = await axios.get(`${apiURL}inventory/all/${localStorage.getItem('employeeId')}`, config)
         console.log(response.data.data)
         this.inventoryItems = response.data.data
       } catch (error) {
