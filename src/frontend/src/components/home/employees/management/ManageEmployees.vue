@@ -1,3 +1,4 @@
+c
 <template class="emply-mng-container">
   <v-app :style="isdarkmode === true ? 'dark' : 'light'">
     <v-container fluid fill-height>
@@ -20,18 +21,13 @@
                     <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
                       <v-icon icon="mdi-account-hard-hat"></v-icon>
                       <v-label
-                        class="ms-2 text-h4 text-headingTextColor"
-                        style="
-                          font-size: 15px;
-                          font-family: Nunito, sans-serif;
-                          font-weight: lighter;
-                        "
+                        class="ms-2 h2 font-family-Nunito text-headingTextColor"
                         height="auto"
                         width="auto"
                         >Employee Details</v-label
                       >&nbsp;
                     </v-col>
-                    <v-col cols="12" md="4" sm="6" xs="12">
+                    <v-col cols="12" md="4" sm="6" xs="12">s
                       <v-text-field
                         v-model="search"
                         density="compact"
@@ -40,9 +36,9 @@
                         variant="outlined"
                         flat
                         color="primary"
-                        width="100%"
+                        width="80%"
                         style="
-                          font-family: Nunito, sans-serif;
+                          font-family: 'Lato', sans-serif;
                           font-size: 15px;
                           font-weight: lighter;
                         "

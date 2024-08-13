@@ -17,7 +17,7 @@
         variant="outlined"
         align-center
         justify-center
-        class="my-3 text-center"
+        class="my-3 text-center mr-4"
         size="large"
       >
         Log in
@@ -172,38 +172,43 @@
                         ></v-text-field></v-col
                     ></v-row>
                   </v-form>
-                  <v-col cols="8" offset="2">
+                  <v-col cols="12" lg="6">
                     <v-btn variant="text" @click="forgotPassword"> Forgot Password?</v-btn></v-col
                   >
                 </v-col>
-
-                <v-col cols="8" offset="2">
-                  <v-btn
-                    :disabled="!valid"
-                    text
-                    @click="login"
-                    @keypress.enter="login"
-                    rounded="md"
-                    size="large"
-                    color="primary"
-                    variant="elevated"
-                    width="100%"
-                    >Login</v-btn
-                  >
-                </v-col>
-                <v-col cols="8" offset="2">
-                  <v-btn
-                    text
-                    @click="(signupDialog = true)((loginDialog = false))(resetFields)"
-                    rounded="md"
-                    color="secondary"
-                    size="large"
-                    variant="elevated"
-                    width="100%"
-                  >
-                    Sign up</v-btn
-                  >
-                </v-col>
+                <v-container>
+                  <v-row
+                    ><v-col cols="12" lg="6">
+                      <v-btn
+                        :disabled="!valid"
+                        text
+                        @click="login"
+                        @keypress.enter="login"
+                        rounded="md"
+                        size="large"
+                        color="primary"
+                        variant="elevated"
+                        width="100%"
+                        block
+                        >Login</v-btn
+                      >
+                    </v-col>
+                    <v-col cols="12" lg="6">
+                      <v-btn
+                        text
+                        @click="(signupDialog = true)((loginDialog = false))(resetFields)"
+                        rounded="md"
+                        color="secondary"
+                        size="large"
+                        variant="elevated"
+                        width="100%"
+                        block
+                      >
+                        Sign up</v-btn
+                      >
+                    </v-col></v-row
+                  ></v-container
+                >
 
                 <v-alert v-model="alertLogin" type="success">
                   You have successfully logged in!</v-alert
@@ -370,31 +375,37 @@
                       ></v-row>
                     </v-form>
                   </v-col>
-                  <v-col cols="8" offset="2">
-                    <Toast position="top-center" />
-                    <v-btn
-                      :disabled="!valid"
-                      text
-                      @click="nextFlow1"
-                      rounded="md"
-                      boarder="xl"
-                      width="100%"
-                      size="large"
-                      variant="elevated"
-                      color="primary"
-                      >Continue</v-btn
-                    > </v-col
-                  ><v-col cols="8" offset="2">
-                    <v-btn
-                      @click="(loginDialog = true), (signupDialog = false)"
-                      rounded="md"
-                      width="100%"
-                      size="large"
-                      variant="elevated"
-                      color="secondary"
-                      >Log in</v-btn
-                    >
-                  </v-col>
+                  <v-container
+                    ><v-row>
+                      <v-col cols="12" lg="6">
+                        <Toast position="top-center" />
+                        <v-btn
+                          :disabled="!valid"
+                          text
+                          @click="nextFlow1"
+                          rounded="md"
+                          boarder="xl"
+                          width="100%"
+                          size="large"
+                          variant="elevated"
+                          color="primary"
+                          block
+                          >Continue</v-btn
+                        > </v-col
+                      ><v-col cols="12" lg="6">
+                        <v-btn
+                          @click="(loginDialog = true), (signupDialog = false)"
+                          rounded="md"
+                          width="100%"
+                          size="large"
+                          variant="elevated"
+                          color="secondary"
+                          block
+                          >Log in</v-btn
+                        >
+                      </v-col></v-row
+                    ></v-container
+                  >
                 </v-col>
               </v-sheet>
             </v-dialog>
@@ -454,30 +465,36 @@
                       ></v-row>
                     </v-form>
                   </v-col>
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      :disabled="!valid"
-                      text
-                      @click="nextFlow2"
-                      rounded="md"
-                      size="large"
-                      color="primary"
-                      variant="elevated"
-                      width="100%"
-                      >Continue</v-btn
-                    >
-                  </v-col>
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      @click="(signupDialog = true)((signup1Dialog = false))"
-                      rounded="md"
-                      color="secondary"
-                      size="large"
-                      variant="elevated"
-                      width="100%"
-                      >Back</v-btn
-                    >
-                  </v-col>
+                  <v-container
+                    ><v-row
+                      ><v-col cols="12" lg="6">
+                        <v-btn
+                          :disabled="!valid"
+                          text
+                          @click="nextFlow2"
+                          rounded="md"
+                          size="large"
+                          color="primary"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Continue</v-btn
+                        >
+                      </v-col>
+                      <v-col cols="12" lg="6">
+                        <v-btn
+                          @click="(signupDialog = true)((signup1Dialog = false))"
+                          rounded="md"
+                          color="secondary"
+                          size="large"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Back</v-btn
+                        >
+                      </v-col></v-row
+                    ></v-container
+                  >
                 </v-col>
               </v-sheet>
             </v-dialog>
@@ -537,32 +554,38 @@
                       ></v-row>
                     </v-form>
                   </v-col>
-                  <v-col cols="8" offset="2">
-                    <Toast position="top-center" />
-                    <v-btn
-                      :disabled="!valid"
-                      text
-                      @click="nextFlowUsername"
-                      rounded="md"
-                      size="large"
-                      color="primary"
-                      variant="elevated"
-                      width="100%"
-                      >Continue</v-btn
-                    ></v-col
-                  >
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      :disabled="!valid"
-                      text
-                      @click="(signup1Dialog = true)((signupUsernameDialog = false))"
-                      rounded="md"
-                      size="large"
-                      color="secondary"
-                      variant="elevated"
-                      width="100%"
-                      >Back</v-btn
-                    ></v-col
+                  <v-container
+                    ><v-row
+                      ><v-col cols="12" lg="6">
+                        <Toast position="top-center" />
+                        <v-btn
+                          :disabled="!valid"
+                          text
+                          @click="nextFlowUsername"
+                          rounded="md"
+                          size="large"
+                          color="primary"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Continue</v-btn
+                        ></v-col
+                      >
+                      <v-col cols="12" lg="6">
+                        <v-btn
+                          :disabled="!valid"
+                          text
+                          @click="(signup1Dialog = true)((signupUsernameDialog = false))"
+                          rounded="md"
+                          size="large"
+                          color="secondary"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Back</v-btn
+                        ></v-col
+                      ></v-row
+                    ></v-container
                   >
                 </v-sheet>
               </v-dialog>
@@ -644,31 +667,36 @@
                       ></v-row>
                     </v-form>
                   </v-col>
-
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      :disabled="!valid"
-                      text
-                      @click="nextFlow3"
-                      rounded="xmdl"
-                      size="large"
-                      color="primary"
-                      variant="elevated"
-                      width="100%"
-                      >Continue</v-btn
-                    >
-                  </v-col>
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      @click="(signupUsernameDialog = true)((signup2Dialog = false))"
-                      rounded="md"
-                      color="secondary"
-                      size="large"
-                      variant="elevated"
-                      width="100%"
-                      >Back</v-btn
-                    >
-                  </v-col>
+                  <v-container
+                    ><v-row
+                      ><v-col cols="12" lg="6">
+                        <v-btn
+                          :disabled="!valid"
+                          text
+                          @click="nextFlow3"
+                          rounded="xmdl"
+                          size="large"
+                          color="primary"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Continue</v-btn
+                        >
+                      </v-col>
+                      <v-col cols="12" lg="6">
+                        <v-btn
+                          @click="(signupUsernameDialog = true)((signup2Dialog = false))"
+                          rounded="md"
+                          color="secondary"
+                          size="large"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Back</v-btn
+                        >
+                      </v-col></v-row
+                    ></v-container
+                  >
                 </v-col>
               </v-sheet>
             </v-dialog>
@@ -786,31 +814,36 @@
                       ></v-row>
                     </v-form>
                   </v-col>
-
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      :disabled="!valid"
-                      text
-                      @click="nextFlowAddress"
-                      rounded="md"
-                      size="large"
-                      color="primary"
-                      variant="elevated"
-                      width="100%"
-                      >Continue</v-btn
-                    >
-                  </v-col>
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      @click="(signup2Dialog = true)((signupAddressDialog = false))"
-                      rounded="md"
-                      color="secondary"
-                      size="large"
-                      variant="elevated"
-                      width="100%"
-                      >Back</v-btn
-                    >
-                  </v-col>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12" lg="6">
+                        <v-btn
+                          :disabled="!valid"
+                          text
+                          @click="nextFlowAddress"
+                          rounded="md"
+                          size="large"
+                          color="primary"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Continue</v-btn
+                        >
+                      </v-col>
+                      <v-col cols="12" lg="6">
+                        <v-btn
+                          @click="(signup2Dialog = true)((signupAddressDialog = false))"
+                          rounded="md"
+                          color="secondary"
+                          size="large"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Back</v-btn
+                        >
+                      </v-col></v-row
+                    ></v-container
+                  >
                 </v-col>
               </v-sheet>
             </v-dialog>
@@ -825,21 +858,26 @@
               <!-- <v-sheet
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
               > -->
-              <v-sheet
+              <v-card
                 class="mx-auto bg-background"
                 width="400"
                 :theme="isdarkmode ? 'dark' : 'light'"
               >
-                <v-col>
-                  <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
-                    Please select of the following details
-                  </h4></v-col
-                >
-                <v-card-actions>
-                  <v-col cols="6"> <RegisterCompanyModal :isdarkmode="isdarkmode" /> </v-col
-                  ><v-col cols="6"> <JoinCompanyModal :isdarkmode="isdarkmode" /></v-col
-                ></v-card-actions>
-              </v-sheet>
+                <v-col
+                  ><v-col>
+                    <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
+                      Please select of the following details
+                    </h4></v-col
+                  >
+
+                  <v-container
+                    ><v-row>
+                      <v-col cols="12" lg="6">
+                        <RegisterCompanyModal :isdarkmode="isdarkmode" /> </v-col
+                      ><v-col cols="12" lg="6">
+                        <JoinCompanyModal :isdarkmode="isdarkmode" /></v-col></v-row></v-container
+                ></v-col>
+              </v-card>
 
               <!-- </v-sheet> -->
             </v-dialog>
@@ -952,6 +990,21 @@
           </v-col>
         </v-row>
       </div>
+      <h1
+        :class="[
+          'splash-title',
+          'header-title',
+          'text-center',
+          { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
+        ]"
+      >
+        How to use <span class="text-primary">Work</span
+        ><span class="text-secondary">Wise</span> Central
+      </h1>
+      <v-row justify="end" style="height: 500px">
+        <Tutorial />
+      </v-row>
+      <v-footer> </v-footer>
     </v-main>
   </v-app>
 </template>
@@ -960,16 +1013,15 @@ import RegisterCompanyModal from './RegisterCompanyModal.vue'
 import JoinCompanyModal from './JoinCompanyModal.vue'
 import axios from 'axios'
 import { defineComponent } from 'vue'
-import VueDatePicker from '@vuepic/vue-datepicker'
-import '@vuepic/vue-datepicker/dist/main.css'
 import Toast from 'primevue/toast'
+import Tutorial from '../home/help/tutorial/Tutorial.vue'
 
 export default defineComponent({
   components: {
     RegisterCompanyModal,
     JoinCompanyModal,
-    VueDatePicker,
-    Toast
+    Toast,
+    Tutorial
   },
   data: () => ({
     localUrl: 'http://localhost:3000/',
