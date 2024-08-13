@@ -366,4 +366,8 @@ export class UsersService {
 
     return false;
   }
+
+  getFullName(user: User): string {
+    return user.personalInfo.firstName + ' ' + user.personalInfo.surname;
+  }
 }
