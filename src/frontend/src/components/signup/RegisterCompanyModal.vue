@@ -510,30 +510,31 @@ export default {
       axios
         .post(apiURL + 'company/create', this.req_obj, config)
         .then((res) => {
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Company registered successfully',
-            life: 3000
-          })
-          console.log(res.data.data.id)
+          console.log(res)
 
           localStorage['currentCompany'] = res.data.data._id
           // localStorage['employeeId'] = res.data.data.employees[0]
-
-          console.log(res.data)
+          console.log('Request to create company worked')
+          console.log(res)
 
           axios
             .get(apiURL + 'company/id/' + res.data.data._id, config)
             .then((res) => {
               console.log(res.data.data)
               localStorage['employeeId'] = res.data.data.employees[0]
+              this.$toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Company registered successfully',
+                life: 3000
+              })
+
+              console.log('Request to set EmployeeId was successfull')
+              this.$router.push({ name: 'dashboard' })
             })
             .catch((error) => {
               console.log('Error occured when storing employeeId: ', error)
             })
-
-          this.$router.push('/dashboard')
         })
         .catch((res) => {
           this.$toast.add({
