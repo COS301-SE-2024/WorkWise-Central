@@ -209,7 +209,11 @@ export default defineComponent({
       ],
 
       titleRules: [(v: string) => !!v || 'Title is required'],
-      dateRules: [(v: string) => !!v || 'Date is required']
+      dateRules: [
+        (v: string) => !!v || 'Date is required',
+        (v: string) => v <= new Date().toISOString().substr(0, 10) || 'Date cannot be in the past',
+        (v: string) => v >= new Date().toISOString().substr(0, 10) || 'Date cannot be in the future'
+      ]
     }
   },
   methods: {

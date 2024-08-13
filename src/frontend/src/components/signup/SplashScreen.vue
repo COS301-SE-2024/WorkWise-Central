@@ -109,7 +109,7 @@
 
           <v-col>
             <v-dialog
-              :opacity="0.1"
+              :opacity="0"
               v-model="loginDialog"
               max-width="400"
               @click:outside="resetFields"
@@ -214,7 +214,7 @@
               </v-card>
             </v-dialog>
             <!-- Forgot Password -->
-            <v-dialog :opacity="0.1" v-model="forgotPasswordDialog" max-width="400">
+            <v-dialog :opacity="0" v-model="forgotPasswordDialog" max-width="400">
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -256,7 +256,7 @@
                 </v-col>
               </v-sheet>
             </v-dialog>
-            <v-dialog :opacity="0.1" v-model="OTPDialog" max-width="400">
+            <v-dialog :opacity="0" v-model="OTPDialog" max-width="400">
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -295,7 +295,7 @@
 
             <!-- Flow 1 -->
             <v-dialog
-              :opacity="0.1"
+              :opacity="0"
               v-model="signupDialog"
               max-width="400"
               @click:outside="resetFields"
@@ -400,7 +400,7 @@
             </v-dialog>
             <!-- Flow 2 -->
             <v-dialog
-              :opacity="0.1"
+              :opacity="0"
               v-model="signup1Dialog"
               max-width="400"
               @click:outside="resetFields"
@@ -483,7 +483,7 @@
             </v-dialog>
             <v-col xs="3" align-self="center">
               <v-dialog
-                :opacity="0.1"
+                :opacity="0"
                 v-model="signupUsernameDialog"
                 max-width="400"
                 @click:outside="resetFields"
@@ -569,7 +569,7 @@
             </v-col>
             <!-- Flow 3 -->
             <v-dialog
-              :opacity="0.1"
+              :opacity="0"
               v-model="signup2Dialog"
               max-width="400"
               @click:outside="resetFields"
@@ -594,14 +594,15 @@
                       <v-row align="center"
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Date of Birth</label
-                          ><VueDatePicker
+                          ><v-text-field
                             :label="birthDate ? '' : 'Select your date of birth'"
                             v-model="birthDate"
                             :rules="date_rules"
                             :format="format"
+                            type="date"
                             required
                             :flow="flow"
-                          ></VueDatePicker
+                          ></v-text-field
                         ></v-col>
                       </v-row>
                       <v-row algin="center"
@@ -673,7 +674,7 @@
             </v-dialog>
             <!-- Flow 4 -->
             <v-dialog
-              :opacity="0.1"
+              :opacity="0"
               v-model="signupAddressDialog"
               max-width="1000"
               @click:outside="resetFields"
@@ -815,7 +816,7 @@
             </v-dialog>
             <!-- Flow 5 -->
             <v-dialog
-              :opacity="0.1"
+              :opacity="0"
               v-model="signup3Dialog"
               max-width="700"
               style="height: 750px"
@@ -1168,7 +1169,7 @@ export default defineComponent({
     ],
     date_rules: [
       (v) => !!v || 'Date of birth is required',
-      (v) => v.length >= 3 || 'Date of birth must be at least 3 characters'
+      (v) => v <= new Date().toISOString().substr(0, 10) || 'Date of birth must be before today'
     ],
     company_name_rules: [
       (v) => !!v || 'Company name is required',
@@ -1208,7 +1209,8 @@ export default defineComponent({
       (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers',
       (v) => /^0[0-9]*$/.test(v) || 'Phone number must start with 0'
     ],
-    company_logo_rules: [(v) => !!v || 'Profile picture is required']
+    company_logo_rules: [(v) => !!v || 'Profile picture is required'],
+    provinceRules: [(v) => !!v || 'Province name is required']
   }),
 
   methods: {
@@ -1225,6 +1227,7 @@ export default defineComponent({
       this.username = ''
       this.password = ''
       this.confirm_password = ''
+      this.signupPassword = ''
       this.gender = ''
       this.language = ''
       this.street = ''
