@@ -710,10 +710,10 @@ export class JobService {
     /// User exists, company exists, check for duplicates
     //  const protectedStatuses = ['No status', 'Archive', 'To Do', 'In Progress', 'Complete'];
 
-    const noStatus = new JobStatus('No Status', '#FFFFFF', companyId);
-    const archive = new JobStatus('Archive', '#b3b0b0', companyId);
-    const toDo = new JobStatus('To Do', '#9f4e22', companyId);
-    const inProgress = new JobStatus('In Progress', '#31864d', companyId);
+    const noStatus = new JobStatus('No Status', '#f67103', companyId);
+    const archive = new JobStatus('Archive', '#f8a701', companyId);
+    const toDo = new JobStatus('To Do', '#304ffe', companyId);
+    const inProgress = new JobStatus('In Progress', '#7a00ff', companyId);
     const complete = new JobStatus('Complete', '#23d923', companyId);
 
     const arr: JobStatus[] = [noStatus, archive, toDo, inProgress, complete];
