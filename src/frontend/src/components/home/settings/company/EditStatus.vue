@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <Toast/>
+    <Toast />
     <v-card>
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
@@ -77,15 +77,27 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn
-            @click="updateStatus"
-            :disabled="!formIsValid"
-            color="success"
-            rounded="md"
-            variant="text"
-            >Create Tag</v-btn
+          <v-container
+            ><v-row
+              ><v-col cols="12" lg="6"
+                ><v-btn
+                  @click="updateStatus"
+                  :disabled="!formIsValid"
+                  color="success"
+                  rounded="md"
+                  variant="text"
+                  block
+                >
+                  <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save
+                  Status</v-btn
+                ></v-col
+              ><v-col cols="12" lg="6"
+                ><v-btn color="error" rounded="md" variant="text" @click="close" block>
+                  <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon> Cancel
+                </v-btn></v-col
+              ></v-row
+            ></v-container
           >
-          <v-btn color="error" rounded="md" variant="text" @click="close"> Cancel </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

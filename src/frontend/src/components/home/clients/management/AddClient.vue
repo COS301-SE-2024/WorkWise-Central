@@ -231,7 +231,7 @@
               order-sm="first"
             >
               <v-btn color="error" width="100%" height="35" variant="text" @click="close">
-                Cancel <v-icon icon="fa: fa-solid fa-ban" color="error" end></v-icon>
+                <v-icon icon="fa: fa-solid fa-ban" color="error" start></v-icon> Cancel
               </v-btn>
             </v-col>
             <v-col
@@ -254,8 +254,9 @@
                 variant="text"
                 color="success"
                 :disabled="click_create_client"
-                >Create Client <v-icon icon="fa: fa-solid fa-user-plus" color="success" end></v-icon
-              ></v-btn>
+                ><v-icon icon="fa: fa-solid fa-user-plus" color="success" start></v-icon>Create
+                Client
+              </v-btn>
             </v-col>
           </v-row>
         </v-form>
@@ -456,8 +457,8 @@ export default defineComponent({
             life: 3000
           })
           setTimeout(() => {
-          window.location.reload()
-        }, 3000)
+            window.location.reload()
+          }, 3000)
         })
         .catch((res) => {
           console.log('Client creation failed')

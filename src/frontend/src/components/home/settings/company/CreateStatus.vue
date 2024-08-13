@@ -11,7 +11,7 @@
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-         variant="elevated"
+        variant="elevated"
         color="secondary"
         v-bind="activatorProps"
         block
@@ -38,10 +38,24 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-btn @click="createStatus" :disabled="!formIsValid" color="success" variant="text"
-          >Create Status</v-btn
-        >
-        <v-btn color="error" rounded="md" variant="text" @click="close"> Cancel </v-btn>
+        <v-container>
+          <v-row>
+            <v-col cols="12" lg="6">
+              <v-btn
+                @click="createStatus"
+                :disabled="!formIsValid"
+                color="success"
+                rounded="md"
+                variant="text"
+                block
+                ><v-icon icon="fa: fa-solid fa-plus" color="success"></v-icon>Create Status</v-btn
+              >
+            </v-col>
+            <v-col cols="12" lg="6">
+              <v-btn color="error" rounded="md" variant="text" @click="close" block><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon> Cancel </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>

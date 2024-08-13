@@ -43,7 +43,7 @@ import EditStatus from '@/components/home/settings/company/EditStatus.vue'
 import TeamView from '@/views/home/teams/TeamView.vue'
 import CompanyRequestView from '@/views/home/company/CompanyRequestView.vue'
 import InvitesCompanyView from '@/views/home/company/InvitesCompanyView.vue'
-
+import NewPasswordView from '@/views/signup/NewPasswordView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -332,6 +332,11 @@ const router = createRouter({
       path: '/company-invites',
       name: 'company-invites',
       component: InvitesCompanyView
+    },
+    {
+      path: '/new-password',
+      name: 'new-password',
+      component: NewPasswordView
     }
   ]
 })
@@ -339,10 +344,10 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const accessToken = localStorage.getItem('access_token')
 
-  if (to.name !== 'splash' && !accessToken) {
+  if (to.name !== 'splash' && !accessToken && to.name !== 'new-password') {
     next({ name: 'splash' }) // Redirect to splash page if no access_token and trying to access a protected route
   } else if (to.name === 'splash' && accessToken) {
-    next({ name: 'Protected' }) // Optional: Redirect to a protected route if already logged in and trying to access splash page
+    next({ name: 'dashboard' }) // Optional: Redirect to a protected route if already logged in and trying to access splash page
   } else {
     next() // Proceed to the route
   }

@@ -42,20 +42,18 @@
                 @click="deleteEmployee"
                 :loading="isDeleting"
                 block
-                >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
-              ></v-btn>
+                ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon
+                >Delete</v-btn
+              >
             </v-col>
             <v-col cols="12" lg="6">
-              <v-btn color="primary" variant="text" @click="clientDialog = false" block
-                >Cancel<v-icon
-                  icon="fa:fa-solid fa-cancel"
-                  end
-                  color="primary"
-                  size="small"
-                ></v-icon
-              ></v-btn>
-            </v-col> </v-row
-        ></v-container>
+              <v-btn color="secondary" variant="text" @click="clientDialog = false" block
+                ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
+                >Cancel</v-btn
+              >
+            </v-col>
+          </v-row></v-container
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>

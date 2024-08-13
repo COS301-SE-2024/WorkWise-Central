@@ -3,8 +3,8 @@
     <!-- Toolbar -->
     <v-app-bar :theme="isdarkmode ? 'themes.dark' : 'themes.light'" class="bg-background">
       <v-toolbar-title class="d-flex justify-start">
-        <v-label class="h4 text-primary">Work</v-label>
-        <v-label class="h4 text-secondary">Wise</v-label>
+        <v-label :class="'h4 text-primary'">Work</v-label>
+        <v-label :class="'h4 text-secondary'">Wise</v-label>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -13,20 +13,20 @@
         color="primary"
         dark
         @click="loginDialog = true"
-        rounded="xl"
+        rounded="md"
         variant="outlined"
         align-center
         justify-center
         class="my-3 text-center mr-4"
         size="large"
       >
-        Log in
+        Login
       </v-btn>
       <v-btn
         color="secondary"
         dark
         @click="signupDialog = true"
-        rounded="xl"
+        rounded="md"
         align-center
         variant="elevated"
         class="my-3 text-center"
@@ -42,12 +42,9 @@
     <v-main :theme="isdarkmode ? 'dark' : 'light'">
       <v-row style="height: 1000px">
         <!-- Left Half -->
-
         <v-col
           cols="12"
           lg="6"
-          md="6"
-          sm="6"
           align-self="center"
           order="last"
           order-lg="first"
@@ -85,7 +82,7 @@
                   size="large"
                   block
                 >
-                  Log in
+                  Login
                 </v-btn></v-col
               >
               <v-col cols="12" lg="6" order="first" order-lg="last">
@@ -95,13 +92,13 @@
                   @click="signupDialog = true"
                   rounded="md"
                   align-center
-                  variant="outlined"
+                  variant="elevated"
                   class="my-3 text-center"
                   width="50%"
                   block
                   size="large"
                 >
-                  Get Started
+                  Sign Up
                 </v-btn></v-col
               ></v-row
             ></v-container
@@ -401,7 +398,7 @@
                           variant="elevated"
                           color="secondary"
                           block
-                          >Log in</v-btn
+                          >Login</v-btn
                         >
                       </v-col></v-row
                     ></v-container
@@ -885,7 +882,7 @@
             <!-- Register Company Modal -->
 
             <p class="text-center h6" :theme="isdarkmode ? 'dark' : 'light'">
-              By clicking Continue to join or sign in, you agree to WorkWise Central's User
+              By clicking Continue to login or sign up, you agree to WorkWise Central's User
               Agreement, Privacy Policy, and Cookie Policy
             </p>
           </v-col>
@@ -893,17 +890,8 @@
 
         <!-- Right Half -->
 
-        <v-col
-          cols="12"
-          lg="6"
-          md="6"
-          sm="6"
-          order="first"
-          order-lg="last"
-          order-md="last"
-          order-sm="first"
-        >
-          <div class="w-full h-full background-image"></div>
+        <v-col cols="12" lg="6" order="first" order-lg="last" order-md="last" order-sm="first">
+          <div class="background-image pa-2"></div>
         </v-col>
       </v-row>
       <!-- <v-footer :theme="isdarkmode ? 'dark' : 'light'" class="bg-background">
@@ -1309,9 +1297,20 @@ export default defineComponent({
       this.loginDialog = false
       this.forgotPasswordDialog = true
     },
-    showOTP() {
-      this.forgotPasswordDialog = false
-      this.OTPDialog = true
+    async showOTP() {
+      const exist = await this.emailExist()
+      if (!exist) {
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Email does not exist',
+          life: 3000
+        })
+      } else {
+        this.forgotPasswordDialog = false
+        this.OTPDialog = true
+      }
+      this.$router.push({ name: 'new-password' })
     },
     format(date) {
       const day = date.getDate()

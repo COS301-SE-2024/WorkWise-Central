@@ -16,7 +16,7 @@
         >Edit</v-btn
       >
     </template>
-    <v-card>
+    <v-card  :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
       <v-form @submit.prevent="validateEdits">
         <v-card-title class="text-center">Edit Employee</v-card-title>
         <v-divider></v-divider>
@@ -95,13 +95,13 @@
                   type="submit"
                   block
                 >
-                  Save
                   <v-icon
                     icon="fa:fa-solid fa-floppy-disk"
-                    end
+                    start
                     color="success"
                     size="small"
                   ></v-icon>
+                  Save
                 </v-btn>
               </v-col>
               <v-col cols="12" lg="6">
@@ -115,10 +115,11 @@
                   @click="close"
                 >
                   <Toast />
-                  Cancel
-                  <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon>
-                </v-btn> </v-col
-            ></v-row>
+                  <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
+                  >Cancel
+                </v-btn>
+              </v-col></v-row
+            >
           </v-container>
         </v-card-actions>
       </v-form>

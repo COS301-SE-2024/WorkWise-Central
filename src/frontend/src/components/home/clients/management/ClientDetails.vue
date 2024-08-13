@@ -98,9 +98,10 @@
       <v-card-actions>
         <v-col>
           <v-btn color="error" width="100%" height="35" @click="close">
-            Close <v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon>
-          </v-btn> </v-col
-      ></v-card-actions>
+            <v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon> Close
+          </v-btn>
+        </v-col></v-card-actions
+      >
     </v-card>
   </v-dialog>
 </template>

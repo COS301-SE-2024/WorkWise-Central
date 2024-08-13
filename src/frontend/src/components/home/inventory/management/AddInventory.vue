@@ -85,18 +85,18 @@
           ><v-row justify="end"
             ><v-col cols="12" lg="6">
               <v-btn @click="close" color="error" block
+                ><v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
                 >Cancel
-                <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon></v-btn
-            ></v-col>
+              </v-btn></v-col
+            >
             <v-col cols="12" lg="6">
               <v-btn @click="createInventoryItem" color="success" :disabled="!valid" block
-                >Create<v-icon
-                  icon="fa:fa-solid fa-plus"
-                  color="success"
-                  size="small"
-                  end
-                ></v-icon></v-btn></v-col></v-row
-        ></v-container>
+                ><v-icon icon="fa:fa-solid fa-plus" color="success" size="small" start></v-icon
+                >Create</v-btn
+              ></v-col
+            ></v-row
+          ></v-container
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
