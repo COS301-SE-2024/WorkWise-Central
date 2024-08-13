@@ -15,13 +15,15 @@
               <label class="font-weight-light" style="font-size: 20px"> First Name</label
               ><v-spacer></v-spacer
               ><small class="text-caption" style="font-size: 12px">{{
-                clientDetails.firstName
+                clientDetails.firstName ? clientDetails.firstName : ''
               }}</small></v-col
             >
             <v-col cols="6">
               <label class="font-weight-light" style="font-size: 20px"> Surname</label
               ><v-spacer></v-spacer
-              ><small class="text-caption">{{ clientDetails.lastName }}</small></v-col
+              ><small class="text-caption">{{
+                clientDetails.lastName ? clientDetails.lastName : ''
+              }}</small></v-col
             >
           </v-row>
 
@@ -31,13 +33,15 @@
               <label class="font-weight-light" style="font-size: 20px">Phone Number</label
               ><v-spacer></v-spacer
               ><small class="text-caption">{{
-                clientDetails.contactInfo.phoneNumber
+                clientDetails.contactInfo.phoneNumber ? clientDetails.contactInfo.phoneNumber : ''
               }}</small></v-col
             >
             <v-col cols="6">
               <label class="font-weight-light" style="font-size: 20px"> Email</label
               ><v-spacer></v-spacer
-              ><small class="text-caption">{{ clientDetails.contactInfo.email }}</small></v-col
+              ><small class="text-caption">{{
+                clientDetails.contactInfo.email ? clientDetails.contactInfo.email : ''
+              }}</small></v-col
             >
           </v-row>
           <v-divider></v-divider>
@@ -46,20 +50,35 @@
               <label class="font-weight-light justify-center" style="font-size: 20px">
                 Address</label
               ><v-spacer></v-spacer
-              ><small class="text-caption">Street: {{ clientDetails.address.street }}</small>
+              ><small class="text-caption"
+                >Street:
+                {{ clientDetails.address.street ? clientDetails.address.street : '' }}</small
+              >
               <br />
-              <small class="text-caption">Suburb: {{ clientDetails.address.suburb }}</small>
+              <small class="text-caption"
+                >Suburb:
+                {{ clientDetails.address.suburb ? clientDetails.address.suburb : '' }}</small
+              >
             </v-col>
             <v-col cols="6">
-              <br /><small class="text-caption">City: {{ clientDetails.address.city }}</small>
               <br /><small class="text-caption"
-                >Postal Code: {{ clientDetails.address.postalCode }}</small
+                >City: {{ clientDetails.address.city ? clientDetails.address.city : '' }}</small
               >
               <br /><small class="text-caption"
-                >Complex/Building: {{ clientDetails.address.complex }}</small
+                >Postal Code:
+                {{
+                  clientDetails.address.postalCode ? clientDetails.address.postalCode : ''
+                }}</small
+              >
+              <br /><small class="text-caption"
+                >Complex/Building:
+                {{ clientDetails.address.complex ? clientDetails.address.complex : '' }}</small
               >
               <br /><small class="text-caption">
-                House Number: {{ clientDetails.address.houseNumber }}</small
+                House Number:
+                {{
+                  clientDetails.address.houseNumber ? clientDetails.address.houseNumber : ''
+                }}</small
               ></v-col
             >
           </v-row>
@@ -95,12 +114,23 @@ export default defineComponent({
   data() {
     return {
       clientDialog: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      localClientDetails: this.deepCopy(this.clientDetails)
     }
   },
   methods: {
     close() {
       this.clientDialog = false
+    },
+    checkIfNull(value) {
+      if (value === null) {
+        return 'None'
+      } else {
+        return value
+      }
+    },
+    deepCopy(obj) {
+      return JSON.parse(JSON.stringify(obj))
     }
   }
 })

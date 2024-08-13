@@ -178,13 +178,11 @@ export default defineComponent({
               :to="{ name: item.routeName }"
               :value="item.title"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
-                :class="isVisible === true ? '' : 'mr-4'"
+                :class="isVisible === true ? '' : 'ml-4'"
               ></v-icon
               ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
             >
@@ -206,13 +204,11 @@ export default defineComponent({
               :to="{ name: item.routeName }"
               :value="item.title"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
-                :class="isVisible === true ? '' : 'mr-4'"
+                :class="isVisible === true ? '' : 'ml-4'"
               ></v-icon
               ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
             >
@@ -235,13 +231,11 @@ export default defineComponent({
               :to="{ name: item.routeName }"
               :value="item.title"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
-                :class="isVisible === true ? '' : 'mr-4'"
+                :class="isVisible === true ? '' : 'ml-4'"
               ></v-icon
               ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
             >
@@ -263,13 +257,11 @@ export default defineComponent({
               :to="{ name: item.routeName }"
               :value="item.title"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
-                :class="isVisible === true ? '' : 'mr-4'"
+                :class="isVisible === true ? '' : 'ml-4'"
               ></v-icon
               ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
             >
@@ -284,20 +276,18 @@ export default defineComponent({
                 title="Inventory"
                 class="list-item-large"
               ></v-list-item>
-            </template>
+            </template>c
             <v-list-item
               v-for="(item, i) in inventorySubItems"
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
-                :class="isVisible === true ? '' : 'mr-4'"
+                :class="isVisible === true ? '' : 'ml-4'"
               ></v-icon
               ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
             >
@@ -319,13 +309,11 @@ export default defineComponent({
               :to="{ name: item.routeName }"
               :value="item.title"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
-                :class="isVisible === true ? '' : 'mr-4'"
+                :class="isVisible === true ? '' : 'ml-4'"
               ></v-icon
               ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
             >
@@ -347,13 +335,11 @@ export default defineComponent({
               :to="{ name: item.routeName }"
               :value="item.title"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
-                :class="isVisible === true ? '' : 'mr-4'"
+                :class="isVisible === true ? '' : 'ml-4'"
               ></v-icon
               ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
             >
@@ -376,13 +362,11 @@ export default defineComponent({
               :to="{ name: item.routeName }"
               :value="item.title"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
               ><v-icon
                 :icon="item.icon"
                 size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
                 start
-                :class="isVisible === true ? '' : 'mr-4'"
+                :class="isVisible === true ? '' : 'ml-4'"
               ></v-icon
               ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
             >

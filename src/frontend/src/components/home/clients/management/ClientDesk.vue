@@ -149,10 +149,26 @@ export default defineComponent({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     dummy: '',
-    selectedItem: {},
+    selectedItem: {
+      firstName: ' ',
+      lastName: ' ',
+      preferredLanguage: ' ',
+      contactInfo: {
+        phoneNumber: ' ',
+        email: ' '
+      },
+      address: {
+        street: ' ',
+        province: ' ',
+        suburb: ' ',
+        city: ' ',
+        postalCode: ' ',
+        complex: ' ',
+        houseNumber: ' '
+      }
+    },
     windowWidth: window.innerWidth,
-    selectedItemName: '',
-    selectedItemSurname: '',
+
     isdarkmode: true,
     clientDialog: false,
     deleteDialog: false,
@@ -262,11 +278,51 @@ export default defineComponent({
     getRowClass(index) {
       return index % 2 === 0 ? 'primary-row' : 'secondary-row'
     },
+    setSelectItemProperties(item) {
+      if (item.firstName != null) {
+        this.selectedItem.firstName = item.firstName
+      }
+      if (item.lastName != null) {
+        // corrected from surname to lastName
+        this.selectedItem.lastName = item.lastName
+      }
+      if (item.preferredLanguage != null) {
+        this.selectedItem.preferredLanguage = item.preferredLanguage
+      }
+      if (item.contactInfo != null) {
+        if (item.contactInfo.phoneNumber != null) {
+          this.selectedItem.contactInfo.phoneNumber = item.contactInfo.phoneNumber
+        }
+        if (item.contactInfo.email != null) {
+          this.selectedItem.contactInfo.email = item.contactInfo.email
+        }
+      }
+      if (item.address != null) {
+        if (item.address.street != null) {
+          this.selectedItem.address.street = item.address.street
+        }
+        if (item.address.province != null) {
+          this.selectedItem.address.province = item.address.province
+        }
+        if (item.address.suburb != null) {
+          this.selectedItem.address.suburb = item.address.suburb
+        }
+        if (item.address.city != null) {
+          this.selectedItem.address.city = item.address.city
+        }
+        if (item.address.postalCode != null) {
+          this.selectedItem.address.postalCode = item.address.postalCode
+        }
+        if (item.address.complex != null) {
+          this.selectedItem.address.complex = item.address.complex
+        }
+        if (item.address.houseNumber != null) {
+          this.selectedItem.address.houseNumber = item.address.houseNumber
+        }
+      }
+    },
     selectItem(item) {
-      this.selectedItem = item
-      this.selectedItemName = item.firstName
-      console.log(this.selectedItemName)
-      this.selectedItemSurname = item.lastName
+      this.setSelectItemProperties(item)
       for (let i = 0; i < this.clientDetails.length; i++) {
         if (this.clientDetails[i] === item) {
           this.selectedItemId = this.clientIds[i]
