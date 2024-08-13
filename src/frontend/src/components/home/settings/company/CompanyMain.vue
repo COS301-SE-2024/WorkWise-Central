@@ -39,7 +39,7 @@
                 width="100%"
                 height="35"
                 variant="elevated"
-                @click="switchCompany(company)"
+                @click="switchCompany(companyName)"
                 block
                 >Save</v-btn
               ></v-col
@@ -80,6 +80,7 @@ export default defineComponent({
       search: '',
       company: '',
       companyName: '',
+      currentCompanyID: '',
       joinedCompanies: [],
       joinedCompaniesNames: [],
       joinedCompaniesIds: [],
@@ -106,20 +107,38 @@ export default defineComponent({
       this.companyDialog = false
     },
     switchCompany(companyName) {
-      const index = this.joinedCompaniesNames.indexOf(companyName)
-      const companyId = this.joinedCompaniesIds[index]
-      const employeeId = this.joinedCompaniesEmployeeIds[index]
+      console.log(companyName)
+      const companyId = this.findCompany(companyName)
+      const employeeId = this.findEmployeeId(companyName)
+      console.log('CompanyId', companyId)
+      console.log('EmployeeId', employeeId)
       this.$emit('switchCompany', companyId)
       this.$toast.add({
         severity: 'success',
         summary: 'Success',
-        detail: `Switched to ${companyName}`
+        detail: `Switched to ${companyName}`,
+        life: 3000
       })
       this.companyName = companyName
       this.company = companyName
       localStorage.setItem('currentCompany', companyId)
-      localStorage.setItem('currentEmployee', employeeId)
+      localStorage.setItem('employeeId', employeeId)
       this.companyDialog = false
+      window.location.reload()
+    },
+    findCompany(companyName) {
+      for (let i = 0; i < this.joinedCompanies.length; i++) {
+        if (this.joinedCompaniesNames[i] === companyName) {
+          return this.joinedCompaniesIds[i]
+        }
+      }
+    },
+    findEmployeeId(companyName) {
+      for (let i = 0; i < this.joinedCompanies.length; i++) {
+        if (this.joinedCompaniesNames[i] === companyName) {
+          return this.joinedCompaniesEmployeeIds[i]
+        }
+      }
     },
     async getCompanies() {
       const config = {
@@ -142,13 +161,12 @@ export default defineComponent({
             this.joinedCompaniesEmployeeIds.push(company.employeeId)
           })
           const currentCompanyID = localStorage.getItem('currentCompany')
-          console.log(this.joinedCompanies.length)
-          console.log(this.joinedCompanies[0].companyId)
           console.log(currentCompanyID)
           for (let i = 0; i < this.joinedCompanies.length; i++) {
-            if (this.joinedCompaniesIds[i] == currentCompanyID) {
+            if (this.joinedCompaniesIds[i] === currentCompanyID) {
+              console.log(this.joinedCompaniesIds[i])
               this.companyName = this.joinedCompaniesNames[i]
-              console.log(this.companyName)
+              break
             } else {
               this.companyName = 'No company selected'
               console.log(this.companyName)
@@ -172,13 +190,13 @@ export default defineComponent({
       return localAvailable ? this.localUrl : this.remoteUrl
     },
     async getCurrentCompanyName() {
-      const currentCompanyID = localStorage.getItem('currentCompany')
-      console.log(this.joinedCompanies.length)
+      this.currentCompanyID = localStorage.getItem('currentCompany')
+      console.log(this.currentCompanyID)
     }
   },
   mounted() {
+    // this.getCurrentCompanyName()
     this.getCompanies()
-    this.getCurrentCompanyName()
   }
 })
 </script>

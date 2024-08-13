@@ -1,7 +1,9 @@
 <template>
   <v-container>
+    <Toast />
     <v-card>
       <v-card-title class="text-primary font-bold text-center">Priorities</v-card-title>
+      <CreatePriority />
       <v-card-text>
         <v-data-table
           :headers="headers"
@@ -22,11 +24,11 @@
                 </v-btn>
               </template>
               <v-list>
-                <!-- <v-list-item @click="selectItem(item)">
+                <v-list-item @click="selectItem(item)">
                   <v-btn color="success" block @click="dialog = true"
                     ><v-icon icon="fa:fa-solid fa-pencil" color="success"></v-icon>Edit</v-btn
                   >
-                </v-list-item> -->
+                </v-list-item>
                 <v-list-item @click="selectItem(item)">
                   <DeletePriority :tag-id="selectedItem._id" />
                 </v-list-item>
@@ -44,7 +46,7 @@
       persistent
     >
       <v-card>
-        <v-card-title> Edit Tag</v-card-title>
+        <v-card-title> Edit Priorities</v-card-title>
         <v-card-text>
           <v-form v-model="formIsValid" ref="form">
             <v-label>Tag Name</v-label>
@@ -80,7 +82,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import DeletePriority from './DeletePriority.vue'
+import ColorPicker from 'primevue/colorpicker'
+import CreatePriority from './CreatePriority.vue'
 import axios from 'axios'
+import Toast from 'primevue/toast'
 export default defineComponent({
   data: () => ({
     headers: [
@@ -118,7 +123,10 @@ export default defineComponent({
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   components: {
-    DeletePriority
+    DeletePriority,
+    ColorPicker,
+    Toast,
+    CreatePriority
   },
   methods: {
     getRowProps(index: number) {
@@ -161,6 +169,7 @@ export default defineComponent({
     },
     selectItem(item: any) {
       console.log(item)
+      this.selectedItem = item
     },
     async updatePrority() {
       const config = {
@@ -171,19 +180,18 @@ export default defineComponent({
       }
       const apiURL = await this.getRequestUrl()
       axios
-        .put(
-          `${apiURL}job/tags/p/${localStorage.getItem('currentCompany')}`,
-          this.selectedItem,
-          config
-        )
+        .patch(`${apiURL}job/tags/p/`, this.selectedItem, config)
         .then((res) => {
           console.log(res)
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Priority updated successfully',
+            detail: 'Status updated',
             life: 3000
           })
+          setTimeout(() => {
+            window.location.reload()
+          }, 3000)
           this.dialog = false
         })
         .catch((err) => {

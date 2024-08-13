@@ -43,7 +43,6 @@
                 <v-text-field
                   v-model="description"
                   color="secondary"
-                  :rules="descriptionRules"
                   required
                   hide-details="auto"
                 ></v-text-field></v-col
@@ -55,7 +54,6 @@
                 <v-text-field
                   v-model="costPrice"
                   color="secondary"
-                  :rules="costPriceRules"
                   required
                   hide-details="auto"
                 ></v-text-field
@@ -65,7 +63,6 @@
                 <v-text-field
                   v-model="currentStockLevel"
                   color="secondary"
-                  :rules="currentStockLevelRules"
                   required
                   hide-details="auto"
                 ></v-text-field
@@ -75,7 +72,6 @@
                 <v-text-field
                   v-model="reorderLevel"
                   color="secondary"
-                  :rules="reorderLevelRules"
                   required
                 ></v-text-field></v-col
             ></v-row>

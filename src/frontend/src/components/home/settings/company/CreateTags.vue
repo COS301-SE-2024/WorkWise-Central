@@ -73,8 +73,7 @@ export default defineComponent({
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       formIsValid: false,
       nameRules: [(v: string) => !!v || 'Name is required'],
-      labelRules: [(v: string) => !!v || 'Label is required'],
-      colorRules: [(v: string) => !!v || 'Color is required']
+      labelRules: [(v: string) => !!v || 'Label is required']
     }
   },
   components: {

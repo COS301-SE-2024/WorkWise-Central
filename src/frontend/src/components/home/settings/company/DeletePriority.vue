@@ -93,16 +93,17 @@ export default defineComponent({
       axios
         .delete(`${apiURL}job/tags/p`, config)
         .then(() => {
-          this.isDeleting = true
-          setTimeout(() => {
-            this.isDeleting = false
-            this.deleteDialog = false
-            this.$toast.add({
+          this.isDeleting = true 
+          this.$toast.add({
               severity: 'success',
               summary: 'Successful',
               detail: 'Priority Deleted',
               life: 3000
             })
+          setTimeout(() => {
+            this.isDeleting = false
+            this.deleteDialog = false
+
           }, 1500)
           window.location.reload()
         })

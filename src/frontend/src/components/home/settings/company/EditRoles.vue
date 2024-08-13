@@ -24,23 +24,30 @@
               :items="permissions"
               label="Permissions"
               chips
+              :disabled="item.roleName === 'Owner' || item.roleName === 'Worker'"
               multiple
               variant="default"
             ></v-select>
           </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu>
-              <template v-slot:activator="{ props }" v-if="item.roleName !== 'Owner'">
-                <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)">
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  rounded="xl"
+                  variant="plain"
+                  v-bind="props"
+                  @click="selectItem(item)"
+                  :disabled="item.roleName === 'Owner' || item.roleName === 'Worker'"
+                >
                   <v-icon color="primary">mdi-dots-horizontal</v-icon>
                 </v-btn>
               </template>
               <v-list>
-                <!-- <v-list-item @click="selectItem(item)">
+                <v-list-item @click="selectItem(item)">
                   <v-btn color="success" block @click="dialog = true"
                     ><v-icon icon="fa:fa-solid fa-pencil" color="success"></v-icon>Edit</v-btn
                   >
-                </v-list-item> -->
+                </v-list-item>
                 <v-list-item @click="selectItem(item)">
                   <DeleteRole :tag-id="item._id" />
                 </v-list-item>
@@ -78,6 +85,7 @@ import axios from 'axios'
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import DeleteRole from './DeleteRole.vue'
+import ColorPicker from 'primevue/colorpicker'
 export default defineComponent({
   props: {
     Company: Object,
@@ -85,7 +93,9 @@ export default defineComponent({
   },
   components: {
     Toast,
-    DeleteRole
+    DeleteRole,
+    ColorPicker,
+    Toast
   },
   data: () => ({
     dialog: false,

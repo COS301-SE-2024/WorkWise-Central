@@ -1,4 +1,5 @@
 <template>
+  <Toast position="top-center" />
   <v-dialog
     v-model="addDialog"
     max-height="800"
@@ -38,7 +39,6 @@
               ><v-text-field
                 v-model="localEditedItem.description"
                 color="secondary"
-                :rules="descriptionRules"
                 required
               ></v-text-field
             ></v-col>
@@ -48,7 +48,6 @@
                 ><v-text-field
                   v-model="localEditedItem.costPrice"
                   color="secondary"
-                  :rules="costPriceRules"
                   required
                 ></v-text-field
               ></v-col>
@@ -57,7 +56,6 @@
                 ><v-text-field
                   v-model="localEditedItem.currentStockLevel"
                   color="secondary"
-                  :rules="currentStockLevelRules"
                   required
                 ></v-text-field
               ></v-col>
@@ -66,7 +64,6 @@
                 ><v-text-field
                   v-model="localEditedItem.reorderLevel"
                   color="secondary"
-                  :rules="reorderLevelRules"
                   required
                 ></v-text-field></v-col
             ></v-row>
@@ -82,7 +79,7 @@
                 >Cancel</v-btn
               ></v-col
             >
-            <Toast position="top-center" />
+
             <v-col cols="12" lg="6">
               <v-btn @click="createInventoryItem" color="success" :disabled="!valid" block
                 ><v-icon
@@ -207,6 +204,9 @@ export default {
           life: 3000
         })
         this.addDialog = false
+        setTimeout(() => {
+          window.location.reload()
+        }, 3000)
       } catch (error) {
         console.error(error)
         this.$toast.add({

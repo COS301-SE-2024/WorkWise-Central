@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <Toast/>
     <v-card>
       <v-card-title class="text-primary font-bold text-center">Statuses</v-card-title>
       <v-card-text>
@@ -11,8 +12,8 @@
           :row-props="getRowProps"
           :header-props="{ class: 'bg-secondary h5 ' }"
         >
-        <template v-slot:[`item.colour`]="{ item }">
-            <v-chip :color="item.colour" >{{ item.colour }}</v-chip>
+          <template v-slot:[`item.colour`]="{ item }">
+            <v-chip :color="item.colour">{{ item.colour }}</v-chip>
           </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu>
@@ -22,11 +23,11 @@
                 </v-btn>
               </template>
               <v-list>
-                <!-- <v-list-item @click="selectItem(item)">
+                <v-list-item @click="selectItem(item)">
                   <v-btn color="success" block @click="dialog = true"
                     ><v-icon icon="fa:fa-solid fa-pencil" color="success"></v-icon>Edit</v-btn
                   >
-                </v-list-item> -->
+                </v-list-item>
                 <v-list-item @click="selectItem(item)">
                   <DeleteStatus :statusId="selectedItem._id" />
                 </v-list-item>
@@ -44,7 +45,7 @@
       persistent
     >
       <v-card>
-        <v-card-title> Edit</v-card-title>
+        <v-card-title> Edit Statuses</v-card-title>
         <v-card-text>
           <v-form v-model="formIsValid" ref="form">
             <v-label>Tag Name</v-label>
@@ -80,7 +81,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import ColorPicker from 'primevue/colorpicker'
 import DeleteStatus from './DeleteStatus.vue'
+import Toast from 'primevue/toast'
 interface Status {
   status: string
   colour: string
@@ -117,7 +120,8 @@ export default defineComponent({
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   components: {
-    DeleteStatus
+    DeleteStatus,
+    ColorPicker
   },
   methods: {
     getRowProps(index: number) {
@@ -155,6 +159,7 @@ export default defineComponent({
     },
     selectItem(item: any) {
       console.log(item)
+      this.selectedItem = item
     },
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
@@ -172,6 +177,15 @@ export default defineComponent({
         .patch(`${apiURL}job/status`, this.selectedItem, config)
         .then((response) => {
           console.log(response)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Status updated',
+            life: 3000
+          })
+          setTimeout(() => {
+            window.location.reload()
+          }, 3000)
         })
         .catch((error) => {
           console.log(error)

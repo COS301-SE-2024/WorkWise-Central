@@ -34,6 +34,7 @@
             v-model="priority.priorityLevel"
             label="Priority Level"
             required
+            :rules="priorityLevelRules"
             outlined
             type="number"
           ></v-text-field>
@@ -81,7 +82,7 @@ export default defineComponent({
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       formIsValid: false,
       labelRules: [(v: string) => !!v || 'Label is required'],
-      colorRules: [(v: string) => !!v || 'Color is required']
+      priorityLevelRules: [(v: number) => !!v || 'Priority Level is required']
     }
   },
   components: {

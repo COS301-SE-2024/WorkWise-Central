@@ -32,7 +32,7 @@ const jobSubItems = ref([
 ])
 
 const inventorySubItems = ref([
-  { title: 'Management', icon: 'fa: fa-solid fa-warehouse', routeName: 'inventory' },
+  { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'inventory' },
   {
     title: 'Inventory Center',
     icon: 'fa: fa-solid fa-bars-progress',
@@ -177,15 +177,10 @@ export default defineComponent({
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                start
-                :class="isVisible === true ? '' : 'ml-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
@@ -203,15 +198,10 @@ export default defineComponent({
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                start
-                :class="isVisible === true ? '' : 'ml-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
@@ -230,15 +220,10 @@ export default defineComponent({
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                start
-                :class="isVisible === true ? '' : 'ml-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
@@ -256,15 +241,10 @@ export default defineComponent({
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                start
-                :class="isVisible === true ? '' : 'ml-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
@@ -276,21 +256,16 @@ export default defineComponent({
                 title="Inventory"
                 class="list-item-large"
               ></v-list-item>
-            </template>c
+            </template>
             <v-list-item
               v-for="(item, i) in inventorySubItems"
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                start
-                :class="isVisible === true ? '' : 'ml-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
@@ -308,15 +283,10 @@ export default defineComponent({
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                start
-                :class="isVisible === true ? '' : 'ml-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
@@ -334,15 +304,10 @@ export default defineComponent({
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                start
-                :class="isVisible === true ? '' : 'ml-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
 
@@ -361,15 +326,10 @@ export default defineComponent({
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                start
-                :class="isVisible === true ? '' : 'ml-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
       </v-navigation-drawer>

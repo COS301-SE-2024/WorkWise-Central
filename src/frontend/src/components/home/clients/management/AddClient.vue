@@ -455,7 +455,9 @@ export default defineComponent({
             detail: 'Client created successfully',
             life: 3000
           })
+          setTimeout(() => {
           window.location.reload()
+        }, 3000)
         })
         .catch((res) => {
           console.log('Client creation failed')

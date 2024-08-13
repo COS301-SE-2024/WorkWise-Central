@@ -99,6 +99,10 @@ export default defineComponent({
           detail: 'Inventory deleted successfully',
           life: 3000
         })
+        this.deleteDialog = false
+        setTimeout(() => {
+          window.location.reload()
+        }, 3000)
       } catch (error) {
         console.error(error)
       }

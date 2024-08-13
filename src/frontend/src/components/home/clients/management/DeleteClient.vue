@@ -116,7 +116,9 @@ export default {
 
         this.clientDialog = false
         this.$emit('clientDeleted')
-        window.location.reload() // Consider removing this for SPA behavior
+        setTimeout(() => {
+          window.location.reload()
+        }, 3000) // Consider removing this for SPA behavior
         // Consider using a more SPA-friendly way of updating the view instead of reloading
       } catch (error) {
         console.error('Error deleting client:', error)

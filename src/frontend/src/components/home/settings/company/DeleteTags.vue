@@ -87,17 +87,19 @@ export default defineComponent({
         .delete(`${apiURL}job/tags`, config)
         .then(() => {
           this.isDeleting = true
+
+          this.isDeleting = false
+          this.deleteDialog = false
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Tag Deleted',
+            life: 3000
+          })
+
           setTimeout(() => {
-            this.isDeleting = false
-            this.deleteDialog = false
-            this.$toast.add({
-              severity: 'success',
-              summary: 'Successful',
-              detail: 'Tag Deleted',
-              life: 3000
-            })
-          }, 1500)
-          window.location.reload()
+            window.location.reload()
+          }, 2000)
         })
         .catch((err) => {
           console.error(err)

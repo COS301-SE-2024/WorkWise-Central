@@ -272,11 +272,25 @@ export default {
           config
         )
         console.log(response)
-        alert('Client updated')
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Client updated successfully',
+          life: 3000
+        })
+        setTimeout(() => {
+          window.location.reload()
+        }, 3000)
+        this.clientDialog = false
         return true
       } catch (error) {
         console.error('Error updating client:', error)
-        alert('Error updating client')
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'An error occurred while updating the client',
+          life: 3000
+        })
         return false
       } finally {
         this.clientDialog = false

@@ -16,11 +16,6 @@
         <EditStatus v-if="currentSettings === 'Status'" />
       </v-col>
       <v-col cols="12" lg="4" order="first" order-lg="last">
-        <CreatePriority v-if="currentSettings === 'Priority'" />
-        <CreateRoles v-if="currentSettings === 'Roles'" />
-        <CreateStatus v-if="currentSettings === 'Status'" />
-        <CreateTags v-if="currentSettings === 'Tags'" />
-
         <v-card class="elevation-0"
           ><v-list class="bg-cardColor">
             <v-list-item-group>
