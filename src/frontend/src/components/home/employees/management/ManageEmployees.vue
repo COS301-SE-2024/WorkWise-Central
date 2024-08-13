@@ -27,7 +27,8 @@ c
                         >Employee Details</v-label
                       >&nbsp;
                     </v-col>
-                    <v-col cols="12" md="4" sm="6" xs="12">s
+                    <v-col cols="12" md="4" sm="6" xs="12"
+                      >s
                       <v-text-field
                         v-model="search"
                         density="compact"
@@ -116,10 +117,7 @@ c
                             >
                             <v-list>
                               <v-list-item
-                                ><EmployeeDetails
-                                  v-model="clientDialog"
-                                  colors="colors"
-                                  :EmployeeDetails="selectedItem"
+                                ><EmployeeDetails colors="colors" :EmployeeDetails="selectedItem"
                               /></v-list-item>
 
                               <v-list-item>

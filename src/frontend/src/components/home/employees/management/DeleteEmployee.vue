@@ -33,14 +33,29 @@
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <Toast />
-        <v-btn color="primary" variant="text" @click="clientDialog = false"
-          >Cancel<v-icon icon="fa:fa-solid fa-cancel" end color="primary" size="small"></v-icon
-        ></v-btn>
-        <v-btn color="error" variant="text" :loading="isDeleting" @click="deleteEmployee"
-          >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
-        ></v-btn>
+        <v-container>
+          <v-row>
+            <v-col cols="12" lg="6">
+              <v-btn
+                color="error"
+                variant="text"
+                @click="deleteEmployee"
+                :loading="isDeleting"
+                block
+                >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
+              ></v-btn>
+            </v-col>
+            <v-col cols="12" lg="6">
+              <v-btn color="primary" variant="text" @click="clientDialog = false" block
+                >Cancel<v-icon
+                  icon="fa:fa-solid fa-cancel"
+                  end
+                  color="primary"
+                  size="small"
+                ></v-icon
+              ></v-btn>
+            </v-col> </v-row
+        ></v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>

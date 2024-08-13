@@ -17,7 +17,7 @@
                       style="font-size: 15px; font-family: Nunito, sans-serif; font-weight: lighter"
                       height="auto"
                       width="auto"
-                    >Job Details
+                      >Job Details
                     </v-label>
                   </v-col>
 
@@ -131,23 +131,56 @@
                         <v-list class="bg-background">
                           <v-list-item>
                             <v-btn color="success" @click="openViewDialog(selectedJob)">
-                              <v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>View
+                              <v-icon
+                                icon="fa:fa-solid fa-eye"
+                                start
+                                color="success"
+                                size="small"
+                              ></v-icon
+                              >View
                             </v-btn>
-                            <v-dialog v-model="viewJobDialogVisible" :max-height="800" :max-width="1000">
-                              <ViewJob :passedInJob="selectedJob" @close="viewJobDialogVisible = false"></ViewJob>
+                            <v-dialog
+                              v-model="viewJobDialogVisible"
+                              :max-height="800"
+                              :max-width="1000"
+                            >
+                              <ViewJob
+                                :passedInJob="selectedJob"
+                                @close="viewJobDialogVisible = false"
+                              ></ViewJob>
                             </v-dialog>
                           </v-list-item>
                           <v-list-item>
                             <v-btn color="warning" @click="openJobCardDialog(selectedJob)">
-                              <v-icon icon="fa:fa-solid fa-pencil" start color="warning" size="small"></v-icon>Edit
+                              <v-icon
+                                icon="fa:fa-solid fa-pencil"
+                                start
+                                color="warning"
+                                size="small"
+                              ></v-icon
+                              >Edit
                             </v-btn>
-                            <v-dialog v-model="viewManagerJobCardVisible" :max-height="800" :max-width="1000">
-                              <ManagerJobCard :passedInJob="selectedJob" @close="viewManagerJobCardVisible= false"></ManagerJobCard>
+                            <v-dialog
+                              v-model="viewManagerJobCardVisible"
+                              :max-height="800"
+                              :max-width="1000"
+                            >
+                              <ManagerJobCard
+                                :passedInJob="selectedJob"
+                                @close="viewManagerJobCardVisible = false"
+                              ></ManagerJobCard>
                             </v-dialog>
                           </v-list-item>
                           <v-list-item>
                             <v-btn color="error" @click="deleteDialog = true"
-                            ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn>
+                              ><v-icon
+                                icon="fa:fa-solid fa-trash"
+                                start
+                                color="error"
+                                size="small"
+                              ></v-icon
+                              >Delete</v-btn
+                            >
                           </v-list-item>
                         </v-list>
                       </v-menu>
@@ -168,9 +201,16 @@
         </v-card-title>
         <v-card-text> Are you sure you want to delete this job? </v-card-text>
         <v-card-actions>
-          <v-btn color="error" @click="confirmDelete">Confirm</v-btn>
-          <v-btn @click="deleteDialog = false"
-          >Cancel</v-btn>
+          <v-container
+            ><v-row
+              ><v-col cols="12" lg="6">
+                <v-btn color="error" @click="confirmDelete" block>Confirm</v-btn></v-col
+              >
+              <v-col cols="12" lg="6">
+                <v-btn @click="deleteDialog = false" block>Cancel</v-btn></v-col
+              ></v-row
+            ></v-container
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -343,7 +383,7 @@ const openJobCardDialog = (job: any) => {
   viewManagerJobCardVisible.value = true
 }
 
-const openViewDialog = (job : any) => {
+const openViewDialog = (job: any) => {
   selectedJob.value = job
   viewJobDialogVisible.value = true
 }

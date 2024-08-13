@@ -83,34 +83,43 @@
           ></v-row>
         </v-card-item>
         <v-card-actions>
-          <v-row>
-            <v-col>
-              <Toast />
-              <v-btn
-                color="success"
-                rounded="md"
-                width="100%"
-                height="35"
-                variant="text"
-                type="submit"
-              >
-                Save
-                <v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon>
-              </v-btn>
-            </v-col>
-            <v-col>
-              <v-btn
-                color="error"
-                rounded="md"
-                width="100%"
-                height="35"
-                variant="text"
-                @click="close"
-              >
-                <Toast />
-                Cancel <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon>
-              </v-btn> </v-col
-          ></v-row>
+          <v-container>
+            <v-row>
+              <v-col cols="12" lg="6">
+                <v-btn
+                  color="success"
+                  rounded="md"
+                  width="100%"
+                  height="35"
+                  variant="text"
+                  type="submit"
+                  block
+                >
+                  Save
+                  <v-icon
+                    icon="fa:fa-solid fa-floppy-disk"
+                    end
+                    color="success"
+                    size="small"
+                  ></v-icon>
+                </v-btn>
+              </v-col>
+              <v-col cols="12" lg="6">
+                <v-btn
+                  color="error"
+                  rounded="md"
+                  width="100%"
+                  height="35"
+                  variant="text"
+                  block
+                  @click="close"
+                >
+                  <Toast />
+                  Cancel
+                  <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon>
+                </v-btn> </v-col
+            ></v-row>
+          </v-container>
         </v-card-actions>
       </v-form>
     </v-card>
