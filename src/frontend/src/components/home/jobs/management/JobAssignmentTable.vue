@@ -174,8 +174,8 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <Toast position="bottom-center"/>
   </v-container>
-  <Toast />
 </template>
 
 <script setup lang="ts">
@@ -441,10 +441,17 @@ const confirmDelete = async () => {
     }
     const apiUrl = await getRequestUrl()
     try {
-      await axios.delete(`${apiUrl}job/${selectedJob.value._id}`, config)
+      const response = await axios.delete(`${apiUrl}job/full/${selectedJob.value._id}`, config)
       detailedJobData.value = detailedJobData.value.filter(
         (job) => job._id !== selectedJob.value!._id
       )
+      console.log('Deleted job:', response)
+      toast.add({
+        severity: 'success',
+        summary: 'Job deleted successfully',
+        detail: 'Job deleted successfully',
+        life: 3000
+      })
       closeDialog()
     } catch (error) {
       toast.add({

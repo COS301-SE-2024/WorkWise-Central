@@ -88,6 +88,7 @@
                           <v-select
                             label="Select"
                             :items="assignableEmployees"
+                            item-value="text"
                             multiple
                             variant="solo"
                             hide-details

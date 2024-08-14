@@ -139,8 +139,6 @@ const openImageOverlay = (index) => {
   imageOverlay.value = true
 }
 
-const uploadImage = (index) => {
-}
 
 const changeImage = (index) => {
   images.value[index].dialog = false

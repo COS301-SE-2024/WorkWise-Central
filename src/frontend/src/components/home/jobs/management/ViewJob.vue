@@ -376,6 +376,9 @@ const changeImage = async (event: Event) => {
       setCardBackgroundColor(imageSrc.value)
       const apiUrl = getRequestUrl()
       try {
+        console.log('Image src value:', imageSrc.value)
+        console.log('Passed in job:', props.passedInJob)
+        console.log('Job id:', props.passedInJob._id)
         await axios.patch(`${apiUrl}job/update/${props.passedInJob._id}`, {
           coverImage: imageSrc.value
         }, config)
