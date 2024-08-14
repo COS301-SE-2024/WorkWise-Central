@@ -83,7 +83,9 @@ export class JobService {
     const createdJob = new Job(createJobDto);
     //createdJob.history.push(new History(`${user.} ${}`));
     console.log('createdJob', createdJob);
-    return await this.jobRepository.save(createdJob);
+    const result = await this.jobRepository.save(createdJob);
+    await this.assignEmployeesWithoutValidation(result._id, result.assignedEmployees.employeeIds);
+    return result;
   }
 
   async getJobById(identifier: Types.ObjectId): Promise<FlattenMaps<Job> & { _id: Types.ObjectId }> {
@@ -463,6 +465,37 @@ export class JobService {
 
       if (!isInJob) {
         await this.jobRepository.assignEmployee(employeeId, jobAssignGroupDto.jobId);
+        pass++;
+      }
+    }
+    return new jobAssignResultDto({
+      passed: pass,
+      failed: total - pass,
+    });
+  }
+
+  async assignEmployeesWithoutValidation(jobId: Types.ObjectId, employeesToAssignIds: Types.ObjectId[]) {
+    ///Validation
+    const job = await this.getJobById(jobId);
+    for (const employeeId of employeesToAssignIds) {
+      const exists = await this.employeeService.employeeExists(employeeId);
+      if (!exists) {
+        throw new NotFoundException('Employee not found');
+      }
+    }
+    ///
+    const total = employeesToAssignIds.length;
+
+    //remove duplicates
+    employeesToAssignIds = [...new Set(employeesToAssignIds)];
+    let pass: number = 0;
+
+    //const result = [];
+    for (const employeeId of employeesToAssignIds) {
+      const isInJob = job.assignedEmployees.employeeIds.some((e) => e._id.toString() === employeeId.toString());
+
+      if (!isInJob) {
+        await this.jobRepository.assignEmployee(employeeId, jobId);
         pass++;
       }
     }

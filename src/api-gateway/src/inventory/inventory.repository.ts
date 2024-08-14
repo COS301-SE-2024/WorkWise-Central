@@ -135,4 +135,20 @@ export class InventoryRepository {
     }
     return true;
   }
+
+  async addAttachments(id: Types.ObjectId, newUrls: string[]) {
+    return await this.InventoryModel.findOneAndUpdate(
+      {
+        $and: [
+          { _id: id },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      },
+      { $push: { images: newUrls }, updatedAt: Date.now() },
+    )
+      .lean()
+      .exec();
+  }
 }
