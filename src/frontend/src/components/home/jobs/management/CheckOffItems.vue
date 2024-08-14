@@ -102,6 +102,7 @@
                             <v-btn
                               color="success"
                               prepend-icon="fa: fa-solid fa-save"
+                              @click="createEmployeeAssignmentObjects()"
                               >Save</v-btn
                             >
                           </v-defaults-provider>
@@ -313,9 +314,9 @@ const createEmployeeAssignmentObjects = () => {
   const itemId = 'someItemId' // Replace with actual item ID
   const employeeId = localStorage.getItem('employeeId') || ''
 
-  const assignments = selectedEmployees.value.map((employeeToAssignId: string) => ({
+  const assignments = selectedEmployees.value.map((selectedEmployee: { text: string, value: string }) => ({
     employeeId,
-    employeeToAssignId,
+    employeeToAssignId: selectedEmployee.value,
     jobId,
     taskId,
     itemId
