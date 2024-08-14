@@ -30,6 +30,10 @@
               <i class="fas fa-building"></i> Manage Companies
             </v-btn>
           </router-link>
+          <v-divider class="my-3"></v-divider>
+          <router-link to="/company-invites" class="text-decoration-none">
+            <v-btn variant="text" width="100%"> <i class="fas fa-envelope"></i> Invites </v-btn>
+          </router-link>
 
           <v-divider class="my-3"></v-divider>
 
@@ -113,10 +117,8 @@ const getUserData = async () => {
 
 const logout = () => {
   // Perform logout logic, then redirect to login page
-  localStorage.removeItem('access_token')
-  localStorage.removeItem('id')
-  localStorage.removeItem('email')
-  router.push('/')
+  localStorage.clear()
+  router.replace('/')
 }
 
 onMounted(() => {

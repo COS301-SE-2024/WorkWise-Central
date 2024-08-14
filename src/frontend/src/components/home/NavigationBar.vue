@@ -20,24 +20,24 @@ const clientSubItems = ref([
 ])
 
 const employeeSubItems = ref([
-  { title: 'Employee Center', icon: 'fa: fa-solid fa-circle-user', routeName: 'employee-center' },
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'manageremployees' },
-  { title: 'Team Workload', icon: 'fa: fa-solid fa-users', routeName: 'teamwork-load' }
+  { title: 'Employee Center', icon: 'fa: fa-solid fa-circle-user', routeName: 'employee-center' },
+  { title: 'Teams', icon: 'fa: fa-solid fa-users', routeName: 'teams' }
 ])
-
+const teamSubItems = ref([{ title: 'Management' }])
 const jobSubItems = ref([
-  { title: 'Job Center', icon: 'fa: fa-solid fa-list-check', routeName: 'task-center' },
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'jobAssignmentView' },
+  { title: 'Job Center', icon: 'fa: fa-solid fa-list-check', routeName: 'task-center' },
   { title: 'Job Board', icon: 'fa: fa-solid fa-table', routeName: 'backlog' }
 ])
 
 const inventorySubItems = ref([
+  { title: 'Management', icon: 'fa: fa-solid fa-warehouse', routeName: 'inventory' },
   {
     title: 'Inventory Center',
     icon: 'fa: fa-solid fa-bars-progress',
     routeName: 'inventory-center'
   },
-  { title: 'Management', icon: 'fa: fa-solid fa-warehouse', routeName: 'inventory' },
   { title: 'Reports', icon: 'fa: fa-solid fa-chart-simple', routeName: 'report-view' },
   {
     title: 'Inventory Stock Take',
@@ -48,15 +48,20 @@ const inventorySubItems = ref([
 
 const inboxSubItems = ref([
   { title: 'Notifications', icon: 'fa: fa-solid fa-bell', routeName: 'notifications' },
-  { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: 'messages' },
-  { title: 'Appointments', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' }
+  // { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: 'messages' },
+  { title: 'Meetings', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' }
 ])
 
 const supportSubItems = ref([
   { title: 'Support', icon: 'fa: fa-solid fa-headset', routeName: 'support' }
 ])
 const moreSubItems = ref([
-  { title: 'Company Settings', icon: 'fa: fa-solid fa-cog', routeName: 'companySettingsView' }
+  { title: 'Company Settings', icon: 'fa: fa-solid fa-cog', routeName: 'companySettingsView' },
+  {
+    title: 'Company Requests',
+    icon: 'fa: fa-solid fa-envelope',
+    routeName: 'company-requests'
+  }
 ])
 </script>
 

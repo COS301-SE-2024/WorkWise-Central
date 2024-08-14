@@ -168,12 +168,20 @@ export default defineUserConfig({
           link: '/demo3/guide/',
         },
         {
+          text: 'Manuals',
+          link: '/demo3/manuals/',
+          children: [
+            { text: 'User Manual', link: '/demo3/manuals/userManual.md' },
+            { text: 'Technical installation Manual', link: '/demo3/manuals/installationManual.md' },
+          ],
+        },
+        {
           text: 'Design Documentation',
           link: '/demo3/designDocs/',
-          children: [
-            { text: 'Wireframes', link: '/demo3/designDocs/wireframes.md' },
-            { text: 'Style document', link: '/demo3/designDocs/styles.md' },
-          ],
+          // children: [
+          //   { text: 'Wireframes', link: '/demo3/designDocs/wireframes.md' },
+          //   { text: 'Style document', link: '/demo3/designDocs/styles.md' },
+          // ],
         },
         {
           text: 'Business Documentation',
@@ -185,7 +193,6 @@ export default defineUserConfig({
             { text: 'Functional requirement specifications', link: '/demo3/businessDocs/functionalRequirements.md' },
             { text: 'Service contract', link: '/demo3/businessDocs/serviceContract.md' },
             { text: 'Market Research', link: '/demo3/businessDocs/marketResearch.md' },
-            { text: 'User Manual', link: '/demo3/businessDocs/userManual.md' },
           ],
         },
         {
@@ -207,9 +214,9 @@ export default defineUserConfig({
             { text: 'Database functional requirements', link: '/demo3/databaseDocs/dbFunctionalRequirements.md' },
             { text: 'Database non-functional requirements', link: '/demo3/databaseDocs/dbNonFunctionalRequirements.md' },
             { text: 'Constraints', link: '/demo3/databaseDocs/constraints.md' },
-            { text: 'Data Model', link: '/demo3/databaseDocs/dataModel.md' },
-            { text: 'ER Diagram', link: '/demo3/databaseDocs/ERDiagrams.md' },
+            // { text: 'Data Model', link: '/demo3/databaseDocs/dataModel.md' },
             { text: 'Database Schema', link: '/demo3/databaseDocs/dbSchema.md' },
+            { text: 'Diagram', link: '/demo3/databaseDocs/ERDiagrams.md' },
           ],
         },
         {

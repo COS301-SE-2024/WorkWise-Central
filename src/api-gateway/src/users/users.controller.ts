@@ -33,9 +33,28 @@ import mongoose, { Types } from 'mongoose';
 import { UserAllResponseDto, UserResponseDto } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { UserEmailVerificationDTO } from './dto/user-validation.dto';
-import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
+import { BooleanResponseDto, FileResponseDto } from '../shared/dtos/api-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserAllResponseDetailedDto } from './dto/user-response.dto';
+//import { GetImageValidator } from '../utils/Custom Validators/GetImageValidator';
+import { BodyInterceptor } from '../utils/Custom Interceptors/body.interceptor';
+// import { diskStorage } from 'multer';
+// import e from 'express';
+// import firebase from 'firebase/compat';
+// import Error = firebase.auth.Error;
+// import { v4 as uuidv4 } from 'uuid';
+// import * as path from 'path';
+
+/*const storage = {
+  storage: diskStorage({
+    destination: './uploads',
+    filename(req: e.Request, file: Express.Multer.File, callback: (error: Error | null, filename: string) => void) {
+      const fileName: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+      const extension: string = path.parse(file.originalname).ext;
+      callback(null, `${fileName}${extension}`);
+    },
+  }),
+};*/
 
 const className = 'User';
 
@@ -70,8 +89,7 @@ export class UsersController {
   })
   @ApiOperation({
     summary: `Create a new ${className}`,
-    description: 'Further details',
-    security: [],
+    description: 'You may also pass an image for their profile Picture',
   })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({
@@ -80,13 +98,34 @@ export class UsersController {
     description: `The access token and ${className}'s Id used for querying. 
     currentCompany Will also be added soon*`,
   })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('profilePicture'), BodyInterceptor)
   @Post('/create')
   async create(@Body() createUserDto: CreateUserDto): Promise<CreateUserResponseDto> {
-    console.log('createUserController');
+    console.log('createUserController', createUserDto);
     try {
-      return await this.usersService.create(createUserDto);
+      return await this.usersService.create(createUserDto, createUserDto.profilePicture);
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
+    }
+  }
+
+  @ApiOperation({
+    summary: `Upload a new User's Profile Picture, and receive the image url`,
+  })
+  @ApiOkResponse({
+    type: FileResponseDto,
+    description: `The URL of the image`,
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UpdateProfilePicDto })
+  @UseInterceptors(FileInterceptor('profilePicture'))
+  @Post('/newUser/profilePic')
+  async uploadProfilePic(@UploadedFile(/*GetImageValidator()*/) file: Express.Multer.File): Promise<FileResponseDto> {
+    try {
+      return this.usersService.uploadProfilePic(file);
+    } catch (e) {
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -262,7 +301,7 @@ export class UsersController {
   @ApiBody({ type: UpdateProfilePicDto })
   @UseInterceptors(FileInterceptor('profilePicture'))
   @Patch('/update/profilePic')
-  async updateProfilePic(@Headers() headers: any, @UploadedFile() file: Express.Multer.File) {
+  async updateProfilePic(@Headers() headers: any, @UploadedFile(/*GetImageValidator()*/) file: Express.Multer.File) {
     try {
       const userId = this.extractUserId(headers);
       return {
@@ -272,6 +311,22 @@ export class UsersController {
       throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  /*  @Post('upload')
+  @UseInterceptors(FileInterceptor('file', storage))
+  @ApiConsumes('multipart/form-data')
+  async uploadFile(@Headers() headers: any, @UploadedFile('file') file: Express.Multer.File) {
+    console.log(file);
+    //return { data: file.filename };
+    try {
+      const userId = this.extractUserId(headers);
+      return {
+        data: await this.usersService.updateProfilePic(userId, file),
+      };
+    } catch (e) {
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }*/
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')

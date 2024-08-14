@@ -46,7 +46,6 @@ import {
   Company,
   CompanyAllResponseDto,
   CompanyDetailedResponseDto,
-  CompanyEmployeesResponseDto,
   CompanyResponseDto,
 } from './entities/company.entity';
 import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
@@ -106,24 +105,18 @@ export class CompanyController {
   @ApiBody({ type: AddUserToCompanyDto })
   @ApiOkResponse({ type: BooleanResponseDto })
   @Post('/add')
-  async addEmployee(
-    @Body()
-    body: {
-      currentEmployeeId: Types.ObjectId;
-      addUserDto: AddUserToCompanyDto;
-    },
-  ) {
+  async addEmployee(@Body() addUserDto: AddUserToCompanyDto) {
     // const currentEmployee = await this.employeeService.findById(
     //   body.currentEmployeeId,
     // );
     // if (currentEmployee.role.permissionSuite.includes('add new employees')) {
-    //TODO: Figure out if this enpoint needs role based access
-    const arr = [body.addUserDto.adminId, body.addUserDto.currentCompany];
-    if (body.addUserDto.roleId) arr.push(body.addUserDto.roleId);
+    //TODO: Figure out if this endpoint needs role based access
+    const arr = [addUserDto.adminId, addUserDto.currentCompany];
+    if (addUserDto.roleId) arr.push(addUserDto.roleId);
     validateObjectIds(arr);
 
     try {
-      return { data: await this.companyService.addEmployee(body.addUserDto) };
+      return { data: await this.companyService.addEmployee(addUserDto) };
     } catch (Error) {
       throw new HttpException('Internal server error', HttpStatus.CONFLICT);
     }
@@ -160,68 +153,6 @@ export class CompanyController {
     try {
       return { data: await this.companyService.getAllCompanies() };
     } catch (Error) {
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  @UseGuards(AuthGuard) //Need to add authorization
-  @ApiOperation({ summary: `Get all employees in ${className}` })
-  @ApiOkResponse({
-    type: CompanyEmployeesResponseDto,
-    description: `The mongodb object of the ${className}, with an _id attribute`,
-  })
-  @ApiParam({
-    name: 'cid',
-    description: `The _id attribute of the ${className}`,
-  })
-  @Get('/all/employees/:cid')
-  async getAllEmployeesInCompany(
-    @Param('cid') cid: string,
-    // @Body() body: { currentEmployeeId: Types.ObjectId },
-  ) {
-    // console.log('In getAllEmployeesInCompany');
-    // console.log('body.currentEmployeeId: ', body.currentEmployeeId);
-    // const currentEmployee = await this.employeeService.findById(
-    //   body.currentEmployeeId,
-    // );
-    // console.log('Current Employee:', currentEmployee);
-    // if (currentEmployee.role.permissionSuite.includes('view all employees')) {
-    //   validateObjectId(cid);
-    //   const objId = new Types.ObjectId(cid);
-    //   try {
-    //     return { data: await this.companyService.getAllEmployees(objId) };
-    //   } catch (Error) {
-    //     throw new HttpException(
-    //       'Something went wrong',
-    //       HttpStatus.INTERNAL_SERVER_ERROR,
-    //     );
-    //   }
-    // } else if (
-    //   currentEmployee.role.permissionSuite.includes('view employees under me')
-    // ) {
-    //   validateObjectId(cid);
-    //   try {
-    //     return {
-    //       data: await this.companyService.getAllEmployeeUnderMe(
-    //         body.currentEmployeeId,
-    //       ),
-    //     };
-    //   } catch (Error) {
-    //     throw new HttpException(
-    //       'Something went wrong',
-    //       HttpStatus.INTERNAL_SERVER_ERROR,
-    //     );
-    //   }
-    // } else {
-    //   throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-    // }
-    //TODO: Please remove since this is a duplicate of the endpoint that exists in employee.controller.ts
-    validateObjectId(cid);
-    const objId = new Types.ObjectId(cid);
-    try {
-      return { data: await this.companyService.getAllEmployees(objId) };
-    } catch (Error) {
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
       throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -403,7 +334,6 @@ export class CompanyController {
   @ApiOperation({
     summary: `Delete an Employee from a company using their 'Id'`,
     description: `You send the Employee _id, and then they get deleted if the id is valid.`,
-    security: [],
   })
   @ApiOkResponse({
     type: BooleanResponseDto,
@@ -411,17 +341,60 @@ export class CompanyController {
   })
   @ApiBody({
     type: DeleteEmployeeFromCompanyDto,
-    description: '',
   })
   @Delete('/emp')
-  async removeEmployee(@Headers() headers: any, @Body() deleteEmployeeDto: DeleteEmployeeFromCompanyDto) {
-    // //TODO: potentially remove the endpoint since there is one in employee.controller.ts
+  async removeEmployee(
+    @Headers() headers: any,
+
+    @Query('adminId') adminId: Types.ObjectId,
+    @Query('companyId') companyId: Types.ObjectId,
+    @Query('employeeToDeleteId') employeeToDeleteId: Types.ObjectId,
+  ) {
     try {
-      const userId = extractUserId(this.jwtService, headers);
-      await this.companyService.deleteEmployee(userId, deleteEmployeeDto);
-      return { data: true };
+      validateObjectId(adminId, 'employee');
+      validateObjectId(companyId, 'company');
+      validateObjectId(employeeToDeleteId, 'employeeToDelete');
     } catch (e) {
-      throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    const deleteEmployeeDto: DeleteEmployeeFromCompanyDto = new DeleteEmployeeFromCompanyDto(
+      adminId,
+      companyId,
+      employeeToDeleteId,
+    );
+    //await this.companyService.deleteEmployee(userId, deleteEmployeeDto); //TODO: Use with cascading delete
+    const userId = extractUserId(this.jwtService, headers);
+    const currentEmployee = await this.employeeService.findById(deleteEmployeeDto.adminId);
+    if (currentEmployee.role.permissionSuite.includes('remove any employees')) {
+      let data;
+      try {
+        data = await this.employeeService.remove(deleteEmployeeDto.employeeToDeleteId);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+
+      if (data === false) {
+        throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+      return { data: data };
+    } else if (currentEmployee.role.permissionSuite.includes('remove employees under me')) {
+      let data;
+      try {
+        data = await this.employeeService.removeUnderMe(
+          userId,
+          deleteEmployeeDto.employeeToDeleteId,
+          deleteEmployeeDto.adminId,
+        );
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+
+      if (data === false) {
+        throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
 

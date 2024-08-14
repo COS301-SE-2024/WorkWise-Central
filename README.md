@@ -18,13 +18,6 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-## Table of Contents
-[Project Description](#project-description) <br>
-[Demo Video](#demo-video) <br>
-[Functional Requirements (SRS)](#functional-requirements-srs) <br>
-[GitHub Project Board](#github-project-board) <br>
-[Team Members](#team-members) <br>
-
 ---
 
 </div>
@@ -51,9 +44,11 @@ By harnessing modern technology, WorkWise Central transforms business operations
 
 [Watch our demo video - Boolean Hooligans Demo2](https://drive.google.com/file/d/1z4bgTkJ-NSnSJUdBeRTijx4pgcQHyxTD/view?usp=drive_link)
 
-## Functional Requirements (SRS)
+[Watch our demo video - Boolean Hooligans Demo3](https://drive.google.com/file/d/1rWXOmel3e3uGDIRimC8dW93tZXijGoxv/view?usp=drive_link)
 
-[Read the full Functional Requirements (SRS) document](https://work-wise-central-1.vercel.app/)
+## Documentation 
+
+[Read the full documentation for this project](https://work-wise-central-1.vercel.app/)
 
 ## GitHub Project Board
 

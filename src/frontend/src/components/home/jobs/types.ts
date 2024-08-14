@@ -72,7 +72,7 @@ type User = {
 
 export type EmployeeJoined = {
   _id: string
-  roleId: Role
+  role: Role
   currentJobAssignments: any[]
   subordinates: any[]
   subordinateTeams: any[]
@@ -112,32 +112,25 @@ type RecordedDetails = {
   inventoryUsed: string[]
 }
 
-type Job = {
-  id: string
-  companyId: string
-  client: Client
-  assignedBy: string
-  status: 'Todo' | 'In Progress' | 'Done'
-  details: JobDetails
-  recordedDetails: RecordedDetails
-  taskList: string[]
-  comments: string[]
-  tags: string[]
-  createdAt: string
-  __v: number
-}
+// type Job = {
+//   id: string
+//   companyId: string
+//   client: Client
+//   assignedBy: string
+//   status: 'Todo' | 'In Progress' | 'Done'
+//   details: JobDetails
+//   recordedDetails: RecordedDetails
+//   taskList: string[]
+//   comments: string[]
+//   tags: string[]
+//   createdAt: string
+//   __v: number
+// }
 
 export type Card = {
   id: number
   title: string
   status: string
-}
-
-export type Column = {
-  id: number
-  status: string
-  color: string
-  cards: JobCardDataFormat[]
 }
 
 export type JobTag = {
@@ -164,13 +157,37 @@ export type JobStatuses = {
   __v: number
 }
 
+type Tag = {
+  _id: string
+  label: string
+  colour: string
+  companyId: string
+  __v: number
+}
+
+type Status = {
+  _id: string
+  status: string
+  colour: string
+  companyId: string
+  __v: number
+}
+
+type PriorityTag = {
+  _id: string
+  label: string
+  priorityLevel: number
+  colour: string
+  companyId: string
+  __v: number
+}
+
 export type JobCardDataFormat = {
   jobId: string
   heading: string
   jobDescription: string
   startDate: string
   endDate: string
-  status: string
   clientName: string
   street: string
   suburb: string
@@ -182,7 +199,152 @@ export type JobCardDataFormat = {
   inventoryUsed: string[]
   taskList: string[]
   comments: string[]
-  //tell hamza to add these new one here
-  priority: string
-  tags: string[]
+  tags: Tag[]
+  status: Status
+  priorityTag: PriorityTag
 }
+
+export type Job = {
+  _id: string
+  company: {
+    registrationNumber: string
+    vatNumber: string
+    name: string
+    type?: string
+    jobStatuses?: string[]
+    logo?: string
+    contactDetails: {
+      phoneNumber: string
+      email: string
+    }
+    address: {
+      street: string
+      province: string
+      suburb: string
+      city: string
+      postalCode: string
+      complex?: string
+      houseNumber?: string
+    }
+    private: boolean
+  }
+  clientId: {
+    registrationNumber?: string
+    details: {
+      firstName: string
+      lastName: string
+      preferredLanguage?: string
+      contactInfo: {
+        phoneNumber: string
+        email: string
+      }
+      address?: {
+        street: string
+        province: string
+        suburb: string
+        city: string
+        postalCode: string
+        complex?: string
+        houseNumber?: string
+      }
+      vatNumber?: string
+      companyId: string
+      idNumber?: string
+      type?: string
+    }
+    createdAt: string
+    updatedAt: string
+    deletedAt: string
+  }
+  assignedBy: {
+    roleId: string
+    superiorId?: string
+    subordinates?: string[]
+    subordinateTeams?: string[]
+    userId: string
+    userInfo: {
+      username: string
+      firstName: string
+      surname: string
+      displayName: string
+      displayImage?: string
+    }
+    companyId: string
+  }
+  assignedEmployees?: {
+    employeeIds?: string[]
+    teamIds?: string[]
+  }
+  status: string
+  tags?: string[]
+  priorityTag?: string
+  attachments: string[]
+  details: {
+    heading: string
+    description: string
+    address: {
+      street: string
+      province: string
+      suburb: string
+      city: string
+      postalCode: string
+      complex?: string
+      houseNumber?: string
+    }
+    startDate: string
+    endDate?: string
+  }
+  recordedDetails?: {
+    imagesTaken?: string[]
+    inventoryUsed?: {
+      inventoryItemId: string
+      inventoryItemName: string
+      quantityUsed: number
+    }[]
+  }
+  clientFeedback?: {
+    rating?: number
+    comment?: string
+  }
+  taskList: {
+    name: string
+    status: string
+    assignedEmployees?: {
+      roleId: string
+      superiorId?: string
+      subordinates?: string[]
+      subordinateTeams?: string[]
+      userId: string
+      userInfo: {
+        username: string
+        firstName: string
+        surname: string
+        displayName: string
+        displayImage?: string
+      }
+      companyId: string
+    }[]
+  }[]
+  comments: string[]
+  history?: {
+    event: string
+    timestamp: string
+  }[]
+  createdAt: string
+  updatedAt: string
+}
+
+export type Column = {
+  id: string
+  status: string
+  color: string
+  companyId: string
+  cards: JobCardDataFormat[]
+}
+
+// export type Column = {
+//   id: number
+//   status: string
+//   color: string
+//   cards: JobCardDataFormat[]
+// }

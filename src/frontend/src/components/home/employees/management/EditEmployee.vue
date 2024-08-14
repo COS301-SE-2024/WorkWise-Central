@@ -46,7 +46,7 @@
                 :items="roleItems"
                 item-value="roleId"
                 item-title="roleName"
-                v-model="req_obj.roleId"
+                v-model="req_obj.updateEmployeeDto.roleId"
                 bg-color="background"
                 variant="solo"
               ></v-select>
@@ -59,7 +59,7 @@
                 persistent-hint
                 @update:modelValue="selected_subordiates"
                 :items="subordinateItemNames"
-                v-model="req_obj.subordinates"
+                v-model="req_obj.updateEmployeeDto.subordinates"
                 item-value="employeeId"
                 item-title="name"
                 bg-color="background"
@@ -74,7 +74,7 @@
                 persistent-hint
                 @update:modelValue="selected_supirior"
                 :items="subordinateItemNames"
-                v-model="req_obj.superiorId"
+                v-model="req_obj.updateEmployeeDto.superiorId"
                 item-value="employeeId"
                 item-title="name"
                 bg-color="background"
@@ -151,10 +151,12 @@ export default {
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       req_obj: {
-        id: localStorage['employeeId'],
-        roleId: '',
-        subordinates: [] as string[],
-        superiorId: ''
+        currentEmployeeId: localStorage['employeeId'],
+        updateEmployeeDto: {
+          roleId: '',
+          subordinates: [] as string[],
+          superiorId: ''
+        }
       },
       nameRules: [
         (v: string) => !!v || 'Name is required',
@@ -177,15 +179,15 @@ export default {
   },
   methods: {
     selected_subordiates() {
-      console.log(this.req_obj.subordinates)
+      console.log(this.req_obj.updateEmployeeDto.subordinates)
       // console.log(this.editedItem)
     },
     selected_supirior() {
-      console.log(this.req_obj.superiorId)
+      console.log(this.req_obj.updateEmployeeDto.superiorId)
     },
     change_roles() {
       this.role_change = true
-      console.log(this.req_obj.roleId)
+      console.log(this.req_obj.updateEmployeeDto.roleId)
     },
     showlocalvalues() {
       console.log(this.localEditedItem)
@@ -195,13 +197,17 @@ export default {
       await this.savechanges()
     },
     async loadSubordinates() {
-      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
+        params: { currentEmployeeId: localStorage['employeeId'] }
+      }
       const apiURL = await this.getRequestUrl()
       try {
         const sub_res = await axios.get(
           apiURL + `employee/listOther/${localStorage.getItem('employeeId')}`,
           config
         )
+        console.log(sub_res)
         for (let i = 0; i < sub_res.data.data.length; i++) {
           const employee_details = await axios.get(
             apiURL + `employee/detailed/id/${sub_res.data.data[i]._id}`,
@@ -216,7 +222,7 @@ export default {
               ' ' +
               employee_details.data.data.userId.personalInfo.surname +
               ' (' +
-              employee_details.data.data.roleId.roleName +
+              employee_details.data.data.role.roleName +
               ')',
             employeeId: employee_details.data.data._id
           }
@@ -255,7 +261,7 @@ export default {
       console.log(this.req_obj)
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       let apiURL = await this.getRequestUrl()
-      console.log(this.localEditedItem)
+      console.log(this.localEditedItem.employeeId)
       axios
         .patch(apiURL + `employee/${this.localEditedItem.employeeId}`, this.req_obj, config)
         .then((res) => {

@@ -55,6 +55,8 @@
               placeholder="Enter the ID number of the client"
               v-model="req_obj.details.idNumber"
               required
+              hint="ID number must be 13 digits long"
+              persistent-hint
               :rules="south_africa_id_rules"
               hide-details="auto"
             ></v-text-field
@@ -269,6 +271,36 @@ const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 
+interface ContactInfo {
+  email: string
+  phoneNumber: string
+}
+
+interface Address {
+  street: string
+  suburb: string
+  city: string
+  province: string
+  postalCode: string
+  complex: string
+  houseNumber: string
+}
+
+interface Details {
+  firstName: string
+  lastName: string
+  preferredLanguage: string
+  contactInfo: ContactInfo
+  address: Address
+  companyId: string // Assuming localStorage['currentCompany'] is a string
+  idNumber?: string
+}
+
+interface RequestObject {
+  employeeId: string // Assuming localStorage['employeeId'] is a string
+  details: Details
+}
+
 export default defineComponent({
   name: 'RegisterCompanyModal ',
   components: {
@@ -311,8 +343,7 @@ export default defineComponent({
         /^[A-Za-z0-9_]+$/.test(v) || 'Username must be alphanumeric characters and underscores only'
     ],
     south_africa_id_rules: [
-      (v: string) => !!v || 'ID number is required',
-      (v: string) => v.length === 13 || 'ID number must be 13 digits long',
+      // (v: string) => v.length === 13 || 'ID number must be 13 digits long',
       (v: string) => /^\d{13}$/.test(v) || 'ID number must contain only digits',
       (v: string) => {
         const dob = v.slice(0, 6)
@@ -364,7 +395,7 @@ export default defineComponent({
         companyId: localStorage['currentCompany'],
         idNumber: ''
       }
-    }
+    } as RequestObject
   }),
   methods: {
     luhnCheck(val: string) {
@@ -408,6 +439,9 @@ export default defineComponent({
       }
     },
     async handleSubmission() {
+      if (this.req_obj.details.idNumber === '') {
+        delete this.req_obj.details.idNumber
+      }
       console.log(JSON.stringify(this.req_obj))
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()

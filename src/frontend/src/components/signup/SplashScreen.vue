@@ -503,7 +503,7 @@
                     >
                     <v-form ref="form" v-model="valid">
                       <v-row
-                        ><v-col align-self="center"
+                        ><v-col align-self="center" cols="12"
                           ><label style="font-size: 14px; font-weight: lighter">Username</label>
                           <v-combobox
                             :theme="isdarkmode ? 'dark' : 'light'"
@@ -515,7 +515,25 @@
                             variant="solo"
                             clearable
                             required
-                          ></v-combobox></v-col
+                          ></v-combobox
+                        ></v-col>
+                        <v-col cols="12">
+                          <small class="text-caption">Profile Picture</small>
+                          <v-file-input
+                            :theme="isdarkmode === true ? 'dark' : 'light'"
+                            variant="solo"
+                            accept="image/*"
+                            width="100%"
+                            placeholder="Profile Picture"
+                            @change="handleImageUpload"
+                            hint="Image size limit of  5MB"
+                            persistent-hint
+                            color="black"
+                            rounded="md"
+                            required
+                            :rules="company_logo_rules"
+                            data-testid="company-logo-file-input"
+                          ></v-file-input> </v-col
                       ></v-row>
                     </v-form>
                   </v-col>
@@ -1189,7 +1207,8 @@ export default defineComponent({
       (v) => (v.length >= 10 && v.length <= 10) || 'Phone number must be 10 characters',
       (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers',
       (v) => /^0[0-9]*$/.test(v) || 'Phone number must start with 0'
-    ]
+    ],
+    company_logo_rules: [(v) => !!v || 'Profile picture is required']
   }),
 
   methods: {
@@ -1246,6 +1265,22 @@ export default defineComponent({
 
       return `Selected date is ${day}/${month}/${year}`
     },
+    handleImageUpload(event) {
+      const target = event.target
+      if (target.files && target.files[0]) {
+        const file = target.files[0]
+        this.profilePicture = file
+        const reader = new FileReader()
+
+        reader.onload = (e) => {
+          if (e.target && typeof e.target.result === 'string') {
+            this.req_obj.logo = e.target.result
+          }
+        }
+        reader.readAsDataURL(file)
+      }
+      console.log(this.req_obj.logo)
+    },
     mounted() {
       setTimeout(() => {
         this.loading = false
@@ -1299,36 +1334,38 @@ export default defineComponent({
     async signup() {
       const apiURL = await this.getRequestUrl()
       this.birthDateFormatter(this.birthDate)
+      const jsonData = {
+        username: this.username,
+        password: this.signupPassword,
+        personalInfo: {
+          firstName: this.name,
+          surname: this.surname,
+          dateOfBirth: this.date,
+          gender: this.gender,
+          preferredLanguage: this.language
+        },
+        address: {
+          street: this.street,
+          suburb: this.suburb,
+          province: this.province,
+          city: this.city,
+          postalCode: this.postal_code,
+          complex: this.complex,
+          houseNumber: this.houseNumber
+        },
+        contactInfo: {
+          phoneNumber: this.phone_number,
+          email: this.email
+        },
+        profile: {
+          displayName: this.name + ' ' + this.surname
+        },
+        skills: this.skills,
+        currentCompany: this.company
+      }
+
       await axios
-        .post(apiURL + 'users/create', {
-          username: this.username,
-          password: this.signupPassword,
-          personalInfo: {
-            firstName: this.name,
-            surname: this.surname,
-            dateOfBirth: this.date,
-            gender: this.gender,
-            preferredLanguage: this.language
-          },
-          address: {
-            street: this.street,
-            suburb: this.suburb,
-            province: this.province,
-            city: this.city,
-            postalCode: this.postal_code,
-            complex: this.complex,
-            houseNumber: this.houseNumber
-          },
-          contactInfo: {
-            phoneNumber: this.phone_number,
-            email: this.email
-          },
-          profile: {
-            displayName: this.name + ' ' + this.surname
-          },
-          skills: this.skills,
-          currentCompany: this.company
-        })
+        .post(apiURL + 'users/create', jsonData)
         .then((response) => {
           console.log(response)
           this.alertSignUpFailure = false
@@ -1338,6 +1375,7 @@ export default defineComponent({
           localStorage.setItem('email', this.email)
           localStorage.setItem('username', this.username)
 
+          this.sendImage()
           // this.resetForm()
         })
         .catch((error) => {
@@ -1345,6 +1383,26 @@ export default defineComponent({
           this.alertSignUp = false
           this.alertSignUpFailure = true
         })
+    },
+    async sendImage() {
+      if (this.profilePicture === '') {
+        return
+      }
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      let formData = new FormData()
+      formData.append('profilePicture', this.profilePicture)
+
+      const apiURL = await this.getRequestUrl()
+      const url = apiURL + `users/update/profilePic/`
+
+      await axios.patch(url, formData, config).then((response) => {
+        console.log(response)
+      })
     },
     async nextFlow1() {
       try {

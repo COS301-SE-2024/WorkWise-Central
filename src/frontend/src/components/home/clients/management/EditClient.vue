@@ -242,21 +242,25 @@ export default {
       // const apiURL = await this.getRequestUrl();
 
       const data = {
-        details: {
-          firstname: this.localEditedItem.firstName,
-          lastname: this.localEditedItem.surname,
-          preferred_Language: this.localEditedItem.preferred_Language,
-          contactInfo: {
-            phoneNumber: this.localEditedItem.contactInfo.phoneNumber,
-            email: this.editedItem.contactInfo.email
-          },
-          address: {
-            street: this.localEditedItem.address.street,
-            suburb: this.localEditedItem.address.suburb,
-            city: this.localEditedItem.address.city,
-            postalCode: this.localEditedItem.address.postalCode,
-            complex: this.localEditedItem.address.complex,
-            houseNumber: this.localEditedItem.address.houseNumber
+        // registrationNumber: this.localEditedItem.registrationNumber,
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        updateClientDto: {
+          details: {
+            firstname: this.localEditedItem.firstName,
+            lastname: this.localEditedItem.surname,
+            preferred_Language: this.localEditedItem.preferred_Language,
+            contactInfo: {
+              phoneNumber: this.localEditedItem.contactInfo.phoneNumber,
+              email: this.editedItem.contactInfo.email
+            },
+            address: {
+              street: this.localEditedItem.address.street,
+              suburb: this.localEditedItem.address.suburb,
+              city: this.localEditedItem.address.city,
+              postalCode: this.localEditedItem.address.postalCode,
+              complex: this.localEditedItem.address.complex,
+              houseNumber: this.localEditedItem.address.houseNumber
+            }
           }
         }
       }
@@ -276,7 +280,7 @@ export default {
         return false
       } finally {
         this.clientDialog = false
-        window.location.reload()
+        //  window.location.reload()
       }
     },
     async isLocalAvailable(localUrl) {

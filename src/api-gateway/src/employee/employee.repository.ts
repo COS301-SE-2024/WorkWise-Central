@@ -96,7 +96,11 @@ export class EmployeeRepository {
   }
 
   async findById(identifier: Types.ObjectId) {
-    identifier = new Types.ObjectId(identifier);
+    console.log('identifier: ', identifier);
+    if (typeof identifier === 'string') {
+      identifier = new Types.ObjectId(identifier);
+    }
+    console.log('identifier: ', identifier);
     const result = this.employeeModel
       .findOne({
         $and: [
@@ -109,7 +113,7 @@ export class EmployeeRepository {
         ],
       })
       .lean();
-    console.log('result from repository: ', result);
+    // console.log('result from repository: ', result);
     return result;
   }
 
@@ -182,6 +186,7 @@ export class EmployeeRepository {
   }
 
   async update(id: Types.ObjectId, updateEmployeeDto: InternalUpdateEmployeeDto) {
+    id = new Types.ObjectId(id);
     const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
       .findOneAndUpdate(
         {
@@ -193,6 +198,42 @@ export class EmployeeRepository {
           ],
         },
         { $set: { ...updateEmployeeDto }, updatedAt: new Date() },
+      )
+      .lean();
+    console.log('Repository response: ', previousObject);
+    return previousObject;
+  }
+
+  async addAssignedJob(id: Types.ObjectId, jobId: Types.ObjectId) {
+    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            { _id: id },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        { $push: { currentJobAssignments: jobId }, updatedAt: new Date() },
+      )
+      .lean();
+
+    return previousObject;
+  }
+
+  async removeAssignedJob(id: Types.ObjectId, jobId: Types.ObjectId) {
+    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            { _id: id },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        { $pull: { currentJobAssignments: jobId }, updatedAt: new Date() },
       )
       .lean();
 

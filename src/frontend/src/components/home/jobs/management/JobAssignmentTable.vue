@@ -1,36 +1,24 @@
 <template>
-  <v-container fluid :max-width="2560">
+  <v-container fluid fill-height>
     <v-row justify="center" xs="6" sm="6" md="12">
       <v-col cols="12">
         <v-row justify="center">
           <v-col cols="12" xs="12" sm="12" md="12" class="pa-0">
-            <v-card
-              height="auto"
-              class="ma-0 bg-cardColor md-start"
-              rounded="md"
-              border="md"
-              min-height="1000%"
-            >
-              <v-card-title height="auto" width="100%">
+            <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
+              <v-card-title
+                class="d-flex align-center pe-2"
+                style="font-family: Nunito, sans-serif; font-size: 25px; font-weight: lighter"
+              >
                 <v-row align="center" justify="space-between">
-                  <v-col
-                    order-sm="0"
-                    order-md="0"
-                    cols="12"
-                    md="4"
-                    sm="12"
-                    xs="12"
-                    class="d-flex justify-start"
-                  >
+                  <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+                    <v-icon icon="fa: fa-solid fa-briefcase" size="x-small"></v-icon>
                     <v-label
-                      class="ms-2 text-h4 font-family-lato text-headingTextColor"
-                      style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+                      class="ms-2 text-h4 text-headingTextColor"
+                      style="font-size: 15px; font-family: Nunito, sans-serif; font-weight: lighter"
                       height="auto"
                       width="auto"
-                    >
-                      <v-icon icon="fa: fa-solid fa-briefcase" size="x-small"></v-icon>
-                      Job Details</v-label
-                    >
+                    >Job Details
+                    </v-label>
                   </v-col>
 
                   <v-col order-sm="1" order-md="1" cols="12" md="4" sm="12" xs="12">
@@ -61,9 +49,9 @@
                   </v-col>
                 </v-row>
               </v-card-title>
+              <v-divider></v-divider>
 
               <v-card-text>
-                <v-divider></v-divider>
                 <v-col cols="12" xs="12" sm="12" md="12">
                   <v-data-table
                     :headers="headers as any"
@@ -78,53 +66,91 @@
                     min-height
                   >
                     <template v-slot:[`item.heading`]="{ item }">
-                      {{ item.details.heading }}
+                      {{ item?.details?.heading }}
                     </template>
 
-                    <template v-slot:[`item.clientPhone`]="{ value }">
-                      <v-chip color="primary">
-                        <a :href="`tel:${value}`" style="color: inherit; text-decoration: none">
-                          <v-icon>fa-solid fa-phone</v-icon>{{ value }}
+                    <template v-slot:[`item.clientPhone`]="{ item }">
+                      <v-chip color="secondary">
+                        <a
+                          :href="`tel:${item?.clientId?.details?.contactInfo?.phoneNumber}`"
+                          style="color: inherit; text-decoration: none"
+                        >
+                          <v-icon>
+                            {{ 'fa: fa-solid fa-phone' }}
+                          </v-icon>
+                          {{ item?.clientId?.details?.contactInfo?.phoneNumber }}
                         </a>
                       </v-chip>
                     </template>
 
-                    <template v-slot:[`item.clientMail`]="{ value }">
-                      <v-chip color="primary">
-                        <a :href="`mailto:${value}`" style="color: inherit; text-decoration: none">
-                          <v-icon>fa-solid fa-envelope</v-icon>{{ value }}
+                    <template v-slot:[`item.clientMail`]="{ item }">
+                      <v-chip color="secondary">
+                        <a
+                          :href="`mailto:${item?.clientId?.details?.contactInfo?.email}`"
+                          style="color: inherit; text-decoration: none"
+                        >
+                          <v-icon>
+                            {{ 'fa: fa-solid fa-envelope' }}
+                          </v-icon>
+                          {{ item?.clientId?.details?.contactInfo?.email }}
                         </a>
                       </v-chip>
                     </template>
 
                     <template v-slot:[`item.description`]="{ item }">
-                      {{ item.details.description }}
+                      {{ item?.details?.description }}
                     </template>
 
-                    <template v-slot:[`item.status`]="{ value }">
-                      <v-chip :color="getStatusColor(value)">
-                        <v-icon>mdi-progress-clock</v-icon>{{ value }}
+                    <template v-slot:[`item.status`]="{ item }">
+                      <v-chip :color="getStatusColor(item?.status?.status)">
+                        <v-icon>mdi-progress-clock</v-icon>{{ item?.status?.status }}
                       </v-chip>
                     </template>
 
                     <template v-slot:[`item.startDate`]="{ item }">
-                      {{ item.details.startDate }}
+                      {{ item?.details?.startDate }}
                     </template>
 
                     <template v-slot:[`item.endDate`]="{ item }">
-                      {{ item.details.endDate }}
+                      {{ item?.details?.endDate }}
                     </template>
 
                     <!-- Actions slot -->
                     <template v-slot:[`item.actions`]="{ item }">
-                      <v-btn
-                        rounded="xl"
-                        variant="plain"
-                        style="transform: rotate(0deg)"
-                        @click="openDialog(item)"
-                      >
-                        <v-icon color="primary">mdi-dots-horizontal</v-icon>
-                      </v-btn>
+                      <v-menu max-width="500px" :theme="isdarkmode === true ? 'dark' : 'light'">
+                        <template v-slot:activator="{ props }">
+                          <v-btn
+                            rounded="xl"
+                            variant="plain"
+                            v-bind="props"
+                            @click="openDialog(item)"
+                          >
+                            <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                          </v-btn>
+                        </template>
+                        <v-list class="bg-background">
+                          <v-list-item>
+                            <v-btn color="success" @click="openViewDialog(selectedJob)">
+                              <v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>View
+                            </v-btn>
+                            <v-dialog v-model="viewJobDialogVisible" :max-height="800" :max-width="1000">
+                              <ViewJob :passedInJob="selectedJob" @close="viewJobDialogVisible = false"></ViewJob>
+                            </v-dialog>
+                          </v-list-item>
+                          <v-list-item>
+                            <v-btn color="warning" @click="openJobCardDialog(selectedJob)">
+                              <v-icon icon="fa:fa-solid fa-pencil" start color="warning" size="small"></v-icon>Edit
+                            </v-btn>
+                            <v-dialog v-model="viewManagerJobCardVisible" :max-height="800" :max-width="1000">
+                              <ManagerJobCard :passedInJob="selectedJob" @close="viewManagerJobCardVisible= false"></ManagerJobCard>
+                            </v-dialog>
+                          </v-list-item>
+                          <v-list-item>
+                            <v-btn color="error" @click="deleteDialog = true"
+                            ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn>
+                          </v-list-item>
+                        </v-list>
+                      </v-menu>
                     </template>
                   </v-data-table>
                 </v-col>
@@ -134,51 +160,22 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-dialog v-model="actionsDialog" :max-width="500">
+    <v-dialog v-model="deleteDialog" :max-width="500">
       <v-card>
-        <v-card-title>
-          {{ selectedJob?.details.heading }}
+        <v-card-title class="text-h6 font-weight-regular bg-red">
+          <v-icon color="white">mdi-alert-circle-outline</v-icon>
+          Confirm Deletion
         </v-card-title>
-        <v-card-text> What would you like to do with this job? </v-card-text>
+        <v-card-text> Are you sure you want to delete this job? </v-card-text>
         <v-card-actions>
-          <v-btn @click="closeDialog"
-            >Cancel <v-icon icon="fa:fa-solid fa-cancel" end color="primary" size="small"></v-icon
-          ></v-btn>
-          <v-spacer></v-spacer>
-
-          <!--          &lt;!&ndash; View Job Dialog &ndash;&gt;-->
-          <!--          <ViewJob :passedInJob="selectedJob"></ViewJob>-->
-
-          <!--          <ManagerJobCard :passedInJob="selectedJob"></ManagerJobCard>-->
-
-          <v-btn color="error" @click="deleteDialog = true"
-            >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
-          ></v-btn>
-          <v-dialog v-model="deleteDialog" :max-width="500">
-            <v-card>
-              <v-card-title class="text-h6 font-weight-regular bg-red">
-                <v-icon color="white">mdi-alert-circle-outline</v-icon>
-                Confirm Deletion
-              </v-card-title>
-              <v-card-text> Are you sure you want to delete this job? </v-card-text>
-              <v-card-actions>
-                <v-btn color="error" @click="confirmDelete">Confirm</v-btn>
-                <v-btn @click="deleteDialog = false"
-                  >Cancel<v-icon
-                    icon="fa:fa-solid fa-cancel"
-                    end
-                    color="error"
-                    size="small"
-                  ></v-icon
-                ></v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+          <v-btn color="error" @click="confirmDelete">Confirm</v-btn>
+          <v-btn @click="deleteDialog = false"
+          >Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <Toast />
   </v-container>
+  <Toast />
 </template>
 
 <script setup lang="ts">
@@ -187,62 +184,38 @@ import axios from 'axios'
 import AddJob from './AddJob.vue'
 import ManagerJobCard from './ManagerJobCard.vue'
 import ViewJob from './ViewJob.vue'
+import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+
+const toast = useToast()
+
+interface EmployeeId {
+  companyId: string
+  createdAt: string
+  currentJobAssignments: string[]
+  role: {
+    permissionSuite: string[]
+    roleId: string
+    roleName: string
+  }
+  subordinateTeams: string[]
+  subordinates: string[]
+  superiorId: string
+  updatedAt: string
+  userId: string
+  userInfo: {
+    displayName: string
+    firstName: string
+    surname: string
+  }
+  _id: string
+}
 
 // Define the type for the job object
 interface Job {
   _id: string
-  company: {
-    registrationNumber: string
-    vatNumber: string
-    name: string
-    type?: string
-    jobStatuses?: string[]
-    logo?: string
-    contactDetails: {
-      phoneNumber: string
-      email: string
-    }
-    address: {
-      street: string
-      province: string
-      suburb: string
-      city: string
-      postalCode: string
-      complex?: string
-      houseNumber?: string
-    }
-    private: boolean
-  }
-  client: {
-    registrationNumber?: string
-    details: {
-      firstName: string
-      lastName: string
-      preferredLanguage?: string
-      contactInfo: {
-        phoneNumber: string
-        email: string
-      }
-      address?: {
-        street: string
-        province: string
-        suburb: string
-        city: string
-        postalCode: string
-        complex?: string
-        houseNumber?: string
-      }
-      vatNumber?: string
-      companyId: string
-      idNumber?: string
-      type?: string
-    }
-    createdAt: string
-    updatedAt: string
-    deletedAt: string
-  }
   assignedBy: {
+    companyId: string
     roleId: string
     superiorId?: string
     subordinates?: string[]
@@ -255,15 +228,41 @@ interface Job {
       displayName: string
       displayImage?: string
     }
-    companyId: string
   }
   assignedEmployees?: {
     employeeIds?: string[]
     teamIds?: string[]
   }
-  status: string
-  tags?: string[]
-  priorityTag?: string
+  clientId: {
+    createdAt: string
+    details: {
+      address: {
+        city: string
+        postalCode: string
+        province: string
+        street: string
+        suburb: string
+      }
+      companyId: string
+      contactInfo: {
+        email: string
+        phoneNumber: string
+      }
+      firstName: string
+      idNumber: string
+      lastName: string
+      preferredLanguage: string
+    }
+  }
+  companyId: string
+  priorityTag?: {
+    colour: string
+    companyId: string
+    label: string
+    priorityLevel: number
+    _v: number
+    _id: string
+  }
   attachments: string[]
   details: {
     heading: string
@@ -288,30 +287,39 @@ interface Job {
       quantityUsed: number
     }[]
   }
+  status: {
+    status: string
+    colour: string
+    companyId: string
+    _v: number
+    _id: string
+  }
+  tags?: {
+    colour: string
+    companyId: string
+    label: string
+    _v: number
+    _id: string
+  }[]
   clientFeedback?: {
     rating?: number
     comment?: string
   }
   taskList: {
-    name: string
-    status: string
-    assignedEmployees?: {
-      roleId: string
-      superiorId?: string
-      subordinates?: string[]
-      subordinateTeams?: string[]
-      userId: string
-      userInfo: {
-        username: string
-        firstName: string
-        surname: string
-        displayName: string
-        displayImage?: string
-      }
-      companyId: string
+    title: string
+    items: {
+      description: string
+      assignedEmployees: string[]
+      dueDate: string
+      done: boolean
     }[]
+  }
+  comments: {
+    employeeId: EmployeeId
+    comment: string
+    date: string
+    _id: string
   }[]
-  comments: string[]
   history?: {
     event: string
     timestamp: string
@@ -326,8 +334,19 @@ const selectedJob = ref<Job | null>(null)
 const deleteDialog = ref(false)
 const detailedJobData = ref<Job[]>([])
 const search = ref('')
+const isdarkmode = ref(localStorage.getItem('theme') === 'true' ? true : false)
+const viewJobDialogVisible = ref(false)
+const viewManagerJobCardVisible = ref(false)
 
-const toast = useToast()
+const openJobCardDialog = (job: any) => {
+  selectedJob.value = job
+  viewManagerJobCardVisible.value = true
+}
+
+const openViewDialog = (job : any) => {
+  selectedJob.value = job
+  viewJobDialogVisible.value = true
+}
 
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
@@ -374,7 +393,18 @@ const fetchData = async () => {
       `${apiUrl}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
       config
     )
-    detailedJobData.value = response.data.data
+    if (response.status > 199 && response.status < 300) {
+      detailedJobData.value = response.data.data
+      console.log('Detailed Job Data', detailedJobData.value)
+      console.log(response)
+    } else {
+      toast.add({
+        severity: 'error',
+        summary: 'Fetch Data Error',
+        detail: 'Failed to fetch data',
+        life: 3000
+      })
+    }
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -395,20 +425,27 @@ const closeDialog = () => {
   actionsDialog.value = false
 }
 
+const formatDate = (dateString: string): string => {
+  const options: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', year: '2-digit' }
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', options)
+}
+
 const confirmDelete = async () => {
   if (selectedJob.value) {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+      }
+    }
+    const apiUrl = await getRequestUrl()
     try {
-      const url = await getRequestUrl()
-      await axios.delete(`${url}job/${selectedJob.value._id}`)
+      await axios.delete(`${apiUrl}job/${selectedJob.value._id}`, config)
       detailedJobData.value = detailedJobData.value.filter(
         (job) => job._id !== selectedJob.value!._id
       )
-      toast.add({
-        severity: 'success',
-        summary: 'Job Deleted',
-        detail: 'Job deleted successfully',
-        life: 3000
-      })
+      closeDialog()
     } catch (error) {
       toast.add({
         severity: 'error',
@@ -417,16 +454,30 @@ const confirmDelete = async () => {
         life: 3000
       })
     } finally {
-      deleteDialog.value = false
+      localStorage.setItem('jobDeleted', 'true')
+      window.location.reload()
     }
   }
 }
 
-onMounted(fetchData)
+onMounted(() => {
+  fetchData()
+  const jobDeleted = localStorage.getItem('jobDeleted')
 
-const getRowProps = (item: Job) => {
+  if (jobDeleted === 'true') {
+    toast.add({
+      severity: 'success',
+      summary: 'Job Deleted',
+      detail: 'Job deleted successfully',
+      life: 3000
+    })
+    localStorage.removeItem('jobDeleted')
+  }
+})
+
+const getRowProps = ({ index }: any) => {
   return {
-    class: item.status === 'completed' ? 'bg-completed' : ''
+    class: index % 2 ? 'bg-secondRowColor' : ''
   }
 }
 
@@ -452,8 +503,5 @@ const getStatusColor = (status: string) => {
 }
 .text-headingTextColor {
   color: #333;
-}
-.font-family-lato {
-  font-family: 'Lato', sans-serif;
 }
 </style>

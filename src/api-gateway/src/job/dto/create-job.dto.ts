@@ -3,6 +3,7 @@ import { Types } from 'mongoose';
 import {
   IsArray,
   IsBoolean,
+  IsDate,
   IsDateString,
   IsMongoId,
   IsNotEmpty,
@@ -156,6 +157,38 @@ export class AssignedEmployees {
   teamIds?: Types.ObjectId[];
 }
 
+export class TaskItem {
+  @ApiHideProperty()
+  @IsOptional()
+  @IsMongoId()
+  _id: Types.ObjectId = new Types.ObjectId();
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  description: string;
+
+  @ApiProperty()
+  @IsArray()
+  @IsMongoId({ each: true })
+  assignedEmployees?: Types.ObjectId[] = [];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsDate()
+  dueDate?: Date;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean()
+  done: boolean = false;
+
+  /*  @ApiProperty()
+  @IsOptional()
+  @IsMongoId()
+  status?: Types.ObjectId;*/
+}
+
 export class Task {
   @ApiHideProperty()
   @IsOptional()
@@ -165,17 +198,14 @@ export class Task {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  name: string;
+  title: string;
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  status: string = 'To do';
-
-  @ApiProperty()
+  @IsOptional()
   @IsArray()
-  @IsMongoId({ each: true })
-  assignedEmployees?: Types.ObjectId[] = [];
+  @ValidateNested()
+  @Type(() => TaskItem)
+  items?: TaskItem[] = [];
 }
 
 export class Comment {
@@ -278,6 +308,10 @@ export class CreateJobDto {
   @IsArray()
   @IsString({ each: true })
   attachments?: string[];
+
+  @ApiProperty()
+  @IsOptional()
+  coverImage?: string;
 }
 
 export class CreateJobResponseDto {

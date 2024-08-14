@@ -51,34 +51,75 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
 export default defineComponent({
   name: 'DeleteStatus',
   props: {
-    statusName: String
+    statusName: String,
+    statusId: String
   },
   data() {
     return {
       deleteDialog: false,
       isDeleting: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false
+      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
   },
   methods: {
     close() {
       this.deleteDialog = false
     },
-    deleteStatus() {
-      this.isDeleting = true
-      setTimeout(() => {
+    async deleteStatus() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          companyId: localStorage.getItem('currentCompany'),
+          employeeId: localStorage.getItem('employeeId'),
+          statusId: this.statusId
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const res = await axios.delete(`${apiURL}job/status/${this.statusId}`, config)
+        if (res.status === 200) {
+          console.log(res.data)
+          this.isDeleting = false
+          this.deleteDialog = false
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Status Deleted',
+            life: 3000
+          })
+          window.location.reload()
+        }
+      } catch (error) {
+        console.error(error)
         this.isDeleting = false
-        this.deleteDialog = false
         this.$toast.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Tag Deleted',
+          severity: 'error',
+          summary: 'Error',
+          detail: 'An error occurred. Please try again',
           life: 3000
         })
-      }, 1500)
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
     }
   }
 })

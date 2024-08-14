@@ -10,6 +10,7 @@ import {
   Post,
   UseGuards,
   Headers,
+  Query,
 } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
@@ -31,6 +32,7 @@ import { AuthGuard } from '../auth/auth.guard';
 // import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { EmployeeService } from '../employee/employee.service';
+import { validateObjectId } from '../utils/Utils';
 
 const className = 'Inventory';
 
@@ -120,22 +122,27 @@ export class InventoryController {
     name: 'id',
     description: `The _id attribute of the Company for which to get all ${className} instances.`,
   })
-  @Get('/all/:id')
+  @Get('/all/:currentEmployeeId')
   async findAllInCompany(
     @Headers() headers: any,
-    @Param('id') id: Types.ObjectId,
-    @Body() body: { currentEmployeeId: Types.ObjectId },
+    @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId,
+    // @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
     console.log('In findAllInCompany');
-    console.log('id', id);
-    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    if (!currentEmployeeId) {
+      throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
+    }
+    validateObjectId(currentEmployeeId, 'currentEmployee');
+    console.log('In findAllInCompany');
+    // console.log('id', id);
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all inventory')) {
       console.log('in if');
       let data;
       try {
         console.log('in try');
-        data = await this.inventoryService.findAllInCompany(id);
+        data = await this.inventoryService.findAllInCompany(currentEmployee.companyId);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
@@ -167,9 +174,13 @@ export class InventoryController {
   async findById(
     @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
-    @Body() body: { currentEmployeeId: Types.ObjectId },
+    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
-    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    if (!currentEmployeeId) {
+      throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
+    }
+    validateObjectId(currentEmployeeId, 'currentEmployee');
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('view all inventory')) {
       const data = await this.inventoryService.findById(id);
       return { data: data };
@@ -207,8 +218,11 @@ export class InventoryController {
       updateInventoryDto: UpdateInventoryDto;
     },
   ) {
+    console.log('In update inventory controller');
     const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    console.log('currnetEmployee: ', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('edit all inventory')) {
+      console.log('in if');
       let data;
       try {
         data = await this.inventoryService.update(id, body.updateInventoryDto);

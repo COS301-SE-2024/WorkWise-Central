@@ -1,10 +1,10 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title class="text-primary font-bold text-center"> Edit Company </v-card-title>
+      <v-card-title class="text-primary font-bold text-center"> Company Details</v-card-title>
       <v-divider></v-divider>
       <v-card-text>
-        <v-form>
+        <v-form ref="form" v-model="valid">
           <v-row>
             <v-col cols="12" lg="5" class="d-flex justify-center">
               <v-avatar color="grey" size="150">
@@ -22,6 +22,7 @@
                 label=" Name"
                 :rules="nameRules"
                 bg-color="background"
+                required
               ></v-text-field>
               <v-label>Type</v-label>
               <v-select
@@ -29,6 +30,7 @@
                 label="Type"
                 :items="type"
                 bg-color="background"
+                required
               ></v-select>
               <v-label>Email</v-label>
               <v-text-field
@@ -36,6 +38,7 @@
                 label="Email"
                 :rules="emailRules"
                 bg-color="background"
+                required
               ></v-text-field>
               <v-label>Phone</v-label>
               <v-text-field
@@ -43,18 +46,21 @@
                 label="Phone"
                 :rules="phone_number_rules"
                 bg-color="background"
+                required
               ></v-text-field>
               <v-label>Street</v-label>
               <v-text-field
                 v-model="company.address.street"
                 label="Street"
                 bg-color="background"
+                required
               ></v-text-field>
               <v-label>Suburb</v-label>
               <v-text-field
                 v-model="company.address.suburb"
                 label="Suburb"
                 bg-color="background"
+                required
               ></v-text-field>
 
               <v-label>Province</v-label>
@@ -62,18 +68,21 @@
                 :items="provinces"
                 v-model="company.address.province"
                 bg-color="background"
+                required
               ></v-select>
               <v-label>City</v-label>
               <v-text-field
                 v-model="company.address.city"
                 label="City"
                 bg-color="background"
+                required
               ></v-text-field>
               <v-label>Postal Code</v-label>
               <v-text-field
                 v-model="company.address.postalCode"
                 label="Postal Code"
                 bg-color="background"
+                required
               ></v-text-field>
             </v-col> </v-row></v-form
       ></v-card-text>
@@ -83,7 +92,7 @@
           ><v-row justify="end">
             <v-col align="center" cols="12" lg="6">
               <Toast position="top-center" />
-              <v-btn color="success" @click="updateCompanyDetails" :disabled="valid" block>
+              <v-btn color="success" @click="updateCompanyDetails" :disabled="!valid" block>
                 Save
                 <v-icon end color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon> </v-btn
             ></v-col>
@@ -114,7 +123,7 @@ export default defineComponent({
   },
   data: () => ({
     isdarkmode: false,
-    localUrl: 'http://localhost:3000',
+    localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     currentCompanyID: localStorage.getItem('currentCompany'),
     valid: false,
@@ -254,6 +263,7 @@ export default defineComponent({
         detail: 'Company update cancelled',
         life: 3000
       })
+      window.location.reload()
     },
     saveChanges() {
       this.$toast.add({
@@ -290,9 +300,14 @@ export default defineComponent({
         }
       }
       const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      const data = {
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        updateCompanyDto: this.company
+      }
       const company_id = localStorage.getItem('currentCompany')
       await axios
-        .patch(`http://localhost:3000/company/update/${company_id}`, this.company, config)
+        .patch(`${apiURL}company/update/${company_id}`, data, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({

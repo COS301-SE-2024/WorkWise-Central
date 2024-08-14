@@ -10,7 +10,7 @@ The layered architectural style is being used to separate the user-interface fro
 The component-based architectural style is being used to make the system **more modular**, while also **reducing coupling**. 
 
 #### Publish-subscribe
-The publish-subscribe style is being used to implement the notification subsystem. Users will be subscribers of relevant notifications and events.
+The publish-subscribe style is being used to implement the notification subsystem. Furthermore, Users will be subscribers of relevant notifications and events.
 
 #### Service-oriented
-The service-oriented style is used to compartmentalise the business logic of the system. Each subsystem constitutes it's own service. These services then provide the business logic needed.
+The service-oriented style is used to compartmentalise the business logic of the system. Each subsystem constitutes its own service. These services then provide the business logic needed.

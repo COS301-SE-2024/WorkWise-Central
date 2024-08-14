@@ -10,13 +10,13 @@ import {
   //IsPhoneNumber,
   IsString,
   MaxLength,
-  MinLength,
+  //MinLength,
   Validate,
   ValidateNested,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { Company } from '../entities/company.entity';
-import { RegistrationNumber } from '../../utils/Custom Validators/RegistrationNumber';
+import { RegistrationNumber, VatNumber } from '../../utils/Custom Validators/RegistrationNumber';
 import { Base64ContentIsImage } from '../../utils/Custom Validators/Base64ContentIsImage';
 
 export class ContactDetails {
@@ -71,17 +71,17 @@ export class CreateCompanyDto {
   userId: Types.ObjectId;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Validate(RegistrationNumber)
-  registrationNumber: string;
+  registrationNumber?: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  @MinLength(10)
+  @Validate(VatNumber)
   @MaxLength(10)
-  vatNumber: string;
+  vatNumber?: string;
 
   @ApiProperty()
   @IsString()
@@ -132,8 +132,9 @@ export class CreateCompanyResponseDto {
 class FilteredAddress extends OmitType(Address, ['street']) {}
 
 class CompanyAllType {
-  registrationNumber: string;
-  vatNumber: string;
+  _id: Types.ObjectId;
+  registrationNumber?: string;
+  vatNumber?: string;
   name: string;
   logo: string;
   address: FilteredAddress;

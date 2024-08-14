@@ -89,16 +89,24 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue'
 import AddInventory from './AddInventory.vue'
 import DeleteInventory from './DeleteInventory.vue'
 import EditInventory from './EditInventory.vue'
 import InventoryDetails from './InventoryDetails.vue'
 import axios from 'axios'
-
+interface Inventory {
+  _id: string
+  name: string
+  description: string
+  costPrice: number
+  currentStockLevel: number
+  reorderLevel: number
+}
 export default defineComponent({
   name: 'InventoryDashboard',
+
   components: { AddInventory, DeleteInventory, EditInventory, InventoryDetails },
   data() {
     return {
@@ -138,17 +146,19 @@ export default defineComponent({
       selectedItem: {},
       selectedItemName: '',
       selectedItemID: '',
-      actionsMenu: false
+      actionsMenu: false,
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
   },
   methods: {
-    selectItem(item) {
+    selectItem(item: Inventory) {
       console.log(item)
       this.selectedItem = item
       this.selectedItemName = item.name
       this.selectedItemID = item._id
     },
-    getRowProps({ index }) {
+    getRowProps(index: number) {
       return {
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
@@ -156,28 +166,41 @@ export default defineComponent({
     fuga() {
       this.actionsMenu = true
     },
-    async getInventory() {
+    async getInventoryItems() {
       // Fetch inventory items from the backend
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployee: localStorage.getItem('employeeId')
         }
       }
+      const apiURL = await this.getRequestUrl()
       try {
-        const response = await axios.get(
-          `http://localhost:3000/inventory/all/${localStorage.getItem('currentCompany')}`,
-          config
-        )
+        const response = await axios.get(`${apiURL}inventory/all/${localStorage.getItem('employeeId')}`, config)
         console.log(response.data.data)
         this.inventoryItems = response.data.data
       } catch (error) {
         console.error(error)
       }
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
   },
   mounted() {
-    this.getInventory()
+    this.getInventoryItems()
   }
 })
 </script>

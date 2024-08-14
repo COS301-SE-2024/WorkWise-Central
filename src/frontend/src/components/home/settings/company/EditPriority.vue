@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title class="text-primary font-bold text-center">Edit Priority</v-card-title>
+      <v-card-title class="text-primary font-bold text-center">Priorities</v-card-title>
       <v-card-text>
         <v-data-table
           :headers="headers"
@@ -11,6 +11,9 @@
           :row-props="getRowProps"
           :header-props="{ class: 'bg-secondary h5 ' }"
         >
+          <template v-slot:[`item.colour`]="{ item }">
+            <v-chip :color="item.colour">{{ item.colour }}</v-chip>
+          </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu>
               <template v-slot:activator="{ props }">
@@ -19,13 +22,13 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item @click="selectItem(item)">
+                <!-- <v-list-item @click="selectItem(item)">
                   <v-btn color="success" block @click="dialog = true"
                     ><v-icon icon="fa:fa-solid fa-pencil" color="success"></v-icon>Edit</v-btn
                   >
-                </v-list-item>
+                </v-list-item> -->
                 <v-list-item @click="selectItem(item)">
-                  <DeletePriority />
+                  <DeletePriority :tag-id="selectedItem._id" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -98,10 +101,11 @@ export default defineComponent({
         key: 'actions'
       }
     ],
-    items: [],
+    items: [] as any[],
     dialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     selectedItem: {
+      _id: '',
       label: '',
       color: '',
       priorityLevel: 0,

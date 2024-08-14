@@ -105,7 +105,11 @@ export class AdminService {
     //Get needed information for message
     const user = await this.usersService.getUserById(userId);
 
-    this.notificationService.create({
+    if (user == null) {
+      throw new NotFoundException('User not found');
+    }
+
+    await this.notificationService.create({
       recipientIds: empIds,
       message: {
         title: `New Request to join ${company.name}`,
