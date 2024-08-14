@@ -82,18 +82,49 @@
         </v-form>
       </v-col>
     </v-row>
+    <Toast/>
   </v-container>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import JoinCompany from '@/components/signup/JoinCompanyModal.vue'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
+import axios from 'axios'
+
+const toast = useToast()
 
 interface Company {
   id: string
   name: string
   description: string
 }
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`
+  }
+}
+// API URLs
+const localUrl: string = 'http://localhost:3000/'
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
+
+// Utility functions
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url)
+    return res.status < 300 && res.status > 199
+  } catch (error) {
+    return false
+  }
+}
+
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
+
 
 const companies = reactive<Company[]>([
   // Example company data, replace with actual data fetching
@@ -137,6 +168,7 @@ const undoLeaveCompany = (company: Company) => {
     clearTimeout(undoTimeout.value)
   }
 }
+
 </script>
 
 <style scoped>
