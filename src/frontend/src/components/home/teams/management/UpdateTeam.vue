@@ -109,6 +109,7 @@ export default {
     }
   },
   created() {
+    console.log(this.editedItem)
     this.localEditedItem = this.deepCopy(this.editedItem)
   },
   methods: {

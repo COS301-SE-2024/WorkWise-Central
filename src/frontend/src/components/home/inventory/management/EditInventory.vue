@@ -103,7 +103,7 @@ import Toast from 'primevue/toast'
 import axios from 'axios'
 
 export default {
-  name: 'AddInventory',
+  name: 'EditInventory',
   props: {
     editedItem: Object,
     item: Object,

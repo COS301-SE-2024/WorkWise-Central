@@ -99,7 +99,6 @@ import axios from 'axios'
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import DeleteRole from './DeleteRole.vue'
-import ColorPicker from 'primevue/colorpicker'
 import CreateRoles from './CreateRoles.vue'
 export default defineComponent({
   props: {
@@ -109,8 +108,7 @@ export default defineComponent({
   components: {
     Toast,
     DeleteRole,
-    ColorPicker,
-    Toast,
+
     CreateRoles
   },
   data: () => ({

@@ -90,7 +90,7 @@ export default defineComponent({
     isdarkmode: localStorage.getItem('theme') === 'true',
     logoutDialog: false,
     selected: '',
-    employeePermissions: [],
+    employeePermissions: [] as string[],
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
@@ -117,12 +117,17 @@ export default defineComponent({
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
+      const apiURL = await this.getRequestUrl()
       axios
-        .get(`http://localhost:3000/users/id/${localStorage.getItem('id')}`, config)
+        .get(`${apiURL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
         .then((response) => {
-          console.log(response.data.data)
+          console.log(response.data.data.role.permissionSuite)
+          this.employeePermissions = response.data.data.role.permissionSuite
         })
         .catch((error) => {
           console.error('Failed to fetch employees:', error)
@@ -139,6 +144,9 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    checkPermission(permission: string) {
+      return this.employeePermissions.includes(permission)
     }
   },
   mounted() {
@@ -330,7 +338,7 @@ export default defineComponent({
           </v-list-group>
         </v-list>
 
-        <v-list v-model:open="open">
+        <v-list v-model:open="open" v-show="checkPermission('company settings') === true">
           <v-list-group fluid value="More">
             <template v-slot:activator="{ props }">
               <v-list-item

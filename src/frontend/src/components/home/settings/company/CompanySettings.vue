@@ -9,7 +9,7 @@
     <v-row>
       <v-col cols="12" lg="8" order="last" order-lg="first">
         <EditCompany v-if="currentSettings === 'Company Details'" />
-        <!-- <EditStructure v-if="currentSettings === 'Structure'" /> -->
+        <EditStructure v-if="currentSettings === 'Structure'" />
         <EditRoles v-if="currentSettings === 'Roles'" />
         <EditPriority v-if="currentSettings === 'Priority'" />
         <EditTags v-if="currentSettings === 'Tags'" />
@@ -47,14 +47,10 @@ import { defineComponent } from 'vue'
 
 import EditCompany from './EditCompany.vue'
 import EditRoles from './EditRoles.vue'
-
+import EditStructure from './EditStructure.vue'
 import EditPriority from './EditPriority.vue'
 import EditTags from './EditTags.vue'
 import EditStatus from './EditStatus.vue'
-import CreatePriority from './CreatePriority.vue'
-import CreateRoles from './CreateRoles.vue'
-import CreateStatus from './CreateStatus.vue'
-import CreateTags from './CreateTags.vue'
 
 export default defineComponent({
   name: 'CompanySettings',
@@ -70,11 +66,11 @@ export default defineComponent({
           label: 'Company Details',
           route: '/companySettingsView/editCompany'
         },
-        // {
-        //   icon: 'fa: fa-solid fa-folder-tree',
-        //   label: 'Structure',
-        //   route: '/editStructure'
-        // },
+        {
+          icon: 'fa: fa-solid fa-folder-tree',
+          label: 'Structure',
+          route: '/editStructure'
+        },
         {
           icon: 'fa: fa-solid fa-person',
           label: 'Roles',
@@ -105,10 +101,7 @@ export default defineComponent({
     EditPriority,
     EditTags,
     EditStatus,
-    CreatePriority,
-    CreateRoles,
-    CreateStatus,
-    CreateTags
+    EditStructure
   },
   methods: {
     close() {

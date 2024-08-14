@@ -44,10 +44,10 @@
               <v-col>
                 <h6>Team Leader ID</h6>
                 <v-select
-                  v-model="teamLeaderId"
+                  v-model="teamLeaderName"
                   color="secondary"
                   :rules="teamLeaderIdRules"
-                  :items="teamLeaderIds"
+                  :items="teamMemberNames"
                   required
                   hide-details="auto"
                 ></v-select>
@@ -58,13 +58,13 @@
               <v-col>
                 <h6>Team Members</h6>
                 <v-select
-                  v-model="model"
                   color="secondary"
                   :items="teamMemberNames"
                   :rules="teamMembersRules"
                   required
+                  multiple
+                  chips
                   hide-details="auto"
-                  hint="Enter team members as JSON"
                 ></v-select>
               </v-col>
             </v-row>
@@ -111,49 +111,31 @@ export default defineComponent({
     valid: false,
     teamName: '',
     model: '',
-    teamMemberNames: [] as string[],
+    teamMembers: '',
     teamLeaderIds: [] as string[],
-    teamMembers: [
-      {
-        id: '',
-        name: ''
-      }
-    ],
+    teamMemberNames: [] as string[],
+    teamMemberIds: [] as string[],
     teamLeaderId: '',
+    teamLeaderName: '',
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     teamNameRules: [(v: string) => !!v || 'Team Name is required'],
-    teamMembersRules: [
-      (v: string) => !!v || 'Team Members are required',
-      (v: string) => {
-        try {
-          JSON.parse(v)
-          return true
-        } catch (e) {
-          return 'Team Members must be a valid JSON'
-        }
-      }
-    ],
-    teamLeaderIdRules: [
-      (v: string) => !!v || 'Team Leader ID is required',
-      (v: string) => /^\d+$/.test(v) || 'Team Leader ID must be a valid number'
-    ]
+    teamMembersRules: [(v: string) => !!v || 'Team Members are required'],
+    teamLeaderIdRules: [(v: string) => !!v || 'Team Leader ID is required']
   }),
   methods: {
     async createTeam() {
       const config = {
-        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
+        params: { currentEmployeeId: localStorage.getItem('employeeId') }
       }
       const apiURL = await this.getRequestUrl()
-
+      console.log(this.teamName)
       const data = {
-        createTeamDto: {
-          teamName: this.teamName,
-          // teamMembers: JSON.parse(this.teamMembers),
-          teamLeaderId: parseInt(this.teamLeaderId),
-          companyId: localStorage.getItem('currentCompany') || ''
-        },
-        currentEmployeeId: localStorage.getItem('employeeId') || '' // Ensure a fallback if the item doesn't exist
+        teamName: this.teamName,
+        teamMembers: this.selectTeamMembers(),
+        teamLeaderId: this.selectTeamLeader(),
+        companyId: localStorage.getItem('currentCompany')
       }
       try {
         console.log(data)
@@ -182,11 +164,17 @@ export default defineComponent({
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
       const apiURL = await this.getRequestUrl()
       try {
-        const response = await axios.get(`${apiURL}employee/all`, config)
+        const response = await axios.get(
+          `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
+          config
+        )
         console.log(response.data.data)
         for (const employee of response.data.data) {
           this.teamMemberNames.push(employee.userInfo.displayName)
@@ -200,6 +188,17 @@ export default defineComponent({
       if (this.valid) {
         this.createTeam()
       }
+    },
+    selectTeamLeader() {
+      console.log(this.teamLeaderIds[this.teamMemberNames.indexOf(this.teamLeaderName)])
+      return this.teamLeaderIds[this.teamMemberNames.indexOf(this.teamLeaderName)]
+    },
+    selectTeamMembers() {
+      for (const member of this.teamMemberNames) {
+        this.teamMemberIds.push(this.teamLeaderIds[this.teamMemberNames.indexOf(member)])
+      }
+      console.log(this.teamMemberIds)
+      return this.teamMemberIds
     },
     close() {
       this.addDialog = false

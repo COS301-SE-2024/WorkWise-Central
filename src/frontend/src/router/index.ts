@@ -44,6 +44,7 @@ import TeamView from '@/views/home/teams/TeamView.vue'
 import CompanyRequestView from '@/views/home/company/CompanyRequestView.vue'
 import InvitesCompanyView from '@/views/home/company/InvitesCompanyView.vue'
 import NewPasswordView from '@/views/signup/NewPasswordView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
