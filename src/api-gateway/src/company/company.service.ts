@@ -69,7 +69,13 @@ export class CompanyService {
     await this.roleService.createDefaultRoles(createdCompany._id);
 
     //Create Default JobStatuses in company
-    await this.jobService.createDefaultStatuses(createdCompany._id);
+    await this.jobService.createDefaultStatuses(createdCompany._id).then((s) => {
+      const arr: Types.ObjectId[] = [];
+      for (const status of s) {
+        arr.push(status._id);
+      }
+      this.addJobStatuses(createdCompany._id, arr);
+    });
 
     //Assign Owner to user
     console.log('Assign Owner to user');
@@ -562,6 +568,10 @@ export class CompanyService {
 
   async addJobStatus(companyId: Types.ObjectId, statusId: Types.ObjectId) {
     return await this.companyRepository.addJobStatus(companyId, statusId);
+  }
+
+  async addJobStatuses(companyId: Types.ObjectId, statusIds: Types.ObjectId[]) {
+    return await this.companyRepository.addJobStatuses(companyId, statusIds);
   }
 
   async updateCompanyStatuses(

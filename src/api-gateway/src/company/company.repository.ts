@@ -289,6 +289,15 @@ export class CompanyRepository {
     );
   }
 
+  async addJobStatuses(companyId: Types.ObjectId, statusIds: Types.ObjectId[]) {
+    return this.companyModel.findOneAndUpdate(
+      {
+        $and: [{ _id: companyId }, isNotDeleted],
+      },
+      { $push: { jobStatuses: { $each: statusIds } } },
+    );
+  }
+
   eradicateCompany(companyId: Types.ObjectId) {
     return this.companyModel
       .deleteOne({
