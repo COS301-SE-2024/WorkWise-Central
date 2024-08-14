@@ -94,6 +94,7 @@ export class InventoryRepository {
   }
 
   async update(id: Types.ObjectId, updateInventoryDto: UpdateInventoryDto) {
+    id = new Types.ObjectId(id);
     const previousObject: FlattenMaps<Inventory> & { _id: Types.ObjectId } = await this.InventoryModel.findOneAndUpdate(
       {
         $and: [
