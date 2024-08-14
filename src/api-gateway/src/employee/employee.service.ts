@@ -203,7 +203,7 @@ export class EmployeeService {
     console.log('In findById service');
     console.log('id: ', id);
     const data = await this.employeeRepository.findById(id);
-    // console.log('data: ', data);
+    console.log('data: ', data);
     return data;
   }
 

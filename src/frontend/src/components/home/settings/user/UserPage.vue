@@ -198,7 +198,6 @@ import { useToast } from 'primevue/usetoast'
 
 const emit = defineEmits(['UploadImage'])
 // Use router
-
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
 const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
