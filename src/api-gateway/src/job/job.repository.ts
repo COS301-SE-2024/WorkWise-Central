@@ -9,6 +9,7 @@ import { Company } from '../company/entities/company.entity';
 import { isNotDeleted } from '../shared/soft-delete';
 import { currentDate } from '../utils/Utils';
 import { TaskItem } from './dto/create-job.dto';
+import { History } from './entities/job.entity';
 
 @Injectable()
 export class JobRepository {
