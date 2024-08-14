@@ -60,9 +60,10 @@ export class EmployeeController {
     return { data: data };
   }
 
-  @Get('/graphViewData/:companyId')
-  async graphData(@Param('companyId') companyId: Types.ObjectId) {
-    const data = await this.employeeService.graphData(companyId);
+  @Get('/graphViewData/:currentEmployeeId')
+  async graphData(@Param('currentEmployeeId') currentEmployeeId: Types.ObjectId) {
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    const data = await this.employeeService.graphData(currentEmployee.companyId);
     return { data: data };
   }
 
