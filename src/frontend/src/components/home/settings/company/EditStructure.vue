@@ -56,21 +56,21 @@ export default defineComponent({
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       data: {
         nodes: {
-          node1: { name: 'Joe' },
-          node2: { name: 'Alice' },
-          node3: { name: 'Bob' },
-          node4: { name: 'Carol' },
-          node5: { name: 'Dave' },
-          node6: { name: 'Eve' },
-          node7: { name: 'Frank' }
+          // node1: { name: 'Joe' },
+          // node2: { name: 'Alice' },
+          // node3: { name: 'Bob' },
+          // node4: { name: 'Carol' },
+          // node5: { name: 'Dave' },
+          // node6: { name: 'Eve' },
+          // node7: { name: 'Frank' }
         },
         edges: {
-          edge1: { source: 'node1', target: 'node2' },
-          edge2: { source: 'node2', target: 'node3' },
-          edge3: { source: 'node3', target: 'node4' },
-          edge4: { source: 'node3', target: 'node5' },
-          edge5: { source: 'node2', target: 'node6' },
-          edge6: { source: 'node6', target: 'node7' }
+          // edge1: { source: 'node1', target: 'node2' },
+          // edge2: { source: 'node2', target: 'node3' },
+          // edge3: { source: 'node3', target: 'node4' },
+          // edge4: { source: 'node3', target: 'node5' },
+          // edge5: { source: 'node2', target: 'node6' },
+          // edge6: { source: 'node6', target: 'node7' }
         },
         layouts: reactive({
           nodes: {}
@@ -147,6 +147,8 @@ export default defineComponent({
           config
         )
         console.log(response)
+        this.data.nodes = response.data.data.nodes
+        this.data.edges = response.data.data.edges
       } catch (error) {
         console.error(error)
       }
