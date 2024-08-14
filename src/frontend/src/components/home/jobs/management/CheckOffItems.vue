@@ -88,7 +88,9 @@
                           <v-select
                             label="Select"
                             :items="assignableEmployees"
-                            item-value="text"
+                            item-text="text"
+                            item-value="value"
+                            item-class="custom-item-class"
                             multiple
                             variant="solo"
                             hide-details
@@ -177,6 +179,7 @@
 <script setup lang="ts">
 import { ref, computed, defineProps, onMounted } from 'vue'
 import axios from 'axios'
+
 // Define props and interfaces
 const props = defineProps<{ jobTaskList: TaskList[]; id: string }>()
 // Dialog
@@ -194,6 +197,9 @@ const config = {
 // Assignable employees
 const assignableEmployees = ref([])
 const selectedEmployees = ref([])
+// Task list item
+const newItemText = ref<string>('')
+
 
 interface TaskItem {
   description: string
@@ -230,8 +236,6 @@ const getRequestUrl = async (): Promise<string> => {
   return localAvailable ? localUrl : remoteUrl
 }
 
-const newItemText = ref<string>('')
-
 // Compute the progress based on tasks
 const progress = computed(() => {
   const firstTaskList = taskList.value[0]
@@ -267,9 +271,10 @@ const saveItem = (index: number) => {
   }
 }
 
+// Fetch employees and populate assignableEmployees
 const getEmployees = async () => {
   try {
-    const apiUrl = await getRequestUrl()
+    const apiUrl = await getRequestUrl();
     const employeeId = localStorage.getItem('employeeId')
     if (!employeeId) {
       throw new Error('Employee ID not found in localStorage')
@@ -285,6 +290,11 @@ const getEmployees = async () => {
     console.error('Error fetching employees', error)
   }
 }
+
+// Call getEmployees on mounted
+onMounted(() => {
+  getEmployees()
+})
 
 const createEmployeeAssignmentObjects = () => {
   const jobId = props.id
@@ -337,5 +347,9 @@ onMounted(() => {
 <style scoped>
 .strikethrough {
   text-decoration: line-through;
+}
+
+.custom-item-class {
+  color: darkseagreen; /* Change this to your desired color */
 }
 </style>

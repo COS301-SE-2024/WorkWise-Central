@@ -129,25 +129,26 @@
                           </v-btn>
                         </template>
                         <v-list class="bg-background">
-                          <v-list-item>
-                            <v-btn color="success" @click="openViewDialog(selectedJob)">
+                          <v-list-item class="pl-0">
+                            <v-btn color="success" width="100%" @click.stop="openViewDialog()">
                               <v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>View
                             </v-btn>
                             <v-dialog v-model="viewJobDialogVisible" :max-height="800" :max-width="1000">
-                              <ViewJob :passedInJob="selectedJob" @close="viewJobDialogVisible = false"></ViewJob>
+                              <ViewJob :passedInJob="selectedJob" @close="closeViewJob()"></ViewJob>
                             </v-dialog>
                           </v-list-item>
-                          <v-list-item>
-                            <v-btn color="warning" @click="openJobCardDialog(selectedJob)">
+                          <v-list-item class="pl-0">
+                            <v-btn color="warning" width="100%" @click.stop="openJobCardDialog()">
                               <v-icon icon="fa:fa-solid fa-pencil" start color="warning" size="small"></v-icon>Edit
                             </v-btn>
-                            <v-dialog v-model="viewManagerJobCardVisible" :max-height="800" :max-width="1000">
-                              <ManagerJobCard :passedInJob="selectedJob" @close="viewManagerJobCardVisible= false"></ManagerJobCard>
+                            <v-dialog v-model="viewManagerJobCardVisible" :max-height="600" :max-width="1000">
+                              <ManagerJobCard :passedInJob="selectedJob" @close="closeEditJob()"></ManagerJobCard>
                             </v-dialog>
                           </v-list-item>
                           <v-list-item>
-                            <v-btn color="error" @click="deleteDialog = true"
-                            ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn>
+                            <v-btn color="error" @click.stop="deleteDialog = true">
+                              <v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete
+                            </v-btn>
                           </v-list-item>
                         </v-list>
                       </v-menu>
@@ -329,7 +330,6 @@ interface Job {
 }
 
 // Define state variables with types
-const actionsDialog = ref(false)
 const selectedJob = ref<Job | null>(null)
 const deleteDialog = ref(false)
 const detailedJobData = ref<Job[]>([])
@@ -338,14 +338,22 @@ const isdarkmode = ref(localStorage.getItem('theme') === 'true' ? true : false)
 const viewJobDialogVisible = ref(false)
 const viewManagerJobCardVisible = ref(false)
 
-const openJobCardDialog = (job: any) => {
-  selectedJob.value = job
+const openJobCardDialog = () => {
   viewManagerJobCardVisible.value = true
 }
 
-const openViewDialog = (job : any) => {
-  selectedJob.value = job
+const openViewDialog = () => {
   viewJobDialogVisible.value = true
+}
+
+const closeViewJob = async () => {
+  viewJobDialogVisible.value = false
+  await fetchData()
+}
+
+const closeEditJob = async () => {
+  viewManagerJobCardVisible.value = false
+  await fetchData()
 }
 
 // API URLs
@@ -418,11 +426,9 @@ const fetchData = async () => {
 // Dialog management
 const openDialog = (job: Job) => {
   selectedJob.value = job
-  actionsDialog.value = true
 }
 
 const closeDialog = () => {
-  actionsDialog.value = false
 }
 
 const formatDate = (dateString: string): string => {
@@ -462,7 +468,7 @@ const confirmDelete = async () => {
       })
     } finally {
       localStorage.setItem('jobDeleted', 'true')
-      window.location.reload()
+      await fetchData()
     }
   }
 }
