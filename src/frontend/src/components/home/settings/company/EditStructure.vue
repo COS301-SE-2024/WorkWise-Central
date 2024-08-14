@@ -45,12 +45,15 @@
 import { defineComponent, reactive } from 'vue'
 import * as vNG from 'v-network-graph'
 import dagre from 'dagre/dist/dagre.min.js'
+import axios from 'axios'
 
 const nodeSize = 40
 
 export default defineComponent({
   data() {
     return {
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       data: {
         nodes: {
           node1: { name: 'Joe' },
@@ -132,6 +135,36 @@ export default defineComponent({
         this.data.layouts.nodes[nodeId] = { x, y }
       })
     },
+    async getGraphView() {
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+      }
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      try {
+        const response = await axios.get(
+          `${apiURL}employee/graphViewData/${localStorage.getItem('employeeId')}`,
+          config
+        )
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async getRequestUrl() {
+      console.log(this.localUrl)
+      console.log(this.remoteUrl)
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
     updateLayout(direction) {
       this.layout(direction)
     },
@@ -144,6 +177,7 @@ export default defineComponent({
   },
   mounted() {
     this.layout('LR')
+    this.getGraphView()
   }
 })
 </script>
