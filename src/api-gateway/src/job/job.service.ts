@@ -76,9 +76,10 @@ export class JobService {
 
     //Save files In Bucket, and store URLs (if provided)
     //
-
-    // if (!createdJob.status)
-    //   createdJob.status = this.jobRepository.find;
+    if (createJobDto.status == null) {
+      console.log(await this.jobTagRepository.findAllStatusesInCompany(createJobDto.companyId));
+      createJobDto.status = (await this.jobTagRepository.findStatusByLabel(createJobDto.companyId, 'No Status'))._id;
+    }
 
     const createdJob = new Job(createJobDto);
     const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} created this job: ${createdJob.details.heading}`;
@@ -340,6 +341,11 @@ export class JobService {
     const result = await this.jobRepository.assignEmployee(jobAssignDto.employeeToAssignId, jobAssignDto.jobId);
     const user = await this.usersService.getUserById(userId);
     const otherEmployee = await this.employeeService.findById(jobAssignDto.employeeToAssignId);
+    const assignedJobs = otherEmployee.currentJobAssignments;
+    assignedJobs.push(job._id);
+    await this.employeeService.internalUpdate(otherEmployee._id, {
+      currentJobAssignments: assignedJobs,
+    });
     if (otherEmployee.userInfo) {
       const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName} to this job`;
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
@@ -395,6 +401,11 @@ export class JobService {
     );
     const user = await this.usersService.getUserById(userId);
     const otherEmployee = await this.employeeService.findById(taskAssignDto.employeeToAssignId);
+    const currentTaskAssignments = otherEmployee.currentTaskAssignments;
+    currentTaskAssignments.push(taskAssignDto.taskId);
+    await this.employeeService.internalUpdate(otherEmployee._id, {
+      currentTaskAssignments: currentTaskAssignments,
+    });
     if (otherEmployee.userInfo) {
       //TODO: FIX later
       const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned Task: ${taskAssignDto.taskId} to ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName}`;
@@ -451,6 +462,11 @@ export class JobService {
     );
     const user = await this.usersService.getUserById(userId);
     const otherEmployee = await this.employeeService.findById(taskAssignDto.employeeToAssignId);
+    const currentTaskAssignments = otherEmployee.currentTaskAssignments;
+    currentTaskAssignments.filter((t) => t.toString() !== taskAssignDto.taskId.toString());
+    await this.employeeService.internalUpdate(otherEmployee._id, {
+      currentTaskAssignments: currentTaskAssignments,
+    });
     if (otherEmployee.userInfo) {
       //TODO: FIX later
       const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Unassigned Task: ${taskAssignDto.taskId} from ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName}`;
@@ -476,6 +492,11 @@ export class JobService {
     const result = await this.jobRepository.unassignEmployee(jobAssignDto.employeeToAssignId, jobAssignDto.jobId);
     const user = await this.usersService.getUserById(userId);
     const otherEmployee = await this.employeeService.findById(jobAssignDto.employeeToAssignId);
+    let assignedJobs = otherEmployee.currentJobAssignments;
+    assignedJobs = assignedJobs.filter((j) => j.toString() !== job._id.toString());
+    await this.employeeService.internalUpdate(otherEmployee._id, {
+      currentJobAssignments: assignedJobs,
+    });
     if (otherEmployee.userInfo) {
       //TODO: FIX later
       const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Unassigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName} from this job`;
@@ -784,8 +805,8 @@ export class JobService {
     return this.jobTagRepository.findStatusById(statusId);
   }
 
-  async getStatusByLabel(lbl: string) {
-    return this.jobTagRepository.findStatusByLabel(lbl);
+  async getStatusByLabel(companyId: Types.ObjectId, lbl: string) {
+    return this.jobTagRepository.findStatusByLabel(companyId, lbl);
   }
 
   private async getStatusByIdWithoutValidation(statusId: Types.ObjectId) {
@@ -813,7 +834,9 @@ export class JobService {
       const exists = await this.statusNameExistsInCompany(js.status, companyId);
       if (exists) throw new InternalServerErrorException(`Job Status already exists: ${js.status}`);
     }
-    return await this.jobTagRepository.createDefaultStatusesInCompany(arr);
+    const result = await this.jobTagRepository.createDefaultStatusesInCompany(arr);
+    console.log(result);
+    return result;
   }
 
   async statusNameExistsInCompany(status: string, companyId: Types.ObjectId) {
@@ -896,7 +919,7 @@ export class JobService {
       deleteStatusDto.companyId,
     );
     const allJobsInCompany = await this.getAllJobsInCompanyWithoutValidation(employee.companyId);
-    const noStatus = await this.getStatusByLabel('No Status');
+    const noStatus = await this.getStatusByLabel(deleteStatusDto.companyId, 'No Status');
     const newStatus: Types.ObjectId = noStatus ? noStatus._id : null;
     for (const job of allJobsInCompany) {
       await this.updateWithoutValidation(job._id, {
