@@ -171,7 +171,7 @@ export class CompanyRepository {
     );
   }
 
-  async addEmployee(id: Types.ObjectId, employeeId: Types.ObjectId) {
+  /*  async addEmployee(id: Types.ObjectId, employeeId: Types.ObjectId) {
     return this.companyModel.findOneAndUpdate(
       {
         $and: [
@@ -200,7 +200,7 @@ export class CompanyRepository {
       { $pull: { employees: employeeId }, updatedAt: currentDate() },
       { new: true },
     );
-  }
+  }*/
 
   async delete(id: Types.ObjectId): Promise<boolean> {
     const result = await this.companyModel.findOneAndUpdate(
@@ -287,5 +287,13 @@ export class CompanyRepository {
       },
       { $push: { jobStatuses: statusId } },
     );
+  }
+
+  eradicateCompany(companyId: Types.ObjectId) {
+    return this.companyModel
+      .deleteOne({
+        _id: companyId,
+      })
+      .exec();
   }
 }
