@@ -13,8 +13,10 @@ import {
   AddAttachmentDto,
   AddCommentDto,
   AddTaskDto,
+  AddTaskItemDto,
   RemoveCommentDto,
   RemoveTaskDto,
+  RemoveTaskItemDto,
   UpdateAttachmentDto,
   UpdateCommentDto,
   UpdateJobDto,
@@ -22,6 +24,7 @@ import {
   UpdateStatus,
   UpdateTag,
   UpdateTaskDto,
+  UpdateTaskItemDto,
 } from './dto/update-job.dto';
 import { FlattenMaps, Types } from 'mongoose';
 import { Comment, Job, Task } from './entities/job.entity';
@@ -889,5 +892,32 @@ export class JobService {
     if (!jobExists) throw new NotFoundException('Job not found');
 
     return this.jobRepository.updateAttachments(updateAttachmentDto.jobId, updateAttachmentDto.attachments);
+  }
+
+  async addJobTaskItem(userId: Types.ObjectId, itemDto: AddTaskItemDto) {
+    await this.userIdMatchesEmployeeId(userId, itemDto.employeeId);
+
+    const jobExists = await this.jobRepository.exists(itemDto.jobId);
+    if (!jobExists) throw new NotFoundException('Job not found');
+
+    return this.jobRepository.addJobTaskItem(itemDto.jobId, itemDto.taskId);
+  }
+
+  async editJobTaskItem(userId: Types.ObjectId, itemDto: UpdateTaskItemDto) {
+    await this.userIdMatchesEmployeeId(userId, itemDto.employeeId);
+
+    const jobExists = await this.jobRepository.exists(itemDto.jobId);
+    if (!jobExists) throw new NotFoundException('Job not found');
+
+    return this.jobRepository.editJobTaskItem(itemDto.jobId, itemDto);
+  }
+
+  async removeJobTaskItem(userId: Types.ObjectId, itemDto: RemoveTaskItemDto) {
+    await this.userIdMatchesEmployeeId(userId, itemDto.employeeId);
+
+    const jobExists = await this.jobRepository.exists(itemDto.jobId);
+    if (!jobExists) throw new NotFoundException('Job not found');
+
+    return this.jobRepository.removeJobTaskItem(itemDto.jobId, itemDto.taskId, itemDto.itemId);
   }
 }
