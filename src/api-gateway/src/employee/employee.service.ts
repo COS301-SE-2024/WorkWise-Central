@@ -14,6 +14,7 @@ import { EmployeeRepository } from './employee.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { ClientService } from '../client/client.service';
 import { UpdateRoleDto } from '../role/dto/update-role.dto';
+import { Nodes, Edges } from 'v-network-graph';
 
 @Injectable()
 export class EmployeeService {
@@ -679,4 +680,51 @@ export class EmployeeService {
   //     await this.update(employee._id, { roleId: roleId });
   //   });
   // }
+
+  async graphData(companyId: Types.ObjectId) {
+    //Setting up for the traversal
+    const owner = await this.findAllInCompanyWithRoleName(companyId, 'Owner');
+    let currentCount: number = 1;
+    let subCount: number = 1;
+    let edgeCount: number = 1;
+    const nodes: Nodes = {};
+    const edges: Edges = {};
+    const currentEmployee = await this.findById(owner[0]._id);
+    const open: Types.ObjectId[] = [];
+
+    //Adding the owner to the nodes
+    const nodeLabel = 'node' + currentCount.toString();
+    nodes[nodeLabel] = { name: currentEmployee.userInfo.displayName };
+    //Adding the owner to the edges
+    currentEmployee.subordinates.forEach(() => {
+      const edgeLabel = 'edge' + edgeCount.toString();
+      edges[edgeLabel] = { source: nodeLabel, target: 'node' + subCount.toString() };
+      edgeCount++;
+      subCount++;
+    });
+    //Add the subordinates to the back of the open list
+    open.push(...currentEmployee.subordinates);
+    currentCount++;
+
+    while (open.length !== 0) {
+      const currentId = open.shift();
+      const currentEmployee = await this.findById(currentId);
+
+      //Adding the currentEmployee to the nodes
+      const nodeLabel = 'node' + currentCount.toString();
+      nodes[nodeLabel] = { name: currentEmployee.userInfo.displayName };
+      //Adding the currentEmployee to the edges
+      currentEmployee.subordinates.forEach(() => {
+        const edgeLabel = 'edge' + edgeCount.toString();
+        edges[edgeLabel] = { source: nodeLabel, target: 'node' + subCount.toString() };
+        edgeCount++;
+        subCount++;
+      });
+      //Add the subordinates to the back of the open list
+      open.push(...currentEmployee.subordinates);
+      currentCount++;
+    }
+
+    return { nodes: nodes, edges: edges };
+  }
 }

@@ -56,7 +56,8 @@
     "rxjs": "^7.8.1",
     "superagent": "^9.0.2",
     "swagger-themes": "^1.4.3",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "v-network-graph": "^0.9.16"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

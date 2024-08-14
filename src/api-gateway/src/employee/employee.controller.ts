@@ -61,6 +61,12 @@ export class EmployeeController {
     return { data: data };
   }
 
+  @Get('/graphViewData/:companyId')
+  async graphData(@Param('companyId') companyId: Types.ObjectId) {
+    const data = await this.employeeService.graphData(companyId);
+    return { data: data };
+  }
+
   @Post('/create')
   async create(
     @Headers() headers: any,
