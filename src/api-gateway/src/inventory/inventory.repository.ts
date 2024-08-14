@@ -146,7 +146,7 @@ export class InventoryRepository {
           },
         ],
       },
-      { $push: { images: newUrls }, updatedAt: Date.now() },
+      { $push: { images: { $each: newUrls } }, updatedAt: Date.now() },
     )
       .lean()
       .exec();

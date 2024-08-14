@@ -449,7 +449,7 @@ export class JobRepository {
   async addAttachments(jobId: Types.ObjectId, newUrls: string[]) {
     const job = await this.jobModel.updateOne(
       { _id: jobId },
-      { $push: { attachments: newUrls }, updatedAt: Date.now() },
+      { $push: { attachments: { $each: newUrls } }, updatedAt: Date.now() },
       { new: true },
     );
     console.log(job);

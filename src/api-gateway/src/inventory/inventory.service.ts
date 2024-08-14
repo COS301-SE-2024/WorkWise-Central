@@ -86,7 +86,6 @@ export class InventoryService {
   }
 
   async update(id: Types.ObjectId, updateInventoryDto: UpdateInventoryDto) {
-    //TODO: Add separate endpoints for add and remove image
     console.log('In update. Id: ', id);
     const validation = await this.validateUpdateInventory(id);
     console.log('validation: ', validation);
