@@ -103,9 +103,7 @@ interface EmployeeId {
 // Data
 const newComment = ref('')
 const userInitials = ref<{ employeeId: string; initials: string }[]>([])
-const comments = ref<
-  { text: string; employeeId: string; date: string; initials?: string; _id: string }[]
->(
+const comments = ref<{ text: string; employeeId: string; date: string; initials?: string; _id: string }[]>(
   props.jobComments.map((comment) => ({
     text: comment.comment,
     employeeId: comment.employeeId._id,
@@ -150,32 +148,6 @@ const getUserData = async () => {
     })
   } catch (error) {
     console.error('Error getting user data', error)
-  }
-}
-
-const getAllEmployeeData = async () => {
-  const apiUrl = await getRequestUrl()
-  try {
-    const employeeResponse = await axios.get(
-      `${apiUrl}employee/all/${localStorage.getItem('currentCompany')}`,
-      config
-    )
-    console.log(employeeResponse)
-    const employeeIds = employeeResponse.data.map((employee: { _id: string }) => employee._id)
-
-    for (const id of employeeIds) {
-      const response = await axios.get(`${apiUrl}users/id/${id}`, config)
-      const userData = response.data.data
-
-      userInitials.value.push({
-        employeeId: id,
-        initials: getInitialsS(userData.personalInfo.firstName, userData.personalInfo.surname)
-      })
-    }
-
-    populateCommentsWithInitials()
-  } catch (error) {
-    console.error('Failed to get employee data', error)
   }
 }
 
@@ -268,6 +240,5 @@ const deleteComment = async (index: number) => {
 // On Mounted
 onMounted(async () => {
   await getUserData()
-  await getAllEmployeeData()
 })
 </script>
