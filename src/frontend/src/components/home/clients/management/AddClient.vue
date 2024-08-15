@@ -61,18 +61,7 @@
               hide-details="auto"
             ></v-text-field
           ></v-col>
-          <!--            <v-col>-->
-          <!--              <small class="text-caption white&#45;&#45;text">Username of client*</small>-->
 
-          <!--              <v-text-field-->
-          <!--                color="secondary"-->
-          <!--                placeholder="Enter the username of the client"-->
-          <!--                v-model="req_obj.clientUsername"-->
-          <!--                required-->
-          <!--                :rules="username_rules"-->
-          <!--                hide-details="auto"-->
-          <!--              ></v-text-field-->
-          <!--            ></v-col>-->
           <v-col>
             <small class="text-caption">Client email address*</small>
             <v-text-field
