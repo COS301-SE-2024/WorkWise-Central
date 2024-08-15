@@ -281,12 +281,12 @@ interface Details {
   preferredLanguage: string
   contactInfo: ContactInfo
   address: Address
-  companyId: string // Assuming localStorage['currentCompany'] is a string
+  companyId: string
   idNumber?: string
 }
 
 interface RequestObject {
-  employeeId: string // Assuming localStorage['employeeId'] is a string
+  employeeId: string
   details: Details
 }
 
@@ -339,7 +339,7 @@ export default defineComponent({
       (v: string) => {
         const dob = v.slice(0, 6)
         const year = parseInt(dob.slice(0, 2), 10) + 1900
-        const month = parseInt(dob.slice(2, 4), 10) - 1 // JS months are 0-indexed
+        const month = parseInt(dob.slice(2, 4), 10) - 1
         const day = parseInt(dob.slice(4, 6), 10)
         const date = new Date(year, month, day)
         return (
