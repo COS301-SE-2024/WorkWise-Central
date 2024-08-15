@@ -260,4 +260,24 @@ export class UsersRepository {
       { $set: { deletedAt: currentDate() } },
     );
   }
+
+  async updateJoinedCompanyName(companyId: Types.ObjectId, newCompanyName: string) {
+    return this.userModel
+      .updateMany(
+        {
+          $and: [
+            { 'joinedCompanies.companyId': companyId },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        {
+          $set: { 'joinedCompanies.$.companyName': newCompanyName },
+          updatedAt: currentDate(),
+        },
+        { new: true },
+      )
+      .lean();
+  }
 }

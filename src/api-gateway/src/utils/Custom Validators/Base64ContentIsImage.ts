@@ -4,7 +4,7 @@ import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface 
 export class Base64ContentIsImage implements ValidatorConstraintInterface {
   validate(value: string, args: ValidationArguments): boolean {
     console.log(args);
-    const dataUriRegex = /^data:image\/(png|jpeg|jpg|gif|svg\+xml);base64,/i;
+    const dataUriRegex = /^data:image\/(png|jpeg|jpg|webp|bmp|gif|svg\+xml);base64,/i;
     if (!dataUriRegex.test(value)) {
       return false;
     }

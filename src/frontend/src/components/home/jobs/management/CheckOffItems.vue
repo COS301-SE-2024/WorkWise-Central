@@ -72,7 +72,7 @@
                     <v-defaults-provider :defaults="{ VIcon: { color: 'info' } }">
                       <v-btn
                         color="info"
-                        @click="assignDialog = true; getEmployees()"
+                        @click="assignDialog = true"
                       >
                         <v-icon>
                           {{ 'fa: fa-solid fa-user-plus' }}
@@ -88,6 +88,9 @@
                           <v-select
                             label="Select"
                             :items="assignableEmployees"
+                            item-title="text"
+                            item-value="value"
+                            item-class="custom-item-class"
                             multiple
                             variant="solo"
                             hide-details
@@ -99,6 +102,7 @@
                             <v-btn
                               color="success"
                               prepend-icon="fa: fa-solid fa-save"
+                              @click="createEmployeeAssignmentObjects()"
                               >Save</v-btn
                             >
                           </v-defaults-provider>
@@ -176,6 +180,7 @@
 <script setup lang="ts">
 import { ref, computed, defineProps, onMounted } from 'vue'
 import axios from 'axios'
+
 // Define props and interfaces
 const props = defineProps<{ jobTaskList: TaskList[]; id: string }>()
 // Dialog
@@ -193,6 +198,9 @@ const config = {
 // Assignable employees
 const assignableEmployees = ref([])
 const selectedEmployees = ref([])
+// Task list item
+const newItemText = ref<string>('')
+
 
 interface TaskItem {
   description: string
@@ -214,6 +222,13 @@ const taskList = ref<TaskList[]>([
   }
 ])
 
+const employees = ([
+  {
+    "text": "Lionel Messi",
+    "value": "66bb07e4047acc46409cc510"
+  }
+])
+
 // Utility functions
 const isLocalAvailable = async (url: string): Promise<boolean> => {
   try {
@@ -228,8 +243,6 @@ const getRequestUrl = async (): Promise<string> => {
   const localAvailable = await isLocalAvailable(localUrl)
   return localAvailable ? localUrl : remoteUrl
 }
-
-const newItemText = ref<string>('')
 
 // Compute the progress based on tasks
 const progress = computed(() => {
@@ -266,9 +279,10 @@ const saveItem = (index: number) => {
   }
 }
 
+// Fetch employees and populate assignableEmployees
 const getEmployees = async () => {
   try {
-    const apiUrl = await getRequestUrl()
+    const apiUrl = await getRequestUrl();
     const employeeId = localStorage.getItem('employeeId')
     if (!employeeId) {
       throw new Error('Employee ID not found in localStorage')
@@ -278,12 +292,21 @@ const getEmployees = async () => {
       text: `${employee.userId.personalInfo.firstName} ${employee.userId.personalInfo.surname}`,
       value: employee._id
     }))
-    console.log(assignableEmployees)
+    console.log(assignableEmployees.value)
     console.log('Employees fetched successfully', response.data)
   } catch (error) {
     console.error('Error fetching employees', error)
   }
 }
+
+// Call getEmployees on mounted
+onMounted(() => {
+  console.log('Tasklist: ', props.jobTaskList)
+  if (props.jobTaskList && props.jobTaskList.length > 0) {
+    taskList.value = props.jobTaskList
+  }
+  getEmployees()
+})
 
 const createEmployeeAssignmentObjects = () => {
   const jobId = props.id
@@ -291,9 +314,9 @@ const createEmployeeAssignmentObjects = () => {
   const itemId = 'someItemId' // Replace with actual item ID
   const employeeId = localStorage.getItem('employeeId') || ''
 
-  const assignments = selectedEmployees.value.map((employeeToAssignId: string) => ({
+  const assignments = selectedEmployees.value.map((selectedEmployee: { text: string, value: string }) => ({
     employeeId,
-    employeeToAssignId,
+    employeeToAssignId: selectedEmployee.value,
     jobId,
     taskId,
     itemId
@@ -325,16 +348,14 @@ const putTask = async () => {
 
 const saveTask = async (index: number) => {}
 
-onMounted(() => {
-  console.log('Tasklist: ', props.jobTaskList)
-  if (props.jobTaskList && props.jobTaskList.length > 0) {
-    taskList.value = props.jobTaskList
-  }
-})
 </script>
 
 <style scoped>
 .strikethrough {
   text-decoration: line-through;
+}
+
+.custom-item-class {
+  color: darkseagreen; /* Change this to your desired color */
 }
 </style>

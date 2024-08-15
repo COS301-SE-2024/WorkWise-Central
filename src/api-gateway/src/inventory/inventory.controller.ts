@@ -11,12 +11,17 @@ import {
   UseGuards,
   Headers,
   Query,
+  BadRequestException,
+  Put,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiConsumes,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
@@ -32,7 +37,8 @@ import { AuthGuard } from '../auth/auth.guard';
 // import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { EmployeeService } from '../employee/employee.service';
-import { validateObjectId } from '../utils/Utils';
+import { isBase64Uri, validateObjectId } from '../utils/Utils';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 const className = 'Inventory';
 
@@ -78,6 +84,12 @@ export class InventoryController {
       createInventoryDto: CreateInventoryDto;
     },
   ) {
+    //Base64 Validation
+    if (body.createInventoryDto.images.length > 0) {
+      const valid = isBase64Uri(body.createInventoryDto.images);
+      if (!valid) throw new BadRequestException('Images must be Base64 URIs');
+    }
+
     const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('add new inventory item')) {
       let data;
@@ -226,6 +238,49 @@ export class InventoryController {
       let data;
       try {
         data = await this.inventoryService.update(id, body.updateInventoryDto);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @ApiOperation({
+    summary: `Add new images to an inventory item`,
+    description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
+  })
+  @ApiOkResponse({
+    type: InventoryResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @ApiBody({ type: UpdateInventoryDto })
+  @Put('images/:id')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'files', maxCount: 20 }]))
+  async addImages(
+    @Headers() headers: any,
+    @Query('inventoryId') id: Types.ObjectId,
+    @Query('empId') currentEmployeeId: Types.ObjectId,
+    @UploadedFiles() files: { files?: Express.Multer.File[] },
+  ) {
+    console.log(files);
+    console.log('In addImages inventory controller');
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    console.log('currentEmployee: ', currentEmployee);
+    if (currentEmployee.role.permissionSuite.includes('edit all inventory')) {
+      console.log('in if');
+      let data;
+      try {
+        //TODO: Validation of invId and empId
+        data = await this.inventoryService.addImages(id, files.files);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }

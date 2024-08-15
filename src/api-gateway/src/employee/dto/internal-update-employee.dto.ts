@@ -51,6 +51,10 @@ export class InternalUpdateEmployeeDto {
   @ApiProperty()
   @IsMongoId()
   userInfo?: UserInfo;
+
+  @IsOptional()
+  @IsMongoId()
+  currentTaskAssignments?: Types.ObjectId[];
 }
 
 export class updateEmployeeResponseDto {
