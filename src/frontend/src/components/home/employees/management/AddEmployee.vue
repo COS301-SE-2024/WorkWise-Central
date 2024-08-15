@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    max-height="800"
-    max-width="600"
-    style="font-family: Nunito, sans-serif"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
-  >
+  <v-dialog max-height="800" max-width="600" style="font-family: Nunito, sans-serif">
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -35,7 +30,6 @@
                 >
 
                 <v-text-field
-                  bg-color="background"
                   v-model="req_obj.newUserUsername"
                   placeholder="Employee Username"
                   rounded="md"
@@ -180,6 +174,7 @@ export default defineComponent({
         console.log(roles_response)
         let roles_data: Role[] = roles_response.data.data
         for (let i = 0; i < roles_data.length; i++) {
+          if (roles_data[i].roleName === 'Owner') continue
           this.roleItems.push({
             roleName: roles_data[i].roleName,
             roleId: roles_data[i]._id
