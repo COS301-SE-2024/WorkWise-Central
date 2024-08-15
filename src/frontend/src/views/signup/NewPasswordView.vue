@@ -1,16 +1,15 @@
 <template>
   <main>
-    <CreateNewPassword />
+    <SplashVue />
   </main>
 </template>
 
-<script lang="ts">
-
-import CreateNewPassword from '../../components/signup/CreateNewPassword.vue'
+<script>
+import SplashVue from '../../components/signup/CreateNewPassword.vue'
 
 export default {
   components: {
-    CreateNewPassword
+    SplashVue
   }
 }
 </script>
