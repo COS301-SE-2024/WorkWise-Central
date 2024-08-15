@@ -96,7 +96,11 @@ export class EmployeeRepository {
   }
 
   async findById(identifier: Types.ObjectId) {
-    identifier = new Types.ObjectId(identifier);
+    console.log('identifier: ', identifier);
+    if (typeof identifier === 'string') {
+      identifier = new Types.ObjectId(identifier);
+    }
+    console.log('identifier: ', identifier);
     const result = this.employeeModel
       .findOne({
         $and: [
