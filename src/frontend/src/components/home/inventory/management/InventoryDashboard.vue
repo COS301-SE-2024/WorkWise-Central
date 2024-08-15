@@ -12,17 +12,17 @@
         height="auto"
         width="100%"
         ><v-row align="center" justify="space-between">
-          <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+          <v-col cols="12" lg="4" class="d-flex align-center">
             <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
             <v-label
-              class="ms-2 h4 font-family-Nunito text-headingTextColor"
+              class="ms-2 h2 font-family-Nunito text-headingTextColor"
               height="auto"
               width="auto"
-              >Inventory</v-label
+              >Inventory Details</v-label
             >
           </v-col>
 
-          <v-col cols="12" md="4" sm="6" xs="12">
+          <v-col cols="12" lg="4" class="d-flex align-center">
             <v-text-field
               v-model="search"
               density="compact"
@@ -37,7 +37,7 @@
             ></v-text-field>
           </v-col>
 
-          <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
+          <v-col cols="12" lg="4" class="d-flex align-center">
             <AddInventory />
           </v-col> </v-row
       ></v-card-title>

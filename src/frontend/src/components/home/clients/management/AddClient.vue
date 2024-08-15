@@ -16,6 +16,7 @@
           text="Add Client"
           prepend-icon="mdi-account-plus"
           variant="elevated"
+          block
           color="secondary"
           v-bind="activatorProps"
         ></v-btn>

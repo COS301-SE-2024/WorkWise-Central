@@ -15,6 +15,7 @@
           text="Add Employee"
           variant="elevated"
           color="secondary"
+          block
           v-bind="activatorProps"
         ></v-btn>
       </v-defaults-provider>

@@ -15,6 +15,7 @@
           text="Add Job"
           prepend-icon="mdi-briefcase-plus"
           variant="elevated"
+          block
           color="secondary"
           v-bind="activatorProps"
         ></v-btn>

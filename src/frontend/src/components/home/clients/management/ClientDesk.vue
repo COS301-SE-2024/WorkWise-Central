@@ -13,7 +13,7 @@
         width="100%"
       >
         <v-row align="center" justify="space-between">
-          <v-col cols="12" lg="4" md="4" sm="4" class="d-flex justify-start align-center">
+          <v-col cols="12" lg="4" class="d-flex justify-start align-center">
             <v-icon icon="mdi-account"></v-icon>
             <v-label
               class="ms-2 h2 font-family-Nunito text-headingTextColor"
@@ -23,7 +23,7 @@
             >
           </v-col>
 
-          <v-col cols="12" lg="4" md="4" sm="4" class="d-flex justify-center">
+          <v-col cols="12" lg="4" class="d-flex justify-center">
             <v-text-field
               v-model="search"
               density="compact"
@@ -39,7 +39,7 @@
             ></v-text-field>
           </v-col>
 
-          <v-col cols="12" lg="4" md="4" sm="4" :class="{ 'd-flex justify-end': !isSmallScreen }">
+          <v-col cols="12" lg="4" :class="{ 'd-flex justify-end': !isSmallScreen }">
             <AddClient />
           </v-col>
         </v-row>

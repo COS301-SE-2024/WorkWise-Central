@@ -3,7 +3,7 @@
     v-model="addDialog"
     max-height="800"
     max-width="600"
-    scrollable
+    scrollablea
     :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
     :opacity="0.1"
   >
@@ -12,6 +12,7 @@
         class="text-none font-weight-regular hello"
         color="secondary"
         v-bind="activatorProps"
+        block
         variant="elevated"
         ><v-icon icon="fa:fa-solid fa-plus" color="" size="xs" />
         <v-icon icon="fa:fa-solid fa-warehouse" color="" />

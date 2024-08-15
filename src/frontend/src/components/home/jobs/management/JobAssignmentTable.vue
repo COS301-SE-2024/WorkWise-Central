@@ -10,18 +10,17 @@
                 style="font-family: Nunito, sans-serif; font-size: 25px; font-weight: lighter"
               >
                 <v-row align="center" justify="space-between">
-                  <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+                  <v-col cols="12" lg="4" class="d-flex align-center">
                     <v-icon icon="fa: fa-solid fa-briefcase" size="x-small"></v-icon>
                     <v-label
-                      class="ms-2 text-h4 text-headingTextColor"
-                      style="font-size: 15px; font-family: Nunito, sans-serif; font-weight: lighter"
+                      class="ms-2 h2 font-family-Nunito text-headingTextColor"
                       height="auto"
                       width="auto"
-                      >Job Details
-                    </v-label>
+                      >Job Details</v-label
+                    >
                   </v-col>
 
-                  <v-col order-sm="1" order-md="1" cols="12" md="4" sm="12" xs="12">
+                  <v-col order-sm="1" order-md="1" cols="12" lg="4">
                     <v-text-field
                       v-model="search"
                       density="compact"
@@ -36,15 +35,7 @@
                       single-line
                     ></v-text-field>
                   </v-col>
-                  <v-col
-                    order-sm="2"
-                    order-md="2"
-                    cols="12"
-                    md="4"
-                    sm="12"
-                    xs="12"
-                    class="d-flex justify-end"
-                  >
+                  <v-col order-sm="2" order-md="2" cols="12" lg="4" class="d-flex justify-end">
                     <AddJob />
                   </v-col>
                 </v-row>

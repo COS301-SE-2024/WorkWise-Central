@@ -1,4 +1,5 @@
 <template>
+  <Toast position="top-center" group="headless" />
   <v-menu
     v-model="companyDialog"
     location="right"
@@ -33,7 +34,6 @@
         <v-container>
           <v-row>
             <v-col cols="12" lg="6" align-self="center">
-              <Toast position="top-center" />
               <v-btn
                 color="success"
                 width="100%"
@@ -79,6 +79,8 @@ export default defineComponent({
     return {
       companyDialog: false,
       isDeleting: false,
+      progress:0,
+      visible: false,
       search: '',
       company: '',
       companyName: '',
@@ -119,8 +121,8 @@ export default defineComponent({
       this.$toast.add({
         severity: 'success',
         summary: 'Success',
-        detail: `Switched to ${companyName}`,
-        life: 3000
+        group: 'headless', // This is optional
+        detail: `Switched to ${companyName}`
       })
       this.companyName = companyName
       this.company = companyName
