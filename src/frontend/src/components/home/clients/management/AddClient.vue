@@ -26,7 +26,7 @@
         <span class="headline text-center">Create a Client </span>
       </v-card-title>
       <v-card-text>
-        <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
+        <v-form ref="form" v-model="valid" @submit.prevent="validateSubmission">
           <v-col>
             <small class="text-caption white--text">First Name of client*</small>
 
@@ -68,7 +68,7 @@
               color="secondary"
               placeholder="Enter the client's email address"
               v-model="req_obj.details.contactInfo.email"
-              :rules="email_rules"
+              :rules="emailRule"
               type="email"
               required
               hide-details="auto"
@@ -81,7 +81,7 @@
               placeholder="Enter the client's phone number"
               v-model="req_obj.details.contactInfo.phoneNumber"
               type="text"
-              :rules="phone_number_rules"
+              :rules="phoneRule"
               required
               hide-details="auto"
             ></v-text-field
@@ -261,8 +261,8 @@ import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 
 interface ContactInfo {
-  email: string
-  phoneNumber: string
+  email?: string
+  phoneNumber?: string
 }
 
 interface Address {
@@ -302,7 +302,10 @@ export default defineComponent({
     addDialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     click_create_client: false,
-    email_rules: [(val: string) => email_reg.test(val) || 'Email should contain an @ symbol'],
+    email_rules: [
+      (v: string) => v || 'Email or Phone number is required',
+      (val: string) => email_reg.test(val) || 'Email should contain an @ symbol'
+    ],
     first_name_rules: [
       (v: string) => !!v || 'First name is required',
       (v: string) => /^[A-Za-z]+$/.test(v) || 'First name must be alphabetic characters'
@@ -332,8 +335,7 @@ export default defineComponent({
         /^[A-Za-z0-9_]+$/.test(v) || 'Username must be alphanumeric characters and underscores only'
     ],
     south_africa_id_rules: [
-      // (v: string) => v.length === 13 || 'ID number must be 13 digits long',
-      (v: string) => /^\d{13}$/.test(v) || 'ID number must contain only digits',
+      (v: string) => !v || /^\d{13}$/.test(v) || 'ID number must contain only digits',
       (v: string) => {
         const dob = v.slice(0, 6)
         const year = parseInt(dob.slice(0, 2), 10) + 1900
@@ -341,11 +343,12 @@ export default defineComponent({
         const day = parseInt(dob.slice(4, 6), 10)
         const date = new Date(year, month, day)
         return (
+          !v ||
           (date.getFullYear() === year && date.getMonth() === month && date.getDate() === day) ||
           'Invalid date of birth in ID number'
         )
       },
-      (v: string) => ['0', '1'].includes(v[10]) || 'Invalid citizenship status digit',
+      (v: string) => !v || ['0', '1'].includes(v[10]) || 'Invalid citizenship status digit',
       (v: string) => {
         // Implementing Luhn algorithm for checksum validation
         let sum = 0
@@ -358,7 +361,7 @@ export default defineComponent({
             sum += doubled > 9 ? doubled - 9 : doubled
           }
         }
-        return sum % 10 === 0 || 'Invalid ID number checksum'
+        return !v || sum % 10 === 0 || 'Invalid ID number checksum'
       }
     ],
 
@@ -386,7 +389,31 @@ export default defineComponent({
       }
     } as RequestObject
   }),
+  computed: {
+    emailRule(): Array<(v: string) => boolean | string> {
+      return this.req_obj.details.contactInfo.phoneNumber !== ''
+        ? []
+        : [
+            (v: string) => this.validatePhoneOrEmail() || 'Email or Phone is required',
+            (val: string) => email_reg.test(val) || 'Email should contain an @ symbol'
+          ]
+    },
+    phoneRule(): Array<(v: string) => boolean | string> {
+      return this.req_obj.details.contactInfo.email !== ''
+        ? []
+        : [
+            (v: string) => this.validatePhoneOrEmail() || 'Email or Phone is required',
+            (v: string) => /^[A-Za-z]+$/.test(v) || 'First name must be alphabetic characters'
+          ]
+    }
+  },
   methods: {
+    validatePhoneOrEmail() {
+      return (
+        this.req_obj.details.contactInfo.phoneNumber != '' ||
+        this.req_obj.details.contactInfo.email != ''
+      )
+    },
     luhnCheck(val: string) {
       let sum = 0
       for (let i = 0; i < val.length; i++) {
@@ -427,10 +454,17 @@ export default defineComponent({
           })
       }
     },
+    async validateSubmission() {
+      const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
+      const validate = await (form as any).validate()
+      this.req_obj.details.idNumber || delete this.req_obj.details.idNumber
+      this.req_obj.details.contactInfo.email || delete this.req_obj.details.contactInfo.email
+      this.req_obj.details.contactInfo.phoneNumber ||
+        delete this.req_obj.details.contactInfo.phoneNumber
+
+      validate || this.handleSubmission()
+    },
     async handleSubmission() {
-      if (this.req_obj.details.idNumber === '') {
-        delete this.req_obj.details.idNumber
-      }
       console.log(JSON.stringify(this.req_obj))
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
