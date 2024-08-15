@@ -269,6 +269,10 @@ export class UsersService {
     return true;
   }
 
+  async updateJoinedCompanyName(companyId: Types.ObjectId, newName: string) {
+    await this.userRepository.updateJoinedCompanyName(companyId, newName);
+  }
+
   async createUserValid(createUserDto: CreateUserDto): Promise<ValidationResult> {
     console.log('createValidation', createUserDto);
 
