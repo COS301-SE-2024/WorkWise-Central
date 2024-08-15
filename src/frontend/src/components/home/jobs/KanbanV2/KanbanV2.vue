@@ -204,41 +204,6 @@
               </v-list>
             </v-menu>
           </v-card-item>
-          <!--          <v-card-item-->
-          <!--            class="font-weight-black text-h5"-->
-          <!--            style="font-family: 'Nunito', sans-serif"-->
-          <!--            v-else-if="column.status === 'In Progress'"-->
-          <!--            align="center"-->
-          <!--            ><v-icon class="pr-1" color="light-blue-accent-4">{{-->
-          <!--              'fa:fas fa-spinner fa-spin'-->
-          <!--            }}</v-icon>-->
-          <!--            {{ column.status-->
-          <!--            }}<v-chip class="text-subtitle-1 font-weight-black" variant="tonal">-->
-          <!--              {{ column.cards.length }}-->
-          <!--            </v-chip></v-card-item-->
-          <!--          ><v-card-item-->
-          <!--            class="font-weight-black text-h5"-->
-          <!--            style="font-family: 'Nunito', sans-serif"-->
-          <!--            v-else-if="column.status === 'Awaiting review'"-->
-          <!--            align="center"-->
-          <!--            ><v-icon class="pr-1" color="purple-accent-3">{{ 'fa:fas fa-hourglass-half' }}</v-icon>-->
-          <!--            {{ column.status }}-->
-          <!--            <v-chip class="text-subtitle-1 font-weight-black" variant="tonal">-->
-          <!--              {{ column.cards.length }}-->
-          <!--            </v-chip></v-card-item-->
-          <!--          ><v-card-item-->
-          <!--            class="font-weight-black text-h5"-->
-          <!--            style="font-family: 'Nunito', sans-serif"-->
-          <!--            v-else-if="column.status === 'Done'"-->
-          <!--            align="center"-->
-          <!--            ><v-icon class="pr-1" color="green-accent-4">{{-->
-          <!--              'fa: fa-solid fa-clipboard-check'-->
-          <!--            }}</v-icon>-->
-          <!--            {{ column.status }}-->
-          <!--            <v-chip class="text-subtitle-1 font-weight-black" variant="tonal">-->
-          <!--              {{ column.cards.length }}-->
-          <!--            </v-chip></v-card-item-->
-          <!--          >-->
 
           <v-virtual-scroll
             :items="column.cards"
@@ -260,6 +225,9 @@
                   aria-grabbed="true"
                   role="option"
                 >
+                  <v-card-item>
+                    <v-img :src="item.coverImage"> </v-img>
+                  </v-card-item>
                   <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
                     ><b>{{ item.heading }}</b></v-card-item
                   >
@@ -766,7 +734,8 @@ export default {
             taskList: loaded_tags_res[i].taskList,
             comments: loaded_tags_res[i].comments,
             priorityTag: loaded_tags_res[i].priorityTag,
-            tags: loaded_tags_res[i].tags
+            tags: loaded_tags_res[i].tags,
+            coverImage: loaded_tags_res[i].coverImage
           })
         }
         console.log(this.starting_cards)
