@@ -202,6 +202,23 @@
                     data-testid="tags-multi-select"
                   ></v-select
                 ></v-col>
+                <v-col>
+                  <small class="text-caption">Cover Image</small>
+                  <v-file-input
+                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    variant="solo"
+                    accept="image/*"
+                    width="100%"
+                    placeholder="Cover image for job"
+                    @change="handleImageUpload"
+                    hint="Image size limit of  5MB"
+                    persistent-hint
+                    color="black"
+                    rounded="md"
+                    required
+                    data-testid="company-logo-file-input"
+                  ></v-file-input>
+                </v-col>
               </v-row>
 
               <label style="font-size: 14px; font-weight: lighter">Job address</label>
@@ -348,6 +365,35 @@ import type {
   JobStatuses
 } from '../types'
 
+type JobDetails = {
+  heading: string
+  description: string
+  address: {
+    province: string
+    street: string
+    suburb: string
+    city: string
+    postalCode: string
+    complex: string
+  }
+  startDate: string
+  endDate: string
+}
+
+type Job = {
+  companyId: string
+  clientId: string
+  assignedBy: string
+  assignedEmployees: {
+    employeeIds: string[]
+  }
+  status?: string
+  details: JobDetails
+  tags?: string[]
+  priorityTag?: string | null
+  coverImage?: string
+}
+
 export default defineComponent({
   name: 'JobDetailsList',
 
@@ -404,7 +450,7 @@ export default defineComponent({
           employeeIds: [] as string[]
         },
         //default job statuses ['Todo','In Progress','Awaiting Review','Done']
-        status: null,
+        status: '',
         details: {
           heading: '',
           description: '',
@@ -420,8 +466,9 @@ export default defineComponent({
           endDate: ''
         },
         tags: [],
-        priorityTag: null
-      },
+        priorityTag: null,
+        coverImage: ''
+      } as Job,
       jobDialog: false
     }
   },
@@ -431,6 +478,20 @@ export default defineComponent({
     }
   },
   methods: {
+    handleImageUpload(event: Event) {
+      const target = event.target as HTMLInputElement
+      if (target.files && target.files[0]) {
+        const file: File = target.files[0]
+        const reader = new FileReader()
+
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          if (e.target && typeof e.target.result === 'string') {
+            this.req_obj.coverImage = e.target.result
+          }
+        }
+        reader.readAsDataURL(file)
+      }
+    },
     updateAllowedTimes() {
       const isToday = this.startDate === this.minDate
 
@@ -472,6 +533,10 @@ export default defineComponent({
       if (this.endDate !== null && this.endTime !== '') {
         this.formatDateAndTime(this.endDate, this.endTime)
       }
+      if (this.req_obj.coverImage === '') delete this.req_obj.coverImage
+
+      // if (this.req_obj.assignedEmployees === null) delete this.req_obj.assignedEmployees
+
       console.log(this.req_obj)
       this.updateDates()
       await this.handleSubmission()
