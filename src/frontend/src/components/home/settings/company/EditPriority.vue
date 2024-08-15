@@ -1,7 +1,23 @@
 <template>
   <v-container>
+    <Toast />
     <v-card>
-      <v-card-title class="text-primary font-bold text-center">Priorities</v-card-title>
+      <v-card-title
+        class="d-flex align-center pe-2 text-h5 font-weight-regular"
+        height="auto"
+        width="100%"
+        ><v-row align="center" justify="space-between"
+          ><v-col cols="12" lg="6">
+            <v-label
+              class="ms-2 h2 font-family-Nunito text-headingTextColor"
+              height="auto"
+              width="auto"
+              >Priorities</v-label
+            ></v-col
+          ><v-col cols="12" lg="6"><CreatePriority /></v-col
+        ></v-row>
+      </v-card-title>
+
       <v-card-text>
         <v-data-table
           :headers="headers"
@@ -22,11 +38,11 @@
                 </v-btn>
               </template>
               <v-list>
-                <!-- <v-list-item @click="selectItem(item)">
+                <v-list-item @click="selectItem(item)">
                   <v-btn color="success" block @click="dialog = true"
                     ><v-icon icon="fa:fa-solid fa-pencil" color="success"></v-icon>Edit</v-btn
                   >
-                </v-list-item> -->
+                </v-list-item>
                 <v-list-item @click="selectItem(item)">
                   <DeletePriority :tag-id="selectedItem._id" />
                 </v-list-item>
@@ -44,7 +60,7 @@
       persistent
     >
       <v-card>
-        <v-card-title> Edit Tag</v-card-title>
+        <v-card-title> Edit Priorities</v-card-title>
         <v-card-text>
           <v-form v-model="formIsValid" ref="form">
             <v-label>Tag Name</v-label>
@@ -62,15 +78,29 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn
-            @click="updatePrority"
-            :disabled="!formIsValid"
-            color="success"
-            rounded="md"
-            variant="text"
-            >Create Tag</v-btn
-          >
-          <v-btn color="error" rounded="md" variant="text" @click="close"> Cancel </v-btn>
+          <v-container>
+            <v-row>
+              <v-col cols="12" lg="6">
+                <v-btn
+                  @click="updatePrority"
+                  :disabled="!formIsValid"
+                  color="success"
+                  rounded="md"
+                  variant="text"
+                  block
+                  :loading="isDeleting"
+                >
+                  <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save
+                  Priority</v-btn
+                ></v-col
+              >
+              <v-col cols="12" lg="6"
+                ><v-btn color="error" rounded="md" variant="text" @click="close" block>
+                  <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon> Cancel
+                </v-btn></v-col
+              >
+            </v-row>
+          </v-container>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -80,7 +110,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import DeletePriority from './DeletePriority.vue'
+import ColorPicker from 'primevue/colorpicker'
+import CreatePriority from './CreatePriority.vue'
 import axios from 'axios'
+import Toast from 'primevue/toast'
 export default defineComponent({
   data: () => ({
     headers: [
@@ -102,6 +135,7 @@ export default defineComponent({
       }
     ],
     items: [] as any[],
+    isDeleting: false,
     dialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     selectedItem: {
@@ -118,7 +152,10 @@ export default defineComponent({
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   components: {
-    DeletePriority
+    DeletePriority,
+    ColorPicker,
+    Toast,
+    CreatePriority
   },
   methods: {
     getRowProps(index: number) {
@@ -161,8 +198,10 @@ export default defineComponent({
     },
     selectItem(item: any) {
       console.log(item)
+      this.selectedItem = item
     },
     async updatePrority() {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -171,19 +210,19 @@ export default defineComponent({
       }
       const apiURL = await this.getRequestUrl()
       axios
-        .put(
-          `${apiURL}job/tags/p/${localStorage.getItem('currentCompany')}`,
-          this.selectedItem,
-          config
-        )
+        .patch(`${apiURL}job/tags/p/`, this.selectedItem, config)
         .then((res) => {
           console.log(res)
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Priority updated successfully',
+            detail: 'Status updated',
             life: 3000
           })
+          setTimeout(() => {
+            window.location.reload()
+            this.isDeleting = false
+          }, 3000)
           this.dialog = false
         })
         .catch((err) => {

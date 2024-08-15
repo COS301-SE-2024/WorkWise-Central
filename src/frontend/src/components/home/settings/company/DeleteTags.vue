@@ -71,6 +71,7 @@ export default defineComponent({
       this.deleteDialog = false
     },
     async deleteTag() {
+      this.isDeleting = true // Indicate the start of the deletion process
       console.log(this.tagId)
       const config = {
         headers: {
@@ -87,17 +88,21 @@ export default defineComponent({
         .delete(`${apiURL}job/tags`, config)
         .then(() => {
           this.isDeleting = true
+
+          this.isDeleting = false
+          this.deleteDialog = false
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Tag Deleted',
+            life: 3000
+          })
+
           setTimeout(() => {
             this.isDeleting = false
             this.deleteDialog = false
-            this.$toast.add({
-              severity: 'success',
-              summary: 'Successful',
-              detail: 'Tag Deleted',
-              life: 3000
-            })
+            window.location.reload()
           }, 1500)
-          window.location.reload()
         })
         .catch((err) => {
           console.error(err)

@@ -70,10 +70,7 @@
                   </v-card-title>
                   <v-card-actions class="d-flex flex-column">
                     <v-defaults-provider :defaults="{ VIcon: { color: 'info' } }">
-                      <v-btn
-                        color="info"
-                        @click="assignDialog = true"
-                      >
+                      <v-btn color="info" @click="assignDialog = true">
                         <v-icon>
                           {{ 'fa: fa-solid fa-user-plus' }}
                         </v-icon>
@@ -201,7 +198,6 @@ const selectedEmployees = ref([])
 // Task list item
 const newItemText = ref<string>('')
 
-
 interface TaskItem {
   description: string
   assignedEmployees: string[]
@@ -222,12 +218,12 @@ const taskList = ref<TaskList[]>([
   }
 ])
 
-const employees = ([
+const employees = [
   {
-    "text": "Lionel Messi",
-    "value": "66bb07e4047acc46409cc510"
+    text: 'Lionel Messi',
+    value: '66bb07e4047acc46409cc510'
   }
-])
+]
 
 // Utility functions
 const isLocalAvailable = async (url: string): Promise<boolean> => {
@@ -282,7 +278,7 @@ const saveItem = (index: number) => {
 // Fetch employees and populate assignableEmployees
 const getEmployees = async () => {
   try {
-    const apiUrl = await getRequestUrl();
+    const apiUrl = await getRequestUrl()
     const employeeId = localStorage.getItem('employeeId')
     if (!employeeId) {
       throw new Error('Employee ID not found in localStorage')
@@ -314,13 +310,15 @@ const createEmployeeAssignmentObjects = () => {
   const itemId = 'someItemId' // Replace with actual item ID
   const employeeId = localStorage.getItem('employeeId') || ''
 
-  const assignments = selectedEmployees.value.map((selectedEmployee: { text: string, value: string }) => ({
-    employeeId,
-    employeeToAssignId: selectedEmployee.value,
-    jobId,
-    taskId,
-    itemId
-  }))
+  const assignments = selectedEmployees.value.map(
+    (selectedEmployee: { text: string; value: string }) => ({
+      employeeId,
+      employeeToAssignId: selectedEmployee.value,
+      jobId,
+      taskId,
+      itemId
+    })
+  )
 
   console.log(assignments)
 }
@@ -347,7 +345,6 @@ const putTask = async () => {
 }
 
 const saveTask = async (index: number) => {}
-
 </script>
 
 <style scoped>

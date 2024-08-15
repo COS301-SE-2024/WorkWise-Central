@@ -27,7 +27,13 @@
           ><v-row justify="end">
             <v-col cols="12" lg="6">
               <Toast position="bottom-center" />
-              <v-btn label="Cancel" color="secondary" text @click="clientDialog = false" block
+              <v-btn
+                label="Cancel"
+                color="secondary"
+                text
+                @click="clientDialog = false"
+                block
+                :loading="isDeleting"
                 ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
                 >Cancel
               </v-btn></v-col
@@ -86,6 +92,7 @@ export default {
       window.location.reload() // Consider removing this for SPA behavior
     },
     async deleteClient() {
+      this.isDeleting = true // Indicate the start of the deletion process
       console.log('meow', this.client_id)
       console.log(localStorage.getItem('employeeId'))
       const config = {
@@ -114,10 +121,11 @@ export default {
           life: 3000
         })
 
-        this.clientDialog = false
-        this.$emit('clientDeleted')
-        window.location.reload() // Consider removing this for SPA behavior
-        // Consider using a more SPA-friendly way of updating the view instead of reloading
+        setTimeout(() => {
+          this.clientDialog = false
+          this.$emit('clientDeleted')
+          window.location.reload()
+        }, 3000)
       } catch (error) {
         console.error('Error deleting client:', error)
 

@@ -16,7 +16,7 @@
         >Edit</v-btn
       >
     </template>
-    <v-card>
+    <v-card :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
       <v-form @submit.prevent="validateEdits">
         <v-card-title class="text-center">Edit Employee</v-card-title>
         <v-divider></v-divider>
@@ -83,34 +83,46 @@
           ></v-row>
         </v-card-item>
         <v-card-actions>
-          <v-row>
-            <v-col>
-              <Toast />
-              <v-btn
-                color="success"
-                rounded="md"
-                width="100%"
-                height="35"
-                variant="text"
-                type="submit"
-              >
-                Save
-                <v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon>
-              </v-btn>
-            </v-col>
-            <v-col>
-              <v-btn
-                color="error"
-                rounded="md"
-                width="100%"
-                height="35"
-                variant="text"
-                @click="close"
-              >
-                <Toast />
-                Cancel <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon>
-              </v-btn> </v-col
-          ></v-row>
+          <v-container>
+            <v-row>
+              <v-col cols="12" lg="6">
+                <v-btn
+                  color="success"
+                  rounded="md"
+                  width="100%"
+                  height="35"
+                  variant="text"
+                  type="submit"
+                  block
+                  :loading="isDeleting"
+                >
+                  <v-icon
+                    icon="fa:fa-solid fa-floppy-disk"
+                    start
+                    color="success"
+                    size="small"
+                  ></v-icon>
+                  Save
+                </v-btn>
+              </v-col>
+              <v-col cols="12" lg="6">
+                <v-btn
+                  color="error"
+                  rounded="md"
+                  width="100%"
+                  height="35"
+                  variant="text"
+                  block
+                  @click="close"
+                  :loading="isDeleting"
+                >
+                  <Toast />
+                  <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
+                  >Cancel
+                </v-btn>
+              </v-col></v-row
+            >
+          </v-container>
         </v-card-actions>
       </v-form>
     </v-card>
@@ -258,6 +270,7 @@ export default {
       this.employeeDialog = false
     },
     async savechanges() {
+      this.isDeleting = true // Indicate the start of the deletion process
       console.log(this.req_obj)
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       let apiURL = await this.getRequestUrl()
@@ -273,7 +286,11 @@ export default {
           })
           console.log(res)
           this.employeeDialog = false
-          window.location.reload()
+          setTimeout(() => {
+            this.isDeleting = false
+            this.employeeDialog = false
+            window.location.reload()
+          }, 1500)
         })
         .catch((error) => {
           this.$toast.add({

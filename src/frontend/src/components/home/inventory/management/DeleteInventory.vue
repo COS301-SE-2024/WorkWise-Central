@@ -79,6 +79,7 @@ export default defineComponent({
   }),
   methods: {
     async deleteInventory() {
+      this.isDeleting = true // Indicate the start of the deletion process
       console.log('meow', this.inventory_id)
       console.log(localStorage.getItem('employeeId'))
       const config = {
@@ -99,6 +100,11 @@ export default defineComponent({
           detail: 'Inventory deleted successfully',
           life: 3000
         })
+        this.deleteDialog = false
+        setTimeout(() => {
+          window.location.reload()
+          this.isDeleting = false
+        }, 3000)
       } catch (error) {
         console.error(error)
       }

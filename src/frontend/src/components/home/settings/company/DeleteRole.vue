@@ -67,18 +67,19 @@ export default defineComponent({
       this.deleteDialog = false
     },
     deleteRole() {
-      this.isDeleting = true
+      this.isDeleting = true // Indicate the start of the deletion process
+
+      this.$toast.add({
+        severity: 'success',
+        summary: 'Successful',
+        detail: 'Role Deleted',
+        life: 3000
+      })
       setTimeout(() => {
         this.isDeleting = false
         this.deleteDialog = false
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Role Deleted',
-          life: 3000
-        })
+        window.location.reload()
       }, 1500)
-      window.location.reload()
     }
   }
 })

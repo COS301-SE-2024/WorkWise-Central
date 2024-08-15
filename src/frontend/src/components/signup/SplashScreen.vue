@@ -3,8 +3,8 @@
     <!-- Toolbar -->
     <v-app-bar :theme="isdarkmode ? 'themes.dark' : 'themes.light'" class="bg-background">
       <v-toolbar-title class="d-flex justify-start">
-        <v-label class="h4 text-primary">Work</v-label>
-        <v-label class="h4 text-secondary">Wise</v-label>
+        <v-label :class="'h4 text-primary'">Work</v-label>
+        <v-label :class="'h4 text-secondary'">Wise</v-label>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -13,20 +13,20 @@
         color="primary"
         dark
         @click="loginDialog = true"
-        rounded="xl"
+        rounded="md"
         variant="outlined"
         align-center
         justify-center
-        class="my-3 text-center"
+        class="my-3 text-center mr-4"
         size="large"
       >
-        Log in
+        Login
       </v-btn>
       <v-btn
         color="secondary"
         dark
         @click="signupDialog = true"
-        rounded="xl"
+        rounded="md"
         align-center
         variant="elevated"
         class="my-3 text-center"
@@ -42,12 +42,9 @@
     <v-main :theme="isdarkmode ? 'dark' : 'light'">
       <v-row style="height: 1000px">
         <!-- Left Half -->
-
         <v-col
           cols="12"
           lg="6"
-          md="6"
-          sm="6"
           align-self="center"
           order="last"
           order-lg="first"
@@ -85,7 +82,7 @@
                   size="large"
                   block
                 >
-                  Log in
+                  Login
                 </v-btn></v-col
               >
               <v-col cols="12" lg="6" order="first" order-lg="last">
@@ -95,13 +92,13 @@
                   @click="signupDialog = true"
                   rounded="md"
                   align-center
-                  variant="outlined"
+                  variant="elevated"
                   class="my-3 text-center"
                   width="50%"
                   block
                   size="large"
                 >
-                  Get Started
+                  Sign Up
                 </v-btn></v-col
               ></v-row
             ></v-container
@@ -109,7 +106,7 @@
 
           <v-col>
             <v-dialog
-              :opacity="0.1"
+              :opacity="0"
               v-model="loginDialog"
               max-width="400"
               @click:outside="resetFields"
@@ -172,38 +169,43 @@
                         ></v-text-field></v-col
                     ></v-row>
                   </v-form>
-                  <v-col cols="8" offset="2">
+                  <v-col cols="12" lg="6">
                     <v-btn variant="text" @click="forgotPassword"> Forgot Password?</v-btn></v-col
                   >
                 </v-col>
-
-                <v-col cols="8" offset="2">
-                  <v-btn
-                    :disabled="!valid"
-                    text
-                    @click="login"
-                    @keypress.enter="login"
-                    rounded="md"
-                    size="large"
-                    color="primary"
-                    variant="elevated"
-                    width="100%"
-                    >Login</v-btn
-                  >
-                </v-col>
-                <v-col cols="8" offset="2">
-                  <v-btn
-                    text
-                    @click="(signupDialog = true)((loginDialog = false))(resetFields)"
-                    rounded="md"
-                    color="secondary"
-                    size="large"
-                    variant="elevated"
-                    width="100%"
-                  >
-                    Sign up</v-btn
-                  >
-                </v-col>
+                <v-container>
+                  <v-row
+                    ><v-col cols="12" lg="6">
+                      <v-btn
+                        :disabled="!valid"
+                        text
+                        @click="login"
+                        @keypress.enter="login"
+                        rounded="md"
+                        size="large"
+                        color="primary"
+                        variant="elevated"
+                        width="100%"
+                        block
+                        >Login</v-btn
+                      >
+                    </v-col>
+                    <v-col cols="12" lg="6">
+                      <v-btn
+                        text
+                        @click="(signupDialog = true)((loginDialog = false))(resetFields)"
+                        rounded="md"
+                        color="secondary"
+                        size="large"
+                        variant="elevated"
+                        width="100%"
+                        block
+                      >
+                        Sign up</v-btn
+                      >
+                    </v-col></v-row
+                  ></v-container
+                >
 
                 <v-alert v-model="alertLogin" type="success">
                   You have successfully logged in!</v-alert
@@ -214,7 +216,7 @@
               </v-card>
             </v-dialog>
             <!-- Forgot Password -->
-            <v-dialog :opacity="0.1" v-model="forgotPasswordDialog" max-width="400">
+            <v-dialog :opacity="0" v-model="forgotPasswordDialog" max-width="400">
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -256,7 +258,7 @@
                 </v-col>
               </v-sheet>
             </v-dialog>
-            <v-dialog :opacity="0.1" v-model="OTPDialog" max-width="400">
+            <v-dialog :opacity="0" v-model="OTPDialog" max-width="400">
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -295,7 +297,7 @@
 
             <!-- Flow 1 -->
             <v-dialog
-              :opacity="0.1"
+              :opacity="0"
               v-model="signupDialog"
               max-width="400"
               @click:outside="resetFields"
@@ -370,37 +372,43 @@
                       ></v-row>
                     </v-form>
                   </v-col>
-                  <v-col cols="8" offset="2">
-                    <Toast position="top-center" />
-                    <v-btn
-                      :disabled="!valid"
-                      text
-                      @click="nextFlow1"
-                      rounded="md"
-                      boarder="xl"
-                      width="100%"
-                      size="large"
-                      variant="elevated"
-                      color="primary"
-                      >Continue</v-btn
-                    > </v-col
-                  ><v-col cols="8" offset="2">
-                    <v-btn
-                      @click="(loginDialog = true), (signupDialog = false)"
-                      rounded="md"
-                      width="100%"
-                      size="large"
-                      variant="elevated"
-                      color="secondary"
-                      >Log in</v-btn
-                    >
-                  </v-col>
+                  <v-container
+                    ><v-row>
+                      <v-col cols="12" lg="6">
+                        <Toast position="top-center" />
+                        <v-btn
+                          :disabled="!valid"
+                          text
+                          @click="nextFlow1"
+                          rounded="md"
+                          boarder="xl"
+                          width="100%"
+                          size="large"
+                          variant="elevated"
+                          color="primary"
+                          block
+                          >Continue</v-btn
+                        > </v-col
+                      ><v-col cols="12" lg="6">
+                        <v-btn
+                          @click="(loginDialog = true), (signupDialog = false)"
+                          rounded="md"
+                          width="100%"
+                          size="large"
+                          variant="elevated"
+                          color="secondary"
+                          block
+                          >Login</v-btn
+                        >
+                      </v-col></v-row
+                    ></v-container
+                  >
                 </v-col>
               </v-sheet>
             </v-dialog>
             <!-- Flow 2 -->
             <v-dialog
-              :opacity="0.1"
+              :opacity="0"
               v-model="signup1Dialog"
               max-width="400"
               @click:outside="resetFields"
@@ -454,36 +462,42 @@
                       ></v-row>
                     </v-form>
                   </v-col>
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      :disabled="!valid"
-                      text
-                      @click="nextFlow2"
-                      rounded="md"
-                      size="large"
-                      color="primary"
-                      variant="elevated"
-                      width="100%"
-                      >Continue</v-btn
-                    >
-                  </v-col>
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      @click="(signupDialog = true)((signup1Dialog = false))"
-                      rounded="md"
-                      color="secondary"
-                      size="large"
-                      variant="elevated"
-                      width="100%"
-                      >Back</v-btn
-                    >
-                  </v-col>
+                  <v-container
+                    ><v-row
+                      ><v-col cols="12" lg="6">
+                        <v-btn
+                          :disabled="!valid"
+                          text
+                          @click="nextFlow2"
+                          rounded="md"
+                          size="large"
+                          color="primary"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Continue</v-btn
+                        >
+                      </v-col>
+                      <v-col cols="12" lg="6">
+                        <v-btn
+                          @click="(signupDialog = true)((signup1Dialog = false))"
+                          rounded="md"
+                          color="secondary"
+                          size="large"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Back</v-btn
+                        >
+                      </v-col></v-row
+                    ></v-container
+                  >
                 </v-col>
               </v-sheet>
             </v-dialog>
             <v-col xs="3" align-self="center">
               <v-dialog
-                :opacity="0.1"
+                :opacity="0"
                 v-model="signupUsernameDialog"
                 max-width="400"
                 @click:outside="resetFields"
@@ -537,39 +551,45 @@
                       ></v-row>
                     </v-form>
                   </v-col>
-                  <v-col cols="8" offset="2">
-                    <Toast position="top-center" />
-                    <v-btn
-                      :disabled="!valid"
-                      text
-                      @click="nextFlowUsername"
-                      rounded="md"
-                      size="large"
-                      color="primary"
-                      variant="elevated"
-                      width="100%"
-                      >Continue</v-btn
-                    ></v-col
-                  >
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      :disabled="!valid"
-                      text
-                      @click="(signup1Dialog = true)((signupUsernameDialog = false))"
-                      rounded="md"
-                      size="large"
-                      color="secondary"
-                      variant="elevated"
-                      width="100%"
-                      >Back</v-btn
-                    ></v-col
+                  <v-container
+                    ><v-row
+                      ><v-col cols="12" lg="6">
+                        <Toast position="top-center" />
+                        <v-btn
+                          :disabled="!valid"
+                          text
+                          @click="nextFlowUsername"
+                          rounded="md"
+                          size="large"
+                          color="primary"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Continue</v-btn
+                        ></v-col
+                      >
+                      <v-col cols="12" lg="6">
+                        <v-btn
+                          :disabled="!valid"
+                          text
+                          @click="(signup1Dialog = true)((signupUsernameDialog = false))"
+                          rounded="md"
+                          size="large"
+                          color="secondary"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Back</v-btn
+                        ></v-col
+                      ></v-row
+                    ></v-container
                   >
                 </v-sheet>
               </v-dialog>
             </v-col>
             <!-- Flow 3 -->
             <v-dialog
-              :opacity="0.1"
+              :opacity="0"
               v-model="signup2Dialog"
               max-width="400"
               @click:outside="resetFields"
@@ -594,14 +614,15 @@
                       <v-row align="center"
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Date of Birth</label
-                          ><VueDatePicker
+                          ><v-text-field
                             :label="birthDate ? '' : 'Select your date of birth'"
                             v-model="birthDate"
                             :rules="date_rules"
                             :format="format"
+                            type="date"
                             required
                             :flow="flow"
-                          ></VueDatePicker
+                          ></v-text-field
                         ></v-col>
                       </v-row>
                       <v-row algin="center"
@@ -643,37 +664,42 @@
                       ></v-row>
                     </v-form>
                   </v-col>
-
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      :disabled="!valid"
-                      text
-                      @click="nextFlow3"
-                      rounded="xmdl"
-                      size="large"
-                      color="primary"
-                      variant="elevated"
-                      width="100%"
-                      >Continue</v-btn
-                    >
-                  </v-col>
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      @click="(signupUsernameDialog = true)((signup2Dialog = false))"
-                      rounded="md"
-                      color="secondary"
-                      size="large"
-                      variant="elevated"
-                      width="100%"
-                      >Back</v-btn
-                    >
-                  </v-col>
+                  <v-container
+                    ><v-row
+                      ><v-col cols="12" lg="6">
+                        <v-btn
+                          :disabled="!valid"
+                          text
+                          @click="nextFlow3"
+                          rounded="xmdl"
+                          size="large"
+                          color="primary"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Continue</v-btn
+                        >
+                      </v-col>
+                      <v-col cols="12" lg="6">
+                        <v-btn
+                          @click="(signupUsernameDialog = true)((signup2Dialog = false))"
+                          rounded="md"
+                          color="secondary"
+                          size="large"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Back</v-btn
+                        >
+                      </v-col></v-row
+                    ></v-container
+                  >
                 </v-col>
               </v-sheet>
             </v-dialog>
             <!-- Flow 4 -->
             <v-dialog
-              :opacity="0.1"
+              :opacity="0"
               v-model="signupAddressDialog"
               max-width="1000"
               @click:outside="resetFields"
@@ -785,37 +811,42 @@
                       ></v-row>
                     </v-form>
                   </v-col>
-
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      :disabled="!valid"
-                      text
-                      @click="nextFlowAddress"
-                      rounded="md"
-                      size="large"
-                      color="primary"
-                      variant="elevated"
-                      width="100%"
-                      >Continue</v-btn
-                    >
-                  </v-col>
-                  <v-col cols="8" offset="2">
-                    <v-btn
-                      @click="(signup2Dialog = true)((signupAddressDialog = false))"
-                      rounded="md"
-                      color="secondary"
-                      size="large"
-                      variant="elevated"
-                      width="100%"
-                      >Back</v-btn
-                    >
-                  </v-col>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12" lg="6">
+                        <v-btn
+                          :disabled="!valid"
+                          text
+                          @click="nextFlowAddress"
+                          rounded="md"
+                          size="large"
+                          color="primary"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Continue</v-btn
+                        >
+                      </v-col>
+                      <v-col cols="12" lg="6">
+                        <v-btn
+                          @click="(signup2Dialog = true)((signupAddressDialog = false))"
+                          rounded="md"
+                          color="secondary"
+                          size="large"
+                          variant="elevated"
+                          width="100%"
+                          block
+                          >Back</v-btn
+                        >
+                      </v-col></v-row
+                    ></v-container
+                  >
                 </v-col>
               </v-sheet>
             </v-dialog>
             <!-- Flow 5 -->
             <v-dialog
-              :opacity="0.1"
+              :opacity="0"
               v-model="signup3Dialog"
               max-width="700"
               style="height: 750px"
@@ -824,21 +855,26 @@
               <!-- <v-sheet
                 :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
               > -->
-              <v-sheet
+              <v-card
                 class="mx-auto bg-background"
                 width="400"
                 :theme="isdarkmode ? 'dark' : 'light'"
               >
-                <v-col>
-                  <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
-                    Please select of the following details
-                  </h4></v-col
-                >
-                <v-card-actions>
-                  <v-col cols="6"> <RegisterCompanyModal :isdarkmode="isdarkmode" /> </v-col
-                  ><v-col cols="6"> <JoinCompanyModal :isdarkmode="isdarkmode" /></v-col
-                ></v-card-actions>
-              </v-sheet>
+                <v-col
+                  ><v-col>
+                    <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
+                      Please select of the following details
+                    </h4></v-col
+                  >
+
+                  <v-container
+                    ><v-row>
+                      <v-col cols="12" lg="6">
+                        <RegisterCompanyModal :isdarkmode="isdarkmode" /> </v-col
+                      ><v-col cols="12" lg="6">
+                        <JoinCompanyModal :isdarkmode="isdarkmode" /></v-col></v-row></v-container
+                ></v-col>
+              </v-card>
 
               <!-- </v-sheet> -->
             </v-dialog>
@@ -846,7 +882,7 @@
             <!-- Register Company Modal -->
 
             <p class="text-center h6" :theme="isdarkmode ? 'dark' : 'light'">
-              By clicking Continue to join or sign in, you agree to WorkWise Central's User
+              By clicking Continue to login or sign up, you agree to WorkWise Central's User
               Agreement, Privacy Policy, and Cookie Policy
             </p>
           </v-col>
@@ -854,17 +890,8 @@
 
         <!-- Right Half -->
 
-        <v-col
-          cols="12"
-          lg="6"
-          md="6"
-          sm="6"
-          order="first"
-          order-lg="last"
-          order-md="last"
-          order-sm="first"
-        >
-          <div class="w-full h-full background-image"></div>
+        <v-col cols="12" lg="6" order="first" order-lg="last" order-md="last" order-sm="first">
+          <div class="background-image pa-2"></div>
         </v-col>
       </v-row>
       <!-- <v-footer :theme="isdarkmode ? 'dark' : 'light'" class="bg-background">
@@ -951,6 +978,21 @@
           </v-col>
         </v-row>
       </div>
+      <h1
+        :class="[
+          'splash-title',
+          'header-title',
+          'text-center',
+          { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
+        ]"
+      >
+        How to use <span class="text-primary">Work</span
+        ><span class="text-secondary">Wise</span> Central
+      </h1>
+      <v-row justify="end" style="height: 500px">
+        <Tutorial />
+      </v-row>
+      <v-footer> </v-footer>
     </v-main>
   </v-app>
 </template>
@@ -959,16 +1001,15 @@ import RegisterCompanyModal from './RegisterCompanyModal.vue'
 import JoinCompanyModal from './JoinCompanyModal.vue'
 import axios from 'axios'
 import { defineComponent } from 'vue'
-import VueDatePicker from '@vuepic/vue-datepicker'
-import '@vuepic/vue-datepicker/dist/main.css'
 import Toast from 'primevue/toast'
+import Tutorial from '../home/help/tutorial/Tutorial.vue'
 
 export default defineComponent({
   components: {
     RegisterCompanyModal,
     JoinCompanyModal,
-    VueDatePicker,
-    Toast
+    Toast,
+    Tutorial
   },
   data: () => ({
     localUrl: 'http://localhost:3000/',
@@ -1168,7 +1209,7 @@ export default defineComponent({
     ],
     date_rules: [
       (v) => !!v || 'Date of birth is required',
-      (v) => v.length >= 3 || 'Date of birth must be at least 3 characters'
+      (v) => v <= new Date().toISOString().substr(0, 10) || 'Date of birth must be before today'
     ],
     company_name_rules: [
       (v) => !!v || 'Company name is required',
@@ -1208,7 +1249,8 @@ export default defineComponent({
       (v) => /^[0-9]*$/.test(v) || 'Phone number must contain only numbers',
       (v) => /^0[0-9]*$/.test(v) || 'Phone number must start with 0'
     ],
-    company_logo_rules: [(v) => !!v || 'Profile picture is required']
+    company_logo_rules: [(v) => !!v || 'Profile picture is required'],
+    provinceRules: [(v) => !!v || 'Province name is required']
   }),
 
   methods: {
@@ -1225,6 +1267,7 @@ export default defineComponent({
       this.username = ''
       this.password = ''
       this.confirm_password = ''
+      this.signupPassword = ''
       this.gender = ''
       this.language = ''
       this.street = ''
@@ -1254,9 +1297,20 @@ export default defineComponent({
       this.loginDialog = false
       this.forgotPasswordDialog = true
     },
-    showOTP() {
-      this.forgotPasswordDialog = false
-      this.OTPDialog = true
+    async showOTP() {
+      const exist = await this.emailExist()
+      if (!exist) {
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Email does not exist',
+          life: 3000
+        })
+      } else {
+        this.forgotPasswordDialog = false
+        this.OTPDialog = true
+      }
+      this.$router.push({ name: 'new-password' })
     },
     format(date) {
       const day = date.getDate()
