@@ -195,7 +195,7 @@ const patchJobDetails = async () => {
   const apiUrl = await getRequestUrl()
   try {
     console.log(job.value.details)
-    const response = await axios.patch(`${apiUrl}job/${props.jobID}`, job.value.details, config)
+    const response = await axios.patch(`${apiUrl}job/update/${props.jobID}`, job.value.details, config)
     if (response.status < 300 && response.status > 199) {
       showEditSuccess()
     } else {

@@ -468,7 +468,7 @@ const confirmDelete = async () => {
       })
     } finally {
       localStorage.setItem('jobDeleted', 'true')
-      await fetchData()
+      window.location.reload()
     }
   }
 }

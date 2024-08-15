@@ -164,7 +164,7 @@
                 <h5 ref="historySection">View Job History</h5>
               </v-divider>
               <v-col>
-                <JobHistory />
+                <JobHistory :jobHistory="props.passedInJob.history"/>
               </v-col>
             </v-col>
           </v-col>
