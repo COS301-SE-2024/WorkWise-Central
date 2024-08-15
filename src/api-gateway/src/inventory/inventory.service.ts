@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateInventoryDto } from './dto/create-inventory.dto';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
 import { Types } from 'mongoose';
@@ -6,6 +6,7 @@ import { Inventory } from './entities/inventory.entity';
 import { CompanyService } from '../company/company.service';
 import { InventoryRepository } from './inventory.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
+import { FileService } from '../file/file.service';
 
 @Injectable()
 export class InventoryService {
@@ -13,6 +14,9 @@ export class InventoryService {
     @Inject(forwardRef(() => InventoryRepository))
     private readonly inventoryRepository: InventoryRepository,
     private readonly companyService: CompanyService,
+
+    @Inject(forwardRef(() => FileService))
+    private readonly fileService: FileService,
   ) {}
 
   async validateCreateInventory(inventory: CreateInventoryDto) {
@@ -37,6 +41,19 @@ export class InventoryService {
       throw new Error(validation.message);
     }
     const newInventory = new Inventory(createInventoryDto);
+    //Save files In Bucket, and store URLs (if provided)
+    if (createInventoryDto.images.length > 0) {
+      const pictures: string[] = [];
+      console.log('Uploading images');
+      for (const image of createInventoryDto.images) {
+        const picture = await this.fileService.uploadBase64Image(image);
+        if (picture.secure_url != null) {
+          pictures.push(picture.secure_url);
+        } else throw new InternalServerErrorException('file upload failed');
+      }
+      newInventory.images.concat(pictures);
+    }
+
     return await this.inventoryRepository.save(newInventory);
   }
 
@@ -85,5 +102,29 @@ export class InventoryService {
       throw new Error('Inventory item does not exist');
     }
     return await this.inventoryRepository.remove(id);
+  }
+
+  async addImages(id: Types.ObjectId, files: Express.Multer.File[]) {
+    const inventoryItem = await this.findById(id);
+    if (inventoryItem == null) throw new NotFoundException('Inventory not found');
+
+    const newUrls: string[] = [];
+    for (const file of files) {
+      const uploadApiResponse = await this.fileService.uploadFile(file);
+      if (uploadApiResponse.secure_url) {
+        console.log('Upload successful');
+        const newUrl = uploadApiResponse.secure_url;
+        console.log(newUrl);
+        newUrls.push(newUrl);
+      } else {
+        console.log('Failed to upload image.', 'Keep it pushing');
+        //return null;
+      }
+    }
+    if (newUrls.length == 0) {
+      return inventoryItem;
+    }
+
+    return this.inventoryRepository.addAttachments(id, newUrls);
   }
 }

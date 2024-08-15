@@ -14,6 +14,7 @@ import {
 import { Type } from 'class-transformer';
 import { RegistrationNumber } from '../../utils/Custom Validators/RegistrationNumber';
 import { Types } from 'mongoose';
+import { Base64ContentIsImage } from '../../utils/Custom Validators/Base64ContentIsImage';
 
 class UpdateContactDetails extends PartialType(ContactDetails) {}
 class UpdateAddress extends PartialType(Address) {}
@@ -38,10 +39,11 @@ export class UpdateCompanyDto {
   @IsOptional()
   type?: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Must be converted to Base64' })
   @IsString()
   @IsOptional()
-  logo?: string = 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
+  @Validate(Base64ContentIsImage)
+  logo?: string;
 
   @ApiProperty()
   @IsOptional()
