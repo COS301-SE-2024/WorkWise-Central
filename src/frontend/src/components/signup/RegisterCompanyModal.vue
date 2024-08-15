@@ -519,9 +519,9 @@ export default {
 
           axios
             .get(apiURL + 'company/id/' + res.data.data._id, config)
-            .then((res) => {
-              console.log(res.data.data)
-              localStorage['employeeId'] = res.data.data.employees[0]
+            .then((res1) => {
+              console.log(res1.data.data)
+              localStorage['employeeId'] = res1.data.data.employees[0]
               this.$toast.add({
                 severity: 'success',
                 summary: 'Success',
