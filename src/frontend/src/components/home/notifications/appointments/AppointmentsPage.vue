@@ -67,31 +67,35 @@
         }}</span>
       </v-card-title>
       <v-card-text>
-        <v-container>
-          <v-row>
-            <v-col cols="12">
-              <v-text-field
-                v-model="newAppointment.title"
-                label="Title"
-                :rules="titleRules"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                v-model="newAppointment.date"
-                label="Date"
-                type="date"
-                :rules="dateRules"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-text-field v-model="newAppointment.details" label="Details"></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-checkbox v-model="newAppointment.important" label="Important"></v-checkbox>
-            </v-col>
-          </v-row>
-        </v-container>
+        <v-form v-model="valid">
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="newAppointment.title"
+                  label="Title"
+                  :rules="titleRules"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="newAppointment.date"
+                  label="Date"
+                  type="date"
+                  :rules="dateRules"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field v-model="newAppointment.details" label="Details"></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-checkbox v-model="newAppointment.important" label="Important"></v-checkbox>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-form>
       </v-card-text>
       <v-card-actions>
         <v-container>
@@ -102,8 +106,14 @@
               </v-btn>
             </v-col>
             <v-col cols="12" lg="6">
-              <v-btn color="success" @click="saveAppointment" block>
-                <v-icon icon="fa: fa-solid fa-floppy-disk" color="success" start></v-icon>Save
+              <v-btn
+                color="success"
+                @click="saveAppointment"
+                block
+                :loading="isGenerating"
+                :disabled="!valid"
+              >
+                <v-icon icon="fa: fa-solid fa-floppy-disk" color="success" start> </v-icon>Save
               </v-btn>
             </v-col>
           </v-row>
@@ -129,6 +139,8 @@ export default defineComponent({
       showDialog: false,
       isEditing: false,
       editIndex: 0,
+      valid: false,
+      isGenerating: false,
       newAppointment: {
         id: 0,
         title: '',
@@ -232,6 +244,7 @@ export default defineComponent({
       }
     },
     saveAppointment() {
+      this.isGenerating = true
       if (this.isEditing && this.editIndex !== null) {
         // Update existing appointment
         this.recentAppointments.splice(this.editIndex, 1, { ...this.newAppointment })
@@ -246,6 +259,7 @@ export default defineComponent({
         }
       }
       this.showDialog = false
+      this.isGenerating = false
     },
     editAppointment(appointment: number) {
       this.isEditing = true
@@ -260,6 +274,7 @@ export default defineComponent({
       )
     },
     updateImportantAppointments(appointment: Appointment) {
+      this.isGenerating = true
       const index = this.importantAppointments.findIndex((a) => a.id === appointment.id)
       if (appointment.important && index === -1) {
         this.importantAppointments.push(appointment)
@@ -268,6 +283,8 @@ export default defineComponent({
       } else if (index !== -1) {
         this.importantAppointments.splice(index, 1, appointment)
       }
+      this.isGenerating = false
+      this.showDialog = false
     }
   }
 })

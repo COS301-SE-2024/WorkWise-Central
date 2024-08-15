@@ -61,10 +61,19 @@
         <v-container>
           <v-row
             ><v-col cols="12">
-              <v-btn color="error" width="100%" height="35" @click="close" block>
+              <v-btn
+                color="error"
+                width="100%"
+                height="35"
+                @click="close"
+                block
+                :loading="isDeleting"
+              >
                 <v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon>Close
-              </v-btn> </v-col></v-row
-        ></v-container>
+              </v-btn>
+            </v-col></v-row
+          ></v-container
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -78,7 +87,8 @@ export default defineComponent({
   },
   data() {
     return {
-      clientDialog: false
+      clientDialog: false,
+      isDeleting: false
     }
   },
   methods: {

@@ -71,6 +71,7 @@ export default defineComponent({
       this.deleteDialog = false
     },
     async deleteTag() {
+      this.isDeleting = true // Indicate the start of the deletion process
       console.log(this.tagId)
       const config = {
         headers: {
@@ -98,8 +99,10 @@ export default defineComponent({
           })
 
           setTimeout(() => {
+            this.isDeleting = false
+            this.deleteDialog = false
             window.location.reload()
-          }, 2000)
+          }, 1500)
         })
         .catch((err) => {
           console.error(err)

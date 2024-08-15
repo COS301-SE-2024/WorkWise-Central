@@ -82,7 +82,7 @@
         </v-form>
       </v-col>
     </v-row>
-    <Toast/>
+    <Toast />
   </v-container>
 </template>
 
@@ -124,7 +124,6 @@ const getRequestUrl = async (): Promise<string> => {
   const localAvailable = await isLocalAvailable(localUrl)
   return localAvailable ? localUrl : remoteUrl
 }
-
 
 const companies = reactive<Company[]>([
   // Example company data, replace with actual data fetching
@@ -168,7 +167,6 @@ const undoLeaveCompany = (company: Company) => {
     clearTimeout(undoTimeout.value)
   }
 }
-
 </script>
 
 <style scoped>

@@ -16,7 +16,7 @@
         >Edit</v-btn
       >
     </template>
-    <v-card  :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
+    <v-card :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
       <v-form @submit.prevent="validateEdits">
         <v-card-title class="text-center">Edit Employee</v-card-title>
         <v-divider></v-divider>
@@ -94,6 +94,7 @@
                   variant="text"
                   type="submit"
                   block
+                  :loading="isDeleting"
                 >
                   <v-icon
                     icon="fa:fa-solid fa-floppy-disk"
@@ -113,6 +114,7 @@
                   variant="text"
                   block
                   @click="close"
+                  :loading="isDeleting"
                 >
                   <Toast />
                   <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
@@ -268,6 +270,7 @@ export default {
       this.employeeDialog = false
     },
     async savechanges() {
+      this.isDeleting = true // Indicate the start of the deletion process
       console.log(this.req_obj)
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       let apiURL = await this.getRequestUrl()
@@ -283,7 +286,11 @@ export default {
           })
           console.log(res)
           this.employeeDialog = false
-          window.location.reload()
+          setTimeout(() => {
+            this.isDeleting = false
+            this.employeeDialog = false
+            window.location.reload()
+          }, 1500)
         })
         .catch((error) => {
           this.$toast.add({

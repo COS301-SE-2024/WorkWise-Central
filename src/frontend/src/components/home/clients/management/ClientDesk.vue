@@ -390,8 +390,8 @@ export default defineComponent({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         },
-        params:{
-          currentEmployeeId : localStorage.getItem('employeeId')
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
       const apiURL = await this.getRequestUrl()

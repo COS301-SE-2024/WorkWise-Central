@@ -131,23 +131,52 @@
                         <v-list class="bg-background">
                           <v-list-item class="pl-0">
                             <v-btn color="success" width="100%" @click.stop="openViewDialog()">
-                              <v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>View
+                              <v-icon
+                                icon="fa:fa-solid fa-eye"
+                                start
+                                color="success"
+                                size="small"
+                              ></v-icon
+                              >View
                             </v-btn>
-                            <v-dialog v-model="viewJobDialogVisible" :max-height="800" :max-width="1000">
+                            <v-dialog
+                              v-model="viewJobDialogVisible"
+                              :max-height="800"
+                              :max-width="1000"
+                            >
                               <ViewJob :passedInJob="selectedJob" @close="closeViewJob()"></ViewJob>
                             </v-dialog>
                           </v-list-item>
                           <v-list-item class="pl-0">
                             <v-btn color="warning" width="100%" @click.stop="openJobCardDialog()">
-                              <v-icon icon="fa:fa-solid fa-pencil" start color="warning" size="small"></v-icon>Edit
+                              <v-icon
+                                icon="fa:fa-solid fa-pencil"
+                                start
+                                color="warning"
+                                size="small"
+                              ></v-icon
+                              >Edit
                             </v-btn>
-                            <v-dialog v-model="viewManagerJobCardVisible" :max-height="600" :max-width="1000">
-                              <ManagerJobCard :passedInJob="selectedJob" @close="closeEditJob()"></ManagerJobCard>
+                            <v-dialog
+                              v-model="viewManagerJobCardVisible"
+                              :max-height="600"
+                              :max-width="1000"
+                            >
+                              <ManagerJobCard
+                                :passedInJob="selectedJob"
+                                @close="closeEditJob()"
+                              ></ManagerJobCard>
                             </v-dialog>
                           </v-list-item>
                           <v-list-item>
                             <v-btn color="error" @click.stop="deleteDialog = true">
-                              <v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete
+                              <v-icon
+                                icon="fa:fa-solid fa-trash"
+                                start
+                                color="error"
+                                size="small"
+                              ></v-icon
+                              >Delete
                             </v-btn>
                           </v-list-item>
                         </v-list>
@@ -182,7 +211,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <Toast position="bottom-center"/>
+    <Toast position="bottom-center" />
   </v-container>
 </template>
 
@@ -435,8 +464,7 @@ const openDialog = (job: Job) => {
   selectedJob.value = job
 }
 
-const closeDialog = () => {
-}
+const closeDialog = () => {}
 
 const formatDate = (dateString: string): string => {
   const options: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', year: '2-digit' }

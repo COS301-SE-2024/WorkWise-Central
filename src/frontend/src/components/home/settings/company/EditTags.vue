@@ -86,6 +86,7 @@
                   color="success"
                   rounded="md"
                   block
+                  :loading="isDeleting"
                   variant="text"
                 >
                   <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save
@@ -129,6 +130,7 @@ export default defineComponent({
       }
     ],
     items: [] as any[],
+    isDeleting: false,
     dialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     selectedItem: {
@@ -200,6 +202,7 @@ export default defineComponent({
       this.selectedItem = item
     },
     async updateTag() {
+      this.isDeleting = true // Indicate the start of the deletion process
       console.log(this.selectedItem)
       const config = {
         headers: {
@@ -219,9 +222,9 @@ export default defineComponent({
             life: 3000
           })
           setTimeout(() => {
+            this.dialog = false
             window.location.reload()
           }, 3000)
-          this.dialog = false
         })
         .catch((err) => {
           console.error(err)

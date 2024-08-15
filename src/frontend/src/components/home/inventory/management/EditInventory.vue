@@ -75,13 +75,24 @@
           <v-row justify="end">
             <v-col cols="12" lg="6">
               <v-btn @click="close" color="error" block
-                ><v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon
+                ><v-icon
+                  icon="fa:fa-solid fa-cancel"
+                  start
+                  color="error"
+                  size="small"
+                  :loading="isDeleting"
+                ></v-icon
                 >Cancel</v-btn
               ></v-col
             >
 
             <v-col cols="12" lg="6">
-              <v-btn @click="createInventoryItem" color="success" :disabled="!valid" block
+              <v-btn
+                @click="createInventoryItem"
+                color="success"
+                :disabled="!valid"
+                block
+                :loading="isDeleting"
                 ><v-icon
                   icon="fa:fa-solid fa-floppy-disk"
                   start
@@ -117,7 +128,7 @@ export default {
       localEditedItem: this.editedItem,
       addDialog: false,
       isdarkmode: localStorage.getItem('theme') === 'true',
-
+      isDeleting: false,
       valid: false,
       name: '',
       description: '',
@@ -164,6 +175,7 @@ export default {
       alert('Item updated')
     },
     async createInventoryItem() {
+      this.isDeleting = true // Indicate the start of the deletion process
       if (!this.localEditedItem) {
         this.$toast.add({
           severity: 'error',
@@ -205,8 +217,9 @@ export default {
         })
         this.addDialog = false
         setTimeout(() => {
+          this.isDeleting = false
           window.location.reload()
-        }, 3000)
+        }, 1500)
       } catch (error) {
         console.error(error)
         this.$toast.add({

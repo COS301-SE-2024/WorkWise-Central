@@ -88,6 +88,7 @@
                   rounded="md"
                   variant="text"
                   block
+                  :loading="isDeleting"
                 >
                   <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save
                   Priority</v-btn
@@ -134,6 +135,7 @@ export default defineComponent({
       }
     ],
     items: [] as any[],
+    isDeleting: false,
     dialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     selectedItem: {
@@ -199,6 +201,7 @@ export default defineComponent({
       this.selectedItem = item
     },
     async updatePrority() {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -218,6 +221,7 @@ export default defineComponent({
           })
           setTimeout(() => {
             window.location.reload()
+            this.isDeleting = false
           }, 3000)
           this.dialog = false
         })

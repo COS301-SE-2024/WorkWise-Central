@@ -48,6 +48,7 @@
                 rounded="md"
                 variant="text"
                 block
+                :loading="isDeleting"
                 ><v-icon icon="fa: fa-solid fa-plus" color="success"></v-icon>Create Tag</v-btn
               >
             </v-col>
@@ -74,6 +75,7 @@ interface Tag {
 export default defineComponent({
   data() {
     return {
+      isDeleting: false,
       dialog: false,
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       tag: {
@@ -93,6 +95,7 @@ export default defineComponent({
   },
   methods: {
     async createTag() {
+      this.isDeleting = true // Indicate the start of the deletion process
       console.log(this.tag)
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
@@ -106,7 +109,9 @@ export default defineComponent({
             detail: 'Tag Created',
             life: 3000
           })
-          window.location.reload()
+          setTimeout(() => {
+            window.location.reload()
+          }, 3000)
         })
         .catch((error) => {
           this.$toast.add({

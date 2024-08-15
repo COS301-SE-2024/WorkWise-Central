@@ -6,6 +6,7 @@
         color="secondary"
         variant="elevated"
         v-bind="activatorProps"
+        :loading="isGenerating"
         @click="openDialog"
       >
         <v-icon icon="fa:fa-solid fa-file" start color="primary" size="small"></v-icon>
@@ -63,6 +64,7 @@ export default {
   data() {
     return {
       dialog: false,
+      isGenerating: false,
       headers: [
         { title: 'Item', value: 'name' },
         { title: 'Current Stock', value: 'currentStock' },
@@ -93,7 +95,7 @@ export default {
     },
     generatePDF() {
       const doc = new jsPDF()
-
+      this.isGenerating = true
       // Title
       doc.text('Inventory Report', 14, 20)
 

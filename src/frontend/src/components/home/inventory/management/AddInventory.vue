@@ -84,13 +84,18 @@
         ><v-container
           ><v-row justify="end"
             ><v-col cols="12" lg="6">
-              <v-btn @click="close" color="error" block
+              <v-btn @click="close" color="error" block :loading="isDeleting"
                 ><v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
                 >Cancel
               </v-btn></v-col
             >
             <v-col cols="12" lg="6">
-              <v-btn @click="createInventoryItem" color="success" :disabled="!valid" block
+              <v-btn
+                @click="createInventoryItem"
+                color="success"
+                :disabled="!valid"
+                block
+                :loading="isDeleting"
                 ><v-icon icon="fa:fa-solid fa-plus" color="success" size="small" start></v-icon
                 >Create</v-btn
               ></v-col
@@ -117,6 +122,7 @@ export default defineComponent({
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
+    isDeleting: false,
     modal_light_theme_color: '#FFFFFF',
     valid: false,
     name: '',
@@ -156,6 +162,7 @@ export default defineComponent({
       })
     },
     async createInventoryItem() {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       }
@@ -183,7 +190,10 @@ export default defineComponent({
           life: 3000
         })
         this.addDialog = false
-        window.location.reload()
+        setTimeout(() => {
+          this.isDeleting = false
+          window.location.reload()
+        }, 1500)
       } catch (error) {
         console.error(error)
         this.$toast.add({

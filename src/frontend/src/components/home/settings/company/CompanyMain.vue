@@ -41,6 +41,7 @@
                 variant="elevated"
                 @click="switchCompany(companyName)"
                 block
+                :loading="isDeleting"
                 >Save</v-btn
               ></v-col
             >
@@ -77,6 +78,7 @@ export default defineComponent({
   data() {
     return {
       companyDialog: false,
+      isDeleting: false,
       search: '',
       company: '',
       companyName: '',
@@ -107,6 +109,7 @@ export default defineComponent({
       this.companyDialog = false
     },
     switchCompany(companyName) {
+      this.isDeleting = true // Indicate the start of the deletion process
       console.log(companyName)
       const companyId = this.findCompany(companyName)
       const employeeId = this.findEmployeeId(companyName)
@@ -124,7 +127,10 @@ export default defineComponent({
       localStorage.setItem('currentCompany', companyId)
       localStorage.setItem('employeeId', employeeId)
       this.companyDialog = false
-      window.location.reload()
+      setTimeout(() => {
+        this.isDeleting = false
+        window.location.reload()
+      }, 3000)
     },
     findCompany(companyName) {
       for (let i = 0; i < this.joinedCompanies.length; i++) {

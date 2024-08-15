@@ -1,5 +1,6 @@
 <template>
-  <v-dialog v-model="clientDialog" max-width="500px">
+  <Toast position="top-center" />
+  <v-dialog v-model="clientDialog" max-width="500px" :opacity="0">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -113,7 +114,11 @@ export default {
           })
           this.isDeleting = false
           this.clientDialog = false
-          window.location.reload()
+          setTimeout(() => {
+            this.isDeleting = false
+            this.clientDialog = false
+            window.location.reload()
+          }, 1500)
         })
         .catch((error) => {
           console.log(error)

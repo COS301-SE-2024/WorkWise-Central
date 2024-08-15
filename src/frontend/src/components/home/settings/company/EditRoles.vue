@@ -76,14 +76,14 @@
           ><v-row justify="end">
             <Toast position="top-center" />
             <v-col align="center" cols="12" lg="6">
-              <v-btn color="success" @click="updateRole" block>
+              <v-btn color="success" @click="updateRole" block :loading="isDeleting">
                 <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>
                 Save</v-btn
               >
             </v-col>
 
             <v-col align="center" cols="12" lg="6"
-              ><v-btn color="error" @click="cancel" block>
+              ><v-btn color="error" @click="cancel" block :loading="isDeleting">
                 <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon> Cancel
               </v-btn></v-col
             ></v-row
@@ -114,7 +114,7 @@ export default defineComponent({
   data: () => ({
     dialog: false,
     items: [],
-
+    isDeleting: false,
     roleNames: [],
     rolePermissions: [],
     permissions: [],
@@ -200,6 +200,7 @@ export default defineComponent({
         })
     },
     async updateRole(roleID) {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -216,6 +217,17 @@ export default defineComponent({
         .patch(`http://localhost:3000/role/${roleID}`, config, data)
         .then((response) => {
           console.log(response)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Role updated',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.isDeleting = false
+            this.dialog = false
+            window.location.reload()
+          }, 1500)
         })
         .catch((error) => {
           console.log(error)

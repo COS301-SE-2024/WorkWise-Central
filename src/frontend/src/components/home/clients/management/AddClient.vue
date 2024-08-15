@@ -254,6 +254,7 @@
                 variant="text"
                 color="success"
                 :disabled="click_create_client"
+                :loading="isDeleting"
                 ><v-icon icon="fa: fa-solid fa-user-plus" color="success" start></v-icon>Create
                 Client
               </v-btn>
@@ -311,6 +312,7 @@ export default defineComponent({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     valid: false,
+    isDeleting: false,
     addDialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     click_create_client: false,
@@ -440,6 +442,7 @@ export default defineComponent({
       }
     },
     async handleSubmission() {
+      this.isDeleting = true // Indicate the start of the deletion process
       if (this.req_obj.details.idNumber === '') {
         delete this.req_obj.details.idNumber
       }
@@ -457,8 +460,9 @@ export default defineComponent({
             life: 3000
           })
           setTimeout(() => {
+            this.isDeleting = false
             window.location.reload()
-          }, 3000)
+          }, 1500)
         })
         .catch((res) => {
           console.log('Client creation failed')

@@ -79,11 +79,23 @@
             <v-col cols="12" lg="6">
               <v-btn @click="close" color="error" block>
                 Cancel
-                <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon>
+                <v-icon
+                  icon="fa:fa-solid fa-cancel"
+                  color="error"
+                  size="small"
+                  end
+                  :loading="isDeleting"
+                ></v-icon>
               </v-btn>
             </v-col>
             <v-col cols="12" lg="6">
-              <v-btn @click="createTeam" color="success" :disabled="!valid" block>
+              <v-btn
+                @click="createTeam"
+                color="success"
+                :disabled="!valid"
+                block
+                :loading="isDeleting"
+              >
                 Create
                 <v-icon icon="fa:fa-solid fa-plus" color="success" size="small" end></v-icon>
               </v-btn>
@@ -109,6 +121,7 @@ export default defineComponent({
     addDialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     valid: false,
+    isDeleting: false,
     teamName: '',
     model: '',
     teamMembers: '',
@@ -125,6 +138,7 @@ export default defineComponent({
   }),
   methods: {
     async createTeam() {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
         params: { currentEmployeeId: localStorage.getItem('employeeId') }
@@ -147,8 +161,11 @@ export default defineComponent({
           detail: 'Team Created',
           life: 3000
         })
-        this.addDialog = false
-        window.location.reload()
+        setTimeout(() => {
+          this.isDeleting = false
+          this.addDialog = false
+          window.location.reload()
+        }, 1500)
       } catch (error) {
         console.error(error)
         this.$toast.add({

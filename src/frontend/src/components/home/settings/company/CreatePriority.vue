@@ -54,6 +54,7 @@
                 color="success"
                 rounded="md"
                 variant="text"
+                :loading="isDeleting"
                 block
                 ><v-icon icon="fa: fa-solid fa-plus" color="success"></v-icon>Create Priority</v-btn
               >
@@ -82,6 +83,7 @@ export default defineComponent({
   data() {
     return {
       dialog: false,
+      isDeleting: false,
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       priority: {
         label: '',
@@ -101,6 +103,7 @@ export default defineComponent({
   },
   methods: {
     async createPriority() {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +122,9 @@ export default defineComponent({
             life: 3000
           })
           this.dialog = false
-          window.location.reload()
+          setTimeout(() => {
+            window.location.reload()
+          }, 3000)
         })
         .catch((err) => {
           console.error(err)

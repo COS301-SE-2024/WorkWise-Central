@@ -148,6 +148,7 @@
                 variant="text"
                 @click="update"
                 :disabled="!valid"
+                :loading="isDeleting"
                 block
                 ><v-icon
                   icon="fa:fa-solid fa-floppy-disk"
@@ -247,6 +248,7 @@ export default {
       this.clientDialog = false
     },
     async update() {
+      this.isDeleting = true // Indicate the start of the deletion process
       console.log(this.localEditedItem.firstName)
       console.log(localStorage.getItem('access_token'))
 
@@ -297,9 +299,11 @@ export default {
           life: 3000
         })
         setTimeout(() => {
+          this.isDeleting = false
+          this.clientDialog = false
           window.location.reload()
         }, 3000)
-        this.clientDialog = false
+
         return true
       } catch (error) {
         console.error('Error updating client:', error)

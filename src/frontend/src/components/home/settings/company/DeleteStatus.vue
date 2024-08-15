@@ -72,6 +72,7 @@ export default defineComponent({
       this.deleteDialog = false
     },
     async deleteStatus() {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -96,9 +97,11 @@ export default defineComponent({
             detail: 'Status Deleted',
             life: 3000
           })
-         setTimeout(() => {
+          setTimeout(() => {
+            this.isDeleting = false
+            this.deleteDialog = false
             window.location.reload()
-          }, 3000)
+          }, 1500)
         }
       } catch (error) {
         console.error(error)

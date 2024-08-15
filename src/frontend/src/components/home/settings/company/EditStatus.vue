@@ -87,12 +87,20 @@
                   rounded="md"
                   variant="text"
                   block
+                  :loading="isDeleting"
                 >
                   <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save
                   Status</v-btn
                 ></v-col
               ><v-col cols="12" lg="6"
-                ><v-btn color="error" rounded="md" variant="text" @click="close" block>
+                ><v-btn
+                  color="error"
+                  rounded="md"
+                  variant="text"
+                  @click="close"
+                  block
+                  :loading="isDeleting"
+                >
                   <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon> Cancel
                 </v-btn></v-col
               ></v-row
@@ -117,6 +125,7 @@ interface Status {
 }
 export default defineComponent({
   data: () => ({
+    isDeleting: false,
     headers: [
       {
         title: 'Status Name',
@@ -195,6 +204,7 @@ export default defineComponent({
       return localAvailable ? this.localUrl : this.remoteUrl
     },
     async updateStatus() {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -214,6 +224,7 @@ export default defineComponent({
           })
           setTimeout(() => {
             window.location.reload()
+            this.isDeleting = false
           }, 3000)
         })
         .catch((error) => {
