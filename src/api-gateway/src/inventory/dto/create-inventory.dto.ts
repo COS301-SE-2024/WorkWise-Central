@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateInventoryDto {
@@ -11,22 +11,27 @@ export class CreateInventoryDto {
   @IsOptional()
   @ApiProperty()
   @IsString()
-  description: string;
+  description?: string;
 
   @IsOptional()
   @ApiProperty()
   @IsNumber()
-  costPrice: number;
+  costPrice?: number;
 
   @IsOptional()
   @ApiProperty()
   @IsNumber()
-  currentStockLevel: number;
+  currentStockLevel?: number;
 
   @IsOptional()
   @ApiProperty()
   @IsNumber()
-  reorderLevel: number;
+  reorderLevel?: number;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  images?: string[] = [];
 
   @IsNotEmpty()
   @IsMongoId()

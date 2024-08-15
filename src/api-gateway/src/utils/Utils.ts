@@ -48,3 +48,17 @@ export function ciEquals(a: string, b: string) {
     ? a.localeCompare(b, undefined, { sensitivity: 'base' }) === 0
     : a === b;
 }
+
+export function isBase64Uri(value: string | string[]) {
+  const dataUriRegex = /^data:image\/(png|jpeg|jpg|webp|bmp|gif|svg\+xml);base64,/i;
+  if (Array.isArray(value)) {
+    for (const base64String of value) {
+      if (!dataUriRegex.test(base64String)) {
+        return false;
+      }
+    }
+    return true;
+  } else {
+    return dataUriRegex.test(value);
+  }
+}
