@@ -1,11 +1,5 @@
 <template>
-  <v-dialog
-    :max-height="800"
-    :max-width="900"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
-    v-model="jobDialog"
-    scrollable
-  >
+  <v-dialog :max-height="800" :max-width="900" v-model="jobDialog" scrollable>
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -502,12 +496,37 @@ export default defineComponent({
       axios
         .post(apiURL + 'job/create', this.req_obj, config)
         .then((res) => {
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Job Added Successfully'
-          })
-          window.location.reload()
+          if (this.req_obj.assignedEmployees.employeeIds.length === 0) {
+            this.$toast.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Job Added Successfully'
+            })
+            window.location.reload()
+          }
+          axios
+            .put(
+              apiURL + 'job/employees',
+              {
+                employeeId: localStorage['employeeId'],
+                employeesToAssignIds: this.req_obj.assignedEmployees.employeeIds,
+                jobId: res.data.data._id
+              },
+              config
+            )
+            .then((res) => {
+              console.log(res)
+              console.log('The employees were assigned successfully')
+              this.$toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Job Added Successfully'
+              })
+              window.location.reload()
+            })
+            .catch((error) => {
+              console.log(error)
+            })
         })
         .catch((res) => {
           this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Job not added' })
