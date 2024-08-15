@@ -19,7 +19,7 @@
 
     <!-- Only show the rest of the components if the title is set -->
     <template v-if="taskList[0].title.trim() !== ''">
-      <v-row>
+      <v-row v-if="!isSaveTaskClicked">
         <v-col>
           <div class="mb-3">{{ progress.toFixed(0) }}%</div>
           <v-progress-linear
@@ -150,7 +150,7 @@
       </v-row>
 
       <v-row>
-        <v-col>
+        <v-col v-if="!isSaveTaskClicked" color="success">
           <v-textarea
             v-model="newItemText"
             label="Add an item"
@@ -168,7 +168,7 @@
       </v-row>
       <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
         <v-row class="justify-center">
-          <v-btn color="success" @click="putTask()" prepend-icon="fa: fa-solid fa-save"
+          <v-btn v-if="isSaveVisible" color="success" @click="handleSaveTaskClick" prepend-icon="fa: fa-solid fa-save"
             >Save Task</v-btn
           >
         </v-row>
@@ -178,56 +178,46 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps, onMounted } from 'vue'
+import { ref, computed, defineProps, onMounted, watch } from 'vue'
 import axios from 'axios'
 
 // Define props and interfaces
 const props = defineProps<{ jobTaskList: TaskList[]; id: string }>()
-// Dialog
-const assignDialog = ref(false)
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-// Request Config
-const config = {
-  headers: {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${localStorage.getItem('access_token')}`
-  }
-}
-// Assignable employees
-const assignableEmployees = ref([])
-const selectedEmployees = ref([])
-// Task list item
-const newItemText = ref<string>('')
-
-
 interface TaskItem {
   description: string
   assignedEmployees: string[]
   dueDate: string
   done: boolean
 }
-
 interface TaskList {
   title: string
   items: TaskItem[]
 }
 
-// Initialize the task list
+// Reactive variables
+const assignDialog = ref(false)
+const assignableEmployees = ref([])
+const selectedEmployees = ref([])
+const newItemText = ref<string>('')
 const taskList = ref<TaskList[]>([
   {
     title: 'Create a new task list',
     items: []
   }
 ])
+const isSaveTaskClicked = ref(true)
+const isSaveVisible = ref(true)
+const taskId = ref('')
 
-const employees = ([
-  {
-    "text": "Lionel Messi",
-    "value": "66bb07e4047acc46409cc510"
+// API URLs and Config
+const localUrl: string = 'http://localhost:3000/'
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
-])
+}
 
 // Utility functions
 const isLocalAvailable = async (url: string): Promise<boolean> => {
@@ -244,20 +234,8 @@ const getRequestUrl = async (): Promise<string> => {
   return localAvailable ? localUrl : remoteUrl
 }
 
-// Compute the progress based on tasks
-const progress = computed(() => {
-  const firstTaskList = taskList.value[0]
-  const totalTasks = firstTaskList.items.length
-  const completedTasks = firstTaskList.items.filter((item) => item.done).length
-  return totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100
-})
-
-// Handle actions without the dialog property
-const openCheckActionsDialog = (index: number) => {
-  // Handle the click without relying on the 'dialog' property
-}
-
-function addItem() {
+// Task-related functions
+const addItem = () => {
   if (newItemText.value.trim() !== '') {
     taskList.value[0].items.push({
       description: newItemText.value,
@@ -269,20 +247,53 @@ function addItem() {
   }
 }
 
-function deleteItem(index: number) {
+const deleteItem = (index: number) => {
   taskList.value[0].items.splice(index, 1)
 }
 
-const saveItem = (index: number) => {
-  if (taskList.value[0].items.length > 0) {
-    // Save the item to the database or handle the save logic
+const handleSaveTaskClick = async () => {
+  await putTask()
+  isSaveTaskClicked.value = false
+  isSaveVisible.value = false
+}
+
+const putTaskItem = async () => {
+  try {
+    const apiUrl = await getRequestUrl()
+    const payload = {
+      employeeId: localStorage.getItem('employeeId') || '',
+      jobId: props.id,
+      taskId: taskId.value
+    }
+    const response = await axios.put(`${apiUrl}job/taskItem`, payload, config)
+    console.log('Task item updated successfully', response.data)
+  } catch (error) {
+    console.error('Error updating task item', error)
   }
 }
 
-// Fetch employees and populate assignableEmployees
+const putTask = async () => {
+  try {
+    const apiUrl = await getRequestUrl()
+    const payload = {
+      employeeId: localStorage.getItem('employeeId') || '',
+      jobId: props.id,
+      title: taskList.value[0].title
+    }
+    const response = await axios.put(`${apiUrl}job/task`, payload, config)
+    console.log('Task updated successfully', response.data)
+    if (response.status > 199 && response.status < 300) {
+      console.log('smile')
+    }
+  } catch (error) {
+    console.error('Error updating task', error)
+  }
+}
+
+// Employee-related functions
 const getEmployees = async () => {
   try {
-    const apiUrl = await getRequestUrl();
+    const apiUrl = await getRequestUrl()
     const employeeId = localStorage.getItem('employeeId')
     if (!employeeId) {
       throw new Error('Employee ID not found in localStorage')
@@ -298,15 +309,6 @@ const getEmployees = async () => {
     console.error('Error fetching employees', error)
   }
 }
-
-// Call getEmployees on mounted
-onMounted(() => {
-  console.log('Tasklist: ', props.jobTaskList)
-  if (props.jobTaskList && props.jobTaskList.length > 0) {
-    taskList.value = props.jobTaskList
-  }
-  getEmployees()
-})
 
 const createEmployeeAssignmentObjects = () => {
   const jobId = props.id
@@ -325,30 +327,49 @@ const createEmployeeAssignmentObjects = () => {
   console.log(assignments)
 }
 
-const putTask = async () => {
-  try {
-    const apiUrl = await getRequestUrl()
-    const payload = {
-      employeeId: localStorage.getItem('employeeId') || '',
-      jobId: props.id,
-      title: taskList.value[0].title
+// Computed properties
+const progress = computed(() => {
+  const firstTaskList = taskList.value[0]
+  const totalTasks = firstTaskList.items.length
+  const completedTasks = firstTaskList.items.filter((item) => item.done).length
+  return totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100
+})
+
+// Watchers
+let initialLength = taskList.value[0].items.length
+watch(
+  () => taskList.value[0].items.length,
+  async (newLength, oldLength) => {
+    if (newLength > initialLength) {
+      initialLength = newLength
+      await putTaskItem()
     }
-    console.log('Payload', payload)
-    const response = await axios.put(`${apiUrl}job/task`, payload, config)
-    console.log('Task updated successfully', response.data)
-    if (response.status > 199 && response.status < 300) {
-      if (taskList.value[0].items.length > 0) {
-        console.log('smile')
-      }
-    }
-  } catch (error) {
-    console.error('Error updating task', error)
   }
+)
+
+// Lifecycle hooks
+onMounted(() => {
+  console.log('Tasklist: ', props.jobTaskList)
+  if (props.jobTaskList && props.jobTaskList.length > 0) {
+    taskList.value = props.jobTaskList
+    if (taskList.value[0].items.length < 0) {
+      isSaveTaskClicked.value = false
+    }
+  }
+  getEmployees()
+})
+
+// Handle actions without the dialog property
+const openCheckActionsDialog = (index: number) => {
+  // Handle the click without relying on the 'dialog' property
 }
 
-const saveTask = async (index: number) => {}
+const saveTask = async (index: number) => {
+  // Implement save logic here
+}
 
 </script>
+
 
 <style scoped>
 .strikethrough {
