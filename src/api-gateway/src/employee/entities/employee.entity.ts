@@ -93,6 +93,15 @@ export class Employee {
   })
   currentJobAssignments?: Types.ObjectId[];
 
+  @ApiProperty()
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: true,
+    default: [],
+    ref: 'Job',
+  })
+  currentTaskAssignments?: Types.ObjectId[];
+
   @ApiHideProperty()
   @Prop({ required: true, default: new Date() })
   public createdAt: Date;

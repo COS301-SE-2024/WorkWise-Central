@@ -5,6 +5,7 @@ import { InventoryService } from '../inventory.service';
 import { InventoryRepository } from '../inventory.repository';
 import { CompanyService } from '../../company/company.service';
 import { Inventory } from '../entities/inventory.entity';
+import { FileModule } from '../../file/file.module';
 
 const mockInventoryRepository = {
   findAll: jest.fn(),
@@ -28,6 +29,7 @@ describe('--Inventory Service--', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [FileModule],
       providers: [
         InventoryService,
         { provide: getModelToken(Inventory.name), useValue: {} },

@@ -269,7 +269,7 @@ export class Job {
 
   @ApiProperty()
   @Prop({ type: [String], required: false, default: [] })
-  attachments: string[];
+  attachments: string[] = [];
 
   @ApiProperty()
   @Prop({ type: String, required: false, default: '' })
@@ -297,7 +297,7 @@ export class Job {
 
   @ApiProperty()
   @Prop({ type: [History], required: true, default: [] })
-  history: History[];
+  history: History[] = [];
 
   @ApiProperty()
   @Prop({ type: [Comment], required: false, default: [] })

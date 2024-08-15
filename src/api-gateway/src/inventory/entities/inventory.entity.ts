@@ -33,6 +33,14 @@ export class Inventory {
   currentStockLevel: number;
 
   @ApiProperty()
+  @Prop({
+    type: [String],
+    required: false,
+    default: [],
+  })
+  images: string[] = [];
+
+  @ApiProperty()
   @Prop({ type: Number, required: false })
   reorderLevel: number;
 
@@ -73,6 +81,14 @@ export class InventoryApiObject {
   @ApiProperty()
   @Prop({ type: Number, required: true })
   currentStockLevel: number;
+
+  @ApiProperty()
+  @Prop({
+    type: [String],
+    required: false,
+    default: [],
+  })
+  images: string[] = [];
 
   @ApiProperty()
   @Prop({ type: Number, required: true })
