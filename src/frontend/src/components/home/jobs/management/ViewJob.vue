@@ -152,7 +152,7 @@
                 <h5 ref="imagesSection">Attach Images</h5>
               </v-divider>
               <v-col>
-                <GetJobImages :attachments="props.passedInJob?.attachments"/>
+                <GetJobImages :id="props.passedInJob?._id"/>
               </v-col>
               <v-divider>
                 <h5 ref="tagsSection">Add Job Tags</h5>

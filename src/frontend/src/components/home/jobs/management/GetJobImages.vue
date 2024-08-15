@@ -98,59 +98,132 @@
       </v-card>
     </v-dialog>
   </v-container>
+  <Toast/>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, defineProps, onMounted } from 'vue'
+import axios from 'axios'
+import { useToast } from 'primevue/usetoast'
+import Toast from 'primevue/toast'
 
-const images = ref([])
-const newFile = ref(null)
+const toast = useToast()
+interface Image {
+  src: string
+  dialog: boolean
+}
+
+const props = defineProps<{ id: string }>()
+
+const images = ref<Image[]>([])
+const newFile = ref<File | null>(null)
 const imageOverlay = ref(false)
 const overlayImageSrc = ref('')
+// API URLs
+const localUrl: string = 'http://localhost:3000/'
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
 
-// onMounted(() => {
-//   images.value = props.attachments.map(attachment => ({
-//     src: attachment,
-//     dialog: false
-//   }))
-// })
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`
+  }
+}
 
-const handleFileChange = () => {
+// Utility functions
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url)
+    return res.status < 300 && res.status > 199
+  } catch (error) {
+    return false
+  }
+}
+
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
+
+const getJobData = async () => {
+  console.log("Getting job data", props.id)
+  const apiUrl = getRequestUrl()
+  try {
+    const response = await axios.get(`${apiUrl}job/id/${props.id}`, config)
+    if (response.status > 199 && response.data < 300) {
+      const job = response.data.data
+      console.log("Job:", job)
+      if (job.attachments) {
+        console.log("Got job data")
+        job.attachments.forEach((attachment: string) => {
+          images.value.push({
+            src: attachment,
+            dialog: false
+          })
+        })
+      }
+    }
+
+  } catch(error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch images' })
+  }
+
+}
+
+const uploadImage = async (index: number) => {
+  const formData = new FormData()
+  formData.append('image', images.value[index].src)
+  const apiUrl = getRequestUrl()
+  try {
+    const response = await axios.patch(`${apiUrl}job/add/attachments`, formData, config)
+    if (response.status === 200) {
+      toast.add({ severity: 'success', summary: 'Success', detail: 'Image uploaded successfully' })
+    }
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to upload image' })
+  }
+}
+
+const handleFileChange = (): void => {
   const file = newFile.value
   if (file) {
     const reader = new FileReader()
-    reader.onload = (e) => {
-      images.value.push({
-        src: e.target.result,
-        dialog: false
-      })
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      if (e.target && e.target.result) {
+        images.value.push({
+          src: e.target.result as string,
+          dialog: false
+        })
+      }
     }
     reader.readAsDataURL(file)
     newFile.value = null
   }
 }
 
-const openImageActionsDialog = (index) => {
+const openImageActionsDialog = (index: number): void => {
   images.value[index].dialog = true
 }
 
-const openImageOverlay = (index) => {
+const openImageOverlay = (index: number): void => {
   overlayImageSrc.value = images.value[index].src
   imageOverlay.value = true
 }
 
-
-const changeImage = (index) => {
+const changeImage = (index: number): void => {
   images.value[index].dialog = false
   const fileInput = document.createElement('input')
   fileInput.type = 'file'
   fileInput.accept = 'image/*'
-  fileInput.onchange = (event) => {
-    const file = event.target.files[0]
+  fileInput.onchange = (event: Event) => {
+    const target = event.target as HTMLInputElement
+    const file = target.files ? target.files[0] : null
     if (file) {
       const reader = new FileReader()
-      reader.onload = (e) => {
-        images.value[index].src = e.target.result
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        if (e.target && e.target.result) {
+          images.value[index].src = e.target.result as string
+        }
       }
       reader.readAsDataURL(file)
     }
@@ -158,7 +231,7 @@ const changeImage = (index) => {
   fileInput.click()
 }
 
-const downloadImage = (index) => {
+const downloadImage = (index: number): void => {
   const link = document.createElement('a')
   link.href = images.value[index].src
   link.download = `downloaded-image-${index + 1}`
@@ -167,11 +240,14 @@ const downloadImage = (index) => {
   document.body.removeChild(link)
 }
 
-const deleteImage = (index) => {
+const deleteImage = (index: number): void => {
   images.value.splice(index, 1)
 }
-</script>
 
+onMounted(() => {
+  getJobData()
+})
+</script>
 <style scoped>
 h5 {
   display: flex;
