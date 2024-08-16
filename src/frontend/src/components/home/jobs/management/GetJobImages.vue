@@ -172,15 +172,17 @@ const getJobData = async () => {
 
 const uploadImage = async (index: number) => {
   const formData = new FormData()
-  formData.append('image', images.value[index].src)
-  const apiUrl = getRequestUrl()
+  formData.append('files', images.value[index].src)
+  const apiUrl = await getRequestUrl()
+  const url = `${apiUrl}job/add/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`
   try {
-    const response = await axios.patch(`${apiUrl}job/add/attachments`, formData, config)
+    const response = await axios.patch(url, formData, config)
     if (response.status === 200) {
-      toast.add({ severity: 'success', summary: 'Success', detail: 'Image uploaded successfully' })
+      toast.add({ severity: 'success', summary: 'Success', detail: 'Image uploaded successfully', life:3000 })
     }
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to upload image' })
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to upload image', life:3000 })
+    console.log(url)
   }
 }
 
