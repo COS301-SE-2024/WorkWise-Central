@@ -100,8 +100,8 @@ export default defineComponent({
     EditRoles,
     EditPriority,
     EditTags,
+    EditStructure,
     EditStatus,
-    EditStructure
   },
   methods: {
     close() {
