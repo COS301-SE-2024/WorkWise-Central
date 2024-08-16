@@ -201,10 +201,10 @@ export class EmployeeService {
   }
 
   async findById(id: Types.ObjectId) {
-    console.log('In findById service');
-    console.log('id: ', id);
+    // console.log('In findById service');
+    // console.log('id: ', id);
     const data = await this.employeeRepository.findById(id);
-    console.log('data: ', data);
+    // console.log('data: ', data);
     return data;
   }
 
@@ -227,13 +227,13 @@ export class EmployeeService {
   }
 
   async update(employeeId: Types.ObjectId, currentEmployeeId: Types.ObjectId, updateEmployeeDto: UpdateEmployeeDto) {
-    console.log('In update service');
+    // console.log('In update service');
     const validation = await this.validateUpdateEmployee(employeeId, currentEmployeeId, updateEmployeeDto);
-    console.log('validation: ', validation);
+    // console.log('validation: ', validation);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
-    console.log('validation complete');
+    // console.log('validation complete');
     //******Updating the structure*********/
     if (updateEmployeeDto.superiorId && updateEmployeeDto.subordinates) {
       //Case: the superior and subordinate is being updated
@@ -304,7 +304,7 @@ export class EmployeeService {
         await this.employeeRepository.updateSuperior(subordinateId, employeeId);
       });
     }
-    console.log('structure updated');
+    // console.log('structure updated');
 
     //Altering the dto to update the role if roleId is given
     const dto = new InternalUpdateEmployeeDto();
@@ -313,11 +313,11 @@ export class EmployeeService {
     dto.subordinateTeams = updateEmployeeDto.subordinateTeams;
     dto.currentJobAssignments = updateEmployeeDto.currentJobAssignments;
     if (updateEmployeeDto.roleId) {
-      console.log('in if. updateEmployeeDto.roleId: ', updateEmployeeDto.roleId);
+      // console.log('in if. updateEmployeeDto.roleId: ', updateEmployeeDto.roleId);
       dto.role.roleId = updateEmployeeDto.roleId;
-      console.log('checkpoint 1');
+      // console.log('checkpoint 1');
       const role = await this.roleService.findById(dto.role.roleId);
-      console.log('role: ', role);
+      // console.log('role: ', role);
       dto.role.permissionSuite = role.permissionSuite;
       dto.role.roleName = role.roleName;
     }
@@ -455,33 +455,33 @@ export class EmployeeService {
   }
 
   async updateRole(roleId: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
-    console.log('In updateRole service');
-    console.log('updateRoleDto: ', updateRoleDto);
+    // console.log('In updateRole service');
+    // console.log('updateRoleDto: ', updateRoleDto);
     const role = await this.roleService.findById(roleId);
-    console.log('role: ', role);
+    // console.log('role: ', role);
     const newRole = new roleObject();
     newRole.roleId = new Types.ObjectId(roleId);
     if (updateRoleDto.permissionSuite) {
-      console.log('In if updateRoleDto.permissionSuite');
+      // console.log('In if updateRoleDto.permissionSuite');
       newRole.permissionSuite = updateRoleDto.permissionSuite;
     } else {
-      console.log('in else');
+      // console.log('in else');
       newRole.permissionSuite = role.permissionSuite;
     }
 
     if (updateRoleDto.roleName) {
-      console.log('In if updateRoleDto.roleName');
+      // console.log('In if updateRoleDto.roleName');
       newRole.roleName = updateRoleDto.roleName;
     } else {
-      console.log('In else');
+      // console.log('In else');
       newRole.roleName = role.roleName;
     }
-    console.log('newRole: ', newRole);
+    // console.log('newRole: ', newRole);
     return await this.employeeRepository.updateRole(roleId, role.companyId, newRole);
   }
 
   async allEmployeesInCompanyWithRole(roleId: Types.ObjectId) {
-    console.log('In allEmployeesInCompanyWithRole service');
+    // console.log('In allEmployeesInCompanyWithRole service');
     return await this.employeeRepository.allEmployeesInCompanyWithRole(roleId);
   }
 
@@ -681,16 +681,16 @@ export class EmployeeService {
   }
 
   async findAllInCompanyWithRoleId(companyId: Types.ObjectId, roleId: Types.ObjectId) {
-    console.log('In findAllInCompanyWithRole');
-    console.log('companyId: ', companyId);
-    console.log('roleId: ', roleId);
+    // console.log('In findAllInCompanyWithRole');
+    // console.log('companyId: ', companyId);
+    // console.log('roleId: ', roleId);
     return await this.employeeRepository.findAllInCompanyWithRoleId(companyId, roleId);
   }
 
   async findAllInCompanyWithRoleName(companyId: Types.ObjectId, name: string) {
-    console.log('In findAllInCompanyWithRole');
-    console.log('companyId: ', companyId);
-    console.log('name: ', name);
+    // console.log('In findAllInCompanyWithRole');
+    // console.log('companyId: ', companyId);
+    // console.log('name: ', name);
     return await this.employeeRepository.findAllInCompanyWithRoleName(companyId, name);
   }
 
@@ -704,6 +704,7 @@ export class EmployeeService {
   // }
 
   async graphData(companyId: Types.ObjectId) {
+    console.log('graphData');
     //Setting up for the traversal
     const owner = await this.findAllInCompanyWithRoleName(companyId, 'Owner');
     let currentCount: number = 1;
@@ -712,14 +713,17 @@ export class EmployeeService {
     const nodes: Nodes = {};
     const edges: Edges = {};
     const currentEmployee = await this.findById(owner[0]._id);
+    console.log('owner Id: ', owner[0]._id);
     const open: Types.ObjectId[] = [];
 
     //Adding the owner to the nodes
     const nodeLabel = 'node' + currentCount.toString();
+    console.log('nodeLabel: ', nodeLabel);
     nodes[nodeLabel] = { name: currentEmployee.userInfo.displayName };
     //Adding the owner to the edges
     currentEmployee.subordinates.forEach(() => {
       const edgeLabel = 'edge' + edgeCount.toString();
+      console.log('edgeLabel: ', edgeLabel);
       edges[edgeLabel] = { source: nodeLabel, target: 'node' + subCount.toString() };
       edgeCount++;
       subCount++;
@@ -730,14 +734,18 @@ export class EmployeeService {
 
     while (open.length !== 0) {
       const currentId = open.shift();
+      console.log('currentId: ', currentId);
       const currentEmployee = await this.findById(currentId);
+      // console.log('currentEmployee: ', currentEmployee);
 
       //Adding the currentEmployee to the nodes
       const nodeLabel = 'node' + currentCount.toString();
+      console.log('nodeLabel: ', nodeLabel);
       nodes[nodeLabel] = { name: currentEmployee.userInfo.displayName };
       //Adding the currentEmployee to the edges
       currentEmployee.subordinates.forEach(() => {
         const edgeLabel = 'edge' + edgeCount.toString();
+        console.log('edgeLabel: ', edgeLabel);
         edges[edgeLabel] = { source: nodeLabel, target: 'node' + subCount.toString() };
         edgeCount++;
         subCount++;
