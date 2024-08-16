@@ -4,6 +4,7 @@ import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { Role } from './entity/role.entity';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { User } from '../users/entities/user.entity';
+import { isNotDeleted } from '../shared/soft-delete';
 @Injectable()
 export class RoleRepository {
   constructor(@InjectModel(Role.name) private readonly roleModel: Model<Role>) {}
@@ -120,5 +121,14 @@ export class RoleRepository {
       return false;
     }
     return true;
+  }
+
+  deleteAllInCompany(companyId: Types.ObjectId) {
+    this.roleModel.updateMany(
+      {
+        $and: [{ companyId: companyId }, isNotDeleted],
+      },
+      { $set: { deletedAt: new Date() } },
+    );
   }
 }

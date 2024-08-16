@@ -22,6 +22,10 @@ import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.d
 import { Employee } from '../employee/entities/employee.entity';
 import { FileService } from '../file/file.service';
 import { JobService } from '../job/job.service';
+import { DeleteCompanyDto } from './dto/delete-company.dto';
+import { ClientService } from '../client/client.service';
+import { InventoryService } from '../inventory/inventory.service';
+import { TeamService } from '../team/team.service';
 
 @Injectable()
 export class CompanyService {
@@ -42,6 +46,15 @@ export class CompanyService {
 
     @Inject(forwardRef(() => JobService))
     private readonly jobService: JobService,
+
+    @Inject(forwardRef(() => ClientService))
+    private readonly clientService: ClientService,
+
+    @Inject(forwardRef(() => InventoryService))
+    private readonly inventoryService: InventoryService,
+
+    @Inject(forwardRef(() => TeamService))
+    private readonly teamService: TeamService,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto) {
@@ -113,7 +126,8 @@ export class CompanyService {
     });
 
     console.log('Add employee to Company');
-    const updatedCompany = await this.addNewEmployeeId(createdCompany._id, employee._id);
+    const updatedCompany: any = await this.addNewEmployeeId(createdCompany._id, employee._id);
+    updatedCompany.ownerId = newJoinedCompany.employeeId;
     return new CreateCompanyResponseDto(updatedCompany);
   }
 
@@ -365,11 +379,11 @@ export class CompanyService {
     }
   }
 
-  async deleteCompany(userId: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
+  async deleteCompany(userId: Types.ObjectId, deleteCompanyDto: DeleteCompanyDto): Promise<boolean> {
     const user = await this.usersService.getUserById(userId);
     let empId: Types.ObjectId;
     for (const joinedCompany of user.joinedCompanies) {
-      if (joinedCompany.companyId.equals(companyId)) {
+      if (joinedCompany.companyId.equals(deleteCompanyDto.companyId)) {
         empId = joinedCompany.employeeId;
       }
     }
@@ -380,13 +394,13 @@ export class CompanyService {
       throw new UnauthorizedException('Only the owner can perform this action');
     }
 
-    const usersInCompany = await this.usersService.getAllUsersInCompany(companyId);
+    const usersInCompany = await this.usersService.getAllUsersInCompany(deleteCompanyDto.companyId);
 
     for (const user of usersInCompany) {
       const newJoinedCompanies: JoinedCompany[] = [];
 
       for (const joinedCompany of user.joinedCompanies) {
-        if (!joinedCompany.companyId.equals(companyId)) {
+        if (joinedCompany.companyId.toString() !== deleteCompanyDto.companyId.toString()) {
           //Create new list, without company
           newJoinedCompanies.push(joinedCompany);
         } else {
@@ -398,7 +412,12 @@ export class CompanyService {
         joinedCompanies: newJoinedCompanies,
       });
     }
-    await this.companyRepository.delete(companyId);
+    this.companyRepository.delete(deleteCompanyDto.companyId);
+    this.jobService.deleteAllWithCompanyId(deleteCompanyDto.companyId);
+    this.jobService.deleteAllTagsAndStatusesInCompany(deleteCompanyDto.companyId);
+    this.clientService.deleteAllInCompany(deleteCompanyDto.companyId);
+    this.inventoryService.deleteAllInCompany(deleteCompanyDto.companyId);
+    this.roleService.deleteAllInCompany(deleteCompanyDto.companyId);
     return true;
   }
 

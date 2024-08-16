@@ -166,6 +166,12 @@ export class JobService {
     return true;
   }
 
+  async deleteAllWithCompanyId(companyId: Types.ObjectId): Promise<boolean> {
+    console.log(`Deleting all Jobs in ${companyId}`);
+    await this.jobRepository.deleteAllInCompany(companyId);
+    return true;
+  }
+
   async jobCreateIsValid(job: CreateJobDto): Promise<ValidationResult> {
     if (!job) {
       return new ValidationResult(false, 'Job is null');
@@ -945,5 +951,18 @@ export class JobService {
     if (!jobExists) throw new NotFoundException('Job not found');
 
     return this.jobRepository.updateAttachments(updateAttachmentDto.jobId, updateAttachmentDto.attachments);
+  }
+
+  async addToHistory(jobId, event: string) {
+    const newEvent = new History(event);
+    this.jobRepository.addToHistory(jobId, newEvent); //Do not await
+  }
+
+  removeClient(fullName: string, clientId: Types.ObjectId) {
+    this.jobRepository.removeClient(fullName, clientId);
+  }
+
+  deleteAllTagsAndStatusesInCompany(companyId: Types.ObjectId) {
+    this.jobTagRepository.deleteAllTagsAndStatusesInCompany(companyId);
   }
 }

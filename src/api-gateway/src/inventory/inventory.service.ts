@@ -86,4 +86,8 @@ export class InventoryService {
     }
     return await this.inventoryRepository.remove(id);
   }
+
+  deleteAllInCompany(companyId: Types.ObjectId) {
+    this.inventoryRepository.deleteAllInCompany(companyId);
+  }
 }
