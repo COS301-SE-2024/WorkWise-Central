@@ -191,7 +191,7 @@ export class ClientController {
       validateObjectId(id);
       try {
         const response = await this.clientService.getClientById(userId, new Types.ObjectId(id));
-        if (this.clientService.clientIsBelowCurrentEmployee(currentEmployeeId, id)) {
+        if (await this.clientService.clientIsBelowCurrentEmployee(currentEmployeeId, id)) {
           return new ApiResponseDto(response);
         } else {
           throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -204,7 +204,7 @@ export class ClientController {
       validateObjectId(id);
       try {
         const response = await this.clientService.getClientById(userId, new Types.ObjectId(id));
-        if (this.clientService.clientIsAssignedToCurrentEmployee(currentEmployeeId, id)) {
+        if (await this.clientService.clientIsAssignedToCurrentEmployee(currentEmployeeId, id)) {
           return new ApiResponseDto(response);
         } else {
           throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -327,7 +327,7 @@ export class ClientController {
         throw e;
       }
     } else if (currentEmployee.role.permissionSuite.includes('edit clients that are under me')) {
-      if (this.clientService.clientIsBelowCurrentEmployee(body.currentEmployeeId, id)) {
+      if (await this.clientService.clientIsBelowCurrentEmployee(body.currentEmployeeId, id)) {
         try {
           validateObjectId(id);
           const clientId = new Types.ObjectId(id);
@@ -342,7 +342,7 @@ export class ClientController {
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
       }
     } else if (currentEmployee.role.permissionSuite.includes('edit clients that are assigned to me')) {
-      if (this.clientService.clientIsAssignedToCurrentEmployee(body.currentEmployeeId, id)) {
+      if (await this.clientService.clientIsAssignedToCurrentEmployee(body.currentEmployeeId, id)) {
         try {
           validateObjectId(id);
           const clientId = new Types.ObjectId(id);
@@ -382,7 +382,7 @@ export class ClientController {
         throw e;
       }
     } else if (currentEmployee.role.permissionSuite.includes('remove clients under me')) {
-      if (this.clientService.clientIsBelowCurrentEmployee(deleteClientDto.employeeId, deleteClientDto.clientId)) {
+      if (await this.clientService.clientIsBelowCurrentEmployee(deleteClientDto.employeeId, deleteClientDto.clientId)) {
         try {
           const userId = extractUserId(this.jwtService, headers);
           return this.clientService.softDelete(userId, deleteClientDto);
@@ -393,7 +393,9 @@ export class ClientController {
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
       }
     } else if (currentEmployee.role.permissionSuite.includes('remove clients assigned to me')) {
-      if (this.clientService.clientIsAssignedToCurrentEmployee(deleteClientDto.employeeId, deleteClientDto.clientId)) {
+      if (
+        await this.clientService.clientIsAssignedToCurrentEmployee(deleteClientDto.employeeId, deleteClientDto.clientId)
+      ) {
         try {
           const userId = extractUserId(this.jwtService, headers);
           return this.clientService.softDelete(userId, deleteClientDto);
