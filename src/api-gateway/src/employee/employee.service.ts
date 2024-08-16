@@ -711,7 +711,6 @@ export class EmployeeService {
     let subCount: number = 2;
     let edgeCount: number = 1;
     const nodes: Nodes = {};
-    const nodeIds: Nodes = {};
     const edges: Edges = {};
     const currentEmployee = await this.findById(owner[0]._id);
     console.log('owner Id: ', owner[0]._id);
@@ -720,8 +719,7 @@ export class EmployeeService {
     //Adding the owner to the nodes
     const nodeLabel = 'node' + currentCount.toString();
     console.log('nodeLabel: ', nodeLabel);
-    nodes[nodeLabel] = { name: currentEmployee.userInfo.displayName };
-    nodeIds[nodeLabel] = { id: currentEmployee._id };
+    nodes[nodeLabel] = { name: currentEmployee.userInfo.displayName, id: currentEmployee._id };
     //Adding the owner to the edges
     currentEmployee.subordinates.forEach(() => {
       const edgeLabel = 'edge' + edgeCount.toString();
@@ -744,8 +742,7 @@ export class EmployeeService {
       //Adding the currentEmployee to the nodes
       const nodeLabel = 'node' + currentCount.toString();
       console.log('nodeLabel: ', nodeLabel);
-      nodes[nodeLabel] = { name: currentEmployee.userInfo.displayName };
-      nodeIds[nodeLabel] = { id: currentEmployee._id };
+      nodes[nodeLabel] = { name: currentEmployee.userInfo.displayName, id: currentEmployee._id };
       //Adding the currentEmployee to the edges
       currentEmployee.subordinates.forEach(() => {
         const edgeLabel = 'edge' + edgeCount.toString();
@@ -760,6 +757,6 @@ export class EmployeeService {
       currentCount++;
     }
 
-    return { nodes: nodes, edges: edges, nodeIds: nodeIds };
+    return { nodes: nodes, edges: edges };
   }
 }
