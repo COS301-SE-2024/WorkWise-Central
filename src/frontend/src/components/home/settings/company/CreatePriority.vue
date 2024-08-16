@@ -10,9 +10,10 @@
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        variant="outlined"
-        color="primary"
+        variant="elevated"
+        color="secondary"
         v-bind="activatorProps"
+        block
       >
         <v-icon icon="fa: fa-solid fa-exclamation-circle" color="primary"></v-icon>
         Create Priority
@@ -34,6 +35,7 @@
             v-model="priority.priorityLevel"
             label="Priority Level"
             required
+            :rules="priorityLevelRules"
             outlined
             type="number"
           ></v-text-field>
@@ -43,16 +45,27 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-btn
-          @click="createPriority"
-          color="success"
-          rounded="md"
-          variant="text"
-          :disabled="!formIsValid"
-        >
-          Create Priority</v-btn
-        >
-        <v-btn color="error" rounded="md" variant="text" @click="close"> Cancel </v-btn>
+        <v-container>
+          <v-row>
+            <v-col cols="12" lg="6">
+              <v-btn
+                @click="createPriority"
+                :disabled="!formIsValid"
+                color="success"
+                rounded="md"
+                variant="text"
+                :loading="isDeleting"
+                block
+                ><v-icon icon="fa: fa-solid fa-plus" color="success"></v-icon>Create Priority</v-btn
+              >
+            </v-col>
+            <v-col cols="12" lg="6">
+              <v-btn color="error" rounded="md" variant="text" @click="close" block
+                ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon> Cancel
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -70,6 +83,7 @@ export default defineComponent({
   data() {
     return {
       dialog: false,
+      isDeleting: false,
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       priority: {
         label: '',
@@ -81,7 +95,7 @@ export default defineComponent({
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       formIsValid: false,
       labelRules: [(v: string) => !!v || 'Label is required'],
-      colorRules: [(v: string) => !!v || 'Color is required']
+      priorityLevelRules: [(v: number) => !!v || 'Priority Level is required']
     }
   },
   components: {
@@ -89,6 +103,7 @@ export default defineComponent({
   },
   methods: {
     async createPriority() {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -107,7 +122,9 @@ export default defineComponent({
             life: 3000
           })
           this.dialog = false
-          window.location.reload()
+          setTimeout(() => {
+            window.location.reload()
+          }, 3000)
         })
         .catch((err) => {
           console.error(err)

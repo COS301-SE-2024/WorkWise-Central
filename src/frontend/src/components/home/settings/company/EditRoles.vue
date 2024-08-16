@@ -1,7 +1,21 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title class="text-primary font-bold text-center"> Roles </v-card-title>
+      <v-card-title
+        class="d-flex align-center pe-2 text-h5 font-weight-regular"
+        height="auto"
+        width="100%"
+        ><v-row align="center" justify="space-between"
+          ><v-col cols="12" lg="6">
+            <v-label
+              class="ms-2 h2 font-family-Nunito text-headingTextColor"
+              height="auto"
+              width="auto"
+              >Roles</v-label
+            ></v-col
+          ><v-col cols="12" lg="6"><CreateRoles /></v-col
+        ></v-row>
+      </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
         <v-data-table
@@ -24,23 +38,30 @@
               :items="permissions"
               label="Permissions"
               chips
+              :disabled="item.roleName === 'Owner' || item.roleName === 'Worker'"
               multiple
               variant="default"
             ></v-select>
           </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu>
-              <template v-slot:activator="{ props }" v-if="item.roleName !== 'Owner'">
-                <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)">
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  rounded="xl"
+                  variant="plain"
+                  v-bind="props"
+                  @click="selectItem(item)"
+                  :disabled="item.roleName === 'Owner' || item.roleName === 'Worker'"
+                >
                   <v-icon color="primary">mdi-dots-horizontal</v-icon>
                 </v-btn>
               </template>
               <v-list>
-                <!-- <v-list-item @click="selectItem(item)">
+                <v-list-item @click="selectItem(item)">
                   <v-btn color="success" block @click="dialog = true"
                     ><v-icon icon="fa:fa-solid fa-pencil" color="success"></v-icon>Edit</v-btn
                   >
-                </v-list-item> -->
+                </v-list-item>
                 <v-list-item @click="selectItem(item)">
                   <DeleteRole :tag-id="item._id" />
                 </v-list-item>
@@ -55,14 +76,14 @@
           ><v-row justify="end">
             <Toast position="top-center" />
             <v-col align="center" cols="12" lg="6">
-              <v-btn color="success" @click="updateRole" block>
+              <v-btn color="success" @click="updateRole" block :loading="isDeleting">
                 <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>
                 Save</v-btn
               >
             </v-col>
 
             <v-col align="center" cols="12" lg="6"
-              ><v-btn color="error" @click="cancel" block>
+              ><v-btn color="error" @click="cancel" block :loading="isDeleting">
                 <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon> Cancel
               </v-btn></v-col
             ></v-row
@@ -78,6 +99,7 @@ import axios from 'axios'
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import DeleteRole from './DeleteRole.vue'
+import CreateRoles from './CreateRoles.vue'
 export default defineComponent({
   props: {
     Company: Object,
@@ -85,12 +107,14 @@ export default defineComponent({
   },
   components: {
     Toast,
-    DeleteRole
+    DeleteRole,
+
+    CreateRoles
   },
   data: () => ({
     dialog: false,
     items: [],
-
+    isDeleting: false,
     roleNames: [],
     rolePermissions: [],
     permissions: [],
@@ -176,6 +200,7 @@ export default defineComponent({
         })
     },
     async updateRole(roleID) {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -192,6 +217,17 @@ export default defineComponent({
         .patch(`http://localhost:3000/role/${roleID}`, config, data)
         .then((response) => {
           console.log(response)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Role updated',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.isDeleting = false
+            this.dialog = false
+            window.location.reload()
+          }, 1500)
         })
         .catch((error) => {
           console.log(error)

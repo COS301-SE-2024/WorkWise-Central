@@ -94,17 +94,17 @@ export default defineComponent({
         .delete(`${apiURL}job/tags/p`, config)
         .then(() => {
           this.isDeleting = true
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Priority Deleted',
+            life: 3000
+          })
           setTimeout(() => {
             this.isDeleting = false
             this.deleteDialog = false
-            this.$toast.add({
-              severity: 'success',
-              summary: 'Successful',
-              detail: 'Priority Deleted',
-              life: 3000
-            })
+            window.location.reload()
           }, 1500)
-          window.location.reload()
         })
         .catch((err) => {
           console.error(err)

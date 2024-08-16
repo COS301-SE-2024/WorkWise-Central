@@ -11,9 +11,10 @@
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        variant="outlined"
-        color="primary"
+        variant="elevated"
+        color="secondary"
         v-bind="activatorProps"
+        block
       >
         <v-icon icon="fa: fa-solid fa-person" color="primary"></v-icon>
         Create Role
@@ -36,15 +37,27 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-btn
-          @click="createRole"
-          :disabled="!formIsValid"
-          color="success"
-          variant="text"
-          rounded="md"
-          >Create Role</v-btn
-        >
-        <v-btn color="error" rounded="md" variant="text" @click="close"> Cancel </v-btn>
+        <v-container>
+          <v-row>
+            <v-col cols="12" lg="6">
+              <v-btn
+                @click="createRole"
+                :disabled="!formIsValid"
+                color="success"
+                rounded="md"
+                variant="text"
+                :loading="isDeleting"
+                block
+                ><v-icon icon="fa: fa-solid fa-plus" color="success"></v-icon>Create Role</v-btn
+              >
+            </v-col>
+            <v-col cols="12" lg="6">
+              <v-btn color="error" rounded="md" variant="text" @click="close" block
+                ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon> Cancel
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -62,6 +75,7 @@ export default defineComponent({
   data() {
     return {
       dialog: false,
+      isDeleting: false,
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
@@ -79,6 +93,7 @@ export default defineComponent({
 
   methods: {
     async createRole() {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
       console.log(this.Role)
@@ -93,7 +108,9 @@ export default defineComponent({
             life: 3000
           })
           this.dialog = false
-          window.location.reload()
+          setTimeout(() => {
+            location.reload()
+          }, 3000)
         })
         .catch((error) => {
           console.log(error)

@@ -58,11 +58,23 @@
         </v-col>
       </v-card-text>
       <v-card-actions>
-        <v-col cols="6">
-          <v-btn color="error" width="100%" height="35" @click="close">
-            Close<v-icon icon="fa:fa-solid fa-cancel" end color="error" size="small"></v-icon>
-          </v-btn> </v-col
-      ></v-card-actions>
+        <v-container>
+          <v-row
+            ><v-col cols="12">
+              <v-btn
+                color="error"
+                width="100%"
+                height="35"
+                @click="close"
+                block
+                :loading="isDeleting"
+              >
+                <v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon>Close
+              </v-btn>
+            </v-col></v-row
+          ></v-container
+        >
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -75,13 +87,11 @@ export default defineComponent({
   },
   data() {
     return {
-      clientDialog: false
+      clientDialog: false,
+      isDeleting: false
     }
   },
   methods: {
-    dialogOpened() {
-      this.clientDialog = true
-    },
     close() {
       console.log('closing dialog:' + this.clientDialog)
       this.clientDialog = false

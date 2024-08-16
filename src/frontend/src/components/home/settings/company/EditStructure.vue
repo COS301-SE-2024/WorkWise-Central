@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card max-height="1500px">
+    <v-card height="1500px">
       <v-card-title class="text-center">Edit Structure </v-card-title>
       <v-divider></v-divider>
       <v-container>
@@ -29,10 +29,10 @@
         <v-container
           ><v-row justify="end">
             <v-col align="center" cols="12" lg="6">
-              <v-btn color="success" @click="saveChanges" block>Save</v-btn>
+              <v-btn color="success" @click="saveChanges" :loading="isDeleting" block>Save</v-btn>
             </v-col>
             <v-col align="center" cols="12" lg="6">
-              <v-btn color="error" @click="cancel" block>Cancel</v-btn>
+              <v-btn color="error" @click="cancel" :loading="isDeleting" block>Cancel</v-btn>
             </v-col></v-row
           ></v-container
         >

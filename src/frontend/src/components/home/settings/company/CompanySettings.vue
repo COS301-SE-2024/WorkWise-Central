@@ -16,11 +16,6 @@
         <EditStatus v-if="currentSettings === 'Status'" />
       </v-col>
       <v-col cols="12" lg="4" order="first" order-lg="last">
-        <CreatePriority v-if="currentSettings === 'Priority'" />
-        <CreateRoles v-if="currentSettings === 'Roles'" />
-        <CreateStatus v-if="currentSettings === 'Status'" />
-        <CreateTags v-if="currentSettings === 'Tags'" />
-
         <v-card class="elevation-0"
           ><v-list class="bg-cardColor">
             <v-list-item-group>
@@ -56,10 +51,6 @@ import EditStructure from './EditStructure.vue'
 import EditPriority from './EditPriority.vue'
 import EditTags from './EditTags.vue'
 import EditStatus from './EditStatus.vue'
-import CreatePriority from './CreatePriority.vue'
-import CreateRoles from './CreateRoles.vue'
-import CreateStatus from './CreateStatus.vue'
-import CreateTags from './CreateTags.vue'
 
 export default defineComponent({
   name: 'CompanySettings',
@@ -111,10 +102,7 @@ export default defineComponent({
     EditTags,
     EditStructure,
     EditStatus,
-    CreatePriority,
-    CreateRoles,
-    CreateStatus,
-    CreateTags
+    EditStructure
   },
   methods: {
     close() {
