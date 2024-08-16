@@ -658,8 +658,8 @@ export default defineComponent({
     },
     updateDates() {
       if (this.endDate && this.startDate && this.startTime && this.endTime) {
-        this.formatDateAndTime(this.startDate, this.startTime)
-        this.formatDateAndTime(this.endDate, this.endTime)
+        this.formatDateAndTime(new Date(this.startDate), this.startTime)
+        this.formatDateAndTime(new Date(this.endDate), this.endTime)
         this.req_obj.details.startDate = convertToISOStr(new Date(this.startDate))
         this.req_obj.details.endDate = convertToISOStr(new Date(this.endDate))
         console.log(this.req_obj.details.startDate)
