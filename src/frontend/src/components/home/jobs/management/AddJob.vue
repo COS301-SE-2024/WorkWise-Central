@@ -584,7 +584,8 @@ export default defineComponent({
       if (validate) {
         const update = this.updateDates()
         console.log(this.req_obj)
-        // update || (await this.handleSubmission())
+        console.log(update)
+        if (update) await this.handleSubmission()
       }
     },
     formatDateAndTime(date: Date, time: string) {
@@ -604,9 +605,11 @@ export default defineComponent({
       console.log(this.req_obj)
       const apiURL = await this.getRequestUrl()
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      console.log('before the request')
       axios
         .post(apiURL + 'job/create', this.req_obj, config)
         .then((res) => {
+          console.log('request has gone through')
           if (this.req_obj.assignedEmployees.employeeIds === undefined) {
             this.$toast.add({
               severity: 'success',
@@ -625,8 +628,8 @@ export default defineComponent({
               },
               config
             )
-            .then((res) => {
-              console.log(res)
+            .then((res1) => {
+              console.log(res1)
               console.log('The employees were assigned successfully')
               this.$toast.add({
                 severity: 'success',
@@ -639,16 +642,17 @@ export default defineComponent({
               console.log(error)
             })
         })
-        .catch((res) => {
+        .catch((error) => {
           this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Job not added' })
-          console.log(res)
+          console.log(error)
         })
     },
     updateDates() {
-      if (this.endDate && this.startDate) {
+      if (this.endDate && this.startDate && this.startTime && this.endTime) {
+        this.formatDateAndTime(this.startDate, this.startTime)
+        this.formatDateAndTime(this.endDate, this.endTime)
         this.req_obj.details.startDate = convertToISOStr(new Date(this.startDate))
         this.req_obj.details.endDate = convertToISOStr(new Date(this.endDate))
-
         console.log(this.req_obj.details.startDate)
         console.log(this.req_obj.details.endDate)
         return true
