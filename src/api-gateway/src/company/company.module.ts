@@ -21,6 +21,7 @@ import { FileService } from '../file/file.service';
 import { InventoryModule } from '../inventory/inventory.module';
 import { InventoryService } from '../inventory/inventory.service';
 import { EmployeeRepository } from '../employee/employee.repository';
+import { ClientService } from '../client/client.service';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { EmployeeRepository } from '../employee/employee.repository';
     FileService,
     InventoryService,
     EmployeeRepository,
+    ClientService,
   ],
   exports: [CompanyService, CompanyRepository, MongooseModule],
 })

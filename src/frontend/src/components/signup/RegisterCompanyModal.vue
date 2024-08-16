@@ -12,6 +12,7 @@
         variant="elevated"
         color="secondary"
         v-bind="activatorProps"
+        block
         >Register Company</v-btn
       >
     </template>

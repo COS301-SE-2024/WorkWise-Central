@@ -42,6 +42,6 @@ import { InventoryService } from '../inventory/inventory.service';
     EmployeeService,
     InventoryService,
   ],
-  exports: [ClientService, MongooseModule],
+  exports: [ClientService, ClientRepository, MongooseModule],
 })
 export class ClientModule {}

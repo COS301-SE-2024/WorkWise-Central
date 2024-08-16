@@ -227,7 +227,7 @@
                 variant="text"
                 @click="addDialog = false"
               >
-                Cancel <v-icon icon="fa: fa-solid fa-ban" color="error" end></v-icon>
+                <v-icon icon="fa: fa-solid fa-ban" color="error" start></v-icon> Cancel
               </v-btn>
             </v-col>
             <v-col
@@ -250,8 +250,10 @@
                 variant="text"
                 color="success"
                 :disabled="click_create_client"
-                >Create Client <v-icon icon="fa: fa-solid fa-user-plus" color="success" end></v-icon
-              ></v-btn>
+                :loading="isDeleting"
+                ><v-icon icon="fa: fa-solid fa-user-plus" color="success" start></v-icon>Create
+                Client
+              </v-btn>
             </v-col>
           </v-row>
         </v-form>
@@ -312,6 +314,7 @@ export default defineComponent({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     valid: false,
+    isDeleting: false,
     addDialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     click_create_client: false,
@@ -499,7 +502,10 @@ export default defineComponent({
             detail: 'Client created successfully',
             life: 3000
           })
-          window.location.reload()
+          setTimeout(() => {
+            this.isDeleting = false
+            window.location.reload()
+          }, 1500)
         })
         .catch((res) => {
           console.log('Client creation failed')

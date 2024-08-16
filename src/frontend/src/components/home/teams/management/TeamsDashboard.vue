@@ -65,7 +65,7 @@
                   <ViewTeam :team="selectedItem" />
                 </v-list-item>
                 <v-list-item>
-                  <UpdateTeam :team_id="selectedItemID" :team="selectedItem" />
+                  <UpdateTeam :team_id="selectedItemID" :editedItem="selectedItem" />
                 </v-list-item>
                 <v-list-item>
                   <DeleteTeam :team_id="selectedItemID" :teamName="selectedItemName" />
@@ -109,7 +109,9 @@ export default defineComponent({
         { text: 'Actions', value: 'actions', sortable: false }
       ],
       teamItems: [],
-
+      teamLeaderId: '',
+      teamLeaderName: '',
+      teamMemberNames: [] as string[],
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       selectedItem: {},
       selectedItemName: '',
@@ -143,9 +145,55 @@ export default defineComponent({
         const response = await axios.get(`${apiURL}team/all`, config)
         console.log(response.data.data)
         this.teamItems = response.data.data
+        this.teamLeaderId = response.data.data.teamLeaderId
       } catch (error) {
         console.error(error)
       }
+    },
+    async getEmployees() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const response = await axios.get(
+          `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
+          config
+        )
+        console.log(response.data.data)
+        for (const employee of response.data.data) {
+          this.teamMemberNames.push(employee.userInfo.displayName)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async getTeamLeaderName() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      axios
+        .get(`${apiURL}employee/detailed/id/${this.teamLeaderId}`, config)
+        .then((response) => {
+          console.log(response.data.data.userInfo.displayName)
+          this.teamLeaderName = response.data.data.userInfo.displayName
+        })
+        .catch((error) => {
+          console.error('Failed to fetch employees:', error)
+        })
     },
     async isLocalAvailable(localUrl: string) {
       try {
