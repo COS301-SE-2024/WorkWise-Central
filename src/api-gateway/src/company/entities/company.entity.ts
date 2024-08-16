@@ -52,7 +52,7 @@ export class Company {
   }
 
   @ApiProperty()
-  @Prop({ required: false, unique: true })
+  @Prop({ required: false, unique: false })
   registrationNumber?: string;
 
   @ApiProperty()
