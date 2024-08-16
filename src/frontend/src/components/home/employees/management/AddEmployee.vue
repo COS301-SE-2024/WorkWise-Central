@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    max-height="800"
-    max-width="600"
-    style="font-family: Nunito, sans-serif"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
-  >
+  <v-dialog max-height="800" max-width="600" style="font-family: Nunito, sans-serif">
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -36,11 +31,11 @@
                 >
 
                 <v-text-field
-                  bg-color="background"
                   v-model="req_obj.newUserUsername"
                   placeholder="Employee Username"
                   rounded="md"
                   required
+                  :rules="rules.username"
                   data-testid="username-textfield"
                 ></v-text-field>
               </v-col>
@@ -56,6 +51,7 @@
                   item-value="roleId"
                   item-title="roleName"
                   v-model="req_obj.roleId"
+                  :rules="rules.role"
                   bg-color="background"
                   variant="solo"
                   data-testid="role-select"
@@ -70,6 +66,7 @@
                   @update:modelValue="selected_supirior"
                   :items="subordinateItemNames"
                   v-model="req_obj.superiorId"
+                  :rules="rules.superior"
                   item-value="employeeId"
                   item-title="name"
                   bg-color="background"
@@ -116,6 +113,11 @@ export default defineComponent({
   data: () => ({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+    rules: {
+      username: [(v: string) => !!v || 'Username is required'],
+      role: [(v: any) => !!v || 'Role is required'],
+      superior: [(v: any) => !!v || 'Superior is required']
+    },
     valid: false,
     dialog: false,
     isDeleting: false,
@@ -183,6 +185,7 @@ export default defineComponent({
         console.log(roles_response)
         let roles_data: Role[] = roles_response.data.data
         for (let i = 0; i < roles_data.length; i++) {
+          if (roles_data[i].roleName === 'Owner') continue
           this.roleItems.push({
             roleName: roles_data[i].roleName,
             roleId: roles_data[i]._id
@@ -191,6 +194,27 @@ export default defineComponent({
       } catch (error) {
         console.error('Error fetching data:', error)
       }
+    },
+    async validateSubmit() {
+      const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
+      const validate = await (form as any).validate()
+
+      //this will be the request to check
+      //if the username that was entered exists
+      // in the company, waiting on jess to create endpoint
+      // const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      // const apiURL = await this.getRequestUrl()
+      // try {
+      //   const res = await axios.post(
+      //     apiURL + 'employee/exists/username',
+      //     { username: this.req_obj.newUserUsername },
+      //     config
+      //   )
+      //   if (res.status > 199 && res.status > 300 && res.data.data == true)
+      //     validate || (await this.handleSubmit())
+      // } catch (error) {
+      //   console.log(error)
+      // }
     },
     async handleSubmit() {
       this.req_obj.adminId = localStorage['employeeId']
