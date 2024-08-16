@@ -96,6 +96,10 @@ export class UsersService {
     return this.userRepository.findAllInCompany(companyId);
   }
 
+  async userWithEmailExistsInCompany(companyId: Types.ObjectId, email: string) {
+    return this.userRepository.userIsInCompanyWithEmail(companyId, email);
+  }
+
   async usernameExists(identifier: string): Promise<boolean> {
     return this.userRepository.exists(identifier);
   }

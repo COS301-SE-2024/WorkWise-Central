@@ -7,7 +7,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateCompanyDto, CreateCompanyResponseDto } from './dto/create-company.dto';
+import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto, UpdateCompanyJobStatuses } from './dto/update-company.dto';
 import { FlattenMaps, Types } from 'mongoose';
 import { Company } from './entities/company.entity';
@@ -59,7 +59,6 @@ export class CompanyService {
 
   async create(createCompanyDto: CreateCompanyDto) {
     const inputValidated = await this.companyCreateIsValid(createCompanyDto);
-    if (!inputValidated.isValid) throw new ConflictException(inputValidated.message);
     if (!inputValidated.isValid) throw new ConflictException(inputValidated.message);
 
     //Save files In Bucket, and store URLs (if provided)
@@ -136,7 +135,7 @@ export class CompanyService {
     //const updatedCompany: any = await this.addNewEmployeeId(createdCompany._id, employee._id);
     const updatedCompany: any = await this.companyRepository.findById(createdCompany._id);
     updatedCompany.ownerId = newJoinedCompany.employeeId;
-    return new CreateCompanyResponseDto(updatedCompany);
+    return updatedCompany;
   }
 
   async companyRegNumberExists(registerNumber: string): Promise<boolean> {
