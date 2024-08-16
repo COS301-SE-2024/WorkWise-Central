@@ -102,7 +102,6 @@ export default defineComponent({
     EditTags,
     EditStructure,
     EditStatus,
-    EditStructure
   },
   methods: {
     close() {
