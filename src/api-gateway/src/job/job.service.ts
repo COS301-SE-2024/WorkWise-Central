@@ -145,6 +145,16 @@ export class JobService {
     }
 
     try {
+      if (updateJobDto.coverImage) {
+        const uploadApiResponse = await this.fileService.uploadBase64Image(updateJobDto.coverImage);
+        if (uploadApiResponse.secure_url) {
+          console.log('Upload successful');
+          updateJobDto.coverImage = uploadApiResponse.secure_url;
+        } else {
+          console.log('Failed to upload image.', 'Keep it pushing');
+          //return null;
+        }
+      }
       const user = await this.usersService.getUserById(userId);
       const previousJob = await this.jobRepository.findById(id);
       const updated = await this.jobRepository.update(id, updateJobDto);

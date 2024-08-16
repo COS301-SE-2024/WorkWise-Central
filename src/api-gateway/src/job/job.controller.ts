@@ -17,6 +17,7 @@ import {
   //UploadedFile,
   UploadedFiles,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { JobService } from './job.service';
 import { CreateJobDto, CreateJobResponseDto } from './dto/create-job.dto';
@@ -54,7 +55,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { CreatePriorityTagDto, CreateStatusDto, CreateTagDto } from './dto/create-tag.dto';
-import { extractUserId, validateObjectId, validateObjectIds } from '../utils/Utils';
+import { extractUserId, isBase64Uri, validateObjectId, validateObjectIds } from '../utils/Utils';
 import { DeleteStatusDto, DeleteTagDto, UpdatePriorityTagDto, UpdateTagDto } from './dto/edit-tag.dto';
 import {
   JobAllResponseDetailedDto,
@@ -117,11 +118,11 @@ export class JobController {
   })
   @Post('/create')
   async create(@Headers() headers: any, @Body() createJobDto: CreateJobDto) {
-    validateObjectId(createJobDto.assignedBy, 'assignedBy');
-    if (createJobDto.companyId) validateObjectId(createJobDto.companyId, 'Company');
-
     try {
+      validateObjectId(createJobDto.assignedBy, 'assignedBy');
+      if (createJobDto.companyId) validateObjectId(createJobDto.companyId, 'Company');
       const userId = extractUserId(this.jwtService, headers);
+      console.log(userId);
       return { data: await this.jobService.create(userId, createJobDto) };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
@@ -306,6 +307,13 @@ export class JobController {
   @Patch('update/:id')
   async update(@Headers() headers: any, @Param('id') jobId: string, @Body() updateJobDto: UpdateJobDto) {
     try {
+      if (updateJobDto.coverImage) {
+        console.log('Cover image present');
+        const isValidUrl = isBase64Uri(updateJobDto.coverImage);
+        if (!isValidUrl) {
+          throw new BadRequestException('coverImage must be Base64 URI');
+        }
+      }
       validateObjectId(jobId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       // console.log(userId);
@@ -701,22 +709,11 @@ export class JobController {
 
   ///Employees
 
-  /*  addAttachmentToJob(@Headers() headers: any, @Param('cid') companyId: string) {
-    try {
-      validateObjectId(companyId);
-      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
-      const compId = new Types.ObjectId(companyId);
-      return this.jobService.addAttachmentToJob(userId, compId);
-    } catch (e) {
-      console.log(e);
-      throw new InternalServerErrorException(`Job could not be updated`);
-    }
-  }*/
-
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @ApiOperation({
-    summary: `Add an attachment to a ${className}`,
+    summary: `Add an attachment to a ${className}, (the key needed in in your form-data is "files")`,
+    description: 'Max of 20 files at a time',
   })
   @ApiOkResponse({
     type: JobResponseDto,

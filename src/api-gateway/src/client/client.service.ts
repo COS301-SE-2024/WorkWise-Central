@@ -46,8 +46,9 @@ export class ClientService {
     }
     const employee = await this.employeeService.findById(createClientDto.employeeId);
     if (!employee) throw new NotFoundException('Employee not found');
-    createClientDto.companyId = employee.companyId;
+    createClientDto.companyId = employee.companyId as Types.ObjectId;
     const createdClient = new Client(createClientDto);
+    createdClient.details.companyId = new Types.ObjectId(employee.companyId);
     return await this.clientRepository.saveClient(createdClient);
   }
 
@@ -229,7 +230,7 @@ export class ClientService {
 
     const employee: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeService.findById(employeeId);
     if (!employee) throw new NotFoundException('Employee not found');
-    if (!employee.userId.equals(userId)) throw new UnauthorizedException('Inconsistent userId');
+    if (employee.userId.toString() !== userId.toString()) throw new UnauthorizedException('Inconsistent userId');
   }
 
   async getListOfClientIdsUnderEmployee(employeeId: Types.ObjectId) {

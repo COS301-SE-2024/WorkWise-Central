@@ -133,7 +133,8 @@ export class CompanyService {
     });
 
     console.log('Add employee to Company');
-    const updatedCompany: any = await this.addNewEmployeeId(createdCompany._id, employee._id);
+    //const updatedCompany: any = await this.addNewEmployeeId(createdCompany._id, employee._id);
+    const updatedCompany: any = await this.companyRepository.findById(createdCompany._id);
     updatedCompany.ownerId = newJoinedCompany.employeeId;
     return new CreateCompanyResponseDto(updatedCompany);
   }
