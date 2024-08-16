@@ -148,6 +148,7 @@ export class InventoryRepository {
         ],
       },
       { $push: { images: { $each: newUrls } }, updatedAt: Date.now() },
+      { new: true },
     )
       .lean()
       .exec();
