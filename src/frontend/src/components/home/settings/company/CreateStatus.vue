@@ -33,7 +33,7 @@
             :rules="labelRules"
           />
           <v-label>Status Color</v-label>
-          <div><ColorPicker inputId="cp-hex" v-model="status.colour" inline /></div>
+          <div><ColorPicker inputId="cp-hex" v-model="status.colour" inline :rules="colorRules" /></div>
           <span>Hex Code: {{ status.colour }}</span>
         </v-form>
       </v-card-text>
@@ -87,7 +87,24 @@ export default defineComponent({
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       formIsValid: false,
-      labelRules: [(v: string) => !!v || 'Label is required']
+      labelRules: [(v: string) => !!v || 'Label is required'],
+      colorRules: [
+        (v: string) => !!v || 'Color is required',
+        (v: string) => !/^#(?:[fF]{3}|[fF]{6})$/.test(v) || 'Pure white is not allowed',
+        (v: string) => {
+          let hex = v.replace('#', '')
+          if (hex.length === 3) {
+            hex = hex
+              .split('')
+              .map((char) => char + char)
+              .join('')
+          }
+          const r = parseInt(hex.substring(0, 2), 16)
+          const g = parseInt(hex.substring(2, 4), 16)
+          const b = parseInt(hex.substring(4, 6), 16)
+          return r < 240 || g < 240 || b < 240 || 'Colors close to white are not allowed'
+        }
+      ]
     }
   },
   components: {

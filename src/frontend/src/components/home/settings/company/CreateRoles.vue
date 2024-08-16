@@ -95,10 +95,16 @@ export default defineComponent({
     async createRole() {
       this.isDeleting = true // Indicate the start of the deletion process
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const data = {
+        roleName: this.Role.roleName,
+        permissionSuite: this.Role.permissionSuite,
+        companyId: this.Role.companyId,
+        currentEmployeeId: localStorage.getItem('employeeId')
+      }
       const apiURL = await this.getRequestUrl()
       console.log(this.Role)
       await axios
-        .post(`${apiURL}role/create`, this.Role, config)
+        .post(`${apiURL}role/create`, data, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -107,7 +113,7 @@ export default defineComponent({
             detail: 'Role Created',
             life: 3000
           })
-          this.dialog = false
+          this.isDeleting = this.dialog = false
           setTimeout(() => {
             location.reload()
           }, 3000)
@@ -120,6 +126,7 @@ export default defineComponent({
             detail: 'Role not created',
             life: 3000
           })
+          this.isDeleting = false
         })
     },
     async isLocalAvailable(localUrl: string) {

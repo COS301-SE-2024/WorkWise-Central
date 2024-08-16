@@ -63,7 +63,7 @@
                   >
                 </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeleteRole :tag-id="item._id" />
+                  <DeleteRole :roleId="item._id" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -155,6 +155,7 @@ export default defineComponent({
           for (let i = 0; i < response.data.data.length; i++) {
             if (response.data.data[i].roleName) {
               this.roleUpdates.push({
+                _id: response.data.data[i]._id,
                 roleName: response.data.data[i].roleName,
                 permissionSuite: response.data.data[i].permissionSuite
               })
@@ -291,6 +292,7 @@ export default defineComponent({
     },
     selectItem(item) {
       console.log(item)
+      this.selectedItem = item
     }
   },
   mounted() {
