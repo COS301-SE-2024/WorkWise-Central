@@ -25,7 +25,6 @@ import { EmployeeService } from '../employee/employee.service';
 import { RoleService } from '../role/role.service';
 import { NotificationService } from '../notification/notification.service';
 import { Role } from '../role/entity/role.entity';
-import { ciEquals } from '../utils/Utils';
 import { InviteToJoin } from './entities/invite-to-join.entity';
 import { EmailService } from '../email/email.service';
 
@@ -131,19 +130,22 @@ export class AdminService {
     if (!(await this.usersService.userIdExists(userId))) {
       throw new BadRequestException('userId Invalid');
     }
+
     const employee = await this.employeeService.findById(userInviteRequestDto.employeeId);
     if (employee.userId.toString() !== userId.toString()) throw new UnauthorizedException('UserId not in employee');
+
     const company = await this.companyService.getCompanyById(employee.companyId);
     if (company == null) throw new NotFoundException('Company Invalid');
 
     // Someone with the email address already exists
-    const allUsers = await this.usersService.getAllUsersInCompany(company._id);
-    for (const user of allUsers) {
-      if (ciEquals(user.personalInfo.contactInfo.email, userInviteRequestDto.emailToInvite))
-        throw new ConflictException('User with email already in company');
+    const userAlreadyInCompany = await this.usersService.userWithEmailExistsInCompany(
+      company._id,
+      userInviteRequestDto.emailToInvite,
+    );
+    if (userAlreadyInCompany) {
+      throw new ConflictException('User with email already in company');
     }
     // get user
-
     const invitesToUser: (FlattenMaps<InviteToJoin> & {
       _id: Types.ObjectId;
     })[] = await this.adminRepository.findInvitesForUser(userInviteRequestDto.emailToInvite);
@@ -173,6 +175,7 @@ export class AdminService {
       role._id,
       role.roleName,
       userInviteRequestDto.emailToInvite,
+      userInviteRequestDto.superiorId,
     );
     const result = await this.adminRepository.saveInvite(newInvite);
 
