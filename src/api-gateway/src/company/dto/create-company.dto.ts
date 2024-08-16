@@ -122,9 +122,9 @@ export class findCompanyResponseDto {
 }
 
 export class CreateCompanyResponseDto {
-  data: Company & { _id: Types.ObjectId };
+  data: Company & { _id: Types.ObjectId; ownerId?: Types.ObjectId };
 
-  constructor(data: Company & { _id: Types.ObjectId }) {
+  constructor(data: Company & { _id: Types.ObjectId; ownerId?: Types.ObjectId }) {
     this.data = data;
   }
 }

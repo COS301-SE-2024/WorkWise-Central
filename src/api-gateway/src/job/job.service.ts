@@ -145,6 +145,16 @@ export class JobService {
     }
 
     try {
+      if (updateJobDto.coverImage) {
+        const uploadApiResponse = await this.fileService.uploadBase64Image(updateJobDto.coverImage);
+        if (uploadApiResponse.secure_url) {
+          console.log('Upload successful');
+          updateJobDto.coverImage = uploadApiResponse.secure_url;
+        } else {
+          console.log('Failed to upload image.', 'Keep it pushing');
+          //return null;
+        }
+      }
       const user = await this.usersService.getUserById(userId);
       const previousJob = await this.jobRepository.findById(id);
       const updated = await this.jobRepository.update(id, updateJobDto);
@@ -169,6 +179,12 @@ export class JobService {
 
   async softDelete(id: Types.ObjectId): Promise<boolean> {
     await this.jobRepository.delete(id);
+    return true;
+  }
+
+  async deleteAllWithCompanyId(companyId: Types.ObjectId): Promise<boolean> {
+    console.log(`Deleting all Jobs in ${companyId}`);
+    await this.jobRepository.deleteAllInCompany(companyId);
     return true;
   }
 
@@ -1031,5 +1047,18 @@ export class JobService {
     if (!jobExists) throw new NotFoundException('Job not found');
 
     return this.jobRepository.removeJobTaskItem(itemDto.jobId, itemDto.taskId, itemDto.itemId);
+  }
+
+  async addToHistory(jobId, event: string) {
+    const newEvent = new History(event);
+    this.jobRepository.addToHistory(jobId, newEvent); //Do not await
+  }
+
+  removeClient(fullName: string, clientId: Types.ObjectId) {
+    this.jobRepository.removeClient(fullName, clientId);
+  }
+
+  deleteAllTagsAndStatusesInCompany(companyId: Types.ObjectId) {
+    this.jobTagRepository.deleteAllTagsAndStatusesInCompany(companyId);
   }
 }

@@ -12,7 +12,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Types } from 'mongoose';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { AddHashtag } from '../../utils/Custom Transformers/add-hashtag.transformer';
 import { UpdatePriorityTagDto, UpdateTagDto } from './edit-tag.dto';
 
@@ -87,8 +87,9 @@ export class UpdateJobDto {
   @IsString({ each: true })
   attachments?: string[];
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Must be a Base64 string' })
   @IsOptional()
+  @Transform(({ value }) => value.trim())
   coverImage?: string;
 }
 

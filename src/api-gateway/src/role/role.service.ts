@@ -387,4 +387,8 @@ export class RoleService {
 
     console.log('Worker role created');
   }
+
+  deleteAllInCompany(companyId: Types.ObjectId) {
+    this.roleRepository.deleteAllInCompany(companyId);
+  }
 }

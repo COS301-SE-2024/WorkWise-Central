@@ -179,8 +179,7 @@ describe('CompanyController', () => {
       });
 
       try {
-        const currentEmployee = { currentEmployeeId: new Types.ObjectId() };
-        await companyController.remove({ invalidIdParam }, companyId.toString(), currentEmployee);
+        await companyController.remove({ invalidIdParam }, companyId.toString(), new Types.ObjectId().toString());
       } catch (error) {
         expect(error).toBeInstanceOf(TypeError);
         //expect(error.getStatus()).toBe(503);
@@ -199,8 +198,7 @@ describe('CompanyController', () => {
       jest.spyOn(usersService, 'softDelete').mockRejectedValue(new Error('DB error'));
 
       try {
-        const currentEmployee = { currentEmployeeId: new Types.ObjectId() };
-        await companyController.remove({ userId }, idParam, currentEmployee);
+        await companyController.remove({ userId }, idParam, new Types.ObjectId().toString());
       } catch (error) {
         expect(error).toBeInstanceOf(TypeError);
         //expect(error.message).toBe('Internal Server Error');
