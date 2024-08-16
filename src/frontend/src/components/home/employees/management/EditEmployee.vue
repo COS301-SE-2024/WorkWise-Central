@@ -49,6 +49,7 @@
                 v-model="req_obj.updateEmployeeDto.roleId"
                 bg-color="background"
                 variant="solo"
+                :loading="loading"
               ></v-select>
             </v-col>
             <v-col :cols="12">
@@ -57,14 +58,15 @@
                 label="Subordinates"
                 hint="Select the employees you'd like to be subordinates of this employee"
                 persistent-hint
-                @update:modelValue="selected_subordiates"
-                :items="subordinateItemNames"
+                @update:model-value="selected_subordiates"
+                :items="filteredSubordinateNames"
                 v-model="req_obj.updateEmployeeDto.subordinates"
                 item-value="employeeId"
                 item-title="name"
                 bg-color="background"
                 variant="solo"
                 multiple
+                :loading="loading"
               ></v-select> </v-col
             ><v-col :cols="12">
               <v-select
@@ -73,7 +75,7 @@
                 hint="Select the employee you'd like to be superior of this employee"
                 persistent-hint
                 @update:modelValue="selected_supirior"
-                :items="subordinateItemNames"
+                :items="filteredSupriorNames"
                 v-model="req_obj.updateEmployeeDto.superiorId"
                 item-value="employeeId"
                 item-title="name"
@@ -154,6 +156,8 @@ export default {
       employeeDialog: false,
       roleItems: [] as RoleItem[],
       subordinateItemNames: [] as EmployeeInformation2[],
+      selected_subordinate_names: [] as EmployeeInformation2[],
+      selected_supiror_names: [] as EmployeeInformation2[],
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
@@ -162,6 +166,7 @@ export default {
       modal_light_theme_color: '#FFFFFF',
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      loading: true,
       req_obj: {
         currentEmployeeId: localStorage['employeeId'],
         updateEmployeeDto: {
@@ -189,10 +194,28 @@ export default {
       ]
     }
   },
+  computed: {
+    filteredSubordinateNames() {
+      return this.subordinateItemNames.filter(
+        (sub: EmployeeInformation2) =>
+          !(
+            this.req_obj.updateEmployeeDto.superiorId &&
+            this.req_obj.updateEmployeeDto.superiorId === sub.employeeId
+          )
+      )
+    },
+    filteredSupriorNames() {
+      return this.subordinateItemNames.filter(
+        (sub: EmployeeInformation2) =>
+          !this.req_obj.updateEmployeeDto.subordinates.some(
+            (selected: string) => selected === sub.employeeId
+          )
+      )
+    }
+  },
   methods: {
-    selected_subordiates() {
-      console.log(this.req_obj.updateEmployeeDto.subordinates)
-      // console.log(this.editedItem)
+    selected_subordiates(a: any) {
+      console.log(a)
     },
     selected_supirior() {
       console.log(this.req_obj.updateEmployeeDto.superiorId)
@@ -216,7 +239,7 @@ export default {
       const apiURL = await this.getRequestUrl()
       try {
         const sub_res = await axios.get(
-          apiURL + `employee/listOther/${localStorage.getItem('employeeId')}`,
+          apiURL + `employee/listOther/${this.editedItem.employeeId}`,
           config
         )
         console.log(sub_res)
@@ -241,6 +264,7 @@ export default {
 
           this.subordinateItemNames.push(company_employee)
         }
+        this.loading = false
       } catch (error) {
         console.error('Error fetching data:', error)
       }
@@ -256,7 +280,11 @@ export default {
         )
         let roles_data: Role[] = roles_response.data.data
         for (let i = 0; i < roles_data.length; i++) {
-          if (roles_data[i].roleName === this.localEditedItem.roleName) continue
+          if (
+            roles_data[i].roleName === this.localEditedItem.roleName ||
+            roles_data[i].roleName === 'Owner'
+          )
+            continue
           this.roleItems.push({
             roleName: roles_data[i].roleName,
             roleId: roles_data[i]._id
@@ -332,7 +360,7 @@ export default {
       return localAvailable ? this.localUrl : this.remoteUrl
     }
   },
-  mounted() {
+  created() {
     this.showlocalvalues()
     this.loadRoles()
     this.loadSubordinates()

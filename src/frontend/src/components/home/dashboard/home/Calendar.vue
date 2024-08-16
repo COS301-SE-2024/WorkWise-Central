@@ -4,7 +4,7 @@ https://github.com/tomosterlund/qalendar/blob/master/development/QalendarView.vu
 
 <template>
   <Qalendar
-    :events="events2"
+    :events="events3"
     :config="config"
     :is-loading="are_events_loading"
     @event-was-clicked="clickedEvent"
@@ -945,6 +945,7 @@ export default {
       ],
       jobs2: [] as Job[],
       events2: [] as Event[],
+      events3: [] as Event[],
       config: {
         week: {
           startsOn: 'monday',
@@ -1060,6 +1061,9 @@ export default {
         console.log('Fetch error: ' + error)
       }
     },
+    loadinEvents3() {
+      this.events3 = this.events2
+    },
     loadJobsMockData() {
       this.jobs.forEach((job) => {
         const event: Event = {
@@ -1119,8 +1123,8 @@ export default {
       return Math.floor(Math.random() * (max - min)) + min
     }
   },
-  mounted() {
-    this.loadJobs()
+  created() {
+    this.loadJobs().then(() => this.loadinEvents3())
     this.are_events_loading = false
   }
 }

@@ -1,11 +1,5 @@
 <template>
-  <v-dialog
-    :max-height="800"
-    :max-width="900"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
-    v-model="jobDialog"
-    scrollable
-  >
+  <v-dialog close-on-back :max-height="800" :max-width="900" v-model="jobDialog">
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -64,10 +58,20 @@
 
                 <label style="font-size: 14px; font-weight: lighter"
                   >If it is a new client, create the employee first.
-                  <RouterLink to="/client-desk-view" style="color: rgb(0, 149, 246)"
-                    >Add new client</RouterLink
+                  <label
+                    style="color: rgb(0, 149, 246)"
+                    @click="
+                      () => {
+                        clientDialogVisibility = true
+                      }
+                    "
+                    >Add new client</label
                   ></label
                 >
+                <AddClient
+                  :showDialog="clientDialogVisibility"
+                  @update:showDialog="clientDialogVisibility = $event"
+                />
               </v-col>
               <v-col>
                 <label style="font-size: 14px; font-weight: lighter">Job description</label>
@@ -84,6 +88,13 @@
                 </v-textarea>
               </v-col>
 
+              <v-alert
+                density="compact"
+                text="End date cannot be before the start date."
+                title="Date Warning"
+                :model-value="date_error_alert"
+                type="warning"
+              ></v-alert>
               <v-row>
                 <v-col align="center" cols="12" md="6">
                   <v-date-picker
@@ -95,7 +106,7 @@
                     v-model="startDate"
                     elevation="5"
                     required
-                    @input="updateAllowedTimes"
+                    :rules="startDateRule"
                     @update:modelValue="updateAllowedTimes"
                     data-testid="job-start-date-datepicker"
                     :min="minDate"
@@ -117,6 +128,7 @@
                     border="md"
                     width="unset"
                     max-width="350"
+                    :rules="endDateRule"
                     v-model="endDate"
                     elevation="5"
                     required
@@ -209,6 +221,23 @@
                     data-testid="tags-multi-select"
                   ></v-select
                 ></v-col>
+                <v-col>
+                  <small class="text-caption">Cover Image</small>
+                  <v-file-input
+                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    variant="solo"
+                    accept="image/*"
+                    width="100%"
+                    placeholder="Cover image for job"
+                    @change="handleImageUpload"
+                    hint="Image size limit of  5MB"
+                    persistent-hint
+                    color="black"
+                    rounded="md"
+                    required
+                    data-testid="company-logo-file-input"
+                  ></v-file-input>
+                </v-col>
               </v-row>
 
               <label style="font-size: 14px; font-weight: lighter">Job address</label>
@@ -362,10 +391,43 @@ import type {
   JobPriorityTag,
   JobStatuses
 } from '../types'
+import AddClient from '@/components/home/clients/management/AddClient.vue'
+
+type JobDetails = {
+  heading: string
+  description: string
+  address: {
+    province: string
+    street: string
+    suburb: string
+    city: string
+    postalCode: string
+    complex: string
+  }
+  startDate: string
+  endDate: string
+}
+
+type Job = {
+  companyId: string
+  clientId: string
+  assignedBy: string
+  assignedEmployees: {
+    employeeIds?: string[]
+  }
+  status?: string
+  details: JobDetails
+  tags?: string[]
+  priorityTag?: string | null
+  coverImage?: string
+}
 
 export default defineComponent({
   name: 'JobDetailsList',
 
+  components: {
+    AddClient
+  },
   data() {
     const now = new Date()
     const currentHour = now.getHours()
@@ -377,6 +439,7 @@ export default defineComponent({
       valid: false,
       selectedDate: '',
       selectedTime: '',
+      clientDialogVisibility: false,
       minDate: new Date().toISOString().substr(0, 10),
       currentHour,
       currentMinute,
@@ -400,13 +463,14 @@ export default defineComponent({
       ],
       employees_rules: [(v: string) => !!v || 'Client is required'],
       description_rules: [(v: string) => !!v || 'Description is required'],
-
+      startDateRule: [(v: string) => !!v || 'Start date is required'],
+      endDateRule: [(v: string) => !!v || 'End date is required'],
       employeesArray: [] as EmployeeInformation[],
       clientsArray: [] as ClientInformation[],
       time: '',
-      startDate: null,
+      startDate: null as string | null,
       startTime: '',
-      endDate: null,
+      endDate: null as string | null,
       endTime: '',
       priorityOptionsArray: [] as JobPriorityTag[],
       tagOptionsArray: [] as JobTag[],
@@ -419,7 +483,7 @@ export default defineComponent({
           employeeIds: [] as string[]
         },
         //default job statuses ['Todo','In Progress','Awaiting Review','Done']
-        status: null,
+        status: '',
         details: {
           heading: '',
           description: '',
@@ -435,17 +499,53 @@ export default defineComponent({
           endDate: ''
         },
         tags: [],
-        priorityTag: null
-      },
-      jobDialog: false
+        priorityTag: null,
+        coverImage: ''
+      } as Job,
+      jobDialog: false,
+      date_error_alert: false
     }
   },
   watch: {
-    selectedDate() {
-      this.updateAllowedTimes()
+    startDate() {
+      this.validateDates()
+    },
+    endDate() {
+      this.validateDates()
     }
   },
   methods: {
+    showAddClientModal() {
+      console.log('modal event')
+      this.clientDialogVisibility = true
+    },
+    validateDates() {
+      if (this.startDate && this.endDate) {
+        const start = new Date(this.startDate)
+        const end = new Date(this.endDate)
+
+        if (end < start) {
+          this.endDate = null
+          this.date_error_alert = true
+        } else {
+          this.date_error_alert = false
+        }
+      }
+    },
+    handleImageUpload(event: Event) {
+      const target = event.target as HTMLInputElement
+      if (target.files && target.files[0]) {
+        const file: File = target.files[0]
+        const reader = new FileReader()
+
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          if (e.target && typeof e.target.result === 'string') {
+            this.req_obj.coverImage = e.target.result
+          }
+        }
+        reader.readAsDataURL(file)
+      }
+    },
     updateAllowedTimes() {
       const isToday = this.startDate === this.minDate
 
@@ -481,15 +581,21 @@ export default defineComponent({
       }
     },
     async validateForm() {
-      if (this.startDate !== null && this.startTime !== '') {
-        this.formatDateAndTime(this.startDate, this.startTime)
+      const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
+      const validate = await (form as any).validate()
+
+      this.req_obj.tags || delete this.req_obj.tags
+      this.req_obj.priorityTag || delete this.req_obj.priorityTag
+      this.req_obj.coverImage || delete this.req_obj.coverImage
+      this.req_obj.assignedEmployees.employeeIds ||
+        delete this.req_obj.assignedEmployees.employeeIds
+
+      if (validate) {
+        const update = this.updateDates()
+        console.log(this.req_obj)
+        console.log(update)
+        if (update) await this.handleSubmission()
       }
-      if (this.endDate !== null && this.endTime !== '') {
-        this.formatDateAndTime(this.endDate, this.endTime)
-      }
-      console.log(this.req_obj)
-      this.updateDates()
-      await this.handleSubmission()
     },
     formatDateAndTime(date: Date, time: string) {
       const [hrs, min] = time.split(':').map(Number)
@@ -508,29 +614,59 @@ export default defineComponent({
       console.log(this.req_obj)
       const apiURL = await this.getRequestUrl()
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      console.log('before the request')
       axios
         .post(apiURL + 'job/create', this.req_obj, config)
         .then((res) => {
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Job Added Successfully'
-          })
-          window.location.reload()
+          console.log('request has gone through')
+          if (this.req_obj.assignedEmployees.employeeIds === undefined) {
+            this.$toast.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Job Added Successfully'
+            })
+            window.location.reload()
+          }
+          axios
+            .put(
+              apiURL + 'job/employees',
+              {
+                employeeId: localStorage['employeeId'],
+                employeesToAssignIds: this.req_obj.assignedEmployees.employeeIds,
+                jobId: res.data.data._id
+              },
+              config
+            )
+            .then((res1) => {
+              console.log(res1)
+              console.log('The employees were assigned successfully')
+              this.$toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Job Added Successfully'
+              })
+              window.location.reload()
+            })
+            .catch((error) => {
+              console.log(error)
+            })
         })
-        .catch((res) => {
+        .catch((error) => {
           this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Job not added' })
-          console.log(res)
+          console.log(error)
         })
     },
     updateDates() {
-      if (this.endDate && this.startDate) {
-        this.req_obj.details.startDate = convertToISOStr(this.startDate)
-        this.req_obj.details.endDate = convertToISOStr(this.endDate)
-
+      if (this.endDate && this.startDate && this.startTime && this.endTime) {
+        this.formatDateAndTime(new Date(this.startDate), this.startTime)
+        this.formatDateAndTime(new Date(this.endDate), this.endTime)
+        this.req_obj.details.startDate = convertToISOStr(new Date(this.startDate))
+        this.req_obj.details.endDate = convertToISOStr(new Date(this.endDate))
         console.log(this.req_obj.details.startDate)
         console.log(this.req_obj.details.endDate)
+        return true
       }
+      return false
     },
     hello() {
       console.log(this.req_obj.details.address.province)

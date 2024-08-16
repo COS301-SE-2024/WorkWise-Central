@@ -7,12 +7,11 @@
           class="pa-16 ma-0 bg-background"
           rounded="md"
           :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
-          border="md"
           elevation="0"
         >
           <!-- Calendar Card -->
           <v-col cols="12">
-            <v-card max-height="auto" border="md" rounded="xl" class="bg-cardColor">
+            <v-card :max-height="1500" border="md" rounded="xl" class="bg-cardColor">
               <v-icon icon="fa:fa-solid fa-calender-alt"></v-icon>
               <v-card-title>Calendar</v-card-title>
 
