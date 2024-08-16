@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :max-height="800" :max-width="900" v-model="jobDialog" scrollable>
+  <v-dialog close-on-back :max-height="800" :max-width="900" v-model="jobDialog">
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -57,10 +57,20 @@
 
                 <label style="font-size: 14px; font-weight: lighter"
                   >If it is a new client, create the employee first.
-                  <RouterLink to="/client-desk-view" style="color: rgb(0, 149, 246)"
-                    >Add new client</RouterLink
+                  <label
+                    style="color: rgb(0, 149, 246)"
+                    @click="
+                      () => {
+                        clientDialogVisibility = true
+                      }
+                    "
+                    >Add new client</label
                   ></label
                 >
+                <AddClient
+                  :showDialog="clientDialogVisibility"
+                  @update:showDialog="clientDialogVisibility = $event"
+                />
               </v-col>
               <v-col>
                 <label style="font-size: 14px; font-weight: lighter">Job description</label>
@@ -77,6 +87,13 @@
                 </v-textarea>
               </v-col>
 
+              <v-alert
+                density="compact"
+                text="End date cannot be before the start date."
+                title="Date Warning"
+                :model-value="date_error_alert"
+                type="warning"
+              ></v-alert>
               <v-row>
                 <v-col align="center" cols="12" md="6">
                   <v-date-picker
@@ -88,7 +105,7 @@
                     v-model="startDate"
                     elevation="5"
                     required
-                    @input="updateAllowedTimes"
+                    :rules="startDateRule"
                     @update:modelValue="updateAllowedTimes"
                     data-testid="job-start-date-datepicker"
                     :min="minDate"
@@ -110,6 +127,7 @@
                     border="md"
                     width="unset"
                     max-width="350"
+                    :rules="endDateRule"
                     v-model="endDate"
                     elevation="5"
                     required
@@ -364,6 +382,7 @@ import type {
   JobPriorityTag,
   JobStatuses
 } from '../types'
+import AddClient from '@/components/home/clients/management/AddClient.vue'
 
 type JobDetails = {
   heading: string
@@ -385,7 +404,7 @@ type Job = {
   clientId: string
   assignedBy: string
   assignedEmployees: {
-    employeeIds: string[]
+    employeeIds?: string[]
   }
   status?: string
   details: JobDetails
@@ -397,6 +416,9 @@ type Job = {
 export default defineComponent({
   name: 'JobDetailsList',
 
+  components: {
+    AddClient
+  },
   data() {
     const now = new Date()
     const currentHour = now.getHours()
@@ -408,6 +430,7 @@ export default defineComponent({
       valid: false,
       selectedDate: '',
       selectedTime: '',
+      clientDialogVisibility: false,
       minDate: new Date().toISOString().substr(0, 10),
       currentHour,
       currentMinute,
@@ -431,13 +454,14 @@ export default defineComponent({
       ],
       employees_rules: [(v: string) => !!v || 'Client is required'],
       description_rules: [(v: string) => !!v || 'Description is required'],
-
+      startDateRule: [(v: string) => !!v || 'Start date is required'],
+      endDateRule: [(v: string) => !!v || 'End date is required'],
       employeesArray: [] as EmployeeInformation[],
       clientsArray: [] as ClientInformation[],
       time: '',
-      startDate: null,
+      startDate: null as string | null,
       startTime: '',
-      endDate: null,
+      endDate: null as string | null,
       endTime: '',
       priorityOptionsArray: [] as JobPriorityTag[],
       tagOptionsArray: [] as JobTag[],
@@ -469,15 +493,36 @@ export default defineComponent({
         priorityTag: null,
         coverImage: ''
       } as Job,
-      jobDialog: false
+      jobDialog: false,
+      date_error_alert: false
     }
   },
   watch: {
-    selectedDate() {
-      this.updateAllowedTimes()
+    startDate() {
+      this.validateDates()
+    },
+    endDate() {
+      this.validateDates()
     }
   },
   methods: {
+    showAddClientModal() {
+      console.log('modal event')
+      this.clientDialogVisibility = true
+    },
+    validateDates() {
+      if (this.startDate && this.endDate) {
+        const start = new Date(this.startDate)
+        const end = new Date(this.endDate)
+
+        if (end < start) {
+          this.endDate = null
+          this.date_error_alert = true
+        } else {
+          this.date_error_alert = false
+        }
+      }
+    },
     handleImageUpload(event: Event) {
       const target = event.target as HTMLInputElement
       if (target.files && target.files[0]) {
@@ -527,19 +572,20 @@ export default defineComponent({
       }
     },
     async validateForm() {
-      if (this.startDate !== null && this.startTime !== '') {
-        this.formatDateAndTime(this.startDate, this.startTime)
-      }
-      if (this.endDate !== null && this.endTime !== '') {
-        this.formatDateAndTime(this.endDate, this.endTime)
-      }
-      if (this.req_obj.coverImage === '') delete this.req_obj.coverImage
+      const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
+      const validate = await (form as any).validate()
 
-      // if (this.req_obj.assignedEmployees === null) delete this.req_obj.assignedEmployees
+      this.req_obj.tags || delete this.req_obj.tags
+      this.req_obj.priorityTag || delete this.req_obj.priorityTag
+      this.req_obj.coverImage || delete this.req_obj.coverImage
+      this.req_obj.assignedEmployees.employeeIds ||
+        delete this.req_obj.assignedEmployees.employeeIds
 
-      console.log(this.req_obj)
-      this.updateDates()
-      await this.handleSubmission()
+      if (validate) {
+        const update = this.updateDates()
+        console.log(this.req_obj)
+        // update || (await this.handleSubmission())
+      }
     },
     formatDateAndTime(date: Date, time: string) {
       const [hrs, min] = time.split(':').map(Number)
@@ -561,7 +607,7 @@ export default defineComponent({
       axios
         .post(apiURL + 'job/create', this.req_obj, config)
         .then((res) => {
-          if (this.req_obj.assignedEmployees.employeeIds.length === 0) {
+          if (this.req_obj.assignedEmployees.employeeIds === undefined) {
             this.$toast.add({
               severity: 'success',
               summary: 'Success',
@@ -600,12 +646,14 @@ export default defineComponent({
     },
     updateDates() {
       if (this.endDate && this.startDate) {
-        this.req_obj.details.startDate = convertToISOStr(this.startDate)
-        this.req_obj.details.endDate = convertToISOStr(this.endDate)
+        this.req_obj.details.startDate = convertToISOStr(new Date(this.startDate))
+        this.req_obj.details.endDate = convertToISOStr(new Date(this.endDate))
 
         console.log(this.req_obj.details.startDate)
         console.log(this.req_obj.details.endDate)
+        return true
       }
+      return false
     },
     hello() {
       console.log(this.req_obj.details.address.province)

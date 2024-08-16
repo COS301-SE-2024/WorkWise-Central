@@ -507,7 +507,7 @@ export default {
       this.req_obj.address.complex || delete this.req_obj.address.complex
       this.req_obj.logo || delete this.req_obj.logo
 
-      validate.valid || this.registrationHandler()
+      validate.valid || (await this.registrationHandler())
     },
 
     async registrationHandler(): Promise<void> {

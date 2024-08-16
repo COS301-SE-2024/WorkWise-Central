@@ -1,26 +1,27 @@
 <template>
+  <!--  <v-btn-->
+  <!--    rounded="md"-->
+  <!--    class="text-none font-weight-regular"-->
+  <!--    style="font-size: 20px"-->
+  <!--    text="Add Client"-->
+  <!--    prepend-icon="mdi-account-plus"-->
+  <!--    variant="elevated"-->
+  <!--    color="secondary"-->
+  <!--    @click="addDialog = true"-->
+  <!--  >-->
+  <!--    <template #prepend>-->
+  <!--      <v-icon color="buttonText">mdi-account-plus</v-icon>-->
+  <!--    </template>-->
+  <!--  </v-btn>-->
   <v-dialog
     v-model="addDialog"
     max-height="800"
     max-width="600"
+    :no-overlay="false"
     scrollable
     :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
     :opacity="0"
   >
-    <template v-slot:activator="{ props: activatorProps }">
-      <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
-        <v-btn
-          rounded="md"
-          class="text-none font-weight-regular"
-          style="font-size: 20px"
-          text="Add Client"
-          prepend-icon="mdi-account-plus"
-          variant="elevated"
-          color="secondary"
-          v-bind="activatorProps"
-        ></v-btn>
-      </v-defaults-provider>
-    </template>
     <v-card :theme="isdarkmode === true ? 'dark' : 'light'"
       ><v-card-title class="fixed">
         <span class="headline text-center">Create a Client </span>
@@ -219,7 +220,13 @@
               order-md="first"
               order-sm="first"
             >
-              <v-btn color="error" width="100%" height="35" variant="text" @click="close">
+              <v-btn
+                color="error"
+                width="100%"
+                height="35"
+                variant="text"
+                @click="addDialog = false"
+              >
                 Cancel <v-icon icon="fa: fa-solid fa-ban" color="error" end></v-icon>
               </v-btn>
             </v-col>
@@ -294,6 +301,12 @@ export default defineComponent({
   name: 'RegisterCompanyModal ',
   components: {
     Toast
+  },
+  props: {
+    showDialog: {
+      type: Boolean,
+      required: true
+    }
   },
   data: () => ({
     localUrl: 'http://localhost:3000/',
@@ -407,6 +420,14 @@ export default defineComponent({
           ]
     }
   },
+  watch: {
+    showDialog(v) {
+      this.addDialog = v
+    },
+    addDialog(v) {
+      this.$emit('update:showDialog', v)
+    }
+  },
   methods: {
     validatePhoneOrEmail() {
       return (
@@ -462,7 +483,7 @@ export default defineComponent({
       this.req_obj.details.contactInfo.phoneNumber ||
         delete this.req_obj.details.contactInfo.phoneNumber
 
-      validate || this.handleSubmission()
+      validate || (await this.handleSubmission())
     },
     async handleSubmission() {
       console.log(JSON.stringify(this.req_obj))
@@ -498,7 +519,6 @@ export default defineComponent({
       return localAvailable ? this.localUrl : this.remoteUrl
     },
     close() {
-      console.log(this.addDialog)
       this.addDialog = false
     }
   },

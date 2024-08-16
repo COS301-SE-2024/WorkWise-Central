@@ -185,6 +185,7 @@ export default {
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
+    addEmployeeVisibility: false,
     sortBy: [
       { key: 'name', order: 'asc' },
       { key: 'email', order: 'asc' },
@@ -238,6 +239,9 @@ export default {
     this.loading_data = false
   },
   methods: {
+    openDialog() {
+      this.addEmployeeVisibility = true
+    },
     selectItem(item: Person) {
       this.selectedItem = item
       this.selectedItemName = item.firstName
