@@ -14,7 +14,7 @@ export class UpdateTagDto {
   @IsMongoId()
   tagId: Types.ObjectId;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @CapitalizeWords()
   label?: string;
@@ -37,7 +37,7 @@ export class UpdatePriorityTagDto {
   @IsMongoId()
   priorityTagId: Types.ObjectId;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @CapitalizeWords()
   label?: string;
@@ -48,7 +48,6 @@ export class UpdatePriorityTagDto {
   @AddHashtag()
   colour?: string;
 
-  @IsNotEmpty()
   @IsOptional()
   @IsNumber()
   priorityLevel?: number;
