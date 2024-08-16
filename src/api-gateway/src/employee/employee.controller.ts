@@ -338,6 +338,30 @@ export class EmployeeController {
   @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiOperation({
+    summary: `Get data for the graph view of the company`,
+    description: `Return the nodes and edged for the graph view of the company. Also returns the nodes mapped to the ids of the employees.`,
+  })
+  @ApiOkResponse({
+    type: EmployeeListResponseDto,
+  })
+  @ApiParam({
+    name: 'currentEmployeeId',
+    description: `The _id attribute of the employee that is making the request.`,
+  })
+  @Get('/graphViewData/:currentEmployeeId')
+  async graphData(@Param('currentEmployeeId') currentEmployeeId: Types.ObjectId) {
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    const data = await this.employeeService.graphData(currentEmployee.companyId);
+    return { data: data };
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
     status: HttpStatus.BAD_REQUEST,
   })
   @ApiOperation({

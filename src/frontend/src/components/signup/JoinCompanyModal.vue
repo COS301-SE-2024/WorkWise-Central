@@ -11,6 +11,7 @@
         class="text-none font-weight-regular hello"
         variant="elevated"
         color="primary"
+        block
         v-bind="activatorProps"
         >Join Company</v-btn
       >

@@ -1,7 +1,22 @@
 <template>
   <v-container>
+    <Toast />
     <v-card>
-      <v-card-title class="text-primary font-bold text-center">Tags</v-card-title>
+      <v-card-title
+        class="d-flex align-center pe-2 text-h5 font-weight-regular"
+        height="auto"
+        width="100%"
+        ><v-row align="center" justify="space-between"
+          ><v-col cols="12" lg="6">
+            <v-label
+              class="ms-2 h2 font-family-Nunito text-headingTextColor"
+              height="auto"
+              width="auto"
+              >Tags</v-label
+            ></v-col
+          ><v-col cols="12" lg="6"><CreateTags /></v-col
+        ></v-row>
+      </v-card-title>
       <v-card-text>
         <v-data-table
           :headers="headers"
@@ -12,7 +27,7 @@
           :header-props="{ class: 'bg-secondary h5 ' }"
         >
           <template v-slot:[`item.colour`]="{ item }">
-            <v-chip :color="item.colour" >{{ item.colour }}</v-chip>
+            <v-chip :color="item.colour">{{ item.colour }}</v-chip>
           </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu>
@@ -22,11 +37,11 @@
                 </v-btn>
               </template>
               <v-list>
-                <!-- <v-list-item @click="selectItem(item)">
+                <v-list-item @click="selectItem(item)">
                   <v-btn color="success" block @click="dialog = true"
                     ><v-icon icon="fa:fa-solid fa-pencil" color="success"></v-icon>Edit</v-btn
                   >
-                </v-list-item> -->
+                </v-list-item>
                 <v-list-item @click="selectItem(item)">
                   <DeleteTags :tagId="selectedItem._id" />
                 </v-list-item>
@@ -44,7 +59,7 @@
       persistent
     >
       <v-card>
-        <v-card-title> Edit</v-card-title>
+        <v-card-title> Edit Tags</v-card-title>
         <v-card-text>
           <v-form v-model="formIsValid" ref="form">
             <v-label>Tag Name</v-label>
@@ -62,15 +77,28 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn
-            @click="updateTag"
-            :disabled="!formIsValid"
-            color="success"
-            rounded="md"
-            variant="text"
-            >Create Tag</v-btn
+          <v-container
+            ><v-row
+              ><v-col cols="12" lg="6">
+                <v-btn
+                  @click="updateTag"
+                  :disabled="!formIsValid"
+                  color="success"
+                  rounded="md"
+                  block
+                  :loading="isDeleting"
+                  variant="text"
+                >
+                  <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save
+                  Tag</v-btn
+                ></v-col
+              ><v-col cols="12" lg="6">
+                <v-btn color="error" rounded="md" variant="text" @click="close" block>
+                  <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon> Cancel
+                </v-btn></v-col
+              ></v-row
+            ></v-container
           >
-          <v-btn color="error" rounded="md" variant="text" @click="close"> Cancel </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -81,6 +109,9 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import DeleteTags from './DeleteTags.vue'
+import ColorPicker from 'primevue/colorpicker'
+import CreateTags from './CreateTags.vue'
+import Toast from 'primevue/toast'
 
 export default defineComponent({
   data: () => ({
@@ -99,6 +130,7 @@ export default defineComponent({
       }
     ],
     items: [] as any[],
+    isDeleting: false,
     dialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     selectedItem: {
@@ -115,7 +147,10 @@ export default defineComponent({
     colorRules: [(v: string) => !!v || 'Color is required']
   }),
   components: {
-    DeleteTags
+    DeleteTags,
+    ColorPicker,
+    Toast,
+    CreateTags
   },
   methods: {
     getRowProps(index: number) {
@@ -164,8 +199,11 @@ export default defineComponent({
     },
     selectItem(item: any) {
       console.log(item)
+      this.selectedItem = item
     },
     async updateTag() {
+      this.isDeleting = true // Indicate the start of the deletion process
+      console.log(this.selectedItem)
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -174,11 +212,7 @@ export default defineComponent({
       }
       const apiURL = await this.getRequestUrl()
       axios
-        .post(
-          `${apiURL}job/tags/${localStorage.getItem('currentCompany')}`,
-          this.selectItem,
-          config
-        )
+        .patch(`${apiURL}job/tags/`, this.selectedItem, config)
         .then((res) => {
           console.log(res)
           this.$toast.add({
@@ -187,7 +221,10 @@ export default defineComponent({
             detail: 'Tag updated successfully',
             life: 3000
           })
-          this.dialog = false
+          setTimeout(() => {
+            this.dialog = false
+            window.location.reload()
+          }, 3000)
         })
         .catch((err) => {
           console.error(err)

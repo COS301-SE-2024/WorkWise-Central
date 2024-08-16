@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
-import { IsArray, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
 
 export class CreateInventoryDto {
   @IsNotEmpty()
@@ -28,15 +29,28 @@ export class CreateInventoryDto {
   @IsNumber()
   reorderLevel?: number;
 
+  @ApiProperty({ description: 'Must be an array of Base64 URI strings' })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
+  @Transform(({ value }) => value.map((item: string) => item.trim()))
   images?: string[] = [];
 
   @IsNotEmpty()
   @IsMongoId()
   @ApiProperty()
   companyId: Types.ObjectId;
+}
+
+export class CreateInventoryOuterDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  currentEmployeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => CreateInventoryDto)
+  createInventoryDto: CreateInventoryDto;
 }
 
 export class CreateInventoryResponseDto {

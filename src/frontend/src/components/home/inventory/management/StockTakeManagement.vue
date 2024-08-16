@@ -21,7 +21,9 @@
               type="number"
               min="0"
             ></v-text-field>
-            <v-btn @click="updateStock(item)" variant="outlined">Update</v-btn>
+            <v-btn @click="updateStock(item)" variant="outlined" :loading="isDeleting"
+              >Update</v-btn
+            >
           </v-card-text>
         </v-card>
       </v-col>
@@ -43,7 +45,8 @@ export default {
     return {
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
-      inventoryItems: [] as InventoryItem[]
+      inventoryItems: [] as InventoryItem[],
+      isDeleting: false
     }
   },
   components: {
@@ -51,6 +54,7 @@ export default {
   },
   methods: {
     async updateStock(item: InventoryItem) {
+      this.isDeleting = true
       console.log(item._id)
       const config = {
         headers: {
@@ -65,7 +69,17 @@ export default {
       }
       const apiURL = await this.getRequestUrl()
       try {
-        await axios.patch(`${apiURL}inventory/${item._id}`, data, config)
+        await axios.patch(`${apiURL}inventory/${item._id}`, data, config).then(() => {
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Stock updated successfully'
+          })
+          setTimeout(() => {
+            window.location.reload()
+            this.isDeleting = false
+          }, 3000)
+        })
       } catch (error) {
         console.error(error)
       }
@@ -85,7 +99,10 @@ export default {
       }
       const apiURL = await this.getRequestUrl()
       try {
-        const response = await axios.get(`${apiURL}inventory/all`, config)
+        const response = await axios.get(
+          `${apiURL}inventory/all/${localStorage.getItem('employeeId')}`,
+          config
+        )
         console.log(response.data.data)
         this.inventoryItems = response.data.data
       } catch (error) {

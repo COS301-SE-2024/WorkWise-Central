@@ -14,9 +14,9 @@ export class EmployeeRepository {
   }
 
   async save(employee: Employee) {
-    console.log('in the save function');
+    // console.log('in the save function');
     const newEmployeeModel = new this.employeeModel(employee);
-    console.log('newEmployeeModel: ', newEmployeeModel);
+    // console.log('newEmployeeModel: ', newEmployeeModel);
     return await newEmployeeModel.save();
   }
 
@@ -96,11 +96,11 @@ export class EmployeeRepository {
   }
 
   async findById(identifier: Types.ObjectId) {
-    console.log('identifier: ', identifier);
+    // console.log('identifier: ', identifier);
     if (typeof identifier === 'string') {
       identifier = new Types.ObjectId(identifier);
     }
-    console.log('identifier: ', identifier);
+    // console.log('identifier: ', identifier);
     const result = this.employeeModel
       .findOne({
         $and: [
@@ -200,7 +200,7 @@ export class EmployeeRepository {
         { $set: { ...updateEmployeeDto }, updatedAt: new Date() },
       )
       .lean();
-    console.log('Repository response: ', previousObject);
+    // console.log('Repository response: ', previousObject);
     return previousObject;
   }
 
@@ -329,7 +329,7 @@ export class EmployeeRepository {
       )
       .lean();
 
-    console.log('Repository response: ', previousObject);
+    // console.log('Repository response: ', previousObject);
 
     return previousObject;
   }

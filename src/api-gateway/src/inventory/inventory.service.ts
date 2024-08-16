@@ -51,7 +51,7 @@ export class InventoryService {
           pictures.push(picture.secure_url);
         } else throw new InternalServerErrorException('file upload failed');
       }
-      newInventory.images.concat(pictures);
+      newInventory.images = pictures;
     }
 
     return await this.inventoryRepository.save(newInventory);
@@ -126,5 +126,9 @@ export class InventoryService {
     }
 
     return this.inventoryRepository.addAttachments(id, newUrls);
+  }
+
+  deleteAllInCompany(companyId: Types.ObjectId) {
+    this.inventoryRepository.deleteAllInCompany(companyId);
   }
 }

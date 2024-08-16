@@ -122,6 +122,11 @@ export class CreateClientDto {
 
   @ApiProperty()
   @IsOptional()
+  @IsMongoId()
+  companyId?: Types.ObjectId;
+
+  @ApiProperty()
+  @IsOptional()
   @IsString()
   registrationNumber?: string;
 

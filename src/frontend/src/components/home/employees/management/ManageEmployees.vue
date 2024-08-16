@@ -1,3 +1,4 @@
+c
 <template class="emply-mng-container">
   <v-app :style="isdarkmode === true ? 'dark' : 'light'">
     <v-container fluid fill-height>
@@ -17,21 +18,16 @@
                   style="font-family: Nunito, sans-serif; font-size: 25px; font-weight: lighter"
                 >
                   <v-row align="center" justify="space-between">
-                    <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+                    <v-col cols="12" lg="4" class="d-flex align-center">
                       <v-icon icon="mdi-account-hard-hat"></v-icon>
                       <v-label
-                        class="ms-2 text-h4 text-headingTextColor"
-                        style="
-                          font-size: 15px;
-                          font-family: Nunito, sans-serif;
-                          font-weight: lighter;
-                        "
+                        class="ms-2 h2 font-family-Nunito text-headingTextColor"
                         height="auto"
                         width="auto"
                         >Employee Details</v-label
-                      >&nbsp;
+                      >
                     </v-col>
-                    <v-col cols="12" md="4" sm="6" xs="12">
+                    <v-col cols="12" lg="4">
                       <v-text-field
                         v-model="search"
                         density="compact"
@@ -40,9 +36,9 @@
                         variant="outlined"
                         flat
                         color="primary"
-                        width="100%"
+                        width="80%"
                         style="
-                          font-family: Nunito, sans-serif;
+                          font-family: 'Lato', sans-serif;
                           font-size: 15px;
                           font-weight: lighter;
                         "
@@ -50,7 +46,7 @@
                         single-line
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
+                    <v-col cols="12" lg="4" class="d-flex justify-end">
                       <AddEmployee />
                     </v-col>
                   </v-row>
@@ -120,10 +116,7 @@
                             >
                             <v-list>
                               <v-list-item
-                                ><EmployeeDetails
-                                  v-model="clientDialog"
-                                  colors="colors"
-                                  :EmployeeDetails="selectedItem"
+                                ><EmployeeDetails colors="colors" :EmployeeDetails="selectedItem"
                               /></v-list-item>
 
                               <v-list-item>

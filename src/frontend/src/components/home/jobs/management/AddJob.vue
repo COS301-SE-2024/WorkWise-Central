@@ -9,6 +9,7 @@
           text="Add Job"
           prepend-icon="mdi-briefcase-plus"
           variant="elevated"
+          block
           color="secondary"
           v-bind="activatorProps"
         ></v-btn>
@@ -344,28 +345,36 @@
         </v-form>
       </v-card-text>
       <v-card-actions class="d-flex flex-column">
-        <v-btn
-          color="success"
-          rounded="md"
-          @click="validateForm"
-          boarder="md"
-          width="100%"
-          height="35"
-          variant="text"
-          data-testid="create-btn"
-          >Create Job
-        </v-btn>
-        <v-btn
-          color="error"
-          rounded="md"
-          boarder="md"
-          width="100%"
-          height="35"
-          variant="text"
-          @click="close"
-          data-testid="cancel-btn"
-          >Cancel
-        </v-btn>
+        <v-container>
+          <v-row>
+            <v-col cols="12" lg="6">
+              <v-btn
+                color="success"
+                rounded="md"
+                @click="validateForm"
+                boarder="md"
+                width="100%"
+                height="35"
+                variant="text"
+                data-testid="create-btn"
+                ><v-icon icon="fa: fa-solid fa-plus" color="success" start></v-icon>Create Job
+              </v-btn>
+            </v-col>
+            <v-col cols="12" lg="6">
+              <v-btn
+                color="error"
+                rounded="md"
+                boarder="md"
+                width="100%"
+                height="35"
+                variant="text"
+                @click="close"
+                data-testid="cancel-btn"
+                ><v-icon icon="fa: fa-solid fa-cancel" color="error" start></v-icon>Cancel
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>

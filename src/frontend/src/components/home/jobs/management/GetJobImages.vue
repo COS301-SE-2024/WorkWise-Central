@@ -139,7 +139,6 @@ const openImageOverlay = (index) => {
   imageOverlay.value = true
 }
 
-
 const changeImage = (index) => {
   images.value[index].dialog = false
   const fileInput = document.createElement('input')
