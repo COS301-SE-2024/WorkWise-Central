@@ -10,9 +10,10 @@
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        variant="outlined"
-        color="primary"
+        variant="elevated"
+        color="secondary"
         v-bind="activatorProps"
+        block
       >
         <v-icon icon="fa: fa-solid fa-tags" color="primary"></v-icon>
         Create Tag
@@ -37,15 +38,27 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-btn
-          @click="createTag"
-          :disabled="!formIsValid"
-          color="success"
-          rounded="md"
-          variant="text"
-          >Create Tag</v-btn
-        >
-        <v-btn color="error" rounded="md" variant="text" @click="close"> Cancel </v-btn>
+        <v-container>
+          <v-row>
+            <v-col cols="12" lg="6">
+              <v-btn
+                @click="createTag"
+                :disabled="!formIsValid"
+                color="success"
+                rounded="md"
+                variant="text"
+                block
+                :loading="isDeleting"
+                ><v-icon icon="fa: fa-solid fa-plus" color="success"></v-icon>Create Tag</v-btn
+              >
+            </v-col>
+            <v-col cols="12" lg="6">
+              <v-btn color="error" rounded="md" variant="text" @click="close" block
+                ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon> Cancel
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -62,6 +75,7 @@ interface Tag {
 export default defineComponent({
   data() {
     return {
+      isDeleting: false,
       dialog: false,
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       tag: {
@@ -73,8 +87,7 @@ export default defineComponent({
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       formIsValid: false,
       nameRules: [(v: string) => !!v || 'Name is required'],
-      labelRules: [(v: string) => !!v || 'Label is required'],
-      colorRules: [(v: string) => !!v || 'Color is required']
+      labelRules: [(v: string) => !!v || 'Label is required']
     }
   },
   components: {
@@ -82,6 +95,7 @@ export default defineComponent({
   },
   methods: {
     async createTag() {
+      this.isDeleting = true // Indicate the start of the deletion process
       console.log(this.tag)
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const apiURL = await this.getRequestUrl()
@@ -95,7 +109,9 @@ export default defineComponent({
             detail: 'Tag Created',
             life: 3000
           })
-          window.location.reload()
+          setTimeout(() => {
+            window.location.reload()
+          }, 3000)
         })
         .catch((error) => {
           this.$toast.add({

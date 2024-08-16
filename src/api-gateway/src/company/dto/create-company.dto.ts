@@ -93,7 +93,7 @@ export class CreateCompanyDto {
   @IsString()
   type?: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'A Base64 URI string' })
   @IsOptional()
   @IsString()
   @Validate(Base64ContentIsImage)

@@ -137,6 +137,22 @@ export class InventoryRepository {
     return true;
   }
 
+  async addAttachments(id: Types.ObjectId, newUrls: string[]) {
+    return await this.InventoryModel.findOneAndUpdate(
+      {
+        $and: [
+          { _id: id },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      },
+      { $push: { images: { $each: newUrls } }, updatedAt: Date.now() },
+    )
+      .lean()
+      .exec();
+  }
+
   deleteAllInCompany(companyId: Types.ObjectId) {
     this.InventoryModel.updateMany(
       {

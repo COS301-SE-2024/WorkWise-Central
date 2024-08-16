@@ -64,10 +64,10 @@ export class JobTagRepository {
       .exec();
   }
 
-  async findStatusByLabel(label: string) {
+  async findStatusByLabel(companyId: Types.ObjectId, label: string) {
     return this.jobStatusModel
       .findOne({
-        $and: [{ status: label }, isNotDeleted],
+        $and: [{ companyId: companyId }, { status: label }, isNotDeleted],
       })
       .lean()
       .exec();
@@ -96,10 +96,12 @@ export class JobTagRepository {
 
   async createDefaultStatusesInCompany(statusArr: JobStatus[]) {
     //'No status' and 'Archive'
+    const result: any[] = [];
     for (const jobStatus of statusArr) {
       const newStatus = await this.jobStatusModel.create(jobStatus);
-      await newStatus.save();
+      result.push(await newStatus.save());
     }
+    return result;
   }
 
   async updateTag(tagId: Types.ObjectId, updates: UpdateTag) {

@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
-import { UpdateJobDto } from './dto/update-job.dto';
+import { Comment, Job, Task } from './entities/job.entity';
+import { UpdateJobDto, UpdateTaskItemDto } from './dto/update-job.dto';
 import { Employee } from '../employee/entities/employee.entity';
 import { Company } from '../company/entities/company.entity';
 //import { Team } from '../team/entities/team.entity';
 import { isNotDeleted } from '../shared/soft-delete';
 import { currentDate } from '../utils/Utils';
-import { Comment, History, Job, Task } from './entities/job.entity';
+import { TaskItem } from './dto/create-job.dto';
+import { History } from './entities/job.entity';
 
 @Injectable()
 export class JobRepository {
@@ -461,7 +463,7 @@ export class JobRepository {
   async addAttachments(jobId: Types.ObjectId, newUrls: string[]) {
     const job = await this.jobModel.updateOne(
       { _id: jobId },
-      { $push: { attachments: newUrls }, updatedAt: Date.now() },
+      { $push: { attachments: { $each: newUrls } }, updatedAt: Date.now() },
       { new: true },
     );
     console.log(job);
@@ -481,6 +483,78 @@ export class JobRepository {
       .exec();
     job.attachments = newAttachments;
     job.updatedAt = new Date();
+    await job.save();
+    return job.toObject();
+  }
+
+  async addJobTaskItem(jobId: Types.ObjectId, taskId: Types.ObjectId) {
+    const job = await this.jobModel
+      .findOne({
+        $and: [
+          {
+            _id: jobId,
+          },
+          isNotDeleted,
+        ],
+      })
+
+      .exec();
+
+    const task = job.taskList.find((t) => {
+      t._id.toString() === taskId.toString();
+    });
+    task.items.push(new TaskItem());
+    await job.save();
+    return job.toObject();
+  }
+
+  async editJobTaskItem(jobId: Types.ObjectId, updateTaskItem: UpdateTaskItemDto) {
+    const job = await this.jobModel
+      .findOne({
+        $and: [
+          {
+            _id: jobId,
+          },
+          isNotDeleted,
+        ],
+      })
+      .exec();
+
+    const task = job.taskList.find((t) => {
+      t._id.toString() === updateTaskItem.taskId.toString();
+    });
+    const item = task.items.find((i) => {
+      i._id.toString() === updateTaskItem.itemId.toString();
+    });
+
+    if (updateTaskItem.description) item.description = updateTaskItem.description;
+    if (updateTaskItem.done) item.done = updateTaskItem.done;
+    if (updateTaskItem.dueDate) item.dueDate = updateTaskItem.dueDate;
+
+    await job.save();
+    return job.toObject();
+  }
+
+  async removeJobTaskItem(jobId: Types.ObjectId, taskId: Types.ObjectId, itemId: Types.ObjectId) {
+    const job = await this.jobModel
+      .findOne({
+        $and: [
+          {
+            _id: jobId,
+          },
+          isNotDeleted,
+        ],
+      })
+      .exec();
+
+    const task = job.taskList.find((t) => {
+      t._id.toString() === taskId.toString();
+    });
+
+    task.items = task.items.filter((i) => {
+      i._id.toString() !== itemId.toString();
+    });
+
     await job.save();
     return job.toObject();
   }

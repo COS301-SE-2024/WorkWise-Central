@@ -3,7 +3,7 @@
     v-model="addDialog"
     max-height="800"
     max-width="600"
-    scrollable
+    scrollablea
     :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
     :opacity="0.1"
   >
@@ -12,6 +12,7 @@
         class="text-none font-weight-regular hello"
         color="secondary"
         v-bind="activatorProps"
+        block
         variant="elevated"
         ><v-icon icon="fa:fa-solid fa-plus" color="" size="xs" />
         <v-icon icon="fa:fa-solid fa-warehouse" color="" />
@@ -43,7 +44,6 @@
                 <v-text-field
                   v-model="description"
                   color="secondary"
-                  :rules="descriptionRules"
                   required
                   hide-details="auto"
                 ></v-text-field></v-col
@@ -55,7 +55,6 @@
                 <v-text-field
                   v-model="costPrice"
                   color="secondary"
-                  :rules="costPriceRules"
                   required
                   hide-details="auto"
                 ></v-text-field
@@ -65,7 +64,6 @@
                 <v-text-field
                   v-model="currentStockLevel"
                   color="secondary"
-                  :rules="currentStockLevelRules"
                   required
                   hide-details="auto"
                 ></v-text-field
@@ -75,7 +73,6 @@
                 <v-text-field
                   v-model="reorderLevel"
                   color="secondary"
-                  :rules="reorderLevelRules"
                   required
                 ></v-text-field></v-col
             ></v-row>
@@ -88,19 +85,24 @@
         ><v-container
           ><v-row justify="end"
             ><v-col cols="12" lg="6">
-              <v-btn @click="close" color="error" block
+              <v-btn @click="close" color="error" block :loading="isDeleting"
+                ><v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
                 >Cancel
-                <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon></v-btn
-            ></v-col>
+              </v-btn></v-col
+            >
             <v-col cols="12" lg="6">
-              <v-btn @click="createInventoryItem" color="success" :disabled="!valid" block
-                >Create<v-icon
-                  icon="fa:fa-solid fa-plus"
-                  color="success"
-                  size="small"
-                  end
-                ></v-icon></v-btn></v-col></v-row
-        ></v-container>
+              <v-btn
+                @click="createInventoryItem"
+                color="success"
+                :disabled="!valid"
+                block
+                :loading="isDeleting"
+                ><v-icon icon="fa:fa-solid fa-plus" color="success" size="small" start></v-icon
+                >Create</v-btn
+              ></v-col
+            ></v-row
+          ></v-container
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -121,6 +123,7 @@ export default defineComponent({
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
+    isDeleting: false,
     modal_light_theme_color: '#FFFFFF',
     valid: false,
     name: '',
@@ -160,6 +163,7 @@ export default defineComponent({
       })
     },
     async createInventoryItem() {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       }
@@ -187,7 +191,10 @@ export default defineComponent({
           life: 3000
         })
         this.addDialog = false
-        window.location.reload()
+        setTimeout(() => {
+          this.isDeleting = false
+          window.location.reload()
+        }, 1500)
       } catch (error) {
         console.error(error)
         this.$toast.add({

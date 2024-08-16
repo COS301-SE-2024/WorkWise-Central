@@ -1,32 +1,37 @@
 import { Types } from 'mongoose';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateInventoryDto {
   @IsNotEmpty()
   @ApiProperty()
   @IsString()
-  name: string;
+  name?: string;
 
   @IsOptional()
   @ApiProperty()
   @IsString()
-  description: string;
+  description?: string;
 
   @IsOptional()
   @ApiProperty()
   @IsNumber()
-  costPrice: number;
+  costPrice?: number;
 
   @IsOptional()
   @ApiProperty()
   @IsNumber()
-  currentStockLevel: number;
+  currentStockLevel?: number;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  images?: string[];
 
   @IsOptional()
   @ApiProperty()
   @IsNumber()
-  reorderLevel: number;
+  reorderLevel?: number;
 }
 
 export class updateInventoryResponseDto {

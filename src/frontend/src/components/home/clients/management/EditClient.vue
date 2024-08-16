@@ -14,94 +14,103 @@
       <v-card-title class="text-center"> Edit Client </v-card-title>
 
       <v-card-text>
-        <v-row>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> Name </small>
-            <v-text-field v-model="localEditedItem.firstName" :rules="nameRules"></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> Surname </small>
-            <v-text-field
-              v-model="localEditedItem.lastName"
-              :rules="surnameRules"
-              hide-details="auto"
-            ></v-text-field> </v-col
-        ></v-row>
+        <v-form v-model="valid">
+          <v-row>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> Name </small>
+              <v-text-field v-model="localEditedItem.firstName" :rules="nameRules"></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> Surname </small>
+              <v-text-field
+                v-model="localEditedItem.lastName"
+                :rules="surnameRules"
+                hide-details="auto"
+              ></v-text-field> </v-col
+          ></v-row>
 
-        <v-row>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> Phone Number </small>
-            <v-text-field
-              v-model="localEditedItem.contactInfo.phoneNumber"
-              :rules="phoneRules"
-              hide-details="auto"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> Email </small>
-            <v-text-field
-              v-model="localEditedItem.contactInfo.email"
-              :rules="emailRules"
-              hide-details="auto"
-            ></v-text-field> </v-col
-        ></v-row>
+          <v-row>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> Phone Number </small>
+              <v-text-field
+                v-model="localEditedItem.contactInfo.phoneNumber"
+                :rules="phoneRules"
+                hide-details="auto"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> Email </small>
+              <v-text-field
+                v-model="localEditedItem.contactInfo.email"
+                :rules="emailRules"
+                hide-details="auto"
+              ></v-text-field> </v-col
+          ></v-row>
 
-        <v-row>
-          <v-col cols="6"
-            ><small class="text-caption font-weight-bold"> Street </small>
-            <v-text-field
-              v-model="localEditedItem.address.street"
-              hide-details="auto"
-            ></v-text-field
-          ></v-col>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> Suburb </small>
-            <v-text-field
-              v-model="localEditedItem.address.suburb"
-              hide-details="auto"
-            ></v-text-field> </v-col
-        ></v-row>
+          <v-row>
+            <v-col cols="6"
+              ><small class="text-caption font-weight-bold"> Street </small>
+              <v-text-field
+                v-model="localEditedItem.address.street"
+                :rules="streetRules"
+                hide-details="auto"
+              ></v-text-field
+            ></v-col>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> Suburb </small>
+              <v-text-field
+                v-model="localEditedItem.address.suburb"
+                :rules="suburbRules"
+                hide-details="auto"
+              ></v-text-field> </v-col
+          ></v-row>
 
-        <v-row>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> City </small>
-            <v-text-field v-model="localEditedItem.address.city" hide-details="auto"></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> Postal Code </small>
-            <v-text-field
-              v-model="localEditedItem.address.postalCode"
-              hide-details="auto"
-            ></v-text-field></v-col
-        ></v-row>
+          <v-row>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> City </small>
+              <v-text-field
+                v-model="localEditedItem.address.city"
+                :rules="cityRules"
+                hide-details="auto"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> Postal Code </small>
+              <v-text-field
+                v-model="localEditedItem.address.postalCode"
+                :rules="postalCodeRules"
+                hide-details="auto"
+              ></v-text-field></v-col
+          ></v-row>
 
-        <v-row
-          ><v-col cols="6">
-            <small class="text-caption font-weight-bold"> Complex </small>
-            <v-text-field
-              theme="cardColor"
-              v-model="localEditedItem.address.complex"
-              hide-details="auto"
-            ></v-text-field
-          ></v-col>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> House Number </small>
-            <v-text-field
-              v-model="localEditedItem.address.houseNumber"
-              hide-details="auto"
-            ></v-text-field></v-col
-        ></v-row>
-        <v-row>
-          <v-col cols="12">
-            <small class="text-caption font-weight-bold">Preferred Language</small>
-            <v-select
-              :items="languages"
-              v-model="localEditedItem.preferred_Language"
-              variant="solo"
-              hide-details="auto"
-            ></v-select>
-          </v-col>
-        </v-row>
+          <v-row
+            ><v-col cols="6">
+              <small class="text-caption font-weight-bold"> Complex </small>
+              <v-text-field
+                theme="cardColor"
+                v-model="localEditedItem.address.complex"
+                hide-details="auto"
+              ></v-text-field
+            ></v-col>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> House Number </small>
+              <v-text-field
+                v-model="localEditedItem.address.houseNumber"
+                hide-details="auto"
+              ></v-text-field></v-col
+          ></v-row>
+          <v-row>
+            <v-col cols="12">
+              <small class="text-caption font-weight-bold">Preferred Language</small>
+              <v-select
+                :items="languages"
+                v-model="localEditedItem.preferred_Language"
+                variant="solo"
+                hide-details="auto"
+              ></v-select>
+            </v-col>
+          </v-row>
+        </v-form>
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
@@ -138,7 +147,8 @@
                 height="35"
                 variant="text"
                 @click="update"
-                :disabled="allRulesPass()"
+                :disabled="!valid"
+                :loading="isDeleting"
                 block
                 ><v-icon
                   icon="fa:fa-solid fa-floppy-disk"
@@ -172,6 +182,7 @@ export default {
       localEditedItem: this.editedItem,
       isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
       clientDialog: false,
+      valid: true,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
       languages: [
@@ -201,7 +212,15 @@ export default {
       phoneRules: [
         (v) => !!v || 'Phone number is required',
         (v) => (v && v.length >= 10) || 'Phone number must be at least 10 digits'
-      ]
+      ],
+      cityRules: [(v) => !!v || 'City is required'],
+      postalCodeRules: [
+        (v) => !!v || 'Postal code is required',
+        (v) => (v && v.length >= 4) || 'Postal code must be at least 4 digits'
+      ],
+      streetRules: [(v) => !!v || 'Street is required'],
+      provinceRules: [(v) => !!v || 'Province is required'],
+      suburbRules: [(v) => !!v || 'Suburb is required']
     }
   },
   watch: {
@@ -229,6 +248,7 @@ export default {
       this.clientDialog = false
     },
     async update() {
+      this.isDeleting = true // Indicate the start of the deletion process
       console.log(this.localEditedItem.firstName)
       console.log(localStorage.getItem('access_token'))
 
@@ -246,8 +266,8 @@ export default {
         currentEmployeeId: localStorage.getItem('employeeId'),
         updateClientDto: {
           details: {
-            firstname: this.localEditedItem.firstName,
-            lastname: this.localEditedItem.surname,
+            firstName: this.localEditedItem.firstName,
+            lastName: this.localEditedItem.surname,
             preferred_Language: this.localEditedItem.preferred_Language,
             contactInfo: {
               phoneNumber: this.localEditedItem.contactInfo.phoneNumber,
@@ -272,15 +292,30 @@ export default {
           config
         )
         console.log(response)
-        alert('Client updated')
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Client updated successfully',
+          life: 3000
+        })
+        setTimeout(() => {
+          this.isDeleting = false
+          this.clientDialog = false
+          window.location.reload()
+        }, 3000)
+
         return true
       } catch (error) {
         console.error('Error updating client:', error)
-        alert('Error updating client')
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'An error occurred while updating the client',
+          life: 3000
+        })
         return false
       } finally {
         this.clientDialog = false
-        //  window.location.reload()
       }
     },
     async isLocalAvailable(localUrl) {

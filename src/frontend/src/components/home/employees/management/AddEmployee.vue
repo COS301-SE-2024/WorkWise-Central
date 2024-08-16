@@ -15,6 +15,7 @@
           text="Add Employee"
           variant="elevated"
           color="secondary"
+          block
           v-bind="activatorProps"
         ></v-btn>
       </v-defaults-provider>
@@ -89,8 +90,9 @@
                 height="35"
                 variant="text"
                 :disabled="click_create_client"
+                :loading="isDeleting"
                 style="font-family: Nunito, sans-serif"
-                >Add<v-icon icon="fa:fa-solid fa-plus" color="success" size="small" end></v-icon>
+                ><v-icon icon="fa:fa-solid fa-plus" color="success" size="small" start></v-icon>Add
               </v-btn>
             </v-col>
           </v-col>
@@ -116,6 +118,7 @@ export default defineComponent({
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     valid: false,
     dialog: false,
+    isDeleting: false,
     roleItems: [] as RoleItem[],
     subordinateItemNames: [] as EmployeeInformation2[],
     isdarkmode: localStorage['theme'] !== 'false',
@@ -194,7 +197,7 @@ export default defineComponent({
       this.req_obj.currentCompany = localStorage['currentCompany']
 
       console.log(this.req_obj)
-
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -212,7 +215,11 @@ export default defineComponent({
             detail: 'Employee Added Successfully',
             life: 3000
           })
-          window.location.reload()
+          setTimeout(() => {
+            this.isDeleting = false
+            this.dialog = false
+            window.location.reload()
+          }, 3000)
         })
         .catch((error) => {
           console.log(error)

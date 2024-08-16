@@ -1,4 +1,5 @@
 <template>
+  <Toast position="top-center" />
   <v-dialog
     v-model="addDialog"
     max-height="800"
@@ -38,7 +39,6 @@
               ><v-text-field
                 v-model="localEditedItem.description"
                 color="secondary"
-                :rules="descriptionRules"
                 required
               ></v-text-field
             ></v-col>
@@ -48,7 +48,6 @@
                 ><v-text-field
                   v-model="localEditedItem.costPrice"
                   color="secondary"
-                  :rules="costPriceRules"
                   required
                 ></v-text-field
               ></v-col>
@@ -57,7 +56,6 @@
                 ><v-text-field
                   v-model="localEditedItem.currentStockLevel"
                   color="secondary"
-                  :rules="currentStockLevelRules"
                   required
                 ></v-text-field
               ></v-col>
@@ -66,7 +64,6 @@
                 ><v-text-field
                   v-model="localEditedItem.reorderLevel"
                   color="secondary"
-                  :rules="reorderLevelRules"
                   required
                 ></v-text-field></v-col
             ></v-row>
@@ -78,13 +75,24 @@
           <v-row justify="end">
             <v-col cols="12" lg="6">
               <v-btn @click="close" color="error" block
-                ><v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon
+                ><v-icon
+                  icon="fa:fa-solid fa-cancel"
+                  start
+                  color="error"
+                  size="small"
+                  :loading="isDeleting"
+                ></v-icon
                 >Cancel</v-btn
               ></v-col
             >
-            <Toast position="top-center" />
+
             <v-col cols="12" lg="6">
-              <v-btn @click="createInventoryItem" color="success" :disabled="!valid" block
+              <v-btn
+                @click="createInventoryItem"
+                color="success"
+                :disabled="!valid"
+                block
+                :loading="isDeleting"
                 ><v-icon
                   icon="fa:fa-solid fa-floppy-disk"
                   start
@@ -106,7 +114,7 @@ import Toast from 'primevue/toast'
 import axios from 'axios'
 
 export default {
-  name: 'AddInventory',
+  name: 'EditInventory',
   props: {
     editedItem: Object,
     item: Object,
@@ -120,7 +128,7 @@ export default {
       localEditedItem: this.editedItem,
       addDialog: false,
       isdarkmode: localStorage.getItem('theme') === 'true',
-
+      isDeleting: false,
       valid: false,
       name: '',
       description: '',
@@ -167,6 +175,7 @@ export default {
       alert('Item updated')
     },
     async createInventoryItem() {
+      this.isDeleting = true // Indicate the start of the deletion process
       if (!this.localEditedItem) {
         this.$toast.add({
           severity: 'error',
@@ -207,6 +216,10 @@ export default {
           life: 3000
         })
         this.addDialog = false
+        setTimeout(() => {
+          this.isDeleting = false
+          window.location.reload()
+        }, 1500)
       } catch (error) {
         console.error(error)
         this.$toast.add({

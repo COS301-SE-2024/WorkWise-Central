@@ -67,6 +67,7 @@ export class CompanyService {
       console.log('Uploading image');
       const picture = await this.fileService.uploadBase64Image(createCompanyDto.logo);
       if (picture.secure_url != null) {
+        console.log('Saving company with a logo');
         createCompanyDto.logo = picture.secure_url;
       } else throw new InternalServerErrorException('file upload failed');
     }
@@ -81,7 +82,13 @@ export class CompanyService {
     await this.roleService.createDefaultRoles(createdCompany._id);
 
     //Create Default JobStatuses in company
-    await this.jobService.createDefaultStatuses(createdCompany._id);
+    await this.jobService.createDefaultStatuses(createdCompany._id).then((s) => {
+      const arr: Types.ObjectId[] = [];
+      for (const status of s) {
+        arr.push(status._id);
+      }
+      this.addJobStatuses(createdCompany._id, arr);
+    });
 
     //Assign Owner to user
     console.log('Assign Owner to user');
@@ -102,24 +109,24 @@ export class CompanyService {
         firstName: user.personalInfo.firstName,
         surname: user.personalInfo.surname,
         displayImage: user.profile.displayImage,
-        displayName: user.profile.displayImage,
+        displayName: user.profile.displayName,
         username: user.systemDetails.username,
       },
     });
 
+    if (employee == null) {
+      this.eradicateCompany(createdCompany._id);
+      throw new InternalServerErrorException('Creation Process failed due to Error in API');
+    }
+
+    /*    console.log('Add employee to Company');
+    const updatedCompany = await this.addNewEmployeeId(createdCompany._id, employee._id);*/
+
     console.log('Make User JoinedCompany');
     const newJoinedCompany = new JoinedCompany(employee._id, createdCompany._id, createdCompany.name);
+
     console.log('Perform Update');
     await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
-
-    await this.employeeService.updateUserInfo(employee._id, {
-      //Add user details to Employee
-      firstName: user.personalInfo.firstName,
-      surname: user.personalInfo.surname,
-      displayImage: user.profile.displayImage,
-      displayName: user.profile.displayName,
-      username: user.systemDetails.username,
-    });
 
     await this.usersService.updateUser(user._id, {
       currentEmployee: employee._id,
@@ -271,8 +278,8 @@ export class CompanyService {
     };
 
     const updatedUser = await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
-    console.log('Add New Employee ID');
-    await this.addNewEmployeeId(company._id, addedEmployee._id);
+    //console.log('Add New Employee ID');
+    //await this.addNewEmployeeId(company._id, addedEmployee._id);
     console.log(updatedUser);
     return newJoinedCompany;
   }
@@ -335,17 +342,10 @@ export class CompanyService {
     };
 
     const updatedUser = await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
-    console.log('Add New Employee ID');
-    await this.addNewEmployeeId(company._id, addedEmployee._id);
+    //console.log('Add New Employee ID');
+    //await this.addNewEmployeeId(company._id, addedEmployee._id);
     console.log(updatedUser);
     return newJoinedCompany;
-  }
-
-  private async addNewEmployeeId(companyId: Types.ObjectId, employeeId: Types.ObjectId) {
-    if (!(await this.employeeIsInCompany(companyId, employeeId))) {
-      await this.companyRepository.addEmployee(companyId, employeeId);
-      return await this.getCompanyById(companyId);
-    } else console.log('Employee is already in company, no need to add them');
   }
 
   async update(userId: Types.ObjectId, companyId: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
@@ -357,8 +357,21 @@ export class CompanyService {
     if (!(await this.usersService.userIsInCompany(userId, companyId)))
       throw new UnauthorizedException('User not in company');
 
+    //Save files In Bucket, and store URLs (if provided)
+    if (updateCompanyDto.logo) {
+      console.log('Uploading image');
+      const picture = await this.fileService.uploadBase64Image(updateCompanyDto.logo);
+      if (picture.secure_url != null) {
+        updateCompanyDto.logo = picture.secure_url;
+      } else throw new InternalServerErrorException('file upload failed');
+    }
+
     const updatedCompany = await this.companyRepository.update(companyId, updateCompanyDto);
     console.log(updatedCompany);
+
+    //Update All Users' JoinedCompanies
+    if (updateCompanyDto.name) await this.usersService.updateJoinedCompanyName(updatedCompany._id, updatedCompany.name);
+
     return updatedCompany;
   }
 
@@ -576,6 +589,10 @@ export class CompanyService {
     return await this.companyRepository.addJobStatus(companyId, statusId);
   }
 
+  async addJobStatuses(companyId: Types.ObjectId, statusIds: Types.ObjectId[]) {
+    return await this.companyRepository.addJobStatuses(companyId, statusIds);
+  }
+
   async updateCompanyStatuses(
     userId: Types.ObjectId,
     employeeId: Types.ObjectId,
@@ -593,5 +610,9 @@ export class CompanyService {
   async findAllStatusesInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
     if (!(await this.usersService.userIdExists(userId))) throw new NotFoundException('User not found');
     return this.companyRepository.findAllStatusesInCompany(companyId);
+  }
+
+  private eradicateCompany(companyId: Types.ObjectId) {
+    this.companyRepository.eradicateCompany(companyId).then((r) => console.log('acknowledged', r.acknowledged));
   }
 }
