@@ -44,6 +44,9 @@ export class ClientService {
     if (!check.isValid) {
       throw new ConflictException(check.message);
     }
+    const employee = await this.employeeService.findById(createClientDto.employeeId);
+    if (!employee) throw new NotFoundException('Employee not found');
+    createClientDto.companyId = employee.companyId;
     const createdClient = new Client(createClientDto);
     return await this.clientRepository.saveClient(createdClient);
   }
@@ -138,6 +141,16 @@ export class ClientService {
     if (result == null) {
       throw new InternalServerErrorException('Internal server Error');
     }
+
+    const emp = await this.employeeService.findById(deleteClientDto.employeeId);
+    const name = emp.userInfo.firstName + emp.userInfo.surname;
+    this.jobService.removeClient(name, deleteClientDto.clientId);
+
+    return true;
+  }
+
+  deleteAllInCompany(companyId: Types.ObjectId) {
+    this.clientRepository.deleteAllInCompany(companyId);
     return true;
   }
 

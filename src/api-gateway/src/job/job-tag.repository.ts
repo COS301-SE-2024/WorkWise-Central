@@ -147,4 +147,10 @@ export class JobTagRepository {
     });
     return deleteResult.acknowledged;
   }
+
+  deleteAllTagsAndStatusesInCompany(companyId: Types.ObjectId) {
+    this.jobTagModel.deleteMany({ companyId: companyId });
+    this.jobPriorityTagModel.deleteMany({ companyId: companyId });
+    this.jobStatusModel.deleteMany({ companyId: companyId });
+  }
 }
