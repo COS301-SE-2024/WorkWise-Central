@@ -1,11 +1,11 @@
 <template>
-  <v-dialog v-model="dialog" max-width="600" :theme="isdarkmode === true ? 'dark' : 'light'">
+  <v-dialog v-model="dialog" max-width="600" :theme="isDarkMode === true ? 'dark' : 'light'">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="success" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>View</v-btn
       >
     </template>
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
       <v-card-title>
         <v-icon>mdi-plus</v-icon>
         <span>Inventory Details</span>
@@ -100,7 +100,7 @@ export default defineComponent({
   data() {
     return {
       dialog: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false
     }
   },
   methods: {

@@ -126,7 +126,7 @@ export default defineComponent({
     Toast
   },
   data: () => ({
-    isdarkmode: false,
+    isDarkMode: false,
     isDeleting: false,
 
     localUrl: 'http://localhost:3000/',
@@ -368,7 +368,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
+    this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
     this.getCompanyDetails()
   }
 })

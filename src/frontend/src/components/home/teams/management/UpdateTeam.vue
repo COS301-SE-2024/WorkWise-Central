@@ -6,7 +6,7 @@
     scrollable
     color="warning"
     :opacity="0.1"
-    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular" color="warning" v-bind="activatorProps">
@@ -14,7 +14,7 @@
         Edit
       </v-btn>
     </template>
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-users"></v-icon>
         Edit Team
@@ -35,21 +35,25 @@
             </v-col>
             <v-col>
               <small class="text-caption">Team Members</small>
-              <v-textarea
-                v-model="localEditedItem.teamMembers"
+              <v-select
+                v-model="selectedTeamMembers"
+                :items="teamMemberNames"
                 color="secondary"
                 :rules="teamMembersRules"
+                multiple
+                chips
                 required
-              ></v-textarea>
+              ></v-select>
             </v-col>
             <v-col>
-              <small class="text-caption">Team Leader ID</small>
-              <v-text-field
-                v-model="localEditedItem.teamLeaderId"
+              <small class="text-caption">Team Leader</small>
+              <v-select
+                v-model="selectedTeamLeader"
+                :items="teamMemberNames"
                 color="secondary"
                 :rules="teamLeaderIdRules"
                 required
-              ></v-text-field>
+              ></v-select>
             </v-col>
           </v-col>
         </v-form>
@@ -63,6 +67,8 @@
                   icon="fa:fa-solid fa-cancel"
                   start
                   color="error"
+                  multiple
+                  chips
                   size="small"
                   :loading="isDeleting"
                 ></v-icon>
@@ -72,7 +78,7 @@
             <Toast position="top-center" />
             <v-col cols="12" lg="6">
               <v-btn
-                @click="updateTeam"
+                @click="handleSubmission"
                 color="success"
                 :disabled="!valid"
                 block
@@ -111,22 +117,28 @@ export default {
     return {
       localEditedItem: this.editedItem,
       editDialog: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       valid: false,
+      isDeleting: false,
+      teamMemberNames: [],
+      selectedTeamMembers: [],
+      selectedTeamLeader: '',
+      teamMemberIds: [],
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       teamNameRules: [(v) => !!v || 'Team Name is required'],
       teamMembersRules: [(v) => (Array.isArray(v) && v.length > 0) || 'Team Members are required'],
-      teamLeaderIdRules: [(v) => !!v || 'Team Leader ID is required']
+      teamLeaderIdRules: [(v) => !!v || 'Team Leader is required']
     }
   },
   created() {
-    console.log(this.editedItem)
     this.localEditedItem = this.deepCopy(this.editedItem)
+    this.getEmployees()
   },
   methods: {
-    updateTeam() {
-      this.isDeleting = true // Indicate the start of the deletion process
+    async updateTeam() {
+      this.isDeleting = true
+
       if (!this.localEditedItem) {
         this.$toast.add({
           severity: 'error',
@@ -143,21 +155,22 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = this.getRequestUrl()
+      const apiURL = await this.getRequestUrl()
 
       const data = {
         updateTeamDto: {
           teamName: this.localEditedItem.teamName,
-          teamMembers: this.localEditedItem.teamMembers,
-          teamLeaderId: this.localEditedItem.teamLeaderId,
+          teamMembers: this.selectedTeamMembers.map((name) => this.getEmployeeIdByName(name)),
+          teamLeaderId: this.getEmployeeIdByName(this.selectedTeamLeader),
           companyId: localStorage.getItem('currentCompany')
         },
         currentEmployeeId: localStorage.getItem('employeeId')
       }
-
+      console.log(data)
       axios
-        .patch(`${apiURL}teams/${this.teamId}`, data, config)
+        .patch(`${apiURL}team/${this.teamId}`, data, config)
         .then((response) => {
+          console.log(response)
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
@@ -167,7 +180,7 @@ export default {
           setTimeout(() => {
             this.isDeleting = false
             this.editDialog = false
-            window.location.reload()
+          //  window.location.reload()
           }, 1500)
         })
         .catch((error) => {
@@ -178,7 +191,52 @@ export default {
             detail: 'An error occurred while updating the team',
             life: 3000
           })
+          setTimeout(() => {
+            this.isDeleting = false
+          }, 1500)
         })
+    },
+    getEmployeeIdByName(name) {
+      const index = this.teamMemberNames.indexOf(name)
+      return this.teamMemberIds[index]
+    },
+    populateTeamLeaderName() {
+      const teamLeader = this.localEditedItem.teamMembers.find(
+        (member) => member === this.localEditedItem.teamLeaderId
+      )
+      this.selectedTeamLeader =
+        this.teamMemberNames[this.localEditedItem.teamMembers.indexOf(teamLeader)]
+    },
+    populateCurrentTeamMembers() {
+      this.selectedTeamMembers = this.localEditedItem.teamMembers.map(
+        (id) => this.teamMemberNames[this.teamMemberIds.indexOf(id)]
+      )
+    },
+    async getEmployees() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const response = await axios.get(
+          `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
+          config
+        )
+        response.data.data.forEach((employee) => {
+          this.teamMemberNames.push(employee.userInfo.displayName)
+          this.teamMemberIds.push(employee._id)
+        })
+        this.populateCurrentTeamMembers()
+        this.populateTeamLeaderName()
+      } catch (error) {
+        console.error(error)
+      }
     },
     deepCopy(obj) {
       return JSON.parse(JSON.stringify(obj))

@@ -3,8 +3,9 @@
     v-model="dialog"
     max-height="800"
     max-width="600"
-    :theme="isdarkmode ? 'dark' : 'light'"
+    :theme="isDarkMode ? 'dark' : 'light'"
     persistent
+    :opacity="0"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
@@ -86,7 +87,7 @@ export default defineComponent({
     return {
       dialog: false,
       isDeleting: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       priority: {
         label: '',
         colour: '',
@@ -142,6 +143,7 @@ export default defineComponent({
           })
           this.dialog = false
           setTimeout(() => {
+            this.isDeleting = false 
             window.location.reload()
           }, 3000)
         })
@@ -153,6 +155,7 @@ export default defineComponent({
             detail: 'An error occurred while creating priority',
             life: 3000
           })
+          this.isDeleting = false 
         })
     },
     async getRequestUrl() {

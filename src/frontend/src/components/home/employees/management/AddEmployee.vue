@@ -123,7 +123,7 @@ export default defineComponent({
     isDeleting: false,
     roleItems: [] as RoleItem[],
     subordinateItemNames: [] as EmployeeInformation2[],
-    isdarkmode: localStorage['theme'] !== 'false',
+    isDarkMode: localStorage['theme'] !== 'false',
     click_create_client: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <Toast />
+    <Toast position="top-center" />
     <v-card>
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
@@ -56,7 +56,7 @@
       v-model="dialog"
       max-height="800"
       max-width="600"
-      :theme="isdarkmode ? 'dark' : 'light'"
+      :theme="isDarkMode ? 'dark' : 'light'"
       persistent
     >
       <v-card>
@@ -76,12 +76,15 @@
             <div>
               <ColorPicker
                 inputId="cp-hex"
-                v-model="selectedItem.color"
+                v-model="selectedItem.colour"
                 inline
                 :rules="colorRules"
               />
             </div>
-            <span>Hex Code: {{ selectedItem.color }}</span>
+            <span
+              >Hex Code:
+              <v-chip :color="selectedItem.colour">{{ selectedItem.colour }}</v-chip></span
+            >
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -144,11 +147,11 @@ export default defineComponent({
     items: [] as any[],
     isDeleting: false,
     dialog: false,
-    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     selectedItem: {
       _id: '',
       label: '',
-      color: '',
+      colour: '',
       priorityLevel: 0,
       companyId: localStorage.getItem('currentCompany')
     },
@@ -232,9 +235,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
+      const data = this.selectedItem
       const apiURL = await this.getRequestUrl()
       axios
-        .patch(`${apiURL}job/tags/p/`, this.selectedItem, config)
+        .patch(`${apiURL}job/tags/p/`, data, config)
         .then((res) => {
           console.log(res)
           this.$toast.add({
@@ -244,7 +248,7 @@ export default defineComponent({
             life: 3000
           })
           setTimeout(() => {
-            window.location.reload()
+            //  window.location.reload()
             this.isDeleting = false
           }, 3000)
           this.dialog = false

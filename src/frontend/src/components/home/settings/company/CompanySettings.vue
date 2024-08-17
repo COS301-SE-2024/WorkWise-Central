@@ -1,5 +1,5 @@
 <template>
-  <v-container :theme="isdarkmode === true ? 'dark' : 'light'">
+  <v-container :theme="isDarkMode === true ? 'dark' : 'light'">
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
         <h1 class="text-xl font-semibold">Company Settings</h1>
@@ -59,7 +59,7 @@ export default defineComponent({
     return {
       companyDialog: false,
       currentSettings: sessionStorage.getItem('currentSettings') || 'Company Details',
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       items: [
         {
           icon: 'fa: fa-solid fa-building',

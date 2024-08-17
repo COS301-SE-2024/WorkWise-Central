@@ -2,7 +2,7 @@
   <v-dialog
     v-model="deleteDialog"
     max-width="500px"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
+    :theme="isDarkMode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
@@ -61,7 +61,7 @@ export default defineComponent({
     return {
       deleteDialog: false,
       isDeleting: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }

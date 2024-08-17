@@ -3,7 +3,7 @@
     v-model="dialog"
     max-height="800"
     max-width="600"
-    :theme="isdarkmode ? 'dark' : 'light'"
+    :theme="isDarkMode ? 'dark' : 'light'"
     :opacity="0.1"
     persistent
   >
@@ -76,7 +76,7 @@ export default defineComponent({
     return {
       dialog: false,
       isDeleting: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       formIsValid: false,

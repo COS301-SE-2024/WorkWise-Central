@@ -300,7 +300,7 @@ export default defineComponent({
     this.getPermissions()
     this.removeOwnerRoleFromArray()
     this.companyID = localStorage.getItem('currentCompany')
-    this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
+    this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
   }
 })
 </script>

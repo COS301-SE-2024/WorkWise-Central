@@ -2,7 +2,8 @@
   <v-dialog
     v-model="deleteDialog"
     max-width="500px"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
+    :theme="isDarkMode === true ? 'dark' : 'light'"
+    :opacity="0"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
@@ -29,8 +30,7 @@
       <v-card-actions>
         <v-container
           ><v-row justify="end"
-            ><v-col cols="12" lg="6"
-              ><Toast position="bottom-center" />
+            ><v-col cols="12" lg="6">
               <v-btn label="Cancel" color="secondary" @click="close" block
                 ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
                 >Cancel
@@ -67,7 +67,7 @@ export default defineComponent({
     return {
       deleteDialog: false,
       isDeleting: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
@@ -101,10 +101,10 @@ export default defineComponent({
             life: 3000
           })
           setTimeout(() => {
-            this.isDeleting = false
             this.deleteDialog = false
+            this.isDeleting = false
             window.location.reload()
-          }, 1500)
+          }, 3000)
         })
         .catch((err) => {
           console.error(err)
@@ -114,6 +114,7 @@ export default defineComponent({
             detail: 'An error occurred',
             life: 3000
           })
+          this.deleteDialog = false
         })
     },
     async getRequestUrl() {

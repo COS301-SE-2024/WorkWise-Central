@@ -20,7 +20,7 @@
                     <v-expansion-panel
                       v-for="i in 14"
                       :key="i"
-                      :theme="isdarkmode === true ? 'dark' : 'light'"
+                      :theme="isDarkMode === true ? 'dark' : 'light'"
                       style="font-family: Nunito, sans-serif"
                     >
                       <v-expansion-panel-title color="faqQuestion"
@@ -52,7 +52,7 @@ export default defineComponent({
   components: { Tut },
   data() {
     return {
-      isdarkmode: sessionStorage['theme'] === 'true',
+      isDarkMode: sessionStorage['theme'] === 'true',
       tab: null,
 
       faqs: [

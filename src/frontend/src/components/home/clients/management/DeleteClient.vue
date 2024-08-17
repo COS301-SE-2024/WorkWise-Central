@@ -2,7 +2,7 @@
   <v-dialog
     v-model="clientDialog"
     max-width="500px"
-    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
     :opacity="0"
   >
     <template v-slot:activator="{ props: activatorProps }">
@@ -10,7 +10,7 @@
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete
       </v-btn>
     </template>
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
       <v-card-title> Delete {{ client.name + ' ' + client.surname }} </v-card-title>
       <v-card-text>
         <v-container>
@@ -26,14 +26,7 @@
         <v-container
           ><v-row justify="end">
             <v-col cols="12" lg="6">
-              <Toast position="bottom-center" />
-              <v-btn
-                label="Cancel"
-                color="secondary"
-                text
-                @click="clientDialog = false"
-                block
-                :loading="isDeleting"
+              <v-btn label="Cancel" color="secondary" text @click="clientDialog = false" block
                 ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
                 >Cancel
               </v-btn></v-col
@@ -75,7 +68,7 @@ export default {
       clientDialog: false,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',

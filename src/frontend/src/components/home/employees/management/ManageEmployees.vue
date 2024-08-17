@@ -1,6 +1,6 @@
 c
 <template class="emply-mng-container">
-  <v-app :style="isdarkmode === true ? 'dark' : 'light'">
+  <v-app :style="isDarkMode === true ? 'dark' : 'light'">
     <v-container fluid fill-height>
       <v-row justify="center" xs="6" sm="6" md="12">
         <v-col cols="12">
@@ -10,7 +10,7 @@ c
                 height="auto"
                 class="pa-11 ma-0 bg-cardColor"
                 rounded="md"
-                :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
+                :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
                 border="md"
               >
                 <v-card-title
@@ -102,7 +102,7 @@ c
                           </v-chip>
                         </template>
                         <template v-slot:[`item.actions`]="{ item }">
-                          <v-menu max-width="500px" :theme="isdarkmode === true ? 'dark' : 'light'">
+                          <v-menu max-width="500px" :theme="isDarkMode === true ? 'dark' : 'light'">
                             <template v-slot:activator="{ props }"
                               ><v-btn
                                 rounded="xl"
@@ -114,7 +114,7 @@ c
                                 <v-icon color="primary">mdi-dots-horizontal</v-icon>
                               </v-btn></template
                             >
-                            <v-list>
+                            <v-list class="bg-background">
                               <v-list-item
                                 ><EmployeeDetails colors="colors" :EmployeeDetails="selectedItem"
                               /></v-list-item>
@@ -169,7 +169,7 @@ export default {
     selectedItemSurname: '',
     loading_data: true,
     selectedItem: {} as any,
-    isdarkmode: localStorage['theme'] !== 'false',
+    isDarkMode: localStorage['theme'] !== 'false',
     clientDialog: false,
     deleteDialog: false,
     editDialog: false,
@@ -377,13 +377,13 @@ export default {
       }
     },
     toggleDarkMode() {
-      console.log(this.isdarkmode)
-      if (this.isdarkmode === true) {
-        this.isdarkmode = false
-        console.log(this.isdarkmode)
+      console.log(this.isDarkMode)
+      if (this.isDarkMode === true) {
+        this.isDarkMode = false
+        console.log(this.isDarkMode)
       } else {
-        this.isdarkmode = true
-        console.log(this.isdarkmode)
+        this.isDarkMode = true
+        console.log(this.isDarkMode)
       }
     },
     getColor(value: string) {

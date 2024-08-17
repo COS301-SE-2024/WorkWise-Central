@@ -3,14 +3,14 @@
     v-model="dialog"
     max-width="500"
     height="500"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
+    :theme="isDarkMode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
         variant="elevated"
-        color="primary"
+        :color="buttonColor ? buttonColor : 'primary'"
         block
         v-bind="activatorProps"
         >Join Company</v-btn
@@ -101,6 +101,9 @@ export default defineComponent({
   components: {
     Toast
   },
+  props: {
+    buttonColor: String
+  },
   data: () => ({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
@@ -112,7 +115,7 @@ export default defineComponent({
     modal_light_theme_color: '#FFFFFF',
     click_create_client: false,
     attribute_is_filled: false,
-    isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
+    isDarkMode: sessionStorage.getItem('theme') === 'true' ? true : false,
     req_obj: {
       company_name: '',
       companyID: ''

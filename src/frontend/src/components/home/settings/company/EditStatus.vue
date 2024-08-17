@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <Toast />
+    <Toast position="top-center" />
     <v-card>
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
@@ -55,7 +55,7 @@
       v-model="dialog"
       max-height="800"
       max-width="600"
-      :theme="isdarkmode ? 'dark' : 'light'"
+      :theme="isDarkMode ? 'dark' : 'light'"
       persistent
     >
       <v-card>
@@ -72,8 +72,11 @@
             />
 
             <v-label>Tag Color</v-label>
-            <div><ColorPicker inputId="cp-hex" v-model="selectedItem.color" inline /></div>
-            <span>Hex Code: {{ selectedItem.color }}</span>
+            <div><ColorPicker inputId="cp-hex" v-model="selectedItem.colour" inline /></div>
+            <span
+              >Hex Code:
+              <v-chip :color="selectedItem.colour">{{ selectedItem.colour }}</v-chip></span
+            >
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -145,7 +148,7 @@ export default defineComponent({
     selectedItem: {
       _id: '',
       status: '',
-      color: '',
+      colour: '',
       companyId: localStorage.getItem('currentCompany'),
       employeeId: localStorage.getItem('employeeId')
     },
@@ -168,7 +171,7 @@ export default defineComponent({
         return r < 240 || g < 240 || b < 240 || 'Colors close to white are not allowed'
       }
     ],
-    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
@@ -226,9 +229,14 @@ export default defineComponent({
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        data: {
+          companyId: localStorage.getItem('currentCompany'),
+          employeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = this.getRequestUrl()
+      console.log(this.selectedItem)
+      const apiURL = await this.getRequestUrl()
       await axios
         .patch(`${apiURL}job/status`, this.selectedItem, config)
         .then((response) => {

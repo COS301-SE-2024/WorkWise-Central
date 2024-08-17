@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <Toast />
+    <Toast position="top-center" />
     <v-card>
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
@@ -55,7 +55,7 @@
       v-model="dialog"
       max-height="800"
       max-width="600"
-      :theme="isdarkmode ? 'dark' : 'light'"
+      :theme="isDarkMode ? 'dark' : 'light'"
       persistent
     >
       <v-card>
@@ -72,8 +72,11 @@
             />
 
             <v-label>Tag Color</v-label>
-            <div><ColorPicker inputId="cp-hex" v-model="selectedItem.color" inline /></div>
-            <span>Hex Code: {{ selectedItem.color }}</span>
+            <div><ColorPicker inputId="cp-hex" v-model="selectedItem.colour" inline /></div>
+            <span
+              >Hex Code:
+              <v-chip :color="selectedItem.colour">{{ selectedItem.colour }}</v-chip></span
+            >
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -132,11 +135,11 @@ export default defineComponent({
     items: [] as any[],
     isDeleting: false,
     dialog: false,
-    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     selectedItem: {
       _id: '',
       label: '',
-      color: '',
+      colour: '',
       companyId: localStorage.getItem('currentCompany')
     },
     localUrl: 'http://localhost:3000/',

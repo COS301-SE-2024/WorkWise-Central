@@ -4,13 +4,13 @@
     v-model="companyDialog"
     location="right"
     min-width="300"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
+    :theme="isDarkMode === true ? 'dark' : 'light'"
     :close-on-content-click="false"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="primary" class="h6" v-bind="activatorProps">{{ companyName }}</v-btn>
     </template>
-    <v-card class="bg-background" :theme="isdarkmode === true ? 'dark' : 'light'" rounded="md">
+    <v-card class="bg-background" :theme="isDarkMode === true ? 'dark' : 'light'" rounded="md">
       <v-card-title class="bg-background">User's Companies</v-card-title>
       <v-card-text class="bg-background">
         <v-container>
@@ -89,7 +89,7 @@ export default defineComponent({
       joinedCompaniesNames: [],
       joinedCompaniesIds: [],
       joinedCompaniesEmployeeIds: [],
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       companyList: [
         'Company 1',
         'Company 2',

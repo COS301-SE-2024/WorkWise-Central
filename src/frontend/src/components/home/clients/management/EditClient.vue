@@ -1,8 +1,9 @@
 <template>
+  <Toast position="top-center" />
   <v-dialog
     v-model="clientDialog"
     max-width="600"
-    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
     :opacity="0"
   >
     <template v-slot:activator="{ props: activatorProps }">
@@ -10,7 +11,7 @@
         ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon>Edit
       </v-btn>
     </template>
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
       <v-card-title class="text-center"> Edit Client </v-card-title>
 
       <v-card-text>
@@ -168,6 +169,7 @@
 
 <script>
 import axios from 'axios'
+import Toast from 'primevue/toast'
 export default {
   name: 'EditClient',
   props: {
@@ -177,10 +179,13 @@ export default {
     item: Object,
     _clientID: Number
   },
+  components: {
+    Toast
+  },
   data() {
     return {
       localEditedItem: this.editedItem,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       clientDialog: false,
       valid: true,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
@@ -301,7 +306,7 @@ export default {
         setTimeout(() => {
           this.isDeleting = false
           this.clientDialog = false
-          window.location.reload()
+          // window.location.reload()
         }, 3000)
 
         return true
@@ -314,8 +319,6 @@ export default {
           life: 3000
         })
         return false
-      } finally {
-        this.clientDialog = false
       }
     },
     async isLocalAvailable(localUrl) {

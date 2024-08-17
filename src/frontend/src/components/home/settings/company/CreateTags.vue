@@ -3,7 +3,7 @@
     v-model="dialog"
     max-height="800"
     max-width="600"
-    :theme="isdarkmode ? 'dark' : 'light'"
+    :theme="isDarkMode ? 'dark' : 'light'"
     persistent
     :opacity="0"
   >
@@ -80,7 +80,7 @@ export default defineComponent({
     return {
       isDeleting: false,
       dialog: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       tag: {
         label: '',
         colour: '',

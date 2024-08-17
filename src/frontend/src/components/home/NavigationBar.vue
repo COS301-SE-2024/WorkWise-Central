@@ -21,8 +21,8 @@ const clientSubItems = ref([
 
 const employeeSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'manageremployees' },
-  { title: 'Employee Center', icon: 'fa: fa-solid fa-circle-user', routeName: 'employee-center' },
-  { title: 'Teams', icon: 'fa: fa-solid fa-users', routeName: 'teams' }
+  { title: 'Teams', icon: 'fa: fa-solid fa-users', routeName: 'teams' },
+  { title: 'Employee Center', icon: 'fa: fa-solid fa-circle-user', routeName: 'employee-center' }
 ])
 const teamSubItems = ref([{ title: 'Management' }])
 const jobSubItems = ref([
@@ -87,7 +87,7 @@ export default defineComponent({
     CompanyMain
   },
   data: () => ({
-    isdarkmode: localStorage.getItem('theme') === 'true',
+    isDarkMode: localStorage.getItem('theme') === 'true',
     logoutDialog: false,
     selected: '',
     employeePermissions: [] as string[],
@@ -99,15 +99,15 @@ export default defineComponent({
   // },
   methods: {
     toggleDarkMode() {
-      console.log(this.isdarkmode)
-      if (this.isdarkmode) {
-        this.isdarkmode = false
-        console.log(this.isdarkmode)
+      console.log(this.isDarkMode)
+      if (this.isDarkMode) {
+        this.isDarkMode = false
+        console.log(this.isDarkMode)
       } else {
-        this.isdarkmode = true
-        console.log(this.isdarkmode)
+        this.isDarkMode = true
+        console.log(this.isDarkMode)
       }
-      localStorage.setItem('theme', this.isdarkmode.toString()) // save the theme to session storage
+      localStorage.setItem('theme', this.isDarkMode.toString()) // save the theme to session storage
     },
     setInbox(inbox: string) {
       this.selected = inbox
@@ -156,9 +156,9 @@ export default defineComponent({
 </script>
 
 <template>
-  <v-app :theme="isdarkmode ? 'dark' : 'light'">
-    <v-app :theme="isdarkmode ? 'dark' : 'light'">
-      <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-background">
+  <v-app :theme="isDarkMode ? 'dark' : 'light'">
+    <v-app :theme="isDarkMode ? 'dark' : 'light'">
+      <v-app-bar :theme="isDarkMode ? 'dark' : 'light'" app class="bg-background">
         <v-app-bar-nav-icon @click="isVisible = !isVisible">
           <v-icon>{{ isVisible ? 'fa: fa-solid fa-bars' : 'fa: fa-solid fa-bars' }}</v-icon>
         </v-app-bar-nav-icon>
@@ -177,7 +177,7 @@ export default defineComponent({
           <v-icon
             class="icon-padding mr-5"
             @click="toggleDarkMode"
-            :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"
+            :icon="isDarkMode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"
           ></v-icon>
         </div>
       </v-app-bar>
@@ -186,7 +186,7 @@ export default defineComponent({
         app
         v-model="drawer"
         :rail="isVisible"
-        :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
+        :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
         min-height="100%"
       >
         <v-list v-model:open="open">
@@ -221,6 +221,7 @@ export default defineComponent({
               ></v-list-item>
             </template>
             <v-list-item
+              v-show="checkPermission('view all clients')"
               v-for="(item, i) in clientSubItems"
               :key="i"
               :to="{ name: item.routeName }"
