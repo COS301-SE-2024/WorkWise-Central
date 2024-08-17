@@ -6,6 +6,7 @@
         color="secondary"
         variant="elevated"
         v-bind="activatorProps"
+        :loading="isGenerating"
         @click="openDialog"
       >
         <v-icon icon="fa:fa-solid fa-file" start color="primary" size="small"></v-icon>
@@ -33,9 +34,21 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn color="primary" @click="generatePDF">Download PDF</v-btn>
+        <v-container
+          ><v-row
+            ><v-col cols="12" lg="6">
+              <v-btn color="primary" @click="generatePDF" block
+                ><v-icon icon="fa: fa-solid fa-file" color="primary"></v-icon>Download PDF</v-btn
+              ></v-col
+            ><v-col cols="12" lg="6">
+              <v-btn color="secondary" @click="closeDialog" block
+                ><v-icon icon="fa: fa-solid fa-cancel" color="secondary"></v-icon>Close</v-btn
+              ></v-col
+            ></v-row
+          ></v-container
+        >
+
         <v-spacer></v-spacer>
-        <v-btn color="secondary" @click="closeDialog">Close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -51,6 +64,7 @@ export default {
   data() {
     return {
       dialog: false,
+      isGenerating: false,
       headers: [
         { title: 'Item', value: 'name' },
         { title: 'Current Stock', value: 'currentStock' },
@@ -81,7 +95,7 @@ export default {
     },
     generatePDF() {
       const doc = new jsPDF()
-
+      this.isGenerating = true
       // Title
       doc.text('Inventory Report', 14, 20)
 

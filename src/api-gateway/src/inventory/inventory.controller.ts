@@ -32,7 +32,7 @@ import {
 import { InventoryListResponseDto, InventoryResponseDto } from './entities/inventory.entity';
 import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
-import { CreateInventoryDto, CreateInventoryResponseDto } from './dto/create-inventory.dto';
+import { CreateInventoryDto, CreateInventoryOuterDto, CreateInventoryResponseDto } from './dto/create-inventory.dto';
 import { AuthGuard } from '../auth/auth.guard';
 // import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
@@ -79,15 +79,15 @@ export class InventoryController {
   async create(
     @Headers() headers: any,
     @Body()
-    body: {
-      currentEmployeeId: Types.ObjectId;
-      createInventoryDto: CreateInventoryDto;
-    },
+    body: CreateInventoryOuterDto,
   ) {
     //Base64 Validation
+    console.log(body);
     if (body.createInventoryDto.images.length > 0) {
-      const valid = isBase64Uri(body.createInventoryDto.images);
-      if (!valid) throw new BadRequestException('Images must be Base64 URIs');
+      for (const image of body.createInventoryDto.images) {
+        const valid = isBase64Uri(image);
+        if (!valid) throw new BadRequestException('Images must be Base64 URIs');
+      }
     }
 
     const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
@@ -254,15 +254,14 @@ export class InventoryController {
     status: HttpStatus.BAD_REQUEST,
   })
   @ApiOperation({
-    summary: `Add new images to an inventory item`,
+    summary: `Add new images to an inventory item (the key needed in in your form-data is "files")`,
     description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
   })
   @ApiOkResponse({
     type: InventoryResponseDto,
     description: `The updated ${className} object`,
   })
-  @ApiBody({ type: UpdateInventoryDto })
-  @Put('images/:id')
+  @Put('images/')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'files', maxCount: 20 }]))
   async addImages(
@@ -271,6 +270,9 @@ export class InventoryController {
     @Query('empId') currentEmployeeId: Types.ObjectId,
     @UploadedFiles() files: { files?: Express.Multer.File[] },
   ) {
+    if (id == undefined || currentEmployeeId == null) {
+      throw new BadRequestException('Query parameters are missing');
+    }
     console.log(files);
     console.log('In addImages inventory controller');
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);

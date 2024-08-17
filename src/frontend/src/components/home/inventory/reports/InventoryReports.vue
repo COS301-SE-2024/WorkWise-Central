@@ -19,6 +19,7 @@
                         variant="elevated"
                         color="primary"
                         block
+                        :loading="isGenerating"
                         @click="generatePDF('Stock Movement Report')"
                         ><v-icon color="secondary" icon="fa:fa-solid fa-file"></v-icon>Generate
                         PDF</v-btn
@@ -97,6 +98,7 @@
                         variant="elevated"
                         color="primary"
                         block
+                        :loading="isGenerating"
                         @click="generatePDF('Inventory Forecast Report')"
                         ><v-icon color="secondary" icon="fa:fa-solid fa-file"></v-icon>Generate
                         PDF</v-btn
@@ -151,6 +153,7 @@ export default defineComponent({
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       activeTab: 0,
+      isGenerating: false,
       locationTab: null,
       locationName: 'Warehouse A',
       currentInventoryItem: '',
@@ -386,7 +389,7 @@ export default defineComponent({
     },
     generatePDF(reportType) {
       const doc = new jsPDF()
-
+      this.isGenerating = true
       // Title
       doc.text(`${reportType}`, 14, 20)
 
@@ -425,6 +428,7 @@ export default defineComponent({
 
       // Save the PDF
       doc.save(`${reportType.toLowerCase().replace(/ /g, '_')}_report.pdf`)
+      this.isGenerating = false
     },
     changeLocationTab(location) {
       this.locationName = location

@@ -35,7 +35,6 @@ import {
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
@@ -55,6 +54,7 @@ import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JobStatusAllResponseDto } from '../job/dto/job-responses.dto';
 import { EmployeeService } from '../employee/employee.service';
+import { DeleteCompanyDto } from './dto/delete-company.dto';
 
 const className = 'Company';
 
@@ -303,23 +303,18 @@ export class CompanyController {
     type: BooleanResponseDto,
     description: `A boolean value indicating whether or not the deletion was a success`,
   })
-  @ApiParam({
-    name: 'cid',
-    description: `The _id attribute of the ${className}`,
-  })
-  @Delete(':cid')
-  async remove(
-    @Headers() headers: any,
-    @Param('cid') cid: string,
-    @Body() body: { currentEmployeeId: Types.ObjectId },
-  ) {
-    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+  @Delete('full')
+  async remove(@Headers() headers: any, @Query('empId') empId: string, @Query('cId') cId: string) {
+    validateObjectIds([empId, cId]);
+    const employeeId = new Types.ObjectId(empId);
+    const companyId = new Types.ObjectId(cId);
+    const currentEmployee = await this.employeeService.findById(employeeId);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       try {
-        validateObjectId(cid);
+        validateObjectId(cId);
         const userId = extractUserId(this.jwtService, headers);
-        const objectId = new Types.ObjectId(cid);
-        await this.companyService.deleteCompany(userId, objectId);
+        const deleteDto = new DeleteCompanyDto(employeeId, companyId);
+        await this.companyService.deleteCompany(userId, deleteDto);
         return { data: true };
       } catch (e) {
         throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);

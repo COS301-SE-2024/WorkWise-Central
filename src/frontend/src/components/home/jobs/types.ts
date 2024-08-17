@@ -202,6 +202,7 @@ export type JobCardDataFormat = {
   tags: Tag[]
   status: Status
   priorityTag: PriorityTag
+  coverImage: string
 }
 
 export type Job = {

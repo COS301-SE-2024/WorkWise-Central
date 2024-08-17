@@ -10,18 +10,17 @@
                 style="font-family: Nunito, sans-serif; font-size: 25px; font-weight: lighter"
               >
                 <v-row align="center" justify="space-between">
-                  <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+                  <v-col cols="12" lg="4" class="d-flex align-center">
                     <v-icon icon="fa: fa-solid fa-briefcase" size="x-small"></v-icon>
                     <v-label
-                      class="ms-2 text-h4 text-headingTextColor"
-                      style="font-size: 15px; font-family: Nunito, sans-serif; font-weight: lighter"
+                      class="ms-2 h2 font-family-Nunito text-headingTextColor"
                       height="auto"
                       width="auto"
-                    >Job Details
-                    </v-label>
+                      >Job Details</v-label
+                    >
                   </v-col>
 
-                  <v-col order-sm="1" order-md="1" cols="12" md="4" sm="12" xs="12">
+                  <v-col order-sm="1" order-md="1" cols="12" lg="4">
                     <v-text-field
                       v-model="search"
                       density="compact"
@@ -36,15 +35,7 @@
                       single-line
                     ></v-text-field>
                   </v-col>
-                  <v-col
-                    order-sm="2"
-                    order-md="2"
-                    cols="12"
-                    md="4"
-                    sm="12"
-                    xs="12"
-                    class="d-flex justify-end"
-                  >
+                  <v-col order-sm="2" order-md="2" cols="12" lg="4" class="d-flex justify-end">
                     <AddJob />
                   </v-col>
                 </v-row>
@@ -131,23 +122,52 @@
                         <v-list class="bg-background">
                           <v-list-item class="pl-0">
                             <v-btn color="success" width="100%" @click.stop="openViewDialog()">
-                              <v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>View
+                              <v-icon
+                                icon="fa:fa-solid fa-eye"
+                                start
+                                color="success"
+                                size="small"
+                              ></v-icon
+                              >View
                             </v-btn>
-                            <v-dialog v-model="viewJobDialogVisible" :max-height="800" :max-width="1000">
+                            <v-dialog
+                              v-model="viewJobDialogVisible"
+                              :max-height="800"
+                              :max-width="1000"
+                            >
                               <ViewJob :passedInJob="selectedJob" @close="closeViewJob()"></ViewJob>
                             </v-dialog>
                           </v-list-item>
                           <v-list-item class="pl-0">
                             <v-btn color="warning" width="100%" @click.stop="openJobCardDialog()">
-                              <v-icon icon="fa:fa-solid fa-pencil" start color="warning" size="small"></v-icon>Edit
+                              <v-icon
+                                icon="fa:fa-solid fa-pencil"
+                                start
+                                color="warning"
+                                size="small"
+                              ></v-icon
+                              >Edit
                             </v-btn>
-                            <v-dialog v-model="viewManagerJobCardVisible" :max-height="600" :max-width="1000">
-                              <ManagerJobCard :passedInJob="selectedJob" @close="closeEditJob()"></ManagerJobCard>
+                            <v-dialog
+                              v-model="viewManagerJobCardVisible"
+                              :max-height="600"
+                              :max-width="1000"
+                            >
+                              <ManagerJobCard
+                                :passedInJob="selectedJob"
+                                @close="closeEditJob()"
+                              ></ManagerJobCard>
                             </v-dialog>
                           </v-list-item>
                           <v-list-item>
                             <v-btn color="error" @click.stop="deleteDialog = true">
-                              <v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete
+                              <v-icon
+                                icon="fa:fa-solid fa-trash"
+                                start
+                                color="error"
+                                size="small"
+                              ></v-icon
+                              >Delete
                             </v-btn>
                           </v-list-item>
                         </v-list>
@@ -169,13 +189,20 @@
         </v-card-title>
         <v-card-text> Are you sure you want to delete this job? </v-card-text>
         <v-card-actions>
-          <v-btn color="error" @click="confirmDelete">Confirm</v-btn>
-          <v-btn @click="deleteDialog = false"
-          >Cancel</v-btn>
+          <v-container
+            ><v-row
+              ><v-col cols="12" lg="6">
+                <v-btn color="error" @click="confirmDelete" block>Confirm</v-btn></v-col
+              >
+              <v-col cols="12" lg="6">
+                <v-btn @click="deleteDialog = false" block>Cancel</v-btn></v-col
+              ></v-row
+            ></v-container
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <Toast position="bottom-center"/>
+    <Toast position="bottom-center" />
   </v-container>
 </template>
 
@@ -428,8 +455,7 @@ const openDialog = (job: Job) => {
   selectedJob.value = job
 }
 
-const closeDialog = () => {
-}
+const closeDialog = () => {}
 
 const formatDate = (dateString: string): string => {
   const options: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', year: '2-digit' }

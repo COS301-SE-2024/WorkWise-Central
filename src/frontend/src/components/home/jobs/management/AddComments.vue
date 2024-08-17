@@ -103,7 +103,9 @@ interface EmployeeId {
 // Data
 const newComment = ref('')
 const userInitials = ref<{ employeeId: string; initials: string }[]>([])
-const comments = ref<{ text: string; employeeId: string; date: string; initials?: string; _id: string }[]>(
+const comments = ref<
+  { text: string; employeeId: string; date: string; initials?: string; _id: string }[]
+>(
   props.jobComments.map((comment) => ({
     text: comment.comment,
     employeeId: comment.employeeId._id,

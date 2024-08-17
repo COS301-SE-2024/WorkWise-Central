@@ -32,7 +32,7 @@ const jobSubItems = ref([
 ])
 
 const inventorySubItems = ref([
-  { title: 'Management', icon: 'fa: fa-solid fa-warehouse', routeName: 'inventory' },
+  { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'inventory' },
   {
     title: 'Inventory Center',
     icon: 'fa: fa-solid fa-bars-progress',
@@ -72,7 +72,7 @@ import '@mdi/font/css/materialdesignicons.css' // icon import
 import ProfilePage from './settings/profile/ProfilePage.vue'
 import DarkModeToggleVue from './settings/DarkModeToggle.vue'
 import CompanyMain from './settings/company/CompanyMain.vue'
-// import { mapGetters } from 'vuex'
+import axios from 'axios'
 
 export default defineComponent({
   name: 'NavigationBar',
@@ -89,7 +89,10 @@ export default defineComponent({
   data: () => ({
     isdarkmode: localStorage.getItem('theme') === 'true',
     logoutDialog: false,
-    selected: ''
+    selected: '',
+    employeePermissions: [] as string[],
+    localUrl: 'http://localhost:3000/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   // computed: {
   //   ...mapGetters(['isDarkMode'])
@@ -109,21 +112,45 @@ export default defineComponent({
     setInbox(inbox: string) {
       this.selected = inbox
     },
-    fuga() {
-      this.logoutDialog = true
+    async getEmployeePermissions() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      axios
+        .get(`${apiURL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
+        .then((response) => {
+          console.log(response.data.data.role.permissionSuite)
+          this.employeePermissions = response.data.data.role.permissionSuite
+        })
+        .catch((error) => {
+          console.error('Failed to fetch employees:', error)
+        })
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    checkPermission(permission: string) {
+      return this.employeePermissions.includes(permission)
     }
-    // logout(name: string) {
-    //   if (name === 'splash') {
-    //     // Clear local storage
-    //     localStorage.clear()
-
-    //     // Replace current history state to prevent back navigation
-    //     window.history.replaceState({}, document.title, window.location.pathname)
-
-    //     // Redirect to login page
-    //     this.$router.push({ name: 'splash' })
-    //   }
-    // }
+  },
+  mounted() {
+    this.getEmployeePermissions()
   }
 })
 </script>
@@ -177,17 +204,10 @@ export default defineComponent({
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
-                start
-                :class="isVisible === true ? '' : 'mr-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
@@ -205,17 +225,10 @@ export default defineComponent({
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
-                start
-                :class="isVisible === true ? '' : 'mr-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
@@ -234,17 +247,10 @@ export default defineComponent({
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
-                start
-                :class="isVisible === true ? '' : 'mr-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
@@ -262,17 +268,10 @@ export default defineComponent({
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
-                start
-                :class="isVisible === true ? '' : 'mr-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
@@ -290,17 +289,10 @@ export default defineComponent({
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
-                start
-                :class="isVisible === true ? '' : 'mr-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
@@ -318,17 +310,10 @@ export default defineComponent({
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
-                start
-                :class="isVisible === true ? '' : 'mr-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
         <v-list v-model:open="open">
@@ -346,21 +331,14 @@ export default defineComponent({
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
-                start
-                :class="isVisible === true ? '' : 'mr-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
 
-        <v-list v-model:open="open">
+        <v-list v-model:open="open" v-show="checkPermission('company settings') === true">
           <v-list-group fluid value="More">
             <template v-slot:activator="{ props }">
               <v-list-item
@@ -375,17 +353,10 @@ export default defineComponent({
               :key="i"
               :to="{ name: item.routeName }"
               :value="item.title"
+              :title="item.title"
+              :prepend-icon="item.icon"
               @click="setInbox(item.title)"
-              :class="{ 'bg-secondary': selected === item.title }"
-              ><v-icon
-                :icon="item.icon"
-                size="sm"
-                :color="selected === item.title ? 'primary' : 'secondary'"
-                start
-                :class="isVisible === true ? '' : 'mr-4'"
-              ></v-icon
-              ><small v-if="isVisible === false">{{ item.title }}</small></v-list-item
-            >
+            ></v-list-item>
           </v-list-group>
         </v-list>
       </v-navigation-drawer>

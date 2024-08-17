@@ -12,6 +12,7 @@
         variant="elevated"
         color="secondary"
         v-bind="activatorProps"
+        block
         >Register Company</v-btn
       >
     </template>
@@ -24,7 +25,7 @@
       <v-form
         ref="form"
         v-model="valid"
-        @submit.prevent="registrationHandler"
+        @submit.prevent="validateRegistration"
         class="bg-background"
       >
         <v-col>
@@ -287,7 +288,6 @@
                   color="cardColor"
                   v-model="req_obj.address.province"
                   rounded="md"
-                  type="houseNumber"
                   variant="solo"
                   :items="[
                     'Eastern Cape',
@@ -357,34 +357,6 @@
                 ></v-text-field
               ></v-col>
             </v-row>
-            <!--            <v-row>-->
-            <!--              <v-col-->
-            <!--                > <v-text-field
-                @update:focused = "setUserId"-->
-            <!--                  :theme="isdarkmode === true ? 'dark' : 'light'"-->
-            <!--                  density="compact"-->
-            <!--                  color="grey-lighten-4"-->
-            <!--                  placeholder="Complex"-->
-            <!--                  rounded="md"-->
-            <!--                  v-model="req_obj.address.complex"-->
-            <!--                  variant="solo"-->
-            <!--                  required-->
-            <!--                ></v-text-field-->
-            <!--              ></v-col>-->
-            <!--              <v-col-->
-            <!--                > <v-text-field
-                @update:focused = "setUserId"-->
-            <!--                  :theme="isdarkmode === true ? 'dark' : 'light'"-->
-            <!--                  density="compact"-->
-            <!--                  color="grey-lighten-4"-->
-            <!--                  placeholder="House number"-->
-            <!--                  rounded="md"-->
-            <!--                  v-model="req_obj.address.houseNumber"-->
-            <!--                  variant="solo"-->
-            <!--                  required-->
-            <!--                ></v-text-field-->
-            <!--              ></v-col>-->
-            <!--            </v-row>-->
           </v-col>
           <v-col cols="8" offset="2" align="center">
             <Toast />
@@ -423,6 +395,31 @@
 <script lang="ts">
 import axios from 'axios'
 import Toast from 'primevue/toast'
+
+type ContactDetails = {
+  email: string
+  phoneNumber: string
+}
+
+type Address = {
+  province: string
+  street: string
+  suburb: string
+  city: string
+  postalCode: string
+  complex?: string
+}
+
+type RequestBody = {
+  userId: string | null
+  name: string
+  type?: string
+  registrationNumber?: string
+  vatNumber?: string
+  logo?: string
+  contactDetails: ContactDetails
+  address: Address
+}
 const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
 
 export default {
@@ -450,12 +447,17 @@ export default {
           /^[A-Z][a-zA-Z &-]{0,48}[a-zA-Z]$/.test(v) ||
           'Company name can contain both capital and lowercase letters, spaces, "&", or "-"'
       ],
-      email_rules: [(val: string) => email_reg.test(val) || 'Email should contain an @ symbol'],
+      email_rules: [
+        (val: string) => !!val || 'Email is requered',
+        (val: string) => email_reg.test(val) || 'Email should contain an @ symbol'
+      ],
       vat_number_rules: [
-        (v: string) => /^\d{10}$/.test(v) || 'VAT number must be a valid South African VAT number'
+        (v: string) =>
+          !v || /^\d{10}$/.test(v) || 'VAT number must be a valid South African VAT number'
       ],
       company_registration_number_rules: [
         (v: string) =>
+          !v ||
           /^\d{4}\/\d{6}\/\d{2}$/.test(v) ||
           'Company registration number must be a valid South African number format: YYYY/NNNNNN/XX'
       ],
@@ -491,17 +493,25 @@ export default {
           suburb: '',
           city: '',
           postalCode: '',
-          complex: '',
-          houseNumber: ''
+          complex: ''
         }
-        // employees: [],
-        // inventoryItems: [],
-        // private: false
-      }
+      } as RequestBody
     }
   },
   methods: {
-    async registrationHandler() {
+    async validateRegistration() {
+      const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
+      const validate = await (form as any).validate()
+
+      this.req_obj.registrationNumber || delete this.req_obj.registrationNumber
+      this.req_obj.vatNumber || delete this.req_obj.vatNumber
+      this.req_obj.address.complex || delete this.req_obj.address.complex
+      this.req_obj.logo || delete this.req_obj.logo
+
+      validate.valid || (await this.registrationHandler())
+    },
+
+    async registrationHandler(): Promise<void> {
       console.log(JSON.stringify(this.req_obj))
       console.log(this.req_obj)
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
@@ -510,30 +520,31 @@ export default {
       axios
         .post(apiURL + 'company/create', this.req_obj, config)
         .then((res) => {
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Company registered successfully',
-            life: 3000
-          })
-          console.log(res.data.data.id)
+          console.log(res)
 
           localStorage['currentCompany'] = res.data.data._id
           // localStorage['employeeId'] = res.data.data.employees[0]
-
-          console.log(res.data)
+          console.log('Request to create company worked')
+          console.log(res)
 
           axios
             .get(apiURL + 'company/id/' + res.data.data._id, config)
-            .then((res) => {
-              console.log(res.data.data)
-              localStorage['employeeId'] = res.data.data.employees[0]
+            .then((res1) => {
+              console.log(res1.data.data)
+              localStorage['employeeId'] = res1.data.data.employees[0]
+              this.$toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Company registered successfully',
+                life: 3000
+              })
+
+              console.log('Request to set EmployeeId was successfull')
+              this.$router.push({ name: 'dashboard' })
             })
             .catch((error) => {
               console.log('Error occured when storing employeeId: ', error)
             })
-
-          this.$router.push('/dashboard')
         })
         .catch((res) => {
           this.$toast.add({

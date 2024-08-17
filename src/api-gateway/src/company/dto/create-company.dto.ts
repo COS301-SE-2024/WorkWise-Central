@@ -1,4 +1,4 @@
-import { ApiProperty, OmitType } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty, OmitType } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import {
   IsBoolean,
@@ -121,10 +121,51 @@ export class findCompanyResponseDto {
   data: Company & { _id: Types.ObjectId }[];
 }
 
-export class CreateCompanyResponseDto {
-  data: Company & { _id: Types.ObjectId };
+export class CompanyApiCreateObject {
+  @ApiProperty()
+  ownerId: Types.ObjectId;
 
-  constructor(data: Company & { _id: Types.ObjectId }) {
+  @ApiProperty()
+  _id: Types.ObjectId;
+
+  @ApiProperty()
+  registrationNumber?: string;
+
+  @ApiProperty()
+  vatNumber?: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  type?: string;
+
+  @ApiProperty()
+  logo?: string = 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
+
+  @ApiProperty()
+  contactDetails: ContactDetails;
+
+  @ApiProperty()
+  address: Address;
+
+  @ApiProperty()
+  private: boolean;
+
+  @ApiHideProperty()
+  public createdAt: Date;
+
+  @ApiHideProperty()
+  public updatedAt: Date;
+
+  @ApiHideProperty()
+  public deletedAt: Date;
+}
+
+export class CreateCompanyResponseDto {
+  data: CompanyApiCreateObject;
+
+  constructor(data: CompanyApiCreateObject) {
     this.data = data;
   }
 }

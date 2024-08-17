@@ -14,12 +14,12 @@ export class RoleService {
   private permissionsArray: string[] = [];
 
   constructor(
-      @Inject(forwardRef(() => EmployeeService))
-      private employeeService: EmployeeService,
-      @Inject(forwardRef(() => CompanyService))
-      private companyService: CompanyService,
-      @Inject(forwardRef(() => RoleRepository))
-      private roleRepository: RoleRepository,
+    @Inject(forwardRef(() => EmployeeService))
+    private employeeService: EmployeeService,
+    @Inject(forwardRef(() => CompanyService))
+    private companyService: CompanyService,
+    @Inject(forwardRef(() => RoleRepository))
+    private roleRepository: RoleRepository,
   ) {
     this.permissionsArray.push('view all employees');
     this.permissionsArray.push('view employees under me');
@@ -165,7 +165,7 @@ export class RoleService {
       throw new Error('CompanyId does not exist');
     }
     console.log('Error not thrown from here');
-    const roles = await this.roleRepository.findAllInCompany(companyId);
+    const roles = (await this.roleRepository.findAllInCompany(companyId)) as unknown as Role[];
     console.log('role: ', roles);
     // let result;
     // //Remove owner role and Worker role
@@ -386,5 +386,9 @@ export class RoleService {
     await this.internalCreate(workerRoleDto);
 
     console.log('Worker role created');
+  }
+
+  deleteAllInCompany(companyId: Types.ObjectId) {
+    this.roleRepository.deleteAllInCompany(companyId);
   }
 }

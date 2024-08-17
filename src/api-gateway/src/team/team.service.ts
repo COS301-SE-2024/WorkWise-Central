@@ -14,6 +14,7 @@ export class TeamService {
   constructor(
     @Inject(forwardRef(() => EmployeeService))
     private employeeService: EmployeeService,
+    @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     @Inject(forwardRef(() => JobService))
     private jobService: JobService,

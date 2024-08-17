@@ -16,6 +16,9 @@ import { JwtService } from '@nestjs/jwt';
 import { FileModule } from '../file/file.module';
 import { FileService } from '../file/file.service';
 import { JobModule } from '../job/job.module';
+import { ClientModule } from '../client/client.module';
+import { TeamModule } from '../team/team.module';
+import { InventoryModule } from '../inventory/inventory.module';
 
 @Module({
   imports: [
@@ -26,6 +29,9 @@ import { JobModule } from '../job/job.module';
     forwardRef(() => RoleModule),
     forwardRef(() => FileModule),
     forwardRef(() => JobModule),
+    forwardRef(() => ClientModule),
+    forwardRef(() => TeamModule),
+    forwardRef(() => InventoryModule),
 
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },

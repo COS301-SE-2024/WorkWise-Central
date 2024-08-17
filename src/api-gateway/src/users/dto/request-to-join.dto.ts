@@ -26,6 +26,10 @@ export class UserInviteRequestDto {
   @IsNotEmpty()
   @IsMongoId()
   roleId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  superiorId: Types.ObjectId;
 }
 
 export class CancelRequestDto {

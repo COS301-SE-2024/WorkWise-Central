@@ -12,6 +12,7 @@ export class Inventory {
     this.currentStockLevel = createInventoryDto.currentStockLevel;
     this.reorderLevel = createInventoryDto.reorderLevel;
     this.companyId = createInventoryDto.companyId;
+    if (createInventoryDto.companyId) this.companyId = createInventoryDto.companyId;
     this.createdAt = new Date();
     //Should add an image field, not sure how to deal with it yet
   }

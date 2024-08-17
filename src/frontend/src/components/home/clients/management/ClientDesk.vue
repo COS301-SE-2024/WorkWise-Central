@@ -13,7 +13,7 @@
         width="100%"
       >
         <v-row align="center" justify="space-between">
-          <v-col cols="12" lg="4" md="4" sm="4" class="d-flex justify-start align-center">
+          <v-col cols="12" lg="4" class="d-flex justify-start align-center">
             <v-icon icon="mdi-account"></v-icon>
             <v-label
               class="ms-2 h2 font-family-Nunito text-headingTextColor"
@@ -23,7 +23,7 @@
             >
           </v-col>
 
-          <v-col cols="12" lg="4" md="4" sm="4" class="d-flex justify-center">
+          <v-col cols="12" lg="4" class="d-flex justify-center">
             <v-text-field
               v-model="search"
               density="compact"
@@ -38,9 +38,34 @@
               single-line
             ></v-text-field>
           </v-col>
-
           <v-col cols="12" lg="4" md="4" sm="4" :class="{ 'd-flex justify-end': !isSmallScreen }">
-            <AddClient />
+            <v-btn
+              rounded="md"
+              class="text-none font-weight-regular"
+              style="font-size: 20px"
+              text="Add Client"
+              prepend-icon="mdi-account-plus"
+              variant="elevated"
+              color="secondary"
+              @click="addClientVisibility = true"
+            >
+              <template #prepend>
+                <v-icon color="buttonText">mdi-account-plus</v-icon>
+              </template>
+            </v-btn>
+            <!--            <v-dialog-->
+            <!--              v-model="addClientVisibility"-->
+            <!--              max-height="800"-->
+            <!--              max-width="600"-->
+            <!--              scrollable-->
+            <!--              :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"-->
+            <!--              :opacity="0"-->
+            <!--            >-->
+            <AddClient
+              :showDialog="addClientVisibility"
+              @update:showDialog="addClientVisibility = $event"
+            />
+            <!--            </v-dialog>-->
           </v-col>
         </v-row>
       </v-card-title>
@@ -138,6 +163,7 @@ import AddClient from './AddClient.vue'
 import ClientDetails from './ClientDetails.vue'
 import axios from 'axios'
 import { defineComponent } from 'vue'
+import AddEmployee from '@/components/home/employees/management/AddEmployee.vue'
 
 export default defineComponent({
   name: 'ClientDesk',
@@ -149,10 +175,26 @@ export default defineComponent({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     dummy: '',
-    selectedItem: {},
+    selectedItem: {
+      firstName: ' ',
+      lastName: ' ',
+      preferredLanguage: ' ',
+      contactInfo: {
+        phoneNumber: ' ',
+        email: ' '
+      },
+      address: {
+        street: ' ',
+        province: ' ',
+        suburb: ' ',
+        city: ' ',
+        postalCode: ' ',
+        complex: ' ',
+        houseNumber: ' '
+      }
+    },
     windowWidth: window.innerWidth,
-    selectedItemName: '',
-    selectedItemSurname: '',
+
     isdarkmode: true,
     clientDialog: false,
     deleteDialog: false,
@@ -160,6 +202,7 @@ export default defineComponent({
     addClientDialog: false,
     actionsDialog: false,
     show: false,
+    addClientVisibility: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
@@ -259,14 +302,57 @@ export default defineComponent({
     this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
   },
   methods: {
+    openClientDialogVisbility() {
+      this.addClientDialog = true
+    },
     getRowClass(index) {
       return index % 2 === 0 ? 'primary-row' : 'secondary-row'
     },
+    setSelectItemProperties(item) {
+      if (item.firstName != null) {
+        this.selectedItem.firstName = item.firstName
+      }
+      if (item.lastName != null) {
+        // corrected from surname to lastName
+        this.selectedItem.lastName = item.lastName
+      }
+      if (item.preferredLanguage != null) {
+        this.selectedItem.preferredLanguage = item.preferredLanguage
+      }
+      if (item.contactInfo != null) {
+        if (item.contactInfo.phoneNumber != null) {
+          this.selectedItem.contactInfo.phoneNumber = item.contactInfo.phoneNumber
+        }
+        if (item.contactInfo.email != null) {
+          this.selectedItem.contactInfo.email = item.contactInfo.email
+        }
+      }
+      if (item.address != null) {
+        if (item.address.street != null) {
+          this.selectedItem.address.street = item.address.street
+        }
+        if (item.address.province != null) {
+          this.selectedItem.address.province = item.address.province
+        }
+        if (item.address.suburb != null) {
+          this.selectedItem.address.suburb = item.address.suburb
+        }
+        if (item.address.city != null) {
+          this.selectedItem.address.city = item.address.city
+        }
+        if (item.address.postalCode != null) {
+          this.selectedItem.address.postalCode = item.address.postalCode
+        }
+        if (item.address.complex != null) {
+          this.selectedItem.address.complex = item.address.complex
+        }
+        if (item.address.houseNumber != null) {
+          this.selectedItem.address.houseNumber = item.address.houseNumber
+        }
+      }
+    },
     selectItem(item) {
-      this.selectedItem = item
-      this.selectedItemName = item.firstName
-      console.log(this.selectedItemName)
-      this.selectedItemSurname = item.lastName
+      this.setSelectItemProperties(item)
       for (let i = 0; i < this.clientDetails.length; i++) {
         if (this.clientDetails[i] === item) {
           this.selectedItemId = this.clientIds[i]
@@ -333,10 +419,14 @@ export default defineComponent({
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
+      const apiURL = await this.getRequestUrl()
       axios
-        .get('http://localhost:3000/client/all', config)
+        .get(`${apiURL}client/all/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           console.log(response.data)
           this.clients = response.data.data
@@ -369,6 +459,21 @@ export default defineComponent({
         .catch((error) => {
           console.error('Failed to fetch employees:', error)
         })
+    },
+    openDialog() {
+      this.addClientVisibility = true
+      },
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
   },
   toggleDarkMode() {
@@ -389,18 +494,6 @@ export default defineComponent({
     return {
       class: index % 2 ? 'bg-secondRowColor' : ''
     }
-  },
-  async isLocalAvailable(localUrl) {
-    try {
-      const res = await axios.get(localUrl)
-      return res.status < 300 && res.status > 199
-    } catch (error) {
-      return false
-    }
-  },
-  async getRequestUrl() {
-    const localAvailable = await this.isLocalAvailable(this.localUrl)
-    return localAvailable ? this.localUrl : this.remoteUrl
   }
 })
 </script>

@@ -10,6 +10,7 @@ import {
 } from './entities/user.entity';
 import { JoinUserDto, UpdateUserDto } from './dto/update-user.dto';
 import { currentDate } from '../utils/Utils';
+import { isNotDeleted } from '../shared/soft-delete';
 
 @Injectable()
 export class UsersRepository {
@@ -279,5 +280,23 @@ export class UsersRepository {
         { new: true },
       )
       .lean();
+  }
+
+  async userIsInCompanyWithEmail(companyId: Types.ObjectId, email: string) {
+    const regex = `${email}`;
+
+    const user = await this.userModel
+      .findOne({
+        $and: [{ 'systemDetails.email': { $regex: regex, $options: 'i' } }, isNotDeleted],
+      })
+      .lean();
+
+    for (const joinedCompany of user.joinedCompanies) {
+      if (joinedCompany.companyId.toString() === companyId.toString()) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

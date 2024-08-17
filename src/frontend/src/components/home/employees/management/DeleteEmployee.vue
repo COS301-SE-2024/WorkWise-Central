@@ -1,5 +1,6 @@
 <template>
-  <v-dialog v-model="clientDialog" max-width="500px">
+  <Toast position="top-center" />
+  <v-dialog v-model="clientDialog" max-width="500px" :opacity="0">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -33,14 +34,27 @@
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <Toast />
-        <v-btn color="primary" variant="text" @click="clientDialog = false"
-          >Cancel<v-icon icon="fa:fa-solid fa-cancel" end color="primary" size="small"></v-icon
-        ></v-btn>
-        <v-btn color="error" variant="text" :loading="isDeleting" @click="deleteEmployee"
-          >Delete<v-icon icon="fa:fa-solid fa-trash" end color="error" size="small"></v-icon
-        ></v-btn>
+        <v-container>
+          <v-row>
+            <v-col cols="12" lg="6">
+              <v-btn
+                color="error"
+                variant="text"
+                @click="deleteEmployee"
+                :loading="isDeleting"
+                block
+                ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon
+                >Delete</v-btn
+              >
+            </v-col>
+            <v-col cols="12" lg="6">
+              <v-btn color="secondary" variant="text" @click="clientDialog = false" block
+                ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
+                >Cancel</v-btn
+              >
+            </v-col>
+          </v-row></v-container
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -100,7 +114,11 @@ export default {
           })
           this.isDeleting = false
           this.clientDialog = false
-          window.location.reload()
+          setTimeout(() => {
+            this.isDeleting = false
+            this.clientDialog = false
+            window.location.reload()
+          }, 1500)
         })
         .catch((error) => {
           console.log(error)
