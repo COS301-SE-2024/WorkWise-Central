@@ -104,6 +104,19 @@ export class JobRepository {
       .lean();
   }
 
+  async addToHistory(id: Types.ObjectId, newEvent: History) {
+    this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [{ _id: id }, isNotDeleted],
+        },
+        { $push: { history: newEvent }, updatedAt: currentDate() },
+        { new: true },
+      )
+      .lean();
+    console.log(`Updated History for Job ${id}`);
+  }
+
   async existsInCompany(id: Types.ObjectId, companyId: Types.ObjectId) {
     const result = await this.jobModel
       .findOne({
@@ -544,5 +557,30 @@ export class JobRepository {
 
     await job.save();
     return job.toObject();
+  }
+
+  removeClient(fullName: string, clientId: Types.ObjectId) {
+    const event = new History(fullName + ' Removed client from the job');
+    this.jobModel
+      .updateMany(
+        { $and: [{ clientId: clientId }, isNotDeleted] },
+        {
+          $set: { clientId: null },
+          $push: { history: event },
+        },
+      )
+      .exec();
+  }
+
+  async deleteAllInCompany(companyId: Types.ObjectId) {
+    const now = currentDate();
+    await this.jobModel.updateMany(
+      {
+        $and: [{ companyId: companyId }, isNotDeleted],
+      },
+      {
+        $set: { deletedAt: now },
+      },
+    );
   }
 }

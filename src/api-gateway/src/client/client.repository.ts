@@ -4,6 +4,7 @@ import { FlattenMaps, Model, Types } from 'mongoose';
 import { Client } from './entities/client.entity';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { currentDate } from '../utils/Utils';
+import { isNotDeleted } from '../shared/soft-delete';
 
 @Injectable()
 export class ClientRepository {
@@ -53,7 +54,7 @@ export class ClientRepository {
           { companyId: companyId },
           {
             $or: [
-              { 'clientInfo.email': { $regex: regex, $options: 'i' } },
+              { 'contactInfo.email': { $regex: regex, $options: 'i' } },
               { 'details.firstName': { $regex: regex, $options: 'i' } },
               { 'details.lastName': { $regex: regex, $options: 'i' } },
             ],
@@ -108,6 +109,16 @@ export class ClientRepository {
         ],
       },
       { $set: { deletedAt: currentDate() } },
+    );
+  }
+
+  deleteAllInCompany(companyId: Types.ObjectId) {
+    const now = currentDate();
+    return this.clientModel.updateMany(
+      {
+        $and: [{ 'details.companyId': companyId }, isNotDeleted],
+      },
+      { $set: { deletedAt: now } },
     );
   }
 }

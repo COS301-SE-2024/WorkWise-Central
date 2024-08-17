@@ -80,7 +80,7 @@ export class Client {
 
   @ApiProperty()
   @Prop({ required: true })
-  details: ClientDetails;
+  details: ClientDetails = new ClientDetails();
 
   @ApiProperty()
   @Prop({ required: false, default: currentDate() })

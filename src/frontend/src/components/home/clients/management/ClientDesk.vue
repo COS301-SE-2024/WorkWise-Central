@@ -38,9 +38,34 @@
               single-line
             ></v-text-field>
           </v-col>
-
-          <v-col cols="12" lg="4" :class="{ 'd-flex justify-end': !isSmallScreen }">
-            <AddClient />
+          <v-col cols="12" lg="4" md="4" sm="4" :class="{ 'd-flex justify-end': !isSmallScreen }">
+            <v-btn
+              rounded="md"
+              class="text-none font-weight-regular"
+              style="font-size: 20px"
+              text="Add Client"
+              prepend-icon="mdi-account-plus"
+              variant="elevated"
+              color="secondary"
+              @click="addClientVisibility = true"
+            >
+              <template #prepend>
+                <v-icon color="buttonText">mdi-account-plus</v-icon>
+              </template>
+            </v-btn>
+            <!--            <v-dialog-->
+            <!--              v-model="addClientVisibility"-->
+            <!--              max-height="800"-->
+            <!--              max-width="600"-->
+            <!--              scrollable-->
+            <!--              :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"-->
+            <!--              :opacity="0"-->
+            <!--            >-->
+            <AddClient
+              :showDialog="addClientVisibility"
+              @update:showDialog="addClientVisibility = $event"
+            />
+            <!--            </v-dialog>-->
           </v-col>
         </v-row>
       </v-card-title>
@@ -138,6 +163,7 @@ import AddClient from './AddClient.vue'
 import ClientDetails from './ClientDetails.vue'
 import axios from 'axios'
 import { defineComponent } from 'vue'
+import AddEmployee from '@/components/home/employees/management/AddEmployee.vue'
 
 export default defineComponent({
   name: 'ClientDesk',
@@ -176,6 +202,7 @@ export default defineComponent({
     addClientDialog: false,
     actionsDialog: false,
     show: false,
+    addClientVisibility: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
@@ -275,6 +302,9 @@ export default defineComponent({
     this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
   },
   methods: {
+    openClientDialogVisbility() {
+      this.addClientDialog = true
+    },
     getRowClass(index) {
       return index % 2 === 0 ? 'primary-row' : 'secondary-row'
     },
@@ -430,6 +460,9 @@ export default defineComponent({
           console.error('Failed to fetch employees:', error)
         })
     },
+    openDialog() {
+      this.addClientVisibility = true
+      },
     async isLocalAvailable(localUrl) {
       try {
         const res = await axios.get(localUrl)

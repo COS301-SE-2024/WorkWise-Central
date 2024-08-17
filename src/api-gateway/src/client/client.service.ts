@@ -44,7 +44,11 @@ export class ClientService {
     if (!check.isValid) {
       throw new ConflictException(check.message);
     }
+    const employee = await this.employeeService.findById(createClientDto.employeeId);
+    if (!employee) throw new NotFoundException('Employee not found');
+    createClientDto.companyId = employee.companyId as Types.ObjectId;
     const createdClient = new Client(createClientDto);
+    createdClient.details.companyId = new Types.ObjectId(employee.companyId);
     return await this.clientRepository.saveClient(createdClient);
   }
 
@@ -138,6 +142,16 @@ export class ClientService {
     if (result == null) {
       throw new InternalServerErrorException('Internal server Error');
     }
+
+    const emp = await this.employeeService.findById(deleteClientDto.employeeId);
+    const name = emp.userInfo.firstName + emp.userInfo.surname;
+    this.jobService.removeClient(name, deleteClientDto.clientId);
+
+    return true;
+  }
+
+  deleteAllInCompany(companyId: Types.ObjectId) {
+    this.clientRepository.deleteAllInCompany(companyId);
     return true;
   }
 
@@ -216,7 +230,7 @@ export class ClientService {
 
     const employee: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeService.findById(employeeId);
     if (!employee) throw new NotFoundException('Employee not found');
-    if (!employee.userId.equals(userId)) throw new UnauthorizedException('Inconsistent userId');
+    if (employee.userId.toString() !== userId.toString()) throw new UnauthorizedException('Inconsistent userId');
   }
 
   async getListOfClientIdsUnderEmployee(employeeId: Types.ObjectId) {
