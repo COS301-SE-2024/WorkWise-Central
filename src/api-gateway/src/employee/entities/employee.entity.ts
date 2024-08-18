@@ -1,9 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
-// import { CreateEmployeeDto } from '../dto/create-employee.dto';
-// import { currentDate } from '../../utils/Utils';
 import { Role } from '../../role/entity/role.entity';
+import { User } from 'src/users/entities/user.entity';
 
 export class UserInfo {
   @ApiProperty()
@@ -203,7 +202,7 @@ export class joinedEmployeeApiObject {
 
   @ApiProperty()
   @Prop({ type: Object, required: true })
-  userId: object;
+  userId: User;
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true })
@@ -222,6 +221,48 @@ export class joinedEmployeeApiObject {
   public deletedAt: Date;
 }
 
+export class Node {
+  @ApiProperty()
+  @Prop({ type: String, required: true, unique: true })
+  name: string;
+
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: true, unique: true })
+  id: Types.ObjectId;
+}
+
+export class Edge {
+  @ApiProperty()
+  @Prop({ type: String, required: true, unique: true })
+  source: string;
+
+  @ApiProperty()
+  @Prop({ type: String, required: true, unique: true })
+  target: string;
+}
+
+export class Nodes {
+  @ApiProperty()
+  @Prop({ type: Node, required: true, unique: true })
+  node1: Node;
+}
+
+export class Edges {
+  @ApiProperty()
+  @Prop({ type: Edge, required: true, unique: true })
+  edge1: Edge;
+}
+
+export class Graph {
+  @ApiProperty()
+  @Prop({ type: { Nodes }, required: true, unique: true })
+  nodes: Nodes;
+
+  @ApiProperty()
+  @Prop({ type: { Edges }, required: true, unique: true })
+  edges: Edges;
+}
+
 export const EmployeeSchema = SchemaFactory.createForClass(Employee);
 
 export class EmployeeListResponseDto {
@@ -229,6 +270,13 @@ export class EmployeeListResponseDto {
     this.data = data;
   }
   data: EmployeeApiObject[];
+}
+
+export class GraphResponseDto {
+  constructor(data: Graph) {
+    this.data = data;
+  }
+  data: Graph;
 }
 
 export class joinedEmployeeListResponseDto {
