@@ -1,17 +1,23 @@
 <template>
   <v-card class="pa-4" height="auto">
-    <!-- Search Bar -->
-    <v-text-field
-      v-model="searchQuery"
-      label="Search labels"
-      prepend-inner-icon="mdi-magnify"
-      outlined
-      dense
-    ></v-text-field>
+    <v-select
+      :items="companyLabels"
+      item-value="_id"
+      item-title="label"
+      label="Select some tags you would like to assign to this job"
+      chips
+      multiple
+      required
+      color="primary"
+      variant="solo"
+      clearable
+      data-testid="tags-multi-select"
+      searchable
+    ></v-select>
 
     <!-- Label List -->
-    <v-list>
-      <v-list-item v-for="label in filteredLabels" :key="label.label" class="d-flex align-center">
+    <v-list class="no-background">
+      <v-list-item v-for="label in filteredLabels" :key="label.label" class="d-flex align-center no-background">
         <v-row align="center" no-gutters class="w-100">
           <!-- Color Block with Label Text -->
           <v-col cols="auto">
@@ -117,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps } from 'vue'
+import { ref, computed, defineProps, onMounted } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
@@ -161,8 +167,26 @@ const getRequestUrl = async (): Promise<string> => {
 }
 
 const labels = ref<Label[]>([
-  // Add more labels here
 ])
+
+const companyLabels = ref<Label[]>([])
+
+const getJobTags = async() => {
+  const apiUrl = await getRequestUrl()
+  try {
+    const response = await axios.get(`${apiUrl}job/tags/${localStorage.getItem('currentCompany')}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+      }
+    })
+    if (response.status > 199 && response.status < 300) {
+      companyLabels.value = response.data.data
+    }
+  } catch (error) {
+    console.log('Failed to get tags', error)
+
+  }
+}
 
 const colorOptions = ref<string[]>([
   '#FFB74D',
@@ -310,4 +334,14 @@ const getContrastingColor = (bgColor: string): string => {
   const brightness = (r * 299 + g * 587 + b * 114) / 1000
   return brightness > 125 ? '#000' : '#fff' // Return black or white
 }
+
+onMounted(() => {
+  getJobTags()
+})
 </script>
+
+<style scoped>
+.no-background {
+  background-color: transparent !important;
+}
+</style>

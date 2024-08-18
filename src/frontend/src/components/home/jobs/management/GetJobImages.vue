@@ -6,8 +6,8 @@
           <v-col offset="1" cols="10" class="pt-0">
             <v-img
               :src="image.src"
-              :min-height="auto"
-              :min-width="auto"
+              min-height="auto"
+              min-width="auto"
               @click="openImageOverlay(index)"
             ></v-img>
           </v-col>
