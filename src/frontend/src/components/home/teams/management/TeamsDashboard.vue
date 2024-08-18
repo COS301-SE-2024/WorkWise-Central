@@ -108,10 +108,10 @@ export default defineComponent({
       search: '',
 
       teamHeaders: [
-        { text: 'Team Name', value: 'teamName' },
-        { text: 'Team Leader', value: 'teamLeaderId' },
-        { text: 'Current Job Assignments', value: 'currentJobAssignments' },
-        { text: 'Actions', value: 'actions', sortable: false }
+        { title: 'Team Name', value: 'teamName' },
+        { title: 'Team Leader', value: 'teamLeaderId' },
+        { title: 'Current Job Assignments', value: 'currentJobAssignments' },
+        { title: 'Actions', value: 'actions', sortable: false }
       ],
       teamItems: [] as Team[],
       teamTable: [

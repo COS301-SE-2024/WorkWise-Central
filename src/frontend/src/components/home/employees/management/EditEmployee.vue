@@ -118,7 +118,7 @@
                   @click="close"
                   :loading="isDeleting"
                 >
-                  <Toast />
+                   <Toast position="top-center" />
                   <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
                   >Cancel
                 </v-btn>

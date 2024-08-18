@@ -183,6 +183,7 @@
                         @click="login"
                         @keypress.enter="login"
                         rounded="md"
+                        :loading="loading"
                         size="large"
                         color="primary"
                         variant="elevated"
@@ -968,6 +969,7 @@ export default defineComponent({
     alertSignUp: false,
     alertSignUpFailure: false,
     alertLogin: false,
+    loading: false,
     signupDialog: false,
     signup1Dialog: false,
     signup2Dialog: false,
@@ -1074,7 +1076,7 @@ export default defineComponent({
     phone_number: '',
     skills: [],
     currentCompany: {},
-    profilePicture: '',
+
     usernameList: [],
     resetForm() {
       this.$refs.form.reset()
@@ -1284,6 +1286,7 @@ export default defineComponent({
       console.log('')
     },
     async login() {
+      this.loading = true
       const apiURL = await this.getRequestUrl()
       if (this.$refs.form.validate()) {
         await axios
@@ -1309,8 +1312,9 @@ export default defineComponent({
             })
             // this.resetForm()
             setTimeout(() => {
+              this.loading = false
               this.$router.push({ name: 'dashboard' })
-            }, 3000)
+            }, 2000)
           })
           .catch((error) => {
             console.log(error)
@@ -1320,6 +1324,7 @@ export default defineComponent({
               detail: 'User unsuccessfully logged in',
               life: 3000
             })
+            this.loading = false
           })
       }
     },

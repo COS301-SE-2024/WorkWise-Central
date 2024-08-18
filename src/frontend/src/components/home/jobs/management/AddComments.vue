@@ -43,7 +43,7 @@
       <!-- Submit button -->
       <v-btn color="success" @click="addComment" prepend-icon="mdi-comment-plus">Comment</v-btn>
     </v-container>
-    <Toast />
+     <Toast position="top-center" />
   </div>
 </template>
 

@@ -114,9 +114,7 @@ import ClientDetails from './home/clients/management/ClientDetails.vue'
 import ClientJobs from './ClientJobs.vue'
 export default {
   name: 'ClientEmployeeView',
-  props: {
-    isDarkMode: Boolean
-  },
+
   components: {
     ClientDetails,
     ClientJobs

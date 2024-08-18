@@ -72,7 +72,8 @@
           </v-row>
         </v-card-title>
 
-r        <v-card-text>
+        r
+        <v-card-text>
           <v-divider></v-divider>
           <v-col cols="12">
             <div style="height: auto; overflow-y: auto">
@@ -196,14 +197,11 @@ import AddClient from './AddClient.vue'
 import ClientDetails from './ClientDetails.vue'
 import axios from 'axios'
 import { defineComponent } from 'vue'
-import AddEmployee from '@/components/home/employees/management/AddEmployee.vue'
+// import AddEmployee from '@/components/home/employees/management/AddEmployee.vue'
 
 export default defineComponent({
   name: 'ClientDesk',
 
-  props: {
-    isDarkMode: Boolean
-  },
   data: () => ({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
@@ -297,8 +295,7 @@ export default defineComponent({
     ClientDetails,
     DeleteClient,
     EditClient,
-    AddClient,
-    AddEmployee
+    AddClient
   },
   computed: {
     filteredClients() {

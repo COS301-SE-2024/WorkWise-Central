@@ -180,7 +180,7 @@ export default {
           setTimeout(() => {
             this.isDeleting = false
             this.editDialog = false
-          //  window.location.reload()
+            window.location.reload()
           }, 1500)
         })
         .catch((error) => {

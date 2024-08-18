@@ -218,7 +218,7 @@ import ManagerJobCard from './ManagerJobCard.vue'
 import ViewJob from './ViewJob.vue'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { is } from 'node_modules/cypress/types/bluebird'
+
 
 const toast = useToast()
 

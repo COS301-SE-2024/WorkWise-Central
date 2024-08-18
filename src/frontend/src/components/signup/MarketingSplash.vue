@@ -1,20 +1,17 @@
 <template>
-  <v-app >
-    <h1
-      :class="[
-        'splash-title',
-        'header-title',
-        'text-center',
-        { 'dark-theme-text': isDarkMode, 'light-theme-text': !isDarkMode }
-      ]"
-    >
-    Manage your business <span class="text-primary">effectively</span> and
-        <span class="text-secondary">efficiently</span> using <span class="text-primary">Work</span
-        ><span class="text-secondary">Wise</span> Central
+  <v-app :theme="isDarkMode ? 'themes.dark' : 'themes.light'">
+    <h1 :class="['splash-title', 'header-title', 'text-center']">
+      Manage your business <span class="text-primary">effectively</span> and
+      <span class="text-secondary">efficiently</span> using <span class="text-primary">Work</span
+      ><span class="text-secondary">Wise</span> Central
     </h1>
-    <v-row style="height: 1000px" :theme="isDarkMode ? 'themes.dark' : 'themes.light'">
+    <v-row
+      style="height: 1000px"
+      :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
+      class="bg-background"
+    >
       <v-col cols="12" order="first" order-lg="last" order-md="last" order-sm="first">
-        <v-tabs v-model="tab" align-tabs="center" bg-color="secondary" stacked >
+        <v-tabs v-model="tab" align-tabs="center" bg-color="secondary" stacked>
           <v-tab v-for="(item, index) in tabs" :key="index">
             {{ item.title }}
             <v-icon :icon="item.icon" color="primary"></v-icon>
@@ -22,7 +19,7 @@
         </v-tabs>
         <v-tabs-window v-model="tab">
           <v-tabs-window-item v-for="(item, index) in tabs" :key="index" :value="index">
-            <v-card flat>
+            <v-card flat class="bg-background">
               <v-img :src="item.imageUrl" height="500px"></v-img>
               <v-card-text>{{ item.description }}</v-card-text>
             </v-card>
@@ -46,20 +43,20 @@ export default defineComponent({
         {
           title: 'Client Management',
           icon: 'mdi-account-group',
-          imageUrl: 'path/to/client-management-image.jpg',
+          imageUrl: '../img/clientManagement.png',
           description:
             'Manage your clients efficiently, track interactions, and ensure client satisfaction.'
         },
         {
           title: 'Project Management',
           icon: 'mdi-briefcase',
-          imageUrl: 'path/to/project-management-image.jpg',
+          imageUrl: '../img/jobManagement.png',
           description: 'Keep your projects on track with our robust project management tools.'
         },
         {
           title: 'Employee Management',
           icon: 'mdi-account',
-          imageUrl: 'path/to/employee-management-image.jpg',
+          imageUrl: '../img/employeeManagement.png',
           description: 'Oversee employee performance, assignments, and roles within the company.'
         },
         {
@@ -71,7 +68,7 @@ export default defineComponent({
         {
           title: 'Operations',
           icon: 'mdi-cogs',
-          imageUrl: 'path/to/operations-image.jpg',
+          imageUrl: '../img/meetings.png',
           description: 'Streamline your day-to-day operations with efficient tools and workflows.'
         },
         {

@@ -173,7 +173,6 @@ import Toast from 'primevue/toast'
 export default {
   name: 'EditClient',
   props: {
-    isDarkMode: Boolean,
     colors: Object,
     editedItem: Object,
     item: Object,

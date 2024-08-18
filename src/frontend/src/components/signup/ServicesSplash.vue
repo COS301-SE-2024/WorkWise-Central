@@ -1,15 +1,9 @@
 <template>
-  <v-app>
+  <v-app :theme="isDarkMode ? 'themes.dark' : 'themes.light'">
     <v-container>
       <v-row class="text-center">
         <v-col cols="12">
-          <h1
-            :class="[
-              'splash-title',
-              'header-title',
-              { 'dark-theme-text': isDarkMode, 'light-theme-text': !isDarkMode }
-            ]"
-          >
+          <h1 :class="['splash-title', 'header-title']">
             What <span class="text-primary">services</span> would you like to
             <span class="text-secondary">manage</span>
           </h1>

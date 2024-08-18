@@ -1,5 +1,5 @@
 <template>
-  <Toast />
+  <Toast position="top-center" />
   <v-dialog
     v-model="dialog"
     max-height="800"
@@ -33,7 +33,9 @@
             :rules="labelRules"
           />
           <v-label>Status Color</v-label>
-          <div><ColorPicker inputId="cp-hex" v-model="status.colour" inline :rules="colorRules" /></div>
+          <div>
+            <ColorPicker inputId="cp-hex" v-model="status.colour" inline :rules="colorRules" />
+          </div>
           <span>Hex Code: {{ status.colour }}</span>
         </v-form>
       </v-card-text>
@@ -127,6 +129,8 @@ export default defineComponent({
             life: 3000
           })
           setTimeout(() => {
+            this.isDeleting = false
+            this.dialog = false
             window.location.reload()
           }, 3000)
         })
@@ -139,6 +143,7 @@ export default defineComponent({
             life: 3000
           })
         })
+      this.isDeleting = false
       console.log('Creating Status')
     },
     async isLocalAvailable(localUrl: string) {

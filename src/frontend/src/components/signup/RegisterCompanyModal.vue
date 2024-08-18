@@ -359,7 +359,7 @@
             </v-row>
           </v-col>
           <v-col cols="8" offset="2" align="center">
-            <Toast />
+             <Toast position="top-center" />
             <v-btn
               color="primary"
               type="submit"

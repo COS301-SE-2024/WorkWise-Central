@@ -192,7 +192,7 @@
         </v-col>
       </v-row>
 
-      <Toast />
+       <Toast position="top-center" />
     </v-container>
   </v-app>
 </template>

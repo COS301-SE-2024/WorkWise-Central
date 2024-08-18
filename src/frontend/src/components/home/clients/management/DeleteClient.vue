@@ -1,4 +1,5 @@
 <template>
+  <Toast position="top-center" />
   <v-dialog
     v-model="clientDialog"
     max-width="500px"

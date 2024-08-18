@@ -56,7 +56,7 @@
       </v-card>
     </template>
   </v-dialog>
-  <Toast />
+   <Toast position="top-center" />
 </template>
 
 <script setup lang="ts">

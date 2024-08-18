@@ -87,7 +87,7 @@ export default defineComponent({
     CompanyMain
   },
   data: () => ({
-    isDarkMode: localStorage.getItem('theme') === 'true',
+    isdarkmode: localStorage.getItem('theme') === 'true',
     logoutDialog: false,
     selected: '',
     employeePermissions: [] as string[],
@@ -99,15 +99,15 @@ export default defineComponent({
   // },
   methods: {
     toggleDarkMode() {
-      console.log(this.isDarkMode)
-      if (this.isDarkMode) {
-        this.isDarkMode = false
-        console.log(this.isDarkMode)
+      console.log(this.isdarkmode)
+      if (this.isdarkmode) {
+        this.isdarkmode = false
+        console.log(this.isdarkmode)
       } else {
-        this.isDarkMode = true
-        console.log(this.isDarkMode)
+        this.isdarkmode = true
+        console.log(this.isdarkmode)
       }
-      localStorage.setItem('theme', this.isDarkMode.toString()) // save the theme to session storage
+      localStorage.setItem('theme', this.isdarkmode.toString()) // save the theme to session storage
     },
     setInbox(inbox: string) {
       this.selected = inbox
@@ -156,9 +156,9 @@ export default defineComponent({
 </script>
 
 <template>
-  <v-app :theme="isDarkMode ? 'dark' : 'light'">
-    <v-app :theme="isDarkMode ? 'dark' : 'light'">
-      <v-app-bar :theme="isDarkMode ? 'dark' : 'light'" app class="bg-background">
+  <v-app :theme="isdarkmode ? 'dark' : 'light'">
+    <v-app :theme="isdarkmode ? 'dark' : 'light'">
+      <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-background">
         <v-app-bar-nav-icon @click="isVisible = !isVisible">
           <v-icon>{{ isVisible ? 'fa: fa-solid fa-bars' : 'fa: fa-solid fa-bars' }}</v-icon>
         </v-app-bar-nav-icon>
@@ -177,7 +177,7 @@ export default defineComponent({
           <v-icon
             class="icon-padding mr-5"
             @click="toggleDarkMode"
-            :icon="isDarkMode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"
+            :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"
           ></v-icon>
         </div>
       </v-app-bar>
@@ -186,7 +186,7 @@ export default defineComponent({
         app
         v-model="drawer"
         :rail="isVisible"
-        :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
+        :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
         min-height="100%"
       >
         <v-list v-model:open="open">
