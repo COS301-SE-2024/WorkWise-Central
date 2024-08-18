@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { InventoryService } from './stocktake.service';
-import { InventoryController } from './stocktake.controller';
+import { InventoryService } from '../inventory/inventory.service';
+import { InventoryController } from '../inventory/inventory.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { StockTake, StockTakeSchema } from './entities/stocktake.entity';
 import { UsersModule } from '../users/users.module';

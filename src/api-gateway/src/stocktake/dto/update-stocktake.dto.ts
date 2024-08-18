@@ -1,25 +1,21 @@
 import { Types } from 'mongoose';
-import { IsDate, IsNumber, IsOptional } from 'class-validator';
+import { IsArray, IsDate, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { StockTakeItem } from './create-stocktake.dto';
 
-export class UpdateInventoryDto {
-  @IsOptional()
+export class UpdateStockTakeDto {
+  @IsNotEmpty()
   @ApiProperty()
   @IsDate()
-  date?: Date;
+  date: Date;
 
-  @IsOptional()
+  @IsNotEmpty()
   @ApiProperty()
-  @IsNumber()
-  currentStockLevel?: number;
-
-  @IsOptional()
-  @ApiProperty()
-  @IsNumber()
-  recordedStockLevel?: number;
+  @IsArray()
+  items: StockTakeItem[];
 }
 
-export class updateInventoryResponseDto {
+export class updateIStockTakeResponseDto {
   response: { access_token: string; id: Types.ObjectId };
   constructor(message: { access_token: string; id: Types.ObjectId }) {
     this.response = message;

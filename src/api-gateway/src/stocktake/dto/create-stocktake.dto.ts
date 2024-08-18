@@ -1,13 +1,8 @@
 import { Types } from 'mongoose';
-import { IsDate, IsMongoId, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsArray, IsDate, IsMongoId, IsNotEmpty, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateStocktakeDto {
-  @IsNotEmpty()
-  @ApiProperty()
-  @IsDate()
-  date: Date;
-
+export class StockTakeItem {
   @IsNotEmpty()
   @ApiProperty()
   @IsNumber()
@@ -22,6 +17,18 @@ export class CreateStocktakeDto {
   @IsMongoId()
   @ApiProperty()
   inventoryItem: Types.ObjectId;
+}
+
+export class CreateStocktakeDto {
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsDate()
+  date: Date;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsArray()
+  items: StockTakeItem[];
 }
 
 export class CreateStocktakeResponseDto {

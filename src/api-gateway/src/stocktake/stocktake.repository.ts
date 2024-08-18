@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { StockTake } from './entities/stocktake.entity';
-// import { UpdateStockTakeDto } from './dto/update-stocktake.dto';
 import { User } from '../users/entities/user.entity';
 import { isNotDeleted } from '../shared/soft-delete';
+import { UpdateStockTakeDto } from './dto/update-stocktake.dto';
 
 @Injectable()
 export class StockTakeRepository {
@@ -95,32 +95,24 @@ export class StockTakeRepository {
     return result != null;
   }
 
-  // async getCompanyIdFromStockTake(StockTakeId: Types.ObjectId) {
-  //   const result = await this.stocktakeModel
-  //     .findOne({ _id: new Types.ObjectId(StockTakeId) }, { companyId: 1, _id: 0 })
-  //     .lean();
+  async update(id: Types.ObjectId, updateStockTakeDto: UpdateStockTakeDto) {
+    id = new Types.ObjectId(id);
+    const previousObject: FlattenMaps<StockTake> & { _id: Types.ObjectId } = await this.stocktakeModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            { _id: id },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        { $set: { ...updateStockTakeDto }, updatedAt: new Date() },
+      )
+      .lean();
 
-  //   return result ? result.companyId : null;
-  // }
-
-  // async update(id: Types.ObjectId, updateStockTakeDto: UpdateStockTakeDto) {
-  //   id = new Types.ObjectId(id);
-  //   const previousObject: FlattenMaps<StockTake> & { _id: Types.ObjectId } = await this.stocktakeModel
-  //     .findOneAndUpdate(
-  //       {
-  //         $and: [
-  //           { _id: id },
-  //           {
-  //             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-  //           },
-  //         ],
-  //       },
-  //       { $set: { ...updateStockTakeDto }, updatedAt: new Date() },
-  //     )
-  //     .lean();
-
-  //   return previousObject;
-  // }
+    return previousObject;
+  }
 
   async remove(id: Types.ObjectId): Promise<boolean> {
     const StockTakeToDelete = await this.findById(id);

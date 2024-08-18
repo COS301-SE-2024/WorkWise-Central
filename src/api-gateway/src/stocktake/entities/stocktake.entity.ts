@@ -3,21 +3,7 @@ import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
 import { CreateStocktakeDto } from '../dto/create-stocktake.dto';
 
-@Schema()
-export class StockTake {
-  constructor(createInventoryDto: CreateStocktakeDto) {
-    this.date = createInventoryDto.date;
-    this.currentStockLevel = createInventoryDto.currentStockLevel;
-    this.recordedStockLevel = createInventoryDto.recordedStockLevel;
-    this.currentStockLevel = createInventoryDto.currentStockLevel;
-    this.inventoryItem = createInventoryDto.inventoryItem;
-    this.createdAt = new Date();
-  }
-
-  @ApiProperty()
-  @Prop({ type: Date, required: true })
-  date: Date;
-
+export class StockTakeItem {
   @ApiProperty()
   @Prop({ type: Number, required: true })
   currentStockLevel: number;
@@ -29,6 +15,21 @@ export class StockTake {
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true })
   inventoryItem: Types.ObjectId;
+}
+
+@Schema()
+export class StockTake {
+  constructor(createStocktakeDto: CreateStocktakeDto) {
+    this.date = createStocktakeDto.date;
+    this.items = createStocktakeDto.items;
+  }
+  @ApiProperty()
+  @Prop({ type: Date, required: true })
+  date: Date;
+
+  @ApiProperty()
+  @Prop({ type: [StockTakeItem], required: true })
+  items: StockTakeItem[];
 
   @ApiHideProperty()
   @Prop({ required: true, default: new Date() })
@@ -42,7 +43,6 @@ export class StockTake {
   @Prop({ required: false })
   public deletedAt: Date;
 }
-
 export class StockTakeApiObject {
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, unique: true })
