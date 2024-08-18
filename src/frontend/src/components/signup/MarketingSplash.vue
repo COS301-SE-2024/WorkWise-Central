@@ -6,7 +6,7 @@
       ><span class="text-secondary">Wise</span> Central
     </h1>
     <v-row
-      style="height: 1000px"
+      style="height: 500px"
       :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
       class="bg-background"
     >
@@ -44,6 +44,7 @@ export default defineComponent({
           title: 'Client Management',
           icon: 'mdi-account-group',
           imageUrl: '../img/clientManagement.png',
+          imageUrlDark: '../img/clientManagementDark.png',
           description:
             'Manage your clients efficiently, track interactions, and ensure client satisfaction.'
         },
@@ -51,30 +52,42 @@ export default defineComponent({
           title: 'Project Management',
           icon: 'mdi-briefcase',
           imageUrl: '../img/jobManagement.png',
+          imageUrlDark: '../img/jobManagementDark.png',
           description: 'Keep your projects on track with our robust project management tools.'
         },
         {
           title: 'Employee Management',
           icon: 'mdi-account',
           imageUrl: '../img/employeeManagement.png',
+          imageUrlDark: '../img/employeeManagementDark.png',
           description: 'Oversee employee performance, assignments, and roles within the company.'
         },
         {
           title: 'Team Management',
           icon: 'mdi-account-multiple',
-          imageUrl: 'path/to/team-management-image.jpg',
+          imageUrl: '../img/teamManagement.png',
+          imageUrlDark: '../img/teamManagementDark.png',
           description: 'Organize your teams, assign leaders, and manage collaborative efforts.'
+        },
+        {
+          title:'Company Management',
+          icon: 'mdi-domain',
+          imageUrl: '../img/companyManagement.png',
+          imageUrlDark: '../img/companyManagementDark.png',
+          description: 'Manage your company structure, roles, and priorities with ease.'
         },
         {
           title: 'Operations',
           icon: 'mdi-cogs',
           imageUrl: '../img/meetings.png',
+          imageUrlDark: '../img/meetingsDark.png',
           description: 'Streamline your day-to-day operations with efficient tools and workflows.'
         },
         {
           title: 'Client Projects',
           icon: 'mdi-folder',
-          imageUrl: 'path/to/client-projects-image.jpg',
+          imageUrl: '../img/clientProjects.png',
+          imageUrlDark: '../img/clientProjectsDark.png',
           description: 'Manage client-specific projects, from inception to completion, with ease.'
         }
       ]

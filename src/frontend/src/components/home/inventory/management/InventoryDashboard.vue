@@ -48,6 +48,7 @@
           :items="inventoryItems"
           :search="search"
           height="auto"
+          v-show="checkPermission('view all inventory')"
           class="bg-cardColor"
           :row-props="getRowProps"
           :header-props="{ class: 'bg-secondRowColor h6' }"

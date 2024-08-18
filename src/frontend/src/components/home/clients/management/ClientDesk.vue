@@ -85,6 +85,7 @@
                 height="auto"
                 rounded="xl"
                 class="bg-cardColor"
+                v-show="checkPermission('view all clients') || checkPermission('view clients under me') || checkPermission('view clients that are assigned to me')"
                 :row-props="getRowProps"
                 :header-props="{ class: 'bg-secondRowColor h6' }"
               >

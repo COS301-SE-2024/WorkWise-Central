@@ -54,14 +54,7 @@
         >
           <v-row justify="center"
             ><v-col align-self="center">
-              <h1
-                :class="[
-                  'splash-title',
-                  'header-title',
-                  'text-center',
-                  { 'dark-theme-text': isDarkMode, 'light-theme-text': !isDarkMode }
-                ]"
-              >
+              <h1 :class="['splash-title', 'header-title', 'text-center']">
                 Welcome To <span class="text-primary">Work</span>
                 <span class="text-secondary">Wise</span> Central
               </h1>
@@ -908,18 +901,11 @@
       </v-footer> -->
       <div><MarketingSplash :theme="isDarkMode ? 'themes.dark' : 'themes.light'" /></div>
 
-      <div>
+      <!-- <div>
         <ServicesSplash :theme="isDarkMode ? 'themes.dark' : 'themes.light'" />
-      </div>
+      </div> -->
       <div>
-        <h1
-          :class="[
-            'splash-title',
-            'header-title',
-            'text-center',
-            { 'dark-theme-text': isDarkMode, 'light-theme-text': !isDarkMode }
-          ]"
-        >
+        <h1 :class="['splash-title', 'header-title', 'text-center']">
           How to use <span class="text-primary">Work</span
           ><span class="text-secondary">Wise</span> Central
         </h1>
