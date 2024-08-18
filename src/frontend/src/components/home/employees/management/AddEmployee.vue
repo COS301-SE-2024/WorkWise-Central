@@ -269,7 +269,6 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.req_obj.adminId = localStorage['employeeId']
     this.req_obj.currentCompany = localStorage['currentCompany']
     this.loadRoles()
     this.loadSubordinates()
