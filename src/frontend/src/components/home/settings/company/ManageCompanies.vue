@@ -19,14 +19,10 @@
             </p>
           </v-col>
 
-          <v-card v-for="company in companies" :key="company.id" class="mb-4 elevation-0 w-100">
+          <v-card v-for="company in joinedCompanies" :key="company.id" class="mb-4 elevation-0 w-100">
             <v-card-title class="text-h6">{{ company.name }}</v-card-title>
             <v-card-text>
-              <p>{{ company.description }}</p>
               <div>
-                <v-btn @click="switchCompany(company)" color="success">
-                  <v-icon left>{{ 'fa: fa-solid fa-briefcase' }}</v-icon> Switch to this company
-                </v-btn>
                 <v-btn @click="leaveCompany(company)" color="warning">
                   <v-icon left>{{ 'fa: fa-solid fa-door-open' }}</v-icon> Leave this company
                 </v-btn>
@@ -65,9 +61,8 @@
           <v-card v-for="company in companies" :key="company.id" class="mb-4 elevation-0 w-100">
             <v-card-title class="text-h6">{{ company.name }}</v-card-title>
             <v-card-text>
-              <p>{{ company.description }}</p>
               <div>
-                <v-btn @click="switchCompany(company)">
+                <v-btn @click="undoLeaveCompany">
                   <v-icon left>{{ 'fa: fa-solid fa-exchange-alt' }}</v-icon> Rejoin the company
                 </v-btn>
                 <v-btn color="red" @click="leaveCompany(company)">
@@ -87,18 +82,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import JoinCompany from '@/components/signup/JoinCompanyModal.vue'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import axios from 'axios'
 
 const toast = useToast()
+const showWarningModal = ref(false)
+
+const joinedCompanies = reactive<Company[]>([])
+const companies = reactive<Company[]>([
+  // Example company data, replace with actual data fetching
+  { id: '1', name: 'Company A' },
+  { id: '2', name: 'Company B'}
+])
 
 interface Company {
   id: string
   name: string
-  description: string
 }
 const config = {
   headers: {
@@ -125,11 +127,24 @@ const getRequestUrl = async (): Promise<string> => {
   return localAvailable ? localUrl : remoteUrl
 }
 
-const companies = reactive<Company[]>([
-  // Example company data, replace with actual data fetching
-  { id: '1', name: 'Company A', description: 'Description of Company A' },
-  { id: '2', name: 'Company B', description: 'Description of Company B' }
-])
+const setUserCompanies = async() => {
+  const apiUrl = await getRequestUrl()
+  try {
+    const response = await axios.get(`${apiUrl}users/id/${localStorage.getItem('id')}`, config)
+    if (response.status < 300 && response.status > 199) {
+      const companiesData = response.data.data.joinedCompanies
+      joinedCompanies.splice(0, joinedCompanies.length, ...companiesData.map((company: any) => ({
+        id: company.companyId,
+        name: company.companyName
+      })))
+    } else {
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Error fetching companies' })
+    }
+  } catch (error) {
+    console.error('Error getting user companies', error)
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Error fetching companies' })
+  }
+}
 
 const newCompanyCode = ref('')
 const companyCodeRules = [(v: string) => !!v || 'Company code is required']
@@ -140,15 +155,12 @@ const saveCompanySettings = () => {
   console.log('Saving company settings:', companies)
 }
 
-const switchCompany = (company: Company) => {
-  console.log('Switching to company:', company.name)
-}
-
 const joinCompany = () => {
   console.log('Joining new company with code:', newCompanyCode.value)
 }
 
 const leaveCompany = (company: Company) => {
+  showWarningModal.value = true
   console.log('Leaving company:', company.name)
   leftCompanies.value.push(company)
   companies.splice(companies.indexOf(company), 1)
@@ -160,6 +172,7 @@ const leaveCompany = (company: Company) => {
   }, 30000)
 }
 
+
 const undoLeaveCompany = (company: Company) => {
   companies.push(company)
   leftCompanies.value = leftCompanies.value.filter((c) => c.id !== company.id)
@@ -167,6 +180,10 @@ const undoLeaveCompany = (company: Company) => {
     clearTimeout(undoTimeout.value)
   }
 }
+
+onMounted(() => {
+  setUserCompanies()
+})
 </script>
 
 <style scoped>

@@ -6,7 +6,7 @@
         <v-col cols="2" class="pt-2">
           <v-avatar color="secondary" style="width: 38px; height: 36px">
             <!-- Display initials of the comment's employee -->
-            <span class="text-h6">{{ getInitials(comment.employeeId) }}</span>
+            <span class="text-h6">{{ getInitials(comment.firstName, comment.surname) }}</span>
           </v-avatar>
         </v-col>
         <v-col md="9">
@@ -96,6 +96,7 @@ interface EmployeeId {
     displayName: string
     firstName: string
     surname: string
+    username: string
   }
   _id: string
 }
@@ -104,24 +105,22 @@ interface EmployeeId {
 const newComment = ref('')
 const userInitials = ref<{ employeeId: string; initials: string }[]>([])
 const comments = ref<
-  { text: string; employeeId: string; date: string; initials?: string; _id: string }[]
+  { text: string; employeeId: string; date: string; firstName: string; surname:string; _id: string }[]
 >(
   props.jobComments.map((comment) => ({
     text: comment.comment,
     employeeId: comment.employeeId._id,
     date: comment.date,
-    _id: comment._id
+    _id: comment._id,
+    firstName: comment.employeeId.userInfo.firstName,
+    surname: comment.employeeId.userInfo.surname
   }))
 )
 
-// Utility Functions
-const getInitials = (employeeId: string): string => {
-  const user = userInitials.value.find((user) => user.employeeId === employeeId)
-  return user ? user.initials : ''
-}
-
-const getInitialsS = (firstName: string, surname: string): string => {
-  return `${firstName.charAt(0)}${surname.charAt(0)}`.toUpperCase()
+const getInitials = (firstName: string, surname: string): string => {
+  const firstInitial = firstName.charAt(0).toUpperCase()
+  const lastInitial = surname.charAt(0).toUpperCase()
+  return `${firstInitial}${lastInitial}`
 }
 
 const isLocalAvailable = async (url: string): Promise<boolean> => {
@@ -146,7 +145,7 @@ const getUserData = async () => {
 
     userInitials.value.push({
       employeeId: localStorage.getItem('id') || '',
-      initials: getInitialsS(userData.personalInfo.firstName, userData.personalInfo.surname)
+      initials: getInitials(userData.personalInfo.firstName, userData.personalInfo.surname)
     })
   } catch (error) {
     console.error('Error getting user data', error)

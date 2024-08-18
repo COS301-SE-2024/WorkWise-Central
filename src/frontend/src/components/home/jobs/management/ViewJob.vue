@@ -168,7 +168,7 @@
               </v-col>
             </v-col>
           </v-col>
-          <v-col sm="12" md="3">
+          <v-col sm="12" md="3" class="sticky-column">
             <v-col class="pb-0">
               <v-label class="d-flex justify-start pb-0 font-weight-bold">Card Actions</v-label>
             </v-col>
@@ -344,7 +344,7 @@ function scrollToSection(
 }
 
 const getStatusColor = (status: string): string => {
-  switch (status.toLowerCase()) {
+  switch (status) {
     case 'to do':
       return 'blue'
     case 'in progress':
@@ -374,7 +374,7 @@ const changeImage = async (event: Event) => {
     reader.onload = async (e) => {
       imageSrc.value = e.target?.result as string
       setCardBackgroundColor(imageSrc.value)
-      const apiUrl = getRequestUrl()
+      const apiUrl = await getRequestUrl()
       try {
         console.log('Image src value:', imageSrc.value)
         console.log('Passed in job:', props.passedInJob)
@@ -423,14 +423,19 @@ const setCardBackgroundColor = (src: string) => {
 }
 
 onMounted(() => {
-  if (props.passedInJob.coverImage === '') {
-    imageSrc.value = 'https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U='
-  } else {
-    imageSrc.value = props.passedInJob.coverImage
+  const setImageAndBackground = () => {
+    if (props.passedInJob.coverImage === '') {
+      imageSrc.value = 'https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U='
+    } else {
+      imageSrc.value = props.passedInJob.coverImage
+    }
+    setCardBackgroundColor(imageSrc.value)
   }
-  setCardBackgroundColor(imageSrc.value)
-})
 
+  const img = new Image()
+  img.src = props.passedInJob.coverImage || 'https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U='
+  img.onload = setImageAndBackground
+})
 </script>
 
 <style scoped>
@@ -447,5 +452,11 @@ onMounted(() => {
   right: 0;
   margin-bottom: 8px; /* Adjust as needed */
   margin-right: 8px; /* Adjust as needed */
+}
+
+.sticky-column {
+  position: sticky;
+  top: 0; /* Adjust as needed */
+  z-index: 1000; /* Ensure it stays above other content */
 }
 </style>
