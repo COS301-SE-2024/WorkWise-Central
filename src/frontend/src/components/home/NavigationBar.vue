@@ -231,7 +231,12 @@ export default defineComponent({
             ></v-list-item>
           </v-list-group>
         </v-list>
-        <v-list v-model:open="open">
+        <v-list
+          v-model:open="open"
+          v-show="
+            checkPermission('view all employees') || checkPermission('view employees under me')
+          "
+        >
           <v-list-group fluid value="Employees">
             <template v-slot:activator="{ props }">
               <v-list-item
