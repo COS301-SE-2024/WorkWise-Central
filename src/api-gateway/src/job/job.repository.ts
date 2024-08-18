@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { Comment, Job, Task } from './entities/job.entity';
 import { UpdateJobDto, UpdateTaskItemDto } from './dto/update-job.dto';
-import { Employee } from '../employee/entities/employee.entity';
+// import { Employee } from '../employee/entities/employee.entity';
 import { Company } from '../company/entities/company.entity';
 //import { Team } from '../team/entities/team.entity';
 import { isNotDeleted } from '../shared/soft-delete';
@@ -60,7 +60,7 @@ export class JobRepository {
     populate: [
       {
         path: 'employeeId',
-        model: Employee.name,
+        model: 'Employee',
       },
       {
         path: 'companyId',
