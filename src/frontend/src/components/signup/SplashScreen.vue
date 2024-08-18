@@ -926,15 +926,15 @@ import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import Tutorial from '../home/help/tutorial/Tutorial.vue'
 import MarketingSplash from './MarketingSplash.vue'
-import ServicesSplash from './ServicesSplash.vue'
+// import ServicesSplash from './ServicesSplash.vue'
 export default defineComponent({
   components: {
     RegisterCompanyModal,
     JoinCompanyModal,
     Toast,
     Tutorial,
-    MarketingSplash,
-    ServicesSplash
+    MarketingSplash
+    // ServicesSplash
   },
   data: () => ({
     localUrl: 'http://localhost:3000/',
