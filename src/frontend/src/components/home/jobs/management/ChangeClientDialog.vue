@@ -64,6 +64,14 @@ import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 
+interface Client {
+  _id: string;
+  details: {
+    firstName: string;
+    lastName: string;
+  };
+}
+
 const props = defineProps<{
   jobID: string
 }>()
@@ -71,7 +79,7 @@ const props = defineProps<{
 const toast = useToast()
 const clientDialog = ref<boolean>(false)
 const selectedClient = ref<string | null>(null)
-const clientData = ref([])
+const clientData = ref<Client[]>([])
 
 // API URLs and config
 const localUrl: string = 'http://localhost:3000/'
@@ -82,6 +90,7 @@ const config = {
     Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
 }
+
 // Utility functions
 const isLocalAvailable = async (url: string): Promise<boolean> => {
   try {
@@ -136,7 +145,7 @@ const openClientDialogAndFetchClients = () => {
 }
 
 const saveClient = async () => {
-  const apiUrl = getRequestUrl()
+  const apiUrl = await getRequestUrl()
   try {
     const response = await axios.patch(`${apiUrl}job/update/${props.jobID}`, { clientId: selectedClient.value }, config)
     if (response.status > 199 && response.status < 300) {
@@ -154,7 +163,7 @@ onMounted(() => {
   getClients()
 })
 
-const getClientFullName = (item: any) => {
+const getClientFullName = (item: Client) => {
   if (item.details && item.details.firstName && item.details.lastName) {
     return `${item.details.firstName} ${item.details.lastName}`
   }

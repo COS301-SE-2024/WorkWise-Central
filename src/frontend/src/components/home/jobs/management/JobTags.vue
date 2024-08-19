@@ -247,16 +247,15 @@ const saveLabel = async () => {
         label: labelTitle.value,
         color: selectedColor.value,
       }
-      const updatedTags = [...props.tags, tag]
-      console.log(updatedTags)
       const response = await axios.post(`${apiUrl}job/tags/add`, tag, config)
+      const updatedTags = [...props.tags, response.data.data._id]
       console.log(response)
       if (response.status > 199 && response.status < 300) {
         labels.value.push(tag)
         try {
           console.log('Job id', props.jobID)
           console.log('Tag body', tag)
-          let response = await axios.patch(`${apiUrl}job/${props.jobID}`, {tags: updatedTags}, config)
+          let response = await axios.patch(`${apiUrl}job/update/${props.jobID}`, {tags: updatedTags}, config)
           if (response.status > 199 && response.status < 300) {
             addTagSuccess()
             console.log('Tag added to the job', response)

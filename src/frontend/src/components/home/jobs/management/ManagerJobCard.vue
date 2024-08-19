@@ -16,9 +16,9 @@
           <v-col>
             <SelectMembers :jobID="props.passedInJob?._id"/>
           </v-col>
-          <v-col>
-            <UpdateJobStatus :passedInJob="props.passedInJob" />
-          </v-col>
+<!--          <v-col>-->
+<!--            <UpdateJobStatus :passedInJob="props.passedInJob" />-->
+<!--          </v-col>-->
           <v-col>
             <!--              <ChangeDueDate :jobDetails="props.passedInJob?.details" :jobID="props.passedInJob?._id"  />-->
           </v-col>
