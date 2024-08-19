@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <Toast position="bottom-center" />
+    <Toast position="top-center" />
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
         <h2 class="text-xl font-semibold">Notifications</h2>

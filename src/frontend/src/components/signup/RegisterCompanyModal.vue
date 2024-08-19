@@ -3,14 +3,14 @@
     v-model="dialog"
     max-height="800"
     max-width="600"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
+    :theme="isDarkMode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
         variant="elevated"
-        color="secondary"
+        :color="buttonColor ? buttonColor : 'secondary'"
         v-bind="activatorProps"
         block
         >Register Company</v-btn
@@ -20,7 +20,7 @@
       elevation="14"
       rounded="md"
       max-width="600"
-      :theme="isdarkmode === true ? 'dark' : 'light'"
+      :theme="isDarkMode === true ? 'dark' : 'light'"
     >
       <v-form
         ref="form"
@@ -215,7 +215,7 @@
             <v-col>
               <small class="text-caption">Company logo</small>
               <v-file-input
-                :theme="isdarkmode === true ? 'dark' : 'light'"
+                :theme="isDarkMode === true ? 'dark' : 'light'"
                 variant="solo"
                 accept="image/*"
                 width="100%"
@@ -349,7 +349,7 @@
             </v-row>
           </v-col>
           <v-col cols="8" offset="2" align="center">
-            <Toast />
+             <Toast position="top-center" />
             <v-btn
               color="primary"
               type="submit"
@@ -417,10 +417,13 @@ export default {
   components: {
     Toast
   },
+  props: {
+    buttonColor: String
+  },
   data() {
     return {
       dialog: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       click_create_client: false,
       valid: true,
       dark: '#2b2b2b',

@@ -3,8 +3,9 @@
     v-model="dialog"
     max-height="800"
     max-width="600"
-    :theme="isdarkmode ? 'dark' : 'light'"
+    :theme="isDarkMode ? 'dark' : 'light'"
     persistent
+    :opacity="0"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
@@ -33,7 +34,9 @@
           />
 
           <v-label>Tag Color</v-label>
-          <div><ColorPicker inputId="cp-hex" v-model="tag.colour" inline /></div>
+          <div>
+            <ColorPicker inputId="cp-hex" v-model="tag.colour" inline :rules="colorRules" />
+          </div>
           <span>Hex Code: {{ tag.colour }}</span>
         </v-form>
       </v-card-text>
@@ -77,7 +80,7 @@ export default defineComponent({
     return {
       isDeleting: false,
       dialog: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       tag: {
         label: '',
         colour: '',
@@ -87,7 +90,24 @@ export default defineComponent({
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       formIsValid: false,
       nameRules: [(v: string) => !!v || 'Name is required'],
-      labelRules: [(v: string) => !!v || 'Label is required']
+      labelRules: [(v: string) => !!v || 'Label is required'],
+      colorRules: [
+        (v: string) => !!v || 'Color is required',
+        (v: string) => !/^#(?:[fF]{3}|[fF]{6})$/.test(v) || 'Pure white is not allowed',
+        (v: string) => {
+          let hex = v.replace('#', '')
+          if (hex.length === 3) {
+            hex = hex
+              .split('')
+              .map((char) => char + char)
+              .join('')
+          }
+          const r = parseInt(hex.substring(0, 2), 16)
+          const g = parseInt(hex.substring(2, 4), 16)
+          const b = parseInt(hex.substring(4, 6), 16)
+          return r < 240 || g < 240 || b < 240 || 'Colors close to white are not allowed'
+        }
+      ]
     }
   },
   components: {
@@ -117,9 +137,10 @@ export default defineComponent({
           this.$toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Tag not created',
+            detail: error.response.data.message,
             life: 3000
           })
+          this.isDeleting = false
           console.error(error)
         })
       console.log('Creating Tag')

@@ -11,7 +11,7 @@
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
       >
     </template>
-    <v-card :color="isdarkmode === true ? 'dark' : 'light'">
+    <v-card :color="isDarkMode === true ? 'dark' : 'light'">
       <v-card-title>
         <span class="headline">Delete {{ details.firstName + ' ' + details.surname }}</span>
       </v-card-title>
@@ -76,7 +76,7 @@ export default {
     return {
       clientDialog: false,
       isDeleting: false,
-      isdarkmode: false,
+      isDarkMode: false,
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
@@ -122,6 +122,7 @@ export default {
         })
         .catch((error) => {
           console.log(error)
+          this.isDeleting = false
           this.$toast.add({
             severity: 'error',
             summary: 'Error',

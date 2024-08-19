@@ -6,7 +6,7 @@
           height="auto"
           class="pa-16 ma-0 bg-background"
           rounded="md"
-          :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
+          :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
           border="md"
           elevation="0"
         >
@@ -171,7 +171,7 @@ export default defineComponent({
         { name: 'Marketing Team', members: 8 },
         { name: 'Support Team', members: 6 }
       ],
-      isdarkmode: sessionStorage.getItem('isdarkmode') === 'true' ? true : false
+      isDarkMode: sessionStorage.getItem('isDarkMode') === 'true' ? true : false
     }
   },
   methods: {

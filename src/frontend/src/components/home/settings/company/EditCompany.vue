@@ -92,7 +92,13 @@
           ><v-row justify="end">
             <v-col align="center" cols="12" lg="6">
               <Toast position="top-center" />
-              <v-btn color="success" @click="updateCompanyDetails" :disabled="!valid" block>
+              <v-btn
+                color="success"
+                @click="updateCompanyDetails"
+                :disabled="!valid"
+                block
+                :loading="isDeleting"
+              >
                 <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save
               </v-btn></v-col
             >
@@ -120,7 +126,9 @@ export default defineComponent({
     Toast
   },
   data: () => ({
-    isdarkmode: false,
+    isDarkMode: false,
+    isDeleting: false,
+
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     currentCompanyID: localStorage.getItem('currentCompany'),
@@ -291,6 +299,7 @@ export default defineComponent({
         })
     },
     async updateCompanyDetails() {
+      this.isDeleting = true
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -314,13 +323,17 @@ export default defineComponent({
             detail: 'Company updated',
             life: 3000
           })
-          window.location.reload()
+          setTimeout(() => {
+            this.isDeleting = false
+            window.location.reload()
+          }, 3000)
         })
         .catch((error) => {
           console.log(error)
+          this.isDeleting = false
           this.$toast.add({
             severity: 'error',
-            summary: 'Sticky Message',
+            summary: 'Error',
             detail: 'Company update failed',
             life: 3000
           })
@@ -355,7 +368,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
+    this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
     this.getCompanyDetails()
   }
 })

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <Toast />
+    <Toast position="top-center" />
     <v-card>
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
@@ -55,7 +55,7 @@
       v-model="dialog"
       max-height="800"
       max-width="600"
-      :theme="isdarkmode ? 'dark' : 'light'"
+      :theme="isDarkMode ? 'dark' : 'light'"
       persistent
     >
       <v-card>
@@ -72,8 +72,11 @@
             />
 
             <v-label>Tag Color</v-label>
-            <div><ColorPicker inputId="cp-hex" v-model="selectedItem.color" inline /></div>
-            <span>Hex Code: {{ selectedItem.color }}</span>
+            <div><ColorPicker inputId="cp-hex" v-model="selectedItem.colour" inline /></div>
+            <span
+              >Hex Code:
+              <v-chip :color="selectedItem.colour">{{ selectedItem.colour }}</v-chip></span
+            >
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -145,13 +148,30 @@ export default defineComponent({
     selectedItem: {
       _id: '',
       status: '',
-      color: '',
+      colour: '',
       companyId: localStorage.getItem('currentCompany'),
       employeeId: localStorage.getItem('employeeId')
     },
     formIsValid: false,
     labelRules: [(v: string) => !!v || 'This field is required'],
-    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+    colorRules: [
+      (v: string) => !!v || 'Color is required',
+      (v: string) => !/^#(?:[fF]{3}|[fF]{6})$/.test(v) || 'Pure white is not allowed',
+      (v: string) => {
+        let hex = v.replace('#', '')
+        if (hex.length === 3) {
+          hex = hex
+            .split('')
+            .map((char) => char + char)
+            .join('')
+        }
+        const r = parseInt(hex.substring(0, 2), 16)
+        const g = parseInt(hex.substring(2, 4), 16)
+        const b = parseInt(hex.substring(4, 6), 16)
+        return r < 240 || g < 240 || b < 240 || 'Colors close to white are not allowed'
+      }
+    ],
+    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
@@ -209,9 +229,14 @@ export default defineComponent({
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        data: {
+          companyId: localStorage.getItem('currentCompany'),
+          employeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = this.getRequestUrl()
+      console.log(this.selectedItem)
+      const apiURL = await this.getRequestUrl()
       await axios
         .patch(`${apiURL}job/status`, this.selectedItem, config)
         .then((response) => {
@@ -228,7 +253,14 @@ export default defineComponent({
           }, 3000)
         })
         .catch((error) => {
-          console.log(error)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.response.data.message,
+            life: 3000
+          })
+          this.isDeleting = false
+          console.error(error)
         })
       console.log('Updating Status')
     },

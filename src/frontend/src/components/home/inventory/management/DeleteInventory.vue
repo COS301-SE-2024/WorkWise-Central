@@ -2,7 +2,7 @@
   <v-dialog
     v-model="deleteDialog"
     max-width="500px"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
+    :theme="isDarkMode === true ? 'dark' : 'light'"
     :opacity="0.1"
   >
     <template v-slot:activator="{ props: activatorProps }">
@@ -10,7 +10,7 @@
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
       >
     </template>
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
       <v-card-title>
         <v-icon>mdi-plus</v-icon>
         <span>Delete Inventory</span>
@@ -73,7 +73,7 @@ export default defineComponent({
     deleteDialog: false,
     clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
     isDeleting: false,
-    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),

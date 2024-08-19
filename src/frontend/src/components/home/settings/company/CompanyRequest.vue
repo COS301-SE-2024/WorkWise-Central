@@ -4,7 +4,7 @@
       height="auto"
       class="pa-11 ma-0 bg-cardColor"
       rounded="md"
-      :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
+      :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
       border="md"
     >
       <v-card-title
@@ -65,7 +65,7 @@
                 <v-chip variant="text">{{ convertDate(value) }}</v-chip>
               </template>
               <template v-slot:[`item.actions`]="{ item }">
-                <v-menu max-width="200px" :theme="isdarkmode === true ? 'dark' : 'light'">
+                <v-menu max-width="200px" :theme="isDarkMode === true ? 'dark' : 'light'">
                   <template v-slot:activator="{ props }">
                     <v-btn rounded="xl" variant="plain" v-bind="props">
                       <v-icon color="primary">mdi-dots-horizontal</v-icon>
@@ -110,7 +110,7 @@ export default defineComponent({
   data() {
     return {
       search: '' as string,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       headers: [

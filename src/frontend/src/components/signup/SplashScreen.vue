@@ -1,7 +1,8 @@
 <template>
-  <v-app :theme="isdarkmode ? 'dark' : 'light'">
+  <Toast position="top-center" />
+  <v-app :theme="isDarkMode ? 'dark' : 'light'">
     <!-- Toolbar -->
-    <v-app-bar :theme="isdarkmode ? 'themes.dark' : 'themes.light'" class="bg-background">
+    <v-app-bar :theme="isDarkMode ? 'themes.dark' : 'themes.light'" class="bg-background">
       <v-toolbar-title class="d-flex justify-start">
         <v-label :class="'h4 text-primary'">Work</v-label>
         <v-label :class="'h4 text-secondary'">Wise</v-label>
@@ -35,11 +36,11 @@
         Sign up
       </v-btn>
       <v-btn @click="toggleDarkMode" base-color="background" text
-        ><v-icon :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"></v-icon
+        ><v-icon :icon="isDarkMode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"></v-icon
       ></v-btn>
     </v-app-bar>
     <!-- Main Content -->
-    <v-main :theme="isdarkmode ? 'dark' : 'light'">
+    <v-main :theme="isDarkMode ? 'dark' : 'light'">
       <v-row style="height: 1000px">
         <!-- Left Half -->
         <v-col
@@ -53,14 +54,7 @@
         >
           <v-row justify="center"
             ><v-col align-self="center">
-              <h1
-                :class="[
-                  'splash-title',
-                  'header-title',
-                  'text-center',
-                  { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
-                ]"
-              >
+              <h1 :class="['splash-title', 'header-title', 'text-center']">
                 Welcome To <span class="text-primary">Work</span>
                 <span class="text-secondary">Wise</span> Central
               </h1>
@@ -116,7 +110,7 @@
                 width="auto"
                 height="auto"
                 border="md"
-                :theme="isdarkmode ? 'dark' : 'light'"
+                :theme="isDarkMode ? 'dark' : 'light'"
                 rounded="md"
                 class="bg-background"
               >
@@ -135,7 +129,7 @@
                         >
 
                         <v-text-field
-                          :theme="isdarkmode ? 'dark' : 'light'"
+                          :theme="isDarkMode ? 'dark' : 'light'"
                           :label="username ? '' : 'Enter your username'"
                           type="username"
                           name="username"
@@ -153,7 +147,7 @@
                           >Password</label
                         >
                         <v-text-field
-                          :theme="isdarkmode ? 'dark' : 'light'"
+                          :theme="isDarkMode ? 'dark' : 'light'"
                           :label="password ? '' : 'Enter your password'"
                           :type="showPassword ? 'text' : 'password'"
                           name="password"
@@ -182,6 +176,7 @@
                         @click="login"
                         @keypress.enter="login"
                         rounded="md"
+                        :loading="loading"
                         size="large"
                         color="primary"
                         variant="elevated"
@@ -222,7 +217,7 @@
                 rounded="md"
                 width="auto"
                 height="auto"
-                :theme="isdarkmode ? 'dark' : 'light'"
+                :theme="isDarkMode ? 'dark' : 'light'"
                 class="bg-background"
               >
                 <v-col>
@@ -264,7 +259,7 @@
                 rounded="md"
                 width="auto"
                 height="auto"
-                :theme="isdarkmode ? 'dark' : 'light'"
+                :theme="isDarkMode ? 'dark' : 'light'"
                 class="bg-background"
               >
                 <v-col>
@@ -307,7 +302,7 @@
                 rounded="md"
                 width="auto"
                 height="auto"
-                :theme="isdarkmode ? 'dark' : 'light'"
+                :theme="isDarkMode ? 'dark' : 'light'"
                 class="bg-background"
               >
                 <v-col>
@@ -324,7 +319,7 @@
                         ><v-col>
                           <label style="font-size: 14px; font-weight: lighter">Email</label>
                           <v-text-field
-                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :theme="isDarkMode ? 'dark' : 'light'"
                             :label="email ? '' : 'Enter your email'"
                             type="email"
                             v-model="email"
@@ -338,7 +333,7 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Password</label>
                           <v-text-field
-                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :theme="isDarkMode ? 'dark' : 'light'"
                             :label="signupPassword ? '' : 'Enter your password'"
                             :type="showPassword ? 'text' : 'password'"
                             name="password"
@@ -357,7 +352,7 @@
                           ><label style="font-size: 14px; font-weight: lighter"
                             >Confirm Password</label
                           ><v-text-field
-                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :theme="isDarkMode ? 'dark' : 'light'"
                             :label="confirm_password ? '' : 'Confirm your password'"
                             :type="showPassword ? 'text' : 'password'"
                             :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
@@ -418,7 +413,7 @@
                 height="auto"
                 border="md"
                 rounded="md"
-                :theme="isdarkmode ? 'dark' : 'light'"
+                :theme="isDarkMode ? 'dark' : 'light'"
                 class="bg-background"
               >
                 <v-col>
@@ -434,7 +429,7 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Name</label>
                           <v-text-field
-                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :theme="isDarkMode ? 'dark' : 'light'"
                             :label="name ? '' : 'Enter your name'"
                             type="name"
                             v-model="name"
@@ -449,7 +444,7 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Surname</label
                           ><v-text-field
-                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :theme="isDarkMode ? 'dark' : 'light'"
                             :label="surname ? '' : 'Enter your surname'"
                             type="surname"
                             v-model="surname"
@@ -507,7 +502,7 @@
                   height="auto"
                   border="md"
                   rounded="md"
-                  :theme="isdarkmode ? 'dark' : 'light'"
+                  :theme="isDarkMode ? 'dark' : 'light'"
                 >
                   <v-col>
                     <v-col>
@@ -520,7 +515,7 @@
                         ><v-col align-self="center" cols="12"
                           ><label style="font-size: 14px; font-weight: lighter">Username</label>
                           <v-combobox
-                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :theme="isDarkMode ? 'dark' : 'light'"
                             :label="username ? '' : 'Select your username'"
                             v-model="username"
                             :items="usernameList"
@@ -534,12 +529,13 @@
                         <v-col cols="12">
                           <small class="text-caption">Profile Picture</small>
                           <v-file-input
-                            :theme="isdarkmode === true ? 'dark' : 'light'"
+                            :theme="isDarkMode === true ? 'dark' : 'light'"
                             variant="solo"
                             accept="image/*"
                             width="100%"
                             placeholder="Profile Picture"
                             @change="handleImageUpload"
+                            v-model="profile_picture"
                             hint="Image size limit of  5MB"
                             persistent-hint
                             color="black"
@@ -599,7 +595,7 @@
                 height="auto"
                 border="md"
                 rounded="md"
-                :theme="isdarkmode ? 'dark' : 'light'"
+                :theme="isDarkMode ? 'dark' : 'light'"
                 class="bg-background"
               >
                 <v-col>
@@ -638,7 +634,7 @@
                             variant="solo"
                             clearable
                             required
-                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :theme="isDarkMode ? 'dark' : 'light'"
                           >
                           </v-select></v-col
                       ></v-row>
@@ -658,7 +654,7 @@
                             variant="solo"
                             clearable
                             required
-                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :theme="isDarkMode ? 'dark' : 'light'"
                           >
                           </v-select></v-col
                       ></v-row>
@@ -709,7 +705,7 @@
                 height="auto"
                 border="md"
                 rounded="md"
-                :theme="isdarkmode ? 'dark' : 'light'"
+                :theme="isDarkMode ? 'dark' : 'light'"
                 class="bg-background"
               >
                 <v-col>
@@ -725,7 +721,7 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Street</label
                           ><v-text-field
-                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :theme="isDarkMode ? 'dark' : 'light'"
                             :label="street ? '' : 'Enter your street name'"
                             type="input"
                             v-model="street"
@@ -741,7 +737,7 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Suburb</label
                           ><v-text-field
-                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :theme="isDarkMode ? 'dark' : 'light'"
                             :label="suburb ? '' : 'Enter your suburb name'"
                             type="input"
                             v-model="suburb"
@@ -759,7 +755,7 @@
                             :label="city ? '' : 'Select your city'"
                             type="input"
                             v-model="city"
-                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :theme="isDarkMode ? 'dark' : 'light'"
                             :rules="cityRules"
                             rounded="md"
                             variant="solo"
@@ -773,7 +769,7 @@
                             :label="province ? '' : 'Select your province'"
                             type="input"
                             v-model="province"
-                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :theme="isDarkMode ? 'dark' : 'light'"
                             :rules="provinceRules"
                             rounded="md"
                             variant="solo"
@@ -785,7 +781,7 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Postal Code</label
                           ><v-text-field
-                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :theme="isDarkMode ? 'dark' : 'light'"
                             :label="postal_code ? '' : 'Enter your postal code'"
                             type="input"
                             v-model="postal_code"
@@ -798,7 +794,7 @@
                         ><v-col
                           ><label style="font-size: 14px; font-weight: lighter">Phone Number</label
                           ><v-text-field
-                            :theme="isdarkmode ? 'dark' : 'light'"
+                            :theme="isDarkMode ? 'dark' : 'light'"
                             :label="phone_number ? '' : 'Enter your phone number'"
                             type="input"
                             v-model="phone_number"
@@ -853,12 +849,12 @@
               @click:outside="resetFields"
             >
               <!-- <v-sheet
-                :bg-color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :bg-color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
               > -->
               <v-card
                 class="mx-auto bg-background"
                 width="400"
-                :theme="isdarkmode ? 'dark' : 'light'"
+                :theme="isDarkMode ? 'dark' : 'light'"
               >
                 <v-col
                   ><v-col>
@@ -870,9 +866,9 @@
                   <v-container
                     ><v-row>
                       <v-col cols="12" lg="6">
-                        <RegisterCompanyModal :isdarkmode="isdarkmode" /> </v-col
+                        <RegisterCompanyModal :isDarkMode="isDarkMode" /> </v-col
                       ><v-col cols="12" lg="6">
-                        <JoinCompanyModal :isdarkmode="isdarkmode" /></v-col></v-row></v-container
+                        <JoinCompanyModal :isDarkMode="isDarkMode" /></v-col></v-row></v-container
                 ></v-col>
               </v-card>
 
@@ -881,7 +877,7 @@
 
             <!-- Register Company Modal -->
 
-            <p class="text-center h6" :theme="isdarkmode ? 'dark' : 'light'">
+            <p class="text-center h6" :theme="isDarkMode ? 'dark' : 'light'">
               By clicking Continue to login or sign up, you agree to WorkWise Central's User
               Agreement, Privacy Policy, and Cookie Policy
             </p>
@@ -894,7 +890,7 @@
           <div class="background-image pa-2"></div>
         </v-col>
       </v-row>
-      <!-- <v-footer :theme="isdarkmode ? 'dark' : 'light'" class="bg-background">
+      <!-- <v-footer :theme="isDarkMode ? 'dark' : 'light'" class="bg-background">
          <v-container>
           <v-row justify="space-between">
             <v-col cols="12" md="6">
@@ -903,95 +899,21 @@
           </v-row>
         </v-container>
       </v-footer> -->
+      <div><MarketingSplash :theme="isDarkMode ? 'themes.dark' : 'themes.light'" /></div>
 
-      <h1
-        :class="[
-          'splash-title',
-          'header-title',
-          'text-center',
-          { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
-        ]"
-      >
-        Manage your business <span class="text-primary">effectively</span> and
-        <span class="text-secondary">efficiently</span> using <span class="text-primary">Work</span
-        ><span class="text-secondary">Wise</span> Central
-      </h1>
-      <v-row style="height: 1000px">
-        <v-col cols="12" order="first" order-lg="last" order-md="last" order-sm="first">
-          <v-tabs v-model="tab" align-tabs="center" bg-color="secondary" stacked>
-            <v-tab v-for="(item, index) in tabs" :key="index">
-              {{ item.title }}<v-icon :icon="item.icon" color="primary"></v-icon>
-            </v-tab>
-          </v-tabs>
-          <v-tabs-window v-model="tab">
-            <v-tabs-window-item v-for="item in tabs" :key="item" :value="item">
-              <v-card flat>
-                <v-img> </v-img>
-              </v-card>
-            </v-tabs-window-item>
-          </v-tabs-window>
-        </v-col>
-      </v-row>
+      <!-- <div>
+        <ServicesSplash :theme="isDarkMode ? 'themes.dark' : 'themes.light'" />
+      </div> -->
       <div>
-        <h1
-          :class="[
-            'splash-title',
-            'header-title',
-            'text-center',
-            { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
-          ]"
-        >
-          What <span class="text-primary">services</span> would you like to
-          <span class="text-secondary">manage</span>
+        <h1 :class="['splash-title', 'header-title', 'text-center']">
+          How to use <span class="text-primary">Work</span
+          ><span class="text-secondary">Wise</span> Central
         </h1>
         <v-row justify="end" style="height: 500px">
-          <v-col cols="12">
-            <v-sheet class="bg-background mx-auto" elevation="0">
-              <v-slide-group v-model="model" class="pa-4" show-arrows>
-                <v-spacer></v-spacer>
-                <v-slide-group-item v-for="(service, index) in services.slice(0, 3)" :key="index">
-                  <v-col cols="12" lg="4" md="4">
-                    <v-card max-width="500px" rounded="xl">
-                      <v-card-title>{{ service.title }}</v-card-title>
-                      <v-card-text>
-                        <div>{{ service.text1 }}</div>
-                        <div>{{ service.text2 }}</div>
-                        <div>{{ service.text3 }}</div>
-                      </v-card-text>
-                      <v-card-actions class="bg-cardColor">
-                        <v-btn
-                          color="primary"
-                          dark
-                          @click="signupDialog = true"
-                          rounded="xl"
-                          class="my-3 text-center"
-                          size="large"
-                        >
-                          Get Started
-                        </v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-col>
-                </v-slide-group-item>
-              </v-slide-group>
-            </v-sheet>
-          </v-col>
+          <Tutorial />
         </v-row>
       </div>
-      <h1
-        :class="[
-          'splash-title',
-          'header-title',
-          'text-center',
-          { 'dark-theme-text': isdarkmode, 'light-theme-text': !isdarkmode }
-        ]"
-      >
-        How to use <span class="text-primary">Work</span
-        ><span class="text-secondary">Wise</span> Central
-      </h1>
-      <v-row justify="end" style="height: 500px">
-        <Tutorial />
-      </v-row>
+
       <v-footer> </v-footer>
     </v-main>
   </v-app>
@@ -1003,13 +925,16 @@ import axios from 'axios'
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import Tutorial from '../home/help/tutorial/Tutorial.vue'
-
+import MarketingSplash from './MarketingSplash.vue'
+// import ServicesSplash from './ServicesSplash.vue'
 export default defineComponent({
   components: {
     RegisterCompanyModal,
     JoinCompanyModal,
     Toast,
-    Tutorial
+    Tutorial,
+    MarketingSplash
+    // ServicesSplash
   },
   data: () => ({
     localUrl: 'http://localhost:3000/',
@@ -1030,6 +955,7 @@ export default defineComponent({
     alertSignUp: false,
     alertSignUpFailure: false,
     alertLogin: false,
+    loading: false,
     signupDialog: false,
     signup1Dialog: false,
     signup2Dialog: false,
@@ -1114,6 +1040,7 @@ export default defineComponent({
     access_token: '',
     password: '',
     signupPassword: '',
+    profilePicture: '',
     confirm_password: '',
     showPassword: false,
     date: '',
@@ -1135,7 +1062,7 @@ export default defineComponent({
     phone_number: '',
     skills: [],
     currentCompany: {},
-    profilePicture: '',
+
     usernameList: [],
     resetForm() {
       this.$refs.form.reset()
@@ -1172,7 +1099,7 @@ export default defineComponent({
     roles: '',
     url: 'http://localhost:3000/users',
     valid: true,
-    isdarkmode: false,
+    isDarkMode: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
@@ -1339,12 +1266,13 @@ export default defineComponent({
       setTimeout(() => {
         this.loading = false
       }, 3000)
-      isdarkmode = localStorage.getItem('theme')
+      isDarkMode = localStorage.getItem('theme')
     },
     companyLogoHandler() {
       console.log('')
     },
     async login() {
+      this.loading = true
       const apiURL = await this.getRequestUrl()
       if (this.$refs.form.validate()) {
         await axios
@@ -1369,7 +1297,10 @@ export default defineComponent({
               life: 3000
             })
             // this.resetForm()
-            this.$router.push('/dashboard')
+            setTimeout(() => {
+              this.loading = false
+              this.$router.push({ name: 'dashboard' })
+            }, 2000)
           })
           .catch((error) => {
             console.log(error)
@@ -1379,11 +1310,35 @@ export default defineComponent({
               detail: 'User unsuccessfully logged in',
               life: 3000
             })
+            this.loading = false
           })
       }
     },
     birthDateFormatter(date) {
       this.date = new Date(date).toISOString()
+    },
+    async imageURL() {
+      const apiURL = await this.getRequestUrl()
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      await axios
+        .post(
+          apiURL + 'users/newUser/profilePic',
+          {
+            profilePicture: this.profilePicture
+          },
+          config
+        )
+        .then((response) => {
+          console.log(response)
+          this.profilePicture = response.data.data
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
     async signup() {
       const apiURL = await this.getRequestUrl()
@@ -1484,6 +1439,7 @@ export default defineComponent({
       this.populateUsernameList()
     },
     async nextFlowUsername() {
+      this.profilePicture = await this.imageURL()
       try {
         this.exists = await this.usernameExist()
         if (this.exists === true) {
@@ -1569,15 +1525,15 @@ export default defineComponent({
     },
 
     toggleDarkMode() {
-      console.log(this.isdarkmode)
-      if (this.isdarkmode === true) {
-        this.isdarkmode = false
-        console.log(this.isdarkmode)
+      console.log(this.isDarkMode)
+      if (this.isDarkMode === true) {
+        this.isDarkMode = false
+        console.log(this.isDarkMode)
       } else {
-        this.isdarkmode = true
-        console.log(this.isdarkmode)
+        this.isDarkMode = true
+        console.log(this.isDarkMode)
       }
-      localStorage.setItem('theme', this.isdarkmode) // save the theme to session storage
+      localStorage.setItem('theme', this.isDarkMode) // save the theme to session storage
     },
     async isLocalAvailable(localUrl) {
       try {

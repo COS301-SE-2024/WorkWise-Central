@@ -2,7 +2,7 @@
   <v-dialog
     v-model="deleteDialog"
     max-width="500px"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
+    :theme="isDarkMode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
@@ -32,7 +32,7 @@
             ><v-col cols="12" lg="6"
               ><Toast position="bottom-center" />
               <v-btn label="Cancel" color="secondary" @click="close" block
-                ><v-icon icon="fa:fa-solid fa-cancel" end color="secondary" size="small"></v-icon
+                ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
                 >Cancel
               </v-btn></v-col
             >
@@ -61,7 +61,7 @@ export default defineComponent({
     return {
       deleteDialog: false,
       isDeleting: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }

@@ -1,12 +1,12 @@
 <template>
-  <v-dialog v-model="clientDialog" max-width="500" :theme="isdarkmode === true ? 'dark' : 'light'">
+  <v-dialog v-model="clientDialog" max-width="500" :theme="isDarkMode === true ? 'dark' : 'light'">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="success" v-bind="activatorProps">
         <v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon> View
       </v-btn>
     </template>
 
-    <v-card :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
+    <v-card :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'">
       <v-card-title> Client Details </v-card-title>
       <v-card-text>
         <v-col>
@@ -115,7 +115,7 @@ export default defineComponent({
   data() {
     return {
       clientDialog: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       localClientDetails: this.deepCopy(this.clientDetails)
     }
   },

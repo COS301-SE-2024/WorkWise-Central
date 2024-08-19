@@ -63,7 +63,7 @@
                   >
                 </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeleteRole :tag-id="item._id" />
+                  <DeleteRole :roleId="item._id" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -76,7 +76,7 @@
           ><v-row justify="end">
             <Toast position="top-center" />
             <v-col align="center" cols="12" lg="6">
-              <v-btn color="success" @click="updateRole" block :loading="isDeleting">
+              <v-btn color="success" @click="bulkRoleUpdate" block :loading="isDeleting">
                 <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>
                 Save</v-btn
               >
@@ -91,6 +91,39 @@
         >
       </v-card-actions>
     </v-card>
+    <v-dialog v-model="dialog" persistent max-width="500px">
+      <v-card>
+        <v-card-title class="text-h5"> Edit Role </v-card-title>
+
+        <v-card-text>
+          <v-text-field v-model="selectedItem.roleName" label="Role Name" outlined></v-text-field>
+
+          <v-select
+            v-model="selectedItem.permissionSuite"
+            :items="permissions"
+            label="Permissions"
+            chips
+            multiple
+          ></v-select>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-container
+            ><v-row
+              ><v-col cols="12" lg="6">
+                <v-btn color="success" @click="updateRole" :loading="isDeleting" block>
+                  <v-icon start icon="fa:fa-solid fa-floppy-disk" color="success"></v-icon> Save
+                </v-btn></v-col
+              ><v-col cols="12" lg="6">
+                <v-btn color="error" @click="cancel" block>
+                  <v-icon start icon="fa:fa-solid fa-times-circle" color="error"></v-icon> Cancel
+                </v-btn></v-col
+              ></v-row
+            ></v-container
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -112,6 +145,8 @@ export default defineComponent({
     CreateRoles
   },
   data: () => ({
+    localUrl: 'http://localhost:3000/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     dialog: false,
     items: [],
     isDeleting: false,
@@ -132,7 +167,12 @@ export default defineComponent({
       { title: 'Actions', key: 'actions' }
     ],
 
-    companyID: ''
+    companyID: '',
+    selectedItem: {
+      _id: '',
+      permissionSuite: [],
+      roleName: ''
+    }
   }),
 
   methods: {
@@ -155,6 +195,7 @@ export default defineComponent({
           for (let i = 0; i < response.data.data.length; i++) {
             if (response.data.data[i].roleName) {
               this.roleUpdates.push({
+                _id: response.data.data[i]._id,
                 roleName: response.data.data[i].roleName,
                 permissionSuite: response.data.data[i].permissionSuite
               })
@@ -207,14 +248,13 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      console.log(this.items[roleID].role)
-      console.log(this.items[roleID].permission)
+
       const data = {
-        roleName: this.items[roleID].role,
-        permissionSuite: this.items[roleID].permission
+        roleName: this.selectedItem.roleName,
+        permissionSuite: this.selectedItem.permissionSuite
       }
       await axios
-        .patch(`http://localhost:3000/role/${roleID}`, config, data)
+        .patch(`http://localhost:3000/role/${this.selectedItem._id}`, config, data)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -231,6 +271,13 @@ export default defineComponent({
         })
         .catch((error) => {
           console.log(error)
+          this.isDeleting = false
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.response.data.message,
+            life: 3000
+          })
         })
     },
     viewRoles() {
@@ -242,17 +289,46 @@ export default defineComponent({
       }
     },
     async bulkRoleUpdate() {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        data: {
+          currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
       const data = {
         roleUpdates: this.roleUpdates,
         roleIds: this.roleIds
       }
-      await axios.patch(`${this.getRequestUrl}role/bulkUpdate/${this.companyID}`, config, data)
+      const apiURL = await this.getRequestUrl()
+      await axios
+        .patch(`${apiURL}role/bulkUpdate/${this.companyID}`, config, data)
+        .then((response) => {
+          console.log(response)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Roles updated',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.isDeleting = false
+            window.location.reload()
+          }, 1500)
+        })
+        .catch((error) => {
+          this.isDeleting = false
+          console.log(error)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'An error occurred while updating roles',
+            life: 3000
+          })
+        })
     },
     getRowProps({ index }) {
       return {
@@ -260,6 +336,7 @@ export default defineComponent({
       }
     },
     cancel() {
+      this.dialog = false
       this.$emit('cancel')
       this.$toast.add({
         severity: 'info',
@@ -291,6 +368,7 @@ export default defineComponent({
     },
     selectItem(item) {
       console.log(item)
+      this.selectedItem = item
     }
   },
   mounted() {
@@ -298,7 +376,7 @@ export default defineComponent({
     this.getPermissions()
     this.removeOwnerRoleFromArray()
     this.companyID = localStorage.getItem('currentCompany')
-    this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
+    this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
   }
 })
 </script>

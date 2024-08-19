@@ -31,11 +31,6 @@
             </v-btn>
           </router-link>
           <v-divider class="my-3"></v-divider>
-          <router-link to="/company-invites" class="text-decoration-none">
-            <v-btn variant="text" width="100%"> <i class="fas fa-envelope"></i> Invites </v-btn>
-          </router-link>
-
-          <v-divider class="my-3"></v-divider>
 
           <v-btn variant="text" @click="logout" width="100%">
             <i class="fas fa-sign-out-alt"></i> Logout
