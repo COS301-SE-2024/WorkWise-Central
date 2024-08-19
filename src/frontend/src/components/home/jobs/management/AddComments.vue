@@ -43,6 +43,7 @@
       <!-- Submit button -->
       <v-btn color="success" @click="addComment" prepend-icon="mdi-comment-plus">Comment</v-btn>
     </v-container>
+    <Toast/>
   </div>
 </template>
 
@@ -139,9 +140,12 @@ const getUserData = async () => {
   const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(`${apiUrl}users/id/${localStorage.getItem('id')}`, config)
-    const userData = response.data.data
-    firstName.value = userData.personalInfo.firstName
-    surname.value = userData.personalInfo.surname
+    if (response.status > 199 && response.status < 300) {
+      console.log(response)
+      const userData = response.data.data
+      firstName.value = userData.personalInfo.firstName
+      surname.value = userData.personalInfo.surname
+    }
   } catch (error) {
     console.error('Error getting user data', error)
   }
@@ -157,33 +161,18 @@ const addComment = async () => {
     })
     return
   }
-
   const apiUrl = await getRequestUrl()
-  const updatedComments = [
-    ...comments.value,
-    {
-      text: newComment.value,
-      employeeId: localStorage.getItem('employeeId') || '',
-      date: new Date().toISOString(),
-    }
-  ]
   const addedComment = ref<{ employeeId: string; jobId: string; newComment: string }>({
     employeeId: localStorage.getItem('employeeId') || '',
     jobId: props.id,
     newComment: newComment.value
   })
-
   try {
-    await axios.put(`${apiUrl}job/comment`, addedComment.value, config)
-    // You can update the _id here if the server returns it
-    comments.value = updatedComments
+    const response = await axios.put(`${apiUrl}job/comment`, addedComment.value, config)
+    console.log(response)
+    const commentId : string = response.data.data.comments[response.data.data.comments.length - 1]._id
+    comments.value.push({text: newComment.value, date: new Date().toISOString(), firstName: firstName.value, surname: surname.value, _id: commentId, employeeId: localStorage.getItem('employeeId') || ''})
     newComment.value = ''
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: 'Successfully commented on job',
-      life: 3000
-    })
   } catch (error) {
     console.error('Error adding comment', error)
     toast.add({
