@@ -24,6 +24,17 @@ export class CreateRoleDto {
   companyId: Types.ObjectId;
 }
 
+export class ExternalCreateRoleDto {
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsMongoId()
+  currentEmployeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  createRoleDto: CreateRoleDto;
+}
+
 export class createRoleResponseDto {
   response: { access_token: string; id: Types.ObjectId };
   constructor(message: { access_token: string; id: Types.ObjectId }) {

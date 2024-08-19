@@ -233,32 +233,26 @@ export class RoleService {
     return this.roleRepository.update(roleId, updateRoleDto);
   }
 
-  async bulkUpdate(userId: Types.ObjectId, bulkUpdateRoleDto: BulkUpdateRoleDto, companyId: Types.ObjectId) {
+  async bulkUpdate(userId: Types.ObjectId, bulkUpdateRoleDto: BulkUpdateRoleDto[], companyId: Types.ObjectId) {
     console.log('In bulk update');
     //Checking that the roles exist for the given company
     const roles = await this.roleRepository.findAllInCompany(companyId);
     console.log('roles: ', roles);
-    const roleIds = roles.map((role) => role._id);
-    console.log('roleIds: ', roleIds);
-    bulkUpdateRoleDto.roleIds.forEach((roleId) => {
-      console.log('roleId: ', roleId);
-      if (!roleIds.toString().includes(roleId.toString())) {
-        console.log('Role does not exist');
-        throw new Error('Role does not exist for the given company');
+    for (let i = 0; i < bulkUpdateRoleDto.length; i++) {
+      console.log('In for loop');
+      const role = roles.find((role) => role._id === bulkUpdateRoleDto[i].roleId);
+      console.log('role: ', role);
+      if (!role) {
+        throw new Error('Role does not exist');
       }
-    });
-    console.log('Roles exist');
+    }
 
     const response = [];
 
     //Doing the updates
-    for (let i = 0; i < bulkUpdateRoleDto.roleIds.length; i++) {
+    for (let i = 0; i < bulkUpdateRoleDto.length; i++) {
       console.log('In for loop');
-      const id = bulkUpdateRoleDto.roleIds[i];
-      console.log('id: ', id);
-      const updateRoleDto = bulkUpdateRoleDto.roleUpdates[i];
-      console.log('updateRoleDto: ', updateRoleDto);
-      response.push(await this.update(userId, id, updateRoleDto));
+      response.push(await this.roleRepository.update(bulkUpdateRoleDto[i].roleId, bulkUpdateRoleDto[i].updateRoleDto));
     }
     return response;
   }
