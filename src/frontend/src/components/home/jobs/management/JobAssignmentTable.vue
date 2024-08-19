@@ -150,7 +150,7 @@
                             </v-btn>
                             <v-dialog
                               v-model="viewManagerJobCardVisible"
-                              :max-height="600"
+                              :max-height="800"
                               :max-width="1000"
                             >
                               <ManagerJobCard

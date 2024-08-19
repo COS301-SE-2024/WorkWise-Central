@@ -1,5 +1,5 @@
 <template>
-  <v-card flat class="text-center elevation-0">
+  <v-card flat class="text-center elevation-0" :min-height="2000">
     <v-card-text>
       <v-form ref="jobForm">
         <v-label>Job Name</v-label>
@@ -117,6 +117,58 @@
           <v-btn color="success" @click="patchJobDetails"> Save </v-btn>
         </v-row>
       </v-form>
+      <v-row>
+        <v-col align="center" cols="12" md="6">
+          <v-date-picker
+            title="SELECT START DATE"
+            header="Start date of job"
+            border="md"
+            width="unset"
+            max-width="350"
+            v-model="startDate"
+            elevation="5"
+            required
+            :rules="startDateRule"
+            @update:modelValue="updateAllowedTimes"
+            data-testid="job-start-date-datepicker"
+            :min="minDate"
+          ></v-date-picker>
+        </v-col>
+        <v-col cols="12" md="6" align="center">
+          <v-time-picker
+            format="24hr"
+            :allowed-hours="allowedHours"
+            :allowed-minutes="allowedMinutes"
+            v-model="startTime"
+            data-testid="job-start-time-timepicker"
+          ></v-time-picker>
+        </v-col>
+        <v-col align="center" cols="12" md="6">
+          <v-date-picker
+            title="SELECT END DATE"
+            header="End date of job"
+            border="md"
+            width="unset"
+            max-width="350"
+            :rules="endDateRule"
+            v-model="endDate"
+            elevation="5"
+            required
+            @update:modelValue="updateAllowedTimesEnd"
+            data-testid="job-end-date-datepicker"
+            :min="minDate"
+          ></v-date-picker>
+        </v-col>
+        <v-col cols="12" md="6" align="center">
+          <v-time-picker
+            :allowed-hours="allowedHours2"
+            :allowed-minutes="allowedMinutes2"
+            format="24hr"
+            v-model="endTime"
+            data-testid="job-end-time-timepicker"
+          ></v-time-picker>
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
   <Toast />
@@ -241,5 +293,66 @@ const showEditError = () => {
     detail: 'An error occurred while editing the details this job',
     life: 3000
   })
+}
+
+// Define the rules and minimum date
+const startDateRule = [(v: string) => !!v || 'Start date is required']
+const endDateRule = [(v: string) => !!v || 'End date is required']
+const minDate = new Date().toISOString().substr(0, 10)
+
+// Define the reactive variables
+const allowedHours2 = ref<(hour: number) => boolean>(() => true)
+const allowedMinutes2 = ref<(minute: number) => boolean>(() => true)
+const endTime = ref<string>('')
+
+// Define the reactive variables
+const endDate = ref<string | null>(null)
+const startDate = ref<string | null>(null)
+const startTime = ref<string>('')
+
+// Define the current hour and minute
+const now = new Date()
+const currentHour = now.getHours()
+const currentMinute = now.getMinutes()
+
+// Define the allowed hours and minutes
+const allowedHours = ref<(hour: number) => boolean>(() => true)
+const allowedMinutes = ref<(minute: number) => boolean>(() => true)
+
+// Function to update allowed times
+const updateAllowedTimes = () => {
+  const isToday = startDate.value === minDate
+
+  console.log('updateAllowedTimes')
+  if (isToday) {
+    allowedHours.value = (hour: number) => hour > currentHour
+    allowedMinutes.value = (minute: number) => {
+      return startTime.value
+        ? minute > currentMinute ||
+        parseInt(startTime.value.split(':')[0]) !== currentHour
+        : true
+    }
+  } else {
+    allowedHours.value = () => true
+    allowedMinutes.value = () => true
+  }
+}
+
+const updateAllowedTimesEnd = () => {
+  const isToday = endDate.value === minDate
+
+  console.log('updateAllowedTimes')
+  if (isToday) {
+    allowedHours2.value = (hour: number) => hour > currentHour
+    allowedMinutes2.value = (minute: number) => {
+      return endTime.value
+        ? minute > currentMinute ||
+        parseInt(endTime.value.split(':')[0]) !== currentHour
+        : true
+    }
+  } else {
+    allowedHours2.value = () => true
+    allowedMinutes2.value = () => true
+  }
 }
 </script>
