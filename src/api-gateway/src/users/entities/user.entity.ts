@@ -101,9 +101,9 @@ export class JoinedCompany {
     this.companyName = companyName;
   }
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: Employee.name })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Employee' })
   employeeId: Types.ObjectId;
-  @Prop({ type: SchemaTypes.ObjectId, ref: Company.name })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Company' })
   companyId: Types.ObjectId;
   @Prop({ type: String })
   companyName: string;
@@ -167,7 +167,7 @@ export class User {
   deviceIds?: string[] = [];
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Employee.name })
+  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: 'Employee' })
   public currentEmployee?: Types.ObjectId;
 
   @ApiProperty()
@@ -265,7 +265,7 @@ export const userJoinedCompaniesField = {
   populate: [
     {
       path: 'employeeId',
-      model: Employee.name,
+      model: 'Employee',
     },
     {
       path: 'companyId',

@@ -15,6 +15,17 @@ export class UpdateRoleDto {
   roleName?: string;
 }
 
+export class ExternalUpdateRoleDto {
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsMongoId()
+  currentEmployeeId: Types.ObjectId;
+
+  @IsNotEmptyObject()
+  @ApiProperty()
+  updateRoleDto: UpdateRoleDto;
+}
+
 export class updateRoleResponseDto {
   response: { access_token: string; id: Types.ObjectId };
   constructor(message: { access_token: string; id: Types.ObjectId }) {
@@ -23,15 +34,25 @@ export class updateRoleResponseDto {
 }
 
 export class BulkUpdateRoleDto {
-  @IsArray()
   @IsNotEmptyObject()
   @ApiProperty()
-  roleUpdates: UpdateRoleDto[];
+  updateRoleDto: UpdateRoleDto;
 
   @IsNotEmpty()
   @IsMongoId()
   @ApiProperty()
-  roleIds: Types.ObjectId[];
+  roleId: Types.ObjectId;
+}
+
+export class ExternalBulkUpdateRoleDto {
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsMongoId()
+  currentEmployeeId: Types.ObjectId;
+
+  @IsNotEmptyObject()
+  @ApiProperty()
+  bulkUpdateRoleDto: BulkUpdateRoleDto[];
 }
 
 // export class BulkUpdateRoleResponseDto {

@@ -325,7 +325,7 @@ const jobAssignedEmployees = {
   populate: [
     {
       path: 'employeeIds',
-      model: Employee.name,
+      model: 'Employee',
     },
     {
       path: 'teamId',
@@ -339,7 +339,7 @@ const employeeComments = {
   populate: [
     {
       path: 'employeeId',
-      model: Employee.name,
+      model: 'Employee',
     },
   ],
 };
@@ -349,7 +349,7 @@ const jobTaskListItems = {
   populate: [
     {
       path: 'items.assignedEmployees',
-      model: Employee.name,
+      model: 'Employee',
     },
   ],
 };
