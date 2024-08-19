@@ -284,6 +284,7 @@ onMounted(() => {
 })
 
 // Company management actions
+
 const rejoinCompany = (company: Company) => {
   console.log('Rejoining company:', company.name)
   companies.push(company)
