@@ -15,9 +15,6 @@
         @click="openClientDialogAndFetchClients"
         v-bind="activatorProps"
       >
-        <v-icon left>
-          {{ 'fa: fa-solid fa-user-edit' }}
-        </v-icon>
         Change Client
       </v-btn>
     </template>
@@ -32,9 +29,11 @@
           <div class="text-caption pa-3">Select a client</div>
 
           <v-autocomplete
-            v-model="selectedClientName"
+            v-model="selectedClient"
             hint="Click the field to select a client"
-            :items="clientNames"
+            :items="clientData.filter(item=> getClientFullName(item))"
+            :item-title="getClientFullName"
+            item-value="_id"
             label="Select Client"
             prepend-icon="fa: fa-solid fa-handshake"
             persistent-hint
@@ -51,7 +50,7 @@
 
         <v-card-actions class="d-flex flex-column">
           <v-btn @click="saveClient" color="success">Save</v-btn>
-          <v-btn @click="isActive.value = false" color="error">Cancel</v-btn>
+          <v-btn @click="isActive.value = false" color="error">Close</v-btn>
         </v-card-actions>
       </v-card>
     </template>
@@ -65,39 +64,12 @@ import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 
-interface Address {
-  street: string
-  province: string
-  suburb: string
-  city: string
-  postalCode: string
-  complex?: string
-  houseNumber?: string
-}
-
-interface ContactInfo {
-  phoneNumber: string
-  email: string
-}
-
-interface Details {
-  firstName: string
-  lastName: string
-  preferredLanguage?: string
-  contactInfo: ContactInfo
-  address: Address
-  vatNumber?: string
-  companyId: any // Replace with appropriate type if known
-  idNumber?: string
-  type?: string
-}
-
 interface Client {
-  _id: any // Replace with appropriate type if known
-  registrationNumber?: string
-  details: Details
-  createdAt: string
-  updatedAt: string
+  _id: string;
+  details: {
+    firstName: string;
+    lastName: string;
+  };
 }
 
 const props = defineProps<{
@@ -106,13 +78,18 @@ const props = defineProps<{
 
 const toast = useToast()
 const clientDialog = ref<boolean>(false)
-const selectedClientName = ref<string>('')
-const clientNames = ref<string[]>([])
+const selectedClient = ref<string | null>(null)
 const clientData = ref<Client[]>([])
 
-// API URLs
+// API URLs and config
 const localUrl: string = 'http://localhost:3000/'
 const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`
+  }
+}
 
 // Utility functions
 const isLocalAvailable = async (url: string): Promise<boolean> => {
@@ -147,38 +124,49 @@ const showClientChangeError = () => {
   })
 }
 
-const getClients = async (): Promise<string> => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('access_token')}`
-    }
-  }
+const getClients = async () => {
   const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(`${apiUrl}client/all`, config)
     if (response.status < 300 && response.status > 199) {
-      console.log('Got client data')
-      console.log(response.data.data)
+      console.log(response)
       clientData.value = response.data.data
     } else {
       console.log('failed')
     }
   } catch (error) {
+    console.log(error)
     console.error('Error updating job:', error)
   }
-  return 'cheese'
 }
 
 const openClientDialogAndFetchClients = () => {
   clientDialog.value = true
 }
 
-const saveClient = () => {
-  clientDialog.value = false
+const saveClient = async () => {
+  const apiUrl = await getRequestUrl()
+  try {
+    const response = await axios.patch(`${apiUrl}job/update/${props.jobID}`, { clientId: selectedClient.value }, config)
+    if (response.status > 199 && response.status < 300) {
+      showClientChangeSuccess()
+    } else {
+      console.log('Wtf happened?', response)
+    }
+  } catch (error) {
+    console.error('Error updating job:', error)
+    showClientChangeError()
+  }
 }
 
 onMounted(() => {
   getClients()
 })
+
+const getClientFullName = (item: Client) => {
+  if (item.details && item.details.firstName && item.details.lastName) {
+    return `${item.details.firstName} ${item.details.lastName}`
+  }
+  return ''
+}
 </script>

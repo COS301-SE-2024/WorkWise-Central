@@ -1,24 +1,30 @@
 <template>
   <v-card class="pa-4" height="auto">
-    <!-- Search Bar -->
-    <v-text-field
-      v-model="searchQuery"
-      label="Search labels"
-      prepend-inner-icon="mdi-magnify"
-      outlined
-      dense
-    ></v-text-field>
+    <v-select
+      :items="companyLabels"
+      item-value="_id"
+      item-title="label"
+      label="Select some tags you would like to assign to this job"
+      chips
+      multiple
+      required
+      color="primary"
+      variant="solo"
+      clearable
+      data-testid="tags-multi-select"
+      searchable
+    ></v-select>
 
     <!-- Label List -->
-    <v-list>
-      <v-list-item v-for="label in filteredLabels" :key="label.label" class="d-flex align-center">
+    <v-list class="no-background">
+      <v-list-item v-for="label in filteredLabels" :key="label.label" class="d-flex align-center no-background">
         <v-row align="center" no-gutters class="w-100">
           <!-- Color Block with Label Text -->
           <v-col cols="auto">
             <div
               :style="{ backgroundColor: label.color }"
               class="mr-4 d-flex justify-center align-center"
-              style="width: 400px; height: 40px; border-radius: 4px; position: relative"
+              style="width: 600px; height: 40px; border-radius: 4px; position: relative"
             >
               <span
                 class="text-center"
@@ -33,7 +39,7 @@
                   font-weight: bold;
                 "
               >
-                {{ label.label }} - Priority: {{ label.priorityLevel }}
+                {{ label.label }}
               </span>
             </div>
           </v-col>
@@ -63,14 +69,6 @@
           <!-- Title Input -->
           <v-label class="pb-0">Title</v-label>
           <v-text-field v-model="labelTitle" outlined dense class="mt-4 pt-0"></v-text-field>
-
-          <v-label class="pb-0">Priority Level (Optional)</v-label>
-          <v-text-field
-            v-model.number="labelPriority"
-            outlined
-            dense
-            class="mt-4 pt-0"
-          ></v-text-field>
 
           <!-- Color Palette -->
           <v-row>
@@ -117,7 +115,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps } from 'vue'
+import { ref, computed, defineProps, onMounted } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
@@ -128,7 +126,6 @@ const toast = useToast()
 interface Label {
   companyId: string
   label: string
-  priorityLevel?: number
   color: string
 }
 
@@ -138,7 +135,6 @@ const searchQuery = ref<string>('')
 const dialog = ref<boolean>(false)
 const dialogTitle = ref<string>('Create Label')
 const labelTitle = ref<string>('')
-const labelPriority = ref<number | undefined>(undefined) // Allow undefined for optional field
 const selectedColor = ref<string>('#ffffff')
 
 // API URLs
@@ -161,8 +157,26 @@ const getRequestUrl = async (): Promise<string> => {
 }
 
 const labels = ref<Label[]>([
-  // Add more labels here
 ])
+
+const companyLabels = ref<Label[]>([])
+
+const getJobTags = async() => {
+  const apiUrl = await getRequestUrl()
+  try {
+    const response = await axios.get(`${apiUrl}job/tags/${localStorage.getItem('currentCompany')}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+      }
+    })
+    if (response.status > 199 && response.status < 300) {
+      companyLabels.value = response.data.data
+    }
+  } catch (error) {
+    console.log('Failed to get tags', error)
+
+  }
+}
 
 const colorOptions = ref<string[]>([
   '#FFB74D',
@@ -206,7 +220,6 @@ const filteredLabels = computed<Label[]>(() =>
 const openCreateDialog = () => {
   dialogTitle.value = 'Create Label'
   labelTitle.value = ''
-  labelPriority.value = undefined
   selectedColor.value = '#ffffff'
   dialog.value = true
 }
@@ -214,7 +227,6 @@ const openCreateDialog = () => {
 const openEditDialog = (label: Label) => {
   dialogTitle.value = 'Edit Label'
   labelTitle.value = label.label
-  labelPriority.value = label.priorityLevel
   selectedColor.value = label.color
   dialog.value = true
 }
@@ -230,27 +242,20 @@ const saveLabel = async () => {
 
   if (dialogTitle.value === 'Create Label') {
     try {
-      const tag: Label = {
+      const tag = {
         companyId: localStorage.getItem('currentCompany') || '',
         label: labelTitle.value,
         color: selectedColor.value,
-        priorityLevel: labelPriority.value
       }
-
-      let response
-      if (typeof labelPriority.value === 'number') {
-        response = await axios.post(`${apiUrl}job/tags/p`, tag, config)
-      } else {
-        response = await axios.post(`${apiUrl}job/tags/add`, tag, config)
-      }
+      const response = await axios.post(`${apiUrl}job/tags/add`, tag, config)
+      const updatedTags = [...props.tags, response.data.data._id]
       console.log(response)
-
       if (response.status > 199 && response.status < 300) {
         labels.value.push(tag)
         try {
           console.log('Job id', props.jobID)
           console.log('Tag body', tag)
-          let response = await axios.patch(`${apiUrl}job/${props.jobID}`, tag, config)
+          let response = await axios.patch(`${apiUrl}job/update/${props.jobID}`, {tags: updatedTags}, config)
           if (response.status > 199 && response.status < 300) {
             addTagSuccess()
             console.log('Tag added to the job', response)
@@ -272,7 +277,6 @@ const saveLabel = async () => {
     if (label) {
       label.label = labelTitle.value
       label.color = selectedColor.value
-      label.priorityLevel = labelPriority.value // Update priorityLevel
     }
   }
   dialog.value = false
@@ -310,4 +314,14 @@ const getContrastingColor = (bgColor: string): string => {
   const brightness = (r * 299 + g * 587 + b * 114) / 1000
   return brightness > 125 ? '#000' : '#fff' // Return black or white
 }
+
+onMounted(() => {
+  getJobTags()
+})
 </script>
+
+<style scoped>
+.no-background {
+  background-color: transparent !important;
+}
+</style>

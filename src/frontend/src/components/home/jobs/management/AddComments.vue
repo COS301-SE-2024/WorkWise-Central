@@ -6,7 +6,7 @@
         <v-col cols="2" class="pt-2">
           <v-avatar color="secondary" style="width: 38px; height: 36px">
             <!-- Display initials of the comment's employee -->
-            <span class="text-h6">{{ getInitials(comment.employeeId) }}</span>
+            <span class="text-h6">{{ getInitials(comment.firstName, comment.surname) }}</span>
           </v-avatar>
         </v-col>
         <v-col md="9">
@@ -43,7 +43,7 @@
       <!-- Submit button -->
       <v-btn color="success" @click="addComment" prepend-icon="mdi-comment-plus">Comment</v-btn>
     </v-container>
-     <Toast position="top-center" />
+    <Toast/>
   </div>
 </template>
 
@@ -51,7 +51,6 @@
 import { defineProps, ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
-import { v4 as uuidv4 } from 'uuid'
 
 const toast = useToast()
 
@@ -96,32 +95,31 @@ interface EmployeeId {
     displayName: string
     firstName: string
     surname: string
+    username: string
   }
   _id: string
 }
-
+const firstName = ref('')
+const surname = ref('')
 // Data
 const newComment = ref('')
-const userInitials = ref<{ employeeId: string; initials: string }[]>([])
 const comments = ref<
-  { text: string; employeeId: string; date: string; initials?: string; _id: string }[]
+  { text: string; employeeId: string; date: string; firstName: string; surname:string; _id: string }[]
 >(
   props.jobComments.map((comment) => ({
     text: comment.comment,
     employeeId: comment.employeeId._id,
     date: comment.date,
-    _id: comment._id
+    _id: comment._id,
+    firstName: comment.employeeId.userInfo.firstName,
+    surname: comment.employeeId.userInfo.surname
   }))
 )
 
-// Utility Functions
-const getInitials = (employeeId: string): string => {
-  const user = userInitials.value.find((user) => user.employeeId === employeeId)
-  return user ? user.initials : ''
-}
-
-const getInitialsS = (firstName: string, surname: string): string => {
-  return `${firstName.charAt(0)}${surname.charAt(0)}`.toUpperCase()
+const getInitials = (firstName: string, surname: string): string => {
+  const firstInitial = firstName.charAt(0).toUpperCase()
+  const lastInitial = surname.charAt(0).toUpperCase()
+  return `${firstInitial}${lastInitial}`
 }
 
 const isLocalAvailable = async (url: string): Promise<boolean> => {
@@ -142,24 +140,15 @@ const getUserData = async () => {
   const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(`${apiUrl}users/id/${localStorage.getItem('id')}`, config)
-    const userData = response.data.data
-
-    userInitials.value.push({
-      employeeId: localStorage.getItem('id') || '',
-      initials: getInitialsS(userData.personalInfo.firstName, userData.personalInfo.surname)
-    })
+    if (response.status > 199 && response.status < 300) {
+      console.log(response)
+      const userData = response.data.data
+      firstName.value = userData.personalInfo.firstName
+      surname.value = userData.personalInfo.surname
+    }
   } catch (error) {
     console.error('Error getting user data', error)
   }
-}
-
-const populateCommentsWithInitials = () => {
-  comments.value.forEach((comment) => {
-    const user = userInitials.value.find((user) => user.employeeId === comment.employeeId)
-    if (user) {
-      comment.initials = user.initials
-    }
-  })
 }
 
 const addComment = async () => {
@@ -172,35 +161,18 @@ const addComment = async () => {
     })
     return
   }
-
   const apiUrl = await getRequestUrl()
-  const newId = uuidv4() // Generate a unique ID
-  const updatedComments = [
-    ...comments.value,
-    {
-      text: newComment.value,
-      employeeId: localStorage.getItem('employeeId') || '',
-      date: new Date().toISOString(),
-      _id: newId // Assign the generated ID
-    }
-  ]
   const addedComment = ref<{ employeeId: string; jobId: string; newComment: string }>({
     employeeId: localStorage.getItem('employeeId') || '',
     jobId: props.id,
     newComment: newComment.value
   })
-
   try {
     const response = await axios.put(`${apiUrl}job/comment`, addedComment.value, config)
-    // You can update the _id here if the server returns it
-    comments.value = updatedComments
+    console.log(response)
+    const commentId : string = response.data.data.comments[response.data.data.comments.length - 1]._id
+    comments.value.push({text: newComment.value, date: new Date().toISOString(), firstName: firstName.value, surname: surname.value, _id: commentId, employeeId: localStorage.getItem('employeeId') || ''})
     newComment.value = ''
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: 'Successfully commented on job',
-      life: 3000
-    })
   } catch (error) {
     console.error('Error adding comment', error)
     toast.add({
@@ -221,25 +193,16 @@ const deleteComment = async (index: number) => {
     commentId: commentToBeRemoved._id
   })
   const updatedComments = comments.value.filter((_, i) => i !== index)
-
   try {
-    const response = await axios.delete(`${apiUrl}job/comment`, {
+    await axios.delete(`${apiUrl}job/comment`, {
       data: commentBody.value,
       headers: config.headers
     })
     comments.value = updatedComments
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: 'Comment deleted successfully',
-      life: 3000
-    })
   } catch (error) {
     console.error('Error deleting comment', error)
   }
 }
-
-// On Mounted
 onMounted(async () => {
   await getUserData()
 })
