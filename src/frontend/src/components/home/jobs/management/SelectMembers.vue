@@ -57,8 +57,15 @@
 <script setup lang="ts">
 import { ref, defineProps, onMounted } from 'vue'
 import axios from 'axios'
-import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+
+interface Member {
+  _id: string;
+  userInfo: {
+    firstName: string;
+    surname: string;
+  };
+}
 
 const props = defineProps<{
   jobID: string
@@ -68,8 +75,9 @@ const toast = useToast()
 
 // State variables
 const membersDialog = ref(false)
-const selectedMembers = ref([])
-const members = ref([]) // Populate with your states data
+const selectedMembers = ref<Member[]>([])
+const members = ref<Member[]>([]) // Populate with your states data
+const originalSelectedMembers = ref<Member[]>([])
 
 // API URLs and config
 const localUrl: string = 'http://localhost:3000/'
@@ -80,6 +88,7 @@ const config = {
     Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
 }
+
 // Utility functions
 const isLocalAvailable = async (url: string): Promise<boolean> => {
   try {
@@ -119,7 +128,13 @@ const getTeamMembers = async () => {
     const response = await axios.get(`${apiUrl}employee/detailed/all/${localStorage.getItem('employeeId')}`, config)
     if (response.status > 199 && response.status < 300) {
       console.log(response)
-      members.value = response.data.data
+      members.value = response.data.data.map((employee: any) => ({
+        _id: employee._id,
+        userInfo: {
+          firstName: employee.userInfo.firstName,
+          surname: employee.userInfo.surname
+        }
+      }))
       console.log('Members only: ', members.value)
     } else {
       console.log('failed')
@@ -131,26 +146,54 @@ const getTeamMembers = async () => {
 }
 
 const saveMembers = async () => {
-  const apiUrl = getRequestUrl()
+  const apiUrl = await getRequestUrl()
   try {
-    for (const member of selectedMembers.value) {
-      console.log(member)
-      const response = await axios.put(`${apiUrl}job/employee`, {
+    // Find members to remove
+    const membersToRemove = originalSelectedMembers.value.filter(
+      originalMember => !selectedMembers.value.some(
+        selectedMember => selectedMember._id === originalMember._id
+      )
+    )
+
+    // Remove unselected members
+    for (const member of membersToRemove) {
+      const response = await axios.patch(`${apiUrl}job/employee`, {
         employeeId: localStorage.getItem('employeeId'),
-        employeeToAssignId: member,
+        employeeToAssignId: member._id,
         jobId: props.jobID
       }, config)
       if (response.status > 199 && response.status < 300) {
-        console.log(response)
-        showAssignEmployeesSuccess()
+        console.log(`Removed member: ${member._id}`)
       } else {
-        console.log('failed')
-        showAssignEmployeesError()
+        console.log('Failed to remove member', response)
       }
     }
 
-  } catch(error) {
+    // Add new selected members
+    for (const member of selectedMembers.value) {
+      if (!originalSelectedMembers.value.some(
+        originalMember => originalMember._id === member._id
+      )) {
+        const response = await axios.put(`${apiUrl}job/employee`, {
+          employeeId: localStorage.getItem('employeeId'),
+          employeeToAssignId: member._id,
+          jobId: props.jobID
+        }, config)
+        if (response.status > 199 && response.status < 300) {
+          console.log(`Added member: ${member._id}`)
+          showAssignEmployeesSuccess()
+        } else {
+          console.log('Failed to add member', response)
+          showAssignEmployeesError()
+        }
+      }
+    }
+
+    // Update the original selected members
+    originalSelectedMembers.value = [...selectedMembers.value]
+  } catch (error) {
     console.log(error)
+    showAssignEmployeesError()
   }
 }
 
@@ -161,7 +204,7 @@ const getAssignedEmployees = async () => {
     if (response.status > 199 && response.status < 300) {
       console.log(response)
       const employees = response.data.data.assignedEmployees.employeeIds
-      selectedMembers.value = employees.map(employee => ({
+      selectedMembers.value = employees.map((employee: any) => ({
         _id: employee._id,
         userInfo: {
           firstName: employee.userInfo.firstName,
@@ -179,14 +222,18 @@ const getAssignedEmployees = async () => {
 
 onMounted(() => {
   getTeamMembers()
-  getAssignedEmployees()
+  getAssignedEmployees().then(() => {
+    originalSelectedMembers.value = [...selectedMembers.value]
+  })
 })
 
-const getMembersFullName = (item: any) => {
+const getMembersFullName = (item: Member) => {
   if (item.userInfo && item.userInfo.firstName && item.userInfo.surname) {
     return `${item.userInfo.firstName} ${item.userInfo.surname}`
   }
   return ''
 }
 </script>
+
+
 
