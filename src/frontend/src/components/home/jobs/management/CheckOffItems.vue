@@ -118,7 +118,7 @@
                       </v-card>
                     </v-dialog>
                     <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
-                      <v-btn color="success" @click="saveItem(index)" class="mb-2">
+                      <v-btn color="success" @click="" class="mb-2">
                         <v-icon>
                           {{ 'fa: fa-solid fa-save' }}
                         </v-icon>

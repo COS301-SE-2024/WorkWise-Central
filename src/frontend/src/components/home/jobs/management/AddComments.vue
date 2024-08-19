@@ -43,8 +43,6 @@
       <!-- Submit button -->
       <v-btn color="success" @click="addComment" prepend-icon="mdi-comment-plus">Comment</v-btn>
     </v-container>
-     <Toast position="top-center" />
-    <Toast/>
   </div>
 </template>
 
@@ -142,23 +140,11 @@ const getUserData = async () => {
   try {
     const response = await axios.get(`${apiUrl}users/id/${localStorage.getItem('id')}`, config)
     const userData = response.data.data
-
-    userInitials.value.push({
-      employeeId: localStorage.getItem('id') || '',
-      initials: getInitialsS(userData.personalInfo.firstName, userData.personalInfo.surname)
-    })
+    firstName.value = userData.personalInfo.firstName
+    surname.value = userData.personalInfo.surname
   } catch (error) {
     console.error('Error getting user data', error)
   }
-}
-
-const populateCommentsWithInitials = () => {
-  comments.value.forEach((comment) => {
-    const user = userInitials.value.find((user) => user.employeeId === comment.employeeId)
-    if (user) {
-      comment.initials = user.initials
-    }
-  })
 }
 
 const addComment = async () => {
@@ -173,14 +159,12 @@ const addComment = async () => {
   }
 
   const apiUrl = await getRequestUrl()
-  const newId = uuidv4() // Generate a unique ID
   const updatedComments = [
     ...comments.value,
     {
       text: newComment.value,
       employeeId: localStorage.getItem('employeeId') || '',
       date: new Date().toISOString(),
-      _id: newId // Assign the generated ID
     }
   ]
   const addedComment = ref<{ employeeId: string; jobId: string; newComment: string }>({
@@ -190,7 +174,7 @@ const addComment = async () => {
   })
 
   try {
-    const response = await axios.put(`${apiUrl}job/comment`, addedComment.value, config)
+    await axios.put(`${apiUrl}job/comment`, addedComment.value, config)
     // You can update the _id here if the server returns it
     comments.value = updatedComments
     newComment.value = ''
