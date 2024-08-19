@@ -14,17 +14,19 @@ import { CreateTeamDto, createTeamResponseDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { TeamService } from './team.service';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
-  ApiInternalServerErrorResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Types } from 'mongoose';
-import { teamListResponseDto, teamResponseDto } from './entities/team.entity';
+import { teamResponseDto } from './entities/team.entity';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { AuthGuard } from '../auth/auth.guard';
 
@@ -35,27 +37,17 @@ const className = 'Team';
 export class TeamController {
   constructor(private readonly teamService: TeamService) {}
 
+  //********Endpoints for test purposes - Start**********/
   @ApiOperation({
-    summary: `Refer to Documentation`,
+    summary: `Used for testing. DO NOT USE IN PRODUCTION`,
   })
   @Get()
   hello() {
     return { message: 'Refer to /documentation for details on the API' };
   }
 
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT')
-  @ApiInternalServerErrorResponse({
-    type: HttpException,
-    status: HttpStatus.NO_CONTENT,
-  })
   @ApiOperation({
-    summary: `Get all ${className} instances`,
-    description: `Returns all ${className} instances in the database.`,
-  })
-  @ApiOkResponse({
-    type: teamListResponseDto,
-    description: `An array of mongodb objects of the ${className} class.`,
+    summary: `Used for testing. DO NOT USE IN PRODUCTION`,
   })
   @Get('/all')
   async findAll() {
@@ -63,11 +55,24 @@ export class TeamController {
     return { data: data };
   }
 
+  //********Endpoints for test purposes - End**********/
+
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
-  @ApiInternalServerErrorResponse({
+  @ApiNoContentResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
     summary: `Find an ${className}`,
@@ -78,24 +83,32 @@ export class TeamController {
     description: `The mongodb object of the ${className}, with an _id attribute`,
   })
   @ApiParam({
-    name: 'id',
+    name: 'teamId',
     description: `The _id attribute of the ${className} to be retrieved.`,
+    type: String,
   })
-  @Get('id/:id')
-  async findById(@Param('id') id: Types.ObjectId) {
-    const data = await this.teamService.findById(id);
+  @Get('id/:teamId')
+  async findById(@Param('teamId') teamId: Types.ObjectId) {
+    const data = await this.teamService.findById(teamId);
     return { data: data };
   }
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
-  @ApiInternalServerErrorResponse({
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
   })
-  @ApiInternalServerErrorResponse({
+  @ApiUnauthorizedResponse({
     type: HttpException,
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
     summary: `Create a new ${className}`,
@@ -119,6 +132,21 @@ export class TeamController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request is not authorized to view the data.`,
+  })
   @ApiOperation({
     summary: `Update an ${className} instances`,
     description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
@@ -128,15 +156,16 @@ export class TeamController {
     description: `The updated ${className} object`,
   })
   @ApiParam({
-    name: 'id',
+    name: 'teamId',
     description: `The _id attribute of the ${className} to be updated.`,
+    type: String,
   })
   @ApiBody({ type: UpdateTeamDto })
-  @Patch(':id')
-  async update(@Param('id') id: Types.ObjectId, @Body() updateTeamDto: UpdateTeamDto) {
+  @Patch(':teamId')
+  async update(@Param('teamId') teamId: Types.ObjectId, @Body() updateTeamDto: UpdateTeamDto) {
     let data;
     try {
-      data = await this.teamService.update(id, updateTeamDto);
+      data = await this.teamService.update(teamId, updateTeamDto);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
@@ -145,6 +174,21 @@ export class TeamController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request is not authorized to view the data.`,
+  })
   @ApiOperation({
     summary: `Delete an ${className}`,
     description: `Send the ${className} ObjectId, and then they get deleted if the id is valid.\n `,
@@ -155,14 +199,15 @@ export class TeamController {
     description: `A boolean value indicating whether or not the deletion was a success`,
   })
   @ApiParam({
-    name: 'id',
+    name: 'teamId',
     description: `The _id attribute of the ${className}`,
+    type: String,
   })
-  @Delete(':id')
-  async remove(@Param('id') id: Types.ObjectId) {
+  @Delete(':teamId')
+  async remove(@Param('teamId') teamId: Types.ObjectId) {
     let data;
     try {
-      data = await this.teamService.remove(id);
+      data = await this.teamService.remove(teamId);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }

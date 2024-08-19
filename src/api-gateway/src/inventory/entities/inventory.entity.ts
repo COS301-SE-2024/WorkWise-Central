@@ -23,15 +23,15 @@ export class Inventory {
 
   @ApiProperty()
   @Prop({ type: String, required: false })
-  description: string;
+  description?: string;
 
   @ApiProperty()
   @Prop({ type: Number, required: false })
-  costPrice: number;
+  costPrice?: number;
 
   @ApiProperty()
   @Prop({ type: Number, required: false, default: 0 })
-  currentStockLevel: number;
+  currentStockLevel?: number;
 
   @ApiProperty()
   @Prop({
@@ -39,11 +39,11 @@ export class Inventory {
     required: false,
     default: [],
   })
-  images: string[] = [];
+  images?: string[] = [];
 
   @ApiProperty()
   @Prop({ type: Number, required: false })
-  reorderLevel: number;
+  reorderLevel?: number;
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Company' })
@@ -55,11 +55,11 @@ export class Inventory {
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public updatedAt: Date;
+  public updatedAt?: Date;
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public deletedAt: Date;
+  public deletedAt?: Date;
 }
 
 export class InventoryApiObject {
@@ -72,16 +72,16 @@ export class InventoryApiObject {
   name: string;
 
   @ApiProperty()
-  @Prop({ type: String, required: true })
-  description: string;
+  @Prop({ type: String, required: false })
+  description?: string;
 
   @ApiProperty()
-  @Prop({ type: Number, required: true })
-  costPrice: number;
+  @Prop({ type: Number, required: false })
+  costPrice?: number;
 
   @ApiProperty()
-  @Prop({ type: Number, required: true })
-  currentStockLevel: number;
+  @Prop({ type: Number, required: false, default: 0 })
+  currentStockLevel?: number;
 
   @ApiProperty()
   @Prop({
@@ -89,11 +89,11 @@ export class InventoryApiObject {
     required: false,
     default: [],
   })
-  images: string[] = [];
+  images?: string[] = [];
 
   @ApiProperty()
-  @Prop({ type: Number, required: true })
-  reorderLevel: number;
+  @Prop({ type: Number, required: false })
+  reorderLevel?: number;
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Company' })
@@ -105,11 +105,11 @@ export class InventoryApiObject {
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public updatedAt: Date;
+  public updatedAt?: Date;
 
   @ApiHideProperty()
   @Prop({ required: false })
-  public deletedAt: Date;
+  public deletedAt?: Date;
 }
 
 export const InventorySchema = SchemaFactory.createForClass(Inventory);
