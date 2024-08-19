@@ -72,7 +72,6 @@
           </v-row>
         </v-card-title>
 
-        r
         <v-card-text>
           <v-divider></v-divider>
           <v-col cols="12">
@@ -85,7 +84,11 @@
                 height="auto"
                 rounded="xl"
                 class="bg-cardColor"
-                v-show="checkPermission('view all clients') || checkPermission('view clients under me') || checkPermission('view clients that are assigned to me')"
+                v-show="
+                  checkPermission('view all clients') ||
+                  checkPermission('view clients under me') ||
+                  checkPermission('view clients that are assigned to me')
+                "
                 :row-props="getRowProps"
                 :header-props="{ class: 'bg-secondRowColor h6' }"
               >
@@ -95,7 +98,7 @@
                   >
                 </template>
                 <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                  <v-chip @click="callPhone" text- border="md"
+                  <v-chip @click="callPhone" color="secondary" border="md"
                     ><v-icon icon="fa:fa-solid fa-phone"></v-icon> {{ value }}</v-chip
                   >
                 </template>
@@ -108,7 +111,7 @@
                   <v-chip variant="text"> {{ value }}</v-chip>
                 </template>
                 <template v-slot:[`item.contactInfo.email`]="{ value }">
-                  <v-chip @click="sendEmail" text- border="md">
+                  <v-chip @click="sendEmail" color="secondary" border="md">
                     <v-icon icon="fa:fa-solid fa-envelope"></v-icon>{{ value }}</v-chip
                   >
                 </template>
