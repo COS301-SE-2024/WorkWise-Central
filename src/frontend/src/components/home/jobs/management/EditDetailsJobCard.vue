@@ -157,6 +157,7 @@
               data-testid="job-end-date-datepicker"
               :min="minDate"
               style="height: 475px;"
+
             ></v-date-picker>
           </v-col>
           <v-col cols="12" md="6" align="center">
@@ -167,7 +168,6 @@
               v-model="endTime"
               data-testid="job-end-time-timepicker"
               elevation="5"
-              style="height: 475px;"
             ></v-time-picker>
           </v-col>
         </v-row>

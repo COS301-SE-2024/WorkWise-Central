@@ -171,6 +171,12 @@ const getJobData = async () => {
 }
 
 const uploadImage = async (index: number) => {
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
   const formData = new FormData()
   formData.append('files', images.value[index].src)
   const apiUrl = await getRequestUrl()
@@ -181,6 +187,7 @@ const uploadImage = async (index: number) => {
       toast.add({ severity: 'success', summary: 'Success', detail: 'Image uploaded successfully', life:3000 })
     }
   } catch (error) {
+    console.log(error)
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to upload image', life:3000 })
     console.log(url)
   }
