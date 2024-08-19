@@ -29,7 +29,10 @@
         </v-col>
       </v-row>
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions class="d-flex flex-column">
+      <v-col class="d-flex flex-column">
+        <v-btn color="success" @click="patchJobDetails"> Save </v-btn>
+      </v-col>
       <v-col class="d-flex flex-column">
         <v-btn class="mb-4" @click="cancelJob" color="error"
           ><v-icon icon="fa: fa-solid fa-cancel"></v-icon>Close</v-btn

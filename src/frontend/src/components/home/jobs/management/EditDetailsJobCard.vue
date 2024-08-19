@@ -1,5 +1,5 @@
 <template>
-  <v-card flat class="text-center elevation-0" :min-height="2000">
+  <v-card flat class="text-center elevation-0" :min-height="1800">
     <v-card-text>
       <v-form ref="jobForm">
         <v-label>Job Name</v-label>
@@ -113,62 +113,68 @@
             ></v-select>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col align="center" cols="12" md="6">
+            <v-date-picker
+              title="SELECT START DATE"
+              header="Start date of job"
+              border="md"
+              width="unset"
+              max-width="350"
+              v-model="startDate"
+              elevation="5"
+              required
+              :rules="startDateRule"
+              @update:modelValue="updateAllowedTimes"
+              data-testid="job-start-date-datepicker"
+              :min="minDate"
+              style="height: 475px;"
+            ></v-date-picker>
+          </v-col>
+          <v-col cols="12" md="6" align="center">
+            <v-time-picker
+              format="24hr"
+              :allowed-hours="allowedHours"
+              :allowed-minutes="allowedMinutes"
+              v-model="startTime"
+              data-testid="job-start-time-timepicker"
+              elevation="5"
+              style="height: 475px;"
+            ></v-time-picker>
+          </v-col>
+          <v-col align="center" cols="12" md="6">
+            <v-date-picker
+              title="SELECT END DATE"
+              header="End date of job"
+              border="md"
+              width="unset"
+              max-width="350"
+              :rules="endDateRule"
+              v-model="endDate"
+              elevation="5"
+              required
+              @update:modelValue="updateAllowedTimesEnd"
+              data-testid="job-end-date-datepicker"
+              :min="minDate"
+              style="height: 475px;"
+            ></v-date-picker>
+          </v-col>
+          <v-col cols="12" md="6" align="center">
+            <v-time-picker
+              :allowed-hours="allowedHours2"
+              :allowed-minutes="allowedMinutes2"
+              format="24hr"
+              v-model="endTime"
+              data-testid="job-end-time-timepicker"
+              elevation="5"
+              style="height: 475px;"
+            ></v-time-picker>
+          </v-col>
+        </v-row>
         <v-row cols="12" class="justify-center">
           <v-btn color="success" @click="patchJobDetails"> Save </v-btn>
         </v-row>
       </v-form>
-      <v-row>
-        <v-col align="center" cols="12" md="6">
-          <v-date-picker
-            title="SELECT START DATE"
-            header="Start date of job"
-            border="md"
-            width="unset"
-            max-width="350"
-            v-model="startDate"
-            elevation="5"
-            required
-            :rules="startDateRule"
-            @update:modelValue="updateAllowedTimes"
-            data-testid="job-start-date-datepicker"
-            :min="minDate"
-          ></v-date-picker>
-        </v-col>
-        <v-col cols="12" md="6" align="center">
-          <v-time-picker
-            format="24hr"
-            :allowed-hours="allowedHours"
-            :allowed-minutes="allowedMinutes"
-            v-model="startTime"
-            data-testid="job-start-time-timepicker"
-          ></v-time-picker>
-        </v-col>
-        <v-col align="center" cols="12" md="6">
-          <v-date-picker
-            title="SELECT END DATE"
-            header="End date of job"
-            border="md"
-            width="unset"
-            max-width="350"
-            :rules="endDateRule"
-            v-model="endDate"
-            elevation="5"
-            required
-            @update:modelValue="updateAllowedTimesEnd"
-            data-testid="job-end-date-datepicker"
-            :min="minDate"
-          ></v-date-picker>
-        </v-col>
-        <v-col cols="12" md="6" align="center">
-          <v-time-picker
-            :allowed-hours="allowedHours2"
-            :allowed-minutes="allowedMinutes2"
-            format="24hr"
-            v-model="endTime"
-            data-testid="job-end-time-timepicker"
-          ></v-time-picker>
-        </v-col>
-      </v-row>
     </v-card-text>
   </v-card>
   <Toast />
