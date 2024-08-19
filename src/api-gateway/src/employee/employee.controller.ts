@@ -84,6 +84,7 @@ export class EmployeeController {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
+
   @Get('/test')
   async test() {
     console.log('In allEmployeesInCompanyWithRole');
