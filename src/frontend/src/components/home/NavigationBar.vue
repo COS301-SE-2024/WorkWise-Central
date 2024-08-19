@@ -21,8 +21,8 @@ const clientSubItems = ref([
 
 const employeeSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'manageremployees' },
-  { title: 'Employee Center', icon: 'fa: fa-solid fa-circle-user', routeName: 'employee-center' },
-  { title: 'Teams', icon: 'fa: fa-solid fa-users', routeName: 'teams' }
+  { title: 'Teams', icon: 'fa: fa-solid fa-users', routeName: 'teams' },
+  { title: 'Employee Center', icon: 'fa: fa-solid fa-circle-user', routeName: 'employee-center' }
 ])
 const teamSubItems = ref([{ title: 'Management' }])
 const jobSubItems = ref([
@@ -221,6 +221,7 @@ export default defineComponent({
               ></v-list-item>
             </template>
             <v-list-item
+              v-show="checkPermission('view all clients')"
               v-for="(item, i) in clientSubItems"
               :key="i"
               :to="{ name: item.routeName }"
@@ -231,7 +232,12 @@ export default defineComponent({
             ></v-list-item>
           </v-list-group>
         </v-list>
-        <v-list v-model:open="open">
+        <v-list
+          v-model:open="open"
+          v-show="
+            checkPermission('view all employees') || checkPermission('view employees under me')
+          "
+        >
           <v-list-group fluid value="Employees">
             <template v-slot:activator="{ props }">
               <v-list-item

@@ -2,15 +2,14 @@
   <v-dialog
     v-model="deleteDialog"
     max-width="500px"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
-    :opacity="0.1"
+    :theme="isDarkMode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
       >
     </template>
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
       <v-card-title>
         <v-icon icon="fa:fa-solid fa-users"></v-icon>
         <span>Delete Team</span>
@@ -65,13 +64,14 @@ export default defineComponent({
   data: () => ({
     deleteDialog: false,
     isDeleting: false,
-    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   methods: {
     async deleteTeam() {
-      console.log('Deleting team with ID:', this.team_id)
+      console.log(this.teamName)
+      console.log(this.team_id)
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ export default defineComponent({
       const apiURL = await this.getRequestUrl()
       try {
         this.isDeleting = true
-        await axios.delete(`${apiURL}teams/${this.team_id}`, config)
+        await axios.delete(`${apiURL}team/${this.team_id}`, config)
         console.log('Team deleted successfully')
         this.$toast.add({
           severity: 'success',

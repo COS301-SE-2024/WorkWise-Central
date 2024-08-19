@@ -43,6 +43,7 @@
       <!-- Submit button -->
       <v-btn color="success" @click="addComment" prepend-icon="mdi-comment-plus">Comment</v-btn>
     </v-container>
+     <Toast position="top-center" />
     <Toast/>
   </div>
 </template>
@@ -140,15 +141,24 @@ const getUserData = async () => {
   const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(`${apiUrl}users/id/${localStorage.getItem('id')}`, config)
-    if (response.status > 199 && response.status < 300) {
-      console.log(response)
-      const userData = response.data.data
-      firstName.value = userData.personalInfo.firstName
-      surname.value = userData.personalInfo.surname
-    }
+    const userData = response.data.data
+
+    userInitials.value.push({
+      employeeId: localStorage.getItem('id') || '',
+      initials: getInitialsS(userData.personalInfo.firstName, userData.personalInfo.surname)
+    })
   } catch (error) {
     console.error('Error getting user data', error)
   }
+}
+
+const populateCommentsWithInitials = () => {
+  comments.value.forEach((comment) => {
+    const user = userInitials.value.find((user) => user.employeeId === comment.employeeId)
+    if (user) {
+      comment.initials = user.initials
+    }
+  })
 }
 
 const addComment = async () => {
@@ -161,18 +171,35 @@ const addComment = async () => {
     })
     return
   }
+
   const apiUrl = await getRequestUrl()
+  const newId = uuidv4() // Generate a unique ID
+  const updatedComments = [
+    ...comments.value,
+    {
+      text: newComment.value,
+      employeeId: localStorage.getItem('employeeId') || '',
+      date: new Date().toISOString(),
+      _id: newId // Assign the generated ID
+    }
+  ]
   const addedComment = ref<{ employeeId: string; jobId: string; newComment: string }>({
     employeeId: localStorage.getItem('employeeId') || '',
     jobId: props.id,
     newComment: newComment.value
   })
+
   try {
     const response = await axios.put(`${apiUrl}job/comment`, addedComment.value, config)
-    console.log(response)
-    const commentId : string = response.data.data.comments[response.data.data.comments.length - 1]._id
-    comments.value.push({text: newComment.value, date: new Date().toISOString(), firstName: firstName.value, surname: surname.value, _id: commentId, employeeId: localStorage.getItem('employeeId') || ''})
+    // You can update the _id here if the server returns it
+    comments.value = updatedComments
     newComment.value = ''
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Successfully commented on job',
+      life: 3000
+    })
   } catch (error) {
     console.error('Error adding comment', error)
     toast.add({

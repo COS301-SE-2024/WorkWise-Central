@@ -27,12 +27,12 @@
                 <small
                   class="text-caption font-weight-regular"
                   style="font-family: Nunito, sans-serif"
-                  >Add employee using employee username</small
+                  >Add employee using employee email</small
                 >
 
                 <v-text-field
-                  v-model="req_obj.newUserUsername"
-                  placeholder="Employee Username"
+                  v-model="req_obj.emailToInvite"
+                  placeholder="Employee email"
                   rounded="md"
                   required
                   :rules="rules.username"
@@ -123,16 +123,16 @@ export default defineComponent({
     isDeleting: false,
     roleItems: [] as RoleItem[],
     subordinateItemNames: [] as EmployeeInformation2[],
-    isdarkmode: localStorage['theme'] !== 'false',
+    isDarkMode: localStorage['theme'] !== 'false',
     click_create_client: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
     req_obj: {
-      adminId: localStorage['employeeId'],
+      employeeId: localStorage['employeeId'],
       currentCompany: localStorage['currentCompany'],
-      newUserUsername: '',
+      emailToInvite: '',
       superiorId: '',
       roleId: ''
     }
@@ -217,7 +217,7 @@ export default defineComponent({
       // }
     },
     async handleSubmit() {
-      this.req_obj.adminId = localStorage['employeeId']
+      this.req_obj.employeeId = localStorage['employeeId']
       this.req_obj.currentCompany = localStorage['currentCompany']
 
       console.log(this.req_obj)
@@ -230,7 +230,7 @@ export default defineComponent({
       }
       const apiURL = await this.getRequestUrl()
       axios
-        .post(apiURL + 'company/add', this.req_obj, config)
+        .post(apiURL + 'admin/invite/create', this.req_obj, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -269,7 +269,6 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.req_obj.adminId = localStorage['employeeId']
     this.req_obj.currentCompany = localStorage['currentCompany']
     this.loadRoles()
     this.loadSubordinates()

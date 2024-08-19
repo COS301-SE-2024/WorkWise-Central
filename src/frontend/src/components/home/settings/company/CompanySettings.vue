@@ -1,5 +1,5 @@
 <template>
-  <v-container :theme="isdarkmode === true ? 'dark' : 'light'">
+  <v-container :theme="isDarkMode === true ? 'dark' : 'light'">
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
         <h1 class="text-xl font-semibold">Company Settings</h1>
@@ -58,8 +58,8 @@ export default defineComponent({
   data() {
     return {
       companyDialog: false,
-      currentSettings: 'Company Details',
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      currentSettings: sessionStorage.getItem('currentSettings') || 'Company Details',
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       items: [
         {
           icon: 'fa: fa-solid fa-building',
@@ -110,16 +110,22 @@ export default defineComponent({
     selectSettings(name: string) {
       if (name === 'Company Details') {
         this.currentSettings = 'Company Details'
+        sessionStorage.setItem('currentSettings', 'Company Details')
       } else if (name === 'Roles') {
         this.currentSettings = 'Roles'
+        sessionStorage.setItem('currentSettings', 'Roles')
       } else if (name === 'Structure') {
         this.currentSettings = 'Structure'
+        sessionStorage.setItem('currentSettings', 'Structure')
       } else if (name === 'Priority') {
         this.currentSettings = 'Priority'
+        sessionStorage.setItem('currentSettings', 'Priority')
       } else if (name === 'Tags') {
         this.currentSettings = 'Tags'
+        sessionStorage.setItem('currentSettings', 'Tags')
       } else if (name === 'Status') {
         this.currentSettings = 'Status'
+        sessionStorage.setItem('currentSettings', 'Status')
       }
     }
   }

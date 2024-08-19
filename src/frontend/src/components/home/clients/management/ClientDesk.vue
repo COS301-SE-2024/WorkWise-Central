@@ -1,159 +1,197 @@
 <template>
-  <v-container fluid fill-height>
-    <v-card
-      height="auto"
-      class="pa-11 ma-0 bg-cardColor"
-      rounded="md"
-      :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
-      border="md"
-    >
-      <v-card-title
-        class="d-flex align-center pe-2 text-h5 font-weight-regular"
+  <v-app :style="isDarkMode === true ? 'dark' : 'light'">
+    <v-container fluid fill-height>
+      <v-card
         height="auto"
-        width="100%"
+        class="pa-11 ma-0 bg-cardColor"
+        rounded="md"
+        :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
+        border="md"
       >
-        <v-row align="center" justify="space-between">
-          <v-col cols="12" lg="4" class="d-flex justify-start align-center">
-            <v-icon icon="mdi-account"></v-icon>
-            <v-label
-              class="ms-2 h2 font-family-Nunito text-headingTextColor"
-              height="auto"
-              width="auto"
-              >Client Details</v-label
-            >
+        <v-card-title
+          class="d-flex align-center pe-2 text-h5 font-weight-regular"
+          height="auto"
+          width="100%"
+        >
+          <v-row align="center" justify="space-between">
+            <v-col cols="12" lg="4" class="d-flex justify-start align-center">
+              <v-icon icon="mdi-account"></v-icon>
+              <v-label
+                class="ms-2 h2 font-family-Nunito text-headingTextColor"
+                height="auto"
+                width="auto"
+                >Client Details</v-label
+              >
+            </v-col>
+
+            <v-col cols="12" lg="4" class="d-flex justify-center">
+              <v-text-field
+                v-model="search"
+                density="compact"
+                label="Search"
+                prepend-inner-icon="mdi-magnify"
+                variant="outlined"
+                flat
+                color="primary"
+                style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+                hide-details
+                single-line
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" lg="4" md="4" sm="4" :class="{ 'd-flex justify-end': !isSmallScreen }">
+              <v-btn
+                rounded="md"
+                class="text-none font-weight-regular"
+                style="font-size: 20px"
+                text="Add Client"
+                prepend-icon="mdi-account-plus"
+                variant="elevated"
+                color="secondary"
+                block
+                @click="addClientVisibility = true"
+              >
+                <template #prepend>
+                  <v-icon color="buttonText">mdi-account-plus</v-icon>
+                </template>
+              </v-btn>
+              <!--            <v-dialog-->
+              <!--              v-model="addClientVisibility"-->
+              <!--              max-height="800"-->
+              <!--              max-width="600"-->
+              <!--              scrollable-->
+              <!--              :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"-->
+              <!--              :opacity="0"-->
+              <!--            >-->
+              <AddClient
+                v-show="checkPermission('add a new clients')"
+                :showDialog="addClientVisibility"
+                @update:showDialog="addClientVisibility = $event"
+              />
+              <!--            </v-dialog>-->
+            </v-col>
+          </v-row>
+        </v-card-title>
+
+        <v-card-text>
+          <v-divider></v-divider>
+          <v-col cols="12">
+            <div style="height: auto; overflow-y: auto">
+              <v-data-table
+                :headers="headers"
+                :items="clientDetails"
+                :search="search"
+                label="Clients"
+                height="auto"
+                rounded="xl"
+                class="bg-cardColor"
+                v-show="
+                  checkPermission('view all clients') ||
+                  checkPermission('view clients under me') ||
+                  checkPermission('view clients that are assigned to me')
+                "
+                :row-props="getRowProps"
+                :header-props="{ class: 'bg-secondRowColor h6' }"
+              >
+                <template #[`item.firstName`]="{ value }">
+                  <v-chip variant="text">
+                    <v-icon icon="fa:fa-solid fa-user "></v-icon>{{ value }}</v-chip
+                  >
+                </template>
+                <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
+                  <v-chip @click="callPhone" color="secondary" border="md"
+                    ><v-icon icon="fa:fa-solid fa-phone"></v-icon> {{ value }}</v-chip
+                  >
+                </template>
+                <template v-slot:[`item.mostRecentJob`]="{ value }">
+                  <v-chip :color="getColor(value)">
+                    {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip
+                  >
+                </template>
+                <template v-slot:[`item.lastName`]="{ value }">
+                  <v-chip variant="text"> {{ value }}</v-chip>
+                </template>
+                <template v-slot:[`item.contactInfo.email`]="{ value }">
+                  <v-chip @click="sendEmail" color="secondary" border="md">
+                    <v-icon icon="fa:fa-solid fa-envelope"></v-icon>{{ value }}</v-chip
+                  >
+                </template>
+                <template v-slot:[`item.address.street`]="{ value }">
+                  <v-chip variant="text">
+                    <v-icon icon="fa:fa-solid fa-location-dot"></v-icon>{{ value }}</v-chip
+                  >
+                </template>
+                <!-- Expanded content slot -->
+
+                <!-- Actions slot -->
+                <template v-slot:[`item.actions`]="{ item }">
+                  <v-menu max-width="500px" :theme="isDarkMode === true ? 'dark' : 'light'">
+                    <template v-slot:activator="{ props }">
+                      <v-btn
+                        rounded="xl"
+                        variant="plain"
+                        v-bind="props"
+                        @click="(actionsDialog = true), selectItem(item)"
+                        v-show="
+                          checkPermission('view all clients') ||
+                          checkPermission('view clients under me') ||
+                          checkPermission('view clients that are assigned to me') ||
+                          checkPermission('edit all clients') ||
+                          checkPermission('edit clients that are under me') ||
+                          checkPermission('edit clients that are assigned to me') ||
+                          checkPermission('remove any clients') ||
+                          checkPermission('remove clients under me') ||
+                          checkPermission('remove clients assigned to me')
+                        "
+                      >
+                        <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item
+                        v-show="
+                          checkPermission('view all clients') ||
+                          checkPermission('view clients under me') ||
+                          checkPermission('view clients that are assigned to me')
+                        "
+                      >
+                        <ClientDetails :colors="colors" :clientDetails="selectedItem"
+                      /></v-list-item>
+
+                      <v-list-item
+                        v-show="
+                          checkPermission('edit all clients') ||
+                          checkPermission('edit clients that are under me') ||
+                          checkPermission('edit clients that are assigned to me')
+                        "
+                        ><EditClient
+                          @update:item="selectedItem = $event"
+                          :editedItem="selectedItem"
+                          :_clientID="selectedItemId"
+                      /></v-list-item>
+
+                      <v-list-item
+                        v-show="
+                          checkPermission('remove any clients') ||
+                          checkPermission('remove clients under me') ||
+                          checkPermission('remove clients assigned to me')
+                        "
+                      >
+                        <DeleteClient
+                          :details="selectedItem"
+                          :client_id="selectedItemId"
+                          :client="selectedItem"
+                          :company_id="clientCompanyID"
+                      /></v-list-item>
+                    </v-list>
+                  </v-menu>
+                </template>
+              </v-data-table>
+            </div>
           </v-col>
-
-          <v-col cols="12" lg="4" class="d-flex justify-center">
-            <v-text-field
-              v-model="search"
-              density="compact"
-              label="Search"
-              prepend-inner-icon="mdi-magnify"
-              variant="outlined"
-              flat
-              color="primary"
-              width="80%"
-              style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
-              hide-details
-              single-line
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" lg="4" md="4" sm="4" :class="{ 'd-flex justify-end': !isSmallScreen }">
-            <v-btn
-              rounded="md"
-              class="text-none font-weight-regular"
-              style="font-size: 20px"
-              text="Add Client"
-              prepend-icon="mdi-account-plus"
-              variant="elevated"
-              color="secondary"
-              @click="addClientVisibility = true"
-            >
-              <template #prepend>
-                <v-icon color="buttonText">mdi-account-plus</v-icon>
-              </template>
-            </v-btn>
-            <!--            <v-dialog-->
-            <!--              v-model="addClientVisibility"-->
-            <!--              max-height="800"-->
-            <!--              max-width="600"-->
-            <!--              scrollable-->
-            <!--              :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"-->
-            <!--              :opacity="0"-->
-            <!--            >-->
-            <AddClient
-              :showDialog="addClientVisibility"
-              @update:showDialog="addClientVisibility = $event"
-            />
-            <!--            </v-dialog>-->
-          </v-col>
-        </v-row>
-      </v-card-title>
-
-      <v-card-text>
-        <v-divider></v-divider>
-        <v-col cols="12">
-          <div style="height: auto; overflow-y: auto">
-            <v-data-table
-              :headers="headers"
-              :items="clientDetails"
-              :search="search"
-              label="Clients"
-              height="auto"
-              rounded="xl"
-              class="bg-cardColor"
-              :row-props="getRowProps"
-              :header-props="{ class: 'bg-cardColor h6' }"
-            >
-              <template #[`item.firstName`]="{ value }">
-                <v-chip variant="text">
-                  <v-icon icon="fa:fa-solid fa-user "></v-icon>{{ value }}</v-chip
-                >
-              </template>
-              <template v-slot:[`item.contactInfo.phoneNumber`]="{ value }">
-                <v-chip @click="callPhone" text- border="md"
-                  ><v-icon icon="fa:fa-solid fa-phone"></v-icon> {{ value }}</v-chip
-                >
-              </template>
-              <template v-slot:[`item.mostRecentJob`]="{ value }">
-                <v-chip :color="getColor(value)"> {{ value }}<v-icon>mdi-briefcase</v-icon></v-chip>
-              </template>
-              <template v-slot:[`item.lastName`]="{ value }">
-                <v-chip variant="text"> {{ value }}</v-chip>
-              </template>
-              <template v-slot:[`item.contactInfo.email`]="{ value }">
-                <v-chip @click="sendEmail" text- border="md">
-                  <v-icon icon="fa:fa-solid fa-envelope"></v-icon>{{ value }}</v-chip
-                >
-              </template>
-              <template v-slot:[`item.address.street`]="{ value }">
-                <v-chip variant="text">
-                  <v-icon icon="fa:fa-solid fa-location-dot"></v-icon>{{ value }}</v-chip
-                >
-              </template>
-              <!-- Expanded content slot -->
-
-              <!-- Actions slot -->
-              <template v-slot:[`item.actions`]="{ item }">
-                <v-menu max-width="500px" :theme="isdarkmode === true ? 'dark' : 'light'">
-                  <template v-slot:activator="{ props }">
-                    <v-btn
-                      rounded="xl"
-                      variant="plain"
-                      v-bind="props"
-                      @click="(actionsDialog = true), selectItem(item)"
-                    >
-                      <v-icon color="primary">mdi-dots-horizontal</v-icon>
-                    </v-btn>
-                  </template>
-                  <v-list class="bg-background">
-                    <v-list-item
-                      ><ClientDetails :colors="colors" :clientDetails="selectedItem"
-                    /></v-list-item>
-
-                    <v-list-item
-                      ><EditClient
-                        @update:item="selectedItem = $event"
-                        :editedItem="selectedItem"
-                        :_clientID="selectedItemId"
-                    /></v-list-item>
-
-                    <v-list-item>
-                      <DeleteClient
-                        :details="selectedItem"
-                        :client_id="selectedItemId"
-                        :client="selectedItem"
-                        :company_id="clientCompanyID"
-                    /></v-list-item>
-                  </v-list>
-                </v-menu>
-              </template>
-            </v-data-table>
-          </div>
-        </v-col>
-      </v-card-text>
-    </v-card>
-  </v-container>
+        </v-card-text>
+      </v-card>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
@@ -163,14 +201,11 @@ import AddClient from './AddClient.vue'
 import ClientDetails from './ClientDetails.vue'
 import axios from 'axios'
 import { defineComponent } from 'vue'
-import AddEmployee from '@/components/home/employees/management/AddEmployee.vue'
+// import AddEmployee from '@/components/home/employees/management/AddEmployee.vue'
 
 export default defineComponent({
   name: 'ClientDesk',
 
-  props: {
-    isDarkMode: Boolean
-  },
   data: () => ({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
@@ -195,7 +230,7 @@ export default defineComponent({
     },
     windowWidth: window.innerWidth,
 
-    isdarkmode: true,
+    isDarkMode: true,
     clientDialog: false,
     deleteDialog: false,
     editDialog: false,
@@ -257,7 +292,8 @@ export default defineComponent({
     clientIds: [],
     clientCompanyID: '',
     expanded: [],
-    selectedItemId: ''
+    selectedItemId: '',
+    employeePermissions: []
   }),
   components: {
     ClientDetails,
@@ -276,8 +312,8 @@ export default defineComponent({
     },
     tableClass() {
       return {
-        'dark-mode': this.isdarkmode,
-        'light-mode': !this.isdarkmode
+        'dark-mode': this.isDarkMode,
+        'light-mode': !this.isDarkMode
       }
     },
     currentTheme() {
@@ -299,11 +335,36 @@ export default defineComponent({
   mounted() {
     this.getClients()
     this.getEmployeeDetails()
-    this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
+    this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
+    this.getEmployeePermissions()
   },
   methods: {
     openClientDialogVisbility() {
       this.addClientDialog = true
+    },
+    async getEmployeePermissions() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      axios
+        .get(`${apiURL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
+        .then((response) => {
+          console.log(response.data.data.role.permissionSuite)
+          this.employeePermissions = response.data.data.role.permissionSuite
+        })
+        .catch((error) => {
+          console.error('Failed to fetch employees:', error)
+        })
+    },
+    checkPermission(permission) {
+      return this.employeePermissions.includes(permission)
     },
     getRowClass(index) {
       return index % 2 === 0 ? 'primary-row' : 'secondary-row'
@@ -462,7 +523,7 @@ export default defineComponent({
     },
     openDialog() {
       this.addClientVisibility = true
-      },
+    },
     async isLocalAvailable(localUrl) {
       try {
         const res = await axios.get(localUrl)
@@ -477,13 +538,13 @@ export default defineComponent({
     }
   },
   toggleDarkMode() {
-    console.log(this.isdarkmode)
-    if (this.isdarkmode === true) {
-      this.isdarkmode = false
-      console.log(this.isdarkmode)
+    console.log(this.isDarkMode)
+    if (this.isDarkMode === true) {
+      this.isDarkMode = false
+      console.log(this.isDarkMode)
     } else {
-      this.isdarkmode = true
-      console.log(this.isdarkmode)
+      this.isDarkMode = true
+      console.log(this.isDarkMode)
     }
   },
   getColor(value) {
@@ -491,6 +552,7 @@ export default defineComponent({
     else return 'green'
   },
   getRowProps({ index }) {
+    console.log(index)
     return {
       class: index % 2 ? 'bg-secondRowColor' : ''
     }

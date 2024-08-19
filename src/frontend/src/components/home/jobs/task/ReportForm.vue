@@ -4,7 +4,7 @@
       v-model="dialog"
       max-height="800"
       max-width="600"
-      :theme="isdarkmode ? 'dark' : 'light'"
+      :theme="isDarkMode ? 'dark' : 'light'"
     >
       <template v-slot:activator="{ props: activatorProps }">
         <v-btn
@@ -17,7 +17,7 @@
           Generate Report
         </v-btn>
       </template>
-      <v-card :theme="isdarkmode ? 'dark' : 'light'">
+      <v-card :theme="isDarkMode ? 'dark' : 'light'">
         <v-card-title class="text-center">Job Report Form</v-card-title>
         <v-card-text>
           <v-form v-model="formIsValid" ref="form">
@@ -113,7 +113,7 @@ export default defineComponent({
 
     // Dark mode
     const storedTheme = localStorage.getItem('theme')
-    const isdarkmode = ref(storedTheme === 'dark')
+    const isDarkMode = ref(storedTheme === 'dark')
 
     // Employee list
     const employees = ref([
@@ -150,7 +150,7 @@ export default defineComponent({
       employees,
       statuses,
       submitReport,
-      isdarkmode,
+      isDarkMode,
       dialog
     }
   }

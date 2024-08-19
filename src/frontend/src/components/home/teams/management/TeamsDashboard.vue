@@ -4,7 +4,7 @@
       height="auto"
       class="pa-11 ma-0 bg-cardColor"
       rounded="md"
-      :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
+      :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
       border="md"
     >
       <v-card-title
@@ -53,8 +53,13 @@
           class="bg-cardColor"
           :row-props="getRowProps"
         >
+          <template v-slot:[`item.currentJobAssignments`]="{ item }">
+            <v-chip v-for="job in item.currentJobAssignments" :key="job">
+              {{ job }}
+            </v-chip>
+          </template>
           <template v-slot:[`item.actions`]="{ item }">
-            <v-menu max-width="500px" :theme="isdarkmode === true ? 'dark' : 'light'">
+            <v-menu max-width="500px" :theme="isDarkMode === true ? 'dark' : 'light'">
               <template v-slot:activator="{ props }">
                 <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)">
                   <v-icon color="primary">mdi-dots-horizontal</v-icon>
@@ -65,7 +70,7 @@
                   <ViewTeam :team="selectedItem" />
                 </v-list-item>
                 <v-list-item>
-                  <UpdateTeam :team_id="selectedItemID" :editedItem="selectedItem" />
+                  <UpdateTeam :teamId="selectedItemID" :editedItem="selectedItem" />
                 </v-list-item>
                 <v-list-item>
                   <DeleteTeam :team_id="selectedItemID" :teamName="selectedItemName" />
@@ -87,7 +92,7 @@ import UpdateTeam from './UpdateTeam.vue'
 import DeleteTeam from './DeleteTeam.vue'
 import axios from 'axios'
 interface Team {
-  id: string
+  _id: string
   companyId: string
   teamName: string
   teamMembers: []
@@ -103,16 +108,23 @@ export default defineComponent({
       search: '',
 
       teamHeaders: [
-        { text: 'Team Name', value: 'teamName' },
-        { text: 'Team Leader', value: 'teamLeaderId' },
-        { text: 'Current Job Assignments', value: 'currentJobAssignments' },
-        { text: 'Actions', value: 'actions', sortable: false }
+        { title: 'Team Name', value: 'teamName' },
+        { title: 'Team Leader', value: 'teamLeaderId' },
+        { title: 'Current Job Assignments', value: 'currentJobAssignments' },
+        { title: 'Actions', value: 'actions', sortable: false }
       ],
-      teamItems: [],
+      teamItems: [] as Team[],
+      teamTable: [
+        {
+          teamName: 'Team 1',
+          teamLeader: 'John Doe',
+          currentJobAssignments: ['Job 1', 'Job 2']
+        }
+      ],
       teamLeaderId: '',
       teamLeaderName: '',
       teamMemberNames: [] as string[],
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       selectedItem: {},
       selectedItemName: '',
       selectedItemID: '',
@@ -127,11 +139,20 @@ export default defineComponent({
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
     },
+    populateTeamTable() {
+      for (const team of this.teamItems) {
+        this.teamTable.push({
+          teamName: team.teamName,
+          teamLeader: this.teamLeaderName,
+          currentJobAssignments: team.currentJobAssignments
+        })
+      }
+    },
     selectItem(item: Team) {
       console.log(item)
       this.selectedItem = item
       this.selectedItemName = item.teamName
-      this.selectedItemID = item.id
+      this.selectedItemID = item._id
     },
     async getTeams() {
       const config = {
@@ -180,7 +201,7 @@ export default defineComponent({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         },
-        params: {
+        data: {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
@@ -210,6 +231,8 @@ export default defineComponent({
   },
   mounted() {
     this.getTeams()
+    this.populateTeamTable()
+    this.getTeamLeaderName()
   }
 })
 </script>

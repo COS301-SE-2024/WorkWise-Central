@@ -1,96 +1,95 @@
 <template>
-  <v-container fluid fill-height>
-    <v-card
+  <Toast position="top-center" />
+  <v-card
+    height="auto"
+    class="pa-11 ma-0 bg-cardColor"
+    rounded="md"
+    :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
+    border="md"
+  >
+    <v-card-title
+      class="d-flex align-center pe-2 text-h5 font-weight-regular"
       height="auto"
-      class="pa-11 ma-0 bg-cardColor"
-      rounded="md"
-      :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
-      border="md"
+      width="100%"
     >
-      <v-card-title
-        class="d-flex align-center pe-2 text-h5 font-weight-regular"
-        height="auto"
-        width="100%"
-      >
-        <v-row align="center" justify="space-between">
-          <v-col cols="12" lg="4" md="4" sm="4" class="d-flex justify-start align-center">
-            <v-icon icon="mdi-account-group"></v-icon>
-            <v-label
-              class="ms-2 h2 font-family-Nunito text-headingTextColor"
-              height="auto"
-              width="auto"
-              >Company Invites</v-label
-            >
-          </v-col>
-
-          <v-col cols="12" lg="4" md="4" sm="4" class="d-flex justify-center">
-            <v-text-field
-              v-model="search"
-              density="compact"
-              label="Search"
-              prepend-inner-icon="mdi-magnify"
-              variant="outlined"
-              flat
-              color="primary"
-              width="80%"
-              style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
-              hide-details
-              single-line
-            ></v-text-field>
-          </v-col>
-        </v-row>
-      </v-card-title>
-
-      <v-card-text>
-        <v-divider></v-divider>
-        <v-col cols="12">
-          <div style="height: auto; overflow-y: auto">
-            <v-data-table
-              :headers="headers"
-              :items="invites"
-              :search="search"
-              label="Invites"
-              height="auto"
-              rounded="xl"
-              class="bg-cardColor"
-              :header-props="{ class: 'bg-cardColor h6' }"
-            >
-              <template v-slot:[`item.companyName`]="{ value }">
-                <v-chip variant="text">{{ value }}</v-chip>
-              </template>
-              <template v-slot:[`item.emailBeingInvited`]="{ value }">
-                <v-chip variant="text">{{ value }}</v-chip>
-              </template>
-              <template v-slot:[`item.createdAt`]="{ value }">
-                <v-chip variant="text">{{ convertDate(value) }}</v-chip>
-              </template>
-              <template v-slot:[`item.actions`]="{ item }">
-                <v-menu max-width="200px" :theme="isdarkmode === true ? 'dark' : 'light'">
-                  <template v-slot:activator="{ props }">
-                    <v-btn rounded="xl" variant="plain" v-bind="props">
-                      <v-icon color="primary">mdi-dots-horizontal</v-icon>
-                    </v-btn>
-                  </template>
-                  <v-list class="bg-background">
-                    <v-list-item @click="acceptInvite(item)">
-                      <v-btn color="success"
-                        ><v-icon color="success" icon="fa: fa-solid fa-check"></v-icon>Accept</v-btn
-                      >
-                    </v-list-item>
-                    <v-list-item @click="declineInvite(item)">
-                      <v-btn color="error"
-                        ><v-icon color="error" icon="fa: fa-solid fa-times"></v-icon>Decline</v-btn
-                      >
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-              </template>
-            </v-data-table>
-          </div>
+      <v-row align="center" justify="space-between">
+        <v-col cols="12" lg="4" md="4" sm="4" class="d-flex justify-start align-center">
+          <v-icon icon="mdi-account-group"></v-icon>
+          <v-label
+            class="ms-2 h4 font-family-Nunito text-headingTextColor"
+            height="auto"
+            width="auto"
+            >Company Invites</v-label
+          >
         </v-col>
-      </v-card-text>
-    </v-card>
-  </v-container>
+
+        <v-col cols="12" lg="4" md="4" sm="4" class="d-flex justify-center">
+          <v-text-field
+            v-model="search"
+            density="compact"
+            label="Search"
+            prepend-inner-icon="mdi-magnify"
+            variant="outlined"
+            flat
+            color="primary"
+            width="80%"
+            style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
+            hide-details
+            single-line
+          ></v-text-field>
+        </v-col>
+      </v-row>
+    </v-card-title>
+
+    <v-card-text>
+      <v-divider></v-divider>
+      <v-col cols="12">
+        <div style="height: auto; overflow-y: auto">
+          <v-data-table
+            :headers="headers"
+            :items="invites"
+            :search="search"
+            label="Invites"
+            height="auto"
+            rounded="xl"
+            class="bg-cardColor"
+            :header-props="{ class: 'bg-cardColor h6' }"
+          >
+            <template v-slot:[`item.companyName`]="{ value }">
+              <v-chip variant="text">{{ value }}</v-chip>
+            </template>
+            <template v-slot:[`item.emailBeingInvited`]="{ value }">
+              <v-chip variant="text">{{ value }}</v-chip>
+            </template>
+            <template v-slot:[`item.createdAt`]="{ value }">
+              <v-chip variant="text">{{ convertDate(value) }}</v-chip>
+            </template>
+            <template v-slot:[`item.actions`]="{ item }">
+              <v-menu max-width="200px" :theme="isDarkMode === true ? 'dark' : 'light'">
+                <template v-slot:activator="{ props }">
+                  <v-btn rounded="xl" variant="plain" v-bind="props">
+                    <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                  </v-btn>
+                </template>
+                <v-list class="bg-background">
+                  <v-list-item @click="acceptInvite(item)">
+                    <v-btn color="success"
+                      ><v-icon color="success" icon="fa: fa-solid fa-check"></v-icon>Accept</v-btn
+                    >
+                  </v-list-item>
+                  <v-list-item @click="declineInvite(item)">
+                    <v-btn color="error"
+                      ><v-icon color="error" icon="fa: fa-solid fa-times"></v-icon>Decline</v-btn
+                    >
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </template>
+          </v-data-table>
+        </div>
+      </v-col>
+    </v-card-text>
+  </v-card>
 </template>
 <script lang="ts">
 import axios from 'axios'
@@ -112,7 +111,7 @@ export default defineComponent({
   data() {
     return {
       search: '' as string,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       headers: [

@@ -1,6 +1,6 @@
 c
 <template class="emply-mng-container">
-  <v-app :style="isdarkmode === true ? 'dark' : 'light'">
+  <v-app :style="isDarkMode === true ? 'dark' : 'light'">
     <v-container fluid fill-height>
       <v-row justify="center" xs="6" sm="6" md="12">
         <v-col cols="12">
@@ -10,7 +10,7 @@ c
                 height="auto"
                 class="pa-11 ma-0 bg-cardColor"
                 rounded="md"
-                :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
+                :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
                 border="md"
               >
                 <v-card-title
@@ -47,7 +47,7 @@ c
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" lg="4" class="d-flex justify-end">
-                      <AddEmployee />
+                      <AddEmployee v-if="permissions.includes('add new employees')" />
                     </v-col>
                   </v-row>
                 </v-card-title>
@@ -58,6 +58,10 @@ c
                   <div style="height: auto; overflow-y: auto">
                     <v-col cols="12" xs="12" sm="12" md="12">
                       <v-data-table
+                        v-if="
+                          permissions.includes('view all employees') ||
+                          permissions.includes('view employees under me')
+                        "
                         :headers="headers"
                         :items="EmployeeDetails2"
                         :search="search"
@@ -102,7 +106,7 @@ c
                           </v-chip>
                         </template>
                         <template v-slot:[`item.actions`]="{ item }">
-                          <v-menu max-width="500px" :theme="isdarkmode === true ? 'dark' : 'light'">
+                          <v-menu max-width="500px" :theme="isDarkMode === true ? 'dark' : 'light'">
                             <template v-slot:activator="{ props }"
                               ><v-btn
                                 rounded="xl"
@@ -114,18 +118,28 @@ c
                                 <v-icon color="primary">mdi-dots-horizontal</v-icon>
                               </v-btn></template
                             >
-                            <v-list>
+                            <v-list class="bg-background">
                               <v-list-item
                                 ><EmployeeDetails colors="colors" :EmployeeDetails="selectedItem"
                               /></v-list-item>
 
                               <v-list-item>
                                 <EditEmployee
+                                  v-if="
+                                    permissions.includes('edit all employees') ||
+                                    permissions.includes('edit employees under me')
+                                  "
                                   @update:item="selectedItem = $event"
                                   :editedItem="selectedItem"
                               /></v-list-item>
 
-                              <v-list-item><DeleteEmployee :details="selectedItem" /></v-list-item>
+                              <v-list-item
+                                v-if="
+                                  permissions.includes('remove any employees') ||
+                                  permissions.includes('remove employees under me')
+                                "
+                                ><DeleteEmployee :details="selectedItem"
+                              /></v-list-item>
                             </v-list>
                           </v-menu>
                         </template>
@@ -168,8 +182,9 @@ export default {
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     selectedItemSurname: '',
     loading_data: true,
+    permissions: [] as string[],
     selectedItem: {} as any,
-    isdarkmode: localStorage['theme'] !== 'false',
+    isDarkMode: localStorage['theme'] !== 'false',
     clientDialog: false,
     deleteDialog: false,
     editDialog: false,
@@ -228,6 +243,7 @@ export default {
     }
   },
   mounted() {
+    this.loadPermissions()
     this.getEmployees()
     this.loading_data = false
   },
@@ -275,6 +291,30 @@ export default {
     },
     callPhone(item: any) {
       window.location.href = 'tel:' + item.phoneNumber
+    },
+    async loadPermissions() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      console.log(localStorage['employeeId'])
+      const apiURL = await this.getRequestUrl()
+
+      try {
+        const employee_response = await axios.get(
+          apiURL + `employee/id/${localStorage['employeeId']}`,
+          config
+        )
+        console.log(employee_response.data.data)
+        this.permissions = employee_response.data.data.role.permissionSuite
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
     },
     async getEmployees() {
       const config = {
@@ -377,13 +417,13 @@ export default {
       }
     },
     toggleDarkMode() {
-      console.log(this.isdarkmode)
-      if (this.isdarkmode === true) {
-        this.isdarkmode = false
-        console.log(this.isdarkmode)
+      console.log(this.isDarkMode)
+      if (this.isDarkMode === true) {
+        this.isDarkMode = false
+        console.log(this.isDarkMode)
       } else {
-        this.isdarkmode = true
-        console.log(this.isdarkmode)
+        this.isDarkMode = true
+        console.log(this.isDarkMode)
       }
     },
     getColor(value: string) {

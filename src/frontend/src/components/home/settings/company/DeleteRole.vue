@@ -2,7 +2,8 @@
   <v-dialog
     v-model="deleteDialog"
     max-width="500px"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
+    :opacity="0"
+    :theme="isDarkMode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
@@ -50,36 +51,79 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
 export default defineComponent({
   name: 'DeleteStatus',
   props: {
-    roleName: String
+    roleName: String,
+    roleId: String
   },
   data() {
     return {
       deleteDialog: false,
       isDeleting: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false
     }
   },
   methods: {
     close() {
       this.deleteDialog = false
     },
-    deleteRole() {
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async deleteRole() {
       this.isDeleting = true // Indicate the start of the deletion process
-
-      this.$toast.add({
-        severity: 'success',
-        summary: 'Successful',
-        detail: 'Role Deleted',
-        life: 3000
-      })
-      setTimeout(() => {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        data: {
+          companyId: localStorage.getItem('currentCompany'),
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const res = await axios.delete(`${apiURL}role/${this.roleId}`, config)
+        if (res.status === 200) {
+          console.log(res.data)
+          this.isDeleting = true
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Role Deleted',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.isDeleting = false
+            this.deleteDialog = false
+            window.location.reload()
+          }, 1500)
+          this.isDeleting = false
+        }
+      } catch (error) {
+        console.error(error)
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'An error occurred. Please try again',
+          life: 3000
+        })
         this.isDeleting = false
-        this.deleteDialog = false
-        window.location.reload()
-      }, 1500)
+      }
     }
   }
 })

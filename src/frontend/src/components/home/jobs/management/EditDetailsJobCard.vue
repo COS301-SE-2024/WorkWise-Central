@@ -177,7 +177,7 @@
       </v-form>
     </v-card-text>
   </v-card>
-  <Toast />
+   <Toast position="top-center" />
 </template>
 <script setup lang="ts">
 import { defineProps, ref } from 'vue'

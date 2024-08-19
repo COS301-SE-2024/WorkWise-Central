@@ -3,14 +3,14 @@
     v-model="dialog"
     max-height="800"
     max-width="600"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
+    :theme="isDarkMode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
         variant="elevated"
-        color="secondary"
+        :color="buttonColor ? buttonColor : 'secondary'"
         v-bind="activatorProps"
         block
         >Register Company</v-btn
@@ -20,7 +20,7 @@
       elevation="14"
       rounded="md"
       max-width="600"
-      :theme="isdarkmode === true ? 'dark' : 'light'"
+      :theme="isDarkMode === true ? 'dark' : 'light'"
     >
       <v-form
         ref="form"
@@ -42,7 +42,6 @@
                 <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
               </label>
               <v-text-field
-                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's name"
@@ -150,7 +149,6 @@
               </label>
 
               <v-text-field
-                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's email adress"
@@ -170,7 +168,6 @@
               </label>
 
               <v-text-field
-                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's phone number"
@@ -188,7 +185,6 @@
               >
 
               <v-text-field
-                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's registration number"
@@ -205,7 +201,6 @@
               <label style="font-size: 14px; font-weight: lighter">Company VAT number</label>
 
               <v-text-field
-                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's VAT number"
@@ -220,7 +215,7 @@
             <v-col>
               <small class="text-caption">Company logo</small>
               <v-file-input
-                :theme="isdarkmode === true ? 'dark' : 'light'"
+                :theme="isDarkMode === true ? 'dark' : 'light'"
                 variant="solo"
                 accept="image/*"
                 width="100%"
@@ -231,7 +226,6 @@
                 color="black"
                 rounded="md"
                 required
-                :rules="company_logo_rules"
                 data-testid="company-logo-file-input"
               ></v-file-input>
             </v-col>
@@ -247,7 +241,6 @@
                   <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
                 </label>
                 <v-text-field
-                  @update:focused="setUserId"
                   density="compact"
                   color="cardColor"
                   placeholder="Street"
@@ -265,7 +258,6 @@
                   <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
                 </label>
                 <v-text-field
-                  @update:focused="setUserId"
                   density="compact"
                   color="cardColor"
                   placeholder="Suburb"
@@ -311,7 +303,6 @@
                   <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
                 </label>
                 <v-text-field
-                  @update:focused="setUserId"
                   density="compact"
                   placeholder="City"
                   rounded="md"
@@ -329,7 +320,6 @@
                   <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
                 </label>
                 <v-text-field
-                  @update:focused="setUserId"
                   density="compact"
                   color="cardColor"
                   placeholder="Postal Code"
@@ -359,7 +349,7 @@
             </v-row>
           </v-col>
           <v-col cols="8" offset="2" align="center">
-            <Toast />
+             <Toast position="top-center" />
             <v-btn
               color="primary"
               type="submit"
@@ -427,10 +417,13 @@ export default {
   components: {
     Toast
   },
+  props: {
+    buttonColor: String
+  },
   data() {
     return {
       dialog: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       click_create_client: false,
       valid: true,
       dark: '#2b2b2b',
@@ -473,9 +466,7 @@ export default {
       suburb_rules: [(v: string) => !!v || 'Suburb is required'],
       province_rules: [(v: string) => !!v || 'Province is required'],
       city_rules: [(v: string) => !!v || 'City is required'],
-      // complex_or_building_rules: [(v: string) => !!v || 'Complex/Building is required'],
       business_type_rules: [(v: string) => !!v || 'Business type required'],
-      company_logo_rules: [(v: string) => !!v || 'Company logo is required'],
       req_obj: {
         userId: localStorage.getItem('id'),
         name: '',
@@ -508,7 +499,10 @@ export default {
       this.req_obj.address.complex || delete this.req_obj.address.complex
       this.req_obj.logo || delete this.req_obj.logo
 
-      validate.valid || (await this.registrationHandler())
+      console.log('hello')
+      console.log(validate)
+      this.req_obj.userId = localStorage['id']
+      if (validate.valid) await this.registrationHandler()
     },
 
     async registrationHandler(): Promise<void> {
@@ -520,31 +514,9 @@ export default {
       axios
         .post(apiURL + 'company/create', this.req_obj, config)
         .then((res) => {
-          console.log(res)
-
           localStorage['currentCompany'] = res.data.data._id
-          // localStorage['employeeId'] = res.data.data.employees[0]
-          console.log('Request to create company worked')
-          console.log(res)
-
-          axios
-            .get(apiURL + 'company/id/' + res.data.data._id, config)
-            .then((res1) => {
-              console.log(res1.data.data)
-              localStorage['employeeId'] = res1.data.data.employees[0]
-              this.$toast.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Company registered successfully',
-                life: 3000
-              })
-
-              console.log('Request to set EmployeeId was successfull')
-              this.$router.push({ name: 'dashboard' })
-            })
-            .catch((error) => {
-              console.log('Error occured when storing employeeId: ', error)
-            })
+          localStorage['employeeId'] = res.data.data.ownerId
+          this.$router.push({ name: 'dashboard' })
         })
         .catch((res) => {
           this.$toast.add({
@@ -589,10 +561,6 @@ export default {
     },
     print_base64_link() {
       console.log(this.req_obj.logo)
-    },
-    setUserId() {
-      this.req_obj.userId = localStorage['id']
-      console.log('userid set')
     }
 
     // base64image() {

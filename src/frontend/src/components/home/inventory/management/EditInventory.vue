@@ -7,7 +7,7 @@
     scrollable
     color="warning"
     :opacity="0.1"
-    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
@@ -15,7 +15,7 @@
         >Edit</v-btn
       >
     </template>
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
         Edit Inventory
@@ -127,7 +127,7 @@ export default {
     return {
       localEditedItem: this.editedItem,
       addDialog: false,
-      isdarkmode: localStorage.getItem('theme') === 'true',
+      isDarkMode: localStorage.getItem('theme') === 'true',
       isDeleting: false,
       valid: false,
       name: '',

@@ -4,7 +4,7 @@
       height="auto"
       class="pa-11 ma-0 bg-cardColor"
       rounded="md"
-      :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
+      :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
       border="md"
     >
       <v-card-title
@@ -38,7 +38,7 @@
           </v-col>
 
           <v-col cols="12" lg="4" class="d-flex align-center">
-            <AddInventory />
+            <AddInventory v-show="checkPermission('add new inventory item')" />
           </v-col> </v-row
       ></v-card-title>
       <v-divider></v-divider>
@@ -48,34 +48,37 @@
           :items="inventoryItems"
           :search="search"
           height="auto"
+          v-show="checkPermission('view all inventory')"
           class="bg-cardColor"
           :row-props="getRowProps"
+          :header-props="{ class: 'bg-secondRowColor h6' }"
         >
           <template v-slot:[`item.actions`]="{ item }">
-            <!-- <v-btn
-              rounded="xl"
-              variant="plain"
-              v-bind="attrs"
-              v-on="on"
-              @click="fuga(), selectItem(item)"
-            >
-              <v-icon color="primary">mdi-dots-horizontal</v-icon>
-            </v-btn> -->
-            <v-menu max-width="500px" :theme="isdarkmode === true ? 'dark' : 'light'">
+            <v-menu max-width="500px" :theme="isDarkMode === true ? 'dark' : 'light'">
               <template v-slot:activator="{ props }">
-                <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)">
+                <v-btn
+                  rounded="xl"
+                  variant="plain"
+                  v-bind="props"
+                  @click="selectItem(item)"
+                  v-show="
+                    checkPermission('view all inventory') ||
+                    checkPermission('edit all inventory') ||
+                    checkPermission('delete inventory item')
+                  "
+                >
                   <v-icon color="primary">mdi-dots-horizontal</v-icon>
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item>
+                <v-list-item v-show="checkPermission('view all inventory')">
                   <InventoryDetails :inventoryItem="selectedItem" />
                 </v-list-item>
-                <v-list-item>
+                <v-list-item v-show="checkPermission('edit all inventory')">
                   <EditInventory :inventory_id="selectedItemID" :editedItem="selectedItem" />
                 </v-list-item>
 
-                <v-list-item>
+                <v-list-item v-show="checkPermission('delete inventory item')">
                   <DeleteInventory
                     :inventory_id="selectedItemID"
                     :inventoryName="selectedItemName"
@@ -142,11 +145,12 @@ export default defineComponent({
       ],
       inventoryItems: [],
       search: '',
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       selectedItem: {},
       selectedItemName: '',
       selectedItemID: '',
       actionsMenu: false,
+      employeePermissions: [] as string[],
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
@@ -200,6 +204,30 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async getEmployeePermissions() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      axios
+        .get(`${apiURL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
+        .then((response) => {
+          console.log(response.data.data.role.permissionSuite)
+          this.employeePermissions = response.data.data.role.permissionSuite
+        })
+        .catch((error) => {
+          console.error('Failed to fetch employees:', error)
+        })
+    },
+    checkPermission(permission: string) {
+      return this.employeePermissions.includes(permission)
     }
   },
   mounted() {

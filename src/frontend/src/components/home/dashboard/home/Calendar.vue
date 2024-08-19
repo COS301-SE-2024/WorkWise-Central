@@ -49,7 +49,7 @@ export default {
   },
   data() {
     return {
-      isdarkmode: localStorage['theme'] === 'true',
+      isDarkMode: localStorage['theme'] === 'true',
       available_event_colors: [
         'blue',
         'yellow',
