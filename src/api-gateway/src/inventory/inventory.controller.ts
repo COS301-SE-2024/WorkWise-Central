@@ -19,15 +19,18 @@ import {
 import { InventoryService } from './inventory.service';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiInternalServerErrorResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { InventoryListResponseDto, InventoryResponseDto } from './entities/inventory.entity';
 import { Types } from 'mongoose';
@@ -246,9 +249,20 @@ export class InventoryController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
-  @ApiInternalServerErrorResponse({
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
     summary: `Update an ${className} instances`,
@@ -292,9 +306,20 @@ export class InventoryController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
-  @ApiInternalServerErrorResponse({
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
     summary: `Add new images to an inventory item (the key needed in in your form-data is "files")`,
@@ -337,13 +362,20 @@ export class InventoryController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
-  @ApiInternalServerErrorResponse({
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
   })
-  @ApiInternalServerErrorResponse({
+  @ApiUnauthorizedResponse({
     type: HttpException,
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
     summary: `Delete an ${className}`,

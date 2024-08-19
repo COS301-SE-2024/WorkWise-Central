@@ -3,7 +3,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { StockTakeRepository } from './stocktake.repository';
 import { FileService } from '../file/file.service';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
-import { CreateStocktakeDto } from './dto/create-stocktake.dto';
+import { CreateStocktakeDto, OuterCreateStocktakeDto, StockTakeItem } from './dto/create-stocktake.dto';
 import { StockTake } from './entities/stocktake.entity';
 import { Types } from 'mongoose';
 import { CompanyService } from '../company/company.service';
@@ -24,8 +24,16 @@ export class StockTakeService {
   async validateCreateStockTake(stocktake: CreateStocktakeDto) {
     //Checking that all the id's are valid
     for (const item of stocktake.items) {
-      if (!(await this.inventoryService.InventoryExists(item.inventoryItem))) {
+      if (!(await this.inventoryService.InventoryExists(item.inventoryId))) {
         return new ValidationResult(false, `Inventory item not found`);
+      }
+    }
+
+    //checking that all the inventory items is part of the given company
+    const listInventory = await this.inventoryService.findAllInCompany(stocktake.companyId);
+    for (const item of stocktake.items) {
+      if (!listInventory.some((inventory) => inventory._id === item.inventoryId)) {
+        return new ValidationResult(false, `Inventory item does not exist in the company`);
       }
     }
     return new ValidationResult(true, `All good`);
@@ -34,24 +42,40 @@ export class StockTakeService {
   async validateUpdateInventory(id: Types.ObjectId, updateStockTakeDto: UpdateStockTakeDto) {
     //checking if the stocktake exists
     if (!(await this.stockTakeExisits(id))) {
-      return new ValidationResult(false, `Stocktake not found`);
+      return new ValidationResult(false, `Stock take not found`);
     }
     //Checking that all the id's are valid
     for (const item of updateStockTakeDto.items) {
-      if (!(await this.inventoryService.InventoryExists(item.inventoryItem))) {
+      if (!(await this.inventoryService.InventoryExists(item.inventoryId))) {
         return new ValidationResult(false, `Inventory item not found`);
       }
     }
     return new ValidationResult(true, `All good`);
   }
 
-  async create(stocktakeDto: CreateStocktakeDto) {
-    const validation = await this.validateCreateStockTake(stocktakeDto);
-    if (!validation.isValid) {
-      throw new Error(validation.message);
+  async create(stocktakeDto: OuterCreateStocktakeDto) {
+    const response = [];
+    //Doing the create
+    const createDto = new CreateStocktakeDto();
+    createDto.companyId = stocktakeDto.companyId;
+    createDto.date = stocktakeDto.date;
+    //getting the current stock level from the inventory items
+    const itemsForDto: StockTakeItem[] = [];
+    stocktakeDto.items.forEach((items) => {
+      itemsForDto.push(new StockTakeItem());
+      
+    });
+
+    const stocktake = new StockTake();
+    response.push(await this.stocktakeRepository.save(stocktake));
+
+    //Checking if the inventory needs to be updated
+    if (stocktakeDto.updateInventory) {
+      stocktakeDto.items.forEach(async (createDto) => {
+        await this.inventoryService.update(createDto.inventoryId, { currentStockLevel: createDto.currentStockLevel });
+      });
     }
-    const newInventory = new StockTake(stocktakeDto);
-    return await this.stocktakeRepository.save(newInventory);
+    return response;
   }
 
   async findAll() {

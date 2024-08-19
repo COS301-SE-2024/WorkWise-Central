@@ -14,14 +14,15 @@ export class StockTakeItem {
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true })
-  inventoryItem: Types.ObjectId;
+  inventoryId: Types.ObjectId;
 }
 
 @Schema()
 export class StockTake {
   constructor(createStocktakeDto: CreateStocktakeDto) {
     this.date = createStocktakeDto.date;
-    this.items = createStocktakeDto.items;
+    this.companyId = createStocktakeDto.companyId;
+    this.createdAt = new Date();
   }
   @ApiProperty()
   @Prop({ type: Date, required: true })
@@ -30,6 +31,10 @@ export class StockTake {
   @ApiProperty()
   @Prop({ type: [StockTakeItem], required: true })
   items: StockTakeItem[];
+
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: true })
+  companyId: Types.ObjectId;
 
   @ApiHideProperty()
   @Prop({ required: true, default: new Date() })

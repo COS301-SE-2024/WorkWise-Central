@@ -1,11 +1,12 @@
 import { Types } from 'mongoose';
-import { IsArray, IsDate, IsMongoId, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsArray, IsBoolean, IsDate, IsMongoId, IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class StockTakeItem {
   @IsNotEmpty()
   @ApiProperty()
   @IsNumber()
+  @ValidateNested()
   currentStockLevel: number;
 
   @IsNotEmpty()
@@ -16,7 +17,7 @@ export class StockTakeItem {
   @IsNotEmpty()
   @IsMongoId()
   @ApiProperty()
-  inventoryItem: Types.ObjectId;
+  inventoryId: Types.ObjectId;
 }
 
 export class CreateStocktakeDto {
@@ -29,6 +30,50 @@ export class CreateStocktakeDto {
   @ApiProperty()
   @IsArray()
   items: StockTakeItem[];
+
+  @IsNotEmpty()
+  @IsMongoId()
+  @ApiProperty()
+  companyId: Types.ObjectId;
+}
+
+export class OuterStockTakeItem {
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsNumber()
+  recordedStockLevel: number;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  @ApiProperty()
+  inventoryId: Types.ObjectId;
+}
+
+export class OuterCreateStocktakeDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  @ApiProperty()
+  currentEmployeeId;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsBoolean()
+  updateInventory: boolean;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsDate()
+  date: Date;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsArray()
+  items: OuterStockTakeItem[];
+
+  @IsNotEmpty()
+  @IsMongoId()
+  @ApiProperty()
+  companyId: Types.ObjectId;
 }
 
 export class CreateStocktakeResponseDto {
