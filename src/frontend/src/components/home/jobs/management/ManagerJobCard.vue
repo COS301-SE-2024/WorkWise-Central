@@ -14,7 +14,7 @@
             <ChangeClient :jobID="props.passedInJob?._id" />
           </v-col>
           <v-col>
-            <SelectMembers />
+            <SelectMembers :jobID="props.passedInJob?._id"/>
           </v-col>
           <v-col>
             <UpdateJobStatus :passedInJob="props.passedInJob" />

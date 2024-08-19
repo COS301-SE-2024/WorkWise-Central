@@ -50,7 +50,7 @@
 
         <v-card-actions class="d-flex flex-column">
           <v-btn @click="saveClient" color="success">Save</v-btn>
-          <v-btn @click="isActive.value = false" color="error">Cancel</v-btn>
+          <v-btn @click="isActive.value = false" color="error">Close</v-btn>
         </v-card-actions>
       </v-card>
     </template>
@@ -70,8 +70,8 @@ const props = defineProps<{
 
 const toast = useToast()
 const clientDialog = ref<boolean>(false)
-const selectedClient = ref<string>('')
-const clientData = ref<[]>([])
+const selectedClient = ref<string | null>(null)
+const clientData = ref([])
 
 // API URLs and config
 const localUrl: string = 'http://localhost:3000/'
@@ -115,7 +115,7 @@ const showClientChangeError = () => {
   })
 }
 
-const getClients = async (): Promise<string> => {
+const getClients = async () => {
   const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(`${apiUrl}client/all`, config)
@@ -129,20 +129,21 @@ const getClients = async (): Promise<string> => {
     console.log(error)
     console.error('Error updating job:', error)
   }
-  return 'cheese'
 }
 
 const openClientDialogAndFetchClients = () => {
   clientDialog.value = true
 }
 
-const saveClient = () => {
-  clientDialog.value = false
-  console.log(selectedClient.value)
+const saveClient = async () => {
   const apiUrl = getRequestUrl()
   try {
-    axios.patch(`${apiUrl}job/update/${props.jobID}`, { clientId: selectedClient.value }, config)
-    showClientChangeSuccess()
+    const response = await axios.patch(`${apiUrl}job/update/${props.jobID}`, { clientId: selectedClient.value }, config)
+    if (response.status > 199 && response.status < 300) {
+      showClientChangeSuccess()
+    } else {
+      console.log('Wtf happened?', response)
+    }
   } catch (error) {
     console.error('Error updating job:', error)
     showClientChangeError()
