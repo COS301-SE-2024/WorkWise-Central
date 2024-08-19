@@ -61,7 +61,7 @@
                 <v-card-text>
                   <v-divider></v-divider>
                   <v-data-table
-                    :items="companies"
+                    :items="joinedCompanies"
                     :headers="companyHeaders"
                     label="Current Companies"
                     height="auto"
