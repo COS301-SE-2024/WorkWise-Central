@@ -290,6 +290,9 @@ export class UsersRepository {
         $and: [{ 'systemDetails.email': { $regex: regex, $options: 'i' } }, isNotDeleted],
       })
       .lean();
+    console.log(user);
+
+    if (!user) return false;
 
     for (const joinedCompany of user.joinedCompanies) {
       if (joinedCompany.companyId.toString() === companyId.toString()) {
