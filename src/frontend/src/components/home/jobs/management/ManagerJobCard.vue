@@ -28,7 +28,7 @@
     <v-card-actions class="d-flex flex-column">
       <v-col class="d-flex flex-column">
         <v-btn class="mb-4" @click="cancelJob" color="error"
-          ><v-icon icon="fa: fa-solid fa-cancel"></v-icon>Close</v-btn
+          ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
         >
       </v-col>
     </v-card-actions>

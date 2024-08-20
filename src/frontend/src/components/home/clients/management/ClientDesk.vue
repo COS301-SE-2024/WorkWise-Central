@@ -1,13 +1,7 @@
 <template>
   <v-app :style="isDarkMode === true ? 'dark' : 'light'">
     <v-container fluid fill-height>
-      <v-card
-        height="auto"
-        class="pa-11 ma-0 bg-cardColor"
-        rounded="md"
-        :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
-        border="md"
-      >
+      <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
         <v-card-title
           class="d-flex align-center pe-2 text-h5 font-weight-regular"
           height="auto"
@@ -124,7 +118,7 @@
 
                 <!-- Actions slot -->
                 <template v-slot:[`item.actions`]="{ item }">
-                  <v-menu max-width="500px" :theme="isDarkMode === true ? 'dark' : 'light'">
+                  <v-menu max-width="500px" >
                     <template v-slot:activator="{ props }">
                       <v-btn
                         rounded="xl"
@@ -535,6 +529,12 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    getRowProps({ index }) {
+      console.log(index)
+      return {
+        class: index % 2 ? 'bg-secondRowColor' : ''
+      }
     }
   },
   toggleDarkMode() {
@@ -550,12 +550,6 @@ export default defineComponent({
   getColor(value) {
     if (value == '') return 'red'
     else return 'green'
-  },
-  getRowProps({ index }) {
-    console.log(index)
-    return {
-      class: index % 2 ? 'bg-secondRowColor' : ''
-    }
   }
 })
 </script>

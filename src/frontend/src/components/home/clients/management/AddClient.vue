@@ -19,10 +19,9 @@
     max-width="600"
     :no-overlay="false"
     scrollable
-    :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
     :opacity="0"
   >
-    <v-card :theme="isDarkMode === true ? 'dark' : 'light'"
+    <v-card
       ><v-card-title class="fixed">
         <span class="headline text-center">Create a Client </span>
       </v-card-title>

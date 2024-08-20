@@ -1,5 +1,5 @@
 <template>
-  <v-app :theme="isDarkMode ? 'themes.dark' : 'themes.light'">
+  <v-app :theme="isDarkMode ? 'dark' : 'light'">
     <v-container>
       <v-row class="text-center">
         <v-col cols="12">

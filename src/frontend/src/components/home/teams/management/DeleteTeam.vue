@@ -2,14 +2,14 @@
   <v-dialog
     v-model="deleteDialog"
     max-width="500px"
-    :theme="isDarkMode === true ? 'dark' : 'light'"
+   
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
       >
     </template>
-    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
+    <v-card>
       <v-card-title>
         <v-icon icon="fa:fa-solid fa-users"></v-icon>
         <span>Delete Team</span>

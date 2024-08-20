@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-height="800" max-width="600" style="font-family: Nunito, sans-serif">
+  <v-dialog max-height="800" max-width="600" style="font-family: Nunito, sans-serif"a>
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn

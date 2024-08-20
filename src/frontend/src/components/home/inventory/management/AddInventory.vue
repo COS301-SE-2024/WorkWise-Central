@@ -1,12 +1,5 @@
 <template>
-  <v-dialog
-    v-model="addDialog"
-    max-height="800"
-    max-width="600"
-    scrollablea
-    :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
-    :opacity="0.1"
-  >
+  <v-dialog v-model="addDialog" max-height="800" max-width="600" scrollablea :opacity="0.1">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         class="text-none font-weight-regular hello"
@@ -19,7 +12,7 @@
         Add Inventory</v-btn
       >
     </template>
-    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
+    <v-card>
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
         Add Inventory
@@ -29,7 +22,7 @@
         <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
           <v-col>
             <v-row>
-              <v-col>
+              <v-col cols="12" lg="6">
                 <h6>Product Name</h6>
                 <v-text-field
                   v-model="name"
@@ -39,7 +32,7 @@
                   hide-details="auto"
                 ></v-text-field
               ></v-col>
-              <v-col>
+              <v-col cols="12" lg="6">
                 <h6>Description</h6>
                 <v-text-field
                   v-model="description"
@@ -50,7 +43,7 @@
             ></v-row>
 
             <v-row
-              ><v-col col="4">
+              ><v-col cols="12" lg="4">
                 <h6>Cost Price</h6>
                 <v-text-field
                   v-model="costPrice"
@@ -59,7 +52,7 @@
                   hide-details="auto"
                 ></v-text-field
               ></v-col>
-              <v-col col="4">
+              <v-col cols="12" lg="4">
                 <h6>Current Stock Level</h6>
                 <v-text-field
                   v-model="currentStockLevel"
@@ -68,7 +61,7 @@
                   hide-details="auto"
                 ></v-text-field
               ></v-col>
-              <v-col col="4">
+              <v-col cols="12" lg="4">
                 <h6>Reorder Level</h6>
                 <v-text-field
                   v-model="reorderLevel"

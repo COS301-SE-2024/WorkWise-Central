@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="clientDialog" max-width="500" :theme="isDarkMode === true ? 'dark' : 'light'">
+  <v-dialog v-model="clientDialog" max-width="500">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="success" v-bind="activatorProps">
         <v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon> View

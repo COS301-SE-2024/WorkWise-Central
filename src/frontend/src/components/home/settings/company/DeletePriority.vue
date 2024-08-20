@@ -2,7 +2,7 @@
   <v-dialog
     v-model="deleteDialog"
     max-width="500px"
-    :theme="isDarkMode === true ? 'dark' : 'light'"
+   
     :opacity="0"
   >
     <template v-slot:activator="{ props: activatorProps }">

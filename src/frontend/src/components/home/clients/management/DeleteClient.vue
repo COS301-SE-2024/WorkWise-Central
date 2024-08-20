@@ -1,17 +1,12 @@
 <template>
   <Toast position="top-center" />
-  <v-dialog
-    v-model="clientDialog"
-    max-width="500px"
-    :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
-    :opacity="0"
-  >
+  <v-dialog v-model="clientDialog" max-width="500px" :opacity="0">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="error" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete
       </v-btn>
     </template>
-    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
+    <v-card>
       <v-card-title> Delete {{ client.name + ' ' + client.surname }} </v-card-title>
       <v-card-text>
         <v-container>

@@ -1,17 +1,12 @@
 <template>
   <Toast position="top-center" />
-  <v-dialog
-    v-model="clientDialog"
-    max-width="600"
-    :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
-    :opacity="0"
-  >
+  <v-dialog v-model="clientDialog" max-width="600" :opacity="0">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon>Edit
       </v-btn>
     </template>
-    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
+    <v-card>
       <v-card-title class="text-center"> Edit Client </v-card-title>
 
       <v-card-text>
@@ -117,30 +112,12 @@
       <v-card-actions>
         <v-container>
           <v-row align-self="center" justify="end"
-            ><v-col
-              cols="12"
-              lg="6"
-              md="6"
-              sm="6"
-              order="last"
-              order-lg="first"
-              order-md="first"
-              order-sm="first"
-            >
+            ><v-col cols="12" lg="6" md="6" sm="6">
               <v-btn color="error" width="85%" height="35" variant="text" @click="close" block>
                 <v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon>
                 Cancel
               </v-btn> </v-col
-            ><v-col
-              cols="12"
-              lg="6"
-              md="6"
-              sm="6"
-              order="first"
-              order-lg="last"
-              order-md="last"
-              order-sm="last"
-            >
+            ><v-col cols="12" lg="6" md="6" sm="6">
               <Toast position="top-center" />
               <v-btn
                 color="success"
@@ -305,7 +282,7 @@ export default {
         setTimeout(() => {
           this.isDeleting = false
           this.clientDialog = false
-          // window.location.reload()
+          window.location.reload()
         }, 3000)
 
         return true

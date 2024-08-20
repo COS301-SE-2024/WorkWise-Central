@@ -15,7 +15,7 @@
         >Edit</v-btn
       >
     </template>
-    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
+    <v-card>
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
         Edit Inventory
@@ -43,7 +43,7 @@
               ></v-text-field
             ></v-col>
             <v-row
-              ><v-col col="4">
+              ><v-col cols="12" lg="4">
                 <small class="text-caption white--text">Cost Price</small
                 ><v-text-field
                   v-model="localEditedItem.costPrice"
@@ -51,7 +51,7 @@
                   required
                 ></v-text-field
               ></v-col>
-              <v-col col="4">
+              <v-col cols="12" lg="4">
                 <small class="text-caption white--text">Current Stock Level</small
                 ><v-text-field
                   v-model="localEditedItem.currentStockLevel"
@@ -59,7 +59,7 @@
                   required
                 ></v-text-field
               ></v-col>
-              <v-col col="4">
+              <v-col cols="12" lg="4">
                 <small class="text-caption white--text">Reorder Level</small
                 ><v-text-field
                   v-model="localEditedItem.reorderLevel"

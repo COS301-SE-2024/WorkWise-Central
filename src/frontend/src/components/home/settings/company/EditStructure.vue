@@ -14,7 +14,7 @@
         </v-row>
       </v-container>
       <v-card-text>
-         <Toast position="top-center" />
+        <Toast position="top-center" />
         <v-network-graph
           v-model="graph"
           class="graph"
@@ -29,12 +29,12 @@
         <v-container
           ><v-row justify="end">
             <v-col align="center" cols="12" lg="6">
-              <v-btn color="success" @click="saveChanges" :loading="isDeleting" block>Save</v-btn>
+              <v-btn color="error" @click="cancel" :loading="isDeleting" block><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Cancel</v-btn>
             </v-col>
             <v-col align="center" cols="12" lg="6">
-              <v-btn color="error" @click="cancel" :loading="isDeleting" block>Cancel</v-btn>
-            </v-col></v-row
-          ></v-container
+              <v-btn color="success" @click="saveChanges" :loading="isDeleting" block><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn>
+            </v-col>
+          </v-row></v-container
         >
       </v-card-actions>
     </v-card>

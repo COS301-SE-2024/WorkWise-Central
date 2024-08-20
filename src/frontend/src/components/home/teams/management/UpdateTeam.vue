@@ -6,7 +6,6 @@
     scrollable
     color="warning"
     :opacity="0.1"
-    :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular" color="warning" v-bind="activatorProps">
@@ -14,7 +13,7 @@
         Edit
       </v-btn>
     </template>
-    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
+    <v-card>
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-users"></v-icon>
         Edit Team

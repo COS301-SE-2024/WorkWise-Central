@@ -224,7 +224,6 @@
                 <v-col>
                   <small class="text-caption">Cover Image</small>
                   <v-file-input
-                    :theme="isDarkMode === true ? 'dark' : 'light'"
                     variant="solo"
                     accept="image/*"
                     width="100%"

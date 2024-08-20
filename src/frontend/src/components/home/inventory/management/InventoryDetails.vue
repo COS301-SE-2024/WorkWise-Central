@@ -1,11 +1,11 @@
 <template>
-  <v-dialog v-model="dialog" max-width="600" :theme="isDarkMode === true ? 'dark' : 'light'">
+  <v-dialog v-model="dialog" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="success" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>View</v-btn
       >
     </template>
-    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
+    <v-card>
       <v-card-title>
         <v-icon>mdi-plus</v-icon>
         <span>Inventory Details</span>
@@ -73,8 +73,8 @@
           ><v-row
             ><Toast position="top-center" />
             <v-col cols="12">
-              <v-btn label="Close" color="secondary" text @click="close" block
-                ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
+              <v-btn label="Close" color="error" text @click="close" block
+                ><v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon
                 >Close</v-btn
               ></v-col
             ></v-row

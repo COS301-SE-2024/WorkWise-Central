@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    max-width="500"
-    height="500"
-    :theme="isDarkMode === true ? 'dark' : 'light'"
-  >
+  <v-dialog v-model="dialog" max-width="500" height="500">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -58,32 +53,38 @@
               ></v-text-field
             ></v-col>-->
           </v-col>
-          <v-col cols="8" offset="2" align="center">
-             <Toast position="top-center" />
-            <v-btn
-              color="primary"
-              rounded="md"
-              boarder="xl"
-              width="85%"
-              @click="handlesubmission"
-              height="35"
-              variant="elevated"
-              :disabled="req_obj.company_name === '' /* && req_obj.companyID === ''*/"
-              >Join Company</v-btn
+          <v-container>
+            <v-row>
+              <v-col cols="12" lg="6">
+                <v-btn
+                  color="secondary"
+                  @click="close"
+                  rounded="md"
+                  boarder="xl"
+                  size="large"
+                  height="35"
+                  block
+                  variant="elevated"
+                  >Back</v-btn
+                >
+              </v-col>
+              <v-col cols="12" lg="6">
+                <Toast position="top-center" />
+                <v-btn
+                  color="primary"
+                  rounded="md"
+                  boarder="xl"
+                  size="large"
+                  block
+                  @click="handlesubmission"
+                  height="35"
+                  variant="elevated"
+                  :disabled="req_obj.company_name === '' /* && req_obj.companyID === ''*/"
+                  >Join Company</v-btn
+                >
+              </v-col></v-row
             >
-          </v-col>
-          <v-col cols="8" offset="2" align="center">
-            <v-btn
-              color="secondary"
-              @click="close"
-              rounded="md"
-              boarder="xl"
-              width="85%"
-              height="35"
-              variant="elevated"
-              >Back</v-btn
-            >
-          </v-col>
+          </v-container>
         </v-col>
       </v-form>
     </v-sheet>

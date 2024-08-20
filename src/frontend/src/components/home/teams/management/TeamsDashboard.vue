@@ -1,87 +1,83 @@
 <template>
-  <v-container fluid fill-height>
-    <v-card
-      height="auto"
-      class="pa-11 ma-0 bg-cardColor"
-      rounded="md"
-      :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
-      border="md"
-    >
-      <v-card-title
-        class="d-flex align-center pe-2 text-h5 font-weight-regular"
-        height="auto"
-        width="100%"
-      >
-        <v-row align="center" justify="space-between">
-          <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
-            <v-icon icon="fa: fa-solid fa-users"></v-icon>
-            <v-label
-              class="ms-2 h4 font-family-Nunito text-headingTextColor"
-              height="auto"
-              width="auto"
-              >Teams</v-label
-            >
-          </v-col>
-
-          <v-col cols="12" md="4" sm="6" xs="12">
-            <v-text-field
-              v-model="search"
-              density="compact"
-              label="Search"
-              prepend-inner-icon="mdi-magnify"
-              variant="outlined"
-              flat
-              color="primary"
-              width="100%"
-              hide-details="auto"
-              single-line
-            ></v-text-field>
-          </v-col>
-
-          <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
-            <CreateTeam />
-          </v-col>
-        </v-row>
-      </v-card-title>
-      <v-divider></v-divider>
-      <v-card-text>
-        <v-data-table
-          :headers="teamHeaders"
-          :items="teamItems"
-          :search="search"
+  <v-app :style="isDarkMode === true ? 'dark' : 'light'">
+    <v-container fluid fill-height>
+      <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
+        <v-card-title
+          class="d-flex align-center pe-2 text-h5 font-weight-regular"
           height="auto"
-          class="bg-cardColor"
-          :row-props="getRowProps"
+          width="100%"
         >
-          <template v-slot:[`item.currentJobAssignments`]="{ item }">
-            <v-chip v-for="job in item.currentJobAssignments" :key="job">
-              {{ job }}
-            </v-chip>
-          </template>
-          <template v-slot:[`item.actions`]="{ item }">
-            <v-menu max-width="500px" :theme="isDarkMode === true ? 'dark' : 'light'">
-              <template v-slot:activator="{ props }">
-                <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)">
-                  <v-icon color="primary">mdi-dots-horizontal</v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item>
-                  <ViewTeam :team="selectedItem" />
-                </v-list-item>
-                <v-list-item>
-                  <UpdateTeam :teamId="selectedItemID" :editedItem="selectedItem" />
-                </v-list-item>
-                <v-list-item>
-                  <DeleteTeam :team_id="selectedItemID" :teamName="selectedItemName" />
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </template>
-        </v-data-table>
-      </v-card-text>
-    </v-card>
-  </v-container>
+          <v-row align="center" justify="space-between">
+            <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+              <v-icon icon="fa: fa-solid fa-users"></v-icon>
+              <v-label
+                class="ms-2 h4 font-family-Nunito text-headingTextColor"
+                height="auto"
+                width="auto"
+                >Teams</v-label
+              >
+            </v-col>
+
+            <v-col cols="12" md="4" sm="6" xs="12">
+              <v-text-field
+                v-model="search"
+                density="compact"
+                label="Search"
+                prepend-inner-icon="mdi-magnify"
+                variant="outlined"
+                flat
+                color="primary"
+                width="100%"
+                hide-details="auto"
+                single-line
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
+              <CreateTeam />
+            </v-col>
+          </v-row>
+        </v-card-title>
+        <v-divider></v-divider>
+        <v-card-text>
+          <v-data-table
+            :headers="teamHeaders"
+            :items="teamItems"
+            :search="search"
+            height="auto"
+            class="bg-cardColor"
+            :row-props="getRowProps"
+          >
+            <template v-slot:[`item.currentJobAssignments`]="{ item }">
+              <v-chip v-for="job in item.currentJobAssignments" :key="job">
+                {{ job }}
+              </v-chip>
+            </template>
+            <template v-slot:[`item.actions`]="{ item }">
+              <v-menu max-width="500px">
+                <template v-slot:activator="{ props }">
+                  <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)">
+                    <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item>
+                    <ViewTeam :team="selectedItem" />
+                  </v-list-item>
+                  <v-list-item>
+                    <UpdateTeam :teamId="selectedItemID" :editedItem="selectedItem" />
+                  </v-list-item>
+                  <v-list-item>
+                    <DeleteTeam :team_id="selectedItemID" :teamName="selectedItemName" />
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </template>
+          </v-data-table>
+        </v-card-text>
+      </v-card>
+    </v-container>
+  </v-app>
 </template>
 
 <script lang="ts">
@@ -124,7 +120,7 @@ export default defineComponent({
       teamLeaderId: '',
       teamLeaderName: '',
       teamMemberNames: [] as string[],
-      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: true,
       selectedItem: {},
       selectedItemName: '',
       selectedItemID: '',
@@ -233,6 +229,7 @@ export default defineComponent({
     this.getTeams()
     this.populateTeamTable()
     this.getTeamLeaderName()
+    this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
   }
 })
 </script>

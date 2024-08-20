@@ -3,7 +3,7 @@
     v-model="employeeDialog"
     max-width="500"
     height="500"
-    :theme="isDarkMode === true ? 'dark' : 'light'"
+    
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
