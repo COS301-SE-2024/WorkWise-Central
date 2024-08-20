@@ -839,13 +839,14 @@ export class JobService {
     /// User exists, company exists, check for duplicates
     //  const protectedStatuses = ['No status', 'Archive', 'To Do', 'In Progress', 'Complete'];
 
-    const noStatus = new JobStatus('No Status', '#f67103', companyId);
     const archive = new JobStatus('Archive', '#f8a701', companyId);
+    const noStatus = new JobStatus('No Status', '#f67103', companyId);
     const toDo = new JobStatus('To Do', '#304ffe', companyId);
     const inProgress = new JobStatus('In Progress', '#7a00ff', companyId);
+    const requestReview = new JobStatus('Request Review', '#fcc309', companyId);
     const complete = new JobStatus('Complete', '#23d923', companyId);
 
-    const arr: JobStatus[] = [noStatus, archive, toDo, inProgress, complete];
+    const arr: JobStatus[] = [archive, noStatus, toDo, inProgress, requestReview, complete];
     for (const js of arr) {
       const exists = await this.statusNameExistsInCompany(js.status, companyId);
       if (exists) throw new InternalServerErrorException(`Job Status already exists: ${js.status}`);
