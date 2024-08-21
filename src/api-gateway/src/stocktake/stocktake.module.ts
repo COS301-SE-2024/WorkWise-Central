@@ -1,6 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { InventoryService } from '../inventory/inventory.service';
-import { InventoryController } from '../inventory/inventory.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { StockTake, StockTakeSchema } from './entities/stocktake.entity';
 import { UsersModule } from '../users/users.module';
@@ -14,11 +13,15 @@ import { StockTakeRepository } from './stocktake.repository';
 import { FileModule } from '../file/file.module';
 import { EmployeeModule } from '../employee/employee.module';
 import { EmployeeService } from '../employee/employee.service';
+import { StockTakeController } from './stocktake.controller';
+import { StockTakeService } from './stocktake.service';
+import { InventoryModule } from 'src/inventory/inventory.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: StockTake.name, schema: StockTakeSchema }]),
     forwardRef(() => UsersModule),
+    forwardRef(() => InventoryModule),
     forwardRef(() => CompanyModule),
     forwardRef(() => RoleModule),
     forwardRef(() => JobModule),
@@ -27,8 +30,8 @@ import { EmployeeService } from '../employee/employee.service';
     forwardRef(() => FileModule),
     forwardRef(() => EmployeeModule),
   ],
-  controllers: [InventoryController],
-  providers: [InventoryService, StockTakeRepository, JobService, EmployeeService],
-  exports: [InventoryService, StockTakeRepository, MongooseModule],
+  controllers: [StockTakeController],
+  providers: [StockTakeService, StockTakeRepository, JobService, EmployeeService, InventoryService],
+  exports: [StockTakeService, StockTakeRepository, MongooseModule],
 })
-export class InventoryModule {}
+export class StockTakeModule {}

@@ -1,9 +1,9 @@
 import { InventoryService } from './../inventory/inventory.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { StockTakeRepository } from './stocktake.repository';
-import { FileService } from '../file/file.service';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
-import { CreateStocktakeDto, OuterCreateStocktakeDto, StockTakeItem } from './dto/create-stocktake.dto';
+import { CreateStocktakeDto, OuterCreateStocktakeDto } from './dto/create-stocktake.dto';
+import { StockTakeItem } from './entities/stocktake.entity';
 import { StockTake } from './entities/stocktake.entity';
 import { Types } from 'mongoose';
 import { CompanyService } from '../company/company.service';
@@ -16,9 +16,6 @@ export class StockTakeService {
     private readonly stocktakeRepository: StockTakeRepository,
     private readonly inventoryService: InventoryService,
     private readonly companyService: CompanyService,
-
-    @Inject(forwardRef(() => FileService))
-    private readonly fileService: FileService,
   ) {}
 
   async validateCreateStockTake(stocktake: CreateStocktakeDto) {
@@ -54,25 +51,34 @@ export class StockTakeService {
   }
 
   async create(stocktakeDto: OuterCreateStocktakeDto) {
-    const response = [];
-    //Doing the create
-    const createDto = new CreateStocktakeDto();
-    createDto.companyId = stocktakeDto.companyId;
-    createDto.date = stocktakeDto.date;
-    //getting the current stock level from the inventory items
-    const itemsForDto: StockTakeItem[] = [];
-    stocktakeDto.items.forEach((items) => {
-      itemsForDto.push(new StockTakeItem());
-      
-    });
+    //Creating the stocktake dto
+
+    console.log('In create stocktake');
+    const itemsForCreate: StockTakeItem[] = [];
+    for (const items of stocktakeDto.items) {
+      const inventory = await this.inventoryService.findById(items.inventoryId);
+      console.log('in loop: ', inventory);
+      itemsForCreate.push({
+        currentStockLevel: inventory.currentStockLevel,
+        recordedStockLevel: items.recordedStockLevel,
+        inventoryId: items.inventoryId,
+      });
+    }
+
+    console.log('this is the itemsForCreate: ');
 
     const stocktake = new StockTake();
-    response.push(await this.stocktakeRepository.save(stocktake));
+    stocktake.companyId = stocktakeDto.companyId;
+    stocktake.date = stocktakeDto.date;
+    stocktake.items = itemsForCreate;
+    console.log('stocktake: ', stocktake);
+    const response = await this.stocktakeRepository.save(stocktake);
 
+    console.log('Stock take has been saved');
     //Checking if the inventory needs to be updated
     if (stocktakeDto.updateInventory) {
       stocktakeDto.items.forEach(async (createDto) => {
-        await this.inventoryService.update(createDto.inventoryId, { currentStockLevel: createDto.currentStockLevel });
+        await this.inventoryService.update(createDto.inventoryId, { currentStockLevel: createDto.recordedStockLevel });
       });
     }
     return response;

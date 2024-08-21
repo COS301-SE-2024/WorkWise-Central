@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
-import { CreateStocktakeDto } from '../dto/create-stocktake.dto';
+// import { CreateStocktakeDto } from '../dto/create-stocktake.dto';
 
 export class StockTakeItem {
   @ApiProperty()
@@ -19,13 +19,13 @@ export class StockTakeItem {
 
 @Schema()
 export class StockTake {
-  constructor(createStocktakeDto: CreateStocktakeDto) {
-    this.date = createStocktakeDto.date;
-    this.companyId = createStocktakeDto.companyId;
-    this.createdAt = new Date();
-  }
+  // constructor(createStocktakeDto: CreateStocktakeDto) {
+  //   this.date = createStocktakeDto.date;
+  //   this.companyId = createStocktakeDto.companyId;
+  //   this.createdAt = new Date();
+  // }
   @ApiProperty()
-  @Prop({ type: Date, required: true })
+  @Prop({ type: Date, required: true, default: new Date() })
   date: Date;
 
   @ApiProperty()

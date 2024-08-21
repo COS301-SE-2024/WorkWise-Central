@@ -57,11 +57,8 @@ export class StockTakeController {
     description: `The updated ${className} object`,
   })
   @Post('/create')
-  async create(
-    @Headers() headers: any,
-    @Body()
-    body: OuterCreateStocktakeDto,
-  ) {
+  async create(@Headers() headers: any, @Body() body: OuterCreateStocktakeDto) {
+    console.log('In create endpoint');
     const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     console.log('current employee: ', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('record stock take')) {
