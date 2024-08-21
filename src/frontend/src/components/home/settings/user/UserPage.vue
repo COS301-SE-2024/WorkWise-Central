@@ -304,8 +304,6 @@ const patchUser = async () => {
   }
 }
 
-//Use primevue toasts to notify the user
-
 const toast = useToast()
 
 const showSuccessToast = () => {
