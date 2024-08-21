@@ -15,6 +15,7 @@ import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { ClientService } from '../client/client.service';
 import { UpdateRoleDto } from '../role/dto/update-role.dto';
 import { Nodes, Edges } from 'v-network-graph';
+import { Exception } from 'handlebars';
 
 @Injectable()
 export class EmployeeService {
@@ -235,81 +236,16 @@ export class EmployeeService {
     }
     // console.log('validation complete');
     //******Updating the structure*********/
-    if (updateEmployeeDto.superiorId && updateEmployeeDto.subordinates) {
-      //Case: the superior and subordinate is being updated
-      //Check that the superior is not a subordinate and vice versa
-
-      updateEmployeeDto.subordinates.forEach((subordinate) => {
-        if (subordinate === updateEmployeeDto.superiorId) {
-          throw new Error('Superior cannot be a subordinate');
-        }
-      });
-      //Check that the employee being made the superior does not have the current employee as a superior
-
-      const superiorEmployee = await this.findById(updateEmployeeDto.superiorId);
-
-      if (superiorEmployee.superiorId === employeeId) {
-        throw new Error('Superior cannot be a subordinate');
-      }
-      //Check that the employee being made a subordinate does not have the current employee as a subordinate
-      updateEmployeeDto.subordinates.forEach(async (subordinate) => {
-        const subordinateEmployee = await this.findById(subordinate);
-        if (subordinateEmployee.subordinates.includes(employeeId)) {
-          throw new Error('Subordinate cannot be a superior');
-        }
-      });
-      //Update the superior employee to have the updated employee as a subordinate
-      const list = superiorEmployee.subordinates;
-      list.push(employeeId);
-      await this.employeeRepository.updateSubordinates(superiorEmployee._id, list);
-      //Update the subordinates to have the updated employee as a superior
-      updateEmployeeDto.subordinates.forEach(async (subordinateId) => {
-        await this.employeeRepository.updateSuperior(subordinateId, employeeId);
-      });
-    } else if (updateEmployeeDto.superiorId && !updateEmployeeDto.subordinates) {
-      //Case: superior is being updated not subordinates
-      //Check that the superior is not a subordinate
-      const employeeToBeUpdated = await this.findById(employeeId);
-      if (employeeToBeUpdated.subordinates) {
-        if (employeeToBeUpdated.subordinates.includes(updateEmployeeDto.superiorId)) {
-          throw new Error('Superior cannot be a subordinate');
-        }
-      }
-      //Check that the employee being made the superior does not have the current employee as a superior
-      const superiorEmployee = await this.findById(updateEmployeeDto.superiorId);
-      if (superiorEmployee.superiorId === employeeId) {
-        throw new Error('Superior cannot be a subordinate');
-      }
-      //Update the superior employee to have the updated employee as a subordinate
-      const list = superiorEmployee.subordinates;
-      list.push(employeeId);
-      await this.employeeRepository.updateSubordinates(superiorEmployee._id, list);
-    } else if (updateEmployeeDto.subordinates && !updateEmployeeDto.superiorId) {
-      //Case: Only the subordinates are being updated.
-      //Check that the subordinates are not the superior
-      updateEmployeeDto.subordinates.forEach((subordinate) => {
-        if (subordinate === employeeId) {
-          throw new Error('Subordinate cannot be a superior');
-        }
-      });
-      //Check that the employee being made a subordinate does not have the current employee as a subordinate
-      updateEmployeeDto.subordinates.forEach(async (subordinate) => {
-        const subordinateEmployee = await this.findById(subordinate);
-        if (subordinateEmployee.subordinates.includes(employeeId)) {
-          throw new Error('Subordinate cannot be a superior');
-        }
-      });
-      //Update the subordinates to have the updated employee as a superior
-      updateEmployeeDto.subordinates.forEach(async (subordinateId) => {
-        await this.employeeRepository.updateSuperior(subordinateId, employeeId);
-      });
+    if (updateEmployeeDto.subordinates) {
+      await this.updateSubordinates(employeeId, updateEmployeeDto.subordinates);
     }
-    // console.log('structure updated');
+    if (updateEmployeeDto.superiorId) {
+      await this.updateSuperior(employeeId, updateEmployeeDto.superiorId);
+    }
+    //**********Done updating structure****************/
 
     //Altering the dto to update the role if roleId is given
     const dto = new InternalUpdateEmployeeDto();
-    dto.superiorId = updateEmployeeDto.superiorId;
-    dto.subordinates = updateEmployeeDto.subordinates;
     dto.subordinateTeams = updateEmployeeDto.subordinateTeams;
     dto.currentJobAssignments = updateEmployeeDto.currentJobAssignments;
     if (updateEmployeeDto.roleId) {
@@ -321,8 +257,108 @@ export class EmployeeService {
       dto.role.permissionSuite = role.permissionSuite;
       dto.role.roleName = role.roleName;
     }
-    const previousObject = this.employeeRepository.update(employeeId, dto);
-    return previousObject;
+    return await this.employeeRepository.update(employeeId, dto);
+  }
+
+  async updateSubordinates(employeeId: Types.ObjectId, newSubordinates: Types.ObjectId[]) {
+    //checking that the current employee's superior is not is the newSubordinate list
+    const currentEmployee = await this.findById(employeeId);
+    const currentSuperior = await this.findById(currentEmployee.superiorId);
+    console.log('############currentSuperior############:', currentSuperior);
+    if (!currentEmployee || !currentSuperior) {
+      throw new Exception('Update subordinates could not be done');
+    }
+    if (newSubordinates.includes(currentEmployee.superiorId)) {
+      throw new Exception('Cannot make the persons current superior a subordinate');
+    }
+    //Checking that the owner is not in the list of newSubordinates
+    const owner = await this.findAllInCompanyWithRoleName(currentEmployee.companyId, 'Owner');
+    if (newSubordinates.includes(owner[0]._id)) {
+      throw new Exception('Cannot make the persons current superior a subordinate');
+    }
+
+    console.log('--------Checking the removed subordinates');
+
+    //checking to see if the any of the current subordinates are being removed
+    for (const currSub of currentEmployee.subordinates) {
+      if (!newSubordinates.includes(currSub)) {
+        console.log('************currSub***************: ', currSub);
+        //A subordinate is being removed from the list. They will be given the current employees superior as a superior
+        //Updating the currentSuperior's subordinate list
+        const newSubordinatesLoop = currentSuperior.subordinates;
+        newSubordinatesLoop.push(currSub);
+        await this.employeeRepository.updateSubordinates(currentSuperior._id, newSubordinatesLoop);
+        //removing currSub from their superiors list of subordinates
+        const currSubEmployee = await this.findById(currSub);
+        console.log('currSubEmployee.superiorId: ', currSubEmployee.superiorId);
+        const currSubSuperior = await this.findById(currSubEmployee.superiorId);
+        const newSubordinatesTemp = currSubSuperior.subordinates;
+        console.log('newSubordinates: ', newSubordinatesTemp);
+        newSubordinatesTemp.filter((ids) => !ids.toString().match(currSub.toString()));
+        console.log('newSubordinatesTemp: ', newSubordinatesTemp);
+        await this.employeeRepository.updateSubordinates(currSubEmployee.superiorId, newSubordinatesTemp);
+        //Updating the current subordinate's superior
+        await this.employeeRepository.updateSuperior(currSub, currentEmployee.superiorId);
+      }
+    }
+
+    console.log('============Checking the new subordinates');
+
+    //updating the superior of the new subordinates
+    for (const newSub of newSubordinates) {
+      if (!currentEmployee.subordinates.includes(newSub)) {
+        console.log('^^^^^^^^^^^^newSub: ', newSub);
+        //These are new subordinates.
+        //Removing the newSub from their current superior
+        const subEmployee = await this.findById(newSub);
+        const subCurrSup = await this.findById(subEmployee.superiorId);
+        console.log('subCurrSup: ', subCurrSup);
+        const newSubordinatesTemp = subCurrSup.subordinates;
+        if ('669fa656bc8cbd35bde22b50' == newSub.toString() || '669fa67bbc8cbd35bde22b68' == newSub.toString()) {
+          console.log('works');
+        }
+        newSubordinatesTemp.filter((ids) => ids.toString() !== newSub.toString());
+        console.log('newSubordinatesTemp: ', newSubordinatesTemp);
+        await this.employeeRepository.updateSubordinates(subEmployee.superiorId, newSubordinatesTemp);
+        //Updating the superior of newSub
+        await this.employeeRepository.updateSuperior(newSub, employeeId);
+      }
+    }
+    //updating the current employees subordinate list
+    return await this.employeeRepository.updateSubordinates(employeeId, newSubordinates);
+  }
+
+  async updateSuperior(employeeId: Types.ObjectId, newSuperior: Types.ObjectId) {
+    //checking that the new superior is not in the tree below the current employee
+    const currentEmployee = await this.findById(employeeId);
+    const currentSup = await this.findById(currentEmployee.superiorId);
+    const newSup = await this.findById(newSuperior);
+
+    if (!currentEmployee || !currentSup || !newSup) {
+      throw new Exception('Could not update superior');
+    }
+    const listBelow = await this.deptFirstTraversalId(employeeId);
+
+    if (listBelow.length == 0) {
+      throw new Exception('Could not update superior');
+    }
+
+    if (listBelow.includes(employeeId)) {
+      throw new Exception('Cannot make the a person below the current employee a superior of the employee');
+    }
+
+    //Updating the subordinate list of the employee's current superior
+    let newSubordinates = currentSup.subordinates;
+    newSubordinates.filter((ids) => ids.toString() !== employeeId.toString());
+    await this.employeeRepository.updateSubordinates(currentSup._id, newSubordinates);
+
+    //Updating the subordinate list of the employees new superior
+    newSubordinates = newSup.subordinates;
+    newSubordinates.push(employeeId);
+    await this.employeeRepository.updateSubordinates(newSup._id, newSubordinates);
+
+    //Updating the current employees superior
+    return await this.employeeRepository.updateSuperior(employeeId, newSuperior);
   }
 
   async addJobAssignment(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
@@ -347,82 +383,16 @@ export class EmployeeService {
       throw new Error('Employee not below the requesting employee');
     }
     //******Updating the structure*********/
-
-    //******Updating the structure*********/
-    if (updateEmployeeDto.superiorId && updateEmployeeDto.subordinates) {
-      //Case: the superior and subordinate is being updated
-      //Check that the superior is not a subordinate and vice versa
-
-      updateEmployeeDto.subordinates.forEach((subordinate) => {
-        if (subordinate === updateEmployeeDto.superiorId) {
-          throw new Error('Superior cannot be a subordinate');
-        }
-      });
-      //Check that the employee being made the superior does not have the current employee as a superior
-
-      const superiorEmployee = await this.findById(updateEmployeeDto.superiorId);
-
-      if (superiorEmployee.superiorId === employeeId) {
-        throw new Error('Superior cannot be a subordinate');
-      }
-      //Check that the employee being made a subordinate does not have the current employee as a subordinate
-      updateEmployeeDto.subordinates.forEach(async (subordinate) => {
-        const subordinateEmployee = await this.findById(subordinate);
-        if (subordinateEmployee.subordinates.includes(employeeId)) {
-          throw new Error('Subordinate cannot be a superior');
-        }
-      });
-      //Update the superior employee to have the updated employee as a subordinate
-      const list = superiorEmployee.subordinates;
-      list.push(employeeId);
-      await this.employeeRepository.updateSubordinates(superiorEmployee._id, list);
-      //Update the subordinates to have the updated employee as a superior
-      updateEmployeeDto.subordinates.forEach(async (subordinateId) => {
-        await this.employeeRepository.updateSuperior(subordinateId, employeeId);
-      });
-    } else if (updateEmployeeDto.superiorId && !updateEmployeeDto.subordinates) {
-      //Case: superior is being updated not subordinates
-      //Check that the superior is not a subordinate
-      const employeeToBeUpdated = await this.findById(employeeId);
-      if (employeeToBeUpdated.subordinates) {
-        if (employeeToBeUpdated.subordinates.includes(updateEmployeeDto.superiorId)) {
-          throw new Error('Superior cannot be a subordinate');
-        }
-      }
-      //Check that the employee being made the superior does not have the current employee as a superior
-      const superiorEmployee = await this.findById(updateEmployeeDto.superiorId);
-      if (superiorEmployee.superiorId === employeeId) {
-        throw new Error('Superior cannot be a subordinate');
-      }
-      //Update the superior employee to have the updated employee as a subordinate
-      const list = superiorEmployee.subordinates;
-      list.push(employeeId);
-      await this.employeeRepository.updateSubordinates(superiorEmployee._id, list);
-    } else if (updateEmployeeDto.subordinates && !updateEmployeeDto.superiorId) {
-      //Case: Only the subordinates are being updated.
-      //Check that the subordinates are not the superior
-      updateEmployeeDto.subordinates.forEach((subordinate) => {
-        if (subordinate === employeeId) {
-          throw new Error('Subordinate cannot be a superior');
-        }
-      });
-      //Check that the employee being made a subordinate does not have the current employee as a subordinate
-      updateEmployeeDto.subordinates.forEach(async (subordinate) => {
-        const subordinateEmployee = await this.findById(subordinate);
-        if (subordinateEmployee.subordinates.includes(employeeId)) {
-          throw new Error('Subordinate cannot be a superior');
-        }
-      });
-      //Update the subordinates to have the updated employee as a superior
-      updateEmployeeDto.subordinates.forEach(async (subordinateId) => {
-        await this.employeeRepository.updateSuperior(subordinateId, employeeId);
-      });
+    if (updateEmployeeDto.subordinates) {
+      await this.updateSubordinates(employeeId, updateEmployeeDto.subordinates);
     }
+    if (updateEmployeeDto.superiorId) {
+      await this.updateSuperior(employeeId, updateEmployeeDto.superiorId);
+    }
+    //**********Done updating structure****************/
 
     //Altering the dto to update the role if roleId is given
     const dto = new InternalUpdateEmployeeDto();
-    dto.superiorId = updateEmployeeDto.superiorId;
-    dto.subordinates = updateEmployeeDto.subordinates;
     dto.subordinateTeams = updateEmployeeDto.subordinateTeams;
     dto.currentJobAssignments = updateEmployeeDto.currentJobAssignments;
     if (updateEmployeeDto.roleId) {
@@ -549,12 +519,12 @@ export class EmployeeService {
     }
 
     // Remove the superior from the list if it exists
-    if (currentEmployee.superiorId) {
-      const index = listOfEmployees.findIndex((employee) => employee._id.equals(currentEmployee.superiorId));
-      if (index !== -1) {
-        listOfEmployees.splice(index, 1);
-      }
-    }
+    // if (currentEmployee.superiorId) {
+    //   const index = listOfEmployees.findIndex((employee) => employee._id.equals(currentEmployee.superiorId));
+    //   if (index !== -1) {
+    //     listOfEmployees.splice(index, 1);
+    //   }
+    // }
 
     // Remove subordinates from the list if they exist
     if (currentEmployee.subordinates && currentEmployee.subordinates.length > 0) {
@@ -712,6 +682,7 @@ export class EmployeeService {
     let edgeCount: number = 1;
     const nodes: Nodes = {};
     const edges: Edges = {};
+    console.log('owner: ', owner);
     const currentEmployee = await this.findById(owner[0]._id);
     console.log('owner Id: ', owner[0]._id);
     const open: Types.ObjectId[] = [];

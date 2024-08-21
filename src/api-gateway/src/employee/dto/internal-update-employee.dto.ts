@@ -34,15 +34,6 @@ export class InternalUpdateEmployeeDto {
   @IsOptional()
   currentJobAssignments?: Types.ObjectId[];
 
-  @IsMongoId()
-  @IsOptional()
-  superiorId?: Types.ObjectId;
-
-  @IsArray()
-  @IsMongoId({ each: true })
-  @IsOptional()
-  subordinates?: Types.ObjectId[];
-
   @IsArray()
   @IsMongoId({ each: true })
   @IsOptional()
