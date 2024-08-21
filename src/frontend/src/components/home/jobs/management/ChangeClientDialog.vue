@@ -78,7 +78,13 @@ const props = defineProps<{
 
 const toast = useToast()
 const clientDialog = ref<boolean>(false)
-const selectedClient = ref<string | null>(null)
+const selectedClient = ref<Client>({
+  _id: '',
+  details: {
+    firstName: '',
+    lastName: ''
+  }
+})
 const clientData = ref<Client[]>([])
 
 // API URLs and config
@@ -140,6 +146,28 @@ const getClients = async () => {
   }
 }
 
+const getCurrentClient = async () => {
+  const apiUrl = await getRequestUrl()
+  try {
+    const response = await axios.get(`${apiUrl}job/id/${props.jobID}`, config)
+    if (response.status > 199 && response.status < 300) {
+      console.log('Client job data', response.data.data.clientId)
+      selectedClient.value = {
+        _id: response.data.data.clientId._id,
+        details: {
+          firstName: response.data.data.clientId.details.firstName,
+          lastName: response.data.data.clientId.details.lastName
+        }
+      }
+    } else {
+      console.log('Wtf happened?', response)
+    }
+
+  } catch(error) {
+    console.error('Error fetching current client:', error)
+  }
+}
+
 const openClientDialogAndFetchClients = () => {
   clientDialog.value = true
 }
@@ -147,12 +175,13 @@ const openClientDialogAndFetchClients = () => {
 const saveClient = async () => {
   const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.patch(`${apiUrl}job/update/${props.jobID}`, { clientId: selectedClient.value }, config)
-    if (response.status > 199 && response.status < 300) {
-      showClientChangeSuccess()
-    } else {
-      console.log('Wtf happened?', response)
-    }
+      const response = await axios.patch(`${apiUrl}job/update/${props.jobID}`, { clientId: selectedClient.value._id }, config)
+      if (response.status > 199 && response.status < 300) {
+        console.log(response)
+        showClientChangeSuccess()
+      } else {
+        console.log('Wtf happened?', response)
+      }
   } catch (error) {
     console.error('Error updating job:', error)
     showClientChangeError()
@@ -160,6 +189,7 @@ const saveClient = async () => {
 }
 
 onMounted(() => {
+  getCurrentClient()
   getClients()
 })
 

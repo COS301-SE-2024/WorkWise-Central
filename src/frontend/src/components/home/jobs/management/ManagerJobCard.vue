@@ -1,13 +1,12 @@
 <template>
   <v-card elevation="14" rounded="md">
-    <!--      <v-img :src="props.passedInJob.imageUrl" aspect-ratio="2.75"></v-img>-->
     <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
       <h2 class="flex-grow-1">{{ props.passedInJob?.details?.heading }}</h2>
     </v-card-title>
     <v-card-text class="text-center">
       <v-row>
         <v-col xs="12" sm="12" md="9">
-          <EditDetails :jobDetails="props?.passedInJob?.details" :jobID="props.passedInJob?._id" />
+          <EditDetails :jobDetails="props?.passedInJob?.details" :jobID="props.passedInJob?._id"/>
         </v-col>
         <v-col xs="12" sm="12" md="3">
           <v-col>
@@ -31,6 +30,11 @@
           ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
         >
       </v-col>
+      <v-col class="d-flex flex-column">
+        <v-btn class="mb-4" @click="emitSave" color="success"
+        ><v-icon icon="fa: fa-solid fa-cancel"></v-icon>Save</v-btn
+        >
+      </v-col>
     </v-card-actions>
   </v-card>
 </template>
@@ -44,9 +48,13 @@ import SelectMembers from './SelectMembers.vue'
 import UpdateJobStatus from './UpdateJobStatus.vue'
 // import ChangeDueDate from './UpdateDateDialog.vue'
 
-const emits = defineEmits(['close'])
+const emits = defineEmits(['close', 'save'])
 const props = defineProps<{ passedInJob: any }>()
 const cancelJob = () => {
   emits('close')
+}
+
+const emitSave = () => {
+  emits('save')
 }
 </script>

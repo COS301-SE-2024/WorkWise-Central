@@ -16,6 +16,7 @@ import { InventoryModule } from './inventory/inventory.module';
 import { AdminModule } from './admin/admin.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { StockTakeModule } from './stocktake/stocktake.module';
 
 const rootPath = join(__dirname, '..', '../../uploads');
 
@@ -31,6 +32,7 @@ const rootPath = join(__dirname, '..', '../../uploads');
     ClientModule,
     JobModule,
     EmployeeModule,
+    StockTakeModule,
     NotificationModule,
     EmailModule,
     FileModule,

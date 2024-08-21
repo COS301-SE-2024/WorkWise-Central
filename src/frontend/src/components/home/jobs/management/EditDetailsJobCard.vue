@@ -21,16 +21,15 @@
           rounded="l"
           required
         ></v-textarea>
-        <!--        <v-row>-->
-        <!--          <v-col cols="5"> </v-col>-->
-        <!--          <v-label>Description</v-label>-->
-        <!--          <Editor-->
-        <!--            v-model="job.details.description"-->
-        <!--            editorStyle="height: 300px;"-->
-        <!--            contentStyle="color: #f5f5f5;"-->
-        <!--          />-->
-
-        <!--        </v-row>-->
+<!--                <v-row>-->
+<!--                  <v-col cols="5"> </v-col>-->
+<!--                  <v-label>Description</v-label>-->
+<!--                  <Editor-->
+<!--                    v-model="job.details.description"-->
+<!--                    editorStyle="height: 300px;"-->
+<!--                    contentStyle="color: #f5f5f5;"-->
+<!--                  />-->
+<!--                </v-row>-->
         <v-row>
           <v-col cols="6">
             <v-label>Street</v-label>
@@ -181,15 +180,14 @@
   <Toast position="top-center" />
 </template>
 <script setup lang="ts">
-import { defineProps, ref } from 'vue'
+import { defineProps, ref} from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import Editor from 'primevue/editor'
+// import Editor from 'primevue/editor'
 
 const toast = useToast()
 
-const cheese = ref('')
 interface Address {
   street: string
   province: string
@@ -244,6 +242,7 @@ const getRequestUrl = async (): Promise<string> => {
   return localAvailable ? localUrl : remoteUrl
 }
 
+
 const patchJobDetails = async () => {
   const config = {
     headers: {
@@ -253,6 +252,12 @@ const patchJobDetails = async () => {
   }
   const apiUrl = await getRequestUrl()
   try {
+    if (startDate.value != null && startTime.value != null) {
+      job.value.details.startDate = `${startDate.value}T${startTime.value}:00.000Z`
+    }
+    if (endDate.value !=null && endTime.value != null) {
+      job.value.details.endDate = `${endDate.value}T${endTime.value}:00.000Z`
+    }
     console.log(job.value.details)
     const response = await axios.patch(
       `${apiUrl}job/update/${props.jobID}`,
@@ -260,6 +265,7 @@ const patchJobDetails = async () => {
       config
     )
     if (response.status < 300 && response.status > 199) {
+      console.log(response)
       showEditSuccess()
     } else {
       showEditError()

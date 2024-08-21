@@ -52,6 +52,7 @@ export class RoleService {
     this.permissionsArray.push('edit all inventory');
     this.permissionsArray.push('add new inventory item');
     this.permissionsArray.push('delete inventory item');
+    this.permissionsArray.push('record stock take');
     this.permissionsArray.push('record inventory use');
     this.permissionsArray.push('record job details');
     this.permissionsArray.push('company settings');
@@ -365,6 +366,7 @@ export class RoleService {
     inventoryRoleDto.permissionSuite.push('delete inventory item');
     inventoryRoleDto.permissionSuite.push('add new inventory item');
     inventoryRoleDto.permissionSuite.push('record inventory use');
+    inventoryRoleDto.permissionSuite.push('record stock take');
 
     await this.internalCreate(inventoryRoleDto);
 
