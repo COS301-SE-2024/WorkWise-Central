@@ -1,20 +1,20 @@
 <template>
   <Toast position="top-center" />
-  <v-app :theme="isdarkmode ? 'dark' : 'light'">
-    <v-app-bar :theme="isdarkmode ? 'themes.dark' : 'themes.light'" class="bg-background">
+  <v-app :theme="isDarkMode ? 'dark' : 'light'">
+    <v-app-bar :theme="isDarkMode ? 'themes.dark' : 'themes.light'" class="bg-background">
       <v-toolbar-title
         ><v-label :class="'h4 text-primary'">Rest</v-label>
         <v-label :class="'h4 text-secondary'">Password</v-label></v-toolbar-title
       >
       <v-btn @click="toggleDarkMode" base-color="background"
-        ><v-icon :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"></v-icon
+        ><v-icon :icon="isDarkMode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"></v-icon
       ></v-btn>
     </v-app-bar>
-    <v-main :theme="isdarkmode ? 'dark' : 'light'">
+    <v-main :theme="isDarkMode ? 'dark' : 'light'">
       <v-container>
         <v-row>
           <v-col cols="12" md="6" offset-md="3">
-            <v-card :theme="isdarkmode ? 'themes.dark' : 'themes.light'">
+            <v-card :theme="isDarkMode ? 'themes.dark' : 'themes.light'">
               <v-card-title class="text-center">Create New Password</v-card-title>
               <v-card-text>
                 <v-form v-model="valid">
@@ -75,7 +75,7 @@ export default defineComponent({
       confirmPassword: '',
       valid: false,
       showPassword: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       passwordRules: [
         (v: string) => !!v || 'Password is required',
         (v: string) => (v && v.length >= 8) || 'Password must be at least 8 characters',
@@ -119,15 +119,15 @@ export default defineComponent({
       } catch (error) {}
     },
     toggleDarkMode() {
-      console.log(this.isdarkmode)
-      if (this.isdarkmode === true) {
-        this.isdarkmode = false
-        console.log(this.isdarkmode)
+      console.log(this.isDarkMode)
+      if (this.isDarkMode === true) {
+        this.isDarkMode = false
+        console.log(this.isDarkMode)
       } else {
-        this.isdarkmode = true
-        console.log(this.isdarkmode)
+        this.isDarkMode = true
+        console.log(this.isDarkMode)
       }
-      localStorage.setItem('theme', this.isdarkmode) // save the theme to session storage
+      localStorage.setItem('theme', this.isDarkMode) // save the theme to session storage
     },
     toggleShowPassword() {
       this.showPassword = !this.showPassword

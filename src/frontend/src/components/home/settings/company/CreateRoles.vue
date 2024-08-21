@@ -3,7 +3,7 @@
     v-model="dialog"
     max-height="800"
     max-width="600"
-    :theme="isdarkmode ? 'dark' : 'light'"
+    :theme="isDarkMode ? 'dark' : 'light'"
     :opacity="0.1"
     persistent
   >
@@ -76,7 +76,7 @@ export default defineComponent({
     return {
       dialog: false,
       isDeleting: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       formIsValid: false,
@@ -95,10 +95,16 @@ export default defineComponent({
     async createRole() {
       this.isDeleting = true // Indicate the start of the deletion process
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const data = {
+        roleName: this.Role.roleName,
+        permissionSuite: this.Role.permissionSuite,
+        companyId: this.Role.companyId,
+        currentEmployeeId: localStorage.getItem('employeeId')
+      }
       const apiURL = await this.getRequestUrl()
       console.log(this.Role)
       await axios
-        .post(`${apiURL}role/create`, this.Role, config)
+        .post(`${apiURL}role/create`, data, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -107,7 +113,7 @@ export default defineComponent({
             detail: 'Role Created',
             life: 3000
           })
-          this.dialog = false
+          this.isDeleting = this.dialog = false
           setTimeout(() => {
             location.reload()
           }, 3000)
@@ -120,6 +126,7 @@ export default defineComponent({
             detail: 'Role not created',
             life: 3000
           })
+          this.isDeleting = false
         })
     },
     async isLocalAvailable(localUrl: string) {

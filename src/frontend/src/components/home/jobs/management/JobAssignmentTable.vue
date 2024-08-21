@@ -108,7 +108,7 @@
 
                     <!-- Actions slot -->
                     <template v-slot:[`item.actions`]="{ item }">
-                      <v-menu max-width="500px" :theme="isdarkmode === true ? 'dark' : 'light'">
+                      <v-menu max-width="500px" :theme="isDarkMode === true ? 'dark' : 'light'">
                         <template v-slot:activator="{ props }">
                           <v-btn
                             rounded="xl"
@@ -150,7 +150,7 @@
                             </v-btn>
                             <v-dialog
                               v-model="viewManagerJobCardVisible"
-                              :max-height="600"
+                              :max-height="800"
                               :max-width="1000"
                             >
                               <ManagerJobCard
@@ -181,7 +181,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-dialog v-model="deleteDialog" :max-width="500">
+    <v-dialog v-model="deleteDialog" :max-width="500" :opacity="0">
       <v-card>
         <v-card-title class="text-h6 font-weight-regular bg-red">
           <v-icon color="white">mdi-alert-circle-outline</v-icon>
@@ -192,17 +192,21 @@
           <v-container
             ><v-row
               ><v-col cols="12" lg="6">
-                <v-btn color="error" @click="confirmDelete" block>Confirm</v-btn></v-col
+                <v-btn color="error" @click="confirmDelete" block :loading="isDeleting"
+                  ><v-icon icon="fa: fa-solid fa-trash" color="error"></v-icon>Confirm</v-btn
+                ></v-col
               >
               <v-col cols="12" lg="6">
-                <v-btn @click="deleteDialog = false" block>Cancel</v-btn></v-col
+                <v-btn @click="deleteDialog = false" block
+                  ><v-icon icon="fa: fa-solid fa-cancel" color="primary"></v-icon>Cancel</v-btn
+                ></v-col
               ></v-row
             ></v-container
           >
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <Toast position="bottom-center" />
+    <Toast position="top-center" />
   </v-container>
 </template>
 
@@ -214,6 +218,7 @@ import ManagerJobCard from './ManagerJobCard.vue'
 import ViewJob from './ViewJob.vue'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+
 
 const toast = useToast()
 
@@ -359,9 +364,10 @@ interface Job {
 // Define state variables with types
 const selectedJob = ref<Job | null>(null)
 const deleteDialog = ref(false)
+const isDeleting = ref(false)
 const detailedJobData = ref<Job[]>([])
 const search = ref('')
-const isdarkmode = ref(localStorage.getItem('theme') === 'true' ? true : false)
+const isDarkMode = ref(localStorage.getItem('theme') === 'true' ? true : false)
 const viewJobDialogVisible = ref(false)
 const viewManagerJobCardVisible = ref(false)
 
@@ -464,6 +470,7 @@ const formatDate = (dateString: string): string => {
 }
 
 const confirmDelete = async () => {
+  isDeleting.value = true
   if (selectedJob.value) {
     const config = {
       headers: {
@@ -484,8 +491,14 @@ const confirmDelete = async () => {
         detail: 'Job deleted successfully',
         life: 3000
       })
+      setTimeout(() => {
+        deleteDialog.value = false
+        isDeleting.value = false
+        window.location.reload()
+      }, 3000)
       closeDialog()
     } catch (error) {
+      isDeleting.value = false
       toast.add({
         severity: 'error',
         summary: 'Delete Error',
@@ -494,7 +507,7 @@ const confirmDelete = async () => {
       })
     } finally {
       localStorage.setItem('jobDeleted', 'true')
-      await fetchData()
+      window.location.reload()
     }
   }
 }

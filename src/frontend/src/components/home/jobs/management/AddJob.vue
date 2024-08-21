@@ -224,7 +224,7 @@
                 <v-col>
                   <small class="text-caption">Cover Image</small>
                   <v-file-input
-                    :theme="isdarkmode === true ? 'dark' : 'light'"
+                    :theme="isDarkMode === true ? 'dark' : 'light'"
                     variant="solo"
                     accept="image/*"
                     width="100%"
@@ -447,7 +447,7 @@ export default defineComponent({
       allowedMinutes: ((minute: number) => true) as (minute: number) => boolean,
       allowedHours2: ((hour: number) => true) as (hour: number) => boolean,
       allowedMinutes2: ((minute: number) => true) as (minute: number) => boolean,
-      isdarkmode: localStorage['theme'] !== 'false',
+      isDarkMode: localStorage['theme'] !== 'false',
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       dark: '#2b2b2b',

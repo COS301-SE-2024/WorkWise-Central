@@ -4,7 +4,7 @@
     max-height="800"
     max-width="600"
     scrollable
-    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
     :opacity="0.1"
   >
     <template v-slot:activator="{ props: activatorProps }">
@@ -18,7 +18,7 @@
         Create Team</v-btn
       >
     </template>
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-users"></v-icon>
         Create Team
@@ -119,7 +119,7 @@ export default defineComponent({
   },
   data: () => ({
     addDialog: false,
-    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     valid: false,
     isDeleting: false,
     teamName: '',

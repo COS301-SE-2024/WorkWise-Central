@@ -3,7 +3,7 @@
     v-model="employeeDialog"
     max-width="500"
     height="500"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
+    :theme="isDarkMode === true ? 'dark' : 'light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
@@ -16,7 +16,7 @@
         >Edit</v-btn
       >
     </template>
-    <v-card :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'">
+    <v-card :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'">
       <v-form @submit.prevent="validateEdits">
         <v-card-title class="text-center">Edit Employee</v-card-title>
         <v-divider></v-divider>
@@ -118,7 +118,7 @@
                   @click="close"
                   :loading="isDeleting"
                 >
-                  <Toast />
+                   <Toast position="top-center" />
                   <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
                   >Cancel
                 </v-btn>
@@ -151,7 +151,7 @@ export default {
     return {
       selectedRole: '',
       localEditedItem: this.editedItem,
-      isdarkmode: localStorage['theme'] !== 'false',
+      isDarkMode: localStorage['theme'] !== 'false',
       role_change: false,
       employeeDialog: false,
       roleItems: [] as RoleItem[],

@@ -19,10 +19,10 @@
     max-width="600"
     :no-overlay="false"
     scrollable
-    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+    :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
     :opacity="0"
   >
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'"
+    <v-card :theme="isDarkMode === true ? 'dark' : 'light'"
       ><v-card-title class="fixed">
         <span class="headline text-center">Create a Client </span>
       </v-card-title>
@@ -316,7 +316,7 @@ export default defineComponent({
     valid: false,
     isDeleting: false,
     addDialog: false,
-    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     click_create_client: false,
     email_rules: [
       (v: string) => v || 'Email or Phone number is required',

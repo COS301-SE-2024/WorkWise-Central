@@ -19,6 +19,7 @@ const vuetify = createVuetify({
   defaults: {
     VDialog: {
       scrollable: true,
+      opacity: '0',
       VCard: {
         height: '70vh',
         VCardTitle: {
@@ -53,9 +54,9 @@ const vuetify = createVuetify({
       VCardText: {
         class: 'bg-cardColor',
         VList: {
-          class: 'bg-cardColor',
+          class: 'bg-background',
           VListItem: {
-            class: 'bg-cardColor'
+            class: 'bg-background'
           }
         }
       },
@@ -117,6 +118,12 @@ const vuetify = createVuetify({
     },
     VStepper: {
       class: 'bg-cardColor'
+    },
+    VList: {
+      class: 'bg-background',
+      VListItem: {
+        class: 'bg-background'
+      }
     }
   },
   directives,

@@ -14,7 +14,7 @@
         </v-row>
       </v-container>
       <v-card-text>
-        <Toast />
+         <Toast position="top-center" />
         <v-network-graph
           v-model="graph"
           class="graph"
