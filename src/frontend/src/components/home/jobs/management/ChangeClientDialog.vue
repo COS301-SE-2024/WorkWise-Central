@@ -78,7 +78,13 @@ const props = defineProps<{
 
 const toast = useToast()
 const clientDialog = ref<boolean>(false)
-const selectedClient = ref(null)
+const selectedClient = ref<Client>({
+  _id: '',
+  details: {
+    firstName: '',
+    lastName: ''
+  }
+})
 const clientData = ref<Client[]>([])
 
 // API URLs and config
@@ -146,7 +152,13 @@ const getCurrentClient = async () => {
     const response = await axios.get(`${apiUrl}job/id/${props.jobID}`, config)
     if (response.status > 199 && response.status < 300) {
       console.log('Client job data', response.data.data.clientId)
-      selectedClient.value = response.data.data.clientId
+      selectedClient.value = {
+        _id: response.data.data.clientId._id,
+        details: {
+          firstName: response.data.data.clientId.details.firstName,
+          lastName: response.data.data.clientId.details.lastName
+        }
+      }
     } else {
       console.log('Wtf happened?', response)
     }
@@ -163,7 +175,6 @@ const openClientDialogAndFetchClients = () => {
 const saveClient = async () => {
   const apiUrl = await getRequestUrl()
   try {
-    if (selectedClient.value != null) {
       const response = await axios.patch(`${apiUrl}job/update/${props.jobID}`, { clientId: selectedClient.value._id }, config)
       if (response.status > 199 && response.status < 300) {
         console.log(response)
@@ -171,7 +182,6 @@ const saveClient = async () => {
       } else {
         console.log('Wtf happened?', response)
       }
-    }
   } catch (error) {
     console.error('Error updating job:', error)
     showClientChangeError()
