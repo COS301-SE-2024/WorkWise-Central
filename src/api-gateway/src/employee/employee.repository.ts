@@ -45,7 +45,7 @@ export class EmployeeRepository {
             companyId: identifier,
           },
           {
-            'role.name': roleName,
+            'role.roleName': roleName,
           },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
