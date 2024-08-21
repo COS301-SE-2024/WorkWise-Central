@@ -258,7 +258,7 @@ const getUserData = async () => {
     user.value.address.postalCode = data.personalInfo.address.postalCode || ''
     user.value.address.complex = data.personalInfo.address.complex || ''
     user.value.address.houseNumber = data.personalInfo.address.houseNumber || ''
-    // user.value.address.preferredProvince = data.personalInfo.address.province || ''
+    user.value.address.preferredProvince = data.personalInfo.address.province || ''
   } catch (error) {
     console.error('Error fetching user data:', error)
   }
@@ -286,8 +286,8 @@ const patchUser = async () => {
         city: user.value.address.city,
         postalCode: user.value.address.postalCode,
         complex: user.value.address.complex,
-        houseNumber: user.value.address.houseNumber
-        // province: user.value.address.preferredProvince
+        houseNumber: user.value.address.houseNumber,
+        province: user.value.address.preferredProvince
       },
       contactInfo: {
         phoneNumber: user.value.contactInfo.phone,
