@@ -15,7 +15,7 @@
         @click="membersDialog = true"
         v-bind="activatorProps"
       >
-        Select Employees
+        Assigned Employees
       </v-btn>
     </template>
 
@@ -174,12 +174,22 @@ const saveMembers = async () => {
       if (!originalSelectedMembers.value.some(
         originalMember => originalMember._id === member._id
       )) {
-        const response = await axios.put(`${apiUrl}job/employee`, {
+        console.log('Add new member option')
+        console.log('Now in selected members', selectedMembers.value)
+        console.log('member', member)
+        const membervia = {
           employeeId: localStorage.getItem('employeeId'),
           employeeToAssignId: member._id,
           jobId: props.jobID
+        }
+        console.log('Member view', membervia)
+        const response = await axios.put(`${apiUrl}job/employee`, {
+          employeeId: localStorage.getItem('employeeId'),
+          employeeToAssignId: member,
+          jobId: props.jobID
         }, config)
         if (response.status > 199 && response.status < 300) {
+          console.log('Member change', response)
           console.log(`Added member: ${member._id}`)
           showAssignEmployeesSuccess()
         } else {
@@ -211,6 +221,7 @@ const getAssignedEmployees = async () => {
           surname: employee.userInfo.surname
         }
       }))
+      console.log('Assigned Employees', selectedMembers.value)
     } else {
       console.log('failed')
     }
