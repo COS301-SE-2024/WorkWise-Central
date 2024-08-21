@@ -122,7 +122,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import DeletePriority from './DeletePriority.vue'
-import ColorPicker from 'primevue/colorpicker'
+
 import CreatePriority from './CreatePriority.vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
@@ -214,7 +214,7 @@ export default defineComponent({
   }),
   components: {
     DeletePriority,
-    ColorPicker,
+
     Toast,
     CreatePriority
   },

@@ -24,15 +24,19 @@
           :configs="configs"
         ></v-network-graph>
       </v-card-text>
-      <v-divider></v-divider>
+
       <v-card-actions class="bg-cardColor">
         <v-container
           ><v-row justify="end">
             <v-col align="center" cols="12" lg="6">
-              <v-btn color="error" @click="cancel" :loading="isDeleting" block><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Cancel</v-btn>
+              <v-btn color="error" @click="cancel" :loading="isDeleting" block
+                ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Cancel</v-btn
+              >
             </v-col>
             <v-col align="center" cols="12" lg="6">
-              <v-btn color="success" @click="saveChanges" :loading="isDeleting" block><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn>
+              <v-btn color="success" @click="saveChanges" :loading="isDeleting" block
+                ><v-icon color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save</v-btn
+              >
             </v-col>
           </v-row></v-container
         >

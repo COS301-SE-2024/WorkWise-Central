@@ -43,7 +43,7 @@
       <!-- Submit button -->
       <v-btn color="success" @click="addComment" prepend-icon="mdi-comment-plus">Comment</v-btn>
     </v-container>
-    <Toast/>
+    <Toast />
   </div>
 </template>
 
@@ -104,7 +104,14 @@ const surname = ref('')
 // Data
 const newComment = ref('')
 const comments = ref<
-  { text: string; employeeId: string; date: string; firstName: string; surname:string; _id: string }[]
+  {
+    text: string
+    employeeId: string
+    date: string
+    firstName: string
+    surname: string
+    _id: string
+  }[]
 >(
   props.jobComments.map((comment) => ({
     text: comment.comment,
@@ -170,8 +177,16 @@ const addComment = async () => {
   try {
     const response = await axios.put(`${apiUrl}job/comment`, addedComment.value, config)
     console.log(response)
-    const commentId : string = response.data.data.comments[response.data.data.comments.length - 1]._id
-    comments.value.push({text: newComment.value, date: new Date().toISOString(), firstName: firstName.value, surname: surname.value, _id: commentId, employeeId: localStorage.getItem('employeeId') || ''})
+    const commentId: string =
+      response.data.data.comments[response.data.data.comments.length - 1]._id
+    comments.value.push({
+      text: newComment.value,
+      date: new Date().toISOString(),
+      firstName: firstName.value,
+      surname: surname.value,
+      _id: commentId,
+      employeeId: localStorage.getItem('employeeId') || ''
+    })
     newComment.value = ''
   } catch (error) {
     console.error('Error adding comment', error)

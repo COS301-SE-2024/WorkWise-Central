@@ -157,7 +157,7 @@ export default defineComponent({
       this.selectedItemName = item.name
       this.selectedItemID = item._id
     },
-    getRowProps(index: number) {
+    getRowProps(index: any) {
       return {
         class: index % 2 ? 'bg-secondRowColor' : ''
       }

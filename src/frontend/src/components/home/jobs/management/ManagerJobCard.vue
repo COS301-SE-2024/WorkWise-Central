@@ -6,18 +6,18 @@
     <v-card-text class="text-center">
       <v-row>
         <v-col xs="12" sm="12" md="9">
-          <EditDetails :jobDetails="props?.passedInJob?.details" :jobID="props.passedInJob?._id"/>
+          <EditDetails :jobDetails="props?.passedInJob?.details" :jobID="props.passedInJob?._id" />
         </v-col>
         <v-col xs="12" sm="12" md="3">
           <v-col>
             <ChangeClient :jobID="props.passedInJob?._id" />
           </v-col>
           <v-col>
-            <SelectMembers :jobID="props.passedInJob?._id"/>
+            <SelectMembers :jobID="props.passedInJob?._id" />
           </v-col>
-<!--          <v-col>-->
-<!--            <UpdateJobStatus :passedInJob="props.passedInJob" />-->
-<!--          </v-col>-->
+          <!--          <v-col>-->
+          <!--            <UpdateJobStatus :passedInJob="props.passedInJob" />-->
+          <!--          </v-col>-->
           <v-col>
             <!--              <ChangeDueDate :jobDetails="props.passedInJob?.details" :jobID="props.passedInJob?._id"  />-->
           </v-col>
@@ -32,7 +32,7 @@
       </v-col>
       <v-col class="d-flex flex-column">
         <v-btn class="mb-4" @click="emitSave" color="success"
-        ><v-icon icon="fa: fa-solid fa-cancel"></v-icon>Save</v-btn
+          ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
         >
       </v-col>
     </v-card-actions>

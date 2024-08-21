@@ -6,7 +6,7 @@
       </v-btn>
     </template>
 
-    <v-card :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'">
+    <v-card>
       <v-card-title> Client Details </v-card-title>
       <v-card-text>
         <v-col>
@@ -98,7 +98,7 @@
       <v-card-actions>
         <v-col>
           <v-btn color="error" width="100%" height="35" @click="close">
-            <v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon> Close
+            <v-icon icon="fa:fa-solid fa-cancel" color="error" start size="small"></v-icon> Close
           </v-btn>
         </v-col></v-card-actions
       >

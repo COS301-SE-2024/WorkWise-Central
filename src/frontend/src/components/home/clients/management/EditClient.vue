@@ -114,7 +114,7 @@
           <v-row align-self="center" justify="end"
             ><v-col cols="12" lg="6" md="6" sm="6">
               <v-btn color="error" width="85%" height="35" variant="text" @click="close" block>
-                <v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon>
+                <v-icon icon="fa:fa-solid fa-cancel" color="error" start d size="small"></v-icon>
                 Cancel
               </v-btn> </v-col
             ><v-col cols="12" lg="6" md="6" sm="6">

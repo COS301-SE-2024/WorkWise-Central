@@ -31,7 +31,7 @@
           <v-autocomplete
             v-model="selectedClient"
             hint="Click the field to select a client"
-            :items="clientData.filter(item=> getClientFullName(item))"
+            :items="clientData.filter((item) => getClientFullName(item))"
             :item-title="getClientFullName"
             item-value="_id"
             label="Select Client"
@@ -49,13 +49,24 @@
         </v-card-text>
 
         <v-card-actions class="d-flex flex-column">
-          <v-btn @click="saveClient" color="success">Save</v-btn>
-          <v-btn @click="isActive.value = false" color="error">Close</v-btn>
+          <v-container
+            ><v-row
+              ><v-col cols="12" lg="6">
+                <v-btn @click="saveClient" color="success" block
+                  ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
+                ></v-col
+              ><v-col cols="12" lg="6">
+                <v-btn @click="isActive.value = false" color="error" block
+                  ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
+                ></v-col
+              ></v-row
+            ></v-container
+          >
         </v-card-actions>
       </v-card>
     </template>
   </v-dialog>
-   <Toast position="top-center" />
+  <Toast position="top-center" />
 </template>
 
 <script setup lang="ts">
@@ -65,11 +76,11 @@ import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 
 interface Client {
-  _id: string;
+  _id: string
   details: {
-    firstName: string;
-    lastName: string;
-  };
+    firstName: string
+    lastName: string
+  }
 }
 
 const props = defineProps<{
@@ -119,6 +130,7 @@ const showClientChangeSuccess = () => {
     detail: 'Changed client successfully',
     life: 3000
   })
+  clientDialog.value = false
 }
 
 const showClientChangeError = () => {
@@ -162,8 +174,7 @@ const getCurrentClient = async () => {
     } else {
       console.log('Wtf happened?', response)
     }
-
-  } catch(error) {
+  } catch (error) {
     console.error('Error fetching current client:', error)
   }
 }
@@ -175,13 +186,17 @@ const openClientDialogAndFetchClients = () => {
 const saveClient = async () => {
   const apiUrl = await getRequestUrl()
   try {
-      const response = await axios.patch(`${apiUrl}job/update/${props.jobID}`, { clientId: selectedClient.value._id }, config)
-      if (response.status > 199 && response.status < 300) {
-        console.log(response)
-        showClientChangeSuccess()
-      } else {
-        console.log('Wtf happened?', response)
-      }
+    const response = await axios.patch(
+      `${apiUrl}job/update/${props.jobID}`,
+      { clientId: selectedClient.value._id },
+      config
+    )
+    if (response.status > 199 && response.status < 300) {
+      console.log(response)
+      showClientChangeSuccess()
+    } else {
+      console.log('Wtf happened?', response)
+    }
   } catch (error) {
     console.error('Error updating job:', error)
     showClientChangeError()

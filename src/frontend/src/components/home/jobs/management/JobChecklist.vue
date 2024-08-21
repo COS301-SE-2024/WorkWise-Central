@@ -47,8 +47,19 @@
         </v-card-text>
 
         <v-card-actions class="d-flex flex-column">
-          <v-btn @click="saveChecklist" color="success">Save</v-btn>
-          <v-btn @click="isActive.value = false" color="error">Cancel</v-btn>
+          <v-container
+            ><v-row
+              ><v-col cols="12" lg="6">
+                <v-btn @click="saveChecklist" color="success" block
+                  ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
+                ></v-col
+              ><v-col cols="12" lg="6"
+                ><v-btn @click="isActive.value = false" color="error" block
+                  ><v-icon icon="fa: fa-solid fa-cancel"></v-icon>Cancel</v-btn
+                ></v-col
+              ></v-row
+            ></v-container
+          >
         </v-card-actions>
       </v-card>
     </template>

@@ -1,4 +1,5 @@
-c<template>
+c
+<template>
   <NavigationBar :component="ClientDesk" />
 </template>
 

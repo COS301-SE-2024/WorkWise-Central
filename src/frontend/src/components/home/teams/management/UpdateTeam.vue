@@ -64,8 +64,8 @@
               <v-btn @click="close" color="error" block>
                 <v-icon
                   icon="fa:fa-solid fa-cancel"
-                  start
                   color="error"
+                  start
                   multiple
                   chips
                   size="small"

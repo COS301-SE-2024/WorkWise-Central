@@ -121,7 +121,7 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import DeleteTags from './DeleteTags.vue'
-import ColorPicker from 'primevue/colorpicker'
+
 import CreateTags from './CreateTags.vue'
 import Toast from 'primevue/toast'
 
@@ -208,7 +208,7 @@ export default defineComponent({
   }),
   components: {
     DeleteTags,
-    ColorPicker,
+
     Toast,
     CreateTags
   },

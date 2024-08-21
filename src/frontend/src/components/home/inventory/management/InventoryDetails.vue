@@ -74,7 +74,7 @@
             ><Toast position="top-center" />
             <v-col cols="12">
               <v-btn label="Close" color="error" text @click="close" block
-                ><v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon
+                ><v-icon icon="fa:fa-solid fa-cancel" color="error" start size="small"></v-icon
                 >Close</v-btn
               ></v-col
             ></v-row

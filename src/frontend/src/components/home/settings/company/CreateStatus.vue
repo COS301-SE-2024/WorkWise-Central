@@ -74,7 +74,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import ColorPicker from 'primevue/colorpicker'
+
 import Toast from 'primevue/toast'
 interface Status {
   status: string
@@ -149,7 +149,6 @@ export default defineComponent({
     }
   },
   components: {
-    ColorPicker,
     Toast
   },
   methods: {

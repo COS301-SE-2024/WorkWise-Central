@@ -1,12 +1,5 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    max-height="800"
-    max-width="600"
-   
-    :opacity="0.1"
-    persistent
-  >
+  <v-dialog v-model="dialog" max-height="800" max-width="600" :opacity="0.1" persistent>
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -87,7 +80,7 @@ export default defineComponent({
       },
       permissions: [] as string[],
       nameRules: [(v: string) => !!v || 'Role Name is required'],
-      permissionRules: [(v: string) => !!v || 'Permission Suite is required'],
+      permissionRules: [(v: string) => !!v || 'Permission Suite is required']
     }
   },
 

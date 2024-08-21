@@ -28,8 +28,7 @@
             ><v-col cols="12" lg="6"
               ><Toast position="bottom-center" />
               <v-btn label="Cancel" color="secondary" @click="close" block
-                ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
-                >Cancel
+                ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon>Cancel
               </v-btn></v-col
             >
             <v-col cols="12" lg="6">

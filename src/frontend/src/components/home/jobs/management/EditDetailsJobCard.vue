@@ -21,15 +21,15 @@
           rounded="l"
           required
         ></v-textarea>
-<!--                <v-row>-->
-<!--                  <v-col cols="5"> </v-col>-->
-<!--                  <v-label>Description</v-label>-->
-<!--                  <Editor-->
-<!--                    v-model="job.details.description"-->
-<!--                    editorStyle="height: 300px;"-->
-<!--                    contentStyle="color: #f5f5f5;"-->
-<!--                  />-->
-<!--                </v-row>-->
+        <!--                <v-row>-->
+        <!--                  <v-col cols="5"> </v-col>-->
+        <!--                  <v-label>Description</v-label>-->
+        <!--                  <Editor-->
+        <!--                    v-model="job.details.description"-->
+        <!--                    editorStyle="height: 300px;"-->
+        <!--                    contentStyle="color: #f5f5f5;"-->
+        <!--                  />-->
+        <!--                </v-row>-->
         <v-row>
           <v-col cols="6">
             <v-label>Street</v-label>
@@ -171,7 +171,7 @@
         </v-row>
         <v-row cols="12" class="justify-center">
           <v-btn color="success" @click="patchJobDetails"
-            ><v-icon icon="fa: fa-solid fa-floppy-disk"></v-icon>Save
+            ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save
           </v-btn>
         </v-row>
       </v-form>
@@ -180,7 +180,7 @@
   <Toast position="top-center" />
 </template>
 <script setup lang="ts">
-import { defineProps, ref} from 'vue'
+import { defineProps, ref } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
@@ -242,7 +242,6 @@ const getRequestUrl = async (): Promise<string> => {
   return localAvailable ? localUrl : remoteUrl
 }
 
-
 const patchJobDetails = async () => {
   const config = {
     headers: {
@@ -255,7 +254,7 @@ const patchJobDetails = async () => {
     if (startDate.value != null && startTime.value != null) {
       job.value.details.startDate = `${startDate.value}T${startTime.value}:00.000Z`
     }
-    if (endDate.value !=null && endTime.value != null) {
+    if (endDate.value != null && endTime.value != null) {
       job.value.details.endDate = `${endDate.value}T${endTime.value}:00.000Z`
     }
     console.log(job.value.details)

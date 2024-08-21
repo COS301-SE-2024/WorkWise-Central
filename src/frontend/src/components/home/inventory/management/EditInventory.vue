@@ -7,7 +7,6 @@
     scrollable
     color="warning"
     :opacity="0.1"
-    :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
@@ -77,8 +76,8 @@
               <v-btn @click="close" color="error" block
                 ><v-icon
                   icon="fa:fa-solid fa-cancel"
-                  start
                   color="error"
+                  start
                   size="small"
                   :loading="isDeleting"
                 ></v-icon

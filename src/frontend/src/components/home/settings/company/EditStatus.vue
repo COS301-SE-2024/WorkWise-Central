@@ -127,7 +127,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import ColorPicker from 'primevue/colorpicker'
+
 import DeleteStatus from './DeleteStatus.vue'
 import Toast from 'primevue/toast'
 import CreateStatus from './CreateStatus.vue'
@@ -218,7 +218,7 @@ export default defineComponent({
   }),
   components: {
     DeleteStatus,
-    ColorPicker,
+
     Toast,
     CreateStatus
   },

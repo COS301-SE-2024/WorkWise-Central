@@ -75,7 +75,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import ColorPicker from 'primevue/colorpicker'
 
 interface Tag {
   label: string
@@ -148,9 +147,7 @@ export default defineComponent({
       ] as string[]
     }
   },
-  components: {
-    ColorPicker
-  },
+  components: {},
   methods: {
     async createTag() {
       this.isDeleting = true // Indicate the start of the deletion process

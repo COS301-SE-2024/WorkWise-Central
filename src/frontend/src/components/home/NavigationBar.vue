@@ -63,6 +63,11 @@ const moreSubItems = ref([
     routeName: 'company-requests'
   }
 ])
+
+const filterClientSubItems = ref(clientSubItems.value.filter((item) => item.title === 'Management'))
+const filterInventorySubItems = ref(
+  inventorySubItems.value.filter((item) => item.title === 'Management')
+)
 </script>
 
 <script lang="ts">
@@ -209,7 +214,10 @@ export default defineComponent({
           ></v-list-item>
         </v-list-group>
       </v-list>
-      <v-list v-model:open="open">
+      <v-list
+        v-model:open="open"
+        v-show="checkPermission('view all clients') || checkPermission('view clients under me')"
+      >
         <v-list-group fluid value="Clients">
           <template v-slot:activator="{ props }">
             <v-list-item
@@ -220,8 +228,9 @@ export default defineComponent({
             ></v-list-item>
           </template>
           <v-list-item
-            v-show="checkPermission('view all clients') || checkPermission('view clients under me')"
-            v-for="(item, i) in clientSubItems"
+            v-for="(item, i) in checkPermission('view all clients')
+              ? clientSubItems
+              : filterClientSubItems"
             :key="i"
             :to="{ name: item.routeName }"
             :value="item.title"
@@ -288,7 +297,9 @@ export default defineComponent({
             ></v-list-item>
           </template>
           <v-list-item
-            v-for="(item, i) in inventorySubItems"
+            v-for="(item, i) in checkPermission('view all inventory')
+              ? inventorySubItems
+              : filterInventorySubItems"
             :key="i"
             :to="{ name: item.routeName }"
             :value="item.title"

@@ -49,7 +49,7 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" lg="4">
-                      <JoinCompany :buttonColor="'secondary'"
+                      <JoinCompanyModal :buttonColor="'secondary'"
                     /></v-col> </v-row
                 ></v-card-title>
                 <v-card-text>
@@ -185,9 +185,9 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import JoinCompany from '../signup/JoinCompanyModal.vue'
+import JoinCompanyModal from '@/components/signup/JoinCompanyModal.vue'
 import InvitePage from '../user/InvitePage.vue'
-import RegisterCompanyModal from '../signup/RegisterCompanyModal.vue'
+import RegisterCompanyModal from '@/components/signup/RegisterCompanyModal.vue'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import axios from 'axios'
