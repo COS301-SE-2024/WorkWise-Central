@@ -75,34 +75,30 @@ const onFileChange = (event: Event) => {
   const file = target.files ? target.files[0] : null
   if (file) {
     const reader = new FileReader()
-    reader.onload = (e: ProgressEvent<FileReader>) => {
+    reader.onload = async (e: ProgressEvent<FileReader>) => {
       if (e.target) {
         avatarSrc.value = e.target.result as string
+        await updateProfileImage(file) // Call updateProfileImage with the file
       }
     }
     reader.readAsDataURL(file)
   }
 }
 
-const updateProfileImage = async () => {
+const updateProfileImage = async (file: File) => {
   const config = {
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'multipart/form-data',
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
   const apiUrl = await getRequestUrl()
-  const userId = localStorage.getItem('id')
-
-  const updatedUserData = {
-    profile: {
-      displayName: displayName.value,
-      displayImage: avatarSrc.value
-    }
-  }
-
+  const formData = new FormData()
+  formData.append('profilePicture', file) // Append the file directly
+  console.log('File', file)
   try {
-    await axios.patch(`${apiUrl}users/update`, updatedUserData, config)
+    const response = await axios.patch(`${apiUrl}users/update/profilePic`, formData, config)
+    console.log('Image upload', response)
   } catch (error) {
     console.log('Failed to upload image: ', error)
   }
@@ -111,10 +107,6 @@ const updateProfileImage = async () => {
 onMounted(() => {
   getProfileImage()
 })
-
-// onUpdated(() => {
-//   window.addEventListener('UploadImage', updateProfileImage)
-// })
 </script>
 
 <style scoped>
