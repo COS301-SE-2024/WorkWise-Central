@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
-import { Company, ContactDetails } from './entities/company.entity';
+import { Address, Company } from './entities/company.entity';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { currentDate } from '../utils/Utils';
 import { isNotDeleted } from '../shared/soft-delete';
@@ -129,33 +129,6 @@ export class CompanyRepository {
     return result != null;
   }
 
-  /*  async employeeExists(
-    compId: Types.ObjectId,
-    empId: Types.ObjectId,
-  ): Promise<boolean> {
-    const result = await this.companyModel
-      .findOne({
-        $and: [
-          { _id: compId },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      })
-      .lean();
-    if (!result) return false;
-
-    console.log('employeeExists');
-    console.log(result);
-    for (const employee of result.employees) {
-      if (employee.equals(empId)) {
-        return true;
-      }
-    }
-
-    return false;
-  }*/
-
   async update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
     const company = await this.companyModel.findOne({
       $and: [
@@ -172,8 +145,15 @@ export class CompanyRepository {
     if (updateCompanyDto.type) company.type = updateCompanyDto.type;
     if (updateCompanyDto.logo) company.logo = updateCompanyDto.logo;
     if (updateCompanyDto.contactDetails) {
-      const updatedContactDetails: ContactDetails = { ...company.contactDetails, ...updateCompanyDto.contactDetails };
-    } //TODO Complete
+      company.contactDetails = { ...company.contactDetails, ...updateCompanyDto.contactDetails };
+    }
+    if (updateCompanyDto.address) {
+      const updatedAddress: Address = { ...company.address, ...updateCompanyDto.address };
+      console.log(updatedAddress);
+      company.address = updatedAddress;
+    }
+    if (updateCompanyDto.private) company.private = updateCompanyDto.private;
+    company.updatedAt = currentDate();
     return (await company.save()).toObject();
   }
 
