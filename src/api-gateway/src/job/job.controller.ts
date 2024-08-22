@@ -963,7 +963,7 @@ export class JobController {
       const itemId = new Types.ObjectId(iId);
       const removeTaskItemDto = new RemoveTaskItemDto(employeeId, jobId, taskId, itemId);
       return {
-        data: await this.jobService.removeTaskFromJob(userId, removeTaskItemDto),
+        data: await this.jobService.removeJobTaskItem(userId, removeTaskItemDto),
       };
     } catch (e) {
       console.log(e);
