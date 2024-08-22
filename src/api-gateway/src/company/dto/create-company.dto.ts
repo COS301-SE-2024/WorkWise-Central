@@ -17,7 +17,6 @@ import {
 import { Transform, Type } from 'class-transformer';
 import { Company } from '../entities/company.entity';
 import { RegistrationNumber, VatNumber } from '../../utils/Custom Validators/RegistrationNumber';
-import { Base64ContentIsImage } from '../../utils/Custom Validators/Base64ContentIsImage';
 
 export class ContactDetails {
   @IsNotEmpty()
