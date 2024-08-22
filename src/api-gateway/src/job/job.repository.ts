@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
-import { Comment, Job, Task } from './entities/job.entity';
-import { UpdateJobDto, UpdateTaskItemDto } from './dto/update-job.dto';
+import { ClientFeedback, Comment, Details, Job, Task } from './entities/job.entity';
+import { UpdateJobDto } from './dto/update-job.dto';
 // import { Employee } from '../employee/entities/employee.entity';
 import { Company } from '../company/entities/company.entity';
 //import { Team } from '../team/entities/team.entity';
@@ -10,6 +10,7 @@ import { isNotDeleted } from '../shared/soft-delete';
 import { currentDate } from '../utils/Utils';
 import { TaskItem } from './dto/create-job.dto';
 import { History } from './entities/job.entity';
+import { UpdateTaskItemDto } from './dto/job-task-item.dto';
 
 @Injectable()
 export class JobRepository {
@@ -92,16 +93,64 @@ export class JobRepository {
       .lean();
   }
 
+  buildUpdateFields(updateDto: UpdateJobDto, prefix = '') {
+    let updateFields = {};
+    for (const key in updateDto) {
+      if (updateDto.hasOwnProperty(key)) {
+        const value = updateDto[key];
+        const fieldKey = prefix ? `${prefix}.${key}` : key;
+        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          updateFields = { ...updateFields, ...this.buildUpdateFields(value, fieldKey) };
+        } else {
+          updateFields[fieldKey] = value;
+        }
+      }
+    }
+    return updateFields;
+  }
+
   async update(id: Types.ObjectId, updateJobDto: UpdateJobDto) {
-    return this.jobModel
-      .findOneAndUpdate(
-        {
-          $and: [{ _id: id }, isNotDeleted],
-        },
-        { $set: { ...updateJobDto }, updatedAt: currentDate() },
-        { new: true },
-      )
-      .lean();
+    const job = await this.jobModel.findOne({ $and: [{ _id: id }, isNotDeleted] }).exec();
+    const newHistory: History[] = [];
+    if (updateJobDto.clientId) {
+      newHistory.push(new History('The Client was changed'));
+      job.clientId = updateJobDto.clientId;
+    }
+    if (updateJobDto.status) {
+      job.status = updateJobDto.status;
+    }
+    if (updateJobDto.details) {
+      const updatedDetails: Details = { ...job.details, ...updateJobDto.details };
+      updatedDetails.address = { ...job.details.address, ...updateJobDto.details.address };
+      console.log(updatedDetails);
+      job.details = updatedDetails;
+    }
+    // if (updateJobDto.recordedDetails) {  //TODO: Speak to Jess
+    //   const updatedDetails = { ...job.recordedDetails, ...updateJobDto.recordedDetails };
+    //   console.log(updatedDetails);
+    //   job.recordedDetails = updatedDetails;
+    // }
+    if (updateJobDto.clientFeedback) {
+      const updatedDetails: ClientFeedback = { ...job.clientFeedback, ...updateJobDto.clientFeedback };
+      console.log(updatedDetails);
+      job.clientFeedback = updatedDetails;
+      newHistory.push(new History('There is new feedback from the client'));
+    }
+    if (updateJobDto.tags) {
+      job.tags = updateJobDto.tags;
+      newHistory.push(new History('The Tags were updated'));
+    }
+    if (updateJobDto.attachments) {
+      job.attachments = updateJobDto.attachments;
+    }
+    if (updateJobDto.coverImage) {
+      job.coverImage = updateJobDto.coverImage;
+      newHistory.push(new History('The Cover Image was updated'));
+    }
+    for (const history of newHistory) {
+      job.history.push(history);
+    }
+    return job.save();
   }
 
   async addToHistory(id: Types.ObjectId, newEvent: History) {
@@ -520,12 +569,8 @@ export class JobRepository {
       })
       .exec();
 
-    const task = job.taskList.find((t) => {
-      t._id.toString() === updateTaskItem.taskId.toString();
-    });
-    const item = task.items.find((i) => {
-      i._id.toString() === updateTaskItem.itemId.toString();
-    });
+    const task = job.taskList.find((t) => t._id.toString() === updateTaskItem.taskId.toString());
+    const item = task.items.find((i) => i._id.toString() === updateTaskItem.itemId.toString());
 
     if (updateTaskItem.description) item.description = updateTaskItem.description;
     if (updateTaskItem.done) item.done = updateTaskItem.done;

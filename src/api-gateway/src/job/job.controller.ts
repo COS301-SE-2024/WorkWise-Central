@@ -21,23 +21,7 @@ import {
 } from '@nestjs/common';
 import { JobService } from './job.service';
 import { CreateJobDto, CreateJobResponseDto } from './dto/create-job.dto';
-import {
-  AddAttachmentDto,
-  AddCommentDto,
-  AddTaskDto,
-  AddTaskItemDto,
-  RemoveCommentDto,
-  RemoveTaskDto,
-  RemoveTaskItemDto,
-  UpdateAttachmentDto,
-  UpdateCommentDto,
-  UpdateDtoResponse,
-  UpdateJobDto,
-  UpdateStatus,
-  UpdateStatusDto,
-  UpdateTaskDto,
-  UpdateTaskItemDto,
-} from './dto/update-job.dto';
+import { UpdateJobDto } from './dto/update-job.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -54,7 +38,7 @@ import mongoose, { Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
-import { CreatePriorityTagDto, CreateStatusDto, CreateTagDto } from './dto/create-tag.dto';
+import { CreatePriorityTagDto, CreateStatusDto, CreateTagDto, PriorityTagDto } from './dto/create-tag.dto';
 import { extractUserId, isBase64Uri, validateObjectId, validateObjectIds } from '../utils/Utils';
 import { DeleteStatusDto, DeleteTagDto, UpdatePriorityTagDto, UpdateTagDto } from './dto/edit-tag.dto';
 import {
@@ -71,6 +55,11 @@ import {
 import { JobAssignDto, JobAssignGroupDto, TaskAssignDto } from './dto/assign-job.dto';
 //import { UpdateProfilePicDto } from '../users/dto/update-user.dto';
 import { FileFieldsInterceptor /*, FileInterceptor*/ } from '@nestjs/platform-express';
+import { AddCommentDto, RemoveCommentDto, UpdateCommentDto } from './dto/job-comments.dto';
+import { AddAttachmentDto, UpdateAttachmentDto } from './dto/job-attachment.dto';
+import { UpdateStatus, UpdateStatusDto } from './dto/job-status.dto';
+import { AddTaskDto, RemoveTaskDto, UpdateTaskDto } from './dto/job-tasks.dto';
+import { AddTaskItemDto, RemoveTaskItemDto, UpdateTaskItemDto } from './dto/job-task-item.dto';
 
 const className = 'Job';
 
@@ -118,6 +107,13 @@ export class JobController {
   })
   @Post('/create')
   async create(@Headers() headers: any, @Body() createJobDto: CreateJobDto) {
+    if (createJobDto.coverImage) {
+      console.log('Cover image present');
+      const isValidUrl = isBase64Uri(createJobDto.coverImage);
+      if (!isValidUrl) {
+        throw new BadRequestException('coverImage must be Base64 URI');
+      }
+    }
     try {
       validateObjectId(createJobDto.assignedBy, 'assignedBy');
       if (createJobDto.companyId) validateObjectId(createJobDto.companyId, 'Company');
@@ -306,20 +302,20 @@ export class JobController {
   @ApiBody({ type: UpdateJobDto })
   @Patch('update/:id')
   async update(@Headers() headers: any, @Param('id') jobId: string, @Body() updateJobDto: UpdateJobDto) {
-    try {
-      if (updateJobDto.coverImage) {
-        console.log('Cover image present');
-        const isValidUrl = isBase64Uri(updateJobDto.coverImage);
-        if (!isValidUrl) {
-          throw new BadRequestException('coverImage must be Base64 URI');
-        }
+    if (updateJobDto.coverImage) {
+      console.log('Cover image present');
+      const isValidUrl = isBase64Uri(updateJobDto.coverImage);
+      if (!isValidUrl) {
+        throw new BadRequestException('coverImage must be Base64 URI');
       }
+    }
+    try {
       validateObjectId(jobId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       // console.log(userId);
       // console.log(new Types.ObjectId(jobId));
-      const success = await this.jobService.update(userId, new Types.ObjectId(jobId), updateJobDto);
-      return new UpdateDtoResponse(success);
+      const job = await this.jobService.update(userId, new Types.ObjectId(jobId), updateJobDto);
+      return { data: job };
     } catch (e) {
       console.log(e);
       throw new InternalServerErrorException(`Job could not be updated`);
@@ -495,7 +491,7 @@ export class JobController {
     summary: 'Add a job Priority Tag to a company',
   })
   @ApiCreatedResponse({
-    type: BooleanResponseDto,
+    type: PriorityTagDto,
     description: 'Confirmation of success of request',
   })
   @UseGuards(AuthGuard)
@@ -585,7 +581,7 @@ export class JobController {
     summary: 'Update the name, colour, or PriorityLevel of a PriorityTag, within a company',
   })
   @ApiResponse({
-    type: TagResponseDto,
+    type: PriorityTagDto,
     description: 'PriorityTag successfully updated',
   })
   @UseGuards(AuthGuard)
