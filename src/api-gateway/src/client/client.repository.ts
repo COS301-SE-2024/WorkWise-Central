@@ -12,7 +12,7 @@ export class ClientRepository {
 
   async saveClient(client: Client) {
     const newClient = new this.clientModel(client);
-    return await newClient.save();
+    return (await newClient.save()).toObject();
   }
 
   async findAll() {
@@ -93,21 +93,26 @@ export class ClientRepository {
   }
 
   async delete(id: Types.ObjectId) {
-    return this.clientModel.findOneAndUpdate(
-      {
-        $and: [{ _id: id }, isNotDeleted],
-      },
-      { $set: { deletedAt: currentDate() } },
-    );
+    return this.clientModel
+      .findOneAndUpdate(
+        {
+          $and: [{ _id: id }, isNotDeleted],
+        },
+        { $set: { deletedAt: currentDate() } },
+      )
+      .lean()
+      .exec();
   }
 
   deleteAllInCompany(companyId: Types.ObjectId) {
     const now = currentDate();
-    return this.clientModel.updateMany(
-      {
-        $and: [{ 'details.companyId': companyId }, isNotDeleted],
-      },
-      { $set: { deletedAt: now } },
-    );
+    return this.clientModel
+      .updateMany(
+        {
+          $and: [{ 'details.companyId': companyId }, isNotDeleted],
+        },
+        { $set: { deletedAt: now } },
+      )
+      .exec();
   }
 }

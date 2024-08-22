@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
-import { Company } from './entities/company.entity';
+import { Company, ContactDetails } from './entities/company.entity';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { currentDate } from '../utils/Utils';
 import { isNotDeleted } from '../shared/soft-delete';
@@ -157,50 +157,25 @@ export class CompanyRepository {
   }*/
 
   async update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
-    return this.companyModel.findOneAndUpdate(
-      {
-        $and: [
-          { _id: id },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      },
-      { $set: { ...updateCompanyDto }, updatedAt: currentDate() },
-      { new: true },
-    );
-  }
+    const company = await this.companyModel.findOne({
+      $and: [
+        { _id: id },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    });
 
-  /*  async addEmployee(id: Types.ObjectId, employeeId: Types.ObjectId) {
-    return this.companyModel.findOneAndUpdate(
-      {
-        $and: [
-          { _id: id },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      },
-      { $push: { employees: employeeId }, updatedAt: currentDate() },
-      { new: true },
-    );
+    if (updateCompanyDto.registrationNumber) company.registrationNumber = updateCompanyDto.registrationNumber;
+    if (updateCompanyDto.vatNumber) company.vatNumber = updateCompanyDto.vatNumber;
+    if (updateCompanyDto.name) company.name = updateCompanyDto.name;
+    if (updateCompanyDto.type) company.type = updateCompanyDto.type;
+    if (updateCompanyDto.logo) company.logo = updateCompanyDto.logo;
+    if (updateCompanyDto.contactDetails) {
+      const updatedContactDetails: ContactDetails = { ...company.contactDetails, ...updateCompanyDto.contactDetails };
+    } //TODO Complete
+    return (await company.save()).toObject();
   }
-
-  async removeEmployee(id: Types.ObjectId, employeeId: Types.ObjectId) {
-    //TODO: Test
-    return this.companyModel.findOneAndUpdate(
-      {
-        $and: [
-          { _id: id },
-          {
-            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-          },
-        ],
-      },
-      { $pull: { employees: employeeId }, updatedAt: currentDate() },
-      { new: true },
-    );
-  }*/
 
   async delete(id: Types.ObjectId): Promise<boolean> {
     const result = await this.companyModel.findOneAndUpdate(
