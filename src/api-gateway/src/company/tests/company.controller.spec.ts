@@ -8,7 +8,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { UpdateCompanyDto } from '../dto/update-company.dto';
 import { UsersService } from '../../users/users.service';
 import { UsersController } from '../../users/users.controller';
-import { CreateCompanyDto, CreateCompanyResponseDto } from '../dto/create-company.dto';
+import { CreateCompanyDto } from '../dto/create-company.dto';
 
 const moduleMocker = new ModuleMocker(global);
 

@@ -6,9 +6,9 @@ import { ClientService } from '../../client/client.service';
 import { CreateJobDto } from '../dto/create-job.dto';
 import { HttpException, HttpStatus, InternalServerErrorException } from '@nestjs/common';
 import { Types } from 'mongoose';
-import { UpdateJobDto } from '../dto/update-job.dto';
+//import { UpdateJobDto } from '../dto/update-job.dto';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
-import { Job } from '../entities/job.entity';
+//import { Job } from '../entities/job.entity';
 
 const moduleMocker = new ModuleMocker(global);
 
