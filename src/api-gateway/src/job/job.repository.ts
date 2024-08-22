@@ -3,9 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import { ClientFeedback, Comment, Details, Job, Task } from './entities/job.entity';
 import { UpdateJobDto } from './dto/update-job.dto';
-// import { Employee } from '../employee/entities/employee.entity';
-import { Company } from '../company/entities/company.entity';
-//import { Team } from '../team/entities/team.entity';
 import { isNotDeleted } from '../shared/soft-delete';
 import { currentDate } from '../utils/Utils';
 import { TaskItem } from './dto/create-job.dto';
@@ -56,20 +53,6 @@ export class JobRepository {
     return this.jobModel.find(filter).lean().exec();
   }
 
-  jobComments = {
-    path: 'comments',
-    populate: [
-      {
-        path: 'employeeId',
-        model: 'Employee',
-      },
-      {
-        path: 'companyId',
-        model: Company.name,
-      },
-    ],
-  };
-
   async findAllInCompanyDetailed(
     companyId: Types.ObjectId,
     fieldsToPopulate: string[] = ['assignedEmployees', 'assignedBy', 'clientId', 'comments'],
@@ -91,22 +74,6 @@ export class JobRepository {
         $and: [{ _id: id }, isNotDeleted],
       })
       .lean();
-  }
-
-  buildUpdateFields(updateDto: UpdateJobDto, prefix = '') {
-    let updateFields = {};
-    for (const key in updateDto) {
-      if (updateDto.hasOwnProperty(key)) {
-        const value = updateDto[key];
-        const fieldKey = prefix ? `${prefix}.${key}` : key;
-        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-          updateFields = { ...updateFields, ...this.buildUpdateFields(value, fieldKey) };
-        } else {
-          updateFields[fieldKey] = value;
-        }
-      }
-    }
-    return updateFields;
   }
 
   async update(id: Types.ObjectId, updateJobDto: UpdateJobDto) {
@@ -549,9 +516,7 @@ export class JobRepository {
 
       .exec();
 
-    const task = job.taskList.find((t) => {
-      t._id.toString() === taskId.toString();
-    });
+    const task = job.taskList.find((t) => t._id.toString() === taskId.toString());
     task.items.push(new TaskItem());
     await job.save();
     return job.toObject();
@@ -592,13 +557,9 @@ export class JobRepository {
       })
       .exec();
 
-    const task = job.taskList.find((t) => {
-      t._id.toString() === taskId.toString();
-    });
+    const task = job.taskList.find((t) => t._id.toString() === taskId.toString());
 
-    task.items = task.items.filter((i) => {
-      i._id.toString() !== itemId.toString();
-    });
+    task.items = task.items.filter((i) => i._id.toString() !== itemId.toString());
 
     await job.save();
     return job.toObject();
