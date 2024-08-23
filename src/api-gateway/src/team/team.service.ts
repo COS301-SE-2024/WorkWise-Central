@@ -115,6 +115,10 @@ export class TeamService {
     return result;
   }
 
+  async findAllInCompany(companyId: Types.ObjectId) {
+    return this.teamRepository.findAllInCompany(companyId);
+  }
+
   async findByNameInCompany(name: string, companyId: Types.ObjectId) {
     //checking if the company exists
     if (!(await this.companyService.companyIdExists(companyId))) {

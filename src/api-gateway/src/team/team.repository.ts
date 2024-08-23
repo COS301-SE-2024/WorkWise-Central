@@ -34,11 +34,26 @@ export class TeamRepository {
   }
 
   async findByIdInCompany(identifier: Types.ObjectId, companyIdentification: Types.ObjectId) {
-    const result: FlattenMaps<Team> & { _id: Types.ObjectId } = await this.teamModel
-      .findOne({
+    return await this.teamModel
+      .find({
         $and: [
           { _id: identifier },
           { companyId: companyIdentification },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+  }
+
+  async findAllInCompany(identifier: Types.ObjectId) {
+    const result: (FlattenMaps<Team> & { _id: Types.ObjectId })[] = await this.teamModel
+      .find({
+        $and: [
+          {
+            companyId: identifier,
+          },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },

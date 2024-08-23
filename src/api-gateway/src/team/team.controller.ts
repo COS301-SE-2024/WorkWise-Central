@@ -111,6 +111,42 @@ export class TeamController {
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
+    summary: `Find an ${className}`,
+    description: `Returns the ${className} instance with the given id and Company id.`,
+  })
+  @ApiOkResponse({
+    type: teamResponseDto,
+    description: `The mongodb object of the ${className}, in a particular Company, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'comanyId',
+    description: `The _id of the Company fo which the teams must be returned.`,
+    type: String,
+  })
+  @Get('all/:comanyId')
+  async findAllInCompany(@Param('comanyId') comanyId: Types.ObjectId) {
+    const data = await this.teamService.findAllInCompany(comanyId);
+    return { data: data };
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request is not authorized to view the data.`,
+  })
+  @ApiOperation({
     summary: `Create a new ${className}`,
     description: `Call to create a new ${className} . The teamName, teamMembers array and companyId are required. The teamLeaderIdd is optional. It returns the access token and the teamId.`,
   })
