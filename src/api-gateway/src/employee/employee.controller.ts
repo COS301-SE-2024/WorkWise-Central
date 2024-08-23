@@ -548,13 +548,16 @@ export class EmployeeController {
     @Param('employeeId') employeeId: Types.ObjectId,
     @Body() body: CurrentEmployeeDto,
   ) {
+    console.log('In remove');
     const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('remove any employees')) {
       let data;
       try {
+        console.log('In try block');
         data = await this.employeeService.remove(employeeId);
       } catch (e) {
+        console.log('error:', e);
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
 
