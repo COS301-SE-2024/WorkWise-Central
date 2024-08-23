@@ -1,8 +1,8 @@
-import { InternalUpdateEmployeeDto } from './dto/internal-update-employee.dto';
+import { InternalUpdateEmployeeDto, UpdateEmployeeUserInfoDto } from './dto/internal-update-employee.dto';
 import { InventoryService } from '../inventory/inventory.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { UpdateEmployeeDto, UpdateEmployeeUserInfoDto } from './dto/update-employee.dto';
+import { AddSubordinatesDto, RemoveSubordinatesDto, UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Types } from 'mongoose';
 import { Employee, roleObject } from './entities/employee.entity';
 import { UsersService } from '../users/users.service';
@@ -44,32 +44,25 @@ export class EmployeeService {
   ) {}
 
   async validateCreateEmployee(employee: CreateEmployeeDto) {
-    // console.log('\nIn validateCreateEmployee');
     // Checking that the company exists
     if (!(await this.companyService.companyIdExists(employee.companyId))) {
       return new ValidationResult(false, `Company not found`);
     }
-    // console.log('checkpoint 1');
     // Checking that the user exists
     if (!(await this.usersService.userIdExists(employee.userId))) {
       return new ValidationResult(false, `User not found`);
     }
-    // console.log('checkpoint 2');
     // Checking if the roleId was passed and if it exists
     if (employee.roleId) {
       if (!(await this.roleService.roleExistsInCompany(employee.roleId, employee.companyId))) {
         return new ValidationResult(false, `Role not found`);
       }
     }
-    // console.log('checkpoint 3');
     // Checking if the superiorId was passed and if it exists
     if (employee.superiorId) {
-      console.log('In if');
       if (!(await this.employeeExistsForCompany(employee.superiorId, employee.companyId))) {
-        console.log('** in if');
         return new ValidationResult(false, `Superior not found`);
       } else {
-        console.log('** in else');
         //Checking that the superior is valid
         const superior = await this.findById(employee.superiorId);
         if (superior.subordinates) {
@@ -79,33 +72,23 @@ export class EmployeeService {
         }
       }
     } else {
-      console.log('In else');
       //Adding the owner as the superior if no superior is passed
       try {
         const owner = await this.findAllInCompanyWithRoleName(employee.companyId, 'Owner');
-        console.log('owner: ', owner);
         employee.superiorId = owner[0]._id;
-      } catch (e) {
-        console.log('The owner is being created, therefore they do not have a superiorId');
-      }
+      } catch (e) {}
     }
-    console.log('checkpoint 4');
     // checking if the user exists in the company
     const user = await this.usersService.getUserById(employee.userId);
     if (await this.usersService.userIsInCompany(user._id, employee.companyId)) {
       return new ValidationResult(false, `User already in company`);
     }
-    console.log('checkpoint 5');
 
     return new ValidationResult(true, `All good`);
   }
 
-  async validateUpdateEmployee(
-    employeeToBeUpdatedId: Types.ObjectId,
-    currentemployeeId: Types.ObjectId,
-    updateEmployeeDto: UpdateEmployeeDto,
-  ) {
-    const currentEmployee = await this.findById(currentemployeeId);
+  async validateUpdateEmployee(updateEmployeeDto: UpdateEmployeeDto) {
+    const currentEmployee = await this.findById(updateEmployeeDto.currentEmployeeId);
     // const employeeToBeUpdated = await this.findById(employeeToBeUpdatedId);
     const companyId = currentEmployee.companyId;
     if (updateEmployeeDto.roleId) {
@@ -119,35 +102,15 @@ export class EmployeeService {
         return new ValidationResult(false, `Superior not found`);
       }
     }
-    //Simply checking that the subordinates exists
-    if (updateEmployeeDto.subordinates) {
-      for (const subordinateId of updateEmployeeDto.subordinates) {
-        if (!(await this.employeeExistsForCompany(subordinateId, companyId))) {
-          return new ValidationResult(false, `Subordinate not found`);
-        }
-      }
-    }
-
-    // Check if the subordinateTeams is passed and exists for the company
-    if (updateEmployeeDto.subordinateTeams) {
-      for (const teamId of updateEmployeeDto.subordinateTeams) {
-        if (!(await this.teamService.teamExistsInCompany(teamId, companyId))) {
-          return new ValidationResult(false, `Team not found`);
-        }
-      }
-    }
     return new ValidationResult(true, `All good`);
   }
 
   async create(createEmployeeDto: CreateEmployeeDto) {
-    console.log('\nIn create employee service ');
     const validation = await this.validateCreateEmployee(createEmployeeDto);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
-    console.log('validation complete');
     const newEmployee = new Employee();
-    console.log('newEmployee made');
     newEmployee.userId = createEmployeeDto.userId;
     newEmployee.companyId = createEmployeeDto.companyId;
     newEmployee.superiorId = createEmployeeDto.superiorId;
@@ -158,23 +121,16 @@ export class EmployeeService {
       newEmployee.userInfo.surname = createEmployeeDto.userInfo.surname;
       newEmployee.userInfo.username = createEmployeeDto.userInfo.username;
     }
-    console.log('newEmployee info added: ', newEmployee);
     if (createEmployeeDto.roleId) {
-      console.log('in if');
       const role = await this.roleService.findById(createEmployeeDto.roleId);
-      console.log('role: ', role);
       newEmployee.role.roleId = role._id;
-      console.log('checkpoint');
       newEmployee.role.permissionSuite = role.permissionSuite;
       newEmployee.role.roleName = role.roleName;
-      console.log('role added to newEmployee');
     } else {
-      console.log('in else');
       const role = await this.roleService.findOneInCompany('Default', createEmployeeDto.companyId);
       newEmployee.role.roleId = role._id;
       newEmployee.role.permissionSuite = role.permissionSuite;
     }
-    console.log('newEmployee: ', newEmployee);
 
     return await this.employeeRepository.save(newEmployee);
   }
@@ -202,10 +158,7 @@ export class EmployeeService {
   }
 
   async findById(id: Types.ObjectId) {
-    // console.log('In findById service');
-    // console.log('id: ', id);
     const data = await this.employeeRepository.findById(id);
-    // console.log('data: ', data);
     return data;
   }
 
@@ -227,37 +180,95 @@ export class EmployeeService {
     return await this.employeeRepository.employeeExistsForCompany(id, companyId);
   }
 
-  async update(employeeId: Types.ObjectId, currentEmployeeId: Types.ObjectId, updateEmployeeDto: UpdateEmployeeDto) {
-    // console.log('In update service');
-    const validation = await this.validateUpdateEmployee(employeeId, currentEmployeeId, updateEmployeeDto);
-    // console.log('validation: ', validation);
+  async update(employeeId: Types.ObjectId, updateEmployeeDto: UpdateEmployeeDto) {
+    const validation = await this.validateUpdateEmployee(updateEmployeeDto);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
-    // console.log('validation complete');
-    //******Updating the structure*********/
-    if (updateEmployeeDto.subordinates) {
-      await this.updateSubordinates(employeeId, updateEmployeeDto.subordinates);
-    }
+
+    //Checking if the superior is being updated
     if (updateEmployeeDto.superiorId) {
       await this.updateSuperior(employeeId, updateEmployeeDto.superiorId);
     }
-    //**********Done updating structure****************/
 
     //Altering the dto to update the role if roleId is given
     const dto = new InternalUpdateEmployeeDto();
-    dto.subordinateTeams = updateEmployeeDto.subordinateTeams;
-    dto.currentJobAssignments = updateEmployeeDto.currentJobAssignments;
     if (updateEmployeeDto.roleId) {
-      // console.log('in if. updateEmployeeDto.roleId: ', updateEmployeeDto.roleId);
       dto.role.roleId = updateEmployeeDto.roleId;
-      // console.log('checkpoint 1');
       const role = await this.roleService.findById(dto.role.roleId);
-      // console.log('role: ', role);
       dto.role.permissionSuite = role.permissionSuite;
       dto.role.roleName = role.roleName;
     }
     return await this.employeeRepository.update(employeeId, dto);
+  }
+
+  async internalUpdate(employeeId: Types.ObjectId, updateEmployeeDto: InternalUpdateEmployeeDto) {
+    return await this.employeeRepository.update(employeeId, updateEmployeeDto);
+  }
+
+  async addSubordinates(employeeId: Types.ObjectId, addSubordinatesDto: AddSubordinatesDto) {
+    //checking that the current employee's superior is not is the newSubordinate list
+    const currentEmployee = await this.findById(employeeId);
+    if (!currentEmployee) {
+      throw new Exception('Update subordinates could not be done');
+    }
+    if (addSubordinatesDto.subordinatesToBeAdded.includes(currentEmployee.superiorId)) {
+      throw new Exception('Cannot make the persons current superior a subordinate');
+    }
+    //Checking that the owner is not in the list of newSubordinates
+    const owner = await this.findAllInCompanyWithRoleName(currentEmployee.companyId, 'Owner');
+    if (addSubordinatesDto.subordinatesToBeAdded.includes(owner[0]._id)) {
+      throw new Exception('Cannot make the persons current superior a subordinate');
+    }
+
+    const newSubordinates = currentEmployee.subordinates;
+
+    //updating the superior of the new subordinates
+    for (const newSubId of addSubordinatesDto.subordinatesToBeAdded) {
+      if (!currentEmployee.subordinates.includes(newSubId)) {
+        newSubordinates.push(newSubId);
+        //These are new subordinates.
+        //Removing the newSub from their current superior
+        const newSub = await this.findById(newSubId);
+        const superior = await this.findById(newSub.superiorId);
+        let newSubordinatesTemp = superior.subordinates;
+        newSubordinatesTemp = newSubordinatesTemp.filter((ids) => ids.toString() !== newSubId.toString());
+        await this.employeeRepository.updateSubordinates(superior._id, newSubordinatesTemp);
+        //Updating the superior of newSub
+        await this.employeeRepository.updateSuperior(newSubId, employeeId);
+      }
+    }
+    //updating the current employees subordinate list
+    return await this.employeeRepository.updateSubordinates(employeeId, newSubordinates);
+  }
+
+  async removeSubordinates(employeeId: Types.ObjectId, removeSubordinatesDto: RemoveSubordinatesDto) {
+    const currentEmployee = await this.findById(employeeId);
+    let newSubordinates = currentEmployee.subordinates;
+    //checking to see if the any of the current subordinates are being removed
+    for (const subId of removeSubordinatesDto.subordinatesToBeRemoved) {
+      if (currentEmployee.subordinates.includes(subId)) {
+        newSubordinates = newSubordinates.filter((ids) => ids.toString() !== subId.toString()); //Removing the subId from the list of subordinates
+
+        //updating the superior of the removed subordinate to be the owner of the company
+        const subEmployee = await this.findById(subId);
+        const owner = await this.findAllInCompanyWithRoleName(subEmployee.companyId, 'Owner');
+        let updateDto = new InternalUpdateEmployeeDto();
+        updateDto.superiorId = owner[0]._id;
+
+        await this.employeeRepository.update(subId, updateDto);
+
+        //Adding the removed subordinate to the owner's list of subordinates
+        const ownerEmployee = await this.findById(owner[0]._id);
+        updateDto = new InternalUpdateEmployeeDto();
+        updateDto.subordinates = ownerEmployee.subordinates;
+        updateDto.subordinates.push(subId);
+        await this.employeeRepository.update(owner[0]._id, updateDto);
+      }
+    }
+
+    //updating the current employees subordinate list
+    return await this.employeeRepository.updateSubordinates(employeeId, newSubordinates);
   }
 
   async updateSubordinates(employeeId: Types.ObjectId, newSubordinates: Types.ObjectId[]) {
@@ -369,50 +380,45 @@ export class EmployeeService {
     return this.employeeRepository.removeAssignedJob(employeeId, jobId);
   }
 
-  async updateUnderMe(
-    userId: Types.ObjectId,
-    employeeId: Types.ObjectId,
-    updateEmployeeDto: UpdateEmployeeDto,
-    currentEmployeeId: Types.ObjectId,
-  ) {
-    const validation = await this.validateUpdateEmployee(employeeId, currentEmployeeId, updateEmployeeDto);
-    if (!validation.isValid) {
-      throw new Error(validation.message);
-    }
-    if (!(await this.isBelowMe(currentEmployeeId, employeeId))) {
-      throw new Error('Employee not below the requesting employee');
-    }
-    //******Updating the structure*********/
-    if (updateEmployeeDto.subordinates) {
-      await this.updateSubordinates(employeeId, updateEmployeeDto.subordinates);
-    }
-    if (updateEmployeeDto.superiorId) {
-      await this.updateSuperior(employeeId, updateEmployeeDto.superiorId);
-    }
-    //**********Done updating structure****************/
+  // async updateUnderMe(
+  //   userId: Types.ObjectId,
+  //   employeeId: Types.ObjectId,
+  //   updateEmployeeDto: UpdateEmployeeDto,
+  //   currentEmployeeId: Types.ObjectId,
+  // ) {
+  //   const validation = await this.validateUpdateEmployee(employeeId, currentEmployeeId, updateEmployeeDto);
+  //   if (!validation.isValid) {
+  //     throw new Error(validation.message);
+  //   }
+  //   if (!(await this.isBelowMe(currentEmployeeId, employeeId))) {
+  //     throw new Error('Employee not below the requesting employee');
+  //   }
+  //   //******Updating the structure*********/
+  //   if (updateEmployeeDto.subordinates) {
+  //     await this.updateSubordinates(employeeId, updateEmployeeDto.subordinates);
+  //   }
+  //   if (updateEmployeeDto.superiorId) {
+  //     await this.updateSuperior(employeeId, updateEmployeeDto.superiorId);
+  //   }
+  //   //**********Done updating structure****************/
 
-    //Altering the dto to update the role if roleId is given
-    const dto = new InternalUpdateEmployeeDto();
-    dto.subordinateTeams = updateEmployeeDto.subordinateTeams;
-    dto.currentJobAssignments = updateEmployeeDto.currentJobAssignments;
-    if (updateEmployeeDto.roleId) {
-      dto.role.roleId = updateEmployeeDto.roleId;
-      const role = await this.roleService.findById(dto.role.roleId);
-      dto.role.permissionSuite = role.permissionSuite;
-      dto.role.roleName = role.roleName;
-    }
+  //   //Altering the dto to update the role if roleId is given
+  //   const dto = new InternalUpdateEmployeeDto();
+  //   dto.subordinateTeams = updateEmployeeDto.subordinateTeams;
+  //   dto.currentJobAssignments = updateEmployeeDto.currentJobAssignments;
+  //   if (updateEmployeeDto.roleId) {
+  //     dto.role.roleId = updateEmployeeDto.roleId;
+  //     const role = await this.roleService.findById(dto.role.roleId);
+  //     dto.role.permissionSuite = role.permissionSuite;
+  //     dto.role.roleName = role.roleName;
+  //   }
 
-    const previousObject = this.employeeRepository.update(employeeId, dto);
-    return previousObject;
-  }
+  //   const previousObject = this.employeeRepository.update(employeeId, dto);
+  //   return previousObject;
+  // }
 
   async updateUserInfo(id: Types.ObjectId, userInfo: UpdateEmployeeUserInfoDto) {
     const previousObject = this.employeeRepository.updateUserInfo(id, userInfo);
-    return previousObject;
-  }
-
-  async internalUpdate(id: Types.ObjectId, userInfo: InternalUpdateEmployeeDto) {
-    const previousObject = this.employeeRepository.update(id, userInfo);
     return previousObject;
   }
 
@@ -674,7 +680,7 @@ export class EmployeeService {
   // }
 
   async graphData(companyId: Types.ObjectId) {
-    console.log('graphData');
+    // console.log('graphData');
     //Setting up for the traversal
     const owner = await this.findAllInCompanyWithRoleName(companyId, 'Owner');
     let currentCount: number = 1;
@@ -682,48 +688,48 @@ export class EmployeeService {
     let edgeCount: number = 1;
     const nodes: Nodes = {};
     const edges: Edges = {};
-    console.log('owner: ', owner);
+    // console.log('owner: ', owner);
     const currentEmployee = await this.findById(owner[0]._id);
-    console.log('owner Id: ', owner[0]._id);
+    // console.log('owner Id: ', owner[0]._id);
     const open: Types.ObjectId[] = [];
 
     //Adding the owner to the nodes
     const nodeLabel = 'node' + currentCount.toString();
-    console.log('nodeLabel: ', nodeLabel);
+    // console.log('nodeLabel: ', nodeLabel);
     nodes[nodeLabel] = { name: currentEmployee.userInfo.displayName, id: currentEmployee._id };
     //Adding the owner to the edges
     currentEmployee.subordinates.forEach(() => {
       const edgeLabel = 'edge' + edgeCount.toString();
-      console.log('edgeLabel: ', edgeLabel);
+      // console.log('edgeLabel: ', edgeLabel);
       edges[edgeLabel] = { source: nodeLabel, target: 'node' + subCount.toString() };
       edgeCount++;
       subCount++;
     });
     //Add the subordinates to the back of the open list
-    console.log('currentEmployee.subordinates: ', currentEmployee.subordinates);
+    // console.log('currentEmployee.subordinates: ', currentEmployee.subordinates);
     open.push(...currentEmployee.subordinates);
     currentCount++;
 
     while (open.length !== 0) {
       const currentId = open.shift();
-      console.log('currentId: ', currentId);
+      // console.log('currentId: ', currentId);
       const currentEmployee = await this.findById(currentId);
       // console.log('currentEmployee: ', currentEmployee);
 
       //Adding the currentEmployee to the nodes
       const nodeLabel = 'node' + currentCount.toString();
-      console.log('nodeLabel: ', nodeLabel);
+      // console.log('nodeLabel: ', nodeLabel);
       nodes[nodeLabel] = { name: currentEmployee.userInfo.displayName, id: currentEmployee._id };
       //Adding the currentEmployee to the edges
       currentEmployee.subordinates.forEach(() => {
         const edgeLabel = 'edge' + edgeCount.toString();
-        console.log('edgeLabel: ', edgeLabel);
+        // console.log('edgeLabel: ', edgeLabel);
         edges[edgeLabel] = { source: nodeLabel, target: 'node' + subCount.toString() };
         edgeCount++;
         subCount++;
       });
       //Add the subordinates to the back of the open list
-      console.log('currentEmployee.subordinates: ', currentEmployee.subordinates);
+      // console.log('currentEmployee.subordinates: ', currentEmployee.subordinates);
       open.push(...currentEmployee.subordinates);
       currentCount++;
     }

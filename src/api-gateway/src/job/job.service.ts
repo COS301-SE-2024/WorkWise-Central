@@ -407,7 +407,7 @@ export class JobService {
     //TODO: Implement later
 
     //TODO: Add Assigned Tasks
-    await this.employeeService.update(taskAssignDto.employeeId, taskAssignDto.employeeToAssignId._id, {});
+    await this.employeeService.internalUpdate(taskAssignDto.employeeId, {});
 
     const result = await this.jobRepository.assignEmployeeToTaskItem(
       taskAssignDto.employeeToAssignId,
@@ -468,7 +468,7 @@ export class JobService {
     //TODO: Implement later
 
     //TODO: Add Assigned Tasks
-    await this.employeeService.update(taskAssignDto.employeeId, taskAssignDto.employeeToAssignId._id, {});
+    await this.employeeService.internalUpdate(taskAssignDto.employeeId, {});
 
     const result = await this.jobRepository.unassignEmployeeFromTaskItem(
       taskAssignDto.employeeToAssignId,

@@ -34,10 +34,21 @@ export class InternalUpdateEmployeeDto {
   @IsOptional()
   currentJobAssignments?: Types.ObjectId[];
 
+  @IsMongoId()
+  @IsOptional()
+  @ApiProperty()
+  superiorId?: Types.ObjectId;
+
   @IsArray()
   @IsMongoId({ each: true })
   @IsOptional()
-  subordinateTeams?: Types.ObjectId[];
+  @ApiProperty()
+  subordinates?: Types.ObjectId[];
+
+  @IsArray()
+  @IsMongoId({ each: true })
+  @IsOptional()
+  teams?: Types.ObjectId[];
 
   @ApiProperty()
   @IsMongoId()

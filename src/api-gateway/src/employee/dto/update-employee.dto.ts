@@ -1,68 +1,47 @@
 import { Types } from 'mongoose';
-import { IsArray, IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-
-export class UpdateEmployeeUserInfoDto {
-  @IsString()
-  @IsOptional()
-  username?: string;
-
-  @IsString()
-  @IsOptional()
-  firstName: string;
-
-  @IsString()
-  @IsOptional()
-  surname: string;
-
-  @IsString()
-  @IsOptional()
-  displayName: string;
-
-  @IsString()
-  @IsOptional()
-  displayImage: string;
-}
-
-export class UpdateEmployeeDto {
-  @IsMongoId()
-  @IsOptional()
-  @ApiProperty()
-  roleId?: Types.ObjectId;
-
-  @IsArray()
-  @IsMongoId({ each: true })
-  @IsOptional()
-  @ApiProperty()
-  currentJobAssignments?: Types.ObjectId[];
-
-  @IsMongoId()
-  @IsOptional()
-  @ApiProperty()
-  superiorId?: Types.ObjectId;
-
-  @IsArray()
-  @IsMongoId({ each: true })
-  @IsOptional()
-  @ApiProperty()
-  subordinates?: Types.ObjectId[];
-
-  @IsArray()
-  @IsMongoId({ each: true })
-  @IsOptional()
-  @ApiProperty()
-  subordinateTeams?: Types.ObjectId[];
-}
-
-export class externalUpdateEmployeeDto {
+export class AddSubordinatesDto {
   @IsMongoId()
   @IsNotEmpty()
   @ApiProperty()
   currentEmployeeId: Types.ObjectId;
 
+  @IsArray()
+  @IsMongoId({ each: true })
   @IsNotEmpty()
   @ApiProperty()
-  updateEmployeeDto: UpdateEmployeeDto;
+  subordinatesToBeAdded: Types.ObjectId[];
+}
+
+export class RemoveSubordinatesDto {
+  @IsMongoId()
+  @IsNotEmpty()
+  @ApiProperty()
+  currentEmployeeId: Types.ObjectId;
+
+  @IsArray()
+  @IsMongoId({ each: true })
+  @IsNotEmpty()
+  @ApiProperty()
+  subordinatesToBeRemoved: Types.ObjectId[];
+}
+
+export class UpdateEmployeeDto {
+  @IsMongoId()
+  @IsNotEmpty()
+  @ApiProperty()
+  currentEmployeeId: Types.ObjectId;
+
+  @IsMongoId()
+  @IsOptional()
+  @ApiProperty()
+  roleId?: Types.ObjectId;
+
+  @IsMongoId()
+  @IsOptional()
+  @ApiProperty()
+  superiorId?: Types.ObjectId;
 }
 
 export class updateEmployeeResponseDto {
