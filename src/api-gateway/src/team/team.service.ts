@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateTeamDto } from './dto/create-team.dto';
-import { UpdateTeamDto } from './dto/update-team.dto';
+import { UpdateTeamDto, AddTeamMembersDto, RemoveTeamMembersDto, InternalUpdateTeamDto } from './dto/update-team.dto';
 import { Types } from 'mongoose';
 import { Team } from './entities/team.entity';
 import { EmployeeService } from '../employee/employee.service';
@@ -60,14 +60,6 @@ export class TeamService {
     const teamTemp = await this.findById(teamId);
     const companyId = teamTemp.companyId;
 
-    // Check if the team exists in the company
-    if ('teamMembers' in team && team.teamMembers) {
-      for (const memberId of team.teamMembers) {
-        if (!(await this.employeeService.employeeExistsForCompany(memberId, companyId))) {
-          return new ValidationResult(false, `Team member not found`);
-        }
-      }
-    }
     // Check if the team leader exists in the company
     if ('teamLeaderId' in team && team.teamLeaderId) {
       if (!(await this.employeeService.employeeExists(team.teamLeaderId))) {
@@ -115,6 +107,13 @@ export class TeamService {
     return result;
   }
 
+  async findAllInCompany(companyId: Types.ObjectId) {
+    return this.teamRepository.findAllInCompany(companyId);
+  }
+  async detailedFindAllInCompany(companyId: Types.ObjectId) {
+    return this.teamRepository.detailedFindAllInCompany(companyId, ['teamMembers', 'teamLeaderId']);
+  }
+
   async findByNameInCompany(name: string, companyId: Types.ObjectId) {
     //checking if the company exists
     if (!(await this.companyService.companyIdExists(companyId))) {
@@ -137,13 +136,84 @@ export class TeamService {
     return this.teamRepository.teamExistsInCompany(id, companyId);
   }
 
-  async update(id: Types.ObjectId, updateTeamDto: UpdateTeamDto) {
+  async update(id: Types.ObjectId, updateTeamDto: InternalUpdateTeamDto) {
     const validation = await this.validateUpdateTeam(id, updateTeamDto);
 
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
-    return this.teamRepository.update(id, updateTeamDto);
+    const updateDto = new InternalUpdateTeamDto();
+    updateDto.teamName = updateTeamDto.teamName;
+    updateDto.teamLeaderId = updateTeamDto.teamLeaderId;
+    updateDto.currentJobAssignments = updateTeamDto.currentJobAssignments;
+    return this.teamRepository.update(id, updateDto);
+  }
+
+  async addTeamMembers(id: Types.ObjectId, addTeamMembersDto: AddTeamMembersDto) {
+    console.log('In add team members');
+    console.log('id: ', id);
+    console.log('addTeamMembersDto: ', addTeamMembersDto);
+    const team = await this.findById(id);
+    if (!team) {
+      throw new Error('Team not found');
+    }
+    console.log('addTeamMembersDto.newTeamMembers: ', addTeamMembersDto.newTeamMembers);
+    for (const memberId of addTeamMembersDto.newTeamMembers) {
+      if (!(await this.employeeService.employeeExists(memberId))) {
+        throw new Error('Employee not found');
+      }
+      if (team.teamLeaderId == memberId) {
+        throw new Error('Employee is already the team leader');
+      }
+    }
+    const newList = team.teamMembers;
+
+    for (const memberId of addTeamMembersDto.newTeamMembers) {
+      if (!team.teamMembers.includes(memberId)) {
+        newList.push(new Types.ObjectId(memberId));
+      }
+    }
+
+    console.log('newList: ', newList);
+
+    const updateDto = new InternalUpdateTeamDto();
+    updateDto.teamMembers = newList;
+    return await this.teamRepository.update(id, updateDto);
+  }
+
+  async removeTeamMembers(id: Types.ObjectId, removeTeamMembersDto: RemoveTeamMembersDto) {
+    console.log('In remove team members');
+
+    const team = await this.findById(id);
+    if (!team) {
+      throw new Error('Team not found');
+    }
+
+    for (const memberId of removeTeamMembersDto.teamMembersToBeRemoved) {
+      if (!(await this.employeeService.employeeExists(memberId))) {
+        throw new Error('Employee not found');
+      }
+      if (team.teamLeaderId == memberId) {
+        throw new Error('Employee is the team leader. Please change the team leader first');
+      }
+    }
+    console.log('team.teamMembers: ', team.teamMembers);
+
+    const newList = team.teamMembers;
+
+    for (const memberId of removeTeamMembersDto.teamMembersToBeRemoved) {
+      console.log('memberId: ', memberId);
+      if (team.teamMembers.map((x) => x.toString()).includes(memberId.toString())) {
+        console.log('In if');
+        newList.splice(newList.indexOf(memberId), 1);
+      }
+    }
+
+    console.log('newList: ', newList);
+
+    const updateDto = new InternalUpdateTeamDto();
+    updateDto.teamMembers = newList;
+    return await this.teamRepository.update(id, updateDto);
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {
