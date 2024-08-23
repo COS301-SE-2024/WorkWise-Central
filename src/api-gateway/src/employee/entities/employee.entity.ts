@@ -69,7 +69,7 @@ export class Employee {
     default: [],
     ref: 'Team',
   })
-  subordinateTeams?: Types.ObjectId[];
+  teams?: Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'User' })
