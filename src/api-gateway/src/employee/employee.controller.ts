@@ -483,6 +483,7 @@ export class EmployeeController {
       try {
         data = await this.employeeService.update(employeeId, updateEmployeeDto);
       } catch (e) {
+        console.log('error:', e);
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
       return { data: data };

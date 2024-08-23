@@ -339,37 +339,38 @@ export class EmployeeService {
     return await this.employeeRepository.updateSubordinates(employeeId, newSubordinates);
   }
 
-  async updateSuperior(employeeId: Types.ObjectId, newSuperior: Types.ObjectId) {
+  async updateSuperior(employeeId: Types.ObjectId, newSuperiorId: Types.ObjectId) {
     //checking that the new superior is not in the tree below the current employee
     const currentEmployee = await this.findById(employeeId);
-    const currentSup = await this.findById(currentEmployee.superiorId);
-    const newSup = await this.findById(newSuperior);
+    const currentSuperior = await this.findById(currentEmployee.superiorId);
+    const newSuperior = await this.findById(newSuperiorId);
 
-    if (!currentEmployee || !currentSup || !newSup) {
+    if (!currentEmployee || !currentSuperior || !newSuperior) {
       throw new Exception('Could not update superior');
     }
     const listBelow = await this.deptFirstTraversalId(employeeId);
+    console.log('listBelow: ', listBelow);
 
     if (listBelow.length == 0) {
       throw new Exception('Could not update superior');
     }
 
-    if (listBelow.includes(employeeId)) {
+    if (listBelow.includes(newSuperiorId)) {
       throw new Exception('Cannot make the a person below the current employee a superior of the employee');
     }
 
     //Updating the subordinate list of the employee's current superior
-    let newSubordinates = currentSup.subordinates;
-    newSubordinates.filter((ids) => ids.toString() !== employeeId.toString());
-    await this.employeeRepository.updateSubordinates(currentSup._id, newSubordinates);
+    let newSubordinates = currentSuperior.subordinates;
+    newSubordinates = newSubordinates.filter((ids) => ids.toString() !== employeeId.toString());
+    await this.employeeRepository.updateSubordinates(currentSuperior._id, newSubordinates);
 
     //Updating the subordinate list of the employees new superior
-    newSubordinates = newSup.subordinates;
+    newSubordinates = newSuperior.subordinates;
     newSubordinates.push(employeeId);
-    await this.employeeRepository.updateSubordinates(newSup._id, newSubordinates);
+    await this.employeeRepository.updateSubordinates(newSuperior._id, newSubordinates);
 
     //Updating the current employees superior
-    return await this.employeeRepository.updateSuperior(employeeId, newSuperior);
+    return await this.employeeRepository.updateSuperior(employeeId, newSuperiorId);
   }
 
   async addJobAssignment(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
