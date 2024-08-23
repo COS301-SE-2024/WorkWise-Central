@@ -284,6 +284,7 @@ export class EmployeeController {
 
     const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all employees')) {
       const data = await this.employeeService.detailedFindById(id);
       return { data: data };
@@ -580,11 +581,13 @@ export class EmployeeController {
     @Param('employeeId') employeeId: Types.ObjectId,
     @Body() removeSubordinatesDto: RemoveSubordinatesDto,
   ) {
+    console.log('removeSubordinate');
     const currentEmployee = await this.employeeService.findById(removeSubordinatesDto.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('edit all employees')) {
       let data;
       try {
-        data = await this.employeeService.update(employeeId, removeSubordinatesDto);
+        console.log('In try block');
+        data = await this.employeeService.removeSubordinates(employeeId, removeSubordinatesDto);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }

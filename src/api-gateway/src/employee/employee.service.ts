@@ -243,11 +243,15 @@ export class EmployeeService {
   }
 
   async removeSubordinates(employeeId: Types.ObjectId, removeSubordinatesDto: RemoveSubordinatesDto) {
+    console.log('employeeId: ', employeeId);
+    console.log('removeSubordinatesDto: ', removeSubordinatesDto);
     const currentEmployee = await this.findById(employeeId);
     let newSubordinates = currentEmployee.subordinates;
     //checking to see if the any of the current subordinates are being removed
     for (const subId of removeSubordinatesDto.subordinatesToBeRemoved) {
-      if (currentEmployee.subordinates.includes(subId)) {
+      console.log('subId: ', subId);
+      if (currentEmployee.subordinates.map((ids) => ids.toString()).includes(subId.toString())) {
+        console.log('In if');
         newSubordinates = newSubordinates.filter((ids) => ids.toString() !== subId.toString()); //Removing the subId from the list of subordinates
 
         //updating the superior of the removed subordinate to be the owner of the company
