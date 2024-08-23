@@ -269,6 +269,17 @@ export class UsersService {
     if (!userToDelete) {
       throw new NotFoundException('Error: User not found, please verify your user');
     }
+    //Remove All joinedCompanies
+    for (const joinedCompany of userToDelete.joinedCompanies) {
+      this.jobService.removeAllReferencesToEmployee(joinedCompany.employeeId);
+      this.employeeService.remove(joinedCompany.employeeId);
+    }
+
+    this.emailService.sendGoodbye({
+      name: userToDelete.personalInfo.firstName,
+      emailAddress: userToDelete.personalInfo.contactInfo.email,
+    });
+
     const result = await this.userRepository.delete(id);
     if (result == null) {
       throw new InternalServerErrorException('Internal server Error');
