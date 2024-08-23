@@ -160,6 +160,34 @@ export class JobService {
   }
 
   async softDelete(id: Types.ObjectId): Promise<boolean> {
+    const job = await this.getJobById(id);
+    if (!job) throw new NotFoundException('Job not found');
+    //Unassign all employees
+    ///from jobs
+    for (const employeeId of job.assignedEmployees.employeeIds) {
+      const employee = await this.employeeService.findById(employeeId);
+      employee.currentJobAssignments = employee.currentJobAssignments.filter(
+        (ass) => ass.toString() === employeeId.toString(),
+      );
+      await this.employeeService.internalUpdate(employeeId, {
+        currentJobAssignments: employee.currentJobAssignments,
+      });
+    }
+    ///from taskItems
+    for (const task of job.taskList) {
+      for (const item of task.items) {
+        for (const employeeId of item.assignedEmployees) {
+          const employee = await this.employeeService.findById(employeeId);
+          if (!employee) continue;
+          employee.currentJobAssignments = employee.currentJobAssignments.filter(
+            (ass) => ass.toString() === employeeId.toString(),
+          );
+          await this.employeeService.internalUpdate(employeeId, {
+            currentJobAssignments: employee.currentJobAssignments,
+          });
+        }
+      }
+    }
     await this.jobRepository.delete(id);
     return true;
   }
