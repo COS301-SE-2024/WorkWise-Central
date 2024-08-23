@@ -13,6 +13,7 @@ import {
   Headers,
   UseInterceptors,
   UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import {
@@ -48,7 +49,7 @@ import {
   CompanyResponseDto,
 } from './entities/company.entity';
 import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
-import { extractUserId, validateObjectId, validateObjectIds } from '../utils/Utils';
+import { extractUserId, isBase64Uri, validateObjectId, validateObjectIds } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -95,7 +96,12 @@ export class CompanyController {
   })
   @Post('/create')
   async create(@Body() createCompanyDto: CreateCompanyDto): Promise<CreateCompanyResponseDto> {
-    return await this.companyService.create(createCompanyDto);
+    if (createCompanyDto.logo) {
+      if (!isBase64Uri(createCompanyDto.logo)) {
+        throw new BadRequestException('Profile picture is invalid, it must be base64 encoded');
+      }
+    }
+    return { data: await this.companyService.create(createCompanyDto) };
   }
 
   @ApiOperation({
@@ -123,7 +129,6 @@ export class CompanyController {
     // }
   }
 
-  @UseGuards(AuthGuard) //It may be accessed by external users
   @ApiOperation({
     summary: `Get all ${className} Names (Except Privates ones)`,
   })
@@ -260,6 +265,7 @@ export class CompanyController {
   @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Change the Logo of a ${className}`,
+    description: `Mime Type: multipart/mixed.\n The key for the image is "logo"`,
   })
   @ApiOkResponse({
     type: CompanyResponseDto,
@@ -272,7 +278,7 @@ export class CompanyController {
   async updateLogo(
     @Headers() headers: any,
     @Param('cid') companyId: string,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() logo: Express.Multer.File,
     @Body() body: { currentEmployeeId: Types.ObjectId },
   ) {
     const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
@@ -281,7 +287,7 @@ export class CompanyController {
         validateObjectId(companyId);
         const userId = extractUserId(this.jwtService, headers);
         return {
-          data: await this.companyService.updateLogo(userId, new Types.ObjectId(companyId), file),
+          data: await this.companyService.updateLogo(userId, new Types.ObjectId(companyId), logo),
         };
       } catch (e) {
         throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);

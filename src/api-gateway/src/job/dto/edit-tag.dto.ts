@@ -9,7 +9,7 @@ export class UpdateTagDto {
   @IsMongoId()
   companyId: Types.ObjectId;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @IsMongoId()
   tagId: Types.ObjectId;
@@ -32,7 +32,7 @@ export class UpdatePriorityTagDto {
   @IsMongoId()
   companyId: Types.ObjectId;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @IsMongoId()
   priorityTagId: Types.ObjectId;
@@ -54,7 +54,7 @@ export class UpdatePriorityTagDto {
 }
 
 export class DeleteTagDto {
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @IsMongoId()
   tagId: Types.ObjectId;

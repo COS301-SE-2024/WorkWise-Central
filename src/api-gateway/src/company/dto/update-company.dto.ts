@@ -1,9 +1,10 @@
-import { Address, ContactDetails } from '../entities/company.entity';
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
+  IsEmail,
   IsMongoId,
   IsNotEmpty,
+  IsNumberString,
   IsOptional,
   IsString,
   MaxLength,
@@ -16,8 +17,50 @@ import { RegistrationNumber } from '../../utils/Custom Validators/RegistrationNu
 import { Types } from 'mongoose';
 import { Base64ContentIsImage } from '../../utils/Custom Validators/Base64ContentIsImage';
 
-class UpdateContactDetails extends PartialType(ContactDetails) {}
-class UpdateAddress extends PartialType(Address) {}
+export class ContactDetails {
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @IsEmail()
+  email?: string;
+}
+
+export class Address {
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  street?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  province?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  suburb?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  city?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumberString()
+  @MaxLength(20)
+  postalCode?: string;
+}
 
 export class UpdateCompanyDto {
   @ApiProperty()
@@ -48,14 +91,14 @@ export class UpdateCompanyDto {
   @ApiProperty()
   @IsOptional()
   @ValidateNested()
-  @Type(() => UpdateContactDetails)
-  contactDetails?: UpdateContactDetails;
+  @Type(() => ContactDetails)
+  contactDetails?: ContactDetails;
 
   @ApiProperty()
   @IsOptional()
   @ValidateNested()
-  @Type(() => UpdateAddress)
-  address?: UpdateAddress;
+  @Type(() => Address)
+  address?: Address;
 
   @ApiProperty()
   @IsOptional()

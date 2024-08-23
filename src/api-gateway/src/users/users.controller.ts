@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -33,11 +34,11 @@ import mongoose, { Types } from 'mongoose';
 import { UserAllResponseDto, UserResponseDto } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { UserEmailVerificationDTO } from './dto/user-validation.dto';
-import { BooleanResponseDto, FileResponseDto } from '../shared/dtos/api-response.dto';
+import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserAllResponseDetailedDto } from './dto/user-response.dto';
 //import { GetImageValidator } from '../utils/Custom Validators/GetImageValidator';
-import { BodyInterceptor } from '../utils/Custom Interceptors/body.interceptor';
+import { isBase64Uri } from '../utils/Utils';
 // import { diskStorage } from 'multer';
 // import e from 'express';
 // import firebase from 'firebase/compat';
@@ -98,20 +99,27 @@ export class UsersController {
     description: `The access token and ${className}'s Id used for querying. 
     currentCompany Will also be added soon*`,
   })
-  @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('profilePicture'), BodyInterceptor)
+  @ApiConsumes('application/json')
   @Post('/create')
   async create(@Body() createUserDto: CreateUserDto): Promise<CreateUserResponseDto> {
     console.log('createUserController', createUserDto);
     try {
-      return await this.usersService.create(createUserDto, createUserDto.profilePicture);
+      const profilePicture = createUserDto.profilePicture;
+      console.log(profilePicture);
+      if (profilePicture) {
+        if (!isBase64Uri(profilePicture)) {
+          throw new BadRequestException('Profile picture is invalid, it must be base64 encoded');
+        }
+      }
+      return await this.usersService.create(createUserDto);
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
   }
 
-  @ApiOperation({
+  /*  @ApiOperation({
     summary: `Upload a new User's Profile Picture, and receive the image url`,
+    description: `This is a form-data request, with the key called 'file'`,
   })
   @ApiOkResponse({
     type: FileResponseDto,
@@ -121,13 +129,13 @@ export class UsersController {
   @ApiBody({ type: UpdateProfilePicDto })
   @UseInterceptors(FileInterceptor('profilePicture'))
   @Post('/newUser/profilePic')
-  async uploadProfilePic(@UploadedFile(/*GetImageValidator()*/) file: Express.Multer.File): Promise<FileResponseDto> {
+  async uploadProfilePic(@UploadedFile(/!*GetImageValidator()*!/) file: Express.Multer.File): Promise<FileResponseDto> {
     try {
       return this.usersService.uploadProfilePic(file);
     } catch (e) {
       throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+  }*/
 
   //@UseGuards(AuthGuard)
   //@ApiBearerAuth('JWT')
@@ -289,9 +297,7 @@ export class UsersController {
   @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Change the Profile Picture of a ${className}`,
-    /*    description: `
-    You may send the entire ${className} object that was sent to you, in your request body.\r\n
-    You may also send a singular attribute `,*/
+    description: `MIME TYPE is a multipart/form-data.\n The file's key is "profilePicture"`,
   })
   @ApiOkResponse({
     type: UserResponseDto,
