@@ -770,7 +770,16 @@ export class JobService {
     const companyExists = await this.companyService.companyIdExists(deleteTagDto.companyId);
     if (!companyExists) throw new NotFoundException('Company not found');
     ///
-    //TODO: Cascade delete
+    const jobsInCompany = await this.jobRepository.findAllInCompany(deleteTagDto.companyId);
+    for (const job of jobsInCompany) {
+      if (job.tags) {
+        const newTags = job.tags.filter((t) => t.toString() !== deleteTagDto.tagId.toString());
+        await this.jobRepository.update(job._id, {
+          tags: newTags,
+        });
+      }
+    }
+
     const deleteResult = await this.jobTagRepository.deleteJobTag(deleteTagDto.tagId);
     return deleteResult.acknowledged;
   }
@@ -786,7 +795,14 @@ export class JobService {
     const companyExists = await this.companyService.companyIdExists(deleteTagDto.companyId);
     if (!companyExists) throw new NotFoundException('Company not found');
     ///
-    //TODO: Cascade delete
+    const jobsInCompany = await this.jobRepository.findAllInCompany(deleteTagDto.companyId);
+    for (const job of jobsInCompany) {
+      if (job.priorityTag) {
+        await this.jobRepository.update(job._id, {
+          priorityTag: null,
+        });
+      }
+    }
     const deleteResult = await this.jobTagRepository.deletePriorityTag(deleteTagDto.tagId);
     return deleteResult.acknowledged;
   }
