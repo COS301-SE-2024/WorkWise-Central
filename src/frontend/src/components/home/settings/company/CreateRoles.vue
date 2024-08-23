@@ -32,12 +32,12 @@
       <v-card-actions>
         <v-container>
           <v-row>
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn color="error" rounded="md" variant="text" @click="close" block
                 ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon> Cancel
               </v-btn>
             </v-col>
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn
                 @click="createRole"
                 :disabled="!formIsValid"

@@ -24,13 +24,13 @@
       <v-card-actions>
         <v-container>
           <v-row justify="end">
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn color="secondary" @click="close" block>
-                <v-icon icon="fa:fa-solid fa-times" start color="secondary" size="small"></v-icon>
+                <v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon>
                 Cancel
               </v-btn>
             </v-col>
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn color="error" :loading="isDeleting" block @click="deleteTeam">
                 <v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>
                 Delete

@@ -25,16 +25,20 @@
       </v-row>
     </v-card-text>
     <v-card-actions class="d-flex flex-column">
-      <v-col class="d-flex flex-column">
-        <v-btn class="mb-4" @click="cancelJob" color="error"
-          ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
-        >
-      </v-col>
-      <v-col class="d-flex flex-column">
-        <v-btn class="mb-4" @click="emitSave" color="success"
-          ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
-        >
-      </v-col>
+      <v-container>
+        <v-row>
+          <v-col class="d-flex flex-column" order="last" order-lg="first" cols="12" lg="6">
+            <v-btn class="mb-4" @click="cancelJob" color="error" block
+              ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
+            >
+          </v-col>
+          <v-col class="d-flex flex-column" order="first" order-lg="last" cols="12" lg="6">
+            <v-btn class="mb-4" @click="emitSave" color="success" block
+              ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
+            >
+          </v-col></v-row
+        ></v-container
+      >
     </v-card-actions>
   </v-card>
 </template>

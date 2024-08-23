@@ -73,11 +73,11 @@
         <v-card-actions class="d-flex flex-column">
           <v-container
             ><v-row
-              ><v-col>
+              ><v-col cols="12" lg="6" order="last" order-lg="first">
                 <v-btn @click="saveAllItems" color="success" block
                   ><v-icon icon="fa:fa-solid fa-floppy-disk"></v-icon>Save All</v-btn
                 ></v-col
-              ><v-col
+              ><v-col cols="12" lg="6" order="first" order-lg="last"
                 ><v-btn @click="isActive.value = false" color="error" block
                   ><v-icon icon="fa:fa-solid fa-cancel" color="error"></v-icon>Cancel</v-btn
                 ></v-col

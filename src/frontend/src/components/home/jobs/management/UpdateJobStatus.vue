@@ -55,8 +55,16 @@
           </v-radio-group>
         </v-card-text>
         <v-card-actions class="d-flex flex-column">
-          <v-btn @click="saveStatus" color="success"> Save </v-btn>
-          <v-btn @click="isActive.value = false" color="error"> Cancel </v-btn>
+          <v-container>
+            <v-row>
+              <v-col cols="12" lg="6">
+                <v-btn @click="saveStatus" color="success" block> Save </v-btn></v-col
+              >
+              <v-col cols="12" lg="6"
+                ><v-btn @click="isActive.value = false" color="error" block> Cancel </v-btn></v-col
+              ></v-row
+            ></v-container
+          >
         </v-card-actions>
       </v-card>
     </template>

@@ -346,7 +346,7 @@
       <v-card-actions class="d-flex flex-column">
         <v-container>
           <v-row>
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6"  order="last" order-lg="first" >
               <v-btn
                 color="error"
                 rounded="md"
@@ -359,7 +359,7 @@
                 ><v-icon icon="fa: fa-solid fa-cancel" color="error" start></v-icon>Cancel
               </v-btn>
             </v-col>
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6"  order="first" order-lg="last" >
               <v-btn
                 color="success"
                 rounded="md"

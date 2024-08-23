@@ -45,7 +45,7 @@
       <v-actions @click="closeCompanyDialog" class="bg-background">
         <v-container>
           <v-row>
-            <v-col cols="12" lg="6" align-self="center">
+            <v-col cols="12" lg="6" align-self="center" order="last" order-lg="first" >
               <v-btn
                 color="error"
                 width="100%"
@@ -56,7 +56,7 @@
                 >Close</v-btn
               >
             </v-col>
-            <v-col cols="12" lg="6" align-self="center">
+            <v-col cols="12" lg="6" align-self="center" order="first" order-lg="last" >
               <v-btn
                 color="success"
                 width="100%"

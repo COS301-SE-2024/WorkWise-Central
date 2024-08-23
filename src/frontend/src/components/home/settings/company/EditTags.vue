@@ -91,11 +91,11 @@
         <v-card-actions>
           <v-container
             ><v-row
-              ><v-col cols="12" lg="6">
+              ><v-col cols="12" lg="6" order="last" order-lg="first">
                 <v-btn color="error" rounded="md" variant="text" @click="close" block>
                   <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon> Cancel
                 </v-btn></v-col
-              ><v-col cols="12" lg="6">
+              ><v-col cols="12" lg="6" order="first" order-lg="last">
                 <v-btn
                   @click="updateTag"
                   :disabled="!formIsValid"

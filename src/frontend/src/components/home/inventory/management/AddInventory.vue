@@ -77,13 +77,13 @@
       <v-card-actions
         ><v-container
           ><v-row justify="end"
-            ><v-col cols="12" lg="6">
+            ><v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn @click="close" color="error" block :loading="isDeleting"
                 ><v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
                 >Cancel
               </v-btn></v-col
             >
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn
                 @click="createInventoryItem"
                 color="success"

@@ -169,7 +169,7 @@
                 </v-col>
                 <v-container>
                   <v-row
-                    ><v-col cols="12" lg="6">
+                    ><v-col cols="12" lg="6"  order="last" order-lg="first" >
                       <v-btn
                         :disabled="!valid"
                         text
@@ -185,7 +185,7 @@
                         >Login</v-btn
                       >
                     </v-col>
-                    <v-col cols="12" lg="6">
+                    <v-col cols="12" lg="6"  order="first" order-lg="last" >
                       <v-btn
                         text
                         @click="(signupDialog = true)((loginDialog = false))(resetFields)"
@@ -373,7 +373,7 @@
                   </v-col>
                   <v-container
                     ><v-row>
-                      <v-col cols="12" lg="6">
+                      <v-col cols="12" lg="6"  order="last" order-lg="first" >
                         <v-btn
                           @click="(loginDialog = true), (signupDialog = false)"
                           rounded="md"
@@ -385,7 +385,7 @@
                           >Login</v-btn
                         >
                       </v-col>
-                      <v-col cols="12" lg="6">
+                      <v-col cols="12" lg="6"  order="first" order-lg="last" >
                         <Toast position="top-center" />
                         <v-btn
                           :disabled="!valid"
@@ -464,7 +464,7 @@
                   </v-col>
                   <v-container
                     ><v-row>
-                      <v-col cols="12" lg="6">
+                      <v-col cols="12" lg="6" order="last" order-lg="first">
                         <v-btn
                           @click="(signupDialog = true)((signup1Dialog = false))"
                           rounded="md"
@@ -475,7 +475,7 @@
                           block
                           >Back</v-btn
                         > </v-col
-                      ><v-col cols="12" lg="6">
+                      ><v-col cols="12" lg="6" order="first" order-lg="last">
                         <v-btn
                           :disabled="!valid"
                           text
@@ -552,7 +552,7 @@
                   </v-col>
                   <v-container
                     ><v-row>
-                      <v-col cols="12" lg="6">
+                      <v-col cols="12" lg="6" order="last" order-lg="first">
                         <v-btn
                           :disabled="!valid"
                           text
@@ -565,7 +565,7 @@
                           block
                           >Back</v-btn
                         ></v-col
-                      ><v-col cols="12" lg="6">
+                      ><v-col cols="12" lg="6" order="first" order-lg="last">
                         <Toast position="top-center" />
                         <v-btn
                           :disabled="!valid"
@@ -664,7 +664,7 @@
                   </v-col>
                   <v-container
                     ><v-row>
-                      <v-col cols="12" lg="6">
+                      <v-col cols="12" lg="6" order="last" order-lg="first">
                         <v-btn
                           @click="(signupUsernameDialog = true)((signup2Dialog = false))"
                           rounded="md"
@@ -675,7 +675,7 @@
                           block
                           >Back</v-btn
                         > </v-col
-                      ><v-col cols="12" lg="6">
+                      ><v-col cols="12" lg="6" order="first" order-lg="last">
                         <v-btn
                           :disabled="!valid"
                           text
@@ -810,7 +810,7 @@
                   </v-col>
                   <v-container>
                     <v-row>
-                      <v-col cols="12" lg="6">
+                      <v-col cols="12" lg="6" order="last" order-lg="first">
                         <v-btn
                           @click="(signup2Dialog = true)((signupAddressDialog = false))"
                           rounded="md"
@@ -821,7 +821,7 @@
                           block
                           >Back</v-btn
                         > </v-col
-                      ><v-col cols="12" lg="6">
+                      ><v-col cols="12" lg="6" order="first" order-lg="last">
                         <v-btn
                           :disabled="!valid"
                           text

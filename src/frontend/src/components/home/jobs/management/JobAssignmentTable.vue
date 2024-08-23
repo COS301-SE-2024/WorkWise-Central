@@ -199,13 +199,13 @@
           <v-card-actions>
             <v-container
               ><v-row
-                ><v-col cols="12" lg="6">
+                ><v-col cols="12" lg="6" order="last" order-lg="first">
                   <v-btn @click="deleteDialog = false" block color="secondary"
                     ><v-icon icon="fa: fa-solid fa-cancel" color="secondary"></v-icon>Cancel</v-btn
                   ></v-col
-                ><v-col cols="12" lg="6">
+                ><v-col cols="12" lg="6" order="first" order-lg="last">
                   <v-btn color="error" @click="confirmDelete" block :loading="isDeleting"
-                    ><v-icon icon="fa: fa-solid fa-trash" color="error"></v-icon>Confirm</v-btn
+                    ><v-icon icon="fa: fa-solid fa-trash" color="error"></v-icon>Delete</v-btn
                   ></v-col
                 >
               </v-row></v-container
