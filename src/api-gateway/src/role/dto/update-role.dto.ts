@@ -50,14 +50,7 @@ export class ExternalBulkUpdateRoleDto {
   @IsMongoId()
   currentEmployeeId: Types.ObjectId;
 
-  @IsNotEmptyObject()
+  @IsNotEmpty()
   @ApiProperty()
   bulkUpdateRoleDto: BulkUpdateRoleDto[];
 }
-
-// export class BulkUpdateRoleResponseDto {
-//   response: { access_token: string; id: Types.ObjectId }[];
-//   constructor(message: { access_token: string; id: Types.ObjectId }) {
-//     this.response = [message];
-//   }
-// }
