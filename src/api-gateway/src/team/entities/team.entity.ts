@@ -21,11 +21,11 @@ export class Team {
   teamName: string;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true, ref: 'Employee' })
   teamMembers: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: false })
+  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: 'Employee' })
   teamLeaderId?: Types.ObjectId;
 
   @ApiProperty()

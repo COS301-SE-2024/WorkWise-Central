@@ -234,16 +234,17 @@ export class RoleService {
     return this.roleRepository.update(roleId, updateRoleDto);
   }
 
-  async bulkUpdate(userId: Types.ObjectId, bulkUpdateRoleDto: BulkUpdateRoleDto[], companyId: Types.ObjectId) {
-    console.log('In bulk update');
+  async bulkUpdate(bulkUpdateRoleDto: BulkUpdateRoleDto[], companyId: Types.ObjectId) {
+    // console.log('In bulk update');
     //Checking that the roles exist for the given company
     const roles = await this.roleRepository.findAllInCompany(companyId);
-    console.log('roles: ', roles);
+    // console.log('roles: ', roles);
     for (let i = 0; i < bulkUpdateRoleDto.length; i++) {
-      console.log('In for loop');
-      const role = roles.find((role) => role._id === bulkUpdateRoleDto[i].roleId);
-      console.log('role: ', role);
+      // console.log('In for loop');
+      const role = roles.find((role) => role._id.toString() === bulkUpdateRoleDto[i].roleId.toString());
+      // console.log('role: ', role);
       if (!role) {
+        // console.log('Role does not exist: ', role);
         throw new Error('Role does not exist');
       }
     }
