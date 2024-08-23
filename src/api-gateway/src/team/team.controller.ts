@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CreateTeamDto, createTeamResponseDto } from './dto/create-team.dto';
-import { UpdateTeamDto } from './dto/update-team.dto';
+import { AddTeamMembersDto, RemoveTeamMembersDto, UpdateTeamDto } from './dto/update-team.dto';
 import { TeamService } from './team.service';
 import {
   ApiBadRequestResponse,
@@ -238,6 +238,91 @@ export class TeamController {
     let data;
     try {
       data = await this.teamService.update(teamId, updateTeamDto);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request is not authorized to view the data.`,
+  })
+  @ApiOperation({
+    summary: `Add team members to a ${className} instances`,
+    description: `Send the id of the ${className} and an array of new team members to be added to that ${className}, and then the team members get added if they are valid`,
+  })
+  @ApiOkResponse({
+    type: teamResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @ApiParam({
+    name: 'teamId',
+    description: `The _id attribute of the ${className} to be updated.`,
+    type: String,
+  })
+  @ApiBody({ type: UpdateTeamDto })
+  @Patch('add/:teamId')
+  async addTeamMember(@Param('teamId') teamId: Types.ObjectId, @Body() addTeamMembersDto: AddTeamMembersDto) {
+    let data;
+    try {
+      data = await this.teamService.addTeamMembers(teamId, addTeamMembersDto);
+    } catch (e) {
+      console.log(e);
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request is not authorized to view the data.`,
+  })
+  @ApiOperation({
+    summary: `Add team members to a ${className} instances`,
+    description: `Send the id of the ${className} and an array of the team members to be removed from the ${className}, and then the team members get removed if they are part of the team`,
+  })
+  @ApiOkResponse({
+    type: teamResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @ApiParam({
+    name: 'teamId',
+    description: `The _id attribute of the ${className} to be updated.`,
+    type: String,
+  })
+  @ApiBody({ type: UpdateTeamDto })
+  @Patch('remove/:teamId')
+  async removeTeamMember(@Param('teamId') teamId: Types.ObjectId, @Body() removeTeamMembersDto: RemoveTeamMembersDto) {
+    let data;
+    try {
+      data = await this.teamService.removeTeamMembers(teamId, removeTeamMembersDto);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }

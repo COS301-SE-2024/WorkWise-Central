@@ -123,7 +123,7 @@ export class TeamRepository {
   }
 
   async update(id: Types.ObjectId, updateTeamDto: UpdateTeamDto) {
-    const previousObject: FlattenMaps<Team> & { _id: Types.ObjectId } = await this.teamModel
+    return await this.teamModel
       .findOneAndUpdate(
         {
           $and: [
@@ -136,7 +136,6 @@ export class TeamRepository {
         { $set: { ...updateTeamDto }, updatedAt: new Date() },
       )
       .lean();
-    return previousObject;
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {
