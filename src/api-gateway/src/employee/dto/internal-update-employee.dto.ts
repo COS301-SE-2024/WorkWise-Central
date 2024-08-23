@@ -27,7 +27,7 @@ export class UpdateEmployeeUserInfoDto {
 export class InternalUpdateEmployeeDto {
   @IsMongoId()
   @IsOptional()
-  role?: roleObject = new roleObject();
+  role?: roleObject;
 
   @IsArray()
   @IsMongoId({ each: true })
@@ -36,17 +36,19 @@ export class InternalUpdateEmployeeDto {
 
   @IsMongoId()
   @IsOptional()
+  @ApiProperty()
   superiorId?: Types.ObjectId;
 
   @IsArray()
   @IsMongoId({ each: true })
   @IsOptional()
+  @ApiProperty()
   subordinates?: Types.ObjectId[];
 
   @IsArray()
   @IsMongoId({ each: true })
   @IsOptional()
-  subordinateTeams?: Types.ObjectId[];
+  teams?: Types.ObjectId[];
 
   @ApiProperty()
   @IsMongoId()
