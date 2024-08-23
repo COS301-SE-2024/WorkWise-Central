@@ -111,12 +111,6 @@ export class JobService {
     }
   }
 
-  async jobExists(id: Types.ObjectId): Promise<boolean> {
-    const result: FlattenMaps<Job> & { _id: Types.ObjectId } = await this.jobRepository.exists(id);
-    //console.log('jobExists -> ', result);
-    return result != null;
-  }
-
   async jobExistsInCompany(id: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } = await this.jobRepository.existsInCompany(id, companyId);
 
@@ -385,9 +379,6 @@ export class JobService {
     /// Role-based stuff
     //TODO: Implement later
 
-    //TODO: Add Assigned Tasks
-    await this.employeeService.update(taskAssignDto.employeeId, taskAssignDto.employeeToAssignId._id, {});
-
     const result = await this.jobRepository.assignEmployeeToTaskItem(
       taskAssignDto.employeeToAssignId,
       taskAssignDto.jobId,
@@ -445,9 +436,6 @@ export class JobService {
 
     /// Role-based stuff
     //TODO: Implement later
-
-    //TODO: Add Assigned Tasks
-    await this.employeeService.update(taskAssignDto.employeeId, taskAssignDto.employeeToAssignId._id, {});
 
     const result = await this.jobRepository.unassignEmployeeFromTaskItem(
       taskAssignDto.employeeToAssignId,
@@ -1086,5 +1074,10 @@ export class JobService {
 
   deleteAllTagsAndStatusesInCompany(companyId: Types.ObjectId) {
     this.jobTagRepository.deleteAllTagsAndStatusesInCompany(companyId);
+  }
+
+  removeAllReferencesToEmployee(employeeId: Types.ObjectId) {
+    this.jobRepository.removeAllReferencesToEmployee(employeeId);
+    return true;
   }
 }
