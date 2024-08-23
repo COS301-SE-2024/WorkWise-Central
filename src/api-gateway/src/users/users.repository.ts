@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
 import {
+  Address,
   JoinedCompany,
   Profile,
   User,
@@ -155,20 +156,33 @@ export class UsersRepository {
   }
 
   async update(id: Types.ObjectId, updateUserDto: UpdateUserDto) {
-    return this.userModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        },
-        { $set: { ...updateUserDto }, updatedAt: currentDate() },
-        { new: true },
-      )
-      .lean();
+    const user = await this.userModel
+      .findOne({
+        $and: [{ _id: id }, isNotDeleted],
+      })
+      .exec();
+    if (updateUserDto.profile) {
+      user.profile = { ...user.profile, ...updateUserDto.profile };
+    }
+    if (updateUserDto.personalInfo) {
+      const updatedAddress: Address = { ...user.personalInfo.address, ...updateUserDto.personalInfo.address };
+      const updatedContactInfo = { ...user.personalInfo.contactInfo, ...updateUserDto.personalInfo.contactInfo };
+      user.personalInfo = { ...user.personalInfo, ...updateUserDto.personalInfo };
+      user.personalInfo.address = updatedAddress;
+      user.personalInfo.contactInfo = updatedContactInfo;
+    }
+    if (updateUserDto.skills) {
+      user.skills = updateUserDto.skills;
+    }
+    if (updateUserDto.currentEmployee) {
+      user.currentEmployee = updateUserDto.currentEmployee;
+    }
+    if (updateUserDto.systemDetails) {
+      user.systemDetails = { ...user.systemDetails, ...updateUserDto.systemDetails };
+    }
+    user.updatedAt = currentDate();
+
+    return (await user.save()).toObject();
   }
 
   async updateProfilePicture(id: Types.ObjectId, profile: Profile) {
@@ -290,6 +304,9 @@ export class UsersRepository {
         $and: [{ 'systemDetails.email': { $regex: regex, $options: 'i' } }, isNotDeleted],
       })
       .lean();
+    console.log(user);
+
+    if (!user) return false;
 
     for (const joinedCompany of user.joinedCompanies) {
       if (joinedCompany.companyId.toString() === companyId.toString()) {

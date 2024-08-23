@@ -309,7 +309,7 @@ export class CreateJobDto {
   @IsString({ each: true })
   attachments?: string[];
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Must be a Base64 string' })
   @IsOptional()
   coverImage?: string;
 }

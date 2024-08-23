@@ -21,7 +21,6 @@ import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { isPhoneNumber } from 'class-validator';
 import { CompanyService } from '../company/company.service';
 import { FileService } from '../file/file.service';
-import { FileResponseDto } from '../shared/dtos/api-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -41,16 +40,15 @@ export class UsersService {
     private fileService: FileService,
   ) {}
 
-  async create(createUserDto: CreateUserDto, profilePicture?: Express.Multer.File) {
+  async create(createUserDto: CreateUserDto) {
     const inputValidated = await this.createUserValid(createUserDto);
     if (!inputValidated.isValid) throw new ConflictException(inputValidated.message);
 
     //Save files In Bucket, and store URLs (if provided)
-    console.log(profilePicture);
     let secureUrl: string = '';
     if (createUserDto.profilePicture) {
       console.log('Uploading image');
-      const picture = await this.fileService.uploadFile(createUserDto.profilePicture);
+      const picture = await this.fileService.uploadBase64Image(createUserDto.profilePicture);
       if (picture.secure_url != null) {
         secureUrl = picture.secure_url;
       } else throw new InternalServerErrorException('file upload failed');
@@ -220,7 +218,7 @@ export class UsersService {
     return updatedUser;
   }
 
-  async uploadProfilePic(file: Express.Multer.File): Promise<FileResponseDto> {
+  /*  async uploadProfilePic(file: Express.Multer.File): Promise<FileResponseDto> {
     //TODO: Add validation
     const uploadApiResponse = await this.fileService.uploadFile(file);
     let newUrl: string;
@@ -233,7 +231,7 @@ export class UsersService {
       return new FileResponseDto({ url: null });
     }
     return new FileResponseDto({ url: newUrl });
-  }
+  }*/
 
   async updateProfilePic(userId: Types.ObjectId, file: Express.Multer.File) {
     //TODO: Add validation

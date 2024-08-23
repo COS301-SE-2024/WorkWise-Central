@@ -66,6 +66,7 @@ export class ClientService {
     if (!userIsInCompany) {
       throw new UnauthorizedException('User or Employee is Null');
     }
+
     return this.clientRepository.findAllInCompany(companyId);
   }
 
@@ -76,33 +77,20 @@ export class ClientService {
   ): Promise<FlattenMaps<Client>> {
     const client = await this.clientRepository.findClientById(clientId);
     if (!client) throw new NotFoundException('Client does not exist');
-
     if (!(await this.usersService.userIsInCompany(userId, client.details.companyId)))
       throw new UnauthorizedException('User not in Same Company');
-
-    const result = await this.clientRepository.findClientById(clientId);
-
-    if (result == null) {
-      throw new NotFoundException('Client not found');
-    }
-    return result;
+    return client;
   }
 
   async getByEmailOrName(userId: Types.ObjectId, companyId: Types.ObjectId, emailOrName: string) {
-    const clients = await this.clientRepository.findClientByEmailOrName(companyId, emailOrName);
-    if (!clients) throw new NotFoundException('Client does not exist');
-
-    const company = await this.companyService.getCompanyById(companyId);
-    if (!company) throw new NotFoundException('Company');
-
     if (!(await this.usersService.userIsInCompany(userId, companyId)))
       throw new UnauthorizedException('User not in Same Company');
 
-    return clients;
+    return await this.clientRepository.findClientsWithEmailOrName(companyId, emailOrName);
   }
 
-  async clientExists(id: Types.ObjectId): Promise<boolean> {
-    return await this.clientRepository.exists(id);
+  async clientExists(clientId: Types.ObjectId): Promise<boolean> {
+    return await this.clientRepository.exists(clientId);
   }
 
   async updateClient(userId: Types.ObjectId, clientId: Types.ObjectId, updateClientDto: UpdateClientDto) {
@@ -110,11 +98,10 @@ export class ClientService {
     if (!inputValidated.isValid) {
       throw inputValidated.exception;
     }
+    const client = await this.clientRepository.findClientById(clientId);
 
-    const client = await this.getClientById(userId, clientId);
-
-    if (!(await this.usersService.userIsInCompany(userId, client.details.companyId)))
-      throw new UnauthorizedException('User not in Same Company');
+    const userIsInCompany = await this.usersService.userIsInCompany(userId, client.details.companyId);
+    if (!userIsInCompany) throw new UnauthorizedException('User not in Same Company');
 
     const result = await this.clientRepository.update(clientId, updateClientDto);
     console.log('updatedClient', result);
@@ -122,10 +109,10 @@ export class ClientService {
   }
 
   async softDelete(userId: Types.ObjectId, deleteClientDto: DeleteClientDto): Promise<boolean> {
-    await this.userIdMatchesEmployeeId(userId, deleteClientDto.employeeId);
+    /*    await this.userIdMatchesEmployeeId(userId, deleteClientDto.employeeId);
     const client = await this.getClientById(userId, deleteClientDto.clientId);
     if (!(await this.usersService.userIsInCompany(userId, client.details.companyId)))
-      throw new UnauthorizedException('User not in Company');
+      throw new UnauthorizedException('User not in Company');*/
 
     const employee: Employee = await this.employeeService.findById(deleteClientDto.employeeId);
     const allJobs = await this.jobService.getAllJobsInCompanyWithoutValidation(employee.companyId);
@@ -159,11 +146,11 @@ export class ClientService {
     if (!client) {
       return new ValidationResultWithException(false, new NotFoundException('Null Reference'));
     }
-
+    /*
     if (client.details) {
-      /*      if (client.details.contactInfo) {
+      /!*      if (client.details.contactInfo) {
         if (client.details.contactInfo.email && client.details.companyId) {
-          const exists = await this.clientRepository.findClientByEmailOrName(
+          const exists = await this.clientRepository.findClientsWithEmailOrName(
             client.details.companyId,
             client.details.contactInfo.email,
           );
@@ -173,7 +160,7 @@ export class ClientService {
               new NotFoundException('Client not found'),
             );
         }
-      }*/
+      }*!/
 
       if (client.details.companyId) {
         const exists = await this.companyService.companyIdExists(client.details.companyId);
@@ -183,7 +170,7 @@ export class ClientService {
             new ConflictException(`Invalid Company ID: ${client.details.companyId}`),
           );
       }
-    }
+    } //TODO: Fix*/
     return new ValidationResultWithException(true);
   }
 
@@ -207,12 +194,8 @@ export class ClientService {
     }
     //Check user making request
     const user = await this.usersService.getUserById(userId);
-    let userIsInCompany = false;
-    for (const joinedCompany of user.joinedCompanies) {
-      if (joinedCompany.companyId.toString() === createClientDto.details.companyId.toString()) {
-        userIsInCompany = true;
-      }
-    }
+    if (!user) return new ValidationResult(false, `User not found`);
+    const userIsInCompany = await this.usersService.userIsInCompany(user._id, createClientDto.companyId);
     if (!userIsInCompany) {
       return new ValidationResult(false, `There are are no details`);
     }
@@ -224,7 +207,7 @@ export class ClientService {
 
     return new ValidationResult(true);
   }
-  private async userIdMatchesEmployeeId(userId: Types.ObjectId, employeeId: Types.ObjectId) {
+  private async userIdMatchesEmployeeId(userId: Types.ObjectId, employeeId: Types.ObjectId): Promise<void> {
     const userExists = await this.usersService.userIdExists(userId);
     if (!userExists) throw new NotFoundException('User not found');
 
@@ -236,45 +219,45 @@ export class ClientService {
   async getListOfClientIdsUnderEmployee(employeeId: Types.ObjectId) {
     const listUnderMe = await this.employeeService.findIdsBelowMeInCompany(employeeId);
     const clientsList: Types.ObjectId[] = [];
-    listUnderMe.forEach(async (employee) => {
+    for (const employee of listUnderMe) {
       const clients = await this.getListOfClientIdsAssignedToEmployee(employee);
       clientsList.push(...clients);
-    });
+    }
     return clientsList;
   }
 
   async getListOfClientIdsAssignedToEmployee(employeeId: Types.ObjectId) {
     const employee = await this.employeeService.findById(employeeId);
     const clientsList: Types.ObjectId[] = [];
-    employee.currentJobAssignments.forEach(async (jobId) => {
+    for (const jobId of employee.currentJobAssignments) {
       const job = await this.jobService.getJobById(jobId);
       if (job.clientId) {
         clientsList.push(job.clientId);
       }
-    });
+    }
     return clientsList;
   }
 
   async getListOfClientObjectsUnderEmployee(employeeId: Types.ObjectId) {
     const listUnderMe = await this.employeeService.findIdsBelowMeInCompany(employeeId);
     const clientsList = [];
-    listUnderMe.forEach(async (employee) => {
+    for (const employee of listUnderMe) {
       const clients = await this.getListOfClientObjectsAssignedToEmployee(employee);
       clientsList.push(clients);
-    });
+    }
     return clientsList;
   }
 
   async getListOfClientObjectsAssignedToEmployee(employeeId: Types.ObjectId) {
     const employee = await this.employeeService.findById(employeeId);
     const clientsList = [];
-    employee.currentJobAssignments.forEach(async (jobId) => {
+    for (const jobId of employee.currentJobAssignments) {
       const job = await this.jobService.getJobById(jobId);
       if (job.clientId) {
         const client = await this.getClientById(employee.userId, job.clientId);
         clientsList.push(client);
       }
-    });
+    }
     return clientsList;
   }
 
