@@ -117,7 +117,6 @@ class Profile {
 
   /*  @IsOptional()
   @IsString()
-  @Validate(Base64ContentIsImage)
   displayImage?: string;*/
 }
 
@@ -160,8 +159,10 @@ export class CreateUserDto {
   @Type(() => String)
   skills?: string[] = [];
 
-  @ApiProperty({ type: 'string', format: 'binary', required: false })
-  profilePicture?: Express.Multer.File;
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  profilePicture?: string;
 }
 
 export class CreateUserResponseDto {

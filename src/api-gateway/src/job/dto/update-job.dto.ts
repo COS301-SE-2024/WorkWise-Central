@@ -1,27 +1,178 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { AssignedEmployees, ClientFeedback, Details, RecordedDetails, Comment, Task } from './create-job.dto';
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
   IsBoolean,
+  IsDate,
   IsDateString,
-  IsHexColor,
   IsMongoId,
-  IsNotEmpty,
+  IsNumber,
+  IsNumberString,
   IsOptional,
   IsString,
+  Max,
+  MaxLength,
+  Min,
   ValidateNested,
 } from 'class-validator';
 import { Types } from 'mongoose';
 import { Transform, Type } from 'class-transformer';
-import { AddHashtag } from '../../utils/Custom Transformers/add-hashtag.transformer';
-import { UpdatePriorityTagDto, UpdateTagDto } from './edit-tag.dto';
 
-class UpdateAssignedEmployees extends PartialType(AssignedEmployees) {}
-class UpdateDetails extends PartialType(Details) {}
-class UpdateRecordedDetails extends PartialType(RecordedDetails) {}
-class UpdateClientFeedback extends PartialType(ClientFeedback) {}
-class UpdateTask extends PartialType(Task) {}
-class UpdateComment extends PartialType(Comment) {}
+export class Address {
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  street?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  province?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  suburb?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  city?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumberString()
+  @MaxLength(20)
+  postalCode?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  complex?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  houseNumber?: string;
+}
+export class ClientFeedback {
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  @Max(10)
+  jobRating?: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  @Max(10)
+  customerServiceRating?: number;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  comments?: string;
+}
+export class Details {
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  heading?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ApiProperty({ type: () => Address })
+  @IsOptional()
+  address?: Address;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsDateString()
+  startDate?: Date;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsDateString()
+  endDate?: Date;
+}
+///
+export class InventoryUsed {
+  //TODO: Actually integrate with inventory, speak to Kumbi and Jess
+  @ApiProperty()
+  @IsOptional()
+  inventoryItemId?: Types.ObjectId;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  inventoryItemName?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  quantityUsed?: number;
+}
+export class RecordedDetails {
+  @ApiProperty()
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  imagesTaken?: string[];
+
+  @ApiProperty()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => InventoryUsed)
+  inventoryUsed?: InventoryUsed[];
+}
+///
+export class TaskItem {
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsDate()
+  dueDate?: Date;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean()
+  done?: boolean;
+
+  /*  @ApiProperty()  //TODO: Maybe add status to Items
+  @IsOptional()
+  @IsMongoId()
+  status?: Types.ObjectId;*/
+}
+
+export class Task {
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  title?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsArray()
+  @ValidateNested()
+  @Type(() => TaskItem)
+  items?: TaskItem[];
+}
+
 // Status is in a separate schema
 export class UpdateJobDto {
   @ApiProperty()
@@ -29,11 +180,11 @@ export class UpdateJobDto {
   @IsMongoId()
   clientId?: Types.ObjectId;
 
-  @ApiProperty()
-  @ValidateNested()
-  @Type(() => UpdateAssignedEmployees)
-  @IsOptional()
-  assignedEmployees?: UpdateAssignedEmployees;
+  // @ApiProperty()
+  // @ValidateNested()
+  // @Type(() => UpdateAssignedEmployees)
+  // @IsOptional()
+  // assignedEmployees?: UpdateAssignedEmployees;
 
   @ApiProperty()
   @IsOptional()
@@ -42,33 +193,27 @@ export class UpdateJobDto {
 
   @ApiProperty()
   @ValidateNested()
-  @Type(() => UpdateDetails)
+  @Type(() => Details)
   @IsOptional()
-  details?: UpdateDetails;
+  details?: Details;
 
   @ApiProperty()
   @ValidateNested()
-  @Type(() => UpdateRecordedDetails)
+  @Type(() => RecordedDetails)
   @IsOptional()
-  recordedDetails?: UpdateRecordedDetails;
+  recordedDetails?: RecordedDetails;
 
   @ApiProperty()
   @ValidateNested()
-  @Type(() => UpdateClientFeedback)
+  @Type(() => ClientFeedback)
   @IsOptional()
-  clientFeedback?: UpdateClientFeedback;
+  clientFeedback?: ClientFeedback;
 
-  @ApiProperty()
-  @ValidateNested({ each: true })
-  @Type(() => UpdateTask)
-  @IsOptional()
-  taskList?: UpdateTask[];
-
-  @ApiProperty()
-  @ValidateNested({ each: true })
-  @Type(() => UpdateComment)
-  @IsOptional()
-  comments?: UpdateComment[];
+  // @ApiProperty()
+  // @ValidateNested({ each: true })
+  // @Type(() => Task)
+  // @IsOptional()
+  // taskList?: Task[];
 
   @ApiProperty()
   @IsArray()
@@ -93,276 +238,7 @@ export class UpdateJobDto {
   coverImage?: string;
 }
 
-export class AddCommentDto {
-  @IsNotEmpty()
-  @IsMongoId()
-  employeeId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  jobId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsString()
-  newComment: string;
-}
-
-export class AddTaskDto {
-  @IsNotEmpty()
-  @IsMongoId()
-  employeeId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  jobId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsString()
-  title: string;
-}
-
-export class AddTaskItemDto {
-  @IsNotEmpty()
-  @IsMongoId()
-  employeeId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  jobId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  taskId: Types.ObjectId;
-}
-
-export class AddAttachmentDto {
-  constructor(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
-    this.employeeId = employeeId;
-    this.jobId = jobId;
-  }
-  @IsNotEmpty()
-  @IsMongoId()
-  employeeId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  jobId: Types.ObjectId;
-}
-
-export class RemoveCommentDto {
-  @IsNotEmpty()
-  @IsMongoId()
-  employeeId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  jobId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  commentId: Types.ObjectId;
-}
-
-export class RemoveTaskDto {
-  @IsNotEmpty()
-  @IsMongoId()
-  employeeId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  jobId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  taskId: Types.ObjectId;
-}
-
-export class RemoveTaskItemDto {
-  constructor(employeeId: Types.ObjectId, jobId: Types.ObjectId, taskId: Types.ObjectId, itemId: Types.ObjectId) {
-    this.employeeId = employeeId;
-    this.jobId = jobId;
-    this.taskId = taskId;
-    this.itemId = itemId;
-  }
-  @IsNotEmpty()
-  @IsMongoId()
-  employeeId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  jobId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  taskId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  itemId: Types.ObjectId;
-}
-
-export class UpdateCommentDto {
-  @IsNotEmpty()
-  @IsMongoId()
-  employeeId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  jobId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  commentId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsString()
-  comment: string;
-}
-
-export class UpdateTaskDto {
-  @IsNotEmpty()
-  @IsMongoId()
-  employeeId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  jobId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  taskId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsString()
-  title: string;
-}
-
-export class UpdateTaskItemDto {
-  @IsNotEmpty()
-  @IsMongoId()
-  employeeId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  jobId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  taskId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  itemId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsOptional()
-  @IsString()
-  description?: string;
-
-  @IsNotEmpty()
-  @IsOptional()
-  @IsDateString()
-  dueDate?: Date;
-
-  @IsNotEmpty()
-  @IsOptional()
-  @IsBoolean()
-  done?: boolean;
-}
-
-/*export class UpdateTaskItem {
-  jobId: Types.ObjectId;
-  taskId: Types.ObjectId;
-  itemId: Types.ObjectId;
-  description?: string;
-  dueDate?: Date;
-  done?: boolean;
-}*/
-
-export class UpdateStatusDto {
-  @IsNotEmpty()
-  @IsMongoId()
-  employeeId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  statusId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsString()
-  status: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsHexColor()
-  @AddHashtag()
-  colour: string;
-}
-
-export class UpdateAttachmentDto {
-  @IsNotEmpty()
-  @IsMongoId()
-  employeeId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  jobId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsArray()
-  @IsString({ each: true })
-  attachments: string[];
-}
-
-export class UpdateStatus {
-  constructor(updateStatusDto: UpdateStatusDto) {
-    this.status = updateStatusDto.status;
-    this.colour = updateStatusDto.colour;
-  }
-
-  @IsNotEmpty()
-  @IsString()
-  status: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsHexColor()
-  @AddHashtag()
-  colour: string;
-}
-
-export class UpdateTag {
-  constructor(u: UpdateTagDto) {
-    if (u.label) {
-      this.label = u.label;
-    }
-    if (u.colour) {
-      this.colour = u.colour;
-    }
-  }
-
-  label?: string;
-  colour?: string;
-}
-
-export class UpdatePriorityTag {
-  constructor(u: UpdatePriorityTagDto) {
-    if (u.label) {
-      this.label = u.label;
-    }
-    if (u.colour) {
-      this.colour = u.colour;
-    }
-    if (u.priorityLevel) {
-      this.priorityLevel = u.priorityLevel;
-    }
-  }
-
-  label?: string;
-  colour?: string;
-  priorityLevel?: number;
-}
-
+/*
 export class UpdateDtoResponse {
   success: boolean;
   message?: string;
@@ -371,3 +247,4 @@ export class UpdateDtoResponse {
     if (message) this.message = message;
   }
 }
+*/

@@ -35,10 +35,8 @@ export class UpdateInventoryDto {
 }
 
 export class ExternalInventoryUpdateDto {
-
   currentEmployeeId: Types.ObjectId;
 
-  
   updateInventoryDto: UpdateInventoryDto;
 }
 
