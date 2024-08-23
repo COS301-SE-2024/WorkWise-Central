@@ -23,6 +23,7 @@ import { InventoryService } from '../inventory/inventory.service';
 import { ClientService } from '../client/client.service';
 import { NotificationService } from '../notification/notification.service';
 import { NotificationModule } from '../notification/notification.module';
+import { EmployeeModule } from '../employee/employee.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { NotificationModule } from '../notification/notification.module';
     forwardRef(() => FileModule),
     forwardRef(() => InventoryModule),
     forwardRef(() => NotificationModule),
+    forwardRef(() => EmployeeModule),
   ],
   controllers: [CompanyController],
   providers: [
