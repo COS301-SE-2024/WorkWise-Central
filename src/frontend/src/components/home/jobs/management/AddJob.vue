@@ -472,6 +472,7 @@ export default defineComponent({
       startTime: '',
       endDate: null as string | null,
       endTime: '',
+      createClientLoadClicked: false,
       priorityOptionsArray: [] as JobPriorityTag[],
       tagOptionsArray: [] as JobTag[],
       statusOptionsArray: [] as JobStatuses[],
@@ -581,6 +582,7 @@ export default defineComponent({
       }
     },
     async validateForm() {
+      this.createClientLoadClicked = true
       const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
       const validate = await (form as any).validate()
 
@@ -625,6 +627,7 @@ export default defineComponent({
               summary: 'Success',
               detail: 'Job Added Successfully'
             })
+            this.createClientLoadClicked = false
             window.location.reload()
           }
           axios
@@ -645,6 +648,7 @@ export default defineComponent({
                 summary: 'Success',
                 detail: 'Job Added Successfully'
               })
+              this.createClientLoadClicked = false
               window.location.reload()
             })
             .catch((error) => {
@@ -672,17 +676,26 @@ export default defineComponent({
       console.log(this.req_obj.details.address.province)
     },
     async loadClients() {
-      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
+        params: {
+          currentEmployeeId: localStorage['employeeId']
+        }
+      }
       const apiURL = await this.getRequestUrl()
       console.log(apiURL)
       axios
-        .get(apiURL + `client/all`, config)
+        .get(apiURL + `client/all/${localStorage['currentCompany']}`, config)
         .then((res) => {
           console.log(res)
 
           console.log(res.data.data)
           for (let i = 0; i < res.data.data.length; i++) {
-            if (res.data.data[i].details.firstName === undefined) continue
+            if (
+              res.data.data[i].details.firstName === undefined ||
+              res.data.data[i].details.lastName === undefined
+            )
+              continue
 
             this.clientsArray.push({
               name: res.data.data[i].details.firstName + ' ' + res.data.data[i].details.lastName,
