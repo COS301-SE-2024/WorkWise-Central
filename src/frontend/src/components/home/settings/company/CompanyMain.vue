@@ -45,7 +45,7 @@
       <v-actions @click="closeCompanyDialog" class="bg-background">
         <v-container>
           <v-row>
-            <v-col cols="12" lg="6" align-self="center" order="last" order-lg="first" >
+            <v-col cols="12" lg="6" align-self="center" order="last" order-lg="first">
               <v-btn
                 color="error"
                 width="100%"
@@ -56,7 +56,7 @@
                 >Close</v-btn
               >
             </v-col>
-            <v-col cols="12" lg="6" align-self="center" order="first" order-lg="last" >
+            <v-col cols="12" lg="6" align-self="center" order="first" order-lg="last">
               <v-btn
                 color="success"
                 width="100%"
@@ -142,6 +142,7 @@ export default defineComponent({
       this.companyName = companyName
       this.company = companyName
       localStorage.setItem('currentCompany', companyId)
+      localStorage.setItem('currentCompanyName', companyName)
       localStorage.setItem('employeeId', employeeId)
       this.companyDialog = false
       setTimeout(() => {
@@ -185,6 +186,7 @@ export default defineComponent({
           for (let i = 0; i < this.joinedCompanies.length; i++) {
             if (this.joinedCompaniesIds[i] === currentCompanyID) {
               this.companyName = this.joinedCompaniesNames[i]
+              localStorage.setItem('currentCompanyName', this.joinedCompaniesNames[i])
               break
             } else {
               this.companyName = 'No company selected'

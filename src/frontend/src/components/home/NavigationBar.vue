@@ -36,9 +36,8 @@ const inventorySubItems = ref([
   {
     title: 'Inventory Center',
     icon: 'fa: fa-solid fa-bars-progress',
-    routeName: 'inventory-center'
+    routeName: 'report-view'
   },
-  { title: 'Reports', icon: 'fa: fa-solid fa-chart-simple', routeName: 'report-view' },
   {
     title: 'Inventory Stock Take',
     icon: 'fa: fa-solid fa-chart-line',

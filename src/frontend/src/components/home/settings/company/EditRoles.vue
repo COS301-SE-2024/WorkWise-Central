@@ -110,11 +110,11 @@
         <v-card-actions>
           <v-container
             ><v-row
-              ><v-col cols="12" lg="6" order="last" order-lg="first" >
+              ><v-col cols="12" lg="6" order="last" order-lg="first">
                 <v-btn color="error" @click="cancel" block>
                   <v-icon start icon="fa:fa-solid fa-times-circle" color="error"></v-icon> Cancel
                 </v-btn></v-col
-              ><v-col cols="12" lg="6" order="first" order-lg="last" >
+              ><v-col cols="12" lg="6" order="first" order-lg="last">
                 <v-btn color="success" @click="updateRole" :loading="isDeleting" block>
                   <v-icon start icon="fa:fa-solid fa-floppy-disk" color="success"></v-icon> Save
                 </v-btn></v-col
@@ -243,16 +243,17 @@ export default defineComponent({
     async updateRole(roleID) {
       this.isDeleting = true // Indicate the start of the deletion process
       const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
+        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       }
 
       const data = {
-        roleName: this.selectedItem.roleName,
-        permissionSuite: this.selectedItem.permissionSuite
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        updateRoleDTO: {
+          roleName: this.selectedItem.roleName,
+          permissionSuite: this.selectedItem.permissionSuite
+        }
       }
+      console.log(data)
       await axios
         .patch(`http://localhost:3000/role/${this.selectedItem._id}`, config, data)
         .then((response) => {
@@ -294,14 +295,11 @@ export default defineComponent({
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        data: {
-          currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
       const data = {
-        roleUpdates: this.roleUpdates,
-        roleIds: this.roleIds
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        bulkUpdateDTO: []
       }
       const apiURL = await this.getRequestUrl()
       await axios

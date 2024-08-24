@@ -169,7 +169,7 @@
                 </v-col>
                 <v-container>
                   <v-row
-                    ><v-col cols="12" lg="6"  order="last" order-lg="first" >
+                    ><v-col cols="12" lg="6" order="last" order-lg="first">
                       <v-btn
                         :disabled="!valid"
                         text
@@ -185,7 +185,7 @@
                         >Login</v-btn
                       >
                     </v-col>
-                    <v-col cols="12" lg="6"  order="first" order-lg="last" >
+                    <v-col cols="12" lg="6" order="first" order-lg="last">
                       <v-btn
                         text
                         @click="(signupDialog = true)((loginDialog = false))(resetFields)"
@@ -373,7 +373,7 @@
                   </v-col>
                   <v-container
                     ><v-row>
-                      <v-col cols="12" lg="6"  order="last" order-lg="first" >
+                      <v-col cols="12" lg="6" order="last" order-lg="first">
                         <v-btn
                           @click="(loginDialog = true), (signupDialog = false)"
                           rounded="md"
@@ -385,7 +385,7 @@
                           >Login</v-btn
                         >
                       </v-col>
-                      <v-col cols="12" lg="6"  order="first" order-lg="last" >
+                      <v-col cols="12" lg="6" order="first" order-lg="last">
                         <Toast position="top-center" />
                         <v-btn
                           :disabled="!valid"

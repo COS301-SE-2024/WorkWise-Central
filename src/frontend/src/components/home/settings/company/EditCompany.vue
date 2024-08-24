@@ -90,12 +90,12 @@
       <v-card-actions class="bg-cardColor">
         <v-container
           ><v-row justify="end">
-            <v-col align="center" cols="12" lg="6" order="last" order-lg="first" >
+            <v-col align="center" cols="12" lg="6" order="last" order-lg="first">
               <v-btn color="error" @click="cancel" block>
                 <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon>Cancel
               </v-btn></v-col
             >
-            <v-col align="center" cols="12" lg="6" order="first" order-lg="last" >
+            <v-col align="center" cols="12" lg="6" order="first" order-lg="last">
               <Toast position="top-center" />
               <v-btn
                 color="success"

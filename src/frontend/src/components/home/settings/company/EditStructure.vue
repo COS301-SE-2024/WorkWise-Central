@@ -192,4 +192,7 @@ export default defineComponent({
 .bg-cardColor {
   background-color: #f5f5f5;
 }
+.graph {
+  height: 700px;
+}
 </style>

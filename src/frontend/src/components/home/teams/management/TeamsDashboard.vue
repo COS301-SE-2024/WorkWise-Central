@@ -47,10 +47,12 @@
             height="auto"
             class="bg-cardColor"
             :row-props="getRowProps"
+            :header-props="{ class: 'bg-secondRowColor h6' }"
           >
+            <template v-slot:[`item.`]> </template>
             <template v-slot:[`item.currentJobAssignments`]="{ item }">
-              <v-chip v-for="job in item.currentJobAssignments" :key="job">
-                {{ job }}
+              <v-chip :color="chipColor(item.currentJobAssignments.length)">
+                {{ item.currentJobAssignments.length }}
               </v-chip>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
@@ -105,7 +107,7 @@ export default defineComponent({
 
       teamHeaders: [
         { title: 'Team Name', value: 'teamName' },
-        { title: 'Team Leader', value: 'teamLeaderId' },
+        { title: 'Team Leader', value: 'teamLeaderId.userInfo.displayName' },
         { title: 'Current Job Assignments', value: 'currentJobAssignments' },
         { title: 'Actions', value: 'actions', sortable: false }
       ],
@@ -130,7 +132,8 @@ export default defineComponent({
     }
   },
   methods: {
-    getRowProps(index: number) {
+    getRowProps(index: any) {
+      console.log(index)
       return {
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
@@ -150,6 +153,13 @@ export default defineComponent({
       this.selectedItemName = item.teamName
       this.selectedItemID = item._id
     },
+    chipColor(numAssignments: number) {
+      if (numAssignments > 0) {
+        return 'success'
+      } else {
+        return 'error'
+      }
+    },
     async getTeams() {
       const config = {
         headers: {
@@ -159,7 +169,10 @@ export default defineComponent({
       }
       const apiURL = await this.getRequestUrl()
       try {
-        const response = await axios.get(`${apiURL}team/all`, config)
+        const response = await axios.get(
+          `${apiURL}team/detailed/all/${localStorage.getItem('currentCompany')}`,
+          config
+        )
         console.log(response.data.data)
         this.teamItems = response.data.data
         this.teamLeaderId = response.data.data.teamLeaderId
