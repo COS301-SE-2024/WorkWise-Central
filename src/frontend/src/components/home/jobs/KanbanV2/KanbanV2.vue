@@ -32,21 +32,21 @@
               </template>
 
               <v-list :border="true" bg-color="background" rounded="lg">
-                <v-list-subheader>Cards</v-list-subheader>
+                <v-list-subheader>Jobs</v-list-subheader>
 
                 <v-list-item>
-                  <v-btn :elevation="0"
-                    ><v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon
-                    >{{ 'Archive all' }}</v-btn
-                  >
+                  <v-btn :elevation="0">
+                    <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
+                    {{ 'Archive all' }}
+                  </v-btn>
                 </v-list-item>
                 <v-list-item>
                   <v-dialog v-model="delete_all_jobs_dialog" max-width="500px">
                     <template v-slot:activator="{ props }">
-                      <v-btn :elevation="0" v-bind="props"
-                        ><v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon
-                        >{{ 'Delete all' }}</v-btn
-                      >
+                      <v-btn :elevation="0" v-bind="props">
+                        <v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon>
+                        {{ 'Delete all' }}
+                      </v-btn>
                     </template>
                     <v-card color="background">
                       <v-card-title>
@@ -90,7 +90,7 @@
                         >{{ 'Edit details' }}
                       </v-btn>
                     </template>
-                    <v-card elevation="14" rounded="md" max-height="700" max-width="900">
+                    <v-card elevation="14" rounded="md" max-height="100%" max-width="900">
                       <v-card-title class="text-center">Edit {{ column.status }}</v-card-title>
                       <v-card-text>
                         <!--              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">-->
@@ -676,14 +676,9 @@ export default {
           config
         )
         console.log(loaded_tags_response)
-        this.columns.push({
-          id: '0',
-          status: 'No Status',
-          color: 'purple-accent-3',
-          cards: [],
-          companyId: localStorage['currentCompany']
-        })
-        loaded_tags_response.data.data.forEach((status: any) => {
+        loaded_tags_response.data.data.map((status: any) => {
+          console.log(status)
+          if (status.status === 'Archive') return null
           this.columns.push({
             id: status._id,
             status: status.status,
