@@ -1,14 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
-import {
-  Address,
-  JoinedCompany,
-  Profile,
-  User,
-  /*  userEmployeeFields,
-  userJoinedCompaniesField,*/
-} from './entities/user.entity';
+import { Address, JoinedCompany, Profile, User } from './entities/user.entity';
 import { JoinUserDto, UpdateUserDto } from './dto/update-user.dto';
 import { currentDate } from '../utils/Utils';
 import { isNotDeleted } from '../shared/soft-delete';
@@ -329,9 +322,10 @@ export class UsersRepository {
   }
 
   async updatePassword(userId: Types.ObjectId, newPassword: string) {
-    const user = await this.userModel.findOne({ _id: userId, isNotDeleted }).exec();
+    const user = await this.userModel.findOne({ $and: [{ _id: userId }, isNotDeleted] }).exec();
     const salt = await bcrypt.genSalt(10);
     user.systemDetails.password = await bcrypt.hash(newPassword, salt);
+    user.markModified('systemDetails');
     await user.save();
   }
 }

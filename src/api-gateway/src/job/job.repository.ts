@@ -82,15 +82,18 @@ export class JobRepository {
     if (updateJobDto.clientId) {
       newHistory.push(new History('The Client was changed'));
       job.clientId = updateJobDto.clientId;
+      job.markModified('clientIdt');
     }
     if (updateJobDto.status) {
       job.status = updateJobDto.status;
+      job.markModified('status');
     }
     if (updateJobDto.details) {
       const updatedDetails: Details = { ...job.details, ...updateJobDto.details };
       updatedDetails.address = { ...job.details.address, ...updateJobDto.details.address };
       console.log(updatedDetails);
       job.details = updatedDetails;
+      job.markModified('details');
     }
     // if (updateJobDto.recordedDetails) {  //TODO: Speak to Jess
     //   const updatedDetails = { ...job.recordedDetails, ...updateJobDto.recordedDetails };
@@ -102,20 +105,25 @@ export class JobRepository {
       console.log(updatedDetails);
       job.clientFeedback = updatedDetails;
       newHistory.push(new History('There is new feedback from the client'));
+      job.markModified('clientFeedback');
     }
     if (updateJobDto.tags) {
       job.tags = updateJobDto.tags;
       newHistory.push(new History('The Tags were updated'));
+      job.markModified('tags');
     }
     if (updateJobDto.attachments) {
       job.attachments = updateJobDto.attachments;
+      job.markModified('attachments');
     }
     if (updateJobDto.coverImage) {
       job.coverImage = updateJobDto.coverImage;
       newHistory.push(new History('The Cover Image was updated'));
+      job.markModified('coverImage');
     }
     for (const history of newHistory) {
       job.history.push(history);
+      job.markModified('history');
     }
     return job.save();
   }
@@ -236,6 +244,7 @@ export class JobRepository {
     const task = job.taskList.find((t) => t._id.toString() === taskId.toString());
     const item = task.items.find((i) => i._id.toString() === itemId.toString());
     item.assignedEmployees.push(employeeId);
+    job.markModified('taskList');
     return (await job.save()).toObject();
   }
 
@@ -310,6 +319,7 @@ export class JobRepository {
     const task = job.taskList.find((t) => t._id.toString() === taskId.toString());
     const item = task.items.find((i) => i._id.toString() === itemId.toString());
     item.assignedEmployees = item.assignedEmployees.filter((e) => e._id.toString() !== employeeId.toString());
+    job.markModified('taskList');
     return (await job.save()).toObject();
   }
 
@@ -388,6 +398,7 @@ export class JobRepository {
     job.comments = job.comments.filter((c) => {
       return c._id.toString() !== commentToRemove._id.toString();
     });
+    job.markModified('comments');
     job.updatedAt = new Date();
     await job.save();
     return job;
@@ -410,6 +421,7 @@ export class JobRepository {
 
     commentToUpdate.comment = newComment;
     job.updatedAt = new Date();
+    job.markModified('comments');
     await job.save();
     return job.toObject();
   }
@@ -454,6 +466,7 @@ export class JobRepository {
       return t._id.toString() !== taskToRemove._id.toString();
     });
     job.updatedAt = new Date();
+    job.markModified('taskList');
     await job.save();
     return job;
   }
@@ -472,6 +485,7 @@ export class JobRepository {
 
     taskToUpdate.title = newTitle;
     job.updatedAt = new Date();
+    job.markModified('taskList');
     await job.save();
     return job.toObject();
   }
@@ -499,6 +513,7 @@ export class JobRepository {
       .exec();
     job.attachments = newAttachments;
     job.updatedAt = new Date();
+    job.markModified('attachments');
     await job.save();
     return job.toObject();
   }
@@ -541,6 +556,7 @@ export class JobRepository {
     if (updateTaskItem.done) item.done = updateTaskItem.done;
     if (updateTaskItem.dueDate) item.dueDate = updateTaskItem.dueDate;
 
+    job.markModified('taskList');
     await job.save();
     return job.toObject();
   }
