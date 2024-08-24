@@ -589,4 +589,28 @@ export class JobRepository {
       },
     );
   }
+
+  async removeAllReferencesToEmployee(employeeId: Types.ObjectId) {
+    const allJobsInCompany = await this.jobModel.find({ $and: [{ employeeId: employeeId }, isNotDeleted] }).exec();
+    for (const job of allJobsInCompany) {
+      if (job.assignedBy.toString() === employeeId.toString()) job.assignedBy = null;
+      const assignedEmp = job.assignedEmployees.employeeIds.find((e) => e._id.toString() === employeeId.toString());
+      if (!assignedEmp) {
+        job.assignedEmployees.employeeIds = job.assignedEmployees.employeeIds.filter(
+          (e) => e._id.toString() !== employeeId.toString(),
+        );
+      }
+      for (const comment of job.comments) {
+        if (comment.employeeId.toString() === employeeId.toString()) {
+          comment.employeeId = null;
+        }
+      }
+      for (const task of job.taskList) {
+        for (const item of task.items) {
+          item.assignedEmployees = item.assignedEmployees.filter((e) => e._id.toString() !== employeeId.toString());
+        }
+      }
+      job.save();
+    }
+  }
 }

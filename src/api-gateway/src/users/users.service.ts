@@ -21,23 +21,32 @@ import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { isPhoneNumber } from 'class-validator';
 import { CompanyService } from '../company/company.service';
 import { FileService } from '../file/file.service';
+import { JobService } from '../job/job.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly userRepository: UsersRepository,
+
     @InjectModel(UserConfirmation.name)
     private readonly userConfirmationModel: Model<UserConfirmation>,
+
     @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
+
     @Inject(forwardRef(() => EmployeeService))
     private employeeService: EmployeeService,
+
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
+
     private emailService: EmailService,
 
     @Inject(forwardRef(() => FileService))
     private fileService: FileService,
+
+    @Inject(forwardRef(() => JobService))
+    private jobService: JobService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -260,6 +269,17 @@ export class UsersService {
     if (!userToDelete) {
       throw new NotFoundException('Error: User not found, please verify your user');
     }
+    //Remove All joinedCompanies
+    for (const joinedCompany of userToDelete.joinedCompanies) {
+      this.jobService.removeAllReferencesToEmployee(joinedCompany.employeeId);
+      this.employeeService.remove(joinedCompany.employeeId);
+    }
+
+    this.emailService.sendGoodbye({
+      name: userToDelete.personalInfo.firstName,
+      emailAddress: userToDelete.personalInfo.contactInfo.email,
+    });
+
     const result = await this.userRepository.delete(id);
     if (result == null) {
       throw new InternalServerErrorException('Internal server Error');

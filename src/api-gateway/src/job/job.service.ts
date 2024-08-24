@@ -111,12 +111,6 @@ export class JobService {
     }
   }
 
-  async jobExists(id: Types.ObjectId): Promise<boolean> {
-    const result: FlattenMaps<Job> & { _id: Types.ObjectId } = await this.jobRepository.exists(id);
-    //console.log('jobExists -> ', result);
-    return result != null;
-  }
-
   async jobExistsInCompany(id: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } = await this.jobRepository.existsInCompany(id, companyId);
 
@@ -166,6 +160,34 @@ export class JobService {
   }
 
   async softDelete(id: Types.ObjectId): Promise<boolean> {
+    const job = await this.getJobById(id);
+    if (!job) throw new NotFoundException('Job not found');
+    //Unassign all employees
+    ///from jobs
+    for (const employeeId of job.assignedEmployees.employeeIds) {
+      const employee = await this.employeeService.findById(employeeId);
+      employee.currentJobAssignments = employee.currentJobAssignments.filter(
+        (ass) => ass.toString() === employeeId.toString(),
+      );
+      await this.employeeService.internalUpdate(employeeId, {
+        currentJobAssignments: employee.currentJobAssignments,
+      });
+    }
+    ///from taskItems
+    for (const task of job.taskList) {
+      for (const item of task.items) {
+        for (const employeeId of item.assignedEmployees) {
+          const employee = await this.employeeService.findById(employeeId);
+          if (!employee) continue;
+          employee.currentJobAssignments = employee.currentJobAssignments.filter(
+            (ass) => ass.toString() === employeeId.toString(),
+          );
+          await this.employeeService.internalUpdate(employeeId, {
+            currentJobAssignments: employee.currentJobAssignments,
+          });
+        }
+      }
+    }
     await this.jobRepository.delete(id);
     return true;
   }
@@ -385,9 +407,6 @@ export class JobService {
     /// Role-based stuff
     //TODO: Implement later
 
-    //TODO: Add Assigned Tasks
-    await this.employeeService.internalUpdate(taskAssignDto.employeeId, {});
-
     const result = await this.jobRepository.assignEmployeeToTaskItem(
       taskAssignDto.employeeToAssignId,
       taskAssignDto.jobId,
@@ -445,9 +464,6 @@ export class JobService {
 
     /// Role-based stuff
     //TODO: Implement later
-
-    //TODO: Add Assigned Tasks
-    await this.employeeService.internalUpdate(taskAssignDto.employeeId, {});
 
     const result = await this.jobRepository.unassignEmployeeFromTaskItem(
       taskAssignDto.employeeToAssignId,
@@ -754,7 +770,16 @@ export class JobService {
     const companyExists = await this.companyService.companyIdExists(deleteTagDto.companyId);
     if (!companyExists) throw new NotFoundException('Company not found');
     ///
-    //TODO: Cascade delete
+    const jobsInCompany = await this.jobRepository.findAllInCompany(deleteTagDto.companyId);
+    for (const job of jobsInCompany) {
+      if (job.tags) {
+        const newTags = job.tags.filter((t) => t.toString() !== deleteTagDto.tagId.toString());
+        await this.jobRepository.update(job._id, {
+          tags: newTags,
+        });
+      }
+    }
+
     const deleteResult = await this.jobTagRepository.deleteJobTag(deleteTagDto.tagId);
     return deleteResult.acknowledged;
   }
@@ -770,7 +795,14 @@ export class JobService {
     const companyExists = await this.companyService.companyIdExists(deleteTagDto.companyId);
     if (!companyExists) throw new NotFoundException('Company not found');
     ///
-    //TODO: Cascade delete
+    const jobsInCompany = await this.jobRepository.findAllInCompany(deleteTagDto.companyId);
+    for (const job of jobsInCompany) {
+      if (job.priorityTag) {
+        await this.jobRepository.update(job._id, {
+          priorityTag: null,
+        });
+      }
+    }
     const deleteResult = await this.jobTagRepository.deletePriorityTag(deleteTagDto.tagId);
     return deleteResult.acknowledged;
   }
@@ -1086,5 +1118,10 @@ export class JobService {
 
   deleteAllTagsAndStatusesInCompany(companyId: Types.ObjectId) {
     this.jobTagRepository.deleteAllTagsAndStatusesInCompany(companyId);
+  }
+
+  removeAllReferencesToEmployee(employeeId: Types.ObjectId) {
+    this.jobRepository.removeAllReferencesToEmployee(employeeId);
+    return true;
   }
 }
