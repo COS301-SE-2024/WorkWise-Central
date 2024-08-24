@@ -20,6 +20,7 @@ import { ClientModule } from '../client/client.module';
 import { TeamModule } from '../team/team.module';
 import { InventoryModule } from '../inventory/inventory.module';
 import { JobService } from '../job/job.service';
+import { UserPasswordReset, UserPasswordResetSchema } from './entities/user-password-reset.entity';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { JobService } from '../job/job.service';
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: UserConfirmation.name, schema: UserConfirmationSchema },
+      { name: UserPasswordReset.name, schema: UserPasswordResetSchema },
     ]),
   ],
   controllers: [UsersController],

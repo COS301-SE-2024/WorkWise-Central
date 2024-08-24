@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import * as bcrypt from 'bcryptjs';
+//import * as bcrypt from 'bcryptjs';
 import { ApiHideProperty, ApiProperty, OmitType } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -276,12 +276,12 @@ export const userJoinedCompaniesField = {
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
-UserSchema.pre('save', async function (next) {
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.systemDetails.password = await bcrypt.hash(this.systemDetails.password, salt);
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
+// UserSchema.pre('save', async function (next) {
+//   try {
+//     const salt = await bcrypt.genSalt(10);
+//     this.systemDetails.password = await bcrypt.hash(this.systemDetails.password, salt);
+//     next();
+//   } catch (error) {
+//     next(error);
+//   }
+// });
