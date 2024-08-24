@@ -189,10 +189,10 @@ describe('JobController', () => {
       });
 
       try {
-        await jobController.remove(jobId.toString(), { pass: invalidIdParam });
+        await jobController.remove(jobId.toString(), invalidIdParam);
       } catch (error) {
         expect(error).toBeInstanceOf(HttpException);
-        expect(error.getStatus()).toBe(503);
+        expect(error.getStatus()).toBe(400);
       }
     });
 
@@ -208,7 +208,7 @@ describe('JobController', () => {
       jest.spyOn(jobService, 'softDelete').mockRejectedValue(new InternalServerErrorException('Internal Server Error'));
 
       try {
-        await jobController.remove(jobId.toString(), { pass: idParam });
+        await jobController.remove(jobId.toString(), idParam);
       } catch (error) {
         expect(error).toBeInstanceOf(Error);
         expect(error.message).toBe('Internal Server Error');
