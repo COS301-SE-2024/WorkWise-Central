@@ -165,7 +165,7 @@ export default defineComponent({
             life: 3000
           })
           setTimeout(() => {
-            window.location.reload()
+            
           }, 3000)
         })
         .catch((error) => {

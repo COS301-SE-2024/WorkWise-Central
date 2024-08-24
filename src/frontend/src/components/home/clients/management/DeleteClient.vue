@@ -78,7 +78,7 @@ export default {
     },
     Delete() {
       alert('Client deleted')
-      window.location.reload() // Consider removing this for SPA behavior
+       // Consider removing this for SPA behavior
     },
     async deleteClient() {
       this.isDeleting = true // Indicate the start of the deletion process
@@ -113,7 +113,7 @@ export default {
         setTimeout(() => {
           this.clientDialog = false
           this.$emit('clientDeleted')
-          window.location.reload()
+          
         }, 3000)
       } catch (error) {
         console.error('Error deleting client:', error)

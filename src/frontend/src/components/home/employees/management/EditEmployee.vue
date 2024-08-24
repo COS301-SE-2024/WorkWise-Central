@@ -312,7 +312,7 @@ export default {
           setTimeout(() => {
             this.isDeleting = false
             this.employeeDialog = false
-            window.location.reload()
+            
           }, 1500)
         })
         .catch((error) => {

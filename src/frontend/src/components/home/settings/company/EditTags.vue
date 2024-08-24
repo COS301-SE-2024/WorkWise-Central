@@ -283,7 +283,7 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.dialog = false
-            window.location.reload()
+            
           }, 3000)
         })
         .catch((err) => {

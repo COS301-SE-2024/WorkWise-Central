@@ -186,7 +186,7 @@ export default defineComponent({
         this.addDialog = false
         setTimeout(() => {
           this.isDeleting = false
-          window.location.reload()
+          
         }, 1500)
       } catch (error) {
         console.error(error)

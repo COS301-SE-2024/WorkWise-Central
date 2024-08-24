@@ -96,7 +96,7 @@ export default defineComponent({
         })
         this.deleteDialog = false
         setTimeout(() => {
-          window.location.reload()
+          
           this.isDeleting = false
         }, 3000)
       } catch (error) {

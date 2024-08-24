@@ -269,7 +269,7 @@ export default defineComponent({
         detail: 'Company update cancelled',
         life: 3000
       })
-      window.location.reload()
+      
     },
     saveChanges() {
       this.$toast.add({
@@ -325,7 +325,7 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.isDeleting = false
-            window.location.reload()
+            
           }, 3000)
         })
         .catch((error) => {

@@ -624,7 +624,7 @@ export default defineComponent({
               summary: 'Success',
               detail: 'Job Added Successfully'
             })
-            window.location.reload()
+            
           }
           axios
             .put(
@@ -644,7 +644,7 @@ export default defineComponent({
                 summary: 'Success',
                 detail: 'Job Added Successfully'
               })
-              window.location.reload()
+              
             })
             .catch((error) => {
               console.log(error)

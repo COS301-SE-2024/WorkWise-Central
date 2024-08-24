@@ -91,7 +91,7 @@ export default defineComponent({
         setTimeout(() => {
           this.isDeleting = false
           this.deleteDialog = false
-          window.location.reload()
+          
         }, 1500)
       } catch (error) {
         console.error('Error deleting team:', error)

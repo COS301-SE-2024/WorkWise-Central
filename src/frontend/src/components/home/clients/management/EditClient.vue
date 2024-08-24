@@ -282,7 +282,7 @@ export default {
         setTimeout(() => {
           this.isDeleting = false
           this.clientDialog = false
-          window.location.reload()
+          
         }, 3000)
 
         return true

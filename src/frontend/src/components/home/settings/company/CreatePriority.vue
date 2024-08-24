@@ -179,7 +179,7 @@ export default defineComponent({
           this.dialog = false
           setTimeout(() => {
             this.isDeleting = false
-            window.location.reload()
+            
           }, 3000)
         })
         .catch((err) => {

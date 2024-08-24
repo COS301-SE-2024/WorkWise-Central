@@ -147,7 +147,7 @@ export default defineComponent({
       this.companyDialog = false
       setTimeout(() => {
         this.isDeleting = false
-        window.location.reload()
+        
       }, 3000)
     },
     findCompany(companyName) {

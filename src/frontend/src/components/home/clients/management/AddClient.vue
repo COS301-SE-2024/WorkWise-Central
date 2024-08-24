@@ -485,7 +485,7 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.isDeleting = false
-            window.location.reload()
+            
           }, 1500)
         })
         .catch((res) => {

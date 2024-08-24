@@ -117,7 +117,7 @@ export default {
           setTimeout(() => {
             this.isDeleting = false
             this.clientDialog = false
-            window.location.reload()
+            
           }, 1500)
         })
         .catch((error) => {

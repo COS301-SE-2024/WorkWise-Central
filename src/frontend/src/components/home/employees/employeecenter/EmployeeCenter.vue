@@ -176,7 +176,7 @@ export default defineComponent({
   data() {
     return {
       companyName: '' as string,
-      employees: [],
+      employees: [] as any,
       tableHeaders: [
         { title: 'Name', value: 'userInfo.displayName', key: 'userInfo.displayName' },
         { title: 'Role', value: 'roleName', key: 'role.roleName' },
