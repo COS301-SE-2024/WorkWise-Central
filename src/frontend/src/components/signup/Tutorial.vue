@@ -13,6 +13,12 @@
 
               <br />
               <v-img :src="login.splash" />
+              <br />
+              <div>
+                <ul class="custom-list">
+                  <li>Click on the "Login" button on the splash page</li>
+                </ul>
+              </div>
             </template>
 
             <template #[`item.2`]>
@@ -20,14 +26,27 @@
 
               <br />
               <v-img :src="login.textfields" />
+              <br />
+              <div>
+                <ul class="custom-list">
+                  <li>Enter the required user information to enter the system</li>
+                </ul>
+              </div>
             </template>
             <template #[`item.3`]>
               <h3 class="text-h6">Login Button Click</h3>
 
               <br />
               <v-img :src="login.button" />
-            </template> </v-stepper
-        ></v-col>
+              <br />
+              <div>
+                <ul class="custom-list">
+                  <li>'Click on the Login'</li>
+                </ul>
+              </div>
+            </template>
+          </v-stepper></v-col
+        >
       </v-expansion-panel-text>
     </v-expansion-panel>
     <v-expansion-panel
@@ -43,44 +62,96 @@
 
               <br />
               <v-img :src="signup.splash" />
+              <br />
+              <div>
+                <ul class="custom-list">
+                  <li>Click on the "SignUp in the splash page</li>
+                </ul>
+              </div>
             </template>
             <template #[`item.2`]>
               <h3 class="text-h6">Input Email & Password</h3>
 
               <br />
               <v-img :src="signup.email" />
+              <br />
+              <div>
+                <ul class="custom-list">
+                  <li>Enter your email and password</li>
+                </ul>
+              </div>
+            </template>
+            <template #[`item.3`]>
+              <h3 class="text-h6">Input Name</h3>
+
+              <br />
+              <v-img :src="signup.name" />
+              <br />
+              <div>
+                <ul class="custom-list">
+                  <li>Enter your name and surname</li>
+                </ul>
+              </div>
             </template>
 
-            <template #[`item.3`]>
+            <template #[`item.4`]>
               <h3 class="text-h6">Username Modal</h3>
 
               <br />
               <v-img :src="signup.username" />
+              <br />
+              <div>
+                <ul class="custom-list">
+                  <li>Choose an auto generated username or enter your very own custom username</li>
+                </ul>
+              </div>
             </template>
 
-            <template #[`item.4`]>
+            <template #[`item.5`]>
               <h3 class="text-h6">Personal Details Modal</h3>
 
               <br />
               <v-img :src="signup.birthdate" />
+              <br />
+              <div>
+                <ul class="custom-list">
+                  <li>Enter your personal information such as birth day</li>
+                </ul>
+              </div>
             </template>
-            <template #[`item.5`]>
+            <template #[`item.6`]>
               <h3 class="text-h6">Address Modal</h3>
 
               <br />
-              <v-img :src="signup.address" /> </template
-            ><template #[`item.6`]>
+              <v-img :src="signup.address" /><br />
+              <div>
+                <ul class="custom-list">
+                  <li>Enter your personal address</li>
+                </ul>
+              </div> </template
+            ><template #[`item.7`]>
               <h3 class="text-h6">Register or Join Company buttons</h3>
 
               <br />
-              <v-img :src="signup.registerjoin" /> </template
-            ><template #[`item.7`]>
+              <v-img :src="signup.registerjoin" /><br />
+              <div>
+                <ul class="custom-list">
+                  <li>Choose whether you want to join or register your own company</li>
+                </ul>
+              </div></template
+            ><template #[`item.8`]>
               <h3 class="text-h6">Register Company Modal</h3>
 
               <br />
               <v-img :src="signup.company" />
-            </template> </v-stepper
-        ></v-col>
+              <div>
+                <ul class="custom-list">
+                  <li>Enter the company information and click create</li>
+                </ul>
+              </div>
+            </template>
+          </v-stepper></v-col
+        >
       </v-expansion-panel-text>
     </v-expansion-panel>
   </v-expansion-panels>
@@ -139,7 +210,16 @@ export default defineComponent({
       },
       items: {
         items_login: ['Step 1', 'Step 2', 'Step 3'],
-        items_signup: ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'],
+        items_signup: [
+          'Step 1',
+          'Step 2',
+          'Step 3',
+          'Step 4',
+          'Step 5',
+          'Step 6',
+          'Step 7',
+          'Step 8'
+        ],
         items_calendar: ['Step 1', 'Step 2', 'Step 3'],
         items_tables: ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6'],
         items_newEmployee: ['Step 1', 'Step 2', 'Step 3'],
@@ -180,4 +260,13 @@ export default defineComponent({
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.custom-list {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.custom-list li {
+  margin-bottom: 8px;
+}
+</style>
