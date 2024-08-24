@@ -18,7 +18,7 @@ import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { EmployeeService } from '../employee/employee.service';
 import { RoleService } from '../role/role.service';
 import { UsersService } from '../users/users.service';
-import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
+import { DeleteEmployeeFromCompanyDto, LeaveCompanyDto } from './dto/delete-employee-in-company.dto';
 import { Employee } from '../employee/entities/employee.entity';
 import { FileService } from '../file/file.service';
 import { JobService } from '../job/job.service';
@@ -26,6 +26,8 @@ import { DeleteCompanyDto } from './dto/delete-company.dto';
 import { ClientService } from '../client/client.service';
 import { InventoryService } from '../inventory/inventory.service';
 import { TeamService } from '../team/team.service';
+import { NotificationService } from '../notification/notification.service';
+import { Message } from '../notification/entities/notification.entity';
 
 @Injectable()
 export class CompanyService {
@@ -55,6 +57,9 @@ export class CompanyService {
 
     @Inject(forwardRef(() => TeamService))
     private readonly teamService: TeamService,
+
+    @Inject(forwardRef(() => NotificationService))
+    private readonly notificationService: NotificationService,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto) {
@@ -346,6 +351,40 @@ export class CompanyService {
     //await this.addNewEmployeeId(company._id, addedEmployee._id);
     console.log(updatedUser);
     return newJoinedCompany;
+  }
+
+  async leaveCompany(userId: Types.ObjectId, leaveCompanyDto: LeaveCompanyDto) {
+    const user = await this.usersService.getUserById(userId);
+    const employee = await this.employeeService.findById(leaveCompanyDto.currentEmployee);
+    const company = await this.getCompanyById(leaveCompanyDto.companyToLeaveId);
+    if (!employee || !user || !company) throw new NotFoundException('User, Employee or Company not found');
+    if (employee.userId.toString() !== user._id.toString())
+      throw new ConflictException('Invalid UserId/EmployeeId pair');
+    const elem = user.joinedCompanies.find(
+      (j) => j.companyId.toString() === leaveCompanyDto.companyToLeaveId.toString(),
+    );
+    if (!elem) throw new UnauthorizedException('Not in company');
+    // Remove from jobs
+    this.jobService.removeAllReferencesToEmployee(leaveCompanyDto.currentEmployee);
+    // Remove from Employees
+    await this.employeeService.remove(leaveCompanyDto.currentEmployee);
+    //Inform company
+    const employees = await this.employeeService.findAllInCompany(leaveCompanyDto.companyToLeaveId);
+    const recipientIds: Types.ObjectId[] = [];
+    for (const emp of employees) {
+      recipientIds.push(emp._id);
+    }
+    const title = `${employee.userInfo.firstName} ${employee.userInfo.surname} has left the ${company.name}`;
+    const body = leaveCompanyDto.reason
+      ? `The reason provided was: ${leaveCompanyDto.reason}`
+      : `No reason was provided`;
+    this.notificationService.create({
+      recipientIds: recipientIds,
+      message: new Message(title, body),
+    });
+    //Remove from User
+    await this.usersService.removeJoinedCompany(userId, leaveCompanyDto.companyToLeaveId);
+    return true;
   }
 
   async update(userId: Types.ObjectId, companyId: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {

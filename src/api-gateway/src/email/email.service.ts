@@ -68,6 +68,23 @@ export class EmailService {
     console.log(result);
   }
 
+  async sendGoodbye(details: { name: string; emailAddress: string }, token?: string) {
+    //?const url = `example.com/auth/confirm?token=${token}`; //TODO:confirm
+    console.log(token);
+    const ourEmail = '<support@workwise.com>';
+    const result = await this.mailerService.sendMail({
+      to: details.emailAddress,
+      from: `"Support Team" ${ourEmail}`,
+      subject: 'Farewell from WorkWise',
+      template: './goodbye',
+      context: {
+        name: details.name,
+        ourEmail: ourEmail,
+      },
+    });
+    console.log(result);
+  }
+
   async sendMail() {
     const message = `Forgot your password? If you didn't forget your password, please ignore this email!`;
 

@@ -38,6 +38,7 @@ import {
   ApiOperation,
   ApiQuery,
   ApiResponse,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
@@ -48,7 +49,7 @@ import {
   CompanyDetailedResponseDto,
   CompanyResponseDto,
 } from './entities/company.entity';
-import { DeleteEmployeeFromCompanyDto } from './dto/delete-employee-in-company.dto';
+import { DeleteEmployeeFromCompanyDto, LeaveCompanyDto } from './dto/delete-employee-in-company.dto';
 import { extractUserId, isBase64Uri, validateObjectId, validateObjectIds } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
@@ -127,6 +128,23 @@ export class CompanyController {
       throw new HttpException('Internal server error', HttpStatus.CONFLICT);
     }
     // }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiSecurity('JWT')
+  @ApiOperation({
+    summary: `Leave a Company`,
+    description: 'The admin in the company will get a notification, and be able to see any jobs you were working on',
+  })
+  @ApiOkResponse({ type: BooleanResponseDto })
+  @Delete('/leave')
+  async leaveCompany(@Headers() headers: any, @Body() leaveCompanyDto: LeaveCompanyDto) {
+    try {
+      const userId = extractUserId(this.jwtService, headers);
+      return { data: await this.companyService.leaveCompany(userId, leaveCompanyDto) };
+    } catch (Error) {
+      throw new HttpException('Internal server error', HttpStatus.CONFLICT);
+    }
   }
 
   @ApiOperation({
