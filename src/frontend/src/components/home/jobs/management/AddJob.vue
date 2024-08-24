@@ -23,7 +23,10 @@
             <v-spacer></v-spacer>
             <v-col>
               <v-col>
-                <label style="font-size: 14px; font-weight: lighter">Job Title*</label>
+                <label style="font-size: 14px; font-weight: lighter"
+                  >Job Title
+                  <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                </label>
 
                 <v-text-field
                   density="compact"
@@ -38,7 +41,9 @@
                 ></v-text-field
               ></v-col>
               <v-col>
-                <label style="font-size: 14px; font-weight: lighter">Client</label>
+                <label style="font-size: 14px; font-weight: lighter"
+                  >Client <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                </label>
 
                 <v-autocomplete
                   density="compact"
@@ -74,7 +79,10 @@
                 />
               </v-col>
               <v-col>
-                <label style="font-size: 14px; font-weight: lighter">Job description</label>
+                <label style="font-size: 14px; font-weight: lighter"
+                  >Job description
+                  <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                </label>
 
                 <v-textarea
                   placeholder="Enter the details of the job"
@@ -240,11 +248,17 @@
                 </v-col>
               </v-row>
 
-              <label style="font-size: 14px; font-weight: lighter">Job address</label>
+              <label style="font-size: 14px; font-weight: lighter"
+                >Job address
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
 
               <v-row>
                 <v-col cols="12" sm="6">
-                  <label style="font-size: 12px; font-weight: lighter">Street</label>
+                  <label style="font-size: 12px; font-weight: lighter"
+                    >Street
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
                   <v-text-field
                     density="compact"
                     color="primary"
@@ -257,7 +271,10 @@
                   ></v-text-field
                 ></v-col>
                 <v-col cols="12" sm="6">
-                  <label style="font-size: 12px; font-weight: lighter">Suburb</label>
+                  <label style="font-size: 12px; font-weight: lighter"
+                    >Suburb
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
                   <v-text-field
                     density="compact"
                     color="primary"
@@ -270,7 +287,10 @@
                   ></v-text-field
                 ></v-col>
                 <v-col sm="6" cols="12">
-                  <label style="font-size: 14px; font-weight: lighter">Province</label>
+                  <label style="font-size: 14px; font-weight: lighter"
+                    >Province
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
                   <v-autocomplete
                     density="compact"
                     color="primary"
@@ -296,7 +316,10 @@
                   ></v-autocomplete
                 ></v-col>
                 <v-col cols="12" sm="6">
-                  <label style="font-size: 12px; font-weight: lighter">City/Town</label>
+                  <label style="font-size: 12px; font-weight: lighter"
+                    >City/Town
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
                   <v-text-field
                     density="compact"
                     color="primary"
@@ -309,7 +332,10 @@
                   ></v-text-field
                 ></v-col>
                 <v-col cols="12" sm="6">
-                  <label style="font-size: 12px; font-weight: lighter">Postal Code</label>
+                  <label style="font-size: 12px; font-weight: lighter"
+                    >Postal Code
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
                   <v-text-field
                     density="compact"
                     color="primary"

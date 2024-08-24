@@ -118,7 +118,7 @@
                   @click="close"
                   :loading="isDeleting"
                 >
-                   <Toast position="top-center" />
+                  <Toast position="top-center" />
                   <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
                   >Cancel
                 </v-btn>
@@ -135,6 +135,15 @@
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import type { EmployeeInformation2, RoleItem, Role } from '@/components/home/employees/types'
+
+type EmployeeUpdate = {
+  currentEmployeeId: string
+  updateEmployeeDto: {
+    roleId?: string
+    subordinates?: string[]
+    superiorId?: string
+  }
+}
 
 export default {
   name: 'EditClient',
@@ -174,7 +183,7 @@ export default {
           subordinates: [] as string[],
           superiorId: ''
         }
-      },
+      } as EmployeeUpdate,
       nameRules: [
         (v: string) => !!v || 'Name is required',
         (v: string) => (v && v.length >= 2) || 'Name must be at least 2 characters'
@@ -207,7 +216,7 @@ export default {
     filteredSupriorNames() {
       return this.subordinateItemNames.filter(
         (sub: EmployeeInformation2) =>
-          !this.req_obj.updateEmployeeDto.subordinates.some(
+          !this.req_obj.updateEmployeeDto.subordinates?.some(
             (selected: string) => selected === sub.employeeId
           )
       )
@@ -228,8 +237,28 @@ export default {
       console.log(this.localEditedItem)
     },
     async validateEdits() {
-      console.log('Validate called')
-      await this.savechanges()
+      if (
+        this.req_obj.updateEmployeeDto.roleId === '' &&
+        this.req_obj.updateEmployeeDto.subordinates?.length === 0 &&
+        this.req_obj.updateEmployeeDto.superiorId === ''
+      ) {
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Please select at least one field to update',
+          life: 3000
+        })
+        return
+      }
+
+      const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
+      const validate = await (form as any).validate()
+      this.req_obj.updateEmployeeDto.subordinates ||
+        delete this.req_obj.updateEmployeeDto.subordinates
+      this.req_obj.updateEmployeeDto.superiorId || delete this.req_obj.updateEmployeeDto.superiorId
+      this.req_obj.updateEmployeeDto.roleId || delete this.req_obj.updateEmployeeDto.roleId
+
+      if (validate) await this.savechanges()
     },
     async loadSubordinates() {
       const config = {
