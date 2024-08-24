@@ -338,6 +338,11 @@ const router = createRouter({
       path: '/new-password',
       name: 'new-password',
       component: NewPasswordView
+    },
+    {
+      path: '/splash/tutorial',
+      name: 'splash-tutorial',
+      component: () => import('@/components/signup/Tutorial.vue')
     }
   ]
 })
