@@ -126,8 +126,7 @@ c
                               <v-list-item>
                                 <EditEmployee
                                   v-if="
-                                    permissions.includes('edit all employees') ||
-                                    permissions.includes('edit employees under me')
+                                    permissions.includes('edit employees') 
                                   "
                                   @update:item="selectedItem = $event"
                                   :editedItem="selectedItem"
@@ -135,8 +134,7 @@ c
 
                               <v-list-item
                                 v-if="
-                                  permissions.includes('remove any employees') ||
-                                  permissions.includes('remove employees under me')
+                                  permissions.includes('delete employees') 
                                 "
                                 ><DeleteEmployee :details="selectedItem"
                               /></v-list-item>

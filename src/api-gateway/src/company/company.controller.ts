@@ -382,9 +382,9 @@ export class CompanyController {
       employeeToDeleteId,
     );
     //await this.companyService.deleteEmployee(userId, deleteEmployeeDto); //TODO: Use with cascading delete
-    const userId = extractUserId(this.jwtService, headers);
+    // const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(deleteEmployeeDto.adminId);
-    if (currentEmployee.role.permissionSuite.includes('remove any employees')) {
+    if (currentEmployee.role.permissionSuite.includes('delete employees')) {
       let data;
       try {
         data = await this.employeeService.remove(deleteEmployeeDto.employeeToDeleteId);
@@ -396,23 +396,25 @@ export class CompanyController {
         throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
       }
       return { data: data };
-    } else if (currentEmployee.role.permissionSuite.includes('remove employees under me')) {
-      let data;
-      try {
-        data = await this.employeeService.removeUnderMe(
-          userId,
-          deleteEmployeeDto.employeeToDeleteId,
-          deleteEmployeeDto.adminId,
-        );
-      } catch (e) {
-        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-      }
+    }
+    // else if (currentEmployee.role.permissionSuite.includes('remove employees under me')) {
+    //   let data;
+    //   try {
+    //     data = await this.employeeService.removeUnderMe(
+    //       userId,
+    //       deleteEmployeeDto.employeeToDeleteId,
+    //       deleteEmployeeDto.adminId,
+    //     );
+    //   } catch (e) {
+    //     throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    //   }
 
-      if (data === false) {
-        throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-      return { data: data };
-    } else {
+    //   if (data === false) {
+    //     throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
+    //   }
+    //   return { data: data };
+    // }
+    else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
