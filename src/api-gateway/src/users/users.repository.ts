@@ -1,17 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
-import {
-  Address,
-  JoinedCompany,
-  Profile,
-  User,
-  /*  userEmployeeFields,
-  userJoinedCompaniesField,*/
-} from './entities/user.entity';
+import { Address, JoinedCompany, Profile, User } from './entities/user.entity';
 import { JoinUserDto, UpdateUserDto } from './dto/update-user.dto';
 import { currentDate } from '../utils/Utils';
 import { isNotDeleted } from '../shared/soft-delete';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersRepository {
@@ -19,6 +13,8 @@ export class UsersRepository {
 
   async save(newUserObj: User) {
     const newUser = new this.userModel(newUserObj);
+    const salt = await bcrypt.genSalt(10);
+    newUser.systemDetails.password = await bcrypt.hash(newUser.systemDetails.password, salt);
     const result = await newUser.save();
     console.log('Save new user:', result);
     return result;
@@ -151,6 +147,14 @@ export class UsersRepository {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
         ],
+      })
+      .lean();
+  }
+
+  async findByEmail(email: string) {
+    return this.userModel
+      .findOne({
+        $and: [{ 'personalInfo.contactInfo.email': email }, isNotDeleted],
       })
       .lean();
   }
@@ -315,5 +319,13 @@ export class UsersRepository {
     }
 
     return false;
+  }
+
+  async updatePassword(userId: Types.ObjectId, newPassword: string) {
+    const user = await this.userModel.findOne({ $and: [{ _id: userId }, isNotDeleted] }).exec();
+    const salt = await bcrypt.genSalt(10);
+    user.systemDetails.password = await bcrypt.hash(newPassword, salt);
+    user.markModified('systemDetails');
+    await user.save();
   }
 }

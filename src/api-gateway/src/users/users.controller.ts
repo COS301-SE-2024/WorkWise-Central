@@ -39,6 +39,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UserAllResponseDetailedDto } from './dto/user-response.dto';
 //import { GetImageValidator } from '../utils/Custom Validators/GetImageValidator';
 import { isBase64Uri } from '../utils/Utils';
+import { RequestResetDto, UserResetPasswordDto } from './dto/user-reset-password.dto';
 // import { diskStorage } from 'multer';
 // import e from 'express';
 // import firebase from 'firebase/compat';
@@ -378,6 +379,38 @@ export class UsersController {
       return this.usersService.changeCurrentEmployee(userId, new Types.ObjectId(companyId));
     } catch (e) {
       throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Make a request to get an email to reset your password',
+  })
+  @ApiResponse({ type: BooleanResponseDto })
+  @Post('request/reset-pass')
+  async requestPasswordReset(@Body() requestResetDto: RequestResetDto) {
+    try {
+      return {
+        data: await this.usersService.createUserPasswordResetRequest(requestResetDto.email),
+      };
+    } catch (e) {
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @ApiOperation({
+    summary:
+      'Once you have received the email, Reset your password and pass the token to prove it was from the recipient of said email',
+    description: 'token is from the email',
+  })
+  @ApiResponse({ type: BooleanResponseDto })
+  @Post('reset-pass')
+  async resetPassword(@Headers() headers: any, @Body() userResetPasswordDto: UserResetPasswordDto) {
+    try {
+      return {
+        data: await this.usersService.resetPassword(userResetPasswordDto.userId, userResetPasswordDto),
+      };
+    } catch (e) {
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

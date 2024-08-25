@@ -3,6 +3,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { UserConfirmation } from '../users/entities/user-confirmation.entity';
 import { InviteToJoin } from '../admin/entities/invite-to-join.entity';
 import { Types } from 'mongoose';
+import { EmailInfoDto, PasswordResetDto } from './dto/emailInfo.dto';
 
 @Global()
 @Injectable()
@@ -51,7 +52,7 @@ export class EmailService {
   }*/
 
   async sendEmailConfirmation(details: { name: string; surname: string; email: string }, token: string) {
-    const url = `example.com/auth/confirm?token=${token}`; //TODO:confirm
+    const url = `example.com/auth/confirm?token=${encodeURIComponent(token)}`; //TODO:confirm
 
     const result = await this.mailerService.sendMail({
       to: details.email,
@@ -68,7 +69,7 @@ export class EmailService {
     console.log(result);
   }
 
-  async sendGoodbye(details: { name: string; emailAddress: string }, token?: string) {
+  async sendGoodbye(details: EmailInfoDto, token?: string) {
     //?const url = `example.com/auth/confirm?token=${token}`; //TODO:confirm
     console.log(token);
     const ourEmail = '<support@workwise.com>';
@@ -85,6 +86,25 @@ export class EmailService {
     console.log(result);
   }
 
+  async sendResetPasswordRequest(resetDto: PasswordResetDto, token: string) {
+    const serverUrl = `http://localhost:5173`; //TODO:Point to Deployment
+    const url = `${serverUrl}/new-password?uId=${encodeURIComponent(resetDto.userId.toString())}&tok=${encodeURIComponent(token)}`;
+    console.log(token);
+    const ourEmail = '<support@workwise.com>';
+    const result = await this.mailerService.sendMail({
+      to: resetDto.emailAddress,
+      from: `"Support Team" ${ourEmail}`,
+      subject: 'Password Reset',
+      template: './password-reset',
+      context: {
+        name: resetDto.name,
+        ourEmail: ourEmail,
+        resetUrl: url,
+      },
+    });
+    console.log(result);
+  }
+
   async sendMail() {
     const message = `Forgot your password? If you didn't forget your password, please ignore this email!`;
 
@@ -95,24 +115,45 @@ export class EmailService {
       text: message,
     });
   }
-  async sendInvite(inviteDto: InviteToJoin, inviteId: Types.ObjectId) {
+  async sendInvite(inviteDto: InviteToJoin, inviteId: Types.ObjectId, hasAccount: boolean) {
     const subject = `Invite to Join ${inviteDto.companyName}`;
-    const newUserLink = `https://tuksui.sharpsoftwaresolutions.net/?inviteId=${encodeURIComponent(inviteId.toString())}`;
-    const existingUserLink = `https://tuksui.sharpsoftwaresolutions.net/?inviteId=${encodeURIComponent(inviteId.toString())}`;
-    const result = await this.mailerService.sendMail({
-      to: inviteDto.emailBeingInvited,
-      from: '"Support Team" <support@workwise.com>',
-      subject: subject,
-      template: './inviteToCompany',
-      context: {
-        companyName: inviteDto.companyName,
-        userName: 'there',
-        roleName: inviteDto.roleName,
-        supportEmail: 'support@workwise.com',
-        newUserLink: newUserLink,
-        existingUserLink: existingUserLink,
-      },
-    });
-    console.log(result);
+    // const newUserLink = `https://tuksui.sharpsoftwaresolutions.net/?inviteId=${encodeURIComponent(inviteId.toString())}`;//TODO:Point to Deployment
+    // const existingUserLink = `https://tuksui.sharpsoftwaresolutions.net/?inviteId=${encodeURIComponent(inviteId.toString())}`;
+
+    const tempUrl = `http://localhost:5173`;
+    const newUserLink = `${tempUrl}/?inviteId=${encodeURIComponent(inviteId.toString())}`;
+    const existingUserLink = `${tempUrl}/company-invites?inviteId=${encodeURIComponent(inviteId.toString())}`;
+
+    if (hasAccount) {
+      const result = await this.mailerService.sendMail({
+        to: inviteDto.emailBeingInvited,
+        from: '"Support Team" <support@workwise.com>',
+        subject: subject,
+        template: './inviteExistingToCompany',
+        context: {
+          companyName: inviteDto.companyName,
+          userName: 'there',
+          roleName: inviteDto.roleName,
+          supportEmail: 'support@workwise.com',
+          url: existingUserLink,
+        },
+      });
+      console.log(result);
+    } else {
+      const result = await this.mailerService.sendMail({
+        to: inviteDto.emailBeingInvited,
+        from: '"Support Team" <support@workwise.com>',
+        subject: subject,
+        template: './inviteToCompany',
+        context: {
+          companyName: inviteDto.companyName,
+          userName: 'there',
+          roleName: inviteDto.roleName,
+          supportEmail: 'support@workwise.com',
+          newUserLink: newUserLink,
+        },
+      });
+      console.log(result);
+    }
   }
 }
