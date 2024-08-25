@@ -2,6 +2,15 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
 
+export class InventoryItem {
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: true })
+  inventoryId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: String, required: true })
+  name: string;
+}
 export class StockTakeItem {
   @ApiProperty()
   @Prop({ type: Number, required: true })
@@ -13,16 +22,11 @@ export class StockTakeItem {
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true })
-  inventoryId: Types.ObjectId;
+  inventoryItem: InventoryItem;
 }
 
 @Schema()
 export class StockTake {
-  // constructor(createStocktakeDto: CreateStocktakeDto) {
-  //   this.date = createStocktakeDto.date;
-  //   this.companyId = createStocktakeDto.companyId;
-  //   this.createdAt = new Date();
-  // }
   @ApiProperty()
   @Prop({ type: Date, required: true, default: new Date() })
   date: Date;

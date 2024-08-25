@@ -140,6 +140,24 @@ export class StockTakeRepository {
     return true;
   }
 
+  async updateInventoryReference(inventoryId: Types.ObjectId, newName: string) {
+    return await this.stocktakeModel.updateMany(
+      {
+        'items.inventoryItem.inventoryId': inventoryId,
+      },
+      { $set: { 'items.inventoryItem.name': newName } },
+    );
+  }
+
+  async removeReferenceToInventory(inventoryId: Types.ObjectId) {
+    return await this.stocktakeModel.updateMany(
+      {
+        'items.inventoryItem.inventoryId': inventoryId,
+      },
+      { $set: { 'items.inventoryItem.inventoryId': null } },
+    );
+  }
+
   async addAttachments(id: Types.ObjectId, newUrls: string[]) {
     return await this.stocktakeModel
       .findOneAndUpdate(
