@@ -6,6 +6,7 @@ import { Types } from 'mongoose';
 import { ClientRepository } from '../client.repository';
 import { CompanyService } from '../../company/company.service';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
+import { NotFoundException } from '@nestjs/common';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -94,7 +95,7 @@ describe('ClientController', () => {
         };
         await clientController.update({ userId }, clientId, body);
       } catch (error) {
-        expect(error).toBeInstanceOf(TypeError);
+        expect(error).toBeInstanceOf(NotFoundException);
         //expect(error.getStatus()).toBe(HttpStatus.BAD_REQUEST);
       }
     });
@@ -138,7 +139,7 @@ describe('ClientController', () => {
         };
         await clientController.update({ userId }, clientId, body);
       } catch (error) {
-        expect(error).toBeInstanceOf(TypeError);
+        expect(error).toBeInstanceOf(NotFoundException);
         //expect(error.message).toBe('Internal Server Error');
         //expect(error.getStatus()).toBe(409);
       }
@@ -172,7 +173,7 @@ describe('ClientController', () => {
       });
 
       try {
-        await clientController.remove({ userId }, { clientId: new Types.ObjectId(), employeeId: new Types.ObjectId() });
+        await clientController.remove({ userId }, new Types.ObjectId().toString(), new Types.ObjectId().toString());
       } catch (error) {
         expect(error).toBeInstanceOf(TypeError);
         //expect(error.getStatus()).toBe(HttpStatus.BAD_REQUEST);
@@ -190,7 +191,7 @@ describe('ClientController', () => {
       jest.spyOn(clientService, 'softDelete').mockRejectedValue(new Error('Internal Server Error'));
 
       try {
-        await clientController.remove({ userId }, { clientId: new Types.ObjectId(), employeeId: new Types.ObjectId() });
+        await clientController.remove({ userId }, new Types.ObjectId().toString(), new Types.ObjectId().toString());
       } catch (error) {
         expect(error).toBeInstanceOf(TypeError);
         //expect(error.message).toBe('Internal Server Error');

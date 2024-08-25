@@ -381,17 +381,20 @@ export class RoleController {
     @Body()
     body: ExternalBulkUpdateRoleDto,
   ) {
-    console.log('In bulkUpdate endpoint');
-    const userId = extractUserId(this.jwtService, headers);
+    // console.log('In bulkUpdate endpoint');
+    // console.log('companyId: ', companyId);
+    // console.log('body: ', body);
+    // const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
-    console.log('currentEmployee: ', currentEmployee);
+    // console.log('currentEmployee: ', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       let data;
-      console.log('In if');
+      // console.log('In if');
       try {
-        console.log('In try clause');
-        data = await this.roleService.bulkUpdate(userId, body.bulkUpdateRoleDto, companyId);
+        // console.log('In try clause');
+        data = await this.roleService.bulkUpdate(body.bulkUpdateRoleDto, companyId);
       } catch (e) {
+        console.log(e);
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
       return { data: data };

@@ -19,15 +19,18 @@ import {
 import { InventoryService } from './inventory.service';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiInternalServerErrorResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { InventoryListResponseDto, InventoryResponseDto } from './entities/inventory.entity';
 import { Types } from 'mongoose';
@@ -54,10 +57,19 @@ export class InventoryController {
   @ApiOperation({
     summary: `Refer to Documentation`,
   })
+
+  //********Endpoints for test purposes - Start**********/
+  @Get('/all')
+  async findAll() {
+    const data = await await this.inventoryService.findAll();
+    return { data: data };
+  }
+
   @Get()
   hello() {
     return { message: 'Refer to /documentation for details on the API' };
   }
+  //********Endpoints for test purposes - End**********/
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
@@ -104,14 +116,6 @@ export class InventoryController {
     }
   }
 
-  //********Endpoints for test purposes - Start**********/
-  @Get('/all')
-  async findAll() {
-    const data = await await this.inventoryService.findAll();
-    return { data: data };
-  }
-  //********Endpoints for test purposes - End**********/
-
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
@@ -135,11 +139,7 @@ export class InventoryController {
     description: `The _id attribute of the Company for which to get all ${className} instances.`,
   })
   @Get('/all/:currentEmployeeId')
-  async findAllInCompany(
-    @Headers() headers: any,
-    @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId,
-    // @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
-  ) {
+  async findAllInCompany(@Headers() headers: any, @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId) {
     console.log('In findAllInCompany');
     if (!currentEmployeeId) {
       throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
@@ -249,9 +249,77 @@ export class InventoryController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
-  @ApiInternalServerErrorResponse({
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request is not authorized to view the data.`,
+  })
+  @ApiOperation({
+    summary: `Update an ${className} instances`,
+    description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
+  })
+  @ApiOkResponse({
+    type: InventoryResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className} to be updated.`,
+  })
+  @ApiBody({ type: UpdateInventoryDto })
+  @Put('stockTake/')
+  async stockTake(
+    @Headers() headers: any,
+    @Param('id') id: Types.ObjectId,
+    @Body()
+    body: {
+      currentEmployeeId: Types.ObjectId;
+      updateInventoryDto: UpdateInventoryDto;
+    },
+  ) {
+    console.log('In update inventory controller');
+    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    console.log('currnetEmployee: ', currentEmployee);
+    if (currentEmployee.role.permissionSuite.includes('edit all inventory')) {
+      console.log('in if');
+      let data;
+      try {
+        data = await this.inventoryService.update(id, body.updateInventoryDto);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
     summary: `Add new images to an inventory item (the key needed in in your form-data is "files")`,
@@ -294,13 +362,20 @@ export class InventoryController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
-  @ApiInternalServerErrorResponse({
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
   })
-  @ApiInternalServerErrorResponse({
+  @ApiUnauthorizedResponse({
     type: HttpException,
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
     summary: `Delete an ${className}`,

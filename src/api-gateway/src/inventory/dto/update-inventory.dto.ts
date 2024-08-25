@@ -34,6 +34,12 @@ export class UpdateInventoryDto {
   reorderLevel?: number;
 }
 
+export class ExternalInventoryUpdateDto {
+  currentEmployeeId: Types.ObjectId;
+
+  updateInventoryDto: UpdateInventoryDto;
+}
+
 export class updateInventoryResponseDto {
   response: { access_token: string; id: Types.ObjectId };
   constructor(message: { access_token: string; id: Types.ObjectId }) {

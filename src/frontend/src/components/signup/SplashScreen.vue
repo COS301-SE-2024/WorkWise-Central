@@ -1262,6 +1262,14 @@ export default defineComponent({
       }
       console.log(this.req_obj.logo)
     },
+    convertImageToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result.toString())
+        reader.onerror = (error) => reject(error)
+      })
+    },
     mounted() {
       setTimeout(() => {
         this.loading = false
@@ -1317,6 +1325,7 @@ export default defineComponent({
     birthDateFormatter(date) {
       this.date = new Date(date).toISOString()
     },
+    /*
     async imageURL() {
       const apiURL = await this.getRequestUrl()
       const config = {
@@ -1340,6 +1349,7 @@ export default defineComponent({
           console.log(error)
         })
     },
+*/
     async signup() {
       const apiURL = await this.getRequestUrl()
       this.birthDateFormatter(this.birthDate)
@@ -1372,6 +1382,9 @@ export default defineComponent({
         skills: this.skills,
         currentCompany: this.company
       }
+      if (this.profilePicture !== '') {
+        jsonData.profilePicture = await this.convertImageToBase64(this.profilePicture)
+      }
 
       await axios
         .post(apiURL + 'users/create', jsonData)
@@ -1383,35 +1396,12 @@ export default defineComponent({
           localStorage.setItem('id', response.data.data.id)
           localStorage.setItem('email', this.email)
           localStorage.setItem('username', this.username)
-
-          this.sendImage()
-          // this.resetForm()
         })
         .catch((error) => {
           console.log(error)
           this.alertSignUp = false
           this.alertSignUpFailure = true
         })
-    },
-    async sendImage() {
-      if (this.profilePicture === '') {
-        return
-      }
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
-      }
-      let formData = new FormData()
-      formData.append('profilePicture', this.profilePicture)
-
-      const apiURL = await this.getRequestUrl()
-      const url = apiURL + `users/update/profilePic/`
-
-      await axios.patch(url, formData, config).then((response) => {
-        console.log(response)
-      })
     },
     async nextFlow1() {
       try {
@@ -1439,7 +1429,7 @@ export default defineComponent({
       this.populateUsernameList()
     },
     async nextFlowUsername() {
-      this.profilePicture = await this.imageURL()
+      //this.profilePicture = await this.imageURL()
       try {
         this.exists = await this.usernameExist()
         if (this.exists === true) {

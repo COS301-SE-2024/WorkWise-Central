@@ -3,8 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { JobPriorityTag, JobTag } from './entities/job-tag.entity';
 import { Model, Types } from 'mongoose';
 import { JobStatus } from './entities/job-status.entity';
-import { UpdatePriorityTag, UpdateStatus, UpdateTag } from './dto/update-job.dto';
 import { isNotDeleted } from '../shared/soft-delete';
+import { UpdatePriorityTag, UpdateTag } from './dto/job-tag.dto';
+import { UpdateStatus } from './dto/job-status.dto';
 
 @Injectable()
 export class JobTagRepository {
@@ -34,7 +35,7 @@ export class JobTagRepository {
 
   async addJobPriorityTagToCompany(jobPriorityTag: JobPriorityTag) {
     const priorityTagModel = new this.jobPriorityTagModel(jobPriorityTag);
-    return await priorityTagModel.save();
+    return (await priorityTagModel.save()).toObject();
   }
 
   async deleteJobTag(tagId: Types.ObjectId) {
@@ -109,7 +110,7 @@ export class JobTagRepository {
       .findOneAndUpdate(
         { _id: tagId },
         {
-          ...updates,
+          $set: { ...updates },
         },
         { new: true },
       )
@@ -122,7 +123,7 @@ export class JobTagRepository {
       .findOneAndUpdate(
         { _id: tagId },
         {
-          ...updates,
+          $set: { ...updates },
         },
         { new: true },
       )
@@ -135,7 +136,7 @@ export class JobTagRepository {
       .findOneAndUpdate(
         { _id: statusId },
         {
-          ...updateStatus,
+          $set: { ...updateStatus },
         },
         { new: true },
       )

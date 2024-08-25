@@ -51,6 +51,6 @@ import { ClientRepository } from '../client/client.repository';
     ClientRepository,
   ],
   controllers: [NotificationController],
-  exports: [NotificationService],
+  exports: [NotificationService, NotificationRepository, FcmNotificationService, MongooseModule],
 })
 export class NotificationModule {}
