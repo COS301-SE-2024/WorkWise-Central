@@ -1,4 +1,8 @@
-<template></template>
+<template>
+  <main>
+    <ReportForm />
+  </main>
+</template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
