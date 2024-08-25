@@ -91,9 +91,7 @@ export default {
     },
     async deleteEmployee() {
       const employee_to_be_deleted = {
-        adminId: localStorage['employeeId'],
-        companyId: localStorage['currentCompany'],
-        employeeToDeleteId: this.details.employeeId
+        currentEmployeeId: localStorage['employeeId']
       }
       console.log(employee_to_be_deleted)
       this.isDeleting = true // Indicate the start of the deletion process
@@ -103,7 +101,7 @@ export default {
       }
       const apiURL = await this.getRequestUrl()
       axios
-        .delete(apiURL + 'company/emp', config)
+        .delete(apiURL + `employee/${this.details.employeeId}`, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -114,11 +112,9 @@ export default {
           })
           this.isDeleting = false
           this.clientDialog = false
-          setTimeout(() => {
-            this.isDeleting = false
-            this.clientDialog = false
-            window.location.reload()
-          }, 1500)
+          this.isDeleting = false
+          this.clientDialog = false
+          window.location.reload()
         })
         .catch((error) => {
           console.log(error)
