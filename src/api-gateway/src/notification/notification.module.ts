@@ -22,11 +22,15 @@ import { ClientModule } from '../client/client.module';
 import { InventoryService } from '../inventory/inventory.service';
 import { InventoryModule } from '../inventory/inventory.module';
 import { ClientRepository } from '../client/client.repository';
+import { NotificationToken, NotificationTokenSchema } from './entities/notificationToken.entity';
 
 @Global()
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Notification.name, schema: NotificationSchema }]),
+    MongooseModule.forFeature([
+      { name: Notification.name, schema: NotificationSchema },
+      { name: NotificationToken.name, schema: NotificationTokenSchema },
+    ]),
     EmailModule,
     forwardRef(() => UsersModule),
     forwardRef(() => CompanyModule),
