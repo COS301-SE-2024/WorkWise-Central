@@ -485,6 +485,17 @@ export class EmployeeService {
     await this.employeeRepository.removeAllReferencesToTeam(teamId);
   }
 
+  async removeRoleReferences(roleId: Types.ObjectId) {
+    const listOfEmployees = await this.allEmployeesInCompanyWithRole(roleId);
+    const workerRole = await this.roleService.findOneInCompany('Worker', listOfEmployees[0].companyId);
+
+    for (const employee of listOfEmployees) {
+      const dto = new InternalUpdateEmployeeDto();
+      dto.role.roleId = workerRole._id;
+      await this.employeeRepository.update(employee._id, dto);
+    }
+  }
+
   async remove(id: Types.ObjectId): Promise<boolean> {
     const employee = await this.findById(id);
     if (!employee) {
