@@ -481,6 +481,10 @@ export class EmployeeService {
     }
   }
 
+  async removeTeamReferences(teamId: Types.ObjectId) {
+    await this.employeeRepository.removeAllReferencesToTeam(teamId);
+  }
+
   async remove(id: Types.ObjectId): Promise<boolean> {
     const employee = await this.findById(id);
     if (!employee) {

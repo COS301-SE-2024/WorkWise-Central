@@ -217,6 +217,11 @@ export class TeamService {
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {
+    //Removing the team from all jobs
+    await this.jobService.removeAllReferencesToTeam(id);
+    //Removing the team from all employees
+    await this.removeEmployeeReferences(id);
+
     //checking if the team exists
     if (!(await this.teamExists(id))) {
       throw new Error('Team not found');

@@ -255,6 +255,23 @@ export class EmployeeRepository {
     return previousObject;
   }
 
+  async removeAllReferencesToTeam(teamId: Types.ObjectId) {
+    const allEmployeesInCompany = await this.employeeModel
+      .find({
+        $and: [
+          { teams: { $in: teamId } },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .exec();
+    for (const employee of allEmployeesInCompany) {
+      employee.teams = employee.teams.filter((team) => team.toString() != teamId.toString());
+      employee.save();
+    }
+  }
+
   async updateSuperior(id: Types.ObjectId, superiorIdentifcation: Types.ObjectId) {
     const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
       .findOneAndUpdate(

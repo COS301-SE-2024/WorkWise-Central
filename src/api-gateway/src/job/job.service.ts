@@ -1124,4 +1124,9 @@ export class JobService {
     this.jobRepository.removeAllReferencesToEmployee(employeeId);
     return true;
   }
+
+  removeAllReferencesToTeam(teamId: Types.ObjectId) {
+    this.jobRepository.removeAllReferencesToTeam(teamId);
+    return true;
+  }
 }
