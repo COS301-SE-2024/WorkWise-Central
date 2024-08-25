@@ -1325,31 +1325,6 @@ export default defineComponent({
     birthDateFormatter(date) {
       this.date = new Date(date).toISOString()
     },
-    /*
-    async imageURL() {
-      const apiURL = await this.getRequestUrl()
-      const config = {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
-      }
-      await axios
-        .post(
-          apiURL + 'users/newUser/profilePic',
-          {
-            profilePicture: this.profilePicture
-          },
-          config
-        )
-        .then((response) => {
-          console.log(response)
-          this.profilePicture = response.data.data
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    },
-*/
     async signup() {
       const apiURL = await this.getRequestUrl()
       this.birthDateFormatter(this.birthDate)
