@@ -106,7 +106,11 @@ c
                           </v-chip>
                         </template>
                         <template v-slot:[`item.actions`]="{ item }">
-                          <v-menu max-width="500px" :theme="isDarkMode === true ? 'dark' : 'light'">
+                          <v-menu
+                            max-width="500px"
+                            :theme="isDarkMode === true ? 'dark' : 'light'"
+                            v-if="item.roleName != 'Owner'"
+                          >
                             <template v-slot:activator="{ props }"
                               ><v-btn
                                 rounded="xl"
