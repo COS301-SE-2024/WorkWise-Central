@@ -37,6 +37,21 @@ export class EmployeeRepository {
     return result;
   }
 
+  async findAllInCompanyWithEmployee(identifier: Types.ObjectId) {
+    return await this.employeeModel
+      .find({
+        $and: [
+          {
+            $or: [{ superiorId: identifier }, { subordinates: { $in: identifier } }],
+          },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+  }
+
   async findAllInCompanyWithRoleName(identifier: Types.ObjectId, roleName: string) {
     const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] = await this.employeeModel
       .find({

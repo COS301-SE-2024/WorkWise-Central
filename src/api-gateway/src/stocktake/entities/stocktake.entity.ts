@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
-// import { CreateStocktakeDto } from '../dto/create-stocktake.dto';
 
 export class StockTakeItem {
   @ApiProperty()

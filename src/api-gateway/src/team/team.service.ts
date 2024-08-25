@@ -223,4 +223,20 @@ export class TeamService {
     }
     return this.teamRepository.remove(id);
   }
+
+  async removeEmployeeReferences(employeeId: Types.ObjectId) {
+    const listOfTeams = await this.teamRepository.findAllWithEmployeeId(employeeId);
+
+    for (const team of listOfTeams) {
+      if (team.teamLeaderId == employeeId) {
+        const updateDto = new InternalUpdateTeamDto();
+        updateDto.teamLeaderId = null;
+        await this.teamRepository.update(team._id, updateDto);
+      } else {
+        const updateDto = new InternalUpdateTeamDto();
+        updateDto.teamMembers = team.teamMembers.filter((x) => x.toString() != employeeId.toString());
+        await this.teamRepository.update(team._id, updateDto);
+      }
+    }
+  }
 }
