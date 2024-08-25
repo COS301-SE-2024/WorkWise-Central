@@ -9,7 +9,6 @@
             <v-data-table
               :headers="tableHeaders"
               :items="employees"
-              item-value="id"
               class="elevation-1 bg-cardColor"
               :row-props="getRowProps"
               dense
@@ -161,7 +160,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from 'vue'
 import Chart from 'primevue/chart'
 import jsPDF from 'jspdf'
@@ -175,8 +174,8 @@ export default defineComponent({
   },
   data() {
     return {
-      companyName: '' as string,
-      employees: [] as any,
+      companyName: '',
+      employees: [],
       tableHeaders: [
         { title: 'Name', value: 'userInfo.displayName', key: 'userInfo.displayName' },
         { title: 'Role', value: 'roleName', key: 'role.roleName' },
@@ -187,7 +186,7 @@ export default defineComponent({
         },
         { title: 'View Report', value: 'actions', sortable: false }
       ],
-      selectedEmployee: null as any,
+      selectedEmployee: null,
       reportDialog: false,
       jobPerformanceData: {},
       productivityData: {},
@@ -235,20 +234,20 @@ export default defineComponent({
         ]
       },
       employeeData: [],
-      selectedItem: '' as any,
+      selectedItem: '',
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
-      items: [] as any[],
-      jobStatusLabels: [] as string[]
+      items: [],
+      jobStatusLabels: []
     }
   },
   methods: {
-    viewReport(employee: any) {
+    viewReport(employee) {
       this.selectedEmployee = employee
       this.generateEmployeeData(employee)
       this.reportDialog = true
     },
-    generateEmployeeData(employee: any) {
+    generateEmployeeData(employee) {
       // Simulate dynamic data based on the selected employee
       this.jobPerformanceData = {
         labels: ['Task 1', 'Task 2', 'Task 3', 'Task 4', 'Task 5'],
@@ -292,12 +291,12 @@ export default defineComponent({
         ]
       }
     },
-    getRowProps(item: any) {
+    getRowProps(item) {
       return {
         class: item % 2 ? 'bg-background' : ''
       }
     },
-    chipColor(numAssignments: number) {
+    chipColor(numAssignments) {
       if (numAssignments > 0) {
         return 'success'
       } else {
@@ -348,13 +347,13 @@ export default defineComponent({
           config
         )
         this.items = res.data.data
-        this.jobStatusLabels = this.items.map((item: any) => item.status)
+        this.jobStatusLabels = this.items.map((item) => item.status)
         console.log(res)
       } catch (error) {
         console.error(error)
       }
     },
-    async isLocalAvailable(localUrl: string) {
+    async isLocalAvailable(localUrl) {
       try {
         const res = await axios.get(localUrl)
         return res.status < 300 && res.status > 199
@@ -362,7 +361,7 @@ export default defineComponent({
         return false
       }
     },
-    selectItem(item: any) {
+    selectItem(item) {
       console.log(item)
       this.selectedItem = item
     },
@@ -370,7 +369,7 @@ export default defineComponent({
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     },
-    async convertJobIdtoJobName(id: string) {
+    async convertJobIdtoJobName(id) {
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -417,7 +416,7 @@ export default defineComponent({
       // Save the PDF
       pdf.save(`${this.selectedEmployee?.name}-report.pdf`)
     },
-    async captureChart(chartRef: any) {
+    async captureChart(chartRef) {
       const canvas = await html2canvas(chartRef.$el.querySelector('canvas'))
       return canvas.toDataURL('image/png')
     }
@@ -425,8 +424,7 @@ export default defineComponent({
   mounted() {
     this.getStatuses()
     this.getEmployees()
-    this.setJobStatusLabels(),
-      (this.companyName = localStorage.getItem('currentCompanyName') as string)
+    this.setJobStatusLabels(), (this.companyName = localStorage.getItem('currentCompanyName'))
   }
 })
 </script>
