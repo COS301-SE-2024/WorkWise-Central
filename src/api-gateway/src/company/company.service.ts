@@ -372,7 +372,7 @@ export class CompanyService {
     const employees = await this.employeeService.findAllInCompany(leaveCompanyDto.companyToLeaveId);
     const recipientIds: Types.ObjectId[] = [];
     for (const emp of employees) {
-      recipientIds.push(emp._id);
+      recipientIds.push(emp.userId);
     }
     const title = `${employee.userInfo.firstName} ${employee.userInfo.surname} has left the ${company.name}`;
     const body = leaveCompanyDto.reason
