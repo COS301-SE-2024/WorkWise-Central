@@ -22,6 +22,8 @@ import { isPhoneNumber } from 'class-validator';
 import { CompanyService } from '../company/company.service';
 import { FileService } from '../file/file.service';
 import { JobService } from '../job/job.service';
+import { UserResetPasswordDto } from './dto/user-reset-password.dto';
+import { UserPasswordReset } from './entities/user-password-reset.entity';
 
 @Injectable()
 export class UsersService {
@@ -30,6 +32,9 @@ export class UsersService {
 
     @InjectModel(UserConfirmation.name)
     private readonly userConfirmationModel: Model<UserConfirmation>,
+
+    @InjectModel(UserPasswordReset.name)
+    private readonly userPasswordResetModel: Model<UserPasswordReset>,
 
     @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
@@ -90,6 +95,26 @@ export class UsersService {
     return this.userRepository.verifyUser(email);
   }
 
+  async createUserPasswordResetRequest(email: string) {
+    const user = await this.getUserByEmail(email);
+    if (!user) throw new NotFoundException('User not found');
+    const passwordResetRequest: UserPasswordReset = {
+      email: email,
+      token: randomStringGenerator(),
+    };
+    const req = await this.userPasswordResetModel.create(passwordResetRequest);
+    await req.save();
+    await this.emailService.sendResetPasswordRequest(
+      {
+        userId: user._id,
+        emailAddress: email,
+        name: user.personalInfo.firstName,
+      },
+      req.token,
+    );
+    return true;
+  }
+
   async getAllUsers(): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
     return this.userRepository.findAll();
   }
@@ -133,6 +158,10 @@ export class UsersService {
 
   async getUserByUsername(identifier: string) {
     return this.userRepository.findByUsername(identifier);
+  }
+
+  async getUserByEmail(identifier: string) {
+    return this.userRepository.findByEmail(identifier);
   }
 
   async updateJoinedCompanies(
@@ -336,19 +365,6 @@ export class UsersService {
     return userJoinedCompany != null;
   }
 
-  async userIsValid(user: User): Promise<ValidationResult> {
-    if (user.joinedCompanies) {
-      for (const joinedCompany of user.joinedCompanies) {
-        const exists = await this.employeeService.employeeExists(joinedCompany.employeeId);
-        if (!exists) return new ValidationResult(false, `Invalid Employee ID: ${joinedCompany.employeeId}`);
-      }
-    }
-    if (user.currentEmployee) {
-      const exists = await this.employeeService.employeeExists(user.currentEmployee);
-      if (!exists) return new ValidationResult(false, `Invalid currentEmployee: ${user.currentEmployee}`);
-    }
-  }
-
   async updateUserValid(id: Types.ObjectId, user: UpdateUserDto): Promise<ValidationResult> {
     if (!user) {
       return new ValidationResult(false, `user cannot be undefined`);
@@ -395,5 +411,12 @@ export class UsersService {
 
   getFullName(user: User): string {
     return user.personalInfo.firstName + ' ' + user.personalInfo.surname;
+  }
+
+  async resetPassword(userId: Types.ObjectId, userResetPasswordDto: UserResetPasswordDto) {
+    const user = await this.getUserById(userId);
+    if (!user) throw new NotFoundException('User not found');
+    await this.userRepository.updatePassword(userId, userResetPasswordDto.newPassword);
+    return true;
   }
 }
