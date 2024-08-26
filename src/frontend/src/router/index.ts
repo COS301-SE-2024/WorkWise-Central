@@ -14,7 +14,6 @@ import ClientView from '@/views/ClientEmployee.vue'
 import ClientEmployeeView from '@/views/home/employees/EmployeeDesk.vue'
 import ClientEmployee from '@/components/ClientEmployeeView.vue'
 import Dashboard from '@/views/home/dashboard/DashboardView.vue'
-import Kanban from '@/components/home/jobs/Kanban.vue'
 import ManagerView from '@/views/ManagerView.vue'
 import ProfilePage from '@/components/home/settings/profile/ProfilePage.vue'
 import CompanySettings from '@/components/home/settings/company/CompanySettings.vue'
@@ -48,11 +47,6 @@ import NewPasswordView from '@/views/signup/NewPasswordView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    {
-      path: '/kanban',
-      name: 'kanban',
-      component: Kanban
-    },
     {
       path: '/register-company',
       name: 'registercompany',
@@ -343,6 +337,11 @@ const router = createRouter({
       path: '/splash/tutorial',
       name: 'splash-tutorial',
       component: () => import('@/components/signup/Tutorial.vue')
+    },
+    {
+      path: '/backlog/archive',
+      name: 'backlog-archive',
+      component: () => import('@/views/home/jobs/Archive.vue')
     }
   ]
 })
