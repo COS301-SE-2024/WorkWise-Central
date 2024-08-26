@@ -223,6 +223,17 @@ export class UsersService {
     return updatedUser;
   }
 
+  async removeJoinedCompanyWithoutValidation(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
+    const updatedUser = await this.userRepository.removeJoinedCompany(userId, companyId);
+    if (updatedUser == null) {
+      throw new NotFoundException('failed to update user');
+    }
+    return updatedUser;
+  }
+
   async changeCurrentEmployee(userId: Types.ObjectId, companyId: Types.ObjectId) {
     const user = await this.userRepository.findById(userId);
     const joinedCompany = user.joinedCompanies.filter(

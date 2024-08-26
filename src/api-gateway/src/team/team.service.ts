@@ -217,10 +217,31 @@ export class TeamService {
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {
+    //Removing the team from all jobs
+    await this.jobService.removeAllReferencesToTeam(id);
+    //Removing the team from all employees
+    await this.removeEmployeeReferences(id);
+
     //checking if the team exists
     if (!(await this.teamExists(id))) {
       throw new Error('Team not found');
     }
     return this.teamRepository.remove(id);
+  }
+
+  async removeEmployeeReferences(employeeId: Types.ObjectId) {
+    const listOfTeams = await this.teamRepository.findAllWithEmployeeId(employeeId);
+
+    for (const team of listOfTeams) {
+      if (team.teamLeaderId == employeeId) {
+        const updateDto = new InternalUpdateTeamDto();
+        updateDto.teamLeaderId = null;
+        await this.teamRepository.update(team._id, updateDto);
+      } else {
+        const updateDto = new InternalUpdateTeamDto();
+        updateDto.teamMembers = team.teamMembers.filter((x) => x.toString() != employeeId.toString());
+        await this.teamRepository.update(team._id, updateDto);
+      }
+    }
   }
 }
