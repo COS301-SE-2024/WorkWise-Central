@@ -466,10 +466,53 @@ export class EmployeeService {
     return await this.employeeRepository.allEmployeesInCompanyWithRole(roleId);
   }
 
+  async removeEmployeeReferences(employeeId: Types.ObjectId) {
+    const currentEmployee = await this.findById(employeeId);
+    const listOfEmployees = await this.employeeRepository.findAllInCompanyWithEmployee(employeeId);
+
+    for (const employee of listOfEmployees) {
+      if (employee.superiorId == employeeId) {
+        await this.updateSuperior(employee._id, currentEmployee.superiorId);
+      } else {
+        const dto = new RemoveSubordinatesDto();
+        dto.subordinatesToBeRemoved = [employee._id];
+        await this.removeSubordinates(employee.superiorId, dto);
+      }
+    }
+  }
+
+  async removeTeamReferences(teamId: Types.ObjectId) {
+    await this.employeeRepository.removeAllReferencesToTeam(teamId);
+  }
+
+  async removeRoleReferences(roleId: Types.ObjectId) {
+    const listOfEmployees = await this.allEmployeesInCompanyWithRole(roleId);
+    const workerRole = await this.roleService.findOneInCompany('Worker', listOfEmployees[0].companyId);
+
+    for (const employee of listOfEmployees) {
+      const dto = new InternalUpdateEmployeeDto();
+      dto.role.roleId = workerRole._id;
+      await this.employeeRepository.update(employee._id, dto);
+    }
+  }
+
   async remove(id: Types.ObjectId): Promise<boolean> {
-    if (!(await this.employeeExists(id))) {
+    const employee = await this.findById(id);
+    if (!employee) {
       throw new Error('Employee does not exist');
     }
+    //Removing the employee from any teams they are part of
+    await this.teamService.removeEmployeeReferences(id);
+
+    //Removing the employee from any job assignments they are part of
+    await this.jobService.removeAllReferencesToEmployee(id);
+
+    //Removing the employee from the user entity
+    await this.usersService.removeJoinedCompanyWithoutValidation(employee.userId, employee.companyId);
+
+    //Updating the tree structure
+    await this.removeEmployeeReferences(id);
+
     return await this.employeeRepository.remove(id);
   }
 

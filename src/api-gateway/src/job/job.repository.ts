@@ -629,4 +629,19 @@ export class JobRepository {
       job.save();
     }
   }
+
+  async removeAllReferencesToTeam(teamId: Types.ObjectId) {
+    const allJobsInCompany = await this.jobModel
+      .find({ $and: [{ 'assignedEmployees.teamIds': teamId }, isNotDeleted] })
+      .exec();
+    for (const job of allJobsInCompany) {
+      const assignedEmp = job.assignedEmployees.teamIds.find((e) => e._id.toString() === teamId.toString());
+      if (!assignedEmp) {
+        job.assignedEmployees.teamIds = job.assignedEmployees.teamIds.filter(
+          (e) => e._id.toString() !== teamId.toString(),
+        );
+      }
+      job.save();
+    }
+  }
 }
