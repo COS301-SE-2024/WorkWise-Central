@@ -20,6 +20,7 @@ import { JobTagRepository } from './job-tag.repository';
 import { JobStatus, JobStatusSchema } from './entities/job-status.entity';
 import { InventoryModule } from '../inventory/inventory.module';
 import { InventoryService } from '../inventory/inventory.service';
+import { StockTakeModule } from '../stocktake/stocktake.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { InventoryService } from '../inventory/inventory.service';
     forwardRef(() => JwtModule),
     forwardRef(() => FileModule),
     forwardRef(() => InventoryModule),
+    forwardRef(() => StockTakeModule),
   ],
   providers: [
     JobService,

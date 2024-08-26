@@ -14,7 +14,10 @@ export class InventoryService {
   constructor(
     @Inject(forwardRef(() => InventoryRepository))
     private readonly inventoryRepository: InventoryRepository,
+
+    @Inject(forwardRef(() => CompanyService))
     private readonly companyService: CompanyService,
+
     @Inject(forwardRef(() => StockTakeService))
     private readonly stockTakeService: StockTakeService,
 

@@ -1,4 +1,4 @@
-import { InventoryService } from './../inventory/inventory.service';
+import { InventoryService } from '../inventory/inventory.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { StockTakeRepository } from './stocktake.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
@@ -14,7 +14,9 @@ export class StockTakeService {
   constructor(
     @Inject(forwardRef(() => StockTakeRepository))
     private readonly stocktakeRepository: StockTakeRepository,
+    @Inject(forwardRef(() => InventoryService))
     private readonly inventoryService: InventoryService,
+    @Inject(forwardRef(() => CompanyService))
     private readonly companyService: CompanyService,
   ) {}
 
