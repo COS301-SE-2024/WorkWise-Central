@@ -346,7 +346,7 @@ const router = createRouter({
     {
       path: '/chat',
       name: 'Chat',
-      component: () => import('@/views/Chats.vue'),
+      component: () => import('@/views/UserChats.vue'),
       props: {
         currentUser: `${localStorage.getItem('id')}`,
         onLogout: () => console.log('Logged out')
