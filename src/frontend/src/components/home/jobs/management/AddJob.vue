@@ -103,6 +103,13 @@
                 :model-value="date_error_alert"
                 type="warning"
               ></v-alert>
+              <v-alert
+                density="compact"
+                text="Dates was not fully set, check date, hours and minutes are set. "
+                title="Date Warning"
+                :model-value="date_validation_error_alert"
+                type="warning"
+              ></v-alert>
               <v-row>
                 <v-col align="center" cols="12" md="6">
                   <v-date-picker
@@ -267,6 +274,7 @@
                     v-model="req_obj.details.address.street"
                     variant="solo"
                     required
+                    :rules="street_rules"
                     data-testid="street-field"
                   ></v-text-field
                 ></v-col>
@@ -283,6 +291,7 @@
                     v-model="req_obj.details.address.suburb"
                     variant="solo"
                     required
+                    :rules="suburb_rules"
                     data-testid="suburb-field"
                   ></v-text-field
                 ></v-col>
@@ -298,6 +307,7 @@
                     rounded="md"
                     v-model="req_obj.details.address.province"
                     @update:model-value="hello"
+                    :rules="province_rules"
                     type="houseNumber"
                     variant="solo"
                     :items="[
@@ -328,6 +338,7 @@
                     v-model="req_obj.details.address.city"
                     variant="solo"
                     required
+                    :rules="city_rules"
                     data-testid="city-town-field"
                   ></v-text-field
                 ></v-col>
@@ -483,6 +494,10 @@ export default defineComponent({
         (v: string) =>
           /^[A-Za-z\s]+$/.test(v) || 'Job title must be alphabetic characters and spaces only'
       ],
+      province_rules: [(v: string) => !!v || 'Province is required'],
+      street_rules: [(v: string) => !!v || 'Street is required'],
+      suburb_rules: [(v: string) => !!v || 'Suburb is required'],
+      city_rules: [(v: string) => !!v || 'City/Town is required'],
       postal_code_rules: [
         (v: string) => !!v || 'Postal code  is required',
         (value: string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
@@ -530,7 +545,8 @@ export default defineComponent({
         coverImage: ''
       } as Job,
       jobDialog: false,
-      date_error_alert: false
+      date_error_alert: false,
+      date_validation_error_alert: false
     }
   },
   watch: {
@@ -617,20 +633,29 @@ export default defineComponent({
       this.req_obj.coverImage || delete this.req_obj.coverImage
       this.req_obj.assignedEmployees.employeeIds ||
         delete this.req_obj.assignedEmployees.employeeIds
+      this.req_obj.status || delete this.req_obj.status
 
       if (validate) {
         const update = this.updateDates()
         console.log(this.req_obj)
         console.log(update)
+        this.date_validation_error_alert = !update
         if (update) await this.handleSubmission()
       }
     },
-    formatDateAndTime(date: Date, time: string) {
+    formatStartDateAndTime(date: Date, time: string) {
       const [hrs, min] = time.split(':').map(Number)
       date.setHours(hrs)
       date.setMinutes(min)
       console.log(date.toISOString())
       this.req_obj.details.startDate = date.toISOString()
+    },
+    formatEndDateAndTime(date: Date, time: string) {
+      const [hrs, min] = time.split(':').map(Number)
+      date.setHours(hrs)
+      date.setMinutes(min)
+      console.log(date.toISOString())
+      this.req_obj.details.endDate = date.toISOString()
     },
     formatDate(d: Date) {
       const year = d.getFullYear()
@@ -688,14 +713,13 @@ export default defineComponent({
     },
     updateDates() {
       if (this.endDate && this.startDate && this.startTime && this.endTime) {
-        this.formatDateAndTime(new Date(this.startDate), this.startTime)
-        this.formatDateAndTime(new Date(this.endDate), this.endTime)
-        this.req_obj.details.startDate = convertToISOStr(new Date(this.startDate))
-        this.req_obj.details.endDate = convertToISOStr(new Date(this.endDate))
+        this.formatStartDateAndTime(new Date(this.startDate), this.startTime)
+        this.formatEndDateAndTime(new Date(this.endDate), this.endTime)
         console.log(this.req_obj.details.startDate)
         console.log(this.req_obj.details.endDate)
         return true
       }
+      console.log('Dates were not set properly')
       return false
     },
     hello() {
