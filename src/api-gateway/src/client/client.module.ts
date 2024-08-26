@@ -18,6 +18,7 @@ import { JobModule } from '../job/job.module';
 import { TeamModule } from '../team/team.module';
 import { InventoryModule } from '../inventory/inventory.module';
 import { InventoryService } from '../inventory/inventory.service';
+import { StockTakeModule } from '../stocktake/stocktake.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { InventoryService } from '../inventory/inventory.service';
     forwardRef(() => JobModule),
     forwardRef(() => TeamModule),
     forwardRef(() => InventoryModule),
+    forwardRef(() => StockTakeModule),
   ],
   controllers: [ClientController],
   providers: [
