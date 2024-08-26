@@ -37,12 +37,12 @@
         <v-container
           ><v-row
             ><v-col cols="12" lg="6">
-              <v-btn color="primary" @click="generatePDF" block
-                ><v-icon icon="fa: fa-solid fa-file" color="primary"></v-icon>Download PDF</v-btn
-              ></v-col
-            ><v-col cols="12" lg="6">
               <v-btn color="secondary" @click="closeDialog" block
                 ><v-icon icon="fa: fa-solid fa-cancel" color="secondary"></v-icon>Close</v-btn
+              ></v-col
+            ><v-col cols="12" lg="6">
+              <v-btn color="primary" @click="generatePDF" block
+                ><v-icon icon="fa: fa-solid fa-file" color="primary"></v-icon>Download PDF</v-btn
               ></v-col
             ></v-row
           ></v-container

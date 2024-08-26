@@ -14,7 +14,7 @@
         </v-row>
       </v-container>
       <v-card-text>
-         <Toast position="top-center" />
+        <Toast position="top-center" />
         <v-network-graph
           v-model="graph"
           class="graph"
@@ -24,17 +24,21 @@
           :configs="configs"
         ></v-network-graph>
       </v-card-text>
-      <v-divider></v-divider>
+
       <v-card-actions class="bg-cardColor">
         <v-container
           ><v-row justify="end">
-            <v-col align="center" cols="12" lg="6">
-              <v-btn color="success" @click="saveChanges" :loading="isDeleting" block>Save</v-btn>
+            <v-col align="center" cols="12" lg="6" order="last" order-lg="first">
+              <v-btn color="error" @click="cancel" :loading="isDeleting" block
+                ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Cancel</v-btn
+              >
             </v-col>
-            <v-col align="center" cols="12" lg="6">
-              <v-btn color="error" @click="cancel" :loading="isDeleting" block>Cancel</v-btn>
-            </v-col></v-row
-          ></v-container
+            <v-col align="center" cols="12" lg="6" order="first" order-lg="last">
+              <v-btn color="success" @click="saveChanges" :loading="isDeleting" block
+                ><v-icon color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save</v-btn
+              >
+            </v-col>
+          </v-row></v-container
         >
       </v-card-actions>
     </v-card>
@@ -187,5 +191,8 @@ export default defineComponent({
 <style scoped>
 .bg-cardColor {
   background-color: #f5f5f5;
+}
+.graph {
+  height: 700px;
 }
 </style>

@@ -45,9 +45,21 @@
             variant="solo"
           ></v-select>
         </v-card-text>
+
         <v-card-actions class="d-flex flex-column">
-          <v-btn @click="saveMembers" color="success">Save</v-btn>
-          <v-btn @click="isActive.value = false" color="error">Cancel</v-btn>
+          <v-container
+            ><v-row
+              ><v-col cols="12" lg="6" order="last" order-lg="first">
+                <v-btn @click="saveMembers" color="success" block
+                  ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
+                ></v-col
+              ><v-col cols="12" lg="6" order="last" order-lg="first">
+                <v-btn @click="isActive.value = false" color="error" block
+                  ><v-icon icon="fa:fa-solid fa-cancel" color="error"></v-icon>Cancel</v-btn
+                ></v-col
+              ></v-row
+            ></v-container
+          >
         </v-card-actions>
       </v-card>
     </template>
@@ -60,11 +72,11 @@ import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 
 interface Member {
-  _id: string;
+  _id: string
   userInfo: {
-    firstName: string;
-    surname: string;
-  };
+    firstName: string
+    surname: string
+  }
 }
 
 const props = defineProps<{
@@ -125,7 +137,10 @@ const showAssignEmployeesError = () => {
 const getTeamMembers = async () => {
   const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}employee/detailed/all/${localStorage.getItem('employeeId')}`, config)
+    const response = await axios.get(
+      `${apiUrl}employee/detailed/all/${localStorage.getItem('employeeId')}`,
+      config
+    )
     if (response.status > 199 && response.status < 300) {
       console.log(response)
       members.value = response.data.data.map((employee: any) => ({
@@ -150,18 +165,21 @@ const saveMembers = async () => {
   try {
     // Find members to remove
     const membersToRemove = originalSelectedMembers.value.filter(
-      originalMember => !selectedMembers.value.some(
-        selectedMember => selectedMember._id === originalMember._id
-      )
+      (originalMember) =>
+        !selectedMembers.value.some((selectedMember) => selectedMember._id === originalMember._id)
     )
 
     // Remove unselected members
     for (const member of membersToRemove) {
-      const response = await axios.patch(`${apiUrl}job/employee`, {
-        employeeId: localStorage.getItem('employeeId'),
-        employeeToAssignId: member._id,
-        jobId: props.jobID
-      }, config)
+      const response = await axios.patch(
+        `${apiUrl}job/employee`,
+        {
+          employeeId: localStorage.getItem('employeeId'),
+          employeeToAssignId: member._id,
+          jobId: props.jobID
+        },
+        config
+      )
       if (response.status > 199 && response.status < 300) {
         console.log(`Removed member: ${member._id}`)
       } else {
@@ -171,9 +189,9 @@ const saveMembers = async () => {
 
     // Add new selected members
     for (const member of selectedMembers.value) {
-      if (!originalSelectedMembers.value.some(
-        originalMember => originalMember._id === member._id
-      )) {
+      if (
+        !originalSelectedMembers.value.some((originalMember) => originalMember._id === member._id)
+      ) {
         console.log('Add new member option')
         console.log('Now in selected members', selectedMembers.value)
         console.log('member', member)
@@ -183,11 +201,15 @@ const saveMembers = async () => {
           jobId: props.jobID
         }
         console.log('Member view', membervia)
-        const response = await axios.put(`${apiUrl}job/employee`, {
-          employeeId: localStorage.getItem('employeeId'),
-          employeeToAssignId: member,
-          jobId: props.jobID
-        }, config)
+        const response = await axios.put(
+          `${apiUrl}job/employee`,
+          {
+            employeeId: localStorage.getItem('employeeId'),
+            employeeToAssignId: member,
+            jobId: props.jobID
+          },
+          config
+        )
         if (response.status > 199 && response.status < 300) {
           console.log('Member change', response)
           console.log(`Added member: ${member._id}`)
@@ -245,6 +267,3 @@ const getMembersFullName = (item: Member) => {
   return ''
 }
 </script>
-
-
-

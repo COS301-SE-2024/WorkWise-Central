@@ -9,7 +9,7 @@ import ToastService from 'primevue/toastservice'
 import VNetworkGraph from 'v-network-graph'
 import 'v-network-graph/lib/style.css'
 import './assets/styles.css'
-import 'vuetify/dist/vuetify.min.css';
+import 'vuetify/dist/vuetify.min.css'
 //import firebaseMessaging from '@/store/firebase'
 
 const app = createApp(App)

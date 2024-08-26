@@ -1,16 +1,11 @@
 <template>
-  <v-dialog
-    v-model="deleteDialog"
-    max-width="500px"
-    :theme="isDarkMode === true ? 'dark' : 'light'"
-    :opacity="0.1"
-  >
+  <v-dialog v-model="deleteDialog" max-width="500px" :opacity="0.1">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
       >
     </template>
-    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
+    <v-card>
       <v-card-title>
         <v-icon>mdi-plus</v-icon>
         <span>Delete Inventory</span>
@@ -30,14 +25,13 @@
       <v-card-actions>
         <v-container
           ><v-row justify="end"
-            ><v-col cols="12" lg="6"
+            ><v-col cols="12" lg="6" order="last" order-lg="first"
               ><Toast position="bottom-center" />
               <v-btn label="Cancel" color="secondary" @click="close" block
-                ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
-                >Cancel
+                ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon>Cancel
               </v-btn></v-col
             >
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn
                 label="Delete"
                 color="error"
@@ -102,7 +96,7 @@ export default defineComponent({
         })
         this.deleteDialog = false
         setTimeout(() => {
-          window.location.reload()
+          
           this.isDeleting = false
         }, 3000)
       } catch (error) {

@@ -51,13 +51,7 @@
         </v-data-table>
       </v-card-text>
     </v-card>
-    <v-dialog
-      v-model="dialog"
-      max-height="800"
-      max-width="600"
-      :theme="isDarkMode ? 'dark' : 'light'"
-      persistent
-    >
+    <v-dialog v-model="dialog" max-height="800" max-width="600" persistent>
       <v-card>
         <v-card-title> Edit Statuses</v-card-title>
         <v-card-text>
@@ -72,7 +66,22 @@
             />
 
             <v-label>Tag Color</v-label>
-            <div><ColorPicker inputId="cp-hex" v-model="selectedItem.colour" inline /></div>
+            <v-row>
+              <v-col
+                v-for="color in colorOptions"
+                :key="color"
+                cols="2"
+                class="d-flex justify-center"
+              >
+                <v-btn
+                  :style="{ backgroundColor: color }"
+                  class="ma-1"
+                  @click="selectedItem.colour = color"
+                  :outlined="selectedItem.colour !== color"
+                  style="width: 40px; height: 40px; border-radius: 4px"
+                ></v-btn>
+              </v-col>
+            </v-row>
             <span
               >Hex Code:
               <v-chip :color="selectedItem.colour">{{ selectedItem.colour }}</v-chip></span
@@ -82,7 +91,18 @@
         <v-card-actions>
           <v-container
             ><v-row
-              ><v-col cols="12" lg="6"
+              ><v-col cols="12" lg="6" order="last" order-lg="first"
+                ><v-btn
+                  color="error"
+                  rounded="md"
+                  variant="text"
+                  @click="close"
+                  block
+                  :loading="isDeleting"
+                >
+                  <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon> Cancel
+                </v-btn></v-col
+              ><v-col cols="12" lg="6" order="first" order-lg="last"
                 ><v-btn
                   @click="updateStatus"
                   :disabled="!formIsValid"
@@ -95,17 +115,6 @@
                   <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save
                   Status</v-btn
                 ></v-col
-              ><v-col cols="12" lg="6"
-                ><v-btn
-                  color="error"
-                  rounded="md"
-                  variant="text"
-                  @click="close"
-                  block
-                  :loading="isDeleting"
-                >
-                  <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon> Cancel
-                </v-btn></v-col
               ></v-row
             ></v-container
           >
@@ -118,7 +127,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import ColorPicker from 'primevue/colorpicker'
+
 import DeleteStatus from './DeleteStatus.vue'
 import Toast from 'primevue/toast'
 import CreateStatus from './CreateStatus.vue'
@@ -171,13 +180,45 @@ export default defineComponent({
         return r < 240 || g < 240 || b < 240 || 'Colors close to white are not allowed'
       }
     ],
+    colorOptions: [
+      '#FFB74D',
+      '#FFD54F',
+      '#FFF176',
+      '#AED581',
+      '#81C784',
+      '#4DB6AC',
+      '#4DD0E1',
+      '#4FC3F7',
+      '#64B5F6',
+      '#7986CB',
+      '#BA68C8',
+      '#DCE775',
+      '#FFF59D',
+      '#FFEB3B',
+      '#FFCA28',
+      '#FF7043',
+      '#FF8A65',
+      '#A1887F',
+      '#90A4AE',
+      '#78909C',
+      '#EF5350',
+      '#EC407A',
+      '#AB47BC',
+      '#8E24AA',
+      '#7B1FA2',
+      '#42A5F5',
+      '#26A69A',
+      '#66BB6A',
+      '#9CCC65',
+      '#FFEE58'
+    ] as string[],
     isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   components: {
     DeleteStatus,
-    ColorPicker,
+
     Toast,
     CreateStatus
   },
@@ -248,7 +289,7 @@ export default defineComponent({
             life: 3000
           })
           setTimeout(() => {
-            window.location.reload()
+            
             this.isDeleting = false
           }, 3000)
         })

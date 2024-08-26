@@ -69,7 +69,7 @@
                 block
                 :loading="isDeleting"
               >
-                <v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon>Close
+                <v-icon icon="fa:fa-solid fa-cancel" color="error" start size="small"></v-icon>Close
               </v-btn>
             </v-col></v-row
           ></v-container

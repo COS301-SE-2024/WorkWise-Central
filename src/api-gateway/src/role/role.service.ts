@@ -271,6 +271,10 @@ export class RoleService {
     if (role.roleName === 'Owner' || role.roleName === 'Worker') {
       throw new Error('Not allowed to remove this role');
     }
+
+    //Removing the role from all the employees
+    await this.employeeService.removeRoleReferences(id);
+
     return this.roleRepository.remove(id);
   }
 

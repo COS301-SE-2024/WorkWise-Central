@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    v-model="employeeDialog"
-    max-width="500"
-    height="500"
-    :theme="isDarkMode === true ? 'dark' : 'light'"
-  >
+  <v-dialog v-model="employeeDialog" max-width="500" height="500">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -16,7 +11,7 @@
         >Edit</v-btn
       >
     </template>
-    <v-card :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'">
+    <v-card>
       <v-form @submit.prevent="validateEdits">
         <v-card-title class="text-center">Edit Employee</v-card-title>
         <v-divider></v-divider>
@@ -87,7 +82,7 @@
         <v-card-actions>
           <v-container>
             <v-row>
-              <v-col cols="12" lg="6">
+              <v-col cols="12" lg="6" order="first" order-lg="last">
                 <v-btn
                   color="success"
                   rounded="md"
@@ -107,7 +102,7 @@
                   Save
                 </v-btn>
               </v-col>
-              <v-col cols="12" lg="6">
+              <v-col cols="12" lg="6" order="last" order-lg="first">
                 <v-btn
                   color="error"
                   rounded="md"
@@ -118,7 +113,7 @@
                   @click="close"
                   :loading="isDeleting"
                 >
-                   <Toast position="top-center" />
+                  <Toast position="top-center" />
                   <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
                   >Cancel
                 </v-btn>
@@ -317,7 +312,7 @@ export default {
           setTimeout(() => {
             this.isDeleting = false
             this.employeeDialog = false
-            window.location.reload()
+            
           }, 1500)
         })
         .catch((error) => {
