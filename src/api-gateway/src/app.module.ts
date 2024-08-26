@@ -18,6 +18,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { StockTakeModule } from './stocktake/stocktake.module';
 import { ChatGateway } from './chat/chat.gateway';
+import { ChatModule } from './chat/chat.module';
 
 const rootPath = join(__dirname, '..', '../../uploads');
 
@@ -42,6 +43,7 @@ const rootPath = join(__dirname, '..', '../../uploads');
     ServeStaticModule.forRoot({
       rootPath: rootPath,
     }),
+    ChatModule,
   ],
 })
 export class AppModule {}

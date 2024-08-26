@@ -10,7 +10,7 @@ import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { AddMessageDto } from './dto/add-message.dto';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: '*' })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;

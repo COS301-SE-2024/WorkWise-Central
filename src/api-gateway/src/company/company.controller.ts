@@ -49,7 +49,7 @@ import {
   CompanyDetailedResponseDto,
   CompanyResponseDto,
 } from './entities/company.entity';
-import { DeleteEmployeeFromCompanyDto, LeaveCompanyDto } from './dto/delete-employee-in-company.dto';
+import { LeaveCompanyDto } from './dto/delete-employee-in-company.dto';
 import { extractUserId, isBase64Uri, validateObjectId, validateObjectIds } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
@@ -137,7 +137,7 @@ export class CompanyController {
     description: 'The admin in the company will get a notification, and be able to see any jobs you were working on',
   })
   @ApiOkResponse({ type: BooleanResponseDto })
-  @Delete('/leave')
+  @Patch('/leave')
   async leaveCompany(@Headers() headers: any, @Body() leaveCompanyDto: LeaveCompanyDto) {
     try {
       const userId = extractUserId(this.jwtService, headers);
@@ -344,77 +344,6 @@ export class CompanyController {
         throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
       }
     } else {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-    }
-  }
-
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT')
-  @ApiOperation({
-    summary: `Delete an Employee from a company using their 'Id'`,
-    description: `You send the Employee _id, and then they get deleted if the id is valid.`,
-  })
-  @ApiOkResponse({
-    type: BooleanResponseDto,
-    description: `A boolean value indicating whether or not the deletion was a success`,
-  })
-  @ApiBody({
-    type: DeleteEmployeeFromCompanyDto,
-  })
-  @Delete('/emp')
-  async removeEmployee(
-    @Headers() headers: any,
-
-    @Query('adminId') adminId: Types.ObjectId,
-    @Query('companyId') companyId: Types.ObjectId,
-    @Query('employeeToDeleteId') employeeToDeleteId: Types.ObjectId,
-  ) {
-    try {
-      validateObjectId(adminId, 'employee');
-      validateObjectId(companyId, 'company');
-      validateObjectId(employeeToDeleteId, 'employeeToDelete');
-    } catch (e) {
-      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-    }
-    const deleteEmployeeDto: DeleteEmployeeFromCompanyDto = new DeleteEmployeeFromCompanyDto(
-      adminId,
-      companyId,
-      employeeToDeleteId,
-    );
-    //await this.companyService.deleteEmployee(userId, deleteEmployeeDto); //TODO: Use with cascading delete
-    // const userId = extractUserId(this.jwtService, headers);
-    const currentEmployee = await this.employeeService.findById(deleteEmployeeDto.adminId);
-    if (currentEmployee.role.permissionSuite.includes('delete employees')) {
-      let data;
-      try {
-        data = await this.employeeService.remove(deleteEmployeeDto.employeeToDeleteId);
-      } catch (e) {
-        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-      }
-
-      if (data === false) {
-        throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-      return { data: data };
-    }
-    // else if (currentEmployee.role.permissionSuite.includes('remove employees under me')) {
-    //   let data;
-    //   try {
-    //     data = await this.employeeService.removeUnderMe(
-    //       userId,
-    //       deleteEmployeeDto.employeeToDeleteId,
-    //       deleteEmployeeDto.adminId,
-    //     );
-    //   } catch (e) {
-    //     throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-    //   }
-
-    //   if (data === false) {
-    //     throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
-    //   }
-    //   return { data: data };
-    // }
-    else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }

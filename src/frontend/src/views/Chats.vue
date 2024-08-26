@@ -39,7 +39,7 @@ const SystemMessage = {
   author: 'Bot'
 }
 
-const socket = io('http://localhost:3000', { autoConnect: false })
+const socket = io('http://localhost:3000', { autoConnect: true })
 
 export default {
   props: {
