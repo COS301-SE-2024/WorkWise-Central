@@ -44,10 +44,7 @@
               ></v-text-field
             ></v-col>
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter"
-                >Type of business
-                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
-              </label>
+              <label style="font-size: 14px; font-weight: lighter">Type of business </label>
               <v-autocomplete
                 density="compact"
                 color="primary"
@@ -55,7 +52,6 @@
                 v-model="req_obj.type"
                 rounded="md"
                 variant="solo"
-                :rules="business_type_rules"
                 :items="[
                   'Agricultural Labor',
                   'Automotive Repair',
@@ -461,7 +457,6 @@ export default {
       suburb_rules: [(v: string) => !!v || 'Suburb is required'],
       province_rules: [(v: string) => !!v || 'Province is required'],
       city_rules: [(v: string) => !!v || 'City is required'],
-      business_type_rules: [(v: string) => !!v || 'Business type required'],
       req_obj: {
         userId: localStorage.getItem('id'),
         name: '',
@@ -493,6 +488,7 @@ export default {
       this.req_obj.vatNumber || delete this.req_obj.vatNumber
       this.req_obj.address.complex || delete this.req_obj.address.complex
       this.req_obj.logo || delete this.req_obj.logo
+      this.req_obj.type || delete this.req_obj.type
 
       console.log('hello')
       console.log(validate)
@@ -509,8 +505,9 @@ export default {
       axios
         .post(apiURL + 'company/create', this.req_obj, config)
         .then((res) => {
-          localStorage['currentCompany'] = res.data.data._id
-          localStorage['employeeId'] = res.data.data.ownerId
+          console.log(res)
+          localStorage['currentCompany'] = res.data._id
+          localStorage['employeeId'] = res.data.ownerId
           this.$router.push({ name: 'dashboard' })
         })
         .catch((res) => {
@@ -553,18 +550,7 @@ export default {
         reader.readAsDataURL(file)
       }
       console.log(this.req_obj.logo)
-    },
-    print_base64_link() {
-      console.log(this.req_obj.logo)
     }
-
-    // base64image() {
-    //   let read = new FileReader()
-    //   read.readAsDataURL(this.req_obj.image)
-    //   read.onload = () => {
-    //     this.req_obj.image = read.result
-    //   }
-    // }
   },
   mounted() {
     this.req_obj.userId = localStorage['id']

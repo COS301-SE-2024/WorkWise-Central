@@ -23,7 +23,10 @@
             <v-spacer></v-spacer>
             <v-col>
               <v-col>
-                <label style="font-size: 14px; font-weight: lighter">Job Title*</label>
+                <label style="font-size: 14px; font-weight: lighter"
+                  >Job Title
+                  <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                </label>
 
                 <v-text-field
                   density="compact"
@@ -38,7 +41,9 @@
                 ></v-text-field
               ></v-col>
               <v-col>
-                <label style="font-size: 14px; font-weight: lighter">Client</label>
+                <label style="font-size: 14px; font-weight: lighter"
+                  >Client <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                </label>
 
                 <v-autocomplete
                   density="compact"
@@ -74,7 +79,10 @@
                 />
               </v-col>
               <v-col>
-                <label style="font-size: 14px; font-weight: lighter">Job description</label>
+                <label style="font-size: 14px; font-weight: lighter"
+                  >Job description
+                  <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                </label>
 
                 <v-textarea
                   placeholder="Enter the details of the job"
@@ -93,6 +101,13 @@
                 text="End date cannot be before the start date."
                 title="Date Warning"
                 :model-value="date_error_alert"
+                type="warning"
+              ></v-alert>
+              <v-alert
+                density="compact"
+                text="Dates was not fully set, check date, hours and minutes are set. "
+                title="Date Warning"
+                :model-value="date_validation_error_alert"
                 type="warning"
               ></v-alert>
               <v-row>
@@ -239,11 +254,17 @@
                 </v-col>
               </v-row>
 
-              <label style="font-size: 14px; font-weight: lighter">Job address</label>
+              <label style="font-size: 14px; font-weight: lighter"
+                >Job address
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
 
               <v-row>
                 <v-col cols="12" sm="6">
-                  <label style="font-size: 12px; font-weight: lighter">Street</label>
+                  <label style="font-size: 12px; font-weight: lighter"
+                    >Street
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
                   <v-text-field
                     density="compact"
                     color="primary"
@@ -252,11 +273,15 @@
                     v-model="req_obj.details.address.street"
                     variant="solo"
                     required
+                    :rules="street_rules"
                     data-testid="street-field"
                   ></v-text-field
                 ></v-col>
                 <v-col cols="12" sm="6">
-                  <label style="font-size: 12px; font-weight: lighter">Suburb</label>
+                  <label style="font-size: 12px; font-weight: lighter"
+                    >Suburb
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
                   <v-text-field
                     density="compact"
                     color="primary"
@@ -265,11 +290,15 @@
                     v-model="req_obj.details.address.suburb"
                     variant="solo"
                     required
+                    :rules="suburb_rules"
                     data-testid="suburb-field"
                   ></v-text-field
                 ></v-col>
                 <v-col sm="6" cols="12">
-                  <label style="font-size: 14px; font-weight: lighter">Province</label>
+                  <label style="font-size: 14px; font-weight: lighter"
+                    >Province
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
                   <v-autocomplete
                     density="compact"
                     color="primary"
@@ -277,6 +306,7 @@
                     rounded="md"
                     v-model="req_obj.details.address.province"
                     @update:model-value="hello"
+                    :rules="province_rules"
                     type="houseNumber"
                     variant="solo"
                     :items="[
@@ -295,7 +325,10 @@
                   ></v-autocomplete
                 ></v-col>
                 <v-col cols="12" sm="6">
-                  <label style="font-size: 12px; font-weight: lighter">City/Town</label>
+                  <label style="font-size: 12px; font-weight: lighter"
+                    >City/Town
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
                   <v-text-field
                     density="compact"
                     color="primary"
@@ -304,11 +337,15 @@
                     v-model="req_obj.details.address.city"
                     variant="solo"
                     required
+                    :rules="city_rules"
                     data-testid="city-town-field"
                   ></v-text-field
                 ></v-col>
                 <v-col cols="12" sm="6">
-                  <label style="font-size: 12px; font-weight: lighter">Postal Code</label>
+                  <label style="font-size: 12px; font-weight: lighter"
+                    >Postal Code
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
                   <v-text-field
                     density="compact"
                     color="primary"
@@ -456,6 +493,10 @@ export default defineComponent({
         (v: string) =>
           /^[A-Za-z\s]+$/.test(v) || 'Job title must be alphabetic characters and spaces only'
       ],
+      province_rules: [(v: string) => !!v || 'Province is required'],
+      street_rules: [(v: string) => !!v || 'Street is required'],
+      suburb_rules: [(v: string) => !!v || 'Suburb is required'],
+      city_rules: [(v: string) => !!v || 'City/Town is required'],
       postal_code_rules: [
         (v: string) => !!v || 'Postal code  is required',
         (value: string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
@@ -471,6 +512,7 @@ export default defineComponent({
       startTime: '',
       endDate: null as string | null,
       endTime: '',
+      createClientLoadClicked: false,
       priorityOptionsArray: [] as JobPriorityTag[],
       tagOptionsArray: [] as JobTag[],
       statusOptionsArray: [] as JobStatuses[],
@@ -502,7 +544,8 @@ export default defineComponent({
         coverImage: ''
       } as Job,
       jobDialog: false,
-      date_error_alert: false
+      date_error_alert: false,
+      date_validation_error_alert: false
     }
   },
   watch: {
@@ -580,6 +623,7 @@ export default defineComponent({
       }
     },
     async validateForm() {
+      this.createClientLoadClicked = true
       const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
       const validate = await (form as any).validate()
 
@@ -588,20 +632,29 @@ export default defineComponent({
       this.req_obj.coverImage || delete this.req_obj.coverImage
       this.req_obj.assignedEmployees.employeeIds ||
         delete this.req_obj.assignedEmployees.employeeIds
+      this.req_obj.status || delete this.req_obj.status
 
       if (validate) {
         const update = this.updateDates()
         console.log(this.req_obj)
         console.log(update)
+        this.date_validation_error_alert = !update
         if (update) await this.handleSubmission()
       }
     },
-    formatDateAndTime(date: Date, time: string) {
+    formatStartDateAndTime(date: Date, time: string) {
       const [hrs, min] = time.split(':').map(Number)
       date.setHours(hrs)
       date.setMinutes(min)
       console.log(date.toISOString())
       this.req_obj.details.startDate = date.toISOString()
+    },
+    formatEndDateAndTime(date: Date, time: string) {
+      const [hrs, min] = time.split(':').map(Number)
+      date.setHours(hrs)
+      date.setMinutes(min)
+      console.log(date.toISOString())
+      this.req_obj.details.endDate = date.toISOString()
     },
     formatDate(d: Date) {
       const year = d.getFullYear()
@@ -624,7 +677,8 @@ export default defineComponent({
               summary: 'Success',
               detail: 'Job Added Successfully'
             })
-            
+            this.createClientLoadClicked = false
+            window.location.reload()
           }
           axios
             .put(
@@ -644,7 +698,8 @@ export default defineComponent({
                 summary: 'Success',
                 detail: 'Job Added Successfully'
               })
-              
+              this.createClientLoadClicked = false
+              window.location.reload()
             })
             .catch((error) => {
               console.log(error)
@@ -657,31 +712,39 @@ export default defineComponent({
     },
     updateDates() {
       if (this.endDate && this.startDate && this.startTime && this.endTime) {
-        this.formatDateAndTime(new Date(this.startDate), this.startTime)
-        this.formatDateAndTime(new Date(this.endDate), this.endTime)
-        this.req_obj.details.startDate = convertToISOStr(new Date(this.startDate))
-        this.req_obj.details.endDate = convertToISOStr(new Date(this.endDate))
+        this.formatStartDateAndTime(new Date(this.startDate), this.startTime)
+        this.formatEndDateAndTime(new Date(this.endDate), this.endTime)
         console.log(this.req_obj.details.startDate)
         console.log(this.req_obj.details.endDate)
         return true
       }
+      console.log('Dates were not set properly')
       return false
     },
     hello() {
       console.log(this.req_obj.details.address.province)
     },
     async loadClients() {
-      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
+        params: {
+          currentEmployeeId: localStorage['employeeId']
+        }
+      }
       const apiURL = await this.getRequestUrl()
       console.log(apiURL)
       axios
-        .get(apiURL + `client/all`, config)
+        .get(apiURL + `client/all/${localStorage['currentCompany']}`, config)
         .then((res) => {
           console.log(res)
 
           console.log(res.data.data)
           for (let i = 0; i < res.data.data.length; i++) {
-            if (res.data.data[i].details.firstName === undefined) continue
+            if (
+              res.data.data[i].details.firstName === undefined ||
+              res.data.data[i].details.lastName === undefined
+            )
+              continue
 
             this.clientsArray.push({
               name: res.data.data[i].details.firstName + ' ' + res.data.data[i].details.lastName,

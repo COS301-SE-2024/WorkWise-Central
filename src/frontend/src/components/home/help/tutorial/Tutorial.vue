@@ -105,7 +105,7 @@
                     <v-img :src="calendar.nav" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Open the navigation bar</li>
                         <li>Click on the Dashboard List Option</li>
                         <li>Click on Calendar List Sub Options that pops up</li>
@@ -119,7 +119,7 @@
                     <v-img :src="calendar.event_click" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>You can click on your desired event or date format</li>
                       </ul>
                     </div>
@@ -131,7 +131,7 @@
                     <v-img :src="calendar.job_card" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>The job card options will pop up</li>
                         <li>You can view more details on the job</li>
                         <li>
@@ -160,7 +160,7 @@
                     <v-img :src="table.view" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Open the navigation bar</li>
                         <li>Click on the Employee List Option</li>
                         <li>Click on Management List Sub Options that pops up</li>
@@ -176,7 +176,7 @@
                     <v-img :src="table.search" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Open the navigation bar</li>
                         <li>You can filter through the employees using the search bar</li>
                         <li>
@@ -194,7 +194,7 @@
                     <v-img :src="table.search_value" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Resultant search options will pop up</li>
                       </ul>
                     </div>
@@ -206,7 +206,7 @@
                     <v-img :src="table.sort" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>
                           Clicking on the arrow on the right of the table name allows you to sort
                           the results by that value in either descending or ascending order
@@ -222,7 +222,7 @@
                     <v-img :src="table.pagination" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>
                           You can paginate the results so that it shows the vaues you want to see
                         </li>
@@ -238,7 +238,7 @@
                     <br />
                     <v-img :src="table.pagination_options" />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>The options to paginate are between 10, 25, 100 & All.</li>
                       </ul>
                     </div>
@@ -266,7 +266,7 @@
                     <v-img :src="addNewClient.buttn" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Open the navigation bar</li>
                         <li>Click on the Client List Option</li>
                         <li>Click on Management List Sub Options that pops up</li>
@@ -283,7 +283,7 @@
                     <v-img :src="addNewClient.fields" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Create Client modal will pop up</li>
                         <li>Fill in the details of the client you'd like to add</li>
                         <li>
@@ -315,7 +315,7 @@
                     <v-img :src="viewClientDetails.view_client_action" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Open the navigation bar</li>
                         <li>Click on the Client List Option</li>
                         <li>Click on Management List Sub Options that pops up</li>
@@ -335,7 +335,7 @@
                     <v-img :src="viewClientDetails.view_client" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Youll be met with a small menu</li>
                         <li>
                           Depending on your role in the company your options that will be available
@@ -353,7 +353,7 @@
                     <v-img :src="viewClientDetails.client_view" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Youll be met with a modal with the clients information</li>
                         <li>You can close this modal by clicking the close button</li>
                       </ul>
@@ -382,7 +382,7 @@
                     <v-img :src="deleteClient.client_action_button" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Open the navigation bar</li>
                         <li>Click on the Client List Option</li>
                         <li>Click on Management List Sub Options that pops up</li>
@@ -402,7 +402,7 @@
                     <v-img :src="deleteClient.delete_client_button" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Youll be met with a small menu</li>
                         <li>
                           Depending on your role in the company your options that will be available
@@ -420,7 +420,7 @@
                     <v-img :src="deleteClient.client_delete_modal" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>You'll be met with a modal with caution message</li>
                         <li>You can close this modal by clicking the close button</li>
                       </ul>
@@ -449,7 +449,7 @@
                     <v-img :src="editClient.client_action_button" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Open the navigation bar</li>
                         <li>Click on the Client List Option</li>
                         <li>Click on Management List Sub Options that pops up</li>
@@ -469,7 +469,7 @@
                     <v-img :src="editClient.client_edit_menu" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Youll be met with a small menu</li>
                         <li>
                           Depending on your role in the company your options that will be available
@@ -487,7 +487,7 @@
                     <v-img :src="editClient.client_edit" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>
                           You'll be met with a modal where you can edit the clients information
                         </li>
@@ -522,7 +522,7 @@
                     <v-img :src="addNewEmployees.button" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Open the navigation bar</li>
                         <li>Click on the Employee List Option</li>
                         <li>Click on Management List Sub Options that pops up</li>
@@ -538,7 +538,7 @@
                     <v-img :src="addNewEmployees.superior" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>You'll be met with the Add Employee Modal</li>
                         <li>
                           You can click on one of the drop downs and select the options depending on
@@ -555,7 +555,7 @@
                     <v-img :src="addNewEmployees.fields" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Fill in the desired fields which are not optional</li>
                         <li>Once you've added the information click on the "Add" button</li>
                       </ul>
@@ -584,7 +584,7 @@
                     <v-img :src="editEmployee.button" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Open the navigation bar</li>
                         <li>Click on the Employee List Option</li>
                         <li>Click on Management List Sub Options that pops up</li>
@@ -604,7 +604,7 @@
                     <v-img :src="editEmployee.options" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>You'll be met with a small menu</li>
                         <li>
                           Depending on your role in the company your options that will be available
@@ -621,7 +621,7 @@
                     <v-img :src="editEmployee.complete" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>You'll be met with the Edit Employee Modal</li>
                         <li>
                           You can click on one of the drop downs and select the options depending on
@@ -653,7 +653,7 @@
                     <v-img :src="deleteEmployee.employee_delete_action" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Open the navigation bar</li>
                         <li>Click on the Employee List Option</li>
                         <li>Click on Management List Sub Options that pops up</li>
@@ -673,7 +673,7 @@
                     <v-img :src="deleteEmployee.employee_delete_menu" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>You'll be met with a small menu</li>
                         <li>
                           Depending on your role in the company your options that will be available
@@ -691,7 +691,7 @@
                     <v-img :src="deleteEmployee.employee_delete_modal" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>You'll be met with a modal with caution message</li>
                         <li>You can delete this employee by clicking the delete button</li>
                         <li>You can close this modal by clicking the close button</li>
@@ -721,7 +721,7 @@
                     <v-img :src="viewEmployee.action" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Open the navigation bar</li>
                         <li>Click on the Employee List Option</li>
                         <li>Click on Management List Sub Options that pops up</li>
@@ -741,7 +741,7 @@
                     <v-img :src="viewEmployee.button" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>You'll be met with a small menu</li>
                         <li>
                           Depending on your role in the company your options that will be available
@@ -759,7 +759,7 @@
                     <v-img :src="viewEmployee.view" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Youll be met with a modal with the employee information</li>
                         <li>You can close this modal by clicking the close button</li>
                       </ul>
@@ -788,7 +788,7 @@
                     <v-img :src="addJob.button" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Open the navigation bar</li>
                         <li>Click on the Job List Option</li>
                         <li>Click on Management List Sub Options that pops up</li>
@@ -805,7 +805,7 @@
                     <v-img :src="addJob.description" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Enter the name you would like to give to your job</li>
                         <li>Enter the name of the client you would like to attach to your job</li>
                         <li>Enter a description for the job</li>
@@ -820,7 +820,7 @@
                     <v-img :src="addJob.startDate" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Select the start date and time that the jobs is meant to commence</li>
                         <li>Select the end date and time that the jobs is meant to conclude</li>
                       </ul>
@@ -833,7 +833,7 @@
                     <v-img :src="addJob.assign" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Assign company employees to the job using the drop down</li>
                       </ul>
                     </div> </template
@@ -844,7 +844,7 @@
                     <v-img :src="addJob.final" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Assign company employees to the job using the drop down</li>
                         <li>Assign a priority level, tags, and an image to job</li>
                         <li>Fill in the address at which the job will be taking place</li>
@@ -875,7 +875,7 @@
                     <v-img :src="editJob.editjob_card" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>
                           You can click on any job or event on the calendar or kanban and the job
                           card will pop up
@@ -891,7 +891,7 @@
                     <v-img :src="editJob.editjob_edit_details_clicked" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>CLick on "Edit Details" button</li>
                       </ul>
                     </div>
@@ -904,7 +904,7 @@
                     <v-img :src="editJob.editjob_card_edit_details" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Details text fields about the jobs will pop up</li>
                         <li>You can edit any of these fields as you would like</li>
                         <li>Click "Save" once you're done</li>
@@ -918,7 +918,7 @@
                     <v-img :src="editJob.editjob_change_client_clicked" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Click on "Edit Details" button</li>
                       </ul>
                     </div>
@@ -930,7 +930,7 @@
                     <v-img :src="editJob.editjob_card_client" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Use the dropdown to change the current client of the job</li>
                         <li>Once you've changed the client click on Save</li>
                         <li>If you wish to close the modal click "Cancel"</li>
@@ -944,7 +944,7 @@
                     <v-img :src="editJob.editjob_select_employees_clicked" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>
                           Click on "Selected employees" button if you wish to change the assigned
                           employees
@@ -965,7 +965,7 @@
                     <v-img :src="editJob.editjob_update_status_clicked" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Click on "Update Status" button</li>
                       </ul>
                     </div>
@@ -977,7 +977,7 @@
                     <v-img :src="editJob.editjob_update_status" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Use the radio buttons to change the current status of the job</li>
                         <li>Once you've changed the status click on Save</li>
                         <li>If you wish to close the modal click "Cancel"</li>
@@ -991,7 +991,7 @@
                     <v-img :src="editJob.editjob_change_due_date_clicked" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Click on "Change Due Date" button</li>
                       </ul>
                     </div>
@@ -1003,7 +1003,7 @@
                     <v-img :src="editJob.editjob_change_due_date" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>
                           Use the date picker to change the start and end, time and date of the job
                         </li>
@@ -1036,7 +1036,7 @@
                     <v-img :src="deleteJob.job_delete_action" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Open the navigation bar</li>
                         <li>Click on the Job List Option</li>
                         <li>Click on Management List Sub Options that pops up</li>
@@ -1056,7 +1056,7 @@
                     <v-img :src="deleteJob.job_delete_menu" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>You'll be met with a small menu</li>
                         <li>
                           Depending on your role in the company your options that will be available
@@ -1074,7 +1074,7 @@
                     <v-img :src="deleteJob.job_delete_modal" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>You'll be met with a modal with caution message</li>
                         <li>You can delete this Job by clicking the delete button</li>
                         <li>You can close this modal by clicking the close button</li>
@@ -1104,7 +1104,7 @@
                     <v-img :src="viewJob.action" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>Open the navigation bar</li>
                         <li>Click on the Job List Option</li>
                         <li>Click on Management List Sub Options that pops up</li>
@@ -1124,7 +1124,7 @@
                     <v-img :src="viewJob.menu" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>You'll be met with a small menu</li>
                         <li>
                           Depending on your role in the company your options that will be available
@@ -1142,7 +1142,7 @@
                     <v-img :src="viewJob.card" />
                     <br />
                     <div>
-                      <ul style="{list-style-type: disc;}">
+                      <ul class="custom-list">
                         <li>You'll be met with a modal with the job information</li>
                         <li>You can close this modal by clicking the close button</li>
                       </ul>
@@ -1153,180 +1153,6 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
-            :title="tutorialQuestions[12]"
-            :theme="isDarkMode === true ? 'dark' : 'light'"
-            style="font-family: Nunito, sans-serif"
-          >
-            <v-expansion-panel-text>
-              <v-col :cols="12"
-                ><v-stepper
-                  v-model="activeSteps.stepper17"
-                  :items="items.items_useUserSettings"
-                  show-actions
-                >
-                  <template #[`item.1`]>
-                    <h3 class="text-h6">Click User Button</h3>
-
-                    <br />
-                    <v-img :src="useUserSettings.button" />
-                    <br />
-                    <div>
-                      <ul style="{list-style-type: disc;}">
-                        <li>This step can be performed on any page with a AppBar/ToolBar</li>
-                        <li>
-                          Click on the users button on the top left with their initials or picture
-                        </li>
-                      </ul>
-                    </div>
-                  </template>
-
-                  <template #[`item.2`]>
-                    <h3 class="text-h6">Click 'Settings' Button</h3>
-
-                    <br />
-                    <v-img :src="useUserSettings.clicked" />
-                    <br />
-                    <div>
-                      <ul style="{list-style-type: disc;}">
-                        <li>
-                          You'll be met with a context menu, with the users name and other
-                          directives
-                        </li>
-                        <li>Click on "Settings"</li>
-                      </ul>
-                    </div>
-                  </template>
-
-                  <template #[`item.3`]>
-                    <h3 class="text-h6">Update User Details</h3>
-
-                    <br />
-                    <v-img :src="useUserSettings.profile" />
-                  </template>
-                  <template #[`item.4`]>
-                    <h3 class="text-h6">Edit Notification Preferences And Navigation Menu</h3>
-
-                    <br />
-                    <v-img :src="useUserSettings.notification" />
-                  </template> </v-stepper
-              ></v-col>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-          <v-expansion-panel
-            :title="tutorialQuestions[13]"
-            :theme="isDarkMode === true ? 'dark' : 'light'"
-            style="font-family: Nunito, sans-serif"
-          >
-            <v-expansion-panel-text>
-              <v-col :cols="12"
-                ><v-stepper
-                  v-model="activeSteps.stepper18"
-                  :items="items.items_useCompanySettings"
-                  show-actions
-                >
-                  <template #[`item.1`]>
-                    <h3 class="text-h6">Click More & Company Settings On Nav Bar</h3>
-
-                    <br />
-                    <v-img :src="useCompanySettings.nav" />
-                  </template>
-
-                  <template #[`item.2`]>
-                    <h3 class="text-h6">Can Edit Company Settings Details</h3>
-
-                    <br />
-                    <v-img :src="useCompanySettings.settings" />
-                  </template>
-
-                  <template #[`item.3`]>
-                    <h3 class="text-h6">Company Role & Permissions</h3>
-
-                    <br />
-                    <v-img :src="useCompanySettings.roles" />
-                  </template>
-                  <template #[`item.4`]>
-                    <h3 class="text-h6">Company Role & Permissions</h3>
-
-                    <br />
-                    <v-img :src="useCompanySettings.options" /> </template
-                  ><template #[`item.5`]>
-                    <h3 class="text-h6">Edit Permission Suite of Roles</h3>
-
-                    <br />
-                    <v-img :src="useCompanySettings.complete" />
-                  </template> </v-stepper
-              ></v-col>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-          <v-expansion-panel
-            :title="tutorialQuestions[14]"
-            :theme="isDarkMode === true ? 'dark' : 'light'"
-            style="font-family: Nunito, sans-serif"
-          >
-            <v-expansion-panel-text>
-              <v-col :cols="12"
-                ><v-stepper
-                  v-model="activeSteps.stepper19"
-                  :items="items.items_changeTheme"
-                  show-actions
-                >
-                  <template #[`item.1`]>
-                    <h3 class="text-h6">Click Moon Icon to Switch to Dark Mode</h3>
-
-                    <br />
-                    <v-img :src="themeChange.light" />
-                  </template>
-
-                  <template #[`item.2`]>
-                    <h3 class="text-h6">Dark Mode</h3>
-
-                    <br />
-                    <v-img :src="themeChange.dark" />
-                  </template> </v-stepper
-              ></v-col>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-          <v-expansion-panel
-            :title="tutorialQuestions[15]"
-            :theme="isDarkMode === true ? 'dark' : 'light'"
-            style="font-family: Nunito, sans-serif"
-          >
-            <v-expansion-panel-text>
-              <v-col :cols="12"
-                ><v-stepper
-                  v-model="activeSteps.stepper20"
-                  :items="items.items_manageCompanies"
-                  show-actions
-                >
-                  <template #[`item.1`]>
-                    <h3 class="text-h6">Manage Companies Navigation-Bar</h3>
-
-                    <br />
-                    <v-img :src="manageCompanies.navbar" />
-                  </template>
-
-                  <template #[`item.2`]>
-                    <h3 class="text-h6">Manage Companies Navigation-Bar clicked</h3>
-
-                    <br />
-                    <v-img :src="manageCompanies.navbar_click" />
-                  </template>
-
-                  <template #[`item.3`]>
-                    <h3 class="text-h6">Manage Companies Dropdown</h3>
-
-                    <br />
-                    <v-img :src="manageCompanies.dropdown" />
-                  </template>
-                  <template #[`item.4`]>
-                    <h3 class="text-h6">Manage Companies Redirect</h3>
-
-                    <br />
-                    <v-img :src="manageCompanies.redirect" />
-                  </template> </v-stepper
-              ></v-col>
-            </v-expansion-panel-text> </v-expansion-panel
-          ><v-expansion-panel
             :title="tutorialQuestions[32]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -1343,6 +1169,16 @@
 
                     <br />
                     <v-img :src="inventoryAdd.add_button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Inventory List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Inventory Details table view</li>
+                        <li>Click on the Add Inventory Button</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -1350,6 +1186,19 @@
 
                     <br />
                     <v-img :src="inventoryAdd.add_fields" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          Enter the product name you would like to give to your inventory item
+                        </li>
+                        <li>Enter the description of the item you would like to add</li>
+                        <li>Enter a cost price</li>
+                        <li>Enter a stack level</li>
+                        <li>Enter a recorder level</li>
+                        <li>Click "Create"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -1377,6 +1226,19 @@
 
                     <br />
                     <v-img :src="editInventory.inventory_action_button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Inventory List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Inventory Details table view</li>
+                        <li>
+                          Click on the 3 orange dots on the far right next to client you would like
+                          to view
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -1384,6 +1246,17 @@
 
                     <br />
                     <v-img :src="editInventory.inventory_edit_menu_clicked" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a small menu</li>
+                        <li>
+                          Depending on your role in the company your options that will be available
+                          are "View", "Edit" or "Delete"
+                        </li>
+                        <li>Click on "Edit"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -1391,8 +1264,18 @@
 
                     <br />
                     <v-img :src="editInventory.inventory_edit_modal" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with the Edit Employee Modal</li>
+                        <li>
+                          You can edit the text fields as you would like and save those updates
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text> </v-expansion-panel
           ><v-expansion-panel
             :title="tutorialQuestions[37]"
@@ -1411,6 +1294,19 @@
 
                     <br />
                     <v-img :src="viewInventory.inventory_action_button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Inventory List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Inventory Details table view</li>
+                        <li>
+                          Click on the 3 orange dots on the far right next to client you would like
+                          to view
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -1418,6 +1314,17 @@
 
                     <br />
                     <v-img :src="viewInventory.inventory_view_menu" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a small menu</li>
+                        <li>
+                          Depending on your role in the company your options that will be available
+                          are "View", "Edit" or "Delete"
+                        </li>
+                        <li>Click on "View"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -1425,8 +1332,16 @@
 
                     <br />
                     <v-img :src="viewInventory.inventory_view_modal" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Youll be met with a modal with the inventory item information</li>
+                        <li>You can close this modal by clicking the close button</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text> </v-expansion-panel
           ><v-expansion-panel
             :title="tutorialQuestions[39]"
@@ -1445,6 +1360,19 @@
 
                     <br />
                     <v-img :src="deleteInventory.inventory_action_button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Inventory List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Inventory Details table view</li>
+                        <li>
+                          Click on the 3 orange dots on the far right next to client you would like
+                          to view
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -1452,6 +1380,17 @@
 
                     <br />
                     <v-img :src="deleteInventory.inventory_delete_menu_clicked" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a small menu</li>
+                        <li>
+                          Depending on your role in the company your options that will be available
+                          are "View", "Edit" or "Delete"
+                        </li>
+                        <li>Click on "Delete"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -1459,8 +1398,300 @@
 
                     <br />
                     <v-img :src="deleteInventory.inventory_delete_modal" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a modal with caution message</li>
+                        <li>You can delete this Inventory by clicking the delete button</li>
+                        <li>You can close this modal by clicking the close button</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+          <v-expansion-panel
+            :title="tutorialQuestions[12]"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
+            style="font-family: Nunito, sans-serif"
+          >
+            <v-expansion-panel-text>
+              <v-col :cols="12"
+                ><v-stepper
+                  v-model="activeSteps.stepper17"
+                  :items="items.items_useUserSettings"
+                  show-actions
+                >
+                  <template #[`item.1`]>
+                    <h3 class="text-h6">Click User Button</h3>
+
+                    <br />
+                    <v-img :src="useUserSettings.button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>This step can be performed on any page with a AppBar/ToolBar</li>
+                        <li>
+                          Click on the users button on the top left with their initials or picture
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+
+                  <template #[`item.2`]>
+                    <h3 class="text-h6">Click 'Settings' Button</h3>
+
+                    <br />
+                    <v-img :src="useUserSettings.clicked" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          You'll be met with a context menu, with the users name and other
+                          directives
+                        </li>
+                        <li>Click on "Settings"</li>
+                      </ul>
+                    </div>
+                  </template>
+
+                  <template #[`item.3`]>
+                    <h3 class="text-h6">Update User Details</h3>
+
+                    <br />
+                    <v-img :src="useUserSettings.profile" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          You can fill in the desired text fields that you would like to changed
+                        </li>
+                        <li>
+                          Once that is done you can update these changes by clicking the "Update
+                          Profile"
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+                  <template #[`item.4`]>
+                    <h3 class="text-h6">Edit Notification Preferences And Navigation Menu</h3>
+
+                    <br />
+                    <v-img :src="useUserSettings.notification" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          You can changed the company Notification settings to what you prefer
+                        </li>
+                        <li>
+                          You can toggle the three switches to change to receiving Push, In-App or
+                          Email notifications
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+          <v-expansion-panel
+            :title="tutorialQuestions[13]"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
+            style="font-family: Nunito, sans-serif"
+          >
+            <v-expansion-panel-text>
+              <v-col :cols="12"
+                ><v-stepper
+                  v-model="activeSteps.stepper18"
+                  :items="items.items_useCompanySettings"
+                  show-actions
+                >
+                  <template #[`item.1`]>
+                    <h3 class="text-h6">Click More & Company Settings On Nav Bar</h3>
+
+                    <br />
+                    <v-img :src="useCompanySettings.nav" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          Navigate to the Nav bar and click on "More" and the "Company settings"
+                          will pop up
+                        </li>
+                        <li>Click on "Company Settings"</li>
+                      </ul>
+                    </div>
+                  </template>
+
+                  <template #[`item.2`]>
+                    <h3 class="text-h6">Can Edit Company Settings Details</h3>
+
+                    <br />
+                    <v-img :src="useCompanySettings.settings" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>you can change the company settings by changing the fields</li>
+                        <li>Click on "SAVE" to apply the changes</li>
+                      </ul>
+                    </div>
+                  </template>
+
+                  <template #[`item.3`]>
+                    <h3 class="text-h6">Company Role & Permissions</h3>
+
+                    <br />
+                    <v-img :src="useCompanySettings.roles" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          you can change the company roles permissions suite by changing the
+                          selected fields in the drop down
+                        </li>
+                        <li>Click on "SAVE" to apply the changes</li>
+                      </ul>
+                    </div>
+                  </template>
+                  <template #[`item.4`]>
+                    <h3 class="text-h6">Company Role & Permissions</h3>
+
+                    <br />
+                    <v-img :src="useCompanySettings.options" /> </template
+                  ><template #[`item.5`]>
+                    <h3 class="text-h6">Edit Permission Suite of Roles</h3>
+
+                    <br />
+                    <v-img :src="useCompanySettings.complete" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Click on "SAVE" to apply the changes</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+          <v-expansion-panel
+            :title="tutorialQuestions[14]"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
+            style="font-family: Nunito, sans-serif"
+          >
+            <v-expansion-panel-text>
+              <v-col :cols="12"
+                ><v-stepper
+                  v-model="activeSteps.stepper19"
+                  :items="items.items_changeTheme"
+                  show-actions
+                >
+                  <template #[`item.1`]>
+                    <h3 class="text-h6">Click Moon Icon to Switch to Dark Mode</h3>
+
+                    <br />
+                    <v-img :src="themeChange.light" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          On the top right corner there is a moon cresent icon click that to change
+                          to Dark Mode
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+
+                  <template #[`item.2`]>
+                    <h3 class="text-h6">Dark Mode</h3>
+
+                    <br />
+                    <v-img :src="themeChange.dark" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          Once in dark mode this will turn into a Sun icon signifying changing back
+                          to Light Mode
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+          <v-expansion-panel
+            :title="tutorialQuestions[15]"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
+            style="font-family: Nunito, sans-serif"
+          >
+            <v-expansion-panel-text>
+              <v-col :cols="12"
+                ><v-stepper
+                  v-model="activeSteps.stepper20"
+                  :items="items.items_manageCompanies"
+                  show-actions
+                >
+                  <template #[`item.1`]>
+                    <h3 class="text-h6">Manage Companies Navigation-Bar</h3>
+
+                    <br />
+                    <v-img :src="manageCompanies.navbar" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          To switch companies click on the companies name on the top left of the
+                          screen
+                        </li>
+                        <li>A menu will appear</li>
+                      </ul>
+                    </div>
+                  </template>
+
+                  <template #[`item.2`]>
+                    <h3 class="text-h6">Manage Companies Navigation-Bar clicked</h3>
+
+                    <br />
+                    <v-img :src="manageCompanies.navbar_click" />
+                  </template>
+
+                  <template #[`item.3`]>
+                    <h3 class="text-h6">Manage Companies Dropdown</h3>
+
+                    <br />
+                    <v-img :src="manageCompanies.dropdown" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          Click on the drop down to see the menu of companies you can switch to, or
+                          are registered under
+                        </li>
+                        <li>select the company you would like to switch</li>
+                        <li>Select Save to switch to that company</li>
+                      </ul>
+                    </div>
+                  </template>
+                  <template #[`item.4`]>
+                    <h3 class="text-h6">Manage Companies Redirect</h3>
+
+                    <br />
+                    <v-img :src="manageCompanies.redirect" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          You will be reloaded to the home page of the company you switched to
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text> </v-expansion-panel
           ><v-expansion-panel
             :title="tutorialQuestions[17]"
@@ -1479,6 +1710,15 @@
 
                     <br />
                     <v-img :src="logout.navbar" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          Navigate to the Nav bar and click on "More" and the "Company settings" &
+                          "Logout" will pop up
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -1486,14 +1726,27 @@
 
                     <br />
                     <v-img :src="logout.button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Click on "Logout"</li>
+                      </ul>
+                    </div>
                   </template>
                   <template #[`item.3`]>
                     <h3 class="text-h6">Redirect To Splash Page</h3>
 
                     <br />
                     <v-img :src="logout.splash" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You will be redirected to the splash page</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -1908,4 +2161,13 @@ export default defineComponent({
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.custom-list {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.custom-list li {
+  margin-bottom: 8px;
+}
+</style>
