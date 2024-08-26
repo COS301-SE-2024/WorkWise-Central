@@ -3,7 +3,12 @@
     <template v-slot:activator="{ props }">
       <v-btn v-bind="props">
         <v-avatar color="secondary" style="width: 38px; height: 36px">
-          <span class="text-h6">{{ user.initials }}</span>
+          <template v-if="displayImage">
+            <v-img :src="displayImage" alt="User Avatar"></v-img>
+          </template>
+          <template v-else>
+            <span class="text-h6">{{ user.initials }}</span>
+          </template>
         </v-avatar>
       </v-btn>
     </template>
@@ -11,7 +16,12 @@
       <v-card-text>
         <div class="mx-auto text-center">
           <v-avatar color="secondary" style="width: 38px; height: 36px">
-            <span class="text-h6">{{ user.initials }}</span>
+            <template v-if="displayImage">
+              <v-img :src="displayImage" alt="User Avatar"></v-img>
+            </template>
+            <template v-else>
+              <span class="text-h6">{{ user.initials }}</span>
+            </template>
           </v-avatar>
           <h3>{{ user.fullName }}</h3>
           <p class="text-caption mt-1">
@@ -49,6 +59,7 @@ import axios from 'axios'
 
 const firstName = ref('')
 const lastName = ref('')
+const displayImage = ref('')
 
 const makeInitials = (firstName: string, lastName: string) => {
   if (!firstName || !lastName) return ''
@@ -103,6 +114,8 @@ const getUserData = async () => {
 
     firstName.value = data.personalInfo.firstName
     lastName.value = data.personalInfo.surname
+    displayImage.value = data.profile.displayImage
+    console.log('Heres the display image:', displayImage.value)
 
     updateUser()
   } catch (error) {

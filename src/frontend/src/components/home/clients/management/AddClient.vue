@@ -19,6 +19,7 @@
     max-width="600"
     :no-overlay="false"
     scrollable
+
     :opacity="0"
   >
     <v-card
@@ -28,7 +29,11 @@
       <v-card-text>
         <v-form ref="form" v-model="valid" @submit.prevent="validateSubmission">
           <v-col>
-            <small class="text-caption white--text">First Name of client*</small>
+            <small class="text-caption white--text"
+              >First Name of client<label style="font-size: 14px; font-weight: lighter; color: red"
+                >*</label
+              ></small
+            >
 
             <v-text-field
               color="secondary"
@@ -40,7 +45,11 @@
             ></v-text-field
           ></v-col>
           <v-col>
-            <small class="text-caption white--text">Surname of client*</small>
+            <small class="text-caption white--text"
+              >Surname of client<label style="font-size: 14px; font-weight: lighter; color: red"
+                >*</label
+              ></small
+            >
             <v-text-field
               color="secondary"
               placeholder="Enter the surname name of the client"
@@ -63,7 +72,11 @@
           ></v-col>
 
           <v-col>
-            <small class="text-caption">Client email address*</small>
+            <small class="text-caption"
+              >Client email address<label style="font-size: 14px; font-weight: lighter; color: red"
+                >*</label
+              ></small
+            >
             <v-text-field
               color="secondary"
               placeholder="Enter the client's email address"
@@ -75,7 +88,11 @@
             ></v-text-field
           ></v-col>
           <v-col>
-            <small class="text-caption">Client phone number*</small>
+            <small class="text-caption"
+              >Client phone number<label style="font-size: 14px; font-weight: lighter; color: red"
+                >*</label
+              ></small
+            >
             <v-text-field
               color="secondary"
               placeholder="Enter the client's phone number"
@@ -194,17 +211,6 @@
                 hide-details="auto"
               ></v-text-field
             ></v-col>
-            <!--            <v-col sm="6" cols="12">-->
-            <!--              <small class="text-caption">House number</small-->
-            <!--              ><v-text-field-->
-            <!--                color="secondary"-->
-            <!--                placeholder="House number"-->
-            <!--                v-model="req_obj.details.address.houseNumber"-->
-            <!--                type="houseNumber"-->
-            <!--                required-->
-            <!--                hide-details="auto"-->
-            <!--              ></v-text-field-->
-            <!--            ></v-col>-->
           </v-row>
 
           <v-spacer></v-spacer>
@@ -297,7 +303,7 @@ export default defineComponent({
     valid: false,
     isDeleting: false,
     addDialog: false,
-    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
+    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     click_create_client: false,
     email_rules: [
       (v: string) => v || 'Email or Phone number is required',
@@ -389,18 +395,25 @@ export default defineComponent({
   computed: {
     emailRule(): Array<(v: string) => boolean | string> {
       return this.req_obj.details.contactInfo.phoneNumber !== ''
-        ? []
+        ? [
+            (v: string) => !v || this.validatePhoneOrEmail() || 'Email or Phone is required',
+            (v: string) => !v || email_reg.test(v) || 'Email should contain an @ symbol'
+          ]
         : [
             (v: string) => this.validatePhoneOrEmail() || 'Email or Phone is required',
-            (val: string) => email_reg.test(val) || 'Email should contain an @ symbol'
+            (v: string) => email_reg.test(v) || 'Email should contain an @ symbol'
           ]
     },
     phoneRule(): Array<(v: string) => boolean | string> {
       return this.req_obj.details.contactInfo.email !== ''
-        ? []
+        ? [
+            (v: string) => !v || this.validatePhoneOrEmail() || 'Email or Phone is required',
+            (v: string) =>
+              !v || /^0\d{9}$/.test(v) || 'Phone number must be a valid South African number'
+          ]
         : [
             (v: string) => this.validatePhoneOrEmail() || 'Email or Phone is required',
-            (v: string) => /^[A-Za-z]+$/.test(v) || 'First name must be alphabetic characters'
+            (v: string) => /^0\d{9}$/.test(v) || 'Phone number must be a valid South African number'
           ]
     }
   },
@@ -415,8 +428,8 @@ export default defineComponent({
   methods: {
     validatePhoneOrEmail() {
       return (
-        this.req_obj.details.contactInfo.phoneNumber != '' ||
-        this.req_obj.details.contactInfo.email != ''
+        this.req_obj.details.contactInfo.phoneNumber !== '' ||
+        this.req_obj.details.contactInfo.email !== ''
       )
     },
     luhnCheck(val: string) {
@@ -467,7 +480,11 @@ export default defineComponent({
       this.req_obj.details.contactInfo.phoneNumber ||
         delete this.req_obj.details.contactInfo.phoneNumber
 
-      validate || (await this.handleSubmission())
+      if (validate) await this.handleSubmission()
+      else {
+        this.emailRule
+        this.phoneRule
+      }
     },
     async handleSubmission() {
       console.log(JSON.stringify(this.req_obj))
