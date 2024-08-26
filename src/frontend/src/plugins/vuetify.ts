@@ -47,12 +47,11 @@ const vuetify = createVuetify({
       elevation: 2,
       rounded: 'md',
       height: 'auto',
-
+      class: 'bg-background',
       VCardTitle: {
         class: 'h5 font-weight-regular  d-flex justify-center bg-cardColor text-secondary'
       },
       VCardText: {
-        class: 'bg-cardColor',
         VList: {
           class: 'bg-background',
           VListItem: {

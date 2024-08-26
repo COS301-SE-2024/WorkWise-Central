@@ -1,15 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
-import { Comment, Job, Task } from './entities/job.entity';
-import { UpdateJobDto, UpdateTaskItemDto } from './dto/update-job.dto';
-// import { Employee } from '../employee/entities/employee.entity';
-import { Company } from '../company/entities/company.entity';
-//import { Team } from '../team/entities/team.entity';
+import { ClientFeedback, Comment, Details, Job, Task } from './entities/job.entity';
+import { UpdateJobDto } from './dto/update-job.dto';
 import { isNotDeleted } from '../shared/soft-delete';
 import { currentDate } from '../utils/Utils';
 import { TaskItem } from './dto/create-job.dto';
 import { History } from './entities/job.entity';
+import { UpdateTaskItemDto } from './dto/job-task-item.dto';
 
 @Injectable()
 export class JobRepository {
@@ -55,20 +53,6 @@ export class JobRepository {
     return this.jobModel.find(filter).lean().exec();
   }
 
-  jobComments = {
-    path: 'comments',
-    populate: [
-      {
-        path: 'employeeId',
-        model: 'Employee',
-      },
-      {
-        path: 'companyId',
-        model: Company.name,
-      },
-    ],
-  };
-
   async findAllInCompanyDetailed(
     companyId: Types.ObjectId,
     fieldsToPopulate: string[] = ['assignedEmployees', 'assignedBy', 'clientId', 'comments'],
@@ -93,15 +77,55 @@ export class JobRepository {
   }
 
   async update(id: Types.ObjectId, updateJobDto: UpdateJobDto) {
-    return this.jobModel
-      .findOneAndUpdate(
-        {
-          $and: [{ _id: id }, isNotDeleted],
-        },
-        { $set: { ...updateJobDto }, updatedAt: currentDate() },
-        { new: true },
-      )
-      .lean();
+    const job = await this.jobModel.findOne({ $and: [{ _id: id }, isNotDeleted] }).exec();
+    const newHistory: History[] = [];
+    if (updateJobDto.clientId) {
+      newHistory.push(new History('The Client was changed'));
+      job.clientId = updateJobDto.clientId;
+      job.markModified('clientIdt');
+    }
+    if (updateJobDto.status) {
+      job.status = updateJobDto.status;
+      job.markModified('status');
+    }
+    if (updateJobDto.details) {
+      const updatedDetails: Details = { ...job.details, ...updateJobDto.details };
+      updatedDetails.address = { ...job.details.address, ...updateJobDto.details.address };
+      console.log(updatedDetails);
+      job.details = updatedDetails;
+      job.markModified('details');
+    }
+    // if (updateJobDto.recordedDetails) {  //TODO: Speak to Jess
+    //   const updatedDetails = { ...job.recordedDetails, ...updateJobDto.recordedDetails };
+    //   console.log(updatedDetails);
+    //   job.recordedDetails = updatedDetails;
+    // }
+    if (updateJobDto.clientFeedback) {
+      const updatedDetails: ClientFeedback = { ...job.clientFeedback, ...updateJobDto.clientFeedback };
+      console.log(updatedDetails);
+      job.clientFeedback = updatedDetails;
+      newHistory.push(new History('There is new feedback from the client'));
+      job.markModified('clientFeedback');
+    }
+    if (updateJobDto.tags) {
+      job.tags = updateJobDto.tags;
+      newHistory.push(new History('The Tags were updated'));
+      job.markModified('tags');
+    }
+    if (updateJobDto.attachments) {
+      job.attachments = updateJobDto.attachments;
+      job.markModified('attachments');
+    }
+    if (updateJobDto.coverImage) {
+      job.coverImage = updateJobDto.coverImage;
+      newHistory.push(new History('The Cover Image was updated'));
+      job.markModified('coverImage');
+    }
+    for (const history of newHistory) {
+      job.history.push(history);
+      job.markModified('history');
+    }
+    return job.save();
   }
 
   async addToHistory(id: Types.ObjectId, newEvent: History) {
@@ -220,6 +244,7 @@ export class JobRepository {
     const task = job.taskList.find((t) => t._id.toString() === taskId.toString());
     const item = task.items.find((i) => i._id.toString() === itemId.toString());
     item.assignedEmployees.push(employeeId);
+    job.markModified('taskList');
     return (await job.save()).toObject();
   }
 
@@ -294,6 +319,7 @@ export class JobRepository {
     const task = job.taskList.find((t) => t._id.toString() === taskId.toString());
     const item = task.items.find((i) => i._id.toString() === itemId.toString());
     item.assignedEmployees = item.assignedEmployees.filter((e) => e._id.toString() !== employeeId.toString());
+    job.markModified('taskList');
     return (await job.save()).toObject();
   }
 
@@ -372,6 +398,7 @@ export class JobRepository {
     job.comments = job.comments.filter((c) => {
       return c._id.toString() !== commentToRemove._id.toString();
     });
+    job.markModified('comments');
     job.updatedAt = new Date();
     await job.save();
     return job;
@@ -394,6 +421,7 @@ export class JobRepository {
 
     commentToUpdate.comment = newComment;
     job.updatedAt = new Date();
+    job.markModified('comments');
     await job.save();
     return job.toObject();
   }
@@ -438,6 +466,7 @@ export class JobRepository {
       return t._id.toString() !== taskToRemove._id.toString();
     });
     job.updatedAt = new Date();
+    job.markModified('taskList');
     await job.save();
     return job;
   }
@@ -456,6 +485,7 @@ export class JobRepository {
 
     taskToUpdate.title = newTitle;
     job.updatedAt = new Date();
+    job.markModified('taskList');
     await job.save();
     return job.toObject();
   }
@@ -483,6 +513,7 @@ export class JobRepository {
       .exec();
     job.attachments = newAttachments;
     job.updatedAt = new Date();
+    job.markModified('attachments');
     await job.save();
     return job.toObject();
   }
@@ -500,9 +531,7 @@ export class JobRepository {
 
       .exec();
 
-    const task = job.taskList.find((t) => {
-      t._id.toString() === taskId.toString();
-    });
+    const task = job.taskList.find((t) => t._id.toString() === taskId.toString());
     task.items.push(new TaskItem());
     await job.save();
     return job.toObject();
@@ -520,17 +549,14 @@ export class JobRepository {
       })
       .exec();
 
-    const task = job.taskList.find((t) => {
-      t._id.toString() === updateTaskItem.taskId.toString();
-    });
-    const item = task.items.find((i) => {
-      i._id.toString() === updateTaskItem.itemId.toString();
-    });
+    const task = job.taskList.find((t) => t._id.toString() === updateTaskItem.taskId.toString());
+    const item = task.items.find((i) => i._id.toString() === updateTaskItem.itemId.toString());
 
     if (updateTaskItem.description) item.description = updateTaskItem.description;
     if (updateTaskItem.done) item.done = updateTaskItem.done;
     if (updateTaskItem.dueDate) item.dueDate = updateTaskItem.dueDate;
 
+    job.markModified('taskList');
     await job.save();
     return job.toObject();
   }
@@ -547,13 +573,9 @@ export class JobRepository {
       })
       .exec();
 
-    const task = job.taskList.find((t) => {
-      t._id.toString() === taskId.toString();
-    });
+    const task = job.taskList.find((t) => t._id.toString() === taskId.toString());
 
-    task.items = task.items.filter((i) => {
-      i._id.toString() !== itemId.toString();
-    });
+    task.items = task.items.filter((i) => i._id.toString() !== itemId.toString());
 
     await job.save();
     return job.toObject();
@@ -582,5 +604,29 @@ export class JobRepository {
         $set: { deletedAt: now },
       },
     );
+  }
+
+  async removeAllReferencesToEmployee(employeeId: Types.ObjectId) {
+    const allJobsInCompany = await this.jobModel.find({ $and: [{ employeeId: employeeId }, isNotDeleted] }).exec();
+    for (const job of allJobsInCompany) {
+      if (job.assignedBy.toString() === employeeId.toString()) job.assignedBy = null;
+      const assignedEmp = job.assignedEmployees.employeeIds.find((e) => e._id.toString() === employeeId.toString());
+      if (!assignedEmp) {
+        job.assignedEmployees.employeeIds = job.assignedEmployees.employeeIds.filter(
+          (e) => e._id.toString() !== employeeId.toString(),
+        );
+      }
+      for (const comment of job.comments) {
+        if (comment.employeeId.toString() === employeeId.toString()) {
+          comment.employeeId = null;
+        }
+      }
+      for (const task of job.taskList) {
+        for (const item of task.items) {
+          item.assignedEmployees = item.assignedEmployees.filter((e) => e._id.toString() !== employeeId.toString());
+        }
+      }
+      job.save();
+    }
   }
 }

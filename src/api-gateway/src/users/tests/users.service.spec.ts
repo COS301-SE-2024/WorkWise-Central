@@ -74,6 +74,10 @@ describe('UsersService', () => {
           useValue: userConfirmationModel,
         },
         { provide: UsersRepository, useClass: MockUserRepository },
+        {
+          provide: getModelToken('UserPasswordReset'),
+          useValue: userConfirmationModel,
+        },
       ],
     })
       .useMocker((token) => {

@@ -1,6 +1,5 @@
 <template>
   <v-card elevation="14" rounded="md">
-    <!--      <v-img :src="props.passedInJob.imageUrl" aspect-ratio="2.75"></v-img>-->
     <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
       <h2 class="flex-grow-1">{{ props.passedInJob?.details?.heading }}</h2>
     </v-card-title>
@@ -14,11 +13,11 @@
             <ChangeClient :jobID="props.passedInJob?._id" />
           </v-col>
           <v-col>
-            <SelectMembers :jobID="props.passedInJob?._id"/>
+            <SelectMembers :jobID="props.passedInJob?._id" />
           </v-col>
-<!--          <v-col>-->
-<!--            <UpdateJobStatus :passedInJob="props.passedInJob" />-->
-<!--          </v-col>-->
+          <!--          <v-col>-->
+          <!--            <UpdateJobStatus :passedInJob="props.passedInJob" />-->
+          <!--          </v-col>-->
           <v-col>
             <!--              <ChangeDueDate :jobDetails="props.passedInJob?.details" :jobID="props.passedInJob?._id"  />-->
           </v-col>
@@ -26,11 +25,20 @@
       </v-row>
     </v-card-text>
     <v-card-actions class="d-flex flex-column">
-      <v-col class="d-flex flex-column">
-        <v-btn class="mb-4" @click="cancelJob" color="error"
-          ><v-icon icon="fa: fa-solid fa-cancel"></v-icon>Close</v-btn
-        >
-      </v-col>
+      <v-container>
+        <v-row>
+          <v-col class="d-flex flex-column" order="last" order-lg="first" cols="12" lg="6">
+            <v-btn class="mb-4" @click="cancelJob" color="error" block
+              ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
+            >
+          </v-col>
+          <v-col class="d-flex flex-column" order="first" order-lg="last" cols="12" lg="6">
+            <v-btn class="mb-4" @click="emitSave" color="success" block
+              ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
+            >
+          </v-col></v-row
+        ></v-container
+      >
     </v-card-actions>
   </v-card>
 </template>
@@ -44,9 +52,13 @@ import SelectMembers from './SelectMembers.vue'
 import UpdateJobStatus from './UpdateJobStatus.vue'
 // import ChangeDueDate from './UpdateDateDialog.vue'
 
-const emits = defineEmits(['close'])
+const emits = defineEmits(['close', 'save'])
 const props = defineProps<{ passedInJob: any }>()
 const cancelJob = () => {
   emits('close')
+}
+
+const emitSave = () => {
+  emits('save')
 }
 </script>

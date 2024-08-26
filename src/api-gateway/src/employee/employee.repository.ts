@@ -45,7 +45,7 @@ export class EmployeeRepository {
             companyId: identifier,
           },
           {
-            'role.name': roleName,
+            'role.roleName': roleName,
           },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
@@ -351,17 +351,17 @@ export class EmployeeRepository {
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {
-    const employeeToDelete = await this.findById(id);
+    // const employeeToDelete = await this.findById(id);
 
-    if (employeeToDelete == null) {
-      return false;
-    }
+    // if (employeeToDelete == null) {
+    //   return false;
+    // }
 
     const result: Document<unknown, NonNullable<unknown>, User> & User & { _id: Types.ObjectId } =
       await this.employeeModel.findOneAndUpdate(
         {
           $and: [
-            { _id: employeeToDelete._id },
+            { _id: new Types.ObjectId(id) },
             {
               $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },

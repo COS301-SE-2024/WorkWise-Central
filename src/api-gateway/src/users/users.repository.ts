@@ -1,16 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
-import {
-  JoinedCompany,
-  Profile,
-  User,
-  /*  userEmployeeFields,
-  userJoinedCompaniesField,*/
-} from './entities/user.entity';
+import { Address, JoinedCompany, Profile, User } from './entities/user.entity';
 import { JoinUserDto, UpdateUserDto } from './dto/update-user.dto';
 import { currentDate } from '../utils/Utils';
 import { isNotDeleted } from '../shared/soft-delete';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersRepository {
@@ -18,6 +13,8 @@ export class UsersRepository {
 
   async save(newUserObj: User) {
     const newUser = new this.userModel(newUserObj);
+    const salt = await bcrypt.genSalt(10);
+    newUser.systemDetails.password = await bcrypt.hash(newUser.systemDetails.password, salt);
     const result = await newUser.save();
     console.log('Save new user:', result);
     return result;
@@ -154,21 +151,42 @@ export class UsersRepository {
       .lean();
   }
 
-  async update(id: Types.ObjectId, updateUserDto: UpdateUserDto) {
+  async findByEmail(email: string) {
     return this.userModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        },
-        { $set: { ...updateUserDto }, updatedAt: currentDate() },
-        { new: true },
-      )
+      .findOne({
+        $and: [{ 'personalInfo.contactInfo.email': email }, isNotDeleted],
+      })
       .lean();
+  }
+
+  async update(id: Types.ObjectId, updateUserDto: UpdateUserDto) {
+    const user = await this.userModel
+      .findOne({
+        $and: [{ _id: id }, isNotDeleted],
+      })
+      .exec();
+    if (updateUserDto.profile) {
+      user.profile = { ...user.profile, ...updateUserDto.profile };
+    }
+    if (updateUserDto.personalInfo) {
+      const updatedAddress: Address = { ...user.personalInfo.address, ...updateUserDto.personalInfo.address };
+      const updatedContactInfo = { ...user.personalInfo.contactInfo, ...updateUserDto.personalInfo.contactInfo };
+      user.personalInfo = { ...user.personalInfo, ...updateUserDto.personalInfo };
+      user.personalInfo.address = updatedAddress;
+      user.personalInfo.contactInfo = updatedContactInfo;
+    }
+    if (updateUserDto.skills) {
+      user.skills = updateUserDto.skills;
+    }
+    if (updateUserDto.currentEmployee) {
+      user.currentEmployee = updateUserDto.currentEmployee;
+    }
+    if (updateUserDto.systemDetails) {
+      user.systemDetails = { ...user.systemDetails, ...updateUserDto.systemDetails };
+    }
+    user.updatedAt = currentDate();
+
+    return (await user.save()).toObject();
   }
 
   async updateProfilePicture(id: Types.ObjectId, profile: Profile) {
@@ -290,6 +308,9 @@ export class UsersRepository {
         $and: [{ 'systemDetails.email': { $regex: regex, $options: 'i' } }, isNotDeleted],
       })
       .lean();
+    console.log(user);
+
+    if (!user) return false;
 
     for (const joinedCompany of user.joinedCompanies) {
       if (joinedCompany.companyId.toString() === companyId.toString()) {
@@ -298,5 +319,13 @@ export class UsersRepository {
     }
 
     return false;
+  }
+
+  async updatePassword(userId: Types.ObjectId, newPassword: string) {
+    const user = await this.userModel.findOne({ $and: [{ _id: userId }, isNotDeleted] }).exec();
+    const salt = await bcrypt.genSalt(10);
+    user.systemDetails.password = await bcrypt.hash(newPassword, salt);
+    user.markModified('systemDetails');
+    await user.save();
   }
 }

@@ -31,7 +31,7 @@
           <v-autocomplete
             v-model="selectedClient"
             hint="Click the field to select a client"
-            :items="clientData.filter(item=> getClientFullName(item))"
+            :items="clientData.filter((item) => getClientFullName(item))"
             :item-title="getClientFullName"
             item-value="_id"
             label="Select Client"
@@ -49,13 +49,24 @@
         </v-card-text>
 
         <v-card-actions class="d-flex flex-column">
-          <v-btn @click="saveClient" color="success">Save</v-btn>
-          <v-btn @click="isActive.value = false" color="error">Close</v-btn>
+          <v-container
+            ><v-row
+              ><v-col cols="12" lg="6" order="last" order-lg="first">
+                <v-btn @click="saveClient" color="success" block
+                  ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
+                ></v-col
+              ><v-col cols="12" lg="6" order="first" order-lg="last">
+                <v-btn @click="isActive.value = false" color="error" block
+                  ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
+                ></v-col
+              ></v-row
+            ></v-container
+          >
         </v-card-actions>
       </v-card>
     </template>
   </v-dialog>
-   <Toast position="top-center" />
+  <Toast position="top-center" />
 </template>
 
 <script setup lang="ts">
@@ -65,11 +76,11 @@ import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 
 interface Client {
-  _id: string;
+  _id: string
   details: {
-    firstName: string;
-    lastName: string;
-  };
+    firstName: string
+    lastName: string
+  }
 }
 
 const props = defineProps<{
@@ -78,7 +89,13 @@ const props = defineProps<{
 
 const toast = useToast()
 const clientDialog = ref<boolean>(false)
-const selectedClient = ref<string | null>(null)
+const selectedClient = ref<Client>({
+  _id: '',
+  details: {
+    firstName: '',
+    lastName: ''
+  }
+})
 const clientData = ref<Client[]>([])
 
 // API URLs and config
@@ -113,6 +130,7 @@ const showClientChangeSuccess = () => {
     detail: 'Changed client successfully',
     life: 3000
   })
+  clientDialog.value = false
 }
 
 const showClientChangeError = () => {
@@ -140,6 +158,27 @@ const getClients = async () => {
   }
 }
 
+const getCurrentClient = async () => {
+  const apiUrl = await getRequestUrl()
+  try {
+    const response = await axios.get(`${apiUrl}job/id/${props.jobID}`, config)
+    if (response.status > 199 && response.status < 300) {
+      console.log('Client job data', response.data.data.clientId)
+      selectedClient.value = {
+        _id: response.data.data.clientId._id,
+        details: {
+          firstName: response.data.data.clientId.details.firstName,
+          lastName: response.data.data.clientId.details.lastName
+        }
+      }
+    } else {
+      console.log('Wtf happened?', response)
+    }
+  } catch (error) {
+    console.error('Error fetching current client:', error)
+  }
+}
+
 const openClientDialogAndFetchClients = () => {
   clientDialog.value = true
 }
@@ -147,8 +186,13 @@ const openClientDialogAndFetchClients = () => {
 const saveClient = async () => {
   const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.patch(`${apiUrl}job/update/${props.jobID}`, { clientId: selectedClient.value }, config)
+    const response = await axios.patch(
+      `${apiUrl}job/update/${props.jobID}`,
+      { clientId: selectedClient.value._id },
+      config
+    )
     if (response.status > 199 && response.status < 300) {
+      console.log(response)
       showClientChangeSuccess()
     } else {
       console.log('Wtf happened?', response)
@@ -160,6 +204,7 @@ const saveClient = async () => {
 }
 
 onMounted(() => {
+  getCurrentClient()
   getClients()
 })
 

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -6,6 +7,7 @@ import {
   Headers,
   HttpException,
   HttpStatus,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -14,7 +16,7 @@ import {
 } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { CreateClientDto, findClientResponseDto } from './dto/create-client.dto';
-import { UpdateClientDto } from './dto/update-client.dto';
+import { UpdateClientRbaDto } from './dto/update-client.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -27,9 +29,8 @@ import {
 import mongoose, { FlattenMaps, Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
 import { ApiResponseDto, Client, ClientApiObject, CreateClientResponseDto } from './entities/client.entity';
-import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import { extractUserId, validateObjectId } from '../utils/Utils';
+import { extractUserId, validateObjectId, validateObjectIds } from '../utils/Utils';
 import { DeleteClientDto } from './dto/delete-client.dto';
 import { EmployeeService } from '../employee/employee.service';
 
@@ -75,7 +76,6 @@ export class ClientController {
   })
   @Post('/create')
   async create(@Headers() headers: any, @Body() createClientDto: CreateClientDto): Promise<CreateClientResponseDto> {
-    console.log('Creating client');
     const currentEmployee = await this.employeeService.findById(createClientDto.employeeId);
     console.log(currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('add a new clients')) {
@@ -123,8 +123,14 @@ export class ClientController {
   async findAllInCompany(
     @Headers() headers: any,
     @Param('cid') cid: string,
-    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
+    @Query('currentEmployeeId') empId: string,
   ) {
+    try {
+      validateObjectIds([cid, empId]);
+    } catch (e) {
+      throw new BadRequestException('currentEmployeeId or cid is invalid');
+    }
+    const currentEmployeeId = new Types.ObjectId(empId);
     if (!currentEmployeeId) {
       throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
     }
@@ -298,22 +304,16 @@ export class ClientController {
   @ApiResponse({
     description: `The updated ${className} object`,
   })
-  @ApiBody({ type: [UpdateUserDto] })
   @ApiParam({
     name: 'id',
     description: `${className} objectId for ${className} that you wish to delete`,
   })
   @Patch('/:id')
-  async update(
-    @Headers() headers: any,
-    @Param('id') id: Types.ObjectId,
-    @Body()
-    body: {
-      currentEmployeeId: Types.ObjectId;
-      updateClientDto: UpdateClientDto;
-    },
-  ) {
+  async update(@Headers() headers: any, @Param('id') id: Types.ObjectId, @Body() body: UpdateClientRbaDto) {
     const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    if (!currentEmployee) {
+      throw new NotFoundException('EmployeeId is invalid');
+    }
     if (currentEmployee.role.permissionSuite.includes('edit all clients')) {
       console.log('in if');
       try {
@@ -361,7 +361,6 @@ export class ClientController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
-  @ApiBody({ type: DeleteClientDto })
   @ApiOperation({
     summary: `Delete a ${className}`,
     description: `You send the ${className} ObjectId, and then they get deleted if the id is valid. 
@@ -370,8 +369,17 @@ export class ClientController {
   @ApiResponse({
     description: `A boolean value indicating whether or not the deletion was a success`,
   })
-  @Delete('/delete/')
-  async remove(@Headers() headers: any, @Body() deleteClientDto: DeleteClientDto) {
+  @Delete('delete/')
+  async remove(@Headers() headers: any, @Query('clientId') cId: string, @Query('empId') empId: string) {
+    try {
+      validateObjectIds([cId, empId]);
+    } catch (e) {
+      throw new BadRequestException('Error with empId or cId query parameters');
+    }
+    const deleteClientDto = new DeleteClientDto();
+    deleteClientDto.clientId = new Types.ObjectId(cId);
+    deleteClientDto.employeeId = new Types.ObjectId(empId);
+
     const currentEmployee = await this.employeeService.findById(deleteClientDto.employeeId);
     if (currentEmployee.role.permissionSuite.includes('remove any clients')) {
       console.log('in if');

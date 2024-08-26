@@ -32,6 +32,10 @@ describe('UsersController', () => {
           provide: getModelToken('UserConfirmation'),
           useValue: userConfirmationModel,
         },
+        {
+          provide: getModelToken('UserPasswordReset'),
+          useValue: userConfirmationModel,
+        },
       ],
     })
       .useMocker((token) => {

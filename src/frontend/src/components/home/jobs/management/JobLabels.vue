@@ -46,34 +46,39 @@
             ><v-spacer></v-spacer>
           </v-row>
 
-          <v-spacer></v-spacer> </v-card-text
-        ><v-card-actions>
-          <v-card-actions>
-            <v-col>
-              <v-btn
-                color="primary"
-                rounded="xl"
-                boarder="xl"
-                width="85%"
-                height="35"
-                variant="text"
-                @click="addSelectedLabels"
-                >Add</v-btn
-              ></v-col
-            >
-            <v-col
-              ><v-btn
-                color="error"
-                rounded="xl"
-                boarder="xl"
-                width="85%"
-                height="35"
-                variant="text"
-                @click="jobDialog = false"
-                >Close</v-btn
-              ></v-col
-            >
-          </v-card-actions>
+          <v-spacer></v-spacer>
+        </v-card-text>
+        <v-card-actions>
+          <v-container>
+            <v-row>
+              <v-col cols="12" lg="6" order="last" order-lg="first">
+                <v-btn
+                  color="primary"
+                  rounded="xl"
+                  boarder="xl"
+                  width="85%"
+                  height="35"
+                  variant="text"
+                  block
+                  @click="addSelectedLabels"
+                  >Add</v-btn
+                ></v-col
+              >
+              <v-col cols="12" lg="6" order="first" order-lg="last">
+                ><v-btn
+                  color="error"
+                  rounded="xl"
+                  boarder="xl"
+                  width="85%"
+                  height="35"
+                  variant="text"
+                  block
+                  @click="jobDialog = false"
+                  >Close</v-btn
+                ></v-col
+              ></v-row
+            ></v-container
+          >
         </v-card-actions>
       </v-card>
     </v-col>

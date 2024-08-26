@@ -1,118 +1,135 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsEmail, IsMongoId, IsNumberString, IsOptional, IsString, MaxLength, ValidateNested } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsEmail,
+  IsMongoId,
+  IsNotEmpty,
+  IsNumberString,
+  IsOptional,
+  IsString,
+  MaxLength,
+  ValidateNested,
+} from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { Types } from 'mongoose';
 
 class ContactInfo {
-  @ApiProperty()
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsString()
   @Transform(({ value }) => (value.startsWith('0') ? `+27${value.slice(1)}` : value))
   //@IsPhoneNumber(null)
   phoneNumber?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsString()
   @IsEmail()
   @Transform(({ value }) => value.toLowerCase())
   email?: string;
 }
-class UpdateContactInfo extends PartialType(ContactInfo) {}
 class Address {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   @MaxLength(255)
   street?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   @MaxLength(255)
   province?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   @MaxLength(255)
   suburb?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   @MaxLength(255)
   city?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsNumberString()
   @MaxLength(20)
   postalCode?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   @MaxLength(255)
   complexOrBuilding?: string;
 }
-class UpdateAddress extends PartialType(Address) {}
 class ClientDetails {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   firstName?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   lastName?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   preferredLanguage?: string;
 
-  @ApiProperty()
-  @ValidateNested()
-  @Type(() => UpdateContactInfo)
-  contactInfo?: UpdateContactInfo;
-
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @ValidateNested()
-  @Type(() => UpdateAddress)
-  address?: UpdateAddress;
+  @Type(() => ContactInfo)
+  contactInfo?: ContactInfo;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => Address)
+  address?: Address;
+
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   vatNumber?: string;
 
-  @ApiProperty()
-  @IsOptional()
-  @IsMongoId()
-  companyId?: Types.ObjectId;
-
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsNumberString()
   idNumber?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   type?: string;
 }
-class UpdateClientDetails extends PartialType(ClientDetails) {}
 
 export class UpdateClientDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   registrationNumber?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @ValidateNested()
-  @Type(() => UpdateClientDetails)
-  details?: UpdateClientDetails;
+  @Type(() => ClientDetails)
+  details?: ClientDetails;
+}
+
+export class UpdateClientRbaDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsMongoId()
+  currentEmployeeId: Types.ObjectId;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => UpdateClientDto)
+  updateClientDto: UpdateClientDto;
 }

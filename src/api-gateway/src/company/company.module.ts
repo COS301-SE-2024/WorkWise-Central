@@ -20,8 +20,10 @@ import { FileModule } from '../file/file.module';
 import { FileService } from '../file/file.service';
 import { InventoryModule } from '../inventory/inventory.module';
 import { InventoryService } from '../inventory/inventory.service';
-import { EmployeeRepository } from '../employee/employee.repository';
 import { ClientService } from '../client/client.service';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationModule } from '../notification/notification.module';
+import { EmployeeModule } from '../employee/employee.module';
 
 @Module({
   imports: [
@@ -34,6 +36,8 @@ import { ClientService } from '../client/client.service';
     forwardRef(() => EmailModule),
     forwardRef(() => FileModule),
     forwardRef(() => InventoryModule),
+    forwardRef(() => NotificationModule),
+    forwardRef(() => EmployeeModule),
   ],
   controllers: [CompanyController],
   providers: [
@@ -47,8 +51,8 @@ import { ClientService } from '../client/client.service';
     JwtService,
     FileService,
     InventoryService,
-    EmployeeRepository,
     ClientService,
+    NotificationService,
   ],
   exports: [CompanyService, CompanyRepository, MongooseModule],
 })

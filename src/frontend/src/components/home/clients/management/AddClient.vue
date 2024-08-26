@@ -19,10 +19,10 @@
     max-width="600"
     :no-overlay="false"
     scrollable
-    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
+
     :opacity="0"
   >
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'"
+    <v-card
       ><v-card-title class="fixed">
         <span class="headline text-center">Create a Client </span>
       </v-card-title>
@@ -215,16 +215,7 @@
 
           <v-spacer></v-spacer>
           <v-row class="fixed">
-            <v-col
-              cols="12"
-              lg="6"
-              md="6"
-              sm="6"
-              order="last"
-              order-lg="first"
-              order-md="first"
-              order-sm="first"
-            >
+            <v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn
                 color="error"
                 width="100%"
@@ -235,16 +226,7 @@
                 <v-icon icon="fa: fa-solid fa-ban" color="error" start></v-icon> Cancel
               </v-btn>
             </v-col>
-            <v-col
-              cols="12"
-              lg="6"
-              md="6"
-              sm="6"
-              order="last"
-              order-lg="first"
-              order-md="first"
-              order-sm="first"
-            >
+            <v-col cols="12" lg="6" order="first" order-lg="last">
               <Toast position="top-center" />
               <v-btn
                 rounded="md"
@@ -520,7 +502,7 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.isDeleting = false
-            window.location.reload()
+            
           }, 1500)
         })
         .catch((res) => {

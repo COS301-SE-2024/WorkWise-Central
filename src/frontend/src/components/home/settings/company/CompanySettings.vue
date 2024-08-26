@@ -1,45 +1,47 @@
 <template>
-  <v-container :theme="isDarkMode === true ? 'dark' : 'light'">
-    <v-row class="justify-center align-center">
-      <v-col cols="12" class="text-center">
-        <h1 class="text-xl font-semibold">Company Settings</h1>
-        <v-divider></v-divider>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" lg="8" order="last" order-lg="first">
-        <EditCompany v-if="currentSettings === 'Company Details'" />
-        <EditStructure v-if="currentSettings === 'Structure'" />
-        <EditRoles v-if="currentSettings === 'Roles'" />
-        <EditPriority v-if="currentSettings === 'Priority'" />
-        <EditTags v-if="currentSettings === 'Tags'" />
-        <EditStatus v-if="currentSettings === 'Status'" />
-      </v-col>
-      <v-col cols="12" lg="4" order="first" order-lg="last">
-        <v-card class="elevation-0"
-          ><v-list class="bg-cardColor">
-            <v-list-item-group>
-              <template v-for="(item, i) in items" :key="i">
-                <v-list-item
-                  @click="selectSettings(item.label)"
-                  :class="{ 'bg-secondary': currentSettings === item.label }"
-                >
-                  <template v-slot:prepend>
-                    <v-list-item-icon>
-                      <v-icon :icon="item.icon" color="primary"></v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <v-list-item-title>{{ item.label }}</v-list-item-title>
-                    </v-list-item-content>
-                  </template>
-                </v-list-item>
-              </template>
-            </v-list-item-group></v-list
-          ></v-card
-        >
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-app :style="isDarkMode === true ? 'dark' : 'light'">
+    <v-container>
+      <v-row class="justify-center align-center">
+        <v-col cols="12" class="text-center">
+          <h1 class="text-xl font-semibold">Company Settings</h1>
+          <v-divider></v-divider>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" lg="8" order="last" order-lg="first">
+          <EditCompany v-if="currentSettings === 'Company Details'" />
+          <EditStructure v-if="currentSettings === 'Structure'" />
+          <EditRoles v-if="currentSettings === 'Roles'" />
+          <EditPriority v-if="currentSettings === 'Priority'" />
+          <EditTags v-if="currentSettings === 'Tags'" />
+          <EditStatus v-if="currentSettings === 'Status'" />
+        </v-col>
+        <v-col cols="12" lg="4" order="first" order-lg="last">
+          <v-card class="elevation-0"
+            ><v-list class="bg-cardColor">
+              <v-list-item-group>
+                <template v-for="(item, i) in items" :key="i">
+                  <v-list-item
+                    @click="selectSettings(item.label)"
+                    :class="{ 'bg-secondary': currentSettings === item.label }"
+                  >
+                    <template v-slot:prepend>
+                      <v-list-item-icon>
+                        <v-icon :icon="item.icon" color="primary"></v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-content>
+                        <v-list-item-title>{{ item.label }}</v-list-item-title>
+                      </v-list-item-content>
+                    </template>
+                  </v-list-item>
+                </template>
+              </v-list-item-group></v-list
+            ></v-card
+          >
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-app>
 </template>
 
 <script lang="ts">
@@ -101,7 +103,7 @@ export default defineComponent({
     EditPriority,
     EditTags,
     EditStructure,
-    EditStatus,
+    EditStatus
   },
   methods: {
     close() {

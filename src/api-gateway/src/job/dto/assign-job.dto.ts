@@ -2,6 +2,7 @@ import { Types } from 'mongoose';
 import { IsMongoId, IsNotEmpty } from 'class-validator';
 
 export class CreateTaskItemDto {
+  //TODO: DO something with this
   @IsNotEmpty()
   @IsMongoId()
   employeeId: Types.ObjectId;
