@@ -1,12 +1,5 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    max-height="800"
-    max-width="600"
-    :theme="isDarkMode ? 'dark' : 'light'"
-    :opacity="0.1"
-    persistent
-  >
+  <v-dialog v-model="dialog" max-height="800" max-width="600" :opacity="0.1" persistent>
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -39,7 +32,12 @@
       <v-card-actions>
         <v-container>
           <v-row>
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="last" order-lg="first">
+              <v-btn color="error" rounded="md" variant="text" @click="close" block
+                ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon> Cancel
+              </v-btn>
+            </v-col>
+            <v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn
                 @click="createRole"
                 :disabled="!formIsValid"
@@ -50,11 +48,6 @@
                 block
                 ><v-icon icon="fa: fa-solid fa-plus" color="success"></v-icon>Create Role</v-btn
               >
-            </v-col>
-            <v-col cols="12" lg="6">
-              <v-btn color="error" rounded="md" variant="text" @click="close" block
-                ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon> Cancel
-              </v-btn>
             </v-col>
           </v-row>
         </v-container>

@@ -1,22 +1,35 @@
 <template>
   <Toast position="top-center" group="headless" />
-  <v-menu
-    v-model="companyDialog"
-    location="right"
-    min-width="300"
-    :theme="isDarkMode === true ? 'dark' : 'light'"
-    :close-on-content-click="false"
-  >
+
+  <v-menu v-model="companyDialog" location="right" min-width="300" :close-on-content-click="false">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="primary" class="h6" v-bind="activatorProps">{{ companyName }}</v-btn>
     </template>
-    <v-card class="bg-background" :theme="isDarkMode === true ? 'dark' : 'light'" rounded="md">
-      <v-card-title class="bg-background">User's Companies</v-card-title>
+    <v-card class="bg-background" rounded="md">
+      <h2 class="h5 font-weight-regular d-flex justify-center bg-background text-secondary">
+        User's Companies
+      </h2>
       <v-card-text class="bg-background">
         <v-container>
-          <v-col>
-            <v-row
-              ><v-combobox
+          <v-row>
+            <v-col cols="2"
+              ><v-menu v-model="modalMenu" activator="parent">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn variant="text" v-bind="attrs" v-on="on" size="small">
+                    <v-icon icon="fa: fa-solid fa-circle-info"></v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item>
+                    <RegisterCompanyModal />
+                  </v-list-item>
+                  <v-list-item>
+                    <JoinCompanyModal />
+                  </v-list-item>
+                </v-list> </v-menu
+            ></v-col>
+            <v-col cols="10">
+              <v-combobox
                 width="100%"
                 bg-color="background"
                 density="compact"
@@ -25,15 +38,25 @@
                 combobox
                 v-model="companyName"
               ></v-combobox
-              ><v-col></v-col
-            ></v-row>
-          </v-col>
+            ></v-col>
+          </v-row>
         </v-container>
       </v-card-text>
       <v-actions @click="closeCompanyDialog" class="bg-background">
         <v-container>
           <v-row>
-            <v-col cols="12" lg="6" align-self="center">
+            <v-col cols="12" lg="6" align-self="center" order="last" order-lg="first">
+              <v-btn
+                color="error"
+                width="100%"
+                height="35"
+                variant="elevated"
+                @click="closeCompanyDialog"
+                block
+                >Close</v-btn
+              >
+            </v-col>
+            <v-col cols="12" lg="6" align-self="center" order="first" order-lg="last">
               <v-btn
                 color="success"
                 width="100%"
@@ -43,29 +66,21 @@
                 block
                 :loading="isDeleting"
                 >Save</v-btn
-              ></v-col
-            >
-            <v-col cols="12" lg="6" align-self="center">
-              <v-btn
-                color="error"
-                width="100%"
-                height="35"
-                variant="elevated"
-                @click="closeCompanyDialog"
-                block
-                >Close</v-btn
-              ></v-col
-            ></v-row
-          ></v-container
-        >
+              >
+            </v-col>
+          </v-row>
+        </v-container>
       </v-actions>
     </v-card>
   </v-menu>
 </template>
+
 <script>
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
+import RegisterCompanyModal from '@/components/signup/RegisterCompanyModal.vue'
+import JoinCompanyModal from '@/components/signup/JoinCompanyModal.vue'
 
 export default defineComponent({
   props: {
@@ -73,13 +88,16 @@ export default defineComponent({
     userDetails: Object
   },
   components: {
-    Toast
+    Toast,
+    RegisterCompanyModal,
+    JoinCompanyModal
   },
   data() {
     return {
       companyDialog: false,
+      modalMenu: false, // Added for the new v-menu
       isDeleting: false,
-      progress:0,
+      progress: 0,
       visible: false,
       search: '',
       company: '',
@@ -111,27 +129,25 @@ export default defineComponent({
       this.companyDialog = false
     },
     switchCompany(companyName) {
-      this.isDeleting = true // Indicate the start of the deletion process
-      console.log(companyName)
+      this.isDeleting = true
       const companyId = this.findCompany(companyName)
       const employeeId = this.findEmployeeId(companyName)
-      console.log('CompanyId', companyId)
-      console.log('EmployeeId', employeeId)
       this.$emit('switchCompany', companyId)
       this.$toast.add({
         severity: 'success',
         summary: 'Success',
-        group: 'headless', // This is optional
+        group: 'headless',
         detail: `Switched to ${companyName}`
       })
       this.companyName = companyName
       this.company = companyName
       localStorage.setItem('currentCompany', companyId)
+      localStorage.setItem('currentCompanyName', companyName)
       localStorage.setItem('employeeId', employeeId)
       this.companyDialog = false
       setTimeout(() => {
         this.isDeleting = false
-        window.location.reload()
+        
       }, 3000)
     },
     findCompany(companyName) {
@@ -160,8 +176,6 @@ export default defineComponent({
       await axios
         .get(`${apiURL}users/id/${user_id}`, config)
         .then((response) => {
-          console.log(response.data.data.joinedCompanies)
-          console.log(response.data.data)
           this.joinedCompanies = response.data.data.joinedCompanies
           this.joinedCompanies.forEach((company) => {
             this.joinedCompaniesNames.push(company.companyName)
@@ -169,15 +183,13 @@ export default defineComponent({
             this.joinedCompaniesEmployeeIds.push(company.employeeId)
           })
           const currentCompanyID = localStorage.getItem('currentCompany')
-          console.log(currentCompanyID)
           for (let i = 0; i < this.joinedCompanies.length; i++) {
             if (this.joinedCompaniesIds[i] === currentCompanyID) {
-              console.log(this.joinedCompaniesIds[i])
               this.companyName = this.joinedCompaniesNames[i]
+              localStorage.setItem('currentCompanyName', this.joinedCompaniesNames[i])
               break
             } else {
               this.companyName = 'No company selected'
-              console.log(this.companyName)
             }
           }
         })
@@ -196,14 +208,9 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
-    },
-    async getCurrentCompanyName() {
-      this.currentCompanyID = localStorage.getItem('currentCompany')
-      console.log(this.currentCompanyID)
     }
   },
   mounted() {
-    // this.getCurrentCompanyName()
     this.getCompanies()
   }
 })

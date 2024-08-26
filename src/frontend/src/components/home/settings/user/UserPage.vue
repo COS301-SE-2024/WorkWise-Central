@@ -184,7 +184,7 @@
         </v-col>
       </v-row>
     </v-container>
-     <Toast position="top-center" />
+    <Toast position="top-center" />
   </v-container>
 </template>
 

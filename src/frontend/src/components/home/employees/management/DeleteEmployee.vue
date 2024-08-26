@@ -36,7 +36,7 @@
       <v-card-actions>
         <v-container>
           <v-row>
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn
                 color="error"
                 variant="text"
@@ -47,9 +47,9 @@
                 >Delete</v-btn
               >
             </v-col>
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn color="secondary" variant="text" @click="clientDialog = false" block
-                ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
+                ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon
                 >Cancel</v-btn
               >
             </v-col>
@@ -117,7 +117,7 @@ export default {
           setTimeout(() => {
             this.isDeleting = false
             this.clientDialog = false
-            window.location.reload()
+            
           }, 1500)
         })
         .catch((error) => {

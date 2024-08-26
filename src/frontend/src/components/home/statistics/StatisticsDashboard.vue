@@ -6,7 +6,6 @@
           height="auto"
           class="pa-16 ma-0 bg-background"
           rounded="md"
-          :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
           border="md"
           elevation="0"
         >

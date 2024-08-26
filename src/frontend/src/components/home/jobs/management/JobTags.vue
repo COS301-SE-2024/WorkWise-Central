@@ -17,7 +17,11 @@
 
     <!-- Label List -->
     <v-list class="no-background">
-      <v-list-item v-for="label in filteredLabels" :key="label.label" class="d-flex align-center no-background">
+      <v-list-item
+        v-for="label in filteredLabels"
+        :key="label.label"
+        class="d-flex align-center no-background"
+      >
         <v-row align="center" no-gutters class="w-100">
           <!-- Color Block with Label Text -->
           <v-col cols="auto">
@@ -156,25 +160,26 @@ const getRequestUrl = async (): Promise<string> => {
   return localAvailable ? localUrl : remoteUrl
 }
 
-const labels = ref<Label[]>([
-])
+const labels = ref<Label[]>([])
 
 const companyLabels = ref<Label[]>([])
 
-const getJobTags = async() => {
+const getJobTags = async () => {
   const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}job/tags/${localStorage.getItem('currentCompany')}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    const response = await axios.get(
+      `${apiUrl}job/tags/${localStorage.getItem('currentCompany')}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
       }
-    })
+    )
     if (response.status > 199 && response.status < 300) {
       companyLabels.value = response.data.data
     }
   } catch (error) {
     console.log('Failed to get tags', error)
-
   }
 }
 
@@ -245,7 +250,7 @@ const saveLabel = async () => {
       const tag = {
         companyId: localStorage.getItem('currentCompany') || '',
         label: labelTitle.value,
-        color: selectedColor.value,
+        color: selectedColor.value
       }
       const response = await axios.post(`${apiUrl}job/tags/add`, tag, config)
       const updatedTags = [...props.tags, response.data.data._id]
@@ -255,7 +260,11 @@ const saveLabel = async () => {
         try {
           console.log('Job id', props.jobID)
           console.log('Tag body', tag)
-          let response = await axios.patch(`${apiUrl}job/update/${props.jobID}`, {tags: updatedTags}, config)
+          let response = await axios.patch(
+            `${apiUrl}job/update/${props.jobID}`,
+            { tags: updatedTags },
+            config
+          )
           if (response.status > 199 && response.status < 300) {
             addTagSuccess()
             console.log('Tag added to the job', response)

@@ -1,7 +1,7 @@
 <template>
   <Toast position="top-center" />
   <v-app :theme="isDarkMode ? 'dark' : 'light'">
-    <v-app-bar :theme="isDarkMode ? 'themes.dark' : 'themes.light'" class="bg-background">
+    <v-app-bar class="bg-background">
       <v-toolbar-title
         ><v-label :class="'h4 text-primary'">Rest</v-label>
         <v-label :class="'h4 text-secondary'">Password</v-label></v-toolbar-title
@@ -14,7 +14,7 @@
       <v-container>
         <v-row>
           <v-col cols="12" md="6" offset-md="3">
-            <v-card :theme="isDarkMode ? 'themes.dark' : 'themes.light'">
+            <v-card>
               <v-card-title class="text-center">Create New Password</v-card-title>
               <v-card-text>
                 <v-form v-model="valid">
