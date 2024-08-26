@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    max-height="800"
-    max-width="600"
-    :theme="isDarkMode === true ? 'dark' : 'light'"
-  >
+  <v-dialog v-model="dialog" max-height="800" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -16,12 +11,7 @@
         >Register Company</v-btn
       >
     </template>
-    <v-sheet
-      elevation="14"
-      rounded="md"
-      max-width="600"
-      :theme="isDarkMode === true ? 'dark' : 'light'"
-    >
+    <v-sheet elevation="14" rounded="md" max-width="600">
       <v-form
         ref="form"
         v-model="valid"
@@ -215,7 +205,6 @@
             <v-col>
               <small class="text-caption">Company logo</small>
               <v-file-input
-                :theme="isDarkMode === true ? 'dark' : 'light'"
                 variant="solo"
                 accept="image/*"
                 width="100%"
@@ -348,34 +337,40 @@
               ></v-col>
             </v-row>
           </v-col>
-          <v-col cols="8" offset="2" align="center">
-             <Toast position="top-center" />
-            <v-btn
-              color="primary"
-              type="submit"
-              rounded="md"
-              boarder="md"
-              width="60%"
-              height="35"
-              variant="elevated"
-              :disabled="click_create_client"
-              data-testid="continue-button"
-              >Continue</v-btn
+          <v-container>
+            <v-row>
+              <v-col cols="12" lg="6" order="last" order-lg="first">
+                <v-btn
+                  color="secondary"
+                  @click="close"
+                  rounded="md"
+                  boarder="xl"
+                  size="large"
+                  height="35"
+                  variant="elevated"
+                  data-testid="back-button"
+                  block
+                  >Back</v-btn
+                >
+              </v-col>
+              <v-col cols="12" lg="6" order="first" order-lg="last">
+                <Toast position="top-center" />
+                <v-btn
+                  color="primary"
+                  type="submit"
+                  rounded="md"
+                  boarder="md"
+                  size="large"
+                  height="35"
+                  variant="elevated"
+                  :disabled="click_create_client"
+                  block
+                  data-testid="continue-button"
+                  >Continue</v-btn
+                >
+              </v-col></v-row
             >
-          </v-col>
-          <v-col cols="8" offset="2" align="center">
-            <v-btn
-              color="secondary"
-              @click="close"
-              rounded="md"
-              boarder="xl"
-              width="60%"
-              height="35"
-              variant="elevated"
-              data-testid="back-button"
-              >Back</v-btn
-            >
-          </v-col>
+          </v-container>
         </v-col>
       </v-form>
     </v-sheet>

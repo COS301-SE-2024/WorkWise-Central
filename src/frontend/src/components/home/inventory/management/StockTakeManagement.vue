@@ -7,10 +7,30 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12"> <GenerateReport :inventory="inventoryItems" /></v-col>
+      <v-col cols="12">
+        <v-text-field v-model="searchQuery" label="Search Inventory" clearable></v-text-field>
+      </v-col>
     </v-row>
     <v-row>
-      <v-col v-for="item in inventoryItems" :key="item._id" cols="12" md="6">
+      <v-col cols="12">
+        <v-select v-model="sortOrder" :items="sortOptions" label="Sort By" clearable></v-select>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <v-date-picker v-model="stockTakeDate" label="Stock Take Date"></v-date-picker>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <v-btn @click="saveStockTake" variant="outlined">Save Stock Take</v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12"> <GenerateReport :inventory="filteredInventoryItems" /></v-col>
+    </v-row>
+    <v-row>
+      <v-col v-for="item in filteredInventoryItems" :key="item._id" cols="12" md="6">
         <v-card>
           <v-card-title>{{ item.name }}</v-card-title>
           <v-card-text>
@@ -21,11 +41,16 @@
               type="number"
               min="0"
             ></v-text-field>
-            <v-btn @click="updateStock(item)" variant="outlined" :loading="isDeleting"
+            <v-btn @click="updateStock(item)" variant="outlined" :loading="isUpdating"
               >Update</v-btn
             >
           </v-card-text>
         </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <v-btn @click="generateAndSaveReport" variant="outlined">Generate and Save Report</v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -46,16 +71,38 @@ export default {
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       inventoryItems: [] as InventoryItem[],
-      isDeleting: false
+      isUpdating: false,
+      searchQuery: '',
+      sortOrder: '',
+      stockTakeDate: new Date(),
+      sortOptions: [
+        { text: 'Name (A-Z)', value: 'name' },
+        { text: 'Stock Level (Low to High)', value: 'stockAsc' },
+        { text: 'Stock Level (High to Low)', value: 'stockDesc' }
+      ]
     }
   },
   components: {
     GenerateReport
   },
+  computed: {
+    filteredInventoryItems() {
+      let items = this.inventoryItems.filter((item) =>
+        item.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      )
+      if (this.sortOrder === 'name') {
+        items = items.sort((a, b) => a.name.localeCompare(b.name))
+      } else if (this.sortOrder === 'stockAsc') {
+        items = items.sort((a, b) => a.currentStockLevel - b.currentStockLevel)
+      } else if (this.sortOrder === 'stockDesc') {
+        items = items.sort((a, b) => b.currentStockLevel - a.currentStockLevel)
+      }
+      return items
+    }
+  },
   methods: {
     async updateStock(item: InventoryItem) {
-      this.isDeleting = true
-      console.log(item._id)
+      this.isUpdating = true
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -76,15 +123,53 @@ export default {
             detail: 'Stock updated successfully'
           })
           setTimeout(() => {
-            window.location.reload()
-            this.isDeleting = false
+            this.isUpdating = false
+            this.getInventoryItems()
           }, 3000)
         })
       } catch (error) {
         console.error(error)
+        this.isUpdating = false
       }
-      // Optionally, you can send the updated stock to your server here
-      console.log(`Updated stock for ${item.name}: ${item.updatedStock}`)
+    },
+    async saveStockTake() {
+      const stockTakeData = {
+        date: this.stockTakeDate,
+        inventoryItems: this.filteredInventoryItems,
+        companyID: localStorage.getItem('currentCompany'),
+        currentEmployee: localStorage.getItem('employeeId')
+      }
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        await axios.post(`${apiURL}stocktake`, stockTakeData, config).then(() => {
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Stock take saved successfully'
+          })
+        })
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async generateAndSaveReport() {
+      // Generate the report and ask the user whether to update stock or keep as is
+      const confirmed = confirm(
+        'Do you want to update the stock on the system based on this report?'
+      )
+      if (confirmed) {
+        for (const item of this.filteredInventoryItems) {
+          await this.updateStock(item)
+        }
+      }
+      // Generate and download the report
+      // this.$refs.report.generateReport()
     },
     async getInventoryItems() {
       // Fetch inventory items from the backend
@@ -103,7 +188,6 @@ export default {
           `${apiURL}inventory/all/${localStorage.getItem('employeeId')}`,
           config
         )
-        console.log(response.data.data)
         this.inventoryItems = response.data.data
       } catch (error) {
         console.error(error)

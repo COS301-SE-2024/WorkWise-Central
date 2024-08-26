@@ -70,10 +70,7 @@
                   </v-card-title>
                   <v-card-actions class="d-flex flex-column">
                     <v-defaults-provider :defaults="{ VIcon: { color: 'info' } }">
-                      <v-btn
-                        color="info"
-                        @click="assignDialog = true"
-                      >
+                      <v-btn color="info" @click="assignDialog = true">
                         <v-icon>
                           {{ 'fa: fa-solid fa-user-plus' }}
                         </v-icon>
@@ -168,7 +165,11 @@
       </v-row>
       <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
         <v-row class="justify-center">
-          <v-btn v-if="isSaveVisible" color="success" @click="handleSaveTaskClick" prepend-icon="fa: fa-solid fa-save"
+          <v-btn
+            v-if="isSaveVisible"
+            color="success"
+            @click="handleSaveTaskClick"
+            prepend-icon="fa: fa-solid fa-save"
             >Save Task</v-btn
           >
         </v-row>
@@ -316,13 +317,15 @@ const createEmployeeAssignmentObjects = () => {
   const itemId = 'someItemId' // Replace with actual item ID
   const employeeId = localStorage.getItem('employeeId') || ''
 
-  const assignments = selectedEmployees.value.map((selectedEmployee: { text: string, value: string }) => ({
-    employeeId,
-    employeeToAssignId: selectedEmployee.value,
-    jobId,
-    taskId,
-    itemId
-  }))
+  const assignments = selectedEmployees.value.map(
+    (selectedEmployee: { text: string; value: string }) => ({
+      employeeId,
+      employeeToAssignId: selectedEmployee.value,
+      jobId,
+      taskId,
+      itemId
+    })
+  )
 
   console.log(assignments)
 }
@@ -367,9 +370,7 @@ const openCheckActionsDialog = (index: number) => {
 const saveTask = async (index: number) => {
   // Implement save logic here
 }
-
 </script>
-
 
 <style scoped>
 .strikethrough {
