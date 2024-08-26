@@ -1,4 +1,4 @@
-import { InventoryService } from './../inventory/inventory.service';
+import { InventoryService } from '../inventory/inventory.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { StockTakeRepository } from './stocktake.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
@@ -14,7 +14,9 @@ export class StockTakeService {
   constructor(
     @Inject(forwardRef(() => StockTakeRepository))
     private readonly stocktakeRepository: StockTakeRepository,
+    @Inject(forwardRef(() => InventoryService))
     private readonly inventoryService: InventoryService,
+    @Inject(forwardRef(() => CompanyService))
     private readonly companyService: CompanyService,
   ) {}
 
@@ -38,7 +40,7 @@ export class StockTakeService {
 
   async validateUpdateInventory(id: Types.ObjectId, updateStockTakeDto: UpdateStockTakeDto) {
     //checking if the stocktake exists
-    if (!(await this.stockTakeExisits(id))) {
+    if (!(await this.stockTakeExists(id))) {
       return new ValidationResult(false, `Stock take not found`);
     }
     //Checking that all the id's are valid
@@ -61,7 +63,7 @@ export class StockTakeService {
       itemsForCreate.push({
         currentStockLevel: inventory.currentStockLevel,
         recordedStockLevel: items.recordedStockLevel,
-        inventoryId: items.inventoryId,
+        inventoryItem: { inventoryId: inventory._id, name: inventory.name },
       });
     }
 
@@ -100,24 +102,26 @@ export class StockTakeService {
     return await this.stocktakeRepository.findById(id);
   }
 
-  async stockTakeExisits(id: Types.ObjectId) {
+  async stockTakeExists(id: Types.ObjectId) {
     return (await this.stocktakeRepository.findById(id)) != null;
   }
 
   async update(id: Types.ObjectId, updateStockTakeDto: UpdateStockTakeDto) {
-    console.log('In update. Id: ', id);
-    const validation = await this.validateUpdateInventory(id, updateStockTakeDto);
-    console.log('validation: ', validation);
-    if (!validation.isValid) {
-      throw new Error(validation.message);
-    }
     console.log('validation is done');
     return await this.stocktakeRepository.update(id, updateStockTakeDto);
   }
 
+  async updateInventoryReference(inventoryId: Types.ObjectId, newName: string) {
+    return await this.stocktakeRepository.updateInventoryReference(inventoryId, newName);
+  }
+
+  async removeReferenceToInventory(inventoryId: Types.ObjectId) {
+    return await this.stocktakeRepository.removeReferenceToInventory(inventoryId);
+  }
+
   async remove(id: Types.ObjectId): Promise<boolean> {
     //checking if the inventory item exists
-    if (!(await this.stockTakeExisits(id))) {
+    if (!(await this.stockTakeExists(id))) {
       throw new Error('Inventory item does not exist');
     }
     return await this.stocktakeRepository.remove(id);

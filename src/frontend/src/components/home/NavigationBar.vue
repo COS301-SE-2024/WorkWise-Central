@@ -36,9 +36,8 @@ const inventorySubItems = ref([
   {
     title: 'Inventory Center',
     icon: 'fa: fa-solid fa-bars-progress',
-    routeName: 'inventory-center'
+    routeName: 'report-view'
   },
-  { title: 'Reports', icon: 'fa: fa-solid fa-chart-simple', routeName: 'report-view' },
   {
     title: 'Inventory Stock Take',
     icon: 'fa: fa-solid fa-chart-line',
@@ -63,6 +62,11 @@ const moreSubItems = ref([
     routeName: 'company-requests'
   }
 ])
+
+const filterClientSubItems = ref(clientSubItems.value.filter((item) => item.title === 'Management'))
+const filterInventorySubItems = ref(
+  inventorySubItems.value.filter((item) => item.title === 'Management')
+)
 </script>
 
 <script lang="ts">
@@ -126,7 +130,8 @@ export default defineComponent({
       axios
         .get(`${apiURL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
         .then((response) => {
-          console.log(response.data.data.role.permissionSuite)
+          console.log(response.data.data)
+          localStorage.setItem('roleId', response.data.data.role._id)
           this.employeePermissions = response.data.data.role.permissionSuite
         })
         .catch((error) => {
@@ -157,219 +162,220 @@ export default defineComponent({
 
 <template>
   <v-app :theme="isdarkmode ? 'dark' : 'light'">
-    <v-app :theme="isdarkmode ? 'dark' : 'light'">
-      <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-background">
-        <v-app-bar-nav-icon @click="isVisible = !isVisible">
-          <v-icon>{{ isVisible ? 'fa: fa-solid fa-bars' : 'fa: fa-solid fa-bars' }}</v-icon>
-        </v-app-bar-nav-icon>
-        <CompanyMain />
-        <v-spacer></v-spacer>
+    <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-background">
+      <v-app-bar-nav-icon @click="isVisible = !isVisible">
+        <v-icon>{{ isVisible ? 'fa: fa-solid fa-bars' : 'fa: fa-solid fa-bars' }}</v-icon>
+      </v-app-bar-nav-icon>
+      <CompanyMain />
+      <v-spacer></v-spacer>
 
-        <v-toolbar-title class="d-flex justify-center">
-          <v-label class="text-primary h4">Work</v-label>
-          <v-label class="text-secondary h4">Wise</v-label>
-        </v-toolbar-title>
+      <v-toolbar-title class="d-flex justify-center">
+        <v-label class="text-primary h4">Work</v-label>
+        <v-label class="text-secondary h4">Wise</v-label>
+      </v-toolbar-title>
 
-        <v-spacer class="d-none d-sm-flex"></v-spacer>
+      <v-spacer class="d-none d-sm-flex"></v-spacer>
 
-        <div class="d-flex align-center">
-          <UserAvatar />
-          <v-icon
-            class="icon-padding mr-5"
-            @click="toggleDarkMode"
-            :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"
-          ></v-icon>
-        </div>
-      </v-app-bar>
-      <v-navigation-drawer
-        class="bg-background"
-        app
-        v-model="drawer"
-        :rail="isVisible"
-        :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
-        min-height="100%"
+      <div class="d-flex align-center">
+        <UserAvatar />
+        <v-icon
+          class="icon-padding mr-5"
+          @click="toggleDarkMode"
+          :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"
+        ></v-icon>
+      </div>
+    </v-app-bar>
+    <v-navigation-drawer
+      class="bg-background"
+      app
+      v-model="drawer"
+      :rail="isVisible"
+      min-height="100%"
+    >
+      <v-list v-model:open="open">
+        <v-list-group fluid value="Dashboard">
+          <template v-slot:activator="{ props }">
+            <v-list-item
+              v-bind="props"
+              prepend-icon="fa: fa-solid fa-tachometer-alt"
+              title="Dashboard"
+              class="list-item-large"
+            ></v-list-item>
+          </template>
+          <v-list-item
+            v-for="(item, i) in dashboardSubItems"
+            :key="i"
+            :to="{ name: item.routeName }"
+            :value="item.title"
+            :title="item.title"
+            :prepend-icon="item.icon"
+            @click="setInbox(item.title)"
+          ></v-list-item>
+        </v-list-group>
+      </v-list>
+      <v-list
+        v-model:open="open"
+        v-show="checkPermission('view all clients') || checkPermission('view clients under me')"
       >
-        <v-list v-model:open="open">
-          <v-list-group fluid value="Dashboard">
-            <template v-slot:activator="{ props }">
-              <v-list-item
-                v-bind="props"
-                prepend-icon="fa: fa-solid fa-tachometer-alt"
-                title="Dashboard"
-                class="list-item-large"
-              ></v-list-item>
-            </template>
+        <v-list-group fluid value="Clients">
+          <template v-slot:activator="{ props }">
             <v-list-item
-              v-for="(item, i) in dashboardSubItems"
-              :key="i"
-              :to="{ name: item.routeName }"
-              :value="item.title"
-              :title="item.title"
-              :prepend-icon="item.icon"
-              @click="setInbox(item.title)"
+              v-bind="props"
+              prepend-icon="fa: fa-solid fa-handshake"
+              title="Clients"
+              class="list-item-large"
             ></v-list-item>
-          </v-list-group>
-        </v-list>
-        <v-list v-model:open="open">
-          <v-list-group fluid value="Clients">
-            <template v-slot:activator="{ props }">
-              <v-list-item
-                v-bind="props"
-                prepend-icon="fa: fa-solid fa-handshake"
-                title="Clients"
-                class="list-item-large"
-              ></v-list-item>
-            </template>
+          </template>
+          <v-list-item
+            v-for="(item, i) in checkPermission('view all clients')
+              ? clientSubItems
+              : filterClientSubItems"
+            :key="i"
+            :to="{ name: item.routeName }"
+            :value="item.title"
+            :title="item.title"
+            :prepend-icon="item.icon"
+            @click="setInbox(item.title)"
+          ></v-list-item>
+        </v-list-group>
+      </v-list>
+      <v-list
+        v-model:open="open"
+        v-show="checkPermission('view all employees') || checkPermission('view employees under me')"
+      >
+        <v-list-group fluid value="Employees">
+          <template v-slot:activator="{ props }">
             <v-list-item
-              v-show="checkPermission('view all clients')"
-              v-for="(item, i) in clientSubItems"
-              :key="i"
-              :to="{ name: item.routeName }"
-              :value="item.title"
-              :title="item.title"
-              :prepend-icon="item.icon"
-              @click="setInbox(item.title)"
+              v-bind="props"
+              prepend-icon="fa: fa-solid fa-users"
+              title="Employees"
+              class="list-item-large"
             ></v-list-item>
-          </v-list-group>
-        </v-list>
-        <v-list
-          v-model:open="open"
-          v-show="
-            checkPermission('view all employees') || checkPermission('view employees under me')
-          "
-        >
-          <v-list-group fluid value="Employees">
-            <template v-slot:activator="{ props }">
-              <v-list-item
-                v-bind="props"
-                prepend-icon="fa: fa-solid fa-users"
-                title="Employees"
-                class="list-item-large"
-              ></v-list-item>
-            </template>
+          </template>
 
+          <v-list-item
+            v-for="(item, i) in employeeSubItems"
+            :key="i"
+            :to="{ name: item.routeName }"
+            :value="item.title"
+            :title="item.title"
+            :prepend-icon="item.icon"
+            @click="setInbox(item.title)"
+          ></v-list-item>
+        </v-list-group>
+      </v-list>
+      <v-list v-model:open="open">
+        <v-list-group fluid value="Jobs">
+          <template v-slot:activator="{ props }">
             <v-list-item
-              v-for="(item, i) in employeeSubItems"
-              :key="i"
-              :to="{ name: item.routeName }"
-              :value="item.title"
-              :title="item.title"
-              :prepend-icon="item.icon"
-              @click="setInbox(item.title)"
+              v-bind="props"
+              prepend-icon="fa: fa-solid fa-briefcase"
+              title="Jobs"
+              class="list-item-large"
             ></v-list-item>
-          </v-list-group>
-        </v-list>
-        <v-list v-model:open="open">
-          <v-list-group fluid value="Jobs">
-            <template v-slot:activator="{ props }">
-              <v-list-item
-                v-bind="props"
-                prepend-icon="fa: fa-solid fa-briefcase"
-                title="Jobs"
-                class="list-item-large"
-              ></v-list-item>
-            </template>
+          </template>
+          <v-list-item
+            v-for="(item, i) in jobSubItems"
+            :key="i"
+            :to="{ name: item.routeName }"
+            :value="item.title"
+            :title="item.title"
+            :prepend-icon="item.icon"
+            @click="setInbox(item.title)"
+          ></v-list-item>
+        </v-list-group>
+      </v-list>
+      <v-list v-model:open="open">
+        <v-list-group fluid value="Inventory">
+          <template v-slot:activator="{ props }">
             <v-list-item
-              v-for="(item, i) in jobSubItems"
-              :key="i"
-              :to="{ name: item.routeName }"
-              :value="item.title"
-              :title="item.title"
-              :prepend-icon="item.icon"
-              @click="setInbox(item.title)"
+              v-bind="props"
+              prepend-icon="fa: fa-solid fa-boxes"
+              title="Inventory"
+              class="list-item-large"
             ></v-list-item>
-          </v-list-group>
-        </v-list>
-        <v-list v-model:open="open">
-          <v-list-group fluid value="Inventory">
-            <template v-slot:activator="{ props }">
-              <v-list-item
-                v-bind="props"
-                prepend-icon="fa: fa-solid fa-boxes"
-                title="Inventory"
-                class="list-item-large"
-              ></v-list-item>
-            </template>
+          </template>
+          <v-list-item
+            v-for="(item, i) in checkPermission('view all inventory')
+              ? inventorySubItems
+              : filterInventorySubItems"
+            :key="i"
+            :to="{ name: item.routeName }"
+            :value="item.title"
+            :title="item.title"
+            :prepend-icon="item.icon"
+            @click="setInbox(item.title)"
+          ></v-list-item>
+        </v-list-group>
+      </v-list>
+      <v-list v-model:open="open">
+        <v-list-group fluid value="Inbox">
+          <template v-slot:activator="{ props }">
             <v-list-item
-              v-for="(item, i) in inventorySubItems"
-              :key="i"
-              :to="{ name: item.routeName }"
-              :value="item.title"
-              :title="item.title"
-              :prepend-icon="item.icon"
-              @click="setInbox(item.title)"
+              v-bind="props"
+              prepend-icon="fa: fa-solid fa-envelope"
+              title="Inbox"
+              class="list-item-large"
             ></v-list-item>
-          </v-list-group>
-        </v-list>
-        <v-list v-model:open="open">
-          <v-list-group fluid value="Inbox">
-            <template v-slot:activator="{ props }">
-              <v-list-item
-                v-bind="props"
-                prepend-icon="fa: fa-solid fa-envelope"
-                title="Inbox"
-                class="list-item-large"
-              ></v-list-item>
-            </template>
+          </template>
+          <v-list-item
+            v-for="(item, i) in inboxSubItems"
+            :key="i"
+            :to="{ name: item.routeName }"
+            :value="item.title"
+            :title="item.title"
+            :prepend-icon="item.icon"
+            @click="setInbox(item.title)"
+          ></v-list-item>
+        </v-list-group>
+      </v-list>
+      <v-list v-model:open="open">
+        <v-list-group fluid value="Help">
+          <template v-slot:activator="{ props }">
             <v-list-item
-              v-for="(item, i) in inboxSubItems"
-              :key="i"
-              :to="{ name: item.routeName }"
-              :value="item.title"
-              :title="item.title"
-              :prepend-icon="item.icon"
-              @click="setInbox(item.title)"
+              v-bind="props"
+              prepend-icon="fa: fa-solid fa-life-ring"
+              title="Help"
+              class="list-item-large"
             ></v-list-item>
-          </v-list-group>
-        </v-list>
-        <v-list v-model:open="open">
-          <v-list-group fluid value="Help">
-            <template v-slot:activator="{ props }">
-              <v-list-item
-                v-bind="props"
-                prepend-icon="fa: fa-solid fa-life-ring"
-                title="Help"
-                class="list-item-large"
-              ></v-list-item>
-            </template>
-            <v-list-item
-              v-for="(item, i) in supportSubItems"
-              :key="i"
-              :to="{ name: item.routeName }"
-              :value="item.title"
-              :title="item.title"
-              :prepend-icon="item.icon"
-              @click="setInbox(item.title)"
-            ></v-list-item>
-          </v-list-group>
-        </v-list>
+          </template>
+          <v-list-item
+            v-for="(item, i) in supportSubItems"
+            :key="i"
+            :to="{ name: item.routeName }"
+            :value="item.title"
+            :title="item.title"
+            :prepend-icon="item.icon"
+            @click="setInbox(item.title)"
+          ></v-list-item>
+        </v-list-group>
+      </v-list>
 
-        <v-list v-model:open="open" v-show="checkPermission('company settings') === true">
-          <v-list-group fluid value="More">
-            <template v-slot:activator="{ props }">
-              <v-list-item
-                v-bind="props"
-                prepend-icon="fa: fa-solid fa-ellipsis-h"
-                title="More"
-                class="list-item-large"
-              ></v-list-item>
-            </template>
+      <v-list v-model:open="open" v-show="checkPermission('company settings') === true">
+        <v-list-group fluid value="More">
+          <template v-slot:activator="{ props }">
             <v-list-item
-              v-for="(item, i) in moreSubItems"
-              :key="i"
-              :to="{ name: item.routeName }"
-              :value="item.title"
-              :title="item.title"
-              :prepend-icon="item.icon"
-              @click="setInbox(item.title)"
+              v-bind="props"
+              prepend-icon="fa: fa-solid fa-ellipsis-h"
+              title="More"
+              class="list-item-large"
             ></v-list-item>
-          </v-list-group>
-        </v-list>
-      </v-navigation-drawer>
-      <v-main>
-        <component :is="component" />
-      </v-main>
-    </v-app>
+          </template>
+          <v-list-item
+            v-for="(item, i) in moreSubItems"
+            :key="i"
+            :to="{ name: item.routeName }"
+            :value="item.title"
+            :title="item.title"
+            :prepend-icon="item.icon"
+            @click="setInbox(item.title)"
+          ></v-list-item>
+        </v-list-group>
+      </v-list>
+    </v-navigation-drawer>
+    <v-main>
+      <component :is="component" />
+    </v-main>
   </v-app>
 </template>
 

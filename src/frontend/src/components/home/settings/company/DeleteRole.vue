@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    v-model="deleteDialog"
-    max-width="500px"
-    :opacity="0"
-    :theme="isDarkMode === true ? 'dark' : 'light'"
-  >
+  <v-dialog v-model="deleteDialog" max-width="500px" :opacity="0">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
@@ -30,14 +25,13 @@
       <v-card-actions>
         <v-container
           ><v-row justify="end"
-            ><v-col cols="12" lg="6"
+            ><v-col cols="12" lg="6" order="last" order-lg="first"
               ><Toast position="bottom-center" />
               <v-btn label="Cancel" color="secondary" @click="close" block
-                ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
-                >Cancel
+                ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon>Cancel
               </v-btn></v-col
             >
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn label="Delete" color="error" :loading="isDeleting" block @click="deleteRole"
                 ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon
                 >Delete
@@ -110,7 +104,7 @@ export default defineComponent({
           setTimeout(() => {
             this.isDeleting = false
             this.deleteDialog = false
-            window.location.reload()
+            
           }, 1500)
           this.isDeleting = false
         }

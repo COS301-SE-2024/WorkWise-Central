@@ -2,13 +2,7 @@
   <v-container fluid fill-height>
     <v-row justify="center">
       <v-col>
-        <v-card
-          height="auto"
-          class="pa-16 ma-0 bg-background"
-          rounded="md"
-          :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
-          elevation="0"
-        >
+        <v-card height="auto" class="pa-16 ma-0 bg-background" rounded="md" elevation="0">
           <!-- Calendar Card -->
           <v-col cols="12">
             <v-card :max-height="1500" border="md" rounded="xl" class="bg-cardColor">

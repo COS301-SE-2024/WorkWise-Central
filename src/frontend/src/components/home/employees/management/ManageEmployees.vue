@@ -6,13 +6,7 @@ c
         <v-col cols="12">
           <v-row justify="center">
             <v-col cols="12" xs="12" sm="12" md="12">
-              <v-card
-                height="auto"
-                class="pa-11 ma-0 bg-cardColor"
-                rounded="md"
-                :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
-                border="md"
-              >
+              <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
                 <v-card-title
                   class="d-flex align-center pe-2"
                   style="font-family: Nunito, sans-serif; font-size: 25px; font-weight: lighter"
@@ -106,7 +100,7 @@ c
                           </v-chip>
                         </template>
                         <template v-slot:[`item.actions`]="{ item }">
-                          <v-menu max-width="500px" :theme="isDarkMode === true ? 'dark' : 'light'">
+                          <v-menu max-width="500px" v-if="item.roleName != 'Owner'">
                             <template v-slot:activator="{ props }"
                               ><v-btn
                                 rounded="xl"
@@ -126,8 +120,7 @@ c
                               <v-list-item>
                                 <EditEmployee
                                   v-if="
-                                    permissions.includes('edit all employees') ||
-                                    permissions.includes('edit employees under me')
+                                    permissions.includes('edit employees') 
                                   "
                                   @update:item="selectedItem = $event"
                                   :editedItem="selectedItem"
@@ -135,8 +128,7 @@ c
 
                               <v-list-item
                                 v-if="
-                                  permissions.includes('remove any employees') ||
-                                  permissions.includes('remove employees under me')
+                                  permissions.includes('delete employees') 
                                 "
                                 ><DeleteEmployee :details="selectedItem"
                               /></v-list-item>
@@ -184,7 +176,7 @@ export default {
     loading_data: true,
     permissions: [] as string[],
     selectedItem: {} as any,
-    isDarkMode: localStorage['theme'] !== 'false',
+    isDarkMode: true,
     clientDialog: false,
     deleteDialog: false,
     editDialog: false,
@@ -246,6 +238,7 @@ export default {
     this.loadPermissions()
     this.getEmployees()
     this.loading_data = false
+    this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
   },
   methods: {
     openDialog() {

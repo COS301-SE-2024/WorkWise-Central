@@ -1,13 +1,7 @@
 <template>
   <v-app :style="isDarkMode === true ? 'dark' : 'light'">
     <v-container fluid fill-height>
-      <v-card
-        height="auto"
-        class="pa-11 ma-0 bg-cardColor"
-        rounded="md"
-        :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
-        border="md"
-      >
+      <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
         <v-card-title
           class="d-flex align-center pe-2 text-h5 font-weight-regular"
           height="auto"
@@ -59,11 +53,11 @@
               <!--              max-height="800"-->
               <!--              max-width="600"-->
               <!--              scrollable-->
-              <!--              :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"-->
+              <!--             -->
               <!--              :opacity="0"-->
               <!--            >-->
               <AddClient
-                v-show="checkPermission('add a new clients')"
+                v-show="checkPermission('add new clients')"
                 :showDialog="addClientVisibility"
                 @update:showDialog="addClientVisibility = $event"
               />
@@ -124,7 +118,7 @@
 
                 <!-- Actions slot -->
                 <template v-slot:[`item.actions`]="{ item }">
-                  <v-menu max-width="500px" :theme="isDarkMode === true ? 'dark' : 'light'">
+                  <v-menu max-width="500px">
                     <template v-slot:activator="{ props }">
                       <v-btn
                         rounded="xl"
@@ -135,12 +129,8 @@
                           checkPermission('view all clients') ||
                           checkPermission('view clients under me') ||
                           checkPermission('view clients that are assigned to me') ||
-                          checkPermission('edit all clients') ||
-                          checkPermission('edit clients that are under me') ||
-                          checkPermission('edit clients that are assigned to me') ||
-                          checkPermission('remove any clients') ||
-                          checkPermission('remove clients under me') ||
-                          checkPermission('remove clients assigned to me')
+                          checkPermission('edit clients') ||
+                          checkPermission('delete clients')
                         "
                       >
                         <v-icon color="primary">mdi-dots-horizontal</v-icon>
@@ -159,9 +149,7 @@
 
                       <v-list-item
                         v-show="
-                          checkPermission('edit all clients') ||
-                          checkPermission('edit clients that are under me') ||
-                          checkPermission('edit clients that are assigned to me')
+                          checkPermission('edit clients') 
                         "
                         ><EditClient
                           @update:item="selectedItem = $event"
@@ -171,9 +159,7 @@
 
                       <v-list-item
                         v-show="
-                          checkPermission('remove any clients') ||
-                          checkPermission('remove clients under me') ||
-                          checkPermission('remove clients assigned to me')
+                          checkPermission('delete clients') 
                         "
                       >
                         <DeleteClient
@@ -535,6 +521,12 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    getRowProps({ index }) {
+      console.log(index)
+      return {
+        class: index % 2 ? 'bg-secondRowColor' : ''
+      }
     }
   },
   toggleDarkMode() {
@@ -550,12 +542,6 @@ export default defineComponent({
   getColor(value) {
     if (value == '') return 'red'
     else return 'green'
-  },
-  getRowProps({ index }) {
-    console.log(index)
-    return {
-      class: index % 2 ? 'bg-secondRowColor' : ''
-    }
   }
 })
 </script>

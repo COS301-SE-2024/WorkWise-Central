@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :style="isDarkMode === true ? 'dark' : 'light'">
     <v-container>
       <v-row class="justify-center align-center">
         <v-col cols="12" class="text-center">
@@ -16,100 +16,87 @@
             <v-spacer></v-spacer>
           </v-tabs>
           <v-tabs-items
-          ><v-tab-item v-if="currentTab === 'Current Companies'">
-            <v-card
-              height="auto"
-              class="pa-11 ma-0 bg-cardColor"
-              rounded="md"
-              :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
-              border="md"
-            >
-              <v-card-title>
-                <v-row align="center" justify="space-between">
-                  <v-col cols="12" lg="4" class="d-flex justify-start align-center">
-                    <v-icon icon="fa: fa-solid fa-building"></v-icon>
-                    <v-label
-                      class="ms-2 h4 font-family-Nunito text-headingTextColor"
-                      height="auto"
-                      width="auto"
-                    >Current Companies</v-label
-                    >
-                  </v-col>
+            ><v-tab-item v-if="currentTab === 'Current Companies'">
+              <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
+                <v-card-title>
+                  <v-row align="center" justify="space-between">
+                    <v-col cols="12" lg="4">
+                      <v-icon icon="fa: fa-solid fa-building"></v-icon>
+                      <v-label
+                        class="ms-2 h4 font-family-Nunito text-headingTextColor"
+                        height="auto"
+                        width="auto"
+                        >Current Companies</v-label
+                      >
+                    </v-col>
 
-                  <v-col cols="12" lg="4" class="d-flex justify-center">
-                    <v-text-field
-                      v-model="search"
-                      density="compact"
-                      label="Search"
-                      prepend-inner-icon="mdi-magnify"
-                      variant="outlined"
-                      flat
-                      color="primary"
-                      style="
+                    <v-col cols="12" lg="4">
+                      <v-text-field
+                        v-model="search"
+                        density="compact"
+                        label="Search"
+                        prepend-inner-icon="mdi-magnify"
+                        variant="outlined"
+                        flat
+                        color="primary"
+                        style="
                           font-family: 'Lato', sans-serif;
                           font-size: 15px;
                           font-weight: lighter;
                         "
-                      hide-details
-                      single-line
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" lg="4" md="4" sm="4">
-                    <JoinCompany :buttonColor="'secondary'"
+                        hide-details
+                        single-line
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" lg="4">
+                      <JoinCompanyModal :buttonColor="'secondary'"
                     /></v-col> </v-row
                 ></v-card-title>
-              <v-card-text>
-                <v-divider></v-divider>
-                <v-data-table
-                  :items="joinedCompanies"
-                  :headers="companyHeaders"
-                  label="Current Companies"
-                  height="auto"
-                  rounded="xl"
-                  class="bg-cardColor"
-                  :row-props="getRowProps"
-                  :header-props="{ class: 'bg-secondRowColor h6' }"
-                >
-                  <template #[`item.actions`]="{ item }">
-                    <v-menu max-width="500px" :theme="isDarkMode === true ? 'dark' : 'light'">
-                      <template v-slot:activator="{ props }">
-                        <v-btn rounded="xl" variant="plain" v-bind="props">
-                          <v-icon color="primary">mdi-dots-horizontal</v-icon>
-                        </v-btn>
-                      </template>
-                      <v-list>
-                        <v-list-item>
-                          <v-btn @click="switchCompany(item)" color="success">
-                            <v-icon left color="success">{{
+                <v-card-text>
+                  <v-divider></v-divider>
+                  <v-data-table
+                    :items="joinedCompanies"
+                    :headers="companyHeaders"
+                    label="Current Companies"
+                    height="auto"
+                    rounded="xl"
+                    class="bg-cardColor"
+                    :row-props="getRowProps"
+                  >
+                    <template #[`item.actions`]="{ item }">
+                      <v-menu max-width="500px">
+                        <template v-slot:activator="{ props }">
+                          <v-btn rounded="xl" variant="plain" v-bind="props">
+                            <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                          </v-btn>
+                        </template>
+                        <v-list>
+                          <v-list-item>
+                            <v-btn @click="switchCompany(item)" color="success">
+                              <v-icon left color="success">{{
                                 'fa: fa-solid fa-briefcase'
                               }}</v-icon>
-                            Switch to this company
-                          </v-btn></v-list-item
-                        >
-                        <v-list-item>
-                          <v-btn @click="leaveCompany(item)" color="warning">
-                            <v-icon left color="warning">{{
+                              Switch to this company
+                            </v-btn></v-list-item
+                          >
+                          <v-list-item>
+                            <v-btn @click="leaveCompany(item)" color="warning">
+                              <v-icon left color="warning">{{
                                 'fa: fa-solid fa-door-open'
                               }}</v-icon>
-                            Leave this company
-                          </v-btn></v-list-item
-                        >
-                      </v-list>
-                    </v-menu>
-                  </template>
-                </v-data-table>
-              </v-card-text>
-            </v-card>
-          </v-tab-item>
+                              Leave this company
+                            </v-btn></v-list-item
+                          >
+                        </v-list>
+                      </v-menu>
+                    </template>
+                  </v-data-table>
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
 
             <v-tab-item v-if="currentTab === 'Recently Left Companies'">
-              <v-card
-                height="auto"
-                class="pa-11 ma-0 bg-cardColor"
-                rounded="md"
-                :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
-                border="md"
-              >
+              <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
                 <v-card-title>
                   <v-row align="center" justify="space-between">
                     <v-col cols="12" lg="4" class="d-flex justify-start align-center">
@@ -118,7 +105,7 @@
                         class="ms-2 h4 font-family-Nunito text-headingTextColor"
                         height="auto"
                         width="auto"
-                      >Recently Left Companies</v-label
+                        >Recently Left Companies</v-label
                       >
                     </v-col>
 
@@ -142,7 +129,7 @@
                     </v-col>
                     <v-col cols="12" lg="4">
                       <RegisterCompanyModal :buttonColor="'secondary'"
-                      /></v-col>
+                    /></v-col>
                   </v-row>
                 </v-card-title>
                 <v-card-text>
@@ -154,10 +141,9 @@
                     rounded="xl"
                     class="bg-cardColor"
                     :row-props="getRowProps"
-                    :header-props="{ class: 'bg-secondRowColor h6' }"
                   >
                     <template #[`item.actions`]="{ item }">
-                      <v-menu max-width="500px" :theme="isDarkMode === true ? 'dark' : 'light'">
+                      <v-menu max-width="500px">
                         <template v-slot:activator="{ props }">
                           <v-btn rounded="xl" variant="plain" v-bind="props">
                             <v-icon color="primary">mdi-dots-horizontal</v-icon>
@@ -167,8 +153,8 @@
                           <v-list-item>
                             <v-btn @click="rejoinCompany(item)" color="success">
                               <v-icon left color="success">{{
-                                  'fa: fa-solid fa-exchange-alt'
-                                }}</v-icon>
+                                'fa: fa-solid fa-exchange-alt'
+                              }}</v-icon>
                               Rejoin the company
                             </v-btn></v-list-item
                           >
@@ -199,7 +185,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import JoinCompany from '@/components/signup/JoinCompanyModal.vue'
+import JoinCompanyModal from '@/components/signup/JoinCompanyModal.vue'
 import InvitePage from '../user/InvitePage.vue'
 import RegisterCompanyModal from '@/components/signup/RegisterCompanyModal.vue'
 import Toast from 'primevue/toast'
@@ -223,8 +209,8 @@ const newCompanyCode = ref('')
 const companyCodeRules = [(v: string) => !!v || 'Company code is required']
 const joinedCompanies = reactive<Company[]>([])
 const leftCompanies = ref<Company[]>([
-  { id: '3', name: 'Company C'},
-  { id: '4', name: 'Company D'}
+  { id: '3', name: 'Company C' },
+  { id: '4', name: 'Company D' }
 ])
 const undoTimeout = ref<ReturnType<typeof setTimeout> | null>(null)
 const joinCompanyModal = ref(false)
@@ -241,7 +227,7 @@ const leftCompanyHeaders = [
 // Table Data
 const companies = reactive<Company[]>([
   { id: '1', name: 'Company A' },
-  { id: '2', name: 'Company B'}
+  { id: '2', name: 'Company B' }
 ])
 
 // API URLs and configs
@@ -269,7 +255,7 @@ const getRequestUrl = async (): Promise<string> => {
   return localAvailable ? localUrl : remoteUrl
 }
 
-const getRowProps = (index: number) => {
+const getRowProps = ({ index }: any) => {
   return {
     class: index % 2 ? 'bg-secondRowColor' : ''
   }
@@ -296,16 +282,20 @@ const permanentlyLeaveCompany = (company: Company) => {
   leftCompanies.value = leftCompanies.value.filter((c) => c.id !== company.id)
 }
 
-const setUserCompanies = async() => {
+const setUserCompanies = async () => {
   const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(`${apiUrl}users/id/${localStorage.getItem('id')}`, config)
     if (response.status < 300 && response.status > 199) {
       const companiesData = response.data.data.joinedCompanies
-      joinedCompanies.splice(0, joinedCompanies.length, ...companiesData.map((company: any) => ({
-        id: company.companyId,
-        name: company.companyName
-      })))
+      joinedCompanies.splice(
+        0,
+        joinedCompanies.length,
+        ...companiesData.map((company: any) => ({
+          id: company.companyId,
+          name: company.companyName
+        }))
+      )
     } else {
       toast.add({ severity: 'error', summary: 'Error', detail: 'Error fetching companies' })
     }

@@ -78,7 +78,7 @@ export class ClientController {
   async create(@Headers() headers: any, @Body() createClientDto: CreateClientDto): Promise<CreateClientResponseDto> {
     const currentEmployee = await this.employeeService.findById(createClientDto.employeeId);
     console.log(currentEmployee);
-    if (currentEmployee.role.permissionSuite.includes('add a new clients')) {
+    if (currentEmployee.role.permissionSuite.includes('add new clients')) {
       console.log('in if');
       try {
         const userId = extractUserId(this.jwtService, headers);
@@ -314,7 +314,7 @@ export class ClientController {
     if (!currentEmployee) {
       throw new NotFoundException('EmployeeId is invalid');
     }
-    if (currentEmployee.role.permissionSuite.includes('edit all clients')) {
+    if (currentEmployee.role.permissionSuite.includes('edit clients')) {
       console.log('in if');
       try {
         validateObjectId(id);
@@ -326,35 +326,38 @@ export class ClientController {
         console.log(e);
         throw e;
       }
-    } else if (currentEmployee.role.permissionSuite.includes('edit clients that are under me')) {
-      if (await this.clientService.clientIsBelowCurrentEmployee(body.currentEmployeeId, id)) {
-        try {
-          validateObjectId(id);
-          const clientId = new Types.ObjectId(id);
-          const userId = extractUserId(this.jwtService, headers);
+    }
+    // else if (currentEmployee.role.permissionSuite.includes('edit clients that are under me')) {
+    //   if (await this.clientService.clientIsBelowCurrentEmployee(body.currentEmployeeId, id)) {
+    //     try {
+    //       validateObjectId(id);
+    //       const clientId = new Types.ObjectId(id);
+    //       const userId = extractUserId(this.jwtService, headers);
 
-          return await this.clientService.updateClient(userId, clientId, body.updateClientDto);
-        } catch (e) {
-          console.log(e);
-          throw e;
-        }
-      } else {
-        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-      }
-    } else if (currentEmployee.role.permissionSuite.includes('edit clients that are assigned to me')) {
-      if (await this.clientService.clientIsAssignedToCurrentEmployee(body.currentEmployeeId, id)) {
-        try {
-          validateObjectId(id);
-          const clientId = new Types.ObjectId(id);
-          const userId = extractUserId(this.jwtService, headers);
+    //       return await this.clientService.updateClient(userId, clientId, body.updateClientDto);
+    //     } catch (e) {
+    //       console.log(e);
+    //       throw e;
+    //     }
+    //   } else {
+    //     throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    //   }
+    // }
+    // else if (currentEmployee.role.permissionSuite.includes('edit clients that are assigned to me')) {
+    //   if (await this.clientService.clientIsAssignedToCurrentEmployee(body.currentEmployeeId, id)) {
+    //     try {
+    //       validateObjectId(id);
+    //       const clientId = new Types.ObjectId(id);
+    //       const userId = extractUserId(this.jwtService, headers);
 
-          return await this.clientService.updateClient(userId, clientId, body.updateClientDto);
-        } catch (e) {
-          console.log(e);
-          throw e;
-        }
-      }
-    } else {
+    //       return await this.clientService.updateClient(userId, clientId, body.updateClientDto);
+    //     } catch (e) {
+    //       console.log(e);
+    //       throw e;
+    //     }
+    //   }
+    // }
+    else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
@@ -381,7 +384,7 @@ export class ClientController {
     deleteClientDto.employeeId = new Types.ObjectId(empId);
 
     const currentEmployee = await this.employeeService.findById(deleteClientDto.employeeId);
-    if (currentEmployee.role.permissionSuite.includes('remove any clients')) {
+    if (currentEmployee.role.permissionSuite.includes('delete clients')) {
       console.log('in if');
       try {
         const userId = extractUserId(this.jwtService, headers);
@@ -389,29 +392,31 @@ export class ClientController {
       } catch (e) {
         throw e;
       }
-    } else if (currentEmployee.role.permissionSuite.includes('remove clients under me')) {
-      if (await this.clientService.clientIsBelowCurrentEmployee(deleteClientDto.employeeId, deleteClientDto.clientId)) {
-        try {
-          const userId = extractUserId(this.jwtService, headers);
-          return this.clientService.softDelete(userId, deleteClientDto);
-        } catch (e) {
-          throw e;
-        }
-      } else {
-        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-      }
-    } else if (currentEmployee.role.permissionSuite.includes('remove clients assigned to me')) {
-      if (
-        await this.clientService.clientIsAssignedToCurrentEmployee(deleteClientDto.employeeId, deleteClientDto.clientId)
-      ) {
-        try {
-          const userId = extractUserId(this.jwtService, headers);
-          return this.clientService.softDelete(userId, deleteClientDto);
-        } catch (e) {
-          throw e;
-        }
-      }
-    } else {
+    }
+    // else if (currentEmployee.role.permissionSuite.includes('remove clients under me')) {
+    //   if (await this.clientService.clientIsBelowCurrentEmployee(deleteClientDto.employeeId, deleteClientDto.clientId)) {
+    //     try {
+    //       const userId = extractUserId(this.jwtService, headers);
+    //       return this.clientService.softDelete(userId, deleteClientDto);
+    //     } catch (e) {
+    //       throw e;
+    //     }
+    //   } else {
+    //     throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    //   }
+    // } else if (currentEmployee.role.permissionSuite.includes('remove clients assigned to me')) {
+    //   if (
+    //     await this.clientService.clientIsAssignedToCurrentEmployee(deleteClientDto.employeeId, deleteClientDto.clientId)
+    //   ) {
+    //     try {
+    //       const userId = extractUserId(this.jwtService, headers);
+    //       return this.clientService.softDelete(userId, deleteClientDto);
+    //     } catch (e) {
+    //       throw e;
+    //     }
+    //   }
+    // }
+    else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }

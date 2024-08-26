@@ -98,7 +98,7 @@
       </v-card>
     </v-dialog>
   </v-container>
-  <Toast/>
+  <Toast />
 </template>
 
 <script setup lang="ts">
@@ -146,15 +146,15 @@ const getRequestUrl = async (): Promise<string> => {
 }
 
 const getJobData = async () => {
-  console.log("Getting job data", props.id)
+  console.log('Getting job data', props.id)
   const apiUrl = getRequestUrl()
   try {
     const response = await axios.get(`${apiUrl}job/id/${props.id}`, config)
     if (response.status > 199 && response.data < 300) {
       const job = response.data.data
-      console.log("Job:", job)
+      console.log('Job:', job)
       if (job.attachments) {
-        console.log("Got job data")
+        console.log('Got job data')
         job.attachments.forEach((attachment: string) => {
           images.value.push({
             src: attachment,
@@ -163,11 +163,9 @@ const getJobData = async () => {
         })
       }
     }
-
-  } catch(error) {
+  } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch images' })
   }
-
 }
 
 const uploadImage = async (index: number) => {
@@ -184,11 +182,16 @@ const uploadImage = async (index: number) => {
   try {
     const response = await axios.patch(url, formData, config)
     if (response.status === 200) {
-      toast.add({ severity: 'success', summary: 'Success', detail: 'Image uploaded successfully', life:3000 })
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Image uploaded successfully',
+        life: 3000
+      })
     }
   } catch (error) {
     console.log(error)
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to upload image', life:3000 })
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to upload image', life: 3000 })
     console.log(url)
   }
 }

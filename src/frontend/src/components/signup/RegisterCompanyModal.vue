@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    max-height="800"
-    max-width="600"
-    :theme="isDarkMode === true ? 'dark' : 'light'"
-  >
+  <v-dialog v-model="dialog" max-height="800" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -16,12 +11,7 @@
         >Register Company</v-btn
       >
     </template>
-    <v-sheet
-      elevation="14"
-      rounded="md"
-      max-width="600"
-      :theme="isDarkMode === true ? 'dark' : 'light'"
-    >
+    <v-sheet elevation="14" rounded="md" max-width="600">
       <v-form
         ref="form"
         v-model="valid"
@@ -54,10 +44,7 @@
               ></v-text-field
             ></v-col>
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter"
-                >Type of business
-                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
-              </label>
+              <label style="font-size: 14px; font-weight: lighter">Type of business </label>
               <v-autocomplete
                 density="compact"
                 color="primary"
@@ -65,7 +52,6 @@
                 v-model="req_obj.type"
                 rounded="md"
                 variant="solo"
-                :rules="business_type_rules"
                 :items="[
                   'Agricultural Labor',
                   'Automotive Repair',
@@ -215,7 +201,6 @@
             <v-col>
               <small class="text-caption">Company logo</small>
               <v-file-input
-                :theme="isDarkMode === true ? 'dark' : 'light'"
                 variant="solo"
                 accept="image/*"
                 width="100%"
@@ -348,34 +333,40 @@
               ></v-col>
             </v-row>
           </v-col>
-          <v-col cols="8" offset="2" align="center">
-             <Toast position="top-center" />
-            <v-btn
-              color="primary"
-              type="submit"
-              rounded="md"
-              boarder="md"
-              width="60%"
-              height="35"
-              variant="elevated"
-              :disabled="click_create_client"
-              data-testid="continue-button"
-              >Continue</v-btn
+          <v-container>
+            <v-row>
+              <v-col cols="12" lg="6" order="last" order-lg="first">
+                <v-btn
+                  color="secondary"
+                  @click="close"
+                  rounded="md"
+                  boarder="xl"
+                  size="large"
+                  height="35"
+                  variant="elevated"
+                  data-testid="back-button"
+                  block
+                  >Back</v-btn
+                >
+              </v-col>
+              <v-col cols="12" lg="6" order="first" order-lg="last">
+                <Toast position="top-center" />
+                <v-btn
+                  color="primary"
+                  type="submit"
+                  rounded="md"
+                  boarder="md"
+                  size="large"
+                  height="35"
+                  variant="elevated"
+                  :disabled="click_create_client"
+                  block
+                  data-testid="continue-button"
+                  >Continue</v-btn
+                >
+              </v-col></v-row
             >
-          </v-col>
-          <v-col cols="8" offset="2" align="center">
-            <v-btn
-              color="secondary"
-              @click="close"
-              rounded="md"
-              boarder="xl"
-              width="60%"
-              height="35"
-              variant="elevated"
-              data-testid="back-button"
-              >Back</v-btn
-            >
-          </v-col>
+          </v-container>
         </v-col>
       </v-form>
     </v-sheet>
@@ -466,7 +457,6 @@ export default {
       suburb_rules: [(v: string) => !!v || 'Suburb is required'],
       province_rules: [(v: string) => !!v || 'Province is required'],
       city_rules: [(v: string) => !!v || 'City is required'],
-      business_type_rules: [(v: string) => !!v || 'Business type required'],
       req_obj: {
         userId: localStorage.getItem('id'),
         name: '',
@@ -498,6 +488,7 @@ export default {
       this.req_obj.vatNumber || delete this.req_obj.vatNumber
       this.req_obj.address.complex || delete this.req_obj.address.complex
       this.req_obj.logo || delete this.req_obj.logo
+      this.req_obj.type || delete this.req_obj.type
 
       console.log('hello')
       console.log(validate)
@@ -514,8 +505,9 @@ export default {
       axios
         .post(apiURL + 'company/create', this.req_obj, config)
         .then((res) => {
-          localStorage['currentCompany'] = res.data.data._id
-          localStorage['employeeId'] = res.data.data.ownerId
+          console.log(res)
+          localStorage['currentCompany'] = res.data._id
+          localStorage['employeeId'] = res.data.ownerId
           this.$router.push({ name: 'dashboard' })
         })
         .catch((res) => {
@@ -558,18 +550,7 @@ export default {
         reader.readAsDataURL(file)
       }
       console.log(this.req_obj.logo)
-    },
-    print_base64_link() {
-      console.log(this.req_obj.logo)
     }
-
-    // base64image() {
-    //   let read = new FileReader()
-    //   read.readAsDataURL(this.req_obj.image)
-    //   read.onload = () => {
-    //     this.req_obj.image = read.result
-    //   }
-    // }
   },
   mounted() {
     this.req_obj.userId = localStorage['id']

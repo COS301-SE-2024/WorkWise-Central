@@ -97,9 +97,9 @@ export default defineComponent({
     }
   },
   methods: {
-    getRowProps(item: number) {
+    getRowProps(item: any) {
       return {
-        class: item % 2 ? 'bg-warning' : ''
+        class: item % 2 ? 'bg-background' : ''
       }
     }
   }

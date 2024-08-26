@@ -36,7 +36,7 @@
       <v-card-actions>
         <v-container>
           <v-row>
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn
                 color="error"
                 variant="text"
@@ -47,9 +47,9 @@
                 >Delete</v-btn
               >
             </v-col>
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn color="secondary" variant="text" @click="clientDialog = false" block
-                ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
+                ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon
                 >Cancel</v-btn
               >
             </v-col>
@@ -91,9 +91,7 @@ export default {
     },
     async deleteEmployee() {
       const employee_to_be_deleted = {
-        adminId: localStorage['employeeId'],
-        companyId: localStorage['currentCompany'],
-        employeeToDeleteId: this.details.employeeId
+        currentEmployeeId: localStorage['employeeId']
       }
       console.log(employee_to_be_deleted)
       this.isDeleting = true // Indicate the start of the deletion process
@@ -103,7 +101,7 @@ export default {
       }
       const apiURL = await this.getRequestUrl()
       axios
-        .delete(apiURL + 'company/emp', config)
+        .delete(apiURL + `employee/${this.details.employeeId}`, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -114,11 +112,9 @@ export default {
           })
           this.isDeleting = false
           this.clientDialog = false
-          setTimeout(() => {
-            this.isDeleting = false
-            this.clientDialog = false
-            window.location.reload()
-          }, 1500)
+          this.isDeleting = false
+          this.clientDialog = false
+          window.location.reload()
         })
         .catch((error) => {
           console.log(error)

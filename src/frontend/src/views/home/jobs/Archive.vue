@@ -1,17 +1,16 @@
-c
 <template>
-  <NavigationBar :component="ClientDesk" />
+  <NavigationBar :component="Archive" />
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from 'vue'
-import ClientDesk from '@/components/home/clients/management/ClientDesk.vue'
+import Archive from '@/components/home/jobs/KanbanV2/Archive.vue'
 import NavigationBar from '@/components/home/NavigationBar.vue'
 export default defineComponent({
-  name: 'ClientDeskView',
+  name: 'ArchiveView',
   computed: {
-    ClientDesk() {
-      return ClientDesk
+    Archive() {
+      return Archive
     }
   },
   components: {
@@ -19,5 +18,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style></style>

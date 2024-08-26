@@ -1,19 +1,13 @@
 <template>
   <Toast position="top-center" />
-  <v-card
-    height="auto"
-    class="pa-11 ma-0 bg-cardColor"
-    rounded="md"
-    :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
-    border="md"
-  >
+  <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
     <v-card-title
       class="d-flex align-center pe-2 text-h5 font-weight-regular"
       height="auto"
       width="100%"
     >
       <v-row align="center" justify="space-between">
-        <v-col cols="12" lg="4" md="4" sm="4" class="d-flex justify-start align-center">
+        <v-col cols="12" lg="4">
           <v-icon icon="mdi-account-group"></v-icon>
           <v-label
             class="ms-2 h4 font-family-Nunito text-headingTextColor"
@@ -23,7 +17,7 @@
           >
         </v-col>
 
-        <v-col cols="12" lg="4" md="4" sm="4" class="d-flex justify-center">
+        <v-col cols="12" lg="4">
           <v-text-field
             v-model="search"
             density="compact"
@@ -32,11 +26,15 @@
             variant="outlined"
             flat
             color="primary"
-            width="80%"
+            width="100%"
             style="font-family: 'Lato', sans-serif; font-size: 15px; font-weight: lighter"
             hide-details
             single-line
+            block
           ></v-text-field>
+        </v-col>
+        <v-col cols="12" lg="4">
+          <CreateInvite />
         </v-col>
       </v-row>
     </v-card-title>
@@ -52,6 +50,7 @@
             label="Invites"
             height="auto"
             rounded="xl"
+            :row-props="getRowProps"
             class="bg-cardColor"
             :header-props="{ class: 'bg-cardColor h6' }"
           >
@@ -65,7 +64,7 @@
               <v-chip variant="text">{{ convertDate(value) }}</v-chip>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
-              <v-menu max-width="200px" :theme="isDarkMode === true ? 'dark' : 'light'">
+              <v-menu max-width="200px">
                 <template v-slot:activator="{ props }">
                   <v-btn rounded="xl" variant="plain" v-bind="props">
                     <v-icon color="primary">mdi-dots-horizontal</v-icon>
@@ -93,8 +92,8 @@
 </template>
 <script lang="ts">
 import axios from 'axios'
-import Toast from 'primevue/toast'
 import { defineComponent } from 'vue'
+import CreateInvite from './CreateInvite.vue'
 
 interface Invite {
   companyId: number
@@ -108,6 +107,9 @@ interface Invite {
 
 export default defineComponent({
   name: 'CompanyInvite',
+  components: {
+    CreateInvite
+  },
   data() {
     return {
       search: '' as string,
@@ -144,6 +146,11 @@ export default defineComponent({
     }
   },
   methods: {
+    getRowProps({ index }: any) {
+      return {
+        class: index % 2 ? 'bg-secondRowColor' : ''
+      }
+    },
     async acceptInvite(invite: Invite) {
       console.log('Accepted:', invite)
       // Add logic to handle invite acceptance

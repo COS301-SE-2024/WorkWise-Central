@@ -1,5 +1,13 @@
 <template>
   <v-container fluid>
+    <v-row justify="end"
+      ><v-col cols="auto">
+        <v-btn size="x-large" align="right" @click="redirectToArchivePage">
+          <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
+        </v-btn>
+      </v-col></v-row
+    >
+
     <v-row class="d-flex flex-nowrap overflow-scroll">
       <v-col
         v-for="column in columns"
@@ -32,21 +40,21 @@
               </template>
 
               <v-list :border="true" bg-color="background" rounded="lg">
-                <v-list-subheader>Cards</v-list-subheader>
+                <v-list-subheader>Jobs</v-list-subheader>
 
                 <v-list-item>
-                  <v-btn :elevation="0"
-                    ><v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon
-                    >{{ 'Archive all' }}</v-btn
-                  >
+                  <v-btn :elevation="0" @click="columnArchiveAll(column)">
+                    <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
+                    {{ 'Archive all' }}
+                  </v-btn>
                 </v-list-item>
                 <v-list-item>
                   <v-dialog v-model="delete_all_jobs_dialog" max-width="500px">
                     <template v-slot:activator="{ props }">
-                      <v-btn :elevation="0" v-bind="props"
-                        ><v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon
-                        >{{ 'Delete all' }}</v-btn
-                      >
+                      <v-btn :elevation="0" v-bind="props">
+                        <v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon>
+                        {{ 'Delete all' }}
+                      </v-btn>
                     </template>
                     <v-card color="background">
                       <v-card-title>
@@ -90,7 +98,7 @@
                         >{{ 'Edit details' }}
                       </v-btn>
                     </template>
-                    <v-card elevation="14" rounded="md" max-height="700" max-width="900">
+                    <v-card elevation="14" rounded="md" max-height="100%" max-width="900">
                       <v-card-title class="text-center">Edit {{ column.status }}</v-card-title>
                       <v-card-text>
                         <!--              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">-->
@@ -253,7 +261,7 @@
                     {{ item.city + ', ' + item.suburb }}</v-card-item
                   >
 
-                  <v-card-item
+                  <v-card-item v-if="item.priorityTag != null"
                     ><v-chip :color="item.priorityTag.colour" variant="tonal" density="comfortable"
                       ><b>Priority: {{ item.priorityTag.label }}</b></v-chip
                     ></v-card-item
@@ -362,6 +370,7 @@
     <ViewJob @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
   </v-dialog>
 </template>
+7
 
 <script lang="ts">
 import type { JobCardDataFormat, Column } from '../types'
@@ -373,7 +382,6 @@ import axios from 'axios'
 
 export default {
   components: {
-    // JBC,
     ViewJob
   },
   data() {
@@ -384,6 +392,7 @@ export default {
       add_column_dialog: false,
       delete_column_dialog: false,
       edit_column_details_dialog: false,
+      archive_status_id: '',
       // columns: [
       //   { id: 0, status: 'No Status', color: 'purple-accent-3', cards: [] },
       //   { id: 1, status: 'Todo', color: '#FF073A', cards: [] },
@@ -409,6 +418,35 @@ export default {
     }
   },
   methods: {
+    async columnArchiveAll(col: Column) {
+      try {
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
+        const apiURL = await this.getRequestUrl()
+        for (let i = 0; i < col.cards.length; i++) {
+          axios
+            .patch(
+              apiURL + `job/update/${col.cards[i].jobId}`,
+              { status: this.archive_status_id },
+              config
+            )
+            .then((res) => {
+              console.log(res.data.data)
+            })
+            .catch((error) => console.log(error))
+        }
+        window.location.reload()
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    redirectToArchivePage() {
+      this.$router.push('/backlog/archive')
+    },
     async columnDelete(col: Column) {
       try {
         const config = {
@@ -441,7 +479,7 @@ export default {
 
         console.log(res)
 
-        window.location.reload()
+        
       } catch (error) {
         console.log(error)
       }
@@ -450,7 +488,7 @@ export default {
       //add a modal that will ask the user if they are sure they want to delete all the cards in a job column
       col.cards.splice(0, col.cards.length)
       this.delete_all_jobs_dialog = false
-      // window.location.reload()
+      // 
     },
     async editColumnButtonClickedSave(col: Column) {
       if (this.new_column_name === '' && this.column_color === '') {
@@ -487,7 +525,7 @@ export default {
           this.column_color = ''
           this.add_column_dialog = false
 
-          window.location.reload()
+          
         } catch (error) {
           console.log(error)
         }
@@ -518,7 +556,7 @@ export default {
           this.column_color = ''
           this.add_column_dialog = false
 
-          window.location.reload()
+          
         } catch (error) {
           console.log(error)
         }
@@ -549,7 +587,7 @@ export default {
           this.column_color = ''
           this.add_column_dialog = false
 
-          window.location.reload()
+          
         } catch (error) {
           console.log(error)
         }
@@ -601,7 +639,7 @@ export default {
         this.column_color = ''
         this.add_column_dialog = false
 
-        window.location.reload()
+        
       } catch (error) {
         console.log(error)
       }
@@ -676,14 +714,12 @@ export default {
           config
         )
         console.log(loaded_tags_response)
-        this.columns.push({
-          id: '0',
-          status: 'No Status',
-          color: 'purple-accent-3',
-          cards: [],
-          companyId: localStorage['currentCompany']
-        })
-        loaded_tags_response.data.data.forEach((status: any) => {
+        loaded_tags_response.data.data.map((status: any) => {
+          console.log(status)
+          if (status.status === 'Archive') {
+            this.archive_status_id = status._id
+            return null
+          }
           this.columns.push({
             id: status._id,
             status: status.status,
@@ -711,9 +747,9 @@ export default {
           config
         )
         console.log(loaded_tags_response)
-        let valid_data = []
         let loaded_tags_res = loaded_tags_response.data.data
         for (let i = 0; i < loaded_tags_res.length; i++) {
+          if (loaded_tags_res[i].status.status === 'Archive') continue
           this.starting_cards.push({
             jobId: loaded_tags_res[i]._id,
             heading: loaded_tags_res[i].details.heading,

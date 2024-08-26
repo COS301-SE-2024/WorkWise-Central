@@ -6,6 +6,7 @@ import { InventoryRepository } from '../inventory.repository';
 import { CompanyService } from '../../company/company.service';
 import { Inventory } from '../entities/inventory.entity';
 import { FileModule } from '../../file/file.module';
+import { StockTakeService } from '../../stocktake/stocktake.service';
 
 const mockInventoryRepository = {
   findAll: jest.fn(),
@@ -24,6 +25,10 @@ const mockCompanyService = {
   companyIdExists: jest.fn(),
 };
 
+const mockStockTakeService = {
+  stockTakeExists: jest.fn(),
+};
+
 describe('--Inventory Service--', () => {
   let inventoryService: InventoryService;
 
@@ -35,6 +40,7 @@ describe('--Inventory Service--', () => {
         { provide: getModelToken(Inventory.name), useValue: {} },
         { provide: InventoryRepository, useValue: mockInventoryRepository },
         { provide: CompanyService, useValue: mockCompanyService },
+        { provide: StockTakeService, useValue: mockStockTakeService },
       ],
     }).compile();
 

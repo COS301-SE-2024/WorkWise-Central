@@ -478,7 +478,7 @@ export class EmployeeController {
     @Param('employeeId') employeeId: Types.ObjectId,
   ) {
     const currentEmployee = await this.employeeService.findById(updateEmployeeDto.currentEmployeeId);
-    if (currentEmployee.role.permissionSuite.includes('edit all employees')) {
+    if (currentEmployee.role.permissionSuite.includes('edit employees')) {
       //TODO: change edit permission
       let data;
       try {
@@ -531,7 +531,7 @@ export class EmployeeController {
     @Body() addSubordinatesDto: AddSubordinatesDto,
   ) {
     const currentEmployee = await this.employeeService.findById(addSubordinatesDto.currentEmployeeId);
-    if (currentEmployee.role.permissionSuite.includes('edit all employees')) {
+    if (currentEmployee.role.permissionSuite.includes('edit employees')) {
       let data;
       try {
         data = await this.employeeService.addSubordinates(employeeId, addSubordinatesDto);
@@ -583,7 +583,7 @@ export class EmployeeController {
   ) {
     console.log('removeSubordinate');
     const currentEmployee = await this.employeeService.findById(removeSubordinatesDto.currentEmployeeId);
-    if (currentEmployee.role.permissionSuite.includes('edit all employees')) {
+    if (currentEmployee.role.permissionSuite.includes('edit employees')) {
       let data;
       try {
         console.log('In try block');
@@ -635,9 +635,9 @@ export class EmployeeController {
     @Body() body: CurrentEmployeeDto,
   ) {
     console.log('In remove');
-    const userId = extractUserId(this.jwtService, headers);
+    // const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
-    if (currentEmployee.role.permissionSuite.includes('remove any employees')) {
+    if (currentEmployee.role.permissionSuite.includes('delete employees')) {
       let data;
       try {
         console.log('In try block');
@@ -651,19 +651,21 @@ export class EmployeeController {
         throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
       }
       return { data: data };
-    } else if (currentEmployee.role.permissionSuite.includes('remove employees under me')) {
-      let data;
-      try {
-        data = await this.employeeService.removeUnderMe(userId, employeeId, body.currentEmployeeId);
-      } catch (e) {
-        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-      }
+    }
+    // else if (currentEmployee.role.permissionSuite.includes('remove employees under me')) {
+    //   let data;
+    //   try {
+    //     data = await this.employeeService.removeUnderMe(userId, employeeId, body.currentEmployeeId);
+    //   } catch (e) {
+    //     throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    //   }
 
-      if (data === false) {
-        throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-      return { data: data };
-    } else {
+    //   if (data === false) {
+    //     throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
+    //   }
+    //   return { data: data };
+    // }
+    else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
