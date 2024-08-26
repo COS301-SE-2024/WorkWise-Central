@@ -6,7 +6,6 @@
     scrollable
     color="warning"
     :opacity="0.1"
-    :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular" color="warning" v-bind="activatorProps">
@@ -14,7 +13,7 @@
         Edit
       </v-btn>
     </template>
-    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
+    <v-card>
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-users"></v-icon>
         Edit Team
@@ -61,12 +60,12 @@
       <v-card-actions>
         <v-container>
           <v-row justify="end">
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn @click="close" color="error" block>
                 <v-icon
                   icon="fa:fa-solid fa-cancel"
-                  start
                   color="error"
+                  start
                   multiple
                   chips
                   size="small"
@@ -76,7 +75,7 @@
               </v-btn>
             </v-col>
             <Toast position="top-center" />
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn
                 @click="handleSubmission"
                 color="success"
@@ -180,7 +179,7 @@ export default {
           setTimeout(() => {
             this.isDeleting = false
             this.editDialog = false
-            window.location.reload()
+            
           }, 1500)
         })
         .catch((error) => {

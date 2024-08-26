@@ -21,15 +21,15 @@
           rounded="l"
           required
         ></v-textarea>
-<!--                <v-row>-->
-<!--                  <v-col cols="5"> </v-col>-->
-<!--                  <v-label>Description</v-label>-->
-<!--                  <Editor-->
-<!--                    v-model="job.details.description"-->
-<!--                    editorStyle="height: 300px;"-->
-<!--                    contentStyle="color: #f5f5f5;"-->
-<!--                  />-->
-<!--                </v-row>-->
+        <!--                <v-row>-->
+        <!--                  <v-col cols="5"> </v-col>-->
+        <!--                  <v-label>Description</v-label>-->
+        <!--                  <Editor-->
+        <!--                    v-model="job.details.description"-->
+        <!--                    editorStyle="height: 300px;"-->
+        <!--                    contentStyle="color: #f5f5f5;"-->
+        <!--                  />-->
+        <!--                </v-row>-->
         <v-row>
           <v-col cols="6">
             <v-label>Street</v-label>
@@ -127,7 +127,7 @@
               @update:modelValue="updateAllowedTimes"
               data-testid="job-start-date-datepicker"
               :min="minDate"
-              style="height: 475px;"
+              style="height: 475px"
             ></v-date-picker>
           </v-col>
           <v-col cols="12" md="6" align="center">
@@ -138,7 +138,7 @@
               v-model="startTime"
               data-testid="job-start-time-timepicker"
               elevation="5"
-              style="height: 475px;"
+              style="height: 475px"
             ></v-time-picker>
           </v-col>
           <v-col align="center" cols="12" md="6">
@@ -155,8 +155,7 @@
               @update:modelValue="updateAllowedTimesEnd"
               data-testid="job-end-date-datepicker"
               :min="minDate"
-              style="height: 475px;"
-
+              style="height: 475px"
             ></v-date-picker>
           </v-col>
           <v-col cols="12" md="6" align="center">
@@ -171,15 +170,17 @@
           </v-col>
         </v-row>
         <v-row cols="12" class="justify-center">
-          <v-btn color="success" @click="patchJobDetails"> Save </v-btn>
+          <v-btn color="success" @click="patchJobDetails"
+            ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save
+          </v-btn>
         </v-row>
       </v-form>
     </v-card-text>
   </v-card>
-   <Toast position="top-center" />
+  <Toast position="top-center" />
 </template>
 <script setup lang="ts">
-import { defineProps, ref} from 'vue'
+import { defineProps, ref } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
@@ -241,7 +242,6 @@ const getRequestUrl = async (): Promise<string> => {
   return localAvailable ? localUrl : remoteUrl
 }
 
-
 const patchJobDetails = async () => {
   const config = {
     headers: {
@@ -254,11 +254,15 @@ const patchJobDetails = async () => {
     if (startDate.value != null && startTime.value != null) {
       job.value.details.startDate = `${startDate.value}T${startTime.value}:00.000Z`
     }
-    if (endDate.value !=null && endTime.value != null) {
+    if (endDate.value != null && endTime.value != null) {
       job.value.details.endDate = `${endDate.value}T${endTime.value}:00.000Z`
     }
     console.log(job.value.details)
-    const response = await axios.patch(`${apiUrl}job/update/${props.jobID}`, job.value.details, config)
+    const response = await axios.patch(
+      `${apiUrl}job/update/${props.jobID}`,
+      job.value.details,
+      config
+    )
     if (response.status < 300 && response.status > 199) {
       console.log(response)
       showEditSuccess()
@@ -340,8 +344,7 @@ const updateAllowedTimes = () => {
     allowedHours.value = (hour: number) => hour > currentHour
     allowedMinutes.value = (minute: number) => {
       return startTime.value
-        ? minute > currentMinute ||
-        parseInt(startTime.value.split(':')[0]) !== currentHour
+        ? minute > currentMinute || parseInt(startTime.value.split(':')[0]) !== currentHour
         : true
     }
   } else {
@@ -358,8 +361,7 @@ const updateAllowedTimesEnd = () => {
     allowedHours2.value = (hour: number) => hour > currentHour
     allowedMinutes2.value = (minute: number) => {
       return endTime.value
-        ? minute > currentMinute ||
-        parseInt(endTime.value.split(':')[0]) !== currentHour
+        ? minute > currentMinute || parseInt(endTime.value.split(':')[0]) !== currentHour
         : true
     }
   } else {

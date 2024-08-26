@@ -1,12 +1,12 @@
 <template>
-  <v-dialog v-model="dialog" max-width="600" :theme="isDarkMode === true ? 'dark' : 'light'">
+  <v-dialog v-model="dialog" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="success" v-bind="activatorProps">
         <v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>
         View
       </v-btn>
     </template>
-    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
+    <v-card>
       <v-card-title>
         <v-icon icon="fa:fa-solid fa-users"></v-icon>
         <span>Team Details</span>
@@ -39,9 +39,13 @@
         <v-divider></v-divider>
         <v-row>
           <v-col cols="6">
-            <label class="font-weight-light" style="font-size: 20px"> Current Job Assignments</label>
+            <label class="font-weight-light" style="font-size: 20px">
+              Current Job Assignments</label
+            >
             <v-spacer></v-spacer>
-            <small class="text-caption" style="font-size: 12px">{{ team.currentJobAssignments }}</small>
+            <small class="text-caption" style="font-size: 12px">{{
+              team.currentJobAssignments
+            }}</small>
           </v-col>
           <v-col cols="6">
             <label class="font-weight-light" style="font-size: 20px"> Date Created</label>
@@ -106,11 +110,11 @@ export default defineComponent({
         this.teamLeaderName = leaderResponse.data.userInfo.displayName
 
         const memberResponses = await Promise.all(
-          this.team.teamMembers.map(memberId =>
+          this.team.teamMembers.map((memberId) =>
             axios.get(`${apiURL}employee/${memberId}`, config)
           )
         )
-        this.teamMemberNames = memberResponses.map(res => res.data.userInfo.displayName)
+        this.teamMemberNames = memberResponses.map((res) => res.data.userInfo.displayName)
       } catch (error) {
         console.error('Failed to fetch team leader or members:', error)
         this.$toast.add({

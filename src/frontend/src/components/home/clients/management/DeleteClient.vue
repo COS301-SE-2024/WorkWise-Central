@@ -1,17 +1,12 @@
 <template>
   <Toast position="top-center" />
-  <v-dialog
-    v-model="clientDialog"
-    max-width="500px"
-    :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
-    :opacity="0"
-  >
+  <v-dialog v-model="clientDialog" max-width="500px" :opacity="0">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="error" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete
       </v-btn>
     </template>
-    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
+    <v-card>
       <v-card-title> Delete {{ client.name + ' ' + client.surname }} </v-card-title>
       <v-card-text>
         <v-container>
@@ -26,12 +21,12 @@
       <v-card-actions>
         <v-container
           ><v-row justify="end">
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn label="Cancel" color="secondary" text @click="clientDialog = false" block
-                ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
+                ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" start size="small"></v-icon
                 >Cancel
               </v-btn></v-col
-            ><v-col cols="12" lg="6">
+            ><v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn
                 label="Delete"
                 color="error"
@@ -83,7 +78,7 @@ export default {
     },
     Delete() {
       alert('Client deleted')
-      window.location.reload() // Consider removing this for SPA behavior
+       // Consider removing this for SPA behavior
     },
     async deleteClient() {
       this.isDeleting = true // Indicate the start of the deletion process
@@ -118,7 +113,7 @@ export default {
         setTimeout(() => {
           this.clientDialog = false
           this.$emit('clientDeleted')
-          window.location.reload()
+          
         }, 3000)
       } catch (error) {
         console.error('Error deleting client:', error)

@@ -1,15 +1,11 @@
 <template>
-  <v-app :theme="isDarkMode ? 'themes.dark' : 'themes.light'">
+  <v-app :theme="isDarkMode ? 'dark' : 'light'">
     <h1 :class="['splash-title', 'header-title', 'text-center']">
       Manage your business <span class="text-primary">effectively</span> and
       <span class="text-secondary">efficiently</span> using <span class="text-primary">Work</span
       ><span class="text-secondary">Wise</span> Central
     </h1>
-    <v-row
-      style="height: 500px"
-      :theme="isDarkMode ? 'themes.dark' : 'themes.light'"
-      class="bg-background"
-    >
+    <v-row style="height: 500px" class="bg-background">
       <v-col cols="12" order="first" order-lg="last" order-md="last" order-sm="first">
         <v-tabs v-model="tab" align-tabs="center" bg-color="secondary" stacked>
           <v-tab v-for="(item, index) in tabs" :key="index">
@@ -70,7 +66,7 @@ export default defineComponent({
           description: 'Organize your teams, assign leaders, and manage collaborative efforts.'
         },
         {
-          title:'Company Management',
+          title: 'Company Management',
           icon: 'mdi-domain',
           imageUrl: '../img/companyManagement.png',
           imageUrlDark: '../img/companyManagementDark.png',

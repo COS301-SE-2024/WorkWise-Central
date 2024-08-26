@@ -7,7 +7,6 @@
     scrollable
     color="warning"
     :opacity="0.1"
-    :theme="isDarkMode === true ? 'themes.dark' : 'themes.light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
@@ -15,7 +14,7 @@
         >Edit</v-btn
       >
     </template>
-    <v-card :theme="isDarkMode === true ? 'dark' : 'light'">
+    <v-card>
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
         Edit Inventory
@@ -43,7 +42,7 @@
               ></v-text-field
             ></v-col>
             <v-row
-              ><v-col col="4">
+              ><v-col cols="12" lg="4">
                 <small class="text-caption white--text">Cost Price</small
                 ><v-text-field
                   v-model="localEditedItem.costPrice"
@@ -51,7 +50,7 @@
                   required
                 ></v-text-field
               ></v-col>
-              <v-col col="4">
+              <v-col cols="12" lg="4">
                 <small class="text-caption white--text">Current Stock Level</small
                 ><v-text-field
                   v-model="localEditedItem.currentStockLevel"
@@ -59,7 +58,7 @@
                   required
                 ></v-text-field
               ></v-col>
-              <v-col col="4">
+              <v-col cols="12" lg="4">
                 <small class="text-caption white--text">Reorder Level</small
                 ><v-text-field
                   v-model="localEditedItem.reorderLevel"
@@ -73,12 +72,12 @@
       <v-card-actions>
         <v-container>
           <v-row justify="end">
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn @click="close" color="error" block
                 ><v-icon
                   icon="fa:fa-solid fa-cancel"
-                  start
                   color="error"
+                  start
                   size="small"
                   :loading="isDeleting"
                 ></v-icon
@@ -86,7 +85,7 @@
               ></v-col
             >
 
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn
                 @click="createInventoryItem"
                 color="success"
@@ -218,7 +217,7 @@ export default {
         this.addDialog = false
         setTimeout(() => {
           this.isDeleting = false
-          window.location.reload()
+          
         }, 1500)
       } catch (error) {
         console.error(error)
