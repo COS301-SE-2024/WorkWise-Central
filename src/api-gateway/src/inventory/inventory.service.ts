@@ -7,6 +7,7 @@ import { CompanyService } from '../company/company.service';
 import { InventoryRepository } from './inventory.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { FileService } from '../file/file.service';
+import { StockTakeService } from '../stocktake/stocktake.service';
 
 @Injectable()
 export class InventoryService {
@@ -14,6 +15,8 @@ export class InventoryService {
     @Inject(forwardRef(() => InventoryRepository))
     private readonly inventoryRepository: InventoryRepository,
     private readonly companyService: CompanyService,
+    @Inject(forwardRef(() => StockTakeService))
+    private readonly stockTakeService: StockTakeService,
 
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
@@ -86,13 +89,14 @@ export class InventoryService {
   }
 
   async update(id: Types.ObjectId, updateInventoryDto: UpdateInventoryDto) {
-    // console.log('In update. Id: ', id);
     const validation = await this.validateUpdateInventory(id);
-    // console.log('validation: ', validation);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
-    // console.log('validation is done');
+
+    if (updateInventoryDto.name) {
+      await this.stockTakeService.updateInventoryReference(id, updateInventoryDto.name);
+    }
     return await this.inventoryRepository.update(id, updateInventoryDto);
   }
 
@@ -101,6 +105,9 @@ export class InventoryService {
     if (!(await this.InventoryExists(id))) {
       throw new Error('Inventory item does not exist');
     }
+
+    await this.stockTakeService.removeReferenceToInventory(id);
+
     return await this.inventoryRepository.remove(id);
   }
 
