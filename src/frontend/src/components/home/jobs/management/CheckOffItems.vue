@@ -24,7 +24,7 @@
 
         <!-- Only show the rest of the components if the title is set -->
         <template v-if="task.title.trim() !== ''">
-          <v-row v-if="!task.isSaveTaskClicked">
+          <v-row>
             <v-col>
               <div class="mb-3">{{ getTaskProgress(task).toFixed(0) }}%</div>
               <v-progress-linear
@@ -94,7 +94,7 @@
                             </v-card-text>
                             <v-card-actions class="d-flex flex-column">
                               <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
-                                <v-btn color="success" prepend-icon="fa: fa-solid fa-save" @click="createEmployeeAssignmentObjects()">
+                                <v-btn color="success" prepend-icon="fa: fa-solid fa-save">
                                   Save
                                 </v-btn>
                               </v-defaults-provider>
@@ -134,7 +134,7 @@
 
           <!-- Add Item to Task -->
           <v-row>
-            <v-col v-if="!task.isSaveTaskClicked" color="success">
+            <v-col color="success">
               <v-textarea
                 v-model="task.newItemText"
                 label="Add an item"
@@ -165,10 +165,52 @@
   </v-container>
 </template>
 
-<script setup>
-import { ref } from 'vue';
+<script setup lang="ts">
+import { defineProps, ref, onMounted } from 'vue';
+import axios from 'axios'
 
-const taskList = ref([
+// API URLs
+const localUrl = 'http://localhost:3000/'
+const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
+
+// Request Config
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`
+  }
+}
+
+const props = defineProps<{
+  jobTaskList: TaskList[];
+  id: string
+}>()
+
+interface TaskItem {
+  description: string
+  assignedEmployees: string[]
+  dueDate: string
+  done: boolean
+}
+interface TaskList {
+  title: string
+  items: TaskItem[]
+}
+
+interface Task {
+  title: string;
+  items: TaskItem[];
+  newItemText: string;
+  isSaveTaskClicked: boolean;
+  isSaveVisible: boolean;
+}
+
+interface Employee {
+  text: string;
+  value: number;
+}
+
+const taskList = ref<Task[]>([
   {
     title: '',
     items: [],
@@ -178,12 +220,26 @@ const taskList = ref([
   },
 ]);
 
-const assignableEmployees = ref([
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url)
+    return res.status >= 200 && res.status < 300
+  } catch {
+    return false
+  }
+}
+
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
+
+const assignableEmployees = ref<Employee[]>([
   { text: 'John Doe', value: 1 },
   { text: 'Jane Smith', value: 2 },
 ]);
 
-const selectedEmployees = ref([]);
+const selectedEmployees = ref<Employee[]>([]);
 const assignDialog = ref(false);
 
 const createNewTask = () => {
@@ -198,33 +254,56 @@ const createNewTask = () => {
 
 const canCreateNewTask = ref(true);
 
-const addItem = (taskIndex) => {
+const addItem = async (taskIndex: number) => {
   if (taskList.value[taskIndex].newItemText.trim() !== '') {
     taskList.value[taskIndex].items.push({
       description: taskList.value[taskIndex].newItemText,
+      assignedEmployees: [],
+      dueDate: new Date().toISOString(),
       done: false,
     });
     taskList.value[taskIndex].newItemText = '';
   }
+  const apiUrl = getRequestUrl()
+  // try {
+  //   const response = await axios.put(`${apiUrl}job/taskItem`, {
+  //     employeeId: localStorage.getItem('employeeId'),
+  //     jobId: props.id,
+  //     taskId: taskList.value[taskIndex]._id,
+  //   }, config)
+  //   console.log(response)
+  // } catch (error) {
+  //   console.log(error)
+  // }
 };
 
-const deleteItem = (taskIndex, itemIndex) => {
+const deleteItem = (taskIndex: number, itemIndex: number) => {
   taskList.value[taskIndex].items.splice(itemIndex, 1);
 };
 
-const saveTask = (taskIndex) => {
+const saveTask = (taskIndex: number) => {
   taskList.value[taskIndex].isSaveTaskClicked = true;
 };
 
-const getTaskProgress = (task) => {
+const getTaskProgress = (task: Task): number => {
   const totalItems = task.items.length;
   const completedItems = task.items.filter((item) => item.done).length;
   return totalItems === 0 ? 0 : (completedItems / totalItems) * 100;
 };
 
-const openCheckActionsDialog = (itemIndex) => {
+const openCheckActionsDialog = (itemIndex: number) => {
   // Implement dialog actions here
 };
+
+onMounted(() => {
+  taskList.value = props.jobTaskList.map(task => ({
+    ...task,
+    newItemText: '',
+    isSaveTaskClicked: false,
+    isSaveVisible: true,
+  }));
+  console.log('Task items:', taskList.value);
+});
 </script>
 
 <style scoped>
