@@ -94,6 +94,9 @@ export class CompanyService {
       this.addJobStatuses(createdCompany._id, arr);
     });
 
+    //Create Default JobPriorityTags in Company
+    await this.jobService.createDefaultPriorityTags(createdCompany._id);
+
     //Assign Owner to user
     console.log('Assign Owner to user');
     const ownerRoleId = (await this.roleService.findOneInCompany('Owner', createdCompany._id))._id;
