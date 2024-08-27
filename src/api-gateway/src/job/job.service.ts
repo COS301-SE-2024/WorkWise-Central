@@ -886,10 +886,37 @@ export class JobService {
     return result;
   }
 
+  async createDefaultPriorityTags(companyId: Types.ObjectId) {
+    ///TODO: Validation CHECK HEX VALIDATION
+    /// User exists, company exists, check for duplicates
+    //  const protectedStatuses = ['No status', 'Archive', 'To Do', 'In Progress', 'Complete'];
+
+    const low = new JobPriorityTag('Low', 3, '#089f6a', companyId);
+    const medium = new JobPriorityTag('Medium', 2, '#ceb013', companyId);
+    const high = new JobPriorityTag('High', 1, '#e01212', companyId);
+
+    const arr: JobPriorityTag[] = [low, medium, high];
+    for (const jobPriorityTag of arr) {
+      const exists = await this.priorityTagExistsInCompany(jobPriorityTag.label, companyId);
+      if (exists) throw new InternalServerErrorException(`Job Tag already exists: ${jobPriorityTag.label}`);
+    }
+    const result = await this.jobTagRepository.createDefaultPriorityTagsInCompany(arr);
+    console.log(result);
+    return result;
+  }
+
   async statusNameExistsInCompany(status: string, companyId: Types.ObjectId) {
     const allStatus = await this.jobTagRepository.findAllStatusesInCompany(companyId);
     for (const stat of allStatus) {
       if (ciEquals(stat.status, status)) return true;
+    }
+    return false;
+  }
+
+  async priorityTagExistsInCompany(label: string, companyId: Types.ObjectId) {
+    const allPTags = await this.jobTagRepository.findAllPriorityTagsInCompany(companyId);
+    for (const pTag of allPTags) {
+      if (ciEquals(pTag.label, label)) return true;
     }
     return false;
   }

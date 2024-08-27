@@ -105,6 +105,15 @@ export class JobTagRepository {
     return result;
   }
 
+  async createDefaultPriorityTagsInCompany(priorityTags: JobPriorityTag[]) {
+    const result: any[] = [];
+    for (const jobPriorityTag of priorityTags) {
+      const newStatus = await this.jobPriorityTagModel.create(jobPriorityTag);
+      result.push(await newStatus.save());
+    }
+    return result;
+  }
+
   async updateTag(tagId: Types.ObjectId, updates: UpdateTag) {
     return await this.jobTagModel
       .findOneAndUpdate(
