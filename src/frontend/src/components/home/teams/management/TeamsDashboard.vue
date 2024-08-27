@@ -176,7 +176,7 @@ export default defineComponent({
     chipColor(numAssignments: number) {
       if (numAssignments > 0) {
         return 'success'
-      } else {
+      } else {s
         return 'error'
       }
     },

@@ -533,6 +533,7 @@
                         <v-col cols="12">
                           <small class="text-caption">Profile Picture</small>
                           <v-file-input
+                            v-model="profilePicture"
                             variant="solo"
                             accept="image/*"
                             width="100%"
@@ -951,6 +952,7 @@ export default defineComponent({
     saltRounds: 10,
     tab: false,
     loginDialog: false,
+    profilePicture: '',
     alertSignUp: false,
     alertSignUpFailure: false,
     alertLogin: false,
@@ -1039,7 +1041,7 @@ export default defineComponent({
     access_token: '',
     password: '',
     signupPassword: '',
-    profilePicture: '',
+
     confirm_password: '',
     showPassword: false,
     date: '',

@@ -262,7 +262,7 @@ export default defineComponent({
           setTimeout(() => {
             this.isDeleting = false
             this.dialog = false
-            
+            this.getRoles()
           }, 1500)
         })
         .catch((error) => {

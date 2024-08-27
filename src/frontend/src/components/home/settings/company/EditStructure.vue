@@ -1,4 +1,4 @@
-s<template>
+<template>
   <v-container>
     <v-card height="1500px">
       <v-card-title class="text-center">Edit Structure </v-card-title>
@@ -22,7 +22,31 @@ s<template>
           :edges="data.edges"
           :layouts="data.layouts"
           :configs="configs"
-        ></v-network-graph>
+          :event-handlers="configs.eventsHandlers"
+        >
+          <template
+            #override-node-label="{ scale, text, x, y, config, textAnchor, dominantBaseline }"
+          >
+            <text
+              x="0"
+              y="0"
+              :font-size="12 * scale"
+              text-anchor="middle"
+              dominant-baseline="central"
+              fill="#ffffff"
+              >{{ text }}</text
+            >
+            <text
+              x="0"
+              y="0"
+              :font-size="config.fontSize * scale"
+              :text-anchor="textAnchor"
+              :dominant-baseline="dominantBaseline"
+              :fill="config.color"
+              :transform="`translate(${x} ${y})`"
+            ></text>
+          </template>
+        </v-network-graph>
       </v-card-text>
 
       <v-card-actions class="bg-cardColor">
@@ -50,6 +74,7 @@ import { defineComponent, reactive } from 'vue'
 import * as vNG from 'v-network-graph'
 import dagre from 'dagre/dist/dagre.min.js'
 import axios from 'axios'
+import EditEmployee from '../../employees/management/EditEmployee.vue'
 
 const nodeSize = 40
 
@@ -58,6 +83,7 @@ export default defineComponent({
     return {
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      color: 'primary',
       data: {
         nodes: {
           // node1: { name: 'Joe' },
@@ -88,12 +114,51 @@ export default defineComponent({
           onBeforeInitialDisplay: () => this.layout('TB')
         },
         node: {
-          normal: { radius: nodeSize / 2 },
-          label: { direction: 'center', color: '#fff' }
+          selectable: true,
+          normal: {
+            type: 'circle',
+            radius: nodeSize,
+            // for type is "rect" -->
+            width: 32,
+            height: 32,
+            borderRadius: 4,
+            // <-- for type is "rect"
+            strokeWidth: 0,
+            strokeColor: '#000000',
+            strokeDasharray: '0',
+            color: '#4466cc'
+          },
+          label: { direction: 'south', color: '#dd2288' },
+          hover: {
+            type: 'circle',
+            radius: nodeSize,
+            // for type is "rect" -->
+            width: 32,
+            height: 32,
+            borderRadius: 4,
+            // <-- for type is "rect"
+            strokeWidth: 0,
+            strokeColor: '#000000',
+            strokeDasharray: '0',
+            color: '#dd2288'
+          },
+          selected: {
+            type: 'circle',
+            radius: nodeSize,
+            // for type is "rect" -->
+            width: 32,
+            height: 32,
+            borderRadius: 4,
+            // <-- for type is "rect"
+            strokeWidth: 0,
+            strokeColor: '#000000',
+            strokeDasharray: '0',
+            color: '#4466cc'
+          }
         },
         edge: {
           normal: {
-            color: '#aaa',
+            color: '#F0984D',
             width: 3
           },
           margin: 4,
@@ -104,6 +169,9 @@ export default defineComponent({
               height: 4
             }
           }
+        },
+        eventsHandlers: {
+          'node:click': this.onNodeClick()
         }
       })
     }
@@ -138,6 +206,25 @@ export default defineComponent({
         const y = g.node(nodeId).y
         this.data.layouts.nodes[nodeId] = { x, y }
       })
+    },
+    onNodeClick() {
+      console.log('Node clicked:')
+    },
+    viewEmployee() {
+      console.log()
+    },
+    async downloadAsSvg() {
+      if (!this.graph) return
+      const text = await this.graph.exportAsSvgText()
+      const url = URL.createObjectURL(new Blob([text], { type: 'octet/stream' }))
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'network-graph.svg' // filename to download
+      a.click()
+      window.URL.revokeObjectURL(url)
+    },
+    EditEmployee(employeeId) {
+      console.log(employeeId)
     },
     async getGraphView() {
       const config = {
@@ -189,10 +276,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.bg-cardColor {
-  background-color: #f5f5f5;
-}
 .graph {
   height: 700px;
+}
+.darkModeText {
+  color: white;
+}
+.lightModeText {
+  color: black;
 }
 </style>

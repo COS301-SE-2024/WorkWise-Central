@@ -47,7 +47,7 @@
             <v-col>
               <small class="text-caption">Team Leader</small>
               <v-select
-                v-model="selectedTeamLeader"
+                v-model="localEditedItem.teamLeaderId.userInfo.displayName"
                 :items="teamMemberNames"
                 color="secondary"
                 :rules="teamLeaderIdRules"
@@ -208,9 +208,9 @@ export default {
         this.teamMemberNames[this.localEditedItem.teamMembers.indexOf(teamLeader)]
     },
     populateCurrentTeamMembers() {
-      this.selectedTeamMembers = this.localEditedItem.teamMembers.map(
-        (id) => this.teamMemberNames[this.teamMemberIds.indexOf(id)]
-      )
+      for (let i = 0; i < this.localEditedItem.teamMembers.length; i++) {
+        this.selectedTeamMembers.push(this.editedItem.teamMembers[i].userInfo.displayName)
+      }
     },
     async getEmployees() {
       const config = {

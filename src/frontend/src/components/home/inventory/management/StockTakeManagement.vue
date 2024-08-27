@@ -130,9 +130,7 @@
 
 <script lang="ts">
 import axios from 'axios'
-import EditInventory from './EditInventory.vue'
 import Chart from 'primevue/chart'
-import GenerateReport from '../reports/GenerateReport.vue'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 interface InventoryItem {
@@ -215,8 +213,6 @@ export default {
     }
   },
   components: {
-    GenerateReport,
-    EditInventory,
     Chart
   },
   computed: {

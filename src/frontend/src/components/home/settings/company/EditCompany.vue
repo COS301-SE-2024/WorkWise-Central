@@ -325,7 +325,7 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.isDeleting = false
-            
+            this.getCompanyDetails()
           }, 3000)
         })
         .catch((error) => {
