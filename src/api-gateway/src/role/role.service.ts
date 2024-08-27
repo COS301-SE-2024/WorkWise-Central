@@ -89,7 +89,7 @@ export class RoleService {
       for (const permission of updateRoleDto.permissionSuite) {
         console.log('In for loop');
         console.log('permission: ', permission);
-        if (!this.permissionsArray.includes(permission)) {
+        if (!this.permissionsArray.some((item) => item.replace(/\s+/g, '') === permission.replace(/\s+/g, ''))) {
           console.log('Invalid permission found');
           return new ValidationResult(false, `Invalid permission`);
         }
