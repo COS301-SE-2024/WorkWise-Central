@@ -34,7 +34,7 @@
             </v-col>
 
             <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
-              <CreateTeam />
+              <CreateTeam @teamCreated="addTeam" />
             </v-col>
           </v-row>
         </v-card-title>
@@ -67,10 +67,18 @@
                     <ViewTeam :team="selectedItem" />
                   </v-list-item>
                   <v-list-item>
-                    <UpdateTeam :teamId="selectedItemID" :editedItem="selectedItem" />
+                    <UpdateTeam
+                      @teamUpdated="updateTeamInList"
+                      :teamId="selectedItemID"
+                      :editedItem="selectedItem"
+                    />
                   </v-list-item>
                   <v-list-item>
-                    <DeleteTeam :team_id="selectedItemID" :teamName="selectedItemName" />
+                    <DeleteTeam
+                      @teamDeleted="removeTeamFromList"
+                      :team_id="selectedItemID"
+                      :teamName="selectedItemName"
+                    />
                   </v-list-item>
                 </v-list>
               </v-menu>
@@ -138,6 +146,18 @@ export default defineComponent({
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
     },
+    updateTeamInList(updatedTeam: Team) {
+      const index = this.teamItems.findIndex((team) => team._id === updatedTeam._id)
+      if (index !== -1) {
+        this.teamItems.splice(index, 1, updatedTeam)
+      }
+    },
+    removeTeamFromList(deletedTeamId: String) {
+      const index = this.teamItems.findIndex((team) => team._id === deletedTeamId)
+      if (index !== -1) {
+        this.teamItems.splice(index, 1)
+      }
+    },
     populateTeamTable() {
       for (const team of this.teamItems) {
         this.teamTable.push({
@@ -179,6 +199,9 @@ export default defineComponent({
       } catch (error) {
         console.error(error)
       }
+    },
+    addTeam(newTeam: Team) {
+      this.teamItems.push(newTeam)
     },
     async getEmployees() {
       const config = {

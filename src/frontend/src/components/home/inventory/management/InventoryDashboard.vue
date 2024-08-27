@@ -33,7 +33,10 @@
             </v-col>
 
             <v-col cols="12" lg="4" class="d-flex align-center">
-              <AddInventory v-show="checkPermission('add new inventory item')" />
+              <AddInventory
+                v-show="checkPermission('add new inventory item')"
+                @inventoryCreated="addInventory"
+              />
             </v-col> </v-row
         ></v-card-title>
         <v-divider></v-divider>
@@ -94,6 +97,7 @@ import DeleteInventory from './DeleteInventory.vue'
 import EditInventory from './EditInventory.vue'
 import InventoryDetails from './InventoryDetails.vue'
 import axios from 'axios'
+
 interface Inventory {
   _id: string
   name: string
@@ -138,7 +142,7 @@ export default defineComponent({
         'Supplier 9',
         'Supplier 10'
       ],
-      inventoryItems: [],
+      inventoryItems: [] as Inventory[],
       search: '',
       isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       selectedItem: {},
@@ -162,8 +166,8 @@ export default defineComponent({
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
     },
-    fuga() {
-      this.actionsMenu = true
+    addInventory(newInventory: Inventory) {
+      this.inventoryItems.push(newInventory)
     },
     async getInventoryItems() {
       // Fetch inventory items from the backend

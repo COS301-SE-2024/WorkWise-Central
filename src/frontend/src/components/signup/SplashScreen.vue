@@ -62,7 +62,7 @@
           >
           <v-container>
             <v-row
-              ><v-col cols="12" lg="6" order="last" order-lg="first">
+              ><v-col cols="12" lg="6">
                 <v-btn
                   color="primary"
                   dark
@@ -79,7 +79,7 @@
                   Login
                 </v-btn></v-col
               >
-              <v-col cols="12" lg="6" order="first" order-lg="last">
+              <v-col cols="12" lg="6">
                 <v-btn
                   color="secondary"
                   dark
@@ -538,13 +538,12 @@
                             width="100%"
                             placeholder="Profile Picture"
                             @change="handleImageUpload"
-                            v-model="profile_picture"
                             hint="Image size limit of  5MB"
                             persistent-hint
                             color="black"
                             rounded="md"
                             required
-                            :rules="company_logo_rules"
+                            clearable
                             data-testid="company-logo-file-input"
                           ></v-file-input> </v-col
                       ></v-row>
@@ -1122,12 +1121,12 @@ export default defineComponent({
     ],
     nameRules: [
       (v) => !!v || 'Name is required',
-      (v) => v.length >= 3 || 'Name must be at least 3 characters',
+
       (v) => /^[a-zA-Z]*$/.test(v) || 'Name must contain only letters'
     ],
     surnameRules: [
       (v) => !!v || 'Surname is required',
-      (v) => v.length >= 3 || 'Surname must be at least 3 characters'
+      (v) => /^[a-zA-Z]*$/.test(v) || 'Name must contain only letters'
     ],
     usernameRules: [
       (v) => !!v || 'Username is required',

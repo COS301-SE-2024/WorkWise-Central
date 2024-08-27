@@ -179,7 +179,8 @@ export default {
           setTimeout(() => {
             this.isDeleting = false
             this.editDialog = false
-            
+            // Emit the event to the parent component with the updated team data
+            this.$emit('teamUpdated', response.data.data)
           }, 1500)
         })
         .catch((error) => {

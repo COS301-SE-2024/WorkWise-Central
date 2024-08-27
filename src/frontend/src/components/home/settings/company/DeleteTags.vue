@@ -81,7 +81,7 @@ export default defineComponent({
       const apiURL = await this.getRequestUrl()
       await axios
         .delete(`${apiURL}job/tags`, config)
-        .then(() => {
+        .then((response) => {
           this.isDeleting = true
 
           this.isDeleting = false
@@ -96,7 +96,7 @@ export default defineComponent({
           setTimeout(() => {
             this.isDeleting = false
             this.deleteDialog = false
-            
+            this.$emit('Deleted', response.data.data)
           }, 1500)
         })
         .catch((err) => {

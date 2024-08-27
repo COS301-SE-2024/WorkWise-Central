@@ -183,10 +183,11 @@ export default defineComponent({
           detail: 'Inventory Added',
           life: 3000
         })
-        this.addDialog = false
+
         setTimeout(() => {
+          this.addDialog = false
           this.isDeleting = false
-          
+          this.$emit('inventoryCreated', response.data.data)
         }, 1500)
       } catch (error) {
         console.error(error)

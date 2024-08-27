@@ -314,6 +314,7 @@ export default defineComponent({
   },
   created() {
     window.addEventListener('resize', this.handleResize)
+    this.getClients()
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.handleResize)

@@ -248,12 +248,12 @@ export default defineComponent({
 
       const data = {
         currentEmployeeId: localStorage.getItem('employeeId'),
-        updateRoleDTO: {
+        updateRoleDto: {
           roleName: this.selectedItem.roleName,
           permissionSuite: this.selectedItem.permissionSuite
         }
       }
-      console.log(data)
+      console.log(JSON.stringify(data))
       await axios
         .patch(`http://localhost:3000/role/${this.selectedItem._id}`, config, data)
         .then((response) => {
