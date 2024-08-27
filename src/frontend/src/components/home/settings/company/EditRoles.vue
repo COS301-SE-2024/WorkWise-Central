@@ -224,16 +224,11 @@ export default defineComponent({
         }
       }
       await axios
-        .get(`http://localhost:3000/role/all/${this.companyID}`, config)
+        .get(`http://localhost:3000/role/allPermissions`, config)
         .then((response) => {
+          console.log(response.data.data)
           for (let i = 0; i < response.data.data.length; i++) {
-            if (response.data.data[i].roleName === 'Owner') {
-              for (let j = 0; j < response.data.data[i].permissionSuite.length; j++) {
-                this.permissions.push(response.data.data[i].permissionSuite[j])
-                console.log(response.data.data[i].permissionSuite[j])
-              }
-              break
-            }
+            this.permissions.push(response.data.data[i])
           }
         })
         .catch((error) => {

@@ -16,7 +16,7 @@
               ><v-menu v-model="modalMenu" activator="parent">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn variant="text" v-bind="attrs" v-on="on" size="small">
-                    <v-icon icon="fa: fa-solid fa-circle-info"></v-icon>
+                    <v-icon icon="fa: fa-solid fa-plus"></v-icon>
                   </v-btn>
                 </template>
                 <v-list>

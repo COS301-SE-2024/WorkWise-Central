@@ -1,4 +1,4 @@
-<template>
+s<template>
   <v-container>
     <v-card height="1500px">
       <v-card-title class="text-center">Edit Structure </v-card-title>
