@@ -225,8 +225,9 @@ export class JobController {
       validateObjectId(userId);
       validateObjectId(empId);
 
+      const employeeId = new Types.ObjectId(empId);
       return {
-        data: await this.jobService.getAllJobsForEmployee(userId, new Types.ObjectId(empId)),
+        data: await this.jobService.getAllJobsForEmployee(userId, employeeId),
       };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
