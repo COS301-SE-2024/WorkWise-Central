@@ -408,13 +408,13 @@ export class UsersService {
 
   async userIsInSameCompanyAsEmployee(userId: Types.ObjectId, employeeId: Types.ObjectId) {
     const user = await this.getUserById(userId);
-    const companyWithEmployee = await this.companyService.getCompanyWithEmployee(employeeId);
-
-    if (!companyWithEmployee || !user) {
+    console.log(user);
+    if (!user) {
       throw new ConflictException('User or Employee is Null');
     }
     for (const joinedCompany of user.joinedCompanies) {
-      if (joinedCompany.companyId.equals(companyWithEmployee._id)) return true;
+      console.log(joinedCompany);
+      if (joinedCompany.employeeId.toString() === employeeId.toString()) return true;
     }
 
     return false;

@@ -575,10 +575,6 @@ export class CompanyService {
     return new ValidationResult(true);
   }
 
-  async getCompanyWithEmployee(employeeId: Types.ObjectId) {
-    return this.companyRepository.findCompanyWithEmployee(employeeId);
-  }
-
   async companyDeleteIsValid(deleteEmployeeDto: DeleteEmployeeFromCompanyDto) {
     let valid = await this.employeeService.employeeExistsForCompany(
       deleteEmployeeDto.employeeToDeleteId,

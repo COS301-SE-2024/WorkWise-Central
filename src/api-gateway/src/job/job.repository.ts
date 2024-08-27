@@ -16,10 +16,6 @@ export class JobRepository {
     private jobModel: Model<Job>,
   ) {}
 
-  private isNotDeleted = {
-    $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-  };
-
   async save(job: Job) {
     const newJob = new this.jobModel(job);
     return await newJob.save();
@@ -174,21 +170,7 @@ export class JobRepository {
   //Specific endpoints
 
   async findAllForEmployee(employeeId: Types.ObjectId) {
-    console.log('Bruh');
-    /*    const filter = {
-      $and: [
-        {
-          'assignedEmployees.employeeIds': {
-            $elemMatch: { employeeIds: employeeId },
-          },
-        },
-        this.isNotDeleted,
-      ],
-    };*/
-    const allJobs = await this.jobModel.find().lean().exec();
-    const result: (FlattenMaps<Job> & { _id: Types.ObjectId })[] = allJobs.filter((x) =>
-      x.assignedEmployees.employeeIds.includes(employeeId),
-    );
+    const result = await this.jobModel.find({ $and: [{ 'assignedEmployees.employeeIds': employeeId }, isNotDeleted] });
     console.log(result);
     return result;
   }
@@ -196,7 +178,7 @@ export class JobRepository {
   async findAllForEmployeeDetailed(employeeId: Types.ObjectId) {
     const fieldsToPopulate = ['assignedEmployees', 'assignedBy', 'clientId', 'comments'];
     const filter = {
-      $and: [{ 'assignedEmployees.employeeIds': { $in: [employeeId] } }, this.isNotDeleted],
+      $and: [{ 'assignedEmployees.employeeIds': employeeId }, isNotDeleted],
     };
     return await this.jobModel.find(filter).populate(fieldsToPopulate).lean().exec();
   }
