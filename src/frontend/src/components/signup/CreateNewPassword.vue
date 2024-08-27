@@ -56,9 +56,8 @@
     </v-main>
   </v-app>
 </template>
-<script></script>
 <script lang="ts">
-// import axios from 'axios'
+import axios from 'axios'
 import Toast from 'primevue/toast'
 import { defineComponent } from 'vue'
 export default defineComponent({
@@ -71,6 +70,8 @@ export default defineComponent({
   },
   data() {
     return {
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       password: '',
       confirmPassword: '',
       valid: false,
@@ -100,6 +101,18 @@ export default defineComponent({
     }
   },
   methods: {
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
     async submit() {
       if (this.password !== this.confirmPassword) {
         alert('Passwords do not match')
@@ -107,16 +120,34 @@ export default defineComponent({
       }
 
       try {
+        const urlParams = new URL(window.location.href).searchParams;
+        const userId = urlParams.get('uId');
+        const token = urlParams.get('tok');
+        console.log('User ID:', userId);
+        console.log('Token:', token);
+        const config = {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
+        const apiUrl = await this.getRequestUrl()
+        const response = await axios.post(`${apiUrl}users/reset-pass`, {
+          userId: userId,
+          token: token,
+          newPassword: this.password
+        }, config)
+        console.log(response)
         this.$toast.add({
           severity: 'success',
           summary: 'Success',
           detail: 'Password updated',
           life: 3000
         })
+
         setTimeout(() => {
           this.$router.push({ name: 'splash' })
         }, 2000)
-      } catch (error) {}
+      } catch (error) { console.log(error)}
     },
     toggleDarkMode() {
       console.log(this.isDarkMode)
