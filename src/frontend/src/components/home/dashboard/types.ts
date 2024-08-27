@@ -128,7 +128,13 @@ export type Job = {
       superiorId: string
     }[]
   }
-  status: string
+  status: {
+    _id: string
+    status: string
+    colour: string
+    companyId: string
+    __v: number
+  }
   tags: {
     _id: string
     label: string
