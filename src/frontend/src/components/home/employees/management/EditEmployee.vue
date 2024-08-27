@@ -12,7 +12,7 @@
       >
     </template>
     <v-card>
-      <v-form @submit.prevent="validateEdits">
+      <v-form ref="form" @submit.prevent="validateEdits">
         <v-card-title class="text-center">Edit Employee</v-card-title>
         <v-divider></v-divider>
         <v-card-item>
@@ -341,7 +341,6 @@ export default {
           setTimeout(() => {
             this.isDeleting = false
             this.employeeDialog = false
-            
           }, 1500)
         })
         .catch((error) => {
