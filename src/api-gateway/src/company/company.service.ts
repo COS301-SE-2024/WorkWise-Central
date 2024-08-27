@@ -94,6 +94,9 @@ export class CompanyService {
       this.addJobStatuses(createdCompany._id, arr);
     });
 
+    //Create Default JobPriorityTags in Company
+    await this.jobService.createDefaultPriorityTags(createdCompany._id);
+
     //Assign Owner to user
     console.log('Assign Owner to user');
     const ownerRoleId = (await this.roleService.findOneInCompany('Owner', createdCompany._id))._id;
@@ -372,7 +375,7 @@ export class CompanyService {
     const employees = await this.employeeService.findAllInCompany(leaveCompanyDto.companyToLeaveId);
     const recipientIds: Types.ObjectId[] = [];
     for (const emp of employees) {
-      recipientIds.push(emp._id);
+      recipientIds.push(emp.userId);
     }
     const title = `${employee.userInfo.firstName} ${employee.userInfo.surname} has left the ${company.name}`;
     const body = leaveCompanyDto.reason
