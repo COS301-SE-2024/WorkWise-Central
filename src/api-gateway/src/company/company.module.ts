@@ -24,6 +24,8 @@ import { ClientService } from '../client/client.service';
 import { NotificationService } from '../notification/notification.service';
 import { NotificationModule } from '../notification/notification.module';
 import { EmployeeModule } from '../employee/employee.module';
+import { StockTakeModule } from '../stocktake/stocktake.module';
+import { StockTakeService } from '../stocktake/stocktake.service';
 
 @Module({
   imports: [
@@ -38,6 +40,7 @@ import { EmployeeModule } from '../employee/employee.module';
     forwardRef(() => InventoryModule),
     forwardRef(() => NotificationModule),
     forwardRef(() => EmployeeModule),
+    forwardRef(() => StockTakeModule),
   ],
   controllers: [CompanyController],
   providers: [
@@ -53,6 +56,7 @@ import { EmployeeModule } from '../employee/employee.module';
     InventoryService,
     ClientService,
     NotificationService,
+    StockTakeService,
   ],
   exports: [CompanyService, CompanyRepository, MongooseModule],
 })

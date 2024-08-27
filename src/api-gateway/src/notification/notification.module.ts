@@ -22,6 +22,7 @@ import { ClientModule } from '../client/client.module';
 import { InventoryService } from '../inventory/inventory.service';
 import { InventoryModule } from '../inventory/inventory.module';
 import { ClientRepository } from '../client/client.repository';
+import { StockTakeModule } from '../stocktake/stocktake.module';
 
 @Global()
 @Module({
@@ -37,6 +38,7 @@ import { ClientRepository } from '../client/client.repository';
     forwardRef(() => TeamModule),
     forwardRef(() => ClientModule),
     forwardRef(() => InventoryModule),
+    forwardRef(() => StockTakeModule),
   ],
   providers: [
     NotificationGateway,
