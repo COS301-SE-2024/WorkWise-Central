@@ -33,6 +33,21 @@ export class TeamRepository {
     return result;
   }
 
+  async findAllWithEmployeeId(identifier: Types.ObjectId) {
+    return await this.teamModel
+      .find({
+        $and: [
+          {
+            $or: [{ teamLeaderId: identifier }, { teamMembers: { $in: identifier } }],
+          },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+  }
+
   async findByIdInCompany(identifier: Types.ObjectId, companyIdentification: Types.ObjectId) {
     return await this.teamModel
       .find({

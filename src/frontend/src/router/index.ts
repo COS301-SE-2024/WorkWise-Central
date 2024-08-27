@@ -342,6 +342,15 @@ const router = createRouter({
       path: '/backlog/archive',
       name: 'backlog-archive',
       component: () => import('@/views/home/jobs/Archive.vue')
+    },
+    {
+      path: '/chat',
+      name: 'Chat',
+      component: () => import('@/views/UserChats.vue'),
+      props: {
+        currentUser: `${localStorage.getItem('id')}`,
+        onLogout: () => console.log('Logged out')
+      }
     }
   ]
 })

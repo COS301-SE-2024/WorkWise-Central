@@ -223,6 +223,17 @@ export class UsersService {
     return updatedUser;
   }
 
+  async removeJoinedCompanyWithoutValidation(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
+    const updatedUser = await this.userRepository.removeJoinedCompany(userId, companyId);
+    if (updatedUser == null) {
+      throw new NotFoundException('failed to update user');
+    }
+    return updatedUser;
+  }
+
   async changeCurrentEmployee(userId: Types.ObjectId, companyId: Types.ObjectId) {
     const user = await this.userRepository.findById(userId);
     const joinedCompany = user.joinedCompanies.filter(
@@ -397,13 +408,13 @@ export class UsersService {
 
   async userIsInSameCompanyAsEmployee(userId: Types.ObjectId, employeeId: Types.ObjectId) {
     const user = await this.getUserById(userId);
-    const companyWithEmployee = await this.companyService.getCompanyWithEmployee(employeeId);
-
-    if (!companyWithEmployee || !user) {
+    console.log(user);
+    if (!user) {
       throw new ConflictException('User or Employee is Null');
     }
     for (const joinedCompany of user.joinedCompanies) {
-      if (joinedCompany.companyId.equals(companyWithEmployee._id)) return true;
+      console.log(joinedCompany);
+      if (joinedCompany.employeeId.toString() === employeeId.toString()) return true;
     }
 
     return false;

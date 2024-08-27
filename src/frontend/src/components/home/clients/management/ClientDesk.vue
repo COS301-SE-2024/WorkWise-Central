@@ -57,7 +57,7 @@
               <!--              :opacity="0"-->
               <!--            >-->
               <AddClient
-                v-show="checkPermission('add a new clients')"
+                v-show="checkPermission('add new clients')"
                 :showDialog="addClientVisibility"
                 @update:showDialog="addClientVisibility = $event"
               />
@@ -129,12 +129,8 @@
                           checkPermission('view all clients') ||
                           checkPermission('view clients under me') ||
                           checkPermission('view clients that are assigned to me') ||
-                          checkPermission('edit all clients') ||
-                          checkPermission('edit clients that are under me') ||
-                          checkPermission('edit clients that are assigned to me') ||
-                          checkPermission('remove any clients') ||
-                          checkPermission('remove clients under me') ||
-                          checkPermission('remove clients assigned to me')
+                          checkPermission('edit clients') ||
+                          checkPermission('delete clients')
                         "
                       >
                         <v-icon color="primary">mdi-dots-horizontal</v-icon>
@@ -153,9 +149,7 @@
 
                       <v-list-item
                         v-show="
-                          checkPermission('edit all clients') ||
-                          checkPermission('edit clients that are under me') ||
-                          checkPermission('edit clients that are assigned to me')
+                          checkPermission('edit clients') 
                         "
                         ><EditClient
                           @update:item="selectedItem = $event"
@@ -165,9 +159,7 @@
 
                       <v-list-item
                         v-show="
-                          checkPermission('remove any clients') ||
-                          checkPermission('remove clients under me') ||
-                          checkPermission('remove clients assigned to me')
+                          checkPermission('delete clients') 
                         "
                       >
                         <DeleteClient

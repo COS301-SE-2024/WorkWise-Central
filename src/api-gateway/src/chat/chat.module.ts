@@ -1,24 +1,27 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { EmployeeService } from './employee.service';
-import { EmployeeController } from './employee.controller';
-import { MongooseModule } from '@nestjs/mongoose';
-import { Employee, EmployeeSchema } from './entities/employee.entity';
 import { UsersModule } from '../users/users.module';
 import { CompanyModule } from '../company/company.module';
 import { RoleModule } from '../role/role.module';
 import { JobModule } from '../job/job.module';
 import { TeamModule } from '../team/team.module';
-import { JobService } from '../job/job.service';
 import { ClientModule } from '../client/client.module';
-import { EmployeeRepository } from './employee.repository';
 import { FileModule } from '../file/file.module';
 import { InventoryModule } from '../inventory/inventory.module';
-import { InventoryService } from '../inventory/inventory.service';
 import { StockTakeModule } from '../stocktake/stocktake.module';
+import { ChatService } from './chat.service';
+import { ChatController } from './chat.controller';
+import { MongooseModule } from '@nestjs/mongoose';
+import { User, UserSchema } from '../users/entities/user.entity';
+import { Chat, ChatSchema } from './entities/chat.entity';
+import { ChatMessage, ChatMessageSchema } from './entities/chat-message.entity';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Employee.name, schema: EmployeeSchema }]),
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: Chat.name, schema: ChatSchema },
+      { name: ChatMessage.name, schema: ChatMessageSchema },
+    ]),
     forwardRef(() => UsersModule),
     forwardRef(() => CompanyModule),
     forwardRef(() => RoleModule),
@@ -29,8 +32,8 @@ import { StockTakeModule } from '../stocktake/stocktake.module';
     forwardRef(() => InventoryModule),
     forwardRef(() => StockTakeModule),
   ],
-  controllers: [EmployeeController],
-  providers: [EmployeeService, EmployeeRepository, JobService, InventoryService],
-  exports: [EmployeeService, EmployeeRepository, MongooseModule],
+  providers: [ChatService],
+  controllers: [ChatController],
+  exports: [ChatService, MongooseModule],
 })
-export class EmployeeModule {}
+export class ChatModule {}

@@ -37,6 +37,21 @@ export class EmployeeRepository {
     return result;
   }
 
+  async findAllInCompanyWithEmployee(identifier: Types.ObjectId) {
+    return await this.employeeModel
+      .find({
+        $and: [
+          {
+            $or: [{ superiorId: identifier }, { subordinates: { $in: identifier } }],
+          },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+  }
+
   async findAllInCompanyWithRoleName(identifier: Types.ObjectId, roleName: string) {
     const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] = await this.employeeModel
       .find({
@@ -238,6 +253,23 @@ export class EmployeeRepository {
       .lean();
 
     return previousObject;
+  }
+
+  async removeAllReferencesToTeam(teamId: Types.ObjectId) {
+    const allEmployeesInCompany = await this.employeeModel
+      .find({
+        $and: [
+          { teams: { $in: teamId } },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .exec();
+    for (const employee of allEmployeesInCompany) {
+      employee.teams = employee.teams.filter((team) => team.toString() != teamId.toString());
+      employee.save();
+    }
   }
 
   async updateSuperior(id: Types.ObjectId, superiorIdentifcation: Types.ObjectId) {

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { SchemaTypes, Types } from 'mongoose';
+import { User } from '../../users/entities/user.entity';
 
 export class Message {
   constructor(title: string, body: string, data?: any, token?: string) {
@@ -21,6 +22,7 @@ export class Message {
 
 @Schema()
 export class Notification {
+  //TODO: Link with tokens properly
   constructor(senderId: Types.ObjectId, recipientId: Types.ObjectId, message: Message) {
     this.senderId = senderId;
     this.recipientId = recipientId;
@@ -30,6 +32,7 @@ export class Notification {
   @Prop({
     type: SchemaTypes.ObjectId,
     required: false /*, ref: Employee.name */,
+    ref: User.name, //TODO: Maybe remove
   })
   senderId?: Types.ObjectId;
 
@@ -41,6 +44,9 @@ export class Notification {
 
   @Prop({ type: Boolean, required: true, default: false })
   isRead: boolean = false;
+
+  @Prop({ type: String, default: 'ACTIVE' })
+  status: string = 'ACTIVE';
 
   @Prop({ type: Date, default: new Date() })
   createdAt: Date;

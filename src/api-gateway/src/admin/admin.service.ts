@@ -96,9 +96,9 @@ export class AdminService {
     const employees = await this.employeeService.findAllInCompany(requestToJoin.companyId);
     //TODO: If they have company settings permissions
     //employees = employees.filter((x) => {x.permissionSuite.includes('can edit company')})
-    const empIds: Types.ObjectId[] = [];
+    const userIds: Types.ObjectId[] = [];
     for (const employee of employees) {
-      empIds.push(employee._id);
+      userIds.push(employee.userId);
     }
 
     //Get needed information for message
@@ -109,7 +109,7 @@ export class AdminService {
     }
 
     await this.notificationService.create({
-      recipientIds: empIds,
+      recipientIds: userIds,
       message: {
         title: `New Request to join ${company.name}`,
         body: `${user.personalInfo.firstName} ${user.personalInfo.surname} would like to join ${company.name},
