@@ -224,7 +224,7 @@
                   <v-form ref="form" v-model="valid" class="bg-background">
                     <v-row>
                       <v-col>
-                        <label style="font-size: 14px; font-weight: lighter">Rest password</label>
+                        <label style="font-size: 14px; font-weight: lighter">Reset password</label>
                         <v-text-field
                           :label="email ? '' : 'Enter your email'"
                           type="email"
@@ -253,6 +253,7 @@
                 </v-col>
               </v-sheet>
             </v-dialog>
+
             <v-dialog :opacity="0" v-model="OTPDialog" max-width="400">
               <v-sheet
                 elevation="14"
@@ -263,29 +264,27 @@
                 class="bg-background"
               >
                 <v-col>
-                  <v-form ref="form" v-model="valid" class="bg-background">
-                    <v-row>
-                      <v-col>
-                        <label style="font-size: 14px; font-weight: lighter"
-                          >Enter the code you received from email</label
-                        >
-
-                        <v-otp-input v-model="value" />
-                      </v-col>
-                    </v-row>
-                  </v-form>
-                  <v-col>
-                    <v-btn
-                      :disabled="!valid"
-                      text
-                      rounded="md"
-                      width="100%"
-                      size="large"
-                      variant="elevated"
-                      color="primary"
-                      >Change Password</v-btn
-                    >
-                  </v-col>
+                  <v-row>
+                    <v-col>
+                      <label style="font-size: 16px; font-weight: normal">
+                        Please check your email to change your password. Follow the instructions provided in the email to complete the process.
+                      </label>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col>
+                      <v-btn
+                        rounded="md"
+                        width="100%"
+                        size="large"
+                        variant="elevated"
+                        color="primary"
+                        @click="OTPDialog = false"
+                      >
+                        Close
+                      </v-btn>
+                    </v-col>
+                  </v-row>
                 </v-col>
               </v-sheet>
             </v-dialog>
@@ -1236,9 +1235,22 @@ export default defineComponent({
         })
       } else {
         this.forgotPasswordDialog = false
-        this.OTPDialog = true
+        const config = {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
+        try {
+          this.OTPDialog = true
+          const apiUrl = await this.getRequestUrl()
+          await axios.post(`${apiUrl}users/request/reset-pass`, {
+            email: this.email
+          }, config)
+        } catch (error) {
+          console.log(error)
+        }
       }
-      this.$router.push({ name: 'new-password' })
+      // this.$router.push({ name: 'new-password' })
     },
     format(date) {
       const day = date.getDate()

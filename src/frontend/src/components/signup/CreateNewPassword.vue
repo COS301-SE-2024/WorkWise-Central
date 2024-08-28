@@ -56,9 +56,8 @@
     </v-main>
   </v-app>
 </template>
-<script></script>
-<script lang="ts">
-// import axios from 'axios'
+<script >
+import axios from 'axios'
 import Toast from 'primevue/toast'
 import { defineComponent } from 'vue'
 export default defineComponent({
@@ -71,35 +70,49 @@ export default defineComponent({
   },
   data() {
     return {
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       password: '',
       confirmPassword: '',
       valid: false,
       showPassword: false,
       isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       passwordRules: [
-        (v: string) => !!v || 'Password is required',
-        (v: string) => (v && v.length >= 8) || 'Password must be at least 8 characters',
-        (v: string) =>
+        (v) => !!v || 'Password is required',
+        (v) => (v && v.length >= 8) || 'Password must be at least 8 characters',
+        (v) =>
           /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/.test(v) ||
           'Password must contain at least one uppercase letter, one lowercase letter and one number',
-        (v: string) =>
+        (v) =>
           /(?=.*[!@#$%^&*])/.test(v) || 'Password must contain at least one special character'
       ],
       confirmPasswordRules: [
-        (v: string) => !!v || 'Confirm Password is required',
-        (v: string) => (v && v.length >= 8) || 'Password must be at least 8 characters',
-        (v: string) =>
+        (v) => !!v || 'Confirm Password is required',
+        (v) => (v && v.length >= 8) || 'Password must be at least 8 characters',
+        (v) =>
           /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/.test(v) ||
           'Password must contain at least one uppercase letter, one lowercase letter and one number',
-        (v: string) =>
+        (v) =>
           /(?=.*[!@#$%^&*])/.test(v) || 'Password must contain at least one special character',
-        function (v: string) {
+        function (v) {
           return v === this.password || 'Passwords do not match'
         }.bind(this)
       ]
     }
   },
   methods: {
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
     async submit() {
       if (this.password !== this.confirmPassword) {
         alert('Passwords do not match')
@@ -107,16 +120,34 @@ export default defineComponent({
       }
 
       try {
+        const urlParams = new URL(window.location.href).searchParams;
+        const userId = urlParams.get('uId');
+        const token = urlParams.get('tok');
+        console.log('User ID:', userId);
+        console.log('Token:', token);
+        const config = {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
+        const apiUrl = await this.getRequestUrl()
+        const response = await axios.post(`${apiUrl}users/reset-pass`, {
+          userId: userId,
+          token: token,
+          newPassword: this.password
+        }, config)
+        console.log(response)
         this.$toast.add({
           severity: 'success',
           summary: 'Success',
           detail: 'Password updated',
           life: 3000
         })
+
         setTimeout(() => {
           this.$router.push({ name: 'splash' })
         }, 2000)
-      } catch (error) {}
+      } catch (error) { console.log(error)}
     },
     toggleDarkMode() {
       console.log(this.isDarkMode)
