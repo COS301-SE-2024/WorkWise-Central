@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-carousel>
-      <v-carousel-item v-for="(image, index) in images" :key="index">
+    <v-carousel hide-delimiters>
+      <v-carousel-item v-for="(image, index) in images" :key="index" >
         <v-img
           :src="image.src"
           min-height="auto"
