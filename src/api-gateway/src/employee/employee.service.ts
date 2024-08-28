@@ -207,6 +207,7 @@ export class EmployeeService {
     //Altering the dto to update the role if roleId is given
     const dto = new InternalUpdateEmployeeDto();
     if (updateEmployeeDto.roleId) {
+      dto.role = new roleObject();
       dto.role.roleId = updateEmployeeDto.roleId;
       const role = await this.roleService.findById(dto.role.roleId);
       dto.role.permissionSuite = role.permissionSuite;
