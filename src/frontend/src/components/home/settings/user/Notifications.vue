@@ -48,7 +48,6 @@
                   label="Enable In-App Notifications"
                 ></v-switch>
               </v-col>
-
             </v-card-text>
           </v-card>
 

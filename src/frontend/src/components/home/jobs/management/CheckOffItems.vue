@@ -2,7 +2,13 @@
   <v-container>
     <!-- Button to create a new task -->
     <v-row class="justify-center mb-4">
-      <v-btn color="primary" @click="createNewTask" :disabled="!canCreateNewTask" prepend-icon="mdi-plus">Create New Task</v-btn>
+      <v-btn
+        color="primary"
+        @click="createNewTask"
+        :disabled="!canCreateNewTask"
+        prepend-icon="mdi-plus"
+        >Create New Task</v-btn
+      >
     </v-row>
 
     <!-- Loop through tasks with pagination -->
@@ -37,7 +43,11 @@
           </v-row>
 
           <!-- Task Items -->
-          <v-row v-for="(item, itemIndex) in task.items.slice(0, 5)" :key="itemIndex" class="d-flex align-center mb-3">
+          <v-row
+            v-for="(item, itemIndex) in task.items.slice(0, 5)"
+            :key="itemIndex"
+            class="d-flex align-center mb-3"
+          >
             <v-col md="10" class="pr-4">
               <v-checkbox
                 v-model="item.done"
@@ -58,7 +68,11 @@
                   origin="top center"
                 >
                   <template v-slot:activator="{ props: activatorProps }">
-                    <v-btn @click="openCheckActionsDialog(itemIndex)" v-bind="activatorProps" class="ml-2">
+                    <v-btn
+                      @click="openCheckActionsDialog(itemIndex)"
+                      v-bind="activatorProps"
+                      class="ml-2"
+                    >
                       <v-icon left>{{ 'fa: fa-solid fa-ellipsis-h' }}</v-icon>
                     </v-btn>
                   </template>
@@ -99,7 +113,11 @@
                                 </v-btn>
                               </v-defaults-provider>
                               <v-defaults-provider :defaults="{ VIcon: { color: 'error' } }">
-                                <v-btn color="error" @click="assignDialog = false" prepend-icon="fa: fa-solid fa-times">
+                                <v-btn
+                                  color="error"
+                                  @click="assignDialog = false"
+                                  prepend-icon="fa: fa-solid fa-times"
+                                >
                                   Cancel
                                 </v-btn>
                               </v-defaults-provider>
@@ -113,7 +131,11 @@
                           </v-btn>
                         </v-defaults-provider>
                         <v-defaults-provider :defaults="{ VIcon: { color: 'error' } }">
-                          <v-btn color="error" @click="deleteItem(taskIndex, itemIndex)" class="mb-2">
+                          <v-btn
+                            color="error"
+                            @click="deleteItem(taskIndex, itemIndex)"
+                            class="mb-2"
+                          >
                             <v-icon>{{ 'fa: fa-solid fa-trash' }}</v-icon>
                             Delete
                           </v-btn>
@@ -147,14 +169,21 @@
                 rows="3"
                 class="mb-4"
               ></v-textarea>
-              <v-btn color="success" @click="addItem(taskIndex)" prepend-icon="mdi-plus">Add Item</v-btn>
+              <v-btn color="success" @click="addItem(taskIndex)" prepend-icon="mdi-plus"
+                >Add Item</v-btn
+              >
             </v-col>
           </v-row>
 
           <!-- Save Task Button -->
           <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
             <v-row class="justify-center">
-              <v-btn v-if="task.isSaveVisible" color="success" @click="saveTask(taskIndex)" prepend-icon="fa: fa-solid fa-save">
+              <v-btn
+                v-if="task.isSaveVisible"
+                color="success"
+                @click="saveTask(taskIndex)"
+                prepend-icon="fa: fa-solid fa-save"
+              >
                 Save Task
               </v-btn>
             </v-row>
@@ -186,48 +215,48 @@ export default {
       currentPage: 1,
       assignDialog: false,
       selectedEmployees: [],
-      assignableEmployees: [],
-    };
+      assignableEmployees: []
+    }
   },
   computed: {
     paginatedTasks() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      return this.taskList.slice(start, start + this.itemsPerPage);
+      const start = (this.currentPage - 1) * this.itemsPerPage
+      return this.taskList.slice(start, start + this.itemsPerPage)
     },
     pageCount() {
-      return Math.ceil(this.taskList.length / this.itemsPerPage);
+      return Math.ceil(this.taskList.length / this.itemsPerPage)
     },
     canCreateNewTask() {
-      return this.taskList.length < this.itemsPerPage * this.pageCount;
+      return this.taskList.length < this.itemsPerPage * this.pageCount
     }
   },
   methods: {
     createNewTask() {
-      this.taskList.push({ title: '', items: [], newItemText: '', isSaveVisible: false });
+      this.taskList.push({ title: '', items: [], newItemText: '', isSaveVisible: false })
     },
     getTaskProgress(task) {
-      const completedItems = task.items.filter(item => item.done).length;
-      return completedItems / task.items.length * 100 || 0;
+      const completedItems = task.items.filter((item) => item.done).length
+      return (completedItems / task.items.length) * 100 || 0
     },
     addItem(taskIndex) {
-      const task = this.taskList[taskIndex];
+      const task = this.taskList[taskIndex]
       if (task.newItemText.trim() !== '') {
-        task.items.push({ description: task.newItemText, done: false });
-        task.newItemText = '';
-        task.isSaveVisible = true;
+        task.items.push({ description: task.newItemText, done: false })
+        task.newItemText = ''
+        task.isSaveVisible = true
       }
     },
     saveTask(taskIndex) {
       // Save task logic
     },
     deleteItem(taskIndex, itemIndex) {
-      this.taskList[taskIndex].items.splice(itemIndex, 1);
+      this.taskList[taskIndex].items.splice(itemIndex, 1)
     },
     openCheckActionsDialog(itemIndex) {
       // Handle dialog actions
-    },
-  },
-};
+    }
+  }
+}
 </script>
 
 <style>

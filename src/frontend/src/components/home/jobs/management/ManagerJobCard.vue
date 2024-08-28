@@ -119,7 +119,7 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col align="center" cols="12" md="6">
+              <v-col  cols="12" md="6">
                 <v-date-picker
                   title="SELECT START DATE"
                   header="Start date of job"
@@ -136,7 +136,7 @@
                   style="height: 475px"
                 ></v-date-picker>
               </v-col>
-              <v-col cols="12" md="6" align="center">
+              <v-col cols="12" md="6">
                 <v-time-picker
                   format="24hr"
                   :allowed-hours="allowedHours"
@@ -147,7 +147,7 @@
                   style="height: 475px"
                 ></v-time-picker>
               </v-col>
-              <v-col align="center" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-date-picker
                   title="SELECT END DATE"
                   header="End date of job"
@@ -164,7 +164,7 @@
                   style="height: 475px"
                 ></v-date-picker>
               </v-col>
-              <v-col cols="12" md="6" align="center">
+              <v-col cols="12" md="6">
                 <v-time-picker
                   :allowed-hours="allowedHours2"
                   :allowed-minutes="allowedMinutes2"
@@ -174,11 +174,6 @@
                   elevation="5"
                 ></v-time-picker>
               </v-col>
-            </v-row>
-            <v-row cols="12" class="justify-center">
-              <v-btn color="success" @click="patchJobDetails"
-              ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save
-              </v-btn>
             </v-row>
           </v-form>
         </v-col>
@@ -207,7 +202,7 @@
             >
           </v-col>
           <v-col class="d-flex flex-column" order="first" order-lg="last" cols="12" lg="6">
-            <v-btn class="mb-4" @click="emitSave" color="success" block
+            <v-btn class="mb-4" @click="patchJobDetails" color="success" block
               ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
             >
           </v-col></v-row
@@ -219,23 +214,26 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, defineProps, ref } from 'vue'
-import EditDetails from './EditDetailsJobCard.vue'
+import { defineEmits, defineProps, ref} from 'vue'
 import ChangeClient from './ChangeClientDialog.vue'
 import SelectMembers from './SelectMembers.vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import UpdateJobStatus from './UpdateJobStatus.vue'
 // import ChangeDueDate from './UpdateDateDialog.vue'
 
+// Props and Emits
 const props = defineProps<{ passedInJob: any }>()
 const emits = defineEmits(['close', 'save'])
+
+// Toast for notifications
+const toast = useToast()
+
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
 const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-const toast = useToast()
 
+// Province Options
 const provinceOptions = [
   'Eastern Cape',
   'Free State',
@@ -248,24 +246,7 @@ const provinceOptions = [
   'Western Cape'
 ]
 
-interface Address {
-  street: string
-  province: string
-  suburb: string
-  city: string
-  postalCode: string
-  complex: string
-  houseNumber: string
-}
-
-interface JobDetails {
-  heading: string
-  description: string
-  address: Address
-  startDate: string
-  endDate: string
-}
-
+// Reactive Variables
 const job = ref({
   details: {
     heading: props.passedInJob.details.heading,
@@ -284,7 +265,29 @@ const job = ref({
   }
 })
 
-// Utility functions
+// Date and Time Variables
+const startDate = ref<string | null>(null)
+const startTime = ref<string>('')
+const endDate = ref<string | null>(null)
+const endTime = ref<string>('')
+
+// Current Date and Time
+const now = new Date()
+const currentHour = now.getHours()
+const currentMinute = now.getMinutes()
+
+// Date Rules and Minimum Date
+const startDateRule = [(v: string) => !!v || 'Start date is required']
+const endDateRule = [(v: string) => !!v || 'End date is required']
+const minDate = new Date().toISOString().slice(0, 10);
+
+// Allowed Hours and Minutes
+const allowedHours = ref<(hour: number) => boolean>(() => true)
+const allowedMinutes = ref<(minute: number) => boolean>(() => true)
+const allowedHours2 = ref<(hour: number) => boolean>(() => true)
+const allowedMinutes2 = ref<(minute: number) => boolean>(() => true)
+
+// Utility Functions
 const isLocalAvailable = async (url: string): Promise<boolean> => {
   try {
     const res = await axios.get(url)
@@ -299,94 +302,9 @@ const getRequestUrl = async (): Promise<string> => {
   return localAvailable ? localUrl : remoteUrl
 }
 
-const patchJobDetails = async () => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('access_token')}`
-    }
-  }
-  const apiUrl = await getRequestUrl()
-  try {
-    if (startDate.value != null && startTime.value != null) {
-      const startDateTime = new Date(`${startDate.value}T${startTime.value}`);
-      job.value.details.startDate = startDateTime.toISOString();
-    }
-    if (endDate.value != null && endTime.value != null) {
-      const endDateTime = new Date(`${endDate.value}T${endTime.value}`);
-      job.value.details.endDate = endDateTime.toISOString();
-    }
-    console.log(job.value.details)
-    const response = await axios.patch(
-      `${apiUrl}job/update/${props.passedInJob._id}`,
-      {details: job.value.details},
-      config
-    )
-    console.log('Changed job details:', job.value.details)
-    if (response.status < 300 && response.status > 199) {
-      console.log(response)
-      showEditSuccess()
-    } else {
-      showEditError()
-    }
-  } catch (error) {
-    console.error('Error getting editing job details', error)
-    showEditError()
-  }
-}
-
-const cancelJob = () => {
-  emits('close')
-}
-
-
-const showEditSuccess = () => {
-  toast.add({
-    severity: 'success',
-    summary: 'Success Message',
-    detail: 'Successfully edited details',
-    life: 3000
-  })
-}
-
-const showEditError = () => {
-  toast.add({
-    severity: 'error',
-    summary: 'Error Message',
-    detail: 'An error occurred while editing the details this job',
-    life: 3000
-  })
-}
-
-// Define the rules and minimum date
-const startDateRule = [(v: string) => !!v || 'Start date is required']
-const endDateRule = [(v: string) => !!v || 'End date is required']
-const minDate = new Date().toISOString().substr(0, 10)
-
-// Define the reactive variables
-const allowedHours2 = ref<(hour: number) => boolean>(() => true)
-const allowedMinutes2 = ref<(minute: number) => boolean>(() => true)
-const endTime = ref<string>('')
-
-// Define the reactive variables
-const endDate = ref<string | null>(null)
-const startDate = ref<string | null>(null)
-const startTime = ref<string>('')
-
-// Define the current hour and minute
-const now = new Date()
-const currentHour = now.getHours()
-const currentMinute = now.getMinutes()
-
-// Define the allowed hours and minutes
-const allowedHours = ref<(hour: number) => boolean>(() => true)
-const allowedMinutes = ref<(minute: number) => boolean>(() => true)
-
-// Function to update allowed times
+// Function to Update Allowed Start Times
 const updateAllowedTimes = () => {
   const isToday = startDate.value === minDate
-
-  console.log('updateAllowedTimes')
   if (isToday) {
     allowedHours.value = (hour: number) => hour > currentHour
     allowedMinutes.value = (minute: number) => {
@@ -400,10 +318,9 @@ const updateAllowedTimes = () => {
   }
 }
 
+// Function to Update Allowed End Times
 const updateAllowedTimesEnd = () => {
   const isToday = endDate.value === minDate
-
-  console.log('updateAllowedTimes')
   if (isToday) {
     allowedHours2.value = (hour: number) => hour > currentHour
     allowedMinutes2.value = (minute: number) => {
@@ -417,7 +334,80 @@ const updateAllowedTimesEnd = () => {
   }
 }
 
-const emitSave = () => {
-  emits('save')
+// Patch Job Details
+const patchJobDetails = async () => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+  const apiUrl = await getRequestUrl()
+  try {
+    // Validate and set startDate
+    if (startDate.value && startTime.value) {
+      const startDateTimeStr = `${startDate.value}T${startTime.value}`
+      const startDateTime = new Date(startDateTimeStr)
+      if (!isNaN(startDateTime.getTime())) {
+        job.value.details.startDate = startDateTime.toISOString()
+      } else {
+        console.error('Invalid start date/time:', startDateTimeStr)
+      }
+    } else {
+      console.error('Missing start date or time value')
+    }
+
+    // Validate and set endDate
+    if (endDate.value && endTime.value) {
+      const endDateTimeStr = `${endDate.value}T${endTime.value}`
+      const endDateTime = new Date(endDateTimeStr)
+      if (!isNaN(endDateTime.getTime())) {
+        job.value.details.endDate = endDateTime.toISOString()
+      } else {
+        console.error('Invalid end date/time:', endDateTimeStr)
+      }
+    } else {
+      console.error('Missing end date or time value')
+    }
+
+    // Make patch request
+    const response = await axios.patch(
+      `${apiUrl}job/update/${props.passedInJob._id}`,
+      { details: job.value.details },
+      config
+    )
+    if (response.status < 300 && response.status > 199) {
+      showEditSuccess()
+    } else {
+      showEditError()
+    }
+  } catch (error) {
+    console.error('Error getting editing job details', error)
+    showEditError()
+  }
+}
+
+// Event Handlers
+const cancelJob = () => {
+  emits('close')
+}
+
+// Toast Notifications
+const showEditSuccess = () => {
+  toast.add({
+    severity: 'success',
+    summary: 'Success Message',
+    detail: 'Successfully edited details',
+    life: 3000
+  })
+}
+
+const showEditError = () => {
+  toast.add({
+    severity: 'error',
+    summary: 'Error Message',
+    detail: 'An error occurred while editing the details of this job',
+    life: 3000
+  })
 }
 </script>

@@ -252,17 +252,17 @@ const patchJobDetails = async () => {
   const apiUrl = await getRequestUrl()
   try {
     if (startDate.value != null && startTime.value != null) {
-      const startDateTime = new Date(`${startDate.value}T${startTime.value}`);
-      job.value.details.startDate = startDateTime.toISOString();
+      const startDateTime = new Date(`${startDate.value}T${startTime.value}`)
+      job.value.details.startDate = startDateTime.toISOString()
     }
     if (endDate.value != null && endTime.value != null) {
-      const endDateTime = new Date(`${endDate.value}T${endTime.value}`);
-      job.value.details.endDate = endDateTime.toISOString();
+      const endDateTime = new Date(`${endDate.value}T${endTime.value}`)
+      job.value.details.endDate = endDateTime.toISOString()
     }
     console.log(job.value.details)
     const response = await axios.patch(
       `${apiUrl}job/update/${props.jobID}`,
-      {details: job.value.details},
+      { details: job.value.details },
       config
     )
     console.log('Changed job details:', job.value.details)
