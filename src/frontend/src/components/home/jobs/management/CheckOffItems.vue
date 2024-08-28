@@ -2,7 +2,13 @@
   <v-container>
     <!-- Button to create a new task -->
     <v-row class="justify-center mb-4">
-      <v-btn color="primary" @click="createNewTask" :disabled="!canCreateNewTask" prepend-icon="mdi-plus">Create New Task</v-btn>
+      <v-btn
+        color="primary"
+        @click="createNewTask"
+        :disabled="!canCreateNewTask"
+        prepend-icon="mdi-plus"
+        >Create New Task</v-btn
+      >
     </v-row>
 
     <!-- Loop through tasks -->
@@ -37,7 +43,11 @@
           </v-row>
 
           <!-- Task Items -->
-          <v-row v-for="(item, itemIndex) in task.items" :key="itemIndex" class="d-flex align-center mb-3">
+          <v-row
+            v-for="(item, itemIndex) in task.items"
+            :key="itemIndex"
+            class="d-flex align-center mb-3"
+          >
             <v-col md="10" class="pr-4">
               <v-checkbox
                 v-model="item.done"
@@ -58,7 +68,11 @@
                   origin="top center"
                 >
                   <template v-slot:activator="{ props: activatorProps }">
-                    <v-btn @click="openCheckActionsDialog(itemIndex)" v-bind="activatorProps" class="ml-2">
+                    <v-btn
+                      @click="openCheckActionsDialog(itemIndex)"
+                      v-bind="activatorProps"
+                      class="ml-2"
+                    >
                       <v-icon left>{{ 'fa: fa-solid fa-ellipsis-h' }}</v-icon>
                     </v-btn>
                   </template>
@@ -99,7 +113,11 @@
                                 </v-btn>
                               </v-defaults-provider>
                               <v-defaults-provider :defaults="{ VIcon: { color: 'error' } }">
-                                <v-btn color="error" @click="assignDialog = false" prepend-icon="fa: fa-solid fa-times">
+                                <v-btn
+                                  color="error"
+                                  @click="assignDialog = false"
+                                  prepend-icon="fa: fa-solid fa-times"
+                                >
                                   Cancel
                                 </v-btn>
                               </v-defaults-provider>
@@ -113,7 +131,11 @@
                           </v-btn>
                         </v-defaults-provider>
                         <v-defaults-provider :defaults="{ VIcon: { color: 'error' } }">
-                          <v-btn color="error" @click="deleteItem(taskIndex, itemIndex)" class="mb-2">
+                          <v-btn
+                            color="error"
+                            @click="deleteItem(taskIndex, itemIndex)"
+                            class="mb-2"
+                          >
                             <v-icon>{{ 'fa: fa-solid fa-trash' }}</v-icon>
                             Delete
                           </v-btn>
@@ -147,14 +169,21 @@
                 rows="3"
                 class="mb-4"
               ></v-textarea>
-              <v-btn color="success" @click="addItem(taskIndex)" prepend-icon="mdi-plus">Add Item</v-btn>
+              <v-btn color="success" @click="addItem(taskIndex)" prepend-icon="mdi-plus"
+                >Add Item</v-btn
+              >
             </v-col>
           </v-row>
 
           <!-- Save Task Button -->
           <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
             <v-row class="justify-center">
-              <v-btn v-if="task.isSaveVisible" color="success" @click="saveTask(taskIndex)" prepend-icon="fa: fa-solid fa-save">
+              <v-btn
+                v-if="task.isSaveVisible"
+                color="success"
+                @click="saveTask(taskIndex)"
+                prepend-icon="fa: fa-solid fa-save"
+              >
                 Save Task
               </v-btn>
             </v-row>
@@ -166,7 +195,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, onMounted } from 'vue';
+import { defineProps, ref, onMounted } from 'vue'
 import axios from 'axios'
 
 // API URLs
@@ -182,7 +211,7 @@ const config = {
 }
 
 const props = defineProps<{
-  jobTaskList: TaskList[];
+  jobTaskList: TaskList[]
   id: string
 }>()
 
@@ -198,16 +227,16 @@ interface TaskList {
 }
 
 interface Task {
-  title: string;
-  items: TaskItem[];
-  newItemText: string;
-  isSaveTaskClicked: boolean;
-  isSaveVisible: boolean;
+  title: string
+  items: TaskItem[]
+  newItemText: string
+  isSaveTaskClicked: boolean
+  isSaveVisible: boolean
 }
 
 interface Employee {
-  text: string;
-  value: number;
+  text: string
+  value: number
 }
 
 const taskList = ref<Task[]>([
@@ -216,9 +245,9 @@ const taskList = ref<Task[]>([
     items: [],
     newItemText: '',
     isSaveTaskClicked: false,
-    isSaveVisible: true,
-  },
-]);
+    isSaveVisible: true
+  }
+])
 
 const isLocalAvailable = async (url: string): Promise<boolean> => {
   try {
@@ -236,11 +265,11 @@ const getRequestUrl = async (): Promise<string> => {
 
 const assignableEmployees = ref<Employee[]>([
   { text: 'John Doe', value: 1 },
-  { text: 'Jane Smith', value: 2 },
-]);
+  { text: 'Jane Smith', value: 2 }
+])
 
-const selectedEmployees = ref<Employee[]>([]);
-const assignDialog = ref(false);
+const selectedEmployees = ref<Employee[]>([])
+const assignDialog = ref(false)
 
 const createNewTask = () => {
   taskList.value.push({
@@ -248,11 +277,11 @@ const createNewTask = () => {
     items: [],
     newItemText: '',
     isSaveTaskClicked: false,
-    isSaveVisible: true,
-  });
-};
+    isSaveVisible: true
+  })
+}
 
-const canCreateNewTask = ref(true);
+const canCreateNewTask = ref(true)
 
 const addItem = async (taskIndex: number) => {
   if (taskList.value[taskIndex].newItemText.trim() !== '') {
@@ -260,9 +289,9 @@ const addItem = async (taskIndex: number) => {
       description: taskList.value[taskIndex].newItemText,
       assignedEmployees: [],
       dueDate: new Date().toISOString(),
-      done: false,
-    });
-    taskList.value[taskIndex].newItemText = '';
+      done: false
+    })
+    taskList.value[taskIndex].newItemText = ''
   }
   const apiUrl = getRequestUrl()
   // try {
@@ -275,35 +304,35 @@ const addItem = async (taskIndex: number) => {
   // } catch (error) {
   //   console.log(error)
   // }
-};
+}
 
 const deleteItem = (taskIndex: number, itemIndex: number) => {
-  taskList.value[taskIndex].items.splice(itemIndex, 1);
-};
+  taskList.value[taskIndex].items.splice(itemIndex, 1)
+}
 
 const saveTask = (taskIndex: number) => {
-  taskList.value[taskIndex].isSaveTaskClicked = true;
-};
+  taskList.value[taskIndex].isSaveTaskClicked = true
+}
 
 const getTaskProgress = (task: Task): number => {
-  const totalItems = task.items.length;
-  const completedItems = task.items.filter((item) => item.done).length;
-  return totalItems === 0 ? 0 : (completedItems / totalItems) * 100;
-};
+  const totalItems = task.items.length
+  const completedItems = task.items.filter((item) => item.done).length
+  return totalItems === 0 ? 0 : (completedItems / totalItems) * 100
+}
 
 const openCheckActionsDialog = (itemIndex: number) => {
   // Implement dialog actions here
-};
+}
 
 onMounted(() => {
-  taskList.value = props.jobTaskList.map(task => ({
+  taskList.value = props.jobTaskList.map((task) => ({
     ...task,
     newItemText: '',
     isSaveTaskClicked: false,
-    isSaveVisible: true,
-  }));
-  console.log('Task items:', taskList.value);
-});
+    isSaveVisible: true
+  }))
+  console.log('Task items:', taskList.value)
+})
 </script>
 
 <style scoped>

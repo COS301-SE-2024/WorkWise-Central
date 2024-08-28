@@ -309,7 +309,6 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.isDeleting = false
-            
           }, 1500)
         })
         .catch((error) => {

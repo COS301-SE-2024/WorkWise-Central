@@ -19,7 +19,6 @@
     max-width="600"
     :no-overlay="false"
     scrollable
-
     :opacity="0"
   >
     <v-card

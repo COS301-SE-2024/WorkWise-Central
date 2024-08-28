@@ -192,7 +192,7 @@ export default defineComponent({
         console.error(error)
       }
     },
-    
+
     async isLocalAvailable(localUrl: string) {
       try {
         const res = await axios.get(localUrl)

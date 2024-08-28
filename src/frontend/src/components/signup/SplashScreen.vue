@@ -267,7 +267,8 @@
                   <v-row>
                     <v-col>
                       <label style="font-size: 16px; font-weight: normal">
-                        Please check your email to change your password. Follow the instructions provided in the email to complete the process.
+                        Please check your email to change your password. Follow the instructions
+                        provided in the email to complete the process.
                       </label>
                     </v-col>
                   </v-row>
@@ -1243,9 +1244,13 @@ export default defineComponent({
         try {
           this.OTPDialog = true
           const apiUrl = await this.getRequestUrl()
-          await axios.post(`${apiUrl}users/request/reset-pass`, {
-            email: this.email
-          }, config)
+          await axios.post(
+            `${apiUrl}users/request/reset-pass`,
+            {
+              email: this.email
+            },
+            config
+          )
         } catch (error) {
           console.log(error)
         }
