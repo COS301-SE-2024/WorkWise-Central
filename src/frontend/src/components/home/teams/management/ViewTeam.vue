@@ -21,7 +21,9 @@
           <v-col cols="6">
             <label class="font-weight-light" style="font-size: 20px"> Team Leader</label>
             <v-spacer></v-spacer>
-            <small class="text-caption" style="font-size: 12px">{{ teamLeaderName }}</small>
+            <small class="text-caption" style="font-size: 12px">{{
+              team.teamLeaderId.userInfo.displayName
+            }}</small>
           </v-col>
         </v-row>
         <v-divider></v-divider>
@@ -30,12 +32,13 @@
             <label class="font-weight-light" style="font-size: 20px"> Team Members</label>
             <v-spacer></v-spacer>
             <small class="text-caption" style="font-size: 12px">
-              <ul>
-                <li v-for="member in teamMemberNames" :key="member.id">{{ member }}</li>
-              </ul>
+              <v-chip v-for="member in team.teamMembers" :key="member.id" color="secondary">{{
+                member.userInfo.displayName
+              }}</v-chip>
             </small>
           </v-col>
         </v-row>
+        <v-spacer></v-spacer>
         <v-divider></v-divider>
         <v-row>
           <v-col cols="6">
@@ -43,9 +46,9 @@
               Current Job Assignments</label
             >
             <v-spacer></v-spacer>
-            <small class="text-caption" style="font-size: 12px">{{
-              team.currentJobAssignments
-            }}</small>
+            <small class="text-caption" style="font-size: 12px"
+              ><v-chip v-for="job in team.jobAssignments" :key="job.id" color="primary"></v-chip
+            ></small>
           </v-col>
           <v-col cols="6">
             <label class="font-weight-light" style="font-size: 20px"> Date Created</label>
@@ -56,14 +59,17 @@
         <v-divider></v-divider>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <Toast position="top-center" />
-        <v-col cols="12">
-          <v-btn label="Close" color="secondary" text @click="close">
-            <v-icon icon="fa:fa-solid fa-times" start color="secondary" size="small"></v-icon>
-            Close
-          </v-btn>
-        </v-col>
+        <v-container
+          ><v-row>
+            <Toast position="top-center" />
+            <v-col cols="12">
+              <v-btn label="Close" color="error" text @click="close" block>
+                <v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon>
+                Close
+              </v-btn>
+            </v-col></v-row
+          ></v-container
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -135,8 +141,9 @@ export default defineComponent({
       return isLocalAvailable ? localUrl : remoteUrl
     }
   },
-  async mounted() {
-    await this.fetchTeamLeaderAndMembers()
+  mounted() {
+    console.log(this.team)
+    this.fetchTeamLeaderAndMembers()
   }
 })
 </script>

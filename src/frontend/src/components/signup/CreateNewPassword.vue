@@ -56,7 +56,7 @@
     </v-main>
   </v-app>
 </template>
-<script >
+<script>
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { defineComponent } from 'vue'
@@ -83,8 +83,7 @@ export default defineComponent({
         (v) =>
           /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/.test(v) ||
           'Password must contain at least one uppercase letter, one lowercase letter and one number',
-        (v) =>
-          /(?=.*[!@#$%^&*])/.test(v) || 'Password must contain at least one special character'
+        (v) => /(?=.*[!@#$%^&*])/.test(v) || 'Password must contain at least one special character'
       ],
       confirmPasswordRules: [
         (v) => !!v || 'Confirm Password is required',
@@ -92,8 +91,7 @@ export default defineComponent({
         (v) =>
           /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/.test(v) ||
           'Password must contain at least one uppercase letter, one lowercase letter and one number',
-        (v) =>
-          /(?=.*[!@#$%^&*])/.test(v) || 'Password must contain at least one special character',
+        (v) => /(?=.*[!@#$%^&*])/.test(v) || 'Password must contain at least one special character',
         function (v) {
           return v === this.password || 'Passwords do not match'
         }.bind(this)
@@ -120,22 +118,26 @@ export default defineComponent({
       }
 
       try {
-        const urlParams = new URL(window.location.href).searchParams;
-        const userId = urlParams.get('uId');
-        const token = urlParams.get('tok');
-        console.log('User ID:', userId);
-        console.log('Token:', token);
+        const urlParams = new URL(window.location.href).searchParams
+        const userId = urlParams.get('uId')
+        const token = urlParams.get('tok')
+        console.log('User ID:', userId)
+        console.log('Token:', token)
         const config = {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`
           }
         }
         const apiUrl = await this.getRequestUrl()
-        const response = await axios.post(`${apiUrl}users/reset-pass`, {
-          userId: userId,
-          token: token,
-          newPassword: this.password
-        }, config)
+        const response = await axios.post(
+          `${apiUrl}users/reset-pass`,
+          {
+            userId: userId,
+            token: token,
+            newPassword: this.password
+          },
+          config
+        )
         console.log(response)
         this.$toast.add({
           severity: 'success',
@@ -147,7 +149,9 @@ export default defineComponent({
         setTimeout(() => {
           this.$router.push({ name: 'splash' })
         }, 2000)
-      } catch (error) { console.log(error)}
+      } catch (error) {
+        console.log(error)
+      }
     },
     toggleDarkMode() {
       console.log(this.isDarkMode)

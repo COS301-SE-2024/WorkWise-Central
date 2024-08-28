@@ -165,7 +165,7 @@ export default defineComponent({
             life: 3000
           })
           setTimeout(() => {
-            
+            this.$emit('Created', response.data.data)
           }, 3000)
         })
         .catch((error) => {

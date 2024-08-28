@@ -176,10 +176,11 @@ export default defineComponent({
             detail: 'Priority created successfully',
             life: 3000
           })
-          this.dialog = false
+
           setTimeout(() => {
+            this.dialog = false
             this.isDeleting = false
-            
+            this.$emit('Created', res.data.data)
           }, 3000)
         })
         .catch((err) => {

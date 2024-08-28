@@ -269,7 +269,6 @@ export default defineComponent({
         detail: 'Company update cancelled',
         life: 3000
       })
-      
     },
     saveChanges() {
       this.$toast.add({
@@ -325,7 +324,7 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.isDeleting = false
-            
+            this.getCompanyDetails()
           }, 3000)
         })
         .catch((error) => {

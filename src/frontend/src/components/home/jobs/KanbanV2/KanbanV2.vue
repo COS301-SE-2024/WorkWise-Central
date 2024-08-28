@@ -478,8 +478,6 @@ export default {
         this.delete_column_dialog = false
 
         console.log(res)
-
-        
       } catch (error) {
         console.log(error)
       }
@@ -488,7 +486,7 @@ export default {
       //add a modal that will ask the user if they are sure they want to delete all the cards in a job column
       col.cards.splice(0, col.cards.length)
       this.delete_all_jobs_dialog = false
-      // 
+      //
     },
     async editColumnButtonClickedSave(col: Column) {
       if (this.new_column_name === '' && this.column_color === '') {
@@ -524,8 +522,6 @@ export default {
           this.new_column_name = ''
           this.column_color = ''
           this.add_column_dialog = false
-
-          
         } catch (error) {
           console.log(error)
         }
@@ -555,8 +551,6 @@ export default {
           this.new_column_name = ''
           this.column_color = ''
           this.add_column_dialog = false
-
-          
         } catch (error) {
           console.log(error)
         }
@@ -586,8 +580,6 @@ export default {
           this.new_column_name = ''
           this.column_color = ''
           this.add_column_dialog = false
-
-          
         } catch (error) {
           console.log(error)
         }
@@ -638,8 +630,6 @@ export default {
         this.new_column_name = ''
         this.column_color = ''
         this.add_column_dialog = false
-
-        
       } catch (error) {
         console.log(error)
       }

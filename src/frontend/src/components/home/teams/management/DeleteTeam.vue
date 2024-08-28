@@ -91,7 +91,8 @@ export default defineComponent({
         setTimeout(() => {
           this.isDeleting = false
           this.deleteDialog = false
-          
+          // Emit the event to the parent component after deletion
+          this.$emit('teamDeleted', this.team_id)
         }, 1500)
       } catch (error) {
         console.error('Error deleting team:', error)

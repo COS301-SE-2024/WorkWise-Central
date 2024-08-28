@@ -217,7 +217,7 @@ export default {
         this.addDialog = false
         setTimeout(() => {
           this.isDeleting = false
-          
+          this.$emit('inventoryUpdated', response.data.data)
         }, 1500)
       } catch (error) {
         console.error(error)
