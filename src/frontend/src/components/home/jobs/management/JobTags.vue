@@ -1,6 +1,6 @@
 <template>
   <v-card class="pa-4" height="auto">
-    <v-select
+    <v-combobox
       v-model="selectedTags"
       :items="companyLabels"
       item-value="_id"
@@ -16,11 +16,14 @@
       searchable
     >
       <template #selection="{ item }">
-        <v-chip :style="{ backgroundColor: item.color, color: getContrastingColor(item.color) }">
+        <v-chip
+          :style="{ backgroundColor: item.color, color: getContrastingColor(item.color) }"
+          @click.stop="openEditDialog(item)"
+        >
           {{ item.label }}
         </v-chip>
       </template>
-    </v-select>
+    </v-combobox>
 <!--    &lt;!&ndash; Label List &ndash;&gt;-->
 <!--    <v-list class="no-background">-->
 <!--      <v-list-item-->
@@ -196,9 +199,11 @@ const getJobTags = async () => {
 const saveTags = async () => {
   const apiUrl = await getRequestUrl()
   try {
+    const updatedTags = selectedTags.value.map((tag) => tag._id)
+    console.log('Selected tags:', updatedTags)
     const response = await axios.patch(
       `${apiUrl}job/update/${props.jobID}`,
-      { tags: selectedTags.value },
+      { tags: updatedTags },
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
