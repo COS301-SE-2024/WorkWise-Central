@@ -40,7 +40,9 @@ export class ClientService {
 
   async create(userId: Types.ObjectId, createClientDto: CreateClientDto): Promise<Client & { _id: Types.ObjectId }> {
     await this.userIdMatchesEmployeeId(userId, createClientDto.employeeId);
+    console.log('pre');
     const check = await this.validateCreate(userId, createClientDto);
+    console.log('post');
     if (!check.isValid) {
       throw new ConflictException(check.message);
     }
@@ -195,7 +197,7 @@ export class ClientService {
     //Check user making request
     const user = await this.usersService.getUserById(userId);
     if (!user) return new ValidationResult(false, `User not found`);
-    const userIsInCompany = await this.usersService.userIsInCompany(user._id, createClientDto.companyId);
+    const userIsInCompany = await this.usersService.userIsInCompany(user._id, createClientDto.details.companyId);
     if (!userIsInCompany) {
       return new ValidationResult(false, `There are are no details`);
     }

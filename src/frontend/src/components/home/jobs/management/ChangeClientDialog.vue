@@ -191,6 +191,7 @@ const saveClient = async () => {
       { clientId: selectedClient.value._id },
       config
     )
+    console.log('Selected client:', selectedClient.value)
     if (response.status > 199 && response.status < 300) {
       console.log(response)
       showClientChangeSuccess()
