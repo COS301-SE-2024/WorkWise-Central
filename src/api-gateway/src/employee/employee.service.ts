@@ -1,7 +1,7 @@
 import { InternalUpdateEmployeeDto, UpdateEmployeeUserInfoDto } from './dto/internal-update-employee.dto';
 import { InventoryService } from '../inventory/inventory.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { CreateEmployeeDto, ExternalCreateEmployeeDto } from './dto/create-employee.dto';
 import { AddSubordinatesDto, RemoveSubordinatesDto, UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Types } from 'mongoose';
 import { Employee, roleObject } from './entities/employee.entity';
@@ -105,7 +105,7 @@ export class EmployeeService {
     return new ValidationResult(true, `All good`);
   }
 
-  async create(createEmployeeDto: CreateEmployeeDto) {
+  async create(createEmployeeDto: ExternalCreateEmployeeDto) {
     const validation = await this.validateCreateEmployee(createEmployeeDto);
     if (!validation.isValid) {
       throw new Error(validation.message);
@@ -113,7 +113,12 @@ export class EmployeeService {
     const newEmployee = new Employee();
     newEmployee.userId = createEmployeeDto.userId;
     newEmployee.companyId = createEmployeeDto.companyId;
-    newEmployee.superiorId = createEmployeeDto.superiorId;
+    if (!createEmployeeDto.superiorId) {
+      const owner = await this.findAllInCompanyWithRoleName(createEmployeeDto.companyId, 'Owner');
+      newEmployee.superiorId = owner[0]._id;
+    } else {
+      newEmployee.superiorId = createEmployeeDto.superiorId;
+    }
     if (createEmployeeDto.userInfo) {
       newEmployee.userInfo.displayImage = createEmployeeDto.userInfo.displayImage;
       newEmployee.userInfo.displayName = createEmployeeDto.userInfo.displayName;
@@ -132,7 +137,15 @@ export class EmployeeService {
       newEmployee.role.permissionSuite = role.permissionSuite;
     }
 
-    return await this.employeeRepository.save(newEmployee);
+    const savedEmployee = await this.employeeRepository.save(newEmployee);
+
+    //Updating the subordinates of the newEmployee
+    const dto = new AddSubordinatesDto();
+    dto.currentEmployeeId = createEmployeeDto.currentEmployeeId;
+    dto.subordinatesToBeAdded = [savedEmployee._id];
+    await this.addSubordinates(savedEmployee.superiorId, dto);
+
+    return savedEmployee;
   }
 
   async findAll() {
@@ -380,43 +393,6 @@ export class EmployeeService {
   async removeJobAssignment(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
     return this.employeeRepository.removeAssignedJob(employeeId, jobId);
   }
-
-  // async updateUnderMe(
-  //   userId: Types.ObjectId,
-  //   employeeId: Types.ObjectId,
-  //   updateEmployeeDto: UpdateEmployeeDto,
-  //   currentEmployeeId: Types.ObjectId,
-  // ) {
-  //   const validation = await this.validateUpdateEmployee(employeeId, currentEmployeeId, updateEmployeeDto);
-  //   if (!validation.isValid) {
-  //     throw new Error(validation.message);
-  //   }
-  //   if (!(await this.isBelowMe(currentEmployeeId, employeeId))) {
-  //     throw new Error('Employee not below the requesting employee');
-  //   }
-  //   //******Updating the structure*********/
-  //   if (updateEmployeeDto.subordinates) {
-  //     await this.updateSubordinates(employeeId, updateEmployeeDto.subordinates);
-  //   }
-  //   if (updateEmployeeDto.superiorId) {
-  //     await this.updateSuperior(employeeId, updateEmployeeDto.superiorId);
-  //   }
-  //   //**********Done updating structure****************/
-
-  //   //Altering the dto to update the role if roleId is given
-  //   const dto = new InternalUpdateEmployeeDto();
-  //   dto.subordinateTeams = updateEmployeeDto.subordinateTeams;
-  //   dto.currentJobAssignments = updateEmployeeDto.currentJobAssignments;
-  //   if (updateEmployeeDto.roleId) {
-  //     dto.role.roleId = updateEmployeeDto.roleId;
-  //     const role = await this.roleService.findById(dto.role.roleId);
-  //     dto.role.permissionSuite = role.permissionSuite;
-  //     dto.role.roleName = role.roleName;
-  //   }
-
-  //   const previousObject = this.employeeRepository.update(employeeId, dto);
-  //   return previousObject;
-  // }
 
   async updateUserInfo(id: Types.ObjectId, userInfo: UpdateEmployeeUserInfoDto) {
     const previousObject = this.employeeRepository.updateUserInfo(id, userInfo);
