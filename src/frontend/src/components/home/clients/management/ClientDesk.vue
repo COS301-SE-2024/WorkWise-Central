@@ -147,21 +147,14 @@
                         <ClientDetails :colors="colors" :clientDetails="selectedItem"
                       /></v-list-item>
 
-                      <v-list-item
-                        v-show="
-                          checkPermission('edit clients') 
-                        "
+                      <v-list-item v-show="checkPermission('edit clients')"
                         ><EditClient
                           @update:item="selectedItem = $event"
                           :editedItem="selectedItem"
                           :_clientID="selectedItemId"
                       /></v-list-item>
 
-                      <v-list-item
-                        v-show="
-                          checkPermission('delete clients') 
-                        "
-                      >
+                      <v-list-item v-show="checkPermission('delete clients')">
                         <DeleteClient
                           :details="selectedItem"
                           :client_id="selectedItemId"
@@ -187,6 +180,7 @@ import AddClient from './AddClient.vue'
 import ClientDetails from './ClientDetails.vue'
 import axios from 'axios'
 import { defineComponent } from 'vue'
+
 // import AddEmployee from '@/components/home/employees/management/AddEmployee.vue'
 
 export default defineComponent({
@@ -314,6 +308,7 @@ export default defineComponent({
   },
   created() {
     window.addEventListener('resize', this.handleResize)
+    this.getClients()
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.handleResize)
@@ -328,6 +323,22 @@ export default defineComponent({
     openClientDialogVisbility() {
       this.addClientDialog = true
     },
+    addClient(item) {
+      this.clientDetails.push(item)
+    },
+    removeClientFromList(item) {
+      const index = this.clientDetails.findIndex((client) => client._id === item)
+      if (index !== -1) {
+        this.clientDetails.splice(index, 1)
+      }
+    },
+    updateClientInList(updatedClient) {
+      const index = this.clientDetails.findIndex((client) => client._id === updatedClient._id)
+      if (index !== -1) {
+        this.clientDetails.splice(index, 1, updatedClient)
+      }
+    },
+
     async getEmployeePermissions() {
       const config = {
         headers: {

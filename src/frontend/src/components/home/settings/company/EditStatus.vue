@@ -289,7 +289,7 @@ export default defineComponent({
             life: 3000
           })
           setTimeout(() => {
-            
+            this.getStatuses()
             this.isDeleting = false
           }, 3000)
         })

@@ -501,7 +501,6 @@ const confirmDelete = async () => {
       setTimeout(() => {
         deleteDialog.value = false
         isDeleting.value = false
-        
       }, 3000)
       closeDialog()
     } catch (error) {
@@ -514,7 +513,6 @@ const confirmDelete = async () => {
       })
     } finally {
       localStorage.setItem('jobDeleted', 'true')
-      
     }
   }
 }

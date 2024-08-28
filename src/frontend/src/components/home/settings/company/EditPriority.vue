@@ -282,7 +282,7 @@ export default defineComponent({
             life: 3000
           })
           setTimeout(() => {
-            //  
+            this.getPriorities()
             this.isDeleting = false
           }, 3000)
           this.dialog = false

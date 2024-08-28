@@ -19,7 +19,6 @@
     max-width="600"
     :no-overlay="false"
     scrollable
-
     :opacity="0"
   >
     <v-card
@@ -502,7 +501,7 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.isDeleting = false
-            
+            this.$emit('create', res.data.data)
           }, 1500)
         })
         .catch((res) => {

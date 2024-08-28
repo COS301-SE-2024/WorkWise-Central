@@ -86,7 +86,7 @@ export default defineComponent({
       const apiURL = await this.getRequestUrl()
       axios
         .delete(`${apiURL}job/tags/p`, config)
-        .then(() => {
+        .then((response) => {
           this.isDeleting = true
           this.$toast.add({
             severity: 'success',
@@ -97,7 +97,7 @@ export default defineComponent({
           setTimeout(() => {
             this.deleteDialog = false
             this.isDeleting = false
-            
+            this.$emit('Deleted', response.data.data)
           }, 3000)
         })
         .catch((err) => {

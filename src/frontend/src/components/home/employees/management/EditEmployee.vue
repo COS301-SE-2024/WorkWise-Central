@@ -341,7 +341,6 @@ export default {
           setTimeout(() => {
             this.isDeleting = false
             this.employeeDialog = false
-            
           }, 1500)
         })
         .catch((error) => {
