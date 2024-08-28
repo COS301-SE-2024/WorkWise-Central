@@ -39,11 +39,16 @@
           <v-card class="mb-4 elevation-0">
             <v-card-title class="text-h6">In-App Notifications</v-card-title>
             <v-card-text>
-              <p>Get notifications within the app for important updates and alerts.</p>
-              <v-switch
-                v-model="notifications.inApp.enabled"
-                label="Enable In-App Notifications"
-              ></v-switch>
+              <v-col>
+                <p>Get notifications within the app for important updates and alerts.</p>
+              </v-col>
+              <v-col offset="4">
+                <v-switch
+                  v-model="notifications.inApp.enabled"
+                  label="Enable In-App Notifications"
+                ></v-switch>
+              </v-col>
+
             </v-card-text>
           </v-card>
 

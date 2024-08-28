@@ -5,8 +5,8 @@
       <v-btn color="primary" @click="createNewTask" :disabled="!canCreateNewTask" prepend-icon="mdi-plus">Create New Task</v-btn>
     </v-row>
 
-    <!-- Loop through tasks -->
-    <v-row v-for="(task, taskIndex) in taskList" :key="taskIndex" class="mt-4">
+    <!-- Loop through tasks with pagination -->
+    <v-row v-for="(task, taskIndex) in paginatedTasks" :key="taskIndex" class="mt-4">
       <v-col>
         <!-- Task Title -->
         <v-textarea
@@ -37,7 +37,7 @@
           </v-row>
 
           <!-- Task Items -->
-          <v-row v-for="(item, itemIndex) in task.items" :key="itemIndex" class="d-flex align-center mb-3">
+          <v-row v-for="(item, itemIndex) in task.items.slice(0, 5)" :key="itemIndex" class="d-flex align-center mb-3">
             <v-col md="10" class="pr-4">
               <v-checkbox
                 v-model="item.done"
@@ -162,156 +162,76 @@
         </template>
       </v-col>
     </v-row>
+
+    <!-- Pagination -->
+    <v-row class="justify-center mt-4">
+      <v-pagination
+        v-model:page="currentPage"
+        :length="pageCount"
+        total-visible="5"
+        color="primary"
+      ></v-pagination>
+    </v-row>
   </v-container>
 </template>
 
-<script setup lang="ts">
-import { defineProps, ref, onMounted } from 'vue';
-import axios from 'axios'
-
-// API URLs
-const localUrl = 'http://localhost:3000/'
-const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
-
-// Request Config
-const config = {
-  headers: {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${localStorage.getItem('access_token')}`
-  }
-}
-
-const props = defineProps<{
-  jobTaskList: TaskList[];
-  id: string
-}>()
-
-interface TaskItem {
-  description: string
-  assignedEmployees: string[]
-  dueDate: string
-  done: boolean
-}
-interface TaskList {
-  title: string
-  items: TaskItem[]
-}
-
-interface Task {
-  title: string;
-  items: TaskItem[];
-  newItemText: string;
-  isSaveTaskClicked: boolean;
-  isSaveVisible: boolean;
-}
-
-interface Employee {
-  text: string;
-  value: number;
-}
-
-const taskList = ref<Task[]>([
-  {
-    title: '',
-    items: [],
-    newItemText: '',
-    isSaveTaskClicked: false,
-    isSaveVisible: true,
+<script>
+export default {
+  data() {
+    return {
+      taskList: [
+        // Populate with tasks
+      ],
+      itemsPerPage: 5,
+      currentPage: 1,
+      assignDialog: false,
+      selectedEmployees: [],
+      assignableEmployees: [],
+    };
   },
-]);
-
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status >= 200 && res.status < 300
-  } catch {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
-
-const assignableEmployees = ref<Employee[]>([
-  { text: 'John Doe', value: 1 },
-  { text: 'Jane Smith', value: 2 },
-]);
-
-const selectedEmployees = ref<Employee[]>([]);
-const assignDialog = ref(false);
-
-const createNewTask = () => {
-  taskList.value.push({
-    title: '',
-    items: [],
-    newItemText: '',
-    isSaveTaskClicked: false,
-    isSaveVisible: true,
-  });
+  computed: {
+    paginatedTasks() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      return this.taskList.slice(start, start + this.itemsPerPage);
+    },
+    pageCount() {
+      return Math.ceil(this.taskList.length / this.itemsPerPage);
+    },
+    canCreateNewTask() {
+      return this.taskList.length < this.itemsPerPage * this.pageCount;
+    }
+  },
+  methods: {
+    createNewTask() {
+      this.taskList.push({ title: '', items: [], newItemText: '', isSaveVisible: false });
+    },
+    getTaskProgress(task) {
+      const completedItems = task.items.filter(item => item.done).length;
+      return completedItems / task.items.length * 100 || 0;
+    },
+    addItem(taskIndex) {
+      const task = this.taskList[taskIndex];
+      if (task.newItemText.trim() !== '') {
+        task.items.push({ description: task.newItemText, done: false });
+        task.newItemText = '';
+        task.isSaveVisible = true;
+      }
+    },
+    saveTask(taskIndex) {
+      // Save task logic
+    },
+    deleteItem(taskIndex, itemIndex) {
+      this.taskList[taskIndex].items.splice(itemIndex, 1);
+    },
+    openCheckActionsDialog(itemIndex) {
+      // Handle dialog actions
+    },
+  },
 };
-
-const canCreateNewTask = ref(true);
-
-const addItem = async (taskIndex: number) => {
-  if (taskList.value[taskIndex].newItemText.trim() !== '') {
-    taskList.value[taskIndex].items.push({
-      description: taskList.value[taskIndex].newItemText,
-      assignedEmployees: [],
-      dueDate: new Date().toISOString(),
-      done: false,
-    });
-    taskList.value[taskIndex].newItemText = '';
-  }
-  const apiUrl = getRequestUrl()
-  // try {
-  //   const response = await axios.put(`${apiUrl}job/taskItem`, {
-  //     employeeId: localStorage.getItem('employeeId'),
-  //     jobId: props.id,
-  //     taskId: taskList.value[taskIndex]._id,
-  //   }, config)
-  //   console.log(response)
-  // } catch (error) {
-  //   console.log(error)
-  // }
-};
-
-const deleteItem = (taskIndex: number, itemIndex: number) => {
-  taskList.value[taskIndex].items.splice(itemIndex, 1);
-};
-
-const saveTask = (taskIndex: number) => {
-  taskList.value[taskIndex].isSaveTaskClicked = true;
-};
-
-const getTaskProgress = (task: Task): number => {
-  const totalItems = task.items.length;
-  const completedItems = task.items.filter((item) => item.done).length;
-  return totalItems === 0 ? 0 : (completedItems / totalItems) * 100;
-};
-
-const openCheckActionsDialog = (itemIndex: number) => {
-  // Implement dialog actions here
-};
-
-onMounted(() => {
-  taskList.value = props.jobTaskList.map(task => ({
-    ...task,
-    newItemText: '',
-    isSaveTaskClicked: false,
-    isSaveVisible: true,
-  }));
-  console.log('Task items:', taskList.value);
-});
 </script>
 
-<style scoped>
+<style>
 .strikethrough {
   text-decoration: line-through;
-}
-
-.custom-item-class {
-  color: darkseagreen; /* Change this to your desired color */
 }
 </style>
