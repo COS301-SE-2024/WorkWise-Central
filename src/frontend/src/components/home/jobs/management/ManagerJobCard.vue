@@ -346,12 +346,14 @@ const patchJobDetails = async () => {
   try {
     // Validate and set startDate
     if (startDate.value && startTime.value) {
-      const startDateTimeStr = `${startDate.value}T${startTime.value}`
-      const startDateTime = new Date(startDateTimeStr)
+      const startTimeString = startTime.value
+      const [hours, minutes] = startTimeString.split(':').map(Number)
+      const startDateTime = new Date(startDate.value)
+      startDateTime.setHours(hours, minutes, 0, 0)
       if (!isNaN(startDateTime.getTime())) {
         job.value.details.startDate = startDateTime.toISOString()
       } else {
-        console.error('Invalid start date/time:', startDateTimeStr)
+        console.error('Invalid start date/time:', startDateTime)
       }
     } else {
       console.error('Missing start date or time value')
@@ -359,8 +361,11 @@ const patchJobDetails = async () => {
 
     // Validate and set endDate
     if (endDate.value && endTime.value) {
-      const endDateTimeStr = `${endDate.value}T${endTime.value}`
-      const endDateTime = new Date(endDateTimeStr)
+      // Construct a valid ISO string manually
+      const endDateTimeStr = endTime.value
+      const [hours, minutes] = endDateTimeStr.split(':').map(Number)
+      const endDateTime = new Date(endDate.value)
+      endDateTime.setHours(hours, minutes, 0,0)
       if (!isNaN(endDateTime.getTime())) {
         job.value.details.endDate = endDateTime.toISOString()
       } else {
@@ -370,7 +375,7 @@ const patchJobDetails = async () => {
       console.error('Missing end date or time value')
     }
 
-    // Make patch request
+      // Make patch request
     const response = await axios.patch(
       `${apiUrl}job/update/${props.passedInJob._id}`,
       { details: job.value.details },
