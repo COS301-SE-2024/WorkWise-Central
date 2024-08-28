@@ -139,6 +139,7 @@ interface Label {
   companyId: string
   label: string
   color: string
+  _id: string
 }
 
 const props = defineProps<{ tags: Label[]; jobID: string }>()
@@ -149,6 +150,8 @@ const dialogTitle = ref<string>('Create Label')
 const labelTitle = ref<string>('')
 const selectedColor = ref<string>('#ffffff')
 const selectedTags = ref<Label[]>([])
+const labels = ref<Label[]>([])
+const companyLabels = ref<Label[]>([])
 
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
@@ -169,10 +172,6 @@ const getRequestUrl = async (): Promise<string> => {
   return localAvailable ? localUrl : remoteUrl
 }
 
-const labels = ref<Label[]>([])
-
-const companyLabels = ref<Label[]>([])
-
 const getJobTags = async () => {
   const apiUrl = await getRequestUrl()
   try {
@@ -186,6 +185,7 @@ const getJobTags = async () => {
     )
     if (response.status > 199 && response.status < 300) {
       companyLabels.value = response.data.data
+      console.log('Returned tags:', companyLabels.value)
       selectedTags.value = props.tags
     }
   } catch (error) {
@@ -196,13 +196,9 @@ const getJobTags = async () => {
 const saveTags = async () => {
   const apiUrl = await getRequestUrl()
   try {
-    const updatedTags = [
-      ...selectedTags.value
-    ];
-    console.log('Updated tags:', updatedTags);
     const response = await axios.patch(
       `${apiUrl}job/update/${props.jobID}`,
-      { tags: updatedTags },
+      { tags: selectedTags.value },
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
@@ -302,7 +298,7 @@ const saveLabel = async () => {
           )
           if (response.status > 199 && response.status < 300) {
             addTagSuccess()
-            await getJobTags()
+            selectedTags.value.push(tag)
             console.log('Tag added to the job', response)
           } else {
             console.log('Failed to add tag to job', response)
