@@ -195,7 +195,7 @@ export class ClientService {
     //Check user making request
     const user = await this.usersService.getUserById(userId);
     if (!user) return new ValidationResult(false, `User not found`);
-    const userIsInCompany = await this.usersService.userIsInCompany(user._id, createClientDto.companyId);
+    const userIsInCompany = await this.usersService.userIsInCompany(user._id, createClientDto.details.companyId);
     if (!userIsInCompany) {
       return new ValidationResult(false, `There are are no details`);
     }
