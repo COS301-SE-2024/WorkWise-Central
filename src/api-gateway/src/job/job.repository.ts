@@ -1,12 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
-import { ClientFeedback, Comment, Details, Job, Task } from './entities/job.entity';
+import {
+  ClientFeedback,
+  Comment,
+  defaultPopulatedFields,
+  Details,
+  employeeComments,
+  History,
+  Job,
+  jobAssignedEmployees,
+  jobTaskListItems,
+  Task,
+} from './entities/job.entity';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { isNotDeleted } from '../shared/soft-delete';
 import { currentDate } from '../utils/Utils';
 import { TaskItem } from './dto/create-job.dto';
-import { History } from './entities/job.entity';
 import { UpdateTaskItemDto } from './dto/job-task-item.dto';
 
 @Injectable()
@@ -22,18 +32,14 @@ export class JobRepository {
   }
 
   async findById(identifier: Types.ObjectId): Promise<FlattenMaps<Job> & { _id: Types.ObjectId }> {
-    const populatedFields: string[] = [
-      'clientId',
-      'assignedBy',
-      'assignedEmployees',
-      /*'inventoryUsed'*/ //TODO: When Inventory is added
-    ];
-
     return this.jobModel
       .findOne({
         $and: [{ _id: identifier }, isNotDeleted],
       })
-      .populate(populatedFields)
+      .populate(defaultPopulatedFields)
+      .populate(jobAssignedEmployees)
+      .populate(employeeComments)
+      .populate(jobTaskListItems)
       .lean();
   }
 
@@ -51,7 +57,7 @@ export class JobRepository {
 
   async findAllInCompanyDetailed(
     companyId: Types.ObjectId,
-    fieldsToPopulate: string[] = ['assignedEmployees', 'assignedBy', 'clientId', 'comments'],
+    //fieldsToPopulate: string[] = ['assignedEmployees', 'assignedBy', 'clientId', 'comments'],
   ) {
     const filter = {
       $and: [{ companyId: companyId }, isNotDeleted],
@@ -59,7 +65,10 @@ export class JobRepository {
 
     return this.jobModel //TODO: Test
       .find(filter)
-      .populate(fieldsToPopulate)
+      .populate(defaultPopulatedFields)
+      .populate(jobAssignedEmployees)
+      .populate(employeeComments)
+      .populate(jobTaskListItems)
       .lean()
       .exec();
   }
@@ -121,7 +130,7 @@ export class JobRepository {
       job.history.push(history);
       job.markModified('history');
     }
-    return job.save();
+    return (await job.save()).toObject();
   }
 
   async addToHistory(id: Types.ObjectId, newEvent: History) {
@@ -170,20 +179,38 @@ export class JobRepository {
       .exec();
   }
 
+  async findOneInternal(id: Types.ObjectId) {
+    return await this.jobModel.findOne({ $and: [{ _id: id }, isNotDeleted] }).exec();
+  }
+
   //Specific endpoints
 
   async findAllForEmployee(employeeId: Types.ObjectId) {
-    const result = await this.jobModel.find({ $and: [{ 'assignedEmployees.employeeIds': employeeId }, isNotDeleted] });
-    console.log(result);
-    return result;
+    return this.jobModel
+      .find({
+        $and: [
+          {
+            $or: [{ 'assignedEmployees.employeeIds': employeeId }, { 'taskList.items.assignedEmployees': employeeId }],
+          },
+          isNotDeleted,
+        ],
+      })
+      .lean()
+      .exec();
   }
 
   async findAllForEmployeeDetailed(employeeId: Types.ObjectId) {
-    const fieldsToPopulate = ['assignedEmployees', 'assignedBy', 'clientId', 'comments'];
     const filter = {
       $and: [{ 'assignedEmployees.employeeIds': employeeId }, isNotDeleted],
     };
-    return await this.jobModel.find(filter).populate(fieldsToPopulate).lean().exec();
+    return await this.jobModel
+      .find(filter)
+      .populate(defaultPopulatedFields)
+      .populate(jobAssignedEmployees)
+      .populate(employeeComments)
+      .populate(jobTaskListItems)
+      .lean()
+      .exec();
   }
 
   async assignEmployee(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
@@ -234,26 +261,12 @@ export class JobRepository {
   }
 
   async unassignEmployee(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
-    return await this.jobModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            {
-              _id: jobId,
-            },
-            isNotDeleted,
-          ],
-        },
-        {
-          $pull: { 'assignedEmployees.employeeIds': employeeId },
-          updatedAt: new Date(),
-        },
-        {
-          new: true,
-        },
-      )
-      .lean()
-      .exec();
+    const job = await this.findOneInternal(jobId);
+    job.assignedEmployees.employeeIds = job.assignedEmployees.employeeIds.filter(
+      (a) => a.toString() !== employeeId.toString(),
+    );
+    job.markModified('assignedEmployees');
+    return (await job.save()).toObject();
   }
 
   /*
@@ -299,6 +312,10 @@ export class JobRepository {
           isNotDeleted,
         ],
       })
+      .populate(defaultPopulatedFields)
+      .populate(jobAssignedEmployees)
+      .populate(employeeComments)
+      .populate(jobTaskListItems)
       .exec();
 
     const task = job.taskList.find((t) => t._id.toString() === taskId.toString());
@@ -332,26 +349,10 @@ export class JobRepository {
   }
 
   async unassignTeam(teamId: Types.ObjectId, jobId: Types.ObjectId) {
-    return await this.jobModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            {
-              _id: jobId,
-            },
-            isNotDeleted,
-          ],
-        },
-        {
-          $pull: { 'assignedEmployees.teamIds': teamId },
-          updatedAt: new Date(),
-        },
-        {
-          new: true,
-        },
-      )
-      .lean()
-      .exec();
+    const job = await this.findOneInternal(jobId);
+    job.assignedEmployees.teamIds = job.assignedEmployees.teamIds.filter((a) => a.toString() !== teamId.toString());
+    job.markModified('assignedEmployees');
+    return (await job.save()).toObject();
   }
 
   async addComment(newComment: Comment, jobId: Types.ObjectId) {

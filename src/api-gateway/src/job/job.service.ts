@@ -137,13 +137,7 @@ export class JobService {
           //return null;
         }
       }
-      // const user = await this.usersService.getUserById(userId);
-      // const previousJob = await this.jobRepository.findById(id);
       const updated = await this.jobRepository.update(id, updateJobDto);
-      console.log(updated);
-      // const event = new History(this.compareJobDto(this.usersService.getFullName(user), previousJob, updateJobDto));
-      // const historyUpdate = await this.jobRepository.addHistory(event, previousJob._id);
-      // console.log('updatedJob', updated, historyUpdate);
       return await this.jobRepository.findById(updated._id);
     } catch (e) {
       throw new Error(e);
@@ -367,7 +361,7 @@ export class JobService {
       currentJobAssignments: assignedJobs,
     });
     if (otherEmployee.userInfo) {
-      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName} to this job`;
+      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.surname} to this job`;
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
@@ -425,7 +419,7 @@ export class JobService {
     });
     if (otherEmployee.userInfo) {
       //TODO: FIX later
-      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned Task: ${taskAssignDto.taskId} to ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName}`;
+      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned Task: ${taskAssignDto.taskId} to ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.surname}`;
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
@@ -483,7 +477,7 @@ export class JobService {
     });
     if (otherEmployee.userInfo) {
       //TODO: FIX later
-      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Unassigned Task: ${taskAssignDto.taskId} from ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName}`;
+      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Unassigned Task: ${taskAssignDto.taskId} from ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.surname}`;
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
@@ -502,7 +496,7 @@ export class JobService {
     if (!alreadyAssigned) throw new ConflictException('Employee Not Assigned');
     /// Role-based stuff
     //TODO: Implement later
-    await this.employeeService.removeJobAssignment(jobAssignDto.employeeId, jobAssignDto.jobId);
+    this.employeeService.removeJobAssignment(jobAssignDto.employeeId, jobAssignDto.jobId);
     const result = await this.jobRepository.unassignEmployee(jobAssignDto.employeeToAssignId, jobAssignDto.jobId);
     const user = await this.usersService.getUserById(userId);
     const otherEmployee = await this.employeeService.findById(jobAssignDto.employeeToAssignId);
@@ -513,7 +507,7 @@ export class JobService {
     });
     if (otherEmployee.userInfo) {
       //TODO: FIX later
-      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Unassigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName} from this job`;
+      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Unassigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.surname} from this job`;
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
@@ -561,7 +555,7 @@ export class JobService {
         const otherEmployee = await this.employeeService.findById(employeeId);
         if (otherEmployee.userInfo) {
           //TODO: FIX later
-          const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} assigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName} from this job`;
+          const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} assigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.surname} from this job`;
           const historyUpdate = await this.jobRepository.addHistory(new History(event), jobAssignGroupDto.jobId);
           console.log(historyUpdate);
         }
@@ -628,7 +622,7 @@ export class JobService {
         const otherEmployee = await this.employeeService.findById(employeeId);
         if (otherEmployee.userInfo) {
           //TODO: FIX later
-          const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} unassigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName} from this job`;
+          const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} unassigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.surname} from this job`;
           const historyUpdate = await this.jobRepository.addHistory(new History(event), jobAssignGroupDto.jobId);
           console.log(historyUpdate);
         }
