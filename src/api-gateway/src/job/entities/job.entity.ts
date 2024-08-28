@@ -48,16 +48,16 @@ export class Details {
   heading: string;
 
   @ApiProperty()
-  @Prop({ type: String, required: true })
-  description: string;
+  @Prop({ type: String, required: true, default: '' })
+  description?: string = '';
 
   @ApiProperty()
   @Prop({ type: Address, required: true })
   address: Address;
 
   @ApiProperty()
-  @Prop({ type: Date, required: true })
-  startDate: Date;
+  @Prop({ type: Date, required: true, default: null })
+  startDate?: Date = null;
 
   @ApiProperty()
   @Prop({ type: Date, required: false })
@@ -111,15 +111,15 @@ export class TaskItem {
   _id: Types.ObjectId = new Types.ObjectId();
 
   @ApiProperty()
-  @Prop({ type: String, required: true })
-  description: string;
+  @Prop({ type: String, required: true, default: '' })
+  description: string = '';
 
   @ApiProperty()
-  @Prop({ type: Date, required: false })
-  dueDate?: Date;
+  @Prop({ type: Date, required: false, default: null })
+  dueDate?: Date = null;
 
   @ApiProperty()
-  @Prop({ type: Boolean, required: true })
+  @Prop({ type: Boolean, required: true, default: false })
   done: boolean = false;
 
   @ApiProperty()
@@ -143,8 +143,8 @@ export class Task {
   _id: Types.ObjectId = new Types.ObjectId();
 
   @ApiProperty()
-  @Prop({ type: String, required: false })
-  title?: string;
+  @Prop({ type: String, required: false, default: '' })
+  title?: string = '';
 
   @ApiProperty()
   @Prop({ type: TaskItem, required: false, default: [] })

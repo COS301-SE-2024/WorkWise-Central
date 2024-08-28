@@ -8,7 +8,7 @@ import {
   ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateJobDto } from './dto/create-job.dto';
+import { AssignedEmployees, CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { FlattenMaps, Types } from 'mongoose';
 import { Comment, History, Job, Task } from './entities/job.entity';
@@ -33,6 +33,7 @@ import { UpdateStatus } from './dto/job-status.dto';
 import { UpdatePriorityTag, UpdateTag } from './dto/job-tag.dto';
 import { AddAttachmentDto, UpdateAttachmentDto } from './dto/job-attachment.dto';
 import { AddTaskItemDto, RemoveTaskItemDto, UpdateTaskItemDto } from './dto/job-task-item.dto';
+import { ConvertItemToJobDto } from './dto/convert-item-to-job.dto';
 
 @Injectable()
 export class JobService {
@@ -218,10 +219,12 @@ export class JobService {
     }
 
     if (job.assignedEmployees) {
-      for (const employee of job.assignedEmployees.employeeIds) {
-        const exists = await this.employeeService.employeeExists(employee);
-        if (!exists) {
-          return new ValidationResult(false, `Employee: ${employee} Not found`);
+      if (job.assignedEmployees.employeeIds.length > 0) {
+        for (const employee of job.assignedEmployees.employeeIds) {
+          const exists = await this.employeeService.employeeExists(employee);
+          if (!exists) {
+            return new ValidationResult(false, `Employee: ${employee} Not found`);
+          }
         }
       }
     }
@@ -368,7 +371,7 @@ export class JobService {
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
-    return result;
+    return this.jobRepository.findById(result._id);
   }
 
   async assignEmployeeToTaskItem(userId: Types.ObjectId, taskAssignDto: TaskAssignDto) {
@@ -514,7 +517,7 @@ export class JobService {
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
-    return result;
+    return this.jobRepository.findById(result._id);
   }
 
   private async userIdMatchesEmployeeId(userId: Types.ObjectId, employeeId: Types.ObjectId) {
@@ -1155,5 +1158,46 @@ export class JobService {
   removeAllReferencesToTeam(teamId: Types.ObjectId) {
     this.jobRepository.removeAllReferencesToTeam(teamId);
     return true;
+  }
+
+  async convertTaskListItemToJob(userId: Types.ObjectId, convertItemDto: ConvertItemToJobDto) {
+    await this.userIdMatchesEmployeeId(userId, convertItemDto.currentEmployeeId);
+    const user = await this.usersService.getUserById(userId);
+    const employee = await this.employeeService.findById(convertItemDto.currentEmployeeId);
+    const job = await this.jobRepository.findById(convertItemDto.jobId);
+    if (!user) throw new NotFoundException('user not found');
+    if (!employee) throw new NotFoundException('Employee not found');
+    if (!job) throw new NotFoundException('Job not found');
+
+    const task = job.taskList.find((t) => t._id.toString() === convertItemDto.taskId.toString());
+    const item = task.items.find((i) => i._id.toString() === convertItemDto.taskItemId.toString());
+    if (!task) throw new ConflictException('Task not found');
+    if (!item) throw new ConflictException('Item not found');
+
+    const createJobDto: CreateJobDto = new CreateJobDto();
+    createJobDto.assignedBy = job.assignedBy._id;
+    createJobDto.companyId = job.companyId;
+    createJobDto.details = {
+      address: job.details.address,
+      heading: item.description,
+    };
+    createJobDto.assignedEmployees = new AssignedEmployees();
+    createJobDto.status = job.status._id;
+
+    const newJob = await this.create(userId, createJobDto);
+    newJob.history.push(
+      new History(
+        `${employee.userInfo.firstName} ${employee.userInfo.surname} converted item: ${item.description} into a Job`,
+      ),
+    );
+    for (const assignedEmployee of newJob.assignedEmployees.employeeIds) {
+      await this.assignEmployee(userId, {
+        jobId: newJob._id,
+        employeeId: employee._id,
+        employeeToAssignId: assignedEmployee._id,
+      });
+    }
+    this.jobRepository.convertTaskToJob(convertItemDto.jobId, convertItemDto.taskId, convertItemDto.taskItemId);
+    return (await newJob.save()).toObject();
   }
 }
