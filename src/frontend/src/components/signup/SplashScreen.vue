@@ -62,7 +62,7 @@
           >
           <v-container>
             <v-row
-              ><v-col cols="12" lg="6" order="last" order-lg="first">
+              ><v-col cols="12" lg="6">
                 <v-btn
                   color="primary"
                   dark
@@ -79,7 +79,7 @@
                   Login
                 </v-btn></v-col
               >
-              <v-col cols="12" lg="6" order="first" order-lg="last">
+              <v-col cols="12" lg="6">
                 <v-btn
                   color="secondary"
                   dark
@@ -224,7 +224,7 @@
                   <v-form ref="form" v-model="valid" class="bg-background">
                     <v-row>
                       <v-col>
-                        <label style="font-size: 14px; font-weight: lighter">Rest password</label>
+                        <label style="font-size: 14px; font-weight: lighter">Reset password</label>
                         <v-text-field
                           :label="email ? '' : 'Enter your email'"
                           type="email"
@@ -253,6 +253,7 @@
                 </v-col>
               </v-sheet>
             </v-dialog>
+
             <v-dialog :opacity="0" v-model="OTPDialog" max-width="400">
               <v-sheet
                 elevation="14"
@@ -263,29 +264,28 @@
                 class="bg-background"
               >
                 <v-col>
-                  <v-form ref="form" v-model="valid" class="bg-background">
-                    <v-row>
-                      <v-col>
-                        <label style="font-size: 14px; font-weight: lighter"
-                          >Enter the code you received from email</label
-                        >
-
-                        <v-otp-input v-model="value" />
-                      </v-col>
-                    </v-row>
-                  </v-form>
-                  <v-col>
-                    <v-btn
-                      :disabled="!valid"
-                      text
-                      rounded="md"
-                      width="100%"
-                      size="large"
-                      variant="elevated"
-                      color="primary"
-                      >Change Password</v-btn
-                    >
-                  </v-col>
+                  <v-row>
+                    <v-col>
+                      <label style="font-size: 16px; font-weight: normal">
+                        Please check your email to change your password. Follow the instructions
+                        provided in the email to complete the process.
+                      </label>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col>
+                      <v-btn
+                        rounded="md"
+                        width="100%"
+                        size="large"
+                        variant="elevated"
+                        color="primary"
+                        @click="OTPDialog = false"
+                      >
+                        Close
+                      </v-btn>
+                    </v-col>
+                  </v-row>
                 </v-col>
               </v-sheet>
             </v-dialog>
@@ -533,18 +533,18 @@
                         <v-col cols="12">
                           <small class="text-caption">Profile Picture</small>
                           <v-file-input
+                            v-model="profilePicture"
                             variant="solo"
                             accept="image/*"
                             width="100%"
                             placeholder="Profile Picture"
                             @change="handleImageUpload"
-                            v-model="profile_picture"
                             hint="Image size limit of  5MB"
                             persistent-hint
                             color="black"
                             rounded="md"
                             required
-                            :rules="company_logo_rules"
+                            clearable
                             data-testid="company-logo-file-input"
                           ></v-file-input> </v-col
                       ></v-row>
@@ -952,6 +952,7 @@ export default defineComponent({
     saltRounds: 10,
     tab: false,
     loginDialog: false,
+    profilePicture: '',
     alertSignUp: false,
     alertSignUpFailure: false,
     alertLogin: false,
@@ -1040,7 +1041,7 @@ export default defineComponent({
     access_token: '',
     password: '',
     signupPassword: '',
-    profilePicture: '',
+
     confirm_password: '',
     showPassword: false,
     date: '',
@@ -1122,12 +1123,12 @@ export default defineComponent({
     ],
     nameRules: [
       (v) => !!v || 'Name is required',
-      (v) => v.length >= 3 || 'Name must be at least 3 characters',
+
       (v) => /^[a-zA-Z]*$/.test(v) || 'Name must contain only letters'
     ],
     surnameRules: [
       (v) => !!v || 'Surname is required',
-      (v) => v.length >= 3 || 'Surname must be at least 3 characters'
+      (v) => /^[a-zA-Z]*$/.test(v) || 'Name must contain only letters'
     ],
     usernameRules: [
       (v) => !!v || 'Username is required',
@@ -1235,9 +1236,26 @@ export default defineComponent({
         })
       } else {
         this.forgotPasswordDialog = false
-        this.OTPDialog = true
+        const config = {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
+        try {
+          this.OTPDialog = true
+          const apiUrl = await this.getRequestUrl()
+          await axios.post(
+            `${apiUrl}users/request/reset-pass`,
+            {
+              email: this.email
+            },
+            config
+          )
+        } catch (error) {
+          console.log(error)
+        }
       }
-      this.$router.push({ name: 'new-password' })
+      // this.$router.push({ name: 'new-password' })
     },
     format(date) {
       const day = date.getDate()

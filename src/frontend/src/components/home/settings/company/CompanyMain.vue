@@ -16,7 +16,7 @@
               ><v-menu v-model="modalMenu" activator="parent">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn variant="text" v-bind="attrs" v-on="on" size="small">
-                    <v-icon icon="fa: fa-solid fa-circle-info"></v-icon>
+                    <v-icon icon="fa: fa-solid fa-plus"></v-icon>
                   </v-btn>
                 </template>
                 <v-list>
@@ -126,6 +126,7 @@ export default defineComponent({
   },
   methods: {
     closeCompanyDialog() {
+      this.companyName = localStorage.getItem('currentCompanyName')
       this.companyDialog = false
     },
     switchCompany(companyName) {
@@ -146,8 +147,8 @@ export default defineComponent({
       localStorage.setItem('employeeId', employeeId)
       this.companyDialog = false
       setTimeout(() => {
+        window.location.reload()
         this.isDeleting = false
-        
       }, 3000)
     },
     findCompany(companyName) {

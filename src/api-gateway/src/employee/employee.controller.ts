@@ -379,22 +379,64 @@ export class EmployeeController {
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
-    summary: `Find the list of all the employees in the company except the given employee and their subordinates and superiors.`,
-    description: `Returns the ${className} instance with the given id.`,
+    summary: `Gets a list of employees that are allowed to be made subordinates of the current employee`,
+    description: `Returns a list of ${className}`,
   })
   @ApiOkResponse({
     type: EmployeeListResponseDto,
   })
   @ApiParam({
     name: 'employeeId',
-    description: `The _id attribute of the ${className}, for which a list of other employee needs to be returned.`,
+    description: `The _id attribute of the ${className}, for which a list of potential subordinates needs to be returned.`,
     type: String,
   })
-  @Get('/listOther/:employeeId')
-  async getOtherEmployees(@Headers() headers: any, @Param('employeeId') id: Types.ObjectId) {
+  @Get('/listPotentialSubordinates/:employeeId')
+  async listPotentialSubordinates(@Headers() headers: any, @Param('employeeId') id: Types.ObjectId) {
     let data;
     try {
-      data = await this.employeeService.getListOfOtherEmployees(id);
+      data = await this.employeeService.listPotentialSubordinates(id);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return {
+      data: data,
+    };
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request is not authorized to view the data.`,
+  })
+  @ApiOperation({
+    summary: `Gets a list of all the employees in the company that are allowed to be made the superior of the current employee`,
+    description: `Returns a list of ${className}`,
+  })
+  @ApiOkResponse({
+    type: EmployeeListResponseDto,
+  })
+  @ApiParam({
+    name: 'employeeId',
+    description: `The _id attribute of the ${className}, for which a list of potential superiors needs to be returned.`,
+    type: String,
+  })
+  @Get('/listPotentialSuperiors/:employeeId')
+  async listSuperiors(@Headers() headers: any, @Param('employeeId') id: Types.ObjectId) {
+    let data;
+    try {
+      data = await this.employeeService.listPotentialSuperiors(id);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }

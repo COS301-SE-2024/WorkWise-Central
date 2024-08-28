@@ -43,6 +43,8 @@ import TeamView from '@/views/home/teams/TeamView.vue'
 import CompanyRequestView from '@/views/home/company/CompanyRequestView.vue'
 import InvitesCompanyView from '@/views/home/company/InvitesCompanyView.vue'
 import NewPasswordView from '@/views/signup/NewPasswordView.vue'
+import ClientPortal from '@/views/home/clients/ClientPortalView.vue'
+import InvoicesView from '@/views/home/invoices/InvoicesView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -351,6 +353,16 @@ const router = createRouter({
         currentUser: `${localStorage.getItem('id')}`,
         onLogout: () => console.log('Logged out')
       }
+    },
+    {
+      path: '/client-portal',
+      name: 'client-portal',
+      component: ClientPortal
+    },
+    {
+      path: '/invoices',
+      name: 'invoices',
+      component: InvoicesView
     }
   ]
 })

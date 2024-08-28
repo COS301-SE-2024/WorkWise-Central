@@ -224,16 +224,11 @@ export default defineComponent({
         }
       }
       await axios
-        .get(`http://localhost:3000/role/all/${this.companyID}`, config)
+        .get(`http://localhost:3000/role/allPermissions`, config)
         .then((response) => {
+          console.log(response.data.data)
           for (let i = 0; i < response.data.data.length; i++) {
-            if (response.data.data[i].roleName === 'Owner') {
-              for (let j = 0; j < response.data.data[i].permissionSuite.length; j++) {
-                this.permissions.push(response.data.data[i].permissionSuite[j])
-                console.log(response.data.data[i].permissionSuite[j])
-              }
-              break
-            }
+            this.permissions.push(response.data.data[i])
           }
         })
         .catch((error) => {
@@ -248,12 +243,12 @@ export default defineComponent({
 
       const data = {
         currentEmployeeId: localStorage.getItem('employeeId'),
-        updateRoleDTO: {
+        updateRoleDto: {
           roleName: this.selectedItem.roleName,
           permissionSuite: this.selectedItem.permissionSuite
         }
       }
-      console.log(data)
+      console.log(JSON.stringify(data))
       await axios
         .patch(`http://localhost:3000/role/${this.selectedItem._id}`, config, data)
         .then((response) => {
@@ -267,7 +262,7 @@ export default defineComponent({
           setTimeout(() => {
             this.isDeleting = false
             this.dialog = false
-            
+            this.getRoles()
           }, 1500)
         })
         .catch((error) => {
@@ -314,7 +309,6 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.isDeleting = false
-            
           }, 1500)
         })
         .catch((error) => {

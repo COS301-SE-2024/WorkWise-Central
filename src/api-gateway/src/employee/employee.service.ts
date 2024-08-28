@@ -218,7 +218,7 @@ export class EmployeeService {
     //Checking that the owner is not in the list of newSubordinates
     const owner = await this.findAllInCompanyWithRoleName(currentEmployee.companyId, 'Owner');
     if (addSubordinatesDto.subordinatesToBeAdded.includes(owner[0]._id)) {
-      throw new Exception('Cannot make the persons current superior a subordinate');
+      throw new Exception('Cannot make the owner a subordinate');
     }
 
     const newSubordinates = currentEmployee.subordinates;
@@ -355,11 +355,7 @@ export class EmployeeService {
     const listBelow = await this.deptFirstTraversalId(employeeId);
     console.log('listBelow: ', listBelow);
 
-    if (listBelow.length == 0) {
-      throw new Exception('Could not update superior');
-    }
-
-    if (listBelow.includes(newSuperiorId)) {
+    if (listBelow.length !== 0 && listBelow.includes(newSuperiorId)) {
       throw new Exception('Cannot make the a person below the current employee a superior of the employee');
     }
 
@@ -591,6 +587,50 @@ export class EmployeeService {
     }
 
     return listOfEmployees;
+  }
+
+  async listPotentialSubordinates(employeeId: Types.ObjectId) {
+    const currentEmployee = await this.findById(employeeId);
+    const listOfEmployees = await this.findAllInCompany(currentEmployee.companyId);
+    const owner = await this.findAllInCompanyWithRoleName(currentEmployee.companyId, 'Owner');
+
+    //Removing the current employee from the list
+    let index = listOfEmployees.findIndex((employee) => employee._id.toString() === currentEmployee._id.toString());
+    if (index !== -1) {
+      listOfEmployees.splice(index, 1);
+    }
+
+    //removing the owner from the list
+    index = listOfEmployees.findIndex((employee) => employee._id.toString() === owner[0]._id.toString());
+    if (index !== -1) {
+      listOfEmployees.splice(index, 1);
+    }
+
+    //removing the current employees superior from the list
+    index = listOfEmployees.findIndex((employee) => employee._id.toString() === currentEmployee.superiorId.toString());
+    if (index !== -1) {
+      listOfEmployees.splice(index, 1);
+    }
+  }
+
+  async listPotentialSuperiors(employeeId: Types.ObjectId) {
+    const currentEmployee = await this.findById(employeeId);
+    const listOfEmployees = await this.findAllInCompany(currentEmployee.companyId);
+
+    //Removing the current employee from the list
+    let index = listOfEmployees.findIndex((employee) => employee._id.toString() === currentEmployee._id.toString());
+    if (index !== -1) {
+      listOfEmployees.splice(index, 1);
+    }
+
+    //Removing everyone below the current employee from the list
+    const listBelow = await this.deptFirstTraversalId(employeeId);
+    for (const tempEmployeeId of listBelow) {
+      index = listOfEmployees.findIndex((employee) => employee._id.toString() === tempEmployeeId.toString());
+      if (index !== -1) {
+        listOfEmployees.splice(index, 1);
+      }
+    }
   }
 
   async deptFirstTraversalId(id: Types.ObjectId) {

@@ -7,43 +7,38 @@
     </template>
     <v-card>
       <v-card-title>
-        <v-icon>mdi-plus</v-icon>
-        <span>Delete Inventory</span>
+        <v-icon>mdi-delete</v-icon>
+        <span>Delete Invoice</span>
       </v-card-title>
-      <v-card-text
-        ><v-container>
+      <v-card-text>
+        <v-container>
           <v-row>
             <p class="font-weight-regular">
-              Are you sure you want to delete <strong>{{ inventoryName }}</strong
+              Are you sure you want to delete the invoice for <strong>{{ clientName }}</strong
               >? This action cannot be reversed.
             </p>
           </v-row>
-        </v-container></v-card-text
-      >
+        </v-container>
+      </v-card-text>
 
       <Toast position="top-center" />
       <v-card-actions>
-        <v-container
-          ><v-row justify="end"
-            ><v-col cols="12" lg="6" order="last" order-lg="first"
-              ><Toast position="bottom-center" />
+        <v-container>
+          <v-row justify="end">
+            <v-col cols="12" lg="6" order="last" order-lg="first">
+              <Toast position="bottom-center" />
               <v-btn label="Cancel" color="secondary" @click="close" block
                 ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon>Cancel
-              </v-btn></v-col
-            >
+              </v-btn>
+            </v-col>
             <v-col cols="12" lg="6" order="first" order-lg="last">
-              <v-btn
-                label="Delete"
-                color="error"
-                :loading="isDeleting"
-                block
-                @click="deleteInventory"
+              <v-btn label="Delete" color="error" :loading="isDeleting" block @click="deleteInvoice"
                 ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon
                 >Delete
-              </v-btn></v-col
-            ></v-row
-          ></v-container
-        >
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -55,27 +50,23 @@ import Toast from 'primevue/toast'
 import axios from 'axios'
 
 export default defineComponent({
-  name: 'DeleteInventory',
+  name: 'DeleteInvoice',
   props: {
-    inventory_id: String,
-    inventoryName: String
+    invoice_id: String,
+    clientName: String
   },
   components: {
     Toast
   },
   data: () => ({
     deleteDialog: false,
-    clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
     isDeleting: false,
-    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
+    remoteUrl: 'https://yourapi.example.com/'
   }),
   methods: {
-    async deleteInventory() {
+    async deleteInvoice() {
       this.isDeleting = true // Indicate the start of the deletion process
-      console.log('meow', this.inventory_id)
-      console.log(localStorage.getItem('employeeId'))
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -87,18 +78,17 @@ export default defineComponent({
       }
       const apiURL = await this.getRequestUrl()
       try {
-        await axios.delete(`${apiURL}inventory/${this.inventory_id}`, config).then((response) => {
-          console.log(response.data)
+        await axios.delete(`${apiURL}invoice/${this.invoice_id}`, config).then((response) => {
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Inventory deleted successfully',
+            detail: 'Invoice deleted successfully',
             life: 3000
           })
           setTimeout(() => {
             this.deleteDialog = false
             this.isDeleting = false
-            this.$emit('Deleted', response.data.data)
+            this.$emit('InvoiceDeleted', response.data.data)
           }, 3000)
         })
       } catch (error) {
@@ -106,9 +96,10 @@ export default defineComponent({
         this.$toast.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'An error occurred while deleting the inventory',
+          detail: 'An error occurred while deleting the invoice',
           life: 3000
         })
+        this.isDeleting = false
       }
     },
     close() {

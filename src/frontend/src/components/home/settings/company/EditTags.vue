@@ -283,7 +283,7 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.dialog = false
-            
+            this.getTags()
           }, 3000)
         })
         .catch((err) => {
