@@ -1,6 +1,7 @@
 <template>
   <v-card class="pa-4" height="auto">
     <v-select
+      v-model="selectedTags"
       :items="companyLabels"
       item-value="_id"
       item-title="label"
@@ -13,56 +14,62 @@
       clearable
       data-testid="tags-multi-select"
       searchable
-    ></v-select>
+    >
+      <template #selection="{ item }">
+        <v-chip :style="{ backgroundColor: item.color, color: getContrastingColor(item.color) }">
+          {{ item.label }}
+        </v-chip>
+      </template>
+    </v-select>
+<!--    &lt;!&ndash; Label List &ndash;&gt;-->
+<!--    <v-list class="no-background">-->
+<!--      <v-list-item-->
+<!--        v-for="label in filteredLabels"-->
+<!--        :key="label.label"-->
+<!--        class="d-flex align-center no-background"-->
+<!--      >-->
+<!--        <v-row align="center" no-gutters class="w-100">-->
+<!--          &lt;!&ndash; Color Block with Label Text &ndash;&gt;-->
+<!--          <v-col cols="auto">-->
+<!--            <div-->
+<!--              :style="{ backgroundColor: label.color }"-->
+<!--              class="mr-4 d-flex justify-center align-center"-->
+<!--              style="width: 600px; height: 40px; border-radius: 4px; position: relative"-->
+<!--            >-->
+<!--              <span-->
+<!--                class="text-center"-->
+<!--                style="-->
+<!--                  position: absolute;-->
+<!--                  width: 100%;-->
+<!--                  height: 100%;-->
+<!--                  display: flex;-->
+<!--                  justify-content: center;-->
+<!--                  align-items: center;-->
+<!--                  color: white;-->
+<!--                  font-weight: bold;-->
+<!--                "-->
+<!--              >-->
+<!--                {{ label.label }}-->
+<!--              </span>-->
+<!--            </div>-->
+<!--          </v-col>-->
 
-    <!-- Label List -->
-    <v-list class="no-background">
-      <v-list-item
-        v-for="label in filteredLabels"
-        :key="label.label"
-        class="d-flex align-center no-background"
-      >
-        <v-row align="center" no-gutters class="w-100">
-          <!-- Color Block with Label Text -->
-          <v-col cols="auto">
-            <div
-              :style="{ backgroundColor: label.color }"
-              class="mr-4 d-flex justify-center align-center"
-              style="width: 600px; height: 40px; border-radius: 4px; position: relative"
-            >
-              <span
-                class="text-center"
-                style="
-                  position: absolute;
-                  width: 100%;
-                  height: 100%;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  color: white;
-                  font-weight: bold;
-                "
-              >
-                {{ label.label }}
-              </span>
-            </div>
-          </v-col>
+<!--          &lt;!&ndash; Edit Icon &ndash;&gt;-->
+<!--          <v-col cols="auto">-->
+<!--            <v-icon @click="openEditDialog(label)">mdi-pencil</v-icon>-->
+<!--          </v-col>-->
 
-          <!-- Edit Icon -->
-          <v-col cols="auto">
-            <v-icon @click="openEditDialog(label)">mdi-pencil</v-icon>
-          </v-col>
-
-          <!-- Delete Icon -->
-          <v-col cols="auto">
-            <v-icon color="error" @click="deleteLabel(label)">mdi-delete</v-icon>
-          </v-col>
-        </v-row>
-      </v-list-item>
-    </v-list>
+<!--          &lt;!&ndash; Delete Icon &ndash;&gt;-->
+<!--          <v-col cols="auto">-->
+<!--            <v-icon color="error" @click="deleteLabel(label)">mdi-delete</v-icon>-->
+<!--          </v-col>-->
+<!--        </v-row>-->
+<!--      </v-list-item>-->
+<!--    </v-list>-->
 
     <!-- Create Label Button -->
-    <v-btn color="success" class="mt-4" @click="openCreateDialog" block> Create Label </v-btn>
+    <v-btn color="success" @click="saveTags"> Save Tags</v-btn>
+    <v-btn color="success" class="mt-4" @click="openCreateDialog" block> Create Tag </v-btn>
 
     <!-- Label Creation/Edit Dialog -->
     <v-dialog v-model="dialog" max-width="400px">
@@ -116,6 +123,7 @@
       </v-card>
     </v-dialog>
   </v-card>
+  <Toast/>
 </template>
 
 <script setup lang="ts">
@@ -140,6 +148,7 @@ const dialog = ref<boolean>(false)
 const dialogTitle = ref<string>('Create Label')
 const labelTitle = ref<string>('')
 const selectedColor = ref<string>('#ffffff')
+const selectedTags = ref<Label[]>([])
 
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
@@ -177,9 +186,35 @@ const getJobTags = async () => {
     )
     if (response.status > 199 && response.status < 300) {
       companyLabels.value = response.data.data
+      selectedTags.value = props.tags
     }
   } catch (error) {
     console.log('Failed to get tags', error)
+  }
+}
+
+const saveTags = async () => {
+  const apiUrl = await getRequestUrl()
+  try {
+    const updatedTags = [
+      ...selectedTags.value
+    ];
+    console.log('Updated tags:', updatedTags);
+    const response = await axios.patch(
+      `${apiUrl}job/update/${props.jobID}`,
+      { tags: updatedTags },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+    )
+    console.log('Selected Tags:', selectedTags)
+    console.log(response)
+  } catch (error) {
+    console.log('Selected Tags:', selectedTags)
+
+    console.log(error)
   }
 }
 
@@ -253,7 +288,7 @@ const saveLabel = async () => {
         color: selectedColor.value
       }
       const response = await axios.post(`${apiUrl}job/tags/add`, tag, config)
-      const updatedTags = [...props.tags, response.data.data._id]
+      const updatedTags = [...props.tags.map(tag => tag._id), response.data.data._id]
       console.log(response)
       if (response.status > 199 && response.status < 300) {
         labels.value.push(tag)
@@ -267,6 +302,7 @@ const saveLabel = async () => {
           )
           if (response.status > 199 && response.status < 300) {
             addTagSuccess()
+            await getJobTags()
             console.log('Tag added to the job', response)
           } else {
             console.log('Failed to add tag to job', response)

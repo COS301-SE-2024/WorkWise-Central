@@ -41,7 +41,7 @@
           <v-col class="text-center">
             <v-spacer></v-spacer>
             <p>
-              <v-chip :color="getStatusColor(props.passedInJob?.status?.status)" dark>
+              <v-chip :color="props.passedInJob?.status?.colour" dark>
                 {{ props.passedInJob?.status?.status }}
               </v-chip>
             </p>
@@ -80,44 +80,59 @@
           </v-divider>
           <v-col class="text-center">
             <v-row class="text-center">
-              <v-col sm="6" md="4">
+              <v-col>
                 <label class="font-weight-bold">City</label>
                 <v-spacer></v-spacer>
                 <p>
-                  {{ props.passedInJob?.details?.address?.city }}
+                  {{
+                    props.passedInJob?.details?.address?.city ||
+                    'City is not available'
+                  }}
                 </p>
               </v-col>
-              <v-col sm="6" md="4">
+              <v-col>
                 <label class="font-weight-bold">Suburb</label>
                 <v-spacer></v-spacer>
                 <p>
-                  {{ props.passedInJob?.details?.address?.suburb }}
+                  {{
+                    props.passedInJob?.details?.address?.suburb ||
+                    'Suburb is not available'
+                  }}
                 </p>
               </v-col>
-              <v-col sm="6" md="4">
+              <v-col>
                 <label class="font-weight-bold">Street</label>
                 <v-spacer></v-spacer>
                 <p>
-                  {{ props.passedInJob?.details?.address?.street }}
+                  {{
+                    props.passedInJob?.details?.address?.street ||
+                    'Address is not available'
+                  }}
                 </p>
               </v-col>
             </v-row>
             <v-row>
-              <v-col sm="6" md="4">
+              <v-col>
                 <label class="font-weight-bold">Postal Code</label>
                 <v-spacer></v-spacer>
                 <p>
-                  {{ props.passedInJob?.details?.address?.postalCode }}
+                  {{
+                    props.passedInJob?.details?.address?.postalCode ||
+                    'Postal code is not available'
+                  }}
                 </p>
               </v-col>
-              <v-col sm="6" md="4">
+              <v-col>
                 <label class="font-weight-bold">Complex</label>
                 <v-spacer></v-spacer>
                 <p>
-                  {{ props.passedInJob?.details?.address?.complex }}
+                  {{
+                    props.passedInJob?.details?.address?.complex ||
+                    'Complex name is not available'
+                  }}
                 </p>
               </v-col>
-              <v-col sm="6" md="4">
+              <v-col>
                 <label class="font-weight-bold">House Number</label>
                 <v-spacer></v-spacer>
                 <p>
@@ -352,23 +367,6 @@ function scrollToSection(
 
   if (sectionRef && sectionRef.value) {
     sectionRef.value.scrollIntoView({ behavior: 'smooth' })
-  }
-}
-
-const getStatusColor = (status: string): string => {
-  switch (status) {
-    case 'to do':
-      return 'blue'
-    case 'in progress':
-      return 'yellow'
-    case 'awaiting invoice':
-      return 'orange'
-    case 'awaiting payment':
-      return 'red'
-    case 'awaiting sign off':
-      return 'green'
-    default:
-      return 'grey'
   }
 }
 
