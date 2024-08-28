@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-carousel hide-delimiters>
-      <v-carousel-item v-for="(image, index) in images" :key="index" >
+      <v-carousel-item v-for="(image, index) in images" :key="index">
         <v-img
           :src="image.src"
           min-height="auto"
@@ -27,12 +27,6 @@
                 Image Actions
               </v-card-title>
               <v-card-actions class="d-flex flex-column">
-                <v-btn color="primary" @click="uploadImage(index)">
-                  <v-icon>
-                    {{ 'fa: fa-solid fa-upload' }}
-                  </v-icon>
-                  Upload
-                </v-btn>
                 <v-btn color="info" @click="changeImage(index)">
                   <v-icon>
                     {{ 'fa: fa-solid fa-sync' }}
@@ -141,7 +135,7 @@ const getRequestUrl = async (): Promise<string> => {
 
 const getJobData = async () => {
   console.log('Getting job data', props.id)
-  const apiUrl = getRequestUrl()
+  const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(`${apiUrl}job/id/${props.id}`, config)
     if (response.status > 199 && response.data < 300) {
@@ -162,44 +156,36 @@ const getJobData = async () => {
   }
 }
 
-const uploadImage = async (index: number) => {
-  const config = {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      Authorization: `Bearer ${localStorage.getItem('access_token')}`
-    }
-  }
-  const formData = new FormData()
-  formData.append('files', images.value[index].src)
-  const apiUrl = await getRequestUrl()
-  const url = `${apiUrl}job/add/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`
-  try {
-    const response = await axios.patch(url, formData, config)
-    if (response.status === 200) {
-      toast.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Image uploaded successfully',
-        life: 3000
-      })
-    }
-  } catch (error) {
-    console.log(error)
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to upload image', life: 3000 })
-    console.log(url)
-  }
-}
-
-const handleFileChange = (): void => {
+const handleFileChange = async (): void => {
   const file = newFile.value
   if (file) {
     const reader = new FileReader()
-    reader.onload = (e: ProgressEvent<FileReader>) => {
+    reader.onload = async (e: ProgressEvent<FileReader>) => {
       if (e.target && e.target.result) {
         images.value.push({
           src: e.target.result as string,
           dialog: false
         })
+        // Upload the image
+        const formData = new FormData()
+        formData.append('files', file)
+        const apiUrl = await getRequestUrl()
+        const url = `${apiUrl}job/add/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`
+        try {
+          const response = await axios.patch(url, formData, config)
+          if (response.status === 200) {
+            toast.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Image uploaded successfully',
+              life: 3000
+            })
+          }
+        } catch (error) {
+          console.log(error)
+          toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to upload image', life: 3000 })
+          console.log(url)
+        }
       }
     }
     reader.readAsDataURL(file)
