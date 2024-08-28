@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-carousel hide-delimiters>
+    <v-carousel v-if="hasImages" hide-delimiters>
       <v-carousel-item v-for="(image, index) in images" :key="index">
         <v-img
           :src="image.src"
@@ -58,7 +58,7 @@
       </v-carousel-item>
     </v-carousel>
 
-    <v-row cols="12">
+    <v-row cols="12" class="pt-4">
       <v-col>
         <v-file-input
           v-model="newFile"
@@ -86,14 +86,12 @@
       </v-card>
     </v-dialog>
   </v-container>
-  <Toast />
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, onMounted } from 'vue'
+import { ref, defineProps, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
-import Toast from 'primevue/toast'
 
 const toast = useToast()
 interface Image {
@@ -207,14 +205,34 @@ const changeImage = (index: number): void => {
   const fileInput = document.createElement('input')
   fileInput.type = 'file'
   fileInput.accept = 'image/*'
-  fileInput.onchange = (event: Event) => {
+  fileInput.onchange = async (event: Event) => {
     const target = event.target as HTMLInputElement
     const file = target.files ? target.files[0] : null
     if (file) {
       const reader = new FileReader()
-      reader.onload = (e: ProgressEvent<FileReader>) => {
+      reader.onload = async (e: ProgressEvent<FileReader>) => {
         if (e.target && e.target.result) {
           images.value[index].src = e.target.result as string
+
+          // Upload the new image
+          const formData = new FormData()
+          formData.append('files', file)
+          const apiUrl = await getRequestUrl()
+          const url = `${apiUrl}job/update/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`
+          try {
+            const response = await axios.patch(url, formData, config)
+            if (response.status === 200) {
+              toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Image updated successfully',
+                life: 3000
+              })
+            }
+          } catch (error) {
+            console.log(error)
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to update image', life: 3000 })
+          }
         }
       }
       reader.readAsDataURL(file)
@@ -235,6 +253,8 @@ const downloadImage = (index: number): void => {
 const deleteImage = (index: number): void => {
   images.value.splice(index, 1)
 }
+
+const hasImages = computed(() => images.value.length > 0)
 
 onMounted(() => {
   getJobData()
