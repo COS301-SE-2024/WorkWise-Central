@@ -218,7 +218,6 @@ const changeImage = (index: number): void => {
           for (const img of images.value) {
             imgUrls.value.push(img.src);
           }
-          console.log(imgUrls)
           const body = {
             employeeId: localStorage.getItem('employeeId'),
             jobId: props.id,
