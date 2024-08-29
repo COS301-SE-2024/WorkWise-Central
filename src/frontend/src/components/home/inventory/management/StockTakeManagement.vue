@@ -7,7 +7,25 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12">
+      <v-col cols="12"> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
         <v-text-field v-model="searchQuery" label="Search Inventory" clearable></v-text-field>
       </v-col>
     </v-row>
