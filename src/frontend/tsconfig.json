@@ -25,7 +25,10 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "lib": ["esnext", "dom"]
+    "lib": ["esnext", "dom"],
+    "paths": {
+      "vue/__globalTypes_3.4_false": ["node_modules/vue/__globalTypes_3.4_false.d.ts"]
+    }
   },
 
 }
