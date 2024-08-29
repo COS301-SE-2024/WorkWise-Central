@@ -142,6 +142,7 @@
                 v-model="req_obj.details.address.street"
                 type="street"
                 required
+                :rules="street_rules"
                 hide-details="auto"
               ></v-text-field
             ></v-col>
@@ -154,6 +155,7 @@
                 placeholder="Suburb"
                 v-model="req_obj.details.address.suburb"
                 type="suburb"
+                :rules="suburb_rules"
                 required
                 hide-details="auto"
               ></v-text-field
@@ -169,6 +171,7 @@
                 v-model="req_obj.details.address.city"
                 type="city"
                 required
+                :rules="city_rules"
                 hide-details="auto"
               ></v-text-field
             ></v-col>
@@ -181,6 +184,7 @@
                 placeholder="Postal Code"
                 v-model="req_obj.details.address.postalCode"
                 type="postalCode"
+                :rules="postal_code_rules"
                 required
                 hide-details="auto"
               ></v-text-field
@@ -208,6 +212,7 @@
                   'Northern Cape',
                   'Western Cape'
                 ]"
+                :rules="province_rules"
                 required
                 data-testid="province-autocomplete"
               ></v-autocomplete
@@ -318,6 +323,14 @@ export default defineComponent({
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     click_create_client: false,
     request_loading: false,
+    postal_code_rules: [
+      (v: string) => !!v || 'Postal code  is required',
+      (value: string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
+    ],
+    street_rules: [(v: string) => !!v || 'Street is required'],
+    suburb_rules: [(v: string) => !!v || 'Suburb is required'],
+    province_rules: [(v: string) => !!v || 'Province is required'],
+    city_rules: [(v: string) => !!v || 'City is required'],
     email_rules: [
       (v: string) => v || 'Email or Phone number is required',
       (val: string) => email_reg.test(val) || 'Email should contain an @ symbol'
@@ -351,11 +364,11 @@ export default defineComponent({
         /^[A-Za-z0-9_]+$/.test(v) || 'Username must be alphanumeric characters and underscores only'
     ],
     south_africa_id_rules: [
-      (v:string) =>  !v ,
+      (v: string) => !v,
       (v: string) => !v || /^\d{13}$/.test(v) || 'ID number must contain only digits',
       (v: string) => {
         console.log(v)
-        if(v===undefined) return true;
+        if (v === undefined) return true
         const dob = v.slice(0, 6)
         const year = parseInt(dob.slice(0, 2), 10) + 1900
         const month = parseInt(dob.slice(2, 4), 10) - 1
@@ -370,7 +383,7 @@ export default defineComponent({
       (v: string) => !v || ['0', '1'].includes(v[10]) || 'Invalid citizenship status digit',
       (v: string) => {
         // Implementing Luhn algorithm for checksum validation
-        if(v===undefined) return true;
+        if (v === undefined) return true
 
         let sum = 0
         for (let i = 0; i < 13; i++) {
