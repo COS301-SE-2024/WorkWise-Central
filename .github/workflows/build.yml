@@ -23,7 +23,7 @@ jobs:
           node-version: '18.18.0'
 
       - name: Build Frontend
-        run: npm install && npm run build-only
+        run: npm install && npm run build
         working-directory: src/frontend
 
       - name: Build Backend
