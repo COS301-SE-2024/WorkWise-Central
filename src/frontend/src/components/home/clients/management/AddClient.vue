@@ -127,10 +127,15 @@
             ></v-autocomplete
           ></v-col>
 
-          <small class="text-caption">Client address</small>
+          <small class="text-caption"
+            >Client address
+            <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+          </small>
           <v-row>
             <v-col sm="6" cols="12"
-              ><small class="text-caption">Street</small
+              ><small class="text-caption"
+                >Street
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
               ><v-text-field
                 color="secondary"
                 placeholder="Street"
@@ -141,7 +146,9 @@
               ></v-text-field
             ></v-col>
             <v-col sm="6" cols="12"
-              ><small class="text-caption">Suburb</small
+              ><small class="text-caption"
+                >Suburb
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
               ><v-text-field
                 color="secondary"
                 placeholder="Suburb"
@@ -153,7 +160,9 @@
             ></v-col>
 
             <v-col sm="6" cols="12">
-              <small class="text-caption">City</small
+              <small class="text-caption"
+                >City
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
               ><v-text-field
                 color="secondary"
                 placeholder="City"
@@ -164,10 +173,12 @@
               ></v-text-field
             ></v-col>
             <v-col sm="6" cols="12"
-              ><small class="text-caption">Zip Code</small
+              ><small class="text-caption"
+                >Postal Code
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
               ><v-text-field
                 color="secondary"
-                placeholder="Zip Code"
+                placeholder="Postal Code"
                 v-model="req_obj.details.address.postalCode"
                 type="postalCode"
                 required
@@ -175,7 +186,9 @@
               ></v-text-field
             ></v-col>
             <v-col sm="6" cols="12">
-              <label style="font-size: 11px; font-weight: lighter">Province</label>
+              <label style="font-size: 11px; font-weight: lighter"
+                >Province <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
               <v-autocomplete
                 density="compact"
                 placeholder="Province"
@@ -236,7 +249,7 @@
                 variant="text"
                 color="success"
                 :disabled="click_create_client"
-                :loading="isDeleting"
+                :loading="request_loading"
                 ><v-icon icon="fa: fa-solid fa-user-plus" color="success" start></v-icon>Create
                 Client
               </v-btn>
@@ -304,6 +317,7 @@ export default defineComponent({
     addDialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     click_create_client: false,
+    request_loading: false,
     email_rules: [
       (v: string) => v || 'Email or Phone number is required',
       (val: string) => email_reg.test(val) || 'Email should contain an @ symbol'
@@ -479,8 +493,10 @@ export default defineComponent({
       this.req_obj.details.contactInfo.phoneNumber ||
         delete this.req_obj.details.contactInfo.phoneNumber
 
-      if (validate) await this.handleSubmission()
-      else {
+      if (validate) {
+        this.request_loading = true
+        await this.handleSubmission()
+      } else {
         this.emailRule
         this.phoneRule
       }
@@ -499,6 +515,7 @@ export default defineComponent({
             detail: 'Client created successfully',
             life: 3000
           })
+          this.request_loading = false
           setTimeout(() => {
             this.isDeleting = false
             this.$emit('create', res.data.data)
