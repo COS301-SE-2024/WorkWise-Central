@@ -17,57 +17,12 @@
       <template #selection="{ item }">
         <v-chip
           :style="{ backgroundColor: item.raw.colour, color: getContrastingColor(item.raw.colour) }"
-          @click.stop="openEditDialog(item)"
+          @click="openEditDialog(item)"
         >
           {{ item.title }}
         </v-chip>
       </template>
     </v-combobox>
-<!--    &lt;!&ndash; Label List &ndash;&gt;-->
-<!--    <v-list class="no-background">-->
-<!--      <v-list-item-->
-<!--        v-for="label in filteredLabels"-->
-<!--        :key="label.label"-->
-<!--        class="d-flex align-center no-background"-->
-<!--      >-->
-<!--        <v-row align="center" no-gutters class="w-100">-->
-<!--          &lt;!&ndash; Color Block with Label Text &ndash;&gt;-->
-<!--          <v-col cols="auto">-->
-<!--            <div-->
-<!--              :style="{ backgroundColor: label.color }"-->
-<!--              class="mr-4 d-flex justify-center align-center"-->
-<!--              style="width: 600px; height: 40px; border-radius: 4px; position: relative"-->
-<!--            >-->
-<!--              <span-->
-<!--                class="text-center"-->
-<!--                style="-->
-<!--                  position: absolute;-->
-<!--                  width: 100%;-->
-<!--                  height: 100%;-->
-<!--                  display: flex;-->
-<!--                  justify-content: center;-->
-<!--                  align-items: center;-->
-<!--                  color: white;-->
-<!--                  font-weight: bold;-->
-<!--                "-->
-<!--              >-->
-<!--                {{ label.label }}-->
-<!--              </span>-->
-<!--            </div>-->
-<!--          </v-col>-->
-
-<!--          &lt;!&ndash; Edit Icon &ndash;&gt;-->
-<!--          <v-col cols="auto">-->
-<!--            <v-icon @click="openEditDialog(label)">mdi-pencil</v-icon>-->
-<!--          </v-col>-->
-
-<!--          &lt;!&ndash; Delete Icon &ndash;&gt;-->
-<!--          <v-col cols="auto">-->
-<!--            <v-icon color="error" @click="deleteLabel(label)">mdi-delete</v-icon>-->
-<!--          </v-col>-->
-<!--        </v-row>-->
-<!--      </v-list-item>-->
-<!--    </v-list>-->
 
     <!-- Create Label Button -->
     <v-btn color="success" @click="saveTags"> Save Tags</v-btn>

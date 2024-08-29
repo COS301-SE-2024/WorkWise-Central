@@ -202,57 +202,56 @@ const openImageOverlay = (index: number): void => {
 }
 
 const changeImage = (index: number): void => {
-    images.value[index].dialog = false
-    const fileInput = document.createElement('input')
-    fileInput.type = 'file'
-    fileInput.accept = 'image/*'
-    fileInput.onchange = async (event: Event) => {
-    const target = event.target as HTMLInputElement
-    const file = target.files ? target.files[0] : null
+  images.value[index].dialog = false;
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/*';
+  fileInput.onchange = async (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const file = target.files ? target.files[0] : null;
     if (file) {
-      const reader = new FileReader()
+      // Remove the old image
+      await deleteImage(index);
+      // Add the new image
+      const reader = new FileReader();
       reader.onload = async (e: ProgressEvent<FileReader>) => {
         if (e.target && e.target.result) {
-          images.value[index].src = e.target.result as string
-          const imgUrls = ref<string[]>([])
-          for (const img of images.value) {
-            imgUrls.value.push(img.src);
-          }
-          const body = {
-            employeeId: localStorage.getItem('employeeId'),
-            jobId: props.id,
-            attachments: imgUrls.value
-          }
-          console.log('Body:', body)
-          const apiUrl = await getRequestUrl()
-          const url = `${apiUrl}job/update/attachments`
+          images.value.push({
+            src: e.target.result as string,
+            dialog: false
+          });
+          // Upload the new image
+          const formData = new FormData();
+          formData.append('files', file);
+          const apiUrl = await getRequestUrl();
           const config = {
             headers: {
-              'Content-Type': 'application/json',
+              'Content-Type': 'multipart/form-data',
               Authorization: `Bearer ${localStorage.getItem('access_token')}`
             }
-          }
+          };
+          const url = `${apiUrl}job/add/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`;
           try {
-            const response = await axios.patch(url, body, config)
+            const response = await axios.patch(url, formData, config);
             if (response.status === 200) {
               toast.add({
                 severity: 'success',
                 summary: 'Success',
                 detail: 'Image updated successfully',
                 life: 3000
-              })
+              });
             }
           } catch (error) {
-            console.log(error)
-            toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to update image', life: 3000 })
+            console.log(error);
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to update image', life: 3000 });
           }
         }
-      }
-      reader.readAsDataURL(file)
+      };
+      reader.readAsDataURL(file);
     }
-  }
-  fileInput.click()
-}
+  };
+  fileInput.click();
+};
 
 const downloadImage = (index: number): void => {
   const link = document.createElement('a')
