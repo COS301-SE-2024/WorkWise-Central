@@ -16,7 +16,7 @@
     >
       <template #selection="{ item }">
         <v-chip
-          :style="{ backgroundColor: item.raw.color, color: getContrastingColor(item.raw.color) }"
+          :style="{ backgroundColor: item.raw.colour, color: getContrastingColor(item.raw.colour) }"
           @click.stop="openEditDialog(item)"
         >
           {{ item.title }}
@@ -140,7 +140,7 @@ const toast = useToast()
 interface Label {
   companyId: string
   label: string
-  color: string
+  colour: string
   _id: string
 }
 
@@ -267,7 +267,7 @@ const openCreateDialog = () => {
 const openEditDialog = (label: any) => {
   dialogTitle.value = 'Edit Label'
   labelTitle.value = label.label
-  selectedColor.value = label.color
+  selectedColor.value = label.colour
   dialog.value = true
 }
 
@@ -285,7 +285,7 @@ const saveLabel = async () => {
       const tag = {
         companyId: localStorage.getItem('currentCompany') || '',
         label: labelTitle.value,
-        color: selectedColor.value
+        colour: selectedColor.value
       }
       const response = await axios.post(`${apiUrl}job/tags/add`, tag, config)
       const updatedTags = [...props.tags.map(tag => tag._id), response.data.data._id]
@@ -302,7 +302,12 @@ const saveLabel = async () => {
           )
           if (response.status > 199 && response.status < 300) {
             addTagSuccess()
-            // selectedTags.value.push(tag)
+            selectedTags.value.push({
+              companyId: localStorage.getItem('currentCompany') || '',
+              label: labelTitle.value,
+              colour: selectedColor.value,
+              _id: updatedTags[updatedTags.length - 1]
+            })
             console.log('Tag added to the job', response)
           } else {
             console.log('Failed to add tag to job', response)
@@ -321,7 +326,7 @@ const saveLabel = async () => {
     const label = labels.value.find((l) => l.label === labelTitle.value)
     if (label) {
       label.label = labelTitle.value
-      label.color = selectedColor.value
+      label.colour = selectedColor.value
     }
   }
   dialog.value = false
