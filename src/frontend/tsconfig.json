@@ -12,6 +12,7 @@
     "target": "esnext",
     "module": "esnext",
     "strict": true,
+    "typeRoots": ["./node_modules/@types"],
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
