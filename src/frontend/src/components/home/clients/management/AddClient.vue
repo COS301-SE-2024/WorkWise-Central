@@ -351,8 +351,11 @@ export default defineComponent({
         /^[A-Za-z0-9_]+$/.test(v) || 'Username must be alphanumeric characters and underscores only'
     ],
     south_africa_id_rules: [
+      (v:string) =>  !v ,
       (v: string) => !v || /^\d{13}$/.test(v) || 'ID number must contain only digits',
       (v: string) => {
+        console.log(v)
+        if(v===undefined) return true;
         const dob = v.slice(0, 6)
         const year = parseInt(dob.slice(0, 2), 10) + 1900
         const month = parseInt(dob.slice(2, 4), 10) - 1
@@ -367,6 +370,8 @@ export default defineComponent({
       (v: string) => !v || ['0', '1'].includes(v[10]) || 'Invalid citizenship status digit',
       (v: string) => {
         // Implementing Luhn algorithm for checksum validation
+        if(v===undefined) return true;
+
         let sum = 0
         for (let i = 0; i < 13; i++) {
           let digit = parseInt(v[i], 10)
@@ -518,7 +523,7 @@ export default defineComponent({
           this.request_loading = false
           setTimeout(() => {
             this.isDeleting = false
-            this.$emit('create', res.data.data)
+            this.$emit('create', res.data.data.details)
           }, 1500)
         })
         .catch((res) => {
