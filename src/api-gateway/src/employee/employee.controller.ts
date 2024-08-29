@@ -62,7 +62,7 @@ export class EmployeeController {
     }
   }
 
-  async validateRequestWithCompannyId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
+  async validateRequestWithCompanyId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
     const user = await this.userService.getUserById(userId);
     if (!user.joinedCompanies.find((joined) => joined.employeeId.toString() === currentEmployeeId.toString())) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -245,7 +245,6 @@ export class EmployeeController {
     await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
 
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
-    // console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all employees')) {
       let data;
       try {
@@ -432,6 +431,10 @@ export class EmployeeController {
   })
   @Get('/listPotentialSubordinates/:employeeId')
   async listPotentialSubordinates(@Headers() headers: any, @Param('employeeId') id: Types.ObjectId) {
+    const userId = await extractUserId(this.jwtService, headers);
+    const employee = await this.employeeService.findById(id);
+    await this.validateRequestWithCompanyId(userId, employee.companyId);
+
     let data;
     try {
       data = await this.employeeService.listPotentialSubordinates(id);
@@ -479,6 +482,10 @@ export class EmployeeController {
   })
   @Get('/listPotentialSuperiors/:employeeId')
   async listSuperiors(@Headers() headers: any, @Param('employeeId') id: Types.ObjectId) {
+    const userId = await extractUserId(this.jwtService, headers);
+    const employee = await this.employeeService.findById(id);
+    await this.validateRequestWithCompanyId(userId, employee.companyId);
+
     let data;
     try {
       data = await this.employeeService.listPotentialSuperiors(id);
