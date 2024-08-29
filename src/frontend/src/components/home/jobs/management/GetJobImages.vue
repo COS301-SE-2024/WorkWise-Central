@@ -263,10 +263,46 @@ const downloadImage = (index: number): void => {
   document.body.removeChild(link)
 }
 
-const deleteImage = (index: number): void => {
-  images.value.splice(index, 1)
-}
-
+const deleteImage = async (index: number): Promise<void> => {
+  // Clear the images array
+  images.value.splice(index, 1);
+  // Prepare the request body
+  const imgUrls = images.value.map(image => image.src);
+  const body = {
+    employeeId: localStorage.getItem('employeeId'),
+    jobId: props.id,
+    attachments: imgUrls
+  };
+  console.log('Body:', body)
+  // Get the API URL
+  const apiUrl = await getRequestUrl();
+  const url = `${apiUrl}job/update/attachments`;
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  };
+  try {
+    const response = await axios.patch(url, body, config);
+    if (response.status === 200) {
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Image deleted successfully',
+        life: 3000
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to delete image',
+      life: 3000
+    });
+  }
+};
 const hasImages = computed(() => images.value.length > 0)
 
 onMounted(() => {
