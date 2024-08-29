@@ -74,7 +74,7 @@
     <v-dialog v-model="imageOverlay" fullscreen hide-overlay transition="dialog-bottom-transition">
       <v-card>
         <v-toolbar dark color="primary">
-          <v-btn icon dark @click="imageOverlay = false">
+          <v-btn dark @click="imageOverlay = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>Image Preview</v-toolbar-title>
@@ -136,25 +136,20 @@ const getJobData = async () => {
   const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(`${apiUrl}job/id/${props.id}`, config)
-    if (response.status > 199 && response.data < 300) {
-      const job = response.data.data
-      console.log('Job:', job)
-      if (job.attachments) {
-        console.log('Got job data')
-        job.attachments.forEach((attachment: string) => {
-          images.value.push({
-            src: attachment,
-            dialog: false
-          })
-        })
-      }
-    }
+    const job = response.data.data
+    job.attachments.forEach((attachment: string) => {
+      images.value.push({
+        src: attachment,
+        dialog: false
+      })
+    })
+      console.log('Here are the images',images.value)
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch images' })
+    console.log(error)
   }
 }
 
-const handleFileChange = async (): void => {
+const handleFileChange = async () => {
   const file = newFile.value
   if (file) {
     const reader = new FileReader()
@@ -168,6 +163,12 @@ const handleFileChange = async (): void => {
         const formData = new FormData()
         formData.append('files', file)
         const apiUrl = await getRequestUrl()
+        const config = {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
         const url = `${apiUrl}job/add/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`
         try {
           const response = await axios.patch(url, formData, config)
@@ -201,11 +202,11 @@ const openImageOverlay = (index: number): void => {
 }
 
 const changeImage = (index: number): void => {
-  images.value[index].dialog = false
-  const fileInput = document.createElement('input')
-  fileInput.type = 'file'
-  fileInput.accept = 'image/*'
-  fileInput.onchange = async (event: Event) => {
+    images.value[index].dialog = false
+    const fileInput = document.createElement('input')
+    fileInput.type = 'file'
+    fileInput.accept = 'image/*'
+    fileInput.onchange = async (event: Event) => {
     const target = event.target as HTMLInputElement
     const file = target.files ? target.files[0] : null
     if (file) {
@@ -213,14 +214,27 @@ const changeImage = (index: number): void => {
       reader.onload = async (e: ProgressEvent<FileReader>) => {
         if (e.target && e.target.result) {
           images.value[index].src = e.target.result as string
-
-          // Upload the new image
-          const formData = new FormData()
-          formData.append('files', file)
+          const imgUrls = ref<string[]>([])
+          for (const img of images.value) {
+            imgUrls.value.push(img.src);
+          }
+          console.log(imgUrls)
+          const body = {
+            employeeId: localStorage.getItem('employeeId'),
+            jobId: props.id,
+            attachments: imgUrls.value
+          }
+          console.log('Body:', body)
           const apiUrl = await getRequestUrl()
-          const url = `${apiUrl}job/update/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`
+          const url = `${apiUrl}job/update/attachments`
+          const config = {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            }
+          }
           try {
-            const response = await axios.patch(url, formData, config)
+            const response = await axios.patch(url, body, config)
             if (response.status === 200) {
               toast.add({
                 severity: 'success',

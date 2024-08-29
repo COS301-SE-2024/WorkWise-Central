@@ -6,7 +6,6 @@
       item-value="_id"
       item-title="label"
       label="Select some tags you would like to assign to this job"
-      chips
       multiple
       required
       color="primary"
@@ -17,10 +16,10 @@
     >
       <template #selection="{ item }">
         <v-chip
-          :style="{ backgroundColor: item.color, color: getContrastingColor(item.color) }"
+          :style="{ backgroundColor: item.raw.color, color: getContrastingColor(item.raw.color) }"
           @click.stop="openEditDialog(item)"
         >
-          {{ item.label }}
+          {{ item.title }}
         </v-chip>
       </template>
     </v-combobox>
@@ -265,7 +264,7 @@ const openCreateDialog = () => {
   dialog.value = true
 }
 
-const openEditDialog = (label: Label) => {
+const openEditDialog = (label: any) => {
   dialogTitle.value = 'Edit Label'
   labelTitle.value = label.label
   selectedColor.value = label.color
@@ -292,7 +291,7 @@ const saveLabel = async () => {
       const updatedTags = [...props.tags.map(tag => tag._id), response.data.data._id]
       console.log(response)
       if (response.status > 199 && response.status < 300) {
-        labels.value.push(tag)
+        // labels.value.push(tag)
         try {
           console.log('Job id', props.jobID)
           console.log('Tag body', tag)
@@ -303,7 +302,7 @@ const saveLabel = async () => {
           )
           if (response.status > 199 && response.status < 300) {
             addTagSuccess()
-            selectedTags.value.push(tag)
+            // selectedTags.value.push(tag)
             console.log('Tag added to the job', response)
           } else {
             console.log('Failed to add tag to job', response)
@@ -352,6 +351,9 @@ const deleteLabel = (label: Label) => {
 
 // Utility function to determine the best text color for the selected background
 const getContrastingColor = (bgColor: string): string => {
+  if (!bgColor || typeof bgColor !== 'string') {
+    return '#000'; // Default to black if bgColor is not defined or not a string
+  }
   const color = bgColor.slice(1) // Remove '#'
   const rgb = parseInt(color, 16) // Convert hex to RGB
   const r = (rgb >> 16) & 0xff
