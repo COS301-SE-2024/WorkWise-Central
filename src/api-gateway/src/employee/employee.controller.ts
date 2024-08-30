@@ -37,10 +37,10 @@ import { Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
 import { extractUserId, validateObjectId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { CurrentEmployeeDto } from '../shared/dtos/current-employee.dto';
 import { AddSubordinatesDto, RemoveSubordinatesDto, UpdateEmployeeDto } from './dto/update-employee.dto';
+import { ExternalCreateEmployeeDto } from './dto/create-employee.dto';
 
 const className = 'Employee';
 
@@ -79,7 +79,7 @@ export class EmployeeController {
     @Body()
     body: {
       currentEmployeeId: Types.ObjectId;
-      createEmployeeDto: CreateEmployeeDto;
+      createEmployeeDto: ExternalCreateEmployeeDto;
     },
   ) {
     const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
