@@ -186,7 +186,7 @@
               <JobStatus :jobID="props.passedInJob?._id" :status="props.passedInJob?.status"/>
             </v-col>
             <v-divider>
-              <h5 ref="tagsSection">Add Job Tags</h5>
+              <h5 ref="jobTagsSection">Add Job Tags</h5>
             </v-divider>
             <v-col>
               <JobTags :tags="props.passedInJob?.tags" :jobID="props.passedInJob?._id" />
@@ -293,6 +293,20 @@
               class="d-flex justify-start"
               border="md"
               elevation="5"
+              @click="scrollToSection('jobTagsSection')"
+            >
+              <v-icon left>
+                {{ 'fa: fa-solid fa-tags' }}
+              </v-icon>
+              Job Tags
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn
+              width="100%"
+              class="d-flex justify-start"
+              border="md"
+              elevation="5"
               @click="scrollToSection('historySection')"
             >
               <v-icon left>
@@ -334,6 +348,7 @@ const imagesSection = ref<HTMLElement | null>(null)
 const tagsSection = ref<HTMLElement | null>(null)
 const historySection = ref<HTMLElement | null>(null)
 const jobStatusSection = ref<HTMLElement | null>(null)
+const jobTagsSection = ref<HTMLElement | null>(null)
 const viewJobDialog = ref(false) // Dialog state
 const checklistSection = ref(null)
 const inventorySection = ref(null)
@@ -372,6 +387,7 @@ function scrollToSection(
     | 'tagsSection'
     | 'historySection'
     | 'jobStatusSection'
+    | 'jobTagsSection'
 ) {
   let sectionRef = null
 
@@ -389,6 +405,8 @@ function scrollToSection(
     sectionRef = historySection
   } else if (section === 'jobStatusSection') {
     sectionRef = jobStatusSection
+  } else if (section === 'jobTagsSection') {
+    sectionRef = jobTagsSection
   }
 
   if (sectionRef && sectionRef.value) {
