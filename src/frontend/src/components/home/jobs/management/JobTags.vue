@@ -36,25 +36,27 @@
         <v-card-text>
           <!-- Title Input -->
           <v-label class="pb-0">Title</v-label>
-          <v-text-field v-model="labelTitle" outlined dense class="mt-4 pt-0"></v-text-field>
+          <v-text-field
+            v-model="labelTitle"
+            label="Label Title"
+            outlined
+            dense
+            class="mt-4 pt-0"
+            hint="Enter the title for the label"
+            persistent-hint
+          ></v-text-field>
 
           <!-- Color Palette -->
-          <v-row>
-            <v-col
-              v-for="color in colorOptions"
-              :key="color"
-              cols="2"
-              class="d-flex justify-center"
-            >
-              <v-btn
-                :style="{ backgroundColor: color }"
-                class="ma-1"
-                @click="selectedColor = color"
-                :outlined="selectedColor !== color"
-                style="width: 40px; height: 40px; border-radius: 4px"
-              ></v-btn>
-            </v-col>
-          </v-row>
+            <!-- Color Picker -->
+            <v-row cols="12" class="pt-4">
+              <v-col cols="12" class="d-flex justify-center">
+                <v-color-picker
+                  v-model="selectedColor"
+                  show-swatches
+                  hide-inputs
+                ></v-color-picker>
+              </v-col>
+            </v-row>
 
           <!-- Selected Color Block with Label Title -->
           <div
