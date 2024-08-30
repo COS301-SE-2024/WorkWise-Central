@@ -163,7 +163,7 @@
             <!--                </v-col>-->
             <!--              </v-row>-->
             <v-divider>
-              <h5 ref="tasksSection">Check Off Tasks</h5>
+              <h5 ref="tasksSection">Task Lists</h5>
             </v-divider>
             <v-row>
               <v-col>
@@ -242,7 +242,7 @@
               <v-icon left>
                 {{ 'fa: fa-solid fa-tasks' }}
               </v-icon>
-              Check Off Task
+              Task Lists
             </v-btn>
           </v-col>
           <v-col>

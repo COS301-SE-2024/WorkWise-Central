@@ -5,9 +5,8 @@
       <v-btn
         color="primary"
         @click="createNewTask"
-        :disabled="!canCreateNewTask"
         prepend-icon="mdi-plus"
-        >Create New Task</v-btn
+        >Create New Task List</v-btn
       >
     </v-row>
 
@@ -15,18 +14,23 @@
     <v-row v-for="(task, taskIndex) in paginatedTasks" :key="taskIndex" class="mt-4">
       <v-col>
         <!-- Task Title -->
-        <v-textarea
-          v-model="task.title"
-          label="Task Title"
-          clearable
-          auto-grow
-          variant="solo"
-          hint="Enter your task title"
-          hide-details
-          prepend-icon="fa: fa-solid fa-tasks"
-          rows="1"
-          class="mb-4"
-        ></v-textarea>
+        <v-row>
+          <v-textarea
+            v-model="task.title"
+            label="Task Title"
+            clearable
+            auto-grow
+            variant="solo"
+            hint="Enter your task title"
+            hide-details
+            prepend-icon="fa: fa-solid fa-tasks"
+            rows="1"
+            class="mb-4"
+          ></v-textarea>
+          <v-btn color="error" outlined @click="deleteTask(taskIndex)" class="pl-10 pt-5">
+            Delete
+          </v-btn>
+        </v-row>
 
         <!-- Only show the rest of the components if the title is set -->
         <template v-if="task.title.trim() !== ''">
@@ -211,7 +215,7 @@ export default {
       taskList: [
         // Populate with tasks
       ],
-      itemsPerPage: 5,
+      itemsPerPage: 1,
       currentPage: 1,
       assignDialog: false,
       selectedEmployees: [],
