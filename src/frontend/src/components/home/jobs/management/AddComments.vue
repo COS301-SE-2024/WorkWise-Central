@@ -5,8 +5,8 @@
       <v-row v-for="(comment, index) in paginatedComments" :key="index" class="d-flex align-center mb-3">
         <v-col cols="2" class="pt-2">
           <v-avatar color="secondary" style="width: 38px; height: 36px">
-            <!-- Display initials of the comment's employee -->
-            <span class="text-h6">{{ getInitials(comment.firstName, comment.surname) }}</span>
+            <!-- Display image of the comment's employee -->
+            <img :src="comment.displayImage" alt="Employee Image" style="width: 100%; height: 100%; object-fit: cover;">
           </v-avatar>
         </v-col>
         <v-col md="9">
@@ -104,6 +104,7 @@ interface EmployeeId {
   updatedAt: string
   userId: string
   userInfo: {
+    displayImage: string
     displayName: string
     firstName: string
     surname: string
@@ -113,6 +114,7 @@ interface EmployeeId {
 }
 const firstName = ref('')
 const surname = ref('')
+const profilePicture = ref('')
 
 // Data
 const newComment = ref('')
@@ -123,7 +125,8 @@ const comments = ref(
     date: comment.date,
     _id: comment._id,
     firstName: comment.employeeId.userInfo.firstName,
-    surname: comment.employeeId.userInfo.surname
+    surname: comment.employeeId.userInfo.surname,
+    displayImage: comment.employeeId.userInfo.displayImage
   }))
 )
 
@@ -168,8 +171,10 @@ const getUserData = async () => {
     const response = await axios.get(`${apiUrl}users/id/${localStorage.getItem('id')}`, config)
     if (response.status > 199 && response.status < 300) {
       const userData = response.data.data
+      console.log('User data', userData)
       firstName.value = userData.personalInfo.firstName
       surname.value = userData.personalInfo.surname
+      profilePicture.value = userData.profile.displayImage
     }
   } catch (error) {
     console.error('Error getting user data', error)
@@ -202,7 +207,8 @@ const addComment = async () => {
       firstName: firstName.value,
       surname: surname.value,
       _id: commentId,
-      employeeId: localStorage.getItem('employeeId') || ''
+      employeeId: localStorage.getItem('employeeId') || '',
+      displayImage: profilePicture.value
     })
     newComment.value = ''
     currentPage.value = totalPages.value // Go to the last page

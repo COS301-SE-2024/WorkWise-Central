@@ -195,7 +195,7 @@
               <h5 ref="historySection">View Job History</h5>
             </v-divider>
             <v-col>
-              <JobHistory :jobHistory="props.passedInJob.history" />
+              <JobHistory :jobHistory="props.passedInJob?.history" :jobID="props.passedInJob?._id" />
             </v-col>
           </v-col>
         </v-col>

@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-col class="d-flex justify-center">
-        <v-btn @click="showHistory = !showHistory" color="success" :icon="true">
+        <v-btn @click="toggleHistory" color="success" :icon="true">
           <v-icon>
             {{ showHistory ? 'fa: fa-solid fa-eye-slash' : 'fa: fa-solid fa-eye' }}
           </v-icon>
@@ -43,6 +43,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { formatDistanceToNow } from 'date-fns'
+import axios from 'axios'
 
 // Define the type for an event
 interface Event {
@@ -53,6 +54,7 @@ interface Event {
 // Props for the component
 const props = defineProps<{
   jobHistory: Event[]
+  jobID: string
 }>()
 
 const events = ref<Event[]>([])
@@ -61,6 +63,25 @@ const events = ref<Event[]>([])
 const showHistory = ref<boolean>(false)
 const currentPage = ref<number>(1)
 const itemsPerPage = 10
+
+// API URLs
+const localUrl: string = 'http://localhost:3000/'
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
+
+// Utility functions
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url)
+    return res.status < 300 && res.status > 199
+  } catch (error) {
+    return false
+  }
+}
+
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
 
 // Format timestamp to a human-readable string
 const formatTimestamp = (timestamp: string): string => {
@@ -79,10 +100,24 @@ const paginatedEvents = computed(() => {
   return events.value.slice(start, end)
 })
 
-onMounted(() => {
-  if (props.jobHistory && props.jobHistory.length > 0) {
-    events.value = props.jobHistory
+const refreshHistory = async () => {
+  const apiUrl = await getRequestUrl()
+  try {
+    const res = await axios.get(`${apiUrl}job/id/${props.jobID}`)
+    events.value = res.data.data.history
+    console.log('History updated:',res)
+  } catch (error) {
+    console.log(error)
   }
+}
+
+const toggleHistory = async () => {
+  showHistory.value = !showHistory.value
+  await refreshHistory()
+}
+
+onMounted(() => {
+  refreshHistory()
 })
 </script>
 
