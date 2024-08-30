@@ -202,7 +202,7 @@ export class EmployeeRepository {
 
   async update(id: Types.ObjectId, updateEmployeeDto: InternalUpdateEmployeeDto) {
     id = new Types.ObjectId(id);
-    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
+    return await this.employeeModel
       .findOneAndUpdate(
         {
           $and: [
@@ -215,8 +215,6 @@ export class EmployeeRepository {
         { $set: { ...updateEmployeeDto }, updatedAt: new Date() },
       )
       .lean();
-    // console.log('Repository response: ', previousObject);
-    return previousObject;
   }
 
   async addAssignedJob(id: Types.ObjectId, jobId: Types.ObjectId) {
@@ -340,7 +338,9 @@ export class EmployeeRepository {
 
   async updateRole(roleId: Types.ObjectId, companyIdentification: Types.ObjectId, newRole: roleObject) {
     roleId = new Types.ObjectId(roleId);
-    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
+    console.log('roleId: ', roleId);
+    console.log('companyIdentification: ', companyIdentification);
+    const previousObject = await this.employeeModel
       .updateMany(
         {
           $and: [
@@ -361,7 +361,7 @@ export class EmployeeRepository {
       )
       .lean();
 
-    // console.log('Repository response: ', previousObject);
+    console.log('Repository response: ', previousObject);
 
     return previousObject;
   }

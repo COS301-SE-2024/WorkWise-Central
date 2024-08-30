@@ -106,8 +106,11 @@ export class CompanyService {
     const user = await this.usersService.getUserById(createCompanyDto.userId);
     ///
 
+    const currentEmployeeId = user.joinedCompanies[0].employeeId;
+
     console.log('Create Employee');
     const employee = await this.employeeService.create({
+      currentEmployeeId: currentEmployeeId,
       userId: createCompanyDto.userId,
       companyId: createdCompany._id,
       superiorId: null,
@@ -240,6 +243,7 @@ export class CompanyService {
     let addedEmployee: Employee & { _id: Types.ObjectId };
     if (addUserDto.roleId) {
       addedEmployee = await this.employeeService.create({
+        currentEmployeeId: addUserDto.adminId,
         companyId: company._id,
         userId: user._id,
         roleId: addUserDto.roleId,
@@ -256,6 +260,7 @@ export class CompanyService {
       const defaultRole = await this.roleService.findOneInCompany('Worker', company._id);
 
       addedEmployee = await this.employeeService.create({
+        currentEmployeeId: addUserDto.adminId,
         companyId: company._id,
         userId: user._id,
         roleId: defaultRole._id,
@@ -297,6 +302,8 @@ export class CompanyService {
     //Get company and user
     const company = await this.getCompanyById(inviteDto.companyId);
     const user = await this.usersService.getUserById(inviteDto.newUserId);
+    const joinedCompany = user.joinedCompanies.find((cmp) => cmp.companyId.toString() === company.toString());
+    const currentEmployeeId = joinedCompany.employeeId;
     // null checks
     if (company == null || user == null) throw new NotFoundException('User or Company not found');
 
@@ -304,6 +311,7 @@ export class CompanyService {
     let addedEmployee: Employee & { _id: Types.ObjectId };
     if (inviteDto.roleId) {
       addedEmployee = await this.employeeService.create({
+        currentEmployeeId: currentEmployeeId,
         companyId: company._id,
         userId: user._id,
         roleId: inviteDto.roleId,
@@ -320,6 +328,7 @@ export class CompanyService {
       const defaultRole = await this.roleService.findOneInCompany('Worker', company._id);
 
       addedEmployee = await this.employeeService.create({
+        currentEmployeeId: currentEmployeeId,
         companyId: company._id,
         userId: user._id,
         roleId: defaultRole._id,
