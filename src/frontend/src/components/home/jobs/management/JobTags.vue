@@ -92,9 +92,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps, onMounted } from 'vue'
+import { ref, defineProps, onMounted } from 'vue'
 import axios from 'axios'
-import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 
 const toast = useToast()
@@ -109,7 +108,6 @@ interface Label {
 
 const props = defineProps<{ tags: Label[]; jobID: string }>()
 
-const searchQuery = ref<string>('')
 const dialog = ref<boolean>(false)
 const dialogTitle = ref<string>('Create Label')
 const labelTitle = ref<string>('')
@@ -205,8 +203,8 @@ const editLabel = async () => {
       tagId: selectedTagId.value
     }
     const response = await axios.patch(`${apiUrl}job/tags`, body, config)
+    editTagSuccess()
     console.log('Edit tag:', response)
-
     // Update the selectedTags array with the new values
     const tagIndex = selectedTags.value.findIndex(tag => tag._id === selectedTagId.value)
     if (tagIndex !== -1) {
@@ -214,6 +212,7 @@ const editLabel = async () => {
       selectedTags.value[tagIndex].colour = selectedColor.value
     }
   } catch (error) {
+    editTagFailure()
     console.log(error)
   }
   labelTitle.value = ''
@@ -221,12 +220,6 @@ const editLabel = async () => {
   selectedTagId.value = ''
   dialog.value = false
 }
-
-const filteredLabels = computed<Label[]>(() =>
-  labels.value.filter((label) =>
-    label.label.toLowerCase().includes(searchQuery.value.toLowerCase())
-  )
-)
 
 const openCreateDialog = () => {
   dialogTitle.value = 'Create Label'
@@ -286,6 +279,7 @@ const saveLabel = async () => {
             console.log('Failed to add tag to job', response)
           }
         } catch (error) {
+          addTagFailure()
           console.log(error)
         }
       } else {
@@ -305,14 +299,6 @@ const saveLabel = async () => {
   dialog.value = false
 }
 
-const addTagSuccess = () => {
-  toast.add({
-    severity: 'success',
-    summary: 'Tag added successfully',
-    detail: 'Tag added successfully',
-    life: 300
-  })
-}
 
 const deleteLabel = async () => {
   const apiUrl = await getRequestUrl()
@@ -331,10 +317,12 @@ const deleteLabel = async () => {
       data: body,
       headers: config.headers
     })
+    deleteTagSuccess()
     console.log('Delete tag:', response)
     // Remove the deleted tag from the selectedTags array
     selectedTags.value = selectedTags.value.filter(tag => tag._id !== selectedTagId.value)
   } catch (error) {
+    deleteTagFailure()
     console.log(error)
   }
   labelTitle.value = ''
@@ -343,12 +331,57 @@ const deleteLabel = async () => {
   dialog.value = false
 }
 
+const editTagFailure = () => {
+  toast.add({
+    severity: 'error',
+    summary: 'Error',
+    detail: 'Failed to edit tag',
+    life: 3000
+  })
+}
+
 const addTagFailure = () => {
   toast.add({
     severity: 'error',
-    summary: 'Failed to add tag',
+    summary: 'Error',
     detail: 'Failed to add tag',
-    life: 300
+    life: 3000
+  })
+}
+
+const deleteTagFailure = () => {
+  toast.add({
+    severity: 'error',
+    summary: 'Error',
+    detail: 'Failed to delete tag',
+    life: 3000
+  })
+}
+
+const addTagSuccess = () => {
+  toast.add({
+    severity: 'success',
+    summary: 'Success',
+    detail: 'Tag added successfully',
+    life: 3000
+  })
+}
+
+const editTagSuccess = () => {
+  toast.add({
+    severity: 'success',
+    summary: 'Success',
+    detail: 'Tag edited successfully',
+    life: 3000
+  })
+}
+
+const deleteTagSuccess = () => {
+  toast.add({
+    severity: 'success',
+    summary: 'Success',
+    detail: 'Tag deleted successfully',
+    life: 3000
   })
 }
 
