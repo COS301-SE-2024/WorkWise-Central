@@ -12,7 +12,6 @@
     "target": "esnext",
     "module": "esnext",
     "strict": true,
-    "typeRoots": ["./node_modules/@types"],
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
@@ -23,10 +22,9 @@
     "baseUrl": ".",
     "types": ["vuetify"],
     "paths": {
-      "@/*": ["src/*"],
+      "@/*": ["src/*"]
     },
-    "lib": ["esnext", "dom"],
+    "lib": ["esnext", "dom"]
   },
-
 }
 
