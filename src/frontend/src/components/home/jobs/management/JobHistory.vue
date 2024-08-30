@@ -34,6 +34,7 @@
         :length="totalPages"
         :total-visible="5"
         class="d-flex justify-center mt-4"
+        color="primary"
       />
     </v-card>
   </div>
