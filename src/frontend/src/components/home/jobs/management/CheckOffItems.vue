@@ -28,7 +28,7 @@
             class="mb-4"
           ></v-textarea>
           <template v-if="task.title.trim() !== ''">
-            <v-btn color="error" outlined @click="deleteTask(taskIndex)" class="pl-10 pt-5">
+            <v-btn color="error" outlined class="pl-10 pt-5">
               Delete
             </v-btn>
           </template>
