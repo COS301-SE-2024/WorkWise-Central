@@ -17,6 +17,6 @@
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "start:dev": "concurrently \"cd src/frontend && npm run dev\" \"cd src/api-gateway && npm run start:dev\"",
-    "update": "npm install && cd src/api-gateway && npm install && cd ../frontend && npm install && cd ../../"
+    "installAll": "npm install && cd src/api-gateway && npm install && cd ../frontend && npm install && cd ../../"
   }
 }
