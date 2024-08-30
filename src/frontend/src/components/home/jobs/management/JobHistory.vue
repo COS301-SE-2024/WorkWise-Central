@@ -13,7 +13,7 @@
     <v-card v-if="showHistory" height="auto" elevation="0">
       <v-list>
         <v-list-item
-          v-for="(event, index) in events"
+          v-for="(event, index) in paginatedEvents"
           :key="event.timestamp"
           :class="{ 'alternate-bg': index % 2 !== 0 }"
         >
@@ -22,18 +22,25 @@
             <v-list-item-subtitle>{{ formatTimestamp(event.timestamp) }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item v-if="events.length === 0">
+        <v-list-item v-if="paginatedEvents.length === 0">
           <v-list-item-content>
             <v-list-item-title>No events found</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
+      <v-pagination
+        v-if="totalPages > 1"
+        v-model="currentPage"
+        :length="totalPages"
+        :total-visible="5"
+        class="d-flex justify-center mt-4"
+      />
     </v-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { formatDistanceToNow } from 'date-fns'
 
 // Define the type for an event
@@ -51,11 +58,25 @@ const events = ref<Event[]>([])
 
 // Local state to toggle history visibility
 const showHistory = ref<boolean>(false)
+const currentPage = ref<number>(1)
+const itemsPerPage = 10
 
 // Format timestamp to a human-readable string
 const formatTimestamp = (timestamp: string): string => {
   return formatDistanceToNow(new Date(timestamp), { addSuffix: true })
 }
+
+// Calculate the total number of pages
+const totalPages = computed(() => {
+  return Math.ceil(events.value.length / itemsPerPage)
+})
+
+// Compute the paginated events based on the current page
+const paginatedEvents = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  return events.value.slice(start, end)
+})
 
 onMounted(() => {
   if (props.jobHistory && props.jobHistory.length > 0) {

@@ -1,5 +1,4 @@
 <template>
-  <v-card class="pa-4" height="auto">
     <v-combobox
       v-model="selectedTags"
       :items="companyLabels"
@@ -24,10 +23,14 @@
       </template>
     </v-combobox>
 
-    <!-- Create Label Button -->
-    <v-btn color="success" width="100%" @click="saveTags"> Save Tags</v-btn>
-    <v-btn color="success" class="mt-4" @click="openCreateDialog" block> Create Tag </v-btn>
-
+  <v-btn color="success" width="100%" @click="saveTags">
+    <v-icon class="fas fa-save"></v-icon>
+    Save Tags
+  </v-btn>
+  <v-btn color="success" class="mt-4" @click="openCreateDialog" block>
+    <v-icon class="fas fa-plus"></v-icon>
+    Create Tag
+  </v-btn>
     <!-- Label Creation/Edit Dialog -->
     <v-dialog v-model="dialog" max-width="400px">
       <v-card>
@@ -75,14 +78,12 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-btn color="success" @click="saveLabel">
+          <v-btn color="success" @click="handleClick">
             {{ dialogTitle === 'Create Label' ? 'Create' : 'Save' }}
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-card>
-  <Toast/>
 </template>
 
 <script setup lang="ts">
@@ -108,6 +109,7 @@ const dialog = ref<boolean>(false)
 const dialogTitle = ref<string>('Create Label')
 const labelTitle = ref<string>('')
 const selectedColor = ref<string>('#ffffff')
+const selectedTagId = ref<string>('')
 const selectedTags = ref<Label[]>([])
 const labels = ref<Label[]>([])
 const companyLabels = ref<Label[]>([])
@@ -174,6 +176,47 @@ const saveTags = async () => {
   }
 }
 
+const handleClick = () => {
+  if (dialogTitle.value === 'Create Label') {
+    saveLabel()
+  } else if (dialogTitle.value === 'Edit Label') {
+    editLabel()
+  }
+}
+
+const editLabel = async () => {
+  const apiUrl = await getRequestUrl()
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+  try {
+    const body = {
+      companyId: localStorage.getItem('currentCompany') || '',
+      label: labelTitle.value,
+      colour: selectedColor.value,
+      tagId: selectedTagId.value
+    }
+    const response = await axios.patch(`${apiUrl}job/tags`, body, config)
+    console.log('Edit tag:', response)
+
+    // Update the selectedTags array with the new values
+    const tagIndex = selectedTags.value.findIndex(tag => tag._id === selectedTagId.value)
+    if (tagIndex !== -1) {
+      selectedTags.value[tagIndex].label = labelTitle.value
+      selectedTags.value[tagIndex].colour = selectedColor.value
+    }
+  } catch (error) {
+    console.log(error)
+  }
+  labelTitle.value = ''
+  selectedColor.value = ''
+  selectedTagId.value = ''
+  dialog.value = false
+}
+
 const filteredLabels = computed<Label[]>(() =>
   labels.value.filter((label) =>
     label.label.toLowerCase().includes(searchQuery.value.toLowerCase())
@@ -192,6 +235,7 @@ const openEditDialog = async (label: any) => {
   console.log('Selected label', label)
   labelTitle.value = label.raw.label
   selectedColor.value = label.raw.colour
+  selectedTagId.value = label.raw._id
   dialog.value = true
 }
 
