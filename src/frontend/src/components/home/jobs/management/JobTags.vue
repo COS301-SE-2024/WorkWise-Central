@@ -1,11 +1,10 @@
 <template>
-  <v-card class="pa-4" height="auto">
-    <v-select
+    <v-combobox
+      v-model="selectedTags"
       :items="companyLabels"
       item-value="_id"
       item-title="label"
       label="Select some tags you would like to assign to this job"
-      chips
       multiple
       required
       color="primary"
@@ -13,57 +12,25 @@
       clearable
       data-testid="tags-multi-select"
       searchable
-    ></v-select>
+    >
+      <template #selection="{ item }">
+        <v-chip
+          :style="{ backgroundColor: item.raw.colour, color: getContrastingColor(item.raw.colour) }"
+          @click="openEditDialog(item)"
+        >
+          {{ item.title }}
+        </v-chip>
+      </template>
+    </v-combobox>
 
-    <!-- Label List -->
-    <v-list class="no-background">
-      <v-list-item
-        v-for="label in filteredLabels"
-        :key="label.label"
-        class="d-flex align-center no-background"
-      >
-        <v-row align="center" no-gutters class="w-100">
-          <!-- Color Block with Label Text -->
-          <v-col cols="auto">
-            <div
-              :style="{ backgroundColor: label.color }"
-              class="mr-4 d-flex justify-center align-center"
-              style="width: 600px; height: 40px; border-radius: 4px; position: relative"
-            >
-              <span
-                class="text-center"
-                style="
-                  position: absolute;
-                  width: 100%;
-                  height: 100%;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  color: white;
-                  font-weight: bold;
-                "
-              >
-                {{ label.label }}
-              </span>
-            </div>
-          </v-col>
-
-          <!-- Edit Icon -->
-          <v-col cols="auto">
-            <v-icon @click="openEditDialog(label)">mdi-pencil</v-icon>
-          </v-col>
-
-          <!-- Delete Icon -->
-          <v-col cols="auto">
-            <v-icon color="error" @click="deleteLabel(label)">mdi-delete</v-icon>
-          </v-col>
-        </v-row>
-      </v-list-item>
-    </v-list>
-
-    <!-- Create Label Button -->
-    <v-btn color="success" class="mt-4" @click="openCreateDialog" block> Create Label </v-btn>
-
+  <v-btn color="success" width="100%" @click="saveTags">
+    <v-icon class="fas fa-save"></v-icon>
+    Save Tags
+  </v-btn>
+  <v-btn color="success" class="mt-4" @click="openCreateDialog" block>
+    <v-icon class="fas fa-plus"></v-icon>
+    Create Tag
+  </v-btn>
     <!-- Label Creation/Edit Dialog -->
     <v-dialog v-model="dialog" max-width="400px">
       <v-card>
@@ -72,25 +39,27 @@
         <v-card-text>
           <!-- Title Input -->
           <v-label class="pb-0">Title</v-label>
-          <v-text-field v-model="labelTitle" outlined dense class="mt-4 pt-0"></v-text-field>
+          <v-text-field
+            v-model="labelTitle"
+            label="Label Title"
+            outlined
+            dense
+            class="mt-4 pt-0"
+            hint="Enter the title for the label"
+            persistent-hint
+          ></v-text-field>
 
           <!-- Color Palette -->
-          <v-row>
-            <v-col
-              v-for="color in colorOptions"
-              :key="color"
-              cols="2"
-              class="d-flex justify-center"
-            >
-              <v-btn
-                :style="{ backgroundColor: color }"
-                class="ma-1"
-                @click="selectedColor = color"
-                :outlined="selectedColor !== color"
-                style="width: 40px; height: 40px; border-radius: 4px"
-              ></v-btn>
-            </v-col>
-          </v-row>
+            <!-- Color Picker -->
+            <v-row cols="12" class="pt-4">
+              <v-col cols="12" class="d-flex justify-center">
+                <v-color-picker
+                  v-model="selectedColor"
+                  show-swatches
+                  hide-inputs
+                ></v-color-picker>
+              </v-col>
+            </v-row>
 
           <!-- Selected Color Block with Label Title -->
           <div
@@ -108,20 +77,23 @@
           </div>
         </v-card-text>
 
-        <v-card-actions>
-          <v-btn color="success" @click="saveLabel">
+        <v-card-actions class="d-flex flex-column">
+          <v-btn color="success" @click="handleClick">
+            <v-icon class="fas fa-save"></v-icon>
             {{ dialogTitle === 'Create Label' ? 'Create' : 'Save' }}
+          </v-btn>
+          <v-btn v-if="dialogTitle === 'Edit Label'" color="error" @click="deleteLabel">
+            <v-icon class="fas fa-trash"></v-icon>
+            Delete
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-card>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps, onMounted } from 'vue'
+import { ref, defineProps, onMounted } from 'vue'
 import axios from 'axios'
-import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 
 const toast = useToast()
@@ -130,16 +102,20 @@ const toast = useToast()
 interface Label {
   companyId: string
   label: string
-  color: string
+  colour: string
+  _id: string
 }
 
 const props = defineProps<{ tags: Label[]; jobID: string }>()
 
-const searchQuery = ref<string>('')
 const dialog = ref<boolean>(false)
 const dialogTitle = ref<string>('Create Label')
 const labelTitle = ref<string>('')
 const selectedColor = ref<string>('#ffffff')
+const selectedTagId = ref<string>('')
+const selectedTags = ref<Label[]>([])
+const labels = ref<Label[]>([])
+const companyLabels = ref<Label[]>([])
 
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
@@ -160,10 +136,6 @@ const getRequestUrl = async (): Promise<string> => {
   return localAvailable ? localUrl : remoteUrl
 }
 
-const labels = ref<Label[]>([])
-
-const companyLabels = ref<Label[]>([])
-
 const getJobTags = async () => {
   const apiUrl = await getRequestUrl()
   try {
@@ -177,50 +149,77 @@ const getJobTags = async () => {
     )
     if (response.status > 199 && response.status < 300) {
       companyLabels.value = response.data.data
+      console.log('Returned tags:', companyLabels.value)
+      selectedTags.value = props.tags
     }
   } catch (error) {
     console.log('Failed to get tags', error)
   }
 }
 
-const colorOptions = ref<string[]>([
-  '#FFB74D',
-  '#FFD54F',
-  '#FFF176',
-  '#AED581',
-  '#81C784',
-  '#4DB6AC',
-  '#4DD0E1',
-  '#4FC3F7',
-  '#64B5F6',
-  '#7986CB',
-  '#BA68C8',
-  '#DCE775',
-  '#FFF59D',
-  '#FFEB3B',
-  '#FFCA28',
-  '#FF7043',
-  '#FF8A65',
-  '#A1887F',
-  '#90A4AE',
-  '#78909C',
-  '#EF5350',
-  '#EC407A',
-  '#AB47BC',
-  '#8E24AA',
-  '#7B1FA2',
-  '#42A5F5',
-  '#26A69A',
-  '#66BB6A',
-  '#9CCC65',
-  '#FFEE58'
-])
+const saveTags = async () => {
+  const apiUrl = await getRequestUrl()
+  try {
+    const updatedTags = selectedTags.value.map((tag) => tag._id)
+    console.log('Selected tags:', updatedTags)
+    const response = await axios.patch(
+      `${apiUrl}job/update/${props.jobID}`,
+      { tags: updatedTags },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+    )
+    console.log('Selected Tags:', selectedTags)
+    console.log(response)
+  } catch (error) {
+    console.log('Selected Tags:', selectedTags)
+    console.log(error)
+  }
+}
 
-const filteredLabels = computed<Label[]>(() =>
-  labels.value.filter((label) =>
-    label.label.toLowerCase().includes(searchQuery.value.toLowerCase())
-  )
-)
+const handleClick = () => {
+  if (dialogTitle.value === 'Create Label') {
+    saveLabel()
+  } else if (dialogTitle.value === 'Edit Label') {
+    editLabel()
+  }
+}
+
+const editLabel = async () => {
+  const apiUrl = await getRequestUrl()
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+  try {
+    const body = {
+      companyId: localStorage.getItem('currentCompany') || '',
+      label: labelTitle.value,
+      colour: selectedColor.value,
+      tagId: selectedTagId.value
+    }
+    const response = await axios.patch(`${apiUrl}job/tags`, body, config)
+    editTagSuccess()
+    console.log('Edit tag:', response)
+    // Update the selectedTags array with the new values
+    const tagIndex = selectedTags.value.findIndex(tag => tag._id === selectedTagId.value)
+    if (tagIndex !== -1) {
+      selectedTags.value[tagIndex].label = labelTitle.value
+      selectedTags.value[tagIndex].colour = selectedColor.value
+    }
+  } catch (error) {
+    editTagFailure()
+    console.log(error)
+  }
+  labelTitle.value = ''
+  selectedColor.value = ''
+  selectedTagId.value = ''
+  dialog.value = false
+}
 
 const openCreateDialog = () => {
   dialogTitle.value = 'Create Label'
@@ -229,10 +228,12 @@ const openCreateDialog = () => {
   dialog.value = true
 }
 
-const openEditDialog = (label: Label) => {
+const openEditDialog = async (label: any) => {
   dialogTitle.value = 'Edit Label'
-  labelTitle.value = label.label
-  selectedColor.value = label.color
+  console.log('Selected label', label)
+  labelTitle.value = label.raw.label
+  selectedColor.value = label.raw.colour
+  selectedTagId.value = label.raw._id
   dialog.value = true
 }
 
@@ -250,13 +251,13 @@ const saveLabel = async () => {
       const tag = {
         companyId: localStorage.getItem('currentCompany') || '',
         label: labelTitle.value,
-        color: selectedColor.value
+        colour: selectedColor.value
       }
       const response = await axios.post(`${apiUrl}job/tags/add`, tag, config)
-      const updatedTags = [...props.tags, response.data.data._id]
+      const updatedTags = [...props.tags.map(tag => tag._id), response.data.data._id]
       console.log(response)
       if (response.status > 199 && response.status < 300) {
-        labels.value.push(tag)
+        // labels.value.push(tag)
         try {
           console.log('Job id', props.jobID)
           console.log('Tag body', tag)
@@ -267,11 +268,18 @@ const saveLabel = async () => {
           )
           if (response.status > 199 && response.status < 300) {
             addTagSuccess()
+            selectedTags.value.push({
+              companyId: localStorage.getItem('currentCompany') || '',
+              label: labelTitle.value,
+              colour: selectedColor.value,
+              _id: updatedTags[updatedTags.length - 1]
+            })
             console.log('Tag added to the job', response)
           } else {
             console.log('Failed to add tag to job', response)
           }
         } catch (error) {
+          addTagFailure()
           console.log(error)
         }
       } else {
@@ -285,36 +293,103 @@ const saveLabel = async () => {
     const label = labels.value.find((l) => l.label === labelTitle.value)
     if (label) {
       label.label = labelTitle.value
-      label.color = selectedColor.value
+      label.colour = selectedColor.value
     }
   }
   dialog.value = false
 }
 
-const addTagSuccess = () => {
+
+const deleteLabel = async () => {
+  const apiUrl = await getRequestUrl()
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+  try {
+    const body = {
+      tagId: selectedTagId.value,
+      companyId: localStorage.getItem('currentCompany')
+    }
+    const response = await axios.delete(`${apiUrl}job/tags`, {
+      data: body,
+      headers: config.headers
+    })
+    deleteTagSuccess()
+    console.log('Delete tag:', response)
+    // Remove the deleted tag from the selectedTags array
+    selectedTags.value = selectedTags.value.filter(tag => tag._id !== selectedTagId.value)
+  } catch (error) {
+    deleteTagFailure()
+    console.log(error)
+  }
+  labelTitle.value = ''
+  selectedColor.value = ''
+  selectedTagId.value = ''
+  dialog.value = false
+}
+
+const editTagFailure = () => {
   toast.add({
-    severity: 'success',
-    summary: 'Tag added successfully',
-    detail: 'Tag added successfully',
-    life: 300
+    severity: 'error',
+    summary: 'Error',
+    detail: 'Failed to edit tag',
+    life: 3000
   })
 }
 
 const addTagFailure = () => {
   toast.add({
     severity: 'error',
-    summary: 'Failed to add tag',
+    summary: 'Error',
     detail: 'Failed to add tag',
-    life: 300
+    life: 3000
   })
 }
 
-const deleteLabel = (label: Label) => {
-  labels.value = labels.value.filter((l) => l.label !== label.label)
+const deleteTagFailure = () => {
+  toast.add({
+    severity: 'error',
+    summary: 'Error',
+    detail: 'Failed to delete tag',
+    life: 3000
+  })
+}
+
+const addTagSuccess = () => {
+  toast.add({
+    severity: 'success',
+    summary: 'Success',
+    detail: 'Tag added successfully',
+    life: 3000
+  })
+}
+
+const editTagSuccess = () => {
+  toast.add({
+    severity: 'success',
+    summary: 'Success',
+    detail: 'Tag edited successfully',
+    life: 3000
+  })
+}
+
+const deleteTagSuccess = () => {
+  toast.add({
+    severity: 'success',
+    summary: 'Success',
+    detail: 'Tag deleted successfully',
+    life: 3000
+  })
 }
 
 // Utility function to determine the best text color for the selected background
 const getContrastingColor = (bgColor: string): string => {
+  if (!bgColor || typeof bgColor !== 'string') {
+    return '#000'; // Default to black if bgColor is not defined or not a string
+  }
   const color = bgColor.slice(1) // Remove '#'
   const rgb = parseInt(color, 16) // Convert hex to RGB
   const r = (rgb >> 16) & 0xff
