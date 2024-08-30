@@ -45,7 +45,7 @@
     "vue-chartjs": "^5.3.1",
     "vue-media-q": "^0.0.5",
     "vue-router": "^4.3.0",
-    "vue-tsc": "^2.0.29",
+    "vue-tsc": "2.0.29",
     "vue3-mq": "^3.2.0",
     "vuex": "^4.0.2",
     "webpack-plugin-vuetify": "^3.0.3"
