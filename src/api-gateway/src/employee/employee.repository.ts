@@ -338,7 +338,9 @@ export class EmployeeRepository {
 
   async updateRole(roleId: Types.ObjectId, companyIdentification: Types.ObjectId, newRole: roleObject) {
     roleId = new Types.ObjectId(roleId);
-    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
+    console.log('roleId: ', roleId);
+    console.log('companyIdentification: ', companyIdentification);
+    const previousObject = await this.employeeModel
       .updateMany(
         {
           $and: [
@@ -359,7 +361,7 @@ export class EmployeeRepository {
       )
       .lean();
 
-    // console.log('Repository response: ', previousObject);
+    console.log('Repository response: ', previousObject);
 
     return previousObject;
   }

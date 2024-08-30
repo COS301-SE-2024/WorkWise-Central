@@ -30,7 +30,7 @@ import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { RoleListResponseDto, RoleResponseDto } from './entity/role.entity';
 import { AuthGuard } from '../auth/auth.guard';
-import { extractUserId } from '../utils/Utils';
+// import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { EmployeeService } from '../employee/employee.service';
 import { CurrentEmployeeDto } from '../shared/dtos/current-employee.dto';
@@ -327,13 +327,13 @@ export class RoleController {
   @Patch(':roleId')
   async update(@Headers() headers: any, @Param('roleId') roleId: Types.ObjectId, @Body() body: ExternalUpdateRoleDto) {
     console.log('In update endpoint');
-    const userId = extractUserId(this.jwtService, headers);
+    // const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     console.log('currentEmployee: ', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       let data;
       try {
-        data = await this.roleService.update(userId, roleId, body.updateRoleDto);
+        data = await this.roleService.update(roleId, body.updateRoleDto);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
