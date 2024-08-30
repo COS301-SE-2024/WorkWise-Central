@@ -275,7 +275,7 @@ const deleteImage = async (index: number): Promise<void> => {
   console.log('Body:', body)
   // Get the API URL
   const apiUrl = await getRequestUrl();
-  const url = `${apiUrl}job/update/attachments`;
+  const url = `${apiUrl}job/updateAttachments`;
   const config = {
     headers: {
       'Content-Type': 'application/json',

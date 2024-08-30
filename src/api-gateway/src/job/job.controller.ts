@@ -750,7 +750,7 @@ export class JobController {
     type: JobResponseDto,
     description: `The updated ${className} instance`,
   })
-  @Patch('/update/attachments')
+  @Patch('/updateAttachments')
   async updateAttachments(@Headers() headers: any, @Body() updateAttachmentDto: UpdateAttachmentDto) {
     try {
       const userId = extractUserId(this.jwtService, headers);
