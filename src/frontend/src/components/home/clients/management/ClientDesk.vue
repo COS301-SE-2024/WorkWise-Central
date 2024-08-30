@@ -149,7 +149,7 @@
 
                       <v-list-item v-show="checkPermission('edit clients')"
                         ><EditClient
-                          @update:item="selectedItem = $event"
+                          @clientUpdated="getClients"
                           :editedItem="selectedItem"
                           :_clientID="selectedItemId"
                       /></v-list-item>
@@ -160,6 +160,7 @@
                           :client_id="selectedItemId"
                           :client="selectedItem"
                           :company_id="clientCompanyID"
+                          @clientDeleted="getClients"
                       /></v-list-item>
                     </v-list>
                   </v-menu>

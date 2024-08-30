@@ -315,6 +315,7 @@ const leaveCompany = (company: Company) => {
   undoTimeout.value = setTimeout(() => {
     leftCompanies.value = leftCompanies.value.filter((c) => c.id !== company.id)
   }, 30000)
+  setUserCompanies()
 }
 
 const undoLeaveCompany = (company: Company) => {

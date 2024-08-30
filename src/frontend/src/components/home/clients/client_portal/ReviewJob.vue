@@ -24,7 +24,20 @@
           <v-textarea v-model="feedback" label="Your Feedback"></v-textarea>
         </v-card-text>
         <v-card-actions>
-          <v-btn text @click="submitReview">Submit</v-btn>
+          <v-container>
+            <v-row>
+              <v-col lg="6" cols="12" order-lg="first">
+                <v-btn @click="reviewDialog = false" color="error" block
+                  ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Cancel</v-btn
+                >
+              </v-col>
+              <v-col lg="6" cols="12" order-lg="last" order="first">
+                <v-btn @click="submitReview" block color="success"
+                  ><v-icon icon="fa: fa-solid fa-paper-plane" color="success"></v-icon>Submit</v-btn
+                >
+              </v-col>
+            </v-row>
+          </v-container>
         </v-card-actions>
       </v-card>
     </v-dialog>

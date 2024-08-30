@@ -22,12 +22,7 @@ import {
   CreateCompanyResponseDto,
   findCompanyResponseDto,
 } from './dto/create-company.dto';
-import {
-  UpdateCompanyDto,
-  UpdateCompanyJobStatusesDto,
-  UpdateCompanyLogoDto,
-  UpdateCompanyJobStatuses,
-} from './dto/update-company.dto';
+import { UpdateCompanyDto, UpdateCompanyJobStatusesDto, UpdateCompanyJobStatuses } from './dto/update-company.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiBearerAuth,
@@ -290,16 +285,15 @@ export class CompanyController {
     description: `The updated ${className} instance`,
   })
   @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: UpdateCompanyLogoDto })
   @UseInterceptors(FileInterceptor('logo'))
   @Patch('/update/:cid/logo')
   async updateLogo(
     @Headers() headers: any,
     @Param('cid') companyId: string,
     @UploadedFile() logo: Express.Multer.File,
-    @Body() body: { currentEmployeeId: Types.ObjectId },
+    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
-    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       try {
         validateObjectId(companyId);
