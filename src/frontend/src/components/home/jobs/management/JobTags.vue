@@ -77,9 +77,14 @@
           </div>
         </v-card-text>
 
-        <v-card-actions>
+        <v-card-actions class="d-flex flex-column">
           <v-btn color="success" @click="handleClick">
+            <v-icon class="fas fa-save"></v-icon>
             {{ dialogTitle === 'Create Label' ? 'Create' : 'Save' }}
+          </v-btn>
+          <v-btn v-if="dialogTitle === 'Edit Label'" color="error" @click="deleteLabel">
+            <v-icon class="fas fa-trash"></v-icon>
+            Delete
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -309,6 +314,35 @@ const addTagSuccess = () => {
   })
 }
 
+const deleteLabel = async () => {
+  const apiUrl = await getRequestUrl()
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+  try {
+    const body = {
+      tagId: selectedTagId.value,
+      companyId: localStorage.getItem('currentCompany')
+    }
+    const response = await axios.delete(`${apiUrl}job/tags`, {
+      data: body,
+      headers: config.headers
+    })
+    console.log('Delete tag:', response)
+    // Remove the deleted tag from the selectedTags array
+    selectedTags.value = selectedTags.value.filter(tag => tag._id !== selectedTagId.value)
+  } catch (error) {
+    console.log(error)
+  }
+  labelTitle.value = ''
+  selectedColor.value = ''
+  selectedTagId.value = ''
+  dialog.value = false
+}
+
 const addTagFailure = () => {
   toast.add({
     severity: 'error',
@@ -316,10 +350,6 @@ const addTagFailure = () => {
     detail: 'Failed to add tag',
     life: 300
   })
-}
-
-const deleteLabel = (label: Label) => {
-  labels.value = labels.value.filter((l) => l.label !== label.label)
 }
 
 // Utility function to determine the best text color for the selected background
