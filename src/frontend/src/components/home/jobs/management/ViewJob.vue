@@ -180,6 +180,12 @@
               <GetJobImages :id="props.passedInJob?._id" />
             </v-col>
             <v-divider>
+              <h5 ref="jobStatusSection">Update Job Status</h5>
+            </v-divider>
+            <v-col>
+              <JobStatus :jobID="props.passedInJob?._id" :status="props.passedInJob?.status"/>
+            </v-col>
+            <v-divider>
               <h5 ref="tagsSection">Add Job Tags</h5>
             </v-divider>
             <v-col>
@@ -273,6 +279,20 @@
               class="d-flex justify-start"
               border="md"
               elevation="5"
+              @click="scrollToSection('jobStatusSection')"
+            >
+              <v-icon left>
+                {{ 'fa: fa-solid fa-info-circle' }}
+              </v-icon>
+              Update Status
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn
+              width="100%"
+              class="d-flex justify-start"
+              border="md"
+              elevation="5"
               @click="scrollToSection('historySection')"
             >
               <v-icon left>
@@ -300,7 +320,9 @@ import CheckOffItems from './CheckOffItems.vue'
 import GetJobImages from './GetJobImages.vue'
 import JobTags from './JobTags.vue'
 import JobHistory from './JobHistory.vue'
+import JobStatus from './JobStatus.vue'
 import axios from 'axios'
+
 
 const props = defineProps<{ passedInJob: any }>()
 const emits = defineEmits(['close'])
@@ -311,6 +333,7 @@ const tasksSection = ref<HTMLElement | null>(null)
 const imagesSection = ref<HTMLElement | null>(null)
 const tagsSection = ref<HTMLElement | null>(null)
 const historySection = ref<HTMLElement | null>(null)
+const jobStatusSection = ref<HTMLElement | null>(null)
 const viewJobDialog = ref(false) // Dialog state
 const checklistSection = ref(null)
 const inventorySection = ref(null)
@@ -348,6 +371,7 @@ function scrollToSection(
     | 'imagesSection'
     | 'tagsSection'
     | 'historySection'
+    | 'jobStatusSection'
 ) {
   let sectionRef = null
 
@@ -363,6 +387,8 @@ function scrollToSection(
     sectionRef = tagsSection
   } else if (section === 'historySection') {
     sectionRef = historySection
+  } else if (section === 'jobStatusSection') {
+    sectionRef = jobStatusSection
   }
 
   if (sectionRef && sectionRef.value) {
