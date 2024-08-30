@@ -25,7 +25,7 @@
     </v-combobox>
 
     <!-- Create Label Button -->
-    <v-btn color="success" @click="saveTags"> Save Tags</v-btn>
+    <v-btn color="success" width="100%" @click="saveTags"> Save Tags</v-btn>
     <v-btn color="success" class="mt-4" @click="openCreateDialog" block> Create Tag </v-btn>
 
     <!-- Label Creation/Edit Dialog -->
@@ -170,43 +170,9 @@ const saveTags = async () => {
     console.log(response)
   } catch (error) {
     console.log('Selected Tags:', selectedTags)
-
     console.log(error)
   }
 }
-
-const colorOptions = ref<string[]>([
-  '#FFB74D',
-  '#FFD54F',
-  '#FFF176',
-  '#AED581',
-  '#81C784',
-  '#4DB6AC',
-  '#4DD0E1',
-  '#4FC3F7',
-  '#64B5F6',
-  '#7986CB',
-  '#BA68C8',
-  '#DCE775',
-  '#FFF59D',
-  '#FFEB3B',
-  '#FFCA28',
-  '#FF7043',
-  '#FF8A65',
-  '#A1887F',
-  '#90A4AE',
-  '#78909C',
-  '#EF5350',
-  '#EC407A',
-  '#AB47BC',
-  '#8E24AA',
-  '#7B1FA2',
-  '#42A5F5',
-  '#26A69A',
-  '#66BB6A',
-  '#9CCC65',
-  '#FFEE58'
-])
 
 const filteredLabels = computed<Label[]>(() =>
   labels.value.filter((label) =>
@@ -221,10 +187,11 @@ const openCreateDialog = () => {
   dialog.value = true
 }
 
-const openEditDialog = (label: any) => {
+const openEditDialog = async (label: any) => {
   dialogTitle.value = 'Edit Label'
-  labelTitle.value = label.label
-  selectedColor.value = label.colour
+  console.log('Selected label', label)
+  labelTitle.value = label.raw.label
+  selectedColor.value = label.raw.colour
   dialog.value = true
 }
 
