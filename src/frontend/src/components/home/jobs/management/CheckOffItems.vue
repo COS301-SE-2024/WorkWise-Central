@@ -27,9 +27,11 @@
             rows="1"
             class="mb-4"
           ></v-textarea>
-          <v-btn color="error" outlined @click="deleteTask(taskIndex)" class="pl-10 pt-5">
-            Delete
-          </v-btn>
+          <template v-if="task.title.trim() !== ''">
+            <v-btn color="error" outlined @click="deleteTask(taskIndex)" class="pl-10 pt-5">
+              Delete
+            </v-btn>
+          </template>
         </v-row>
 
         <!-- Only show the rest of the components if the title is set -->
@@ -208,62 +210,68 @@
   </v-container>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      taskList: [
-        // Populate with tasks
-      ],
-      itemsPerPage: 1,
-      currentPage: 1,
-      assignDialog: false,
-      selectedEmployees: [],
-      assignableEmployees: []
-    }
-  },
-  computed: {
-    paginatedTasks() {
-      const start = (this.currentPage - 1) * this.itemsPerPage
-      return this.taskList.slice(start, start + this.itemsPerPage)
-    },
-    pageCount() {
-      return Math.ceil(this.taskList.length / this.itemsPerPage)
-    },
-    canCreateNewTask() {
-      return this.taskList.length < this.itemsPerPage * this.pageCount
-    }
-  },
-  methods: {
-    createNewTask() {
-      this.taskList.push({ title: '', items: [], newItemText: '', isSaveVisible: false })
-    },
-    getTaskProgress(task) {
-      const completedItems = task.items.filter((item) => item.done).length
-      return (completedItems / task.items.length) * 100 || 0
-    },
-    addItem(taskIndex) {
-      const task = this.taskList[taskIndex]
-      if (task.newItemText.trim() !== '') {
-        task.items.push({ description: task.newItemText, done: false })
-        task.newItemText = ''
-        task.isSaveVisible = true
-      }
-    },
-    saveTask(taskIndex) {
-      // Save task logic
-    },
-    deleteItem(taskIndex, itemIndex) {
-      this.taskList[taskIndex].items.splice(itemIndex, 1)
-    },
-    openCheckActionsDialog(itemIndex) {
-      // Handle dialog actions
-    }
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+
+interface Task {
+  title: string
+  items: { description: string; done: boolean }[]
+  newItemText: string
+  isSaveVisible: boolean
+}
+
+const taskList = ref<Task[]>([])
+const itemsPerPage = ref(1)
+const currentPage = ref(1)
+const assignDialog = ref(false)
+const selectedEmployees = ref<string[]>([])
+const assignableEmployees = ref<string[]>([])
+
+const paginatedTasks = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  return taskList.value.slice(start, start + itemsPerPage.value)
+})
+
+const pageCount = computed(() => {
+  return Math.ceil(taskList.value.length / itemsPerPage.value)
+})
+
+const canCreateNewTask = computed(() => {
+  return taskList.value.length < itemsPerPage.value * pageCount.value
+})
+
+function createNewTask() {
+  taskList.value.push({ title: '', items: [], newItemText: '', isSaveVisible: false })
+}
+
+function getTaskProgress(task: Task) {
+  const completedItems = task.items.filter((item) => item.done).length
+  return (completedItems / task.items.length) * 100 || 0
+}
+
+function addItem(taskIndex: number) {
+  const task = taskList.value[taskIndex]
+  if (task.newItemText.trim() !== '') {
+    task.items.push({ description: task.newItemText, done: false })
+    task.newItemText = ''
+    task.isSaveVisible = true
   }
+}
+
+function saveTask(taskIndex: number) {
+  // Save task logic
+}
+
+function deleteItem(taskIndex: number, itemIndex: number) {
+  taskList.value[taskIndex].items.splice(itemIndex, 1)
+}
+
+function openCheckActionsDialog(itemIndex: number) {
+  // Handle dialog actions
 }
 </script>
 
-<style>
+<style scoped>
 .strikethrough {
   text-decoration: line-through;
 }
