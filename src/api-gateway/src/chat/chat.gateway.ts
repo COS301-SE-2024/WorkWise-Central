@@ -69,6 +69,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.emit('init-chat', { chatIds: chatIds });
   }
 
+  @AsyncApiSub({
+    channel: 'new-message',
+    message: {
+      payload: AddMessageDto,
+    },
+    summary: 'Listen for new messages that are targeted to you as a user',
+    description: `Used in order to receive new messages in real-time`,
+  })
   @SubscribeMessage('new-message')
   async handleNewMessage(@ConnectedSocket() client: Socket, @MessageBody(new ValidationPipe()) payload: AddMessageDto) {
     const userId = this.jwtService.decode(payload.jwt).sub;
@@ -83,6 +91,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(payload.chatId.toString()).emit('new-message', result);
   }
 
+  @AsyncApiSub({
+    channel: 'delete-message',
+    message: {
+      payload: DeleteMessageDto,
+    },
+    summary: 'Listen for removed messages in chats that are related to you as a user',
+    description: `Used in order to receive  real-time updates from the chat gateway`,
+  })
   @SubscribeMessage('delete-message')
   async handleDeleteMessage(
     @ConnectedSocket() client: Socket,
@@ -100,6 +116,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(payload.chatId.toString()).emit('delete-message', result);
   }
 
+  @AsyncApiSub({
+    channel: 'delete-chat',
+    message: {
+      payload: DeleteChatDto,
+    },
+    summary: 'Listen for chats being deleted or "closed"',
+    description: `Used in order to receive real-time feedback on chats that are still open`,
+  })
   @SubscribeMessage('delete-chat')
   async handleDeleteChat(@ConnectedSocket() client: Socket, @MessageBody(new ValidationPipe()) payload: DeleteChatDto) {
     const userId: Types.ObjectId = this.jwtService.decode(payload.jwt).sub;
@@ -114,6 +138,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(payload.chatId.toString()).emit('delete-chat', result);
   }
 
+  @AsyncApiSub({
+    channel: 'update-message',
+    message: {
+      payload: UpdateMessageDto,
+    },
+    summary: 'Listen for messages being edited by others in your chats',
+    description: `Used in order to receive real-time feedback on chats that you are in`,
+  })
   @SubscribeMessage('update-message')
   async handleUpdateMessage(
     @ConnectedSocket() client: Socket,
