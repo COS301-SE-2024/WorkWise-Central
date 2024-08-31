@@ -5,6 +5,7 @@ import { RouterView } from 'vue-router'
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import axios from 'axios'
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -36,6 +37,7 @@ getToken(messaging, { vapidKey: 'BHFxgovddtMIC2TUXezr9v2oRD1E4AQZjr-d-dsY6z_ehd-
   if (currentToken) {
     // Send the token to your server and update the UI if necessary
     console.log('Token is:', currentToken);
+
     // ...
   } else {
     // Show permission request UI
