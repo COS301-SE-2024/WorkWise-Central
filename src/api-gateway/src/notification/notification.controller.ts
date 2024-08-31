@@ -16,12 +16,12 @@ export class NotificationController {
   ) {}
   @Get()
   async test(@Query('id') id: string) {
-    //this.validateObjectId(id);
+    validateObjectId(id);
     const compId = new Types.ObjectId(id);
     try {
       return await this.notificationService.notifyAllInCompany(compId, {
-        title: 'Test',
-        body: 'Hello world',
+        title: 'Test Again',
+        body: 'Hello world ',
       });
     } catch (e) {
       throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -67,7 +67,9 @@ export class NotificationController {
     try {
       const userId = this.extractUserId(headers);
       return { data: await this.notificationService.saveNewFCMToken(userId, body.newToken) };
-    } catch (e) {}
+    } catch (e) {
+      throw e;
+    }
   }
 
   @ApiOperation({
