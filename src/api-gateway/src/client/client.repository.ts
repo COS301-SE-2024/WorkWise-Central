@@ -41,7 +41,7 @@ export class ClientRepository {
     return this.clientModel
       .find({
         $and: [
-          { companyId: companyId },
+          { 'details.companyId': companyId },
           {
             $or: [
               { 'contactInfo.email': { $regex: regex, $options: 'i' } },

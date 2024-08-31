@@ -662,7 +662,7 @@ export class JobService {
     return this.jobTagRepository.findAllPriorityTagsInCompany(companyId);
   }
 
-  async addJobTagToCompany(userId: Types.ObjectId, createTagDto: CreateTagDto): Promise<Job & { _id: Types.ObjectId }> {
+  async addJobTagToCompany(userId: Types.ObjectId, createTagDto: CreateTagDto) {
     /// Validation
     const user = await this.usersService.getUserById(userId);
     if (!user) throw new NotFoundException('User not found');
@@ -684,9 +684,9 @@ export class JobService {
     }
 
     const newTag = new JobTag(createTagDto.label, createTagDto.colour, createTagDto.companyId);
-    const savedDoc = await this.jobTagRepository.addJobTagToCompany(newTag);
-    console.log(savedDoc);
-    return savedDoc.toObject();
+    const j = await this.jobTagRepository.addJobTagToCompany(newTag);
+    console.log(j);
+    return j;
   }
 
   /*  async addJobStatusToCompany(
