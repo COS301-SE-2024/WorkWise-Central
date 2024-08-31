@@ -21,10 +21,11 @@ const firebaseConfig = {
 };
 const localUrl: string = 'http://localhost:3000/'
 const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
+// TODO: Change config to pull jwt from localStorage
 const config = {
   headers: {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    Authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NmNlY2Q4NDc5ODlhNzA5ODJjNDhlN2EiLCJ1c2VybmFtZSI6Ikxlc2Vnb0RsYW1pbmkiLCJpYXQiOjE3MjUxMDM4NTIsImV4cCI6NjUyNTEwMjY1Mn0.i0YdUxIOnku0-GuymSpRRcxQ9v9fZrmvE3UiEak9wdI'
   }
 }
 // Utility functions
