@@ -59,7 +59,7 @@
               <AddClient
                 v-show="checkPermission('add new clients')"
                 :showDialog="addClientVisibility"
-                @update:showDialog="addClientVisibility = $event"
+                @createClient="getClients"
               />
               <!--            </v-dialog>-->
             </v-col>

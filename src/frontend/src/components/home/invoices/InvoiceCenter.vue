@@ -23,7 +23,7 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" lg="6">
-                     <Chart type="bar" :data="chartData" />
+                      <Chart type="bar" :data="chartData" />
                     </v-col>
                     <v-col cols="12" lg="6">
                       <Chart :type="chartType" :data="chartData" />
@@ -231,15 +231,27 @@ export default {
       totalUnpaid: 30,
       chartType: 'pie',
       // Define chart options
+      chartData2: {
+        labels: ['January', 'February'], // Labels for the x-axis
+        datasets: [
+          {
+            label: 'Invoices', // Label for the dataset
+            data: [1500, 2500], // Data points for the dataset
+            backgroundColor: 'rgba(75, 192, 192, 0.2)', // Background color for the bars
+            borderColor: 'rgba(75, 192, 192, 1)', // Border color for the bars
+            borderWidth: 1 // Border width of the bars
+          }
+        ]
+      },
       chartOptions: {
         responsive: true,
         plugins: {
           legend: {
-            position: 'top'
+            position: 'top' // Position of the legend
           },
           tooltip: {
             callbacks: {
-              label: function (context: any) {
+              label: (context: any) => {
                 let label = context.dataset.label || ''
                 if (label) {
                   label += ': '
@@ -254,11 +266,11 @@ export default {
         },
         scales: {
           x: {
-            stacked: true
+            stacked: true // Enable stacking on the x-axis
           },
           y: {
-            stacked: true,
-            beginAtZero: true
+            stacked: true, // Enable stacking on the y-axis
+            beginAtZero: true // Start the y-axis at zero
           }
         }
       },
@@ -311,10 +323,10 @@ export default {
         { date: '2024-08-05', amount: 2000, invoiceNumber: 'INV-002' }
       ]
 
-      this.chartOptions = {
-        series: [1500, 2500],
-        labels: ['Paid', 'Unpaid']
-      }
+      // this.chartOptions = {
+      //   series: [1500, 2500] as number[],
+      //   labels: ['Paid', 'Unpaid']
+      // }
 
       this.invoiceAgingReport = [
         { daysOverdue: 30, count: 2 },

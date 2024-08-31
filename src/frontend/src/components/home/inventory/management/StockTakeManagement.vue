@@ -444,9 +444,9 @@ export default {
         0
       )
 
-      doc.text(`Total Items: ${totalItems}`, 10, doc.autoTable.previous.finalY + 10)
-      doc.text(`Total Current Stock: ${totalStock}`, 10, doc.autoTable.previous.finalY + 17)
-      doc.text(`Total Reorder Level: ${totalReorder}`, 10, doc.autoTable.previous.finalY + 24)
+      // doc.text(`Total Items: ${totalItems}`, 10, doc.autoTable.previous.finalY + 10)
+      // doc.text(`Total Current Stock: ${totalStock}`, 10, doc.autoTable.previous.finalY + 17)
+      // doc.text(`Total Reorder Level: ${totalReorder}`, 10, doc.autoTable.previous.finalY + 24)
 
       // Save the PDF
       doc.save(`stock_take_${localStorage.getItem('currentCompanyName')}_${this.currentDate}.pdf`)
