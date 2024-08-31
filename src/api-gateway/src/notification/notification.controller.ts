@@ -1,10 +1,11 @@
 import { Body, Controller, Get, Headers, HttpException, HttpStatus, Patch, Post, Query } from '@nestjs/common';
-import { ApiInternalServerErrorResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiInternalServerErrorResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { NotificationService } from './notification.service';
 import { Types } from 'mongoose';
 import { validateObjectId } from '../utils/Utils';
 import { ReceiveFCMTokenDto, StopPushDto } from './dto/receiveFCMTokenDto';
 import { JwtService } from '@nestjs/jwt';
+import { NotificationToken } from './entities/notificationToken.entity';
 
 @ApiTags('Notification')
 @Controller('notification')
@@ -59,6 +60,8 @@ export class NotificationController {
     summary: 'After accepting Push Notifications, send your new Device token for push notifications',
     description: ' You only need to do this when its the first time using the device, or the user cleared App Data',
   })
+  @ApiBody({ type: ReceiveFCMTokenDto })
+  @ApiResponse({ type: NotificationToken })
   @Post('push/token')
   async sendFCMToken(@Headers() headers: any, @Body() body: ReceiveFCMTokenDto) {
     try {
@@ -71,6 +74,7 @@ export class NotificationController {
     summary: 'If you want to turn off push notifications on your device',
     description: 'Send the current device Id',
   })
+  @ApiResponse({ type: NotificationToken })
   @Patch('push/token')
   async stopNotificationsOnThisDevice(@Headers() headers: any, @Body() body: StopPushDto) {
     try {
