@@ -1145,8 +1145,10 @@ export class JobService {
     this.jobTagRepository.deleteAllTagsAndStatusesInCompany(companyId);
   }
 
-  removeAllReferencesToEmployee(employeeId: Types.ObjectId) {
-    this.jobRepository.removeAllReferencesToEmployee(employeeId);
+  async removeAllReferencesToEmployee(employeeId: Types.ObjectId) {
+    const employee = await this.employeeService.findById(employeeId);
+    if (!employee) throw new NotFoundException('Employee not found');
+    this.jobRepository.removeAllReferencesToEmployee(employee.companyId, employeeId);
     return true;
   }
 
