@@ -168,8 +168,7 @@
             <v-row>
               <v-col>
                 <CheckOffItems
-                  :jobTaskList="props.passedInJob?.taskList"
-                  :id="props.passedInJob?._id"
+                  :jobID="props.passedInJob?._id"
                 />
               </v-col>
             </v-row>

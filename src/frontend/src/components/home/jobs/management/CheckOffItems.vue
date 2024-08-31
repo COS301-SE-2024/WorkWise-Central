@@ -185,7 +185,6 @@
           <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
             <v-row class="justify-center">
               <v-btn
-                v-if="task.isSaveVisible"
                 color="success"
                 @click="saveTask(taskIndex)"
                 prepend-icon="fa: fa-solid fa-save"
@@ -211,14 +210,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, defineProps, onMounted } from 'vue'
+import axios from 'axios'
 
 interface Task {
   title: string
   items: { description: string; done: boolean }[]
   newItemText: string
   isSaveVisible: boolean
+  _id: string
 }
+
+const props = defineProps<{jobID: string}>()
 
 const taskList = ref<Task[]>([])
 const itemsPerPage = ref(1)
@@ -226,6 +229,31 @@ const currentPage = ref(1)
 const assignDialog = ref(false)
 const selectedEmployees = ref<string[]>([])
 const assignableEmployees = ref<string[]>([])
+
+//API URLS
+const localUrl: string = 'http://localhost:3000/'
+const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`
+  }
+}
+
+// Utility functions
+const isLocalAvailable = async (url: string): Promise<boolean> => {
+  try {
+    const res = await axios.get(url)
+    return res.status < 300 && res.status > 199
+  } catch (error) {
+    return false
+  }
+}
+
+const getRequestUrl = async (): Promise<string> => {
+  const localAvailable = await isLocalAvailable(localUrl)
+  return localAvailable ? localUrl : remoteUrl
+}
 
 const paginatedTasks = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value
@@ -241,7 +269,7 @@ const canCreateNewTask = computed(() => {
 })
 
 function createNewTask() {
-  taskList.value.push({ title: '', items: [], newItemText: '', isSaveVisible: false })
+  taskList.value.push({ title: '', items: [], newItemText: '', isSaveVisible: false, _id: '' })
 }
 
 function getTaskProgress(task: Task) {
@@ -258,8 +286,58 @@ function addItem(taskIndex: number) {
   }
 }
 
-function saveTask(taskIndex: number) {
-  // Save task logic
+const getJobTasks = async () => {
+  const apiUrl = await getRequestUrl()
+  try {
+    const response = await axios.get(`${apiUrl}job/id/${props.jobID}`)
+    const tasks = response.data.data.taskList.map((task: any) => ({
+      title: task.title,
+      items: task.items,
+      newItemText: '',
+      isSaveVisible: false,
+      _id: task._id
+    }))
+    taskList.value = tasks
+    console.log('Mapped tasks:', taskList.value)
+  } catch (error) {
+    console.log('Failed to retrieve tasks', error)
+  }
+}
+const createTaskIntegration = async (taskIndex: number) => {
+  const apiUrl = await getRequestUrl()
+  const body = {
+    employeeId: localStorage.getItem('employeeId') || '',
+    jobId: props.jobID,
+    title: taskList.value[taskIndex].title
+  }
+  const response = await axios.put(`${apiUrl}job/task`, body, config)
+  taskList.value[taskIndex]._id = response.data.data.taskList[response.data.data.taskList.length - 1]._id
+  console.log('New task called', response.data.data)
+}
+
+const updateTaskIntegration = async (taskIndex: number) => {
+  const apiUrl = await getRequestUrl()
+  const body = {
+    employeeId: localStorage.getItem('employeeId') || '',
+    jobId: props.jobID,
+    taskId: taskList.value[taskIndex]._id,
+    title: taskList.value[taskIndex].title
+  }
+  const response = await axios.patch(`${apiUrl}job/task`, body, config)
+  console.log('Task updated', response.data.data)
+}
+
+const saveTask = async (taskIndex: number) => {
+  const apiUrl = await getRequestUrl()
+  try {
+    if (taskList.value[taskIndex]._id === '') {
+      await createTaskIntegration(taskIndex)
+    } else {
+      await updateTaskIntegration(taskIndex)
+    }
+  } catch(error) {
+    console.log(error)
+  }
 }
 
 function deleteItem(taskIndex: number, itemIndex: number) {
@@ -269,6 +347,10 @@ function deleteItem(taskIndex: number, itemIndex: number) {
 function openCheckActionsDialog(itemIndex: number) {
   // Handle dialog actions
 }
+
+onMounted(() => {
+  getJobTasks()
+})
 </script>
 
 <style scoped>
