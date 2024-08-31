@@ -41,7 +41,7 @@
           <v-col class="text-center">
             <v-spacer></v-spacer>
             <p>
-              <v-chip :color="getStatusColor(props.passedInJob?.status?.status)" dark>
+              <v-chip :color="props.passedInJob?.status?.colour" dark>
                 {{ props.passedInJob?.status?.status }}
               </v-chip>
             </p>
@@ -80,44 +80,59 @@
           </v-divider>
           <v-col class="text-center">
             <v-row class="text-center">
-              <v-col sm="6" md="4">
+              <v-col>
                 <label class="font-weight-bold">City</label>
                 <v-spacer></v-spacer>
                 <p>
-                  {{ props.passedInJob?.details?.address?.city }}
+                  {{
+                    props.passedInJob?.details?.address?.city ||
+                    'City is not available'
+                  }}
                 </p>
               </v-col>
-              <v-col sm="6" md="4">
+              <v-col>
                 <label class="font-weight-bold">Suburb</label>
                 <v-spacer></v-spacer>
                 <p>
-                  {{ props.passedInJob?.details?.address?.suburb }}
+                  {{
+                    props.passedInJob?.details?.address?.suburb ||
+                    'Suburb is not available'
+                  }}
                 </p>
               </v-col>
-              <v-col sm="6" md="4">
+              <v-col>
                 <label class="font-weight-bold">Street</label>
                 <v-spacer></v-spacer>
                 <p>
-                  {{ props.passedInJob?.details?.address?.street }}
+                  {{
+                    props.passedInJob?.details?.address?.street ||
+                    'Address is not available'
+                  }}
                 </p>
               </v-col>
             </v-row>
             <v-row>
-              <v-col sm="6" md="4">
+              <v-col>
                 <label class="font-weight-bold">Postal Code</label>
                 <v-spacer></v-spacer>
                 <p>
-                  {{ props.passedInJob?.details?.address?.postalCode }}
+                  {{
+                    props.passedInJob?.details?.address?.postalCode ||
+                    'Postal code is not available'
+                  }}
                 </p>
               </v-col>
-              <v-col sm="6" md="4">
+              <v-col>
                 <label class="font-weight-bold">Complex</label>
                 <v-spacer></v-spacer>
                 <p>
-                  {{ props.passedInJob?.details?.address?.complex }}
+                  {{
+                    props.passedInJob?.details?.address?.complex ||
+                    'Complex name is not available'
+                  }}
                 </p>
               </v-col>
-              <v-col sm="6" md="4">
+              <v-col>
                 <label class="font-weight-bold">House Number</label>
                 <v-spacer></v-spacer>
                 <p>
@@ -148,7 +163,7 @@
             <!--                </v-col>-->
             <!--              </v-row>-->
             <v-divider>
-              <h5 ref="tasksSection">Check Off Tasks</h5>
+              <h5 ref="tasksSection">Task Lists</h5>
             </v-divider>
             <v-row>
               <v-col>
@@ -165,7 +180,13 @@
               <GetJobImages :id="props.passedInJob?._id" />
             </v-col>
             <v-divider>
-              <h5 ref="tagsSection">Add Job Tags</h5>
+              <h5 ref="jobStatusSection">Update Job Status</h5>
+            </v-divider>
+            <v-col>
+              <JobStatus :jobID="props.passedInJob?._id" :status="props.passedInJob?.status"/>
+            </v-col>
+            <v-divider>
+              <h5 ref="jobTagsSection">Add Job Tags</h5>
             </v-divider>
             <v-col>
               <JobTags :tags="props.passedInJob?.tags" :jobID="props.passedInJob?._id" />
@@ -174,7 +195,7 @@
               <h5 ref="historySection">View Job History</h5>
             </v-divider>
             <v-col>
-              <JobHistory :jobHistory="props.passedInJob.history" />
+              <JobHistory :jobHistory="props.passedInJob?.history" :jobID="props.passedInJob?._id" />
             </v-col>
           </v-col>
         </v-col>
@@ -221,7 +242,7 @@
               <v-icon left>
                 {{ 'fa: fa-solid fa-tasks' }}
               </v-icon>
-              Check Off Task
+              Task Lists
             </v-btn>
           </v-col>
           <v-col>
@@ -258,6 +279,34 @@
               class="d-flex justify-start"
               border="md"
               elevation="5"
+              @click="scrollToSection('jobStatusSection')"
+            >
+              <v-icon left>
+                {{ 'fa: fa-solid fa-info-circle' }}
+              </v-icon>
+              Update Status
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn
+              width="100%"
+              class="d-flex justify-start"
+              border="md"
+              elevation="5"
+              @click="scrollToSection('jobTagsSection')"
+            >
+              <v-icon left>
+                {{ 'fa: fa-solid fa-tags' }}
+              </v-icon>
+              Job Tags
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn
+              width="100%"
+              class="d-flex justify-start"
+              border="md"
+              elevation="5"
               @click="scrollToSection('historySection')"
             >
               <v-icon left>
@@ -285,7 +334,9 @@ import CheckOffItems from './CheckOffItems.vue'
 import GetJobImages from './GetJobImages.vue'
 import JobTags from './JobTags.vue'
 import JobHistory from './JobHistory.vue'
+import JobStatus from './JobStatus.vue'
 import axios from 'axios'
+
 
 const props = defineProps<{ passedInJob: any }>()
 const emits = defineEmits(['close'])
@@ -296,6 +347,8 @@ const tasksSection = ref<HTMLElement | null>(null)
 const imagesSection = ref<HTMLElement | null>(null)
 const tagsSection = ref<HTMLElement | null>(null)
 const historySection = ref<HTMLElement | null>(null)
+const jobStatusSection = ref<HTMLElement | null>(null)
+const jobTagsSection = ref<HTMLElement | null>(null)
 const viewJobDialog = ref(false) // Dialog state
 const checklistSection = ref(null)
 const inventorySection = ref(null)
@@ -333,6 +386,8 @@ function scrollToSection(
     | 'imagesSection'
     | 'tagsSection'
     | 'historySection'
+    | 'jobStatusSection'
+    | 'jobTagsSection'
 ) {
   let sectionRef = null
 
@@ -348,27 +403,14 @@ function scrollToSection(
     sectionRef = tagsSection
   } else if (section === 'historySection') {
     sectionRef = historySection
+  } else if (section === 'jobStatusSection') {
+    sectionRef = jobStatusSection
+  } else if (section === 'jobTagsSection') {
+    sectionRef = jobTagsSection
   }
 
   if (sectionRef && sectionRef.value) {
     sectionRef.value.scrollIntoView({ behavior: 'smooth' })
-  }
-}
-
-const getStatusColor = (status: string): string => {
-  switch (status) {
-    case 'to do':
-      return 'blue'
-    case 'in progress':
-      return 'yellow'
-    case 'awaiting invoice':
-      return 'orange'
-    case 'awaiting payment':
-      return 'red'
-    case 'awaiting sign off':
-      return 'green'
-    default:
-      return 'grey'
   }
 }
 

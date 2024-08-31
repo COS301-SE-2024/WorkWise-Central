@@ -119,7 +119,7 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col  cols="12" md="6">
+              <v-col  cols="12" md="6" class="d-flex justify-center align-center">
                 <v-date-picker
                   title="SELECT START DATE"
                   header="Start date of job"
@@ -136,7 +136,7 @@
                   style="height: 475px"
                 ></v-date-picker>
               </v-col>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="6" class="d-flex justify-center align-center">
                 <v-time-picker
                   format="24hr"
                   :allowed-hours="allowedHours"
@@ -147,7 +147,7 @@
                   style="height: 475px"
                 ></v-time-picker>
               </v-col>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="6" class="d-flex justify-center align-center">
                 <v-date-picker
                   title="SELECT END DATE"
                   header="End date of job"
@@ -164,7 +164,7 @@
                   style="height: 475px"
                 ></v-date-picker>
               </v-col>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="6" class="d-flex justify-center align-center">
                 <v-time-picker
                   :allowed-hours="allowedHours2"
                   :allowed-minutes="allowedMinutes2"
