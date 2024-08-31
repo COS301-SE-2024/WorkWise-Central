@@ -70,7 +70,7 @@ export class RoleService {
     return new ValidationResult(true, `All good`);
   }
 
-  async validateUpdateRole(userId: Types.ObjectId, roleId: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
+  async validateUpdateRole(roleId: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
     console.log('In validate UpdateRole');
     console.log('updateRoleDto: ', updateRoleDto);
     const roleToBeUpdate = await this.findById(roleId);
@@ -207,10 +207,10 @@ export class RoleService {
     return result;
   }
 
-  async update(userId: Types.ObjectId, roleId: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
+  async update(roleId: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
     console.log('In role update service');
     console.log('updateRoleDto: ', updateRoleDto);
-    const validation = await this.validateUpdateRole(userId, roleId, updateRoleDto);
+    const validation = await this.validateUpdateRole(roleId, updateRoleDto);
     console.log('validation: ', validation);
     if (!validation.isValid) {
       throw new Error(validation.message);
