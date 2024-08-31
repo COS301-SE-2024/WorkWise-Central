@@ -354,7 +354,6 @@ export class JobService {
     }
     /// Role-based stuff
     //TODO: Implement later
-    await this.employeeService.addJobAssignment(jobAssignDto.employeeId, jobAssignDto.jobId);
     const result = await this.jobRepository.assignEmployee(jobAssignDto.employeeToAssignId, jobAssignDto.jobId);
     const user = await this.usersService.getUserById(userId);
     const otherEmployee = await this.employeeService.findById(jobAssignDto.employeeToAssignId);
@@ -499,7 +498,6 @@ export class JobService {
     if (!alreadyAssigned) throw new ConflictException('Employee Not Assigned');
     /// Role-based stuff
     //TODO: Implement later
-    await this.employeeService.removeJobAssignment(jobAssignDto.employeeId, jobAssignDto.jobId);
     const result = await this.jobRepository.unassignEmployee(jobAssignDto.employeeToAssignId, jobAssignDto.jobId);
     const user = await this.usersService.getUserById(userId);
     const otherEmployee = await this.employeeService.findById(jobAssignDto.employeeToAssignId);
