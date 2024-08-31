@@ -220,9 +220,7 @@ export class CompanyController {
   })
   @ApiQuery({ name: 'str', description: 'An email or name of company' })
   @Get('search?')
-  async findByEmailOrName(
-    @Query('str') str: string,
-  ): Promise<{ data: FlattenMaps<Company> & { _id: Types.ObjectId } }> {
+  async findByEmailOrName(@Query('str') str: string) {
     try {
       str = decodeURIComponent(str);
       return {
