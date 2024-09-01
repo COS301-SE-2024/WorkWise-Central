@@ -128,7 +128,7 @@ export class EmployeeService {
     }
     if (createEmployeeDto.roleId) {
       const role = await this.roleService.findById(createEmployeeDto.roleId);
-      newEmployee.role.roleId = role._id;
+      newEmployee.role.roleId = new Types.ObjectId(role._id);
       newEmployee.role.permissionSuite = role.permissionSuite;
       newEmployee.role.roleName = role.roleName;
     } else {
@@ -419,7 +419,7 @@ export class EmployeeService {
       // console.log('In if updateRoleDto.permissionSuite');
       newRole.permissionSuite = updateRoleDto.permissionSuite;
     } else {
-      // console.log('in else');
+      // console.log('in else updateRoleDto.permissionSuite');
       newRole.permissionSuite = role.permissionSuite;
     }
 
@@ -427,11 +427,15 @@ export class EmployeeService {
       // console.log('In if updateRoleDto.roleName');
       newRole.roleName = updateRoleDto.roleName;
     } else {
-      // console.log('In else');
+      // console.log('In else updateRoleDto.roleName');
       newRole.roleName = role.roleName;
     }
     // console.log('newRole: ', newRole);
-    return await this.employeeRepository.updateRole(roleId, role.companyId, newRole);
+    return await this.employeeRepository.updateRole(
+      new Types.ObjectId(roleId),
+      new Types.ObjectId(role.companyId),
+      newRole,
+    );
   }
 
   async allEmployeesInCompanyWithRole(roleId: Types.ObjectId) {
