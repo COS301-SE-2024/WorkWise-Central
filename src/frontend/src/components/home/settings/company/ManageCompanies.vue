@@ -337,10 +337,9 @@ const leaveCompany = async (company: Company) => {
       } else {
         localStorage.removeItem('currentCompany')
         localStorage.removeItem('employeeId')
-        localStorage.removeItem('id')
         localStorage.removeItem('roleId')
         localStorage.removeItem('currentCompanyName')
-        reloadWindow()
+        window.location.reload()
       }
       console.log('Company leave response:', response)
     } else {
