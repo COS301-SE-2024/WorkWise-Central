@@ -106,13 +106,7 @@
 import axios from 'axios'
 export default {
   name: 'HourlyRate',
-  props: {
-    companyID: String,
-    employees: Array,
-    roles: Array,
-    employeeHeaders: Array,
-    roleHeaders: Array
-  },
+
   data() {
     return {
       currentTab: 'Employees',
