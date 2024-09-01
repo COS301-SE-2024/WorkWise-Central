@@ -114,7 +114,7 @@
                             </v-card-text>
                             <v-card-actions class="d-flex flex-column">
                               <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
-                                <v-btn color="success" prepend-icon="fa: fa-solid fa-save">
+                                <v-btn color="success" prepend-icon="fa: fa-solid fa-save" @click="saveMembers(taskIndex, itemIndex)">
                                   Save
                                 </v-btn>
                               </v-defaults-provider>
@@ -221,6 +221,13 @@ interface Task {
   _id: string
 }
 
+interface Member {
+  _id: string
+  userInfo: {
+    firstName: string
+    surname: string
+  }
+}
 const props = defineProps<{jobID: string}>()
 
 const taskList = ref<Task[]>([])
@@ -229,6 +236,10 @@ const currentPage = ref(1)
 const assignDialog = ref(false)
 const selectedEmployees = ref<string[]>([])
 const assignableEmployees = ref<string[]>([])
+const selectedMembers = ref<Member[]>([])
+const members = ref<Member[]>([]) // Populate with your states data
+const originalSelectedMembers = ref<Member[]>([])
+
 
 //API URLS
 const localUrl: string = 'http://localhost:3000/'
@@ -277,12 +288,43 @@ function getTaskProgress(task: Task) {
   return (completedItems / task.items.length) * 100 || 0
 }
 
-function addItem(taskIndex: number) {
+const addItem = async (taskIndex: number) => {
   const task = taskList.value[taskIndex]
   if (task.newItemText.trim() !== '') {
     task.items.push({ description: task.newItemText, done: false })
     task.newItemText = ''
     task.isSaveVisible = true
+  }
+  const apiUrl = await getRequestUrl()
+  try {
+    const body = {
+      employeeId: localStorage.getItem('employeeId') || '',
+      jobId: props.jobID,
+      taskId: taskList.value[taskIndex]._id
+    }
+    const response = await axios.put(`${apiUrl}job/taskItem`, body, config)
+    console.log(response.data.data)
+    if (response.status > 199 && response.status < 300) {
+      const currentDate = new Date().toISOString()
+      console.log(currentDate)
+      const itemId = response.data.data.taskList[taskIndex].items[response.data.data.taskList[taskIndex].items.length - 1]._id
+      console.log('Item id', itemId)
+     const body2 = {
+        employeeId: localStorage.getItem('employeeId') || '',
+        jobId: props.jobID,
+        taskId: taskList.value[taskIndex]._id,
+        description: taskList.value[taskIndex].items[taskList.value[taskIndex].items.length - 1].description,
+        done: taskList.value[taskIndex].items[taskList.value[taskIndex].items.length-1].done,
+        itemId: response.data.data.taskList[taskIndex].items[response.data.data.taskList[taskIndex].items.length - 1]._id,
+        dueDate: currentDate
+     }
+     console.log('Description', body2.description)
+     console.log(body2)
+      const response2 = await axios.patch(`${apiUrl}job/taskItem`, body2, config)
+      console.log(response2.data.data)
+    }
+  } catch (error) {
+    console.log(error)
   }
 }
 
@@ -297,6 +339,7 @@ const getJobTasks = async () => {
       isSaveVisible: false,
       _id: task._id
     }))
+    console.log('Tasks:', tasks)
     taskList.value = tasks
     console.log('Mapped tasks:', taskList.value)
   } catch (error) {
@@ -340,6 +383,134 @@ const saveTask = async (taskIndex: number) => {
   }
 }
 
+const getTeamMembers = async () => {
+  const apiUrl = await getRequestUrl()
+  try {
+    const response = await axios.get(
+      `${apiUrl}employee/detailed/all/${localStorage.getItem('employeeId')}`,
+      config
+    )
+    if (response.status > 199 && response.status < 300) {
+      console.log(response)
+      members.value = response.data.data.map((employee: any) => ({
+        _id: employee._id,
+        userInfo: {
+          firstName: employee.userInfo.firstName,
+          surname: employee.userInfo.surname
+        }
+      }))
+      console.log('Members only: ', members.value)
+    } else {
+      console.log('failed')
+    }
+  } catch (error) {
+    console.log(error)
+    console.error('Error updating job:', error)
+  }
+}
+
+const saveMembers = async (taskIndex: number, itemIndex: number) => {
+  const apiUrl = await getRequestUrl()
+  try {
+    // Find members to remove
+    const membersToRemove = originalSelectedMembers.value.filter(
+      (originalMember) =>
+        !selectedMembers.value.some((selectedMember) => selectedMember._id === originalMember._id)
+    )
+
+    // Remove unselected members
+    for (const member of membersToRemove) {
+      const response = await axios.patch(
+        `${apiUrl}job/employee/taskItem`,
+        {
+          employeeId: localStorage.getItem('employeeId'),
+          employeeToAssignId: member._id,
+          jobId: props.jobID,
+          taskId: taskList.value[taskIndex]._id,
+          itemId: taskList.value[taskIndex].items[itemIndex]._id
+        },
+        config
+      )
+      if (response.status > 199 && response.status < 300) {
+        console.log(`Removed member: ${member._id}`)
+      } else {
+        console.log('Failed to remove member', response)
+      }
+    }
+
+    // Add new selected members
+    for (const member of selectedMembers.value) {
+      if (
+        !originalSelectedMembers.value.some((originalMember) => originalMember._id === member._id)
+      ) {
+        console.log('Add new member option')
+        console.log('Now in selected members', selectedMembers.value)
+        console.log('member', member)
+        const membervia = {
+          employeeId: localStorage.getItem('employeeId'),
+          employeeToAssignId: member._id,
+          jobId: props.jobID
+        }
+        console.log('Member view', membervia)
+        const response = await axios.put(
+          `${apiUrl}job/employee`,
+          {
+            employeeId: localStorage.getItem('employeeId'),
+            employeeToAssignId: member,
+            jobId: props.jobID
+          },
+          config
+        )
+        if (response.status > 199 && response.status < 300) {
+          console.log('Member change', response)
+          console.log(`Added member: ${member._id}`)
+          showAssignEmployeesSuccess()
+        } else {
+          console.log('Failed to add member', response)
+          showAssignEmployeesError()
+        }
+      }
+    }
+
+    // Update the original selected members
+    originalSelectedMembers.value = [...selectedMembers.value]
+  } catch (error) {
+    console.log(error)
+    showAssignEmployeesError()
+  }
+}
+
+const getAssignedEmployees = async () => {
+  const apiUrl = await getRequestUrl()
+  try {
+    const response = await axios.get(`${apiUrl}job/id/${props.jobID}`, config)
+    if (response.status > 199 && response.status < 300) {
+      console.log(response)
+      const employees = response.data.data.assignedEmployees.employeeIds
+      selectedMembers.value = employees.map((employee: any) => ({
+        _id: employee._id,
+        userInfo: {
+          firstName: employee.userInfo.firstName,
+          surname: employee.userInfo.surname
+        }
+      }))
+      console.log('Assigned Employees', selectedMembers.value)
+    } else {
+      console.log('failed')
+    }
+  } catch (error) {
+    console.log(error)
+    console.error('Error updating job:', error)
+  }
+}
+
+const getMembersFullName = (item: Member) => {
+  if (item.userInfo && item.userInfo.firstName && item.userInfo.surname) {
+    return `${item.userInfo.firstName} ${item.userInfo.surname}`
+  }
+  return ''
+}
+
 function deleteItem(taskIndex: number, itemIndex: number) {
   taskList.value[taskIndex].items.splice(itemIndex, 1)
 }
@@ -350,6 +521,10 @@ function openCheckActionsDialog(itemIndex: number) {
 
 onMounted(() => {
   getJobTasks()
+  getTeamMembers()
+  getAssignedEmployees().then(() => {
+    originalSelectedMembers.value = [...selectedMembers.value]
+  })
 })
 </script>
 
