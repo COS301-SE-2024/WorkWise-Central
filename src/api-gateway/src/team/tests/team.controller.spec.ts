@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TeamController } from '../team.controller';
 import { TeamService } from '../team.service';
-import { Types } from 'mongoose';
+// import { Types } from 'mongoose';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 
 jest.mock('../team.service');
@@ -9,7 +9,7 @@ const moduleMocker = new ModuleMocker(global);
 
 describe('--Team Controller--', () => {
   let controller: TeamController;
-  let service: TeamService;
+  // let service: TeamService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,7 +26,7 @@ describe('--Team Controller--', () => {
       .compile();
 
     controller = module.get<TeamController>(TeamController);
-    service = module.get<TeamService>(TeamService);
+    // service = module.get<TeamService>(TeamService);
   });
 
   afterEach(() => {
@@ -153,7 +153,6 @@ describe('--Team Controller--', () => {
     //   jest.spyOn(service, 'remove').mockResolvedValue(returnedResponseFromService as any);
     //   expect(await controller.remove(id)).toEqual(expectedResponse);
     // });
-
     // it('should return false when the team has been deleted', async () => {
     //   const id = new Types.ObjectId();
     //   const returnedResponseFromService = false;
