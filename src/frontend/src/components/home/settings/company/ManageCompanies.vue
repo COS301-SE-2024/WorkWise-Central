@@ -219,7 +219,7 @@ const tabs = ['Current Companies', 'Recently Left Companies', 'Company Invites']
 const currentTab = ref('Current Companies')
 const newCompanyCode = ref('')
 const companyCodeRules = [(v: string) => !!v || 'Company code is required']
-const joinedCompanies = reactive<Company[]>([])
+const joinedCompanies = ref<Company[]>([])
 const leftCompanies = ref<Company[]>([
   { id: '3', name: 'Company C' },
   { id: '4', name: 'Company D' }
@@ -286,9 +286,9 @@ const setUserCompanies = async () => {
     if (response.status >= 200 && response.status < 300) {
       const companiesData = response.data.data.joinedCompanies
       console.log('Company data:', companiesData)
-      joinedCompanies.splice(
+      joinedCompanies.value.splice(
         0,
-        joinedCompanies.length,
+        joinedCompanies.value.length,
         ...companiesData.map((company: any) => ({
           companyId: company.companyId,
           employeeId: company.employeeId,
@@ -306,41 +306,51 @@ const setUserCompanies = async () => {
 
 const leaveCompany = async (company: Company) => {
   console.log('Leaving company:', company.name)
+
+  // Ensure the company exists in the joinedCompanies array
+  const companyIndex = joinedCompanies.value.findIndex(c => c.companyId === company.companyId)
+  if (companyIndex === -1) {
+    console.error('Company not found in joined companies')
+    return
+  }
+
   leftCompanies.value.push(company)
-  companies.value.splice(companies.value.indexOf(company), 1)
+  joinedCompanies.value.splice(companyIndex, 1)
   console.log('Notifying company about the departure:', company.name)
+
   undoTimeout.value = setTimeout(() => {
     leftCompanies.value = leftCompanies.value.filter((c) => c.companyId !== company.companyId)
   }, 30000)
+
   const apiUrl = await getRequestUrl()
   try {
     const body = {
       currentEmployee: company.employeeId,
-      companyToLeave: company.companyId,
+      companyToLeaveId: company.companyId,
       reason: ''
     }
     const response = await axios.patch(`${apiUrl}company/leave/`, body, config)
     if (response.status >= 200 && response.status < 300) {
       leaveCompanyToast(company.name)
-      if (companies.value.length > 0) {
-        switchCompany(companies.value[0])
+      if (joinedCompanies.value.length > 0) {
+        await switchCompany(joinedCompanies.value[0])
       } else {
         localStorage.removeItem('currentCompany')
         localStorage.removeItem('employeeId')
         localStorage.removeItem('id')
         localStorage.removeItem('roleId')
         localStorage.removeItem('currentCompanyName')
+        reloadWindow()
       }
       console.log('Company leave response:', response)
     } else {
-      throw new Error('Failed to leave company')
+      leaveCompanyFailureToast(company.name)
     }
   } catch (error) {
     console.log(error)
     leaveCompanyFailureToast(company.name)
   }
 }
-
 const rejoinCompany = (company: Company) => {
   console.log('Rejoining company:', company.name)
   companies.value.push(company)
@@ -379,8 +389,20 @@ const saveCompanySettings = () => {
 }
 
 // Switch company
-const switchCompany = (company: Company) => {
-  console.log('Switching to company:', company.name)
+const switchCompany = async (company: Company) => {
+  localStorage.setItem('currentCompany', company.companyId)
+  localStorage.setItem('employeeId', company.employeeId)
+  localStorage.setItem('currentCompanyName', company.name)
+  const apiUrl = getRequestUrl()
+  try {
+    const response = await axios.get(`${apiUrl}employee/id/${company.employeeId}`, config)
+    console.log('Returned employee', response)
+    // const roleId = response.data.data.role.roleId
+    // localStorage.setItem('roleId', roleId)
+    window.location.reload()
+  } catch (error) {
+    console.log('Failed to set role:', error)
+  }
 }
 
 // Join company
