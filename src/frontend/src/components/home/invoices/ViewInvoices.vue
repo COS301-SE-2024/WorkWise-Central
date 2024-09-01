@@ -39,7 +39,7 @@
         </v-row>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="error" text @click="dialog = false">Close</v-btn>
+        <v-btn color="error"  @click="dialog = false">Close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
