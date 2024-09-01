@@ -108,7 +108,7 @@ export default defineComponent({
           })
           this.isDeleting = this.dialog = false
           setTimeout(() => {
-            location.reload()
+            this.$emit('Created', response.data.data)
           }, 3000)
         })
         .catch((error) => {

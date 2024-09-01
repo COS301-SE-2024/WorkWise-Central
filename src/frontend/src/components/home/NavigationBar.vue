@@ -44,6 +44,11 @@ const inventorySubItems = ref([
     routeName: 'stock-take'
   }
 ])
+const invoicesSubItems = ref([
+  { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'invoices' },
+  { title: 'Invoice Center', icon: 'fa: fa-solid fa-file-invoice', routeName: '404' },
+  { title: 'Invoice Board', icon: 'fa: fa-solid fa-table', routeName: '404' }
+])
 
 const inboxSubItems = ref([
   { title: 'Notifications', icon: 'fa: fa-solid fa-bell', routeName: 'notifications' },
@@ -276,6 +281,27 @@ export default defineComponent({
           </template>
           <v-list-item
             v-for="(item, i) in jobSubItems"
+            :key="i"
+            :to="{ name: item.routeName }"
+            :value="item.title"
+            :title="item.title"
+            :prepend-icon="item.icon"
+            @click="setInbox(item.title)"
+          ></v-list-item>
+        </v-list-group>
+      </v-list>
+      <v-list v-model:open="open">
+        <v-list-group fluid value="Invoices">
+          <template v-slot:activator="{ props }">
+            <v-list-item
+              v-bind="props"
+              prepend-icon="fa: fa-solid fa-file"
+              title="Invoices"
+              class="list-item-large"
+            ></v-list-item>
+          </template>
+          <v-list-item
+            v-for="(item, i) in invoicesSubItems"
             :key="i"
             :to="{ name: item.routeName }"
             :value="item.title"

@@ -87,20 +87,28 @@ export default defineComponent({
       }
       const apiURL = await this.getRequestUrl()
       try {
-        await axios.delete(`${apiURL}inventory/${this.inventory_id}`, config)
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Inventory deleted successfully',
-          life: 3000
+        await axios.delete(`${apiURL}inventory/${this.inventory_id}`, config).then((response) => {
+          console.log(response.data)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Inventory deleted successfully',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.deleteDialog = false
+            this.isDeleting = false
+            this.$emit('Deleted', response.data.data)
+          }, 3000)
         })
-        this.deleteDialog = false
-        setTimeout(() => {
-          
-          this.isDeleting = false
-        }, 3000)
       } catch (error) {
         console.error(error)
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'An error occurred while deleting the inventory',
+          life: 3000
+        })
       }
     },
     close() {

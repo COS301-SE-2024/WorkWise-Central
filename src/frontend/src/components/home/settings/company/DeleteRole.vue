@@ -104,7 +104,7 @@ export default defineComponent({
           setTimeout(() => {
             this.isDeleting = false
             this.deleteDialog = false
-            
+            this.$emit('Deleted', res.data.data)
           }, 1500)
           this.isDeleting = false
         }

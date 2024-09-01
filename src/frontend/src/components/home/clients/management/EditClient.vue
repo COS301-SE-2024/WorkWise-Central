@@ -282,7 +282,7 @@ export default {
         setTimeout(() => {
           this.isDeleting = false
           this.clientDialog = false
-          
+          this.$emit('clientUpdated', response.data.data)
         }, 3000)
 
         return true

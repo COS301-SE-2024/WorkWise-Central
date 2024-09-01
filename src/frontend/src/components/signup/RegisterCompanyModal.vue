@@ -507,8 +507,17 @@ export default {
         .then((res) => {
           console.log(res)
           localStorage['currentCompany'] = res.data._id
+          localStorage['currentCompanyName'] = res.data.data.name
           localStorage['employeeId'] = res.data.ownerId
-          this.$router.push({ name: 'dashboard' })
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Company Registered Successfully',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.$router.push({ name: 'dashboard' })
+          }, 3000)
         })
         .catch((res) => {
           this.$toast.add({

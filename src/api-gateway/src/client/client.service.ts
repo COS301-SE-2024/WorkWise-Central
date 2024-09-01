@@ -40,7 +40,9 @@ export class ClientService {
 
   async create(userId: Types.ObjectId, createClientDto: CreateClientDto): Promise<Client & { _id: Types.ObjectId }> {
     await this.userIdMatchesEmployeeId(userId, createClientDto.employeeId);
+    console.log('pre');
     const check = await this.validateCreate(userId, createClientDto);
+    console.log('post');
     if (!check.isValid) {
       throw new ConflictException(check.message);
     }

@@ -1,7 +1,7 @@
 import { InternalUpdateEmployeeDto, UpdateEmployeeUserInfoDto } from './dto/internal-update-employee.dto';
 import { InventoryService } from '../inventory/inventory.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { CreateEmployeeDto, ExternalCreateEmployeeDto } from './dto/create-employee.dto';
 import { AddSubordinatesDto, RemoveSubordinatesDto, UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Types } from 'mongoose';
 import { Employee, roleObject } from './entities/employee.entity';
@@ -105,7 +105,7 @@ export class EmployeeService {
     return new ValidationResult(true, `All good`);
   }
 
-  async create(createEmployeeDto: CreateEmployeeDto) {
+  async create(createEmployeeDto: ExternalCreateEmployeeDto) {
     const validation = await this.validateCreateEmployee(createEmployeeDto);
     if (!validation.isValid) {
       throw new Error(validation.message);
@@ -113,7 +113,12 @@ export class EmployeeService {
     const newEmployee = new Employee();
     newEmployee.userId = createEmployeeDto.userId;
     newEmployee.companyId = createEmployeeDto.companyId;
-    newEmployee.superiorId = createEmployeeDto.superiorId;
+    if (!createEmployeeDto.superiorId) {
+      const owner = await this.findAllInCompanyWithRoleName(createEmployeeDto.companyId, 'Owner');
+      newEmployee.superiorId = owner[0]._id;
+    } else {
+      newEmployee.superiorId = createEmployeeDto.superiorId;
+    }
     if (createEmployeeDto.userInfo) {
       newEmployee.userInfo.displayImage = createEmployeeDto.userInfo.displayImage;
       newEmployee.userInfo.displayName = createEmployeeDto.userInfo.displayName;
@@ -123,7 +128,7 @@ export class EmployeeService {
     }
     if (createEmployeeDto.roleId) {
       const role = await this.roleService.findById(createEmployeeDto.roleId);
-      newEmployee.role.roleId = role._id;
+      newEmployee.role.roleId = new Types.ObjectId(role._id);
       newEmployee.role.permissionSuite = role.permissionSuite;
       newEmployee.role.roleName = role.roleName;
     } else {
@@ -132,7 +137,15 @@ export class EmployeeService {
       newEmployee.role.permissionSuite = role.permissionSuite;
     }
 
-    return await this.employeeRepository.save(newEmployee);
+    const savedEmployee = await this.employeeRepository.save(newEmployee);
+
+    //Updating the subordinates of the newEmployee
+    const dto = new AddSubordinatesDto();
+    dto.currentEmployeeId = createEmployeeDto.currentEmployeeId;
+    dto.subordinatesToBeAdded = [savedEmployee._id];
+    await this.addSubordinates(savedEmployee.superiorId, dto);
+
+    return savedEmployee;
   }
 
   async findAll() {
@@ -194,6 +207,7 @@ export class EmployeeService {
     //Altering the dto to update the role if roleId is given
     const dto = new InternalUpdateEmployeeDto();
     if (updateEmployeeDto.roleId) {
+      dto.role = new roleObject();
       dto.role.roleId = updateEmployeeDto.roleId;
       const role = await this.roleService.findById(dto.role.roleId);
       dto.role.permissionSuite = role.permissionSuite;
@@ -218,7 +232,7 @@ export class EmployeeService {
     //Checking that the owner is not in the list of newSubordinates
     const owner = await this.findAllInCompanyWithRoleName(currentEmployee.companyId, 'Owner');
     if (addSubordinatesDto.subordinatesToBeAdded.includes(owner[0]._id)) {
-      throw new Exception('Cannot make the persons current superior a subordinate');
+      throw new Exception('Cannot make the owner a subordinate');
     }
 
     const newSubordinates = currentEmployee.subordinates;
@@ -355,11 +369,7 @@ export class EmployeeService {
     const listBelow = await this.deptFirstTraversalId(employeeId);
     console.log('listBelow: ', listBelow);
 
-    if (listBelow.length == 0) {
-      throw new Exception('Could not update superior');
-    }
-
-    if (listBelow.includes(newSuperiorId)) {
+    if (listBelow.length !== 0 && listBelow.includes(newSuperiorId)) {
       throw new Exception('Cannot make the a person below the current employee a superior of the employee');
     }
 
@@ -385,43 +395,6 @@ export class EmployeeService {
     return this.employeeRepository.removeAssignedJob(employeeId, jobId);
   }
 
-  // async updateUnderMe(
-  //   userId: Types.ObjectId,
-  //   employeeId: Types.ObjectId,
-  //   updateEmployeeDto: UpdateEmployeeDto,
-  //   currentEmployeeId: Types.ObjectId,
-  // ) {
-  //   const validation = await this.validateUpdateEmployee(employeeId, currentEmployeeId, updateEmployeeDto);
-  //   if (!validation.isValid) {
-  //     throw new Error(validation.message);
-  //   }
-  //   if (!(await this.isBelowMe(currentEmployeeId, employeeId))) {
-  //     throw new Error('Employee not below the requesting employee');
-  //   }
-  //   //******Updating the structure*********/
-  //   if (updateEmployeeDto.subordinates) {
-  //     await this.updateSubordinates(employeeId, updateEmployeeDto.subordinates);
-  //   }
-  //   if (updateEmployeeDto.superiorId) {
-  //     await this.updateSuperior(employeeId, updateEmployeeDto.superiorId);
-  //   }
-  //   //**********Done updating structure****************/
-
-  //   //Altering the dto to update the role if roleId is given
-  //   const dto = new InternalUpdateEmployeeDto();
-  //   dto.subordinateTeams = updateEmployeeDto.subordinateTeams;
-  //   dto.currentJobAssignments = updateEmployeeDto.currentJobAssignments;
-  //   if (updateEmployeeDto.roleId) {
-  //     dto.role.roleId = updateEmployeeDto.roleId;
-  //     const role = await this.roleService.findById(dto.role.roleId);
-  //     dto.role.permissionSuite = role.permissionSuite;
-  //     dto.role.roleName = role.roleName;
-  //   }
-
-  //   const previousObject = this.employeeRepository.update(employeeId, dto);
-  //   return previousObject;
-  // }
-
   async updateUserInfo(id: Types.ObjectId, userInfo: UpdateEmployeeUserInfoDto) {
     const previousObject = this.employeeRepository.updateUserInfo(id, userInfo);
     return previousObject;
@@ -446,7 +419,7 @@ export class EmployeeService {
       // console.log('In if updateRoleDto.permissionSuite');
       newRole.permissionSuite = updateRoleDto.permissionSuite;
     } else {
-      // console.log('in else');
+      // console.log('in else updateRoleDto.permissionSuite');
       newRole.permissionSuite = role.permissionSuite;
     }
 
@@ -454,11 +427,15 @@ export class EmployeeService {
       // console.log('In if updateRoleDto.roleName');
       newRole.roleName = updateRoleDto.roleName;
     } else {
-      // console.log('In else');
+      // console.log('In else updateRoleDto.roleName');
       newRole.roleName = role.roleName;
     }
     // console.log('newRole: ', newRole);
-    return await this.employeeRepository.updateRole(roleId, role.companyId, newRole);
+    return await this.employeeRepository.updateRole(
+      new Types.ObjectId(roleId),
+      new Types.ObjectId(role.companyId),
+      newRole,
+    );
   }
 
   async allEmployeesInCompanyWithRole(roleId: Types.ObjectId) {
@@ -591,6 +568,50 @@ export class EmployeeService {
     }
 
     return listOfEmployees;
+  }
+
+  async listPotentialSubordinates(employeeId: Types.ObjectId) {
+    const currentEmployee = await this.findById(employeeId);
+    const listOfEmployees = await this.findAllInCompany(currentEmployee.companyId);
+    const owner = await this.findAllInCompanyWithRoleName(currentEmployee.companyId, 'Owner');
+
+    //Removing the current employee from the list
+    let index = listOfEmployees.findIndex((employee) => employee._id.toString() === currentEmployee._id.toString());
+    if (index !== -1) {
+      listOfEmployees.splice(index, 1);
+    }
+
+    //removing the owner from the list
+    index = listOfEmployees.findIndex((employee) => employee._id.toString() === owner[0]._id.toString());
+    if (index !== -1) {
+      listOfEmployees.splice(index, 1);
+    }
+
+    //removing the current employees superior from the list
+    index = listOfEmployees.findIndex((employee) => employee._id.toString() === currentEmployee.superiorId.toString());
+    if (index !== -1) {
+      listOfEmployees.splice(index, 1);
+    }
+  }
+
+  async listPotentialSuperiors(employeeId: Types.ObjectId) {
+    const currentEmployee = await this.findById(employeeId);
+    const listOfEmployees = await this.findAllInCompany(currentEmployee.companyId);
+
+    //Removing the current employee from the list
+    let index = listOfEmployees.findIndex((employee) => employee._id.toString() === currentEmployee._id.toString());
+    if (index !== -1) {
+      listOfEmployees.splice(index, 1);
+    }
+
+    //Removing everyone below the current employee from the list
+    const listBelow = await this.deptFirstTraversalId(employeeId);
+    for (const tempEmployeeId of listBelow) {
+      index = listOfEmployees.findIndex((employee) => employee._id.toString() === tempEmployeeId.toString());
+      if (index !== -1) {
+        listOfEmployees.splice(index, 1);
+      }
+    }
   }
 
   async deptFirstTraversalId(id: Types.ObjectId) {

@@ -242,7 +242,6 @@ export default defineComponent({
           setTimeout(() => {
             this.isDeleting = false
             this.dialog = false
-            
           }, 3000)
         })
         .catch((error) => {

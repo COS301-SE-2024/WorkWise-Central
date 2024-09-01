@@ -98,7 +98,7 @@
                       </template>
 
                       <template v-slot:[`item.status`]="{ item }">
-                        <v-chip :color="getStatusColor(item?.status?.status)">
+                        <v-chip :color="item?.status?.colour">
                           <v-icon>mdi-progress-clock</v-icon>{{ item?.status?.status }}
                         </v-chip>
                       </template>
@@ -501,7 +501,6 @@ const confirmDelete = async () => {
       setTimeout(() => {
         deleteDialog.value = false
         isDeleting.value = false
-        
       }, 3000)
       closeDialog()
     } catch (error) {
@@ -514,7 +513,6 @@ const confirmDelete = async () => {
       })
     } finally {
       localStorage.setItem('jobDeleted', 'true')
-      
     }
   }
 }

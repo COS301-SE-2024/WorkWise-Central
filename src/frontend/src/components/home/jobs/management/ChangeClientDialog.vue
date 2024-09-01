@@ -51,11 +51,11 @@
         <v-card-actions class="d-flex flex-column">
           <v-container
             ><v-row
-              ><v-col cols="12" lg="6" order="last" order-lg="first">
+              ><v-col cols="12" lg="6">
                 <v-btn @click="saveClient" color="success" block
                   ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
                 ></v-col
-              ><v-col cols="12" lg="6" order="first" order-lg="last">
+              ><v-col cols="12" lg="6">
                 <v-btn @click="isActive.value = false" color="error" block
                   ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
                 ></v-col
@@ -145,7 +145,7 @@ const showClientChangeError = () => {
 const getClients = async () => {
   const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}client/all`, config)
+    const response = await axios.get(`${apiUrl}client/all/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`, config)
     if (response.status < 300 && response.status > 199) {
       console.log(response)
       clientData.value = response.data.data
@@ -188,7 +188,7 @@ const saveClient = async () => {
   try {
     const response = await axios.patch(
       `${apiUrl}job/update/${props.jobID}`,
-      { clientId: selectedClient.value._id },
+      { clientId: selectedClient.value},
       config
     )
     if (response.status > 199 && response.status < 300) {

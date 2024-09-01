@@ -131,13 +131,12 @@ export default defineComponent({
   }),
   methods: {
     async createTeam() {
-      this.isDeleting = true // Indicate the start of the deletion process
+      this.isDeleting = true
       const config = {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
         params: { currentEmployeeId: localStorage.getItem('employeeId') }
       }
       const apiURL = await this.getRequestUrl()
-      console.log(this.teamName)
       const data = {
         teamName: this.teamName,
         teamMembers: this.selectTeamMembers(),
@@ -145,9 +144,7 @@ export default defineComponent({
         companyId: localStorage.getItem('currentCompany')
       }
       try {
-        console.log(data)
         const response = await axios.post(`${apiURL}team/create`, data, config)
-        console.log(response)
         this.$toast.add({
           severity: 'success',
           summary: 'Success',
@@ -157,7 +154,8 @@ export default defineComponent({
         setTimeout(() => {
           this.isDeleting = false
           this.addDialog = false
-          
+          // Emit the event to the parent component with the new team data
+          this.$emit('teamCreated', response.data.data)
         }, 1500)
       } catch (error) {
         console.error(error)
