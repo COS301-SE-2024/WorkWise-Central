@@ -22,7 +22,7 @@ export default {
     const generatePdf = () => {
       const props = {
         outputType: OutputType.Save,
-        fileName: "Invoice_2021",
+        fileName: "Invoice",
         orientationLandscape: false,
         compress: true,
         logo: {
