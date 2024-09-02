@@ -20,7 +20,7 @@
         >Add Employee</v-card-title
       >
       <v-card-text>
-        <v-form ref="form" v-model="valid" @submit.prevent="validateSubmit">
+        <v-form ref="form" v-model="valid" @submit.prevent="validate">
           <v-col>
             <v-row>
               <v-col :cols="12">
