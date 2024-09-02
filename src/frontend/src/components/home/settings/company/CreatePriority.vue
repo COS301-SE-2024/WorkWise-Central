@@ -180,7 +180,7 @@ export default defineComponent({
           setTimeout(() => {
             this.dialog = false
             this.isDeleting = false
-            this.$emit('Created', res.data.data)
+            this.$emit('CreatedPriority', res.data.data)
           }, 3000)
         })
         .catch((err) => {

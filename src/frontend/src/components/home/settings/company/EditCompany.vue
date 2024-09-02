@@ -8,11 +8,7 @@
           <v-row>
             <v-col cols="12" lg="5" class="d-flex justify-center">
               <v-avatar color="grey" size="150">
-                <v-img
-                  size="50"
-                  src="https://cdn.vuetifyjs.com/docs/images/brand-kit/v-logo-circle.png"
-                  cover
-                ></v-img>
+                <v-img size="50" :src="company.logo" cover></v-img>
               </v-avatar>
             </v-col>
             <v-col cols="12" lg="7">
@@ -150,7 +146,8 @@ export default defineComponent({
         houseNumber: ''
       },
       vatNumber: '',
-      registrationNumber: ''
+      registrationNumber: '',
+      logo: ''
     },
     type: [
       'Agricultural Labor',
@@ -311,9 +308,9 @@ export default defineComponent({
         currentEmployeeId: localStorage.getItem('employeeId'),
         updateCompanyDto: this.company
       }
-      const company_id = localStorage.getItem('currentCompany')
+
       await axios
-        .patch(`${apiURL}company/update/${company_id}`, data, config)
+        .patch(`${apiURL}company/update/${localStorage.getItem('currentCompany')}`, data, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({

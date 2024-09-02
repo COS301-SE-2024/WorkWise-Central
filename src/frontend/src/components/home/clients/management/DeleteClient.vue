@@ -89,8 +89,8 @@ export default {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         },
-        data: {
-          employeeId: localStorage.getItem('employeeId'),
+        params: {
+          empId: localStorage.getItem('employeeId'),
           clientId: this.client_id
         }
       }
@@ -100,7 +100,7 @@ export default {
         console.log(this.client_id)
         this.isDeleting = true // Indicate the start of the deletion process
 
-        const response = await axios.delete(`${apiURL}client/delete`, config)
+        const response = await axios.delete(`${apiURL}client/delete/`, config)
         console.log(response)
 
         this.$toast.add({

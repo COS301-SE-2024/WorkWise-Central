@@ -165,7 +165,9 @@ export default defineComponent({
             life: 3000
           })
           setTimeout(() => {
-            this.$emit('Created', response.data.data)
+            this.isDeleting = false
+            this.dialog = false
+            this.$emit('CreatedTag', response.data.data)
           }, 3000)
         })
         .catch((error) => {
