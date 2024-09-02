@@ -28,7 +28,8 @@
             class="mb-4"
           ></v-textarea>
           <template v-if="task.title.trim() !== ''">
-            <v-btn color="error" outlined class="pl-10 pt-5">
+            <v-btn color="error" outlined class="pl-10 pt-5" @click="deleteTask(taskIndex)">
+              <v-icon color="error">{{'fa: fa-solid fa-trash'}}</v-icon>
               Delete
             </v-btn>
           </template>
@@ -347,6 +348,7 @@ const getJobTasks = async () => {
     console.log('Failed to retrieve tasks', error)
   }
 }
+
 const createTaskIntegration = async (taskIndex: number) => {
   const apiUrl = await getRequestUrl()
   const body = {
@@ -515,6 +517,24 @@ function deleteItem(taskIndex: number, itemIndex: number) {
 
 function openCheckActionsDialog(itemIndex: number) {
   // Handle dialog actions
+}
+
+const deleteTask = async (taskIndex: number) => {
+  const apiUrl = getRequestUrl()
+  try {
+    const body = {
+      employeeId: localStorage.getItem('employeeId') || '',
+      jobId: props.jobID,
+      taskId: taskList.value[taskIndex]._id
+    }
+    const response = await axios.delete(`${apiUrl}job/task`, { data: body, headers: config.headers })
+    console.log('Delete successful', response)
+    if (response.status > 199 && response.status < 300) {
+      taskList.value.splice(taskIndex, 1)
+    }
+  } catch(error) {
+    console.log(error)
+  }
 }
 
 onMounted(() => {
