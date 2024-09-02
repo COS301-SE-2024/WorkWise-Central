@@ -200,7 +200,10 @@
                   </v-select
                 ></v-col>
                 <v-col :cols="12" :sm="6" :md="6" :lg="6" :xl="6">
-                  <label style="font-size: 14px; font-weight: lighter">Priority</label>
+                  <label style="font-size: 14px; font-weight: lighter"
+                    >Priority
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
 
                   <v-select
                     :items="priorityOptionsArray"
@@ -214,6 +217,7 @@
                     @update:modelValue="updateEmployee"
                     variant="solo"
                     clearable
+                    :rules="priorityRules"
                     data-testid="priority-select"
                   >
                     <!--                    <template #chip="{ item, index }">-->
@@ -515,6 +519,7 @@ export default defineComponent({
       description_rules: [(v: string) => !!v || 'Description is required'],
       startDateRule: [(v: string) => !!v || 'Start date is required'],
       endDateRule: [(v: string) => !!v || 'End date is required'],
+      priorityRules: [(v: string) => !!v || 'Priority tag is required'],
       employeesArray: [] as EmployeeInformation[],
       clientsArray: [] as ClientInformation[],
       time: '',
