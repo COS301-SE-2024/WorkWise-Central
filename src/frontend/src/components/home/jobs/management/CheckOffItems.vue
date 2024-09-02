@@ -475,7 +475,6 @@ const saveMembers = async (taskIndex: number, itemIndex: number) => {
     originalSelectedMembers.value = [...selectedMembers.value]
   } catch (error) {
     console.log(error)
-    showAssignEmployeesError()
   }
 }
 
