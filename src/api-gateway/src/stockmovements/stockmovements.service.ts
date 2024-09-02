@@ -102,17 +102,8 @@ export class StockMovementsService {
     return await this.stockMovementsRepository.updateEmployeeInfo(id, details);
   }
 
-  async removeEmployeeRef(id: Types.ObjectId) {
-    const movement = await this.findById(id);
-    const details = new EmployeeDetails();
-
-    details.employeeId = null;
-    details.username = movement.employee.username;
-    details.firstName = movement.employee.firstName;
-    details.surname = movement.employee.surname;
-    details.displayName = movement.employee.displayName;
-
-    return await this.stockMovementsRepository.updateEmployeeInfo(id, details);
+  async removeEmployeeRef(employeeId: Types.ObjectId) {
+    return await this.stockMovementsRepository.removeEmployeeRef(employeeId);
   }
 
   async updateInventoryInfo(id: Types.ObjectId, newName: string) {
@@ -123,11 +114,8 @@ export class StockMovementsService {
     return await this.stockMovementsRepository.updateInventoryInfo(id, details);
   }
 
-  async removeInventoryRef(id: Types.ObjectId, newName: string) {
-    const details = new InventoryItem();
-    details.inventoryId = null;
-    details.nameOfItem = newName;
-    return await this.stockMovementsRepository.updateInventoryInfo(id, details);
+  async removeInventoryRef(inventoryId: Types.ObjectId) {
+    return await this.stockMovementsRepository.removeInventoryRef(inventoryId);
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {

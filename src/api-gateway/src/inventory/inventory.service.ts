@@ -120,7 +120,7 @@ export class InventoryService {
     if (!(await this.InventoryExists(id))) {
       throw new Error('Inventory item does not exist');
     }
-
+    await this.stockMovementsService.removeInventoryRef(id);
     await this.stockTakeService.removeReferenceToInventory(id);
 
     return await this.inventoryRepository.remove(id);

@@ -108,6 +108,38 @@ export class StockMovementsRepository {
     return previousObject;
   }
 
+  async removeEmployeeRef(employeeId: Types.ObjectId) {
+    const previousObject: FlattenMaps<StockMovements> & { _id: Types.ObjectId } =
+      await this.StockMovementsModel.findOneAndUpdate(
+        {
+          $and: [
+            { 'employee.employeeId': employeeId },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        { $set: { 'employee.employeeId': null }, updatedAt: new Date() },
+      ).lean();
+    return previousObject;
+  }
+
+  async removeInventoryRef(inventoryId: Types.ObjectId) {
+    const previousObject: FlattenMaps<StockMovements> & { _id: Types.ObjectId } =
+      await this.StockMovementsModel.findOneAndUpdate(
+        {
+          $and: [
+            { 'inventoryItem.inventoryId': inventoryId },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        { $set: { 'inventoryItem.inventoryId': null }, updatedAt: new Date() },
+      ).lean();
+    return previousObject;
+  }
+
   async remove(id: Types.ObjectId): Promise<boolean> {
     const StockMovementsToDelete = await this.findById(id);
 

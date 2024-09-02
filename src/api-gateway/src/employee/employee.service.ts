@@ -16,6 +16,7 @@ import { ClientService } from '../client/client.service';
 import { UpdateRoleDto } from '../role/dto/update-role.dto';
 import { Nodes, Edges } from 'v-network-graph';
 import { Exception } from 'handlebars';
+import { StockMovementsService } from '../stockmovements/stockmovements.service';
 
 @Injectable()
 export class EmployeeService {
@@ -41,6 +42,9 @@ export class EmployeeService {
 
     @Inject(forwardRef(() => InventoryService))
     private inventoryService: InventoryService,
+
+    @Inject(forwardRef(() => StockMovementsService))
+    private readonly stockMovementsService: StockMovementsService,
   ) {}
 
   async validateCreateEmployee(employee: CreateEmployeeDto) {
@@ -489,6 +493,8 @@ export class EmployeeService {
 
     //Updating the tree structure
     await this.removeEmployeeReferences(id);
+
+    await this.stockMovementsService.removeEmployeeRef(id);
 
     return await this.employeeRepository.remove(id);
   }
