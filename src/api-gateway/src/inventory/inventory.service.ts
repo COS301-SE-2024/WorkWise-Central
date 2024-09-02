@@ -8,6 +8,8 @@ import { InventoryRepository } from './inventory.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { FileService } from '../file/file.service';
 import { StockTakeService } from '../stocktake/stocktake.service';
+import { StockMovementsService } from '../stockmovements/stockmovements.service';
+import { CreateStockMovementsDto } from '../stockmovements/dto/create-stockmovements.dto';
 
 @Injectable()
 export class InventoryService {
@@ -23,6 +25,9 @@ export class InventoryService {
 
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
+
+    @Inject(forwardRef(() => StockMovementsService))
+    private readonly stockMovementsService: StockMovementsService,
   ) {}
 
   async validateCreateInventory(inventory: CreateInventoryDto) {
@@ -96,6 +101,13 @@ export class InventoryService {
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
+    const inventory = await this.findById(id);
+    const dto = new CreateStockMovementsDto();
+    dto.companyId = inventory.companyId;
+    dto.inventoryId = id;
+    dto.movementDate = new Date();
+    dto.reason = 'Inventory Update';
+    await this.stockMovementsService.create(dto);
 
     if (updateInventoryDto.name) {
       await this.stockTakeService.updateInventoryReference(id, updateInventoryDto.name);
