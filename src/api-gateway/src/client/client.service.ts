@@ -84,6 +84,11 @@ export class ClientService {
     return client;
   }
 
+  async getClientByIdInternal(clientId: Types.ObjectId): Promise<FlattenMaps<Client>> {
+    const client = await this.clientRepository.findClientById(clientId);
+    return client;
+  }
+
   async getByEmailOrName(userId: Types.ObjectId, companyId: Types.ObjectId, emailOrName: string) {
     if (!(await this.usersService.userIsInCompany(userId, companyId)))
       throw new UnauthorizedException('User not in Same Company');

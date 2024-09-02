@@ -1,3 +1,4 @@
+import { JobService } from './../job/job.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
@@ -6,8 +7,7 @@ import { Invoice } from './entities/invoice.entity';
 import { CompanyService } from '../company/company.service';
 import { InvoiceRepository } from './invoice.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
-import { FileService } from '../file/file.service';
-import { StockTakeService } from '../stocktake/stocktake.service';
+import { ClientService } from 'src/client/client.service';
 
 @Injectable()
 export class InvoiceService {
@@ -18,11 +18,11 @@ export class InvoiceService {
     @Inject(forwardRef(() => CompanyService))
     private readonly companyService: CompanyService,
 
-    @Inject(forwardRef(() => StockTakeService))
-    private readonly stockTakeService: StockTakeService,
+    @Inject(forwardRef(() => JobService))
+    private readonly jobService: JobService,
 
-    @Inject(forwardRef(() => FileService))
-    private readonly fileService: FileService,
+    @Inject(forwardRef(() => ClientService))
+    private readonly clientService: ClientService,
   ) {}
 
   async validateCreateInvoice(Invoice: CreateInvoiceDto) {
@@ -30,14 +30,22 @@ export class InvoiceService {
     if (!(await this.companyService.companyIdExists(Invoice.companyId))) {
       return new ValidationResult(false, `Company not found`);
     }
-    return new ValidationResult(true, `All good`);
-  }
 
-  async validateUpdateInvoice(id: Types.ObjectId) {
-    //Checking that the Invoice item exists
-    if (!(await this.InvoiceExists(id))) {
-      return new ValidationResult(false, `Invoice item not found`);
+    //checking if the job exists
+    if (!(await this.jobService.getJobById(Invoice.jobId))) {
+      return new ValidationResult(false, `Job not found`);
     }
+
+    //Checking that the items exist
+    if (Invoice.items.length === 0) {
+      return new ValidationResult(false, `Items not found`);
+    }
+
+    //checking that the client exists
+    if (!(await this.clientService.getClientByIdInternal(Invoice.clientId))) {
+      return new ValidationResult(false, `Client not found`);
+    }
+
     return new ValidationResult(true, `All good`);
   }
 
@@ -80,10 +88,10 @@ export class InvoiceService {
   }
 
   async update(id: Types.ObjectId, updateInvoiceDto: UpdateInvoiceDto) {
-    const validation = await this.validateUpdateInvoice(id);
-    if (!validation.isValid) {
-      throw new Error(validation.message);
-    }
+    // const validation = await this.validateUpdateInvoice(id);
+    // if (!validation.isValid) {
+    //   throw new Error(validation.message);
+    // }
     return await this.invoiceRepository.update(id, updateInvoiceDto);
   }
 

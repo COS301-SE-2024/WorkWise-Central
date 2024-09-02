@@ -39,16 +39,6 @@ export class UpdateInvoiceDto {
   clientId: Types.ObjectId;
 
   @IsNotEmpty()
-  @IsMongoId()
-  @ApiProperty()
-  jobId: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsMongoId()
-  @ApiProperty()
-  companyId: Types.ObjectId;
-
-  @IsNotEmpty()
   @IsArray()
   @ApiProperty()
   items: items[];
