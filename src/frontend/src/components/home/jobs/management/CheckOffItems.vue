@@ -215,7 +215,7 @@ import axios from 'axios'
 
 interface Task {
   title: string
-  items: { description: string; done: boolean }[]
+  items: { description: string; done: boolean; _id: string }[]
   newItemText: string
   isSaveVisible: boolean
   _id: string
@@ -291,7 +291,7 @@ function getTaskProgress(task: Task) {
 const addItem = async (taskIndex: number) => {
   const task = taskList.value[taskIndex]
   if (task.newItemText.trim() !== '') {
-    task.items.push({ description: task.newItemText, done: false })
+    task.items.push({ description: task.newItemText, done: false, _id: '' })
     task.newItemText = ''
     task.isSaveVisible = true
   }
@@ -308,16 +308,17 @@ const addItem = async (taskIndex: number) => {
       const currentDate = new Date().toISOString()
       console.log(currentDate)
       const itemId = response.data.data.taskList[taskIndex].items[response.data.data.taskList[taskIndex].items.length - 1]._id
+      taskList.value[taskIndex].items[taskList.value[taskIndex].items.length - 1]._id = itemId
       console.log('Item id', itemId)
-     const body2 = {
-        employeeId: localStorage.getItem('employeeId') || '',
-        jobId: props.jobID,
-        taskId: taskList.value[taskIndex]._id,
-        description: taskList.value[taskIndex].items[taskList.value[taskIndex].items.length - 1].description,
-        done: taskList.value[taskIndex].items[taskList.value[taskIndex].items.length-1].done,
-        itemId: response.data.data.taskList[taskIndex].items[response.data.data.taskList[taskIndex].items.length - 1]._id,
-        dueDate: currentDate
-     }
+       const body2 = {
+          employeeId: localStorage.getItem('employeeId') || '',
+          jobId: props.jobID,
+          taskId: taskList.value[taskIndex]._id,
+          description: taskList.value[taskIndex].items[taskList.value[taskIndex].items.length - 1].description,
+          done: taskList.value[taskIndex].items[taskList.value[taskIndex].items.length-1].done,
+          itemId: itemId,
+          dueDate: currentDate
+       }
      console.log('Description', body2.description)
      console.log(body2)
       const response2 = await axios.patch(`${apiUrl}job/taskItem`, body2, config)
@@ -464,10 +465,8 @@ const saveMembers = async (taskIndex: number, itemIndex: number) => {
         if (response.status > 199 && response.status < 300) {
           console.log('Member change', response)
           console.log(`Added member: ${member._id}`)
-          showAssignEmployeesSuccess()
         } else {
           console.log('Failed to add member', response)
-          showAssignEmployeesError()
         }
       }
     }

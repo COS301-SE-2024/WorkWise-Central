@@ -220,10 +220,7 @@ const currentTab = ref('Current Companies')
 const newCompanyCode = ref('')
 const companyCodeRules = [(v: string) => !!v || 'Company code is required']
 const joinedCompanies = ref<Company[]>([])
-const leftCompanies = ref<Company[]>([
-  { id: '3', name: 'Company C' },
-  { id: '4', name: 'Company D' }
-])
+const leftCompanies = ref<Company[]>([])
 const undoTimeout = ref<ReturnType<typeof setTimeout> | null>(null)
 const joinCompanyModal = ref(false)
 const confirmLeaveDialog = ref(false)
@@ -240,10 +237,7 @@ const leftCompanyHeaders = [
 ]
 
 // Table Data
-const companies = ref<Company[]>([
-  { id: '1', name: 'Company A' },
-  { id: '2', name: 'Company B' }
-])
+const companies = ref<Company[]>([])
 
 // API URLs and configs
 const localUrl = 'http://localhost:3000/'
