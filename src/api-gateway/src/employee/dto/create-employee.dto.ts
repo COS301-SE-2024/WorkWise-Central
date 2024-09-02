@@ -29,6 +29,37 @@ export class CreateEmployeeDto {
   companyId: Types.ObjectId;
 }
 
+export class ExternalCreateEmployeeDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  @ApiProperty()
+  currentEmployeeId: Types.ObjectId;
+
+  @IsMongoId()
+  @IsOptional()
+  @ApiProperty()
+  roleId?: Types.ObjectId;
+
+  @IsMongoId()
+  @IsOptional()
+  @ApiProperty()
+  superiorId?: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  @ApiProperty()
+  userId: Types.ObjectId;
+
+  @ApiHideProperty()
+  @IsMongoId()
+  userInfo?: UserInfo;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  @ApiProperty()
+  companyId: Types.ObjectId;
+}
+
 export class CreateEmployeeResponseDto {
   response: { access_token: string; id: Types.ObjectId };
   constructor(message: { access_token: string; id: Types.ObjectId }) {
