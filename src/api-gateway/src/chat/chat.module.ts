@@ -14,6 +14,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from '../users/entities/user.entity';
 import { Chat, ChatSchema } from './entities/chat.entity';
 import { ChatMessage, ChatMessageSchema } from './entities/chat-message.entity';
+import { ChatGateway } from './chat.gateway';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -32,8 +34,8 @@ import { ChatMessage, ChatMessageSchema } from './entities/chat-message.entity';
     forwardRef(() => InventoryModule),
     forwardRef(() => StockTakeModule),
   ],
-  providers: [ChatService],
+  providers: [ChatService, ChatGateway, JwtService],
   controllers: [ChatController],
-  exports: [ChatService, MongooseModule],
+  exports: [ChatService, MongooseModule, ChatGateway],
 })
 export class ChatModule {}
