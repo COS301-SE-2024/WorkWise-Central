@@ -338,8 +338,6 @@ export class EmployeeRepository {
 
   async updateRole(roleId: Types.ObjectId, companyIdentification: Types.ObjectId, newRole: roleObject) {
     roleId = new Types.ObjectId(roleId);
-    console.log('roleId: ', roleId);
-    console.log('companyIdentification: ', companyIdentification);
     const previousObject = await this.employeeModel
       .updateMany(
         {
@@ -361,7 +359,37 @@ export class EmployeeRepository {
       )
       .lean();
 
-    console.log('Repository response: ', previousObject);
+    return previousObject;
+  }
+
+  async updateHourlyRate(
+    roleId: Types.ObjectId,
+    companyIdentification: Types.ObjectId,
+    newHourlyRate: number,
+    oldHourlyRate: number,
+  ) {
+    roleId = new Types.ObjectId(roleId);
+    const previousObject = await this.employeeModel
+      .updateMany(
+        {
+          $and: [
+            { 'role.roleId': roleId },
+            { companyId: companyIdentification },
+            { hourlyRate: oldHourlyRate },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        {
+          $set: {
+            hourlyRate: newHourlyRate,
+            updatedAt: new Date(),
+          },
+        },
+        { new: true, lean: true },
+      )
+      .lean();
 
     return previousObject;
   }
