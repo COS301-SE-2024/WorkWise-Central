@@ -25,8 +25,7 @@
       <v-card-actions>
         <v-container
           ><v-row justify="end"
-            ><v-col cols="12" lg="6" order="last" order-lg="first"
-              ><Toast position="bottom-center" />
+            ><v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn label="Cancel" color="secondary" @click="close" block
                 ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon>Cancel
               </v-btn></v-col
@@ -96,7 +95,7 @@ export default defineComponent({
           setTimeout(() => {
             this.isDeleting = false
             this.deleteDialog = false
-            this.$emit('Deleted', response.data.data)
+            this.$emit('DeletedTag', response.data.data)
           }, 1500)
         })
         .catch((err) => {

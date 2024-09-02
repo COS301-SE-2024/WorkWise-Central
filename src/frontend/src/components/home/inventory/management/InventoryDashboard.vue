@@ -35,7 +35,7 @@
             <v-col cols="12" lg="4" class="d-flex align-center">
               <AddInventory
                 v-show="checkPermission('add new inventory item')"
-                @inventoryCreated="addInventory"
+                @inventoryCreated="getInventoryItems"
               />
             </v-col> </v-row
         ></v-card-title>
@@ -72,13 +72,18 @@
                     <InventoryDetails :inventoryItem="selectedItem" />
                   </v-list-item>
                   <v-list-item v-show="checkPermission('edit all inventory')">
-                    <EditInventory :inventory_id="selectedItemID" :editedItem="selectedItem" />
+                    <EditInventory
+                      :inventory_id="selectedItemID"
+                      :editedItem="selectedItem"
+                      @inventoryUpdated="getInventoryItems"
+                    />
                   </v-list-item>
 
                   <v-list-item v-show="checkPermission('delete inventory item')">
                     <DeleteInventory
                       :inventory_id="selectedItemID"
                       :inventoryName="selectedItemName"
+                      @deleteInventory="getInventoryItems"
                     />
                   </v-list-item>
                 </v-list> </v-menu
@@ -168,6 +173,15 @@ export default defineComponent({
     },
     addInventory(newInventory: Inventory) {
       this.inventoryItems.push(newInventory)
+    },
+    deleteInventory(deletedTeamId: String) {
+      const index = this.inventoryItems.findIndex((item) => item._id === deletedTeamId)
+      if (index !== -1) {
+        this.inventoryItems.splice(index, 1)
+      }
+    },
+    updateInventory() {
+      this.getInventoryItems()
     },
     async getInventoryItems() {
       // Fetch inventory items from the backend

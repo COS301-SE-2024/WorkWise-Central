@@ -14,7 +14,7 @@
               width="auto"
               >Priorities</v-label
             ></v-col
-          ><v-col cols="12" lg="6"><CreatePriority /></v-col
+          ><v-col cols="12" lg="6"><CreatePriority @CreatedPriority="getPriorities" /></v-col
         ></v-row>
       </v-card-title>
 
@@ -44,7 +44,7 @@
                   >
                 </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeletePriority :tag-id="selectedItem._id" />
+                  <DeletePriority :tag-id="selectedItem._id" @DeletedPriority="getPriorities" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -283,9 +283,9 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.getPriorities()
+            this.dialog = false
             this.isDeleting = false
           }, 3000)
-          this.dialog = false
         })
         .catch((err) => {
           console.error(err)

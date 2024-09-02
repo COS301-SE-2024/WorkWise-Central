@@ -169,7 +169,7 @@ export default defineComponent({
           setTimeout(() => {
             this.isDeleting = false
             this.dialog = false
-            this.$emit('Created', response.data.data)
+            this.$emit('CreatedStatus', response.data.data)
           }, 3000)
         })
         .catch((error) => {

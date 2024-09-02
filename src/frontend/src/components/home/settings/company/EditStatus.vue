@@ -14,7 +14,7 @@
               width="auto"
               >Statuses</v-label
             ></v-col
-          ><v-col cols="12" lg="6"><CreateStatus /></v-col
+          ><v-col cols="12" lg="6"><CreateStatus @CreatedStatus="getStatuses" /></v-col
         ></v-row>
       </v-card-title>
       <v-card-text>
@@ -43,7 +43,7 @@
                   >
                 </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeleteStatus :statusId="selectedItem._id" />
+                  <DeleteStatus :statusId="selectedItem._id" @DeletedStatus="getStatuses" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -290,6 +290,7 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.getStatuses()
+            this.dialog = false
             this.isDeleting = false
           }, 3000)
         })

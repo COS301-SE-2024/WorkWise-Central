@@ -536,7 +536,7 @@ export default defineComponent({
           this.request_loading = false
           setTimeout(() => {
             this.isDeleting = false
-            this.$emit('create', res.data.data.details)
+            this.$emit('createClient', res.data.data)
           }, 1500)
         })
         .catch((res) => {
