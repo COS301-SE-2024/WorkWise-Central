@@ -30,7 +30,7 @@ export class JobTagRepository {
 
   async addJobTagToCompany(jobTag: JobTag) {
     const jobTagModel = new this.jobTagModel(jobTag);
-    return await jobTagModel.save();
+    return (await jobTagModel.save()).toObject();
   }
 
   async addJobPriorityTagToCompany(jobPriorityTag: JobPriorityTag) {
