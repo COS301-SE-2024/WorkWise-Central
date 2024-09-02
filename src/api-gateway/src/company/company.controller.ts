@@ -213,16 +213,14 @@ export class CompanyController {
 
   @ApiOperation({
     summary: `Search for a company using Email or Company Name`,
-    description: '\nurlencode the search parameter!',
+    description: '\nurlEncode the search parameter!',
   })
   @ApiResponse({
     type: findCompanyResponseDto,
   })
   @ApiQuery({ name: 'str', description: 'An email or name of company' })
   @Get('search?')
-  async findByEmailOrName(
-    @Query('str') str: string,
-  ): Promise<{ data: FlattenMaps<Company> & { _id: Types.ObjectId } }> {
+  async findByEmailOrName(@Query('str') str: string) {
     try {
       str = decodeURIComponent(str);
       return {

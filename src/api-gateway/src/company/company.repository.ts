@@ -52,7 +52,7 @@ export class CompanyRepository {
       .lean();
   }
 
-  async findByEmailOrName(identifier: string): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+  async findByEmailOrName(identifier: string) {
     const regex = `${identifier}`;
     return this.companyModel
       .find({

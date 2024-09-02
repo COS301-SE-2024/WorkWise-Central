@@ -28,7 +28,7 @@ export class NotificationRepository {
   }*/
 
   async findOne(id: Types.ObjectId): Promise<Notification[]> {
-    return this.notificationModel.find({ id: id }).exec();
+    return this.notificationModel.find({ _id: id }).exec();
   }
 
   async saveToken(token: NotificationToken) {

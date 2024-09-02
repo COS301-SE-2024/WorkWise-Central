@@ -114,7 +114,7 @@ export class UsersRepository {
     const result: FlattenMaps<User> & { _id: Types.ObjectId } = await this.userModel
       .findOne({
         $and: [
-          { id: userId },
+          { _id: userId },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
