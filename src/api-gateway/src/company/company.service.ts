@@ -198,7 +198,7 @@ export class CompanyService {
     return result;
   }
 
-  async getByEmailOrName(identifier: string): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+  async getByEmailOrName(identifier: string) {
     const result = await this.companyRepository.findByEmailOrName(identifier);
 
     if (result == null) {
