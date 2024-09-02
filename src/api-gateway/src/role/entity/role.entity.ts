@@ -27,6 +27,10 @@ export class Role {
   @Prop({ type: SchemaTypes.ObjectId, required: true })
   companyId: Types.ObjectId;
 
+  @ApiProperty()
+  @Prop({ type: Number, required: false })
+  hourlyRate?: number;
+
   @ApiHideProperty()
   @Prop({ type: Date, required: true, default: new Date() })
   public createdAt: Date;
@@ -60,6 +64,10 @@ export class RoleApiObject {
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true })
   companyId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: Number, required: false })
+  hourlyRate?: number;
 
   @ApiHideProperty()
   @Prop({ type: Date, required: true, default: new Date() })

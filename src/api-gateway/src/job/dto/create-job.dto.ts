@@ -22,34 +22,34 @@ import { JobApiObject } from './job-responses.dto';
 
 export class Address {
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(255)
-  street: string;
+  street?: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(255)
-  province: string;
+  province?: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(255)
-  suburb: string;
+  suburb?: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(255)
-  city: string;
+  city?: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumberString()
   @MaxLength(20)
-  postalCode: string;
+  postalCode?: string;
 
   @ApiProperty()
   @IsOptional()
@@ -92,9 +92,9 @@ export class Details {
   heading: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  description: string;
+  description?: string = '';
 
   @ApiProperty({ type: () => Address })
   @ValidateNested()
@@ -102,9 +102,9 @@ export class Details {
   address: Address;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsDateString()
-  startDate: Date;
+  startDate?: Date = null;
 
   @ApiProperty()
   @IsOptional()
@@ -148,13 +148,13 @@ export class AssignedEmployees {
   @IsArray()
   @IsMongoId({ each: true })
   @IsOptional()
-  employeeIds?: Types.ObjectId[];
+  employeeIds?: Types.ObjectId[] = [];
 
   @ApiProperty()
   @IsOptional()
   @IsArray()
   @IsMongoId({ each: true })
-  teamIds?: Types.ObjectId[];
+  teamIds?: Types.ObjectId[] = [];
 }
 
 export class TaskItem {
@@ -176,7 +176,7 @@ export class TaskItem {
   @ApiProperty()
   @IsOptional()
   @IsDate()
-  dueDate?: Date;
+  dueDate?: Date = null;
 
   @ApiProperty()
   @IsOptional()

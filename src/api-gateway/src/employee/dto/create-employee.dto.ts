@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { UserInfo } from '../entities/employee.entity';
 
@@ -27,6 +27,11 @@ export class CreateEmployeeDto {
   @IsMongoId()
   @ApiProperty()
   companyId: Types.ObjectId;
+
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty()
+  hourlyRate?: number;
 }
 
 export class ExternalCreateEmployeeDto {
@@ -58,6 +63,11 @@ export class ExternalCreateEmployeeDto {
   @IsMongoId()
   @ApiProperty()
   companyId: Types.ObjectId;
+
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty()
+  hourlyRate?: number;
 }
 
 export class CreateEmployeeResponseDto {
