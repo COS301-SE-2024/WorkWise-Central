@@ -924,7 +924,7 @@ import JoinCompanyModal from './JoinCompanyModal.vue'
 import axios from 'axios'
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
-import Tutorial from '../home/help/tutorial/Tutorial.vue'
+import Tutorial from './Tutorial.vue'
 import MarketingSplash from './MarketingSplash.vue'
 // import ServicesSplash from './ServicesSplash.vue'
 export default defineComponent({

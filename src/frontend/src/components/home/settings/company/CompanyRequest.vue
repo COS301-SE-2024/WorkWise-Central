@@ -1,5 +1,5 @@
 <template>
-  <Toast position="top-right"></Toast>
+  <Toast position="top-center"></Toast>
   <v-container fluid fill-height>
     <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
       <v-card-title

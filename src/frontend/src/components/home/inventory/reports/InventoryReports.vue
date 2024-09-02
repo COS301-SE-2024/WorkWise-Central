@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12">
         <v-tabs v-model="activeTab" bg-color="secondary">
-          <v-tab v-for="tab in header" :key="tab" @click="changeTab(tab)">{{ tab }}</v-tab>
+          <v-tab v-for="tab in header" :key="tab" @click="c(tab)">{{ tab }}</v-tab>
         </v-tabs>
 
         <v-tabs-items v-model="activeTab">
