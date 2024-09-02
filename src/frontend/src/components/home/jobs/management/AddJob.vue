@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-dialog close-on-back :max-height="800" :max-width="900" v-model="jobDialog">
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
@@ -196,7 +196,8 @@
                     variant="solo"
                     clearable
                     data-testid="status-select"
-                  ></v-select
+                  >
+                  </v-select
                 ></v-col>
                 <v-col :cols="12" :sm="6" :md="6" :lg="6" :xl="6">
                   <label style="font-size: 14px; font-weight: lighter">Priority</label>
@@ -214,8 +215,14 @@
                     variant="solo"
                     clearable
                     data-testid="priority-select"
-                  ></v-select
-                ></v-col>
+                  >
+                    <!--                    <template #chip="{ item, index }">-->
+                    <!--                      <v-chip :key="index" :color="item.colour" text-color="white">{{-->
+                    <!--                        item.title-->
+                    <!--                      }}</v-chip>-->
+                    <!--                    </template>-->
+                  </v-select></v-col
+                >
 
                 <v-col :cols="12" :sm="6" :md="6" :lg="6" :xl="6">
                   <label style="font-size: 14px; font-weight: lighter">Tags</label>
@@ -234,7 +241,8 @@
                     variant="solo"
                     clearable
                     data-testid="tags-multi-select"
-                  ></v-select
+                  >
+                  </v-select
                 ></v-col>
                 <v-col>
                   <small class="text-caption">Cover Image</small>
@@ -406,6 +414,7 @@
                 height="35"
                 variant="text"
                 data-testid="create-btn"
+                :loading="request_load"
                 ><v-icon icon="fa: fa-solid fa-plus" color="success" start></v-icon>Create Job
               </v-btn>
             </v-col>
@@ -475,6 +484,7 @@ export default defineComponent({
       valid: false,
       selectedDate: '',
       selectedTime: '',
+      request_load: false,
       clientDialogVisibility: false,
       minDate: new Date().toISOString().substr(0, 10),
       currentHour,
@@ -556,6 +566,19 @@ export default defineComponent({
       this.validateDates()
     }
   },
+  // computed: {
+  //   selectedTags: {
+  //     get(): JobTag[] {
+  //       if (this.req_obj.tags != undefined)
+  //         return this.req_obj.tags.map((value: string) =>
+  //           this.tagOptionsArray.find((item: JobTag) => item._id === value)
+  //         ) as JobTag[]
+  //     },
+  //     set(val: JobTag[]) {
+  //       this.req_obj.tags = val.map((item) => item._id)
+  //     }
+  //   }
+  // },
   methods: {
     showAddClientModal() {
       console.log('modal event')
@@ -623,7 +646,6 @@ export default defineComponent({
       }
     },
     async validateForm() {
-      this.createClientLoadClicked = true
       const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
       const validate = await (form as any).validate()
 
@@ -639,7 +661,10 @@ export default defineComponent({
         console.log(this.req_obj)
         console.log(update)
         this.date_validation_error_alert = !update
-        if (update) await this.handleSubmission()
+        if (update) {
+          this.request_load = true
+          await this.handleSubmission()
+        }
       }
     },
     formatStartDateAndTime(date: Date, time: string) {
@@ -678,6 +703,7 @@ export default defineComponent({
               detail: 'Job Added Successfully'
             })
             this.createClientLoadClicked = false
+            this.request_load = false
             window.location.reload()
           }
           axios
@@ -698,11 +724,12 @@ export default defineComponent({
                 summary: 'Success',
                 detail: 'Job Added Successfully'
               })
-              this.createClientLoadClicked = false
+              this.request_load = false
               window.location.reload()
             })
             .catch((error) => {
               console.log(error)
+              this.request_load = false
             })
         })
         .catch((error) => {
