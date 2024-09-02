@@ -9,6 +9,7 @@ import {
   HttpException,
   HttpStatus,
   UseGuards,
+  Headers,
 } from '@nestjs/common';
 import { CreateTeamDto, createTeamResponseDto } from './dto/create-team.dto';
 import { AddTeamMembersDto, RemoveTeamMembersDto, UpdateTeamDto } from './dto/update-team.dto';
@@ -17,6 +18,7 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
@@ -29,13 +31,34 @@ import { Types } from 'mongoose';
 import { teamResponseDto } from './entities/team.entity';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { UsersService } from '../users/users.service';
+import { JwtService } from '@nestjs/jwt';
+import { extractUserId } from '../utils/Utils';
 
 const className = 'Team';
 
 @ApiTags('Team')
 @Controller('team')
 export class TeamController {
-  constructor(private readonly teamService: TeamService) {}
+  constructor(
+    private readonly teamService: TeamService,
+    private readonly userService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async validateRequestWithEmployeeId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
+    const user = await this.userService.getUserById(userId);
+    if (!user.joinedCompanies.find((joined) => joined.employeeId.toString() === currentEmployeeId.toString())) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
+  async validateRequestWithCompanyId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
+    const user = await this.userService.getUserById(userId);
+    if (!user.joinedCompanies.find((joined) => joined.employeeId.toString() === currentEmployeeId.toString())) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+  }
 
   //********Endpoints for test purposes - Start**********/
   @ApiOperation({
@@ -72,6 +95,11 @@ export class TeamController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -88,8 +116,10 @@ export class TeamController {
     type: String,
   })
   @Get('id/:teamId')
-  async findById(@Param('teamId') teamId: Types.ObjectId) {
+  async findById(@Headers() headers: any, @Param('teamId') teamId: Types.ObjectId) {
     const data = await this.teamService.findById(teamId);
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithCompanyId(userId, data.companyId);
     return { data: data };
   }
 
@@ -108,6 +138,11 @@ export class TeamController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -119,13 +154,16 @@ export class TeamController {
     description: `Array of mongodb ${className} objects, in a particular Company, with an _id attribute`,
   })
   @ApiParam({
-    name: 'comanyId',
+    name: 'companyId',
     description: `The _id of the Company fo which the teams must be returned.`,
     type: String,
   })
-  @Get('all/:comanyId')
-  async findAllInCompany(@Param('comanyId') comanyId: Types.ObjectId) {
-    const data = await this.teamService.findAllInCompany(comanyId);
+  @Get('all/:companyId')
+  async findAllInCompany(@Headers() headers: any, @Param('companyId') companyId: Types.ObjectId) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithCompanyId(userId, companyId);
+
+    const data = await this.teamService.findAllInCompany(companyId);
     return { data: data };
   }
 
@@ -144,6 +182,11 @@ export class TeamController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -155,13 +198,16 @@ export class TeamController {
     description: `Array of detailed mongodb ${className} objects, in a particular Company, with an _id attribute`,
   })
   @ApiParam({
-    name: 'comanyId',
+    name: 'companyId',
     description: `The _id of the Company fo which the teams must be returned.`,
     type: String,
   })
-  @Get('detailed/all/:comanyId')
-  async detailedFindAllInCompany(@Param('comanyId') comanyId: Types.ObjectId) {
-    const data = await this.teamService.detailedFindAllInCompany(comanyId);
+  @Get('detailed/all/:companyId')
+  async detailedFindAllInCompany(@Headers() headers: any, @Param('companyId') companyId: Types.ObjectId) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithCompanyId(userId, companyId);
+
+    const data = await this.teamService.detailedFindAllInCompany(companyId);
     return { data: data };
   }
 
@@ -180,6 +226,11 @@ export class TeamController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -192,7 +243,9 @@ export class TeamController {
     type: createTeamResponseDto,
   })
   @Post('/create')
-  async create(@Body() createTeamDto: CreateTeamDto) {
+  async create(@Headers() headers: any, @Body() createTeamDto: CreateTeamDto) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithCompanyId(userId, createTeamDto.companyId);
     let data;
     try {
       data = await this.teamService.create(createTeamDto);
@@ -217,6 +270,11 @@ export class TeamController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -234,13 +292,17 @@ export class TeamController {
   })
   @ApiBody({ type: UpdateTeamDto })
   @Patch(':teamId')
-  async update(@Param('teamId') teamId: Types.ObjectId, @Body() updateTeamDto: UpdateTeamDto) {
+  async update(@Headers() headers: any, @Param('teamId') teamId: Types.ObjectId, @Body() updateTeamDto: UpdateTeamDto) {
     let data;
     try {
       data = await this.teamService.update(teamId, updateTeamDto);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
+
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithCompanyId(userId, data.companyId);
+
     return { data: data };
   }
 
@@ -259,6 +321,11 @@ export class TeamController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -276,7 +343,15 @@ export class TeamController {
   })
   @ApiBody({ type: UpdateTeamDto })
   @Patch('add/:teamId')
-  async addTeamMember(@Param('teamId') teamId: Types.ObjectId, @Body() addTeamMembersDto: AddTeamMembersDto) {
+  async addTeamMember(
+    @Headers() headers: any,
+    @Param('teamId') teamId: Types.ObjectId,
+    @Body() addTeamMembersDto: AddTeamMembersDto,
+  ) {
+    const team = await this.teamService.findById(teamId);
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithCompanyId(userId, team.companyId);
+
     let data;
     try {
       data = await this.teamService.addTeamMembers(teamId, addTeamMembersDto);
@@ -302,6 +377,11 @@ export class TeamController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -319,7 +399,14 @@ export class TeamController {
   })
   @ApiBody({ type: UpdateTeamDto })
   @Patch('remove/:teamId')
-  async removeTeamMember(@Param('teamId') teamId: Types.ObjectId, @Body() removeTeamMembersDto: RemoveTeamMembersDto) {
+  async removeTeamMember(
+    @Headers() headers: any,
+    @Param('teamId') teamId: Types.ObjectId,
+    @Body() removeTeamMembersDto: RemoveTeamMembersDto,
+  ) {
+    const team = await this.teamService.findById(teamId);
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithCompanyId(userId, team.companyId);
     let data;
     try {
       data = await this.teamService.removeTeamMembers(teamId, removeTeamMembersDto);
@@ -344,6 +431,11 @@ export class TeamController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -361,7 +453,11 @@ export class TeamController {
     type: String,
   })
   @Delete(':teamId')
-  async remove(@Param('teamId') teamId: Types.ObjectId) {
+  async remove(@Headers() headers: any, @Param('teamId') teamId: Types.ObjectId) {
+    const team = await this.teamService.findById(teamId);
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithCompanyId(userId, team.companyId);
+
     let data;
     try {
       data = await this.teamService.remove(teamId);

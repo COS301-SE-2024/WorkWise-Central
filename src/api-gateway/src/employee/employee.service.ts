@@ -693,7 +693,7 @@ export class EmployeeService {
     }
   }
 
-  async detailedFindByIdUnderMe(userId: Types.ObjectId, employeeId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
+  async detailedFindByIdUnderMe(employeeId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
     if (await this.isBelowMe(currentEmployeeId, employeeId)) {
       return await this.detailedFindById(currentEmployeeId);
     } else {
@@ -701,7 +701,7 @@ export class EmployeeService {
     }
   }
 
-  async findByIdUnderMe(userId: Types.ObjectId, employeeId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
+  async findByIdUnderMe(employeeId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
     if (await this.isBelowMe(currentEmployeeId, employeeId)) {
       return await this.findById(employeeId);
     } else {
