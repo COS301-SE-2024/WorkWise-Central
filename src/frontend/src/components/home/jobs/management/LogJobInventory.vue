@@ -35,7 +35,7 @@
     class="elevation-1"
     hide-default-footer
   >
-    <template v-slot:[`item.actions`]="{ item, index }">
+    <template v-slot:[`item.actions`]="{ index }">
       <v-btn icon @click="removeInventory(index)">
         <v-icon>mdi-delete</v-icon>
       </v-btn>

@@ -197,6 +197,12 @@
               <LogJobInventory :jobID="props.passedInJob?._id" />
             </v-col>
             <v-divider>
+              <h5 ref="jobInvoiceSection">Generate Invoice</h5>
+            </v-divider>
+            <v-col>
+              <GenerateInvoice />
+            </v-col>
+            <v-divider>
               <h5 ref="historySection">View Job History</h5>
             </v-divider>
             <v-col>
@@ -284,6 +290,20 @@
               class="d-flex justify-start"
               border="md"
               elevation="5"
+              @click="scrollToSection('jobInvoiceSection')"
+            >
+              <v-icon left>
+                {{ 'fa: fa-solid fa-file-invoice' }}
+              </v-icon>
+              Generate Invoice
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn
+              width="100%"
+              class="d-flex justify-start"
+              border="md"
+              elevation="5"
               @click="scrollToSection('jobInventorySection')"
             >
               <v-icon left>
@@ -327,6 +347,7 @@ import JobTags from './JobTags.vue'
 import JobHistory from './JobHistory.vue'
 import JobStatus from './JobStatus.vue'
 import LogJobInventory from './LogJobInventory.vue'
+import GenerateInvoice from './GenerateInvoice.vue'
 import axios from 'axios'
 
 
@@ -342,6 +363,7 @@ const historySection = ref<HTMLElement | null>(null)
 const jobStatusSection = ref<HTMLElement | null>(null)
 const jobTagsSection = ref<HTMLElement | null>(null)
 const jobInventorySection = ref<HTMLElement | null>(null)
+const jobInvoiceSection = ref<HTMLElement | null>(null)
 const viewJobDialog = ref(false) // Dialog state
 const checklistSection = ref(null)
 const inventorySection = ref(null)
@@ -382,6 +404,7 @@ function scrollToSection(
     | 'jobStatusSection'
     | 'jobTagsSection'
     | 'jobInventorySection'
+    | 'jobInvoiceSection'
 ) {
   let sectionRef = null
 
@@ -403,6 +426,8 @@ function scrollToSection(
     sectionRef = jobTagsSection
   } else if (section === 'jobInventorySection') {
     sectionRef = jobInventorySection
+  } else if (section === 'jobInvoiceSection') {
+    sectionRef = jobInvoiceSection
   }
 
   if (sectionRef && sectionRef.value) {
