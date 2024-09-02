@@ -1,14 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { SchemaTypes, Types } from 'mongoose';
 import { currentDate } from '../../utils/Utils';
 
 @Schema()
-export class Chat extends Document {
+export class Chat {
+  @Prop({ type: SchemaTypes.ObjectId, required: true })
+  _id: Types.ObjectId = new Types.ObjectId();
+
   @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }], required: true })
   participants: Types.ObjectId[];
 
   constructor(participants: Types.ObjectId[]) {
-    super();
     this.participants = participants;
   }
 
