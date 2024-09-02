@@ -20,7 +20,7 @@
         >Add Employee</v-card-title
       >
       <v-card-text>
-        <v-form ref="form" v-model="valid" @submit.prevent="handleSubmit">
+        <v-form ref="form" v-model="valid" @submit.prevent="validateSubmit">
           <v-col>
             <v-row>
               <v-col :cols="12">
@@ -237,7 +237,7 @@ export default defineComponent({
       const validate = await (form as any).validate()
       if (validate) {
         this.request_load = true
-        await this.handleSubmission()
+        await this.handleSubmit()
       }
     },
     async handleSubmit() {
