@@ -351,7 +351,6 @@ export class JobService {
     }
     /// Role-based stuff
     //TODO: Implement later
-    await this.employeeService.addJobAssignment(jobAssignDto.employeeId, jobAssignDto.jobId);
     const result = await this.jobRepository.assignEmployee(jobAssignDto.employeeToAssignId, jobAssignDto.jobId);
     const user = await this.usersService.getUserById(userId);
     const otherEmployee = await this.employeeService.findById(jobAssignDto.employeeToAssignId);
@@ -496,7 +495,6 @@ export class JobService {
     if (!alreadyAssigned) throw new ConflictException('Employee Not Assigned');
     /// Role-based stuff
     //TODO: Implement later
-    this.employeeService.removeJobAssignment(jobAssignDto.employeeId, jobAssignDto.jobId);
     const result = await this.jobRepository.unassignEmployee(jobAssignDto.employeeToAssignId, jobAssignDto.jobId);
     const user = await this.usersService.getUserById(userId);
     const otherEmployee = await this.employeeService.findById(jobAssignDto.employeeToAssignId);
@@ -661,7 +659,7 @@ export class JobService {
     return this.jobTagRepository.findAllPriorityTagsInCompany(companyId);
   }
 
-  async addJobTagToCompany(userId: Types.ObjectId, createTagDto: CreateTagDto): Promise<Job & { _id: Types.ObjectId }> {
+  async addJobTagToCompany(userId: Types.ObjectId, createTagDto: CreateTagDto) {
     /// Validation
     const user = await this.usersService.getUserById(userId);
     if (!user) throw new NotFoundException('User not found');
@@ -683,9 +681,9 @@ export class JobService {
     }
 
     const newTag = new JobTag(createTagDto.label, createTagDto.colour, createTagDto.companyId);
-    const savedDoc = await this.jobTagRepository.addJobTagToCompany(newTag);
-    console.log(savedDoc);
-    return savedDoc.toObject();
+    const j = await this.jobTagRepository.addJobTagToCompany(newTag);
+    console.log(j);
+    return j;
   }
 
   /*  async addJobStatusToCompany(
@@ -1144,8 +1142,10 @@ export class JobService {
     this.jobTagRepository.deleteAllTagsAndStatusesInCompany(companyId);
   }
 
-  removeAllReferencesToEmployee(employeeId: Types.ObjectId) {
-    this.jobRepository.removeAllReferencesToEmployee(employeeId);
+  async removeAllReferencesToEmployee(employeeId: Types.ObjectId) {
+    const employee = await this.employeeService.findById(employeeId);
+    if (!employee) throw new NotFoundException('Employee not found');
+    this.jobRepository.removeAllReferencesToEmployee(employee.companyId, employeeId);
     return true;
   }
 

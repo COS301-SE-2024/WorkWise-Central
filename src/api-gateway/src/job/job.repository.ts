@@ -592,8 +592,8 @@ export class JobRepository {
     );
   }
 
-  async removeAllReferencesToEmployee(employeeId: Types.ObjectId) {
-    const allJobsInCompany = await this.jobModel.find({ $and: [{ employeeId: employeeId }, isNotDeleted] }).exec();
+  async removeAllReferencesToEmployee(companyId: Types.ObjectId, employeeId: Types.ObjectId) {
+    const allJobsInCompany = await this.jobModel.find({ $and: [{ companyId: companyId }, isNotDeleted] }).exec();
     for (const job of allJobsInCompany) {
       if (job.assignedBy.toString() === employeeId.toString()) job.assignedBy = null;
       const assignedEmp = job.assignedEmployees.employeeIds.find((e) => e._id.toString() === employeeId.toString());
@@ -615,7 +615,11 @@ export class JobRepository {
           job.markModified('taskList');
         }
       }
-      job.save();
+      job.markModified('comments');
+      job.markModified('assignedEmployees');
+      job.markModified('assignedBy');
+      job.markModified('taskList');
+      await job.save();
     }
   }
 

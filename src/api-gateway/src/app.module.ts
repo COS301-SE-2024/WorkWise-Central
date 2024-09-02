@@ -17,7 +17,6 @@ import { AdminModule } from './admin/admin.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { StockTakeModule } from './stocktake/stocktake.module';
-import { ChatGateway } from './chat/chat.gateway';
 import { ChatModule } from './chat/chat.module';
 import { TimeTrackerModule } from './time-tracker/time-tracker.module';
 
@@ -25,7 +24,7 @@ const rootPath = join(__dirname, '..', '../../uploads');
 
 @Module({
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService],
   imports: [
     ConfigModule.forRoot({ envFilePath: [`../.env`, `.env`], isGlobal: true }),
     MongooseModule.forRoot(`${process.env.SERVER_LOGIN}`),
