@@ -191,6 +191,12 @@
               <JobTags :tags="props.passedInJob?.tags" :jobID="props.passedInJob?._id" />
             </v-col>
             <v-divider>
+              <h5 ref="jobInventorySection">Log Inventory</h5>
+            </v-divider>
+            <v-col>
+              <LogJobInventory :jobID="props.passedInJob?._id" />
+            </v-col>
+            <v-divider>
               <h5 ref="historySection">View Job History</h5>
             </v-divider>
             <v-col>
@@ -216,20 +222,6 @@
               Add Comment
             </v-btn>
           </v-col>
-          <!--            <v-col>-->
-          <!--              <v-btn-->
-          <!--                width="100%"-->
-          <!--                class="d-flex justify-start"-->
-          <!--                border="md"-->
-          <!--                elevation="5"-->
-          <!--                @click="scrollToSection('notesSection')"-->
-          <!--              >-->
-          <!--                <v-icon left>-->
-          <!--                  {{ 'fa: fa-solid fa-sticky-note' }}-->
-          <!--                </v-icon>-->
-          <!--                Add Note-->
-          <!--              </v-btn>-->
-          <!--            </v-col>-->
           <v-col>
             <v-btn
               width="100%"
@@ -258,20 +250,6 @@
               Attach Images
             </v-btn>
           </v-col>
-          <!--            <v-col>-->
-          <!--              <v-btn-->
-          <!--                width="100%"-->
-          <!--                class="d-flex justify-start"-->
-          <!--                border="md"-->
-          <!--                elevation="5"-->
-          <!--                @click="scrollToSection('tagsSection')"-->
-          <!--              >-->
-          <!--                <v-icon left>-->
-          <!--                  {{ 'fa: fa-solid fa-box' }}-->
-          <!--                </v-icon>-->
-          <!--                Log Inventory-->
-          <!--              </v-btn>-->
-          <!--            </v-col>-->
           <v-col>
             <v-btn
               width="100%"
@@ -298,6 +276,20 @@
                 {{ 'fa: fa-solid fa-tags' }}
               </v-icon>
               Job Tags
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn
+              width="100%"
+              class="d-flex justify-start"
+              border="md"
+              elevation="5"
+              @click="scrollToSection('jobInventorySection')"
+            >
+              <v-icon left>
+                {{ 'fa: fa-solid fa-boxes' }}
+              </v-icon>
+              Log Inventory
             </v-btn>
           </v-col>
           <v-col>
@@ -334,6 +326,7 @@ import GetJobImages from './GetJobImages.vue'
 import JobTags from './JobTags.vue'
 import JobHistory from './JobHistory.vue'
 import JobStatus from './JobStatus.vue'
+import LogJobInventory from './LogJobInventory.vue'
 import axios from 'axios'
 
 
@@ -348,6 +341,7 @@ const tagsSection = ref<HTMLElement | null>(null)
 const historySection = ref<HTMLElement | null>(null)
 const jobStatusSection = ref<HTMLElement | null>(null)
 const jobTagsSection = ref<HTMLElement | null>(null)
+const jobInventorySection = ref<HTMLElement | null>(null)
 const viewJobDialog = ref(false) // Dialog state
 const checklistSection = ref(null)
 const inventorySection = ref(null)
@@ -387,6 +381,7 @@ function scrollToSection(
     | 'historySection'
     | 'jobStatusSection'
     | 'jobTagsSection'
+    | 'jobInventorySection'
 ) {
   let sectionRef = null
 
@@ -406,6 +401,8 @@ function scrollToSection(
     sectionRef = jobStatusSection
   } else if (section === 'jobTagsSection') {
     sectionRef = jobTagsSection
+  } else if (section === 'jobInventorySection') {
+    sectionRef = jobInventorySection
   }
 
   if (sectionRef && sectionRef.value) {
