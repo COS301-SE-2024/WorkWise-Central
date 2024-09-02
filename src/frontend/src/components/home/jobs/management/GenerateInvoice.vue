@@ -1,113 +1,135 @@
 <template>
-  <v-container>
-    <v-btn color="primary" @click="generatePdf">
-      Generate PDF
+  <div>
+    <!-- Vuetify Button to Generate PDF Invoice -->
+    <v-btn @click="generatePdf" color="primary">
+      Generate PDF Invoice
     </v-btn>
-
-    <!-- Hidden content to be converted to PDF -->
-    <div ref="invoiceContent" class="hidden-content">
-      <v-card>
-        <v-card-title>Invoice</v-card-title>
-        <v-card-subtitle>
-          <div>{{ companyName }}</div>
-          <div>{{ companyAddress }}</div>
-        </v-card-subtitle>
-
-        <v-card-text>
-          <div>
-            <strong>Customer Details:</strong>
-            <div>{{ customerName }}</div>
-            <div>{{ customerAddress }}</div>
-          </div>
-
-          <div>
-            <strong>Invoice Date:</strong> {{ invoiceDate }}
-          </div>
-
-          <div>
-            <strong>Job:</strong> {{ jobTitle }}
-          </div>
-
-          <v-table>
-            <thead>
-            <tr>
-              <th>Action</th>
-              <th>Amount</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(action, index) in actions" :key="index">
-              <td>{{ action.name }}</td>
-              <td>{{ formatCurrency(action.amount) }}</td>
-            </tr>
-            </tbody>
-          </v-table>
-
-          <v-divider></v-divider>
-
-          <div class="text-right mt-3">
-            <strong>Total:</strong> {{ formatCurrency(totalAmount) }}
-          </div>
-        </v-card-text>
-      </v-card>
-    </div>
-  </v-container>
+  </div>
 </template>
 
-<script>
-import html2pdf from 'html2pdf.js';
+<script lang="ts">
+import { ref } from 'vue';
+import { VBtn } from 'vuetify/components';
+import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template';
 
 export default {
-  data() {
-    return {
-      companyName: "Your Company Name",
-      companyAddress: "1234 Street, City, Country",
-      customerName: "John Doe",
-      customerAddress: "5678 Customer St, City, Country",
-      invoiceDate: new Date().toLocaleDateString(),
-      jobTitle: "Job #1234: Website Development",
-      actions: [
-        { name: "Initial Consultation", amount: 100 },
-        { name: "Website Design", amount: 500 },
-        { name: "Development", amount: 1200 },
-        { name: "Testing", amount: 300 },
-      ],
-    };
+  name: 'InvoiceGenerator',
+  components: {
+    VBtn,
   },
-  computed: {
-    totalAmount() {
-      return this.actions.reduce((total, action) => total + action.amount, 0);
-    },
-  },
-  methods: {
-    generatePdf() {
-      const element = this.$refs.invoiceContent;
-
-      const options = {
-        margin: 1,
-        filename: 'invoice.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+  setup() {
+    // Function to Generate PDF
+    const generatePdf = () => {
+      const props = {
+        outputType: OutputType.Save,
+        fileName: "Invoice_2021",
+        orientationLandscape: false,
+        compress: true,
+        logo: {
+          src: "https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/logo.png",
+          type: 'PNG',
+          width: 53.33,
+          height: 26.66,
+          margin: {
+            top: 0,
+            left: 0,
+          }
+        },
+        stamp: {
+          inAllPages: true,
+          src: "https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/qr_code.jpg",
+          type: 'JPG',
+          width: 20,
+          height: 20,
+          margin: {
+            top: 0,
+            left: 0
+          }
+        },
+        business: {
+          name: "Business Name",
+          address: "1234 Business Street, City, Country",
+          phone: "(+355) 069 11 11 111",
+          email: "email@example.com",
+          email_1: "info@example.al",
+          website: "www.example.al",
+        },
+        contact: {
+          label: "Invoice issued for:",
+          name: "Client Name",
+          address: "5678 Client Address, City, Country",
+          phone: "(+355) 069 22 22 222",
+          email: "client@website.al",
+          otherInfo: "www.website.al",
+        },
+        invoice: {
+          label: "Invoice #: ",
+          num: 19,
+          invDate: "Payment Date: 01/01/2021 18:12",
+          invGenDate: "Invoice Date: 02/02/2021 10:17",
+          headerBorder: false,
+          tableBodyBorder: false,
+          header: [
+            { title: "#", style: { width: 10 } },
+            { title: "Title", style: { width: 30 } },
+            { title: "Description", style: { width: 80 } },
+            { title: "Price" },
+            { title: "Quantity" },
+            { title: "Unit" },
+            { title: "Total" }
+          ],
+          table: [
+            [1, "Design Work", "Initial design concept for website", 300, 2, "hours", 600],
+            [2, "Development", "Frontend and backend development", 700, 5, "hours", 3500],
+            [3, "Testing", "Testing and bug fixing", 200, 3, "hours", 600]
+          ],
+          additionalRows: [
+            {
+              col1: 'Total:',
+              col2: '4700.00',
+              col3: 'USD',
+              style: {
+                fontSize: 14
+              }
+            },
+            {
+              col1: 'VAT:',
+              col2: '20',
+              col3: '%',
+              style: {
+                fontSize: 10
+              }
+            },
+            {
+              col1: 'SubTotal:',
+              col2: '3760.00',
+              col3: 'USD',
+              style: {
+                fontSize: 10
+              }
+            }
+          ],
+          invDescLabel: "Invoice Note",
+          invDesc: "Thank you for your business. Please make the payment by the due date."
+        },
+        footer: {
+          text: "The invoice is created on a computer and is valid without the signature and stamp.",
+        },
+        pageEnable: true,
+        pageLabel: "Page ",
       };
 
-      html2pdf().from(element).set(options).save();
-    },
-    formatCurrency(value) {
-      return new Intl.NumberFormat("en-UK", {
-        style: "currency",
-        currency: "R",
-      }).format(value);
-    },
+      // Generate the PDF using the template
+      jsPDFInvoiceTemplate(props);
+    };
+
+    return {
+      generatePdf,
+    };
   },
 };
 </script>
 
 <style scoped>
-.hidden-content {
-  display: none;
-}
-.text-right {
-  text-align: right;
-}
+/* No display-specific styles are needed since we're not displaying data */
 </style>
