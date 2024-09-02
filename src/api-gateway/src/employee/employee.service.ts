@@ -378,14 +378,6 @@ export class EmployeeService {
     return await this.employeeRepository.updateSuperior(employeeId, newSuperiorId);
   }
 
-  async addJobAssignment(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
-    return this.employeeRepository.addAssignedJob(employeeId, jobId);
-  }
-
-  async removeJobAssignment(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
-    return this.employeeRepository.removeAssignedJob(employeeId, jobId);
-  }
-
   async updateUserInfo(id: Types.ObjectId, userInfo: UpdateEmployeeUserInfoDto) {
     const previousObject = this.employeeRepository.updateUserInfo(id, userInfo);
     return previousObject;

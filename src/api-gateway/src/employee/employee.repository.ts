@@ -217,42 +217,6 @@ export class EmployeeRepository {
       .lean();
   }
 
-  async addAssignedJob(id: Types.ObjectId, jobId: Types.ObjectId) {
-    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        },
-        { $push: { currentJobAssignments: jobId }, updatedAt: new Date() },
-      )
-      .lean();
-
-    return previousObject;
-  }
-
-  async removeAssignedJob(id: Types.ObjectId, jobId: Types.ObjectId) {
-    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        },
-        { $pull: { currentJobAssignments: jobId }, updatedAt: new Date() },
-      )
-      .lean();
-
-    return previousObject;
-  }
-
   async removeAllReferencesToTeam(teamId: Types.ObjectId) {
     const allEmployeesInCompany = await this.employeeModel
       .find({
