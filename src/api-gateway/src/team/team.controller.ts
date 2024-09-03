@@ -53,9 +53,9 @@ export class TeamController {
     }
   }
 
-  async validateRequestWithCompanyId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
+  async validateRequestWithCompanyId(userId: Types.ObjectId, companyId: Types.ObjectId) {
     const user = await this.userService.getUserById(userId);
-    if (!user.joinedCompanies.find((joined) => joined.employeeId.toString() === currentEmployeeId.toString())) {
+    if (!user.joinedCompanies.find((joined) => joined.companyId.toString() === companyId.toString())) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }

@@ -22,6 +22,11 @@ export class CreateInventoryDto {
   @IsOptional()
   @ApiProperty()
   @IsNumber()
+  salePrice?: number;
+
+  @IsOptional()
+  @ApiProperty()
+  @IsNumber()
   currentStockLevel?: number;
 
   @IsOptional()

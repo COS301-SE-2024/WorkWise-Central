@@ -11,6 +11,7 @@ import { TeamService } from '../../team/team.service';
 import { Employee } from '../entities/employee.entity';
 import { ClientService } from '../../client/client.service';
 import { InventoryService } from '../../inventory/inventory.service';
+import { StockMovementsService } from '../../stockmovements/stockmovements.service';
 
 const mockEmployeeRepository = {
   findAll: jest.fn(),
@@ -50,6 +51,8 @@ const mockClientService = {};
 
 const mockInventoryService = {};
 
+const mockStockMovementsService = {};
+
 describe('--Employee Service--', () => {
   let employeeService: EmployeeService;
 
@@ -66,6 +69,7 @@ describe('--Employee Service--', () => {
         { provide: TeamService, useValue: mockTeamService },
         { provide: ClientService, useValue: mockClientService },
         { provide: InventoryService, useValue: mockInventoryService },
+        { provide: StockMovementsService, useValue: mockStockMovementsService },
       ],
     }).compile();
 
