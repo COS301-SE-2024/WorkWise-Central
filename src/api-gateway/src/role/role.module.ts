@@ -21,6 +21,7 @@ import { FileModule } from '../file/file.module';
 import { InventoryService } from '../inventory/inventory.service';
 import { InventoryModule } from '../inventory/inventory.module';
 import { StockTakeModule } from '../stocktake/stocktake.module';
+import { StockMovementsModule } from '../stockmovements/stockmovements.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { StockTakeModule } from '../stocktake/stocktake.module';
     forwardRef(() => FileModule),
     forwardRef(() => InventoryModule),
     forwardRef(() => StockTakeModule),
+    forwardRef(() => StockMovementsModule),
   ],
   controllers: [RoleController],
   providers: [

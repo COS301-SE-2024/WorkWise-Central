@@ -19,6 +19,7 @@ import { TeamModule } from '../team/team.module';
 import { InventoryModule } from '../inventory/inventory.module';
 import { InventoryService } from '../inventory/inventory.service';
 import { StockTakeModule } from '../stocktake/stocktake.module';
+import { StockMovementsModule } from '../stockmovements/stockmovements.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { StockTakeModule } from '../stocktake/stocktake.module';
     forwardRef(() => TeamModule),
     forwardRef(() => InventoryModule),
     forwardRef(() => StockTakeModule),
+    forwardRef(() => StockMovementsModule),
   ],
   controllers: [ClientController],
   providers: [
