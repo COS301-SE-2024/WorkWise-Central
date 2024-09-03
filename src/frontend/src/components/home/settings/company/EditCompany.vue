@@ -8,8 +8,14 @@
           <v-row>
             <v-col cols="12" lg="5" class="d-flex justify-center">
               <v-avatar color="grey" size="150">
-                <v-img size="50" :src="company.logo" cover></v-img>
+                <v-img size="50" cover></v-img>
               </v-avatar>
+              <v-file-input
+                ref="fileInput"
+                accept="image/*"
+                class="hidden bg-transparent"
+                @change="onFileChange"
+              ></v-file-input>
             </v-col>
             <v-col cols="12" lg="7">
               <v-label> Name</v-label>
@@ -308,7 +314,7 @@ export default defineComponent({
         currentEmployeeId: localStorage.getItem('employeeId'),
         updateCompanyDto: this.company
       }
-
+      console.log(JSON.stringify(data))
       await axios
         .patch(`${apiURL}company/update/${localStorage.getItem('currentCompany')}`, data, config)
         .then((response) => {
@@ -331,6 +337,54 @@ export default defineComponent({
             severity: 'error',
             summary: 'Error',
             detail: 'Company update failed',
+            life: 3000
+          })
+        })
+    },
+    onFileChange(event: Event) {
+      const target = event.target as HTMLInputElement
+      const file = target.files ? target.files[0] : null
+      if (file) {
+        const reader = new FileReader()
+        reader.onload = async (e: ProgressEvent<FileReader>) => {
+          if (e.target) {
+            this.company.logo = e.target.result as string
+            await this.updateCompanyLogo(file)
+          }
+        }
+        reader.readAsDataURL(file)
+      }
+    },
+    updateCompanyLogo(file: File) {
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const formData = new FormData()
+      formData.append('logo', file)
+      axios
+        .patch(
+          `${this.localUrl}company/update/logo/${localStorage.getItem('currentCompany')}`,
+          formData,
+          config
+        )
+        .then((response) => {
+          console.log(response)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Company logo updated',
+            life: 3000
+          })
+        })
+        .catch((error) => {
+          console.log(error)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Company logo update failed',
             life: 3000
           })
         })

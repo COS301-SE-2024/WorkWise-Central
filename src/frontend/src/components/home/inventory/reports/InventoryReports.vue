@@ -47,13 +47,12 @@
 <script>
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import Chart from 'primevue/chart'
+
 import LogStockMovement from './LogStockMovement.vue'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 export default defineComponent({
   components: {
-    Chart,
     LogStockMovement
   },
   data() {

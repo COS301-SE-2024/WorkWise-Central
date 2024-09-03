@@ -100,20 +100,20 @@ export default {
         console.log(this.client_id)
         this.isDeleting = true // Indicate the start of the deletion process
 
-        const response = await axios.delete(`${apiURL}client/delete/`, config)
-        console.log(response)
+        await axios.delete(`${apiURL}client/delete/`, config).then((response) => {
+          console.log(response)
 
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Client deleted successfully',
-          life: 3000
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Client deleted successfully',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.clientDialog = false
+            this.$emit('clientDeleted', response.data.data)
+          }, 1500)
         })
-
-        setTimeout(() => {
-          this.clientDialog = false
-          this.$emit('clientDeleted', res.data.data)
-        }, 3000)
       } catch (error) {
         console.error('Error deleting client:', error)
 
