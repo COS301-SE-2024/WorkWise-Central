@@ -19,6 +19,7 @@ import { Employee } from '../employee/entities/employee.entity';
 import { EmployeeService } from '../employee/employee.service';
 import { DeleteClientDto } from './dto/delete-client.dto';
 import { JobService } from '../job/job.service';
+import { ClientFeedbackDto } from './dto/client-feedback.dto';
 
 @Injectable()
 export class ClientService {
@@ -81,6 +82,12 @@ export class ClientService {
     if (!client) throw new NotFoundException('Client does not exist');
     if (!(await this.usersService.userIsInCompany(userId, client.details.companyId)))
       throw new UnauthorizedException('User not in Same Company');
+    return client;
+  }
+
+  async internalGetClientById(clientId: Types.ObjectId) {
+    const client = await this.clientRepository.findClientById(clientId);
+    if (!client) throw new NotFoundException('Client does not exist');
     return client;
   }
 
@@ -271,5 +278,26 @@ export class ClientService {
   async clientIsAssignedToCurrentEmployee(currentEmployee: Types.ObjectId, clientId: Types.ObjectId) {
     const list = await this.getListOfClientIdsAssignedToEmployee(currentEmployee);
     return list.includes(clientId);
+  }
+
+  async getAllRelatedJobs(clientId: Types.ObjectId) {
+    const client = await this.internalGetClientById(clientId);
+    if (!client) throw new NotFoundException('Client not found');
+    return this.jobService.getAllJobsForClient(clientId);
+  }
+
+  async addFeedbackOnJob(feedbackDto: ClientFeedbackDto) {
+    const job = await this.jobService.getJobById(feedbackDto.jobId);
+    if (!job) throw new NotFoundException('Job not found');
+    const client = await this.internalGetClientById(feedbackDto.clientId);
+    if (!client) throw new NotFoundException('Client not found');
+
+    return this.jobService.addClientFeedback(feedbackDto.jobId, {
+      clientFeedback: {
+        comments: feedbackDto.comments,
+        jobRating: feedbackDto.jobRating,
+        customerServiceRating: feedbackDto.customerServiceRating,
+      },
+    });
   }
 }
