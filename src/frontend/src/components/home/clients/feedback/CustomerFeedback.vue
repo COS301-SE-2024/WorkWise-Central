@@ -52,8 +52,8 @@
               @click:outside="feedbackMenu = false"
             >
               <template v-slot:activator="{ props }">
-                <v-card v-bind="props" class="ma-3">
-                  <v-card-title>
+                <v-card v-bind="props" class="ma-3 bg-background" border="md" >
+                  <v-card-title class="bg-background">
                     <span>{{ feedback.employeeName }}</span>
                     <v-spacer></v-spacer>
                     <v-rating
@@ -63,7 +63,7 @@
                       readonly
                     ></v-rating>
                   </v-card-title>
-                  <h6 class="bg-cardColor pa-5 ma-0">{{ feedback.jobDone }}</h6>
+                  <h6 class="bg-background pa-5 ma-0">{{ feedback.jobDone }}</h6>
                   <v-card-text>{{ feedback.feedback }}</v-card-text>
                 </v-card>
               </template>

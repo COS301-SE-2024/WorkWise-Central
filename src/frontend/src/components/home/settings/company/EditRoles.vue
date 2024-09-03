@@ -173,7 +173,7 @@ export default defineComponent({
       permissionSuite: [],
       roleName: ''
     },
-    bulkRoleUpdateDto:[]
+    bulkRoleUpdateDto: []
   }),
 
   methods: {
@@ -293,10 +293,20 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
+      for (let i = 1; i < this.roleUpdates.length; i++) {
+        this.bulkRoleUpdateDto.push({
+          roleId: this.roleUpdates[i]._id,
+          updateRoleDto: {
+            roleName: this.roleUpdates[i].roleName,
+            permissionSuite: this.roleUpdates[i].permissionSuite
+          }
+        })
+      }
       const data = {
         currentEmployeeId: localStorage.getItem('employeeId'),
-        bulkUpdateDTO: []
+        bulkUpdateRoleDto: this.bulkRoleUpdateDto
       }
+      console.log(JSON.stringify(data))
       const apiURL = await this.getRequestUrl()
       await axios
         .patch(`${apiURL}role/bulkUpdate/${this.companyID}`, config, data)
