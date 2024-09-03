@@ -122,7 +122,7 @@ export class UsersRepository {
       })
       .lean();
     //console.log('userIdExists -> ', result);
-    return result !== null;
+    return result != null;
   }
 
   async findById(id: Types.ObjectId) {
