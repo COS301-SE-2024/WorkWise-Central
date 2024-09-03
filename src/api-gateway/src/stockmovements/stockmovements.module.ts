@@ -1,8 +1,8 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { InventoryService } from './inventory.service';
-import { InventoryController } from './inventory.controller';
+import { StockMovementsService } from './stockmovements.service';
+import { StockMovementsController } from './stockmovements.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Inventory, InventorySchema } from './entities/inventory.entity';
+import { StockMovements, StockMovementsSchema } from './entities/stockmovements.entity';
 import { UsersModule } from '../users/users.module';
 import { CompanyModule } from '../company/company.module';
 import { RoleModule } from '../role/role.module';
@@ -10,17 +10,17 @@ import { JobModule } from '../job/job.module';
 import { TeamModule } from '../team/team.module';
 import { JobService } from '../job/job.service';
 import { ClientModule } from '../client/client.module';
-import { InventoryRepository } from './inventory.repository';
+import { StockMovementsRepository } from './stockmovements.repository';
 import { FileModule } from '../file/file.module';
 import { EmployeeModule } from '../employee/employee.module';
 import { EmployeeService } from '../employee/employee.service';
 import { StockTakeModule } from '../stocktake/stocktake.module';
 import { StockTakeService } from '../stocktake/stocktake.service';
-import { StockMovementsModule } from '../stockmovements/stockmovements.module';
+import { InventoryModule } from '../inventory/inventory.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Inventory.name, schema: InventorySchema }]),
+    MongooseModule.forFeature([{ name: StockMovements.name, schema: StockMovementsSchema }]),
     forwardRef(() => UsersModule),
     forwardRef(() => CompanyModule),
     forwardRef(() => RoleModule),
@@ -30,10 +30,10 @@ import { StockMovementsModule } from '../stockmovements/stockmovements.module';
     forwardRef(() => FileModule),
     forwardRef(() => EmployeeModule),
     forwardRef(() => StockTakeModule),
-    forwardRef(() => StockMovementsModule),
+    forwardRef(() => InventoryModule),
   ],
-  controllers: [InventoryController],
-  providers: [InventoryService, InventoryRepository, JobService, EmployeeService, StockTakeService],
-  exports: [InventoryService, InventoryRepository, MongooseModule],
+  controllers: [StockMovementsController],
+  providers: [StockMovementsService, StockMovementsRepository, JobService, EmployeeService, StockTakeService],
+  exports: [StockMovementsService, StockMovementsRepository, MongooseModule],
 })
-export class InventoryModule {}
+export class StockMovementsModule {}

@@ -21,6 +21,11 @@ export class UpdateInventoryDto {
   @IsOptional()
   @ApiProperty()
   @IsNumber()
+  salePrice?: number;
+
+  @IsOptional()
+  @ApiProperty()
+  @IsNumber()
   currentStockLevel?: number;
 
   @IsOptional()
@@ -32,6 +37,11 @@ export class UpdateInventoryDto {
   @ApiProperty()
   @IsNumber()
   reorderLevel?: number;
+
+  @IsOptional()
+  @ApiProperty()
+  @IsString()
+  reason?: string;
 }
 
 export class ExternalInventoryUpdateDto {

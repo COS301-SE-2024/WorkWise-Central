@@ -85,6 +85,11 @@ export class ClientService {
     return client;
   }
 
+  async getClientByIdInternal(clientId: Types.ObjectId): Promise<FlattenMaps<Client>> {
+    const client = await this.clientRepository.findClientById(clientId);
+    return client;
+  }
+
   async internalGetClientById(clientId: Types.ObjectId) {
     const client = await this.clientRepository.findClientById(clientId);
     if (!client) throw new NotFoundException('Client does not exist');
