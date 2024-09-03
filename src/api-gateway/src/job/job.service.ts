@@ -1145,7 +1145,7 @@ export class JobService {
   async removeAllReferencesToEmployee(employeeId: Types.ObjectId) {
     const employee = await this.employeeService.findById(employeeId);
     if (!employee) throw new NotFoundException('Employee not found');
-    this.jobRepository.removeAllReferencesToEmployee(employee.companyId, employeeId);
+    this.jobRepository.removeAllReferencesToEmployee(employee.companyId, employee._id);
     return true;
   }
 
