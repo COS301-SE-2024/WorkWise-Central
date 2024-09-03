@@ -2,91 +2,15 @@
   <v-col :cols="12">
     <v-sheet rounded class="w-lg-screen" elevation="0">
       <div>
+        <v-text-field
+          v-model="searchQuery"
+          placeholder="Search..."
+          prepend-inner-icon="mdi-magnify"
+          clearable
+        />
         <v-expansion-panels class="my-4" variant="accordion">
-          <!--          <v-expansion-panel-->
-          <!--            :title="tutorialQuestions[0]"-->
-          <!--            :theme="isdarkmode === true ? 'dark' : 'light'"-->
-          <!--            style="font-family: Nunito, sans-serif"-->
-          <!--          >-->
-          <!--            <v-expansion-panel-text>-->
-          <!--              <v-col :cols="12"-->
-          <!--                ><v-stepper v-model="activeSteps.stepper1" :items="items.items_login" show-actions>-->
-          <!--                  <template #[`item.1`]>-->
-          <!--                    <h3 class="text-h6">Splash Page</h3>-->
-
-          <!--                    <br />-->
-          <!--                    <v-img :src="login.splash" />-->
-          <!--                  </template>-->
-
-          <!--                  <template #[`item.2`]>-->
-          <!--                    <h3 class="text-h6">Login Modal</h3>-->
-
-          <!--                    <br />-->
-          <!--                    <v-img :src="login.textfields" />-->
-          <!--                  </template>-->
-          <!--                  <template #[`item.3`]>-->
-          <!--                    <h3 class="text-h6">Login Button Click</h3>-->
-
-          <!--                    <br />-->
-          <!--                    <v-img :src="login.button" />-->
-          <!--                  </template> </v-stepper-->
-          <!--              ></v-col>-->
-          <!--            </v-expansion-panel-text>-->
-          <!--          </v-expansion-panel>-->
-          <!--          <v-expansion-panel-->
-          <!--            :title="tutorialQuestions[1]"-->
-          <!--            :theme="isdarkmode === true ? 'dark' : 'light'"-->
-          <!--            style="font-family: Nunito, sans-serif"-->
-          <!--          >-->
-          <!--            <v-expansion-panel-text>-->
-          <!--              <v-col :cols="12"-->
-          <!--                ><v-stepper v-model="activeSteps.stepper2" :items="items.items_signup" show-actions>-->
-          <!--                  <template #[`item.1`]>-->
-          <!--                    <h3 class="text-h6">Splash Page Click Signup Button</h3>-->
-
-          <!--                    <br />-->
-          <!--                    <v-img :src="signup.splash" />-->
-          <!--                  </template>-->
-          <!--                  <template #[`item.2`]>-->
-          <!--                    <h3 class="text-h6">Input Email & Password</h3>-->
-
-          <!--                    <br />-->
-          <!--                    <v-img :src="signup.email" />-->
-          <!--                  </template>-->
-
-          <!--                  <template #[`item.3`]>-->
-          <!--                    <h3 class="text-h6">Username Modal</h3>-->
-
-          <!--                    <br />-->
-          <!--                    <v-img :src="signup.username" />-->
-          <!--                  </template>-->
-
-          <!--                  <template #[`item.4`]>-->
-          <!--                    <h3 class="text-h6">Personal Details Modal</h3>-->
-
-          <!--                    <br />-->
-          <!--                    <v-img :src="signup.birthdate" />-->
-          <!--                  </template>-->
-          <!--                  <template #[`item.5`]>-->
-          <!--                    <h3 class="text-h6">Address Modal</h3>-->
-
-          <!--                    <br />-->
-          <!--                    <v-img :src="signup.address" /> </template-->
-          <!--                  ><template #[`item.6`]>-->
-          <!--                    <h3 class="text-h6">Register or Join Company buttons</h3>-->
-
-          <!--                    <br />-->
-          <!--                    <v-img :src="signup.registerjoin" /> </template-->
-          <!--                  ><template #[`item.7`]>-->
-          <!--                    <h3 class="text-h6">Register Company Modal</h3>-->
-
-          <!--                    <br />-->
-          <!--                    <v-img :src="signup.company" />-->
-          <!--                  </template> </v-stepper-->
-          <!--              ></v-col>-->
-          <!--            </v-expansion-panel-text>-->
-          <!--          </v-expansion-panel>-->
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[2])"
             :title="tutorialQuestions[2]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -146,6 +70,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[3])"
             :title="tutorialQuestions[3]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -248,6 +173,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[5])"
             :title="tutorialQuestions[5]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -297,6 +223,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[6])"
             :title="tutorialQuestions[6]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -364,6 +291,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[33])"
             :title="tutorialQuestions[33]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -431,6 +359,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[38])"
             :title="tutorialQuestions[38]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -504,6 +433,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[4])"
             :title="tutorialQuestions[4]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -566,6 +496,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[7])"
             :title="tutorialQuestions[7]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -635,6 +566,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[34])"
             :title="tutorialQuestions[34]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -703,6 +635,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[8])"
             :title="tutorialQuestions[8]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -770,6 +703,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[9])"
             :title="tutorialQuestions[9]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -857,6 +791,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[10])"
             :title="tutorialQuestions[10]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -1018,6 +953,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[35])"
             :title="tutorialQuestions[35]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -1086,6 +1022,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[11])"
             :title="tutorialQuestions[11]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -1153,6 +1090,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[32])"
             :title="tutorialQuestions[32]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -1210,6 +1148,7 @@
               ></v-col>
             </v-expansion-panel-text> </v-expansion-panel
           ><v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[36])"
             :title="tutorialQuestions[36]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -1278,6 +1217,7 @@
               >
             </v-expansion-panel-text> </v-expansion-panel
           ><v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[37])"
             :title="tutorialQuestions[37]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -1344,6 +1284,7 @@
               >
             </v-expansion-panel-text> </v-expansion-panel
           ><v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[39])"
             :title="tutorialQuestions[39]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -1412,6 +1353,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[12])"
             :title="tutorialQuestions[12]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -1497,6 +1439,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[13])"
             :title="tutorialQuestions[13]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -1577,6 +1520,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[14])"
             :title="tutorialQuestions[14]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -1624,6 +1568,7 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[15])"
             :title="tutorialQuestions[15]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -1694,6 +1639,7 @@
               >
             </v-expansion-panel-text> </v-expansion-panel
           ><v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[17])"
             :title="tutorialQuestions[17]"
             :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
@@ -2155,7 +2101,15 @@ export default defineComponent({
         items_deleteJob: ['Step 1', 'Step 2', 'Step 3'],
         items_editClient: ['Step 1', 'Step 2', 'Step 3'],
         items_editInventory: ['Step 1', 'Step 2', 'Step 3']
-      }
+      },
+      searchQuery: ''
+    }
+  },
+  computed: {
+    filteredItems() {
+      return this.tutorialQuestions.filter((question) =>
+        question.toLowerCase().includes(this.searchQuery.toLowerCase())
+      )
     }
   }
 })
