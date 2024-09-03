@@ -199,10 +199,10 @@ export class JobRepository {
       .exec();
   }
 
-  async findAllForClient(clientId: Types.ObjectId) {
+  async findAllCurrentForClient(clientId: Types.ObjectId, statusId: Types.ObjectId) {
     return this.jobModel
       .find({
-        $and: [{ clientId: clientId }, isNotDeleted],
+        $and: [{ clientId: clientId }, { status: { $ne: statusId } }, isNotDeleted],
       })
       .lean()
       .exec();
@@ -677,5 +677,14 @@ export class JobRepository {
       .exec();
     console.log(job);
     return job;
+  }
+
+  findCompletedForClient(clientId: Types.ObjectId, statusId: Types.ObjectId) {
+    return this.jobModel
+      .find({
+        $and: [{ clientId: clientId }, { status: statusId }, isNotDeleted],
+      })
+      .lean()
+      .exec();
   }
 }

@@ -1235,7 +1235,23 @@ export class JobService {
     return true;
   }
 
-  getAllJobsForClient(clientId: Types.ObjectId) {
-    return this.jobRepository.findAllForClient(clientId);
+  async getAllCurrentJobsForClient(clientId: Types.ObjectId) {
+    const client = await this.clientService.internalGetClientById(clientId);
+    if (!client) throw new NotFoundException('Client not found');
+
+    const finalStatus = await this.companyService.internalFindAllStatusesInCompany(client.details.companyId);
+    console.log(finalStatus);
+    const statusId = finalStatus.jobStatuses[finalStatus.jobStatuses.length - 1];
+    return this.jobRepository.findAllCurrentForClient(clientId, statusId);
+  }
+
+  async getAllCompletedJobsForClient(clientId: Types.ObjectId) {
+    const client = await this.clientService.internalGetClientById(clientId);
+    if (!client) throw new NotFoundException('Client not found');
+
+    const finalStatus = await this.companyService.internalFindAllStatusesInCompany(client.details.companyId);
+    console.log(finalStatus);
+    const statusId = finalStatus.jobStatuses[finalStatus.jobStatuses.length - 1];
+    return this.jobRepository.findCompletedForClient(clientId, statusId);
   }
 }

@@ -659,6 +659,10 @@ export class CompanyService {
     return this.companyRepository.findAllStatusesInCompany(companyId);
   }
 
+  async internalFindAllStatusesInCompany(companyId: Types.ObjectId) {
+    return this.companyRepository.findAllStatusesInCompany(companyId);
+  }
+
   private eradicateCompany(companyId: Types.ObjectId) {
     this.companyRepository.eradicateCompany(companyId).then((r) => console.log('acknowledged', r.acknowledged));
   }
