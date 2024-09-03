@@ -77,9 +77,16 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import Toast from 'primevue/toast'
 import axios from 'axios'
+interface Invoice {
+  _id: string
+  number: string
+  date: string
+  amount: number
+  status: string
+}
 
 export default {
   name: 'EditInvoice',
@@ -92,21 +99,27 @@ export default {
   },
   data() {
     return {
-      localEditedInvoice: this.editedInvoice,
+      localEditedInvoice: {
+        _id: '',
+        number: '',
+        date: '',
+        amount: '',
+        status: ''
+      },
       editDialog: false,
       valid: false,
       statusOptions: ['Paid', 'Unpaid', 'Pending'],
-      invoiceNumberRules: [(v) => !!v || 'Invoice number is required'],
-      dateRules: [(v) => !!v || 'Date is required'],
+      invoiceNumberRules: [(v: string) => !!v || 'Invoice number is required'],
+      dateRules: [(v: string) => !!v || 'Date is required'],
       amountRules: [
-        (v) => !!v || 'Amount is required',
-        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Amount must be a valid number'
+        (v: string) => !!v || 'Amount is required',
+        (v: string) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Amount must be a valid number'
       ]
     }
   },
   created() {
     // Create a deep copy of editedInvoice
-    // this.localEditedInvoice = this.deepCopy(this.editedInvoice)
+    this.localEditedInvoice = this.deepCopy(this.editedInvoice)
   },
   methods: {
     updateInvoice() {
@@ -143,8 +156,10 @@ export default {
             detail: 'Invoice updated successfully',
             life: 3000
           })
-          this.editDialog = false
-          this.$emit('invoiceUpdated', response.data)
+          setTimeout(() => {
+            this.editDialog = false
+            this.$emit('invoiceUpdated', response.data)
+          }, 3000)
         })
         .catch((error) => {
           console.error(error)
@@ -164,9 +179,9 @@ export default {
     close() {
       this.editDialog = false
     },
-    // deepCopy(obj) {
-    //   return JSON.parse(JSON.stringify(obj))
-    // },
+    deepCopy(obj: any) {
+      return JSON.parse(JSON.stringify(obj))
+    },
     getRequestUrl() {
       return 'https://your-api-url.com'
     }

@@ -237,8 +237,21 @@
                     <v-img :src="item.coverImage"> </v-img>
                   </v-card-item>
                   <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
-                    ><b>{{ item.heading }}</b></v-card-item
-                  >
+                    ><b>{{ item.heading }}</b>
+                    <v-menu align="left">
+                      <template v-slot:activator="{ props }">
+                        <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
+                      </template>
+                      <v-list :border="true" bg-color="background" rounded="lg">
+                        <v-list-item>
+                          <v-btn :elevation="0" @click="ArchiveJob(item)">
+                            <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
+                            {{ 'Archive' }}
+                          </v-btn>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </v-card-item>
                   <v-card-item v-if="item.status.status === column.status"
                     ><v-chip
                       :color="column.color"
@@ -418,6 +431,22 @@ export default {
     }
   },
   methods: {
+    async ArchiveJob(payload: JobCardDataFormat) {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      axios
+        .patch(apiURL + `job/update/${payload.jobId}`, { status: this.archive_status_id }, config)
+        .then((res) => {
+          console.log(res.data.data)
+          window.location.reload()
+        })
+        .catch((error) => console.log(error))
+    },
     async columnArchiveAll(col: Column) {
       try {
         const config = {

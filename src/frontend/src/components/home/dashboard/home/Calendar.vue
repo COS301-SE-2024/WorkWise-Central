@@ -1026,7 +1026,9 @@ export default {
         )
 
         let jobs: Job[] = employee_jobs.data.data
-        jobs.forEach((job: Job) => {
+        jobs.map((job: Job) => {
+          if (job.status.status === 'Archive') return null
+
           if (job.clientId != null) {
             const evnt: Event = {
               title: job.details.heading,

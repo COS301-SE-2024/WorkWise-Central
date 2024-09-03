@@ -26,7 +26,7 @@
         <v-container
           ><v-row justify="end"
             ><v-col cols="12" lg="6" order="last" order-lg="first"
-              ><Toast position="bottom-center" />
+              >
               <v-btn label="Cancel" color="secondary" @click="close" block
                 ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon>Cancel
               </v-btn></v-col
@@ -104,7 +104,7 @@ export default defineComponent({
           setTimeout(() => {
             this.isDeleting = false
             this.deleteDialog = false
-            this.$emit('Deleted', res.data.data)
+            this.$emit('DeletedRole', res.data.data)
           }, 1500)
           this.isDeleting = false
         }

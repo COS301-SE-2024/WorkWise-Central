@@ -32,6 +32,11 @@ export class UpdateInventoryDto {
   @ApiProperty()
   @IsNumber()
   reorderLevel?: number;
+
+  @IsOptional()
+  @ApiProperty()
+  @IsString()
+  reason?: string;
 }
 
 export class ExternalInventoryUpdateDto {

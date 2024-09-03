@@ -276,7 +276,13 @@ export type Job = {
     employeeIds?: string[]
     teamIds?: string[]
   }
-  status: string
+  status: {
+    _id: string
+    status: string
+    colour: string
+    companyId: string
+    __v: number
+  }
   tags?: string[]
   priorityTag?: string
   attachments: string[]

@@ -8,7 +8,7 @@ import {
   ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateJobDto } from './dto/create-job.dto';
+import { AssignedEmployees, CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { FlattenMaps, Types } from 'mongoose';
 import { Comment, History, Job, Task } from './entities/job.entity';
@@ -33,6 +33,7 @@ import { UpdateStatus } from './dto/job-status.dto';
 import { UpdatePriorityTag, UpdateTag } from './dto/job-tag.dto';
 import { AddAttachmentDto, UpdateAttachmentDto } from './dto/job-attachment.dto';
 import { AddTaskItemDto, RemoveTaskItemDto, UpdateTaskItemDto } from './dto/job-task-item.dto';
+import { ConvertItemToJobDto } from './dto/convert-item-to-job.dto';
 
 @Injectable()
 export class JobService {
@@ -136,13 +137,7 @@ export class JobService {
           //return null;
         }
       }
-      // const user = await this.usersService.getUserById(userId);
-      // const previousJob = await this.jobRepository.findById(id);
       const updated = await this.jobRepository.update(id, updateJobDto);
-      console.log(updated);
-      // const event = new History(this.compareJobDto(this.usersService.getFullName(user), previousJob, updateJobDto));
-      // const historyUpdate = await this.jobRepository.addHistory(event, previousJob._id);
-      // console.log('updatedJob', updated, historyUpdate);
       return await this.jobRepository.findById(updated._id);
     } catch (e) {
       throw new Error(e);
@@ -218,10 +213,12 @@ export class JobService {
     }
 
     if (job.assignedEmployees) {
-      for (const employee of job.assignedEmployees.employeeIds) {
-        const exists = await this.employeeService.employeeExists(employee);
-        if (!exists) {
-          return new ValidationResult(false, `Employee: ${employee} Not found`);
+      if (job.assignedEmployees.employeeIds.length > 0) {
+        for (const employee of job.assignedEmployees.employeeIds) {
+          const exists = await this.employeeService.employeeExists(employee);
+          if (!exists) {
+            return new ValidationResult(false, `Employee: ${employee} Not found`);
+          }
         }
       }
     }
@@ -363,11 +360,11 @@ export class JobService {
       currentJobAssignments: assignedJobs,
     });
     if (otherEmployee.userInfo) {
-      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName} to this job`;
+      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.surname} to this job`;
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
-    return result;
+    return this.jobRepository.findById(result._id);
   }
 
   async assignEmployeeToTaskItem(userId: Types.ObjectId, taskAssignDto: TaskAssignDto) {
@@ -421,7 +418,7 @@ export class JobService {
     });
     if (otherEmployee.userInfo) {
       //TODO: FIX later
-      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned Task: ${taskAssignDto.taskId} to ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName}`;
+      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned Task: ${taskAssignDto.taskId} to ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.surname}`;
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
@@ -479,7 +476,7 @@ export class JobService {
     });
     if (otherEmployee.userInfo) {
       //TODO: FIX later
-      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Unassigned Task: ${taskAssignDto.taskId} from ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName}`;
+      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Unassigned Task: ${taskAssignDto.taskId} from ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.surname}`;
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
@@ -508,11 +505,11 @@ export class JobService {
     });
     if (otherEmployee.userInfo) {
       //TODO: FIX later
-      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Unassigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName} from this job`;
+      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Unassigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.surname} from this job`;
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
-    return result;
+    return this.jobRepository.findById(result._id);
   }
 
   private async userIdMatchesEmployeeId(userId: Types.ObjectId, employeeId: Types.ObjectId) {
@@ -556,7 +553,7 @@ export class JobService {
         const otherEmployee = await this.employeeService.findById(employeeId);
         if (otherEmployee.userInfo) {
           //TODO: FIX later
-          const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} assigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName} from this job`;
+          const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} assigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.surname} from this job`;
           const historyUpdate = await this.jobRepository.addHistory(new History(event), jobAssignGroupDto.jobId);
           console.log(historyUpdate);
         }
@@ -623,7 +620,7 @@ export class JobService {
         const otherEmployee = await this.employeeService.findById(employeeId);
         if (otherEmployee.userInfo) {
           //TODO: FIX later
-          const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} unassigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName} from this job`;
+          const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} unassigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.surname} from this job`;
           const historyUpdate = await this.jobRepository.addHistory(new History(event), jobAssignGroupDto.jobId);
           console.log(historyUpdate);
         }
@@ -1155,5 +1152,46 @@ export class JobService {
   removeAllReferencesToTeam(teamId: Types.ObjectId) {
     this.jobRepository.removeAllReferencesToTeam(teamId);
     return true;
+  }
+
+  async convertTaskListItemToJob(userId: Types.ObjectId, convertItemDto: ConvertItemToJobDto) {
+    await this.userIdMatchesEmployeeId(userId, convertItemDto.currentEmployeeId);
+    const user = await this.usersService.getUserById(userId);
+    const employee = await this.employeeService.findById(convertItemDto.currentEmployeeId);
+    const job = await this.jobRepository.findById(convertItemDto.jobId);
+    if (!user) throw new NotFoundException('user not found');
+    if (!employee) throw new NotFoundException('Employee not found');
+    if (!job) throw new NotFoundException('Job not found');
+
+    const task = job.taskList.find((t) => t._id.toString() === convertItemDto.taskId.toString());
+    const item = task.items.find((i) => i._id.toString() === convertItemDto.taskItemId.toString());
+    if (!task) throw new ConflictException('Task not found');
+    if (!item) throw new ConflictException('Item not found');
+
+    const createJobDto: CreateJobDto = new CreateJobDto();
+    createJobDto.assignedBy = job.assignedBy._id;
+    createJobDto.companyId = job.companyId;
+    createJobDto.details = {
+      address: job.details.address,
+      heading: item.description,
+    };
+    createJobDto.assignedEmployees = new AssignedEmployees();
+    createJobDto.status = job.status._id;
+
+    const newJob = await this.create(userId, createJobDto);
+    newJob.history.push(
+      new History(
+        `${employee.userInfo.firstName} ${employee.userInfo.surname} converted item: ${item.description} into a Job`,
+      ),
+    );
+    for (const assignedEmployee of newJob.assignedEmployees.employeeIds) {
+      await this.assignEmployee(userId, {
+        jobId: newJob._id,
+        employeeId: employee._id,
+        employeeToAssignId: assignedEmployee._id,
+      });
+    }
+    this.jobRepository.convertTaskToJob(convertItemDto.jobId, convertItemDto.taskId, convertItemDto.taskItemId);
+    return (await newJob.save()).toObject();
   }
 }

@@ -13,7 +13,7 @@
               width="auto"
               >Roles</v-label
             ></v-col
-          ><v-col cols="12" lg="6"><CreateRoles /></v-col
+          ><v-col cols="12" lg="6"><CreateRoles @CreatedRoles="getRoles" /></v-col
         ></v-row>
       </v-card-title>
       <v-divider></v-divider>
@@ -63,7 +63,7 @@
                   >
                 </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeleteRole :roleId="item._id" />
+                  <DeleteRole :roleId="item._id" @DeletedRole="getRoles" />
                 </v-list-item>
               </v-list>
             </v-menu>

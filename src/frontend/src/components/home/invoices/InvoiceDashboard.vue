@@ -58,13 +58,13 @@
               </template>
               <v-list>
                 <v-list-item>
-                  <ViewInvoice />
+                  <ViewInvoice :invoice="selectedItem" />
                 </v-list-item>
                 <v-list-item>
-                  <EditInvoice />
+                  <EditInvoice :editedInvoice="selectedItem" :invoice_id="selectedItem._id" />
                 </v-list-item>
                 <v-list-item>
-                  <DeleteInvoice />
+                  <DeleteInvoice :invoice_id="selectedItem._id" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -120,7 +120,7 @@ export default defineComponent({
       search: '',
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
-      selectedItem: ''
+      selectedItem: {} as Invoice
     }
   },
   components: { DeleteInvoice, EditInvoice, ViewInvoice },
@@ -161,7 +161,7 @@ export default defineComponent({
       }
     },
     selectInvoice(invoice: Invoice) {
-      this.selectedItem = invoice._id
+      this.selectedItem = invoice
     },
     getRowProps(index: any) {
       return {

@@ -14,7 +14,7 @@
               width="auto"
               >Tags</v-label
             ></v-col
-          ><v-col cols="12" lg="6"><CreateTags /></v-col
+          ><v-col cols="12" lg="6"><CreateTags @CreatedTag="getTags" /></v-col
         ></v-row>
       </v-card-title>
       <v-card-text>
@@ -43,7 +43,7 @@
                   >
                 </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeleteTags :tagId="selectedItem._id" />
+                  <DeleteTags :tagId="selectedItem._id" @DeletedTag="getTags" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -283,6 +283,7 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.dialog = false
+            this.isDeleting = false
             this.getTags()
           }, 3000)
         })
@@ -294,6 +295,7 @@ export default defineComponent({
             detail: 'An error occurred while updating tag',
             life: 3000
           })
+          this.isDeleting = false
         })
     },
     close() {

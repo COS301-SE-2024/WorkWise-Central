@@ -16,6 +16,7 @@ import { EmployeeService } from '../employee/employee.service';
 import { StockTakeController } from './stocktake.controller';
 import { StockTakeService } from './stocktake.service';
 import { InventoryModule } from 'src/inventory/inventory.module';
+import { StockMovementsModule } from '../stockmovements/stockmovements.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { InventoryModule } from 'src/inventory/inventory.module';
     forwardRef(() => ClientModule),
     forwardRef(() => FileModule),
     forwardRef(() => EmployeeModule),
+    forwardRef(() => StockMovementsModule),
   ],
   controllers: [StockTakeController],
   providers: [StockTakeService, StockTakeRepository, JobService, EmployeeService, InventoryService],

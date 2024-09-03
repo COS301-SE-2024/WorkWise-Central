@@ -127,55 +127,72 @@
             ></v-autocomplete
           ></v-col>
 
-          <small class="text-caption">Client address</small>
+          <small class="text-caption"
+            >Client address
+            <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+          </small>
           <v-row>
             <v-col sm="6" cols="12"
-              ><small class="text-caption">Street</small
+              ><small class="text-caption"
+                >Street
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
               ><v-text-field
                 color="secondary"
                 placeholder="Street"
                 v-model="req_obj.details.address.street"
                 type="street"
                 required
+                :rules="street_rules"
                 hide-details="auto"
               ></v-text-field
             ></v-col>
             <v-col sm="6" cols="12"
-              ><small class="text-caption">Suburb</small
+              ><small class="text-caption"
+                >Suburb
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
               ><v-text-field
                 color="secondary"
                 placeholder="Suburb"
                 v-model="req_obj.details.address.suburb"
                 type="suburb"
+                :rules="suburb_rules"
                 required
                 hide-details="auto"
               ></v-text-field
             ></v-col>
 
             <v-col sm="6" cols="12">
-              <small class="text-caption">City</small
+              <small class="text-caption"
+                >City
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
               ><v-text-field
                 color="secondary"
                 placeholder="City"
                 v-model="req_obj.details.address.city"
                 type="city"
                 required
+                :rules="city_rules"
                 hide-details="auto"
               ></v-text-field
             ></v-col>
             <v-col sm="6" cols="12"
-              ><small class="text-caption">Zip Code</small
+              ><small class="text-caption"
+                >Postal Code
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
               ><v-text-field
                 color="secondary"
-                placeholder="Zip Code"
+                placeholder="Postal Code"
                 v-model="req_obj.details.address.postalCode"
                 type="postalCode"
+                :rules="postal_code_rules"
                 required
                 hide-details="auto"
               ></v-text-field
             ></v-col>
             <v-col sm="6" cols="12">
-              <label style="font-size: 11px; font-weight: lighter">Province</label>
+              <label style="font-size: 11px; font-weight: lighter"
+                >Province <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
               <v-autocomplete
                 density="compact"
                 placeholder="Province"
@@ -195,6 +212,7 @@
                   'Northern Cape',
                   'Western Cape'
                 ]"
+                :rules="province_rules"
                 required
                 data-testid="province-autocomplete"
               ></v-autocomplete
@@ -236,7 +254,7 @@
                 variant="text"
                 color="success"
                 :disabled="click_create_client"
-                :loading="isDeleting"
+                :loading="request_loading"
                 ><v-icon icon="fa: fa-solid fa-user-plus" color="success" start></v-icon>Create
                 Client
               </v-btn>
@@ -304,6 +322,15 @@ export default defineComponent({
     addDialog: false,
     isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
     click_create_client: false,
+    request_loading: false,
+    postal_code_rules: [
+      (v: string) => !!v || 'Postal code  is required',
+      (value: string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
+    ],
+    street_rules: [(v: string) => !!v || 'Street is required'],
+    suburb_rules: [(v: string) => !!v || 'Suburb is required'],
+    province_rules: [(v: string) => !!v || 'Province is required'],
+    city_rules: [(v: string) => !!v || 'City is required'],
     email_rules: [
       (v: string) => v || 'Email or Phone number is required',
       (val: string) => email_reg.test(val) || 'Email should contain an @ symbol'
@@ -337,8 +364,11 @@ export default defineComponent({
         /^[A-Za-z0-9_]+$/.test(v) || 'Username must be alphanumeric characters and underscores only'
     ],
     south_africa_id_rules: [
+      (v: string) => !v,
       (v: string) => !v || /^\d{13}$/.test(v) || 'ID number must contain only digits',
       (v: string) => {
+        console.log(v)
+        if (v === undefined) return true
         const dob = v.slice(0, 6)
         const year = parseInt(dob.slice(0, 2), 10) + 1900
         const month = parseInt(dob.slice(2, 4), 10) - 1
@@ -353,6 +383,8 @@ export default defineComponent({
       (v: string) => !v || ['0', '1'].includes(v[10]) || 'Invalid citizenship status digit',
       (v: string) => {
         // Implementing Luhn algorithm for checksum validation
+        if (v === undefined) return true
+
         let sum = 0
         for (let i = 0; i < 13; i++) {
           let digit = parseInt(v[i], 10)
@@ -479,8 +511,10 @@ export default defineComponent({
       this.req_obj.details.contactInfo.phoneNumber ||
         delete this.req_obj.details.contactInfo.phoneNumber
 
-      if (validate) await this.handleSubmission()
-      else {
+      if (validate) {
+        this.request_loading = true
+        await this.handleSubmission()
+      } else {
         this.emailRule
         this.phoneRule
       }
@@ -499,9 +533,10 @@ export default defineComponent({
             detail: 'Client created successfully',
             life: 3000
           })
+          this.request_loading = false
           setTimeout(() => {
             this.isDeleting = false
-            this.$emit('create', res.data.data)
+            this.$emit('createClient', res.data.data)
           }, 1500)
         })
         .catch((res) => {

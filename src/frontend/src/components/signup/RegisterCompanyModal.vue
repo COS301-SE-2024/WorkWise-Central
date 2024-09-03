@@ -36,7 +36,6 @@
                 color="cardColor"
                 placeholder="Enter the company's name"
                 v-model="req_obj.name"
-                :rules="company_name_rules"
                 rounded="md"
                 variant="solo"
                 required
@@ -362,6 +361,7 @@
                   :disabled="click_create_client"
                   block
                   data-testid="continue-button"
+                  :loading="register_request_loading"
                   >Continue</v-btn
                 >
               </v-col></v-row
@@ -457,6 +457,7 @@ export default {
       suburb_rules: [(v: string) => !!v || 'Suburb is required'],
       province_rules: [(v: string) => !!v || 'Province is required'],
       city_rules: [(v: string) => !!v || 'City is required'],
+      register_request_loading: false,
       req_obj: {
         userId: localStorage.getItem('id'),
         name: '',
@@ -493,7 +494,10 @@ export default {
       console.log('hello')
       console.log(validate)
       this.req_obj.userId = localStorage['id']
-      if (validate.valid) await this.registrationHandler()
+      if (validate.valid) {
+        this.register_request_loading = true
+        await this.registrationHandler()
+      }
     },
 
     async registrationHandler(): Promise<void> {
@@ -509,6 +513,7 @@ export default {
           localStorage['currentCompany'] = res.data._id
           localStorage['currentCompanyName'] = res.data.data.name
           localStorage['employeeId'] = res.data.ownerId
+          this.register_request_loading = false
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
@@ -527,6 +532,7 @@ export default {
             life: 3000
           })
           console.log(res)
+          this.register_request_loading = false
         })
     },
 
