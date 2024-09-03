@@ -6,7 +6,7 @@
         ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon>Edit
       </v-btn>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title class="text-center"> Edit Client </v-card-title>
 
       <v-card-text>

@@ -12,7 +12,7 @@
         </v-avatar>
       </v-btn>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-text>
         <div class="mx-auto text-center">
           <v-avatar color="secondary" style="width: 38px; height: 36px">

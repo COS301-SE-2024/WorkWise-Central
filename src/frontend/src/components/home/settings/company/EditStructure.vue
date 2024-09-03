@@ -6,10 +6,10 @@
       <v-container>
         <v-row>
           <v-col cols="12" lg="6">
-            <v-btn @click="updateLayout('TB')"> Top-Bottom </v-btn>
+            <v-btn @click="removeNode"> Remove Node </v-btn>
           </v-col>
           <v-col cols="12" lg="6">
-            <v-btn @click="updateLayout('LR')"> Left-Right </v-btn>
+            <v-btn @click="addNode"> Add Node </v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -17,6 +17,8 @@
         <Toast position="top-center" />
         <v-network-graph
           v-model="graph"
+          v-model:selected-nodes="selectedNodes"
+          v-model:selected-edges="selectedEdges"
           class="graph"
           :nodes="data.nodes"
           :edges="data.edges"
@@ -106,6 +108,8 @@ export default defineComponent({
           nodes: {}
         })
       },
+      selectedNodes: [],
+      selectedEdges: [],
       nodeSize,
       graph: null,
       configs: vNG.defineConfigs({
@@ -212,6 +216,15 @@ export default defineComponent({
     },
     viewEmployee() {
       console.log()
+    },
+    removeNode() {
+      const nodeIds = Object.keys(this.data.nodes)
+      if (nodeIds.length === 0) return
+    },
+    addNode() {
+      const newNodeId = `node${Object.keys(this.data.nodes).length + 1}`
+
+      this.data.nodes[newNodeId] = { name: 'New Node' }
     },
     async downloadAsSvg() {
       if (!this.graph) return

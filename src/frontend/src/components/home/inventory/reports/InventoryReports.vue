@@ -2,14 +2,10 @@
   <v-container>
     <v-row>
       <v-col cols="12">
-        <v-tabs v-model="activeTab" bg-color="secondary">
-          <v-tab v-for="tab in header" :key="tab" @click="c(tab)">{{ tab }}</v-tab>
-        </v-tabs>
-
         <v-tabs-items v-model="activeTab">
           <!-- Stock Movement Report -->
           <v-tab-item v-if="currentTab === 'Stock Movement Report'">
-            <v-card>
+            <v-card class="bg-cardColor">
               <v-card-title>Stock Movement Report</v-card-title>
               <v-card-text>
                 <v-container>
@@ -40,96 +36,8 @@
           <!-- Employee Activity Report -->
 
           <!-- Location-Based Inventory Report -->
-          <v-tab-item v-if="currentTab === 'Location-Based Inventory Report'">
-            <v-card>
-              <v-card-title>Location-Based Inventory Report</v-card-title>
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" lg="6"
-                      ><v-btn
-                        variant="elevated"
-                        color="primary"
-                        block
-                        @click="generatePDF('Location-Based Inventory Report')"
-                        ><v-icon color="secondary" icon="fa:fa-solid fa-file"></v-icon>Generate
-                        PDF</v-btn
-                      ></v-col
-                    >
-                    <v-col cols="12" lg="6"><LogStockMovement /></v-col></v-row
-                ></v-container>
-              </v-card-text>
-              <v-tabs v-model="locationTab" bg-color="background">
-                <v-tab
-                  v-for="location in locations"
-                  :key="location"
-                  @click="changeLocationTab(location)"
-                  >{{ location }}</v-tab
-                >
-              </v-tabs>
-              <v-tabs-items v-model="locationTab">
-                <v-tab-item v-for="location in locations" :key="location">
-                  <v-card v-if="locationName === location">
-                    <v-card-title>{{ location }} Inventory Levels</v-card-title>
-
-                    <v-list class="bg-cardColor">
-                      <v-list-item v-for="item in getLocationItems(location)" :key="item.id">
-                        <v-list-item-content>
-                          <v-list-item-title>{{ item.name }}</v-list-item-title>
-                          <v-list-item-subtitle>Stock: {{ item.stock }}</v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list>
-                  </v-card>
-                </v-tab-item>
-              </v-tabs-items>
-            </v-card>
-          </v-tab-item>
 
           <!-- Inventory Forecast Report -->
-          <v-tab-item v-if="currentTab === 'Inventory Forecast Report'">
-            <v-card>
-              <v-card-title>Inventory Usage Report</v-card-title>
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12"
-                      ><v-btn
-                        variant="elevated"
-                        color="primary"
-                        block
-                        :loading="isGenerating"
-                        @click="generatePDF('Inventory Forecast Report')"
-                        ><v-icon color="secondary" icon="fa:fa-solid fa-file"></v-icon>Generate
-                        PDF</v-btn
-                      ></v-col
-                    >
-                  </v-row></v-container
-                >
-              </v-card-text>
-              <v-data-table
-                :items="forecastData"
-                :items-per-page="5"
-                content-tag="v-data-table"
-                :headers="forecastHeaders"
-                class="elevation-1 bg-cardColor"
-              >
-                <template v-slot:[`item.showGraph`]="{ item }"
-                  ><v-btn
-                    rounded="xl"
-                    variant="plain"
-                    v-bind="props"
-                    @click="setGraphWithCorrectData(item)"
-                  >
-                    <v-icon color="primary" icon="fa: fa-solid fa-chart-simple"></v-icon>
-                  </v-btn>
-                </template>
-              </v-data-table>
-              <v-card v-if="currentInventoryItem !== ''">
-                <Chart type="bar" :data="chartData" class="elevation-1 bg-cardColor"
-              /></v-card>
-            </v-card>
-          </v-tab-item>
         </v-tabs-items>
       </v-col>
     </v-row>
@@ -158,12 +66,7 @@ export default defineComponent({
       locationName: 'Warehouse A',
       currentInventoryItem: '',
       currentTab: 'Stock Movement Report',
-      header: [
-        'Stock Movement Report',
-
-        'Location-Based Inventory Report',
-        'Inventory Forecast Report'
-      ],
+      header: ['Stock Movement Report'],
       stockMovementHeaders: [
         { title: 'Item', value: 'item' },
 

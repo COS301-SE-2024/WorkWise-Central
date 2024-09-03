@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title class="text-primary font-bold text-center"> Company Details</v-card-title>
       <v-divider></v-divider>
       <v-card-text>

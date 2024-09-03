@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title class="text-h5">Review Completed Jobs</v-card-title>
       <v-divider></v-divider>
       <v-list>
@@ -17,7 +17,7 @@
     </v-card>
 
     <v-dialog v-model="reviewDialog" max-width="500px">
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title class="text-h5">Review Job</v-card-title>
         <v-card-text>
           <v-rating v-model="rating" background-color="yellow"></v-rating>

@@ -14,7 +14,7 @@
       <v-container>
         <v-row>
           <v-col cols="12" md="6" offset-md="3">
-            <v-card>
+            <v-card class="bg-cardColor">
               <v-card-title class="text-center">Create New Password</v-card-title>
               <v-card-text>
                 <v-form v-model="valid">

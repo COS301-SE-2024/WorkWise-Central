@@ -101,7 +101,7 @@
 
     <!-- Invoice Details Modal -->
     <v-dialog v-model="showInvoiceModal">
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title>Invoice Details</v-card-title>
         <v-card-text>
           <p>Invoice #: {{ selectedInvoice.invoiceNumber }}</p>
@@ -126,7 +126,7 @@
     <!-- Invoice Aging Report -->
     <v-row>
       <v-col>
-        <v-card>
+        <v-card class="bg-cardColor">
           <v-card-title>Invoice Aging Report</v-card-title>
           <v-card-text>
             <v-list>

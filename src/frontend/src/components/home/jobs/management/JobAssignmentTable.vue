@@ -190,7 +190,7 @@
         </v-col>
       </v-row>
       <v-dialog v-model="deleteDialog" :max-width="500" :opacity="0">
-        <v-card>
+        <v-card class="bg-cardColor">
           <v-card-title class="text-h6 font-weight-regular bg-red">
             <v-icon color="white">mdi-alert-circle-outline</v-icon>
             Confirm Deletion

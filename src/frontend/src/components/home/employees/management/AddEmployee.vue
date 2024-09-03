@@ -15,7 +15,7 @@
         ></v-btn>
       </v-defaults-provider>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title class="text-center" style="font-family: Nunito, sans-serif"
         >Add Employee</v-card-title
       >

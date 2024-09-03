@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title class="text-h5">Current Jobs</v-card-title>
       <v-divider></v-divider>
       <v-list>

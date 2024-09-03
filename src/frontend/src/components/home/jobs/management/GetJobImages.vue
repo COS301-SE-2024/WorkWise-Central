@@ -22,7 +22,7 @@
           origin="top center"
         >
           <template v-slot:default="{ isActive }">
-            <v-card>
+            <v-card class="bg-cardColor">
               <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
                 Image Actions
               </v-card-title>
@@ -72,7 +72,7 @@
     </v-row>
 
     <v-dialog v-model="imageOverlay" fullscreen hide-overlay transition="dialog-bottom-transition">
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-toolbar dark color="primary">
           <v-btn dark @click="imageOverlay = false">
             <v-icon>mdi-close</v-icon>

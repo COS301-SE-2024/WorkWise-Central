@@ -13,7 +13,7 @@
         Create Role
       </v-btn>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title> Create new Role</v-card-title>
       <v-card-text>
         <v-form v-model="formIsValid" ref="form">

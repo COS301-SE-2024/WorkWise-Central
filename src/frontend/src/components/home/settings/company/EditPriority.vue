@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <Toast position="top-center" />
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
         height="auto"
@@ -23,7 +23,7 @@
           :headers="headers"
           :items="items"
           item-value="role"
-          class="bg-cardColor elevation-1"
+          class="bg-cardColor"
           :row-props="getRowProps"
           :header-props="{ class: 'bg-secondary h5 ' }"
         >
@@ -53,7 +53,7 @@
       </v-card-text>
     </v-card>
     <v-dialog v-model="dialog" max-height="800" max-width="600" persistent>
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title> Edit Priorities</v-card-title>
         <v-card-text>
           <v-form v-model="formIsValid" ref="form">
