@@ -199,6 +199,15 @@ export class JobRepository {
       .exec();
   }
 
+  async findAllForClient(clientId: Types.ObjectId) {
+    return this.jobModel
+      .find({
+        $and: [{ clientId: clientId }, isNotDeleted],
+      })
+      .lean()
+      .exec();
+  }
+
   async findAllForEmployeeDetailed(employeeId: Types.ObjectId) {
     const filter = {
       $and: [{ 'assignedEmployees.employeeIds': employeeId }, isNotDeleted],
@@ -658,5 +667,15 @@ export class JobRepository {
     job.markModified('taskList');
     job.markModified('history');
     return (await job.save()).toObject();
+  }
+
+  async getAllRelatedEmployees(jobId: Types.ObjectId) {
+    const job = await this.jobModel
+      .findOne({ $and: [{ _id: jobId, isNotDeleted }] })
+      .select(['assignedBy', 'assignedEmployees', 'taskList.items.assignedEmployees'])
+      .lean()
+      .exec();
+    console.log(job);
+    return job;
   }
 }
