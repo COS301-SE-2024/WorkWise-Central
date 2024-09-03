@@ -263,8 +263,8 @@ export class InventoryController {
     status: HttpStatus.BAD_REQUEST,
   })
   @ApiOperation({
-    summary: `Update an ${className} instances`,
-    description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
+    summary: `Record use of inventory in a job`,
+    description: `Send a array of the items used and the amounts used`,
   })
   @ApiOkResponse({
     type: InventoryResponseDto,
@@ -301,8 +301,8 @@ export class InventoryController {
     status: HttpStatus.BAD_REQUEST,
   })
   @ApiOperation({
-    summary: `Update an ${className} instances`,
-    description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
+    summary: `Update an ${className} stock use recorded`,
+    description: `Send an array of inventory id's and the change in the amount recorded before`,
   })
   @ApiOkResponse({
     type: InventoryResponseDto,
