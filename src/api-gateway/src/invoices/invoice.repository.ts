@@ -21,6 +21,17 @@ export class InvoiceRepository {
     return await newCompanyModel.save();
   }
 
+  async findLastInvoiceNumber(companyIdentification: Types.ObjectId) {
+    const lastInvoice = await this.InvoiceModel.findOne({
+      companyId: companyIdentification,
+      $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+    })
+      .sort({ invoiceNumber: -1 })
+      .select('invoiceNumber')
+      .lean();
+    return lastInvoice ? lastInvoice.invoiceNumber : null;
+  }
+
   async findAllInCompany(identifier: Types.ObjectId) {
     return await this.InvoiceModel.find({
       $and: [

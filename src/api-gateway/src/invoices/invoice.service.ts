@@ -1,13 +1,14 @@
 import { JobService } from './../job/job.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { CreateInvoiceDto } from './dto/create-invoice.dto';
+import { CreateInvoiceDto, items } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { Types } from 'mongoose';
 import { Invoice } from './entities/invoice.entity';
 import { CompanyService } from '../company/company.service';
 import { InvoiceRepository } from './invoice.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
-import { ClientService } from 'src/client/client.service';
+import { ClientService } from '../client/client.service';
+import { InventoryService } from '../inventory/inventory.service';
 
 @Injectable()
 export class InvoiceService {
@@ -23,6 +24,9 @@ export class InvoiceService {
 
     @Inject(forwardRef(() => ClientService))
     private readonly clientService: ClientService,
+
+    @Inject(forwardRef(() => InventoryService))
+    private readonly inventoryService: InventoryService,
   ) {}
 
   async validateCreateInvoice(Invoice: CreateInvoiceDto) {
@@ -57,6 +61,49 @@ export class InvoiceService {
     const newInvoice = new Invoice(createInvoiceDto);
     newInvoice.items = createInvoiceDto.items;
     return await this.invoiceRepository.save(newInvoice);
+  }
+
+  async generate(jobId: Types.ObjectId) {
+    const dto = new CreateInvoiceDto();
+    const job = await this.jobService.getJobById(jobId);
+    dto.clientId = job.clientId;
+    dto.companyId = job.companyId;
+    const number = await this.invoiceRepository.findLastInvoiceNumber(job.companyId);
+    if (number === null) {
+      dto.invoiceNumber = 1;
+    } else {
+      dto.invoiceNumber = number + 1;
+    }
+
+    dto.invoiceDate = new Date();
+    dto.items = [];
+    let subTotal = 0;
+
+    for (const inventory of job.recordedDetails.inventoryUsed) {
+      const inventoryItem = await this.inventoryService.findById(inventory.inventoryItemId);
+      const item = new items();
+      item.item = inventory.inventoryItemName;
+      item.quantity = inventory.quantityUsed;
+      if (inventoryItem.salePrice) {
+        item.unitPrice = inventoryItem.salePrice;
+      } else if (inventoryItem.costPrice) {
+        item.unitPrice = inventoryItem.costPrice;
+      } else {
+        item.unitPrice = 0;
+      }
+      item.discount = 0;
+      item.total = item.unitPrice;
+      subTotal = subTotal + item.total;
+      dto.items.push(item);
+    }
+
+    dto.paid = false;
+    dto.subTotal = subTotal;
+    dto.tax = 0;
+
+    dto.total = dto.subTotal + dto.tax;
+
+    return await this.create(dto);
   }
 
   async findAll() {
