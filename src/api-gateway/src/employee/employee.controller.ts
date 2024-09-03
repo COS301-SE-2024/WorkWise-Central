@@ -306,6 +306,11 @@ export class EmployeeController {
     description: '_id of the employee making the request',
     type: String,
   })
+  @ApiQuery({
+    name: 'currentEmployeeId',
+    description: `The _id attribute of the employee who is making the request.`,
+    type: String,
+  })
   @Get('/detailed/id/:id')
   async findByIdDetailed(
     @Headers() headers: any,
@@ -366,6 +371,16 @@ export class EmployeeController {
   @ApiParam({
     name: 'id',
     description: `The _id attribute of the ${className} to be retrieved.`,
+    type: String,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className} to be retrieved.`,
+    type: String,
+  })
+  @ApiQuery({
+    name: 'currentEmployeeId',
+    description: `The _id attribute of the employee who is making the request.`,
     type: String,
   })
   @Get('id/:id')

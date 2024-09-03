@@ -29,6 +29,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -193,6 +194,11 @@ export class InventoryController {
   @ApiParam({
     name: 'id',
     description: `The _id attribute of the ${className} to be retrieved.`,
+  })
+  @ApiQuery({
+    name: 'currentEmployeeId',
+    description: `The _id attribute of the employee who is making the request.`,
+    type: String,
   })
   @Get('id/:id')
   async findById(
@@ -362,13 +368,23 @@ export class InventoryController {
     type: InventoryResponseDto,
     description: `The updated ${className} object`,
   })
+  @ApiQuery({
+    name: 'inventoryId',
+    description: `The _id attribute of the inventory.`,
+    type: String,
+  })
+  @ApiQuery({
+    name: 'currentEmployeeId',
+    description: `The _id attribute of the employee who is making the request.`,
+    type: String,
+  })
   @Put('images/')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'files', maxCount: 20 }]))
   async addImages(
     @Headers() headers: any,
     @Query('inventoryId') id: Types.ObjectId,
-    @Query('empId') currentEmployeeId: Types.ObjectId,
+    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
     @UploadedFiles() files: { files?: Express.Multer.File[] },
   ) {
     const userId = await extractUserId(this.jwtService, headers);
