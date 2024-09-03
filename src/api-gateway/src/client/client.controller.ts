@@ -432,12 +432,30 @@ export class ClientController {
     status: 200,
     description: `The details of the job that are relevant to the client`,
   })
-  @Get('portal/viewJobs')
+  @Get('portal/view-jobs')
   async viewClientJobs(@Query('clientId') cId: string) {
     try {
       validateObjectId(cId);
       const clientId = new Types.ObjectId(cId);
       return { data: await this.clientService.getAllRelatedJobs(clientId) };
+    } catch (e) {
+      throw e;
+    }
+  }
+  //Ability to see your completed jobs
+  @ApiOperation({ summary: `For a client to see all their closed jobs` })
+  @ApiResponse({
+    isArray: true,
+    type: JobForClientDto, //TODO: Reflect properly
+    status: 200,
+    description: `The details of the job that are relevant to the client`,
+  })
+  @Get('portal/view-jobs/complete')
+  async viewCompletedClientJobs(@Query('clientId') cId: string) {
+    try {
+      validateObjectId(cId);
+      const clientId = new Types.ObjectId(cId);
+      return { data: await this.clientService.getAllCompletedJobs(clientId) };
     } catch (e) {
       throw e;
     }

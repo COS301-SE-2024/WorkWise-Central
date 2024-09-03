@@ -283,7 +283,15 @@ export class ClientService {
   async getAllRelatedJobs(clientId: Types.ObjectId) {
     const client = await this.internalGetClientById(clientId);
     if (!client) throw new NotFoundException('Client not found');
-    return this.jobService.getAllJobsForClient(clientId);
+    return this.jobService.getAllCurrentJobsForClient(clientId);
+  }
+
+  async getAllCompletedJobs(clientId: Types.ObjectId) {
+    const client = await this.internalGetClientById(clientId);
+    if (!client) throw new NotFoundException('Client not found');
+    const jobs = await this.jobService.getAllCompletedJobsForClient(clientId);
+    console.log(jobs);
+    return jobs;
   }
 
   async addFeedbackOnJob(feedbackDto: ClientFeedbackDto) {
