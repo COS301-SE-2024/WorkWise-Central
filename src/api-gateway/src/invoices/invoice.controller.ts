@@ -22,6 +22,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -117,14 +118,18 @@ export class InvoiceController {
     type: InvoiceListResponseDto,
     description: `An array of mongodb objects of the ${className} class for a given Company.`,
   })
-  @ApiParam({
-    name: 'id',
+  @ApiQuery({
+    name: 'currentEmployeeId',
     description: `The _id attribute of the Company for which to get all ${className} instances.`,
   })
-  @Get('/generate')
+  @ApiParam({
+    name: 'jobId',
+    description: `The _id attribute of the Company for which to get all ${className} instances.`,
+  })
+  @Get('/generate/:jobId')
   async generate(
     @Headers() headers: any,
-    @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId,
+    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
     @Param('jobId') jobId: Types.ObjectId,
   ) {
     if (!currentEmployeeId) {

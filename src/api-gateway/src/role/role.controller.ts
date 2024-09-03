@@ -57,6 +57,7 @@ export class RoleController {
   }
 
   async validateRequestWithCompanyId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
+    console.log('In validateRequestWithCompanyId');
     const user = await this.userService.getUserById(userId);
     if (!user.joinedCompanies.find((joined) => joined.employeeId.toString() === currentEmployeeId.toString())) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
