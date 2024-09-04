@@ -33,6 +33,9 @@ import { JwtService } from '@nestjs/jwt';
 import { extractUserId, validateObjectId, validateObjectIds } from '../utils/Utils';
 import { DeleteClientDto } from './dto/delete-client.dto';
 import { EmployeeService } from '../employee/employee.service';
+import { JobForClientDto } from './dto/job-for-client.dto';
+import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
+import { ClientFeedbackDto } from './dto/client-feedback.dto';
 
 const className = 'Client';
 
@@ -68,7 +71,7 @@ export class ClientController {
     description: 'Further details',
     security: [],
   })
-  @ApiBody({ type: [CreateClientDto] })
+  @ApiBody({ type: CreateClientDto })
   @ApiResponse({
     type: CreateClientResponseDto,
     description: `The access token and ${className}'s Id used for querying. 
@@ -418,6 +421,61 @@ export class ClientController {
     // }
     else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
+  //Ability to see your jobs
+  @ApiOperation({ summary: `For a client to see all their open jobs` })
+  @ApiResponse({
+    isArray: true,
+    type: JobForClientDto, //TODO: Reflect properly
+    status: 200,
+    description: `The details of the job that are relevant to the client`,
+  })
+  @Get('portal/view-jobs')
+  async viewClientJobs(@Query('clientId') cId: string) {
+    try {
+      validateObjectId(cId);
+      const clientId = new Types.ObjectId(cId);
+      return { data: await this.clientService.getAllRelatedJobs(clientId) };
+    } catch (e) {
+      throw e;
+    }
+  }
+  //Ability to see your completed jobs
+  @ApiOperation({ summary: `For a client to see all their closed jobs` })
+  @ApiResponse({
+    isArray: true,
+    type: JobForClientDto, //TODO: Reflect properly
+    status: 200,
+    description: `The details of the job that are relevant to the client`,
+  })
+  @Get('portal/view-jobs/complete')
+  async viewCompletedClientJobs(@Query('clientId') cId: string) {
+    try {
+      validateObjectId(cId);
+      const clientId = new Types.ObjectId(cId);
+      return { data: await this.clientService.getAllCompletedJobs(clientId) };
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  //Ability to see their progress
+
+  //Ability to leave feedback on job/worker
+  @ApiOperation({ summary: `For a client to leave feedback on a job/worker` })
+  @ApiResponse({
+    type: BooleanResponseDto, //TODO: Reflect properly
+    status: 200,
+    description: `Whether the request was successful`,
+  })
+  @Post('portal/feedback')
+  async leaveFeedbackOnJob(@Body() feedbackDto: ClientFeedbackDto) {
+    try {
+      return { data: await this.clientService.addFeedbackOnJob(feedbackDto) };
+    } catch (e) {
+      throw e;
     }
   }
 }

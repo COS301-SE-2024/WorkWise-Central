@@ -203,13 +203,13 @@ export class Job {
     if (createJobDto.companyId) this.companyId = createJobDto.companyId;
     if (createJobDto.clientId) this.clientId = createJobDto.clientId;
     if (createJobDto.assignedBy) this.assignedBy = createJobDto.assignedBy;
-    for (const employeeId of createJobDto.assignedEmployees.employeeIds) {
-      this.assignedEmployees.employeeIds.push(new Types.ObjectId(employeeId));
-    }
-
-    for (const teamId of createJobDto.assignedEmployees.teamIds) {
-      this.assignedEmployees.teamIds.push(new Types.ObjectId(teamId));
-    }
+    //     for (const employeeId of createJobDto.assignedEmployees.employeeIds) {
+    //   this.assignedEmployees.employeeIds.push(new Types.ObjectId(employeeId));
+    // }
+    //
+    // for (const teamId of createJobDto.assignedEmployees.teamIds) {
+    //   this.assignedEmployees.teamIds.push(new Types.ObjectId(teamId));
+    // }
 
     if (createJobDto.status) this.status = createJobDto.status;
     if (createJobDto.details) this.details = createJobDto.details;
