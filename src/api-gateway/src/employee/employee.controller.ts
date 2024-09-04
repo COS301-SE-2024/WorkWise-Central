@@ -299,7 +299,7 @@ export class EmployeeController {
     description: `The mongodb object of the ${className}, with an _id attribute, joined with the User and Role tables.`,
   })
   @ApiParam({
-    name: 'id',
+    name: 'employeeId',
     description: `The _id attribute of the ${className} to be retrieved.`,
     type: String,
   })
@@ -311,7 +311,7 @@ export class EmployeeController {
   @Get('/detailed/id/:id')
   async findByIdDetailed(
     @Headers() headers: any,
-    @Param('id') id: Types.ObjectId,
+    @Param('employeeId') employeeId: Types.ObjectId,
     @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
     const userId = await extractUserId(this.jwtService, headers);
@@ -320,12 +320,12 @@ export class EmployeeController {
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all employees')) {
-      const data = await this.employeeService.detailedFindById(id);
+      const data = await this.employeeService.detailedFindById(employeeId);
       return { data: data };
     } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
       let data;
       try {
-        data = await this.employeeService.detailedFindByIdUnderMe(id, currentEmployeeId);
+        data = await this.employeeService.detailedFindByIdUnderMe(employeeId, currentEmployeeId);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
@@ -366,14 +366,19 @@ export class EmployeeController {
     description: `The mongodb object of the ${className}, with an _id attribute`,
   })
   @ApiParam({
-    name: 'id',
+    name: 'employeeId',
     description: `The _id attribute of the ${className} to be retrieved.`,
+    type: String,
+  })
+  @ApiQuery({
+    name: 'currentEmployeeId',
+    description: '_id of the employee making the request',
     type: String,
   })
   @Get('id/:id')
   async findById(
     @Headers() headers: any,
-    @Param('id') id: Types.ObjectId,
+    @Param('employeeId') employeeId: Types.ObjectId,
     @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
     const userId = await extractUserId(this.jwtService, headers);
@@ -382,12 +387,12 @@ export class EmployeeController {
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     // console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all employees')) {
-      const data = await this.employeeService.findById(id);
+      const data = await this.employeeService.findById(employeeId);
       return { data: data };
     } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
       let data;
       try {
-        data = await this.employeeService.findByIdUnderMe(id, currentEmployeeId);
+        data = await this.employeeService.findByIdUnderMe(employeeId, currentEmployeeId);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
