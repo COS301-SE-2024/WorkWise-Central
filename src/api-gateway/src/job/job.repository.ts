@@ -674,7 +674,7 @@ export class JobRepository {
 
   async getAllRelatedEmployees(jobId: Types.ObjectId) {
     const job = await this.jobModel
-      .findOne({ $and: [{ _id: jobId, isNotDeleted }] })
+      .findOne({ $and: [{ _id: jobId }, isNotDeleted] })
       .select(['assignedBy', 'assignedEmployees', 'taskList.items.assignedEmployees'])
       .lean()
       .exec();
