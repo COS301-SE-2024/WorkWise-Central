@@ -86,8 +86,7 @@ export class ClientService {
   }
 
   async getClientByIdInternal(clientId: Types.ObjectId): Promise<FlattenMaps<Client>> {
-    const client = await this.clientRepository.findClientById(clientId);
-    return client;
+    return await this.clientRepository.findClientById(clientId);
   }
 
   async internalGetClientById(clientId: Types.ObjectId) {
@@ -186,20 +185,6 @@ export class ClientService {
       }
     } //TODO: Fix*/
     return new ValidationResultWithException(true);
-  }
-
-  private async clientIsValid(
-    //Will have to check this
-    client: Client | CreateClientDto,
-  ): Promise<ValidationResult> {
-    if (client.details) {
-      if (client.details.companyId) {
-        const exists = await this.companyService.companyIdExists(client.details.companyId);
-        if (!exists) return new ValidationResult(false, `Invalid Company ID: ${client.details.companyId}`);
-      }
-    }
-
-    return new ValidationResult(true);
   }
 
   private async validateCreate(userId: Types.ObjectId, createClientDto: CreateClientDto): Promise<ValidationResult> {
@@ -305,7 +290,15 @@ export class ClientService {
     const client = await this.internalGetClientById(feedbackDto.clientId);
     if (!client) throw new NotFoundException('Client not found');
 
+    /*    if (job.clientFeedback) {
+      if (feedbackDto.comments) job.clientFeedback.comments = feedbackDto.comments;
+      if (feedbackDto.customerServiceRating)
+        job.clientFeedback.customerServiceRating = feedbackDto.customerServiceRating;
+      if (feedbackDto.comments) job.clientFeedback.comments = feedbackDto.comments;
+    }*/
+
     return this.jobService.addClientFeedback(feedbackDto.jobId, {
+      // Must overwrite current feedback
       clientFeedback: {
         comments: feedbackDto.comments,
         jobRating: feedbackDto.jobRating,
