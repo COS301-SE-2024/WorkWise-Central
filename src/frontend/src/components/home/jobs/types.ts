@@ -342,9 +342,10 @@ export type Job = {
 }
 
 export type Column = {
-  id: string
+  _id: string
+  __v: 0
   status: string
-  color: string
+  colour: string
   companyId: string
   cards: JobCardDataFormat[]
 }
