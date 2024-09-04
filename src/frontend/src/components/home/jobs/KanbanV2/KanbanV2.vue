@@ -424,6 +424,7 @@ export default {
       //   { id: 4, status: 'Done', color: '#FFFF33', cards: [] }
       // ] as Column[],
       columns: [] as Column[],
+      archive_id: '',
       new_column_name: '',
       error_message: '',
       column_color: '',
@@ -447,6 +448,7 @@ export default {
       this.columns.map((col: Column) => {
         list.push(col._id)
       })
+      list.push(this.archive_id)
       const req = { employeeId: localStorage['employeeId'], jobStatuses: list }
       console.log(req)
       const config = {
@@ -811,6 +813,7 @@ export default {
           }
           loaded_tags_response.data.data.jobStatuses[i]['cards'] = []
         }
+        this.archive_id = loaded_tags_response.data.data.jobStatuses[i]._id
         loaded_tags_response.data.data.jobStatuses.splice(archive_index, 1)
         this.columns = loaded_tags_response.data.data.jobStatuses
       } catch (error) {
