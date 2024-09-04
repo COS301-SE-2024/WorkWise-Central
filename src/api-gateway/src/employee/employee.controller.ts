@@ -432,14 +432,14 @@ export class EmployeeController {
     type: String,
   })
   @Get('/listPotentialSubordinates/:employeeId')
-  async listPotentialSubordinates(@Headers() headers: any, @Param('employeeId') id: Types.ObjectId) {
+  async listPotentialSubordinates(@Headers() headers: any, @Param('employeeId') employeeId: Types.ObjectId) {
     const userId = await extractUserId(this.jwtService, headers);
-    const employee = await this.employeeService.findById(id);
+    const employee = await this.employeeService.findById(employeeId);
     await this.validateRequestWithCompanyId(userId, employee.companyId);
 
     let data;
     try {
-      data = await this.employeeService.listPotentialSubordinates(id);
+      data = await this.employeeService.listPotentialSubordinates(employeeId);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
@@ -483,14 +483,14 @@ export class EmployeeController {
     type: String,
   })
   @Get('/listPotentialSuperiors/:employeeId')
-  async listSuperiors(@Headers() headers: any, @Param('employeeId') id: Types.ObjectId) {
+  async listSuperiors(@Headers() headers: any, @Param('employeeId') employeeId: Types.ObjectId) {
     const userId = await extractUserId(this.jwtService, headers);
-    const employee = await this.employeeService.findById(id);
+    const employee = await this.employeeService.findById(employeeId);
     await this.validateRequestWithCompanyId(userId, employee.companyId);
 
     let data;
     try {
-      data = await this.employeeService.listPotentialSuperiors(id);
+      data = await this.employeeService.listPotentialSuperiors(employeeId);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
