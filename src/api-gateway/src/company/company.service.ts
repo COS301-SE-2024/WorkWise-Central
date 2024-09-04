@@ -198,7 +198,7 @@ export class CompanyService {
     return result;
   }
 
-  async getByEmailOrName(identifier: string): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+  async getByEmailOrName(identifier: string) {
     const result = await this.companyRepository.findByEmailOrName(identifier);
 
     if (result == null) {
@@ -656,6 +656,10 @@ export class CompanyService {
 
   async findAllStatusesInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
     if (!(await this.usersService.userIdExists(userId))) throw new NotFoundException('User not found');
+    return this.companyRepository.findAllStatusesInCompany(companyId);
+  }
+
+  async internalFindAllStatusesInCompany(companyId: Types.ObjectId) {
     return this.companyRepository.findAllStatusesInCompany(companyId);
   }
 

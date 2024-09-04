@@ -60,6 +60,7 @@ import { AddAttachmentDto, UpdateAttachmentDto } from './dto/job-attachment.dto'
 import { UpdateStatus, UpdateStatusDto } from './dto/job-status.dto';
 import { AddTaskDto, RemoveTaskDto, UpdateTaskDto } from './dto/job-tasks.dto';
 import { AddTaskItemDto, RemoveTaskItemDto, UpdateTaskItemDto } from './dto/job-task-item.dto';
+import { ConvertItemToJobDto } from './dto/convert-item-to-job.dto';
 
 const className = 'Job';
 
@@ -750,7 +751,7 @@ export class JobController {
     type: JobResponseDto,
     description: `The updated ${className} instance`,
   })
-  @Patch('/update/attachments')
+  @Patch('/updateAttachments')
   async updateAttachments(@Headers() headers: any, @Body() updateAttachmentDto: UpdateAttachmentDto) {
     try {
       const userId = extractUserId(this.jwtService, headers);
@@ -1010,6 +1011,29 @@ export class JobController {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
         data: await this.jobService.editJobTaskItem(userId, updateTaskItemDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Convert a Job TaskList Item into a new Job`,
+    description: `It also removes the task from the current Job and updated the History to reflect the conversion`,
+  })
+  @ApiOkResponse({
+    type: JobResponseDto,
+    description: `The new Job that was created from the TaskList Item`,
+  })
+  @Patch('/convert')
+  async convertItemToJob(@Headers() headers: any, @Body() convertItemToJobDto: ConvertItemToJobDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.convertTaskListItemToJob(userId, convertItemToJobDto),
       };
     } catch (e) {
       console.log(e);

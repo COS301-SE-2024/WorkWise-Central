@@ -210,6 +210,13 @@ export default defineComponent({
     close() {
       this.addDialog = false
     },
+    resetFields() {
+      this.name = ''
+      this.description = ''
+      this.costPrice = ''
+      this.currentStockLevel = ''
+      this.reorderLevel = ''
+    },
     async isLocalAvailable(localUrl: string) {
       try {
         const res = await axios.get(localUrl)

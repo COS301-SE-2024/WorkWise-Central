@@ -217,42 +217,6 @@ export class EmployeeRepository {
       .lean();
   }
 
-  async addAssignedJob(id: Types.ObjectId, jobId: Types.ObjectId) {
-    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        },
-        { $push: { currentJobAssignments: jobId }, updatedAt: new Date() },
-      )
-      .lean();
-
-    return previousObject;
-  }
-
-  async removeAssignedJob(id: Types.ObjectId, jobId: Types.ObjectId) {
-    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        },
-        { $pull: { currentJobAssignments: jobId }, updatedAt: new Date() },
-      )
-      .lean();
-
-    return previousObject;
-  }
-
   async removeAllReferencesToTeam(teamId: Types.ObjectId) {
     const allEmployeesInCompany = await this.employeeModel
       .find({
@@ -338,7 +302,7 @@ export class EmployeeRepository {
 
   async updateRole(roleId: Types.ObjectId, companyIdentification: Types.ObjectId, newRole: roleObject) {
     roleId = new Types.ObjectId(roleId);
-    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
+    const previousObject = await this.employeeModel
       .updateMany(
         {
           $and: [
@@ -359,7 +323,37 @@ export class EmployeeRepository {
       )
       .lean();
 
-    // console.log('Repository response: ', previousObject);
+    return previousObject;
+  }
+
+  async updateHourlyRate(
+    roleId: Types.ObjectId,
+    companyIdentification: Types.ObjectId,
+    newHourlyRate: number,
+    oldHourlyRate: number,
+  ) {
+    roleId = new Types.ObjectId(roleId);
+    const previousObject = await this.employeeModel
+      .updateMany(
+        {
+          $and: [
+            { 'role.roleId': roleId },
+            { companyId: companyIdentification },
+            { hourlyRate: oldHourlyRate },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        {
+          $set: {
+            hourlyRate: newHourlyRate,
+            updatedAt: new Date(),
+          },
+        },
+        { new: true, lean: true },
+      )
+      .lean();
 
     return previousObject;
   }

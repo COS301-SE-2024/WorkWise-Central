@@ -248,7 +248,7 @@ export default {
         updateClientDto: {
           details: {
             firstName: this.localEditedItem.firstName,
-            lastName: this.localEditedItem.surname,
+            lastName: this.localEditedItem.lastName,
             preferred_Language: this.localEditedItem.preferred_Language,
             contactInfo: {
               phoneNumber: this.localEditedItem.contactInfo.phoneNumber,
@@ -265,7 +265,7 @@ export default {
           }
         }
       }
-
+console.log(data)
       try {
         const response = await axios.patch(
           `http://localhost:3000/client/${this._clientID}`,

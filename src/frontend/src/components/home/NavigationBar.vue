@@ -39,14 +39,14 @@ const inventorySubItems = ref([
     routeName: 'report-view'
   },
   {
-    title: 'Inventory Stock Take',
+    title: 'Stock Management',
     icon: 'fa: fa-solid fa-chart-line',
     routeName: 'stock-take'
   }
 ])
 const invoicesSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'invoices' },
-  { title: 'Invoice Center', icon: 'fa: fa-solid fa-file-invoice', routeName: '404' },
+  { title: 'Invoice Center', icon: 'fa: fa-solid fa-file-invoice', routeName: 'invoice-center' },
   { title: 'Invoice Board', icon: 'fa: fa-solid fa-table', routeName: '404' }
 ])
 

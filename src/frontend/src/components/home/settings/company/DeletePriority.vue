@@ -97,7 +97,7 @@ export default defineComponent({
           setTimeout(() => {
             this.deleteDialog = false
             this.isDeleting = false
-            this.$emit('Deleted', response.data.data)
+            this.$emit('DeletedPriority', response.data.data)
           }, 3000)
         })
         .catch((err) => {

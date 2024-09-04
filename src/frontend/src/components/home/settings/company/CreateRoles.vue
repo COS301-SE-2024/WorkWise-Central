@@ -108,7 +108,7 @@ export default defineComponent({
           })
           this.isDeleting = this.dialog = false
           setTimeout(() => {
-            this.$emit('Created', response.data.data)
+            this.$emit('CreatedRoles', response.data.data)
           }, 3000)
         })
         .catch((error) => {

@@ -746,15 +746,12 @@ export default {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        data: {
-          employeeId: localStorage.getItem('employeeId')
         }
       }
       const apiURL = await this.getRequestUrl()
       const user_id = localStorage.getItem('id')
       try {
-        const res = await axios.get(`${apiURL}notification`, config)
+        const res = await axios.get(`${apiURL}notification/employee?userId=${user_id}`, config)
         console.log(res)
         this.items = res.data.data
       } catch (error) {
