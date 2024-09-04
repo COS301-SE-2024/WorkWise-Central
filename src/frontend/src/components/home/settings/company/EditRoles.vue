@@ -340,13 +340,6 @@ export default defineComponent({
     },
     cancel() {
       this.dialog = false
-      this.$emit('cancel')
-      this.$toast.add({
-        severity: 'info',
-        summary: 'Info',
-        detail: 'Company update cancelled',
-        life: 3000
-      })
     },
     saveChanges() {
       this.$emit('save', this.company)

@@ -43,7 +43,7 @@
                   >
                 </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeleteStatus :statusId="selectedItem._id" @DeletedStatus="getStatuses" />
+                  <DeleteStatus :statusId="selectedItem.statusId" @DeletedStatus="getStatuses" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -92,14 +92,7 @@
           <v-container
             ><v-row
               ><v-col cols="12" lg="6" order="last" order-lg="first"
-                ><v-btn
-                  color="error"
-                  rounded="md"
-                  variant="text"
-                  @click="close"
-                  block
-                  :loading="isDeleting"
-                >
+                ><v-btn color="error" rounded="md" variant="text" @click="close" block>
                   <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon> Cancel
                 </v-btn></v-col
               ><v-col cols="12" lg="6" order="first" order-lg="last"
@@ -155,7 +148,7 @@ export default defineComponent({
     items: [] as any[],
     dialog: false,
     selectedItem: {
-      _id: '',
+      statusId: '',
       status: '',
       colour: '',
       companyId: localStorage.getItem('currentCompany'),
@@ -258,7 +251,13 @@ export default defineComponent({
     },
     selectItem(item: any) {
       console.log(item)
-      this.selectedItem = item
+      this.selectedItem = {
+        statusId: item._id,
+        status: item.status,
+        colour: item.colour,
+        companyId: localStorage.getItem('currentCompany'),
+        employeeId: localStorage.getItem('employeeId')
+      }
     },
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
@@ -292,7 +291,7 @@ export default defineComponent({
             this.getStatuses()
             this.dialog = false
             this.isDeleting = false
-          }, 3000)
+          }, 2000)
         })
         .catch((error) => {
           this.$toast.add({

@@ -43,7 +43,7 @@
                   >
                 </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeleteTags :tagId="selectedItem._id" @DeletedTag="getTags" />
+                  <DeleteTags :tagId="selectedItem.tagId" @DeletedTag="getTags" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -146,7 +146,7 @@ export default defineComponent({
     dialog: false,
     isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     selectedItem: {
-      _id: '',
+      tagId: '',
       label: '',
       colour: '',
       companyId: localStorage.getItem('currentCompany')
@@ -259,7 +259,12 @@ export default defineComponent({
     },
     selectItem(item: any) {
       console.log(item)
-      this.selectedItem = item
+      this.selectedItem = {
+        tagId: item._id,
+        label: item.label,
+        colour: item.colour,
+        companyId: item.companyId
+      }
     },
     async updateTag() {
       this.isDeleting = true // Indicate the start of the deletion process
