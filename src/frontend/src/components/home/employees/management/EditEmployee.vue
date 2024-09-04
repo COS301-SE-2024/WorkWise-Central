@@ -7,6 +7,7 @@
         color="warning"
         variant="text"
         v-bind="activatorProps"
+        :disabled="Disabled"
         ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon
         >Edit</v-btn
       >
@@ -148,6 +149,10 @@ export default {
   props: {
     editedItem: {
       type: Object,
+      required: true
+    },
+    Disabled: {
+      type: Boolean,
       required: true
     }
   },

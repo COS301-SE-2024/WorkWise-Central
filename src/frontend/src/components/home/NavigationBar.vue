@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
 import UserAvatar from './UserAvatar.vue'
-const isVisible = ref(true)
+const isVisible = ref(false)
 const drawer = ref(true)
 
 const open = ref(['Dashboard'])

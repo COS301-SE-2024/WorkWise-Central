@@ -7,7 +7,7 @@
       </v-btn>
     </template>
     <v-card class="bg-cardColor">
-      <v-card-title> Delete {{ client.name + ' ' + client.surname }} </v-card-title>
+      <v-card-title> Delete {{ client.firstName + ' ' + client.lastName }} </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
@@ -51,10 +51,10 @@ import Toast from 'primevue/toast'
 export default {
   name: 'DeleteClient',
   props: {
-    opened: Boolean,
+
     client_id: Number,
-    companyID: String,
     client: Object
+  
   },
   components: { Toast },
   data() {
@@ -111,7 +111,7 @@ export default {
           })
           setTimeout(() => {
             this.clientDialog = false
-            this.$emit('clientDeleted', response.data.data)
+            this.$emit('deleteClient', this.client_id)
           }, 1500)
         })
       } catch (error) {

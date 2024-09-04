@@ -122,6 +122,7 @@ c
                                   v-if="permissions.includes('edit employees')"
                                   @update:item="selectedItem = $event"
                                   :editedItem="selectedItem"
+                                  :Disabled="false"
                               /></v-list-item>
 
                               <v-list-item v-if="permissions.includes('delete employees')"

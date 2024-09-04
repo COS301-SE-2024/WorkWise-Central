@@ -55,7 +55,7 @@
               </template>
             </v-data-table>
 
-            <v-btn color="success" block @click="saveStockTake">
+            <v-btn color="success" block @click="saveAllStockTake">
               <v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon> Save
             </v-btn></v-card-text
           >
@@ -318,6 +318,52 @@ export default {
 
       // Reset the form
       this.resetForm()
+    },
+    async saveAllStockTake() {
+      const stockTakeData = {
+        date: this.currentDate,
+        inventoryItems: this.filteredInventoryItems,
+        companyID: localStorage.getItem('currentCompany'),
+        currentEmployee: localStorage.getItem('username') || 'John Doe' // Replace with actual employee name if available
+      }
+
+      const doc = new jsPDF()
+      const pageWidth = doc.internal.pageSize.getWidth()
+
+      // Add title
+      doc.setFontSize(18)
+      doc.text('Stock Take Summary', pageWidth / 2, 15, { align: 'center' })
+
+      // Add date and employee name
+      doc.setFontSize(12)
+      doc.text(`Date: ${stockTakeData.date}`, 15, 30)
+      doc.text(`Employee: ${stockTakeData.currentEmployee}`, 15, 40)
+
+      // Create table headers
+      const headers = ['Item Name', 'Cost Price', 'Current Stock Level', 'Reorder Level']
+
+      // Create table body data
+      const body = stockTakeData.inventoryItems.map((item) => [
+        item.name,
+        item.costPrice, // Formatting price
+        item.currentStockLevel,
+        item.currentStockLevel + 30 // Example reorder level calculation
+      ])
+
+      // Add table to the PDF
+      autoTable(doc, {
+        head: [headers],
+        body: body,
+        startY: 50,
+        theme: 'grid',
+        styles: { fontSize: 10 },
+        headStyles: { fillColor: [50, 50, 50] },
+        columnStyles: { 0: { cellWidth: 'auto' } },
+        margin: { top: 60 }
+      })
+
+      // Save the PDF
+      doc.save(`stock_take_${stockTakeData.date}.pdf`)
     },
 
     resetForm() {

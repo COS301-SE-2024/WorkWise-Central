@@ -535,6 +535,7 @@ export default defineComponent({
           })
           this.request_loading = false
           setTimeout(() => {
+            this.addDialog = false
             this.isDeleting = false
             this.$emit('createClient', res.data.data)
           }, 1500)
