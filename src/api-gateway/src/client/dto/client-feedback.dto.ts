@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Types } from 'mongoose';
 
 export class ClientFeedbackDto {
@@ -10,9 +10,13 @@ export class ClientFeedbackDto {
   clientId: Types.ObjectId;
   @IsOptional()
   @IsNumber()
+  @Min(1)
+  @Max(10)
   jobRating?: number;
   @IsOptional()
   @IsNumber()
+  @Min(1)
+  @Max(10)
   customerServiceRating?: number;
   @IsOptional()
   @IsString()
