@@ -11,11 +11,11 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class items {
+export class Items {
   @IsNotEmpty()
   @ApiProperty()
   @IsString()
-  item: string;
+  description: string;
 
   @IsNotEmpty()
   @ApiProperty()
@@ -49,6 +49,11 @@ export class CreateInvoiceDto {
   @IsDate()
   invoiceDate: Date;
 
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsDate()
+  paymentDate: Date;
+
   @IsNotEmpty()
   @ApiProperty()
   @IsNumber()
@@ -62,7 +67,12 @@ export class CreateInvoiceDto {
   @IsNotEmpty()
   @ApiProperty()
   @IsNumber()
-  tax: number;
+  taxAmount: number;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsNumber()
+  taxPercentage: number;
 
   @ApiProperty()
   @IsOptional()
@@ -86,7 +96,12 @@ export class CreateInvoiceDto {
   @IsNotEmpty()
   @IsArray()
   @ApiProperty()
-  items: items[];
+  inventoryItems: Items[];
+
+  @IsNotEmpty()
+  @IsArray()
+  @ApiProperty()
+  laborItems: Items[];
 }
 
 export class CreateInvoiceOuterDto {
