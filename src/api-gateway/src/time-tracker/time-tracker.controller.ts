@@ -1,15 +1,17 @@
 import { Body, Controller, Get, Headers, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { TimeTrackerService } from './time-tracker.service';
 import { JwtService } from '@nestjs/jwt';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { extractUserId } from '../utils/Utils';
 import {
   CreateTimeTrackerDto,
   GeneralTimeTrackerDto,
+  GetCompletedTimeTrackersDto,
   GetCurrentTimeTrackersDto,
   GetTimeTrackersDto,
   StopTimeTrackerDto,
 } from './dto/create-time-tracker.dto';
+import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 
 @ApiTags('Time-Tracker')
 @Controller('time-tracker')
@@ -93,6 +95,30 @@ export class TimeTrackerController {
     }
   }
 
+  @Get('employee/check-ins/complete')
+  async getAllCompleteCheckins(@Headers() headers: any, @Body() completedTimeTrackersDto: GetCompletedTimeTrackersDto) {
+    try {
+      //validateObjectId(createJobDto.assignedBy, 'assignedBy');
+      const userId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.timeTrackerService.getAllCompletedCheckins(userId, completedTimeTrackersDto.employeeId),
+      };
+    } catch (Error) {
+      throw new HttpException(Error, HttpStatus.CONFLICT);
+    }
+  }
+
+  @Get('employee/check-ins/company/')
+  async getAllCompanyCheckins(@Headers() headers: any, @Body() companyTimeTrackerDto: GetCompletedTimeTrackersDto) {
+    try {
+      //validateObjectId(createJobDto.assignedBy, 'assignedBy');
+      const userId = extractUserId(this.jwtService, headers);
+      return { data: await this.timeTrackerService.getAllCompanyCheckins(userId, companyTimeTrackerDto.employeeId) };
+    } catch (Error) {
+      throw new HttpException(Error, HttpStatus.CONFLICT);
+    }
+  }
+
   /*  @Get('user/check-ins/current')
   async getAllCurrentUserCheckins(@Headers() headers: any) {
     try {
@@ -103,4 +129,34 @@ export class TimeTrackerController {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
   }*/
+
+  @Get('latest-checkin/')
+  @ApiOperation({ summary: 'Get the latest check-in for an employee' })
+  @ApiBody({ type: GeneralTimeTrackerDto })
+  @ApiResponse({ status: 200, description: 'Latest check-in retrieved successfully.', type: BooleanResponseDto })
+  @ApiResponse({ status: 404, description: 'Employee not found.' })
+  async getLatestCheckinForEmployee(@Headers() headers: any, @Body() generalTimeTrackerDto: GeneralTimeTrackerDto) {
+    const userId = extractUserId(this.jwtService, headers);
+    await this.timeTrackerService.userIdMatchesEmployeeId(userId, generalTimeTrackerDto.employeeId);
+    return { data: this.timeTrackerService.getLatestCheckinForEmployee(userId, generalTimeTrackerDto) };
+  }
+
+  @Get('all-checkins')
+  async getAllEmployeeCheckins(@Headers() headers: any, @Body() generalTimeTrackerDto: GeneralTimeTrackerDto) {
+    const userId = extractUserId(this.jwtService, headers);
+    await this.timeTrackerService.userIdMatchesEmployeeId(userId, generalTimeTrackerDto.employeeId);
+    return { data: this.timeTrackerService.getAllEmployeeCheckins(userId, generalTimeTrackerDto.employeeId) };
+  }
+
+  @Get('total-time-spent')
+  async getTotalTimeSpentOnJob(@Headers() headers: any, @Body() generalTimeTrackerDto: GeneralTimeTrackerDto) {
+    const userId = extractUserId(this.jwtService, headers);
+    await this.timeTrackerService.userIdMatchesEmployeeId(userId, generalTimeTrackerDto.employeeId);
+    return {
+      data: this.timeTrackerService.getTotalTimeSpentOnJob(
+        generalTimeTrackerDto.employeeId,
+        generalTimeTrackerDto.jobId,
+      ),
+    };
+  }
 }
