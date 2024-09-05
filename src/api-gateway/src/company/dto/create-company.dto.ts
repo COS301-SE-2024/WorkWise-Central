@@ -14,14 +14,14 @@ import {
   Validate,
   ValidateNested,
 } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { Company } from '../entities/company.entity';
 import { RegistrationNumber, VatNumber } from '../../utils/Custom Validators/RegistrationNumber';
 
 export class ContactDetails {
   @IsNotEmpty()
   @IsString()
-  @Transform(({ value }) => (value.startsWith('0') ? `+27${value.slice(1)}` : value))
+  //@Transform(({ value }) => (value.startsWith('0') ? `+27${value.slice(1)}` : value))
   //@IsPhoneNumber(null)
   phoneNumber: string;
 

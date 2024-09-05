@@ -19,6 +19,7 @@ import { Employee } from '../employee/entities/employee.entity';
 import { EmployeeService } from '../employee/employee.service';
 import { DeleteClientDto } from './dto/delete-client.dto';
 import { JobService } from '../job/job.service';
+import { ClientFeedbackDto } from './dto/client-feedback.dto';
 
 @Injectable()
 export class ClientService {
@@ -85,7 +86,12 @@ export class ClientService {
   }
 
   async getClientByIdInternal(clientId: Types.ObjectId): Promise<FlattenMaps<Client>> {
+    return await this.clientRepository.findClientById(clientId);
+  }
+
+  async internalGetClientById(clientId: Types.ObjectId) {
     const client = await this.clientRepository.findClientById(clientId);
+    if (!client) throw new NotFoundException('Client does not exist');
     return client;
   }
 
@@ -181,20 +187,6 @@ export class ClientService {
     return new ValidationResultWithException(true);
   }
 
-  private async clientIsValid(
-    //Will have to check this
-    client: Client | CreateClientDto,
-  ): Promise<ValidationResult> {
-    if (client.details) {
-      if (client.details.companyId) {
-        const exists = await this.companyService.companyIdExists(client.details.companyId);
-        if (!exists) return new ValidationResult(false, `Invalid Company ID: ${client.details.companyId}`);
-      }
-    }
-
-    return new ValidationResult(true);
-  }
-
   private async validateCreate(userId: Types.ObjectId, createClientDto: CreateClientDto): Promise<ValidationResult> {
     if (!createClientDto.details || !createClientDto.details.companyId) {
       return new ValidationResult(false, `There are are no details`);
@@ -276,5 +268,42 @@ export class ClientService {
   async clientIsAssignedToCurrentEmployee(currentEmployee: Types.ObjectId, clientId: Types.ObjectId) {
     const list = await this.getListOfClientIdsAssignedToEmployee(currentEmployee);
     return list.includes(clientId);
+  }
+
+  async getAllRelatedJobs(clientId: Types.ObjectId) {
+    const client = await this.internalGetClientById(clientId);
+    if (!client) throw new NotFoundException('Client not found');
+    return this.jobService.getAllCurrentJobsForClient(clientId);
+  }
+
+  async getAllCompletedJobs(clientId: Types.ObjectId) {
+    const client = await this.internalGetClientById(clientId);
+    if (!client) throw new NotFoundException('Client not found');
+    const jobs = await this.jobService.getAllCompletedJobsForClient(clientId);
+    console.log(jobs);
+    return jobs;
+  }
+
+  async addFeedbackOnJob(feedbackDto: ClientFeedbackDto) {
+    const job = await this.jobService.getJobById(feedbackDto.jobId);
+    if (!job) throw new NotFoundException('Job not found');
+    const client = await this.internalGetClientById(feedbackDto.clientId);
+    if (!client) throw new NotFoundException('Client not found');
+
+    /*    if (job.clientFeedback) {
+      if (feedbackDto.comments) job.clientFeedback.comments = feedbackDto.comments;
+      if (feedbackDto.customerServiceRating)
+        job.clientFeedback.customerServiceRating = feedbackDto.customerServiceRating;
+      if (feedbackDto.comments) job.clientFeedback.comments = feedbackDto.comments;
+    }*/
+
+    return this.jobService.addClientFeedback(feedbackDto.jobId, {
+      // Must overwrite current feedback
+      clientFeedback: {
+        comments: feedbackDto.comments,
+        jobRating: feedbackDto.jobRating,
+        customerServiceRating: feedbackDto.customerServiceRating,
+      },
+    });
   }
 }
