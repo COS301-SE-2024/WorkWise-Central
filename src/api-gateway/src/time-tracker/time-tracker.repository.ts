@@ -3,6 +3,7 @@ import { TimeInterval, TimeTracker } from './entities/time-tracker.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { currentDate } from '../utils/Utils';
+import { isNotDeleted } from '../shared/soft-delete';
 
 @Injectable()
 export class TimeTrackerRepository {
@@ -72,5 +73,34 @@ export class TimeTrackerRepository {
 
   async getAllCompanyCheckins(employeeId: Types.ObjectId) {
     return this.timeTrackerModel.findOne({ employeeId: employeeId }).exec();
+  }
+
+  async getAllIntervalsOnJob(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
+    const times = await this.timeTrackerModel
+      .find({ $and: [{ employeeId: employeeId }, { jobId: jobId }, { checkOutTime: { $ne: null } }] })
+      .exec();
+    console.log(times);
+    return times;
+  }
+
+  async closeAllTimeTrackersForJob(jobId: Types.ObjectId) {
+    const trackers = await this.timeTrackerModel.find({ $and: [{ jobId: jobId }, isNotDeleted] }).exec();
+    console.log(trackers);
+    if (!trackers) return true;
+    const now = currentDate();
+    const updatePromises = trackers.map(async (tracker) => {
+      for (const pause of tracker.pauses) {
+        if (!pause.end) pause.end = now;
+      }
+      tracker.markModified('pauses');
+      if (!tracker.checkOutTime) {
+        tracker.checkOutTime = now;
+        tracker.markModified('checkOutTime');
+      }
+      return tracker.save();
+    });
+
+    await Promise.all(updatePromises);
+    return true;
   }
 }
