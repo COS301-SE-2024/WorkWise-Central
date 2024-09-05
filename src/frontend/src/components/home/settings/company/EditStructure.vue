@@ -229,16 +229,15 @@ export default defineComponent({
       if (event.node) {
         // Traverse nodes using for...in loop
         for (const nodeId in this.data.nodes) {
-          if (this.data.nodes.hasOwnProperty(nodeId)) {
-            const node = this.data.nodes[nodeId]
-            console.log(nodeId)
-            if (nodeId === event.node) {
-              console.log(this.selectedItem)
-              this.selectedItem = node
-              break // Exit the loop once the node is found
-            }
+          const node = this.data.nodes[nodeId]
+          console.log(nodeId)
+          if (nodeId === event.node) {
+            console.log(this.selectedItem)
+            this.selectedItem = node
+            break // Exit the loop once the node is found
           }
         }
+
         console.log('Node clicked:', this.selectedItem)
       } else {
         console.log('No node clicked')
