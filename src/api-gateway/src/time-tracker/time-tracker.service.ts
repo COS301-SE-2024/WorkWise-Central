@@ -12,6 +12,8 @@ import {
 } from './dto/create-time-tracker.dto';
 import { Employee } from '../employee/entities/employee.entity';
 import { TimeTrackerRepository } from './time-tracker.repository';
+import { TimeInterval } from './entities/time-tracker.entity';
+import { TimeSpentDto } from './dto/time-spent.dto';
 
 @Injectable()
 export class TimeTrackerService {
@@ -91,7 +93,44 @@ export class TimeTrackerService {
     return this.timeTrackerRepository.getAllEmployeeCheckins(employeeId);
   }
 
-  private async userIdMatchesEmployeeId(userId: Types.ObjectId, employeeId: Types.ObjectId) {
+  async getTotalTimeSpentOnJob(employeeId: Types.ObjectId, jobId: Types.ObjectId): Promise<TimeSpentDto> {
+    await this.closeAllTimeTrackersForJob(jobId);
+    const times = await this.timeTrackerRepository.getAllIntervalsOnJob(employeeId, jobId);
+    if (!times) return new TimeSpentDto(0, 0);
+    let timeWorking: number = 0;
+    let timePaused: number = 0;
+    for (const time of times) {
+      timePaused += this.calculateTotalPauseMinutes(time.pauses);
+      timeWorking += this.calculateTotalWorkMinutes(time.checkInTime, time.checkOutTime);
+    }
+
+    return new TimeSpentDto(timeWorking, timePaused);
+  }
+
+  async closeAllTimeTrackersForJob(jobId: Types.ObjectId) {
+    return this.timeTrackerRepository.closeAllTimeTrackersForJob(jobId);
+  }
+
+  calculateTotalPauseMinutes(pauses: TimeInterval[]): number {
+    let totalMinutes = 0;
+
+    for (const pause of pauses) {
+      const start = new Date(pause.start).getTime();
+      const end = new Date(pause.end).getTime();
+      const duration = (end - start) / (1000 * 60);
+      totalMinutes += duration;
+    }
+
+    return totalMinutes;
+  }
+
+  calculateTotalWorkMinutes(startDate: Date, endDate: Date): number {
+    const start = new Date(startDate).getTime();
+    const end = new Date(endDate).getTime();
+    return (end - start) / (1000 * 60);
+  }
+
+  async userIdMatchesEmployeeId(userId: Types.ObjectId, employeeId: Types.ObjectId) {
     const userExists = await this.usersService.userIdExists(userId);
     if (!userExists) throw new NotFoundException('User not found');
 
