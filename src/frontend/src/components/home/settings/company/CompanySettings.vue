@@ -56,7 +56,7 @@ import EditPriority from './EditPriority.vue'
 import EditTags from './EditTags.vue'
 import EditStatus from './EditStatus.vue'
 import HourlyRate from './HourlyRate.vue'
-import SetupPaymentGateway from './SetupPaymentGateway.vue'
+import SetupPaymentGateway from '../company/SetupPaymentGateway.vue'
 
 export default defineComponent({
   name: 'CompanySettings',
