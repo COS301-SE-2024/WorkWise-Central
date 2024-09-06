@@ -47,8 +47,12 @@ export default defineComponent({
         { id: 1, number: 'INV-001', date: '2023-07-01', amount: '100.00', status: 'Unpaid' },
         { id: 2, number: 'INV-002', date: '2023-08-01', amount: '200.00', status: 'Paid' }
       ],
+      // invoice:[],
       merchantId: '10000100',
-      merchantKey: '46f0cd694581a'
+      merchantKey: '46f0cd694581a',
+      requests: [] as Request[],
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     }
   },
   methods: {
@@ -59,7 +63,56 @@ export default defineComponent({
       } else {
         console.error('Form not found for invoice:', invoiceId)
       }
+    },
+    async getCompanyRequests() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      };
+      const url = await this.getRequestUrl();
+      await axios
+        .get(`${url}admin/request/all/company/${localStorage.getItem('currentCompany')}/detailed`, config)
+        .then((response) => {
+          this.requests = response.data.data;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    async getInvoicesRequests() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      };
+      const url = await this.getRequestUrl();
+      await axios
+        .get(`${url}admin/request/all/company/${localStorage.getItem('currentCompany')}/detailed`, config)
+        .then((response) => {
+          this.requests = response.data.data;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl);
+        return res.status >= 200 && res.status < 300;
+      } catch (error) {
+        return false;
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl);
+      return localAvailable ? this.localUrl : this.remoteUrl;
     }
+  },
+  mounted() {
+    this.getCompanyRequests();
   }
 })
 </script>

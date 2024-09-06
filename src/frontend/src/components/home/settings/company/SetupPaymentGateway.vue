@@ -1,0 +1,239 @@
+<template>
+  <v-container>
+    <v-card>
+      <v-divider></v-divider>
+      <!-- Payment Gateway Setup Section -->
+      <v-card-title class="text-primary font-bold text-center">
+        Setup Payment Gateway
+      </v-card-title>
+      <v-divider></v-divider>
+      <v-card-text>
+        <!-- Stepper -->
+        <v-stepper v-model="activeSteps.stepper3" :items="items.items" show-actions>
+          <template #[`item.1`]>
+            <h3 class="text-h6">Create an account with PayFast</h3>
+            <br />
+            <v-img :src="images.nav" />
+            <br />
+            <div>
+              <ul class="custom-list">
+                <li>
+                  Click
+                  <a
+                    href="https://payfast.io/gateway-aggregator-selector/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >here</a
+                  >
+                  to go to PayFast's signup page
+                </li>
+              </ul>
+            </div>
+          </template>
+          <template #[`item.2`]>
+            <h3 class="text-h6">Fill in the details on the signup sheet</h3>
+            <br />
+            <v-img :src="images.event_click" />
+            <br />
+            <div>
+              <ul class="custom-list">
+                <li>Select your industry</li>
+                <li>Select your yearly revenue</li>
+                <li>Click on the "I'm not a robot"</li>
+                <li>Click on 'Get Started' button</li>
+              </ul>
+            </div>
+          </template>
+          <template #[`item.3`]>
+            <h3 class="text-h6">Fill in your account details</h3>
+            <br />
+            <v-img :src="images.job_card" />
+            <br />
+            <div>
+              <ul class="custom-list">
+                <li>Fill in the email field</li>
+                <li>Fill in the password field</li>
+                <li>Select the Account Type</li>
+                <li>Click on the 'Continue' button</li>
+              </ul>
+            </div>
+          </template>
+          <template #[`item.4`]>
+            <h3 class="text-h6">Fill in your Business Information</h3>
+            <br />
+            <v-img :src="images.job_card" />
+            <br />
+            <div>
+              <ul class="custom-list">
+                <li>Fill in all the fields on the form</li>
+                <li>Click on the 'Continue' button</li>
+              </ul>
+            </div>
+          </template>
+          <template #[`item.5`]>
+            <h3 class="text-h6">Fill in your Business Address</h3>
+            <br />
+            <v-img :src="images.job_card" />
+            <br />
+            <div>
+              <ul class="custom-list">
+                <li>Fill in all the fields on the form</li>
+                <li>Click on the 'Continue' button</li>
+              </ul>
+            </div>
+          </template>
+          <template #[`item.6`]>
+            <h3 class="text-h6">Fill in your Banking Details</h3>
+            <br />
+            <v-img :src="images.job_card" />
+            <br />
+            <div>
+              <ul class="custom-list">
+                <li>Fill in all the fields on the form</li>
+                <li>Click on the 'Continue' button</li>
+              </ul>
+            </div>
+          </template>
+          <template #[`item.7`]>
+            <h3 class="text-h6">Fill in your Account Holder Information</h3>
+            <br />
+            <v-img :src="images.job_card" />
+            <br />
+            <div>
+              <ul class="custom-list">
+                <li>Fill in all the fields on the form</li>
+                <li>Click on the 'Finish' button</li>
+              </ul>
+            </div>
+          </template>
+          <template #[`item.8`]>
+            <h3 class="text-h6">Verify your account</h3>
+            <br />
+            <v-img :src="images.job_card" />
+            <br />
+            <div>
+              <ul class="custom-list">
+                <li>Verify the bank account</li>
+                <li>Submit proof of physical address</li>
+                <li>Submit identity document</li>
+                <li>Click on the 'Submit Documents' button</li>
+              </ul>
+            </div>
+          </template>
+          <template #[`item.9`]>
+            <h3 class="text-h6">Go to your dashboard</h3>
+            <br />
+            <v-img :src="images.job_card" />
+            <br />
+            <div>
+              <ul class="custom-list">
+                <li>Go to your dashboard</li>
+                <li>Get your merchant id</li>
+                <li>Get your merchant key</li>
+              </ul>
+            </div>
+          </template>
+          <template #[`item.10`]>
+            <h3 class="text-h6">Fill in the details below</h3>
+            <br />
+            <v-img :src="images.job_card" />
+            <br />
+            <div>
+              <ul class="custom-list">
+                <li>Fill in the merchant id below</li>
+                <li>Fill in the merchant key below</li>
+                <li>Click on the save button</li>
+              </ul>
+            </div>
+          </template>
+        </v-stepper>
+
+        <!-- Spacing -->
+        <v-spacer class="my-6"></v-spacer>
+
+        <!-- Merchant Input Form -->
+        <v-form ref="form" v-model="valid">
+          <v-label> Merchant ID</v-label>
+          <v-text-field
+            v-model="merchantId"
+            label="Merchant ID"
+            :rules="merchantIdRules"
+            required
+          ></v-text-field>
+          <v-label> Merchant Key</v-label>
+          <v-text-field
+            v-model="merchantKey"
+            label="Merchant Key"
+            :rules="merchantKeyRules"
+            required
+            type="password"
+          ></v-text-field>
+        </v-form>
+      </v-card-text>
+
+      <!-- Card Actions for Save and Cancel -->
+      <v-divider></v-divider>
+      <v-card-actions class="bg-cardColor">
+        <v-container>
+          <v-row justify="end">
+            <v-col align="center" cols="12" lg="6" order="last" order-lg="first">
+              <v-btn color="error" @click="cancel" block>
+                <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon>
+                Cancel
+              </v-btn>
+            </v-col>
+            <v-col align="center" cols="12" lg="6" order="first" order-lg="last">
+              <v-btn
+                color="success"
+                @click="updateCompanyDetails"
+                :disabled="!valid"
+                block
+                :loading="isDeleting"
+              >
+                <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>
+                Save
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-actions>
+    </v-card>
+  </v-container>
+</template>
+
+<script lang="ts">
+export default {
+  name: 'SetupPaymentGateway',
+  data() {
+    return {
+      valid: false,
+      isDeleting: false,
+      merchantId: '',
+      merchantKey: '',
+      merchantIdRules: [(v: string) => !!v || 'Merchant ID is required'],
+      merchantKeyRules: [(v: string) => !!v || 'Merchant Key is required'],
+      activeSteps: { stepper3: 1 },
+      items: {
+        items: [
+          'Step 1',
+          'Step 2',
+          'Step 3',
+          'Step 4',
+          'Step 5',
+          'Step 6',
+          'Step 7',
+          'Step 8',
+          'Step 9',
+          'Step 10'
+        ]
+      },
+      images: {
+        nav: '/path/to/nav-image',
+        event_click: '/path/to/event-click-image',
+        job_card: '/path/to/job-card-image'
+      }
+    }
+  },
+  methods: {}
+}
+</script>
