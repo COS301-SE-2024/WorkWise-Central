@@ -57,11 +57,7 @@ export class EmployeeController {
 
   async validateRequestWithEmployeeId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
     const user = await this.userService.getUserById(userId);
-    console.log('user', user);
-    console.log('user.joinedCompanies: ', user.joinedCompanies);
-    console.log('currentEmployeeId: ', currentEmployeeId);
     if (!user.joinedCompanies.find((joined) => joined.employeeId.toString() === currentEmployeeId.toString())) {
-      console.log('Unauthorized');
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
   }
