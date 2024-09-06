@@ -12,9 +12,19 @@
             <v-list-item-subtitle>Status: {{ invoice.status }}</v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
+            <form
+              :id="'paymentForm' + invoice.id"
+              action="https://sandbox.payfast.co.za/eng/process"
+              method="post"
+            >
+              <input type="hidden" name="merchant_id" :value="merchantId" />
+              <input type="hidden" name="merchant_key" :value="merchantKey" />
+              <input type="hidden" name="amount" :value="invoice.amount" />
+              <input type="hidden" name="item_name" :value="`Invoice #${invoice.number}`" />
+            </form>
             <v-btn
               color="success"
-              @click="payInvoice(invoice)"
+              @click="submitPaymentForm(invoice.id)"
               :disabled="invoice.status === 'Paid'"
             >
               Pay Now
@@ -26,35 +36,30 @@
   </v-container>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import axios from 'axios'
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   data() {
     return {
-      stripe: null,
       invoices: [
         { id: 1, number: 'INV-001', date: '2023-07-01', amount: '100.00', status: 'Unpaid' },
         { id: 2, number: 'INV-002', date: '2023-08-01', amount: '200.00', status: 'Paid' }
-      ]
+      ],
+      merchantId: '10000100',
+      merchantKey: '46f0cd694581a'
     }
   },
-  async mounted() {
-    this.stripe = await loadStripe('your-public-key-here')
-  },
   methods: {
-    async payInvoice(invoice) {
-      try {
-        const response = await axios.post('your-backend-endpoint', {
-          amount: invoice.amount,
-          currency: 'usd',
-          invoice_id: invoice.id
-        })
-
-        const { sessionId } = response.data
-        await this.stripe.redirectToCheckout({ sessionId })
-      } catch (error) {
-        console.error('Payment failed', error)
+    submitPaymentForm(invoiceId: number) {
+      const form = document.getElementById('paymentForm' + invoiceId) as HTMLFormElement
+      if (form) {
+        form.submit()
+      } else {
+        console.error('Form not found for invoice:', invoiceId)
       }
     }
   }
-}
+})
 </script>
