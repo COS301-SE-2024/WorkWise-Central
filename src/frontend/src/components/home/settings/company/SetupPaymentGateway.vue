@@ -13,7 +13,7 @@
           <template #[`item.1`]>
             <h3 class="text-h6">Create an account with PayFast</h3>
             <br />
-            <v-img :src="images.signup"/>
+            <v-img :src="images.signup" />
             <br />
             <div>
               <ul class="custom-list">
@@ -155,14 +155,14 @@
         <v-form ref="form" v-model="valid">
           <v-label> Merchant ID</v-label>
           <v-text-field
-            v-model="merchantId"
+            v-model="company.accountDetails.merchantId"
             label="Merchant ID"
             :rules="merchantIdRules"
             required
           ></v-text-field>
           <v-label> Merchant Key</v-label>
           <v-text-field
-            v-model="merchantKey"
+            v-model="company.accountDetails.merchantKey"
             label="Merchant Key"
             :rules="merchantKeyRules"
             required
@@ -173,15 +173,15 @@
       <!-- Card Actions for Save and Cancel -->
       <v-divider></v-divider>
       <v-card-actions class="bg-cardColor">
-        <v-container>
-          <v-row justify="end">
+        <v-container
+          ><v-row justify="end">
             <v-col align="center" cols="12" lg="6" order="last" order-lg="first">
               <v-btn color="error" @click="cancel" block>
-                <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon>
-                Cancel
-              </v-btn>
-            </v-col>
+                <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon>Cancel
+              </v-btn></v-col
+            >
             <v-col align="center" cols="12" lg="6" order="first" order-lg="last">
+              <Toast position="top-center" />
               <v-btn
                 color="success"
                 @click="updateCompanyDetails"
@@ -189,12 +189,11 @@
                 block
                 :loading="isDeleting"
               >
-                <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>
-                Save
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
+                <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save
+              </v-btn></v-col
+            >
+          </v-row></v-container
+        >
       </v-card-actions>
     </v-card>
   </v-container>
@@ -211,13 +210,16 @@ import accountInfo from '@/assets/images/paymentGateway/payfast-account-holder-i
 import verifyAccount from '@/assets/images/paymentGateway/payfast-verify-account.png'
 import dashboard from '@/assets/images/paymentGateway/payfast-dashboard.png'
 import enterDetails from '@/assets/images/paymentGateway/payfast-enter-detailspng.png'
+import axios from 'axios'
 
 export default {
   name: 'SetupPaymentGateway',
   data() {
     return {
-      valid: false,
+      isDarkMode: false,
       isDeleting: false,
+      valid: false,
+      currentCompanyID: localStorage.getItem('currentCompany'),
       merchantId: '',
       merchantKey: '',
       merchantIdRules: [(v: string) => !!v || 'Merchant ID is required'],
@@ -248,9 +250,109 @@ export default {
         verifyAccount: verifyAccount,
         dashboard: dashboard,
         enterDetails: enterDetails
+      },
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      company: {
+        accountDetails: {
+          merchantId: '',
+          merchantKey: ''
+        }
       }
     }
   },
-  methods: {}
+  methods: {
+    cancel() {
+      this.$toast.add({
+        severity: 'info',
+        summary: 'Info',
+        detail: 'Company update cancelled',
+        life: 3000
+      })
+    },
+    async getCompanyDetails() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      // const apiURL = await this.getRequestUrl()
+      const company_id = localStorage.getItem('currentCompany')
+      await axios
+        .get(`http://localhost:3000/company/id/${company_id}`, config)
+        .then((response) => {
+          this.company = response.data.data
+          console.log(this.company)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async updateCompanyDetails() {
+      this.isDeleting = true
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      const data = {
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        updateCompanyDto: this.company
+      }
+      console.log('Data: ', data)
+
+      await axios
+        .patch(`${apiURL}company/update/${localStorage.getItem('currentCompany')}`, data, config)
+        .then((response) => {
+          console.log(response)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Company updated',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.isDeleting = false
+            this.getCompanyDetails()
+          }, 3000)
+        })
+        .catch((error) => {
+          console.log(error)
+          this.isDeleting = false
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Company update failed',
+            life: 3000
+          })
+        })
+    },
+    rulesPassed() {
+      if (this.merchantId && this.merchantKey) {
+        this.valid = true
+      } else {
+        this.valid = false
+      }
+    }
+  },
+  mounted() {
+    this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
+    this.getCompanyDetails()
+  }
 }
 </script>
