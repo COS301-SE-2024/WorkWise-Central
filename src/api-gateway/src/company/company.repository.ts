@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
-import { Address, Company } from './entities/company.entity';
+import { AccountDetails, Address, Company } from './entities/company.entity';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { currentDate } from '../utils/Utils';
 import { isNotDeleted } from '../shared/soft-delete';
@@ -139,20 +139,47 @@ export class CompanyRepository {
       ],
     });
 
-    if (updateCompanyDto.registrationNumber) company.registrationNumber = updateCompanyDto.registrationNumber;
-    if (updateCompanyDto.vatNumber) company.vatNumber = updateCompanyDto.vatNumber;
-    if (updateCompanyDto.name) company.name = updateCompanyDto.name;
-    if (updateCompanyDto.type) company.type = updateCompanyDto.type;
-    if (updateCompanyDto.logo) company.logo = updateCompanyDto.logo;
+    if (updateCompanyDto.registrationNumber) {
+      company.registrationNumber = updateCompanyDto.registrationNumber;
+      company.markModified('registrationNumber');
+    }
+    if (updateCompanyDto.vatNumber) {
+      company.vatNumber = updateCompanyDto.vatNumber;
+      company.markModified('vatNumber');
+    }
+    if (updateCompanyDto.name) {
+      company.name = updateCompanyDto.name;
+      company.markModified('name');
+    }
+    if (updateCompanyDto.type) {
+      company.type = updateCompanyDto.type;
+      company.markModified('type');
+    }
+    if (updateCompanyDto.logo) {
+      company.logo = updateCompanyDto.logo;
+      company.markModified('logo');
+    }
     if (updateCompanyDto.contactDetails) {
       company.contactDetails = { ...company.contactDetails, ...updateCompanyDto.contactDetails };
+      company.markModified('contactDetails');
     }
     if (updateCompanyDto.address) {
       const updatedAddress: Address = { ...company.address, ...updateCompanyDto.address };
       console.log(updatedAddress);
       company.address = updatedAddress;
+      company.markModified('address');
     }
-    if (updateCompanyDto.private) company.private = updateCompanyDto.private;
+    if (updateCompanyDto.accountDetails) {
+      const updatedAccDetails: AccountDetails = { ...company.accountDetails, ...updateCompanyDto.accountDetails };
+      console.log(updatedAccDetails);
+      company.accountDetails = updatedAccDetails;
+      company.markModified('accountDetails');
+    }
+
+    if (updateCompanyDto.private) {
+      company.private = updateCompanyDto.private;
+      company.markModified('private');
+    }
     company.updatedAt = currentDate();
     return (await company.save()).toObject();
   }
