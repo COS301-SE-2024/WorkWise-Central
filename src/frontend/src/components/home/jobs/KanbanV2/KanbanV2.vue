@@ -813,7 +813,7 @@ export default {
           }
           loaded_tags_response.data.data.jobStatuses[i]['cards'] = []
         }
-        this.archive_id = loaded_tags_response.data.data.jobStatuses[i]._id
+        this.archive_id = loaded_tags_response.data.data.jobStatuses[archive_index]._id
         loaded_tags_response.data.data.jobStatuses.splice(archive_index, 1)
         this.columns = loaded_tags_response.data.data.jobStatuses
       } catch (error) {
