@@ -63,6 +63,15 @@ export class Address {
   postalCode: string;
 }
 
+export class AccountDetails {
+  @IsOptional()
+  @IsString()
+  merchantId?: string;
+  @IsOptional()
+  @IsString()
+  merchantKey?: string;
+}
+
 export class CreateCompanyDto {
   @IsNotEmpty()
   @IsMongoId()
@@ -112,6 +121,12 @@ export class CreateCompanyDto {
 
   @ApiProperty()
   @IsOptional()
+  @ValidateNested()
+  @Type(() => AccountDetails)
+  accountDetails?: AccountDetails;
+
+  @ApiProperty()
+  @IsOptional()
   @IsBoolean()
   private?: boolean = false;
 }
@@ -147,6 +162,9 @@ export class CompanyApiCreateObject {
 
   @ApiProperty()
   address: Address;
+
+  @ApiProperty()
+  accountDetails: AccountDetails;
 
   @ApiProperty()
   private: boolean;
