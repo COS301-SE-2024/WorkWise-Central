@@ -33,6 +33,13 @@ export class Address {
   postalCode: string;
 }
 
+export class AccountDetails {
+  @Prop({ type: String, required: false })
+  merchantId?: string;
+  @Prop({ type: String, required: false })
+  merchantKey?: string;
+}
+
 @Schema()
 export class Company {
   constructor(createCompanyDto: CreateCompanyDto) {
@@ -90,6 +97,10 @@ export class Company {
   @ApiProperty()
   @Prop({ required: true })
   address: Address;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  accountDetails: AccountDetails = new AccountDetails();
 
   @ApiProperty()
   @Prop({ type: Boolean, required: true, default: false })
@@ -170,6 +181,9 @@ export class CompanyApiDetailedObject {
 
   @ApiProperty()
   address: Address;
+
+  @ApiProperty()
+  accountDetails: AccountDetails;
 
   @ApiProperty()
   private: boolean;
