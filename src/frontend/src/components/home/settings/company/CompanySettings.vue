@@ -16,6 +16,7 @@
           <EditTags v-if="currentSettings === 'Tags'" />
           <EditStatus v-if="currentSettings === 'Status'" />
           <HourlyRate v-if="currentSettings === 'Hourly Rate'" />
+          <SetUpPaymentGateway v-if="currentSettings === 'Setup Payment Gateway'" />
         </v-col>
         <v-col cols="12" lg="4" order="first" order-lg="last">
           <v-card class="elevation-0"
@@ -55,6 +56,7 @@ import EditPriority from './EditPriority.vue'
 import EditTags from './EditTags.vue'
 import EditStatus from './EditStatus.vue'
 import HourlyRate from './HourlyRate.vue'
+import SetUpPaymentGateway from './setUpPaymentGateway.vue'
 
 export default defineComponent({
   name: 'CompanySettings',
@@ -100,6 +102,11 @@ export default defineComponent({
           icon: 'fa: fa-solid fa-dollar-sign',
           label: 'Hourly Rate',
           route: '/hourly-rate'
+        },
+        {
+          icon: 'fa: fa-solid fa-cash-register',
+          label: 'Setup Payment Gateway',
+          route: '/companySettingsView/set-up-payment-gateway'
         }
       ]
     }
@@ -111,7 +118,8 @@ export default defineComponent({
     EditTags,
     EditStructure,
     EditStatus,
-    HourlyRate
+    HourlyRate,
+    SetUpPaymentGateway
   },
   methods: {
     close() {
@@ -139,6 +147,9 @@ export default defineComponent({
       } else if (name === 'Hourly Rate') {
         this.currentSettings = 'Hourly Rate'
         sessionStorage.setItem('currentSettings', 'Hourly Rate')
+      }else if (name === 'Setup Payment Gateway') {
+        this.currentSettings = 'Setup Payment Gateway'
+        sessionStorage.setItem('currentSettings', 'Setup Payment Gateway')
       }
     }
   }

@@ -375,6 +375,11 @@ const router = createRouter({
       path: '/hourly-rate',
       name: 'hourly-rate',
       component: HourlyRate
+    },
+    {
+      path: '/companySettingsView/set-up-payment-gateway',
+      name: 'set-up-payment-gateway',
+      component: () => import('@/views/settings/setUpPaymentGateway.vue')
     }
   ]
 })
