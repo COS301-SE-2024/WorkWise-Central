@@ -13,7 +13,7 @@
           <template #[`item.1`]>
             <h3 class="text-h6">Create an account with PayFast</h3>
             <br />
-            <v-img :src="images.nav" />
+            <v-img :src="images.signup"/>
             <br />
             <div>
               <ul class="custom-list">
@@ -33,7 +33,7 @@
           <template #[`item.2`]>
             <h3 class="text-h6">Fill in the details on the signup sheet</h3>
             <br />
-            <v-img :src="images.event_click" />
+            <v-img :src="images.signupFilledIn" />
             <br />
             <div>
               <ul class="custom-list">
@@ -47,7 +47,7 @@
           <template #[`item.3`]>
             <h3 class="text-h6">Fill in your account details</h3>
             <br />
-            <v-img :src="images.job_card" />
+            <v-img :src="images.accountDetails" />
             <br />
             <div>
               <ul class="custom-list">
@@ -61,7 +61,7 @@
           <template #[`item.4`]>
             <h3 class="text-h6">Fill in your Business Information</h3>
             <br />
-            <v-img :src="images.job_card" />
+            <v-img :src="images.businessInfo" />
             <br />
             <div>
               <ul class="custom-list">
@@ -73,7 +73,7 @@
           <template #[`item.5`]>
             <h3 class="text-h6">Fill in your Business Address</h3>
             <br />
-            <v-img :src="images.job_card" />
+            <v-img :src="images.businessAddress" />
             <br />
             <div>
               <ul class="custom-list">
@@ -85,7 +85,7 @@
           <template #[`item.6`]>
             <h3 class="text-h6">Fill in your Banking Details</h3>
             <br />
-            <v-img :src="images.job_card" />
+            <v-img :src="images.bankDetails" />
             <br />
             <div>
               <ul class="custom-list">
@@ -97,7 +97,7 @@
           <template #[`item.7`]>
             <h3 class="text-h6">Fill in your Account Holder Information</h3>
             <br />
-            <v-img :src="images.job_card" />
+            <v-img :src="images.accountInfo" />
             <br />
             <div>
               <ul class="custom-list">
@@ -109,7 +109,7 @@
           <template #[`item.8`]>
             <h3 class="text-h6">Verify your account</h3>
             <br />
-            <v-img :src="images.job_card" />
+            <v-img :src="images.verifyAccount" />
             <br />
             <div>
               <ul class="custom-list">
@@ -123,7 +123,7 @@
           <template #[`item.9`]>
             <h3 class="text-h6">Go to your dashboard</h3>
             <br />
-            <v-img :src="images.job_card" />
+            <v-img :src="images.dashboard" />
             <br />
             <div>
               <ul class="custom-list">
@@ -202,6 +202,16 @@
 </template>
 
 <script lang="ts">
+import signup from '@/assets/images/paymentGateway/payfast-signup.png'
+import signupFilledIn from '@/assets/images/paymentGateway/payfast-signup-filled-in.png'
+import accountDetails from '@/assets/images/paymentGateway/payfast-company-details.png'
+import businessInfo from '@/assets/images/paymentGateway/payfast-business-information.png'
+import businessAddress from '@/assets/images/paymentGateway/payfast-business-address.png'
+import bankDetails from '@/assets/images/paymentGateway/payfast-bank-details.png'
+import accountInfo from '@/assets/images/paymentGateway/payfast-account-holder-information.png'
+import verifyAccount from '@/assets/images/paymentGateway/payfast-verify-account.png'
+import dashboard from '@/assets/images/paymentGateway/payfast-dashboard.png'
+
 export default {
   name: 'SetupPaymentGateway',
   data() {
@@ -228,9 +238,15 @@ export default {
         ]
       },
       images: {
-        nav: '/path/to/nav-image',
-        event_click: '/path/to/event-click-image',
-        job_card: '/path/to/job-card-image'
+        signup: signup,
+        signupFilledIn: signupFilledIn,
+        accountDetails: accountDetails,
+        businessInfo: businessInfo,
+        businessAddress: businessAddress,
+        bankDetails: bankDetails,
+        accountInfo: accountInfo,
+        verifyAccount: verifyAccount,
+        dashboard: dashboard,
       }
     }
   },
