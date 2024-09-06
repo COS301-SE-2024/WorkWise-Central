@@ -32,6 +32,11 @@ export class TimeTrackerService {
 
   async getAllCheckins(userId: Types.ObjectId, getTimeTrackersDto: GetTimeTrackersDto) {
     await this.userIdMatchesEmployeeId(userId, getTimeTrackersDto.employeeId);
+    return this.timeTrackerRepository.getAllCheckinsBetween(
+      getTimeTrackersDto.employeeId,
+      getTimeTrackersDto.fromDate,
+      getTimeTrackersDto.toDate,
+    );
   }
 
   async checkIn(userId: Types.ObjectId, createTimeTrackerDto: CreateTimeTrackerDto) {

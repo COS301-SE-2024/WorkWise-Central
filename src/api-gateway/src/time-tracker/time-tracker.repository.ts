@@ -58,21 +58,19 @@ export class TimeTrackerRepository {
   }
 
   async getAllCompletedCheckins(employeeId: Types.ObjectId) {
-    return this.timeTrackerModel
-      .findOne({ $and: [{ employeeId: employeeId }, { checkOutTime: { $ne: null } }] })
-      .exec();
+    return this.timeTrackerModel.find({ $and: [{ employeeId: employeeId }, { checkOutTime: { $ne: null } }] }).exec();
   }
 
   async getAllRunningCheckins(employeeId: Types.ObjectId) {
-    return this.timeTrackerModel.findOne({ $and: [{ employeeId: employeeId }, { checkOutTime: null }] }).exec();
+    return this.timeTrackerModel.find({ $and: [{ employeeId: employeeId }, { checkOutTime: null }] }).exec();
   }
 
   async getAllEmployeeCheckins(employeeId: Types.ObjectId) {
-    return this.timeTrackerModel.findOne({ employeeId: employeeId }).exec();
+    return this.timeTrackerModel.find({ employeeId: employeeId }).exec();
   }
 
   async getAllCompanyCheckins(employeeId: Types.ObjectId) {
-    return this.timeTrackerModel.findOne({ employeeId: employeeId }).exec();
+    return this.timeTrackerModel.find({ employeeId: employeeId }).exec();
   }
 
   async getAllIntervalsOnJob(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
@@ -102,5 +100,14 @@ export class TimeTrackerRepository {
 
     await Promise.all(updatePromises);
     return true;
+  }
+
+  async getAllCheckinsBetween(employeeId: Types.ObjectId, fromDate: Date, toDate: Date) {
+    return this.timeTrackerModel
+      .find({
+        $and: [{ employeeId: employeeId }, { checkInTime: { $gte: fromDate } }, { checkOutTime: { $lte: toDate } }],
+      })
+      .lean()
+      .exec();
   }
 }
