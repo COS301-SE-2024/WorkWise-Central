@@ -136,7 +136,7 @@
           <template #[`item.10`]>
             <h3 class="text-h6">Fill in the details below</h3>
             <br />
-            <v-img :src="images.job_card" />
+            <v-img :src="images.enterDetails" />
             <br />
             <div>
               <ul class="custom-list">
@@ -166,7 +166,6 @@
             label="Merchant Key"
             :rules="merchantKeyRules"
             required
-            type="password"
           ></v-text-field>
         </v-form>
       </v-card-text>
@@ -211,6 +210,7 @@ import bankDetails from '@/assets/images/paymentGateway/payfast-bank-details.png
 import accountInfo from '@/assets/images/paymentGateway/payfast-account-holder-information.png'
 import verifyAccount from '@/assets/images/paymentGateway/payfast-verify-account.png'
 import dashboard from '@/assets/images/paymentGateway/payfast-dashboard.png'
+import enterDetails from '@/assets/images/paymentGateway/payfast-enter-detailspng.png'
 
 export default {
   name: 'SetupPaymentGateway',
@@ -247,6 +247,7 @@ export default {
         accountInfo: accountInfo,
         verifyAccount: verifyAccount,
         dashboard: dashboard,
+        enterDetails: enterDetails
       }
     }
   },
