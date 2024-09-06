@@ -40,7 +40,7 @@
               <v-chip class="text-subtitle-1 font-weight-black" variant="tonal">
                 {{ column.cards.length }}
               </v-chip>
-              <v-menu align="left" v-if="column.status !== 'No Status'">
+              <v-menu align="left">
                 <template v-slot:activator="{ props }">
                   <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
                 </template>
@@ -101,9 +101,9 @@
                       </v-card>
                     </v-dialog>
                   </v-list-item>
-                  <v-list-subheader>Column</v-list-subheader>
+                  <v-list-subheader v-if="column.status !== 'No Status'">Column</v-list-subheader>
 
-                  <v-list-item>
+                  <v-list-item v-if="column.status !== 'No Status'">
                     <v-dialog max-height="700" max-width="500" v-model="edit_column_details_dialog">
                       <template v-slot:activator="{ props }">
                         <v-btn :elevation="0" v-bind="props"
@@ -182,7 +182,7 @@
                       </v-card>
                     </v-dialog>
                   </v-list-item>
-                  <v-list-item>
+                  <v-list-item v-if="column.status !== 'No Status'">
                     <v-dialog v-model="delete_column_dialog" max-width="500px">
                       <template v-slot:activator="{ props }">
                         <v-btn :elevation="0" v-bind="props"
@@ -861,6 +861,30 @@ export default {
         let loaded_tags_res = loaded_tags_response.data.data
         for (let i = 0; i < loaded_tags_res.length; i++) {
           if (loaded_tags_res[i].status.status === 'Archive') continue
+          if (
+            loaded_tags_res[i]._id === undefined ||
+            loaded_tags_res[i].details.heading === undefined ||
+            loaded_tags_res[i].details.description === undefined ||
+            loaded_tags_res[i].details.startDate === undefined ||
+            loaded_tags_res[i].details.endDate === undefined ||
+            loaded_tags_res[i].status === undefined ||
+            loaded_tags_res[i].clientId === undefined ||
+            loaded_tags_res[i].clientId.details === undefined ||
+            loaded_tags_res[i].details.address === undefined ||
+            loaded_tags_res[i].details.address.street === undefined ||
+            loaded_tags_res[i].details.address.suburb === undefined ||
+            loaded_tags_res[i].details.address.city === undefined ||
+            loaded_tags_res[i].details.address.street.postalCode === undefined ||
+            loaded_tags_res[i].recordedDetails.imagesTaken === undefined ||
+            loaded_tags_res[i].recordedDetails.inventoryUsed === undefined ||
+            loaded_tags_res[i].taskList === undefined ||
+            loaded_tags_res[i].comments === undefined ||
+            loaded_tags_res[i].priorityTag === undefined ||
+            loaded_tags_res[i].tags === undefined ||
+            loaded_tags_res[i].coverImage === undefined
+          )
+            continue
+
           this.starting_cards.push({
             jobId: loaded_tags_res[i]._id,
             heading: loaded_tags_res[i].details.heading,
