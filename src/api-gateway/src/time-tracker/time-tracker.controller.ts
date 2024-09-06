@@ -12,6 +12,9 @@ import {
   StopTimeTrackerDto,
 } from './dto/create-time-tracker.dto';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
+import { TimeTracker } from './entities/time-tracker.entity';
+import { TimeSpentDto } from './dto/time-spent.dto';
+import { TimeTrackerResponseDto, TimeTrackersResponseDto } from './dto/time-tracker-response.dto';
 
 @ApiTags('Time-Tracker')
 @Controller('time-tracker')
@@ -30,6 +33,9 @@ export class TimeTrackerController {
   }
 
   @Post('check-in')
+  @ApiOperation({ summary: 'Check in to indicate them starting to work on a job' })
+  @ApiResponse({ status: 201, description: 'User checked in successfully.', type: TimeTrackerResponseDto })
+  @ApiResponse({ status: 409, description: 'Conflict error.' })
   async checkIn(@Headers() headers: any, @Body() createTimeTrackerDto: CreateTimeTrackerDto) {
     try {
       //validateObjectId(createJobDto.assignedBy, 'assignedBy');
@@ -41,6 +47,9 @@ export class TimeTrackerController {
   }
 
   @Post('check-out')
+  @ApiOperation({ summary: 'Check out to indicate you are no longer working on a job for the day' })
+  @ApiResponse({ status: 201, description: 'User checked out successfully.', type: TimeTrackerResponseDto })
+  @ApiResponse({ status: 409, description: 'Conflict error.' })
   async checkOut(@Headers() headers: any, @Body() stopTimeTrackerDto: StopTimeTrackerDto) {
     try {
       //validateObjectId(createJobDto.assignedBy, 'assignedBy');
@@ -52,6 +61,9 @@ export class TimeTrackerController {
   }
 
   @Post('pause')
+  @ApiOperation({ summary: 'Pause your latest running timer on a job' })
+  @ApiResponse({ status: 201, description: 'Pause was successful', type: TimeTrackerResponseDto })
+  @ApiResponse({ status: 409, description: 'Conflict error.' })
   async pause(@Headers() headers: any, @Body() pauseTimeTrackerDto: GeneralTimeTrackerDto) {
     try {
       //validateObjectId(createJobDto.assignedBy, 'assignedBy');
@@ -63,6 +75,9 @@ export class TimeTrackerController {
   }
 
   @Post('resume')
+  @ApiOperation({ summary: 'Resume your latest running timer on a job' })
+  @ApiResponse({ status: 201, description: 'Resumption was successful', type: TimeTrackerResponseDto })
+  @ApiResponse({ status: 409, description: 'Conflict error.' })
   async resume(@Headers() headers: any, @Body() pauseTimeTrackerDto: GeneralTimeTrackerDto) {
     try {
       //validateObjectId(createJobDto.assignedBy, 'assignedBy');
@@ -73,7 +88,10 @@ export class TimeTrackerController {
     }
   }
 
-  @Get('employee/check-ins/all')
+  @Get('employee/check-ins/all/between')
+  @ApiOperation({ summary: 'Get all check-ins for an employee between a certain range of time' })
+  @ApiResponse({ status: 201, description: 'Pause was successful', type: TimeTrackersResponseDto })
+  @ApiResponse({ status: 409, description: 'Conflict error.' })
   async getAllCheckins(@Headers() headers: any, @Body() getTimeTrackersDto: GetTimeTrackersDto) {
     try {
       //validateObjectId(createJobDto.assignedBy, 'assignedBy');
@@ -85,6 +103,9 @@ export class TimeTrackerController {
   }
 
   @Get('employee/check-ins/current')
+  @ApiOperation({ summary: `Get an employee's current checkin` })
+  @ApiResponse({ status: 201, description: 'Pause was successful', type: TimeTrackersResponseDto })
+  @ApiResponse({ status: 409, description: 'Conflict error.' })
   async getAllCurrentCheckins(@Headers() headers: any, @Body() currentTimeTrackersDto: GetCurrentTimeTrackersDto) {
     try {
       //validateObjectId(createJobDto.assignedBy, 'assignedBy');
@@ -96,6 +117,8 @@ export class TimeTrackerController {
   }
 
   @Get('employee/check-ins/complete')
+  @ApiOperation({ summary: `Get all complete checkins for an employee` })
+  @ApiResponse({ type: TimeTracker })
   async getAllCompleteCheckins(@Headers() headers: any, @Body() completedTimeTrackersDto: GetCompletedTimeTrackersDto) {
     try {
       //validateObjectId(createJobDto.assignedBy, 'assignedBy');
@@ -109,6 +132,8 @@ export class TimeTrackerController {
   }
 
   @Get('employee/check-ins/company/')
+  @ApiOperation({ summary: `Get all complete checkins for an employee` })
+  @ApiResponse({ type: TimeTracker })
   async getAllCompanyCheckins(@Headers() headers: any, @Body() companyTimeTrackerDto: GetCompletedTimeTrackersDto) {
     try {
       //validateObjectId(createJobDto.assignedBy, 'assignedBy');
@@ -142,6 +167,8 @@ export class TimeTrackerController {
   }
 
   @Get('all-checkins')
+  @ApiOperation({ summary: `Get all checkins for an employee` })
+  @ApiResponse({ type: TimeTrackersResponseDto })
   async getAllEmployeeCheckins(@Headers() headers: any, @Body() generalTimeTrackerDto: GeneralTimeTrackerDto) {
     const userId = extractUserId(this.jwtService, headers);
     await this.timeTrackerService.userIdMatchesEmployeeId(userId, generalTimeTrackerDto.employeeId);
@@ -149,6 +176,8 @@ export class TimeTrackerController {
   }
 
   @Get('total-time-spent')
+  @ApiOperation({ summary: `Get total time spent on a job for an employee` })
+  @ApiResponse({ type: TimeSpentDto })
   async getTotalTimeSpentOnJob(@Headers() headers: any, @Body() generalTimeTrackerDto: GeneralTimeTrackerDto) {
     const userId = extractUserId(this.jwtService, headers);
     await this.timeTrackerService.userIdMatchesEmployeeId(userId, generalTimeTrackerDto.employeeId);
