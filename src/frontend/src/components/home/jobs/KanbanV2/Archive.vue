@@ -13,12 +13,10 @@
     :headers="headers"
     show-select
   >
-    <template v-slot:[`item.Title`]="{ value }">
-      <v-chip variant="text">
-        <v-icon icon="fa:fa-solid fa-user "></v-icon
-        >{{ value.charAt(0).toUpperCase() + value.slice(1) }}</v-chip
-      >
+    <template v-slot:[`item.status`]="{ value }">
+      <v-chip variant="tonal" :color="value.colour"> {{ value.status }}</v-chip>
     </template>
+
     <template v-slot:[`item.actions`]="{ item }">
       <v-menu max-width="500px">
         <template v-slot:activator="{ props }"
@@ -70,7 +68,7 @@ export default defineComponent({
       starting_cards: [] as JobCardDataFormat[],
       headers: [
         { title: 'Job Heading', key: 'heading', align: 'center', value: 'heading' },
-        { title: 'Job Status', key: 'status.status', align: 'center', value: 'status' },
+        { title: 'Job Status', key: 'status', align: 'center', value: 'status' },
         { title: 'Start Date', key: 'startDate', align: 'center', value: 'startDate' },
         { title: 'End Date', key: 'endDate', align: 'center', value: 'endDate' },
         { title: 'Actions', key: 'actions', align: 'center' }
@@ -81,7 +79,9 @@ export default defineComponent({
   },
   methods: {
     redirectToKanban() {
-      this.$router.push('/backlog')
+      // this.$router.push('/backlog')
+      window.history.go(-1)
+      return false
     },
     async UnarchiveJob() {
       const config = {
@@ -181,8 +181,6 @@ export default defineComponent({
             suburb: loaded_tags_res[i].details.address.suburb,
             city: loaded_tags_res[i].details.address.city,
             postalCode: loaded_tags_res[i].details.address.street.postalCode,
-            imagesTaken: loaded_tags_res[i].recordedDetails.imagesTaken,
-            inventoryUsed: loaded_tags_res[i].recordedDetails.inventoryUsed,
             taskList: loaded_tags_res[i].taskList,
             comments: loaded_tags_res[i].comments,
             priorityTag: loaded_tags_res[i].priorityTag,

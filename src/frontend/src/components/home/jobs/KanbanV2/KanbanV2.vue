@@ -14,6 +14,7 @@
         v-model="columns"
         class="d-flex flex-nowrap overflow-scroll"
         :onUpdate="onColumnDragEnd"
+        group="columns"
       >
         <v-col
           v-for="column in columns"
@@ -234,78 +235,87 @@
             >
               <template #default="{ item }">
                 <v-card-text>
-                  <v-card
-                    @click="clickedEvent(item)"
-                    variant="flat"
-                    elevation="3"
-                    class="kanban-card mb-2"
-                    draggable="true"
-                    :class="{ dragging: isDragging(item) }"
-                    @dragstart="onDragStart(item, column)"
-                    @dragend="onDragEnd"
-                    aria-grabbed="true"
-                    role="option"
+                  <VueDraggable
+                    v-model="column.cards"
+                    group="job-cards"
+                    :onUpdate="onJobCardChanges"
                   >
-                    <v-card-item>
-                      <v-img :src="item.coverImage"> </v-img>
-                    </v-card-item>
-                    <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
-                      ><b>{{ item.heading }}</b>
-                      <v-menu align="left">
-                        <template v-slot:activator="{ props }">
-                          <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
-                        </template>
-                        <v-list :border="true" bg-color="background" rounded="lg">
-                          <v-list-item>
-                            <v-btn :elevation="0" @click="ArchiveJob(item)">
-                              <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
-                              {{ 'Archive' }}
-                            </v-btn>
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
-                    </v-card-item>
-                    <v-card-item v-if="item.status.status === column.status"
-                      ><v-chip
-                        :color="column.colour"
-                        variant="elevated"
-                        rounded="sm"
-                        density="comfortable"
+                    <v-card
+                      @click="clickedEvent(item)"
+                      variant="flat"
+                      elevation="3"
+                      class="kanban-card mb-2"
+                      draggable="true"
+                      :class="{ dragging: isDragging(item) }"
+                      @dragstart="onDragStart(item, column)"
+                      @dragend="onDragEnd"
+                      @drop="onDrop(column)"
+                      aria-grabbed="true"
+                      role="option"
+                    >
+                      <v-card-item>
+                        <v-img :src="item.coverImage"> </v-img>
+                      </v-card-item>
+                      <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
+                        ><b>{{ item.heading }}</b>
+                        <v-menu align="left">
+                          <template v-slot:activator="{ props }">
+                            <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
+                          </template>
+                          <v-list :border="true" bg-color="background" rounded="lg">
+                            <v-list-item>
+                              <v-btn :elevation="0" @click="ArchiveJob(item)">
+                                <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
+                                {{ 'Archive' }}
+                              </v-btn>
+                            </v-list-item>
+                          </v-list>
+                        </v-menu>
+                      </v-card-item>
+                      <v-card-item v-if="item.status.status === column.status"
+                        ><v-chip
+                          :color="column.colour"
+                          variant="elevated"
+                          rounded="sm"
+                          density="comfortable"
+                        >
+                          <b>{{ item.status.status }}</b></v-chip
+                        ></v-card-item
                       >
-                        <b>{{ item.status.status }}</b></v-chip
-                      ></v-card-item
-                    >
 
-                    <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                      <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-user-large' }}</v-icon>
-                      {{ item.clientName }}</v-card-item
-                    ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                      <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
-                      {{ item.startDate }}</v-card-item
-                    ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                      <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-location-dot' }}</v-icon>
-                      {{ item.city + ', ' + item.suburb }}</v-card-item
-                    >
-
-                    <v-card-item v-if="item.priorityTag != null"
-                      ><v-chip
-                        :color="item.priorityTag.colour"
-                        variant="tonal"
-                        density="comfortable"
-                        ><b>Priority: {{ item.priorityTag.label }}</b></v-chip
-                      ></v-card-item
-                    >
-
-                    <v-card-text>
-                      <v-chip
-                        :color="item.tags[i].colour"
-                        class=""
-                        v-for="(n, i) in item.tags.length"
-                        :key="i"
-                        ><b>{{ item.tags[i].label }}</b></v-chip
+                      <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                        <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-user-large' }}</v-icon>
+                        {{ item.clientName }}</v-card-item
+                      ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                        <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
+                        {{ item.startDate }}</v-card-item
+                      ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                        <v-icon color="kanbanIconColor">{{
+                          'fa: fa-solid fa-location-dot'
+                        }}</v-icon>
+                        {{ item.city + ', ' + item.suburb }}</v-card-item
                       >
-                    </v-card-text>
-                  </v-card>
+
+                      <v-card-item v-if="item.priorityTag != null"
+                        ><v-chip
+                          :color="item.priorityTag.colour"
+                          variant="tonal"
+                          density="comfortable"
+                          ><b>Priority: {{ item.priorityTag.label }}</b></v-chip
+                        ></v-card-item
+                      >
+
+                      <v-card-text>
+                        <v-chip
+                          :color="item.tags[i].colour"
+                          class=""
+                          v-for="(n, i) in item.tags.length"
+                          :key="i"
+                          ><b>{{ item.tags[i].label }}</b></v-chip
+                        >
+                      </v-card-text>
+                    </v-card>
+                  </VueDraggable>
                 </v-card-text>
               </template>
             </v-virtual-scroll>
@@ -416,13 +426,6 @@ export default {
       delete_column_dialog: false,
       edit_column_details_dialog: false,
       archive_status_id: '',
-      // columns: [
-      //   { id: 0, status: 'No Status', color: 'purple-accent-3', cards: [] },
-      //   { id: 1, status: 'Todo', color: '#FF073A', cards: [] },
-      //   { id: 2, status: 'In Progress', color: '#39FF14', cards: [] },
-      //   { id: 3, status: 'Awaiting review', color: '#0FF0FC', cards: [] },
-      //   { id: 4, status: 'Done', color: '#FFFF33', cards: [] }
-      // ] as Column[],
       columns: [] as Column[],
       archive_id: '',
       new_column_name: '',
@@ -442,13 +445,16 @@ export default {
     }
   },
   methods: {
+    async onJobCardChanges(e: SortableEvent) {
+      console.log(e)
+    },
     async onColumnDragEnd(e: SortableEvent) {
       console.log('column dragged')
       let list = [] as string[]
       this.columns.map((col: Column) => {
         list.push(col._id)
       })
-      list.push(this.archive_id)
+      list.push(this.archive_status_id)
       const req = { employeeId: localStorage['employeeId'], jobStatuses: list }
       console.log(req)
       const config = {
@@ -475,6 +481,8 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
+      console.log(this.archive_status_id)
+      console.log(payload)
       const apiURL = await this.getRequestUrl()
       axios
         .patch(apiURL + `job/update/${payload.jobId}`, { status: this.archive_status_id }, config)
@@ -813,7 +821,8 @@ export default {
           }
           loaded_tags_response.data.data.jobStatuses[i]['cards'] = []
         }
-        this.archive_id = loaded_tags_response.data.data.jobStatuses[archive_index]._id
+
+        this.archive_status_id = loaded_tags_response.data.data.jobStatuses[archive_index]._id
         loaded_tags_response.data.data.jobStatuses.splice(archive_index, 1)
         this.columns = loaded_tags_response.data.data.jobStatuses
       } catch (error) {
@@ -861,29 +870,29 @@ export default {
         let loaded_tags_res = loaded_tags_response.data.data
         for (let i = 0; i < loaded_tags_res.length; i++) {
           if (loaded_tags_res[i].status.status === 'Archive') continue
-          if (
-            loaded_tags_res[i]._id === undefined ||
-            loaded_tags_res[i].details.heading === undefined ||
-            loaded_tags_res[i].details.description === undefined ||
-            loaded_tags_res[i].details.startDate === undefined ||
-            loaded_tags_res[i].details.endDate === undefined ||
-            loaded_tags_res[i].status === undefined ||
-            loaded_tags_res[i].clientId === undefined ||
-            loaded_tags_res[i].clientId.details === undefined ||
-            loaded_tags_res[i].details.address === undefined ||
-            loaded_tags_res[i].details.address.street === undefined ||
-            loaded_tags_res[i].details.address.suburb === undefined ||
-            loaded_tags_res[i].details.address.city === undefined ||
-            loaded_tags_res[i].details.address.street.postalCode === undefined ||
-            loaded_tags_res[i].recordedDetails.imagesTaken === undefined ||
-            loaded_tags_res[i].recordedDetails.inventoryUsed === undefined ||
-            loaded_tags_res[i].taskList === undefined ||
-            loaded_tags_res[i].comments === undefined ||
-            loaded_tags_res[i].priorityTag === undefined ||
-            loaded_tags_res[i].tags === undefined ||
-            loaded_tags_res[i].coverImage === undefined
-          )
-            continue
+          // if (
+          //   loaded_tags_res[i]._id === undefined ||
+          //   loaded_tags_res[i].details.heading === undefined ||
+          //   loaded_tags_res[i].details.description === undefined ||
+          //   loaded_tags_res[i].details.startDate === undefined ||
+          //   loaded_tags_res[i].details.endDate === undefined ||
+          //   loaded_tags_res[i].status === undefined ||
+          //   loaded_tags_res[i].clientId === undefined ||
+          //   loaded_tags_res[i].clientId.details === undefined ||
+          //   loaded_tags_res[i].details.address === undefined ||
+          //   loaded_tags_res[i].details.address.street === undefined ||
+          //   loaded_tags_res[i].details.address.suburb === undefined ||
+          //   loaded_tags_res[i].details.address.city === undefined ||
+          //   loaded_tags_res[i].details.address.street.postalCode === undefined ||
+          //   loaded_tags_res[i].recordedDetails.imagesTaken === undefined ||
+          //   loaded_tags_res[i].recordedDetails.inventoryUsed === undefined ||
+          //   loaded_tags_res[i].taskList === undefined ||
+          //   loaded_tags_res[i].comments === undefined ||
+          //   loaded_tags_res[i].priorityTag === undefined ||
+          //   loaded_tags_res[i].tags === undefined ||
+          //   loaded_tags_res[i].coverImage === undefined
+          // )
+          //   continue
 
           this.starting_cards.push({
             jobId: loaded_tags_res[i]._id,
@@ -900,8 +909,6 @@ export default {
             suburb: loaded_tags_res[i].details.address.suburb,
             city: loaded_tags_res[i].details.address.city,
             postalCode: loaded_tags_res[i].details.address.street.postalCode,
-            imagesTaken: loaded_tags_res[i].recordedDetails.imagesTaken,
-            inventoryUsed: loaded_tags_res[i].recordedDetails.inventoryUsed,
             taskList: loaded_tags_res[i].taskList,
             comments: loaded_tags_res[i].comments,
             priorityTag: loaded_tags_res[i].priorityTag,
@@ -925,7 +932,6 @@ export default {
       const h = String(date_passed_in.getHours()).padStart(2, '0')
       const mn = String(date_passed_in.getMinutes()).padStart(2, '0')
       const f_date = `${y}-${m}-${d} ${h}:${mn}`
-      // console.log(f_date)
       return f_date
     },
     onDragStart(card: JobCardDataFormat, column: Column) {
@@ -944,6 +950,7 @@ export default {
     },
     async onDrop(targetColumn: Column) {
       if (this.draggedCard && this.sourceColumn) {
+        console.log(this.draggedCard)
         this.sourceColumn.cards = this.sourceColumn.cards.filter(
           (c) => c.jobId !== this.draggedCard!.jobId
         )
@@ -973,15 +980,11 @@ export default {
             console.log(error)
           }
         }
-        // this.N_M_Sort(targetColumn.cards, this.order_of_sorting_in_columns)
-
-        this.makeRequest()
         this.draggedCard = null
         this.sourceColumn = null
         this.dropTarget = null
       }
     },
-    makeRequest() {},
     isDropTarget(column: Column) {
       return this.dropTarget === column
     },
