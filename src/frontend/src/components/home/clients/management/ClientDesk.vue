@@ -43,26 +43,19 @@
                 color="secondary"
                 width="100%"
                 block
-                @click="addClientVisibility = true"
+                @click="openDialog"
               >
                 <template #prepend>
                   <v-icon color="buttonText">mdi-account-plus</v-icon>
                 </template>
               </v-btn>
-              <!--            <v-dialog-->
-              <!--              v-model="addClientVisibility"-->
-              <!--              max-height="800"-->
-              <!--              max-width="600"-->
-              <!--              scrollable-->
-              <!--             -->
-              <!--              :opacity="0"-->
-              <!--            >-->
-              <AddClient
-                v-show="checkPermission('add new clients')"
-                :showDialog="addClientVisibility"
-                @createClient="getClients"
-              />
-              <!--            </v-dialog>-->
+              <v-dialog v-model="addClientVisibility" max-height="800" max-width="600">
+                <AddClient
+                  v-show="checkPermission('add new clients')"
+                  :showDialog="addClientVisibility"
+                  @close="addClientVisibility = false"
+                />
+              </v-dialog>
             </v-col>
           </v-row>
         </v-card-title>
@@ -187,6 +180,7 @@ export default defineComponent({
   name: 'ClientDesk',
 
   data: () => ({
+    dialogVisible: false,
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     dummy: '',
@@ -320,11 +314,8 @@ export default defineComponent({
     this.getEmployeePermissions()
   },
   methods: {
-    openClientDialogVisbility() {
-      this.addClientDialog = true
-    },
-    addClient(item) {
-      this.clientDetails.push(item)
+    openDialog() {
+      this.addClientVisibility = true
     },
     removeClientFromList(item) {
       console.log(this.clientDetails)
@@ -530,9 +521,6 @@ export default defineComponent({
         .catch((error) => {
           console.error('Failed to fetch employees:', error)
         })
-    },
-    openDialog() {
-      this.addClientVisibility = true
     },
     async isLocalAvailable(localUrl) {
       try {

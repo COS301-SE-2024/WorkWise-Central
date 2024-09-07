@@ -13,257 +13,250 @@
   <!--      <v-icon color="buttonText">mdi-account-plus</v-icon>-->
   <!--    </template>-->
   <!--  </v-btn>-->
-  <v-dialog
-    v-model="addDialog"
-    max-height="800"
-    max-width="600"
-    :no-overlay="false"
-    scrollable
-    :opacity="0"
-  >
-    <v-card
-      ><v-card-title class="fixed">
-        <span class="headline text-center">Create a Client </span>
-      </v-card-title>
-      <v-card-text>
-        <v-form ref="form" v-model="valid" @submit.prevent="validateSubmission">
-          <v-col>
-            <small class="text-caption white--text"
-              >First Name of client<label style="font-size: 14px; font-weight: lighter; color: red"
-                >*</label
-              ></small
-            >
+  <!--  <v-dialog-->
+  <!--    v-model="addDialog"-->
+  <!--    max-height="800"-->
+  <!--    max-width="600"-->
+  <!--    :no-overlay="false"-->
+  <!--    scrollable-->
+  <!--    :opacity="0"-->
+  <!--    close-on-back-->
+  <!--  >-->
+  <v-card
+    ><v-card-title class="fixed">
+      <span class="headline text-center">Create a Client </span>
+    </v-card-title>
+    <v-card-text>
+      <v-form ref="form" v-model="valid" @submit.prevent="validateSubmission">
+        <v-col>
+          <small class="text-caption white--text"
+            >First Name of client<label style="font-size: 14px; font-weight: lighter; color: red"
+              >*</label
+            ></small
+          >
 
-            <v-text-field
+          <v-text-field
+            color="secondary"
+            placeholder="Enter the first name of the client"
+            v-model="req_obj.details.firstName"
+            required
+            :rules="first_name_rules"
+            hide-details="auto"
+          ></v-text-field
+        ></v-col>
+        <v-col>
+          <small class="text-caption white--text"
+            >Surname of client<label style="font-size: 14px; font-weight: lighter; color: red"
+              >*</label
+            ></small
+          >
+          <v-text-field
+            color="secondary"
+            placeholder="Enter the surname name of the client"
+            v-model="req_obj.details.lastName"
+            required
+            :rules="surname_rules"
+            hide-details="auto"
+          ></v-text-field></v-col
+        ><v-col>
+          <small class="text-caption white--text">ID of client</small>
+          <v-text-field
+            placeholder="Enter the ID number of the client"
+            v-model="req_obj.details.idNumber"
+            required
+            hint="ID number must be 13 digits long"
+            persistent-hint
+            :rules="south_africa_id_rules"
+            hide-details="auto"
+          ></v-text-field
+        ></v-col>
+
+        <v-col>
+          <small class="text-caption"
+            >Client email address<label style="font-size: 14px; font-weight: lighter; color: red"
+              >*</label
+            ></small
+          >
+          <v-text-field
+            color="secondary"
+            placeholder="Enter the client's email address"
+            v-model="req_obj.details.contactInfo.email"
+            :rules="emailRule"
+            type="email"
+            required
+            hide-details="auto"
+          ></v-text-field
+        ></v-col>
+        <v-col>
+          <small class="text-caption"
+            >Client phone number<label style="font-size: 14px; font-weight: lighter; color: red"
+              >*</label
+            ></small
+          >
+          <v-text-field
+            color="secondary"
+            placeholder="Enter the client's phone number"
+            v-model="req_obj.details.contactInfo.phoneNumber"
+            type="text"
+            :rules="phoneRule"
+            required
+            hide-details="auto"
+          ></v-text-field
+        ></v-col>
+        <v-col>
+          <small class="text-caption">Preferred language</small>
+          <v-autocomplete
+            color="primary"
+            placeholder="Enter the language preferred by the client"
+            v-model="req_obj.details.preferredLanguage"
+            type="preferredLanguage"
+            :items="[
+              'Afrikaans',
+              'English',
+              'Ndebele',
+              'Sotho',
+              'Swati',
+              'Tsonga',
+              'Tswana',
+              'Venda',
+              'Xhosa',
+              'Zulu'
+            ]"
+            required
+            hide-details="auto"
+          ></v-autocomplete
+        ></v-col>
+
+        <small class="text-caption"
+          >Client address
+          <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+        </small>
+        <v-row>
+          <v-col sm="6" cols="12"
+            ><small class="text-caption"
+              >Street
+              <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
+            ><v-text-field
               color="secondary"
-              placeholder="Enter the first name of the client"
-              v-model="req_obj.details.firstName"
+              placeholder="Street"
+              v-model="req_obj.details.address.street"
+              type="street"
               required
-              :rules="first_name_rules"
+              :rules="street_rules"
               hide-details="auto"
             ></v-text-field
           ></v-col>
-          <v-col>
-            <small class="text-caption white--text"
-              >Surname of client<label style="font-size: 14px; font-weight: lighter; color: red"
-                >*</label
-              ></small
-            >
-            <v-text-field
+          <v-col sm="6" cols="12"
+            ><small class="text-caption"
+              >Suburb
+              <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
+            ><v-text-field
               color="secondary"
-              placeholder="Enter the surname name of the client"
-              v-model="req_obj.details.lastName"
+              placeholder="Suburb"
+              v-model="req_obj.details.address.suburb"
+              type="suburb"
+              :rules="suburb_rules"
               required
-              :rules="surname_rules"
-              hide-details="auto"
-            ></v-text-field></v-col
-          ><v-col>
-            <small class="text-caption white--text">ID of client</small>
-            <v-text-field
-              placeholder="Enter the ID number of the client"
-              v-model="req_obj.details.idNumber"
-              required
-              hint="ID number must be 13 digits long"
-              persistent-hint
-              :rules="south_africa_id_rules"
               hide-details="auto"
             ></v-text-field
           ></v-col>
 
-          <v-col>
+          <v-col sm="6" cols="12">
             <small class="text-caption"
-              >Client email address<label style="font-size: 14px; font-weight: lighter; color: red"
-                >*</label
-              ></small
-            >
-            <v-text-field
+              >City
+              <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
+            ><v-text-field
               color="secondary"
-              placeholder="Enter the client's email address"
-              v-model="req_obj.details.contactInfo.email"
-              :rules="emailRule"
-              type="email"
+              placeholder="City"
+              v-model="req_obj.details.address.city"
+              type="city"
+              required
+              :rules="city_rules"
+              hide-details="auto"
+            ></v-text-field
+          ></v-col>
+          <v-col sm="6" cols="12"
+            ><small class="text-caption"
+              >Postal Code
+              <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
+            ><v-text-field
+              color="secondary"
+              placeholder="Postal Code"
+              v-model="req_obj.details.address.postalCode"
+              type="postalCode"
+              :rules="postal_code_rules"
               required
               hide-details="auto"
             ></v-text-field
           ></v-col>
-          <v-col>
-            <small class="text-caption"
-              >Client phone number<label style="font-size: 14px; font-weight: lighter; color: red"
-                >*</label
-              ></small
-            >
-            <v-text-field
-              color="secondary"
-              placeholder="Enter the client's phone number"
-              v-model="req_obj.details.contactInfo.phoneNumber"
-              type="text"
-              :rules="phoneRule"
-              required
-              hide-details="auto"
-            ></v-text-field
-          ></v-col>
-          <v-col>
-            <small class="text-caption">Preferred language</small>
+          <v-col sm="6" cols="12">
+            <label style="font-size: 11px; font-weight: lighter"
+              >Province <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+            </label>
             <v-autocomplete
-              color="primary"
-              placeholder="Enter the language preferred by the client"
-              v-model="req_obj.details.preferredLanguage"
-              type="preferredLanguage"
-              :rules="prefered_languages_rules"
+              density="compact"
+              placeholder="Province"
+              color="cardColor"
+              v-model="req_obj.details.address.province"
+              rounded="md"
+              type="houseNumber"
+              variant="solo"
               :items="[
-                'Afrikaans',
-                'English',
-                'Ndebele',
-                'Sotho',
-                'Swati',
-                'Tsonga',
-                'Tswana',
-                'Venda',
-                'Xhosa',
-                'Zulu'
+                'Eastern Cape',
+                'Free State',
+                'Gauteng',
+                'KwaZulu-Natal',
+                'Limpopo',
+                'Mpumalanga',
+                'North West',
+                'Northern Cape',
+                'Western Cape'
               ]"
+              :rules="province_rules"
               required
-              hide-details="auto"
+              data-testid="province-autocomplete"
             ></v-autocomplete
           ></v-col>
+          <v-col sm="6" cols="12"
+            ><small class="text-caption">Complex/Building</small
+            ><v-text-field
+              color="secondary"
+              placeholder="Complex/Building"
+              v-model="req_obj.details.address.complex"
+              type="complex"
+              required
+              hide-details="auto"
+            ></v-text-field
+          ></v-col>
+        </v-row>
 
-          <small class="text-caption"
-            >Client address
-            <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
-          </small>
-          <v-row>
-            <v-col sm="6" cols="12"
-              ><small class="text-caption"
-                >Street
-                <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
-              ><v-text-field
-                color="secondary"
-                placeholder="Street"
-                v-model="req_obj.details.address.street"
-                type="street"
-                required
-                :rules="street_rules"
-                hide-details="auto"
-              ></v-text-field
-            ></v-col>
-            <v-col sm="6" cols="12"
-              ><small class="text-caption"
-                >Suburb
-                <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
-              ><v-text-field
-                color="secondary"
-                placeholder="Suburb"
-                v-model="req_obj.details.address.suburb"
-                type="suburb"
-                :rules="suburb_rules"
-                required
-                hide-details="auto"
-              ></v-text-field
-            ></v-col>
-
-            <v-col sm="6" cols="12">
-              <small class="text-caption"
-                >City
-                <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
-              ><v-text-field
-                color="secondary"
-                placeholder="City"
-                v-model="req_obj.details.address.city"
-                type="city"
-                required
-                :rules="city_rules"
-                hide-details="auto"
-              ></v-text-field
-            ></v-col>
-            <v-col sm="6" cols="12"
-              ><small class="text-caption"
-                >Postal Code
-                <label style="font-size: 14px; font-weight: lighter; color: red">*</label> </small
-              ><v-text-field
-                color="secondary"
-                placeholder="Postal Code"
-                v-model="req_obj.details.address.postalCode"
-                type="postalCode"
-                :rules="postal_code_rules"
-                required
-                hide-details="auto"
-              ></v-text-field
-            ></v-col>
-            <v-col sm="6" cols="12">
-              <label style="font-size: 11px; font-weight: lighter"
-                >Province <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
-              </label>
-              <v-autocomplete
-                density="compact"
-                placeholder="Province"
-                color="cardColor"
-                v-model="req_obj.details.address.province"
-                rounded="md"
-                type="houseNumber"
-                variant="solo"
-                :items="[
-                  'Eastern Cape',
-                  'Free State',
-                  'Gauteng',
-                  'KwaZulu-Natal',
-                  'Limpopo',
-                  'Mpumalanga',
-                  'North West',
-                  'Northern Cape',
-                  'Western Cape'
-                ]"
-                :rules="province_rules"
-                required
-                data-testid="province-autocomplete"
-              ></v-autocomplete
-            ></v-col>
-            <v-col sm="6" cols="12"
-              ><small class="text-caption">Complex/Building</small
-              ><v-text-field
-                color="secondary"
-                placeholder="Complex/Building"
-                v-model="req_obj.details.address.complex"
-                type="complex"
-                required
-                hide-details="auto"
-              ></v-text-field
-            ></v-col>
-          </v-row>
-
-          <v-spacer></v-spacer>
-          <v-row class="fixed">
-            <v-col cols="12" lg="6" order="last" order-lg="first">
-              <v-btn
-                color="error"
-                width="100%"
-                height="35"
-                variant="text"
-                @click="addDialog = false"
-              >
-                <v-icon icon="fa: fa-solid fa-ban" color="error" start></v-icon> Cancel
-              </v-btn>
-            </v-col>
-            <v-col cols="12" lg="6" order="first" order-lg="last">
-              <Toast position="top-center" />
-              <v-btn
-                rounded="md"
-                boarder="xl"
-                width="100%"
-                height="35"
-                type="submit"
-                variant="text"
-                color="success"
-                :disabled="click_create_client"
-                :loading="request_loading"
-                ><v-icon icon="fa: fa-solid fa-user-plus" color="success" start></v-icon>Create
-                Client
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-form>
-      </v-card-text>
-    </v-card>
-  </v-dialog>
+        <v-spacer></v-spacer>
+        <v-row class="fixed">
+          <v-col cols="12" lg="6" order="last" order-lg="first">
+            <v-btn color="error" width="100%" height="35" variant="text" @click="close">
+              <v-icon icon="fa: fa-solid fa-ban" color="error" start></v-icon> Cancel
+            </v-btn>
+          </v-col>
+          <v-col cols="12" lg="6" order="first" order-lg="last">
+            <Toast position="top-center" />
+            <v-btn
+              rounded="md"
+              boarder="xl"
+              width="100%"
+              height="35"
+              type="submit"
+              variant="text"
+              color="success"
+              :disabled="click_create_client"
+              :loading="request_loading"
+              ><v-icon icon="fa: fa-solid fa-user-plus" color="success" start></v-icon>Create Client
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-form>
+    </v-card-text>
+  </v-card>
+  <!--  </v-dialog>-->
 </template>
 
 <script lang="ts">
@@ -314,115 +307,118 @@ export default defineComponent({
       required: true
     }
   },
-  data: () => ({
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
-    valid: false,
-    isDeleting: false,
-    addDialog: false,
-    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
-    click_create_client: false,
-    request_loading: false,
-    postal_code_rules: [
-      (v: string) => !!v || 'Postal code  is required',
-      (value: string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
-    ],
-    street_rules: [(v: string) => !!v || 'Street is required'],
-    suburb_rules: [(v: string) => !!v || 'Suburb is required'],
-    province_rules: [(v: string) => !!v || 'Province is required'],
-    city_rules: [(v: string) => !!v || 'City is required'],
-    email_rules: [
-      (v: string) => v || 'Email or Phone number is required',
-      (val: string) => email_reg.test(val) || 'Email should contain an @ symbol'
-    ],
-    first_name_rules: [
-      (v: string) => !!v || 'First name is required',
-      (v: string) => /^[A-Za-z]+$/.test(v) || 'First name must be alphabetic characters'
-    ],
-    surname_rules: [
-      (v: string) => !!v || 'Surname is required',
-      (v: string) => /^[A-Za-z]+$/.test(v) || 'Surname must be alphabetic characters'
-    ],
-    phone_number_rules: [
-      (v: string) => !!v || 'Phone number is required',
-      (v: string) => /^0\d{9}$/.test(v) || 'Phone number must be a valid South African number'
-    ],
-    prefered_languages_rules: [(v: string) => !!v || 'Preferred language is required'],
-    id_number_rules: [
-      (v: string) => !!v || 'ID number is required'
-      // (v:string) => (v && v.length === 13) || 'ID number must be 13 digits',
-      // (v:string) =>
-      //   /^(\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{4}\d{1}0\d{1})$/.test(v) ||
-      //   'ID number must be a valid South African ID number',
-      // (v:string) => this.luhnCheck(v) || 'ID number must be a valid South African ID number'
-    ],
-    username_rules: [
-      (v: string) => !!v || 'Username is required',
-      (v: string) => (v && v.length >= 3) || 'Username must be at least 3 characters',
-      (v: string) => (v && v.length <= 30) || 'Username must be less than 30 characters',
-      (v: string) =>
-        /^[A-Za-z0-9_]+$/.test(v) || 'Username must be alphanumeric characters and underscores only'
-    ],
-    south_africa_id_rules: [
-      (v: string) => !v,
-      (v: string) => !v || /^\d{13}$/.test(v) || 'ID number must contain only digits',
-      (v: string) => {
-        console.log(v)
-        if (v === undefined) return true
-        const dob = v.slice(0, 6)
-        const year = parseInt(dob.slice(0, 2), 10) + 1900
-        const month = parseInt(dob.slice(2, 4), 10) - 1
-        const day = parseInt(dob.slice(4, 6), 10)
-        const date = new Date(year, month, day)
-        return (
-          !v ||
-          (date.getFullYear() === year && date.getMonth() === month && date.getDate() === day) ||
-          'Invalid date of birth in ID number'
-        )
-      },
-      (v: string) => !v || ['0', '1'].includes(v[10]) || 'Invalid citizenship status digit',
-      (v: string) => {
-        // Implementing Luhn algorithm for checksum validation
-        if (v === undefined) return true
+  data() {
+    return {
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      valid: false,
+      isDeleting: false,
+      addDialog: this.showDialog,
+      isdarkmode: localStorage.getItem('theme') === 'true',
+      click_create_client: false,
+      request_loading: false,
+      postal_code_rules: [
+        (v: string) => !!v || 'Postal code  is required',
+        (value: string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
+      ],
+      street_rules: [(v: string) => !!v || 'Street is required'],
+      suburb_rules: [(v: string) => !!v || 'Suburb is required'],
+      province_rules: [(v: string) => !!v || 'Province is required'],
+      city_rules: [(v: string) => !!v || 'City is required'],
+      email_rules: [
+        (v: string) => v || 'Email or Phone number is required',
+        (val: string) => email_reg.test(val) || 'Email should contain an @ symbol'
+      ],
+      first_name_rules: [
+        (v: string) => !!v || 'First name is required',
+        (v: string) => /^[A-Za-z]+$/.test(v) || 'First name must be alphabetic characters'
+      ],
+      surname_rules: [
+        (v: string) => !!v || 'Surname is required',
+        (v: string) => /^[A-Za-z]+$/.test(v) || 'Surname must be alphabetic characters'
+      ],
+      phone_number_rules: [
+        (v: string) => !!v || 'Phone number is required',
+        (v: string) => /^0\d{9}$/.test(v) || 'Phone number must be a valid South African number'
+      ],
+      prefered_languages_rules: [(v: string) => !!v || 'Preferred language is required'],
+      id_number_rules: [
+        (v: string) => !!v || 'ID number is required'
+        // (v:string) => (v && v.length === 13) || 'ID number must be 13 digits',
+        // (v:string) =>
+        //   /^(\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{4}\d{1}0\d{1})$/.test(v) ||
+        //   'ID number must be a valid South African ID number',
+        // (v:string) => this.luhnCheck(v) || 'ID number must be a valid South African ID number'
+      ],
+      username_rules: [
+        (v: string) => !!v || 'Username is required',
+        (v: string) => (v && v.length >= 3) || 'Username must be at least 3 characters',
+        (v: string) => (v && v.length <= 30) || 'Username must be less than 30 characters',
+        (v: string) =>
+          /^[A-Za-z0-9_]+$/.test(v) ||
+          'Username must be alphanumeric characters and underscores only'
+      ],
+      south_africa_id_rules: [
+        (v: string) => !v,
+        (v: string) => !v || /^\d{13}$/.test(v) || 'ID number must contain only digits',
+        (v: string) => {
+          console.log(v)
+          if (v === undefined) return true
+          const dob = v.slice(0, 6)
+          const year = parseInt(dob.slice(0, 2), 10) + 1900
+          const month = parseInt(dob.slice(2, 4), 10) - 1
+          const day = parseInt(dob.slice(4, 6), 10)
+          const date = new Date(year, month, day)
+          return (
+            !v ||
+            (date.getFullYear() === year && date.getMonth() === month && date.getDate() === day) ||
+            'Invalid date of birth in ID number'
+          )
+        },
+        (v: string) => !v || ['0', '1'].includes(v[10]) || 'Invalid citizenship status digit',
+        (v: string) => {
+          // Implementing Luhn algorithm for checksum validation
+          if (v === undefined) return true
 
-        let sum = 0
-        for (let i = 0; i < 13; i++) {
-          let digit = parseInt(v[i], 10)
-          if (i % 2 === 0) {
-            sum += digit
-          } else {
-            let doubled = digit * 2
-            sum += doubled > 9 ? doubled - 9 : doubled
+          let sum = 0
+          for (let i = 0; i < 13; i++) {
+            let digit = parseInt(v[i], 10)
+            if (i % 2 === 0) {
+              sum += digit
+            } else {
+              let doubled = digit * 2
+              sum += doubled > 9 ? doubled - 9 : doubled
+            }
           }
+          return !v || sum % 10 === 0 || 'Invalid ID number checksum'
         }
-        return !v || sum % 10 === 0 || 'Invalid ID number checksum'
-      }
-    ],
+      ],
 
-    req_obj: {
-      employeeId: localStorage['employeeId'],
-      details: {
-        firstName: '',
-        lastName: '',
-        preferredLanguage: '',
-        contactInfo: {
-          email: '',
-          phoneNumber: ''
-        },
-        address: {
-          street: '',
-          suburb: '',
-          city: '',
-          province: '',
-          postalCode: '',
-          complex: '',
-          houseNumber: ''
-        },
-        companyId: localStorage['currentCompany'],
-        idNumber: ''
-      }
-    } as RequestObject
-  }),
+      req_obj: {
+        employeeId: localStorage['employeeId'],
+        details: {
+          firstName: '',
+          lastName: '',
+          preferredLanguage: '',
+          contactInfo: {
+            email: '',
+            phoneNumber: ''
+          },
+          address: {
+            street: '',
+            suburb: '',
+            city: '',
+            province: '',
+            postalCode: '',
+            complex: '',
+            houseNumber: ''
+          },
+          companyId: localStorage['currentCompany'],
+          idNumber: ''
+        }
+      } as RequestObject
+    }
+  },
   computed: {
     emailRule(): Array<(v: string) => boolean | string> {
       return this.req_obj.details.contactInfo.phoneNumber !== ''
@@ -451,12 +447,18 @@ export default defineComponent({
   watch: {
     showDialog(v) {
       this.addDialog = v
-    },
-    addDialog(v) {
-      this.$emit('update:showDialog', v)
     }
   },
   methods: {
+    close() {
+      this.$emit('close')
+    },
+    closeDialog() {
+      this.$emit('update:isOpen', false)
+    },
+    updateDialogVisibility(val: any) {
+      this.$emit('update:isOpen', val)
+    },
     validatePhoneOrEmail() {
       return (
         this.req_obj.details.contactInfo.phoneNumber !== '' ||
@@ -556,12 +558,11 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
-    },
-    close() {
-      this.addDialog = false
     }
   },
-  mounted() {}
+  mounted() {
+    this.addDialog = this.showDialog
+  }
 })
 </script>
 

@@ -379,20 +379,17 @@ export class CompanyController {
   async updateStatusOrder(
     @Headers() headers: any,
     @Body()
-    body: {
-      currentEmployeeId: Types.ObjectId;
-      updateCompanyJobStatusesDto: UpdateCompanyJobStatusesDto;
-    },
+    updateCompanyJobStatusesDto: UpdateCompanyJobStatusesDto,
   ) {
-    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    const currentEmployee = await this.employeeService.findById(updateCompanyJobStatusesDto.employeeId);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       try {
         const userId = extractUserId(this.jwtService, headers);
-        const statusArr = new UpdateCompanyJobStatuses(body.updateCompanyJobStatusesDto);
+        const statusArr = new UpdateCompanyJobStatuses(updateCompanyJobStatusesDto);
         return {
           data: await this.companyService.updateCompanyStatuses(
             userId,
-            body.updateCompanyJobStatusesDto.employeeId,
+            updateCompanyJobStatusesDto.employeeId,
             statusArr,
           ),
         };
