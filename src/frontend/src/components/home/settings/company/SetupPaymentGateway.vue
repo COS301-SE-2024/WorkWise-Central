@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <v-card>
+      <Toast position="top-center" />
       <v-divider></v-divider>
       <!-- Payment Gateway Setup Section -->
       <v-card-title class="text-primary font-bold text-center">
@@ -181,7 +182,6 @@
               </v-btn></v-col
             >
             <v-col align="center" cols="12" lg="6" order="first" order-lg="last">
-              <Toast position="top-center" />
               <v-btn
                 color="success"
                 @click="updateCompanyDetails"
@@ -211,6 +211,7 @@ import verifyAccount from '@/assets/images/paymentGateway/payfast-verify-account
 import dashboard from '@/assets/images/paymentGateway/payfast-dashboard.png'
 import enterDetails from '@/assets/images/paymentGateway/payfast-enter-detailspng.png'
 import axios from 'axios'
+import Toast from 'primevue/toast'
 
 export default {
   name: 'SetupPaymentGateway',
@@ -261,6 +262,9 @@ export default {
       }
     }
   },
+  components: {
+    Toast
+  },
   methods: {
     cancel() {
       this.$toast.add({
@@ -285,9 +289,21 @@ export default {
           this.company.accountDetails.merchantId = response.data.data.accountDetails.merchantId
           this.company.accountDetails.merchantKey = response.data.data.accountDetails.merchantKey
           console.log(this.company)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Company details retrieved',
+            life: 3000
+          })
         })
         .catch((error) => {
           console.log(error)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Company details retrieval failed',
+            life: 3000
+          })
         })
     },
     async getRequestUrl() {
