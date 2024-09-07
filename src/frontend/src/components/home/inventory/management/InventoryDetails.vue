@@ -5,7 +5,7 @@
         ><v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>View</v-btn
       >
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon>mdi-plus</v-icon>
         <span>Inventory Details</span>

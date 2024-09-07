@@ -14,7 +14,7 @@
       </v-btn>
     </template>
 
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title class="headline">Inventory Report</v-card-title>
       <v-card-text>
         <p>Below is a comparison between the current stock levels and the expected stock levels.</p>

@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col cols="12">
-        <v-card>
+        <v-card class="bg-cardColor">
           <v-card-title>Employee Reports</v-card-title>
           <v-divider></v-divider>
           <v-card-text>
@@ -32,13 +32,13 @@
     <!-- Summary Section -->
     <v-row class="mt-4">
       <v-col cols="12">
-        <v-card>
+        <v-card class="bg-cardColor">
           <v-card-title>{{ companyName }} Summary</v-card-title>
           <v-divider></v-divider>
           <v-card-text>
             <v-row>
               <v-col cols="12" md="6">
-                <v-card>
+                <v-card class="bg-cardColor">
                   <v-card-title>Overall Job Performance</v-card-title>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -51,7 +51,7 @@
                 </v-card>
               </v-col>
               <v-col cols="12" md="6">
-                <v-card>
+                <v-card class="bg-cardColor">
                   <v-card-title>Overall Productivity</v-card-title>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -66,7 +66,7 @@
             </v-row>
             <v-row>
               <v-col cols="12" lg="6">
-                <v-card>
+                <v-card class="bg-cardColor">
                   <v-card-title>Average Satisfaction</v-card-title>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -79,7 +79,7 @@
                 </v-card>
               </v-col>
               <v-col cols="12" lg="6">
-                <v-card>
+                <v-card class="bg-cardColor">
                   <v-card-title>Average Project Completion</v-card-title>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -95,13 +95,13 @@
 
     <!-- Report Dialog -->
     <v-dialog v-model="reportDialog" max-width="800px">
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title>{{ selectedEmployee?.name }}'s Report</v-card-title>
         <v-divider></v-divider>
         <v-card-text>
           <v-row>
             <v-col cols="12" md="6">
-              <v-card>
+              <v-card class="bg-cardColor">
                 <v-card-title>Job Performance Report</v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>
@@ -110,7 +110,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="6">
-              <v-card>
+              <v-card class="bg-cardColor">
                 <v-card-title>Productivity Report</v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>
@@ -121,7 +121,7 @@
           </v-row>
           <v-row>
             <v-col cols="12" md="6">
-              <v-card>
+              <v-card class="bg-cardColor">
                 <v-card-title>Satisfaction Survey Results</v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>
@@ -130,7 +130,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="6">
-              <v-card>
+              <v-card class="bg-cardColor">
                 <v-card-title>Completed Projects</v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>

@@ -5,10 +5,10 @@
         <h2 class="text-xl font-semibold">Message Board</h2>
       </v-col>
     </v-row>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-row>
         <v-col cols="12" lg="2">
-          <v-card>
+          <v-card class="bg-cardColor">
             <v-card-title>Chats</v-card-title>
             <v-card-text>
               <v-text-field
@@ -51,7 +51,7 @@
           </v-card>
         </v-col>
         <v-col cols="12" lg="10">
-          <v-card>
+          <v-card class="bg-cardColor">
             <v-card-title>
               <v-avatar :src="selectedPerson.avatar"></v-avatar>
               <h4>{{ selectedPerson.name }}</h4>
