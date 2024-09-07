@@ -55,6 +55,17 @@
             </v-col></v-row
           >
           <v-divider></v-divider>
+
+          <v-row
+            ><v-col cols="6"
+              ><label>Superior</label><v-spacer></v-spacer
+              ><small class="text-caption">{{ EmployeeDetails.contactInfo.email }}</small></v-col
+            ><v-col cols="6"
+              ><label> Subordinates </label><v-spacer></v-spacer
+              ><small class="text-caption">{{ EmployeeDetails.roleName }}</small>
+            </v-col></v-row
+          >
+          <v-divider></v-divider>
         </v-col>
       </v-card-text>
       <v-card-actions>
