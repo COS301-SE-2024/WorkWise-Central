@@ -50,3 +50,9 @@ export class GetCurrentTimeTrackersDto {
   @IsMongoId()
   employeeId: Types.ObjectId;
 }
+
+export class GetCompletedTimeTrackersDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+}

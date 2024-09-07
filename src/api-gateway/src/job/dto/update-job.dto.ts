@@ -238,6 +238,12 @@ export class UpdateJobDto {
   coverImage?: string;
 }
 
+export class AddFeedbackDto {
+  @ValidateNested()
+  @Type(() => ClientFeedback)
+  clientFeedback: ClientFeedback;
+}
+
 /*
 export class UpdateDtoResponse {
   success: boolean;

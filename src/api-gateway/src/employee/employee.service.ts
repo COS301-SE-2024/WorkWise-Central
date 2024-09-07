@@ -582,6 +582,8 @@ export class EmployeeService {
     if (index !== -1) {
       listOfEmployees.splice(index, 1);
     }
+
+    return listOfEmployees;
   }
 
   async listPotentialSuperiors(employeeId: Types.ObjectId) {
@@ -602,6 +604,8 @@ export class EmployeeService {
         listOfEmployees.splice(index, 1);
       }
     }
+
+    return listOfEmployees;
   }
 
   async deptFirstTraversalId(id: Types.ObjectId) {

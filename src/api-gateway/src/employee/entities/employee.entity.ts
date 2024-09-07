@@ -84,7 +84,7 @@ export class Employee {
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: Number, required: true })
+  @Prop({ type: Number, required: true, default: 0 })
   hourlyRate: number;
 
   @ApiProperty()
