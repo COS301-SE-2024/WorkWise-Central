@@ -13,7 +13,7 @@
         Create Role
       </v-btn>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title> Create new Role</v-card-title>
       <v-card-text>
         <v-form v-model="formIsValid" ref="form">
@@ -89,9 +89,11 @@ export default defineComponent({
       this.isDeleting = true // Indicate the start of the deletion process
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const data = {
-        roleName: this.Role.roleName,
-        permissionSuite: this.Role.permissionSuite,
-        companyId: this.Role.companyId,
+        createRoleDto: {
+          roleName: this.Role.roleName,
+          permissionSuite: this.Role.permissionSuite,
+          companyId: this.Role.companyId
+        },
         currentEmployeeId: localStorage.getItem('employeeId')
       }
       const apiURL = await this.getRequestUrl()

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <Toast position="top-center" />
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
         height="auto"
@@ -43,7 +43,7 @@
                   >
                 </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeleteTags :tagId="selectedItem._id" @DeletedTag="getTags" />
+                  <DeleteTags :tagId="selectedItem.tagId" @DeletedTag="getTags" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -52,7 +52,7 @@
       </v-card-text>
     </v-card>
     <v-dialog v-model="dialog" max-height="800" max-width="600" persistent>
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title> Edit Tags</v-card-title>
         <v-card-text>
           <v-form v-model="formIsValid" ref="form">
@@ -146,7 +146,7 @@ export default defineComponent({
     dialog: false,
     isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     selectedItem: {
-      _id: '',
+      tagId: '',
       label: '',
       colour: '',
       companyId: localStorage.getItem('currentCompany')
@@ -259,7 +259,12 @@ export default defineComponent({
     },
     selectItem(item: any) {
       console.log(item)
-      this.selectedItem = item
+      this.selectedItem = {
+        tagId: item._id,
+        label: item.label,
+        colour: item.colour,
+        companyId: item.companyId
+      }
     },
     async updateTag() {
       this.isDeleting = true // Indicate the start of the deletion process

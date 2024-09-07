@@ -195,8 +195,6 @@ export type JobCardDataFormat = {
   postalCode: string
   complex?: string
   houseNumber?: string
-  imagesTaken: string[]
-  inventoryUsed: string[]
   taskList: string[]
   comments: string[]
   tags: Tag[]
@@ -342,9 +340,10 @@ export type Job = {
 }
 
 export type Column = {
-  id: string
+  _id: string
+  __v: 0
   status: string
-  color: string
+  colour: string
   companyId: string
   cards: JobCardDataFormat[]
 }

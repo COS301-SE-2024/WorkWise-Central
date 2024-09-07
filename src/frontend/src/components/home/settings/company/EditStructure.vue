@@ -5,11 +5,14 @@
       <v-divider></v-divider>
       <v-container>
         <v-row>
-          <v-col cols="12" lg="6">
-            <v-btn @click="updateLayout('TB')"> Top-Bottom </v-btn>
+          <v-col cols="12" lg="4">
+            <v-btn @click="removeNode"> Remove Node </v-btn>
           </v-col>
-          <v-col cols="12" lg="6">
-            <v-btn @click="updateLayout('LR')"> Left-Right </v-btn>
+          <v-col cols="12" lg="4">
+            <v-btn @click="addNode"> Add Node </v-btn>
+          </v-col>
+          <v-col cols="12" lg="4">
+            <EditEmployee :Disabled="selectedNodes.length === 0" :editedItem="selectedItem" />
           </v-col>
         </v-row>
       </v-container>
@@ -17,6 +20,8 @@
         <Toast position="top-center" />
         <v-network-graph
           v-model="graph"
+          v-model:selected-nodes="selectedNodes"
+          v-model:selected-edges="selectedEdges"
           class="graph"
           :nodes="data.nodes"
           :edges="data.edges"
@@ -50,20 +55,20 @@
       </v-card-text>
 
       <v-card-actions class="bg-cardColor">
-        <v-container
-          ><v-row justify="end">
+        <v-container>
+          <v-row justify="end">
             <v-col align="center" cols="12" lg="6" order="last" order-lg="first">
-              <v-btn color="error" @click="cancel" :loading="isDeleting" block
-                ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Cancel</v-btn
-              >
+              <v-btn color="error" @click="cancel" :loading="isDeleting" block>
+                <v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Cancel
+              </v-btn>
             </v-col>
             <v-col align="center" cols="12" lg="6" order="first" order-lg="last">
-              <v-btn color="success" @click="saveChanges" :loading="isDeleting" block
-                ><v-icon color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save</v-btn
-              >
+              <v-btn color="success" @click="saveChanges" :loading="isDeleting" block>
+                <v-icon color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save
+              </v-btn>
             </v-col>
-          </v-row></v-container
-        >
+          </v-row>
+        </v-container>
       </v-card-actions>
     </v-card>
   </v-container>
@@ -84,28 +89,16 @@ export default defineComponent({
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       color: 'primary',
+      selectedItem: '',
       data: {
-        nodes: {
-          // node1: { name: 'Joe' },
-          // node2: { name: 'Alice' },
-          // node3: { name: 'Bob' },
-          // node4: { name: 'Carol' },
-          // node5: { name: 'Dave' },
-          // node6: { name: 'Eve' },
-          // node7: { name: 'Frank' }
-        },
-        edges: {
-          // edge1: { source: 'node1', target: 'node2' },
-          // edge2: { source: 'node2', target: 'node3' },
-          // edge3: { source: 'node3', target: 'node4' },
-          // edge4: { source: 'node3', target: 'node5' },
-          // edge5: { source: 'node2', target: 'node6' },
-          // edge6: { source: 'node6', target: 'node7' }
-        },
+        nodes: {},
+        edges: {},
         layouts: reactive({
           nodes: {}
         })
       },
+      selectedNodes: [],
+      selectedEdges: [],
       nodeSize,
       graph: null,
       configs: vNG.defineConfigs({
@@ -118,11 +111,9 @@ export default defineComponent({
           normal: {
             type: 'circle',
             radius: nodeSize,
-            // for type is "rect" -->
             width: 32,
             height: 32,
             borderRadius: 4,
-            // <-- for type is "rect"
             strokeWidth: 0,
             strokeColor: '#000000',
             strokeDasharray: '0',
@@ -132,11 +123,9 @@ export default defineComponent({
           hover: {
             type: 'circle',
             radius: nodeSize,
-            // for type is "rect" -->
             width: 32,
             height: 32,
             borderRadius: 4,
-            // <-- for type is "rect"
             strokeWidth: 0,
             strokeColor: '#000000',
             strokeDasharray: '0',
@@ -145,11 +134,9 @@ export default defineComponent({
           selected: {
             type: 'circle',
             radius: nodeSize,
-            // for type is "rect" -->
             width: 32,
             height: 32,
             borderRadius: 4,
-            // <-- for type is "rect"
             strokeWidth: 0,
             strokeColor: '#000000',
             strokeDasharray: '0',
@@ -171,10 +158,13 @@ export default defineComponent({
           }
         },
         eventsHandlers: {
-          'node:click': this.onNodeClick()
+          'node:click': this.onNodeClick
         }
       })
     }
+  },
+  components: {
+    EditEmployee
   },
   methods: {
     layout(direction) {
@@ -207,11 +197,17 @@ export default defineComponent({
         this.data.layouts.nodes[nodeId] = { x, y }
       })
     },
-    onNodeClick() {
-      console.log('Node clicked:')
-    },
     viewEmployee() {
       console.log()
+    },
+    removeNode() {
+      const nodeIds = Object.keys(this.data.nodes)
+      if (nodeIds.length === 0) return
+      // Implement your logic for removing a node here
+    },
+    addNode() {
+      const newNodeId = `node${Object.keys(this.data.nodes).length + 1}`
+      this.data.nodes[newNodeId] = { name: 'New Node' }
     },
     async downloadAsSvg() {
       if (!this.graph) return
@@ -225,6 +221,34 @@ export default defineComponent({
     },
     EditEmployee(employeeId) {
       console.log(employeeId)
+    },
+    onNodeClick(event) {
+      console.log(event.node)
+      console.log(this.data.nodes)
+
+      if (event.node) {
+        // Traverse nodes using for...in loop
+        for (const nodeId in this.data.nodes) {
+          const node = this.data.nodes[nodeId]
+          console.log(nodeId)
+          if (nodeId === event.node) {
+            console.log(this.selectedItem)
+            this.selectedItem = node
+            break // Exit the loop once the node is found
+          }
+        }
+
+        console.log('Node clicked:', this.selectedItem)
+      } else {
+        console.log('No node clicked')
+      }
+    },
+
+    editEmployee() {
+      if (this.selectedItem) {
+        console.log(`Editing employee with ID: ${this.selectedItem}`)
+        // Add your logic to edit the employee here
+      }
     },
     async getGraphView() {
       const config = {

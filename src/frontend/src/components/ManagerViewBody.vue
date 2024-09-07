@@ -73,7 +73,7 @@ export default defineComponent({
                                 </v-avatar>
                               </v-btn>
                             </template>
-                            <v-card>
+                            <v-card class="bg-cardColor">
                               <v-card-text>
                                 <div class="mx-auto text-center">
                                   <v-avatar color="blue">
@@ -132,7 +132,7 @@ export default defineComponent({
                                 </v-avatar>
                               </v-btn>
                             </template>
-                            <v-card>
+                            <v-card class="bg-cardColor">
                               <v-card-text>
                                 <div class="mx-auto text-center">
                                   <v-avatar color="#879898">

@@ -15,7 +15,7 @@
         ></v-btn>
       </v-defaults-provider>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title class="text-center" style="font-family: Nunito, sans-serif"
         >Add Employee</v-card-title
       >
@@ -58,7 +58,6 @@
                   item-value="roleId"
                   item-title="roleName"
                   v-model="req_obj.roleId"
-                  :rules="rules.role"
                   bg-color="background"
                   variant="solo"
                   data-testid="role-select"
@@ -79,7 +78,6 @@
                   @update:modelValue="selected_supirior"
                   :items="subordinateItemNames"
                   v-model="req_obj.superiorId"
-                  :rules="rules.superior"
                   item-value="employeeId"
                   item-title="name"
                   bg-color="background"
