@@ -6,7 +6,7 @@
         View
       </v-btn>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon>mdi-file-document-outline</v-icon>
         <span>Invoice Details</span>

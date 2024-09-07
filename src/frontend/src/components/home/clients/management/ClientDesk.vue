@@ -32,7 +32,7 @@
                 single-line
               ></v-text-field>
             </v-col>
-            <v-col cols="12" lg="4" md="4" sm="4" :class="{ 'd-flex justify-end': !isSmallScreen }">
+            <v-col cols="12" lg="4">
               <v-btn
                 rounded="md"
                 class="text-none font-weight-regular"
@@ -41,6 +41,7 @@
                 prepend-icon="mdi-account-plus"
                 variant="elevated"
                 color="secondary"
+                width="100%"
                 block
                 @click="openDialog"
               >
@@ -149,11 +150,9 @@
 
                       <v-list-item v-show="checkPermission('delete clients')">
                         <DeleteClient
-                          :details="selectedItem"
                           :client_id="selectedItemId"
                           :client="selectedItem"
-                          :company_id="clientCompanyID"
-                          @clientDeleted="getClients"
+                          @deleteClient="getClients"
                       /></v-list-item>
                     </v-list>
                   </v-menu>
@@ -319,9 +318,12 @@ export default defineComponent({
       this.addClientVisibility = true
     },
     removeClientFromList(item) {
+      console.log(this.clientDetails)
       const index = this.clientDetails.findIndex((client) => client._id === item)
+      console.log(index)
       if (index !== -1) {
         this.clientDetails.splice(index, 1)
+        console.log('Im not crazy')
       }
     },
     updateClientInList(updatedClient) {
@@ -481,12 +483,22 @@ export default defineComponent({
           console.log(response.data)
           this.clients = response.data.data
           console.log(this.clients)
+          if (this.clients.length === 0) {
+            this.clientDetails = []
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'No clients found',
+              life: 3000
+            })
+          }
           for (let i = 0; i < this.clients.length; i++) {
             this.clientIds[i] = this.clients[i]._id
             console.log(this.clientIds[i])
             this.clientDetails[i] = this.clients[i].details
             console.log(this.clientDetails[i])
           }
+          console.log(this.clientDetails)
         })
         .catch((error) => {
           console.error('Failed to fetch clients:', error)

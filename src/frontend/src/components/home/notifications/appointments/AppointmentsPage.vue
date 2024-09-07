@@ -60,7 +60,7 @@
 
   <!-- Dialog for Creating/Editing Appointment -->
   <v-dialog v-model="showDialog" persistent max-width="600px">
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <span class="headline">{{
           isEditing ? 'Edit Appointment' : 'Create New Appointment'

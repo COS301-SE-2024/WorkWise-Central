@@ -7,11 +7,12 @@
         color="warning"
         variant="text"
         v-bind="activatorProps"
+        :disabled="Disabled"
         ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon
         >Edit</v-btn
       >
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-form ref="form" @submit.prevent="validateEdits">
         <v-card-title class="text-center">Edit Employee</v-card-title>
         <v-divider></v-divider>
@@ -148,6 +149,10 @@ export default {
   props: {
     editedItem: {
       type: Object,
+      required: true
+    },
+    Disabled: {
+      type: Boolean,
       required: true
     }
   },
