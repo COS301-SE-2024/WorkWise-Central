@@ -75,24 +75,8 @@ export default defineComponent({
       await axios
         .get(`${url}admin/request/all/company/${localStorage.getItem('currentCompany')}/detailed`, config)
         .then((response) => {
-          this.requests = response.data.data;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
-    async getInvoicesRequests() {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
-      };
-      const url = await this.getRequestUrl();
-      await axios
-        .get(`${url}admin/request/all/company/${localStorage.getItem('currentCompany')}/detailed`, config)
-        .then((response) => {
-          this.requests = response.data.data;
+          this.merchantId = response.data.accountDetails.merchantId;
+          this.merchantKey = response.data.accountDetails.merchantKey;
         })
         .catch((error) => {
           console.error(error);
