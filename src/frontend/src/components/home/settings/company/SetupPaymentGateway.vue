@@ -282,7 +282,8 @@ export default {
       await axios
         .get(`http://localhost:3000/company/id/${company_id}`, config)
         .then((response) => {
-          this.company = response.data.data
+          this.company.accountDetails.merchantId = response.data.data.accountDetails.merchantId
+          this.company.accountDetails.merchantKey = response.data.data.accountDetails.merchantKey
           console.log(this.company)
         })
         .catch((error) => {
