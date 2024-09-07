@@ -134,6 +134,7 @@ export default defineComponent({
       axios
         .get(`${apiURL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
         .then((response) => {
+          console.log(response)
           console.log(response.data.data)
           localStorage.setItem('roleId', response.data.data.role._id)
           this.employeePermissions = response.data.data.role.permissionSuite
