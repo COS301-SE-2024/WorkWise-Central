@@ -47,6 +47,7 @@ import ClientPortal from '@/views/home/clients/ClientPortalView.vue'
 import InvoicesView from '@/views/home/invoices/InvoicesView.vue'
 import InvoiceCenter from '@/views/home/invoices/InvoiceCenter.vue'
 import HourlyRate from '@/components/home/settings/company/HourlyRate.vue'
+import GoogleMapsView from '@/views/home/map/GoogleMapsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -375,6 +376,11 @@ const router = createRouter({
       path: '/hourly-rate',
       name: 'hourly-rate',
       component: HourlyRate
+    },
+    {
+      path: '/map',
+      name: 'map',
+      component: GoogleMapsView
     }
   ]
 })
