@@ -33,7 +33,7 @@
   </v-btn>
     <!-- Label Creation/Edit Dialog -->
     <v-dialog v-model="dialog" max-width="400px">
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title>{{ dialogTitle }}</v-card-title>
 
         <v-card-text>

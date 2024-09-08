@@ -1,10 +1,11 @@
 <template>
-  <v-app :theme="isDarkMode ? 'dark' : 'light'">
-    <h1 :class="['splash-title', 'header-title', 'text-center']">
+  <v-app>
+    <h2 :class="['splash-title', 'header-title', 'text-center']">
       Manage your business <span class="text-primary">effectively</span> and
       <span class="text-secondary">efficiently</span> using <span class="text-primary">Work</span
       ><span class="text-secondary">Wise</span> Central
-    </h1>
+    </h2>
+    <v-spacer></v-spacer>
     <v-row style="height: 500px" class="bg-background">
       <v-col cols="12" order="first" order-lg="last" order-md="last" order-sm="first">
         <v-tabs v-model="tab" align-tabs="center" bg-color="secondary" stacked>
@@ -16,7 +17,7 @@
         <v-tabs-window v-model="tab">
           <v-tabs-window-item v-for="(item, index) in tabs" :key="index" :value="index">
             <v-card flat class="bg-background">
-              <v-img :src="item.imageUrl" height="500px"></v-img>
+              <v-img :src="isDarkMode ? item.imageUrlDark : item.imageUrl" height="500px"></v-img>
               <v-card-text>{{ item.description }}</v-card-text>
             </v-card>
           </v-tabs-window-item>
@@ -34,7 +35,7 @@ export default defineComponent({
   data() {
     return {
       tab: 0,
-      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true',
       tabs: [
         {
           title: 'Client Management',
@@ -91,65 +92,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style scoped>
-.light-theme-text {
-  color: rgb(0, 0, 0);
-  opacity: 65%;
-}
-
-.dark-theme-text {
-  color: #dcdbdb;
-}
-
-.modal-dark-theme {
-  background-color: #2b2b2b;
-}
-
-.modal-light-theme {
-  background-color: #ffffff;
-}
-.header-title {
-  font-size: 40px;
-  font: 'Lato';
-}
-.fill-height {
-  height: 100%;
-}
-
-.button-width {
-  width: 400px;
-}
-
-.button-height {
-  height: 80px;
-}
-
-.colorAccent {
-  color: #6a99ce;
-}
-.colorAccent2 {
-  color: #879898;
-}
-.text-start {
-  text-align: start;
-}
-.splash-image {
-  width: 140%;
-  height: 100%;
-  align-content: end;
-}
-
-.grad-class {
-  background: #3a7bd5; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #3a6073, #3a7bd5); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(
-    to right,
-    #3a6073,
-    #3a7bd5
-  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-}
-.mb-4 {
-  margin-bottom: 1.5rem;
-}
-</style>

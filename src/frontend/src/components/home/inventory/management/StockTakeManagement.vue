@@ -2,68 +2,71 @@
   <v-container>
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
-        <h1 class="text-xl font-semibold">Stock Management</h1>
+        <h1 class="text-xl font-semibold">Stock Take</h1>
         <v-divider></v-divider>
       </v-col>
     </v-row>
+
     <v-row>
-      <v-col cols="12" lg="6">
-        <v-text-field
-          v-model="searchQuery"
-          label="Search"
-          placeholder="Search for an item"
-          outlined
-          variant="outlined"
-          color="primary"
-          dense
-          clearable
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12" lg="6">
-        <v-text-field
-          type="date"
-          placeholder="Date of Stock Take"
-          color="primary"
-          variant="outlined"
-          v-model="currentDate"
-        >
-        </v-text-field>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col v-for="item in filteredInventoryItems" :key="item._id" cols="12" sm="6" md="4">
-        <v-card>
-          <v-card-title>{{ item?.name }}</v-card-title>
-          <v-card-subtitle>Cost Price: R{{ item?.costPrice }}</v-card-subtitle>
-          <v-card-actions>
-            <v-container
-              ><v-row
-                ><v-col>
-                  <v-btn color="success" @click="showChart(item)" block>
-                    <v-icon icon="fa: fa-solid fa-chart-simple" color="success"></v-icon> Show Stock
-                    Chart
-                  </v-btn></v-col
-                ></v-row
-              >
-              <v-col>
-                <v-btn color="error" @click="selectItem(item)" block
-                  ><v-icon icon="fa: fa-solid fa-clipboard" color="error"></v-icon>Record
-                  Stock</v-btn
-                ></v-col
-              ></v-container
+      <v-container>
+        <v-card class="bg-cardColor">
+          <v-card-title>
+            <v-row>
+              <v-col cols="12" lg="6">
+                <v-text-field
+                  v-model="searchQuery"
+                  label="Search"
+                  placeholder="Search for an item"
+                  outlined
+                  variant="outlined"
+                  color="primary"
+                  dense
+                  clearable
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" lg="6">
+                <v-text-field
+                  type="date"
+                  placeholder="Date of Stock Take"
+                  color="primary"
+                  variant="outlined"
+                  v-model="currentDate"
+                >
+                </v-text-field>
+              </v-col> </v-row
+          ></v-card-title>
+          <v-card-text>
+            <v-data-table
+              :headers="headers"
+              :items="filteredInventoryItems"
+              item-key="_id"
+              :row-props="getRowProps"
+              :header-props="{ class: 'bg-secondRowColor h6' }"
+              class="bg-cardColor"
             >
-          </v-card-actions>
-        </v-card>
-      </v-col>
-      <v-btn color="success" block @click="saveStockTake"
-        ><v-icon icon="fa:fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
+              <template v-slot:[`item.actions`]="{ item }">
+                <v-btn color="success" @click="showChart(item)" block>
+                  <v-icon icon="fa: fa-solid fa-chart-simple" color="success"></v-icon> Show Stock
+                  Chart
+                </v-btn>
+                <v-btn color="error" @click="selectItem(item)" block>
+                  <v-icon icon="fa: fa-solid fa-clipboard" color="error"></v-icon> Record Stock
+                </v-btn>
+              </template>
+            </v-data-table>
+
+            <v-btn color="success" block @click="saveAllStockTake">
+              <v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon> Save
+            </v-btn></v-card-text
+          >
+        </v-card></v-container
       >
     </v-row>
   </v-container>
 
   <!-- Chart Dialog -->
   <v-dialog v-model="chartDialog" max-width="600px">
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>Stock Levels for {{ selectedItem?.name }}</v-card-title>
       <v-card-text>
         <Chart type="bar" :data="chartData" />
@@ -90,7 +93,7 @@
 
     <!-- Stock Take Dialog -->
     <v-dialog v-model="showDialog" max-width="500px">
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title>Record Stock of {{ selectedItem.name }}</v-card-title>
         <v-card-text>
           <v-form @submit.prevent="submitStockTake">
@@ -186,10 +189,16 @@ export default {
       searchQuery: '',
       sortOrder: '',
       stockTakeDate: new Date(),
+      headers: [
+        { title: 'Name', value: 'name' },
+        { title: 'Cost Price', value: 'costPrice' },
+        { title: 'Current Stock Level', value: 'currentStockLevel' },
+        { title: 'Actions', value: 'actions', sortable: false }
+      ],
       sortOptions: [
-        { text: 'Name (A-Z)', value: 'name' },
-        { text: 'Stock Level (Low to High)', value: 'stockAsc' },
-        { text: 'Stock Level (High to Low)', value: 'stockDesc' }
+        { title: 'Name (A-Z)', value: 'name' },
+        { title: 'Stock Level (Low to High)', value: 'stockAsc' },
+        { title: 'Stock Level (High to Low)', value: 'stockDesc' }
       ],
       showDialog: false,
       newStockItem: {
@@ -291,6 +300,11 @@ export default {
         this.isUpdating = false
       }
     },
+    getRowProps(index: any) {
+      return {
+        class: index % 2 === 0 ? 'bg-secondRowColor' : ''
+      }
+    },
     submitStockTake() {
       // Convert the images string to an array
       // const imagesArray = this.newStockItem.images.split(',').map((img) => img.trim())
@@ -304,6 +318,52 @@ export default {
 
       // Reset the form
       this.resetForm()
+    },
+    async saveAllStockTake() {
+      const stockTakeData = {
+        date: this.currentDate,
+        inventoryItems: this.filteredInventoryItems,
+        companyID: localStorage.getItem('currentCompany'),
+        currentEmployee: localStorage.getItem('username') || 'John Doe' // Replace with actual employee name if available
+      }
+
+      const doc = new jsPDF()
+      const pageWidth = doc.internal.pageSize.getWidth()
+
+      // Add title
+      doc.setFontSize(18)
+      doc.text('Stock Take Summary', pageWidth / 2, 15, { align: 'center' })
+
+      // Add date and employee name
+      doc.setFontSize(12)
+      doc.text(`Date: ${stockTakeData.date}`, 15, 30)
+      doc.text(`Employee: ${stockTakeData.currentEmployee}`, 15, 40)
+
+      // Create table headers
+      const headers = ['Item Name', 'Cost Price', 'Current Stock Level', 'Reorder Level']
+
+      // Create table body data
+      const body = stockTakeData.inventoryItems.map((item) => [
+        item.name,
+        item.costPrice, // Formatting price
+        item.currentStockLevel,
+        item.currentStockLevel + 30 // Example reorder level calculation
+      ])
+
+      // Add table to the PDF
+      autoTable(doc, {
+        head: [headers],
+        body: body,
+        startY: 50,
+        theme: 'grid',
+        styles: { fontSize: 10 },
+        headStyles: { fillColor: [50, 50, 50] },
+        columnStyles: { 0: { cellWidth: 'auto' } },
+        margin: { top: 60 }
+      })
+
+      // Save the PDF
+      doc.save(`stock_take_${stockTakeData.date}.pdf`)
     },
 
     resetForm() {

@@ -6,35 +6,57 @@
       </v-tab>
     </v-tabs>
 
-    <v-tab-item v-if="currentTab === 'Employees'">
-      <v-data-table
-        :headers="employeeHeaders"
-        :items="employees"
-        item-key="id"
-        class="bg-cardColor"
-      >
-        <template v-slot:[`item.actions`]="{ item }">
-          <v-btn @click="openRoleDialog(item)" color="primary">
-            <v-icon>mdi-dots-horizontal</v-icon></v-btn
+    <v-tab-item>
+      <Toast position="top-center" />
+      <v-card class="bg-cardColor">
+        <v-card-title
+          class="d-flex align-center pe-2 text-h5 font-weight-regular"
+          height="auto"
+          width="100%"
+          ><v-row align="center" justify="space-between"
+            ><v-col cols="12" lg="6">
+              <v-label
+                class="ms-2 h2 font-family-Nunito text-headingTextColor"
+                height="auto"
+                width="auto"
+                >{{ currentTab }}</v-label
+              ></v-col
+            ><v-col cols="12" lg="6"></v-col
+          ></v-row>
+        </v-card-title>
+        <v-card-text>
+          <v-tab-item v-if="currentTab === 'Employees'"
+            ><v-data-table
+              :headers="employeeHeaders"
+              :items="employees"
+              item-key="id"
+              class="bg-cardColor"
+            >
+              <template v-slot:[`item.actions`]="{ item }">
+                <v-btn @click="openRoleDialog(item)" color="primary">
+                  <v-icon>mdi-dots-horizontal</v-icon></v-btn
+                >
+              </template>
+            </v-data-table></v-tab-item
           >
-        </template>
-      </v-data-table>
-    </v-tab-item>
 
-    <v-tab-item v-if="currentTab === 'Roles'">
-      <v-data-table :headers="roleHeaders" :items="roles" item-key="id" class="bg-cardColor">
-        <template v-slot:[`item.actions`]="{ item }">
-          <v-btn @click="openRoleDialog(item)" color="primary">
-            <v-icon color="primary">mdi-dots-horizontal</v-icon></v-btn
-          >
-        </template>
-      </v-data-table>
+          <v-tab-item v-if="currentTab === 'Roles'">
+            <v-data-table :headers="roleHeaders" :items="roles" item-key="id" class="bg-cardColor">
+              <template v-slot:[`item.actions`]="{ item }">
+                <v-btn @click="openRoleDialog(item)" color="primary">
+                  <v-icon color="primary">mdi-dots-horizontal</v-icon></v-btn
+                >
+              </template>
+            </v-data-table>
+          </v-tab-item>
+        </v-card-text>
+      </v-card>
     </v-tab-item>
 
     <!-- Employee Edit Dialog -->
     <v-dialog v-model="employeeDialog" max-width="500px">
-      <v-card>
-        <v-card-title>Edit Employee</v-card-title>
+      <v-card class="bg-cardColor">
+        <v-card-title>Edit Employee's Hourly Rate</v-card-title>
         <v-card-subtitle>
           <v-text-field
             v-model="currentEmployee.firstName"
@@ -72,8 +94,8 @@
 
     <!-- Role Edit Dialog -->
     <v-dialog v-model="roleDialog" max-width="500px">
-      <v-card>
-        <v-card-title>Edit Role</v-card-title>
+      <v-card class="bg-cardColor">
+        <v-card-title>Edit Role's Hourly Rate</v-card-title>
         <v-card-subtitle>
           <v-text-field v-model="currentRole.roleName" label="Role Name" readonly></v-text-field>
           <v-text-field
