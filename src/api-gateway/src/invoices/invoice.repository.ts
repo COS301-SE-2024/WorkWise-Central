@@ -45,6 +45,19 @@ export class InvoiceRepository {
     }).lean();
   }
 
+  async findAllForClient(identifier: Types.ObjectId) {
+    return await this.InvoiceModel.find({
+      $and: [
+        {
+          clientId: identifier,
+        },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    }).lean();
+  }
+
   async findById(identifier: Types.ObjectId) {
     return this.InvoiceModel.findOne({
       $and: [
