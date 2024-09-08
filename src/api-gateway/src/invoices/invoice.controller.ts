@@ -215,7 +215,7 @@ export class InvoiceController {
     type: String,
   })
   @Get('/all/forClient/:clientId')
-  async findAllForEmployee(
+  async findAllForClient(
     @Headers() headers: any,
     @Param('clientId') clientId: Types.ObjectId,
     @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
@@ -224,11 +224,11 @@ export class InvoiceController {
       throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
     }
 
-    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    // const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     // if (currentEmployee.role.permissionSuite.includes('view all Invoice')) {
     let data;
     try {
-      data = await this.invoiceService.findAllInCompany(currentEmployee.companyId);
+      data = await this.invoiceService.findAllForClient(clientId);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }

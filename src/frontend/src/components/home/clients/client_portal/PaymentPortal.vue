@@ -6,10 +6,10 @@
       <v-list>
         <v-list-item v-for="invoice in invoices" :key="invoice.id">
           <v-list-item-content>
-            <v-list-item-title>Invoice #{{ invoice.number }}</v-list-item-title>
-            <v-list-item-subtitle>Date: {{ invoice.date }}</v-list-item-subtitle>
-            <v-list-item-subtitle>Amount: {{ invoice.amount }}</v-list-item-subtitle>
-            <v-list-item-subtitle>Status: {{ invoice.status }}</v-list-item-subtitle>
+            <v-list-item-title>Invoice #{{ invoice.invoiceNumber }}</v-list-item-title>
+            <v-list-item-subtitle>Payment date: {{ invoice.paymentDate }}</v-list-item-subtitle>
+            <v-list-item-subtitle>Amount: {{ invoice.total }}</v-list-item-subtitle>
+            <v-list-item-subtitle>Status: {{ invoice.paid }}</v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
             <form
@@ -19,13 +19,13 @@
             >
               <input type="hidden" name="merchant_id" :value="merchantId" />
               <input type="hidden" name="merchant_key" :value="merchantKey" />
-              <input type="hidden" name="amount" :value="invoice.amount" />
-              <input type="hidden" name="item_name" :value="`Invoice #${invoice.number}`" />
+              <input type="hidden" name="amount" :value="invoice.total" />
+              <input type="hidden" name="item_name" :value="`Invoice #${invoice.invoiceNumber}`" />
             </form>
             <v-btn
               color="success"
               @click="submitPaymentForm(invoice.id)"
-              :disabled="invoice.status === 'Paid'"
+              :disabled="invoice.paid === 'Paid'"
             >
               Pay Now
             </v-btn>
@@ -44,8 +44,33 @@ export default defineComponent({
   data() {
     return {
       invoices: [
-        { id: 1, number: 'INV-001', date: '2023-07-01', amount: '100.00', status: 'Unpaid' },
-        { id: 2, number: 'INV-002', date: '2023-08-01', amount: '200.00', status: 'Paid' }
+        {
+          id: 1,
+          invoiceNumber: 'invoiceNumber',
+          invoiceDate: 'invoiceDate',
+          paymentDate: 'paymentDate',
+          subTotal: 'Unpaid',
+          total: 'total',
+          tax: 'tax',
+          paid: 'paid',
+          clientId: 'clientId',
+          jobId: 'jobId',
+          companyId: 'companyId',
+          inventoryItems: [{
+            description: 'description',
+            quantity: 'quantity',
+            unitPrice: 'unitPrice',
+            discount: 'discount',
+            total: 'total'
+          }],
+          laborItems: [{
+            description: 'description',
+            quantity: 'quantity',
+            unitPrice: 'unitPrice',
+            discount: 'discount',
+            total: 'total'
+          }]
+        }
       ],
       clientId: '66cf13c3a76252f35d46c8fb', //This is for testing purposes
       client: {
@@ -113,10 +138,11 @@ export default defineComponent({
         })
 
       this.companyId = this.client.details.companyId
+      console.log('this.companyId: ', this.companyId)
 
       //Getting the company info
       await axios
-        .get(`${url}admin/request/all/company/${this.companyId}/detailed`, config)
+        .get(`${url}/company/${this.companyId}/detailed`, config)
         .then((response) => {
           this.merchantId = response.data.accountDetails.merchantId
           this.merchantKey = response.data.accountDetails.merchantKey
@@ -126,7 +152,15 @@ export default defineComponent({
         })
 
       //Getting the invoices
-      
+      await axios
+        .get(`${url}invoice/all/forClient/${this.clientId}`, config)
+        .then((response) => {
+          this.invoices = response.data
+          console.log('response.data: ', response.data)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
     },
     async isLocalAvailable(localUrl: string) {
       try {

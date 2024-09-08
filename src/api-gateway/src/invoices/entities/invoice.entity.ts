@@ -110,6 +110,7 @@ export class InvoiceApiObject {
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, unique: true })
   id: Types.ObjectId;
+
   @ApiProperty()
   @Prop({ type: Number, required: true, unique: true })
   invoiceNumber: number;
