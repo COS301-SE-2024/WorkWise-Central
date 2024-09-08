@@ -38,7 +38,7 @@ import { InvoiceService } from './invoice.service';
 const className = 'Invoice';
 
 @ApiTags('Invoice')
-@Controller('Invoice')
+@Controller('invoice')
 export class InvoiceController {
   constructor(
     private readonly invoiceService: InvoiceService,
@@ -46,11 +46,10 @@ export class InvoiceController {
     private readonly employeeService: EmployeeService,
   ) {}
 
+  //********Endpoints for test purposes - Start**********/
   @ApiOperation({
     summary: `Refer to Documentation`,
   })
-
-  //********Endpoints for test purposes - Start**********/
   @Get('/all')
   async findAll() {
     const data = await await this.invoiceService.findAll();
