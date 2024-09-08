@@ -377,7 +377,7 @@ export class EmployeeController {
     description: '_id of the employee making the request',
     type: String,
   })
-  @Get('id/:id')
+  @Get('id/:employeeId')
   async findById(
     @Headers() headers: any,
     @Param('employeeId') employeeId: Types.ObjectId,
