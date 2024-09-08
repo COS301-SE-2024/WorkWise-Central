@@ -47,12 +47,38 @@ export default defineComponent({
         { id: 1, number: 'INV-001', date: '2023-07-01', amount: '100.00', status: 'Unpaid' },
         { id: 2, number: 'INV-002', date: '2023-08-01', amount: '200.00', status: 'Paid' }
       ],
-      // invoice:[],
-      merchantId: '10000100',
-      merchantKey: '46f0cd694581a',
+      clientId: '66cf13c3a76252f35d46c8fb', //This is for testing purposes
+      client: {
+        registrationNumber: '',
+        details: {
+          firstName: '',
+          lastName: '',
+          preferredLanguage: '',
+          contactInfo: {
+            phoneNumber: '',
+            email: ''
+          },
+          address: {
+            street: '',
+            suburb: '',
+            province: '',
+            city: '',
+            postalCode: '',
+            complexOrBuilding: ''
+          },
+          vatNumber: '',
+          companyId: '',
+          idNumber: '',
+          type: ''
+        },
+
+      },
+      companyId: '',
+      merchantId: '',
+      merchantKey: '',
       requests: [] as Request[],
       localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
   },
   methods: {
@@ -64,39 +90,59 @@ export default defineComponent({
         console.error('Form not found for invoice:', invoiceId)
       }
     },
-    async getCompanyRequests() {
+    async getRequests() {
+      if (localStorage.getItem('clientId') !== null) {
+        this.clientId = localStorage.getItem('clientId') as string
+      }
+
+      //Getting the client info
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
-      };
-      const url = await this.getRequestUrl();
+      }
+      const url = await this.getRequestUrl()
       await axios
-        .get(`${url}admin/request/all/company/${localStorage.getItem('currentCompany')}/detailed`, config)
+        .get(`${url}client/id/${this.clientId}`, config)
         .then((response) => {
-          this.merchantId = response.data.accountDetails.merchantId;
-          this.merchantKey = response.data.accountDetails.merchantKey;
+          this.client = response.data
         })
         .catch((error) => {
-          console.error(error);
-        });
+          console.error(error)
+        })
+
+      this.companyId = this.client.details.companyId
+
+      //Getting the company info
+      await axios
+        .get(`${url}admin/request/all/company/${this.companyId}/detailed`, config)
+        .then((response) => {
+          this.merchantId = response.data.accountDetails.merchantId
+          this.merchantKey = response.data.accountDetails.merchantKey
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+
+      //Getting the invoices
+      
     },
     async isLocalAvailable(localUrl: string) {
       try {
-        const res = await axios.get(localUrl);
-        return res.status >= 200 && res.status < 300;
+        const res = await axios.get(localUrl)
+        return res.status >= 200 && res.status < 300
       } catch (error) {
-        return false;
+        return false
       }
     },
     async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl);
-      return localAvailable ? this.localUrl : this.remoteUrl;
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
   },
   mounted() {
-    this.getCompanyRequests();
+    this.getRequests()
   }
 })
 </script>
