@@ -56,20 +56,24 @@ export default defineComponent({
           clientId: 'clientId',
           jobId: 'jobId',
           companyId: 'companyId',
-          inventoryItems: [{
-            description: 'description',
-            quantity: 'quantity',
-            unitPrice: 'unitPrice',
-            discount: 'discount',
-            total: 'total'
-          }],
-          laborItems: [{
-            description: 'description',
-            quantity: 'quantity',
-            unitPrice: 'unitPrice',
-            discount: 'discount',
-            total: 'total'
-          }]
+          inventoryItems: [
+            {
+              description: 'description',
+              quantity: 'quantity',
+              unitPrice: 'unitPrice',
+              discount: 'discount',
+              total: 'total'
+            }
+          ],
+          laborItems: [
+            {
+              description: 'description',
+              quantity: 'quantity',
+              unitPrice: 'unitPrice',
+              discount: 'discount',
+              total: 'total'
+            }
+          ]
         }
       ],
       clientId: '66cf13c3a76252f35d46c8fb', //This is for testing purposes
@@ -95,8 +99,7 @@ export default defineComponent({
           companyId: '',
           idNumber: '',
           type: ''
-        },
-
+        }
       },
       companyId: '',
       merchantId: '',
@@ -129,9 +132,10 @@ export default defineComponent({
       }
       const url = await this.getRequestUrl()
       await axios
-        .get(`${url}client/id/${this.clientId}`, config)
+        .get(`${url}client/clientPortal/id/${this.clientId}`, config)
         .then((response) => {
-          this.client = response.data
+          console.log('response: ', response)
+          this.client = response.data.data
         })
         .catch((error) => {
           console.error(error)
@@ -142,10 +146,14 @@ export default defineComponent({
 
       //Getting the company info
       await axios
-        .get(`${url}/company/${this.companyId}/detailed`, config)
+        .get(`${url}company/id/${this.companyId}`, config)
         .then((response) => {
-          this.merchantId = response.data.accountDetails.merchantId
-          this.merchantKey = response.data.accountDetails.merchantKey
+          console.log('response: ', response)
+          this.merchantId = response.data.data.accountDetails.merchantId
+          this.merchantKey = response.data.data.accountDetails.merchantKey
+
+          console.log('this.merchantId: ', this.merchantId)
+          console.log('this.merchantKey: ', this.merchantKey)
         })
         .catch((error) => {
           console.error(error)

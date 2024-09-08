@@ -187,8 +187,6 @@ export class InvoiceController {
     // }
   }
 
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
@@ -215,17 +213,7 @@ export class InvoiceController {
     type: String,
   })
   @Get('/all/forClient/:clientId')
-  async findAllForClient(
-    @Headers() headers: any,
-    @Param('clientId') clientId: Types.ObjectId,
-    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
-  ) {
-    if (!currentEmployeeId) {
-      throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
-    }
-
-    // const currentEmployee = await this.employeeService.findById(currentEmployeeId);
-    // if (currentEmployee.role.permissionSuite.includes('view all Invoice')) {
+  async findAllForClient(@Headers() headers: any, @Param('clientId') clientId: Types.ObjectId) {
     let data;
     try {
       data = await this.invoiceService.findAllForClient(clientId);
@@ -233,9 +221,6 @@ export class InvoiceController {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
     return { data: data };
-    // } else {
-    //   throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
-    // }
   }
 
   @UseGuards(AuthGuard)
