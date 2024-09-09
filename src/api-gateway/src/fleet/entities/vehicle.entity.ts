@@ -34,6 +34,9 @@ export class VehicleAvailability {
 
   @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Employee.name, default: null })
   assignedTo?: Types.ObjectId = null;
+
+  @Prop({ type: Date, required: false })
+  updatedAt?: Date;
 }
 
 export class ServiceDetails {

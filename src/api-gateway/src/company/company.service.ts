@@ -188,6 +188,16 @@ export class CompanyService {
 
     return result;
   }
+  feat;
+  async getCompanyNameById(identifier: Types.ObjectId): Promise<string> {
+    const result = await this.companyRepository.findCompanyNameById(identifier);
+
+    if (result == null) {
+      throw new ConflictException('Company not found');
+    }
+
+    return result;
+  }
 
   async getCompanyByIdDetailed(identifier: Types.ObjectId) {
     const populatedFields = ['employees', 'inventoryItems'];
