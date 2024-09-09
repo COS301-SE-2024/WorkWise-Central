@@ -156,4 +156,32 @@ export class EmailService {
       console.log(result);
     }
   }
+
+  async sendClientPortalLink(
+    clientId: Types.ObjectId,
+    clientEmail: string,
+    clientName: string,
+    clientSurname: string,
+    companyName: string,
+    jobTitle: string,
+  ) {
+    const serverUrl = `http://localhost:5173`; //TODO: Point to Deployment <!-- https://tuksui.sharpsoftwaresolutions.net?clientid=clientid-->
+    const url = `${serverUrl}/client-portal?cId=${encodeURIComponent(clientId.toString())}`;
+    const ourEmail = '<support@workwise.com>';
+
+    const result = await this.mailerService.sendMail({
+      to: clientEmail,
+      from: `"Support Team" ${ourEmail}`,
+      subject: 'New Job Alert',
+      template: './client-portal',
+      context: {
+        name: clientName,
+        surname: clientSurname,
+        companyName: companyName,
+        jobTitle: jobTitle,
+        link: url,
+      },
+    });
+    console.log(result);
+  }
 }
