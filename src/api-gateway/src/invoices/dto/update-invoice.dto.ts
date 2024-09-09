@@ -1,47 +1,57 @@
 import { Types } from 'mongoose';
-import { IsArray, IsDate, IsMongoId, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { IsArray, IsDate, IsNumber, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { items } from './create-invoice.dto';
+import { Items } from './create-invoice.dto';
 
 export class UpdateInvoiceDto {
   @IsOptional()
   @ApiProperty()
   @IsNumber()
-  invoiceNumber: number;
+  invoiceNumber?: number;
 
   @ApiProperty()
   @IsOptional()
   @IsDate()
-  invoiceDate: Date;
+  invoiceDate?: Date;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsDate()
+  paymentDate?: Date;
 
   @IsOptional()
   @ApiProperty()
   @IsNumber()
-  subTotal: number;
+  subTotal?: number;
 
   @IsOptional()
   @ApiProperty()
   @IsNumber()
-  total: number;
+  total?: number;
 
   @IsOptional()
   @ApiProperty()
   @IsNumber()
-  tax: number;
+  taxAmount?: number;
+
+  @IsOptional()
+  @ApiProperty()
+  @IsNumber()
+  taxPercentage?: number;
 
   @ApiProperty()
   @IsOptional()
   paid?: boolean;
 
-  @IsNotEmpty()
-  @IsMongoId()
-  @ApiProperty()
-  clientId: Types.ObjectId;
-
-  @IsNotEmpty()
+  @IsOptional()
   @IsArray()
   @ApiProperty()
-  items: items[];
+  inventoryItems?: Items[];
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty()
+  laborItems?: Items[];
 }
 
 export class ExternalInvoiceUpdateDto {

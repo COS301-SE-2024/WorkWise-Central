@@ -3,10 +3,10 @@ import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
 import { CreateInvoiceDto } from '../dto/create-invoice.dto';
 
-export class items {
+export class Items {
   @ApiProperty()
   @Prop({ type: String, required: true })
-  item: string;
+  description: string;
 
   @ApiProperty()
   @Prop({ type: Number, required: true })
@@ -32,7 +32,8 @@ export class Invoice {
     this.invoiceDate = createInvoiceDto.invoiceDate;
     this.subTotal = createInvoiceDto.subTotal;
     this.total = createInvoiceDto.total;
-    this.tax = createInvoiceDto.tax;
+    this.taxAmount = createInvoiceDto.taxAmount;
+    this.taxPercentage = createInvoiceDto.taxPercentage;
     this.paid = createInvoiceDto.paid;
     this.clientId = createInvoiceDto.clientId;
     this.jobId = createInvoiceDto.jobId;
@@ -49,6 +50,10 @@ export class Invoice {
   invoiceDate: Date;
 
   @ApiProperty()
+  @Prop({ required: true, default: new Date() })
+  paymentDate: Date;
+
+  @ApiProperty()
   @Prop({ type: Number, required: true })
   subTotal: number;
 
@@ -58,7 +63,11 @@ export class Invoice {
 
   @ApiProperty()
   @Prop({ type: Number, required: true })
-  tax: number;
+  taxAmount: number;
+
+  @ApiProperty()
+  @Prop({ type: Number, required: true })
+  taxPercentage: number;
 
   @ApiProperty()
   @Prop({ type: Boolean, required: true, default: false })
@@ -77,8 +86,12 @@ export class Invoice {
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [items], required: true })
-  items: items[];
+  @Prop({ type: [Items], required: true })
+  inventoryItems: Items[];
+
+  @ApiProperty()
+  @Prop({ type: [Items], required: true })
+  laborItems: Items[];
 
   @ApiHideProperty()
   @Prop({ required: true, default: new Date() })
@@ -97,7 +110,6 @@ export class InvoiceApiObject {
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, unique: true })
   id: Types.ObjectId;
-
   @ApiProperty()
   @Prop({ type: Number, required: true, unique: true })
   invoiceNumber: number;
@@ -105,6 +117,10 @@ export class InvoiceApiObject {
   @ApiProperty()
   @Prop({ required: true, default: new Date() })
   invoiceDate: Date;
+
+  @ApiProperty()
+  @Prop({ required: true, default: new Date() })
+  paymentDate: Date;
 
   @ApiProperty()
   @Prop({ type: Number, required: true })
@@ -135,8 +151,12 @@ export class InvoiceApiObject {
   companyId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: [items], required: true })
-  items: items[];
+  @Prop({ type: [Items], required: true })
+  inventoryItems: Items[];
+
+  @ApiProperty()
+  @Prop({ type: [Items], required: true })
+  laborItems: Items[];
 
   @ApiHideProperty()
   @Prop({ required: true, default: new Date() })
