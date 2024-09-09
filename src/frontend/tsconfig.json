@@ -20,7 +20,7 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": ["vuetify"],
+    "types": ["vuetify", "node"],
     "paths": {
       "@/*": ["src/*"]
     },
