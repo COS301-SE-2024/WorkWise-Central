@@ -48,10 +48,10 @@ export class InvoiceService {
       return new ValidationResult(false, `Job not found`);
     }
 
-    //Checking that the items exist
-    if (Invoice.inventoryItems.length === 0 && Invoice.laborItems.length === 0) {
-      return new ValidationResult(false, `Items not found`);
-    }
+    // //Checking that the items exist
+    // if (Invoice.inventoryItems.length === 0 && Invoice.laborItems.length === 0) {
+    //   return new ValidationResult(false, `Items not found`);
+    // }
 
     //checking that the client exists
     if (!(await this.clientService.getClientByIdInternal(Invoice.clientId))) {
@@ -62,7 +62,9 @@ export class InvoiceService {
   }
 
   async create(createInvoiceDto: CreateInvoiceDto) {
+    console.log('createInvoiceDto: ', createInvoiceDto);
     const validation = await this.validateCreateInvoice(createInvoiceDto);
+    console.log('validation: ', validation);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }

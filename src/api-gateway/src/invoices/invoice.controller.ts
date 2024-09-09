@@ -85,18 +85,16 @@ export class InvoiceController {
     @Body()
     body: CreateInvoiceOuterDto,
   ) {
-    // const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
-    // if (currentEmployee.role.permissionSuite.includes('add new Invoice item')) {
+    console.log('In create invoice controller');
+    console.log('body: ', body);
     let data;
     try {
       data = await this.invoiceService.create(body.createInvoiceDto);
     } catch (e) {
+      console.log('Error: ', e);
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
     return { data: data };
-    // } else {
-    //   throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
-    // }
   }
 
   @UseGuards(AuthGuard)
