@@ -1,14 +1,23 @@
-import { Global, Injectable } from '@nestjs/common';
+import { forwardRef, Global, Inject, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UserConfirmation } from '../users/entities/user-confirmation.entity';
 import { InviteToJoin } from '../admin/entities/invite-to-join.entity';
 import { Types } from 'mongoose';
 import { EmailInfoDto, PasswordResetDto } from './dto/emailInfo.dto';
+import { NotificationService } from '../notification/notification.service';
+import { UsersService } from '../users/users.service';
+import { Message } from '../notification/entities/notification.entity';
 
 @Global()
 @Injectable()
 export class EmailService {
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(
+    private readonly mailerService: MailerService,
+    @Inject(forwardRef(() => NotificationService))
+    private readonly notificationService: NotificationService,
+    @Inject(forwardRef(() => UsersService))
+    private readonly userService: UsersService,
+  ) {}
 
   async sendUserConfirmation(userConfirmation: UserConfirmation) {
     console.log('sendUserConfirmation', userConfirmation);
@@ -53,6 +62,17 @@ export class EmailService {
 
   async sendEmailConfirmation(details: { name: string; surname: string; email: string }, token: string) {
     const url = `example.com/auth/confirm?token=${encodeURIComponent(token)}`; //TODO:confirm
+
+    const user = await this.userService.getUserByEmail(details.email);
+    if (user) {
+      this.notificationService.create({
+        recipientIds: [user._id],
+        message: new Message(
+          'Please confirm you email address',
+          `Please go to your email and you should have received a confirmation email.`,
+        ),
+      });
+    }
 
     const result = await this.mailerService.sendMail({
       to: details.email,
@@ -125,6 +145,16 @@ export class EmailService {
     const existingUserLink = `${tempUrl}/company-invites?inviteId=${encodeURIComponent(inviteId.toString())}`;
 
     if (hasAccount) {
+      const user = await this.userService.getUserByEmail(inviteDto.emailBeingInvited);
+      if (user) {
+        this.notificationService.create({
+          recipientIds: [user._id],
+          message: new Message('New invite to Company!', `You have been invited to join ${inviteDto.companyName}`, {
+            inviteId: inviteId,
+          }),
+        });
+      }
+
       const result = await this.mailerService.sendMail({
         to: inviteDto.emailBeingInvited,
         from: '"Support Team" <support@workwise.com>',
