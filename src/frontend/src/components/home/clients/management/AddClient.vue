@@ -540,7 +540,8 @@ export default defineComponent({
             this.addDialog = false
             this.isDeleting = false
             this.$emit('createClient', res.data.data)
-          }, 1500)
+            this.$emit('close')
+          }, 1000)
         })
         .catch((res) => {
           console.log('Client creation failed')
