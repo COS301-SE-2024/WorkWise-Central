@@ -165,6 +165,7 @@ export default defineComponent({
         .then((response) => {
           this.merchant_id = response.data.data.accountDetails.merchantId
           this.merchant_key = response.data.data.accountDetails.merchantKey
+          this.passPhrase = response.data.data.accountDetails.passPhrase
         })
         .catch((error) => {
           console.error(error)
