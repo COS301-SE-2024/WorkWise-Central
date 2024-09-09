@@ -95,18 +95,18 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
+<script lang="js">
 import { defineComponent } from 'vue'
 import axios from 'axios'
 export default defineComponent({
   props: {
-    EmployeeDetails: Object
+    EmployeeDetails: { type: Object, required: true }
   },
   data() {
     return {
       clientDialog: false,
       isDeleting: false,
-      subnames: [] as string[],
+      subnames: [],
       supname: '',
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
@@ -159,7 +159,7 @@ export default defineComponent({
       console.log('closing dialog:' + this.clientDialog)
       this.clientDialog = false
     },
-    async isLocalAvailable(localUrl: string) {
+    async isLocalAvailable(string) {
       try {
         const res = await axios.get(localUrl)
         return res.status < 300 && res.status > 199
