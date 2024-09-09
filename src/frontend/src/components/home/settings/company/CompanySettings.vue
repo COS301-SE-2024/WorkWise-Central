@@ -15,6 +15,7 @@
           <EditPriority v-if="currentSettings === 'Priority'" />
           <EditTags v-if="currentSettings === 'Tags'" />
           <EditStatus v-if="currentSettings === 'Status'" />
+          <HourlyRate v-if="currentSettings === 'Hourly Rate'" />
         </v-col>
         <v-col cols="12" lg="4" order="first" order-lg="last">
           <v-card class="elevation-0"
@@ -53,6 +54,7 @@ import EditStructure from './EditStructure.vue'
 import EditPriority from './EditPriority.vue'
 import EditTags from './EditTags.vue'
 import EditStatus from './EditStatus.vue'
+import HourlyRate from './HourlyRate.vue'
 
 export default defineComponent({
   name: 'CompanySettings',
@@ -93,6 +95,11 @@ export default defineComponent({
           icon: 'fa: fa-solid fa-check-circle',
           label: 'Status',
           route: '/edit-status'
+        },
+        {
+          icon: 'fa: fa-solid fa-dollar-sign',
+          label: 'Hourly Rate',
+          route: '/hourly-rate'
         }
       ]
     }
@@ -103,7 +110,8 @@ export default defineComponent({
     EditPriority,
     EditTags,
     EditStructure,
-    EditStatus
+    EditStatus,
+    HourlyRate
   },
   methods: {
     close() {
@@ -128,6 +136,9 @@ export default defineComponent({
       } else if (name === 'Status') {
         this.currentSettings = 'Status'
         sessionStorage.setItem('currentSettings', 'Status')
+      } else if (name === 'Hourly Rate') {
+        this.currentSettings = 'Hourly Rate'
+        sessionStorage.setItem('currentSettings', 'Hourly Rate')
       }
     }
   }

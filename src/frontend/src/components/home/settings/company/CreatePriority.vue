@@ -13,7 +13,7 @@
         Create Priority
       </v-btn>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title> Create new Priority</v-card-title>
       <v-card-text>
         <v-form v-model="formIsValid" ref="form">
@@ -180,7 +180,7 @@ export default defineComponent({
           setTimeout(() => {
             this.dialog = false
             this.isDeleting = false
-            this.$emit('Created', res.data.data)
+            this.$emit('CreatedPriority', res.data.data)
           }, 3000)
         })
         .catch((err) => {

@@ -1,5 +1,12 @@
 <template>
-  <v-dialog v-model="addDialog" max-height="800" max-width="600" scrollablea :opacity="0.1">
+  <v-dialog
+    v-model="addDialog"
+    max-height="800"
+    max-width="600"
+    scrollable
+    :opacity="0.1"
+    @click:outside="resetFields"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         class="text-none font-weight-regular hello"
@@ -12,7 +19,7 @@
         Add Inventory</v-btn
       >
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
         Add Inventory
@@ -78,7 +85,7 @@
         ><v-container
           ><v-row justify="end"
             ><v-col cols="12" lg="6" order="last" order-lg="first">
-              <v-btn @click="close" color="error" block :loading="isDeleting"
+              <v-btn @click="close(), resetFields()" color="error" block :loading="isDeleting"
                 ><v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
                 >Cancel
               </v-btn></v-col
@@ -209,6 +216,13 @@ export default defineComponent({
     },
     close() {
       this.addDialog = false
+    },
+    resetFields() {
+      this.name = ''
+      this.description = ''
+      this.costPrice = ''
+      this.currentStockLevel = ''
+      this.reorderLevel = ''
     },
     async isLocalAvailable(localUrl: string) {
       try {

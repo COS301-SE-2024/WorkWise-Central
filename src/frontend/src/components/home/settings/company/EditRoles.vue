@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
         height="auto"
@@ -13,7 +13,7 @@
               width="auto"
               >Roles</v-label
             ></v-col
-          ><v-col cols="12" lg="6"><CreateRoles /></v-col
+          ><v-col cols="12" lg="6"><CreateRoles @CreatedRoles="getRoles" /></v-col
         ></v-row>
       </v-card-title>
       <v-divider></v-divider>
@@ -63,7 +63,7 @@
                   >
                 </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeleteRole :roleId="item._id" />
+                  <DeleteRole :roleId="item._id" @DeletedRole="getRoles" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -92,7 +92,7 @@
       </v-card-actions>
     </v-card>
     <v-dialog v-model="dialog" persistent max-width="500px">
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title class="text-h5"> Edit Role </v-card-title>
 
         <v-card-text>
@@ -172,7 +172,8 @@ export default defineComponent({
       _id: '',
       permissionSuite: [],
       roleName: ''
-    }
+    },
+    bulkRoleUpdateDto: []
   }),
 
   methods: {
@@ -292,10 +293,20 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
+      for (let i = 1; i < this.roleUpdates.length; i++) {
+        this.bulkRoleUpdateDto.push({
+          roleId: this.roleUpdates[i]._id,
+          updateRoleDto: {
+            roleName: this.roleUpdates[i].roleName,
+            permissionSuite: this.roleUpdates[i].permissionSuite
+          }
+        })
+      }
       const data = {
         currentEmployeeId: localStorage.getItem('employeeId'),
-        bulkUpdateDTO: []
+        bulkUpdateRoleDto: this.bulkRoleUpdateDto
       }
+      console.log(JSON.stringify(data))
       const apiURL = await this.getRequestUrl()
       await axios
         .patch(`${apiURL}role/bulkUpdate/${this.companyID}`, config, data)
@@ -329,13 +340,6 @@ export default defineComponent({
     },
     cancel() {
       this.dialog = false
-      this.$emit('cancel')
-      this.$toast.add({
-        severity: 'info',
-        summary: 'Info',
-        detail: 'Company update cancelled',
-        life: 3000
-      })
     },
     saveChanges() {
       this.$emit('save', this.company)
@@ -361,6 +365,9 @@ export default defineComponent({
     selectItem(item) {
       console.log(item)
       this.selectedItem = item
+    },
+    addRoleToBulkUpdateDto(role) {
+      this.bulkRoleUpdateDto.push(role)
     }
   },
   mounted() {

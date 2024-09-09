@@ -2,20 +2,19 @@
 import { ref } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
 import UserAvatar from './UserAvatar.vue'
-const isVisible = ref(true)
+const isVisible = ref(false)
 const drawer = ref(true)
 
 const open = ref(['Dashboard'])
 
 const dashboardSubItems = ref([
   { title: 'Calender', icon: 'fa: fa-solid fa-house', routeName: 'dashboard' },
-  { title: 'Statistics', icon: 'fa: fa-solid fa-chart-line', routeName: 'statisticView' },
-  { title: 'TBD', icon: 'fa: fa-solid fa-clock', routeName: '404' }
+  { title: 'Statistics', icon: 'fa: fa-solid fa-chart-line', routeName: 'statisticView' }
 ])
 
 const clientSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'client-desk-view' },
-  { title: 'Client Center', icon: 'fa: fa-brands fa-centercode', routeName: 'client-center' },
+
   { title: 'Customer Feedback', icon: 'fa: fa-solid fa-comment', routeName: 'client-feedback' }
 ])
 
@@ -39,14 +38,14 @@ const inventorySubItems = ref([
     routeName: 'report-view'
   },
   {
-    title: 'Inventory Stock Take',
+    title: 'Stock Take',
     icon: 'fa: fa-solid fa-chart-line',
     routeName: 'stock-take'
   }
 ])
 const invoicesSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'invoices' },
-  { title: 'Invoice Center', icon: 'fa: fa-solid fa-file-invoice', routeName: '404' },
+  { title: 'Invoice Center', icon: 'fa: fa-solid fa-file-invoice', routeName: 'invoice-center' },
   { title: 'Invoice Board', icon: 'fa: fa-solid fa-table', routeName: '404' }
 ])
 
@@ -190,13 +189,7 @@ export default defineComponent({
         ></v-icon>
       </div>
     </v-app-bar>
-    <v-navigation-drawer
-      class="bg-background"
-      app
-      v-model="drawer"
-      :rail="isVisible"
-      min-height="100%"
-    >
+    <v-navigation-drawer class="bg-background" app v-model="isVisible" min-height="100%">
       <v-list v-model:open="open">
         <v-list-group fluid value="Dashboard">
           <template v-slot:activator="{ props }">

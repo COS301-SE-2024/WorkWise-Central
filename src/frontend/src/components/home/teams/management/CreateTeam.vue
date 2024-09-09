@@ -6,12 +6,13 @@
         color="secondary"
         v-bind="activatorProps"
         variant="elevated"
+        block
         ><v-icon icon="fa:fa-solid fa-plus" color="" size="xs" />
         <v-icon icon="fa:fa-solid fa-users" color="" />
         Create Team</v-btn
       >
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-users"></v-icon>
         Create Team
@@ -207,6 +208,11 @@ export default defineComponent({
       }
       console.log(this.teamMemberIds)
       return this.teamMemberIds
+    },
+    resetFields() {
+      this.teamName = ''
+      this.teamLeaderId = ''
+      this.teamMembers = ''
     },
     close() {
       this.addDialog = false

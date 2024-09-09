@@ -23,7 +23,7 @@
     </template>
 
     <template v-slot:default="{ isActive }">
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title> Enter the due date for this job </v-card-title>
 
         <v-card-text>

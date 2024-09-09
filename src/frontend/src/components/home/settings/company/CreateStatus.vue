@@ -14,7 +14,7 @@
         Create Status
       </v-btn>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title> Create new Status</v-card-title>
       <v-card-text>
         <v-form v-model="formIsValid" ref="form">
@@ -169,7 +169,7 @@ export default defineComponent({
           setTimeout(() => {
             this.isDeleting = false
             this.dialog = false
-            this.$emit('Created', response.data.data)
+            this.$emit('CreatedStatus', response.data.data)
           }, 3000)
         })
         .catch((error) => {

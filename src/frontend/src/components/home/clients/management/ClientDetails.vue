@@ -6,7 +6,7 @@
       </v-btn>
     </template>
 
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title> Client Details </v-card-title>
       <v-card-text>
         <v-col>

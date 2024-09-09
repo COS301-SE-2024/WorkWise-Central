@@ -44,6 +44,7 @@ import { extractUserId, isBase64Uri } from '../utils/Utils';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UsersService } from '../users/users.service';
 import { CurrentEmployeeDto } from '../shared/dtos/current-employee.dto';
+import { ListOfUpdatesForUsedInventory, ListOfUsedInventory } from './dto/use-inventory.dto';
 
 const className = 'Inventory';
 
@@ -245,7 +246,83 @@ export class InventoryController {
       console.log('in if');
       let data;
       try {
-        data = await this.inventoryService.update(id, externalInventoryUpdateDto.updateInventoryDto);
+        data = await this.inventoryService.update(id, externalInventoryUpdateDto);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @ApiOperation({
+    summary: `Record use of inventory in a job`,
+    description: `Send a array of the items used and the amounts used`,
+  })
+  @ApiOkResponse({
+    type: InventoryResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @ApiBody({ type: ListOfUsedInventory })
+  @Patch('/recordStockUse')
+  async recordStockUse(
+    @Headers() headers: any,
+    @Body()
+    listOfUsedInventory: ListOfUsedInventory,
+  ) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, listOfUsedInventory.currentEmployeeId);
+
+    const currentEmployee = await this.employeeService.findById(listOfUsedInventory.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('record inventory use')) {
+      let data;
+      try {
+        data = await this.inventoryService.recordStockUse(listOfUsedInventory);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @ApiOperation({
+    summary: `Update an ${className} stock use recorded`,
+    description: `Send an array of inventory id's and the change in the amount recorded before`,
+  })
+  @ApiOkResponse({
+    type: InventoryResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @ApiBody({ type: ListOfUpdatesForUsedInventory })
+  @Patch('/updateStockUse')
+  async updateStockUse(
+    @Headers() headers: any,
+    @Body()
+    listOfUsedInventory: ListOfUpdatesForUsedInventory,
+  ) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, listOfUsedInventory.currentEmployeeId);
+
+    const currentEmployee = await this.employeeService.findById(listOfUsedInventory.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('record inventory use')) {
+      let data;
+      try {
+        data = await this.inventoryService.updateStockUse(listOfUsedInventory);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }

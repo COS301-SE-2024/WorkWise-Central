@@ -2,41 +2,71 @@
   <v-container>
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
-        <h1 class="text-xl font-semibold">Stock Management</h1>
+        <h1 class="text-xl font-semibold">Stock Take</h1>
         <v-divider></v-divider>
       </v-col>
     </v-row>
+
     <v-row>
-      <v-col v-for="item in inventoryItems" :key="item._id" cols="12" sm="6" md="4">
-        <v-card>
-          <v-card-title>{{ item.name }}</v-card-title>
-          <v-card-subtitle>Cost Price: R{{ item.costPrice }}</v-card-subtitle>
-          <v-card-actions>
-            <v-container
-              ><v-row
-                ><v-col>
-                  <v-btn color="success" @click="showChart(item)" block>
-                    <v-icon icon="fa: fa-solid fa-chart-simple" color="success"></v-icon> Show Stock
-                    Chart
-                  </v-btn></v-col
-                ></v-row
-              >
-              <v-col>
-                <v-btn color="error" @click="showDialog = true" block
-                  ><v-icon icon="fa: fa-solid fa-clipboard" color="error"></v-icon>Record
-                  Stock</v-btn
-                ></v-col
-              ></v-container
+      <v-container>
+        <v-card class="bg-cardColor">
+          <v-card-title>
+            <v-row>
+              <v-col cols="12" lg="6">
+                <v-text-field
+                  v-model="searchQuery"
+                  label="Search"
+                  placeholder="Search for an item"
+                  outlined
+                  variant="outlined"
+                  color="primary"
+                  dense
+                  clearable
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" lg="6">
+                <v-text-field
+                  type="date"
+                  placeholder="Date of Stock Take"
+                  color="primary"
+                  variant="outlined"
+                  v-model="currentDate"
+                >
+                </v-text-field>
+              </v-col> </v-row
+          ></v-card-title>
+          <v-card-text>
+            <v-data-table
+              :headers="headers"
+              :items="filteredInventoryItems"
+              item-key="_id"
+              :row-props="getRowProps"
+              :header-props="{ class: 'bg-secondRowColor h6' }"
+              class="bg-cardColor"
             >
-          </v-card-actions>
-        </v-card>
-      </v-col>
+              <template v-slot:[`item.actions`]="{ item }">
+                <v-btn color="success" @click="showChart(item)" block>
+                  <v-icon icon="fa: fa-solid fa-chart-simple" color="success"></v-icon> Show Stock
+                  Chart
+                </v-btn>
+                <v-btn color="error" @click="selectItem(item)" block>
+                  <v-icon icon="fa: fa-solid fa-clipboard" color="error"></v-icon> Record Stock
+                </v-btn>
+              </template>
+            </v-data-table>
+
+            <v-btn color="success" block @click="saveAllStockTake">
+              <v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon> Save
+            </v-btn></v-card-text
+          >
+        </v-card></v-container
+      >
     </v-row>
   </v-container>
 
   <!-- Chart Dialog -->
   <v-dialog v-model="chartDialog" max-width="600px">
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>Stock Levels for {{ selectedItem?.name }}</v-card-title>
       <v-card-text>
         <Chart type="bar" :data="chartData" />
@@ -63,8 +93,8 @@
 
     <!-- Stock Take Dialog -->
     <v-dialog v-model="showDialog" max-width="500px">
-      <v-card>
-        <v-card-title>Add Stock Item</v-card-title>
+      <v-card class="bg-cardColor">
+        <v-card-title>Record Stock of {{ selectedItem.name }}</v-card-title>
         <v-card-text>
           <v-form @submit.prevent="submitStockTake">
             <v-text-field
@@ -100,11 +130,21 @@
               :rules="reorderLevelRules"
             ></v-text-field>
 
-            <v-textarea
-              label="Images (URLs)"
+            <v-file-input
               v-model="selectedItem.images"
-              placeholder="Enter image URLs separated by commas"
-            ></v-textarea>
+              variant="solo"
+              accept="image/*"
+              width="100%"
+              placeholder="Inventory Item Image"
+              @change="handleImageUpload"
+              hint="Image size limit of  5MB"
+              persistent-hint
+              color="black"
+              rounded="md"
+              required
+              clearable
+              data-testid="company-logo-file-input"
+            ></v-file-input>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -144,15 +184,21 @@ export default {
     return {
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
-
+      currentDate: new Date().toISOString().substr(0, 10),
       isUpdating: false,
       searchQuery: '',
       sortOrder: '',
       stockTakeDate: new Date(),
+      headers: [
+        { title: 'Name', value: 'name' },
+        { title: 'Cost Price', value: 'costPrice' },
+        { title: 'Current Stock Level', value: 'currentStockLevel' },
+        { title: 'Actions', value: 'actions', sortable: false }
+      ],
       sortOptions: [
-        { text: 'Name (A-Z)', value: 'name' },
-        { text: 'Stock Level (Low to High)', value: 'stockAsc' },
-        { text: 'Stock Level (High to Low)', value: 'stockDesc' }
+        { title: 'Name (A-Z)', value: 'name' },
+        { title: 'Stock Level (Low to High)', value: 'stockAsc' },
+        { title: 'Stock Level (High to Low)', value: 'stockDesc' }
       ],
       showDialog: false,
       newStockItem: {
@@ -205,7 +251,7 @@ export default {
         // Add more items as needed
       ],
       chartDialog: false,
-      selectedItem: null as any,
+      selectedItem: '' as any,
       chartData: {
         labels: [],
         datasets: []
@@ -217,17 +263,9 @@ export default {
   },
   computed: {
     filteredInventoryItems() {
-      let items = this.inventoryItems.filter((item) =>
+      return this.inventoryItems.filter((item) =>
         item.name.toLowerCase().includes(this.searchQuery.toLowerCase())
       )
-      if (this.sortOrder === 'name') {
-        items = items.sort((a, b) => a.name.localeCompare(b.name))
-      } else if (this.sortOrder === 'stockAsc') {
-        items = items.sort((a, b) => a.currentStockLevel - b.currentStockLevel)
-      } else if (this.sortOrder === 'stockDesc') {
-        items = items.sort((a, b) => b.currentStockLevel - a.currentStockLevel)
-      }
-      return items
     }
   },
   methods: {
@@ -262,6 +300,11 @@ export default {
         this.isUpdating = false
       }
     },
+    getRowProps(index: any) {
+      return {
+        class: index % 2 === 0 ? 'bg-secondRowColor' : ''
+      }
+    },
     submitStockTake() {
       // Convert the images string to an array
       // const imagesArray = this.newStockItem.images.split(',').map((img) => img.trim())
@@ -276,6 +319,53 @@ export default {
       // Reset the form
       this.resetForm()
     },
+    async saveAllStockTake() {
+      const stockTakeData = {
+        date: this.currentDate,
+        inventoryItems: this.filteredInventoryItems,
+        companyID: localStorage.getItem('currentCompany'),
+        currentEmployee: localStorage.getItem('username') || 'John Doe' // Replace with actual employee name if available
+      }
+
+      const doc = new jsPDF()
+      const pageWidth = doc.internal.pageSize.getWidth()
+
+      // Add title
+      doc.setFontSize(18)
+      doc.text('Stock Take Summary', pageWidth / 2, 15, { align: 'center' })
+
+      // Add date and employee name
+      doc.setFontSize(12)
+      doc.text(`Date: ${stockTakeData.date}`, 15, 30)
+      doc.text(`Employee: ${stockTakeData.currentEmployee}`, 15, 40)
+
+      // Create table headers
+      const headers = ['Item Name', 'Cost Price', 'Current Stock Level', 'Reorder Level']
+
+      // Create table body data
+      const body = stockTakeData.inventoryItems.map((item) => [
+        item.name,
+        item.costPrice, // Formatting price
+        item.currentStockLevel,
+        item.currentStockLevel + 30 // Example reorder level calculation
+      ])
+
+      // Add table to the PDF
+      autoTable(doc, {
+        head: [headers],
+        body: body,
+        startY: 50,
+        theme: 'grid',
+        styles: { fontSize: 10 },
+        headStyles: { fillColor: [50, 50, 50] },
+        columnStyles: { 0: { cellWidth: 'auto' } },
+        margin: { top: 60 }
+      })
+
+      // Save the PDF
+      doc.save(`stock_take_${stockTakeData.date}.pdf`)
+    },
+
     resetForm() {
       this.newStockItem = {
         name: '',
@@ -284,6 +374,24 @@ export default {
         currentStockLevel: 0,
         reorderLevel: 0,
         images: ''
+      }
+    },
+    selectItem(item: any) {
+      this.selectedItem = item
+      this.showDialog = true
+    },
+    handleImageUpload(event: Event) {
+      const target = event.target as HTMLInputElement
+      if (target.files && target.files[0]) {
+        const file: File = target.files[0]
+        const reader = new FileReader()
+
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          if (e.target && typeof e.target.result === 'string') {
+            // this.selectItem.images = e.target.result
+          }
+        }
+        reader.readAsDataURL(file)
       }
     },
     showChart(item: any) {
@@ -344,11 +452,66 @@ export default {
     },
     async saveStockTake() {
       const stockTakeData = {
-        date: this.stockTakeDate,
+        date: this.currentDate,
         inventoryItems: this.filteredInventoryItems,
         companyID: localStorage.getItem('currentCompany'),
-        currentEmployee: localStorage.getItem('employeeId')
+        currentEmployee: localStorage.getItem('username')
       }
+
+      const mockEmployeeName = 'John Doe' // Replace with actual employee name if available
+
+      const doc = new jsPDF()
+
+      const pageWidth = doc.internal.pageSize.getWidth()
+
+      // Add title
+      doc.setFontSize(18)
+      doc.text('Stock Take Summary', pageWidth / 2, 15, { align: 'center' })
+
+      // Add date and employee name
+      doc.setFontSize(12)
+      doc.text(`Date: ${this.currentDate}`, 10, 25)
+      doc.text(`Employee: ${stockTakeData.currentEmployee}`, 10, 32)
+
+      // Add a table with inventory data
+      const tableBody = this.filteredInventoryItems.map((item) => {
+        const reorderLevel = item.currentStockLevel + 30
+        const difference = reorderLevel - item.currentStockLevel
+        return [
+          item.name,
+          `R${item.costPrice.toFixed(2)}`,
+          item.currentStockLevel,
+          reorderLevel,
+          difference
+        ]
+      })
+
+      autoTable(doc, {
+        head: [['Item Name', 'Cost Price', 'Current Stock Level', 'Reorder Level', 'Difference']],
+        body: tableBody,
+        startY: 40,
+        theme: 'grid'
+      })
+
+      // Add summary at the end of the PDF
+      const totalItems = this.filteredInventoryItems.length
+      const totalStock = this.filteredInventoryItems.reduce(
+        (sum, item) => sum + item.currentStockLevel,
+        0
+      )
+      const totalReorder = this.filteredInventoryItems.reduce(
+        (sum, item) => sum + (item.currentStockLevel + 30),
+        0
+      )
+
+      // doc.text(`Total Items: ${totalItems}`, 10, doc.autoTable.previous.finalY + 10)
+      // doc.text(`Total Current Stock: ${totalStock}`, 10, doc.autoTable.previous.finalY + 17)
+      // doc.text(`Total Reorder Level: ${totalReorder}`, 10, doc.autoTable.previous.finalY + 24)
+
+      // Save the PDF
+      doc.save(`stock_take_${localStorage.getItem('currentCompanyName')}_${this.currentDate}.pdf`)
+
+      // Save stock take data to the backend
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -356,12 +519,13 @@ export default {
         }
       }
       const apiURL = await this.getRequestUrl()
+
       try {
         await axios.post(`${apiURL}stocktake`, stockTakeData, config).then(() => {
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Stock take saved successfully'
+            detail: 'Stock take saved and PDF generated successfully'
           })
         })
       } catch (error) {

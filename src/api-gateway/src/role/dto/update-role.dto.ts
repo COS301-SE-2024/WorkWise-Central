@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IsArray, IsMongoId, IsNotEmpty, IsNotEmptyObject, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsNotEmptyObject, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateRoleDto {
@@ -13,6 +13,11 @@ export class UpdateRoleDto {
   @ApiProperty()
   @IsString()
   roleName?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty()
+  hourlyRate?: number;
 }
 
 export class ExternalUpdateRoleDto {

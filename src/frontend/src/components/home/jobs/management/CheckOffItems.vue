@@ -85,7 +85,7 @@
                   </template>
 
                   <template v-slot:default="{ isActive }">
-                    <v-card>
+                    <v-card class="bg-cardColor">
                       <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
                         Item actions
                       </v-card-title>
@@ -97,7 +97,7 @@
                           </v-btn>
                         </v-defaults-provider>
                         <v-dialog v-model="assignDialog" max-width="400px">
-                          <v-card>
+                          <v-card class="bg-cardColor">
                             <v-card-title class="text-h5">Assign Employees</v-card-title>
                             <v-card-text class="text-center">
                               <v-label>Assigned Employees</v-label>

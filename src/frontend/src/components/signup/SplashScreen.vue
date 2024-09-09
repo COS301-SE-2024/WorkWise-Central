@@ -169,7 +169,7 @@
                 </v-col>
                 <v-container>
                   <v-row
-                    ><v-col cols="12" lg="6" order="last" order-lg="first">
+                    ><v-col cols="12" lg="6" order="first" order-lg="last">
                       <v-btn
                         :disabled="!valid"
                         text
@@ -185,7 +185,7 @@
                         >Login</v-btn
                       >
                     </v-col>
-                    <v-col cols="12" lg="6" order="first" order-lg="last">
+                    <v-col cols="12" lg="6" order="last" order-lg="first">
                       <v-btn
                         text
                         @click="(signupDialog = true)((loginDialog = false))(resetFields)"
@@ -924,7 +924,7 @@ import JoinCompanyModal from './JoinCompanyModal.vue'
 import axios from 'axios'
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
-import Tutorial from '../home/help/tutorial/Tutorial.vue'
+import Tutorial from './Tutorial.vue'
 import MarketingSplash from './MarketingSplash.vue'
 // import ServicesSplash from './ServicesSplash.vue'
 export default defineComponent({

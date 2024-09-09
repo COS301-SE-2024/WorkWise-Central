@@ -84,6 +84,10 @@ export class Employee {
   companyId: Types.ObjectId;
 
   @ApiProperty()
+  @Prop({ type: Number, required: true, default: 0 })
+  hourlyRate: number;
+
+  @ApiProperty()
   @Prop({
     type: [SchemaTypes.ObjectId],
     required: true,
@@ -158,6 +162,10 @@ export class EmployeeApiObject {
   companyId: Types.ObjectId;
 
   @ApiProperty()
+  @Prop({ type: Number, required: true })
+  hourlyRate: number;
+
+  @ApiProperty()
   @Prop({
     type: [SchemaTypes.ObjectId],
     required: true,
@@ -207,6 +215,10 @@ export class joinedEmployeeApiObject {
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true })
   companyId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: Number, required: true })
+  hourlyRate: number;
 
   @ApiHideProperty()
   @Prop({ required: true, default: new Date() })

@@ -1,6 +1,8 @@
+import { JobService } from './../job/job.service';
+import { EmployeeService } from './../employee/employee.service';
 import { forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateInventoryDto } from './dto/create-inventory.dto';
-import { UpdateInventoryDto } from './dto/update-inventory.dto';
+import { ExternalInventoryUpdateDto } from './dto/update-inventory.dto';
 import { Types } from 'mongoose';
 import { Inventory } from './entities/inventory.entity';
 import { CompanyService } from '../company/company.service';
@@ -8,6 +10,9 @@ import { InventoryRepository } from './inventory.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { FileService } from '../file/file.service';
 import { StockTakeService } from '../stocktake/stocktake.service';
+import { StockMovementsService } from '../stockmovements/stockmovements.service';
+import { CreateStockMovementsDto } from '../stockmovements/dto/create-stockmovements.dto';
+import { ListOfUpdatesForUsedInventory, ListOfUsedInventory } from './dto/use-inventory.dto';
 
 @Injectable()
 export class InventoryService {
@@ -23,6 +28,15 @@ export class InventoryService {
 
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
+
+    @Inject(forwardRef(() => StockMovementsService))
+    private readonly stockMovementsService: StockMovementsService,
+
+    @Inject(forwardRef(() => JobService))
+    private readonly jobService: JobService,
+
+    @Inject(forwardRef(() => EmployeeService))
+    private readonly employeeService: EmployeeService,
   ) {}
 
   async validateCreateInventory(inventory: CreateInventoryDto) {
@@ -91,16 +105,56 @@ export class InventoryService {
     return await this.inventoryRepository.InventoryExistsForCompany(id, companyId);
   }
 
-  async update(id: Types.ObjectId, updateInventoryDto: UpdateInventoryDto) {
+  async recordStockUse(listOfUsedInventory: ListOfUsedInventory) {
+    const employee = await this.employeeService.findById(listOfUsedInventory.currentEmployeeId);
+    const job = await this.jobService.getJobById(listOfUsedInventory.jobId);
+    for (const item of listOfUsedInventory.listOfUsedInventory) {
+      const inventory = await this.findById(item.inventoryId);
+      const dto = new ExternalInventoryUpdateDto();
+      dto.currentEmployeeId = listOfUsedInventory.currentEmployeeId;
+      dto.updateInventoryDto.currentStockLevel = inventory.currentStockLevel - item.amountUsed;
+      dto.updateInventoryDto.reason = employee.userInfo.displayName + ' used this item in ' + job.details.heading;
+      await this.update(inventory._id, dto);
+    }
+  }
+
+  async updateStockUse(listOfUsedInventory: ListOfUpdatesForUsedInventory) {
+    const employee = await this.employeeService.findById(listOfUsedInventory.currentEmployeeId);
+    const job = await this.jobService.getJobById(listOfUsedInventory.jobId);
+    for (const item of listOfUsedInventory.listOfUsedInventory) {
+      const inventory = await this.findById(item.inventoryId);
+      const dto = new ExternalInventoryUpdateDto();
+      dto.currentEmployeeId = listOfUsedInventory.currentEmployeeId;
+      dto.updateInventoryDto.currentStockLevel = inventory.currentStockLevel - item.changeInAmount;
+      dto.updateInventoryDto.reason =
+        employee.userInfo.displayName + ' updated the amount of this item used in ' + job.details.heading;
+      await this.update(inventory._id, dto);
+    }
+  }
+
+  async update(id: Types.ObjectId, updateInventoryDto: ExternalInventoryUpdateDto) {
     const validation = await this.validateUpdateInventory(id);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
-
-    if (updateInventoryDto.name) {
-      await this.stockTakeService.updateInventoryReference(id, updateInventoryDto.name);
+    const inventory = await this.findById(id);
+    const dto = new CreateStockMovementsDto();
+    dto.companyId = inventory.companyId;
+    dto.inventoryId = id;
+    dto.movementDate = new Date();
+    dto.employeeId = updateInventoryDto.currentEmployeeId;
+    if (updateInventoryDto.updateInventoryDto.reason) {
+      dto.reason = updateInventoryDto.updateInventoryDto.reason;
+    } else {
+      dto.reason = 'Inventory Update';
     }
-    return await this.inventoryRepository.update(id, updateInventoryDto);
+
+    await this.stockMovementsService.create(dto);
+
+    if (updateInventoryDto.updateInventoryDto.name) {
+      await this.stockTakeService.updateInventoryReference(id, updateInventoryDto.updateInventoryDto.name);
+    }
+    return await this.inventoryRepository.update(id, updateInventoryDto.updateInventoryDto);
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {
@@ -108,7 +162,7 @@ export class InventoryService {
     if (!(await this.InventoryExists(id))) {
       throw new Error('Inventory item does not exist');
     }
-
+    await this.stockMovementsService.removeInventoryRef(id);
     await this.stockTakeService.removeReferenceToInventory(id);
 
     return await this.inventoryRepository.remove(id);

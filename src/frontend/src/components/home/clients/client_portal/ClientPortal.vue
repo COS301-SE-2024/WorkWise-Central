@@ -1,23 +1,24 @@
 <template>
   <v-app :style="isDarkMode === true ? 'dark' : 'light'">
-    <v-container>
-      <v-tabs bg-color="secondary" dark>
-        <v-tab v-for="tab in tabs" :key="tab" @click="changeSection(tab)">
-          {{ tab }}
-        </v-tab>
-      </v-tabs>
-      <v-tabs-items v-model="activeTab">
-        <v-tab-item v-if="section === 'Current Jobs'">
-          <ClientJobs />
-        </v-tab-item>
-        <v-tab-item v-if="section === 'Review Jobs'">
-          <ReviewJobs />
-        </v-tab-item>
-        <v-tab-item v-if="section === 'Invoices'">
-          <Invoices />
-        </v-tab-item>
-      </v-tabs-items>
-    </v-container>
+    <v-main>
+      <v-container>
+        <v-tabs bg-color="secondary" dark>
+          <v-tab v-for="tab in tabs" :key="tab" @click="changeSection(tab)">
+            {{ tab }}
+          </v-tab>
+        </v-tabs>
+        <v-tabs-items v-model="activeTab">
+          <v-tab-item v-if="section === 'Current Jobs'">
+            <ClientJobs />
+          </v-tab-item>
+          <v-tab-item v-if="section === 'Review Jobs'">
+            <ReviewJobs />
+          </v-tab-item>
+          <v-tab-item v-if="section === 'Invoices'">
+            <Invoices />
+          </v-tab-item>
+        </v-tabs-items> </v-container
+    ></v-main>
   </v-app>
 </template>
 

@@ -7,12 +7,13 @@
         color="warning"
         variant="text"
         v-bind="activatorProps"
+        :disabled="Disabled"
         ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon
         >Edit</v-btn
       >
     </template>
-    <v-card>
-      <v-form @submit.prevent="validateEdits">
+    <v-card class="bg-cardColor">
+      <v-form ref="form" @submit.prevent="validateEdits">
         <v-card-title class="text-center">Edit Employee</v-card-title>
         <v-divider></v-divider>
         <v-card-item>
@@ -149,6 +150,10 @@ export default {
     editedItem: {
       type: Object,
       required: true
+    },
+    Disabled: {
+      type: Boolean,
+      required: true
     }
   },
   data() {
@@ -263,31 +268,69 @@ export default {
       const apiURL = await this.getRequestUrl()
       try {
         const sub_res = await axios.get(
-          apiURL + `employee/listOther/${this.editedItem.employeeId}`,
+          apiURL + `employee/listPotentialSubordinates/${this.editedItem.employeeId}`,
           config
         )
         console.log(sub_res)
-        for (let i = 0; i < sub_res.data.data.length; i++) {
-          const employee_details = await axios.get(
-            apiURL + `employee/detailed/id/${sub_res.data.data[i]._id}`,
-            config
-          )
-
-          console.log(employee_details.data)
-
-          let company_employee: EmployeeInformation2 = {
-            name:
-              employee_details.data.data.userId.personalInfo.firstName +
-              ' ' +
-              employee_details.data.data.userId.personalInfo.surname +
-              ' (' +
-              employee_details.data.data.role.roleName +
-              ')',
-            employeeId: employee_details.data.data._id
-          }
-
-          this.subordinateItemNames.push(company_employee)
-        }
+        // for (let i = 0; i < sub_res.data.data.length; i++) {
+        //   const employee_details = await axios.get(
+        //     apiURL + `employee/detailed/id/${sub_res.data.data[i]._id}`,
+        //     config
+        //   )
+        //
+        //   console.log(employee_details.data)
+        //
+        //   let company_employee: EmployeeInformation2 = {
+        //     name:
+        //       employee_details.data.data.userId.personalInfo.firstName +
+        //       ' ' +
+        //       employee_details.data.data.userId.personalInfo.surname +
+        //       ' (' +
+        //       employee_details.data.data.role.roleName +
+        //       ')',
+        //     employeeId: employee_details.data.data._id
+        //   }
+        //
+        //   this.subordinateItemNames.push(company_employee)
+        // }
+        this.loading = false
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    },
+    async loadSuperiors() {
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
+        params: { currentEmployeeId: localStorage['employeeId'] }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const sup_res = await axios.get(
+          apiURL + `employee/listPotentialSuperiors/${this.editedItem.employeeId}`,
+          config
+        )
+        console.log(sup_res)
+        // for (let i = 0; i < sub_res.data.data.length; i++) {
+        //   const employee_details = await axios.get(
+        //     apiURL + `employee/detailed/id/${sub_res.data.data[i]._id}`,
+        //     config
+        //   )
+        //
+        //   console.log(employee_details.data)
+        //
+        //   let company_employee: EmployeeInformation2 = {
+        //     name:
+        //       employee_details.data.data.userId.personalInfo.firstName +
+        //       ' ' +
+        //       employee_details.data.data.userId.personalInfo.surname +
+        //       ' (' +
+        //       employee_details.data.data.role.roleName +
+        //       ')',
+        //     employeeId: employee_details.data.data._id
+        //   }
+        //
+        //   this.subordinateItemNames.push(company_employee)
+        // }
         this.loading = false
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -387,6 +430,7 @@ export default {
     this.showlocalvalues()
     this.loadRoles()
     this.loadSubordinates()
+    this.loadSuperiors()
   }
 }
 </script>

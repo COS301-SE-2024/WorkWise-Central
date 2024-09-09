@@ -5,7 +5,7 @@
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
       >
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon>mdi-plus</v-icon>
         <span>Delete Priority</span>
@@ -97,7 +97,7 @@ export default defineComponent({
           setTimeout(() => {
             this.deleteDialog = false
             this.isDeleting = false
-            this.$emit('Deleted', response.data.data)
+            this.$emit('DeletedPriority', response.data.data)
           }, 3000)
         })
         .catch((err) => {
