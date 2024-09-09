@@ -48,6 +48,7 @@ import InvoicesView from '@/views/home/invoices/InvoicesView.vue'
 import InvoiceCenter from '@/views/home/invoices/InvoiceCenter.vue'
 import HourlyRate from '@/components/home/settings/company/HourlyRate.vue'
 import SetupPaymentGateway from '@/components/home/settings/company/SetupPaymentGateway.vue'
+import SuccessfulPayment from '@/components/home/clients/client_portal/SuccessfulPayment.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -381,6 +382,11 @@ const router = createRouter({
       path: '/companySettingsView/setup-payment-gateway',
       name: 'setup-payment-gateway',
       component: SetupPaymentGateway
+    },
+    {
+      path: '/client-portal/SuccessfulPayment',
+      name: 'SuccessfulPayment',
+      component: SuccessfulPayment
     }
   ]
 })
