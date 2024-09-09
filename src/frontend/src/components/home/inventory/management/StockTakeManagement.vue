@@ -44,14 +44,8 @@
               :header-props="{ class: 'bg-secondRowColor h6' }"
               class="bg-cardColor"
             >
-              <template v-slot:[`item.actions`]="{ item }">
-                <v-btn color="success" @click="showChart(item)" block>
-                  <v-icon icon="fa: fa-solid fa-chart-simple" color="success"></v-icon> Show Stock
-                  Chart
-                </v-btn>
-                <v-btn color="error" @click="selectItem(item)" block>
-                  <v-icon icon="fa: fa-solid fa-clipboard" color="error"></v-icon> Record Stock
-                </v-btn>
+              <template v-slot:[`item.reorderLevel`]="{ item }">
+                <v-text-field type="number" v-model="item.reorderLevel"> </v-text-field>
               </template>
             </v-data-table>
 
@@ -191,9 +185,10 @@ export default {
       stockTakeDate: new Date(),
       headers: [
         { title: 'Name', value: 'name' },
-        { title: 'Cost Price', value: 'costPrice' },
+
         { title: 'Current Stock Level', value: 'currentStockLevel' },
-        { title: 'Actions', value: 'actions', sortable: false }
+        { title: 'Reorder Level', value: 'reorderLevel' },
+        { title: '', value: 'actions', sortable: false }
       ],
       sortOptions: [
         { title: 'Name (A-Z)', value: 'name' },
@@ -230,24 +225,6 @@ export default {
         (v: string) => !/^0\d/.test(v) || 'Reorder Level cannot have leading zeros'
       ],
       inventoryItems: [
-        {
-          _id: '1',
-          name: 'Item 1',
-          costPrice: 100,
-          currentStockLevel: 50
-        },
-        {
-          _id: '2',
-          name: 'Item 2',
-          costPrice: 150,
-          currentStockLevel: 30
-        },
-        {
-          _id: '3',
-          name: 'Item 3',
-          costPrice: 200,
-          currentStockLevel: 20
-        }
         // Add more items as needed
       ],
       chartDialog: false,
@@ -343,7 +320,7 @@ export default {
       const headers = ['Item Name', 'Cost Price', 'Current Stock Level', 'Reorder Level']
 
       // Create table body data
-      const body = stockTakeData.inventoryItems.map((item) => [
+      const body = stockTakeData.inventoryItems.map((item ) => [
         item.name,
         item.costPrice, // Formatting price
         item.currentStockLevel,
@@ -420,7 +397,7 @@ export default {
       const doc = new jsPDF()
 
       // Loop through each inventory item
-      this.inventoryItems.forEach((item, index) => {
+      this.inventoryItems.forEach((item , index) => {
         // Calculate reorder level
         const reorderLevel = item.currentStockLevel + 30
 

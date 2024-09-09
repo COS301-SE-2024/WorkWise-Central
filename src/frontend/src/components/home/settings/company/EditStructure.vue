@@ -12,7 +12,13 @@
             <v-btn @click="addNode" block> Add Node </v-btn>
           </v-col>
           <v-col cols="12" lg="4">
-            <v-btn color="primary" block @click="getEmployeeDetails" :disabled="!selectedItem">
+            <v-btn
+              color="primary"
+              block
+              @click="getEmployeeDetails"
+              :disabled="!selectedItem"
+              :loading="isLoading"
+            >
               <v-icon icon="fa: fa-solid fa-pencil" color="primary"></v-icon>Edit</v-btn
             >
           </v-col>
@@ -83,16 +89,10 @@
             <v-row
               ><v-col>
                 <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
-                  {{
-                    selectedEmployee?.firstName.charAt(0).toUpperCase() +
-                    selectedEmployee?.firstName.slice(1)
-                  }}
-                  {{
-                    selectedEmployee?.surname.charAt(0).toUpperCase() +
-                    selectedEmployee?.surname.slice(1)
-                  }}
+                  {{ selectedEmployee?.userInfo.firstName }}
+                  {{ selectedEmployee?.userInfo.surname }}
                 </h4>
-                <h3 class="text-center">Role: {{ selectedEmployee?.roleName }}</h3>
+                <h3 class="text-center">Role: {{ selectedEmployee?.role.roleName }}</h3>
               </v-col></v-row
             >
             <v-row
@@ -206,6 +206,7 @@ export default defineComponent({
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       color: 'primary',
+      isLoading: false,
       selectedItem: '',
       employeeDialog: false,
       data: {
@@ -217,6 +218,9 @@ export default defineComponent({
       },
       selectedNodes: [],
       selectedEdges: [],
+      subordinateItemNames: [],
+      roleItems: [],
+      loading: false,
       nodeSize,
       graph: null,
       configs: vNG.defineConfigs({
@@ -404,6 +408,7 @@ export default defineComponent({
       }
     },
     async getEmployeeDetails() {
+      this.isLoading = true
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -422,7 +427,14 @@ export default defineComponent({
         )
         console.log(response)
         this.selectedEmployee = response.data.data
-        this.employeeDialog = true
+
+        this.loadSubordinates()
+        this.loadSuperiors()
+        this.loadRoles()
+        setTimeout(() => {
+          this.employeeDialog = true
+          this.isLoading = false
+        }, 1000)
       } catch (error) {
         console.error(error)
       }
@@ -457,9 +469,10 @@ export default defineComponent({
         params: { currentEmployeeId: localStorage['employeeId'] }
       }
       const apiURL = await this.getRequestUrl()
+      console.log(this.selectedEmployee._id)
       try {
         const sub_res = await axios.get(
-          apiURL + `employee/listPotentialSubordinates/${this.editedItem.employeeId}`,
+          apiURL + `employee/listPotentialSubordinates/${this.selectedEmployee._id}`,
           config
         )
         console.log(sub_res)
@@ -474,9 +487,10 @@ export default defineComponent({
         params: { currentEmployeeId: localStorage['employeeId'] }
       }
       const apiURL = await this.getRequestUrl()
+      console.log(this.selectedEmployee._id)
       try {
         const sup_res = await axios.get(
-          apiURL + `employee/listPotentialSuperiors/${this.editedItem.employeeId}`,
+          apiURL + `employee/listPotentialSuperiors/${this.selectedEmployee._id}`,
           config
         )
         console.log(sup_res)
@@ -497,7 +511,7 @@ export default defineComponent({
         let roles_data = roles_response.data.data
         for (let i = 0; i < roles_data.length; i++) {
           if (
-            roles_data[i].roleName === this.localEditedItem.roleName ||
+            roles_data[i].roleName === this.selectedEmployee.role.roleName ||
             roles_data[i].roleName === 'Owner'
           )
             continue
@@ -518,9 +532,9 @@ export default defineComponent({
       console.log(this.req_obj)
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       let apiURL = await this.getRequestUrl()
-      console.log(this.localEditedItem.employeeId)
+      console.log(this.this.selectedItem.id)
       axios
-        .patch(apiURL + `employee/${this.localEditedItem.employeeId}`, this.req_obj, config)
+        .patch(apiURL + `employee/${this.this.selectedItem.id}`, this.req_obj, config)
         .then((res) => {
           this.$toast.add({
             severity: 'success',
@@ -570,7 +584,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.layout('LR')
+    this.layout('TB')
     this.getGraphView()
   }
 })
