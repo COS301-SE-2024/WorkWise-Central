@@ -1,6 +1,6 @@
 import { JobService } from './../job/job.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { CreateInvoiceDto, items } from './dto/create-invoice.dto';
+import { CreateInvoiceDto, Items } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { Types } from 'mongoose';
 import { Invoice } from './entities/invoice.entity';
@@ -9,6 +9,8 @@ import { InvoiceRepository } from './invoice.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { ClientService } from '../client/client.service';
 import { InventoryService } from '../inventory/inventory.service';
+import { TimeTrackerService } from '../time-tracker/time-tracker.service';
+import { EmployeeService } from '../employee/employee.service';
 
 @Injectable()
 export class InvoiceService {
@@ -27,6 +29,12 @@ export class InvoiceService {
 
     @Inject(forwardRef(() => InventoryService))
     private readonly inventoryService: InventoryService,
+
+    @Inject(forwardRef(() => TimeTrackerService))
+    private readonly timeTrackerService: TimeTrackerService,
+
+    @Inject(forwardRef(() => EmployeeService))
+    private readonly employeeService: EmployeeService,
   ) {}
 
   async validateCreateInvoice(Invoice: CreateInvoiceDto) {
@@ -41,7 +49,7 @@ export class InvoiceService {
     }
 
     //Checking that the items exist
-    if (Invoice.items.length === 0) {
+    if (Invoice.inventoryItems.length === 0 && Invoice.laborItems.length === 0) {
       return new ValidationResult(false, `Items not found`);
     }
 
@@ -59,7 +67,8 @@ export class InvoiceService {
       throw new Error(validation.message);
     }
     const newInvoice = new Invoice(createInvoiceDto);
-    newInvoice.items = createInvoiceDto.items;
+    newInvoice.inventoryItems = createInvoiceDto.inventoryItems;
+    newInvoice.laborItems = createInvoiceDto.laborItems;
     return await this.invoiceRepository.save(newInvoice);
   }
 
@@ -76,13 +85,15 @@ export class InvoiceService {
     }
 
     dto.invoiceDate = new Date();
-    dto.items = [];
-    let subTotal = 0;
+    dto.inventoryItems = [];
+    dto.laborItems = [];
+    let total = 0;
 
+    //Adding the inventory items used for the job
     for (const inventory of job.recordedDetails.inventoryUsed) {
       const inventoryItem = await this.inventoryService.findById(inventory.inventoryItemId);
-      const item = new items();
-      item.item = inventory.inventoryItemName;
+      const item = new Items();
+      item.description = inventory.inventoryItemName;
       item.quantity = inventory.quantityUsed;
       if (inventoryItem.salePrice) {
         item.unitPrice = inventoryItem.salePrice;
@@ -92,16 +103,19 @@ export class InvoiceService {
         item.unitPrice = 0;
       }
       item.discount = 0;
-      item.total = item.unitPrice;
-      subTotal = subTotal + item.total;
-      dto.items.push(item);
+      item.total = item.unitPrice * item.quantity;
+      total = total + item.total;
+      dto.inventoryItems.push(item);
     }
 
-    dto.paid = false;
-    dto.subTotal = subTotal;
-    dto.tax = 0;
+    //TODO: add labor to invoice
 
-    dto.total = dto.subTotal + dto.tax;
+    dto.paid = false;
+    dto.taxPercentage = 15; //VAT percentage in South Africa
+    dto.taxAmount = total * (15 / 115);
+    dto.subTotal = total - dto.taxAmount;
+
+    dto.total = dto.total + dto.taxAmount;
 
     return await this.create(dto);
   }
@@ -135,10 +149,6 @@ export class InvoiceService {
   }
 
   async update(id: Types.ObjectId, updateInvoiceDto: UpdateInvoiceDto) {
-    // const validation = await this.validateUpdateInvoice(id);
-    // if (!validation.isValid) {
-    //   throw new Error(validation.message);
-    // }
     return await this.invoiceRepository.update(id, updateInvoiceDto);
   }
 

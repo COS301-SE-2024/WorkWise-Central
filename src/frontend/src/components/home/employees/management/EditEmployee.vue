@@ -163,8 +163,10 @@ export default {
       isDarkMode: localStorage['theme'] !== 'false',
       role_change: false,
       employeeDialog: false,
+      currentSubordinates: [] as string[],
       roleItems: [] as RoleItem[],
       subordinateItemNames: [] as EmployeeInformation2[],
+      superiorItemNames: [] as EmployeeInformation2[],
       selected_subordinate_names: [] as EmployeeInformation2[],
       selected_supiror_names: [] as EmployeeInformation2[],
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
@@ -262,8 +264,13 @@ export default {
     },
     async loadSubordinates() {
       const config = {
-        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
-        params: { currentEmployeeId: localStorage['employeeId'] }
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
       }
       const apiURL = await this.getRequestUrl()
       try {
@@ -272,27 +279,35 @@ export default {
           config
         )
         console.log(sub_res)
-        // for (let i = 0; i < sub_res.data.data.length; i++) {
-        //   const employee_details = await axios.get(
-        //     apiURL + `employee/detailed/id/${sub_res.data.data[i]._id}`,
-        //     config
-        //   )
-        //
-        //   console.log(employee_details.data)
-        //
-        //   let company_employee: EmployeeInformation2 = {
-        //     name:
-        //       employee_details.data.data.userId.personalInfo.firstName +
-        //       ' ' +
-        //       employee_details.data.data.userId.personalInfo.surname +
-        //       ' (' +
-        //       employee_details.data.data.role.roleName +
-        //       ')',
-        //     employeeId: employee_details.data.data._id
-        //   }
-        //
-        //   this.subordinateItemNames.push(company_employee)
-        // }
+        for (let i = 0; i < sub_res.data.data.length; i++) {
+          console.log(sub_res.data)
+          let company_employee: EmployeeInformation2 = {
+            name:
+              sub_res.data.data[i].userInfo.firstName +
+              ' ' +
+              sub_res.data.data[i].userInfo.surname +
+              ' (' +
+              sub_res.data.data[i].role.roleName +
+              ')',
+            employeeId: sub_res.data.data[i]._id
+          }
+
+          this.subordinateItemNames.push(company_employee)
+        }
+
+        const current_subs = await axios.get(
+          apiURL + `employee/detailed/id/${this.editedItem.employeeId}`,
+          config
+        )
+        console.log(current_subs.data.data)
+        for (let i = 0; i < current_subs.data.data.length; i++) {
+          if (this.req_obj.updateEmployeeDto.subordinates != undefined)
+            this.req_obj.updateEmployeeDto.subordinates.push(
+              current_subs.data.data[i].subordinates._id
+            )
+          this.req_obj.updateEmployeeDto.superiorId = current_subs.data.data.superiorId
+        }
+
         this.loading = false
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -310,27 +325,22 @@ export default {
           config
         )
         console.log(sup_res)
-        // for (let i = 0; i < sub_res.data.data.length; i++) {
-        //   const employee_details = await axios.get(
-        //     apiURL + `employee/detailed/id/${sub_res.data.data[i]._id}`,
-        //     config
-        //   )
-        //
-        //   console.log(employee_details.data)
-        //
-        //   let company_employee: EmployeeInformation2 = {
-        //     name:
-        //       employee_details.data.data.userId.personalInfo.firstName +
-        //       ' ' +
-        //       employee_details.data.data.userId.personalInfo.surname +
-        //       ' (' +
-        //       employee_details.data.data.role.roleName +
-        //       ')',
-        //     employeeId: employee_details.data.data._id
-        //   }
-        //
-        //   this.subordinateItemNames.push(company_employee)
-        // }
+
+        for (let i = 0; i < sup_res.data.data.length; i++) {
+          console.log(sup_res.data)
+          let company_employee: EmployeeInformation2 = {
+            name:
+              sup_res.data.data[i].userInfo.firstName +
+              ' ' +
+              sup_res.data.data[i].userInfo.surname +
+              ' (' +
+              sup_res.data.data[i].role.roleName +
+              ')',
+            employeeId: sup_res.data.data[i]._id
+          }
+
+          this.superiorItemNames.push(company_employee)
+        }
         this.loading = false
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -370,8 +380,52 @@ export default {
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       let apiURL = await this.getRequestUrl()
       console.log(this.localEditedItem.employeeId)
+      let add_object = {
+        currentEmployeeId: localStorage['employeeId'],
+        subordinatesToBeAdded: this.req_obj.updateEmployeeDto.subordinates
+      }
+      console.log(add_object)
+
       axios
-        .patch(apiURL + `employee/${this.localEditedItem.employeeId}`, this.req_obj, config)
+        .patch(
+          apiURL + `employee/${this.localEditedItem.employeeId}`,
+          {
+            currentEmployeeId: localStorage['employeeId'],
+            superiorId: this.req_obj.updateEmployeeDto.superiorId,
+            roleId: this.req_obj.updateEmployeeDto.roleId
+          },
+          config
+        )
+        .then(() => {})
+        .catch((error) => {
+          console.log(error)
+          this.isDeleting = false
+        })
+
+      axios
+        .patch(
+          apiURL + `employee/addSubordinate/${this.localEditedItem.employeeId}`,
+          add_object,
+          config
+        )
+        .then((res) => {})
+        .catch((error) => {
+          console.log(error)
+          this.isDeleting = false
+        })
+
+      const to_be_removed = this.req_obj.updateEmployeeDto.subordinates?.filter(
+        (item) => !this.currentSubordinates.includes(item)
+      )
+      axios
+        .patch(
+          apiURL + `employee/removeSubordinate/${this.localEditedItem.employeeId}`,
+          {
+            currentEmployeeId: localStorage['employeeId'],
+            subordinatesToBeRemoved: to_be_removed
+          },
+          config
+        )
         .then((res) => {
           this.$toast.add({
             severity: 'success',
@@ -379,6 +433,13 @@ export default {
             detail: 'Employee updated successfully',
             life: 3000
           })
+          console.log(res)
+          this.employeeDialog = false
+          setTimeout(() => {
+            this.isDeleting = false
+            this.employeeDialog = false
+          }, 1500)
+
           console.log(res)
           this.employeeDialog = false
           setTimeout(() => {
@@ -394,6 +455,7 @@ export default {
             life: 3000
           })
           console.log(error)
+          this.isDeleting = false
         })
     },
     // async update() {

@@ -46,7 +46,6 @@
                   class="text-caption font-weight-regular"
                   style="font-family: Nunito, sans-serif"
                   >Choose role
-                  <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                 </small>
                 <v-select
                   clearable
@@ -68,7 +67,6 @@
                   class="text-caption font-weight-regular"
                   style="font-family: Nunito, sans-serif"
                   >Choose superior
-                  <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                 </small>
                 <v-select
                   clearable
@@ -275,6 +273,7 @@ export default defineComponent({
             detail: 'Failed to add employee',
             life: 3000
           })
+          this.request_load = false
         })
     },
     async isLocalAvailable(localUrl: string) {

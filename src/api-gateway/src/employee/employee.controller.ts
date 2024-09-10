@@ -308,18 +308,20 @@ export class EmployeeController {
     description: '_id of the employee making the request',
     type: String,
   })
-  @Get('/detailed/id/:id')
+  @Get('/detailed/id/:employeeId')
   async findByIdDetailed(
     @Headers() headers: any,
     @Param('employeeId') employeeId: Types.ObjectId,
     @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
+    console.log('employeeId: ', employeeId);
     const userId = await extractUserId(this.jwtService, headers);
     await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
 
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all employees')) {
+      console.log('In if');
       const data = await this.employeeService.detailedFindById(employeeId);
       return { data: data };
     } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
@@ -375,7 +377,7 @@ export class EmployeeController {
     description: '_id of the employee making the request',
     type: String,
   })
-  @Get('id/:id')
+  @Get('id/:employeeId')
   async findById(
     @Headers() headers: any,
     @Param('employeeId') employeeId: Types.ObjectId,
