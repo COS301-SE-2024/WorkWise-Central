@@ -16,7 +16,7 @@
           </v-list-item-content>
           <!-- @click="trackEmployee(job)" -->
           <v-btn color="success"
-            ><v-icon icon="fa: fa-solid fa-file" color="success"></v-icon>Track Employee</v-btn
+            ><v-icon icon="fa: fa-solid fa-file" color="success"></v-icon>View progress</v-btn
           >
         </v-list-item>
       </v-list>
