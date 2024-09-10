@@ -540,6 +540,7 @@ export default defineComponent({
             this.addDialog = false
             this.isDeleting = false
             this.$emit('createClient', res.data.data)
+            this.resetFields()
             this.$emit('close')
           }, 1000)
         })
@@ -559,6 +560,31 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    resetFields() {
+      this.req_obj = {
+        employeeId: localStorage['employeeId'],
+        details: {
+          firstName: '',
+          lastName: '',
+          preferredLanguage: '',
+          contactInfo: {
+            email: '',
+            phoneNumber: ''
+          },
+          address: {
+            street: '',
+            suburb: '',
+            city: '',
+            province: '',
+            postalCode: '',
+            complex: '',
+            houseNumber: ''
+          },
+          companyId: localStorage['currentCompany'],
+          idNumber: ''
+        }
+      } as RequestObject
     }
   },
   mounted() {
