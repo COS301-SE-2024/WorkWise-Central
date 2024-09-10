@@ -140,6 +140,10 @@ export class InvoiceApiObject {
   paid: boolean;
 
   @ApiProperty()
+  @Prop({ required: true, default: new Date() })
+  receiptOfPaymentDate: Date;
+
+  @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Client' })
   clientId: Types.ObjectId;
 
