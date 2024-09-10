@@ -118,6 +118,8 @@ export class AdminService {
           type: 'requestToJoin',
         },
       },
+      isJobRelated: false,
+      companyName: company.name,
     });
     return savedReq;
   }
@@ -346,6 +348,8 @@ export class AdminService {
           body: `Congratulations, ${fName} ${lName}! You have been accepted into ${companyName} in the role: ${roleName}`,
         },
         recipientIds: [acceptRequestDto.userToJoinId],
+        isJobRelated: false,
+        companyName: company.name,
       });
       //remove request
       await this.adminRepository.acceptRequest(acceptRequestDto.userToJoinId, acceptRequestDto.companyId);
@@ -363,6 +367,8 @@ export class AdminService {
           body: `Good day, ${fName} ${lName}. You have unfortunately been rejected from ${companyName}.`,
         },
         recipientIds: [acceptRequestDto.userToJoinId],
+        isJobRelated: false,
+        companyName: company.name,
       });
       await this.adminRepository.rejectRequest(acceptRequestDto.userToJoinId, acceptRequestDto.companyId);
       return true;

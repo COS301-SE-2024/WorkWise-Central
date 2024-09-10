@@ -1232,7 +1232,13 @@ export class JobService {
         `${client.details.firstName} ${client.details.lastName} has left a review on Job: ${updated.details.heading}`,
       );
       const allEmps = await this.getAllEmployeesRelatedToJob(jobId);
-      await this.notificationService.create({ recipientIds: allEmps, message: mes });
+      const company = await this.companyService.getCompanyById(updated.companyId);
+      await this.notificationService.create({
+        recipientIds: allEmps,
+        message: mes,
+        isJobRelated: true,
+        companyName: company.name,
+      });
     }
     return true;
   }
