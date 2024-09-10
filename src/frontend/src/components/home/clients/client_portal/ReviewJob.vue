@@ -106,7 +106,7 @@ export default {
               houseNumber: ''
             },
             startDate: null,
-            endDate: '2024-09-10T09:44:34.007Z'
+            endDate: ''
           },
           clientFeedback: {
             jobRating: 10,
