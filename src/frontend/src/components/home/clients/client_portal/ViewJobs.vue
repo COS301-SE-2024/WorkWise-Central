@@ -29,6 +29,7 @@
 export default {
   data() {
     return {
+      clientId: '',
       jobs: [
         {
           id: 1,
@@ -65,7 +66,16 @@ export default {
       } else {
         console.error('Geolocation is not supported by this browser.')
       }
+    },
+    getRequests() {
+      
     }
+  },
+  mounted() {
+    if (sessionStorage.getItem('clientId') !== null) {
+      this.clientId = sessionStorage.getItem('clientId')
+    }
+    this.getRequests()
   }
 }
 </script>

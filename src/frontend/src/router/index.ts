@@ -361,7 +361,8 @@ const router = createRouter({
     {
       path: '/client-portal',
       name: 'client-portal',
-      component: ClientPortal
+      component: ClientPortal,
+      props: route => ({ cid: route.query.cid })
     },
     {
       path: '/invoices',
@@ -384,8 +385,8 @@ const router = createRouter({
       component: SetupPaymentGateway
     },
     {
-      path: '/client-portal/SuccessfulPayment',
-      name: 'SuccessfulPayment',
+      path: '/client-portal/successful-payment',
+      name: 'successful-payment',
       component: SuccessfulPayment
     }
   ]

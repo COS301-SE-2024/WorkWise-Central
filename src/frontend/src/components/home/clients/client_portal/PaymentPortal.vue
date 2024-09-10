@@ -45,12 +45,13 @@
 <script lang="ts">
 import axios from 'axios'
 import { defineComponent } from 'vue'
-import MD5 from 'crypto-js/md5'
+import CryptoJS from 'crypto-js'
+
 export default defineComponent({
   data() {
     return {
       invoices: [] as Array<any>, // Update with your invoice model
-      clientId: '66cf13c3a76252f35d46c8fb', // This is for testing purposes
+      clientId: '66cf13c3a76252f35d46c8fb' as any, // This is for testing purposes
       client: {
         registrationNumber: '',
         details: {
@@ -75,15 +76,16 @@ export default defineComponent({
           type: ''
         }
       },
+      testRoute: '' as any,
       companyId: '',
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       merchant_id: '10000100',
       merchant_key: '46f0cd694581a',
       passPhrase: 'jt7NOE43FZPn',
-      return_url: 'https://tuksapi.sharpsoftwaresolutions.net/client-portal/SuccessfulPayment',
+      return_url: 'https://tuksapi.sharpsoftwaresolutions.net/client-portal/successful-payment',
       cancel_url: 'https://tuksapi.sharpsoftwaresolutions.net/client-portal',
-      notify_url: 'https://tuksapi.sharpsoftwaresolutions.net/client-portal/SuccessfulPayment',
+      notify_url: 'https://tuksapi.sharpsoftwaresolutions.net/payfast/notify',
       testingMode: true,
       pfHost: 'https://sandbox.payfast.co.za/eng/process',
       forms: {} as { [key: string]: any }
@@ -102,7 +104,7 @@ export default defineComponent({
         name_last: this.client.details.lastName,
         email_address: this.client.details.contactInfo.email,
         m_payment_id: invoice._id,
-        amount:invoice.total,
+        amount: invoice.total,
         item_name: invoice.invoiceNumber
       }
       let pfOutput = ''
@@ -118,7 +120,7 @@ export default defineComponent({
         getString += `&passphrase=${encodeURIComponent(this.passPhrase.trim())}`
       }
       console.log('getString:', getString)
-      return MD5(getString).toString()
+      return CryptoJS.MD5(getString).toString()
     },
     submitPaymentForm(invoiceId: number) {
       const form = document.getElementById('paymentForm' + invoiceId) as HTMLFormElement
@@ -199,6 +201,9 @@ export default defineComponent({
     }
   },
   mounted() {
+    if (sessionStorage.getItem('clientId') !== null) {
+      this.clientId = sessionStorage.getItem('clientId')
+    }
     this.getRequests()
   }
 })
