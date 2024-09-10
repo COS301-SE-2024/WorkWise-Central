@@ -187,7 +187,7 @@ export class AdminService {
     const result = await this.adminRepository.saveInvite(newInvite);
 
     const hasAccount = await this.usersService.emailExists(userInviteRequestDto.emailToInvite);
-    await this.emailService.sendInvite(newInvite, result._id, hasAccount);
+    await this.emailService.sendInvite(newInvite, result._id, hasAccount, userId);
 
     return result;
   }
