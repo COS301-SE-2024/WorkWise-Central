@@ -35,6 +35,7 @@ export class EmployeeService {
     @Inject(forwardRef(() => JobService))
     private readonly jobService: JobService,
 
+    @Inject(forwardRef(() => TeamService))
     private teamService: TeamService,
 
     @Inject(forwardRef(() => ClientService))
