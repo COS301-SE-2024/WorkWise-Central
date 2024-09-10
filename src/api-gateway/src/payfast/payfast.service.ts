@@ -10,18 +10,21 @@ import { Invoice } from 'src/invoices/entities/invoice.entity';
 
 @Injectable()
 export class PayfastService {
+  private sandboxMode;
+  private pfHost;
+  private payfastPassphrase;
+  private invoice: FlattenMaps<Invoice> & { _id: Types.ObjectId };
   constructor(
-    private sandboxMode = true,
-    private pfHost = this.sandboxMode ? 'sandbox.payfast.co.za' : 'www.payfast.co.za',
-    private payfastPassphrase = 'your_payfast_passphrase',
-    private invoice: FlattenMaps<Invoice> & { _id: Types.ObjectId },
-
     @Inject(forwardRef(() => CompanyService))
     private readonly companyService: CompanyService,
 
     @Inject(forwardRef(() => InvoiceService))
     private readonly invoiceService: InvoiceService,
-  ) {}
+  ) {
+    this.sandboxMode = true;
+    this.pfHost = this.sandboxMode ? 'sandbox.payfast.co.za' : 'www.payfast.co.za';
+    this.payfastPassphrase = 'your_payfast_passphrase';
+  }
 
   async setData(invoiceId: Types.ObjectId) {
     const invoice = await this.invoiceService.findById(invoiceId);
