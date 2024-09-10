@@ -1253,7 +1253,7 @@ export class JobService {
 
     const finalStatus = await this.companyService.internalFindAllStatusesInCompany(client.details.companyId);
     console.log(finalStatus);
-    const statusId = finalStatus.jobStatuses[finalStatus.jobStatuses.length - 1];
-    return this.jobRepository.findCompletedForClient(clientId, statusId);
+    const statusId = finalStatus.jobStatuses[finalStatus.jobStatuses.length - 2];
+    return this.jobRepository.findCompletedForClient(clientId, statusId._id);
   }
 }
