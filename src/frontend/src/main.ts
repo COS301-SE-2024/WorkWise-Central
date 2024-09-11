@@ -10,6 +10,7 @@ import VNetworkGraph from 'v-network-graph'
 import 'v-network-graph/lib/style.css'
 import './assets/styles.css'
 import 'vuetify/dist/vuetify.min.css'
+
 //import firebaseMessaging from '@/store/firebase'
 
 const app = createApp(App)
@@ -17,7 +18,7 @@ const app = createApp(App)
 app.use(KanbanPlugin)
 app.use(vuetify)
 app.use(router)
-app.use(shims-vue.d.ts)
+
 app.use(PrimeVue, { theme: { preset: Aura } })
 app.use(VNetworkGraph)
 // app.use(store)

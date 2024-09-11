@@ -52,7 +52,8 @@ const invoicesSubItems = ref([
 const inboxSubItems = ref([
   { title: 'Notifications', icon: 'fa: fa-solid fa-bell', routeName: 'notifications' },
   // { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: 'messages' },
-  { title: 'Meetings', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' }
+  { title: 'Meetings', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' },
+  { title: 'Video Conferencing', icon: 'fa: fa-solid fa-video', routeName: 'video-meetings' }
 ])
 
 const supportSubItems = ref([
