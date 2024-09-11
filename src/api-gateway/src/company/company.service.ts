@@ -663,7 +663,12 @@ export class CompanyService {
     const company = await this.getCompanyById(employee.companyId);
     if (company.jobStatuses.length != updateCompanyJobStatuses.jobStatuses.length)
       throw new BadRequestException('Invalid number of columns');
-
+    const noStat = await this.jobService.getStatusByLabel(employee.companyId, 'No Status');
+    if (!noStat) throw new NotFoundException('No Status not found');
+    updateCompanyJobStatuses.jobStatuses = updateCompanyJobStatuses.jobStatuses.filter(
+      (id) => id.toString() == noStat._id.toString(),
+    );
+    updateCompanyJobStatuses.jobStatuses.unshift(noStat._id);
     return this.companyRepository.updateStatuses(employee.companyId, updateCompanyJobStatuses.jobStatuses);
   }
 
@@ -675,6 +680,16 @@ export class CompanyService {
   async internalFindAllStatusesInCompany(companyId: Types.ObjectId) {
     return this.companyRepository.findAllStatusesInCompany(companyId);
   }
+
+  async getCompanyStatusNames(companyId: Types.ObjectId) {
+    const statArr = await this.companyRepository.findAllStatusNamesInCompany(companyId);
+    console.log(statArr);
+    return statArr;
+  }
+
+  // async getCompanyAccountDetails(companyId: Types.ObjectId) {
+  //   return this.companyRepository.findCompanyAccountDetails(companyId);
+  // }
 
   private eradicateCompany(companyId: Types.ObjectId) {
     this.companyRepository.eradicateCompany(companyId).then((r) => console.log('acknowledged', r.acknowledged));

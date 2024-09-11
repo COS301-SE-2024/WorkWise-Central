@@ -259,6 +259,26 @@ export class CompanyRepository {
       .exec();
   }
 
+  async findAllStatusNamesInCompany(companyId: Types.ObjectId) {
+    const comp = await this.companyModel
+      .findOne({
+        $and: [{ _id: companyId }, isNotDeleted],
+      })
+      .select(['jobStatuses'])
+      .populate('jobStatuses')
+      .lean()
+      .exec();
+
+    if (!comp) throw new Error('Company not found');
+
+    const statArr: any[] = comp.jobStatuses;
+    const result: string[] = [];
+    for (const statArrElement of statArr) {
+      result.push(statArrElement.status);
+    }
+    return result;
+  }
+
   async addJobStatus(companyId: Types.ObjectId, statusId: Types.ObjectId) {
     return this.companyModel.findOneAndUpdate(
       {
@@ -284,4 +304,14 @@ export class CompanyRepository {
       })
       .exec();
   }
+
+  /*  async findCompanyAccountDetails(companyId: Types.ObjectId) {
+    return this.companyModel
+      .findOne({
+        $and: [{ _id: companyId }, isNotDeleted],
+      })
+      .select(['accountDetails'])
+      .lean()
+      .exec();
+  }*/
 }
