@@ -43,6 +43,7 @@
             </v-col>
             <v-col cols="12" lg="10">
               <v-text-field
+                @click="getNotificationsSequel"
                 v-model="search"
                 label="Search"
                 elevation="1"
@@ -63,8 +64,8 @@
                 <v-card-text class="bg-background">
                   <v-list class="bg-background" rounded="md">
                     <v-list-item
-                      v-for="notification in filteredNotifications"
-                      :key="notification._id"
+                      v-for="(notification, i) in notifications"
+                      :key="i"
                       @click="handleNotificationClick(notification._id)"
                     >
                       <Panel :class="'bg-background'">
@@ -78,14 +79,14 @@
                               "
                             >
                             </v-icon>
-                            <span class="font-bold h6">{{ notification.title }}</span>
+                            <span class="font-bold h6">{{ notification.message.title }}</span>
                           </div>
                         </template>
                         <template #footer>
                           <div class="flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center gap-2"></div>
                             <span class="text-surface-500 dark:text-surface-400">
-                              {{ notification.date }}</span
+                              {{ notification.createdAt }}</span
                             >
                           </div>
                         </template>
@@ -116,29 +117,16 @@
                           </v-menu>
                         </template>
                         <p class="m-0" :theme="true">
-                          <span class="font-bold"> {{ notification.title }}</span>
+                          <span class="font-bold"> {{ notification.message.title }}</span>
                           <br />
-                          {{ notification.body }}
+                          {{ notification.message.body }}
                           <br />
-                          <!--                          notification.type -->
-                          <br />
-                          {{ notification.company }}
+                          {{ notification.companyName }}
                         </p>
                       </Panel>
                     </v-list-item>
                   </v-list>
                 </v-card-text>
-                <v-card-actions>
-                  <v-row>
-                    <v-col cols="12" lg="6">
-                      <v-pagination
-                        v-model="currentPage"
-                        :length="pages"
-                        color="primary"
-                      ></v-pagination>
-                    </v-col>
-                  </v-row>
-                </v-card-actions>
               </v-card>
             </v-col>
           </v-row>
@@ -200,18 +188,7 @@ export default {
   data() {
     return {
       menu: false,
-      notifications: [
-        {
-          _id: 'a13098fa0hn',
-          title: 'Job Assignment: Tire Replacement at Warehouse',
-          body: 'You have been assigned to replace tires on all forklifts at the Wielding Tires warehouse.',
-          action: 'viewJobDetails',
-          isJobRelated: false,
-          company: 'Wielding Tires',
-          date: '2021-09-01',
-          isRead: false
-        }
-      ],
+      notifications: [] as any[],
       items: [
         { title: 'Inbox', icon: 'fa: fa-solid fa-inbox' }
 
@@ -230,7 +207,7 @@ export default {
       pages: 10,
 
       groupBy: ['Date', 'Company', 'Type'],
-      filteredNotificationsArray: [] as string[],
+      filteredNotificationsArray: [] as any[],
       search: '',
       clickedNotificationId: 'af2o3ufoaiunf', // Track the clicked notification ID
       active: true,
@@ -258,9 +235,14 @@ export default {
   computed: {
     filteredNotifications() {
       // Filter notifications based on the current inbox
+      console.log(this.notifications)
+      if (this.notifications == null) {
+        console.log('Notifications are null')
+      }
+
       let filtered = this.notifications.filter(
         (notification) =>
-          notification.title.toLowerCase().includes(this.search.toLowerCase()) &&
+          notification.message.title.toLowerCase().includes(this.search.toLowerCase()) &&
           (this.filteredNotificationsArray.length === 0 ||
             this.filteredNotificationsArray.includes(notification._id))
       )
@@ -274,16 +256,18 @@ export default {
       }
 
       if (this.currentCompany) {
-        filtered = filtered.filter((notification) => notification.company === this.currentCompany)
+        filtered = filtered.filter(
+          (notification) => notification.companyName === this.currentCompany
+        )
       }
 
       return filtered
     }
   },
-  mounted() {
-    this.getNotifications()
-    this.getCompanies()
+  async mounted() {
+    await this.getCompanies()
     this.populateCompanies()
+    //await this.getNotifications()
   },
   methods: {
     async getCompanies() {
@@ -544,11 +528,37 @@ export default {
         }
       }
       const apiURL = await this.getRequestUrl()
-      const user_id = localStorage.getItem('_id')
+      const user_id = localStorage.getItem('id')
       try {
-        const res = await axios.get(`${apiURL}notification/employee?userId=${user_id}`, config)
-        console.log(res)
-        this.items = res.data.data
+        const res = await axios.get(`${apiURL}notification/user?userId=${user_id}`, config)
+        console.log('User Notifications', res)
+        //this.items = res.data.data
+        for (const datum of res.data.data) {
+          this.notifications.push(datum)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async getNotificationsSequel() {
+      console.log('Get Notifications')
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      const user_id = localStorage.getItem('id')
+      try {
+        const res = await axios.get(`${apiURL}notification/user?userId=${user_id}`, config)
+        //console.log('User Notifications', res.data.data)
+        //this.items = res.data.data
+        for (const datum of res.data.data) {
+          console.log('Bob', datum)
+          this.notifications.push(datum)
+        }
+        return this.notifications
       } catch (error) {
         console.error(error)
       }
