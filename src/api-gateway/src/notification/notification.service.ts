@@ -1,4 +1,11 @@
-import { forwardRef, Inject, Injectable, InternalServerErrorException, OnModuleInit } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -135,5 +142,17 @@ export class NotificationService implements OnModuleInit {
 
   async stopPushNotifications(userId: Types.ObjectId, body: StopPushDto) {
     return this.notificationRepository.stopPushNotificationsOnDevice(userId, body.deviceType);
+  }
+
+  async markAsRead(userId: Types.ObjectId, notificationId: Types.ObjectId) {
+    const user = await this.usersService.getUserById(userId);
+    if (!user) throw new NotFoundException('Invalid UserId');
+    return this.notificationRepository.markAsRead(notificationId);
+  }
+
+  async markAsUnread(userId: Types.ObjectId, notificationId: Types.ObjectId) {
+    const user = await this.usersService.getUserById(userId);
+    if (!user) throw new NotFoundException('Invalid UserId');
+    return this.notificationRepository.markAsUnread(notificationId);
   }
 }
