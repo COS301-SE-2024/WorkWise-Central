@@ -45,7 +45,13 @@ export class NotificationService implements OnModuleInit {
     const senderId = newNotification.senderId;
     const message = newNotification.message;
     for (const recipient of newNotification.recipientIds) {
-      const singularNotification = new Notification(senderId, recipient, message);
+      const singularNotification = new Notification(
+        senderId,
+        recipient,
+        message,
+        newNotification.companyName,
+        newNotification.isJobRelated,
+      );
       // listOfNotifications.push(singularNotification);
       const result = new this.notificationModel(singularNotification);
       await result.save();

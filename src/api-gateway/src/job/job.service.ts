@@ -369,6 +369,15 @@ export class JobService {
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
+
+    const company = await this.companyService.getCompanyById(otherEmployee.companyId);
+    this.notificationService.create({
+      recipientIds: [otherEmployee.userId],
+      message: new Message(`New Job Assignment`, `You have been assigned to a new job: ${job.details.heading}`),
+      companyName: company?.name,
+      isJobRelated: true,
+    });
+
     return this.jobRepository.findById(result._id);
   }
 
@@ -505,7 +514,7 @@ export class JobService {
     const otherEmployee = await this.employeeService.findById(jobAssignDto.employeeToAssignId);
     let assignedJobs = otherEmployee.currentJobAssignments;
     assignedJobs = assignedJobs.filter((j) => j.toString() !== job._id.toString());
-    await this.employeeService.internalUpdate(otherEmployee._id, {
+    this.employeeService.internalUpdate(otherEmployee._id, {
       currentJobAssignments: assignedJobs,
     });
     if (otherEmployee.userInfo) {

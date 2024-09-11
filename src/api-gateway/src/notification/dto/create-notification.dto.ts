@@ -19,7 +19,7 @@ export class CreateNotificationDto {
   whoCanView?: string;
 
   @IsOptional()
-  isJobRelated?: boolean;
+  isJobRelated?: boolean = false;
 
   @IsOptional()
   companyName?: string = null;
