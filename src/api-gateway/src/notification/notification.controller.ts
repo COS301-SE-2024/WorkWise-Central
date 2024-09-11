@@ -44,7 +44,7 @@ export class NotificationController {
     }
   }
 
-  @Get('/employee')
+  @Get('/user')
   async getAllUserNotifications(@Query('userId') id: string) {
     validateObjectId(id);
     const userId = new Types.ObjectId(id);
