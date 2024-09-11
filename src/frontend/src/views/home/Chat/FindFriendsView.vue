@@ -1,61 +1,44 @@
 <template>
-  <div id="FindFriends" class="pt-[100px] overflow-auto fixed h-[100vh] w-full">
-    <div v-for="user in usersComputed" :key="user">
-      <div v-if="hideMe(user)" @click="createNewChat(user)" class="flex w-full p-4 items-center cursor-pointer">
+  <v-container id="FindFriends" fluid class="pa-0 pt-12 overflow-auto fixed fill-height">
+    <v-row v-for="user in props.usersComputed" :key="user.id" class="pa-0">
+      <v-col cols="12" class="pa-0">
+        <v-list-item
+          v-if="hideMe(user)"
+          @click="createNewChat(user)"
+          class="cursor-pointer"
+        >
+          <v-list-item-avatar>
+            <v-avatar size="48" :src="user.picture" color="red"></v-avatar>
+          </v-list-item-avatar>
 
-        <img class="rounded-full mr-4 w-12" :src="user.picture || ''">
-
-        <div class="w-full">
-
-          <div class="flex justify-between items-center">
-            <div class="text-[15px] text-gray-600">{{  user.firstName  }} {{  user.lastName  }}</div>
-          </div>
-          <div class="flex items-center">
-            <div class="text-[15px] text-gray-500">Hi, I'm using WhatsApp!</div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-2 text--grey">{{ user.firstName }} {{ user.lastName }}</v-list-item-title>
+            <v-list-item-subtitle class="text-body-2 grey--text">Hi, let's chat!</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { useUserStore } from "@/store/user-store";
-import { storeToRefs } from "pinia";
-const userStore = useUserStore()
-const { sub, userDataForChat, allUsers, removeUsersFromFindFriends } = storeToRefs(userStore)
-let users = ref([])
+import { computed } from 'vue';
 
+// Props
+const props = defineProps({
+  usersComputed: {
+    type: Array,
+  },
+});
+
+// Methods
 const hideMe = (user) => {
-  if (user.sub === sub.value) {
-    return false
-  }
-  return true
-}
+  // Logic to decide whether to hide a user
+  return false; // For testing, show all users
+};
 
 const createNewChat = (user) => {
-  userDataForChat.value = []
-  userDataForChat.value.push({
-    id: '',
-    sub1: sub.value,
-    sub2: user.sub,
-    firstName: user.firstName,
-    picture: user.picture,
-  })
-}
-
-const usersComputed = computed(() => {
-  allUsers.value.forEach(user => users.value.push(user))
-  removeUsersFromFindFriends.value.forEach(remove => {
-    let index = users.value.findIndex(user => user.sub === remove)
-    users.value.splice(index, 1)
-  })
-  return users.value
-})
+  // Logic for creating a new chat
+  console.log("Creating chat with", user);
+};
 </script>
-
-<style lang="scss" scoped>
-
-</style>

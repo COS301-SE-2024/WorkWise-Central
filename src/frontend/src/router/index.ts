@@ -379,7 +379,7 @@ const router = createRouter({
     {
       path: "/homeView",
       name: 'homeView',
-      component: () => import('@/views/home/Chat/HomeView.vue'),
+      component: () => import('@/views/home/Chat/ChatUIView.vue'),
     },
   ]
 })
