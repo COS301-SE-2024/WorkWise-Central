@@ -129,6 +129,15 @@ export class CompanyRepository {
     return result != null;
   }
 
+  async nameExists(name: string) {
+    const result = await this.companyModel
+      .findOne({
+        $and: [{ name: name }, isNotDeleted],
+      })
+      .lean();
+    return result != null;
+  }
+
   async update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
     const company = await this.companyModel.findOne({
       $and: [

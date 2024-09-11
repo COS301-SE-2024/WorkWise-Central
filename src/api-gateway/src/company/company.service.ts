@@ -87,7 +87,7 @@ export class CompanyService {
     await this.roleService.createDefaultRoles(createdCompany._id);
 
     //Create Default JobStatuses in company
-    await this.jobService.createDefaultStatuses(createdCompany._id).then((s) => {
+    this.jobService.createDefaultStatuses(createdCompany._id).then((s) => {
       const arr: Types.ObjectId[] = [];
       for (const status of s) {
         arr.push(status._id);
@@ -96,7 +96,7 @@ export class CompanyService {
     });
 
     //Create Default JobPriorityTags in Company
-    await this.jobService.createDefaultPriorityTags(createdCompany._id);
+    this.jobService.createDefaultPriorityTags(createdCompany._id);
 
     //Assign Owner to user
     console.log('Assign Owner to user');
@@ -107,10 +107,10 @@ export class CompanyService {
     const user = await this.usersService.getUserById(createCompanyDto.userId);
     ///
 
-    const currentEmployeeId = user.joinedCompanies[0].employeeId;
+    const currentEmployeeId = user.joinedCompanies[0]?.employeeId;
 
     console.log('Create Employee');
-    const employee = await this.employeeService.create({
+    const employee = await this.employeeService.createOwner({
       currentEmployeeId: currentEmployeeId,
       userId: createCompanyDto.userId,
       companyId: createdCompany._id,
@@ -152,6 +152,10 @@ export class CompanyService {
 
   async companyRegNumberExists(registerNumber: string): Promise<boolean> {
     return this.companyRepository.registrationNumberExists(registerNumber);
+  }
+
+  async companyNameExists(name: string): Promise<boolean> {
+    return this.companyRepository.nameExists(name);
   }
 
   async companyVatNumberExists(vatNumber: string): Promise<boolean> {
@@ -546,6 +550,10 @@ export class CompanyService {
       if (await this.companyRegNumberExists(company.registrationNumber)) {
         return new ValidationResult(false, `Company with ${company.registrationNumber} already exists`);
       }
+    }
+
+    if (await this.companyNameExists(company.name)) {
+      return new ValidationResult(false, `Company with ${company.name} already exists`);
     }
 
     return new ValidationResult(true);
