@@ -1,7 +1,7 @@
 <template>
   <v-list-item two-line>
     <v-list-item-avatar>
-      <img :src="chat.user.picture" />
+      <img :src="chat.user.picture" alt="User Avatar" />
     </v-list-item-avatar>
 
     <v-list-item-content>
@@ -13,7 +13,7 @@
 
     <v-list-item-action>
       <v-list-item-action-text class="text-body-2">{{ lastMessageTime }}</v-list-item-action-text>
-      <v-icon color="grey">mdi-check-all</v-icon>
+      <v-icon color="grey">{{ chat.sub1HasViewed && chat.sub2HasViewed ? 'mdi-check-all' : 'mdi-checkbox-blank-outline' }}</v-icon>
     </v-list-item-action>
   </v-list-item>
 
@@ -21,6 +21,8 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
+
 // Props to accept chat data
 const props = defineProps({
   chat: {
@@ -29,9 +31,16 @@ const props = defineProps({
   },
 });
 
-// Mocking functions for last message and time
-const lastMessage = props.chat.messages.length ? props.chat.messages[props.chat.messages.length - 1].message : 'No messages';
-const lastMessageTime = new Date(props.chat.messages[props.chat.messages.length - 1]?.createdAt).toLocaleTimeString();
+// Computed properties for last message and time
+const lastMessage = computed(() => {
+  const messages = Array.isArray(props.chat.messages) ? props.chat.messages : [];
+  return messages.length ? messages[messages.length - 1].message : 'No messages';
+});
+
+const lastMessageTime = computed(() => {
+  const messages = Array.isArray(props.chat.messages) ? props.chat.messages : [];
+  return messages.length ? new Date(messages[messages.length - 1].createdAt).toLocaleTimeString() : '';
+});
 </script>
 
 <style scoped>
