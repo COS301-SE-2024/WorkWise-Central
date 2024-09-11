@@ -94,6 +94,30 @@ export class NotificationController {
     } catch (e) {}
   }*/
 
+  @Patch('markAsRead/:nId')
+  async markAsRead(@Headers() headers: any, @Query('nId') nId: string) {
+    validateObjectId(nId);
+    const notificationId = new Types.ObjectId(nId);
+    try {
+      const userId = this.extractUserId(headers);
+      return { data: await this.notificationService.markAsRead(userId, notificationId) };
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  @Patch('markAsUnread/:nId')
+  async markAsUnread(@Headers() headers: any, @Query('nId') nId: string) {
+    validateObjectId(nId);
+    const notificationId = new Types.ObjectId(nId);
+    try {
+      const userId = this.extractUserId(headers);
+      return { data: await this.notificationService.markAsUnread(userId, notificationId) };
+    } catch (e) {
+      throw e;
+    }
+  }
+
   public extractUserId(headers: any) {
     const authHeader: string = headers.authorization;
     const decodedJwtAccessToken = this.jwtService.decode(authHeader.replace(/^Bearer\s+/i, ''));
