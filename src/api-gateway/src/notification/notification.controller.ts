@@ -38,7 +38,7 @@ export class NotificationController {
     validateObjectId(id);
     const employeeId = new Types.ObjectId(id);
     try {
-      return await this.notificationService.findAllWithEmployeeId(employeeId);
+      return { data: await this.notificationService.findAllWithEmployeeId(employeeId) };
     } catch (e) {
       throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -49,7 +49,7 @@ export class NotificationController {
     validateObjectId(id);
     const userId = new Types.ObjectId(id);
     try {
-      return await this.notificationService.findAllWithUserId(userId);
+      return { data: await this.notificationService.findAllWithUserId(userId) };
     } catch (e) {
       throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
