@@ -2,7 +2,6 @@
   <aside class="chat-sidebar">
     <h2>Chats</h2>
     <span class="p-input-icon-left w-full mb-3">
-      <i class="fa: fa-solid fa-search" />
       <InputText v-model="searchQuery" placeholder="Search users" class="w-full" />
     </span>
     <ul class="user-list">
@@ -77,5 +76,11 @@ const selectUser = (user) => {
 :deep(.p-inputtext) {
   background-color: #ffffff;
   color: #495057;
+}
+
+.p-inputtext {
+  flex-grow: 1;
+  width: 100%;
+  margin-bottom: 10px;
 }
 </style>
