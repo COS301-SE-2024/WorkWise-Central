@@ -23,8 +23,13 @@ const handleUserSelected = (user) => {
 };
 
 const handleMessageSent = (message) => {
-  // Logic to send message and update chat history
-  console.log(`Message sent to ${selectedUser.value.name}: ${message}`);
+  // Check if a user is selected before sending the message
+  if (selectedUser.value) {
+    console.log(`Message sent to ${selectedUser.value.name}: ${message}`);
+    // Add logic here to update the chat history or send the message to the server
+  } else {
+    console.warn('No user selected. Please select a user before sending a message.');
+  }
 };
 </script>
 

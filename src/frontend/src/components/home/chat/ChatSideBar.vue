@@ -14,6 +14,9 @@ import { ref } from 'vue';
 import Listbox from 'primevue/listbox';
 import Avatar from 'primevue/avatar';
 
+// Define the emit function to allow emitting events to the parent component
+const emit = defineEmits(['user-selected']);  // Define the event name
+
 const selectedUser = ref(null);
 const chatUsers = ref([
   { id: 1, name: 'Alice', profilePic: '/images/alice.jpg' },
@@ -22,8 +25,7 @@ const chatUsers = ref([
 ]);
 
 const selectUser = (event) => {
-  // Emit selected user to parent
-  emit('user-selected', event.value);
+  emit('user-selected', event.value);  // Emit the selected user to the parent component
 };
 </script>
 

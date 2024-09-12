@@ -1,6 +1,11 @@
 <template>
   <div class="message-list">
-    <div v-for="(message, index) in messages" :key="index" class="message-item" :class="{ 'my-message': message.sentByMe }">
+    <div
+      v-for="(message, index) in messages"
+      :key="index"
+      class="message-item"
+      :class="{ 'my-message': message.sentByMe }"
+    >
       <Card class="p-mb-2">
         <span class="message-content">{{ message.content }}</span>
         <div class="timestamp">{{ message.timestamp }}</div>
@@ -13,9 +18,14 @@
 import { ref, watch } from 'vue';
 import Card from 'primevue/card';
 
+// Define props in the setup script
+const props = defineProps({
+  selectedUser: Object,  // Define selectedUser as a prop
+});
+
 const messages = ref([]);
 
-// Receive chat history via props or from a parent component
+// Watch for changes to selectedUser
 watch(() => props.selectedUser, (newUser) => {
   if (newUser) {
     messages.value = getChatHistory(newUser.id);  // Load the chat history for the user
