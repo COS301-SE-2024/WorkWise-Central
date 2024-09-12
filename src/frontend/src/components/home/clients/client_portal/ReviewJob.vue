@@ -182,7 +182,8 @@ export default {
         clientId: this.clientId,
         jobRating: this.jobRating,
         customerServiceRating: this.customerServiceRating,
-        comments: this.feedback
+        comments: this.feedback,
+        clientName: this.client.details.firstName + ' ' + this.client.details.lastName
       }
       const config = {
         headers: {

@@ -62,6 +62,11 @@ export class Address {
 }
 export class ClientFeedback {
   @ApiProperty()
+  @IsString()
+  @IsOptional()
+  clientName?: string;
+
+  @ApiProperty()
   @IsNumber()
   @IsOptional()
   @Min(0)
