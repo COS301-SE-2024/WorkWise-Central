@@ -16,6 +16,11 @@
         :currentUser="currentUser"
       />
       <ChatInput @send-message="sendMessage" :disabled="!selectedUser" v-if="selectedUser" />
+      <div v-else class="no-user-selected">
+        <img  alt="Message Icon" class="message-icon" />
+        <h1>WorkWise Chat</h1>
+        <p>Select a user to start a new chat</p>
+      </div>
     </div>
   </div>
 </template>
@@ -98,5 +103,29 @@ const sendMessage = (content) => {
 .chat-header h2 {
   margin-left: 1rem;
   font-size: 1.2rem;
+}
+
+.no-user-selected {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.message-icon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 1rem;
+}
+
+.no-user-selected h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.no-user-selected p {
+  font-size: 1rem;
+  color: #888;
 }
 </style>
