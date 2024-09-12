@@ -35,8 +35,8 @@ import Avatar from 'primevue/avatar';
 // Mock data
 const currentUser = ref({ id: 1, name: 'You' });
 const users = ref([
-  { id: 2, name: 'Alice', avatar: 'path/to/alice-avatar.jpg' },
-  { id: 3, name: 'Bob', avatar: 'path/to/bob-avatar.jpg' },
+  { id: 2, name: 'Alice', avatar: '@/components/home/chat/mockImages/Alice.jpeg' },
+  { id: 3, name: 'Bob', avatar: '@/components/home/chat/mockImages/Bob.jpeg' },
   { id: 4, name: 'Charlie', avatar: 'path/to/charlie-avatar.jpg' },
 ]);
 
