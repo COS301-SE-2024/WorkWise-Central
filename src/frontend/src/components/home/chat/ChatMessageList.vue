@@ -48,6 +48,7 @@ const scrollToBottom = () => {
   padding: 1rem;
   display: flex;
   flex-direction: column;
+  background-color: #e5ddd5;
 }
 
 .message {
@@ -61,10 +62,11 @@ const scrollToBottom = () => {
 }
 
 .message-content {
-  background-color: #f0f0f0;
+  background-color: #ffffff;
   border-radius: 12px;
   padding: 0.5rem 1rem;
   position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .message.sent .message-content {

@@ -11,7 +11,8 @@
         <h2>{{ selectedUser.name }}</h2>
       </header>
       <ChatMessageList
-        :messages="messages"
+        v-if="selectedUser"
+        :messages="currentMessages"
         :currentUser="currentUser"
       />
       <ChatInput @send-message="sendMessage" :disabled="!selectedUser" />
@@ -36,10 +37,24 @@ const users = ref([
 
 const selectedUser = ref(null);
 
-const messages = ref([
-  { id: 1, senderId: 1, receiverId: 2, content: 'Hey Alice!', timestamp: new Date() },
-  { id: 2, senderId: 2, receiverId: 1, content: 'Hi there!', timestamp: new Date() },
-]);
+const messages = ref({
+  2: [
+    { id: 1, senderId: 1, receiverId: 2, content: 'Hey Alice!', timestamp: new Date() },
+    { id: 2, senderId: 2, receiverId: 1, content: 'Hi there!', timestamp: new Date() },
+  ],
+  3: [
+    { id: 1, senderId: 1, receiverId: 3, content: 'Hello Bob!', timestamp: new Date() },
+    { id: 2, senderId: 3, receiverId: 1, content: 'Hey, how are you?', timestamp: new Date() },
+  ],
+  4: [
+    { id: 1, senderId: 4, receiverId: 1, content: 'Hi there!', timestamp: new Date() },
+    { id: 2, senderId: 1, receiverId: 4, content: 'Hello Charlie!', timestamp: new Date() },
+  ],
+});
+
+const currentMessages = computed(() => {
+  return selectedUser.value ? messages.value[selectedUser.value.id] || [] : [];
+});
 
 const selectUser = (user) => {
   selectedUser.value = user;
@@ -48,13 +63,13 @@ const selectUser = (user) => {
 const sendMessage = (content) => {
   if (selectedUser.value) {
     const newMessage = {
-      id: messages.value.length + 1,
+      id: currentMessages.value.length + 1,
       senderId: currentUser.value.id,
       receiverId: selectedUser.value.id,
       content,
       timestamp: new Date()
     };
-    messages.value.push(newMessage);
+    messages.value[selectedUser.value.id].push(newMessage);
   }
 };
 </script>

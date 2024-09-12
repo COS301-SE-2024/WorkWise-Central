@@ -1,7 +1,10 @@
 <template>
   <aside class="chat-sidebar">
     <h2>Chats</h2>
-    <InputText v-model="searchQuery" placeholder="Search users" class="w-full mb-3" />
+    <span class="p-input-icon-left w-full mb-3">
+      <i class="fa: fa-solid fa-search" />
+      <InputText v-model="searchQuery" placeholder="Search users" class="w-full" />
+    </span>
     <ul class="user-list">
       <li
         v-for="user in filteredUsers"
@@ -69,5 +72,10 @@ const selectUser = (user) => {
 
 .user-list li span {
   margin-left: 1rem;
+}
+
+:deep(.p-inputtext) {
+  background-color: #ffffff;
+  color: #495057;
 }
 </style>
