@@ -17,7 +17,7 @@
       />
       <ChatInput @send-message="sendMessage" :disabled="!selectedUser" v-if="selectedUser" />
       <div v-else class="no-user-selected">
-        <img  alt="Message Icon" class="message-icon" />
+        <img src="@/assets/images/background/WorkWiseChat.png" alt="Message Icon" class="message-icon" />
         <h1>WorkWise Chat</h1>
         <p>Select a user to start a new chat</p>
       </div>
