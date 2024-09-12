@@ -52,19 +52,30 @@
               @click:outside="feedbackMenu = false"
             >
               <template v-slot:activator="{ props }">
-                <v-card v-bind="props" class="ma-3 bg-background" border="md" >
+                <v-card v-bind="props" class="ma-3 bg-background" border="md">
                   <v-card-title class="bg-background">
-                    <span>{{ feedback.employeeName }}</span>
+                    <span>Client: {{ feedback.clientName }}</span>
                     <v-spacer></v-spacer>
-                    <v-rating
-                      v-model="feedback.satisfactionLevel"
+                    <span>Job: {{ feedback.jobTitle }}</span>
+                  </v-card-title>
+                  <v-label style="display: block; margin-bottom: 10px">Job Rating</v-label>
+                  <v-rating
+                      v-model="feedback.jobRating"
                       active-color="blue"
                       color="orange-lighten-1"
                       readonly
                     ></v-rating>
-                  </v-card-title>
-                  <h6 class="bg-background pa-5 ma-0">{{ feedback.jobDone }}</h6>
-                  <v-card-text>{{ feedback.feedback }}</v-card-text>
+                    <v-spacer></v-spacer>
+                    <v-label style="display: block; margin-bottom: 10px">Customer Service Rating</v-label>
+                    <v-rating
+                      v-model="feedback.customerServiceRating"
+                      active-color="blue"
+                      color="orange-lighten-1"
+                      readonly
+                    ></v-rating>
+                    <v-spacer></v-spacer>
+                    <v-label style="display: block; margin-bottom: 10px">Comment</v-label>
+                  <v-card-text>{{ feedback.comments }}</v-card-text>
                 </v-card>
               </template>
             </v-menu>
@@ -77,13 +88,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
 
 interface Feedback {
   clientName: string
-  employeeName: string
-  jobDone: string
-  satisfactionLevel: number
-  feedback: string
+  comments: string
+  jobRating: number
+  customerServiceRating: number
+  jobTitle: string
 }
 
 export default defineComponent({
@@ -98,85 +110,10 @@ export default defineComponent({
       satisfactionLevels: [1, 2, 3, 4, 5],
       categories: ['All Feedback'] as string[],
       categoryName: 'All Feedback',
-      feedbacks: [
-        {
-          clientName: 'Alice Brown',
-          employeeName: 'John Doe',
-          jobDone: 'Plumbing',
-          satisfactionLevel: 4,
-          feedback: 'Great job, very satisfied with the service.'
-        },
-        {
-          clientName: 'Bob Smith',
-          employeeName: 'Jane Smith',
-          jobDone: 'Electrical',
-          satisfactionLevel: 5,
-          feedback: 'Excellent work, highly recommend!'
-        },
-        {
-          clientName: 'Carol White',
-          employeeName: 'Michael Johnson',
-          jobDone: 'Carpentry',
-          satisfactionLevel: 3,
-          feedback: 'Good job, but the work took longer than expected.'
-        },
-        {
-          clientName: 'David Black',
-          employeeName: 'Emily Davis',
-          jobDone: 'Painting',
-          satisfactionLevel: 5,
-          feedback: 'Fantastic service, very pleased with the results.'
-        },
-        {
-          clientName: 'Eva Green',
-          employeeName: 'Chris Lee',
-          jobDone: 'Landscaping',
-          satisfactionLevel: 4,
-          feedback: 'Well done, the garden looks great.'
-        },
-        {
-          clientName: 'Frank Harris',
-          employeeName: 'Sara Wilson',
-          jobDone: 'Roofing',
-          satisfactionLevel: 2,
-          feedback: 'Not satisfied with the work, it was poorly done.'
-        },
-        {
-          clientName: 'Grace Hall',
-          employeeName: 'David Kim',
-          jobDone: 'Flooring',
-          satisfactionLevel: 5,
-          feedback: 'Amazing job, the floors look beautiful!'
-        },
-        {
-          clientName: 'Henry Clark',
-          employeeName: 'Laura Adams',
-          jobDone: 'Tiling',
-          satisfactionLevel: 3,
-          feedback: 'Average work, some tiles were not aligned properly.'
-        },
-        {
-          clientName: 'Isabel Lewis',
-          employeeName: 'Mark Allen',
-          jobDone: 'Plastering',
-          satisfactionLevel: 4,
-          feedback: 'Good work, the walls are smooth and even.'
-        },
-        {
-          clientName: 'Jackie Turner',
-          employeeName: 'Olivia Scott',
-          jobDone: 'HVAC Installation',
-          satisfactionLevel: 5,
-          feedback: 'Excellent service, the installation was perfect!'
-        },
-        {
-          clientName: 'Kevin Wright',
-          employeeName: 'Paul King',
-          jobDone: 'Window Installation',
-          satisfactionLevel: 3,
-          feedback: 'The windows are fine, but there were delays in the project.'
-        }
-      ] as Feedback[]
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      companyId: '',
+      feedbacks: [] as Feedback[]
     }
   },
   methods: {
@@ -198,10 +135,51 @@ export default defineComponent({
           this.categories.push(feedback.jobDone)
         }
       })
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status >= 200 && res.status < 300
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async getRequests() {
+      // Getting all the jobs for the company
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const url = await this.getRequestUrl()
+      if (localStorage.getItem('currentCompany') !== null) {
+        this.companyId = localStorage.getItem('currentCompany') as string
+      }
+      await axios
+        .get(`${url}job/all/company/${this.companyId}`, config)
+        .then((response) => {
+          for (const job of response.data.data) {
+            if (job.clientFeedback != null) {
+              this.feedbacks.push(job.clientFeedback)
+              console.log('job.details.heading: ', job.details.heading)
+              this.feedbacks[this.feedbacks.length - 1].jobTitle = job.details.heading
+            }
+          }
+          console.log('this.feedbacks: ', this.feedbacks)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
     }
   },
   mounted() {
     this.populateCategories()
+    this.getRequests()
   },
   computed: {
     filteredFeedbacks(): Feedback[] {
