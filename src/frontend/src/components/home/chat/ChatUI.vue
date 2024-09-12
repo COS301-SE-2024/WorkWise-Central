@@ -1,34 +1,60 @@
 <template>
   <div class="chat-app">
-    <div class="sidebar">
-      <ChatSidebar @user-selected="handleUserSelected" />
-    </div>
-    <div class="chat-area">
-      <ChatMessageList :selectedUser="selectedUser" />
-      <ChatInput @message-sent="handleMessageSent" />
+    <ChatSidebar
+      :users="users"
+      :selectedUser="selectedUser"
+      @select-user="selectUser"
+    />
+    <div class="chat-main">
+      <header v-if="selectedUser" class="chat-header">
+        <Avatar :image="selectedUser.avatar" size="large" shape="circle" />
+        <h2>{{ selectedUser.name }}</h2>
+      </header>
+      <ChatMessageList
+        :messages="messages"
+        :currentUser="currentUser"
+      />
+      <ChatInput @send-message="sendMessage" :disabled="!selectedUser" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import ChatSidebar from './ChatSideBar.vue';
 import ChatMessageList from './ChatMessageList.vue';
 import ChatInput from './ChatInput.vue';
+import Avatar from 'primevue/avatar';
+
+// Mock data
+const currentUser = ref({ id: 1, name: 'You' });
+const users = ref([
+  { id: 2, name: 'Alice', avatar: 'path/to/alice-avatar.jpg' },
+  { id: 3, name: 'Bob', avatar: 'path/to/bob-avatar.jpg' },
+  { id: 4, name: 'Charlie', avatar: 'path/to/charlie-avatar.jpg' },
+]);
 
 const selectedUser = ref(null);
 
-const handleUserSelected = (user) => {
+const messages = ref([
+  { id: 1, senderId: 1, receiverId: 2, content: 'Hey Alice!', timestamp: new Date() },
+  { id: 2, senderId: 2, receiverId: 1, content: 'Hi there!', timestamp: new Date() },
+]);
+
+const selectUser = (user) => {
   selectedUser.value = user;
 };
 
-const handleMessageSent = (message) => {
-  // Check if a user is selected before sending the message
+const sendMessage = (content) => {
   if (selectedUser.value) {
-    console.log(`Message sent to ${selectedUser.value.name}: ${message}`);
-    // Add logic here to update the chat history or send the message to the server
-  } else {
-    console.warn('No user selected. Please select a user before sending a message.');
+    const newMessage = {
+      id: messages.value.length + 1,
+      senderId: currentUser.value.id,
+      receiverId: selectedUser.value.id,
+      content,
+      timestamp: new Date()
+    };
+    messages.value.push(newMessage);
   }
 };
 </script>
@@ -37,18 +63,25 @@ const handleMessageSent = (message) => {
 .chat-app {
   display: flex;
   height: 100vh;
+  font-family: Arial, sans-serif;
 }
 
-.sidebar {
-  width: 25%;
-  background-color: #f4f4f4;
-}
-
-.chat-area {
+.chat-main {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  background-color: #e5ddd5;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.chat-header h2 {
+  margin-left: 1rem;
+  font-size: 1.2rem;
 }
 </style>

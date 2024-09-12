@@ -1,7 +1,16 @@
 <template>
   <div class="chat-input">
-    <InputText v-model="newMessage" placeholder="Type a message" @keyup.enter="sendMessage"></InputText>
-    <Button icon="pi pi-send" @click="sendMessage"></Button>
+    <InputText
+      v-model="message"
+      placeholder="Type a message"
+      @keyup.enter="sendMessage"
+      :disabled="disabled"
+    />
+    <Button
+      icon="pi pi-send"
+      @click="sendMessage"
+      :disabled="disabled || !message.trim()"
+    />
   </div>
 </template>
 
@@ -10,16 +19,21 @@ import { ref } from 'vue';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 
-// Define the emit function to allow emitting events to the parent component
-const emit = defineEmits(['message-sent']);  // Define the event name
+const props = defineProps({
+  disabled: {
+    type: Boolean,
+    default: false
+  }
+});
 
-const newMessage = ref('');
+const emit = defineEmits(['send-message']);
 
-// Function to send the message and emit the event
+const message = ref('');
+
 const sendMessage = () => {
-  if (newMessage.value.trim() !== '') {
-    emit('message-sent', newMessage.value);  // Emit the message to the parent component
-    newMessage.value = '';  // Clear the input field
+  if (message.value.trim() && !props.disabled) {
+    emit('send-message', message.value);
+    message.value = '';
   }
 };
 </script>
@@ -27,8 +41,22 @@ const sendMessage = () => {
 <style scoped>
 .chat-input {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
   padding: 1rem;
+  background-color: #f0f0f0;
+  border-top: 1px solid #e0e0e0;
+}
+
+.p-inputtext {
+  flex-grow: 1;
+  margin-right: 0.5rem;
+}
+
+.p-button {
+  background-color: #25D366;
+  border: none;
+}
+
+.p-button:enabled:hover {
+  background-color: #128C7E;
 }
 </style>
