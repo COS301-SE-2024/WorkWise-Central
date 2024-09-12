@@ -1,14 +1,24 @@
 <template>
   <v-container fluid>
     <Toast position="top-center" />
-    <!-- Participants Grid -->
+
+    <!-- Meeting Name -->
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
         <h2 class="text-xl font-semibold">{{ meetingName }}</h2>
       </v-col>
       <v-divider></v-divider>
     </v-row>
-    <v-row class="d-flex justify-center flex-wrap">
+
+    <!-- Layout Toggle Button -->
+    <v-row class="d-flex justify-center">
+      <v-btn @click="toggleLayout">{{
+        layout === 'grid' ? 'Switch to List View' : 'Switch to Grid View'
+      }}</v-btn>
+    </v-row>
+
+    <!-- Participants Grid or List -->
+    <v-row class="d-flex justify-center flex-wrap" v-if="layout === 'grid'">
       <v-col
         v-for="participant in participants"
         :key="participant.id"
@@ -17,7 +27,7 @@
         lg="4"
         class="participant-card"
       >
-        <v-card>
+        <v-card border="md">
           <v-img
             v-if="participant.cameraOn"
             :src="participant.videoStream"
@@ -52,10 +62,53 @@
       </v-col>
     </v-row>
 
-    <!-- Toast Notifications for actions -->
+    <!-- Participants List -->
+    <v-row class="d-flex justify-center" v-else>
+      <v-col
+        cols="12"
+        v-for="participant in participants"
+        :key="participant.id"
+        class="participant-list-item"
+      >
+        <v-card>
+          <v-row>
+            <v-col cols="2">
+              <v-avatar
+                v-if="!participant.cameraOn"
+                size="75"
+                class="mx-auto d-flex justify-center align-center"
+                color="bg-cardColor"
+              >
+                <img :src="participant.profilePic" alt="Profile Picture" />
+              </v-avatar>
+              <v-img
+                v-else
+                :src="participant.videoStream"
+                height="75px"
+                class="participant-video"
+              />
+            </v-col>
+            <v-col cols="8" class="d-flex align-center">
+              <span>{{ participant.id }} - {{ participant.isMuted ? 'Muted' : 'Unmuted' }}</span>
+            </v-col>
+            <v-col cols="2" class="d-flex align-center">
+              <v-btn icon @click="toggleMute(participant.id)">
+                <v-icon v-if="participant.isMuted">mdi-microphone-off</v-icon>
+                <v-icon v-else>mdi-microphone</v-icon>
+              </v-btn>
+              <v-btn icon @click="switchCamera(participant.id)">
+                <v-icon>mdi-camera</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Toast Notifications -->
     <Toast ref="toast" />
 
-    <!-- Controls for user -->
+    <!-- User Controls -->
     <v-row class="d-flex justify-center">
       <v-btn @click="handleMute">Toggle Mute</v-btn>
       <v-btn @click="handleCamera">Toggle Camera</v-btn>
@@ -66,6 +119,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
+interface Participant {
+  id: number
+  profilePic: string
+  videoStream: string
+  isMuted: boolean
+  cameraOn: boolean
+}
 
 export default defineComponent({
   name: 'VideoConferencing',
@@ -77,92 +137,17 @@ export default defineComponent({
       participants: [
         {
           id: 1,
-          profilePic: 'path/to/profile1.jpg',
-          videoStream: 'path/to/video1.mp4',
-          cameraOn: true,
-          isMuted: false
+          profilePic: 'https://randomuser.me/api/portraits',
+          videoStream: 'https://source.unsplash.com/random/800x600',
+          isMuted: false,
+          cameraOn: true
         },
-        {
-          id: 2,
-          profilePic: 'path/to/profile2.jpg',
-          videoStream: 'path/to/video2.mp4',
-          cameraOn: false,
-          isMuted: true
-        },
-        {
-          id: 3,
-          profilePic: 'path/to/profile3.jpg',
-          videoStream: 'path/to/video3.mp4',
-          cameraOn: true,
-          isMuted: false
-        },
-        {
-          id: 4,
-          profilePic: 'path/to/profile4.jpg',
-          videoStream: 'path/to/video4.mp4',
-          cameraOn: true,
-          isMuted: true
-        },
-        {
-          id: 5,
-          profilePic: 'path/to/profile5.jpg',
-          videoStream: 'path/to/video5.mp4',
-          cameraOn: false,
-          isMuted: false
-        },
-        {
-          id: 6,
-          profilePic: 'path/to/profile6.jpg',
-          videoStream: 'path/to/video6.mp4',
-          cameraOn: true,
-          isMuted: true
-        },
-        {
-          id: 7,
-          profilePic: 'path/to/profile7.jpg',
-          videoStream: 'path/to/video7.mp4',
-          cameraOn: false,
-          isMuted: false
-        },
-        {
-          id: 8,
-          profilePic: 'path/to/profile8.jpg',
-          videoStream: 'path/to/video8.mp4',
-          cameraOn: true,
-          isMuted: true
-        },
-        {
-          id: 9,
-          profilePic: 'path/to/profile9.jpg',
-          videoStream: 'path/to/video9.mp4',
-          cameraOn: false,
-          isMuted: false
-        },
-        {
-          id: 10,
-          profilePic: 'path/to/profile10.jpg',
-          videoStream: 'path/to/video10.mp4',
-          cameraOn: true,
-          isMuted: false
-        },
-        {
-          id: 11,
-          profilePic: 'path/to/profile11.jpg',
-          videoStream: 'path/to/video11.mp4',
-          cameraOn: false,
-          isMuted: true
-        },
-        {
-          id: 12,
-          profilePic: 'path/to/profile12.jpg',
-          videoStream: 'path/to/video12.mp4',
-          cameraOn: true,
-          isMuted: false
-        }
-      ],
+        // Your participants array
+      ] as Participant[],
       isUserMuted: false,
       isUserCameraOn: true,
-      meetingName: 'Weekly Standup Meeting'
+      meetingName: 'Weekly Standup Meeting',
+      layout: 'grid' // Default layout is grid
     }
   },
   methods: {
@@ -195,6 +180,9 @@ export default defineComponent({
     },
     handleCamera() {
       this.isUserCameraOn = !this.isUserCameraOn
+    },
+    toggleLayout() {
+      this.layout = this.layout === 'grid' ? 'list' : 'grid'
     }
   }
 })
@@ -203,5 +191,8 @@ export default defineComponent({
 <style scoped>
 .participant-video {
   object-fit: cover;
+}
+.participant-list-item {
+  margin-bottom: 10px;
 }
 </style>
