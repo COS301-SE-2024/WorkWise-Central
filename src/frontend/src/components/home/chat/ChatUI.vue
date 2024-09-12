@@ -15,7 +15,7 @@
         :messages="currentMessages"
         :currentUser="currentUser"
       />
-      <ChatInput @send-message="sendMessage" :disabled="!selectedUser" />
+      <ChatInput @send-message="sendMessage" :disabled="!selectedUser" v-if="selectedUser" />
     </div>
   </div>
 </template>
