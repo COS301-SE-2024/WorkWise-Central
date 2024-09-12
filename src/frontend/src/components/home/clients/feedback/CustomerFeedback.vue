@@ -54,28 +54,41 @@
               <template v-slot:activator="{ props }">
                 <v-card v-bind="props" class="ma-3 bg-background" border="md">
                   <v-card-title class="bg-background">
-                    <span>Client: {{ feedback.clientName }}</span>
+                    <span> {{ feedback.clientName }}</span>
                     <v-spacer></v-spacer>
-                    <span>Job: {{ feedback.jobTitle }}</span>
+                    <span>{{ feedback.jobTitle }}</span>
                   </v-card-title>
-                  <v-label style="display: block; margin-bottom: 10px">Job Rating</v-label>
-                  <v-rating
-                      v-model="feedback.jobRating"
-                      active-color="blue"
-                      color="orange-lighten-1"
-                      readonly
-                    ></v-rating>
-                    <v-spacer></v-spacer>
-                    <v-label style="display: block; margin-bottom: 10px">Customer Service Rating</v-label>
-                    <v-rating
-                      v-model="feedback.customerServiceRating"
-                      active-color="blue"
-                      color="orange-lighten-1"
-                      readonly
-                    ></v-rating>
-                    <v-spacer></v-spacer>
-                    <v-label style="display: block; margin-bottom: 10px">Comment</v-label>
-                  <v-card-text>{{ feedback.comments }}</v-card-text>
+                  <v-card-text
+                    ><v-container
+                      ><v-row
+                        ><v-col cols="12" lg="6">
+                          <v-label style="display: block; margin-bottom: 10px">Job Rating</v-label>
+                          <v-rating
+                            v-model="feedback.jobRating"
+                            active-color="blue"
+                            color="orange-lighten-1"
+                            readonly
+                          ></v-rating></v-col
+                        ><v-col cols="12" lg="6"
+                          ><v-label style="display: block; margin-bottom: 10px"
+                            >Customer Service Rating</v-label
+                          >
+                          <v-rating
+                            v-model="feedback.customerServiceRating"
+                            active-color="blue"
+                            color="orange-lighten-1"
+                            readonly
+                          ></v-rating></v-col></v-row
+                    ></v-container>
+                    <v-container>
+                      <v-row
+                        ><v-col>
+                          <v-label style="display: block; margin-bottom: 10px">Comment</v-label>
+                          <v-card-text>{{ feedback.comments }}</v-card-text></v-col
+                        ></v-row
+                      ></v-container
+                    >
+                  </v-card-text>
                 </v-card>
               </template>
             </v-menu>
@@ -131,8 +144,8 @@ export default defineComponent({
     },
     populateCategories() {
       this.feedbacks.forEach((feedback: Feedback) => {
-        if (!this.categories.includes(feedback.jobDone)) {
-          this.categories.push(feedback.jobDone)
+        if (!this.categories.includes(feedback.jobTitle)) {
+          this.categories.push(feedback.jobTitle)
         }
       })
     },
@@ -185,14 +198,16 @@ export default defineComponent({
     filteredFeedbacks(): Feedback[] {
       return this.feedbacks.filter((feedback: Feedback) => {
         const matchesCategory = this.selectedCategory
-          ? feedback.jobDone === this.selectedCategory
+          ? feedback.jobTitle === this.selectedCategory
           : true
         const matchesSatisfaction = this.selectedSatisfaction
-          ? feedback.satisfactionLevel === this.selectedSatisfaction
+          ? feedback.jobRating === this.selectedSatisfaction ||
+            feedback.customerServiceRating === this.selectedSatisfaction
           : true
         const matchesSearchQuery = this.searchQuery
-          ? feedback.feedback.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            feedback.employeeName.toLowerCase().includes(this.searchQuery.toLowerCase())
+          ? feedback.comments.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            feedback.clientName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            feedback.jobTitle.toLowerCase().includes(this.searchQuery.toLowerCase())
           : true
 
         return matchesCategory && matchesSatisfaction && matchesSearchQuery
