@@ -82,7 +82,7 @@ export class Invoice {
   jobId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Job' })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Company' })
   companyId: Types.ObjectId;
 
   @ApiProperty()

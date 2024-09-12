@@ -134,6 +134,14 @@ export class InvoiceService {
     return await this.invoiceRepository.findAllInCompany(companyId);
   }
 
+  async detailedFindAllInCompany(companyId: Types.ObjectId) {
+    //checking if the company exist
+    if (!(await this.companyService.companyIdExists(companyId))) {
+      throw new Error('CompanyId does not exist');
+    }
+    return await this.invoiceRepository.detailedFindAllInCompany(companyId);
+  }
+
   async findAllForClient(clientId: Types.ObjectId) {
     //checking if the company exist
     if (!(await this.clientService.clientExists(clientId))) {
