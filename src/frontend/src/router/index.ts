@@ -377,9 +377,9 @@ const router = createRouter({
       component: HourlyRate
     },
     {
-      path: "/homeView",
-      name: 'homeView',
-      component: () => import('@/views/home/Chat/ChatUIView.vue'),
+      path: '/chatHome',
+      name: 'chatHome',
+      component: () => import('@/views/home/chat/ChatHome.vue'),
     },
   ]
 })

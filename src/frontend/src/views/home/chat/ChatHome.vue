@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import NavigationBar from '@/components/home/NavigationBar.vue'
-import Chat from './HomeView.vue'
+import ChatUI from '@/components/home/chat/ChatUI.vue'
 </script>
 
 <template>
-  <NavigationBar :component="Chat"/>
+  <NavigationBar :component="ChatUI"/>
 </template>
 
 <style scoped>
