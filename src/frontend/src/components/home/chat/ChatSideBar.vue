@@ -2,19 +2,39 @@
   <aside class="chat-sidebar">
     <h2>Chats</h2>
     <span class="p-input-icon-left w-full mb-3">
-      <InputText v-model="searchQuery" placeholder="Search users" class="w-full" />
+      <i class="pi pi-search" />
+      <InputText v-model="searchQuery" placeholder="Search chats" class="w-full" />
     </span>
-    <ul class="user-list">
+    <Button label="New Chat" icon="pi pi-plus" @click="showNewChatDialog" class="p-button-outlined mb-3 w-full" />
+
+    <ul class="chat-list">
       <li
-        v-for="user in filteredUsers"
-        :key="user.id"
-        @click="selectUser(user)"
-        :class="{ 'selected': selectedUser && user.id === selectedUser.id }"
+        v-for="chat in filteredChats"
+        :key="chat.id"
+        @click="selectChat(chat)"
+        :class="{ 'selected': selectedChat && chat.id === selectedChat.id }"
       >
-        <Avatar :image="user.avatar" size="large" shape="circle" />
-        <span>{{ user.name }}</span>
+        <Avatar :image="chat.avatar" size="large" shape="circle" />
+        <span>{{ chat.name }}</span>
       </li>
     </ul>
+
+    <Dialog v-model:visible="newChatDialogVisible" header="Create New Chat" :style="{ width: '50vw' }">
+      <div class="p-fluid">
+        <div class="p-field">
+          <label for="chatName">Chat Name</label>
+          <InputText id="chatName" v-model="newChatName" />
+        </div>
+        <div class="p-field">
+          <label for="participants">Participants</label>
+          <MultiSelect id="participants" v-model="selectedParticipants" :options="availableUsers" optionLabel="name" placeholder="Select participants" />
+        </div>
+      </div>
+      <template #footer>
+        <Button label="Cancel" icon="pi pi-times" @click="closeNewChatDialog" class="p-button-text" />
+        <Button label="Create" icon="pi pi-check" @click="createNewChat" autofocus />
+      </template>
+    </Dialog>
   </aside>
 </template>
 
@@ -22,20 +42,50 @@
 import { ref, computed } from 'vue';
 import Avatar from 'primevue/avatar';
 import InputText from 'primevue/inputtext';
+import Button from 'primevue/button';
+import Dialog from 'primevue/dialog';
+import MultiSelect from 'primevue/multiselect';
 
-const props = defineProps(['users', 'selectedUser']);
-const emit = defineEmits(['select-user']);
+const props = defineProps(['chats', 'selectedChat', 'users']);
+const emit = defineEmits(['select-chat', 'create-chat']);
 
 const searchQuery = ref('');
+const newChatDialogVisible = ref(false);
+const newChatName = ref('');
+const selectedParticipants = ref([]);
 
-const filteredUsers = computed(() => {
-  return props.users.filter(user =>
-    user.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+const filteredChats = computed(() => {
+  return props.chats.filter(chat =>
+    chat.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
 });
 
-const selectUser = (user) => {
-  emit('select-user', user);
+const availableUsers = computed(() => {
+  return props.users.filter(user => user.id !== currentUser.id);
+});
+
+const selectChat = (chat) => {
+  emit('select-chat', chat);
+};
+
+const showNewChatDialog = () => {
+  newChatDialogVisible.value = true;
+};
+
+const closeNewChatDialog = () => {
+  newChatDialogVisible.value = false;
+  newChatName.value = '';
+  selectedParticipants.value = [];
+};
+
+const createNewChat = () => {
+  if (newChatName.value && selectedParticipants.value.length > 0) {
+    emit('create-chat', {
+      name: newChatName.value,
+      participants: selectedParticipants.value.map(user => user.id)
+    });
+    closeNewChatDialog();
+  }
 };
 </script>
 
@@ -47,12 +97,12 @@ const selectUser = (user) => {
   padding: 1rem;
 }
 
-.user-list {
+.chat-list {
   list-style-type: none;
   padding: 0;
 }
 
-.user-list li {
+.chat-list li {
   display: flex;
   align-items: center;
   padding: 0.5rem;
@@ -61,15 +111,15 @@ const selectUser = (user) => {
   transition: background-color 0.2s;
 }
 
-.user-list li:hover {
+.chat-list li:hover {
   background-color: #e0e0e0;
 }
 
-.user-list li.selected {
+.chat-list li.selected {
   background-color: #d0d0d0;
 }
 
-.user-list li span {
+.chat-list li span {
   margin-left: 1rem;
 }
 
@@ -79,7 +129,6 @@ const selectUser = (user) => {
 }
 
 .p-inputtext {
-  flex-grow: 1;
   width: 100%;
   margin-bottom: 10px;
 }

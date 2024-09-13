@@ -1,25 +1,28 @@
 <template>
   <div class="chat-app">
     <ChatSidebar
+      :chats="chats"
+      :selectedChat="selectedChat"
       :users="users"
-      :selectedUser="selectedUser"
-      @select-user="selectUser"
+      @select-chat="selectChat"
+      @create-chat="createChat"
     />
     <div class="chat-main">
-      <header v-if="selectedUser" class="chat-header">
-        <Avatar :image="selectedUser.avatar" size="large" shape="circle" />
-        <h2>{{ selectedUser.name }}</h2>
+      <header v-if="selectedChat" class="chat-header">
+        <Avatar :image="selectedChat.avatar" size="large" shape="circle" />
+        <h2>{{ selectedChat.name }}</h2>
       </header>
       <ChatMessageList
-        v-if="selectedUser"
+        v-if="selectedChat"
         :messages="currentMessages"
         :currentUser="currentUser"
+        :users="users"
       />
-      <ChatInput @send-message="sendMessage" :disabled="!selectedUser" v-if="selectedUser" />
-      <div v-else class="no-user-selected">
-        <img src="@/assets/images/background/WorkWiseChat.png" alt="Message Icon" class="message-icon" />
+      <ChatInput @send-message="sendMessage" :disabled="!selectedChat" v-if="selectedChat" />
+      <div v-else class="no-chat-selected">
+        <img src="@/assets/images/background/WorkWiseChat.png" alt="Chat Icon" class="chat-icon" />
         <h1>WorkWise Chat</h1>
-        <p>Select a user to start a new chat</p>
+        <p>Select a chat or create a new one to start messaging</p>
       </div>
     </div>
   </div>
@@ -33,48 +36,70 @@ import ChatInput from './ChatInput.vue';
 import Avatar from 'primevue/avatar';
 
 // Mock data
-const currentUser = ref({ id: 1, name: 'You' });
+const currentUser = ref({ id: 1, name: 'You', avatar: '@/assets/images/avatars/you.jpg' });
 const users = ref([
-  { id: 2, name: 'Alice', avatar: '@/components/home/chat/mockImages/Alice.jpeg' },
-  { id: 3, name: 'Bob', avatar: '@/components/home/chat/mockImages/Bob.jpeg' },
-  { id: 4, name: 'Charlie', avatar: 'path/to/charlie-avatar.jpg' },
+  { id: 2, name: 'Alice', avatar: '@/assets/images/avatars/alice.jpg' },
+  { id: 3, name: 'Bob', avatar: '@/assets/images/avatars/bob.jpg' },
+  { id: 4, name: 'Charlie', avatar: '@/assets/images/avatars/charlie.jpg' },
 ]);
 
-const selectedUser = ref(null);
+const chats = ref([
+  { id: 1, name: 'General Chat', avatar: '@/assets/images/avatars/group.jpg', participants: [1, 2, 3, 4] },
+  { id: 2, name: 'Alice', avatar: '@/assets/images/avatars/alice.jpg', participants: [1, 2] },
+  { id: 3, name: 'Bob', avatar: '@/assets/images/avatars/bob.jpg', participants: [1, 3] },
+]);
+
+const selectedChat = ref(null);
 
 const messages = ref({
+  1: [
+    { id: 1, senderId: 2, content: 'Hello everyone!', timestamp: new Date() },
+    { id: 2, senderId: 1, content: 'Hi Alice!', timestamp: new Date() },
+  ],
   2: [
-    { id: 1, senderId: 1, receiverId: 2, content: 'Hey Alice!', timestamp: new Date() },
-    { id: 2, senderId: 2, receiverId: 1, content: 'Hi there!', timestamp: new Date() },
+    { id: 1, senderId: 1, content: 'Hey Alice!', timestamp: new Date() },
+    { id: 2, senderId: 2, content: 'Hi there!', timestamp: new Date() },
   ],
   3: [
-    { id: 1, senderId: 1, receiverId: 3, content: 'Hello Bob!', timestamp: new Date() },
-    { id: 2, senderId: 3, receiverId: 1, content: 'Hey, how are you?', timestamp: new Date() },
-  ],
-  4: [
-    { id: 1, senderId: 4, receiverId: 1, content: 'Hi there!', timestamp: new Date() },
-    { id: 2, senderId: 1, receiverId: 4, content: 'Hello Charlie!', timestamp: new Date() },
+    { id: 1, senderId: 1, content: 'Hello Bob!', timestamp: new Date() },
+    { id: 2, senderId: 3, content: 'Hey, how are you?', timestamp: new Date() },
   ],
 });
 
 const currentMessages = computed(() => {
-  return selectedUser.value ? messages.value[selectedUser.value.id] || [] : [];
+  return selectedChat.value ? messages.value[selectedChat.value.id] || [] : [];
 });
 
-const selectUser = (user) => {
-  selectedUser.value = user;
+const selectChat = (chat) => {
+  selectedChat.value = chat;
 };
 
-const sendMessage = (content) => {
-  if (selectedUser.value) {
+const createChat = (newChat) => {
+  const chatId = chats.value.length + 1;
+  const chat = {
+    id: chatId,
+    name: newChat.name,
+    avatar: '@/assets/images/avatars/group.jpg', // Default group avatar
+    participants: [currentUser.value.id, ...newChat.participants]
+  };
+  chats.value.push(chat);
+  messages.value[chatId] = [];
+  selectChat(chat);
+};
+
+const sendMessage = ({ content, attachment }) => {
+  if (selectedChat.value) {
     const newMessage = {
       id: currentMessages.value.length + 1,
       senderId: currentUser.value.id,
-      receiverId: selectedUser.value.id,
       content,
+      attachment,
       timestamp: new Date()
     };
-    messages.value[selectedUser.value.id].push(newMessage);
+    if (!messages.value[selectedChat.value.id]) {
+      messages.value[selectedChat.value.id] = [];
+    }
+    messages.value[selectedChat.value.id].push(newMessage);
   }
 };
 </script>
@@ -105,27 +130,29 @@ const sendMessage = (content) => {
   font-size: 1.2rem;
 }
 
-.no-user-selected {
+.no-chat-selected {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
+  background-color: #f9f9f9;
 }
 
-.message-icon {
+.chat-icon {
   width: 100px;
   height: 100px;
   margin-bottom: 1rem;
 }
 
-.no-user-selected h1 {
+.no-chat-selected h1 {
   font-size: 2rem;
   margin-bottom: 0.5rem;
+  color: #333;
 }
 
-.no-user-selected p {
+.no-chat-selected p {
   font-size: 1rem;
-  color: #888;
+  color: #666;
 }
 </style>
