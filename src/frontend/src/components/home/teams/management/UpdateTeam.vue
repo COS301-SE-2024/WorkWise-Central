@@ -115,6 +115,8 @@ export default {
   data() {
     return {
       localEditedItem: this.editedItem,
+      initalTeamName: this.editedItem.teamName,
+      intialTeamLeader: this.editedItem.teamLeaderId,
       editDialog: false,
       isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       valid: false,
@@ -173,12 +175,16 @@ export default {
       const apiURL = await this.getRequestUrl()
 
       //updating the all the team info except the teamMember info
-      if (this.localEditedItem.teamName || this.getEmployeeIdByName(this.selectedTeamLeader)) {
+      if (
+        this.localEditedItem.teamName !== this.initalTeamName ||
+        this.getEmployeeIdByName(this.selectedTeamLeader !== this.intialTeamLeader)
+      ) {
         const data = {
           teamName: this.localEditedItem.teamName,
           teamLeaderId: this.getEmployeeIdByName(this.selectedTeamLeader)
         }
         console.log(data)
+        console.log('hi')
         axios
           .patch(`${apiURL}team/${this.teamId}`, data, config)
           .then((response) => {
