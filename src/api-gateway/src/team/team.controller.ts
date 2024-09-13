@@ -54,7 +54,10 @@ export class TeamController {
   }
 
   async validateRequestWithCompanyId(userId: Types.ObjectId, companyId: Types.ObjectId) {
+    console.log('userId: ', userId);
+    console.log('companyId: ', companyId);
     const user = await this.userService.getUserById(userId);
+    console.log('user: ', user);
     if (!user.joinedCompanies.find((joined) => joined.companyId.toString() === companyId.toString())) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
@@ -405,8 +408,10 @@ export class TeamController {
     @Param('teamId') teamId: Types.ObjectId,
     @Body() removeTeamMembersDto: RemoveTeamMembersDto,
   ) {
+    console.log('In endpoint');
     const team = await this.teamService.findById(teamId);
     const userId = await extractUserId(this.jwtService, headers);
+    console.log('userId: ', userId);
     await this.validateRequestWithCompanyId(userId, team.companyId);
     let data;
     try {

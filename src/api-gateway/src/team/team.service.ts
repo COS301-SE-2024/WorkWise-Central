@@ -164,9 +164,9 @@ export class TeamService {
       if (!(await this.employeeService.employeeExists(memberId))) {
         throw new Error('Employee not found');
       }
-      if (team.teamLeaderId == memberId) {
-        throw new Error('Employee is already the team leader');
-      }
+      // if (team.teamLeaderId == memberId) {
+      //   throw new Error('Employee is already the team leader');
+      // }
     }
     const newList = team.teamMembers;
 
@@ -201,20 +201,21 @@ export class TeamService {
     }
     console.log('team.teamMembers: ', team.teamMembers);
 
-    const newList = team.teamMembers;
+    const newList = [];
+    console.log('newList: ', newList);
 
-    for (const memberId of removeTeamMembersDto.teamMembersToBeRemoved) {
+    for (const memberId of team.teamMembers) {
       console.log('memberId: ', memberId);
-      if (team.teamMembers.map((x) => x.toString()).includes(memberId.toString())) {
-        console.log('In if');
-        newList.splice(newList.indexOf(memberId), 1);
+      if (!removeTeamMembersDto.teamMembersToBeRemoved.some((id) => id.toString() === memberId.toString())) {
+        console.log('in if');
+        newList.push(memberId);
       }
     }
-
     console.log('newList: ', newList);
 
     const updateDto = new InternalUpdateTeamDto();
     updateDto.teamMembers = newList;
+    console.log('updateDto: ', updateDto);
     return await this.teamRepository.update(id, updateDto);
   }
 
