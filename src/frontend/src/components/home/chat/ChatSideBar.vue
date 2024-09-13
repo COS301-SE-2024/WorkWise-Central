@@ -2,10 +2,10 @@
   <aside class="chat-sidebar">
     <h2>Chats</h2>
     <span class="p-input-icon-left w-full mb-3">
-      <i class="pi pi-search" />
+      <i class="fa: fa-solid fa-search" />
       <InputText v-model="searchQuery" placeholder="Search chats" class="w-full" />
     </span>
-    <Button label="New Chat" icon="pi pi-plus" @click="showNewChatDialog" class="p-button-outlined mb-3 w-full" />
+    <Button label="New Chat" icon="fa: fa-solid fa-plus" @click="showNewChatDialog" class="p-button-outlined mb-3 w-full" />
 
     <ul class="chat-list">
       <li
@@ -19,7 +19,7 @@
       </li>
     </ul>
 
-    <Dialog v-model:visible="newChatDialogVisible" header="Create New Chat" :style="{ width: '50vw' }">
+    <Dialog v-model:visible="newChatDialogVisible" header="Create New Chat" :style="{ width: '50vw' }" class="new-chat-dialog">
       <div class="p-fluid">
         <div class="p-field">
           <label for="chatName">Chat Name</label>
@@ -31,8 +31,8 @@
         </div>
       </div>
       <template #footer>
-        <Button label="Cancel" icon="pi pi-times" @click="closeNewChatDialog" class="p-button-text" />
-        <Button label="Create" icon="pi pi-check" @click="createNewChat" autofocus />
+        <Button label="Cancel" icon="fa: fa-solid fa-times" @click="closeNewChatDialog" class="p-button-text" />
+        <Button label="Create" icon="fa: fa-solid fa-check" @click="createNewChat" autofocus />
       </template>
     </Dialog>
   </aside>
@@ -45,6 +45,7 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import MultiSelect from 'primevue/multiselect';
+import * as currentUser from 'vuetify/locale'
 
 const props = defineProps(['chats', 'selectedChat', 'users']);
 const emit = defineEmits(['select-chat', 'create-chat']);
@@ -97,6 +98,12 @@ const createNewChat = () => {
   padding: 1rem;
 }
 
+.new-chat-dialog {
+  background-color: #f4f4f4;
+  border: 1px solid #e0e0e0;
+  padding: 1rem;
+}
+
 .chat-list {
   list-style-type: none;
   padding: 0;
@@ -129,7 +136,7 @@ const createNewChat = () => {
 }
 
 .p-inputtext {
-  width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  margin-left: 7px;
 }
 </style>
