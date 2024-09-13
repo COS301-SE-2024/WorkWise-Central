@@ -43,7 +43,6 @@
             </v-col>
             <v-col cols="12" lg="10">
               <v-text-field
-                @click="getNotificationsSequel"
                 v-model="search"
                 label="Search"
                 elevation="1"
@@ -86,7 +85,7 @@
                           <div class="flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center gap-2"></div>
                             <span class="text-surface-500 dark:text-surface-400">
-                              {{ notification.createdAt }}</span
+                              {{ format(new Date(notification.createdAt), 'dd MMMM yyyy') }}</span
                             >
                           </div>
                         </template>
@@ -117,11 +116,7 @@
                           </v-menu>
                         </template>
                         <p class="m-0" :theme="true">
-                          <span class="font-bold"> {{ notification.message.title }}</span>
-                          <br />
                           {{ notification.message.body }}
-                          <br />
-                          {{ notification.companyName }}
                         </p>
                       </Panel>
                     </v-list-item>
@@ -154,7 +149,7 @@
                 v-for="(item, index) in filters"
                 :key="index"
                 :value="index"
-                @click="filterOn ? filter(item.title, false) : filter(item.title, false)"
+                @click="filterOn ? filter(item.title) : filter(item.title)"
                 :class="{ 'bg-secondary': currentFilter === item.title }"
               >
                 <v-list-item-title>{{ item.title }}</v-list-item-title>
@@ -182,19 +177,16 @@
 <script lang="ts">
 import Toast from 'primevue/toast'
 import Panel from 'primevue/panel'
-
+import { format } from 'date-fns'
 import axios from 'axios'
 export default {
   data() {
     return {
       menu: false,
       notifications: [] as any[],
+      allNotifications: [] as any[],
       items: [
         { title: 'Inbox', icon: 'fa: fa-solid fa-inbox' }
-
-        // { title: 'Saved', icon: 'fa: fa-solid fa-bookmark' },
-        // { title: 'Done', icon: 'fa: fa-solid fa-check' }
-
         // Add more items here
       ],
       filters: [
@@ -209,7 +201,7 @@ export default {
       groupBy: ['Date', 'Company', 'Type'],
       filteredNotificationsArray: [] as any[],
       search: '',
-      clickedNotificationId: 'af2o3ufoaiunf', // Track the clicked notification ID
+      clickedNotificationId: '', // Track the clicked notification ID
       active: true,
       clickedNotfiicationIds: [] as string[],
       selectAllNotifications: false, // Track the select all checkbox
@@ -228,7 +220,8 @@ export default {
       currentCompany: '', // Track the current company
       currentFilter: '', // Track the current filter
       localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      apply: false
     }
   },
   components: { Toast, Panel },
@@ -238,6 +231,7 @@ export default {
       console.log(this.notifications)
       if (this.notifications == null) {
         console.log('Notifications are null')
+        return []
       }
 
       let filtered = this.notifications.filter(
@@ -264,12 +258,13 @@ export default {
       return filtered
     }
   },
-  async mounted() {
-    await this.getCompanies()
+  mounted() {
+    this.getCompanies()
     this.populateCompanies()
-    //await this.getNotifications()
+    this.getNotifications()
   },
   methods: {
+    format,
     async getCompanies() {
       console.log('Get Companies')
       const config = {
@@ -325,6 +320,13 @@ export default {
     },
     setInbox(inbox: string) {
       this.currentInbox = inbox
+      if (inbox === 'Unread') {
+        this.notifications = this.allNotifications.filter((n) => n.isRead === false)
+      } else if (inbox === 'Read') {
+        this.notifications = this.allNotifications.filter((n) => n.isRead === true)
+      } else {
+        this.notifications = this.allNotifications
+      }
     },
     switchCompany(company: string) {
       console.log('Switch Company:', company)
@@ -334,11 +336,6 @@ export default {
       console.log('Populate Companies')
       for (let i = 0; i < this.joinedCompanies.length; i++) {
         this.companies.push({ title: this.joinedCompaniesNames[i] })
-      }
-      for (let j = 0; j < this.notifications.length; j++) {
-        if (!this.companies.find((company) => company.title === this.notifications[j].company)) {
-          this.companies.push({ title: this.notifications[j].company })
-        }
       }
     },
     handleNotificationClick(_id: string) {
@@ -485,25 +482,22 @@ export default {
         }
       }
     },
-    filter(filterType: string, apply: boolean) {
+    filter(filterType: string) {
       this.filteredNotificationsArray = []
-      console.log('Filter:', apply)
+      this.apply = !this.apply
+      console.log('Filter:', this.apply)
       this.currentFilter = filterType
+      this.applyFilter(this.apply)
       if (this.filterOn) {
-        this.applyFilter(apply)
-      } else {
-        this.applyFilter(apply)
         if (filterType === 'Job Oriented') {
           for (let i = 0; i < this.notifications.length; i++) {
-            if (this.notifications[i].isJobRelated) {
-              this.filteredNotificationsArray.push(this.notifications[i]._id)
-            }
+            this.notifications = this.allNotifications.filter((n) => n.isJobRelated)
           }
         } else if (filterType === 'Admin') {
-          for (let i = 0; i < this.notifications.length; i++) {
-            this.filteredNotificationsArray.push(this.notifications[i]._id)
-          }
+          this.notifications = this.allNotifications.filter((n) => !n.isJobRelated)
         }
+      } else {
+        this.notifications = this.allNotifications
       }
     },
     applyFilter(apply: boolean) {
@@ -531,34 +525,12 @@ export default {
       const user_id = localStorage.getItem('id')
       try {
         const res = await axios.get(`${apiURL}notification/user?userId=${user_id}`, config)
-        console.log('User Notifications', res)
+        //console.log('User Notifications', res)
         //this.items = res.data.data
         for (const datum of res.data.data) {
           this.notifications.push(datum)
+          this.allNotifications.push(datum)
         }
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    async getNotificationsSequel() {
-      console.log('Get Notifications')
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
-      }
-      const apiURL = await this.getRequestUrl()
-      const user_id = localStorage.getItem('id')
-      try {
-        const res = await axios.get(`${apiURL}notification/user?userId=${user_id}`, config)
-        //console.log('User Notifications', res.data.data)
-        //this.items = res.data.data
-        for (const datum of res.data.data) {
-          console.log('Bob', datum)
-          this.notifications.push(datum)
-        }
-        return this.notifications
       } catch (error) {
         console.error(error)
       }
