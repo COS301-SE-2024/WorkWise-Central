@@ -377,9 +377,9 @@ const router = createRouter({
       component: HourlyRate
     },
     {
-      path: 'inv-kanban',
+      path: '/inv-kanban',
       name: 'invoice-kanban',
-      component: () => import('@/components/home/invoices/InvKanbanV1/InvoiceKanban.vue')
+      component: () => import('@/views/home/invoices/InvoiceBacklog.vue')
     }
   ]
 })

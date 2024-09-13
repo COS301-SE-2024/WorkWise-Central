@@ -1,13 +1,5 @@
 <template>
   <v-container fluid>
-    <v-row justify="end"
-      ><v-col cols="auto">
-        <v-btn size="x-large" align="right" @click="redirectToArchivePage">
-          <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
-        </v-btn>
-      </v-col></v-row
-    >
-
     <v-row class="d-flex flex-nowrap overflow-scroll">
       <VueDraggable
         ref="el"
@@ -301,80 +293,6 @@
             </v-virtual-scroll>
           </v-card>
         </v-col>
-        <v-col cols="auto">
-          <v-dialog max-height="600" max-width="500" v-model="add_column_dialog">
-            <template v-slot:activator="{ props }">
-              <v-btn icon="fa: fa-solid fa-plus" v-bind="props"></v-btn>
-            </template>
-            <v-card elevation="14" rounded="md" max-height="700" max-width="900">
-              <v-card-title class="text-center">New Column</v-card-title>
-              <v-card-text>
-                <!--              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">-->
-                <v-col>
-                  <v-spacer></v-spacer>
-                  <v-col>
-                    <v-col align="center">
-                      <v-icon :color="column_color" :size="40">
-                        {{ 'fa: fa-solid fa-cube' }}
-                      </v-icon>
-                    </v-col>
-                    <v-col>
-                      <label style="font-size: 14px; font-weight: lighter">Column Name</label>
-                      <v-text-field
-                        density="compact"
-                        color="grey-lighten-4"
-                        placeholder="Enter the name of the new column"
-                        rounded="md"
-                        variant="solo"
-                        v-model="new_column_name"
-                        :rules="column_name_rule"
-                        required
-                        data-testid="job-title-field"
-                      ></v-text-field
-                    ></v-col>
-                    <v-col align="center">
-                      <label style="font-size: 14px; font-weight: lighter">Color</label>
-                      <v-color-picker
-                        v-model="column_color"
-                        hide-inputs
-                        show-swatches
-                        @update:modelValue="addColorPickerUpdate"
-                      ></v-color-picker>
-                    </v-col>
-                  </v-col>
-                </v-col>
-                <v-col align="center">
-                  <label style="{color:red;}">{{ error_message }}</label>
-                </v-col>
-                <v-col cols="8" offset="2" align="center">
-                  <v-btn
-                    color="success"
-                    rounded="md"
-                    type="submit"
-                    boarder="md"
-                    width="100%"
-                    height="35"
-                    variant="text"
-                    @click="addColumnButtonClickedSave"
-                    data-testid="create-btn"
-                    >Save
-                  </v-btn>
-                  <v-btn
-                    color="error"
-                    rounded="md"
-                    boarder="md"
-                    width="100%"
-                    height="35"
-                    variant="text"
-                    @click="add_column_dialog = false"
-                    data-testid="cancel-btn"
-                    >Cancel
-                  </v-btn>
-                </v-col>
-              </v-card-text>
-            </v-card>
-          </v-dialog>
-        </v-col>
       </VueDraggable>
     </v-row>
   </v-container>
@@ -409,19 +327,19 @@ export default {
       archive_status_id: '',
       columns: [
         {
-          _id: '64872d9a9f2c9e001f5aabc6',
-          __v: 0,
-          status: 'Paid',
-          colour: '#4CAF50', // Green for "Paid"
-          companyId: '6472d1b99c0f3e001d5aa014',
-          cards: []
-        },
-        {
-          _id: '64872d9a9f2c9e001f5aabc7',
+          _id: 0,
           __v: 0,
           status: 'Unpaid',
           colour: '#F44336', // Red for "Unpaid"
-          companyId: '6472d1b99c0f3e001d5aa014',
+          companyId: localStorage['currentCompany'],
+          cards: []
+        },
+        {
+          _id: 1,
+          __v: 0,
+          status: 'Paid',
+          colour: '#4CAF50', // Green for "Paid"
+          companyId: localStorage['currentCompany'],
           cards: []
         }
       ] as Column[],
@@ -1066,7 +984,7 @@ export default {
     }
   },
   mounted() {
-    this.loadColumns().then(() => this.loadJobs().then(() => this.loading(this.starting_cards)))
+    // this.loadColumns().then(() => this.loadJobs().then(() => this.loading(this.starting_cards)))
   }
 }
 </script>

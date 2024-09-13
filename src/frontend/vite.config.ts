@@ -46,7 +46,19 @@ export default defineConfig({
         ]
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 10000000
+        maximumFileSizeToCacheInBytes: 10000000,
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => {
+              return url.pathname.startsWith('/api') || url.pathname.startsWith('/images')
+            },
+            handler: 'CacheFirst' as const,
+            options: {
+              cacheName: 'api-cache',
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          }
+        ]
       }
     })
   ],
