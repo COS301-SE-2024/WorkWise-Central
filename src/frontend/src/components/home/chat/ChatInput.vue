@@ -66,6 +66,8 @@ const onFileSelect = (event) => {
   padding: 1rem;
   background-color: #f0f0f0;
   border-top: 1px solid #e0e0e0;
+  position: sticky;
+  bottom: 0;
 }
 
 .p-inputtext {
