@@ -192,7 +192,7 @@ export class TeamService {
       throw new Error('Team not found');
     }
     //checking that the team leader is not being remove
-    if (!removeTeamMembersDto.teamMembersToBeRemoved.some((id) => id.toString() === team.teamLeaderId.toString())) {
+    if (removeTeamMembersDto.teamMembersToBeRemoved.some((id) => id.toString() === team.teamLeaderId.toString())) {
       throw new Error('Cannot remove the team leader');
     }
 

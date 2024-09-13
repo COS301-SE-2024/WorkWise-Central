@@ -417,6 +417,7 @@ export class TeamController {
     try {
       data = await this.teamService.removeTeamMembers(teamId, removeTeamMembersDto);
     } catch (e) {
+      console.log('e: ', e);
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
     return { data: data };
