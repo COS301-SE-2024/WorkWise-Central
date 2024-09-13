@@ -50,8 +50,8 @@
               <v-icon v-else>mdi-microphone</v-icon>
             </v-btn>
             <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on" @click="switchCamera(participant.id)">
+              <template v-slot:activator="{ props }">
+                <v-btn icon v-bind="props" @click="switchCamera(participant.id)">
                   <v-icon>mdi-camera</v-icon>
                 </v-btn>
               </template>
@@ -141,7 +141,7 @@ export default defineComponent({
           videoStream: 'https://source.unsplash.com/random/800x600',
           isMuted: false,
           cameraOn: true
-        },
+        }
         // Your participants array
       ] as Participant[],
       isUserMuted: false,
