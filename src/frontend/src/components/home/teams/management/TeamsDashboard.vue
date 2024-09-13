@@ -56,7 +56,7 @@
               </v-chip>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
-              <v-menu max-width="500px">
+              <v-menu max-width="500px" v-bind="menuProps">
                 <template v-slot:activator="{ props }">
                   <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)">
                     <v-icon color="primary">mdi-dots-horizontal</v-icon>
@@ -112,7 +112,7 @@ export default defineComponent({
   data() {
     return {
       search: '',
-
+      menuVisible: false,
       teamHeaders: [
         { title: 'Team Name', value: 'teamName' },
         { title: 'Team Leader', value: 'teamLeaderId.userInfo.displayName' },
@@ -139,9 +139,16 @@ export default defineComponent({
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
   },
+  computed: {
+    menuProps() {
+      return {
+        'v-model': this.menuVisible // Bind the visibility state using v-bind
+      }
+    }
+  },
   methods: {
     getRowProps(index: any) {
-      // console.log(index)
+      console.log(index)
       return {
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
@@ -168,10 +175,11 @@ export default defineComponent({
       }
     },
     selectItem(item: Team) {
-      // console.log(item)
+      console.log(item)
       this.selectedItem = item
       this.selectedItemName = item.teamName
       this.selectedItemID = item._id
+      this.menuVisible = true // Open the menu
     },
     chipColor(numAssignments: number) {
       if (numAssignments > 0) {
@@ -193,12 +201,13 @@ export default defineComponent({
           `${apiURL}team/detailed/all/${localStorage.getItem('currentCompany')}`,
           config
         )
-        console.log('response.data.data: ', response.data.data)
+        console.log(response.data.data)
         this.teamItems = response.data.data
         this.teamLeaderId = response.data.data.teamLeaderId
       } catch (error) {
         console.error(error)
       }
+      this.menuVisible = false
     },
     addTeam(newTeam: Team) {
       this.teamItems.push(newTeam)
@@ -219,7 +228,7 @@ export default defineComponent({
           `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
           config
         )
-        // console.log(response.data.data)
+        console.log(response.data.data)
         for (const employee of response.data.data) {
           this.teamMemberNames.push(employee.userInfo.displayName)
         }
@@ -227,7 +236,27 @@ export default defineComponent({
         console.error(error)
       }
     },
-    
+    async getTeamLeaderName() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        data: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      axios
+        .get(`${apiURL}employee/detailed/id/${this.teamLeaderId}`, config)
+        .then((response) => {
+          console.log(response.data.data.userInfo.displayName)
+          this.teamLeaderName = response.data.data.userInfo.displayName
+        })
+        .catch((error) => {
+          console.error('Failed to fetch employees:', error)
+        })
+    },
     async isLocalAvailable(localUrl: string) {
       try {
         const res = await axios.get(localUrl)
@@ -239,11 +268,13 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
-    }
+    },
+    
   },
   mounted() {
     this.getTeams()
     this.populateTeamTable()
+    this.getTeamLeaderName()
     this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
   }
 })

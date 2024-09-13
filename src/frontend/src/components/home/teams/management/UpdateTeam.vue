@@ -138,6 +138,14 @@ export default {
     this.getEmployees()
     this.initialTeamMembers = [...this.localEditedItem.teamMembers] // Store the initial members
   },
+  watch: {
+    selectedTeamMembers(newMembers) {
+      // Ensure team leader is always part of the selected team members
+      if (!newMembers.includes(this.selectedTeamLeader)) {
+        newMembers.push(this.selectedTeamLeader)
+      }
+    }
+  },
   methods: {
     compareTeamMembers() {
       const addedMembers = this.selectedTeamMembers.filter(
@@ -152,6 +160,16 @@ export default {
       )
 
       return { addedMembers, removedMembers }
+    },
+    isTeamLeader(name) {
+      return name === this.selectedTeamLeader // Disable if the name is the team leader
+    },
+    populateTeamLeaderName() {
+      const teamLeader = this.localEditedItem.teamMembers.find(
+        (member) => member === this.localEditedItem.teamLeaderId
+      )
+      this.selectedTeamLeader =
+        this.teamMemberNames[this.localEditedItem.teamMembers.indexOf(teamLeader)]
     },
     async updateTeam() {
       this.isDeleting = true
