@@ -17,7 +17,7 @@
       class="p-button-rounded p-button-outlined"
     />
     <Button
-      icon="pi pi-send"
+      icon="fa: fa-solid fa-paper-plane"
       @click="sendMessage"
       :disabled="disabled || (!message.trim() && !attachment)"
       class="p-button-rounded"
@@ -94,7 +94,7 @@ const onFileSelect = (event) => {
   color: #ffffff;
 }
 
-:deep(.p-fileupload-choose) {
+:deep( .p-fileupload-choose) {
   margin-right: 0.5rem;
 }
 </style>
