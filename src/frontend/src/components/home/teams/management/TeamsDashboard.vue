@@ -141,7 +141,7 @@ export default defineComponent({
   },
   methods: {
     getRowProps(index: any) {
-      console.log(index)
+      // console.log(index)
       return {
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
@@ -168,7 +168,7 @@ export default defineComponent({
       }
     },
     selectItem(item: Team) {
-      console.log(item)
+      // console.log(item)
       this.selectedItem = item
       this.selectedItemName = item.teamName
       this.selectedItemID = item._id
@@ -193,7 +193,7 @@ export default defineComponent({
           `${apiURL}team/detailed/all/${localStorage.getItem('currentCompany')}`,
           config
         )
-        console.log(response.data.data)
+        console.log('response.data.data: ', response.data.data)
         this.teamItems = response.data.data
         this.teamLeaderId = response.data.data.teamLeaderId
       } catch (error) {
@@ -219,7 +219,7 @@ export default defineComponent({
           `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
           config
         )
-        console.log(response.data.data)
+        // console.log(response.data.data)
         for (const employee of response.data.data) {
           this.teamMemberNames.push(employee.userInfo.displayName)
         }
@@ -227,27 +227,7 @@ export default defineComponent({
         console.error(error)
       }
     },
-    async getTeamLeaderName() {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        data: {
-          currentEmployeeId: localStorage.getItem('employeeId')
-        }
-      }
-      const apiURL = await this.getRequestUrl()
-      axios
-        .get(`${apiURL}employee/detailed/id/${this.teamLeaderId}`, config)
-        .then((response) => {
-          console.log(response.data.data.userInfo.displayName)
-          this.teamLeaderName = response.data.data.userInfo.displayName
-        })
-        .catch((error) => {
-          console.error('Failed to fetch employees:', error)
-        })
-    },
+    
     async isLocalAvailable(localUrl: string) {
       try {
         const res = await axios.get(localUrl)
@@ -264,7 +244,6 @@ export default defineComponent({
   mounted() {
     this.getTeams()
     this.populateTeamTable()
-    this.getTeamLeaderName()
     this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
   }
 })

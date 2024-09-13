@@ -297,6 +297,7 @@ export class TeamController {
     try {
       data = await this.teamService.update(teamId, updateTeamDto);
     } catch (e) {
+      console.log('e: ', e);
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
 
@@ -341,7 +342,7 @@ export class TeamController {
     description: `The _id attribute of the ${className} to be updated.`,
     type: String,
   })
-  @ApiBody({ type: UpdateTeamDto })
+  @ApiBody({ type: AddTeamMembersDto })
   @Patch('add/:teamId')
   async addTeamMember(
     @Headers() headers: any,
@@ -397,7 +398,7 @@ export class TeamController {
     description: `The _id attribute of the ${className} to be updated.`,
     type: String,
   })
-  @ApiBody({ type: UpdateTeamDto })
+  @ApiBody({ type: RemoveTeamMembersDto })
   @Patch('remove/:teamId')
   async removeTeamMember(
     @Headers() headers: any,

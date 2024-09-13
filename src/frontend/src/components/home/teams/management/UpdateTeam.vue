@@ -121,6 +121,7 @@ export default {
       isDeleting: false,
       teamMemberNames: [],
       selectedTeamMembers: [],
+      initialTeamMembers: [],
       selectedTeamLeader: '',
       teamMemberIds: [],
       localUrl: 'http://localhost:3000/',
@@ -133,8 +134,23 @@ export default {
   created() {
     this.localEditedItem = this.deepCopy(this.editedItem)
     this.getEmployees()
+    this.initialTeamMembers = [...this.localEditedItem.teamMembers] // Store the initial members
   },
   methods: {
+    compareTeamMembers() {
+      const addedMembers = this.selectedTeamMembers.filter(
+        (member) =>
+          !this.initialTeamMembers.some(
+            (initialMember) => initialMember.userInfo.displayName === member
+          )
+      )
+
+      const removedMembers = this.initialTeamMembers.filter(
+        (initialMember) => !this.selectedTeamMembers.includes(initialMember.userInfo.displayName)
+      )
+
+      return { addedMembers, removedMembers }
+    },
     async updateTeam() {
       this.isDeleting = true
 
@@ -156,45 +172,120 @@ export default {
       }
       const apiURL = await this.getRequestUrl()
 
-      const data = {
-        updateTeamDto: {
+      //updating the all the team info except the teamMember info
+      if (this.localEditedItem.teamName || this.getEmployeeIdByName(this.selectedTeamLeader)) {
+        const data = {
           teamName: this.localEditedItem.teamName,
-          teamMembers: this.selectedTeamMembers.map((name) => this.getEmployeeIdByName(name)),
-          teamLeaderId: this.getEmployeeIdByName(this.selectedTeamLeader),
-          companyId: localStorage.getItem('currentCompany')
-        },
-        currentEmployeeId: localStorage.getItem('employeeId')
+          teamLeaderId: this.getEmployeeIdByName(this.selectedTeamLeader)
+        }
+        console.log(data)
+        axios
+          .patch(`${apiURL}team/${this.teamId}`, data, config)
+          .then((response) => {
+            console.log(response)
+            this.$toast.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Team updated successfully',
+              life: 3000
+            })
+            setTimeout(() => {
+              this.isDeleting = false
+              this.editDialog = false
+              // Emit the event to the parent component with the updated team data
+              this.$emit('teamUpdated', response.data.data)
+            }, 1500)
+          })
+          .catch((error) => {
+            console.error(error)
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while updating the team',
+              life: 3000
+            })
+            setTimeout(() => {
+              this.isDeleting = false
+            }, 1500)
+          })
       }
-      console.log(data)
-      axios
-        .patch(`${apiURL}team/${this.teamId}`, data, config)
-        .then((response) => {
-          console.log(response)
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Team updated successfully',
-            life: 3000
+      //Updating the team member info
+      const { addedMembers, removedMembers } = this.compareTeamMembers()
+
+      //checking if members were added
+      if (addedMembers.length != 0) {
+        const newTeamMembersData = {
+          newTeamMembers: addedMembers.map((member) => this.getEmployeeIdByName(member))
+        }
+        console.log('newTeamMembersData: ', newTeamMembersData)
+
+        axios
+          .patch(`${apiURL}team/add/${this.teamId}`, newTeamMembersData, config)
+          .then((response) => {
+            console.log(response)
+            this.$toast.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Team updated successfully',
+              life: 3000
+            })
+            setTimeout(() => {
+              this.isDeleting = false
+              this.editDialog = false
+              // Emit the event to the parent component with the updated team data
+              this.$emit('teamUpdated', response.data.data)
+            }, 1500)
           })
-          setTimeout(() => {
-            this.isDeleting = false
-            this.editDialog = false
-            // Emit the event to the parent component with the updated team data
-            this.$emit('teamUpdated', response.data.data)
-          }, 1500)
-        })
-        .catch((error) => {
-          console.error(error)
-          this.$toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'An error occurred while updating the team',
-            life: 3000
+          .catch((error) => {
+            console.error(error)
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while updating the team',
+              life: 3000
+            })
+            setTimeout(() => {
+              this.isDeleting = false
+            }, 1500)
           })
-          setTimeout(() => {
-            this.isDeleting = false
-          }, 1500)
-        })
+      }
+
+      //checking if members were removed
+      if (removedMembers.length != 0) {
+        const removeTeamMembersData = {
+          teamMembersToBeRemoved: removedMembers.map((member) => member._id) // Assuming _id represents the team member's ID
+        }
+        console.log('removeTeamMembersData: ', removeTeamMembersData)
+        axios
+          .patch(`${apiURL}team/remove/${this.teamId}`, removeTeamMembersData, config)
+          .then((response) => {
+            console.log(response)
+            this.$toast.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Team updated successfully',
+              life: 3000
+            })
+            setTimeout(() => {
+              this.isDeleting = false
+              this.editDialog = false
+              // Emit the event to the parent component with the updated team data
+              this.$emit('teamUpdated', response.data.data)
+            }, 1500)
+          })
+          .catch((error) => {
+            console.error(error)
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while updating the team',
+              life: 3000
+            })
+            setTimeout(() => {
+              this.isDeleting = false
+            }, 1500)
+          })
+      }
     },
     getEmployeeIdByName(name) {
       const index = this.teamMemberNames.indexOf(name)

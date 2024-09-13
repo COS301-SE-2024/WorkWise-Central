@@ -115,6 +115,8 @@ export class TeamService {
   }
 
   async findByNameInCompany(name: string, companyId: Types.ObjectId) {
+    console.log('name: ', name);
+    console.log('companyId: ', companyId);
     //checking if the company exists
     if (!(await this.companyService.companyIdExists(companyId))) {
       throw new Error('Company not found');
