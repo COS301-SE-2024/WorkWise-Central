@@ -2,6 +2,10 @@ import { IsArray, IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-vali
 import { Types } from 'mongoose';
 
 export class CreateChatDto {
+  @IsString()
+  @IsNotEmpty()
+  chatName: string;
+
   @IsMongoId({ each: true })
   @IsArray()
   @IsNotEmpty()
