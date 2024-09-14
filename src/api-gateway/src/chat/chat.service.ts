@@ -10,6 +10,8 @@ import { Message } from '../notification/entities/notification.entity';
 import { UsersService } from '../users/users.service';
 import { AddUsersToChatDto } from './dto/create-chat.dto';
 import { DeleteChatDto } from './dto/delete-chat.dto';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import { SendMessageDto } from './dto/send-message.dto';
 
 @Injectable()
 export class ChatService {
@@ -25,8 +27,11 @@ export class ChatService {
   ) {}
 
   // Create a new chat
-  async createChat(userId: Types.ObjectId, participants: Types.ObjectId[]) {
-    const chat = new Chat(participants);
+  async createChat(userId: Types.ObjectId, chatName: string, participants: Types.ObjectId[]) {
+    const creator: Types.ObjectId = userId;
+
+    if (chatName.length == 0) chatName = randomStringGenerator();
+    const chat = new Chat(chatName, participants, creator);
     const newChat = new this.chatModel(chat);
     return (await newChat.save()).toObject();
   }
@@ -40,6 +45,30 @@ export class ChatService {
     return result;
   }
 
+  // Send a message in a chat with HTTP
+  // async sendMessageHttp(userId: Types.ObjectId, addMessageDto: AddMessageDto) {
+  //   const chatMessage = new ChatMessage(addMessageDto.chatId, userId, addMessageDto.body);
+  //   const newMessage = new this.chatMessageModel(chatMessage);
+  //   const result = (await newMessage.save()).toObject();
+  //   this.updateChat(result);
+  //   return result;
+  // }
+
+  async sendMessageHttp(userId: Types.ObjectId, body: SendMessageDto) {
+    const user = await this.userService.getUserById(userId);
+    if (!user) throw new NotFoundException();
+
+    const message = new this.chatMessageModel({
+      chatId: body.chatId,
+      userId: userId,
+      textContent: body.textContent,
+      attachments: body.attachments,
+      isRead: false,
+    });
+
+    return (await message.save()).toObject();
+  }
+
   private updateChat(newMessage: ChatMessage & Required<{ _id: Types.ObjectId }>) {
     this.chatModel.updateOne(
       { _id: newMessage.chatId },
@@ -50,9 +79,9 @@ export class ChatService {
   }
 
   // Get all messages in a chat
-  async getMessagesInChat(chatId: Types.ObjectId) {
+  async getMessagesInChat(userId: Types.ObjectId, chatId: Types.ObjectId) {
     return this.chatMessageModel
-      .find({ _id: chatId })
+      .find({ chatId: chatId })
       .populate('userId', 'userId')
       .sort({ createdAt: 1 })
       .lean()
@@ -99,6 +128,13 @@ export class ChatService {
       .exec();
   }
 
+  async removeUserFromChatHttp(userId: Types.ObjectId, chatId: Types.ObjectId, userIdToRemove: Types.ObjectId) {
+    return this.chatModel
+      .findByIdAndUpdate(chatId, { $pull: { participants: userIdToRemove } }, { new: true })
+      .lean()
+      .exec();
+  }
+
   // Delete a chat
   async deleteChat(userId: Types.ObjectId, deleteChatDto: DeleteChatDto) {
     const user = await this.userService.getUserById(userId);
@@ -130,6 +166,15 @@ export class ChatService {
       })
       .exec();
   }
+
+  // Get unread messages count for a chatId TODO
+  /*  async getUnreadMessagesCountForChat(userId: Types.ObjectId, chatId: Types.ObjectId): Promise<number> {
+    return this.chatMessageModel
+      .countDocuments({
+        $and: [{ chatId: chatId }, { userId: { $ne: userId } }, { isRead: false }],
+      })
+      .exec();
+  }*/
 
   async deleteMessage(userId: Types.ObjectId, payload: DeleteMessageDto) {
     const user = await this.userService.getUserById(userId);
