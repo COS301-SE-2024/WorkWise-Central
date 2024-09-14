@@ -9,8 +9,15 @@
     />
     <div class="chat-main">
       <header v-if="selectedChat" class="chat-header">
-        <Avatar :image="selectedChat.avatar" size="large" shape="circle" />
-        <h2>{{ selectedChat.name }}</h2>
+        <Avatar
+          :image="
+            /*TODO: Fix later */
+            selectedChat?.displayImage ? selectedChat?.displayImage : defaultProfilePic
+          "
+          size="large"
+          shape="circle"
+        />
+        <h2>{{ selectedChat?.name }}</h2>
       </header>
       <ChatMessageList
         v-if="selectedChat"
@@ -28,28 +35,12 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue';
-import ChatSidebar from './ChatSideBar.vue';
-import ChatMessageList from './ChatMessageList.vue';
-import ChatInput from './ChatInput.vue';
-import Avatar from 'primevue/avatar';
-
-// Mock data
-const currentUser = ref({ id: 1, name: 'You', avatar: '@/assets/images/avatars/you.jpg' });
-const users = ref([
-  { id: 2, name: 'Alice', avatar: '@/assets/images/avatars/alice.jpg' },
-  { id: 3, name: 'Bob', avatar: '@/assets/images/avatars/bob.jpg' },
-  { id: 4, name: 'Charlie', avatar: '@/assets/images/avatars/charlie.jpg' },
-]);
-
-const chats = ref([
-  { id: 1, name: 'General Chat', avatar: '@/assets/images/avatars/group.jpg', participants: [1, 2, 3, 4] },
-  { id: 2, name: 'Alice', avatar: '@/assets/images/avatars/alice.jpg', participants: [1, 2] },
-  { id: 3, name: 'Bob', avatar: '@/assets/images/avatars/bob.jpg', participants: [1, 3] },
-]);
-
-const selectedChat = ref(null);
+<script>
+import ChatSidebar from './ChatSideBar.vue'
+import ChatMessageList from './ChatMessageList.vue'
+import ChatInput from './ChatInput.vue'
+import Avatar from 'primevue/avatar'
+import axios from 'axios'
 
 const messages = ref({
   1: [
