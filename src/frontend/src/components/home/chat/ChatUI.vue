@@ -162,21 +162,131 @@ export default {
     async addNewUsersToChat(chatId, userIds) {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
 
-const sendMessage = ({ content, attachment }) => {
-  if (selectedChat.value) {
-    const newMessage = {
-      id: currentMessages.value.length + 1,
-      senderId: currentUser.value.id,
-      content,
-      attachment,
-      timestamp: new Date()
-    };
-    if (!messages.value[selectedChat.value.id]) {
-      messages.value[selectedChat.value.id] = [];
+      const result = await axios.post(
+        `${this.server_url}chat/add-users`,
+        {
+          chatId: chatId,
+          userIds: userIds
+        },
+        config
+      )
+      console.log(result)
+
+      if (result.status >= 200 && result.status < 300) {
+        //console.log('new chat', result.data.data)
+        if (result.data.data._id) {
+          //this.chats.push(result.data.data)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Action was successful',
+            life: 3000
+          })
+        }
+      } else {
+        console.log('Error adding users')
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `There is probably something wrong with the server. Please try again later.`,
+          life: 3000
+        })
+      }
+    },
+    async getUserChats() {
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const result = await axios.get(`${this.server_url}chat/user-chats`, config)
+      console.log('Get All User Chats', result)
+      if (result.status >= 200 && result.status < 300) {
+        console.log('new chat', result.data.data)
+        if (result.data.data) {
+          const chats = result.data.data
+          for (const chat of chats) {
+            this.chats.push(chat)
+          }
+          /*this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Chat created successfully',
+            life: 3000
+          })*/
+        }
+      } else {
+        console.log('Error Retrieving chats')
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Something went wrong',
+          life: 3000
+        })
+      }
+    },
+    async getMessagesInChat(chatId) {
+      console.log('chatId is', chatId)
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const result = await axios.get(`${this.server_url}chat/chat-messages/${chatId}`, config)
+      console.log('Result of FetchMessages', result)
+      if (result.status >= 200 && result.status < 300) {
+        console.log('Fetching Messages', result.data.data)
+        if (result.data.data) {
+          const messages = result.data.data
+          for (const message of messages) {
+            if (!this.messages[chatId]) {
+              this.messages[chatId] = []
+            }
+            this.messages[chatId].push(message)
+          }
+          /*this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Chat created successfully',
+            life: 3000
+          })*/
+        }
+      } else {
+        console.log('Error Retrieving Messages')
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Something went wrong',
+          life: 3000
+        })
+      }
+    },
+    async sendMessage({ content, attachment }) {
+      if (this.selectedChat) {
+        //TODO: Update this to send message to server
+        /*const newMessage = {
+          id: this.currentMessages.length + 1,
+          senderId: this.currentUser.id,
+          content,
+          attachment,
+          timestamp: new Date()
+        }*/
+        const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+        const data = {
+          chatId: this.selectedChat._id,
+          textContent: content
+          //attachments: attachment
+        }
+        console.log(data)
+        const res = await axios.post(`${this.server_url}chat/send-message`, data, config)
+        console.log(res)
+        if (res.status >= 200 && res.status < 300) {
+          if (!this.messages[this.selectedChat._id]) {
+            //this.$set(this.messages, this.selectedChat._id, [])
+            this.messages[this.selectedChat._id] = []
+          }
+          const newMessage = res.data.data
+          this.messages[this.selectedChat._id].push(newMessage)
+        } else {
+          console.log('problem')
+        }
+      }
     }
-    messages.value[selectedChat.value.id].push(newMessage);
+    // async sendMessageHelper(content, attachments) {}
   }
-};
+}
 </script>
 
 <style scoped>
