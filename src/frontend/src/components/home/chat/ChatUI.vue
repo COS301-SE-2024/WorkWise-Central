@@ -42,41 +42,125 @@ import ChatInput from './ChatInput.vue'
 import Avatar from 'primevue/avatar'
 import axios from 'axios'
 
-const messages = ref({
-  1: [
-    { id: 1, senderId: 2, content: 'Hello everyone!', timestamp: new Date() },
-    { id: 2, senderId: 1, content: 'Hi Alice!', timestamp: new Date() },
-  ],
-  2: [
-    { id: 1, senderId: 1, content: 'Hey Alice!', timestamp: new Date() },
-    { id: 2, senderId: 2, content: 'Hi there!', timestamp: new Date() },
-  ],
-  3: [
-    { id: 1, senderId: 1, content: 'Hello Bob!', timestamp: new Date() },
-    { id: 2, senderId: 3, content: 'Hey, how are you?', timestamp: new Date() },
-  ],
-});
+export default {
+  components: {
+    ChatSidebar,
+    ChatMessageList,
+    ChatInput,
+    Avatar
+  },
+  data() {
+    return {
+      defaultProfilePic: 'http://www.gravatar.com/avatar/?d=mp',
+      currentUser: { id: 1, name: 'You', avatar: '@/assets/images/avatars/you.jpg' },
+      users: [],
+      chats: [],
+      selectedChat: null,
+      messages: [],
+      server_url: import.meta.env.VITE_SERVER_API
+    }
+  },
+  computed: {
+    currentMessages() {
+      return this.selectedChat ? this.messages[this.selectedChat._id] || [] : []
+    }
+  },
+  mounted() {
+    this.getUserChats()
+      .then(() => {
+        //console.log('User chats', this.chats)
+        for (const chat of this.chats) {
+          console.log('Fetching messages for chat', chat)
+          this.getMessagesInChat(chat._id)
+        }
+      })
+      .then(() => {
+        console.log('All messages fetched')
+      })
+    this.getAllUsers()
+  },
+  methods: {
+    getAllUsers() {
+      console.log('Get all Users')
+      const temp = import.meta.env.VITE_SERVER_API
+      console.log(temp)
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      axios
+        .get(`${this.server_url}users/all`, config)
+        .then((res) => {
+          if (res.data.status >= 200 && res.data.status < 300) {
+            console.error('Failed to get all users')
+            //TODO: Display Toast for error
+            return
+          }
+          console.log('All users', res)
+          for (const datum of res.data.data) {
+            this.users.push(datum)
+          }
+          //this.users = res.data.data
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
+    selectChat(chat) {
+      this.selectedChat = chat
+    },
+    createChat(newChat) {
+      this.createNewChatHelper(newChat.name, newChat.participants)
+      /*      const chatId = this.chats.length + 1
+      const chat = {
+        id: chatId,
+        name: newChat.name,
+        avatar: '@/assets/images/avatars/group.jpg', // Default group avatar
+        participants: [this.currentUser.id, ...newChat.participants]
+      }
 
-const currentMessages = computed(() => {
-  return selectedChat.value ? messages.value[selectedChat.value.id] || [] : [];
-});
+      this.chats.push(chat)
+      this.$set(this.messages, chatId, [])
+      this.selectChat(chat)*/
+    },
+    async createNewChatHelper(chatName, userIdsForChat) {
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      userIdsForChat.push(localStorage['id'])
 
-const selectChat = (chat) => {
-  selectedChat.value = chat;
-};
+      const result = await axios.post(
+        `${this.server_url}chat/create`,
+        {
+          chatName: chatName,
+          participants: userIdsForChat
+        },
+        config
+      )
+      console.log(result)
 
-const createChat = (newChat) => {
-  const chatId = chats.value.length + 1;
-  const chat = {
-    id: chatId,
-    name: newChat.name,
-    avatar: '@/assets/images/avatars/group.jpg', // Default group avatar
-    participants: [currentUser.value.id, ...newChat.participants]
-  };
-  chats.value.push(chat);
-  messages.value[chatId] = [];
-  selectChat(chat);
-};
+      if (result.status >= 200 && result.status < 300) {
+        console.log('new chat', result.data.data)
+        if (result.data.data._id) {
+          this.chats.push(result.data.data)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Chat created successfully',
+            life: 3000
+          })
+          const chat = result.data.data
+          this.selectChat(chat)
+          this.$set(this.messages, chat._id, [])
+          this.selectChat(chat)
+        }
+      } else {
+        console.log('Error creating chat')
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to create chat',
+          life: 3000
+        })
+      }
+    },
+    async addNewUsersToChat(chatId, userIds) {
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
 
 const sendMessage = ({ content, attachment }) => {
   if (selectedChat.value) {
