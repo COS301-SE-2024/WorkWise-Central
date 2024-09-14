@@ -5,21 +5,31 @@
       <i class="fa: fa-solid fa-search" />
       <InputText v-model="searchQuery" placeholder="Search chats" class="w-full" />
     </span>
-    <Button label="New Chat" icon="fa: fa-solid fa-plus" @click="showNewChatDialog" class="p-button-outlined mb-3 w-full" />
+    <Button
+      label="New Chat"
+      icon="fa: fa-solid fa-plus"
+      @click="showNewChatDialog"
+      class="p-button-outlined mb-3 w-full"
+    />
 
     <ul class="chat-list">
       <li
         v-for="chat in filteredChats"
         :key="chat.id"
         @click="selectChat(chat)"
-        :class="{ 'selected': selectedChat && chat.id === selectedChat.id }"
+        :class="{ selected: selectedChat && chat.id === selectedChat.id }"
       >
         <Avatar :image="chat.avatar" size="large" shape="circle" />
         <span>{{ chat.name }}</span>
       </li>
     </ul>
 
-    <Dialog v-model:visible="newChatDialogVisible" header="Create New Chat" :style="{ width: '50vw' }" class="new-chat-dialog">
+    <Dialog
+      v-model:visible="newChatDialogVisible"
+      header="Create New Chat"
+      :style="{ width: '50vw' }"
+      class="new-chat-dialog"
+    >
       <div class="p-fluid">
         <div class="p-field">
           <label for="chatName">Chat Name</label>
@@ -27,11 +37,22 @@
         </div>
         <div class="p-field">
           <label for="participants">Participants</label>
-          <MultiSelect id="participants" v-model="selectedParticipants" :options="availableUsers" optionLabel="name" placeholder="Select participants" />
+          <MultiSelect
+            id="participants"
+            v-model="selectedParticipants"
+            :options="availableUsers"
+            optionLabel="systemDetails.username"
+            placeholder="Select participants"
+          />
         </div>
       </div>
       <template #footer>
-        <Button label="Cancel" icon="fa: fa-solid fa-times" @click="closeNewChatDialog" class="p-button-text" />
+        <Button
+          label="Cancel"
+          icon="fa: fa-solid fa-times"
+          @click="closeNewChatDialog"
+          class="p-button-text"
+        />
         <Button label="Create" icon="fa: fa-solid fa-check" @click="createNewChat" autofocus />
       </template>
     </Dialog>
@@ -39,55 +60,66 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import Avatar from 'primevue/avatar';
-import InputText from 'primevue/inputtext';
-import Button from 'primevue/button';
-import Dialog from 'primevue/dialog';
-import MultiSelect from 'primevue/multiselect';
-import * as currentUser from 'vuetify/locale'
+import { ref, computed } from 'vue'
+import Avatar from 'primevue/avatar'
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
+import Dialog from 'primevue/dialog'
+import MultiSelect from 'primevue/multiselect'
 
-const props = defineProps(['chats', 'selectedChat', 'users']);
-const emit = defineEmits(['select-chat', 'create-chat']);
+const props = defineProps(['chats', 'selectedChat', 'users'])
+const emit = defineEmits(['select-chat', 'create-chat'])
 
-const searchQuery = ref('');
-const newChatDialogVisible = ref(false);
-const newChatName = ref('');
-const selectedParticipants = ref([]);
+const searchQuery = ref('')
+const newChatDialogVisible = ref(false)
+const newChatName = ref('')
+const selectedParticipants = ref([])
+const currentUserId = localStorage['id']
 
 const filteredChats = computed(() => {
-  return props.chats.filter(chat =>
+  return props.chats.filter((chat) =>
     chat.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
-});
+  )
+})
 
 const availableUsers = computed(() => {
-  return props.users.filter(user => user.id !== currentUser.id);
-});
+  return props.users.filter((user) => user._id !== currentUserId)
+})
 
 const selectChat = (chat) => {
-  emit('select-chat', chat);
-};
+  emit('select-chat', chat)
+}
 
 const showNewChatDialog = () => {
-  newChatDialogVisible.value = true;
-};
+  newChatDialogVisible.value = true
+}
 
 const closeNewChatDialog = () => {
-  newChatDialogVisible.value = false;
-  newChatName.value = '';
-  selectedParticipants.value = [];
-};
+  newChatDialogVisible.value = false
+  newChatName.value = ''
+  selectedParticipants.value = []
+}
 
 const createNewChat = () => {
   if (newChatName.value && selectedParticipants.value.length > 0) {
+    const chatName = newChatName.value
+    let participants = [currentUserId]
+    for (const vElement of selectedParticipants.value) {
+      participants.push(vElement._id)
+    }
+    if (chatName.length === 0) {
+      console.log('No empty chat names allowed')
+      //TOOO: Error toast
+      return
+    }
+    //console.log('Test', participants)
     emit('create-chat', {
       name: newChatName.value,
-      participants: selectedParticipants.value.map(user => user.id)
-    });
-    closeNewChatDialog();
+      participants: participants
+    })
+    closeNewChatDialog()
   }
-};
+}
 </script>
 
 <style scoped>
