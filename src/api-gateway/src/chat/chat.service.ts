@@ -38,21 +38,12 @@ export class ChatService {
 
   // Send a message in a chat
   async sendMessage(userId: Types.ObjectId, addMessageDto: AddMessageDto) {
-    const chatMessage = new ChatMessage(addMessageDto.chatId, userId, addMessageDto.body);
+    const chatMessage = new ChatMessage(addMessageDto.chatId, userId, addMessageDto.textContent);
     const newMessage = new this.chatMessageModel(chatMessage);
-    const result = (await newMessage.save()).toObject();
-    this.updateChat(result);
+    const result = await newMessage.save();
+    this.updateChat(await result.populate('userId'));
     return result;
   }
-
-  // Send a message in a chat with HTTP
-  // async sendMessageHttp(userId: Types.ObjectId, addMessageDto: AddMessageDto) {
-  //   const chatMessage = new ChatMessage(addMessageDto.chatId, userId, addMessageDto.body);
-  //   const newMessage = new this.chatMessageModel(chatMessage);
-  //   const result = (await newMessage.save()).toObject();
-  //   this.updateChat(result);
-  //   return result;
-  // }
 
   async sendMessageHttp(userId: Types.ObjectId, body: SendMessageDto) {
     const user = await this.userService.getUserById(userId);
@@ -122,6 +113,7 @@ export class ChatService {
 
   // Remove a user from a chat
   async removeUserFromChat(chatId: Types.ObjectId, userId: Types.ObjectId) {
+    //TODO: Check if user is the creator of the chat`
     return this.chatModel
       .findByIdAndUpdate(chatId, { $pull: { participants: userId } }, { new: true })
       .lean()
@@ -196,6 +188,6 @@ export class ChatService {
       message.attachments = payload.attachments;
       message.markModified('attachments');
     }
-    return (await message.save()).toObject();
+    return (await (await message.save()).populate('userId')).toObject();
   }
 }
