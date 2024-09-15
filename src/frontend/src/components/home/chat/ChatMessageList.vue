@@ -3,7 +3,7 @@
     <div
       v-for="message in messages"
       :key="message._id"
-      :class="['message', { sent: message.userId._id === userId }]"
+      :class="['message', { sent: message.userId._id === userId || message?.userId === userId }]"
     >
       <Avatar :image="getUserAvatar(message.userId._id)" size="small" shape="circle" />
       <div class="message-content">
@@ -19,7 +19,7 @@
 import { ref, watch, nextTick } from 'vue'
 import Avatar from 'primevue/avatar'
 
-const props = defineProps(['messages', 'currentUser', 'users'])
+const props = defineProps(['messages', 'users'])
 
 const messageContainer = ref(null)
 
@@ -51,11 +51,11 @@ const scrollToBottom = () => {
 }
 
 const getUserName = (userId) => {
-  console.log('Pros for messageList', props)
-  for (const u of props.users) {
-    console.log('ABC')
-    console.log(u)
-  }
+  //console.log('Pros for messageList', props)
+  // for (const u of props.users) {
+  //   console.log('ABC')
+  //   console.log(u)
+  // }
   const user = props.users.find((u) => u._id === userId)
   return user ? user?.profile?.displayName : 'Unknown User'
 }
