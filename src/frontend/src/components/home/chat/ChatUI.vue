@@ -19,13 +19,12 @@
         />
         <h2>{{ selectedChat?.name }}</h2>
       </header>
-      <ChatMessageList
+      <ChatMessageList v-if="selectedChat" :messages="currentMessages" :users="users" />
+      <ChatInput
+        @send-message="sendMessageWithSockets"
+        :disabled="!selectedChat"
         v-if="selectedChat"
-        :messages="currentMessages"
-        :currentUser="currentUser"
-        :users="users"
       />
-      <ChatInput @send-message="sendMessage" :disabled="!selectedChat" v-if="selectedChat" />
       <div v-else class="no-chat-selected">
         <img src="@/assets/images/background/WorkWiseChat.png" alt="Chat Icon" class="chat-icon" />
         <h1>WorkWise Chat</h1>
@@ -41,6 +40,13 @@ import ChatMessageList from './ChatMessageList.vue'
 import ChatInput from './ChatInput.vue'
 import Avatar from 'primevue/avatar'
 import axios from 'axios'
+import { io } from 'socket.io-client'
+
+const serverUrl = import.meta.env.VITE_SERVER_API
+const socket = io(`${serverUrl}chat-space`, {
+  autoConnect: true,
+  transports: ['websocket', 'polling', 'flashsocket']
+})
 
 export default {
   components: {
@@ -52,7 +58,7 @@ export default {
   data() {
     return {
       defaultProfilePic: 'http://www.gravatar.com/avatar/?d=mp',
-      currentUser: { id: 1, name: 'You', avatar: '@/assets/images/avatars/you.jpg' },
+      //currentUser: { id: 1, name: 'You', avatar: '@/assets/images/avatars/you.jpg' },
       users: [],
       chats: [],
       selectedChat: null,
@@ -78,6 +84,37 @@ export default {
         console.log('All messages fetched')
       })
     this.getAllUsers()
+
+    socket.connect()
+
+    socket.on('connect', async () => {
+      console.log('Socket connected')
+      await this.setupSockets()
+    })
+
+    socket.on('disconnect', () => {
+      console.log('Socket disconnected')
+    })
+
+    socket.on('init-chat', (data) => {
+      console.log('User Joined rooms', data)
+    })
+
+    socket.on('new-message', (data) => {
+      this.handleNewMessage(data)
+    })
+
+    socket.on('update-message', (data) => {
+      this.handleUpdateMessage(data)
+    })
+
+    socket.on('delete-message', (data) => {
+      this.handleDeleteMessage(data)
+    })
+
+    socket.on('delete-chat', () => {
+      this.handleDeleteChat(data)
+    })
   },
   methods: {
     getAllUsers() {
@@ -108,17 +145,6 @@ export default {
     },
     createChat(newChat) {
       this.createNewChatHelper(newChat.name, newChat.participants)
-      /*      const chatId = this.chats.length + 1
-      const chat = {
-        id: chatId,
-        name: newChat.name,
-        avatar: '@/assets/images/avatars/group.jpg', // Default group avatar
-        participants: [this.currentUser.id, ...newChat.participants]
-      }
-
-      this.chats.push(chat)
-      this.$set(this.messages, chatId, [])
-      this.selectChat(chat)*/
     },
     async createNewChatHelper(chatName, userIdsForChat) {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
@@ -283,8 +309,71 @@ export default {
           console.log('problem')
         }
       }
-    }
+    },
+    async sendMessageWithSockets({ content, attachment }) {
+      if (this.selectedChat) {
+        socket
+          .emitWithAck('new-message', {
+            jwt: localStorage['access_token'],
+            chatId: this.selectedChat._id,
+            textContent: content
+            //attachments: [
+          })
+          .then((data) => {
+            console.log('Message success', data)
+          })
+      }
+    },
     // async sendMessageHelper(content, attachments) {}
+    async setupSockets() {
+      console.log('Init chat')
+      socket.emitWithAck('init-chat', { jwt: localStorage['access_token'] }).then((data) => {
+        console.log('Init chat data', data)
+      })
+    },
+    handleNewMessage(data) {
+      console.log('New message received', data)
+      if (!this.messages[data.chatId]) {
+        //chat not found
+        console.log('Chat not found')
+        this.messages[data.chatId] = []
+      }
+      this.messages[data.chatId].push(data)
+    },
+    handleDeleteMessage(data) {
+      console.log('Delete message received', data)
+      if (!this.messages[data.chatId]) {
+        //chat not found
+        //console.log('Chat not found')
+        //this.messages[data.chatId] = []
+        return
+      }
+      const index = this.messages[data.chatId].findIndex((m) => m._id === data._id)
+      if (index !== -1) {
+        this.messages[data.chatId].splice(index, 1)
+      }
+    },
+    handleUpdateMessage(data) {
+      console.log('Update message received', data)
+      if (!this.messages[data.chatId]) {
+        return
+      }
+      const index = this.messages[data.chatId].findIndex((m) => m._id === data._id)
+      if (index !== -1) {
+        this.messages[data.chatId][index].textContent = data.textContent
+
+        if (data.attachments) {
+          this.messages[data.chatId][index].attachments = data.attachments
+        }
+      }
+    },
+    handleDeleteChat() {
+      console.log('Delete chat received', data)
+      const index = this.chats.findIndex((c) => c._id === data.chatId)
+      if (index !== -1) {
+        this.chats.splice(index, 1)
+      }
+    }
   }
 }
 </script>
