@@ -60,13 +60,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async initChat(@ConnectedSocket() client: Socket, @MessageBody() payload: GetUserIdDto) {
     const decodedJwtAccessToken = this.jwtService.decode(payload.jwt);
     const allChatsWithUser = await this.chatService.getUserChats(decodedJwtAccessToken.sub);
-    console.log(allChatsWithUser);
+    console.log('All Chats with User', allChatsWithUser);
     const chatIds = [];
     for (const chat of allChatsWithUser) {
       chatIds.push(chat._id.toString());
     }
     client.join(chatIds);
     client.emit('init-chat', { chatIds: chatIds });
+    return { success: true };
   }
 
   @AsyncApiSub({
@@ -80,7 +81,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('new-message')
   async handleNewMessage(@ConnectedSocket() client: Socket, @MessageBody(new ValidationPipe()) payload: AddMessageDto) {
     const userId = this.jwtService.decode(payload.jwt).sub;
-    this.logger.log(`Message received: ${userId} - ${payload.body}`);
+    this.logger.log(`Message received: ${userId} - ${payload.textContent}`);
     const chat = await this.chatService.getChat(payload.chatId);
     if (!chat) {
       client.emit('new-message', { Error: 'Chat not found' });
@@ -89,6 +90,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
     const result = await this.chatService.sendMessage(userId, payload);
     this.server.to(payload.chatId.toString()).emit('new-message', result);
+    return { success: true };
   }
 
   @AsyncApiSub({
@@ -114,6 +116,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
     const result = await this.chatService.deleteMessage(userId, payload);
     this.server.to(payload.chatId.toString()).emit('delete-message', result);
+    return { success: true };
   }
 
   @AsyncApiSub({

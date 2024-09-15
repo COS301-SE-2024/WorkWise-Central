@@ -13,7 +13,7 @@ export class AddMessageDto {
 
   @IsNotEmpty()
   @IsString()
-  body: string;
+  textContent: string;
 
   @IsOptional()
   @IsArray()
