@@ -96,7 +96,7 @@ export default defineComponent({
       priority: {
         label: '',
         colour: '',
-        priorityLevel: 0,
+        priorityLevel: 0 as number,
         companyId: localStorage.getItem('currentCompany')
       },
       localUrl: 'http://localhost:3000/',
@@ -166,6 +166,7 @@ export default defineComponent({
         }
       }
       const apiURL = await this.getRequestUrl()
+      console.log(this.priority)
       axios
         .post(`${apiURL}job/tags/p`, this.priority, config)
         .then((res) => {

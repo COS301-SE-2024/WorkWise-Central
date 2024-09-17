@@ -1,5 +1,11 @@
 <template>
   <v-container>
+    <v-row class="justify-center align-center">
+      <v-col cols="12" class="text-center">
+        <h1 class="text-xl font-semibold">Inventory Reports</h1>
+        <v-divider></v-divider>
+      </v-col>
+    </v-row>
     <v-row>
       <v-col cols="12">
         <v-tabs-items v-model="activeTab">
