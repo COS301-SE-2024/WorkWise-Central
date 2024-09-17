@@ -34,6 +34,7 @@
     "bcryptjs": "^2.4.3",
     "chart.js": "^4.4.3",
     "dagre": "^0.8.5",
+    "date-fns": "^3.6.0",
     "firebase": "^10.13.1",
     "html2pdf.js": "^0.10.2",
     "jspdf": "^2.5.1",
