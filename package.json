@@ -11,6 +11,7 @@
     "concurrently": "^8.2.2",
     "ts-loader": "^9.5.1",
     "typescript": "^5.5.4",
+    "vite-plugin-pwa": "^0.20.5",
     "vuepress": "^2.0.0-rc.13"
   },
   "scripts": {

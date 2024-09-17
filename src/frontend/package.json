@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "bld": "vite build",
+    "pwa": "vite preview",
     "build": "run-p type-check \"build-only {@}\" --",
     "serve": "PORT=4433 serve dist",
     "preview": "vite preview",

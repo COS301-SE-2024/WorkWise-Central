@@ -13,11 +13,13 @@ export default defineConfig({
     vuetify({ autoImport: true }),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: 'auto',
       manifest: {
         name: 'My Awesome App',
-        short_name: 'MyApp',
-        description: 'My Awesome App description',
-        theme_color: '#ffffff',
+        short_name: 'WorkWise',
+        description: 'WorkWise Central is a service delivery job tracking PWA',
+        theme_color: '#F0984D',
+        background_color: '#227D9B',
         icons: [
           {
             src: '/pwa-192x192.png',
@@ -46,7 +48,9 @@ export default defineConfig({
         ]
       },
       workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,vue,txt,woff2}'],
         maximumFileSizeToCacheInBytes: 10000000,
+        cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
             urlPattern: ({ url }) => {
