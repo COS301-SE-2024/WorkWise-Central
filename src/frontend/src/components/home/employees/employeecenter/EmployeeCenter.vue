@@ -1,5 +1,11 @@
 <template>
   <v-container>
+    <v-row class="justify-center align-center">
+      <v-col cols="12" class="text-center">
+        <h2 class="text-xl font-semibold">Employee Center</h2>
+      </v-col>
+      <v-divider></v-divider>
+    </v-row>
     <v-row>
       <v-col cols="12">
         <v-card class="bg-cardColor">
