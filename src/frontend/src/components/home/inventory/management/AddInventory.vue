@@ -194,6 +194,7 @@ export default defineComponent({
         setTimeout(() => {
           this.addDialog = false
           this.isDeleting = false
+          this.resetFields()
           this.$emit('inventoryCreated', response.data.data)
         }, 1500)
       } catch (error) {

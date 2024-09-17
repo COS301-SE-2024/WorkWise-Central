@@ -44,7 +44,17 @@
                   >
                 </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeletePriority :tag-id="selectedItem.priorityTagId" @DeletedPriority="getPriorities" />
+                  <DeletePriority
+                    :tag-id="selectedItem.priorityTagId"
+                    :Disabled="
+                      selectedItem.label === 'Low' ||
+                      selectedItem.label === 'Medium' ||
+                      selectedItem.label === 'High'
+                        ? true
+                        : false
+                    "
+                    @DeletedPriority="getPriorities"
+                  />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -214,7 +224,6 @@ export default defineComponent({
   }),
   components: {
     DeletePriority,
-
     Toast,
     CreatePriority
   },

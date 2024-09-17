@@ -26,7 +26,7 @@ const employeeSubItems = ref([
 const teamSubItems = ref([{ title: 'Management' }])
 const jobSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'jobAssignmentView' },
-  { title: 'Job Center', icon: 'fa: fa-solid fa-list-check', routeName: 'task-center' },
+
   { title: 'Job Board', icon: 'fa: fa-solid fa-table', routeName: 'backlog' }
 ])
 
@@ -52,7 +52,8 @@ const invoicesSubItems = ref([
 const inboxSubItems = ref([
   { title: 'Notifications', icon: 'fa: fa-solid fa-bell', routeName: 'notifications' },
   // { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: 'messages' },
-  { title: 'Meetings', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' }
+  { title: 'Meetings', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' },
+  { title: 'Video Conferencing', icon: 'fa: fa-solid fa-video', routeName: 'video-meetings' }
 ])
 
 const supportSubItems = ref([
@@ -134,7 +135,8 @@ export default defineComponent({
       axios
         .get(`${apiURL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
         .then((response) => {
-          console.log(response.data)
+          console.log(response)
+          console.log(response.data.data)
           localStorage.setItem('roleId', response.data.data.role._id)
           this.employeePermissions = response.data.data.role.permissionSuite
         })
