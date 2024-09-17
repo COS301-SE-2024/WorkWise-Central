@@ -110,7 +110,7 @@ export default {
       } as Invoice,
       editDialog: false,
       valid: false,
-      statusOptions: ['Paid', 'Unpaid'] as boolean[],
+      statusOptions: ['Paid', 'Unpaid', 'Pending'] as any[],
       invoiceNumberRules: [(v: string) => !!v || 'Invoice number is required'],
       dateRules: [(v: string) => !!v || 'Date is required'],
       amountRules: [
@@ -139,8 +139,6 @@ export default {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` }
       }
       const apiURL = this.getRequestUrl()
-
-     
 
       axios
         .patch(`${apiURL}/invoices/${this.invoice_id}`, this.localEditedInvoice, config)
