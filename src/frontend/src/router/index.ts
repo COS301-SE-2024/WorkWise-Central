@@ -381,6 +381,11 @@ const router = createRouter({
       path: '/video-meetings',
       name: 'video-meetings',
       component: VideoMeetings
+    },
+    {
+      path: '/inv-kanban',
+      name: 'invoice-kanban',
+      component: () => import('@/views/home/invoices/InvoiceBacklog.vue')
     }
   ]
 })
