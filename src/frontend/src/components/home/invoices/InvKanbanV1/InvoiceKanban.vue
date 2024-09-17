@@ -325,24 +325,7 @@ export default {
       delete_column_dialog: false,
       edit_column_details_dialog: false,
       archive_status_id: '',
-      columns: [
-        {
-          _id: 0,
-          __v: 0,
-          status: 'Unpaid',
-          colour: '#F44336', // Red for "Unpaid"
-          companyId: localStorage['currentCompany'],
-          cards: []
-        },
-        {
-          _id: 1,
-          __v: 0,
-          status: 'Paid',
-          colour: '#4CAF50', // Green for "Paid"
-          companyId: localStorage['currentCompany'],
-          cards: []
-        }
-      ] as Column[],
+      columns: [] as Column[],
       archive_id: '',
       new_column_name: '',
       error_message: '',
