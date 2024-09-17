@@ -7,111 +7,112 @@
       <v-col cols="12" class="text-center">
         <h2 class="text-xl font-semibold">{{ meetingName }}</h2>
       </v-col>
-      <v-divider></v-divider>
     </v-row>
 
     <!-- Layout Toggle Button -->
-    <v-row class="d-flex justify-center">
-      <v-btn @click="toggleLayout">{{
-        layout === 'grid' ? 'Switch to List View' : 'Switch to Grid View'
-      }}</v-btn>
-    </v-row>
+    <v-card rounded="md" class="bg-background" border="md">
+      <v-row class="d-flex justify-center">
+        <v-btn @click="toggleLayout">{{
+          layout === 'grid' ? 'Switch to List View' : 'Switch to Grid View'
+        }}</v-btn>
+      </v-row>
 
-    <!-- Participants Grid or List -->
-    <v-row class="d-flex justify-center flex-wrap" v-if="layout === 'grid'">
-      <v-col
-        v-for="participant in participants"
-        :key="participant.id"
-        cols="12"
-        md="6"
-        lg="4"
-        class="participant-card"
-      >
-        <v-card border="md">
-          <v-img
-            v-if="participant.cameraOn"
-            :src="participant.videoStream"
-            height="200px"
-            class="participant-video"
-          />
-          <v-avatar
-            v-else
-            size="200"
-            class="mx-auto d-flex justify-center align-center"
-            color="bg-cardColor"
-          >
-            <img :src="participant.profilePic" alt="Profile Picture" />
-          </v-avatar>
+      <!-- Participants Grid or List -->
+      <v-row class="d-flex justify-center flex-wrap" v-if="layout === 'grid'">
+        <v-col
+          v-for="participant in participants"
+          :key="participant.id"
+          cols="12"
+          md="6"
+          lg="4"
+          class="participant-card"
+        >
+          <v-card border="md">
+            <v-img
+              v-if="participant.cameraOn"
+              :src="participant.videoStream"
+              height="200px"
+              class="participant-video"
+            />
+            <v-avatar
+              v-else
+              size="200"
+              class="mx-auto d-flex justify-center align-center"
+              color="bg-cardColor"
+            >
+              <img :src="participant.profilePic" alt="Profile Picture" />
+            </v-avatar>
 
-          <v-card-actions>
-            <!-- Mute Button -->
-            <v-btn icon @click="toggleMute(participant.id)">
-              <v-icon v-if="participant.isMuted">mdi-microphone-off</v-icon>
-              <v-icon v-else>mdi-microphone</v-icon>
-            </v-btn>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ props }">
-                <v-btn icon v-bind="props" @click="switchCamera(participant.id)">
-                  <v-icon>mdi-camera</v-icon>
-                </v-btn>
-              </template>
-              <span>Switch Camera</span>
-            </v-tooltip>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <!-- Participants List -->
-    <v-row class="d-flex justify-center" v-else>
-      <v-col
-        cols="12"
-        v-for="participant in participants"
-        :key="participant.id"
-        class="participant-list-item"
-      >
-        <v-card>
-          <v-row>
-            <v-col cols="2">
-              <v-avatar
-                v-if="!participant.cameraOn"
-                size="75"
-                class="mx-auto d-flex justify-center align-center"
-                color="bg-cardColor"
-              >
-                <img :src="participant.profilePic" alt="Profile Picture" />
-              </v-avatar>
-              <v-img
-                v-else
-                :src="participant.videoStream"
-                height="75px"
-                class="participant-video"
-              />
-            </v-col>
-            <v-col cols="8" class="d-flex align-center">
-              <span>{{ participant.id }} - {{ participant.isMuted ? 'Muted' : 'Unmuted' }}</span>
-            </v-col>
-            <v-col cols="2" class="d-flex align-center">
+            <v-card-actions>
+              <!-- Mute Button -->
               <v-btn icon @click="toggleMute(participant.id)">
                 <v-icon v-if="participant.isMuted">mdi-microphone-off</v-icon>
                 <v-icon v-else>mdi-microphone</v-icon>
               </v-btn>
-              <v-btn icon @click="switchCamera(participant.id)">
-                <v-icon>mdi-camera</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ props }">
+                  <v-btn icon v-bind="props" @click="switchCamera(participant.id)">
+                    <v-icon>mdi-camera</v-icon>
+                  </v-btn>
+                </template>
+                <span>Switch Camera</span>
+              </v-tooltip>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
 
-    <!-- Toast Notifications -->
+      <!-- Participants List -->
+      <v-row class="d-flex justify-center" v-else>
+        <v-col
+          cols="12"
+          v-for="participant in participants"
+          :key="participant.id"
+          class="participant-list-item"
+        >
+          <v-card>
+            <v-row>
+              <v-col cols="2">
+                <v-avatar
+                  v-if="!participant.cameraOn"
+                  size="75"
+                  class="mx-auto d-flex justify-center align-center"
+                  color="bg-cardColor"
+                >
+                  <img :src="participant.profilePic" alt="Profile Picture" />
+                </v-avatar>
+                <v-img
+                  v-else
+                  :src="participant.videoStream"
+                  height="75px"
+                  class="participant-video"
+                />
+              </v-col>
+              <v-col cols="8" class="d-flex align-center">
+                <span>{{ participant.id }} - {{ participant.isMuted ? 'Muted' : 'Unmuted' }}</span>
+              </v-col>
+              <v-col cols="2" class="d-flex align-center">
+                <v-btn icon @click="toggleMute(participant.id)">
+                  <v-icon v-if="participant.isMuted">mdi-microphone-off</v-icon>
+                  <v-icon v-else>mdi-microphone</v-icon>
+                </v-btn>
+                <v-btn icon @click="switchCamera(participant.id)">
+                  <v-icon>mdi-camera</v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
 
-    <!-- User Controls -->
-    <v-row class="d-flex justify-center">
-      <v-btn @click="handleMute">Toggle Mute</v-btn>
-      <v-btn @click="handleCamera">Toggle Camera</v-btn>
-    </v-row>
+      <!-- Toast Notifications -->
+
+      <!-- User Controls -->
+      <v-row class="d-flex justify-center">
+        <v-btn @click="handleMute">Toggle Mute</v-btn>
+        <v-btn @click="handleCamera">Toggle Camera</v-btn>
+      </v-row>
+    </v-card>
   </v-container>
 </template>
 

@@ -186,11 +186,7 @@ export default defineComponent({
     }
   },
   methods: {
-    getRowProps(row: Feedback) {
-      return {
-        class: 'bg-cardColor'
-      }
-    },
+   
     getFeedbackDetails(feedback: Feedback) {
       console.log(feedback)
     },

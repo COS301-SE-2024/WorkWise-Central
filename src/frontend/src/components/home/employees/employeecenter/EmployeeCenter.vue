@@ -346,7 +346,7 @@ export default defineComponent({
         }
       }
       const apiURL = await this.getRequestUrl()
-      const user_id = localStorage.getItem('id')
+
       try {
         const res = await axios.get(
           `${apiURL}job/status/all/${localStorage.getItem('currentCompany')}`,
