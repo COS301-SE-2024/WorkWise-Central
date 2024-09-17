@@ -18,7 +18,7 @@ const app = createApp(App)
 app.use(KanbanPlugin)
 app.use(vuetify)
 app.use(router)
-
+app.use(ToastService)
 app.use(PrimeVue, { theme: { preset: Aura } })
 app.use(VNetworkGraph)
 // app.use(store)
