@@ -106,7 +106,6 @@
     </v-row>
 
     <!-- Toast Notifications -->
-    <Toast ref="toast" />
 
     <!-- User Controls -->
     <v-row class="d-flex justify-center">

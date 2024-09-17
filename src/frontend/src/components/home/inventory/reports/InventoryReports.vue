@@ -38,12 +38,6 @@
               />
             </v-card>
           </v-tab-item>
-
-          <!-- Employee Activity Report -->
-
-          <!-- Location-Based Inventory Report -->
-
-          <!-- Inventory Forecast Report -->
         </v-tabs-items>
       </v-col>
     </v-row>
@@ -381,8 +375,32 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async getStockMovements() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const response = await axios.get(
+          `${apiURL}StockMovements/all/${localStorage.getItem('employeeId')}`,
+          config
+        )
+        console.log(response.data.data)
+        this.stockMovements = response.data.data
+      } catch (error) {
+        console.error(error)
+      }
     }
   },
-  mounted() {}
+  mounted() {
+    this.getStockMovements()
+  }
 })
 </script>

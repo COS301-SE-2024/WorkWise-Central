@@ -1,5 +1,11 @@
 <template>
   <v-container fluid fill-height>
+    <v-row class="justify-center align-center">
+      <v-col cols="12" class="text-center">
+        <h2 class="text-xl font-semibold">Dashboard</h2>
+      </v-col>
+      <v-divider></v-divider>
+    </v-row>
     <v-row justify="center">
       <v-col>
         <v-card height="auto" class="pa-16 ma-0 bg-background" rounded="md" elevation="0">
@@ -114,7 +120,7 @@ export default {
   font-weight: bold;
 }
 
-.calendar-container-dark {
+/* .calendar-container-dark {
   background-color: transparent;
   color: grey;
 }
@@ -122,5 +128,5 @@ export default {
 .calendar-container-light {
   background-color: transparent;
   color: darkslategrey;
-}
+} */
 </style>
