@@ -33,7 +33,7 @@ import { JwtService } from '@nestjs/jwt';
 import { extractUserId, validateObjectId, validateObjectIds } from '../utils/Utils';
 import { DeleteClientDto } from './dto/delete-client.dto';
 import { EmployeeService } from '../employee/employee.service';
-import { JobForClientDto } from './dto/job-for-client.dto';
+import { CompanyAccountDetailsDto, CompanyStatusesDto, JobForClientDto } from './dto/job-for-client.dto';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { ClientFeedbackDto } from './dto/client-feedback.dto';
 
@@ -493,6 +493,42 @@ export class ClientController {
   async leaveFeedbackOnJob(@Body() feedbackDto: ClientFeedbackDto) {
     try {
       return { data: await this.clientService.addFeedbackOnJob(feedbackDto) };
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  @ApiOperation({ summary: `For the client-portal Timeline on Job status` })
+  @ApiResponse({
+    isArray: true,
+    type: CompanyStatusesDto,
+    status: 200,
+    description: `Array containing all status names, for Timeline showing progress`,
+  })
+  @Get('portal/timeline/statuses')
+  async getCompanyStatusNames(@Query('clientId') cId: string) {
+    try {
+      validateObjectId(cId);
+      const clientId = new Types.ObjectId(cId);
+      return { data: await this.clientService.getCompanyStatusNames(clientId) };
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  @ApiOperation({ summary: `For a client to retrieve company account details, for payment gateway` })
+  @ApiResponse({
+    isArray: true,
+    type: CompanyAccountDetailsDto,
+    status: 200,
+    description: `Company account details`,
+  })
+  @Get('portal/account-details')
+  async getCompanyAccountDetails(@Query('clientId') cId: string) {
+    try {
+      validateObjectId(cId);
+      const clientId = new Types.ObjectId(cId);
+      return { data: await this.clientService.getCompanyAccountDetails(clientId) };
     } catch (e) {
       throw e;
     }

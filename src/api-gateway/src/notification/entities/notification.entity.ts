@@ -23,10 +23,20 @@ export class Message {
 @Schema()
 export class Notification {
   //TODO: Link with tokens properly
-  constructor(senderId: Types.ObjectId, recipientId: Types.ObjectId, message: Message) {
+  constructor(
+    senderId: Types.ObjectId,
+    recipientId: Types.ObjectId,
+    message: Message,
+    companyName?: string | null,
+    jobRelated?: boolean,
+  ) {
     this.senderId = senderId;
     this.recipientId = recipientId;
     this.message = message;
+    if (jobRelated) this.isJobRelated = jobRelated;
+    else this.isJobRelated = false;
+    if (companyName) this.companyName = companyName;
+    else this.companyName = null;
   }
 
   @Prop({
@@ -44,6 +54,12 @@ export class Notification {
 
   @Prop({ type: Boolean, required: true, default: false })
   isRead: boolean = false;
+
+  @Prop({ type: Boolean, required: true, default: false })
+  isJobRelated: boolean = false;
+
+  @Prop({ type: String, required: true, default: null })
+  companyName: string = null;
 
   @Prop({ type: String, default: 'ACTIVE' })
   status: string = 'ACTIVE';
