@@ -1,7 +1,11 @@
 <template>
   <v-dialog v-model="deleteDialog" max-width="500px">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
+      <v-btn
+        class="text-none font-weight-regular hello"
+        color="error"
+        v-bind="activatorProps"
+        :disabled="Disabled"
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
       >
     </template>
@@ -25,8 +29,7 @@
       <v-card-actions>
         <v-container
           ><v-row justify="end"
-            ><v-col cols="12" lg="6" order="last" order-lg="first"
-              >
+            ><v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn label="Cancel" color="secondary" @click="close" block
                 ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon>Cancel
               </v-btn></v-col
@@ -51,7 +54,8 @@ export default defineComponent({
   name: 'DeleteStatus',
   props: {
     statusName: String,
-    statusId: String
+    statusId: String,
+    Disabled: Boolean
   },
   data() {
     return {

@@ -105,7 +105,7 @@ const refreshHistory = async () => {
   try {
     const res = await axios.get(`${apiUrl}job/id/${props.jobID}`)
     events.value = res.data.data.history
-    console.log('History updated:',res)
+    console.log('History updated:', res)
   } catch (error) {
     console.log(error)
   }

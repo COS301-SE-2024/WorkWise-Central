@@ -1,7 +1,11 @@
 <template>
   <v-dialog v-model="deleteDialog" max-width="500px" :opacity="0">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
+      <v-btn
+        class="text-none font-weight-regular hello"
+        color="error"
+        v-bind="activatorProps"
+        :disabled="Disabled"
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
       >
     </template>
@@ -55,7 +59,8 @@ export default defineComponent({
   name: 'DeleteTags',
   props: {
     pritorityName: String,
-    tagId: String
+    tagId: String,
+    Disabled: Boolean
   },
   data() {
     return {

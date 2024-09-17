@@ -145,7 +145,10 @@ const showClientChangeError = () => {
 const getClients = async () => {
   const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}client/all/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`, config)
+    const response = await axios.get(
+      `${apiUrl}client/all/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
+      config
+    )
     if (response.status < 300 && response.status > 199) {
       console.log(response)
       clientData.value = response.data.data
@@ -188,7 +191,7 @@ const saveClient = async () => {
   try {
     const response = await axios.patch(
       `${apiUrl}job/update/${props.jobID}`,
-      { clientId: selectedClient.value},
+      { clientId: selectedClient.value },
       config
     )
     if (response.status > 199 && response.status < 300) {

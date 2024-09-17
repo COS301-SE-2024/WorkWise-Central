@@ -2,11 +2,19 @@
   <div>
     <v-container>
       <!-- Display comments -->
-      <v-row v-for="(comment, index) in paginatedComments" :key="index" class="d-flex align-center mb-3">
+      <v-row
+        v-for="(comment, index) in paginatedComments"
+        :key="index"
+        class="d-flex align-center mb-3"
+      >
         <v-col cols="2" class="pt-2">
           <v-avatar color="secondary" style="width: 38px; height: 36px">
             <!-- Display image of the comment's employee -->
-            <img :src="comment.displayImage" alt="Employee Image" style="width: 100%; height: 100%; object-fit: cover;">
+            <img
+              :src="comment.displayImage"
+              alt="Employee Image"
+              style="width: 100%; height: 100%; object-fit: cover"
+            />
           </v-avatar>
         </v-col>
         <v-col md="9">
@@ -30,13 +38,9 @@
       </v-row>
 
       <!-- Pagination -->
-      <v-row >
+      <v-row>
         <v-col offset="1">
-          <v-pagination
-            v-model="currentPage"
-            :length="totalPages"
-            color="primary"
-          ></v-pagination>
+          <v-pagination v-model="currentPage" :length="totalPages" color="primary"></v-pagination>
         </v-col>
       </v-row>
 
@@ -231,7 +235,9 @@ const deleteComment = async (index: number) => {
     jobId: props.id,
     commentId: commentToBeRemoved._id
   })
-  const updatedComments = comments.value.filter((_, i) => i !== index + (currentPage.value - 1) * commentsPerPage)
+  const updatedComments = comments.value.filter(
+    (_, i) => i !== index + (currentPage.value - 1) * commentsPerPage
+  )
   try {
     await axios.delete(`${apiUrl}job/comment`, {
       data: commentBody.value,
