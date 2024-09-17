@@ -57,7 +57,7 @@ export default {
       },
       jobs: [
         {
-          _id: {},
+          _id: '',
           details: {
             heading: '',
             description: '',
