@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "bld": "vite build",
+    "pwa": "vite preview",
     "build": "run-p type-check \"build-only {@}\" --",
+    "serve": "PORT=4433 serve dist",
     "preview": "vite preview",
     "test:e2e": "start-server-and-test preview http://localhost:4173 'cypress run --e2e'",
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'",
@@ -78,6 +81,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-vue": "^9.23.0",
+    "https-localhost": "^4.7.1",
     "jsdom": "^24.0.0",
     "node-sass": "^9.0.0",
     "npm-run-all2": "^6.1.2",
