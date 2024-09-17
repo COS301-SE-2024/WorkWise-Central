@@ -38,18 +38,18 @@ export class NotificationController {
     validateObjectId(id);
     const employeeId = new Types.ObjectId(id);
     try {
-      return await this.notificationService.findAllWithEmployeeId(employeeId);
+      return { data: await this.notificationService.findAllWithEmployeeId(employeeId) };
     } catch (e) {
       throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  @Get('/employee')
+  @Get('/user')
   async getAllUserNotifications(@Query('userId') id: string) {
     validateObjectId(id);
     const userId = new Types.ObjectId(id);
     try {
-      return await this.notificationService.findAllWithUserId(userId);
+      return { data: await this.notificationService.findAllWithUserId(userId) };
     } catch (e) {
       throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -93,6 +93,30 @@ export class NotificationController {
       //return { data: await this.notificationService.removeToken(userId, body.newToken) };
     } catch (e) {}
   }*/
+
+  @Patch('markAsRead/:nId')
+  async markAsRead(@Headers() headers: any, @Query('nId') nId: string) {
+    validateObjectId(nId);
+    const notificationId = new Types.ObjectId(nId);
+    try {
+      const userId = this.extractUserId(headers);
+      return { data: await this.notificationService.markAsRead(userId, notificationId) };
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  @Patch('markAsUnread/:nId')
+  async markAsUnread(@Headers() headers: any, @Query('nId') nId: string) {
+    validateObjectId(nId);
+    const notificationId = new Types.ObjectId(nId);
+    try {
+      const userId = this.extractUserId(headers);
+      return { data: await this.notificationService.markAsUnread(userId, notificationId) };
+    } catch (e) {
+      throw e;
+    }
+  }
 
   public extractUserId(headers: any) {
     const authHeader: string = headers.authorization;

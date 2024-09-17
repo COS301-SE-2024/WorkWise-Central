@@ -87,7 +87,7 @@ export class CompanyService {
     await this.roleService.createDefaultRoles(createdCompany._id);
 
     //Create Default JobStatuses in company
-    await this.jobService.createDefaultStatuses(createdCompany._id).then((s) => {
+    this.jobService.createDefaultStatuses(createdCompany._id).then((s) => {
       const arr: Types.ObjectId[] = [];
       for (const status of s) {
         arr.push(status._id);
@@ -96,7 +96,7 @@ export class CompanyService {
     });
 
     //Create Default JobPriorityTags in Company
-    await this.jobService.createDefaultPriorityTags(createdCompany._id);
+    this.jobService.createDefaultPriorityTags(createdCompany._id);
 
     //Assign Owner to user
     console.log('Assign Owner to user');
@@ -107,10 +107,10 @@ export class CompanyService {
     const user = await this.usersService.getUserById(createCompanyDto.userId);
     ///
 
-    const currentEmployeeId = user.joinedCompanies[0].employeeId;
+    const currentEmployeeId = user.joinedCompanies[0]?.employeeId;
 
     console.log('Create Employee');
-    const employee = await this.employeeService.create({
+    const employee = await this.employeeService.createOwner({
       currentEmployeeId: currentEmployeeId,
       userId: createCompanyDto.userId,
       companyId: createdCompany._id,
@@ -152,6 +152,10 @@ export class CompanyService {
 
   async companyRegNumberExists(registerNumber: string): Promise<boolean> {
     return this.companyRepository.registrationNumberExists(registerNumber);
+  }
+
+  async companyNameExists(name: string): Promise<boolean> {
+    return this.companyRepository.nameExists(name);
   }
 
   async companyVatNumberExists(vatNumber: string): Promise<boolean> {
@@ -548,6 +552,10 @@ export class CompanyService {
       }
     }
 
+    if (await this.companyNameExists(company.name)) {
+      return new ValidationResult(false, `Company with ${company.name} already exists`);
+    }
+
     return new ValidationResult(true);
   }
 
@@ -655,7 +663,12 @@ export class CompanyService {
     const company = await this.getCompanyById(employee.companyId);
     if (company.jobStatuses.length != updateCompanyJobStatuses.jobStatuses.length)
       throw new BadRequestException('Invalid number of columns');
-
+    const noStat = await this.jobService.getStatusByLabel(employee.companyId, 'No Status');
+    if (!noStat) throw new NotFoundException('No Status not found');
+    updateCompanyJobStatuses.jobStatuses = updateCompanyJobStatuses.jobStatuses.filter(
+      (id) => id.toString() == noStat._id.toString(),
+    );
+    updateCompanyJobStatuses.jobStatuses.unshift(noStat._id);
     return this.companyRepository.updateStatuses(employee.companyId, updateCompanyJobStatuses.jobStatuses);
   }
 
@@ -667,6 +680,16 @@ export class CompanyService {
   async internalFindAllStatusesInCompany(companyId: Types.ObjectId) {
     return this.companyRepository.findAllStatusesInCompany(companyId);
   }
+
+  async getCompanyStatusNames(companyId: Types.ObjectId) {
+    const statArr = await this.companyRepository.findAllStatusNamesInCompany(companyId);
+    console.log(statArr);
+    return statArr;
+  }
+
+  // async getCompanyAccountDetails(companyId: Types.ObjectId) {
+  //   return this.companyRepository.findCompanyAccountDetails(companyId);
+  // }
 
   private eradicateCompany(companyId: Types.ObjectId) {
     this.companyRepository.eradicateCompany(companyId).then((r) => console.log('acknowledged', r.acknowledged));
