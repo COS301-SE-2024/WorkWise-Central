@@ -18,13 +18,7 @@
       @input="validateForm"
     ></v-text-field>
 
-    <v-btn
-      :disabled="!formValid"
-      color="primary"
-      @click="addInventory"
-    >
-      Add Inventory
-    </v-btn>
+    <v-btn :disabled="!formValid" color="primary" @click="addInventory"> Add Inventory </v-btn>
   </v-form>
 
   <v-divider class="my-4"></v-divider>
@@ -49,88 +43,81 @@
     class="mt-4"
   ></v-pagination>
 
-  <v-btn
-    :disabled="!inventoryList.length"
-    color="success"
-    class="mt-4"
-    @click="logInventory"
-  >
+  <v-btn :disabled="!inventoryList.length" color="success" class="mt-4" @click="logInventory">
     Log All Inventory
   </v-btn>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps } from 'vue';
+import { ref, computed, defineProps } from 'vue'
 
-const props = defineProps<{ jobID: string }>();
+const props = defineProps<{ jobID: string }>()
 
 interface InventoryItem {
-  name: string;
-  quantity: number;
+  name: string
+  quantity: number
 }
 
 const newInventory = ref<InventoryItem>({
   name: '',
-  quantity: 1,
-});
+  quantity: 1
+})
 
-const inventoryList = ref<InventoryItem[]>([]);
-const inventoryOptions = ref(['Item A', 'Item B', 'Item C']); // Replace with actual options
+const inventoryList = ref<InventoryItem[]>([])
+const inventoryOptions = ref(['Item A', 'Item B', 'Item C']) // Replace with actual options
 
-const formValid = ref(false);
-const itemsPerPage = ref(5);
-const currentPage = ref(1);
+const formValid = ref(false)
+const itemsPerPage = ref(5)
+const currentPage = ref(1)
 
 const totalPages = computed(() => {
-  return Math.ceil(inventoryList.value.length / itemsPerPage.value);
-});
+  return Math.ceil(inventoryList.value.length / itemsPerPage.value)
+})
 
 const paginatedInventory = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
-  return inventoryList.value.slice(start, end);
-});
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  const end = start + itemsPerPage.value
+  return inventoryList.value.slice(start, end)
+})
 
 const tableHeaders = [
   { text: 'Item Name', value: 'name' },
   { text: 'Quantity Used', value: 'quantity' },
-  { text: 'Action', value: 'actions', sortable: false },
-];
+  { text: 'Action', value: 'actions', sortable: false }
+]
 
 function validateForm() {
-  formValid.value = newInventory.value.name !== '' && newInventory.value.quantity > 0;
+  formValid.value = newInventory.value.name !== '' && newInventory.value.quantity > 0
 }
 
 function addInventory() {
-  const existingItem = inventoryList.value.find(
-    (item) => item.name === newInventory.value.name
-  );
+  const existingItem = inventoryList.value.find((item) => item.name === newInventory.value.name)
 
   if (existingItem) {
     // If the item exists, increase the quantity
-    existingItem.quantity += newInventory.value.quantity;
+    existingItem.quantity += newInventory.value.quantity
   } else {
     // If the item doesn't exist, add it to the list
-    inventoryList.value.push({ ...newInventory.value });
+    inventoryList.value.push({ ...newInventory.value })
   }
 
   // Reset the new inventory fields
-  newInventory.value.name = '';
-  newInventory.value.quantity = 1;
-  validateForm();
+  newInventory.value.name = ''
+  newInventory.value.quantity = 1
+  validateForm()
 }
 
 function removeInventory(index: number) {
-  inventoryList.value.splice(index, 1);
+  inventoryList.value.splice(index, 1)
   if (currentPage.value > totalPages.value) {
-    currentPage.value = totalPages.value;
+    currentPage.value = totalPages.value
   }
 }
 
 function logInventory() {
-  console.log("Inventory Logged:", inventoryList.value);
-  inventoryList.value = [];
-  currentPage.value = 1;
+  console.log('Inventory Logged:', inventoryList.value)
+  inventoryList.value = []
+  currentPage.value = 1
 }
 </script>
 

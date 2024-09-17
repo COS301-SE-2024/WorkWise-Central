@@ -54,7 +54,6 @@
                 @input="searchEmails"
               ></v-text-field>
             </v-col>
-           
           </v-row>
           <v-row>
             <v-col cols="12" order="last" justify="center">

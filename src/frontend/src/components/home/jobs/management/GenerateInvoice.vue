@@ -1,43 +1,41 @@
 <template>
   <div>
     <!-- Vuetify Button to Generate PDF Invoice -->
-    <v-btn @click="generatePdf" color="primary">
-      Generate PDF Invoice
-    </v-btn>
+    <v-btn @click="generatePdf" color="primary"> Generate PDF Invoice </v-btn>
   </div>
 </template>
 
 <script lang="ts">
-import { ref } from 'vue';
-import { VBtn } from 'vuetify/components';
-import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template';
+import { ref } from 'vue'
+import { VBtn } from 'vuetify/components'
+import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template'
 
 export default {
   name: 'InvoiceGenerator',
   components: {
-    VBtn,
+    VBtn
   },
   setup() {
     // Function to Generate PDF
     const generatePdf = () => {
       const props = {
         outputType: OutputType.Save,
-        fileName: "Invoice_2021",
+        fileName: 'Invoice_2021',
         orientationLandscape: false,
         compress: true,
         logo: {
-          src: "https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/logo.png",
+          src: 'https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/logo.png',
           type: 'PNG',
           width: 53.33,
           height: 26.66,
           margin: {
             top: 0,
-            left: 0,
+            left: 0
           }
         },
         stamp: {
           inAllPages: true,
-          src: "https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/qr_code.jpg",
+          src: 'https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/qr_code.jpg',
           type: 'JPG',
           width: 20,
           height: 20,
@@ -47,41 +45,41 @@ export default {
           }
         },
         business: {
-          name: "Business Name",
-          address: "1234 Business Street, City, Country",
-          phone: "(+355) 069 11 11 111",
-          email: "email@example.com",
-          email_1: "info@example.al",
-          website: "www.example.al",
+          name: 'Business Name',
+          address: '1234 Business Street, City, Country',
+          phone: '(+355) 069 11 11 111',
+          email: 'email@example.com',
+          email_1: 'info@example.al',
+          website: 'www.example.al'
         },
         contact: {
-          label: "Invoice issued for:",
-          name: "Client Name",
-          address: "5678 Client Address, City, Country",
-          phone: "(+355) 069 22 22 222",
-          email: "client@website.al",
-          otherInfo: "www.website.al",
+          label: 'Invoice issued for:',
+          name: 'Client Name',
+          address: '5678 Client Address, City, Country',
+          phone: '(+355) 069 22 22 222',
+          email: 'client@website.al',
+          otherInfo: 'www.website.al'
         },
         invoice: {
-          label: "Invoice #: ",
+          label: 'Invoice #: ',
           num: 19,
-          invDate: "Payment Date: 01/01/2021 18:12",
-          invGenDate: "Invoice Date: 02/02/2021 10:17",
+          invDate: 'Payment Date: 01/01/2021 18:12',
+          invGenDate: 'Invoice Date: 02/02/2021 10:17',
           headerBorder: false,
           tableBodyBorder: false,
           header: [
-            { title: "#", style: { width: 10 } },
-            { title: "Title", style: { width: 30 } },
-            { title: "Description", style: { width: 80 } },
-            { title: "Price" },
-            { title: "Quantity" },
-            { title: "Unit" },
-            { title: "Total" }
+            { title: '#', style: { width: 10 } },
+            { title: 'Title', style: { width: 30 } },
+            { title: 'Description', style: { width: 80 } },
+            { title: 'Price' },
+            { title: 'Quantity' },
+            { title: 'Unit' },
+            { title: 'Total' }
           ],
           table: [
-            [1, "Design Work", "Initial design concept for website", 300, 2, "hours", 600],
-            [2, "Development", "Frontend and backend development", 700, 5, "hours", 3500],
-            [3, "Testing", "Testing and bug fixing", 200, 3, "hours", 600]
+            [1, 'Design Work', 'Initial design concept for website', 300, 2, 'hours', 600],
+            [2, 'Development', 'Frontend and backend development', 700, 5, 'hours', 3500],
+            [3, 'Testing', 'Testing and bug fixing', 200, 3, 'hours', 600]
           ],
           additionalRows: [
             {
@@ -109,25 +107,25 @@ export default {
               }
             }
           ],
-          invDescLabel: "Invoice Note",
-          invDesc: "Thank you for your business. Please make the payment by the due date."
+          invDescLabel: 'Invoice Note',
+          invDesc: 'Thank you for your business. Please make the payment by the due date.'
         },
         footer: {
-          text: "The invoice is created on a computer and is valid without the signature and stamp.",
+          text: 'The invoice is created on a computer and is valid without the signature and stamp.'
         },
         pageEnable: true,
-        pageLabel: "Page ",
-      };
+        pageLabel: 'Page '
+      }
 
       // Generate the PDF using the template
-      jsPDFInvoiceTemplate(props);
-    };
+      jsPDFInvoiceTemplate(props)
+    }
 
     return {
-      generatePdf,
-    };
-  },
-};
+      generatePdf
+    }
+  }
+}
 </script>
 
 <style scoped>
