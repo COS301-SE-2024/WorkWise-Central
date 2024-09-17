@@ -30,6 +30,10 @@ export class Inventory {
   costPrice?: number;
 
   @ApiProperty()
+  @Prop({ type: Number, required: false })
+  salePrice?: number;
+
+  @ApiProperty()
   @Prop({ type: Number, required: false, default: 0 })
   currentStockLevel?: number;
 

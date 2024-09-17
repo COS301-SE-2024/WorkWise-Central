@@ -6,7 +6,7 @@
         <h2 class="text-xl font-semibold">Notifications</h2>
       </v-col>
     </v-row>
-    <v-card rounded="md" class="bg-cardColor">
+    <v-card rounded="md" class="bg-background" border="md">
       <v-row>
         <v-col cols="12" lg="10">
           <v-row>
@@ -15,27 +15,33 @@
                 ><v-col cols="12"
                   ><v-btn
                     @click="setInbox('All')"
-                    :class="{ 'bg-cardColor': currentInbox === 'All' }"
-                    ><v-icon icon="fa: fa-solid fa-inbox"></v-icon>All</v-btn
+                    :class="{ 'bg-secondary': currentInbox === 'All' }"
+                    color=""
+                    variant="text"
+                    ><v-icon icon="fa: fa-solid fa-inbox" color="primary"></v-icon>All</v-btn
                   ></v-col
                 >
                 <v-col cols="12">
                   <v-btn
-                    @click="setInbox('Unread')"
-                    :class="{ 'bg-cardColor': currentInbox === 'Unread' }"
-                    ><v-icon icon="fa: fa-regular fa-bell"></v-icon>Unread</v-btn
+                    @click="setInbox('Read')"
+                    :class="{ 'bg-secondary': currentInbox === 'Read' }"
+                    color=""
+                    variant="text"
+                    ><v-icon icon="fa: fa-regular fa-bell" color="primary"></v-icon>Read</v-btn
                   ></v-col
                 >
                 <v-col cols="12"
                   ><v-btn
-                    @click="setInbox('Read')"
-                    :class="{ 'bg-cardColor': currentInbox === 'Read' }"
-                    ><v-icon icon="fa: fa-solid fa-bell"></v-icon>Read</v-btn
+                    @click="setInbox('Unread')"
+                    :class="{ 'bg-secondary': currentInbox === 'Unread' }"
+                    color=""
+                    variant="text"
+                    ><v-icon icon="fa: fa-solid fa-bell" color="primary"></v-icon>Unread</v-btn
                   ></v-col
                 >
               </v-row>
             </v-col>
-            <v-col cols="12" lg="8">
+            <v-col cols="12" lg="10">
               <v-text-field
                 v-model="search"
                 label="Search"
@@ -48,37 +54,20 @@
                 @input="searchEmails"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" lg="2">
-              <v-select
-                label="Sort By"
-                :items="groupBy"
-                density="compact"
-                class="pa-0 ma-2"
-                @change="groupBySelection($event)"
-              ></v-select>
-            </v-col>
           </v-row>
           <v-row>
             <v-col cols="12" order="last" justify="center">
-              <v-card class="pa-0 ma-3" elevation="0">
-                <v-card-title class="text-h4">{{ currentInbox }}</v-card-title>
+              <v-card class="pa-0 ma-3 bg-background" elevation="0">
+                <v-card-title class="text-h4 bg-background">{{ currentInbox }}</v-card-title>
                 <v-divider></v-divider>
-                <v-card-text>
-                  <v-list class="bg-cardColor" rounded="md">
+                <v-card-text class="bg-background">
+                  <v-list class="bg-background" rounded="md">
                     <v-list-item
                       v-for="notification in filteredNotifications"
                       :key="notification.id"
                       @click="handleNotificationClick(notification.id)"
-                      :class="{
-                        'bg-background':
-                          clickedNotificationId === notification.id ||
-                          clickedNotfiicationIds.includes(notification.id)
-                      }"
                     >
-                      <v-label
-                        class="h5 font-weight-regular d-flex justify-center bg-cardColor text-secondary"
-                      ></v-label>
-                      <Panel style="background-color:">
+                      <Panel :class="'bg-background'">
                         <template #header>
                           <div class="flex items-center gap-2">
                             <v-icon
@@ -89,7 +78,7 @@
                               "
                             >
                             </v-icon>
-                            <span class="font-bold">{{ notification.title }}</span>
+                            <span class="font-bold h6">{{ notification.title }}</span>
                           </div>
                         </template>
                         <template #footer>
@@ -138,8 +127,8 @@
                             </v-list>
                           </v-menu>
                         </template>
-                        <p class="m-0">
-                          <span>{{ notification.title }}</span>
+                        <p class="m-0" :theme="true">
+                          <span class="font-bold"> {{ notification.title }}</span>
                           <br />
                           {{ notification.message }}
                           <br />
@@ -167,8 +156,8 @@
           </v-row>
         </v-col>
         <v-col cols="12" lg="2">
-          <v-card class="pa-0 ma-2" elevation="0" border="sm">
-            <v-list class="bg-cardColor">
+          <v-card class="pa-0 ma-2 bg-background" elevation="0" border="sm">
+            <v-list class="bg-background">
               <v-list-item
                 v-for="(item, index) in items"
                 :key="index"
@@ -183,7 +172,7 @@
               </v-list-item>
             </v-list>
             <v-divider></v-divider>
-            <v-list class="bg-cardColor">
+            <v-list class="bg-background">
               <v-label>Filters</v-label>
               <v-list-item
                 v-for="(item, index) in filters"
@@ -196,7 +185,7 @@
               </v-list-item>
             </v-list>
             <v-divider></v-divider>
-            <v-list class="bg-cardColor">
+            <v-list class="bg-background">
               <v-label>Companies</v-label>
               <v-list-item
                 v-for="(item, index) in companies"
@@ -746,15 +735,12 @@ export default {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        data: {
-          employeeId: localStorage.getItem('employeeId')
         }
       }
       const apiURL = await this.getRequestUrl()
       const user_id = localStorage.getItem('id')
       try {
-        const res = await axios.get(`${apiURL}notification`, config)
+        const res = await axios.get(`${apiURL}notification/employee?userId=${user_id}`, config)
         console.log(res)
         this.items = res.data.data
       } catch (error) {

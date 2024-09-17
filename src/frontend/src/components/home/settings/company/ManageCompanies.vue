@@ -179,11 +179,9 @@
       </v-row>
       <Toast position="top-center" />
       <v-dialog v-model="confirmLeaveDialog" max-width="500px">
-        <v-card>
+        <v-card class="bg-cardColor">
           <v-card-title class="headline">Confirm Leave</v-card-title>
-          <v-card-text>
-            Are you sure you want to leave the company?
-          </v-card-text>
+          <v-card-text> Are you sure you want to leave the company? </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" @click="confirmLeaveDialog = false">Cancel</v-btn>
@@ -302,7 +300,7 @@ const leaveCompany = async (company: Company) => {
   console.log('Leaving company:', company.name)
 
   // Ensure the company exists in the joinedCompanies array
-  const companyIndex = joinedCompanies.value.findIndex(c => c.companyId === company.companyId)
+  const companyIndex = joinedCompanies.value.findIndex((c) => c.companyId === company.companyId)
   if (companyIndex === -1) {
     console.error('Company not found in joined companies')
     return
@@ -413,31 +411,59 @@ const leaveCompanyToast = (companyName: string) => {
 }
 
 const leaveCompanyFailureToast = (companyName: string) => {
-  toast.add({ severity: 'error', summary: 'Failed to Leave Company', detail: `Failed to leave ${companyName}` })
+  toast.add({
+    severity: 'error',
+    summary: 'Failed to Leave Company',
+    detail: `Failed to leave ${companyName}`
+  })
 }
 
 const permanentlyLeaveCompanyToast = (companyName: string) => {
-  toast.add({ severity: 'warn', summary: 'Company Permanently Left', detail: `You have permanently left ${companyName}` })
+  toast.add({
+    severity: 'warn',
+    summary: 'Company Permanently Left',
+    detail: `You have permanently left ${companyName}`
+  })
 }
 
 const permanentlyLeaveCompanyFailureToast = (companyName: string) => {
-  toast.add({ severity: 'error', summary: 'Failed to Permanently Leave Company', detail: `Failed to permanently leave ${companyName}` })
+  toast.add({
+    severity: 'error',
+    summary: 'Failed to Permanently Leave Company',
+    detail: `Failed to permanently leave ${companyName}`
+  })
 }
 
 const rejoinCompanyToast = (companyName: string) => {
-  toast.add({ severity: 'success', summary: 'Company Rejoined', detail: `You have rejoined ${companyName}` })
+  toast.add({
+    severity: 'success',
+    summary: 'Company Rejoined',
+    detail: `You have rejoined ${companyName}`
+  })
 }
 
 const rejoinCompanyFailureToast = (companyName: string) => {
-  toast.add({ severity: 'error', summary: 'Failed to Rejoin Company', detail: `Failed to rejoin ${companyName}` })
+  toast.add({
+    severity: 'error',
+    summary: 'Failed to Rejoin Company',
+    detail: `Failed to rejoin ${companyName}`
+  })
 }
 
 const switchCompanyToast = (companyName: string) => {
-  toast.add({ severity: 'success', summary: 'Company Switched', detail: `Switched to ${companyName}` })
+  toast.add({
+    severity: 'success',
+    summary: 'Company Switched',
+    detail: `Switched to ${companyName}`
+  })
 }
 
 const switchCompanyFailureToast = (companyName: string) => {
-  toast.add({ severity: 'error', summary: 'Failed to Switch Company', detail: `Failed to switch to ${companyName}` })
+  toast.add({
+    severity: 'error',
+    summary: 'Failed to Switch Company',
+    detail: `Failed to switch to ${companyName}`
+  })
 }
 
 // Lifecycle hooks

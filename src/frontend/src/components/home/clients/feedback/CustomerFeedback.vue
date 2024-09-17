@@ -1,15 +1,49 @@
 <template>
   <v-container>
-    <v-tabs v-model="activeTab" background-color="primary" bg-color="secondary" dark>
-      <v-tab v-for="category in categories" :key="category" @click="selectCategory(category)">
-        {{ category }}
-      </v-tab>
-    </v-tabs>
+    <!-- Search and Filters Section -->
+    <v-row class="d-flex justify-space-between">
+      <v-col cols="12" md="4">
+        <v-text-field
+          v-model="searchQuery"
+          label="Search Feedback"
+          prepend-inner-icon="mdi-magnify"
+          variant="outlined"
+          color="primary"
+          clearable
+        ></v-text-field>
+      </v-col>
+      <v-col cols="12" md="4">
+        <v-select
+          v-model="selectedCategory"
+          :items="categories"
+          label="Filter by Category"
+          variant="outlined"
+          color="primary"
+          clearable
+        ></v-select>
+      </v-col>
+      <v-col cols="12" md="4">
+        <v-select
+          v-model="selectedSatisfaction"
+          :items="satisfactionLevels"
+          label="Filter by Satisfaction Level"
+          variant="outlined"
+          color="primary"
+          clearable
+        ></v-select>
+      </v-col>
+    </v-row>
 
     <v-tabs-items v-model="activeTab">
       <v-tab-item>
         <v-row>
-          <v-col v-for="(feedback, index) in filterCategory" :key="index" cols="12" lg="6" md="6">
+          <v-col
+            v-for="(feedback, index) in filteredFeedbacks"
+            :key="index"
+            cols="12"
+            lg="6"
+            md="6"
+          >
             <v-menu
               v-model="feedbackMenu"
               :close-on-content-click="false"
@@ -18,8 +52,8 @@
               @click:outside="feedbackMenu = false"
             >
               <template v-slot:activator="{ props }">
-                <v-card v-bind="props" class="ma-3">
-                  <v-card-title>
+                <v-card v-bind="props" class="ma-3 bg-background" border="md">
+                  <v-card-title class="bg-background">
                     <span>{{ feedback.employeeName }}</span>
                     <v-spacer></v-spacer>
                     <v-rating
@@ -29,11 +63,8 @@
                       readonly
                     ></v-rating>
                   </v-card-title>
-                  <h6 class="bg-cardColor pa-5 ma-0">{{ feedback.jobDone }}</h6>
+                  <h6 class="bg-background pa-5 ma-0">{{ feedback.jobDone }}</h6>
                   <v-card-text>{{ feedback.feedback }}</v-card-text>
-                  <v-card-actions>
-                    <v-btn v-bind="props">Details</v-btn>
-                  </v-card-actions>
                 </v-card>
               </template>
             </v-menu>
@@ -61,8 +92,12 @@ export default defineComponent({
       activeTab: 0,
       feedbackMenu: false,
       selectedFeedback: null as Feedback | null,
+      searchQuery: '',
+      selectedCategory: '',
+      selectedSatisfaction: null,
+      satisfactionLevels: [1, 2, 3, 4, 5],
       categories: ['All Feedback'] as string[],
-      categoryName: 'All Feedback', // This is the default category
+      categoryName: 'All Feedback',
       feedbacks: [
         {
           clientName: 'Alice Brown',
@@ -169,13 +204,21 @@ export default defineComponent({
     this.populateCategories()
   },
   computed: {
-    filterCategory(): Feedback[] {
-      console.log('Filtering by:', this.categoryName)
-      if (this.categoryName === 'All Feedback') {
-        return this.feedbacks
-      } else {
-        return this.feedbacks.filter((feedback: Feedback) => feedback.jobDone === this.categoryName)
-      }
+    filteredFeedbacks(): Feedback[] {
+      return this.feedbacks.filter((feedback: Feedback) => {
+        const matchesCategory = this.selectedCategory
+          ? feedback.jobDone === this.selectedCategory
+          : true
+        const matchesSatisfaction = this.selectedSatisfaction
+          ? feedback.satisfactionLevel === this.selectedSatisfaction
+          : true
+        const matchesSearchQuery = this.searchQuery
+          ? feedback.feedback.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            feedback.employeeName.toLowerCase().includes(this.searchQuery.toLowerCase())
+          : true
+
+        return matchesCategory && matchesSatisfaction && matchesSearchQuery
+      })
     }
   }
 })

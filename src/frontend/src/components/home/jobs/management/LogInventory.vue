@@ -25,7 +25,7 @@
     </template>
 
     <template v-slot:default="{ isActive }">
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
           Log Inventory
         </v-card-title>

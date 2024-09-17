@@ -5,11 +5,22 @@
       <v-divider></v-divider>
       <v-container>
         <v-row>
-          <v-col cols="12" lg="6">
-            <v-btn @click="updateLayout('TB')"> Top-Bottom </v-btn>
+          <v-col cols="12" lg="4">
+            <v-btn @click="updateLayout('TB')" block>Top to Bottom</v-btn>
           </v-col>
-          <v-col cols="12" lg="6">
-            <v-btn @click="updateLayout('LR')"> Left-Right </v-btn>
+          <v-col cols="12" lg="4">
+            <v-btn @click="updateLayout('LR')" block> Left to Right </v-btn>
+          </v-col>
+          <v-col cols="12" lg="4">
+            <v-btn
+              color="primary"
+              block
+              @click="getEmployeeDetails"
+              :disabled="!selectedItem"
+              :loading="isLoading"
+            >
+              <v-icon icon="fa: fa-solid fa-pencil" color="primary"></v-icon>Edit</v-btn
+            >
           </v-col>
         </v-row>
       </v-container>
@@ -17,6 +28,8 @@
         <Toast position="top-center" />
         <v-network-graph
           v-model="graph"
+          v-model:selected-nodes="selectedNodes"
+          v-model:selected-edges="selectedEdges"
           class="graph"
           :nodes="data.nodes"
           :edges="data.edges"
@@ -50,22 +63,132 @@
       </v-card-text>
 
       <v-card-actions class="bg-cardColor">
-        <v-container
-          ><v-row justify="end">
+        <v-container>
+          <v-row justify="end">
             <v-col align="center" cols="12" lg="6" order="last" order-lg="first">
-              <v-btn color="error" @click="cancel" :loading="isDeleting" block
-                ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Cancel</v-btn
-              >
+              <v-btn color="error" @click="cancel" :loading="isDeleting" block>
+                <v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Cancel
+              </v-btn>
             </v-col>
             <v-col align="center" cols="12" lg="6" order="first" order-lg="last">
-              <v-btn color="success" @click="saveChanges" :loading="isDeleting" block
-                ><v-icon color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save</v-btn
-              >
+              <v-btn color="success" @click="saveChanges" :loading="isDeleting" block>
+                <v-icon color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save
+              </v-btn>
             </v-col>
-          </v-row></v-container
-        >
+          </v-row>
+        </v-container>
       </v-card-actions>
     </v-card>
+
+    <v-dialog v-model="employeeDialog" max-width="500" height="500">
+      <v-card class="bg-cardColor">
+        <v-form ref="form" @submit.prevent="validateEdits">
+          <v-card-title class="text-center">Edit Employee</v-card-title>
+          <v-divider></v-divider>
+          <v-card-item>
+            <v-row
+              ><v-col>
+                <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
+                  {{ selectedEmployee?.userInfo.firstName }}
+                  {{ selectedEmployee?.userInfo.surname }}
+                </h4>
+                <h3 class="text-center">Role: {{ selectedEmployee?.role.roleName }}</h3>
+              </v-col></v-row
+            >
+            <v-row
+              ><v-col :cols="12">
+                <v-select
+                  clearable
+                  label="Company Role"
+                  hint="Select the role you'd like to change this employee to"
+                  persistent-hint
+                  @update:modelValue="change_roles"
+                  :items="roleItems"
+                  item-value="roleId"
+                  item-title="roleName"
+                  v-model="req_obj.updateEmployeeDto.roleId"
+                  bg-color="background"
+                  variant="solo"
+                  :loading="loading"
+                ></v-select>
+              </v-col>
+              <v-col :cols="12">
+                <v-select
+                  clearable
+                  label="Subordinates"
+                  hint="Select the employees you'd like to be subordinates of this employee"
+                  persistent-hint
+                  @update:model-value="selected_subordiates"
+                  :items="filteredSubordinateNames"
+                  v-model="req_obj.updateEmployeeDto.subordinates"
+                  item-value="employeeId"
+                  item-title="name"
+                  bg-color="background"
+                  variant="solo"
+                  multiple
+                  :loading="loading"
+                ></v-select> </v-col
+              ><v-col :cols="12">
+                <v-select
+                  clearable
+                  label="Superior"
+                  hint="Select the employee you'd like to be superior of this employee"
+                  persistent-hint
+                  @update:modelValue="selected_supirior"
+                  :items="filteredSupriorNames"
+                  v-model="req_obj.updateEmployeeDto.superiorId"
+                  item-value="employeeId"
+                  item-title="name"
+                  bg-color="background"
+                  variant="solo"
+                ></v-select> </v-col
+            ></v-row>
+          </v-card-item>
+          <v-card-actions>
+            <v-container>
+              <v-row>
+                <v-col cols="12" lg="6" order="first" order-lg="last">
+                  <v-btn
+                    color="success"
+                    rounded="md"
+                    width="100%"
+                    height="35"
+                    variant="text"
+                    type="submit"
+                    block
+                    :loading="isDeleting"
+                  >
+                    <v-icon
+                      icon="fa:fa-solid fa-floppy-disk"
+                      start
+                      color="success"
+                      size="small"
+                    ></v-icon>
+                    Save
+                  </v-btn>
+                </v-col>
+                <v-col cols="12" lg="6" order="last" order-lg="first">
+                  <v-btn
+                    color="error"
+                    rounded="md"
+                    width="100%"
+                    height="35"
+                    variant="text"
+                    block
+                    @click="close"
+                    :loading="isDeleting"
+                  >
+                    <Toast position="top-center" />
+                    <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
+                    >Cancel
+                  </v-btn>
+                </v-col></v-row
+              >
+            </v-container>
+          </v-card-actions>
+        </v-form>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -74,7 +197,6 @@ import { defineComponent, reactive } from 'vue'
 import * as vNG from 'v-network-graph'
 import dagre from 'dagre/dist/dagre.min.js'
 import axios from 'axios'
-import EditEmployee from '../../employees/management/EditEmployee.vue'
 
 const nodeSize = 40
 
@@ -84,28 +206,21 @@ export default defineComponent({
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       color: 'primary',
+      isLoading: false,
+      selectedItem: '',
+      employeeDialog: false,
       data: {
-        nodes: {
-          // node1: { name: 'Joe' },
-          // node2: { name: 'Alice' },
-          // node3: { name: 'Bob' },
-          // node4: { name: 'Carol' },
-          // node5: { name: 'Dave' },
-          // node6: { name: 'Eve' },
-          // node7: { name: 'Frank' }
-        },
-        edges: {
-          // edge1: { source: 'node1', target: 'node2' },
-          // edge2: { source: 'node2', target: 'node3' },
-          // edge3: { source: 'node3', target: 'node4' },
-          // edge4: { source: 'node3', target: 'node5' },
-          // edge5: { source: 'node2', target: 'node6' },
-          // edge6: { source: 'node6', target: 'node7' }
-        },
+        nodes: {},
+        edges: {},
         layouts: reactive({
           nodes: {}
         })
       },
+      selectedNodes: [],
+      selectedEdges: [],
+      subordinateItemNames: [],
+      roleItems: [],
+      loading: false,
       nodeSize,
       graph: null,
       configs: vNG.defineConfigs({
@@ -118,11 +233,9 @@ export default defineComponent({
           normal: {
             type: 'circle',
             radius: nodeSize,
-            // for type is "rect" -->
             width: 32,
             height: 32,
             borderRadius: 4,
-            // <-- for type is "rect"
             strokeWidth: 0,
             strokeColor: '#000000',
             strokeDasharray: '0',
@@ -132,11 +245,9 @@ export default defineComponent({
           hover: {
             type: 'circle',
             radius: nodeSize,
-            // for type is "rect" -->
             width: 32,
             height: 32,
             borderRadius: 4,
-            // <-- for type is "rect"
             strokeWidth: 0,
             strokeColor: '#000000',
             strokeDasharray: '0',
@@ -145,11 +256,9 @@ export default defineComponent({
           selected: {
             type: 'circle',
             radius: nodeSize,
-            // for type is "rect" -->
             width: 32,
             height: 32,
             borderRadius: 4,
-            // <-- for type is "rect"
             strokeWidth: 0,
             strokeColor: '#000000',
             strokeDasharray: '0',
@@ -171,9 +280,37 @@ export default defineComponent({
           }
         },
         eventsHandlers: {
-          'node:click': this.onNodeClick()
+          'node:click': this.onNodeClick
         }
-      })
+      }),
+      selectedEmployee: '',
+      req_obj: {
+        currentEmployeeId: localStorage['employeeId'],
+        updateEmployeeDto: {
+          roleId: '',
+          subordinates: [],
+          superiorId: ''
+        }
+      }
+    }
+  },
+  computed: {
+    filteredSubordinateNames() {
+      return this.subordinateItemNames.filter(
+        (sub) =>
+          !(
+            this.req_obj?.updateEmployeeDto.superiorId &&
+            this.req_obj?.updateEmployeeDto.superiorId === sub.employeeId
+          )
+      )
+    },
+    filteredSupriorNames() {
+      return this.subordinateItemNames.filter(
+        (sub) =>
+          !this.req_obj?.updateEmployeeDto.subordinates?.some(
+            (selected) => selected === sub.employeeId
+          )
+      )
     }
   },
   methods: {
@@ -207,11 +344,17 @@ export default defineComponent({
         this.data.layouts.nodes[nodeId] = { x, y }
       })
     },
-    onNodeClick() {
-      console.log('Node clicked:')
-    },
     viewEmployee() {
       console.log()
+    },
+    removeNode() {
+      const nodeIds = Object.keys(this.data.nodes)
+      if (nodeIds.length === 0) return
+      // Implement your logic for removing a node here
+    },
+    addNode() {
+      const newNodeId = `node${Object.keys(this.data.nodes).length + 1}`
+      this.data.nodes[newNodeId] = { name: 'New Node' }
     },
     async downloadAsSvg() {
       if (!this.graph) return
@@ -223,9 +366,29 @@ export default defineComponent({
       a.click()
       window.URL.revokeObjectURL(url)
     },
-    EditEmployee(employeeId) {
-      console.log(employeeId)
+
+    onNodeClick(event) {
+      console.log(event.node)
+      console.log(this.data.nodes)
+
+      if (event.node) {
+        // Traverse nodes using for...in loop
+        for (const nodeId in this.data.nodes) {
+          const node = this.data.nodes[nodeId]
+          console.log(nodeId)
+          if (nodeId === event.node) {
+            console.log(this.selectedItem)
+            this.selectedItem = node
+            break // Exit the loop once the node is found
+          }
+        }
+
+        console.log('Node clicked:', this.selectedItem)
+      } else {
+        console.log('No node clicked')
+      }
     },
+
     async getGraphView() {
       const config = {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
@@ -243,6 +406,158 @@ export default defineComponent({
       } catch (error) {
         console.error(error)
       }
+    },
+    async getEmployeeDetails() {
+      this.isLoading = true
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      try {
+        const response = await axios.get(
+          `${apiURL}employee/detailed/id/${this.selectedItem.id}`,
+          config
+        )
+        console.log(response)
+        this.selectedEmployee = response.data.data
+
+        this.loadSubordinates()
+        this.loadSuperiors()
+        this.loadRoles()
+        setTimeout(() => {
+          this.employeeDialog = true
+          this.isLoading = false
+        }, 1000)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async validateEdits() {
+      if (
+        this.req_obj.updateEmployeeDto.roleId === '' &&
+        this.req_obj.updateEmployeeDto.subordinates?.length === 0 &&
+        this.req_obj.updateEmployeeDto.superiorId === ''
+      ) {
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Please select at least one field to update',
+          life: 3000
+        })
+        return
+      }
+
+      const form = this.$refs.form
+      const validate = await form.validate()
+      this.req_obj.updateEmployeeDto.subordinates ||
+        delete this.req_obj.updateEmployeeDto.subordinates
+      this.req_obj.updateEmployeeDto.superiorId || delete this.req_obj.updateEmployeeDto.superiorId
+      this.req_obj.updateEmployeeDto.roleId || delete this.req_obj.updateEmployeeDto.roleId
+
+      if (validate) await this.savechanges()
+    },
+    async loadSubordinates() {
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
+        params: { currentEmployeeId: localStorage['employeeId'] }
+      }
+      const apiURL = await this.getRequestUrl()
+      console.log(this.selectedEmployee._id)
+      try {
+        const sub_res = await axios.get(
+          apiURL + `employee/listPotentialSubordinates/${this.selectedEmployee._id}`,
+          config
+        )
+        console.log(sub_res)
+        this.loading = false
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    },
+    async loadSuperiors() {
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
+        params: { currentEmployeeId: localStorage['employeeId'] }
+      }
+      const apiURL = await this.getRequestUrl()
+      console.log(this.selectedEmployee._id)
+      try {
+        const sup_res = await axios.get(
+          apiURL + `employee/listPotentialSuperiors/${this.selectedEmployee._id}`,
+          config
+        )
+        console.log(sup_res)
+        this.loading = false
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    },
+    async loadRoles() {
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      try {
+        let roles_response = await axios.get(
+          apiURL + `role/all/${localStorage['currentCompany']}`,
+          config
+        )
+        let roles_data = roles_response.data.data
+        for (let i = 0; i < roles_data.length; i++) {
+          if (
+            roles_data[i].roleName === this.selectedEmployee.role.roleName ||
+            roles_data[i].roleName === 'Owner'
+          )
+            continue
+          this.roleItems.push({
+            roleName: roles_data[i].roleName,
+            roleId: roles_data[i]._id
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    },
+    close() {
+      this.employeeDialog = false
+    },
+    async savechanges() {
+      this.isDeleting = true // Indicate the start of the deletion process
+      console.log(this.req_obj)
+      let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      let apiURL = await this.getRequestUrl()
+      console.log(this.this.selectedItem.id)
+      axios
+        .patch(apiURL + `employee/${this.this.selectedItem.id}`, this.req_obj, config)
+        .then((res) => {
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Employee updated successfully',
+            life: 3000
+          })
+          console.log(res)
+          this.employeeDialog = false
+          setTimeout(() => {
+            this.isDeleting = false
+            this.employeeDialog = false
+          }, 1500)
+        })
+        .catch((error) => {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'An error occurred while updating the employee',
+            life: 3000
+          })
+          console.log(error)
+        })
     },
     async getRequestUrl() {
       console.log(this.localUrl)
@@ -269,7 +584,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.layout('LR')
+    this.layout('TB')
     this.getGraphView()
   }
 })

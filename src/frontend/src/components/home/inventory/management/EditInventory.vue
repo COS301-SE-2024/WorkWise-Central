@@ -14,7 +14,7 @@
         >Edit</v-btn
       >
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
         Edit Inventory
@@ -217,7 +217,7 @@ export default {
         this.addDialog = false
         setTimeout(() => {
           this.isDeleting = false
-          this.$emit('inventoryUpdated', response.data.data)
+          this.$emit('inventoryUpdated', response.data.data, this.inventory_id)
         }, 1500)
       } catch (error) {
         console.error(error)

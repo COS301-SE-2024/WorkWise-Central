@@ -1,27 +1,27 @@
 <template>
-    <v-combobox
-      v-model="selectedTags"
-      :items="companyLabels"
-      item-value="_id"
-      item-title="label"
-      label="Select some tags you would like to assign to this job"
-      multiple
-      required
-      color="primary"
-      variant="solo"
-      clearable
-      data-testid="tags-multi-select"
-      searchable
-    >
-      <template #selection="{ item }">
-        <v-chip
-          :style="{ backgroundColor: item.raw.colour, color: getContrastingColor(item.raw.colour) }"
-          @click="openEditDialog(item)"
-        >
-          {{ item.title }}
-        </v-chip>
-      </template>
-    </v-combobox>
+  <v-combobox
+    v-model="selectedTags"
+    :items="companyLabels"
+    item-value="_id"
+    item-title="label"
+    label="Select some tags you would like to assign to this job"
+    multiple
+    required
+    color="primary"
+    variant="solo"
+    clearable
+    data-testid="tags-multi-select"
+    searchable
+  >
+    <template #selection="{ item }">
+      <v-chip
+        :style="{ backgroundColor: item.raw.colour, color: getContrastingColor(item.raw.colour) }"
+        @click="openEditDialog(item)"
+      >
+        {{ item.title }}
+      </v-chip>
+    </template>
+  </v-combobox>
 
   <v-btn color="success" width="100%" @click="saveTags">
     <v-icon class="fas fa-save"></v-icon>
@@ -31,64 +31,60 @@
     <v-icon class="fas fa-plus"></v-icon>
     Create Tag
   </v-btn>
-    <!-- Label Creation/Edit Dialog -->
-    <v-dialog v-model="dialog" max-width="400px">
-      <v-card>
-        <v-card-title>{{ dialogTitle }}</v-card-title>
+  <!-- Label Creation/Edit Dialog -->
+  <v-dialog v-model="dialog" max-width="400px">
+    <v-card class="bg-cardColor">
+      <v-card-title>{{ dialogTitle }}</v-card-title>
 
-        <v-card-text>
-          <!-- Title Input -->
-          <v-label class="pb-0">Title</v-label>
-          <v-text-field
-            v-model="labelTitle"
-            label="Label Title"
-            outlined
-            dense
-            class="mt-4 pt-0"
-            hint="Enter the title for the label"
-            persistent-hint
-          ></v-text-field>
+      <v-card-text>
+        <!-- Title Input -->
+        <v-label class="pb-0">Title</v-label>
+        <v-text-field
+          v-model="labelTitle"
+          label="Label Title"
+          outlined
+          dense
+          class="mt-4 pt-0"
+          hint="Enter the title for the label"
+          persistent-hint
+        ></v-text-field>
 
-          <!-- Color Palette -->
-            <!-- Color Picker -->
-            <v-row cols="12" class="pt-4">
-              <v-col cols="12" class="d-flex justify-center">
-                <v-color-picker
-                  v-model="selectedColor"
-                  show-swatches
-                  hide-inputs
-                ></v-color-picker>
-              </v-col>
-            </v-row>
+        <!-- Color Palette -->
+        <!-- Color Picker -->
+        <v-row cols="12" class="pt-4">
+          <v-col cols="12" class="d-flex justify-center">
+            <v-color-picker v-model="selectedColor" show-swatches hide-inputs></v-color-picker>
+          </v-col>
+        </v-row>
 
-          <!-- Selected Color Block with Label Title -->
-          <div
-            v-if="labelTitle"
-            class="d-flex justify-center align-center mt-4"
-            :style="{
-              backgroundColor: selectedColor,
-              color: getContrastingColor(selectedColor),
-              width: '100%',
-              height: '100px',
-              borderRadius: '8px'
-            }"
-          >
-            <span style="font-size: 24px">{{ labelTitle }}</span>
-          </div>
-        </v-card-text>
+        <!-- Selected Color Block with Label Title -->
+        <div
+          v-if="labelTitle"
+          class="d-flex justify-center align-center mt-4"
+          :style="{
+            backgroundColor: selectedColor,
+            color: getContrastingColor(selectedColor),
+            width: '100%',
+            height: '100px',
+            borderRadius: '8px'
+          }"
+        >
+          <span style="font-size: 24px">{{ labelTitle }}</span>
+        </div>
+      </v-card-text>
 
-        <v-card-actions class="d-flex flex-column">
-          <v-btn color="success" @click="handleClick">
-            <v-icon class="fas fa-save"></v-icon>
-            {{ dialogTitle === 'Create Label' ? 'Create' : 'Save' }}
-          </v-btn>
-          <v-btn v-if="dialogTitle === 'Edit Label'" color="error" @click="deleteLabel">
-            <v-icon class="fas fa-trash"></v-icon>
-            Delete
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      <v-card-actions class="d-flex flex-column">
+        <v-btn color="success" @click="handleClick">
+          <v-icon class="fas fa-save"></v-icon>
+          {{ dialogTitle === 'Create Label' ? 'Create' : 'Save' }}
+        </v-btn>
+        <v-btn v-if="dialogTitle === 'Edit Label'" color="error" @click="deleteLabel">
+          <v-icon class="fas fa-trash"></v-icon>
+          Delete
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
@@ -206,7 +202,7 @@ const editLabel = async () => {
     editTagSuccess()
     console.log('Edit tag:', response)
     // Update the selectedTags array with the new values
-    const tagIndex = selectedTags.value.findIndex(tag => tag._id === selectedTagId.value)
+    const tagIndex = selectedTags.value.findIndex((tag) => tag._id === selectedTagId.value)
     if (tagIndex !== -1) {
       selectedTags.value[tagIndex].label = labelTitle.value
       selectedTags.value[tagIndex].colour = selectedColor.value
@@ -254,7 +250,7 @@ const saveLabel = async () => {
         colour: selectedColor.value
       }
       const response = await axios.post(`${apiUrl}job/tags/add`, tag, config)
-      const updatedTags = [...props.tags.map(tag => tag._id), response.data.data._id]
+      const updatedTags = [...props.tags.map((tag) => tag._id), response.data.data._id]
       console.log(response)
       if (response.status > 199 && response.status < 300) {
         // labels.value.push(tag)
@@ -299,7 +295,6 @@ const saveLabel = async () => {
   dialog.value = false
 }
 
-
 const deleteLabel = async () => {
   const apiUrl = await getRequestUrl()
   const config = {
@@ -320,7 +315,7 @@ const deleteLabel = async () => {
     deleteTagSuccess()
     console.log('Delete tag:', response)
     // Remove the deleted tag from the selectedTags array
-    selectedTags.value = selectedTags.value.filter(tag => tag._id !== selectedTagId.value)
+    selectedTags.value = selectedTags.value.filter((tag) => tag._id !== selectedTagId.value)
   } catch (error) {
     deleteTagFailure()
     console.log(error)
@@ -388,7 +383,7 @@ const deleteTagSuccess = () => {
 // Utility function to determine the best text color for the selected background
 const getContrastingColor = (bgColor: string): string => {
   if (!bgColor || typeof bgColor !== 'string') {
-    return '#000'; // Default to black if bgColor is not defined or not a string
+    return '#000' // Default to black if bgColor is not defined or not a string
   }
   const color = bgColor.slice(1) // Remove '#'
   const rgb = parseInt(color, 16) // Convert hex to RGB

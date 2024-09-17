@@ -84,30 +84,21 @@
                 <label class="font-weight-bold">City</label>
                 <v-spacer></v-spacer>
                 <p>
-                  {{
-                    props.passedInJob?.details?.address?.city ||
-                    'City is not available'
-                  }}
+                  {{ props.passedInJob?.details?.address?.city || 'City is not available' }}
                 </p>
               </v-col>
               <v-col>
                 <label class="font-weight-bold">Suburb</label>
                 <v-spacer></v-spacer>
                 <p>
-                  {{
-                    props.passedInJob?.details?.address?.suburb ||
-                    'Suburb is not available'
-                  }}
+                  {{ props.passedInJob?.details?.address?.suburb || 'Suburb is not available' }}
                 </p>
               </v-col>
               <v-col>
                 <label class="font-weight-bold">Street</label>
                 <v-spacer></v-spacer>
                 <p>
-                  {{
-                    props.passedInJob?.details?.address?.street ||
-                    'Address is not available'
-                  }}
+                  {{ props.passedInJob?.details?.address?.street || 'Address is not available' }}
                 </p>
               </v-col>
             </v-row>
@@ -127,8 +118,7 @@
                 <v-spacer></v-spacer>
                 <p>
                   {{
-                    props.passedInJob?.details?.address?.complex ||
-                    'Complex name is not available'
+                    props.passedInJob?.details?.address?.complex || 'Complex name is not available'
                   }}
                 </p>
               </v-col>
@@ -167,9 +157,7 @@
             </v-divider>
             <v-row>
               <v-col>
-                <CheckOffItems
-                  :jobID="props.passedInJob?._id"
-                />
+                <CheckOffItems :jobID="props.passedInJob?._id" />
               </v-col>
             </v-row>
             <v-divider>
@@ -182,7 +170,7 @@
               <h5 ref="jobStatusSection">Update Job Status</h5>
             </v-divider>
             <v-col>
-              <JobStatus :jobID="props.passedInJob?._id" :status="props.passedInJob?.status"/>
+              <JobStatus :jobID="props.passedInJob?._id" :status="props.passedInJob?.status" />
             </v-col>
             <v-divider>
               <h5 ref="jobTagsSection">Add Job Tags</h5>
@@ -206,7 +194,10 @@
               <h5 ref="historySection">View Job History</h5>
             </v-divider>
             <v-col>
-              <JobHistory :jobHistory="props.passedInJob?.history" :jobID="props.passedInJob?._id" />
+              <JobHistory
+                :jobHistory="props.passedInJob?.history"
+                :jobID="props.passedInJob?._id"
+              />
             </v-col>
           </v-col>
         </v-col>
@@ -349,7 +340,6 @@ import JobStatus from './JobStatus.vue'
 import LogJobInventory from './LogJobInventory.vue'
 import GenerateInvoice from './GenerateInvoice.vue'
 import axios from 'axios'
-
 
 const props = defineProps<{ passedInJob: any }>()
 const emits = defineEmits(['close'])

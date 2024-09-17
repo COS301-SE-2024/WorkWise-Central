@@ -12,6 +12,10 @@ import { EmployeeService } from '../employee/employee.service';
 import { StockTakeService } from './stocktake.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { OuterCreateStocktakeDto } from './dto/create-stocktake.dto';
+import { extractUserId } from '../utils/Utils';
+import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '../users/users.service';
+import { Types } from 'mongoose';
 
 const className = 'StockTake';
 
@@ -21,10 +25,26 @@ export class StockTakeController {
   constructor(
     private readonly employeeService: EmployeeService,
     private readonly stockTakeService: StockTakeService,
+    private readonly userService: UsersService,
+    private readonly jwtService: JwtService,
   ) {}
 
+  async validateRequestWithEmployeeId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
+    const user = await this.userService.getUserById(userId);
+    if (!user.joinedCompanies.find((joined) => joined.employeeId.toString() === currentEmployeeId.toString())) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
+  async validateRequestWithCompanyId(userId: Types.ObjectId, companyId: Types.ObjectId) {
+    const user = await this.userService.getUserById(userId);
+    if (!user.joinedCompanies.find((joined) => joined.companyId.toString() === companyId.toString())) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
   @ApiOperation({
-    summary: `Refer to Documentation`,
+    summary: `Used for testing. DO NOT USE IN PRODUCTION`,
   })
   @Get()
   hello() {
@@ -58,9 +78,9 @@ export class StockTakeController {
   })
   @Post('/create')
   async create(@Headers() headers: any, @Body() body: OuterCreateStocktakeDto) {
-    console.log('In create endpoint');
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, body.currentEmployeeId);
     const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
-    console.log('current employee: ', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('record stock take')) {
       let data;
       try {
@@ -70,7 +90,6 @@ export class StockTakeController {
           throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
         }
       } catch (e) {
-        console.log('error:', e);
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
       return { data: data };

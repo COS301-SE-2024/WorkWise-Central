@@ -51,7 +51,7 @@ export class NotificationService implements OnModuleInit {
 
   watchDatabase() {
     this.notificationModel.watch().on('change', async (change) => {
-      console.log(change);
+      //console.log(change);
       const document: Notification = change.fullDocument;
       console.log(document);
       try {

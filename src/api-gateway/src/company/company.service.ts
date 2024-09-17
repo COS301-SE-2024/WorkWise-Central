@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   forwardRef,
   Inject,
@@ -651,11 +652,19 @@ export class CompanyService {
     const employee = await this.employeeService.findById(employeeId);
     if (employee == null) throw new NotFoundException('Employee not found');
 
+    const company = await this.getCompanyById(employee.companyId);
+    if (company.jobStatuses.length != updateCompanyJobStatuses.jobStatuses.length)
+      throw new BadRequestException('Invalid number of columns');
+
     return this.companyRepository.updateStatuses(employee.companyId, updateCompanyJobStatuses.jobStatuses);
   }
 
   async findAllStatusesInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
     if (!(await this.usersService.userIdExists(userId))) throw new NotFoundException('User not found');
+    return this.companyRepository.findAllStatusesInCompany(companyId);
+  }
+
+  async internalFindAllStatusesInCompany(companyId: Types.ObjectId) {
     return this.companyRepository.findAllStatusesInCompany(companyId);
   }
 

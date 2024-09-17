@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="clientDialog" max-width="500" height="400">
+  <v-dialog
+    v-model="clientDialog"
+    max-width="500"
+    height="400"
+    @click="console.log(EmployeeDetails)"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -55,6 +60,17 @@
             </v-col></v-row
           >
           <v-divider></v-divider>
+
+          <v-row
+            ><v-col cols="6"
+              ><label>Superior</label><v-spacer></v-spacer
+              ><small class="text-caption">{{ supname }}</small></v-col
+            ><v-col cols="6"
+              ><label> Subordinates </label><v-spacer></v-spacer
+              ><small class="text-caption" v-for="(name, i) in subnames" :key="i">{{ name }}</small>
+            </v-col></v-row
+          >
+          <v-divider></v-divider>
         </v-col>
       </v-card-text>
       <v-card-actions>
@@ -79,23 +95,85 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="js">
 import { defineComponent } from 'vue'
+import axios from 'axios'
 export default defineComponent({
   props: {
-    EmployeeDetails: Array
+    EmployeeDetails: { type: Object, required: true }
   },
   data() {
     return {
       clientDialog: false,
-      isDeleting: false
+      isDeleting: false,
+      subnames: [],
+      supname: '',
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
   },
   methods: {
+    async loadEmployeeData() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      console.log(localStorage['employeeId'])
+      const apiURL = await this.getRequestUrl()
+
+      if (this.EmployeeDetails === undefined) return
+
+      try {
+        const employee_response = await axios.get(
+          apiURL + `employee/id/${this.EmployeeDetails.employeeId}`,
+          config
+        )
+        console.log(employee_response)
+        for (let i = 0; i < employee_response.data.data.subordinates.length; i++) {
+          const res_res = await axios.get(
+            apiURL + `employee/id/${employee_response.data.data.subordinates[0]}`,
+            config
+          )
+          this.subnames.push(
+            res_res.data.data.userInfo.firstName + ' ' + res_res.data.data.userInfo.surname
+          )
+        }
+
+        const res_res = await axios.get(
+          apiURL + `employee/id/${employee_response.data.data.superiorId}`,
+          config
+        )
+
+        this.supname =
+          res_res.data.data.userInfo.firstName + ' ' + res_res.data.data.userInfo.surname
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
+    },
     close() {
       console.log('closing dialog:' + this.clientDialog)
       this.clientDialog = false
+    },
+    async isLocalAvailable(string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
+  },
+  mounted() {
+    this.loadEmployeeData()
   }
 })
 </script>

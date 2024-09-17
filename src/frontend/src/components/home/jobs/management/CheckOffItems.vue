@@ -2,10 +2,7 @@
   <v-container>
     <!-- Button to create a new task -->
     <v-row class="justify-center mb-4">
-      <v-btn
-        color="primary"
-        @click="createNewTask"
-        prepend-icon="mdi-plus"
+      <v-btn color="primary" @click="createNewTask" prepend-icon="mdi-plus"
         >Create New Task List</v-btn
       >
     </v-row>
@@ -29,7 +26,7 @@
           ></v-textarea>
           <template v-if="task.title.trim() !== ''">
             <v-btn color="error" outlined class="pl-10 pt-5" @click="deleteTask(taskIndex)">
-              <v-icon color="error">{{'fa: fa-solid fa-trash'}}</v-icon>
+              <v-icon color="error">{{ 'fa: fa-solid fa-trash' }}</v-icon>
               Delete
             </v-btn>
           </template>
@@ -85,7 +82,7 @@
                   </template>
 
                   <template v-slot:default="{ isActive }">
-                    <v-card>
+                    <v-card class="bg-cardColor">
                       <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
                         Item actions
                       </v-card-title>
@@ -97,7 +94,7 @@
                           </v-btn>
                         </v-defaults-provider>
                         <v-dialog v-model="assignDialog" max-width="400px">
-                          <v-card>
+                          <v-card class="bg-cardColor">
                             <v-card-title class="text-h5">Assign Employees</v-card-title>
                             <v-card-text class="text-center">
                               <v-label>Assigned Employees</v-label>
@@ -115,7 +112,11 @@
                             </v-card-text>
                             <v-card-actions class="d-flex flex-column">
                               <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
-                                <v-btn color="success" prepend-icon="fa: fa-solid fa-save" @click="saveMembers(taskIndex, itemIndex)">
+                                <v-btn
+                                  color="success"
+                                  prepend-icon="fa: fa-solid fa-save"
+                                  @click="saveMembers(taskIndex, itemIndex)"
+                                >
                                   Save
                                 </v-btn>
                               </v-defaults-provider>
@@ -229,7 +230,7 @@ interface Member {
     surname: string
   }
 }
-const props = defineProps<{jobID: string}>()
+const props = defineProps<{ jobID: string }>()
 
 const taskList = ref<Task[]>([])
 const itemsPerPage = ref(1)
@@ -240,7 +241,6 @@ const assignableEmployees = ref<string[]>([])
 const selectedMembers = ref<Member[]>([])
 const members = ref<Member[]>([]) // Populate with your states data
 const originalSelectedMembers = ref<Member[]>([])
-
 
 //API URLS
 const localUrl: string = 'http://localhost:3000/'
@@ -308,20 +308,24 @@ const addItem = async (taskIndex: number) => {
     if (response.status > 199 && response.status < 300) {
       const currentDate = new Date().toISOString()
       console.log(currentDate)
-      const itemId = response.data.data.taskList[taskIndex].items[response.data.data.taskList[taskIndex].items.length - 1]._id
+      const itemId =
+        response.data.data.taskList[taskIndex].items[
+          response.data.data.taskList[taskIndex].items.length - 1
+        ]._id
       taskList.value[taskIndex].items[taskList.value[taskIndex].items.length - 1]._id = itemId
       console.log('Item id', itemId)
-       const body2 = {
-          employeeId: localStorage.getItem('employeeId') || '',
-          jobId: props.jobID,
-          taskId: taskList.value[taskIndex]._id,
-          description: taskList.value[taskIndex].items[taskList.value[taskIndex].items.length - 1].description,
-          done: taskList.value[taskIndex].items[taskList.value[taskIndex].items.length-1].done,
-          itemId: itemId,
-          dueDate: currentDate
-       }
-     console.log('Description', body2.description)
-     console.log(body2)
+      const body2 = {
+        employeeId: localStorage.getItem('employeeId') || '',
+        jobId: props.jobID,
+        taskId: taskList.value[taskIndex]._id,
+        description:
+          taskList.value[taskIndex].items[taskList.value[taskIndex].items.length - 1].description,
+        done: taskList.value[taskIndex].items[taskList.value[taskIndex].items.length - 1].done,
+        itemId: itemId,
+        dueDate: currentDate
+      }
+      console.log('Description', body2.description)
+      console.log(body2)
       const response2 = await axios.patch(`${apiUrl}job/taskItem`, body2, config)
       console.log(response2.data.data)
     }
@@ -357,7 +361,8 @@ const createTaskIntegration = async (taskIndex: number) => {
     title: taskList.value[taskIndex].title
   }
   const response = await axios.put(`${apiUrl}job/task`, body, config)
-  taskList.value[taskIndex]._id = response.data.data.taskList[response.data.data.taskList.length - 1]._id
+  taskList.value[taskIndex]._id =
+    response.data.data.taskList[response.data.data.taskList.length - 1]._id
   console.log('New task called', response.data.data)
 }
 
@@ -381,7 +386,7 @@ const saveTask = async (taskIndex: number) => {
     } else {
       await updateTaskIntegration(taskIndex)
     }
-  } catch(error) {
+  } catch (error) {
     console.log(error)
   }
 }
@@ -527,12 +532,15 @@ const deleteTask = async (taskIndex: number) => {
       jobId: props.jobID,
       taskId: taskList.value[taskIndex]._id
     }
-    const response = await axios.delete(`${apiUrl}job/task`, { data: body, headers: config.headers })
+    const response = await axios.delete(`${apiUrl}job/task`, {
+      data: body,
+      headers: config.headers
+    })
     console.log('Delete successful', response)
     if (response.status > 199 && response.status < 300) {
       taskList.value.splice(taskIndex, 1)
     }
-  } catch(error) {
+  } catch (error) {
     console.log(error)
   }
 }
