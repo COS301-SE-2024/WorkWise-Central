@@ -110,7 +110,7 @@ export default {
       } as Invoice,
       editDialog: false,
       valid: false,
-      statusOptions: ['Paid', 'Unpaid', 'Pending'],
+      statusOptions: ['Paid', 'Unpaid'] as boolean[],
       invoiceNumberRules: [(v: string) => !!v || 'Invoice number is required'],
       dateRules: [(v: string) => !!v || 'Date is required'],
       amountRules: [

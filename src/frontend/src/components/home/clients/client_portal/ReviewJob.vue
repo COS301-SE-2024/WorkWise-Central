@@ -92,7 +92,7 @@ export default {
       },
       completedJobs: [
         {
-          _id: {},
+          _id: '',
           details: {
             heading: '',
             description: '',
