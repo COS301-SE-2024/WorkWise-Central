@@ -44,6 +44,7 @@
           :header-props="{ class: 'bg-secondRowColor h6' }"
           class="bg-cardColor"
         >
+          <template v-slot:[`item.total`]="{ item }">R{{ item.total }}</template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu max-width="500px">
               <template v-slot:activator="{ props }">
