@@ -48,10 +48,10 @@ export class InvoiceService {
       return new ValidationResult(false, `Job not found`);
     }
 
-    //Checking that the items exist
-    if (Invoice.inventoryItems.length === 0 && Invoice.laborItems.length === 0) {
-      return new ValidationResult(false, `Items not found`);
-    }
+    // //Checking that the items exist
+    // if (Invoice.inventoryItems.length === 0 && Invoice.laborItems.length === 0) {
+    //   return new ValidationResult(false, `Items not found`);
+    // }
 
     //checking that the client exists
     if (!(await this.clientService.getClientByIdInternal(Invoice.clientId))) {
@@ -62,7 +62,9 @@ export class InvoiceService {
   }
 
   async create(createInvoiceDto: CreateInvoiceDto) {
+    console.log('createInvoiceDto: ', createInvoiceDto);
     const validation = await this.validateCreateInvoice(createInvoiceDto);
+    console.log('validation: ', validation);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
@@ -130,6 +132,22 @@ export class InvoiceService {
       throw new Error('CompanyId does not exist');
     }
     return await this.invoiceRepository.findAllInCompany(companyId);
+  }
+
+  async detailedFindAllInCompany(companyId: Types.ObjectId) {
+    //checking if the company exist
+    if (!(await this.companyService.companyIdExists(companyId))) {
+      throw new Error('CompanyId does not exist');
+    }
+    return await this.invoiceRepository.detailedFindAllInCompany(companyId);
+  }
+
+  async findAllForClient(clientId: Types.ObjectId) {
+    //checking if the company exist
+    if (!(await this.clientService.clientExists(clientId))) {
+      throw new Error('CompanyId does not exist');
+    }
+    return await this.invoiceRepository.findAllForClient(clientId);
   }
 
   async findById(id: Types.ObjectId) {

@@ -85,6 +85,11 @@ export class ClientService {
     return client;
   }
 
+  async getClientByIdForClientPortal(clientId: Types.ObjectId): Promise<FlattenMaps<Client>> {
+    const client = await this.clientRepository.findClientById(clientId);
+    return client;
+  }
+
   async getClientByIdInternal(clientId: Types.ObjectId): Promise<FlattenMaps<Client>> {
     return await this.clientRepository.findClientById(clientId);
   }

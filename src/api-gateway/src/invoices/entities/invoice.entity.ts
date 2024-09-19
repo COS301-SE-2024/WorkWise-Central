@@ -82,7 +82,7 @@ export class Invoice {
   jobId: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Job' })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Company' })
   companyId: Types.ObjectId;
 
   @ApiProperty()
@@ -110,6 +110,7 @@ export class InvoiceApiObject {
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, unique: true })
   id: Types.ObjectId;
+
   @ApiProperty()
   @Prop({ type: Number, required: true, unique: true })
   invoiceNumber: number;
@@ -137,6 +138,10 @@ export class InvoiceApiObject {
   @ApiProperty()
   @Prop({ type: Boolean, required: true, default: false })
   paid: boolean;
+
+  @ApiProperty()
+  @Prop({ required: true, default: new Date() })
+  receiptOfPaymentDate: Date;
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Client' })
