@@ -30,6 +30,10 @@ export class Address {
 
 export class ClientFeedback {
   @ApiProperty()
+  @Prop({ type: String, required: false, default: '' })
+  clientName?: string;
+
+  @ApiProperty()
   @Prop({ type: Number, required: false, default: 10 })
   jobRating?: number;
 

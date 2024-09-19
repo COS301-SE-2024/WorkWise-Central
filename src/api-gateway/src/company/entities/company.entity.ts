@@ -38,6 +38,8 @@ export class AccountDetails {
   merchantId?: string;
   @Prop({ type: String, required: false })
   merchantKey?: string;
+  @Prop({ type: String, required: false })
+  passPhrase?: string;
 }
 
 @Schema()

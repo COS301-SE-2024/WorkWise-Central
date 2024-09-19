@@ -22,6 +22,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -38,7 +39,7 @@ import { InvoiceService } from './invoice.service';
 const className = 'Invoice';
 
 @ApiTags('Invoice')
-@Controller('Invoice')
+@Controller('invoice')
 export class InvoiceController {
   constructor(
     private readonly invoiceService: InvoiceService,
@@ -46,11 +47,10 @@ export class InvoiceController {
     private readonly employeeService: EmployeeService,
   ) {}
 
+  //********Endpoints for test purposes - Start**********/
   @ApiOperation({
     summary: `Refer to Documentation`,
   })
-
-  //********Endpoints for test purposes - Start**********/
   @Get('/all')
   async findAll() {
     const data = await await this.invoiceService.findAll();
@@ -85,18 +85,16 @@ export class InvoiceController {
     @Body()
     body: CreateInvoiceOuterDto,
   ) {
-    // const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
-    // if (currentEmployee.role.permissionSuite.includes('add new Invoice item')) {
+    console.log('In create invoice controller');
+    console.log('body: ', body);
     let data;
     try {
       data = await this.invoiceService.create(body.createInvoiceDto);
     } catch (e) {
+      console.log('Error: ', e);
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
     return { data: data };
-    // } else {
-    //   throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
-    // }
   }
 
   @UseGuards(AuthGuard)
@@ -185,6 +183,87 @@ export class InvoiceController {
     // } else {
     //   throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     // }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @ApiOperation({
+    summary: `Get all ${className} instances for a given Company`,
+    description: `Returns all ${className} instances in the database for a given Company.`,
+  })
+  @ApiOkResponse({
+    type: InvoiceListResponseDto,
+    description: `An array of mongodb objects of the ${className} class for a given Company.`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the Company for which to get all ${className} instances.`,
+  })
+  @Get('/all/detailed/:currentEmployeeId')
+  async detailedFindAllInCompany(
+    @Headers() headers: any,
+    @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId,
+  ) {
+    if (!currentEmployeeId) {
+      throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
+    }
+
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    // if (currentEmployee.role.permissionSuite.includes('view all Invoice')) {
+    let data;
+    try {
+      data = await this.invoiceService.detailedFindAllInCompany(currentEmployee.companyId);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
+    // } else {
+    //   throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    // }
+  }
+
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @ApiOperation({
+    summary: `Get all ${className} instances for a given Company`,
+    description: `Returns all ${className} instances in the database for a given Company.`,
+  })
+  @ApiOkResponse({
+    type: InvoiceListResponseDto,
+    description: `An array of mongodb objects of the ${className} class for a given Company.`,
+  })
+  @ApiParam({
+    name: 'clientId',
+    description: `The _id attribute of the Client for which to get all ${className} instances.`,
+  })
+  @ApiQuery({
+    name: 'currentEmployeeId',
+    description: '_id of the employee making the request',
+    type: String,
+  })
+  @Get('/all/forClient/:clientId')
+  async findAllForClient(@Headers() headers: any, @Param('clientId') clientId: Types.ObjectId) {
+    let data;
+    try {
+      data = await this.invoiceService.findAllForClient(clientId);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
   }
 
   @UseGuards(AuthGuard)

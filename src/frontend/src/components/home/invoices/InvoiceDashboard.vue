@@ -84,10 +84,13 @@ import ViewInvoice from './ViewInvoices.vue'
 
 interface Invoice {
   _id: string
-  number: string
-  date: string
-  amount: number
-  status: string
+  invoiceNumber: string
+  creationDate: string
+  paymentDate: string
+  total: number
+  paid: boolean
+  clientName: string
+  jobTitle: string
 }
 
 export default defineComponent({
@@ -95,70 +98,79 @@ export default defineComponent({
   data() {
     return {
       invoiceHeaders: [
-        { title: 'Invoice Number', value: 'number', sortable: true, key: 'number' },
-        { title: 'Date', value: 'date', sortable: true, key: 'date' },
-        { title: 'Amount', value: 'amount', sortable: true, key: 'amount' },
-        { title: 'Status', value: 'status', sortable: true, key: 'status' },
+        { title: 'Invoice Number', value: 'invoiceNumber', sortable: true, key: 'invoiceNumber' },
+        { title: 'Client', value: 'clientName', sortable: true, key: 'clientName' },
+        { title: 'Job', value: 'jobTitle', sortable: true, key: 'jobTitle' },
+        { title: 'Creation date', value: 'creationDate', sortable: true, key: 'creationDate' },
+        { title: 'Payment due date', value: 'paymentDate', sortable: true, key: 'paymentDate' },
+        { title: 'Amount', value: 'total', sortable: true, key: 'total' },
+        { title: 'Status', value: 'paid', sortable: true, key: 'paid' },
         { title: '', value: 'actions', key: 'actions', sortable: false, class: 'my-header-style' }
       ],
-      invoiceItems: [
-        {
-          _id: '1',
-          number: 'INV-001',
-          date: '2021-09-01',
-          amount: 1000,
-          status: 'Paid'
-        },
-        {
-          _id: '2',
-          number: 'INV-002',
-          date: '2021-09-02',
-          amount: 2000,
-          status: 'Unpaid'
-        }
-      ] as Invoice[],
+      invoiceItems: [] as Invoice[],
       search: '',
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
-      selectedItem: {} as Invoice
+      selectedItem: {} as Invoice,
+      companyId: '',
+      currentEmployee: ''
     }
   },
   components: { DeleteInvoice, EditInvoice, ViewInvoice },
   methods: {
-    async getInvoices() {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        params: {
-          currentEmployee: localStorage.getItem('employeeId')
-        }
-      }
-      const apiURL = await this.getRequestUrl()
+    async isLocalAvailable(localUrl: string) {
       try {
-        const response = await axios.get(`${apiURL}invoice/all`, config)
-        console.log(response.data.data)
-        this.invoiceItems = response.data.data
+        const res = await axios.get(localUrl)
+        return res.status >= 200 && res.status < 300
       } catch (error) {
-        console.error(error)
+        return false
       }
-    },
-    viewInvoice(invoice: Invoice) {
-      console.log('Viewing invoice:', invoice)
-      // Implement the view functionality
     },
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
+    async getRequests() {
+      // Getting all the jobs for the company
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
       }
+      const url = await this.getRequestUrl()
+      if (localStorage.getItem('currentCompany') !== null) {
+        this.companyId = localStorage.getItem('currentCompany') as string
+      }
+      if (localStorage.getItem('employeeId') !== null) {
+        this.currentEmployee = localStorage.getItem('employeeId') as string
+      }
+      await axios
+        .get(`${url}invoice/all/detailed/${this.currentEmployee}`, config)
+        .then((response) => {
+          console.log('response: ', response)
+          for (const invoice of response.data.data) {
+            this.invoiceItems.push({
+              _id: invoice._id,
+              invoiceNumber: invoice.invoiceNumber,
+              creationDate: invoice.invoiceDate,
+              paymentDate: invoice.paymentDate,
+              total: invoice.total,
+              paid: invoice.paid,
+              clientName:
+                invoice.clientId.details.firstName + ' ' + invoice.clientId.details.lastName,
+              jobTitle: invoice.jobId.details.heading
+            })
+          }
+          console.log('this.invoiceItems: ', this.invoiceItems)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    },
+    viewInvoice(invoice: Invoice) {
+      console.log('Viewing invoice:', invoice)
+      // Implement the view functionality
     },
     selectInvoice(invoice: Invoice) {
       this.selectedItem = invoice
@@ -170,7 +182,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.getInvoices()
+    this.getRequests()
   }
 })
 </script>
