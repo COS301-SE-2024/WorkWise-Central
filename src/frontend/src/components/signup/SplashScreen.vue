@@ -899,7 +899,6 @@
           </v-row>
         </v-container>
       </v-footer> -->
-      <div><MarketingSplash /></div>
 
       <!-- <div>
         <ServicesSplash  />
@@ -925,15 +924,15 @@ import axios from 'axios'
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import Tutorial from './Tutorial.vue'
-import MarketingSplash from './MarketingSplash.vue'
+
 // import ServicesSplash from './ServicesSplash.vue'
 export default defineComponent({
   components: {
     RegisterCompanyModal,
     JoinCompanyModal,
     Toast,
-    Tutorial,
-    MarketingSplash
+    Tutorial
+
     // ServicesSplash
   },
   data: () => ({
