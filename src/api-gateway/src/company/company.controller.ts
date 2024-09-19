@@ -313,6 +313,7 @@ export class CompanyController {
     @UploadedFile() logo: Express.Multer.File,
     @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
+    console.log('In update endpoint');
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       try {

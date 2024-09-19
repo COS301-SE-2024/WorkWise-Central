@@ -29,13 +29,15 @@ import { InventoryService } from '../inventory/inventory.service';
 import { TeamService } from '../team/team.service';
 import { NotificationService } from '../notification/notification.service';
 import { Message } from '../notification/entities/notification.entity';
-import { paymentGatewayConstants } from './constants';
 import * as crypto from 'crypto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CompanyService {
   constructor(
     private readonly companyRepository: CompanyRepository,
+
+    private configService: ConfigService,
 
     @Inject(forwardRef(() => EmployeeService))
     private readonly employeeService: EmployeeService,
@@ -426,28 +428,51 @@ export class CompanyService {
 
   encrypt(data: string) {
     console.log('In encryption function: ', data);
-    const ENCRYPTION_KEY = Buffer.from(paymentGatewayConstants.secret, 'base64');
+    const payKey = this.configService.get<string>('PAY_KEY');
+    console.log('Secret: ', payKey);
+
+    let ENCRYPTION_KEY = Buffer.from(payKey, 'base64');
+
+    // If the key is not 32 bytes, adjust the length
+    if (ENCRYPTION_KEY.length !== 32) {
+      ENCRYPTION_KEY = Buffer.concat([ENCRYPTION_KEY], 32); // Pads or truncates to 32 bytes
+    }
+
+    console.log('ENCRYPTION_KEY length: ', ENCRYPTION_KEY.length); // Should be 32
     console.log('ENCRYPTION_KEY: ', ENCRYPTION_KEY);
+
     const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
+    const cipher = crypto.createCipheriv('aes-256-cbc', ENCRYPTION_KEY, iv);
     let encrypted = cipher.update(data, 'utf8', 'hex');
     encrypted += cipher.final('hex');
+
     console.log('Encrypted data: ', encrypted);
-    // Return the IV and encrypted data concatenated with a colon
+
     return iv.toString('hex') + ':' + encrypted;
   }
 
   decrypt(data: string) {
-    const ENCRYPTION_KEY = Buffer.from(paymentGatewayConstants.secret, 'base64');
+    const payKey = this.configService.get<string>('PAY_KEY');
+    let ENCRYPTION_KEY = Buffer.from(payKey, 'base64');
+
+    // Ensure the key is 32 bytes long, padding or truncating as necessary
+    if (ENCRYPTION_KEY.length !== 32) {
+      ENCRYPTION_KEY = Buffer.concat([ENCRYPTION_KEY], 32); // Pad or truncate to 32 bytes
+    }
+
+    // Split the data into IV and encrypted text
     const textParts = data.split(':');
-    const iv = Buffer.from(textParts.shift() as string, 'hex'); // Extract IV from the text
-    const encrypted = Buffer.from(textParts.join(':'), 'hex');
-    const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
+    const iv = Buffer.from(textParts.shift() as string, 'hex'); // Extract the IV
+    const encrypted = Buffer.from(textParts.join(':'), 'hex'); // Extract the encrypted text
 
-    let decrypted = decipher.update(encrypted.toString('hex'), 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
+    // Create a decipher instance with AES-256-CBC, the encryption key, and IV
+    const decipher = crypto.createDecipheriv('aes-256-cbc', ENCRYPTION_KEY, iv);
 
-    return decrypted;
+    // Decrypt the encrypted text
+    decipher.update(encrypted);
+    const result = decipher.final('utf8');
+
+    return result;
   }
 
   async update(userId: Types.ObjectId, companyId: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
