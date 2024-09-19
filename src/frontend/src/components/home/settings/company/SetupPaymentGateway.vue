@@ -303,11 +303,11 @@ export default {
       // const apiURL = await this.getRequestUrl()
       const company_id = localStorage.getItem('currentCompany')
       await axios
-        .get(`http://localhost:3000/company/id/${company_id}`, config)
+        .get(`http://localhost:3000/company/id/${company_id}/accountDetails`, config)
         .then((response) => {
-          this.company.accountDetails.merchantId = response.data.data.accountDetails.merchantId
-          this.company.accountDetails.merchantKey = response.data.data.accountDetails.merchantKey
-          this.company.accountDetails.passPhrase = response.data.data.accountDetails.passPhrase
+          this.company.accountDetails.merchantId = response.data.data.merchantId
+          this.company.accountDetails.merchantKey = response.data.data.merchantKey
+          this.company.accountDetails.passPhrase = response.data.data.passPhrase
           console.log(this.company)
           this.$toast.add({
             severity: 'success',

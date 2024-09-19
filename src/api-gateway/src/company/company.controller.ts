@@ -40,6 +40,7 @@ import { AddUserToCompanyDto } from './dto/add-user-to-company.dto';
 import mongoose, { FlattenMaps, Types } from 'mongoose';
 import {
   Company,
+  CompanyAccountDetailsResponseDto,
   CompanyAllResponseDto,
   CompanyDetailedResponseDto,
   CompanyResponseDto,
@@ -212,6 +213,26 @@ export class CompanyController {
   }
 
   @ApiOperation({
+    summary: `Find a ${className}, with Actual Employees and Inventory Items instead of ObjectIds`,
+  })
+  @ApiOkResponse({
+    type: CompanyAccountDetailsResponseDto,
+    description: `The mongodb 'Detailed' object of the ${className}, with an _id attribute`,
+  })
+  @Get('id/:id/accountDetails')
+  async findOneAccountDetails(@Param('id') id: string) {
+    try {
+      validateObjectId(id);
+      return {
+        data: await this.companyService.getCompanyAccountDetails(new Types.ObjectId(id)),
+      };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(e, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @ApiOperation({
     summary: `Search for a company using Email or Company Name`,
     description: '\nurlEncode the search parameter!',
   })
@@ -265,6 +286,7 @@ export class CompanyController {
           data: updatedCompany,
         };
       } catch (e) {
+        console.log(e);
         throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
       }
     } else {

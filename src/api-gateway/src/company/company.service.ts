@@ -11,7 +11,7 @@ import {
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto, UpdateCompanyJobStatuses } from './dto/update-company.dto';
 import { FlattenMaps, Types } from 'mongoose';
-import { Company } from './entities/company.entity';
+import { Company, CompanyAccountDetailsObject } from './entities/company.entity';
 import { JoinedCompany } from '../users/entities/user.entity';
 import { AddUserFromInviteDto, AddUserToCompanyDto } from './dto/add-user-to-company.dto';
 import { CompanyRepository } from './company.repository';
@@ -29,6 +29,8 @@ import { InventoryService } from '../inventory/inventory.service';
 import { TeamService } from '../team/team.service';
 import { NotificationService } from '../notification/notification.service';
 import { Message } from '../notification/entities/notification.entity';
+import { paymentGatewayConstants } from './constants';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class CompanyService {
@@ -188,6 +190,24 @@ export class CompanyService {
 
     if (result == null) {
       throw new ConflictException('Company not found');
+    }
+
+    return result;
+  }
+
+  async getCompanyAccountDetails(identifier: Types.ObjectId) {
+    const company = await this.companyRepository.findById(identifier);
+    const result = new CompanyAccountDetailsObject();
+    if (company.accountDetails != null) {
+      if (company.accountDetails.merchantId != null) {
+        result.merchantId = this.decrypt(company.accountDetails.merchantId);
+      }
+      if (company.accountDetails.merchantKey != null) {
+        result.merchantKey = this.decrypt(company.accountDetails.merchantKey);
+      }
+      if (company.accountDetails.passPhrase != null) {
+        result.passPhrase = this.decrypt(company.accountDetails.passPhrase);
+      }
     }
 
     return result;
@@ -404,6 +424,32 @@ export class CompanyService {
     return true;
   }
 
+  encrypt(data: string) {
+    console.log('In encryption function: ', data);
+    const ENCRYPTION_KEY = Buffer.from(paymentGatewayConstants.secret, 'base64');
+    console.log('ENCRYPTION_KEY: ', ENCRYPTION_KEY);
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
+    let encrypted = cipher.update(data, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    console.log('Encrypted data: ', encrypted);
+    // Return the IV and encrypted data concatenated with a colon
+    return iv.toString('hex') + ':' + encrypted;
+  }
+
+  decrypt(data: string) {
+    const ENCRYPTION_KEY = Buffer.from(paymentGatewayConstants.secret, 'base64');
+    const textParts = data.split(':');
+    const iv = Buffer.from(textParts.shift() as string, 'hex'); // Extract IV from the text
+    const encrypted = Buffer.from(textParts.join(':'), 'hex');
+    const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
+
+    let decrypted = decipher.update(encrypted.toString('hex'), 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+
+    return decrypted;
+  }
+
   async update(userId: Types.ObjectId, companyId: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
     const inputValidated = await this.companyUpdateIsValid(userId, companyId, updateCompanyDto);
     if (!inputValidated.isValid) {
@@ -421,6 +467,22 @@ export class CompanyService {
         updateCompanyDto.logo = picture.secure_url;
       } else throw new InternalServerErrorException('file upload failed');
     }
+    console.log('Before encryption: ', updateCompanyDto);
+
+    //checking if accountDetails are being updated and encrypting the details
+    if (updateCompanyDto.accountDetails.merchantId) {
+      updateCompanyDto.accountDetails.merchantId = this.encrypt(updateCompanyDto.accountDetails.merchantId);
+    }
+
+    if (updateCompanyDto.accountDetails.merchantKey) {
+      updateCompanyDto.accountDetails.merchantKey = this.encrypt(updateCompanyDto.accountDetails.merchantKey);
+    }
+
+    if (updateCompanyDto.accountDetails.passPhrase) {
+      updateCompanyDto.accountDetails.passPhrase = this.encrypt(updateCompanyDto.accountDetails.passPhrase);
+    }
+
+    console.log('After encryption: ', updateCompanyDto);
 
     const updatedCompany = await this.companyRepository.update(companyId, updateCompanyDto);
     console.log(updatedCompany);
