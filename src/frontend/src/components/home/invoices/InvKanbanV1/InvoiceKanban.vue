@@ -325,7 +325,24 @@ export default {
       delete_column_dialog: false,
       edit_column_details_dialog: false,
       archive_status_id: '',
-      columns: [] as Column[],
+      columns: [
+        {
+          _id: '1',
+          __v: 0,
+          status: 'Paid',
+          colour: '#00FF00', // Example color for paid status
+          companyId: 'company_1',
+          cards: []
+        },
+        {
+          _id: '2',
+          __v: 0,
+          status: 'Unpaid',
+          colour: '#FF0000', // Example color for unpaid status
+          companyId: 'company_2',
+          cards: []
+        }
+      ] as Column[],
       archive_id: '',
       new_column_name: '',
       error_message: '',
@@ -803,7 +820,7 @@ export default {
       const apiURL = await this.getRequestUrl()
       try {
         const loaded_tags_response = await axios.get(
-          apiURL + `company/status/all/${localStorage['currentCompany']}`,
+          apiURL + `invoice/all/${localStorage['currentCompany']}`,
           config
         )
         console.log(loaded_tags_response.data.data)
@@ -968,6 +985,7 @@ export default {
   },
   mounted() {
     // this.loadColumns().then(() => this.loadJobs().then(() => this.loading(this.starting_cards)))
+    this.loadData()
   }
 }
 </script>
