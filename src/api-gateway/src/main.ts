@@ -5,7 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerTheme, SwaggerThemeNameEnum } from 'swagger-themes';
 import * as compression from 'compression';
 import { urlencoded, json } from 'express';
-import { createAsyncapiDocs } from './async-api';
+//import { createAsyncapiDocs } from './async-api';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,7 +25,7 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-  await createAsyncapiDocs(app);
+//  await createAsyncapiDocs(app);
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ limit: '50mb', extended: true }));
   app.use(compression());
