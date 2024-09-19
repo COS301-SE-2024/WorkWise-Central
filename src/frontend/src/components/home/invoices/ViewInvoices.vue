@@ -75,7 +75,7 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
+<script >
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template'
 
 export default {
