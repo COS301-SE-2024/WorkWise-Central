@@ -10,13 +10,6 @@
       <v-divider></v-divider>
     </v-row>
 
-    <!-- Add this below the meeting name -->
-    <v-row class="justify-center align-center">
-      <v-col cols="12" class="text-center">
-        <div id="jitsi-container" style="height: 500px; width: 100%"></div>
-      </v-col>
-    </v-row>
-
     <!-- Layout Toggle Button -->
     <v-row class="d-flex justify-center">
       <v-btn @click="toggleLayout">{{
@@ -125,7 +118,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
-
 interface Participant {
   id: number
   profilePic: string
@@ -149,41 +141,15 @@ export default defineComponent({
           isMuted: false,
           cameraOn: true
         }
+        // Your participants array
       ] as Participant[],
       isUserMuted: false,
       isUserCameraOn: true,
       meetingName: 'Weekly Standup Meeting',
-      layout: 'grid', // Default layout is grid
-      jitsiApi: null
-    }
-  },
-  mounted() {
-    if (window.JitsiMeetExternalAPI) {
-      this.initializeJitsi()
-    } else {
-      const script = document.createElement('script')
-      script.src = 'https://meet.jit.si/external_api.js'
-      script.onload = () => this.initializeJitsi()
-      document.body.appendChild(script)
+      layout: 'grid' // Default layout is grid
     }
   },
   methods: {
-    initializeJitsi() {
-      const domain = 'meet.jit.si'
-      const options = {
-        roomName: 'WeeklyStandupMeeting',
-        width: '100%',
-        height: 500,
-        parentNode: document.querySelector('#jitsi-container'),
-        configOverwrite: {
-          disableSimulcast: false
-        },
-        interfaceConfigOverwrite: {
-          SHOW_JITSI_WATERMARK: false
-        }
-      }
-      this.jitsiApi = new JitsiMeetExternalAPI(domain, options)
-    },
     toggleMute(participantId: number) {
       const participant = this.participants.find((p) => p.id === participantId)
       if (participant) {
@@ -216,11 +182,6 @@ export default defineComponent({
     },
     toggleLayout() {
       this.layout = this.layout === 'grid' ? 'list' : 'grid'
-    }
-  },
-  beforeUnmount() {
-    if (this.jitsiApi) {
-      this.jitsiApi.dispose()
     }
   }
 })
