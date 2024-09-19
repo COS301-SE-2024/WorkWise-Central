@@ -69,7 +69,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.emit('init-chat', { chatIds: chatIds });
   }
 
-/*  @AsyncApiSub({
+  /*  @AsyncApiSub({
     channel: 'new-message',
     message: {
       payload: AddMessageDto,
@@ -91,7 +91,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(payload.chatId.toString()).emit('new-message', result);
   }
 
-/*  @AsyncApiSub({
+  /*  @AsyncApiSub({
     channel: 'delete-message',
     message: {
       payload: DeleteMessageDto,
@@ -116,7 +116,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(payload.chatId.toString()).emit('delete-message', result);
   }
 
-/*  @AsyncApiSub({
+  /*  @AsyncApiSub({
     channel: 'delete-chat',
     message: {
       payload: DeleteChatDto,
@@ -138,7 +138,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(payload.chatId.toString()).emit('delete-chat', result);
   }
 
-/*  @AsyncApiSub({
+  /*  @AsyncApiSub({
     channel: 'update-message',
     message: {
       payload: UpdateMessageDto,

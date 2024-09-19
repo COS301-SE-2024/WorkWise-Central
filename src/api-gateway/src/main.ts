@@ -25,7 +25,7 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-//  await createAsyncapiDocs(app);
+  //  await createAsyncapiDocs(app);
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ limit: '50mb', extended: true }));
   app.use(compression());
