@@ -45,6 +45,36 @@ export class InvoiceRepository {
     }).lean();
   }
 
+  async detailedFindAllInCompany(identifier: Types.ObjectId) {
+    const result: (FlattenMaps<Invoice> & { _id: Types.ObjectId })[] = await this.InvoiceModel.find({
+      $and: [
+        {
+          companyId: identifier,
+        },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    })
+      .populate(['clientId', 'jobId'])
+      .lean();
+
+    return result;
+  }
+
+  async findAllForClient(identifier: Types.ObjectId) {
+    return await this.InvoiceModel.find({
+      $and: [
+        {
+          clientId: identifier,
+        },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    }).lean();
+  }
+
   async findById(identifier: Types.ObjectId) {
     return this.InvoiceModel.findOne({
       $and: [

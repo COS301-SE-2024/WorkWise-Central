@@ -1,14 +1,5 @@
 import { Types } from 'mongoose';
-import {
-  IsDate,
-  IsMongoId,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  ValidateNested,
-  IsArray,
-  IsOptional,
-} from 'class-validator';
+import { IsDate, IsMongoId, IsNotEmpty, IsNumber, IsString, IsArray, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class Items {
@@ -93,15 +84,15 @@ export class CreateInvoiceDto {
   @ApiProperty()
   companyId: Types.ObjectId;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsArray()
   @ApiProperty()
-  inventoryItems: Items[];
+  inventoryItems?: Items[];
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsArray()
   @ApiProperty()
-  laborItems: Items[];
+  laborItems?: Items[];
 }
 
 export class CreateInvoiceOuterDto {
@@ -110,7 +101,6 @@ export class CreateInvoiceOuterDto {
   currentEmployeeId: Types.ObjectId;
 
   @IsNotEmpty()
-  @ValidateNested()
   createInvoiceDto: CreateInvoiceDto;
 }
 

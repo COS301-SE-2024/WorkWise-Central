@@ -43,6 +43,11 @@ export class UpdateInvoiceDto {
   @IsOptional()
   paid?: boolean;
 
+  @ApiProperty()
+  @IsOptional()
+  @IsDate()
+  receiptOfPaymentDate?: Date;
+
   @IsOptional()
   @IsArray()
   @ApiProperty()
