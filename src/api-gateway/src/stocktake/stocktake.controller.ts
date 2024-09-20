@@ -90,6 +90,7 @@ export class StockTakeController {
           throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
         }
       } catch (e) {
+        console.log(e);
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
       return { data: data };
