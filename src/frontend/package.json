@@ -53,7 +53,7 @@
     "vue-router": "^4.3.0",
     "vue3-mq": "^3.2.0",
     "vuedraggable": "^4.1.0",
-    "vuex": "^4.0.2",
+    "vuex": "^4.1.0",
     "webpack-plugin-vuetify": "^3.0.3"
   },
   "devDependencies": {
