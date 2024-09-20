@@ -279,45 +279,15 @@ export default {
         })
       }
     },
-    async sendMessage({ content, attachment }) {
+    async sendMessageWithSockets({ content, attachments }) {
       if (this.selectedChat) {
-        //TODO: Update this to send message to server
-        /*const newMessage = {
-          id: this.currentMessages.length + 1,
-          senderId: this.currentUser.id,
-          content,
-          attachment,
-          timestamp: new Date()
-        }*/
-        const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-        const data = {
-          chatId: this.selectedChat._id,
-          textContent: content
-          //attachments: attachment
-        }
-        console.log(data)
-        const res = await axios.post(`${this.server_url}chat/send-message`, data, config)
-        console.log(res)
-        if (res.status >= 200 && res.status < 300) {
-          if (!this.messages[this.selectedChat._id]) {
-            //this.$set(this.messages, this.selectedChat._id, [])
-            this.messages[this.selectedChat._id] = []
-          }
-          const newMessage = res.data.data
-          this.messages[this.selectedChat._id].push(newMessage)
-        } else {
-          console.log('problem')
-        }
-      }
-    },
-    async sendMessageWithSockets({ content, attachment }) {
-      if (this.selectedChat) {
+        //console.log('sending', content, attachments)
         socket
           .emitWithAck('new-message', {
             jwt: localStorage['access_token'],
             chatId: this.selectedChat._id,
-            textContent: content
-            //attachments: [
+            textContent: content ? content : '##image_only##',
+            attachments: attachments
           })
           .then((data) => {
             console.log('Message success', data)
