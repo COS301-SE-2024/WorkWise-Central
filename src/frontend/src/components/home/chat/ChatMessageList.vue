@@ -157,11 +157,6 @@ const scrollToBottom = () => {
 }
 
 const getUserName = (userId) => {
-  //console.log('Pros for messageList', props)
-  // for (const u of props.users) {
-  //   console.log('ABC')
-  //   console.log(u)
-  // }
   const user = props.users.find((u) => u._id === userId)
   return user ? user?.profile?.displayName : 'Unknown User'
 }
@@ -169,6 +164,34 @@ const getUserName = (userId) => {
 const getUserAvatar = (userId) => {
   const user = props.users.find((u) => u._id === userId)
   return user ? user?.profile.displayImage : defaultProfilePic
+}
+
+const handleItemClick = (event, messageId, chatId, label) => {
+  if (label === 'Delete') {
+    confirm.require({
+      target: event.currentTarget,
+      message: 'Are you sure you want to delete this message?',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        performAction(messageId, chatId, label)
+      },
+      reject: () => {}
+    })
+  } else {
+    performAction(messageId, chatId, label)
+  }
+}
+
+const performAction = (messageId, chatId, action) => {
+  if (action === 'Edit') {
+    startEdit(messageId)
+  } else if (action === 'Delete') {
+    emit('delete-message', {
+      messageId: messageId,
+      chatId: chatId,
+      action: action
+    })
+  }
 }
 </script>
 
