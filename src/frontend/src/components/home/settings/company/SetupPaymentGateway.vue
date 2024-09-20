@@ -159,6 +159,9 @@
             v-model="company.accountDetails.merchantId"
             label="Merchant ID"
             :rules="merchantIdRules"
+            :type="showMerchantId ? 'text' : 'password'"
+            :append-icon="showMerchantId ? 'mdi-eye-off' : 'mdi-eye'"
+            @click:append="toggleShowMerchantId"
             required
           ></v-text-field>
           <v-label> Merchant Key</v-label>
@@ -166,6 +169,19 @@
             v-model="company.accountDetails.merchantKey"
             label="Merchant Key"
             :rules="merchantKeyRules"
+            :type="showMerchantKey ? 'text' : 'password'"
+            :append-icon="showMerchantKey ? 'mdi-eye-off' : 'mdi-eye'"
+            @click:append="toggleShowMerchantKey"
+            required
+          ></v-text-field>
+          <v-label> Passphrase</v-label>
+          <v-text-field
+            v-model="company.accountDetails.passPhrase"
+            label="Passphrase"
+            :rules="passphraseRules"
+            :type="showPassphrase ? 'text' : 'password'"
+            :append-icon="showPassphrase ? 'mdi-eye-off' : 'mdi-eye'"
+            @click:append="toggleShowPassphrase"
             required
           ></v-text-field>
         </v-form>
@@ -221,10 +237,12 @@ export default {
       isDeleting: false,
       valid: false,
       currentCompanyID: localStorage.getItem('currentCompany'),
-      merchantId: '',
-      merchantKey: '',
       merchantIdRules: [(v: string) => !!v || 'Merchant ID is required'],
       merchantKeyRules: [(v: string) => !!v || 'Merchant Key is required'],
+      passphraseRules: [(v: string) => !!v || 'Merchant Key is required'],
+      showMerchantId: false,
+      showMerchantKey: false,
+      showPassphrase: false,
       activeSteps: { stepper3: 1 },
       items: {
         items: [
@@ -257,7 +275,8 @@ export default {
       company: {
         accountDetails: {
           merchantId: '',
-          merchantKey: ''
+          merchantKey: '',
+          passPhrase: ''
         }
       }
     }
@@ -284,10 +303,11 @@ export default {
       // const apiURL = await this.getRequestUrl()
       const company_id = localStorage.getItem('currentCompany')
       await axios
-        .get(`http://localhost:3000/company/id/${company_id}`, config)
+        .get(`http://localhost:3000/company/id/${company_id}/accountDetails`, config)
         .then((response) => {
-          this.company.accountDetails.merchantId = response.data.data.accountDetails.merchantId
-          this.company.accountDetails.merchantKey = response.data.data.accountDetails.merchantKey
+          this.company.accountDetails.merchantId = response.data.data.merchantId
+          this.company.accountDetails.merchantKey = response.data.data.merchantKey
+          this.company.accountDetails.passPhrase = response.data.data.passPhrase
           console.log(this.company)
           this.$toast.add({
             severity: 'success',
@@ -360,11 +380,20 @@ export default {
         })
     },
     rulesPassed() {
-      if (this.merchantId && this.merchantKey) {
+      if (this.company.accountDetails.merchantId && this.company.accountDetails.merchantKey) {
         this.valid = true
       } else {
         this.valid = false
       }
+    },
+    toggleShowMerchantId() {
+      this.showMerchantId = !this.showMerchantId
+    },
+    toggleShowMerchantKey() {
+      this.showMerchantKey = !this.showMerchantKey
+    },
+    toggleShowPassphrase() {
+      this.showPassphrase = !this.showPassphrase
     }
   },
   mounted() {

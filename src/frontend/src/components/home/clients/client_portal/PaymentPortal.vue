@@ -163,11 +163,11 @@ export default defineComponent({
 
       // Getting the company info
       await axios
-        .get(`${url}company/id/${this.companyId}`, config)
+        .get(`${url}company/id/${this.companyId}/accountDetails`, config)
         .then((response) => {
-          this.merchant_id = response.data.data.accountDetails.merchantId
-          this.merchant_key = response.data.data.accountDetails.merchantKey
-          this.passPhrase = response.data.data.accountDetails.passPhrase
+          this.merchant_id = response.data.data.merchantId
+          this.merchant_key = response.data.data.merchantKey
+          this.passPhrase = response.data.data.passPhrase
         })
         .catch((error) => {
           console.error(error)
