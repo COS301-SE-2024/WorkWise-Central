@@ -27,18 +27,24 @@ export class ChatService {
   ) {}
 
   // Create a new chat
-  async createChat(userId: Types.ObjectId, chatName: string, participants: Types.ObjectId[]) {
+  async createChat(userId: Types.ObjectId, chatName: string, participants: Types.ObjectId[], chatImage?: string) {
     const creator: Types.ObjectId = userId;
 
     if (chatName.length == 0) chatName = randomStringGenerator();
-    const chat = new Chat(chatName, participants, creator);
+    const imgUrl = chatImage ? chatImage : 'https://img.icons8.com/?size=100&id=105326&format=png&color=000000';
+    const chat = new Chat(chatName, participants, creator, imgUrl);
     const newChat = new this.chatModel(chat);
-    return (await newChat.save()).toObject();
+    return (await (await newChat.save()).populate('participants')).toObject();
   }
 
   // Send a message in a chat
   async sendMessage(userId: Types.ObjectId, addMessageDto: AddMessageDto) {
-    const chatMessage = new ChatMessage(addMessageDto.chatId, userId, addMessageDto.textContent);
+    const chatMessage = new ChatMessage(
+      addMessageDto.chatId,
+      userId,
+      addMessageDto.textContent,
+      addMessageDto.attachments,
+    );
     const newMessage = new this.chatMessageModel(chatMessage);
     const result = await newMessage.save();
     this.updateChat(await result.populate('userId'));
@@ -81,7 +87,7 @@ export class ChatService {
 
   // Get all chats for a user
   async getUserChats(userId: Types.ObjectId) {
-    return this.chatModel.find({ participants: userId }).sort({ updatedAt: 1 }).lean().exec();
+    return this.chatModel.find({ participants: userId }).sort({ updatedAt: 1 }).populate('participants').lean().exec();
   }
 
   // Add a user to a chat
@@ -89,6 +95,7 @@ export class ChatService {
     return this.chatModel
       .findByIdAndUpdate(chatId, { $addToSet: { participants: userId } }, { new: true })
       .lean()
+      .populate('participants')
       .exec();
   }
 
@@ -124,6 +131,7 @@ export class ChatService {
     return this.chatModel
       .findByIdAndUpdate(chatId, { $pull: { participants: userIdToRemove } }, { new: true })
       .lean()
+      .populate('participants')
       .exec();
   }
 
@@ -137,7 +145,7 @@ export class ChatService {
 
   // Get a chat
   async getChat(chatId: Types.ObjectId) {
-    return this.chatModel.findOne({ _id: chatId }).lean().exec();
+    return this.chatModel.findOne({ _id: chatId }).populate('participants').lean().exec();
   }
 
   // Mark a message as read

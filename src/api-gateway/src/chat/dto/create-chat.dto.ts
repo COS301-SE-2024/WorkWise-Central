@@ -10,6 +10,10 @@ export class CreateChatDto {
   @IsArray()
   @IsNotEmpty()
   participants: Types.ObjectId[];
+
+  @IsOptional()
+  @IsString()
+  chatImage?: string;
 }
 
 export class AddUsersToChatDto {

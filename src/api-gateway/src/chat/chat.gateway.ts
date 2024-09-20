@@ -80,8 +80,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   })
   @SubscribeMessage('new-message')
   async handleNewMessage(@ConnectedSocket() client: Socket, @MessageBody(new ValidationPipe()) payload: AddMessageDto) {
+    console.log(payload);
     const userId = this.jwtService.decode(payload.jwt).sub;
-    this.logger.log(`Message received: ${userId} - ${payload.textContent}`);
+    this.logger.log(`Message received: ${userId} - ${payload.textContent}\n${payload.attachments}`);
     const chat = await this.chatService.getChat(payload.chatId);
     if (!chat) {
       client.emit('new-message', { Error: 'Chat not found' });
