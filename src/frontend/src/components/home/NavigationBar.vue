@@ -64,6 +64,11 @@ const moreSubItems = ref([
     title: 'Company Requests',
     icon: 'fa: fa-solid fa-envelope',
     routeName: 'company-requests'
+  },
+  {
+    title: 'Chats',
+    icon: 'fa: fa-solid fa-comments',
+    routeName: 'chatHome'
   }
 ])
 
