@@ -133,27 +133,32 @@ export class InventoryService {
   }
 
   async update(id: Types.ObjectId, updateInventoryDto: ExternalInventoryUpdateDto) {
+    console.log('In update inventory');
     const validation = await this.validateUpdateInventory(id);
     if (!validation.isValid) {
+      console.log('validation failed');
       throw new Error(validation.message);
     }
     const inventory = await this.findById(id);
     const dto = new CreateStockMovementsDto();
-    dto.companyId = inventory.companyId;
-    dto.inventoryId = id;
     dto.movementDate = new Date();
-    dto.employeeId = updateInventoryDto.currentEmployeeId;
     if (updateInventoryDto.updateInventoryDto.reason) {
       dto.reason = updateInventoryDto.updateInventoryDto.reason;
     } else {
       dto.reason = 'Inventory Update';
     }
+    dto.movement = updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel;
+    dto.companyId = new Types.ObjectId(inventory.companyId.toString());
+    dto.employeeId = new Types.ObjectId(updateInventoryDto.currentEmployeeId.toString());
+    dto.inventoryId = new Types.ObjectId(id.toString());
 
+    console.log('dto for stockmovements: ', dto);
     await this.stockMovementsService.create(dto);
 
     if (updateInventoryDto.updateInventoryDto.name) {
       await this.stockTakeService.updateInventoryReference(id, updateInventoryDto.updateInventoryDto.name);
     }
+    console.log('--------');
     return await this.inventoryRepository.update(id, updateInventoryDto.updateInventoryDto);
   }
 
