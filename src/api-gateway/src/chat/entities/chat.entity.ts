@@ -11,16 +11,24 @@ export class Chat {
   @Prop({ type: String, required: true, default: randomStringGenerator() })
   name: string;
 
+  @Prop({
+    type: String,
+    required: true,
+    default: 'https://img.icons8.com/?size=100&id=105326&format=png&color=000000',
+  })
+  image: string = 'https://img.icons8.com/?size=100&id=105326&format=png&color=000000';
+
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User', required: false })
   admin: Types.ObjectId;
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'User' }], required: true })
   participants: Types.ObjectId[];
 
-  constructor(name: string, participants: Types.ObjectId[], admin?: Types.ObjectId) {
+  constructor(name: string, participants: Types.ObjectId[], admin?: Types.ObjectId, image?: string) {
     this.name = name;
     this.participants = participants;
     this.admin = admin;
+    this.image = image;
   }
 
   @Prop({ default: Date.now })
