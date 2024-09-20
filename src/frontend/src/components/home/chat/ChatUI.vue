@@ -408,7 +408,7 @@ export default {
 
 .chat-app {
   display: flex;
-  height: 100vh;
+  height: 93vh;
   font-family: Arial, sans-serif;
 }
 
