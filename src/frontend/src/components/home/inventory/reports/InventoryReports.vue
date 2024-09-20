@@ -15,20 +15,17 @@
               <v-card-title>Stock Movement Report</v-card-title>
               <v-card-text>
                 <v-container>
-                  <v-row>
-                    <v-col cols="12" lg="6"
-                      ><v-btn
-                        variant="elevated"
-                        color="primary"
-                        block
-                        :loading="isGenerating"
-                        @click="generatePDF('Stock Movement Report')"
-                        ><v-icon color="secondary" icon="fa:fa-solid fa-file"></v-icon>Generate
-                        PDF</v-btn
-                      ></v-col
-                    >
-                    <!-- <v-col cols="12" lg="6"><LogStockMovement /></v-col> -->
-                  </v-row>
+                  <v-col>
+                    <v-btn
+                      variant="elevated"
+                      color="primary"
+                      block
+                      :loading="isGenerating"
+                      @click="generatePDF('Stock Movement Report')"
+                      ><v-icon color="secondary" icon="fa:fa-solid fa-file"></v-icon>Generate
+                      PDF</v-btn
+                    ></v-col
+                  >
                 </v-container>
               </v-card-text>
               <v-data-table
@@ -59,121 +56,21 @@ export default defineComponent({
       activeTab: 0,
       isGenerating: false,
       locationTab: null,
-      locationName: 'Warehouse A',
       currentInventoryItem: '',
       currentTab: 'Stock Movement Report',
       header: ['Stock Movement Report'],
       stockMovementHeaders: [
         { title: 'Item', value: 'item' },
-
         { title: 'Reason', value: 'reason' },
         { title: 'Quantity', value: 'quantity' },
         { title: 'Employee', value: 'employee' },
         { title: 'Date', value: 'date' }
       ],
       stockMovements: [
-        {
-          date: '',
-          type: '',
-          item: '',
-          quantity: 0,
-          employee: '',
-          reason: ''
-        }
-      ],
-      employeeActivityHeaders: [
-        { title: 'Employee', value: 'employee' },
-        { title: 'Item Managed', value: 'item' },
-        { title: 'Action', value: 'action' },
-        { title: 'Date', value: 'date' }
-      ],
-      employeeActivities: [
-        { employee: 'John Doe', item: 'Item A', action: 'Restock', date: '2024-07-01' },
-        { employee: 'Jane Smith', item: 'Item B', action: 'Sale', date: '2024-07-02' },
-        { employee: 'John Doe', item: 'Item C', action: 'Adjustment', date: '2024-07-03' }
-      ],
-      locations: ['Warehouse A', 'Warehouse B'],
-      inventory: [
-        { id: 1, name: 'Item A', stock: 100, location: 'Warehouse A' },
-        { id: 2, name: 'Item B', stock: 50, location: 'Warehouse B' }
-      ],
-      forecastHeaders: [
-        { title: 'Item', value: 'item' },
-        { title: 'Month', value: 'month' },
-        { title: 'Starting Stock', value: 'startingStock' },
-        { title: 'Ending Stock', value: 'endingStock' },
-        { title: 'Show Graph', value: 'showGraph' }
-      ],
-      forecastData: [
-        { month: '2024-01', item: 'Pipes', startingStock: 200, endingStock: 180 },
-        { month: '2024-01', item: 'Wires', startingStock: 150, endingStock: 120 },
-        { month: '2024-02', item: 'Pipes', startingStock: 180, endingStock: 160 },
-        { month: '2024-02', item: 'Wires', startingStock: 120, endingStock: 90 },
-        { month: '2024-03', item: 'Pipes', startingStock: 160, endingStock: 140 },
-        { month: '2024-03', item: 'Wires', startingStock: 90, endingStock: 60 },
-        { month: '2024-04', item: 'Pipes', startingStock: 140, endingStock: 130 },
-        { month: '2024-04', item: 'Wires', startingStock: 60, endingStock: 50 },
-        { month: '2024-05', item: 'Pipes', startingStock: 130, endingStock: 110 },
-        { month: '2024-05', item: 'Wires', startingStock: 50, endingStock: 40 },
-        { month: '2024-06', item: 'Pipes', startingStock: 110, endingStock: 100 },
-        { month: '2024-06', item: 'Wires', startingStock: 40, endingStock: 30 },
-        { month: '2024-07', item: 'Pipes', startingStock: 100, endingStock: 90 },
-        { month: '2024-07', item: 'Wires', startingStock: 30, endingStock: 20 },
-        { month: '2024-08', item: 'Pipes', startingStock: 90, endingStock: 80 },
-        { month: '2024-08', item: 'Wires', startingStock: 20, endingStock: 15 },
-        { month: '2024-09', item: 'Pipes', startingStock: 80, endingStock: 70 },
-        { month: '2024-09', item: 'Wires', startingStock: 15, endingStock: 10 },
-        { month: '2024-10', item: 'Pipes', startingStock: 70, endingStock: 60 },
-        { month: '2024-10', item: 'Wires', startingStock: 10, endingStock: 5 },
-        { month: '2024-11', item: 'Pipes', startingStock: 60, endingStock: 50 },
-        { month: '2024-11', item: 'Wires', startingStock: 5, endingStock: 0 },
-        { month: '2024-12', item: 'Pipes', startingStock: 50, endingStock: 40 },
-        { month: '2024-12', item: 'Wires', startingStock: 0, endingStock: 0 }
-      ],
-      chartData: {
-        labels: [],
-        datasets: [
-          {
-            label: 'Start of the month stock levels for ' + this.currentInventoryItem,
-            data: [],
-            backgroundColor: '#42A5F5'
-          },
-          {
-            label: 'End of the month stock levels for ' + this.currentInventoryItem,
-            data: [],
-            backgroundColor: '#66BB6A'
-          }
-        ]
-      }
+      ]
     }
   },
   methods: {
-    getLocationItems(location) {
-      return this.inventory.filter((item) => item.location === location)
-    },
-    changeTab(tab) {
-      this.currentTab = tab
-      console.log('Current tab:', tab)
-
-      // Perform actions based on the selected tab
-      if (tab === 0) {
-        console.log('Stock Movement Report tab selected')
-        this.currentTab = 'Stock Movement Report'
-        // Add any specific actions you need to perform
-      } else if (tab === 1) {
-        console.log('Employee Activity Report tab selected')
-        this.currentTab = 'Employee Activity Report'
-        // Add any specific actions you need to perform
-      } else if (tab === 2) {
-        console.log('Location-Based Inventory Report tab selected')
-        this.currentTab = 'Location-Based Inventory Report'
-        // Add any specific actions you need to perform
-      } else if (tab === 3) {
-        console.log('Inventory Forecast Report tab selected')
-        this.currentTab = 'Inventory Forecast Report'
-        // Add any specific actions you need to perform
-      }
-    },
     generatePDF(reportType) {
       const doc = new jsPDF()
       this.isGenerating = true
@@ -193,17 +90,6 @@ export default defineComponent({
           item.employee,
           item.date
         ])
-      } else if (reportType === 'Location-Based Inventory Report') {
-        tableColumns = ['Item', 'Stock', 'Location']
-        tableRows = this.inventory.map((item) => [item.name, item.stock, item.location])
-      } else if (reportType === 'Inventory Forecast Report') {
-        tableColumns = ['Item', 'Month', 'Starting Stock', 'Ending Stock']
-        tableRows = this.forecastData.map((item) => [
-          item.item,
-          item.month,
-          item.startingStock,
-          item.endingStock
-        ])
       }
 
       // AutoTable plugin for jsPDF to generate tables
@@ -216,38 +102,6 @@ export default defineComponent({
       // Save the PDF
       doc.save(`${reportType.toLowerCase().replace(/ /g, '_')}_report.pdf`)
       this.isGenerating = false
-    },
-    changeLocationTab(location) {
-      this.locationName = location
-      console.log('Current location tab:', location)
-    },
-    setGraphWithCorrectData(item) {
-      this.currentInventoryItem = item.item // Update the item name
-
-      // Filter the forecast data for the selected item
-      const filteredData = this.forecastData.filter((data) => data.item === item.item)
-
-      // Extract the starting and ending stock levels for the selected item
-      const startingStock = filteredData.map((data) => data.startingStock)
-      const endingStock = filteredData.map((data) => data.endingStock)
-      const months = filteredData.map((data) => data.month) // Extract the months
-
-      // Update the chart data
-      this.chartData = {
-        labels: months, // Set the months as labels
-        datasets: [
-          {
-            label: 'Start of the month stock levels for ' + this.currentInventoryItem,
-            data: startingStock, // Set the starting stock levels
-            backgroundColor: '#42A5F5'
-          },
-          {
-            label: 'End of the month stock levels for ' + this.currentInventoryItem,
-            data: endingStock, // Set the ending stock levels
-            backgroundColor: '#66BB6A'
-          }
-        ]
-      }
     },
     async isLocalAvailable(localUrl) {
       try {
@@ -274,8 +128,18 @@ export default defineComponent({
           `${apiURL}StockMovements/all/${localStorage.getItem('employeeId')}`,
           config
         )
-        console.log(response.data.data)
-        this.stockMovements = response.data.data
+        console.log('response.data.data: ', response.data.data)
+        for (const item of response.data.data) {
+          console.log('item: ', item)
+          this.stockMovements.push({
+            date: item.movementDate,
+            type: item.type,
+            item: item.inventoryItem.nameOfItem,
+            quantity: item.movement,
+            employee: item.employee.displayName,
+            reason: item.reason
+          })
+        }
       } catch (error) {
         console.error(error)
       }
