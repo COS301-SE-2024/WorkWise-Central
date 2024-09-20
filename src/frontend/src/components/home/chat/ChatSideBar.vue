@@ -15,11 +15,19 @@
     <ul class="chat-list">
       <li
         v-for="chat in filteredChats"
-        :key="chat.id"
+        :key="chat._id"
         @click="selectChat(chat)"
-        :class="{ selected: selectedChat && chat.id === selectedChat.id }"
+        :class="{ selected: selectedChat && chat._id === selectedChat._id }"
       >
-        <Avatar :image="chat.avatar" size="large" shape="circle" />
+        <Avatar
+          :image="
+            chat.image
+              ? chat.image
+              : 'https://img.icons8.com/?size=100&id=105326&format=png&color=000000' //TODO: Replace with other image
+          "
+          size="large"
+          shape="circle"
+        />
         <span>{{ chat.name }}</span>
       </li>
     </ul>
@@ -45,7 +53,14 @@
             placeholder="Select participants"
           />
         </div>
+
+        <div class="p-field">
+          <label for="participants">Chat Image</label>
+          <!-- File input for images -->
+          <input type="file" accept="image/*" @change="handleFileChange" ref="fileInput" />
+        </div>
       </div>
+
       <template #footer>
         <Button
           label="Cancel"
@@ -76,6 +91,18 @@ const newChatName = ref('')
 const selectedParticipants = ref([])
 const currentUserId = localStorage['id']
 
+const fileInput = ref(null)
+const selectedImage = ref(null)
+const base64Image = ref(null)
+
+const handleFileChange = (event) => {
+  const files = event.target.files
+  if (files.length > 0) {
+    selectedImage.value = files[0]
+    convertToBase64(files[0])
+  }
+}
+
 const filteredChats = computed(() => {
   return props.chats.filter((chat) =>
     chat.name.toLowerCase().includes(searchQuery.value.toLowerCase())
@@ -100,6 +127,17 @@ const closeNewChatDialog = () => {
   selectedParticipants.value = []
 }
 
+const convertToBase64 = (f) => {
+  const file = f
+  if (file) {
+    const reader = new FileReader()
+    reader.onload = () => {
+      base64Image.value = reader.result
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
 const createNewChat = () => {
   if (newChatName.value && selectedParticipants.value.length > 0) {
     const chatName = newChatName.value
@@ -115,7 +153,8 @@ const createNewChat = () => {
     //console.log('Test', participants)
     emit('create-chat', {
       name: newChatName.value,
-      participants: participants
+      participants: participants,
+      chatImage: base64Image
     })
     closeNewChatDialog()
   }
@@ -128,6 +167,7 @@ const createNewChat = () => {
   background-color: #f4f4f4;
   border-right: 1px solid #e0e0e0;
   padding: 1rem;
+  height: 100%;
 }
 
 .new-chat-dialog {
