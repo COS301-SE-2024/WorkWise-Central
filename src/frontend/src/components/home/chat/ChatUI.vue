@@ -57,9 +57,9 @@ import ChatInput from './ChatInput.vue'
 import Avatar from 'primevue/avatar'
 import axios from 'axios'
 import { io } from 'socket.io-client'
+import { API_URL } from '@/main'
 
-const serverUrl = import.meta.env.VITE_SERVER_API
-const socket = io(`${serverUrl}chat-space`, {
+const socket = io(`${API_URL}chat-space`, {
   autoConnect: true,
   transports: ['websocket', 'polling', 'flashsocket']
 })
@@ -79,7 +79,7 @@ export default {
       chats: [],
       selectedChat: null,
       messages: [],
-      server_url: import.meta.env.VITE_SERVER_API
+      server_url: API_URL
     }
   },
   computed: {
@@ -135,8 +135,7 @@ export default {
   methods: {
     getAllUsers() {
       console.log('Get all Users')
-      const temp = import.meta.env.VITE_SERVER_API
-      console.log(temp)
+      //console.log(API_URL)
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       axios
         .get(`${this.server_url}users/all`, config)
@@ -160,18 +159,23 @@ export default {
       this.selectedChat = chat
     },
     createChat(newChat) {
-      this.createNewChatHelper(newChat.name, newChat.participants)
+      this.createNewChatHelper(newChat.name, newChat.participants, newChat.chatImage)
     },
-    async createNewChatHelper(chatName, userIdsForChat) {
+    async createNewChatHelper(chatName, userIdsForChat, chatImage) {
+      console.log(chatImage)
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       userIdsForChat.push(localStorage['id'])
 
+      const spreadElements = {
+        chatName: chatName,
+        participants: userIdsForChat
+      }
+      if (chatImage != null) {
+        spreadElements.chatImage = chatImage.value
+      }
       const result = await axios.post(
         `${this.server_url}chat/create`,
-        {
-          chatName: chatName,
-          participants: userIdsForChat
-        },
+        { ...spreadElements },
         config
       )
       console.log(result)
