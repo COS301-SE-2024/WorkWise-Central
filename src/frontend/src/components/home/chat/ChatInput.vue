@@ -17,24 +17,30 @@
     <!--      chooseLabel="Attach"-->
     <!--      class="p-button-rounded p-button-outlined"-->
     <!--    />-->
-    <Button
-      icon="fa: fa-solid fa-paper-plane"
-      @click="sendMessage"
-      :disabled="disabled || (!message.trim() && attachments.length === 0)"
-      class="p-button-rounded"
-    />
 
-    <div class="col-2">
-      <v-file-input
-        v-model="newFiles"
-        label="Attach Files"
-        prepend-icon="fa: fa-solid fa-file"
-        @change="handleFileChange"
-        variant="solo"
-        class="p-button-rounded p-button-outlined col-2"
-        multiple
-      ></v-file-input>
-    </div>
+    <FileUpload
+      :multiple="true"
+      @select="handleFileChange"
+      @clear="clearFiles"
+      :auto="true"
+      chooseLabel="Attach Files"
+      :customUpload="true"
+      :showCancelButton="false"
+      :showUploadButton="false"
+      :class="{ 'p-button-rounded p-button-outlined': true }"
+    >
+      <template #chooseicon>
+        <i class="fas fa-file"></i>
+      </template>
+    </FileUpload>
+    <v-col cols="1">
+      <Button
+        icon="fa: fa-solid fa-paper-plane"
+        @click="sendMessage"
+        :disabled="disabled || (!message.trim() && attachments.length === 0)"
+        class="p-button-rounded"
+      />
+    </v-col>
   </div>
 </template>
 
@@ -45,6 +51,8 @@ import Button from 'primevue/button'
 import axios from 'axios'
 import { API_URL } from '@/main'
 import { useToast } from 'primevue/usetoast'
+import FileUpload from 'primevue/fileupload'
+import { defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
   disabled: {
@@ -73,8 +81,8 @@ const sendMessage = () => {
   }
 }
 
-const handleFileChange = async () => {
-  const files = newFiles.value
+const handleFileChange = async (event) => {
+  const files = event.files
   if (files && files.length > 0) {
     const formData = new FormData()
 
@@ -107,9 +115,6 @@ const handleFileChange = async () => {
           console.log('Pushed', em)
         }
 
-        // Clear the file input after successful upload
-        newFiles.value = []
-
         return response.data.data
       }
     } catch (error) {
@@ -125,12 +130,16 @@ const handleFileChange = async () => {
   }
 }
 
-// const onFileSelect = (event) => {
-//   attachment.value = event.files[0]
-// }
+const clearFiles = () => {
+  attachments.value = []
+}
 </script>
 
 <style scoped>
+.p-fileupload-choose {
+  width: 100%;
+}
+
 .chat-input {
   display: flex;
   align-items: center;
