@@ -59,4 +59,12 @@ export class NotificationRepository {
     console.log('User Tokens: ', result);
     return result;
   }
+
+  markAsRead(notificationId: Types.ObjectId) {
+    return this.notificationModel.updateOne({ _id: notificationId }, { isRead: true }).lean().exec();
+  }
+
+  markAsUnread(notificationId: Types.ObjectId) {
+    return this.notificationModel.updateOne({ _id: notificationId }, { isRead: false }).lean().exec();
+  }
 }

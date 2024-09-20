@@ -204,6 +204,7 @@ export class JobRepository {
       .find({
         $and: [{ clientId: clientId }, { status: { $ne: statusId } }, isNotDeleted],
       })
+      .populate('status')
       .lean()
       .exec();
   }

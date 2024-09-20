@@ -18,6 +18,12 @@ export class CreateNotificationDto {
   @Transform(({ value }) => value.toLowerCase())
   whoCanView?: string;
 
+  @IsOptional()
+  isJobRelated?: boolean = false;
+
+  @IsOptional()
+  companyName?: string = null;
+
   @IsString()
   @IsNotEmpty()
   @MinLength(1)

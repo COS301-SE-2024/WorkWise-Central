@@ -26,8 +26,15 @@
 import ClientJobs from './ViewJobs.vue'
 import ReviewJobs from './ReviewJob.vue'
 import Invoices from './PaymentPortal.vue'
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
+  props: {
+    cid: {
+      type: String,
+      required: true // cid might not always be provided
+    }
+  },
   components: {
     ClientJobs,
     ReviewJobs,
@@ -36,13 +43,25 @@ export default {
   data() {
     return {
       section: 'Current Jobs',
-      tabs: ['Current Jobs', 'Review Jobs', 'Invoices']
+      tabs: ['Current Jobs', 'Review Jobs', 'Invoices'],
+      clientID: ''
     }
   },
   methods: {
     changeSection(section) {
       this.section = section
+    },
+    getCidValue() {
+      const url = this.$route.fullPath
+      const match = url.match(/cid=([a-zA-Z0-9]+)/);
+      if (match[1]) {
+        sessionStorage.setItem('clientId', match[1])
+        this.clientID = sessionStorage.getItem('clientId').toString()
+      }
     }
+  },
+  mounted() {
+    this.getCidValue();
   }
-}
+});
 </script>

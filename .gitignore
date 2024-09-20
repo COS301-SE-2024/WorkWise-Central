@@ -45,3 +45,4 @@ commands.js
 component.js
 component-index.html
 /src/api-gateway/uploads/
+!/src/frontend/.env.production
