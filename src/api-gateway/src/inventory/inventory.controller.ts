@@ -240,6 +240,8 @@ export class InventoryController {
     @Body()
     externalInventoryUpdateDto: ExternalInventoryUpdateDto,
   ) {
+    console.log('\n IN THE UPDATE ENDPOINT');
+    console.log('externalInventoryUpdateDto: ', externalInventoryUpdateDto);
     const userId = await extractUserId(this.jwtService, headers);
     await this.validateRequestWithEmployeeId(userId, externalInventoryUpdateDto.currentEmployeeId);
 
