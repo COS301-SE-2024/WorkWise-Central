@@ -100,6 +100,9 @@ const getUserAvatar = (userId) => {
   position: relative;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   margin-left: 0.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .message.sent .message-content {
@@ -108,18 +111,58 @@ const getUserAvatar = (userId) => {
   margin-right: 0.5rem;
 }
 
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.2rem;
+}
+
 .sender-name {
   font-weight: bold;
   font-size: 0.8rem;
+}
+
+.three-dots {
+  align-self: flex-start;
+  margin-left: 0.5rem;
+}
+
+.message-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.message-text {
+  text-align: left;
   margin-bottom: 0.2rem;
-  display: block;
 }
 
 .timestamp {
-  font-size: 0.75rem;
+  font-size: 0.8em;
   color: #888;
-  position: absolute;
-  bottom: -1.2rem;
-  right: 0.5rem;
+  align-self: flex-end;
+}
+
+.attachments {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 5px;
+  margin-top: 5px;
+}
+
+.attachment {
+  display: flex;
+  align-items: center;
+  margin-bottom: 3px;
+}
+
+.attachment a {
+  margin-left: 5px;
+  text-decoration: none;
+  color: #007bff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 }
 </style>
