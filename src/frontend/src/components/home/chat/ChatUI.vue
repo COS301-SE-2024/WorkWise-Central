@@ -73,6 +73,7 @@ export default {
   },
   data() {
     return {
+      defaultChatPic: 'https://img.icons8.com/?size=100&id=105326&format=png&color=000000',
       defaultProfilePic: 'http://www.gravatar.com/avatar/?d=mp',
       //currentUser: { id: 1, name: 'You', avatar: '@/assets/images/avatars/you.jpg' },
       users: [],
@@ -363,6 +364,26 @@ export default {
       if (index !== -1) {
         this.chats.splice(index, 1)
       }
+    },
+    async editMessage({ messageId, chatId, action }) {
+      console.log(messageId)
+      console.log(action)
+    },
+    async deleteMessage({ messageId, chatId, action }) {
+      console.log(messageId)
+      console.log(action)
+      socket
+        .emitWithAck('delete-message', {
+          jwt: localStorage['access_token'],
+          chatId: chatId,
+          messageId: messageId
+        })
+        .then((data) => {
+          console.log('Delete message success', data)
+          // if (data.success === true) {
+          //   //show toast
+          // }
+        })
     }
   }
 }
