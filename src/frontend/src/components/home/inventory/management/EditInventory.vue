@@ -117,7 +117,7 @@ export default {
   props: {
     editedItem: Object,
     item: Object,
-    inventory_id: String
+    inventory_id: String,
   },
   components: {
     Toast
@@ -184,7 +184,6 @@ export default {
           salePrice: this.localEditedItem.salePrice,
           currentStockLevel: this.localEditedItem.currentStockLevel,
           reorderLevel: this.localEditedItem.reorderLevel,
-          reason: this.localEditedItem.reason
         }}
       try {
         console.log(data)
