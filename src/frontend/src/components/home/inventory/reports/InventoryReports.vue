@@ -27,8 +27,9 @@
                         PDF</v-btn
                       ></v-col
                     >
-                    <v-col cols="12" lg="6"><LogStockMovement /></v-col></v-row
-                ></v-container>
+                    <!-- <v-col cols="12" lg="6"><LogStockMovement /></v-col> -->
+                  </v-row>
+                </v-container>
               </v-card-text>
               <v-data-table
                 :headers="stockMovementHeaders"
@@ -48,13 +49,9 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 
-import LogStockMovement from './LogStockMovement.vue'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 export default defineComponent({
-  components: {
-    LogStockMovement
-  },
   data() {
     return {
       localUrl: 'http://localhost:3000/',
@@ -76,124 +73,12 @@ export default defineComponent({
       ],
       stockMovements: [
         {
-          date: '2024-07-01',
-          type: 'Purchase',
-          item: 'Item A',
-          quantity: 50,
-          employee: 'John Doe',
-          reason: 'Restock'
-        },
-        {
-          date: '2024-07-02',
-          type: 'Sale',
-          item: 'Item B',
-          quantity: 20,
-          employee: 'Jane Smith',
-          reason: 'Damage'
-        },
-        {
-          date: '2024-07-03',
-          type: 'Adjustment',
-          item: 'Item C',
-          quantity: -5,
-          employee: 'John Doe',
-          reason: 'Damage'
-        },
-        {
-          date: '2024-07-04',
-          type: 'Return',
-          item: 'Item D',
-          quantity: 10,
-          employee: 'Alice Johnson',
-          reason: 'Inventory Recount'
-        },
-        {
-          date: '2024-07-05',
-          type: 'Sale',
-          item: 'Item E',
-          quantity: 15,
-          employee: 'Mark Brown',
-          reason: 'Damage'
-        },
-        {
-          date: '2024-07-06',
-          type: 'Purchase',
-          item: 'Item F',
-          quantity: 100,
-          employee: 'Emily Davis',
-          reason: 'Bulk Order'
-        },
-        {
-          date: '2024-07-07',
-          type: 'Adjustment',
-          item: 'Item G',
-          quantity: -8,
-          employee: 'Michael Wilson',
-          reason: 'Inventory Recount'
-        },
-        {
-          date: '2024-07-08',
-          type: 'Sale',
-          item: 'Item H',
-          quantity: 30,
-          employee: 'Sarah Miller',
-          reason: 'Inventory Recount'
-        },
-        {
-          date: '2024-07-09',
-          type: 'Transfer',
-          item: 'Item I',
-          quantity: 25,
-          employee: 'David Lee',
-          reason: 'Warehouse Transfer'
-        },
-        {
-          date: '2024-07-10',
-          type: 'Purchase',
-          item: 'Item J',
-          quantity: 60,
-          employee: 'Laura White',
-          reason: 'Restock'
-        },
-        {
-          date: '2024-07-11',
-          type: 'Sale',
-          item: 'Item K',
-          quantity: 40,
-          employee: 'James Harris',
-          reason: 'Damage'
-        },
-        {
-          date: '2024-07-12',
-          type: 'Adjustment',
-          item: 'Item L',
-          quantity: -3,
-          employee: 'Jessica Clark',
-          reason: 'Damage'
-        },
-        {
-          date: '2024-07-13',
-          type: 'Return',
-          item: 'Item M',
-          quantity: 5,
-          employee: 'Chris Martinez',
-          reason: 'Supplier Return'
-        },
-        {
-          date: '2024-07-14',
-          type: 'Sale',
-          item: 'Item N',
-          quantity: 50,
-          employee: 'Anna Thompson',
-          reason: 'Damage'
-        },
-        {
-          date: '2024-07-15',
-          type: 'Purchase',
-          item: 'Item O',
-          quantity: 75,
-          employee: 'Kevin Walker',
-          reason: 'Bulk Order'
+          date: '',
+          type: '',
+          item: '',
+          quantity: 0,
+          employee: '',
+          reason: ''
         }
       ],
       employeeActivityHeaders: [
@@ -376,14 +261,11 @@ export default defineComponent({
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     },
-    async getStockMovements() {
+    async getRequests() {
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        params: {
-          currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
       const apiURL = await this.getRequestUrl()
@@ -400,7 +282,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.getStockMovements()
+    this.getRequests()
   }
 })
 </script>

@@ -50,6 +50,7 @@ export class StockMovementsService {
   }
 
   async findAllInCompany(companyId: Types.ObjectId) {
+    console.log('companyId', companyId);
     //checking if the company exist
     if (!(await this.companyService.companyIdExists(companyId))) {
       throw new Error('CompanyId does not exist');
