@@ -2,7 +2,7 @@
   <v-container>
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
-        <h1 class="text-xl font-semibold">Inventory Reports</h1>
+        <h1 class="text-xl font-semibold">Inventory Movements</h1>
         <v-divider></v-divider>
       </v-col>
     </v-row>
@@ -10,32 +10,29 @@
       <v-col cols="12">
         <v-tabs-items v-model="activeTab">
           <!-- Stock Movement Report -->
-          <v-tab-item v-if="currentTab === 'Stock Movement Report'">
-            <v-card class="bg-cardColor">
-              <v-card-title>Stock Movement Report</v-card-title>
-              <v-card-text>
-                <v-container>
-                  <v-col>
-                    <v-btn
-                      variant="elevated"
-                      color="primary"
-                      block
-                      :loading="isGenerating"
-                      @click="generatePDF('Stock Movement Report')"
-                      ><v-icon color="secondary" icon="fa:fa-solid fa-file"></v-icon>Generate
-                      PDF</v-btn
-                    ></v-col
-                  >
-                </v-container>
-              </v-card-text>
-              <v-data-table
-                :headers="stockMovementHeaders"
-                :items="stockMovements"
-                class="elevation-1 bg-cardColor"
-                :header-props="{ class: 'bg-cardColor h6' }"
-              />
-            </v-card>
-          </v-tab-item>
+          <v-card class="bg-cardColor">
+            <v-card-text>
+              <v-container>
+                <v-col>
+                  <v-btn
+                    variant="elevated"
+                    color="primary"
+                    block
+                    :loading="isGenerating"
+                    @click="generatePDF()"
+                    ><v-icon color="secondary" icon="fa:fa-solid fa-file"></v-icon>Generate
+                    PDF</v-btn
+                  ></v-col
+                >
+              </v-container>
+            </v-card-text>
+            <v-data-table
+              :headers="stockMovementHeaders"
+              :items="stockMovements"
+              class="elevation-1 bg-cardColor"
+              :header-props="{ class: 'bg-cardColor h6' }"
+            />
+          </v-card>
         </v-tabs-items>
       </v-col>
     </v-row>
@@ -57,8 +54,6 @@ export default defineComponent({
       isGenerating: false,
       locationTab: null,
       currentInventoryItem: '',
-      currentTab: 'Stock Movement Report',
-      header: ['Stock Movement Report'],
       stockMovementHeaders: [
         { title: 'Item', value: 'item' },
         { title: 'Reason', value: 'reason' },
@@ -66,31 +61,28 @@ export default defineComponent({
         { title: 'Employee', value: 'employee' },
         { title: 'Date', value: 'date' }
       ],
-      stockMovements: [
-      ]
+      stockMovements: []
     }
   },
   methods: {
-    generatePDF(reportType) {
+    generatePDF() {
       const doc = new jsPDF()
       this.isGenerating = true
       // Title
-      doc.text(`${reportType}`, 14, 20)
+      doc.text(`${'Stock Movement Report'}`, 14, 20)
 
       // Define table columns and rows based on report type
       let tableColumns = []
       let tableRows = []
 
-      if (reportType === 'Stock Movement Report') {
-        tableColumns = ['Item', 'Reason', 'Quantity', 'Employee', 'Date']
-        tableRows = this.stockMovements.map((item) => [
-          item.item,
-          item.reason,
-          item.quantity,
-          item.employee,
-          item.date
-        ])
-      }
+      tableColumns = ['Item', 'Reason', 'Quantity', 'Employee', 'Date']
+      tableRows = this.stockMovements.map((item) => [
+        item.item,
+        item.reason,
+        item.quantity,
+        item.employee,
+        item.date
+      ])
 
       // AutoTable plugin for jsPDF to generate tables
       autoTable(doc, {
