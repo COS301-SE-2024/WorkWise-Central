@@ -20,6 +20,7 @@ import { StockTakeModule } from './stocktake/stocktake.module';
 import { ChatModule } from './chat/chat.module';
 import { TimeTrackerModule } from './time-tracker/time-tracker.module';
 import { StockMovementsModule } from './stockmovements/stockmovements.module';
+import { GlobalModuleModule } from './shared/global-module/global-module.module';
 
 const rootPath = join(__dirname, '..', '../../uploads');
 
@@ -43,10 +44,12 @@ const rootPath = join(__dirname, '..', '../../uploads');
     AdminModule,
     ServeStaticModule.forRoot({
       rootPath: rootPath,
+      serveRoot: '/uploads',
     }),
     ChatModule,
     TimeTrackerModule,
     StockMovementsModule,
+    GlobalModuleModule,
   ],
 })
 export class AppModule {}
