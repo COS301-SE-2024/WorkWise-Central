@@ -12,14 +12,30 @@
         <Avatar
           :image="
             /*TODO: Fix later */
-            selectedChat?.displayImage ? selectedChat?.displayImage : defaultProfilePic
+            selectedChat?.image ? selectedChat?.image : defaultChatPic
           "
           size="large"
           shape="circle"
         />
         <h2>{{ selectedChat?.name }}</h2>
+        <div class="participant-area">
+          <div
+            v-for="participant in selectedChat?.participants"
+            :key="participant._id"
+            class="participant"
+          >
+            <Avatar :image="participant.profile.displayImage" size="small" shape="circle" />
+            <span>{{ participant.profile.displayName }}</span>
+          </div>
+        </div>
       </header>
-      <ChatMessageList v-if="selectedChat" :messages="currentMessages" :users="users" />
+      <ChatMessageList
+        v-if="selectedChat"
+        :messages="currentMessages"
+        :users="users"
+        @edit-message="editMessage"
+        @delete-message="deleteMessage"
+      />
       <ChatInput
         @send-message="sendMessageWithSockets"
         :disabled="!selectedChat"
@@ -349,6 +365,22 @@ export default {
 </script>
 
 <style scoped>
+.participant-area {
+  margin-left: 40%;
+  display: flex;
+  align-items: flex-end;
+  align-content: end;
+  left: 0;
+}
+
+.participant {
+  margin-left: 1%;
+  font-size: medium;
+  display: flex;
+  align-items: flex-end;
+  align-content: end;
+}
+
 .chat-app {
   display: flex;
   height: 100vh;
