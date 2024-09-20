@@ -32,30 +32,56 @@
         <div class="message-body">
           <div class="message-text">
             <template v-if="editingMessageId === message._id && message.textContent !== hiddenText">
-              <v-text-field
+              <InputText
                 v-model="editedText"
                 @keyup.enter="saveEdit(message.chatId, message._id)"
-                @keyup.esc="cancelEdit"
+                @keyup.escape="cancelEdit"
                 autofocus
-              ></v-text-field>
+              />
             </template>
             <template v-else>
               {{ message.textContent !== hiddenText ? message.textContent : '' }}
             </template>
           </div>
           <div class="attachments" v-if="message.attachments && message.attachments.length > 0">
-            <div v-for="(attachment, index) in message.attachments" :key="index" class="attachment">
+            <Carousel
+              v-if="getImageAttachments(message.attachments).length > 0"
+              :value="getImageAttachments(message.attachments)"
+              :numVisible="3"
+              :numScroll="2"
+              :showIndicators="true"
+            >
+              <template #item="slotProps">
+                <div class="image-item">
+                  <Image
+                    :src="slotProps.data"
+                    :alt="getFileName(slotProps.data)"
+                    style="width: 100px; height: 100px; object-fit: fill"
+                    preview
+                  />
+                  <Button
+                    icon="pi pi-download"
+                    @click="downloadAttachment(slotProps.data)"
+                    class="p-button-rounded p-button-text"
+                  />
+                </div>
+              </template>
+            </Carousel>
+            <div
+              v-for="(attachment, index) in getRegularAttachments(message.attachments)"
+              :key="index"
+              class="attachment"
+            >
               <template v-if="editingMessageId === message._id">
-                <v-text-field
+                <InputText
                   v-model="editedAttachments[index]"
                   @keyup.enter="saveEdit(message.chatId, message._id)"
-                  @keyup.esc="cancelEdit"
-                  dense
-                ></v-text-field>
+                  @keyup.escape="cancelEdit"
+                />
               </template>
               <template v-else>
-                <v-icon small>mdi-paperclip</v-icon>
-                <a :href="attachment" download>
+                <i class="pi pi-paperclip" style="font-size: 0.8rem"></i>
+                <a href="#" @click.prevent="downloadAttachment(attachment)">
                   {{ getFileName(attachment) }}
                 </a>
               </template>
@@ -73,6 +99,10 @@ import { ref, watch, nextTick } from 'vue'
 import Avatar from 'primevue/avatar'
 import ConfirmPopup from 'primevue/confirmpopup'
 import { useConfirm } from 'primevue/useconfirm'
+import Carousel from 'primevue/carousel'
+import Button from 'primevue/button'
+import InputText from 'primevue/inputtext'
+import Image from 'primevue/image'
 
 const confirm = useConfirm()
 const editingMessageId = ref(null)
@@ -95,7 +125,6 @@ const items = ref([
 
 const getFileName = (attachment) => {
   let tempName = attachment.split('/').pop()
-  //console.log(tempName)
   return tempName.substring(37)
 }
 
@@ -193,6 +222,23 @@ const performAction = (messageId, chatId, action) => {
     })
   }
 }
+
+const getImageAttachments = (attachments) => {
+  return attachments.filter((attachment) => /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(attachment))
+}
+
+const getRegularAttachments = (attachments) => {
+  return attachments.filter((attachment) => !/\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(attachment))
+}
+
+const downloadAttachment = (url) => {
+  const link = document.createElement('a')
+  link.href = url
+  link.download = getFileName(url)
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
 </script>
 
 <style scoped>
@@ -203,10 +249,7 @@ const performAction = (messageId, chatId, action) => {
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  background-color: #e5ddd5;
-  /*
-  background-image: url('https://images.unsplash.com/photo-1503891617560-5b8c2e28cbf6?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-  */
+  background-color: #b6afa9;
 }
 
 .message {
@@ -235,7 +278,7 @@ const performAction = (messageId, chatId, action) => {
 }
 
 .message.sent .message-content {
-  background-color: #dcf8c6;
+  background-color: #f1bd91;
   margin-left: 0;
   margin-right: 0.5rem;
 }
@@ -293,5 +336,19 @@ const performAction = (messageId, chatId, action) => {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 200px;
+}
+
+.image-item {
+  position: relative;
+}
+
+.image-item .p-button {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+}
+
+:deep(.p-carousel .p-carousel-indicators) {
+  display: none;
 }
 </style>
