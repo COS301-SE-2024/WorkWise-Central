@@ -115,9 +115,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       console.log('Error');
       return;
     }
-    const result = await this.chatService.deleteMessage(userId, payload);
-    this.server.to(payload.chatId.toString()).emit('delete-message', result);
-    return { success: true };
+    await this.chatService.deleteMessage(userId, payload);
+    this.server.to(payload.chatId.toString()).emit('delete-message', { success: true, messageId: payload.messageId });
+    return { success: true, messageId: payload.messageId };
   }
 
   @AsyncApiSub({
