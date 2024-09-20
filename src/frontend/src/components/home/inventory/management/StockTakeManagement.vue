@@ -44,12 +44,12 @@
               :header-props="{ class: 'bg-secondRowColor h6' }"
               class="bg-cardColor"
             >
-              <template v-slot:[`item.reorderLevel`]="{ item }">
-                <v-text-field type="number" v-model="item.reorderLevel"> </v-text-field>
+              <template v-slot:[`item.currentStockLevel`]="{ item }">
+                <v-text-field type="number" v-model="item.currentStockLevel"> </v-text-field>
               </template>
             </v-data-table>
 
-            <v-btn color="success" block @click="saveAllStockTake">
+            <v-btn color="success" block @click="saveAllStockTake()">
               <v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon> Save
             </v-btn></v-card-text
           >
@@ -111,14 +111,14 @@
             ></v-text-field>
 
             <v-text-field
-              label="Current Stock Level"
+              label="Recorded Stock Level"
               v-model="selectedItem.currentStockLevel"
               type="number"
               :rules="currentStockLevelRules"
             ></v-text-field>
 
             <v-text-field
-              label="Reorder Level"
+              label="Current Stock Level"
               v-model="selectedItem.reorderLevel"
               type="number"
               :rules="reorderLevelRules"
@@ -159,6 +159,23 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <template>
+      <!-- Confirmation Dialog with PDF Preview -->
+      <v-dialog v-model="confirmDialog" max-width="800px">
+        <v-card>
+          <v-card-title class="headline">Update Inventory</v-card-title>
+          <v-card-text>
+            <p>Do you want to update the inventory table based on this stock take?</p>
+            <iframe v-if="pdfUrl" :src="pdfUrl" width="100%" height="400px"></iframe>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="green darken-1" text @click="confirmUpdate(true)">Yes</v-btn>
+            <v-btn color="red darken-1" text @click="confirmUpdate(false)">No</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </template>
   </div>
 </template>
 
@@ -181,8 +198,8 @@ export default {
       headers: [
         { title: 'Name', value: 'name' },
 
-        { title: 'Current Stock Level', value: 'currentStockLevel' },
-        { title: 'Reorder Level', value: 'reorderLevel' },
+        { title: 'Current Stock Level', value:  'reorderLevel'},
+        { title: 'Recorded Stock Level', value: 'currentStockLevel' },
         { title: '', value: 'actions', sortable: false }
       ],
       sortOptions: [
@@ -208,14 +225,14 @@ export default {
         (v) => !/^0\d/.test(v) || 'Cost Price cannot have leading zeros'
       ],
       currentStockLevelRules: [
+        (v) => !!v || 'Recorded Stock Level is required',
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Recorded Stock Level must be a valid number',
+        (v) => !/^0\d/.test(v) || 'Recorded Stock Level cannot have leading zeros'
+      ],
+      reorderLevelRules: [
         (v) => !!v || 'Current Stock Level is required',
         (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Current Stock Level must be a valid number',
         (v) => !/^0\d/.test(v) || 'Current Stock Level cannot have leading zeros'
-      ],
-      reorderLevelRules: [
-        (v) => !!v || 'Reorder Level is required',
-        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Reorder Level must be a valid number',
-        (v) => !/^0\d/.test(v) || 'Reorder Level cannot have leading zeros'
       ],
       inventoryItems: [
         // Add more items as needed
@@ -225,7 +242,10 @@ export default {
       chartData: {
         labels: [],
         datasets: []
-      }
+      },
+      confirmDialog: false,
+      updateInventory: false,
+      pdfUrl: null
     }
   },
   components: {
@@ -270,6 +290,22 @@ export default {
         this.isUpdating = false
       }
     },
+    async createStockItem(item) {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiUrl = await this.getRequestUrl()
+      const data = ''
+      try {
+        const response = await axios.post(`${apiUrl}stocktake/create`, data, config)
+        console.log('Stock take create:', response)
+      } catch (error) {
+        console.log('Failed to create stock: ', error)
+      }
+    },
     getRowProps(index) {
       return {
         class: index % 2 === 0 ? 'bg-secondRowColor' : ''
@@ -290,11 +326,15 @@ export default {
       this.resetForm()
     },
     async saveAllStockTake() {
+      this.generatePDFPreview()
+      this.confirmDialog = true
+    },
+    async generatePDFPreview() {
       const stockTakeData = {
-        date: this.currentDate,
+        date: new Date(this.currentDate).toISOString(),
         inventoryItems: this.filteredInventoryItems,
         companyID: localStorage.getItem('currentCompany'),
-        currentEmployee: localStorage.getItem('username') || 'John Doe' // Replace with actual employee name if available
+        currentEmployee: localStorage.getItem('username') || 'John Doe'
       }
 
       const doc = new jsPDF()
@@ -310,14 +350,14 @@ export default {
       doc.text(`Employee: ${stockTakeData.currentEmployee}`, 15, 40)
 
       // Create table headers
-      const headers = ['Item Name', 'Cost Price', 'Current Stock Level', 'Reorder Level']
+      const headers = ['Item Name', 'Cost Price', 'Recorded Stock Level', 'Current Stock Level']
 
       // Create table body data
       const body = stockTakeData.inventoryItems.map((item) => [
         item.name,
-        item.costPrice, // Formatting price
+        item.costPrice,
         item.currentStockLevel,
-        item.currentStockLevel + 30 // Example reorder level calculation
+        item.currentStockLevel + 30
       ])
 
       // Add table to the PDF
@@ -332,8 +372,41 @@ export default {
         margin: { top: 60 }
       })
 
-      // Save the PDF
-      doc.save(`stock_take_${stockTakeData.date}.pdf`)
+      // Generate Blob URL for PDF preview
+      const pdfBlob = doc.output('blob')
+      this.pdfUrl = URL.createObjectURL(pdfBlob)
+    },
+    async confirmUpdate(update) {
+      this.updateInventory = update;
+      this.confirmDialog = false;
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      };
+      const apiURL = await this.getRequestUrl();
+      const data = {
+        "currentEmployeeId": localStorage.getItem('employeeId'),
+        "companyId": localStorage.getItem('currentCompany'),
+        "date": new Date(this.currentDate).toISOString(),
+        "items": [],
+        "updateInventory": this.updateInventory
+      };
+      this.filteredInventoryItems.forEach((item) => {
+        data.items.push({
+          "inventoryId": item._id,
+          "recordedStockLevel": item.currentStockLevel
+        });
+      })
+      console.log('Data', data)
+      try {
+        const response = await axios.post(`${apiURL}stocktake/create`, data, config)
+        console.log('Response:', response)
+        console.log("Hello world!");
+      } catch (error) {
+        console.log('Failure to update stock take', error);
+      }
     },
 
     resetForm() {
@@ -373,7 +446,7 @@ export default {
 
       // Prepare the chart data
       this.chartData = {
-        labels: ['Current Stock Level', 'Suggested Reorder Level'],
+        labels: ['Recorded Stock Level', 'Suggested Current Stock Level'],
         datasets: [
           {
             label: item.name,
@@ -399,8 +472,8 @@ export default {
 
         // Create the table data
         const tableData = [
-          ['Current Stock Level', item.currentStockLevel.toString()],
-          ['Suggested Reorder Level', reorderLevel.toString()]
+          ['Recorded Stock Level', item.currentStockLevel.toString()],
+          ['Suggested Current Stock Level', reorderLevel.toString()]
         ]
 
         // Add the table to the PDF
@@ -457,7 +530,7 @@ export default {
       })
 
       autoTable(doc, {
-        head: [['Item Name', 'Cost Price', 'Current Stock Level', 'Reorder Level', 'Difference']],
+        head: [['Item Name', 'Cost Price', 'Recorded Stock Level', 'Current Stock Level', 'Difference']],
         body: tableBody,
         startY: 40,
         theme: 'grid'
@@ -476,7 +549,7 @@ export default {
 
       // doc.text(`Total Items: ${totalItems}`, 10, doc.autoTable.previous.finalY + 10)
       // doc.text(`Total Current Stock: ${totalStock}`, 10, doc.autoTable.previous.finalY + 17)
-      // doc.text(`Total Reorder Level: ${totalReorder}`, 10, doc.autoTable.previous.finalY + 24)
+      // doc.text(`Total Current Stock Level: ${totalReorder}`, 10, doc.autoTable.previous.finalY + 24)
 
       // Save the PDF
       doc.save(`stock_take_${localStorage.getItem('currentCompanyName')}_${this.currentDate}.pdf`)
