@@ -8,27 +8,13 @@
       @create-chat="createChat"
     />
     <div class="chat-main">
-      <header v-if="selectedChat" class="chat-header">
-        <Avatar
-          :image="
-            /*TODO: Fix later */
-            selectedChat?.image ? selectedChat?.image : defaultChatPic
-          "
-          size="large"
-          shape="circle"
-        />
-        <h2>{{ selectedChat?.name }}</h2>
-        <div class="participant-area">
-          <div
-            v-for="participant in selectedChat?.participants"
-            :key="participant._id"
-            class="participant"
-          >
-            <Avatar :image="participant.profile.displayImage" size="small" shape="circle" />
-            <span>{{ participant.profile.displayName }}</span>
-          </div>
-        </div>
-      </header>
+      <ChatHeader
+        v-if="selectedChat"
+        :chat="selectedChat"
+        :participants="selectedChat?.participants"
+      >
+        <!--        <ChatHeaderPopover v-if="selectedChat"></ChatHeaderPopover>-->
+      </ChatHeader>
       <ChatMessageList
         v-if="selectedChat"
         :messages="currentMessages"
@@ -54,10 +40,11 @@
 import ChatSidebar from './ChatSideBar.vue'
 import ChatMessageList from './ChatMessageList.vue'
 import ChatInput from './ChatInput.vue'
-import Avatar from 'primevue/avatar'
 import axios from 'axios'
 import { io } from 'socket.io-client'
 import { API_URL } from '@/main'
+import ChatHeader from '@/components/home/chat/ChatHeader.vue'
+import { ref } from 'vue'
 
 const socket = io(`${API_URL}chat-space`, {
   autoConnect: true,
@@ -67,9 +54,9 @@ const socket = io(`${API_URL}chat-space`, {
 export default {
   components: {
     ChatSidebar,
+    ChatHeader,
     ChatMessageList,
-    ChatInput,
-    Avatar
+    ChatInput
   },
   data() {
     return {
@@ -79,7 +66,7 @@ export default {
       users: [],
       chats: [],
       selectedChat: null,
-      messages: [],
+      messages: ref([]),
       server_url: API_URL
     }
   },
@@ -93,7 +80,7 @@ export default {
       .then(() => {
         //console.log('User chats', this.chats)
         for (const chat of this.chats) {
-          console.log('Fetching messages for chat', chat)
+          //console.log('Fetching messages for chat', chat)
           this.getMessagesInChat(chat._id)
         }
       })
@@ -193,8 +180,9 @@ export default {
           })
           const chat = result.data.data
           this.selectChat(chat)
-          this.$set(this.messages, chat._id, [])
-          this.selectChat(chat)
+
+          // this.$set(this.messages, chat._id, [])
+          // this.selectChat(chat)
         }
       } else {
         console.log('Error creating chat')
@@ -269,12 +257,12 @@ export default {
       }
     },
     async getMessagesInChat(chatId) {
-      console.log('chatId is', chatId)
+      //console.log('chatId is', chatId)
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const result = await axios.get(`${this.server_url}chat/chat-messages/${chatId}`, config)
-      console.log('Result of FetchMessages', result)
+      //console.log('Result of FetchMessages', result)
       if (result.status >= 200 && result.status < 300) {
-        console.log('Fetching Messages', result.data.data)
+        //console.log('Fetching Messages', result.data.data)
         if (result.data.data) {
           const messages = result.data.data
           for (const message of messages) {
@@ -332,16 +320,22 @@ export default {
       this.messages[data.chatId].push(data)
     },
     handleDeleteMessage(data) {
-      console.log('Delete message received', data)
+      // window.console.log('Delete message received', JSON.stringify(data))
+      // window.console.log('messages is', this.messages)
+      // window.console.log('data is', JSON.stringify(data))
       if (!this.messages[data.chatId]) {
         //chat not found
-        //console.log('Chat not found')
-        //this.messages[data.chatId] = []
+        console.log('Message not found')
+        this.messages[data.chatId] = []
         return
       }
-      const index = this.messages[data.chatId].findIndex((m) => m._id === data._id)
+      const index = this.messages[data.chatId].findIndex((m) => m._id === data.messageId)
       if (index !== -1) {
         this.messages[data.chatId].splice(index, 1)
+        console.log('Done filtering')
+      } else {
+        console.log('Could not locate in array')
+        console.log(data)
       }
     },
     handleUpdateMessage(data) {
@@ -380,6 +374,8 @@ export default {
         })
         .then((data) => {
           console.log('Delete message success', data)
+          console.log(this.messages)
+          //this.messages = this.messages.filter((m) => m._id === data?.messageId)
           // if (data.success === true) {
           //   //show toast
           // }
@@ -421,7 +417,6 @@ export default {
 .chat-header {
   display: flex;
   align-items: center;
-  padding: 1rem;
   background-color: #f0f0f0;
   border-bottom: 1px solid #e0e0e0;
 }
