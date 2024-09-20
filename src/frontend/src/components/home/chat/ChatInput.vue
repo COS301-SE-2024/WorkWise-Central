@@ -7,56 +7,127 @@
       :disabled="disabled"
       class="w-full"
     />
-    <FileUpload
-      mode="basic"
-      :maxFileSize="1000000"
-      @select="onFileSelect"
-      :disabled="disabled"
-      :auto="true"
-      chooseLabel="Attach"
-      class="p-button-rounded p-button-outlined"
-    />
+
+    <!--    <FileUpload-->
+    <!--      mode="basic"-->
+    <!--      :maxFileSize="1000000"-->
+    <!--      @select="onFileSelect"-->
+    <!--      :disabled="disabled"-->
+    <!--      :auto="true"-->
+    <!--      chooseLabel="Attach"-->
+    <!--      class="p-button-rounded p-button-outlined"-->
+    <!--    />-->
     <Button
       icon="fa: fa-solid fa-paper-plane"
       @click="sendMessage"
-      :disabled="disabled || (!message.trim() && !attachment)"
+      :disabled="disabled || (!message.trim() && attachments.length === 0)"
       class="p-button-rounded"
     />
+
+    <div class="col-2">
+      <v-file-input
+        v-model="newFiles"
+        label="Attach Files"
+        prepend-icon="fa: fa-solid fa-file"
+        @change="handleFileChange"
+        variant="solo"
+        class="p-button-rounded p-button-outlined col-2"
+        multiple
+      ></v-file-input>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import InputText from 'primevue/inputtext';
-import Button from 'primevue/button';
-import FileUpload from 'primevue/fileupload';
+import { ref } from 'vue'
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
+import axios from 'axios'
+import { API_URL } from '@/main'
+import { useToast } from 'primevue/usetoast'
 
 const props = defineProps({
   disabled: {
     type: Boolean,
     default: false
   }
-});
+})
 
-const emit = defineEmits(['send-message']);
+const emit = defineEmits(['send-message'])
+const toast = useToast()
+const message = ref('')
+//const attachment = ref(null)
 
-const message = ref('');
-const attachment = ref(null);
-
+const attachments = ref([])
+//const newFile = ref(null)
+const newFiles = ref([])
 const sendMessage = () => {
-  if ((message.value.trim() || attachment.value) && !props.disabled) {
+  if ((message.value.trim() || attachments.value.length > 0) && !props.disabled) {
+    console.log('Emtting', message.value, attachments.value)
     emit('send-message', {
       content: message.value,
-      attachment: attachment.value
-    });
-    message.value = '';
-    attachment.value = null;
+      attachments: attachments.value
+    })
+    message.value = ''
+    attachments.value = []
   }
-};
+}
 
-const onFileSelect = (event) => {
-  attachment.value = event.files[0];
-};
+const handleFileChange = async () => {
+  const files = newFiles.value
+  if (files && files.length > 0) {
+    const formData = new FormData()
+
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i])
+    }
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+      }
+    }
+
+    const url = `${API_URL}chat/add/attachments`
+
+    try {
+      const response = await axios.put(url, formData, config)
+      if (response.status === 200) {
+        console.log(response)
+        toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Files uploaded successfully',
+          life: 3000
+        })
+
+        for (const em of response.data.data) {
+          attachments.value.push(em)
+          console.log('Pushed', em)
+        }
+
+        // Clear the file input after successful upload
+        newFiles.value = []
+
+        return response.data.data
+      }
+    } catch (error) {
+      console.error(error)
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to upload File(s)',
+        life: 3000
+      })
+      console.log(url)
+    }
+  }
+}
+
+// const onFileSelect = (event) => {
+//   attachment.value = event.files[0]
+// }
 </script>
 
 <style scoped>
@@ -81,12 +152,12 @@ const onFileSelect = (event) => {
 }
 
 .p-button {
-  background-color: #25D366;
+  background-color: #25d366;
   color: #ffffff;
 }
 
 .p-button:enabled:hover {
-  background-color: #128C7E;
+  background-color: #128c7e;
 }
 
 .p-button:disabled {
@@ -94,7 +165,7 @@ const onFileSelect = (event) => {
   color: #ffffff;
 }
 
-:deep( .p-fileupload-choose) {
+:deep(.p-fileupload-choose) {
   margin-right: 0.5rem;
 }
 </style>
