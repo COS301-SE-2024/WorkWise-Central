@@ -71,6 +71,33 @@
 <script setup>
 import { ref, watch, nextTick } from 'vue'
 import Avatar from 'primevue/avatar'
+import ConfirmPopup from 'primevue/confirmpopup'
+import { useConfirm } from 'primevue/useconfirm'
+
+const confirm = useConfirm()
+const editingMessageId = ref(null)
+const editedText = ref('')
+const editedAttachments = ref([])
+const emit = defineEmits(['edit-message', 'delete-message'])
+
+const hiddenText = '##image_only##'
+
+const items = ref([
+  {
+    label: 'Edit',
+    icon: 'pi pi-refresh'
+  },
+  {
+    label: 'Delete',
+    icon: 'pi pi-upload'
+  }
+])
+
+const getFileName = (attachment) => {
+  let tempName = attachment.split('/').pop()
+  console.log(tempName)
+  return tempName.substring(37)
+}
 
 const props = defineProps(['messages', 'users'])
 
@@ -88,6 +115,32 @@ watch(
     })
   }
 )
+
+const startEdit = (messageId) => {
+  const message = props.messages.find((m) => m._id === messageId)
+  if (message) {
+    editingMessageId.value = messageId
+    editedText.value = message.textContent
+    editedAttachments.value = [...message.attachments]
+  }
+}
+
+const saveEdit = (chatId, messageId) => {
+  emit('edit-message', {
+    messageId: messageId,
+    chatId: chatId,
+    action: 'Edit',
+    textContent: editedText.value,
+    attachments: editedAttachments.value
+  })
+  cancelEdit()
+}
+
+const cancelEdit = () => {
+  editingMessageId.value = null
+  editedText.value = ''
+  editedAttachments.value = []
+}
 
 const formatTimestamp = (timestamp) => {
   return new Intl.DateTimeFormat('en-US', {
