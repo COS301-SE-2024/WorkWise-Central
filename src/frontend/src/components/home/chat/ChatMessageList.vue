@@ -95,7 +95,7 @@ const items = ref([
 
 const getFileName = (attachment) => {
   let tempName = attachment.split('/').pop()
-  console.log(tempName)
+  //console.log(tempName)
   return tempName.substring(37)
 }
 

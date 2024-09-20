@@ -29,6 +29,9 @@
           shape="circle"
         />
         <span>{{ chat.name }}</span>
+        <div class="card flex justify-center">
+          <Menu :model="items" />
+        </div>
       </li>
     </ul>
 
@@ -43,6 +46,7 @@
           <label for="chatName">Chat Name</label>
           <InputText id="chatName" v-model="newChatName" />
         </div>
+
         <div class="p-field">
           <label for="participants">Participants</label>
           <MultiSelect
@@ -81,6 +85,7 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import MultiSelect from 'primevue/multiselect'
+//import FileUpload from 'primevue/fileupload'
 
 const props = defineProps(['chats', 'selectedChat', 'users'])
 const emit = defineEmits(['select-chat', 'create-chat'])
@@ -94,6 +99,11 @@ const currentUserId = localStorage['id']
 const fileInput = ref(null)
 const selectedImage = ref(null)
 const base64Image = ref(null)
+
+const items = ref([
+  { label: 'Delete', icon: 'pi pi-plus' },
+  { label: 'Search', icon: 'pi pi-search' }
+])
 
 const handleFileChange = (event) => {
   const files = event.target.files
