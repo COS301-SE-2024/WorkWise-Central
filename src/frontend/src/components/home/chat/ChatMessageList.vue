@@ -6,9 +6,62 @@
       :class="['message', { sent: message.userId._id === userId || message?.userId === userId }]"
     >
       <Avatar :image="getUserAvatar(message.userId._id)" size="small" shape="circle" />
+
       <div class="message-content">
-        <span class="sender-name">{{ getUserName(message.userId._id) }}</span>
-        {{ message.textContent }}
+        <div class="message-header">
+          <span class="sender-name">{{ getUserName(message.userId._id) }}</span>
+          <div class="three-dots" v-if="message.userId._id === userId">
+            <ConfirmPopup></ConfirmPopup>
+            <v-menu>
+              <template v-slot:activator="{ props }">
+                <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn>
+              </template>
+
+              <v-list>
+                <v-list-item
+                  v-for="(item, i) in items"
+                  :key="i"
+                  @click="handleItemClick($event, message._id, message.chatId, item.label)"
+                >
+                  <v-list-item-title>{{ item.label }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </div>
+        </div>
+        <div class="message-body">
+          <div class="message-text">
+            <template v-if="editingMessageId === message._id && message.textContent !== hiddenText">
+              <v-text-field
+                v-model="editedText"
+                @keyup.enter="saveEdit(message.chatId, message._id)"
+                @keyup.esc="cancelEdit"
+                autofocus
+              ></v-text-field>
+            </template>
+            <template v-else>
+              {{ message.textContent !== hiddenText ? message.textContent : '' }}
+            </template>
+          </div>
+          <div class="attachments" v-if="message.attachments && message.attachments.length > 0">
+            <div v-for="(attachment, index) in message.attachments" :key="index" class="attachment">
+              <template v-if="editingMessageId === message._id">
+                <v-text-field
+                  v-model="editedAttachments[index]"
+                  @keyup.enter="saveEdit(message.chatId, message._id)"
+                  @keyup.esc="cancelEdit"
+                  dense
+                ></v-text-field>
+              </template>
+              <template v-else>
+                <v-icon small>mdi-paperclip</v-icon>
+                <a :href="attachment" download>
+                  {{ getFileName(attachment) }}
+                </a>
+              </template>
+            </div>
+          </div>
+        </div>
         <span class="timestamp">{{ formatTimestamp(message.createdAt) }}</span>
       </div>
     </div>
