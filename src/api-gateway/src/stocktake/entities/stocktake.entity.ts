@@ -4,7 +4,7 @@ import { SchemaTypes, Types } from 'mongoose';
 
 export class InventoryItem {
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Inventory' })
   inventoryId: Types.ObjectId;
 
   @ApiProperty()
@@ -36,7 +36,7 @@ export class StockTake {
   items: StockTakeItem[];
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Company' })
   companyId: Types.ObjectId;
 
   @ApiHideProperty()

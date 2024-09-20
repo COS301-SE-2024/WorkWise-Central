@@ -200,6 +200,17 @@ export class CompanyApiDetailedObject {
   public deletedAt: Date;
 }
 
+export class CompanyAccountDetailsObject {
+  @ApiProperty()
+  merchantId?: string;
+
+  @ApiProperty()
+  merchantKey?: string;
+
+  @ApiProperty()
+  passPhrase: string;
+}
+
 export const CompanySchema = SchemaFactory.createForClass(Company);
 
 export class CompanyEmployeesResponseDto {
@@ -236,4 +247,8 @@ export class CompanyDetailedResponseDto {
     this.data = data;
   }
   data: CompanyApiDetailedObject;
+}
+
+export class CompanyAccountDetailsResponseDto {
+  data: CompanyAccountDetailsObject;
 }

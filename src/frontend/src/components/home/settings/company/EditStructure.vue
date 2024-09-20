@@ -472,7 +472,7 @@ export default defineComponent({
       console.log(this.selectedEmployee._id)
       try {
         const sub_res = await axios.get(
-          apiURL + `employee/listPotentialSubordinates/${this.selectedEmployee._id}`,
+          apiURL + `employee/listPotentialSubordinates/${this.selectedEmployee.employeeId}`,
           config
         )
         console.log(sub_res)
