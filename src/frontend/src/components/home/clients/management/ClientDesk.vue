@@ -49,7 +49,12 @@
                   <v-icon color="buttonText">mdi-account-plus</v-icon>
                 </template>
               </v-btn>
-              <v-dialog v-model="addClientVisibility" max-height="800" max-width="600">
+              <v-dialog
+                v-model="addClientVisibility"
+                opacity="0.6"
+                max-height="800"
+                max-width="600"
+              >
                 <AddClient
                   v-show="checkPermission('add new clients')"
                   :showDialog="addClientVisibility"

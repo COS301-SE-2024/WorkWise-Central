@@ -11,10 +11,6 @@
         <v-col
           v-for="column in columns"
           :key="column._id"
-          :class="{ 'drop-target': isDropTarget(column) }"
-          @dragover.prevent="onDragOver(column)"
-          @dragleave="onDragLeave"
-          @drop="onDrop(column)"
           role="listbox"
           aria-dropeffect="move"
           :lg="3"
@@ -246,20 +242,7 @@
                       role="option"
                     >
                       <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
-                        ><b>{{ item.invoiceNumber }}</b>
-                        <v-menu align="left">
-                          <template v-slot:activator="{ props }">
-                            <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
-                          </template>
-                          <v-list :border="true" bg-color="background" rounded="lg">
-                            <v-list-item>
-                              <v-btn :elevation="0" @click="ArchiveJob(item)">
-                                <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
-                                {{ 'Archive' }}
-                              </v-btn>
-                            </v-list-item>
-                          </v-list>
-                        </v-menu>
+                        ><b>{{ 'Invoice #' + item.invoiceNumber }}</b>
                       </v-card-item>
                       <v-card-item
                         ><v-chip
@@ -283,7 +266,9 @@
                         {{ 'Payment date: ' + item.paymentDate }}</v-card-item
                       >
                       <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                        <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
+                        <v-icon color="kanbanIconColor">{{
+                          'fa: fa-solid fa-cash-register'
+                        }}</v-icon>
                         {{ 'Amount Due: ' + item.total }}</v-card-item
                       >
                     </v-card>
@@ -357,77 +342,7 @@ export default {
       column_name_rule: [
         (v: string) => !!v || 'Column name is required',
         (v: string) => (v && v.length <= 20) || 'Column name must be less than 20 characters'
-      ],
-      invoices: [
-        {
-          id: '64872d9a9f2c9e001f5aabc1',
-          invoiceNumber: 1001,
-          invoiceDate: '2024-09-01T08:30:00Z',
-          paymentDate: '2024-09-15T08:30:00Z',
-          subTotal: 5000,
-          total: 5500,
-          paid: true,
-          clientId: '6472d1b99c0f3e001d5aa009',
-          clientName: 'ABC Corp',
-          inventoryItems: [
-            { description: 'Laptop', quantity: 2, unitPrice: 1000 },
-            { description: 'Monitor', quantity: 2, unitPrice: 300 }
-          ],
-          laborItems: [{ description: 'Installation Service', quantity: 5, unitPrice: 100 }]
-        },
-        {
-          id: '64872d9a9f2c9e001f5aabc2',
-          invoiceNumber: 1002,
-          invoiceDate: '2024-09-02T10:00:00Z',
-          paymentDate: '2024-09-16T10:00:00Z',
-          subTotal: 2000,
-          total: 2100,
-          paid: false,
-          clientId: '6472d1b99c0f3e001d5aa010',
-          clientName: 'XYZ Solutions',
-          inventoryItems: [{ description: 'Desktop', quantity: 3, unitPrice: 600 }],
-          laborItems: [{ description: 'Configuration Service', quantity: 2, unitPrice: 50 }]
-        },
-        {
-          id: '64872d9a9f2c9e001f5aabc3',
-          invoiceNumber: 1003,
-          invoiceDate: '2024-09-03T14:00:00Z',
-          paymentDate: '2024-09-17T14:00:00Z',
-          subTotal: 3500,
-          total: 3850,
-          paid: false,
-          clientId: '6472d1b99c0f3e001d5aa011',
-          clientName: 'DEF Industries',
-          inventoryItems: [{ description: 'Router', quantity: 4, unitPrice: 150 }],
-          laborItems: [{ description: 'Network Setup', quantity: 10, unitPrice: 100 }]
-        },
-        {
-          id: '64872d9a9f2c9e001f5aabc4',
-          invoiceNumber: 1004,
-          invoiceDate: '2024-09-04T12:00:00Z',
-          paymentDate: '2024-09-18T12:00:00Z',
-          subTotal: 4500,
-          total: 5000,
-          paid: true,
-          clientId: '6472d1b99c0f3e001d5aa012',
-          clientName: 'GHI Innovations',
-          inventoryItems: [{ description: 'Server', quantity: 1, unitPrice: 4000 }],
-          laborItems: [{ description: 'Server Installation', quantity: 5, unitPrice: 100 }]
-        },
-        {
-          id: '64872d9a9f2c9e001f5aabc5',
-          invoiceNumber: 1005,
-          invoiceDate: '2024-09-05T16:00:00Z',
-          paymentDate: '2024-09-19T16:00:00Z',
-          subTotal: 3000,
-          total: 3300,
-          paid: false,
-          clientId: '6472d1b99c0f3e001d5aa013',
-          clientName: 'JKL Technologies',
-          inventoryItems: [{ description: 'Printer', quantity: 5, unitPrice: 500 }],
-          laborItems: [{ description: 'Printer Setup', quantity: 6, unitPrice: 50 }]
-        }
-      ] as InvoiceCardDataFormat[]
+      ]
     }
   },
   methods: {
@@ -656,12 +571,7 @@ export default {
         this.error_message = 'A color should be selected'
         return
       }
-      // const column: Column = {
-      //   id: this.columns.length + 1,
-      //   status: this.new_column_name,
-      //   color: this.column_color,
-      //   cards: []
-      // }
+
       try {
         const config = {
           headers: {
@@ -693,9 +603,6 @@ export default {
     },
     addColorPickerUpdate() {
       console.log(this.column_color)
-    },
-    addColumnButtonClicked() {
-      console.log('Add button clicked')
     },
     async clickedEvent(payload: InvoiceCardDataFormat) {
       const config = {
@@ -744,72 +651,6 @@ export default {
       // })
       console.log(this.columns[0].cards.length)
     },
-    async loadColumns() {
-      console.log('load Column request')
-      // const config = {
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     Authorization: `Bearer ${localStorage.getItem('access_token')}`
-      //   }
-      // }
-      // const apiURL = await this.getRequestUrl()
-      // try {
-      //   const loaded_tags_response = await axios.get(
-      //     apiURL + `job/status/all/${localStorage['currentCompany']}`,
-      //     config
-      //   )
-      //   console.log(loaded_tags_response)
-      //   loaded_tags_response.data.data.map((status: any) => {
-      //     console.log(status)
-      //     if (status.status === 'Archive') {
-      //       this.archive_status_id = status._id
-      //       return null
-      //     }
-      //     this.columns.push({
-      //       _id: status._id,
-      //       __v: status.__v,
-      //       status: status.status,
-      //       colour: status.colour,
-      //       companyId: status.companyId,
-      //       cards: [] as InvoiceCardDataFormat[]
-      //     })
-      //   })
-      // } catch (error) {
-      //   console.log('Error fetching data:', error)
-      // }
-
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
-      }
-      const apiURL = await this.getRequestUrl()
-      try {
-        const loaded_tags_response = await axios.get(
-          apiURL + `company/status/all/${localStorage['currentCompany']}`,
-          config
-        )
-        console.log(loaded_tags_response.data.data)
-        // loaded_tags_response.data.data.jobStatuses.forEach((col: any) => {
-        //   col['cards'] = [] as InvoiceCardDataFormat[]
-        // })
-
-        let archive_index = -1
-        for (let i = 0; i < loaded_tags_response.data.data.jobStatuses.length; i++) {
-          if (loaded_tags_response.data.data.jobStatuses[i].status === 'Archive') {
-            archive_index = i
-          }
-          loaded_tags_response.data.data.jobStatuses[i]['cards'] = []
-        }
-
-        this.archive_status_id = loaded_tags_response.data.data.jobStatuses[archive_index]._id
-        loaded_tags_response.data.data.jobStatuses.splice(archive_index, 1)
-        this.columns = loaded_tags_response.data.data.jobStatuses
-      } catch (error) {
-        console.log(error)
-      }
-    },
     async loadData() {
       const config = {
         headers: {
@@ -820,90 +661,55 @@ export default {
       const apiURL = await this.getRequestUrl()
       try {
         const loaded_tags_response = await axios.get(
-          apiURL + `invoice/all/${localStorage['currentCompany']}`,
+          apiURL + `invoice/all/detailed/${localStorage['employeeId']}`,
           config
         )
         console.log(loaded_tags_response.data.data)
-        loaded_tags_response.data.data.forEach((col: any) => {
-          col['cards'] = [] as InvoiceCardDataFormat[]
+
+        // id: string // For ObjectId type in the API class
+        // invoiceNumber: number
+        // invoiceDate: string // Using ISO string format for Date
+        // paymentDate: string // ISO string format
+        // subTotal: number
+        // total: number
+        // paid: boolean
+        // clientId: string // For ObjectId type
+        // clientName: string
+
+        let paid_cards = [] as InvoiceCardDataFormat[]
+        let unpaid_cards = [] as InvoiceCardDataFormat[]
+        loaded_tags_response.data.data.forEach((card: any) => {
+          if (card.paid)
+            paid_cards.push({
+              id: card._id,
+              invoiceNumber: card.invoiceNumber,
+              invoiceDate: this.formatDate(card.invoiceDate),
+              paymentDate: this.formatDate(card.paymentDate),
+              subTotal: card.subTotal,
+              total: card.total,
+              paid: card.paid,
+              clientId: card.clientId._id,
+              clientName: card.clientId.details.firstName + ' ' + card.clientId.details.lastName
+            })
+          else
+            unpaid_cards.push({
+              id: card._id,
+              invoiceNumber: card.invoiceNumber,
+              invoiceDate: this.formatDate(card.invoiceDate),
+              paymentDate: this.formatDate(card.paymentDate),
+              subTotal: card.subTotal,
+              total: card.total,
+              paid: card.paid,
+              clientId: card.clientId._id,
+              clientName: card.clientId.details.firstName + ' ' + card.clientId.details.lastName
+            })
         })
-        this.columns = loaded_tags_response.data.data
+        this.columns[0].cards = unpaid_cards
+        this.columns[1].cards = paid_cards
         console.log(loaded_tags_response.data.data)
       } catch (error) {
         console.log(error)
       }
-    },
-    async loadJobs() {
-      console.log('load jobs request')
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
-      }
-      const apiURL = await this.getRequestUrl()
-      try {
-        const loaded_tags_response = await axios.get(
-          apiURL + `job/all/company/detailed/${localStorage['currentCompany']}`,
-          config
-        )
-        console.log(loaded_tags_response)
-        let loaded_tags_res = loaded_tags_response.data.data
-        for (let i = 0; i < loaded_tags_res.length; i++) {
-          if (loaded_tags_res[i].status.status === 'Archive') continue
-          // if (
-          //   loaded_tags_res[i]._id === undefined ||
-          //   loaded_tags_res[i].details.heading === undefined ||
-          //   loaded_tags_res[i].details.description === undefined ||
-          //   loaded_tags_res[i].details.startDate === undefined ||
-          //   loaded_tags_res[i].details.endDate === undefined ||
-          //   loaded_tags_res[i].status === undefined ||
-          //   loaded_tags_res[i].clientId === undefined ||
-          //   loaded_tags_res[i].clientId.details === undefined ||
-          //   loaded_tags_res[i].details.address === undefined ||
-          //   loaded_tags_res[i].details.address.street === undefined ||
-          //   loaded_tags_res[i].details.address.suburb === undefined ||
-          //   loaded_tags_res[i].details.address.city === undefined ||
-          //   loaded_tags_res[i].details.address.street.postalCode === undefined ||
-          //   loaded_tags_res[i].recordedDetails.imagesTaken === undefined ||
-          //   loaded_tags_res[i].recordedDetails.inventoryUsed === undefined ||
-          //   loaded_tags_res[i].taskList === undefined ||
-          //   loaded_tags_res[i].comments === undefined ||
-          //   loaded_tags_res[i].priorityTag === undefined ||
-          //   loaded_tags_res[i].tags === undefined ||
-          //   loaded_tags_res[i].coverImage === undefined
-          // )
-          //   continue
-
-          // this.starting_cards.push({
-          //   id: loaded_tags_res[i]._id,
-          //   heading: loaded_tags_res[i].details.heading,
-          //   jobDescription: loaded_tags_res[i].details.description,
-          //   startDate: this.formatDate(loaded_tags_res[i].details.startDate),
-          //   endDate: this.formatDate(loaded_tags_res[i].details.endDate),
-          //   status: loaded_tags_res[i].status,
-          //   clientName:
-          //     loaded_tags_res[i].clientId.details.firstName +
-          //     ' ' +
-          //     loaded_tags_res[i].clientId.details.lastName,
-          //   street: loaded_tags_res[i].details.address.street,
-          //   suburb: loaded_tags_res[i].details.address.suburb,
-          //   city: loaded_tags_res[i].details.address.city,
-          //   postalCode: loaded_tags_res[i].details.address.street.postalCode,
-          //   taskList: loaded_tags_res[i].taskList,
-          //   comments: loaded_tags_res[i].comments,
-          //   priorityTag: loaded_tags_res[i].priorityTag,
-          //   tags: loaded_tags_res[i].tags,
-          //   coverImage: loaded_tags_res[i].coverImage
-          // })
-        }
-        console.log(this.starting_cards)
-      } catch (error) {
-        console.log('Error fetching data:', error)
-      }
-    },
-    loadCardsInRespectiveColumns(card: InvoiceCardDataFormat, column: Column) {
-      column.cards.push(card)
     },
     formatDate(date: string) {
       const date_passed_in = new Date(date)
