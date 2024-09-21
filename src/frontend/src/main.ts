@@ -17,7 +17,10 @@ import './index.css'
 import ConfirmationService from 'primevue/confirmationservice'
 
 //To refer to API in Dev and Prod
-export const API_URL: string = import.meta.env.VITE_SERVER_API
+export const API_URL: string =
+  import.meta.env.ENVIRONMENT == 'prod'
+    ? import.meta.env.VITE_SERVER_API_PROD
+    : import.meta.env.VITE_SERVER_API_DEV
 
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
