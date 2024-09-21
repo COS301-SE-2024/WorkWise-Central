@@ -15,7 +15,7 @@
         class="d-flex flex-nowrap overflow-scroll"
         :onUpdate="onColumnDragEnd"
         group="columns"
-        animation="150"
+        :animation="150"
         ghostClass="ghost"
       >
         <v-col
@@ -245,7 +245,7 @@
                   @click="clickedEvent(item)"
                   variant="flat"
                   elevation="3"
-                  animation="150"
+                  :animation="150"
                   ghostClass="ghost"
                   class="kanban-card mb-2"
                   draggable="true"
