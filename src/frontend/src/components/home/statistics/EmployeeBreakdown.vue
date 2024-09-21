@@ -10,8 +10,16 @@
     <v-card-subtitle>Total Employees: {{ totalEmployees }}</v-card-subtitle>
 
     <v-card-text>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        variant="outlined"
+        color="primary"
+        label="Search Employees"
+        class="mb-4"
+      />
       <!-- Employee Stats Table -->
-      <v-data-table :items="employees" :headers="employeeHeaders"  class="bg-background">
+      <v-data-table :items="employees" :headers="employeeHeaders" class="bg-background">
         <!-- Stats for Each Employee -->
         <template v-slot:[`item.actions`]="{ item }">
           <v-menu max-width="500px">
@@ -33,7 +41,7 @@
               <v-list-item>
                 <v-btn>
                   <v-icon icon="fa: fa-solid fa-clipboard-check"></v-icon>Total Jobs:
-                  {{ item.totalJobs }}
+                  {{ item.totalJobs }} 
                 </v-btn>
               </v-list-item>
               <v-list-item>
@@ -103,6 +111,8 @@ export default {
     return {
       currentTab: 'Employee Breakdown', // Example tab name
       totalEmployees: 100, // Example total employees, replace with actual data
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       employees: [], // Array to hold employee data
       employeeHeaders: [
         { title: 'First Name', value: 'userInfo.firstName' },
@@ -168,7 +178,7 @@ export default {
           `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
           config
         )
-        console.log(response.data.data)
+        console.log(response)
         this.employees = response.data.data
       } catch (error) {
         console.error(error)

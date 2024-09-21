@@ -9,21 +9,23 @@
     <v-card-subtitle>Total Clients in the Company: {{ totalClients }}</v-card-subtitle>
 
     <!-- Search bar for v-data-table -->
-    <v-text-field
-      v-model="search"
-      append-icon="mdi-magnify"
-      label="Search Clients"
-      class="mb-4"
-      @keyup="applyFilter"
-    />
-
     <v-card-text>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        variant="outlined"
+        color="primary"
+        label="Search Clients"
+        class="mb-4"
+        @keyup="applyFilter"
+      />
       <!-- Client Data Table -->
       <v-data-table
         :items="clientDetails"
         :headers="headers"
         class="bg-background"
         :search="search"
+       :item-class="getItemClass"
       >
         <!-- Actions Column -->
         <template v-slot:[`item.actions`]="{ item }">
@@ -47,15 +49,48 @@
 
       <!-- Breakdown Section (Appears after clicking View Breakdown) -->
       <v-card v-if="showStats">
-        <v-card-title>Client Breakdown for {{ selectedClient.name }}</v-card-title>
+        <v-card-title>Client Breakdown for {{ selectedClient.firstName }}</v-card-title>
         <v-card-text>
-          <p><strong>Number of Current Jobs:</strong> {{ selectedClient.currentJobs }}</p>
-          <p><strong>Total Number of Jobs:</strong> {{ selectedClient.totalJobs }}</p>
-          <p><strong>Average Rating:</strong> {{ selectedClient.averageRating }}</p>
-
+          <!-- Bar chart for number of jobs -->
+          <Chart type="bar" :data="jobsData" :options="jobsChartOptions" />
+          <!-- Customer Service Rating Section -->
+          <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
+            <div class="d-flex justify-center mt-auto text-h5">Customer Service Rating</div>
+            <div class="d-flex align-center flex-column my-auto">
+              <div class="text-h2 mt-5">
+                {{ overallRating }}
+                <span class="text-h6 ml-n3">/5</span>
+              </div>
+              <v-rating
+                :model-value="overallRating"
+                color="yellow-darken-3"
+                half-increments
+              ></v-rating>
+              <div class="px-3">{{ totalRatings }} ratings</div>
+            </div>
+            <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
+              <v-list-item v-for="(rating, i) in 5" :key="i">
+                <v-progress-linear
+                  :model-value="rating * ratingValueFactor"
+                  class="mx-n5"
+                  color="yellow-darken-3"
+                  height="20"
+                  rounded
+                ></v-progress-linear>
+                <template v-slot:prepend>
+                  <span>{{ rating }}</span>
+                  <v-icon class="mx-3" icon="mdi-star"></v-icon>
+                </template>
+                <template v-slot:append>
+                  <div class="rating-values">
+                    <span class="d-flex justify-end">{{ ratingCounts[i] }}</span>
+                  </div>
+                </template>
+              </v-list-item>
+            </v-list>
+          </v-card>
           <!-- PrimeVue Chart.js for Ratings per Job -->
           <Chart type="bar" :data="jobRatingData" />
-
           <!-- PrimeVue Chart.js for Invoices (Paid on time vs not on time) -->
           <Chart type="pie" :data="invoiceData" />
         </v-card-text>
@@ -67,13 +102,17 @@
 <script>
 import Chart from 'primevue/chart'
 import axios from 'axios'
+
 export default {
   components: { Chart },
   data() {
     return {
       totalClients: 50, // Example data, replace with actual
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       search: '',
       clientDetails: [], // Bind actual client data here
+      clientIds: [],
       filteredClientDetails: [],
       clients: [],
       headers: [
@@ -99,24 +138,42 @@ export default {
           key: 'contactInfo.phoneNumber',
           class: 'h3'
         },
-        {
-          title: 'Email',
-          value: 'contactInfo.email',
-          key: 'contactInfo.email',
-          class: 'h3'
-        },
-        {
-          title: 'Address',
-          value: 'address.street',
-          key: 'address.street',
-          class: 'h3'
-        },
+        { title: 'Email', value: 'contactInfo.email', key: 'contactInfo.email', class: 'h3' },
+        { title: 'Address', value: 'address.street', key: 'address.street', class: 'h3' },
         { title: '', value: 'actions', key: 'actions', sortable: false, class: 'h3' }
       ],
       showStats: false,
       selectedClient: {},
       jobRatingData: {},
-      invoiceData: {}
+      invoiceData: {},
+      overallRating: 4.2, // Mock overall rating value
+      totalRatings: 150, // Mock total number of ratings
+      ratingCounts: [100, 30, 10, 5, 5], // Mock counts for 5-star, 4-star, 3-star, etc.
+      ratingValueFactor: 2, // Factor for progress bar width calculation
+      jobsData: {
+        labels: ['Current Jobs', 'Total Jobs'],
+        datasets: [
+          {
+            label: 'Job Breakdown',
+            backgroundColor: ['#42A5F5', '#66BB6A'],
+            data: [5, 10] // Mock data: Current Jobs: 5, Total Jobs: 10
+          }
+        ]
+      },
+      jobsChartOptions: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 12
+          }
+        }
+      }
     }
   },
   methods: {
@@ -155,6 +212,10 @@ export default {
         ]
       }
     },
+    getItemClass(client) {
+      // Returns the 'selected-client' class for the selected client
+      return client === this.selectedClient ? 'selected-client' : ''
+    },
     async getClients() {
       const config = {
         headers: {
@@ -166,10 +227,11 @@ export default {
         }
       }
       const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
       axios
         .get(`${apiURL}client/all/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
-          console.log(response.data)
+          console.log(response)
           this.clients = response.data.data
           console.log(this.clients)
 
@@ -205,5 +267,7 @@ export default {
 </script>
 
 <style scoped>
-/* Add any custom styles here */
+.selected-client {
+  background-color: #f0f8ff !important; /* Highlight color for selected client */
+}
 </style>
