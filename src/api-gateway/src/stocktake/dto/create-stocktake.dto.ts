@@ -3,6 +3,7 @@ import {
   IsArray,
   IsBoolean,
   IsDate,
+  IsDateString,
   IsMongoId,
   IsNotEmpty,
   IsNumber,
@@ -71,7 +72,7 @@ export class OuterCreateStocktakeDto {
 
   @IsOptional()
   @ApiProperty()
-  @IsDate()
+  @IsDateString()
   date?: Date;
 
   @IsNotEmpty()

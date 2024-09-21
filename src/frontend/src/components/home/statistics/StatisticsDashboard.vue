@@ -1,6 +1,11 @@
 <template>
   <v-container fluid fill-height>
-   ca
+     <v-row class="justify-center align-center">
+      <v-col cols="12" class="text-center">
+        <h2 class="text-xl font-semibold">Statistics Dashboard</h2>
+      </v-col>
+      <v-divider></v-divider>
+    </v-row>
     <v-row justify="center">
       <v-col>
         <v-card

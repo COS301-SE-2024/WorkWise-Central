@@ -19,7 +19,7 @@
             <v-col>
               <small class="text-caption">Invoice Number</small>
               <v-text-field
-                v-model="localEditedInvoice.number"
+                v-model="localEditedInvoice.invoiceNumber"
                 color="secondary"
                 :rules="invoiceNumberRules"
                 required
@@ -28,7 +28,7 @@
             <v-col>
               <small class="text-caption">Date</small>
               <v-text-field
-                v-model="localEditedInvoice.date"
+                v-model="localEditedInvoice.creationDate"
                 color="secondary"
                 required
               ></v-text-field>
@@ -37,7 +37,7 @@
               <v-col cols="12" lg="6">
                 <small class="text-caption">Amount</small>
                 <v-text-field
-                  v-model="localEditedInvoice.amount"
+                  v-model="localEditedInvoice.total"
                   color="secondary"
                   required
                 ></v-text-field>
@@ -45,7 +45,7 @@
               <v-col cols="12" lg="6">
                 <small class="text-caption">Status</small>
                 <v-select
-                  v-model="localEditedInvoice.status"
+                  v-model="localEditedInvoice.paid"
                   :items="statusOptions"
                   color="secondary"
                   required
@@ -82,16 +82,22 @@ import Toast from 'primevue/toast'
 import axios from 'axios'
 interface Invoice {
   _id: string
-  number: string
-  date: string
-  amount: number
-  status: string
+  invoiceNumber: string
+  creationDate: string
+  paymentDate: string
+  total: number
+  paid: boolean
+  clientName: string
+  jobTitle: string
 }
 
 export default {
   name: 'EditInvoice',
   props: {
-    editedInvoice: Object,
+    editedInvoice: {
+      type: Object as () => Invoice,
+      required: true
+    },
     invoice_id: String
   },
   components: {
@@ -100,15 +106,11 @@ export default {
   data() {
     return {
       localEditedInvoice: {
-        _id: '',
-        number: '',
-        date: '',
-        amount: '',
-        status: ''
-      },
+        ...this.editedInvoice
+      } as Invoice,
       editDialog: false,
       valid: false,
-      statusOptions: ['Paid', 'Unpaid', 'Pending'],
+      statusOptions: ['Paid', 'Unpaid', 'Pending'] as any[],
       invoiceNumberRules: [(v: string) => !!v || 'Invoice number is required'],
       dateRules: [(v: string) => !!v || 'Date is required'],
       amountRules: [
@@ -138,17 +140,8 @@ export default {
       }
       const apiURL = this.getRequestUrl()
 
-      const data = {
-        invoice: {
-          number: this.localEditedInvoice.number,
-          date: this.localEditedInvoice.date,
-          amount: this.localEditedInvoice.amount,
-          status: this.localEditedInvoice.status
-        }
-      }
-
       axios
-        .patch(`${apiURL}/invoices/${this.invoice_id}`, data, config)
+        .patch(`${apiURL}/invoices/${this.invoice_id}`, this.localEditedInvoice, config)
         .then((response) => {
           this.$toast.add({
             severity: 'success',

@@ -98,10 +98,10 @@
                             </template>
                             <v-list>
                               <v-list-item @click="handleAction('mark as read', notification._id)">
-                                <v-btn color="secondary" block>
+                                <v-btn color="success" block>
                                   <v-icon
                                     icon="fa:fa-solid fa-envelope-open"
-                                    color="secondary"
+                                    color="success"
                                   ></v-icon>
                                   Mark as Read
                                 </v-btn>

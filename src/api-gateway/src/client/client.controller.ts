@@ -227,6 +227,25 @@ export class ClientController {
     }
   }
 
+  @ApiOperation({ summary: `Find a specific ${className}` })
+  @ApiResponse({
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className}`,
+  })
+  @Get('clientPortal/id/:id')
+  async findOneForClientPortal(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
+    try {
+      const response = await this.clientService.getClientByIdForClientPortal(new Types.ObjectId(id));
+      return new ApiResponseDto(response);
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @ApiResponse({

@@ -25,22 +25,27 @@ export class StockMovementsService {
   ) {}
 
   async create(createStockMovementsDto: CreateStockMovementsDto) {
-    const newStockMovements = new StockMovements(createStockMovementsDto);
+    console.log('In create stock movements');
+    const newStockMovements = new StockMovements();
+    newStockMovements.reason = createStockMovementsDto.reason;
+    newStockMovements.movement = createStockMovementsDto.movement;
+    newStockMovements.movementDate = createStockMovementsDto.movementDate;
+    newStockMovements.companyId = createStockMovementsDto.companyId;
 
     const employee = await this.employeeService.findById(createStockMovementsDto.employeeId);
-    const employeeDetails = new EmployeeDetails();
-    employeeDetails.employeeId = employee._id;
-    employeeDetails.displayName = employee.userInfo.displayName;
-    employeeDetails.firstName = employee.userInfo.firstName;
-    employeeDetails.surname = employee.userInfo.surname;
-    employeeDetails.username = employee.userInfo.username;
-    newStockMovements.employee = employeeDetails;
+    newStockMovements.employee = new EmployeeDetails();
+    newStockMovements.employee.employeeId = employee._id;
+    newStockMovements.employee.displayName = employee.userInfo.displayName;
+    newStockMovements.employee.firstName = employee.userInfo.firstName;
+    newStockMovements.employee.surname = employee.userInfo.surname;
+    newStockMovements.employee.username = employee.userInfo.username;
 
     const inventory = await this.inventoryService.findById(createStockMovementsDto.inventoryId);
-    const inventoryItem = new InventoryItem();
-    inventoryItem.inventoryId = inventory._id;
-    inventoryItem.nameOfItem = inventory.name;
-    newStockMovements.inventoryItem = inventoryItem;
+    newStockMovements.inventoryItem = new InventoryItem();
+    newStockMovements.inventoryItem.inventoryId = inventory._id;
+    newStockMovements.inventoryItem.nameOfItem = inventory.name;
+
+    console.log('StockMovements: ', newStockMovements);
 
     return await this.stockMovementsRepository.save(newStockMovements);
   }
@@ -50,6 +55,7 @@ export class StockMovementsService {
   }
 
   async findAllInCompany(companyId: Types.ObjectId) {
+    console.log('companyId', companyId);
     //checking if the company exist
     if (!(await this.companyService.companyIdExists(companyId))) {
       throw new Error('CompanyId does not exist');
