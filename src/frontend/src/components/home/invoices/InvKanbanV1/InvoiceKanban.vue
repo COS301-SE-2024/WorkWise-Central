@@ -1,12 +1,16 @@
 <template>
   <v-container fluid>
-    <v-row class="d-flex flex-nowrap overflow-scroll">
+    <v-row>
       <VueDraggable
+        class="d-flex flex-nowrap overflow-scroll flex flex-col gap-2 p-4 w-300px h-800px m-auto bg-gray-500/5 rounded overflow-auto"
         ref="el"
         v-model="columns"
-        class="d-flex flex-nowrap overflow-scroll"
         :onUpdate="onColumnDragEnd"
         group="columns"
+        :animation="150"
+        ghostClass="ghost"
+        :scroll="true"
+        :disabled="true"
       >
         <v-col
           v-for="column in columns"
@@ -29,253 +33,242 @@
               <v-chip class="text-subtitle-1 font-weight-black" variant="tonal">
                 {{ column.cards.length }}
               </v-chip>
-              <v-menu align="left">
-                <template v-slot:activator="{ props }">
-                  <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
-                </template>
+              <!--              <v-menu align="left">-->
+              <!--                <template v-slot:activator="{ props }">-->
+              <!--                  <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>-->
+              <!--                </template>-->
 
-                <v-list :border="true" bg-color="background" rounded="lg">
-                  <v-list-subheader>Jobs</v-list-subheader>
+              <!--                <v-list :border="true" bg-color="background" rounded="lg">-->
+              <!--                  <v-list-subheader>Jobs</v-list-subheader>-->
 
-                  <v-list-item>
-                    <v-btn :elevation="0" @click="columnArchiveAll(column)">
-                      <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
-                      {{ 'Archive all' }}
-                    </v-btn>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-dialog v-model="delete_all_jobs_dialog" max-width="500px">
-                      <template v-slot:activator="{ props }">
-                        <v-btn :elevation="0" v-bind="props">
-                          <v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon>
-                          {{ 'Delete all' }}
-                        </v-btn>
-                      </template>
-                      <v-card color="background">
-                        <v-card-title>
-                          <span class="headline">Delete {{ column.status }}</span>
-                        </v-card-title>
-                        <v-card-text>
-                          <v-container>
-                            <v-row>
-                              <p>
-                                Are you sure you want to delete all the jobs in the
-                                <strong>{{
-                                  column.status.charAt(0).toUpperCase() + column.status.slice(1)
-                                }}</strong>
-                                column. all the jobs within it will be permanently removed through
-                                out the company.
-                              </p>
-                              <strong> This action cannot be reversed. </strong>
-                            </v-row>
-                          </v-container>
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn
-                            @click="columnDeleteAllJobs(column)"
-                            color="success"
-                            variant="text"
-                          >
-                            {{ 'Delete' }}
-                          </v-btn>
+              <!--                  <v-list-item>-->
+              <!--                    <v-btn :elevation="0" @click="columnArchiveAll(column)">-->
+              <!--                      <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>-->
+              <!--                      {{ 'Archive all' }}-->
+              <!--                    </v-btn>-->
+              <!--                  </v-list-item>-->
+              <!--                  <v-list-item>-->
+              <!--                    <v-dialog v-model="delete_all_jobs_dialog" max-width="500px">-->
+              <!--                      <template v-slot:activator="{ props }">-->
+              <!--                        <v-btn :elevation="0" v-bind="props">-->
+              <!--                          <v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon>-->
+              <!--                          {{ 'Delete all' }}-->
+              <!--                        </v-btn>-->
+              <!--                      </template>-->
+              <!--                      <v-card color="background">-->
+              <!--                        <v-card-title>-->
+              <!--                          <span class="headline">Delete {{ column.status }}</span>-->
+              <!--                        </v-card-title>-->
+              <!--                        <v-card-text>-->
+              <!--                          <v-container>-->
+              <!--                            <v-row>-->
+              <!--                              <p>-->
+              <!--                                Are you sure you want to delete all the jobs in the-->
+              <!--                                <strong>{{-->
+              <!--                                  column.status.charAt(0).toUpperCase() + column.status.slice(1)-->
+              <!--                                }}</strong>-->
+              <!--                                column. all the jobs within it will be permanently removed through-->
+              <!--                                out the company.-->
+              <!--                              </p>-->
+              <!--                              <strong> This action cannot be reversed. </strong>-->
+              <!--                            </v-row>-->
+              <!--                          </v-container>-->
+              <!--                        </v-card-text>-->
+              <!--                        <v-card-actions>-->
+              <!--                          <v-spacer></v-spacer>-->
+              <!--                          <v-btn-->
+              <!--                            @click="columnDeleteAllJobs(column)"-->
+              <!--                            color="success"-->
+              <!--                            variant="text"-->
+              <!--                          >-->
+              <!--                            {{ 'Delete' }}-->
+              <!--                          </v-btn>-->
 
-                          <v-btn
-                            color="error"
-                            variant="text"
-                            @click="delete_all_jobs_dialog = false"
-                            >Cancel</v-btn
-                          >
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
-                  </v-list-item>
-                  <v-list-subheader v-if="column.status !== 'No Status'">Column</v-list-subheader>
+              <!--                          <v-btn-->
+              <!--                            color="error"-->
+              <!--                            variant="text"-->
+              <!--                            @click="delete_all_jobs_dialog = false"-->
+              <!--                            >Cancel</v-btn-->
+              <!--                          >-->
+              <!--                        </v-card-actions>-->
+              <!--                      </v-card>-->
+              <!--                    </v-dialog>-->
+              <!--                  </v-list-item>-->
+              <!--                  <v-list-subheader v-if="column.status !== 'No Status'">Column</v-list-subheader>-->
 
-                  <v-list-item v-if="column.status !== 'No Status'">
-                    <v-dialog max-height="700" max-width="500" v-model="edit_column_details_dialog">
-                      <template v-slot:activator="{ props }">
-                        <v-btn :elevation="0" v-bind="props"
-                          ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
-                          >{{ 'Edit details' }}
-                        </v-btn>
-                      </template>
-                      <v-card elevation="14" rounded="md" max-height="100%" max-width="900">
-                        <v-card-title class="text-center">Edit {{ column.status }}</v-card-title>
-                        <v-card-text>
-                          <!--              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">-->
-                          <v-col>
-                            <v-spacer></v-spacer>
-                            <v-col>
-                              <v-col align="center">
-                                <v-icon :color="column_color" :size="40">
-                                  {{ 'fa: fa-solid fa-cube' }}
-                                </v-icon>
-                              </v-col>
-                              <v-col>
-                                <label style="font-size: 14px; font-weight: lighter"
-                                  >Column Name</label
-                                >
-                                <v-text-field
-                                  density="compact"
-                                  color="grey-lighten-4"
-                                  placeholder="Enter the name of the new column"
-                                  rounded="md"
-                                  variant="solo"
-                                  v-model="new_column_name"
-                                  :rules="column_name_rule"
-                                  required
-                                  data-testid="job-title-field"
-                                ></v-text-field
-                              ></v-col>
-                              <v-col align="center">
-                                <label style="font-size: 14px; font-weight: lighter">Color</label>
-                                <v-color-picker
-                                  v-model="column_color"
-                                  hide-inputs
-                                  show-swatches
-                                  @update:modelValue="addColorPickerUpdate"
-                                ></v-color-picker>
-                              </v-col>
-                            </v-col>
-                          </v-col>
-                          <v-col align="center">
-                            <label style="{color:red}">{{ error_message }}</label>
-                          </v-col>
-                          <v-col cols="8" offset="2" align="center">
-                            <v-btn
-                              color="success"
-                              rounded="md"
-                              type="submit"
-                              boarder="md"
-                              width="100%"
-                              height="35"
-                              variant="text"
-                              @click="editColumnButtonClickedSave(column)"
-                              data-testid="create-btn"
-                              >Save
-                            </v-btn>
-                            <v-btn
-                              color="error"
-                              rounded="md"
-                              boarder="md"
-                              width="100%"
-                              height="35"
-                              variant="text"
-                              @click="edit_column_details_dialog = false"
-                              data-testid="cancel-btn"
-                              >Cancel
-                            </v-btn>
-                          </v-col>
-                        </v-card-text>
-                      </v-card>
-                    </v-dialog>
-                  </v-list-item>
-                  <v-list-item v-if="column.status !== 'No Status'">
-                    <v-dialog v-model="delete_column_dialog" max-width="500px">
-                      <template v-slot:activator="{ props }">
-                        <v-btn :elevation="0" v-bind="props"
-                          ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
-                          >{{ 'Delete' }}</v-btn
-                        >
-                      </template>
-                      <v-card color="background">
-                        <v-card-title>
-                          <span class="headline">Delete {{ column.status }}</span>
-                        </v-card-title>
-                        <v-card-text>
-                          <v-container>
-                            <v-row>
-                              <p>
-                                Are you sure you want to delete the
-                                <strong>{{
-                                  column.status.charAt(0).toUpperCase() + column.status.slice(1)
-                                }}</strong>
-                                column, all jobs within it will be moved to the
-                                <b>No Status</b> column.
-                              </p>
-                              <strong> This action cannot be reversed. </strong>
-                            </v-row>
-                          </v-container>
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn @click="columnDelete(column)" color="success" variant="text">
-                            {{ 'Delete' }}
-                          </v-btn>
+              <!--                  <v-list-item v-if="column.status !== 'No Status'">-->
+              <!--                    <v-dialog max-height="700" max-width="500" v-model="edit_column_details_dialog">-->
+              <!--                      <template v-slot:activator="{ props }">-->
+              <!--                        <v-btn :elevation="0" v-bind="props"-->
+              <!--                          ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon-->
+              <!--                          >{{ 'Edit details' }}-->
+              <!--                        </v-btn>-->
+              <!--                      </template>-->
+              <!--                      <v-card elevation="14" rounded="md" max-height="100%" max-width="900">-->
+              <!--                        <v-card-title class="text-center">Edit {{ column.status }}</v-card-title>-->
+              <!--                        <v-card-text>-->
+              <!--                          &lt;!&ndash;              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">&ndash;&gt;-->
+              <!--                          <v-col>-->
+              <!--                            <v-spacer></v-spacer>-->
+              <!--                            <v-col>-->
+              <!--                              <v-col align="center">-->
+              <!--                                <v-icon :color="column_color" :size="40">-->
+              <!--                                  {{ 'fa: fa-solid fa-cube' }}-->
+              <!--                                </v-icon>-->
+              <!--                              </v-col>-->
+              <!--                              <v-col>-->
+              <!--                                <label style="font-size: 14px; font-weight: lighter"-->
+              <!--                                  >Column Name</label-->
+              <!--                                >-->
+              <!--                                <v-text-field-->
+              <!--                                  density="compact"-->
+              <!--                                  color="grey-lighten-4"-->
+              <!--                                  placeholder="Enter the name of the new column"-->
+              <!--                                  rounded="md"-->
+              <!--                                  variant="solo"-->
+              <!--                                  v-model="new_column_name"-->
+              <!--                                  :rules="column_name_rule"-->
+              <!--                                  required-->
+              <!--                                  data-testid="job-title-field"-->
+              <!--                                ></v-text-field-->
+              <!--                              ></v-col>-->
+              <!--                              <v-col align="center">-->
+              <!--                                <label style="font-size: 14px; font-weight: lighter">Color</label>-->
+              <!--                                <v-color-picker-->
+              <!--                                  v-model="column_color"-->
+              <!--                                  hide-inputs-->
+              <!--                                  show-swatches-->
+              <!--                                  @update:modelValue="addColorPickerUpdate"-->
+              <!--                                ></v-color-picker>-->
+              <!--                              </v-col>-->
+              <!--                            </v-col>-->
+              <!--                          </v-col>-->
+              <!--                          <v-col align="center">-->
+              <!--                            <label style="{color:red}">{{ error_message }}</label>-->
+              <!--                          </v-col>-->
+              <!--                          <v-col cols="8" offset="2" align="center">-->
+              <!--                            <v-btn-->
+              <!--                              color="success"-->
+              <!--                              rounded="md"-->
+              <!--                              type="submit"-->
+              <!--                              boarder="md"-->
+              <!--                              width="100%"-->
+              <!--                              height="35"-->
+              <!--                              variant="text"-->
+              <!--                              @click="editColumnButtonClickedSave(column)"-->
+              <!--                              data-testid="create-btn"-->
+              <!--                              >Save-->
+              <!--                            </v-btn>-->
+              <!--                            <v-btn-->
+              <!--                              color="error"-->
+              <!--                              rounded="md"-->
+              <!--                              boarder="md"-->
+              <!--                              width="100%"-->
+              <!--                              height="35"-->
+              <!--                              variant="text"-->
+              <!--                              @click="edit_column_details_dialog = false"-->
+              <!--                              data-testid="cancel-btn"-->
+              <!--                              >Cancel-->
+              <!--                            </v-btn>-->
+              <!--                          </v-col>-->
+              <!--                        </v-card-text>-->
+              <!--                      </v-card>-->
+              <!--                    </v-dialog>-->
+              <!--                  </v-list-item>-->
+              <!--                  <v-list-item v-if="column.status !== 'No Status'">-->
+              <!--                    <v-dialog v-model="delete_column_dialog" max-width="500px">-->
+              <!--                      <template v-slot:activator="{ props }">-->
+              <!--                        <v-btn :elevation="0" v-bind="props"-->
+              <!--                          ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon-->
+              <!--                          >{{ 'Delete' }}</v-btn-->
+              <!--                        >-->
+              <!--                      </template>-->
+              <!--                      <v-card color="background">-->
+              <!--                        <v-card-title>-->
+              <!--                          <span class="headline">Delete {{ column.status }}</span>-->
+              <!--                        </v-card-title>-->
+              <!--                        <v-card-text>-->
+              <!--                          <v-container>-->
+              <!--                            <v-row>-->
+              <!--                              <p>-->
+              <!--                                Are you sure you want to delete the-->
+              <!--                                <strong>{{-->
+              <!--                                  column.status.charAt(0).toUpperCase() + column.status.slice(1)-->
+              <!--                                }}</strong>-->
+              <!--                                column, all jobs within it will be moved to the-->
+              <!--                                <b>No Status</b> column.-->
+              <!--                              </p>-->
+              <!--                              <strong> This action cannot be reversed. </strong>-->
+              <!--                            </v-row>-->
+              <!--                          </v-container>-->
+              <!--                        </v-card-text>-->
+              <!--                        <v-card-actions>-->
+              <!--                          <v-spacer></v-spacer>-->
+              <!--                          <v-btn @click="columnDelete(column)" color="success" variant="text">-->
+              <!--                            {{ 'Delete' }}-->
+              <!--                          </v-btn>-->
 
-                          <v-btn color="error" variant="text" @click="delete_column_dialog = false"
-                            >Cancel</v-btn
-                          >
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
+              <!--                          <v-btn color="error" variant="text" @click="delete_column_dialog = false"-->
+              <!--                            >Cancel</v-btn-->
+              <!--                          >-->
+              <!--                        </v-card-actions>-->
+              <!--                      </v-card>-->
+              <!--                    </v-dialog>-->
+              <!--                  </v-list-item>-->
+              <!--                </v-list>-->
+              <!--              </v-menu>-->
             </v-card-item>
-
-            <v-virtual-scroll
-              :items="column.cards"
-              class="kanban-column-scroller"
-              :max-height="850"
-              :max-width="500"
-            >
-              <template #default="{ item }">
-                <v-card-text>
-                  <VueDraggable
-                    v-model="column.cards"
-                    group="job-cards"
-                    :onUpdate="onJobCardChanges"
-                  >
-                    <v-card
-                      @click="clickedEvent(item)"
-                      variant="flat"
-                      elevation="3"
-                      class="kanban-card mb-2"
-                      draggable="true"
-                      :class="{ dragging: isDragging(item) }"
-                      @dragstart="onDragStart(item, column)"
-                      @dragend="onDragEnd"
-                      @drop="onDrop(column)"
-                      aria-grabbed="true"
-                      role="option"
+            <v-card-text>
+              <VueDraggable
+                class="flex flex-col gap-2 p-4 w-300px h-300px m-auto bg-gray-500/5 rounded overflow-auto"
+                v-model="column.cards"
+                group="job-cards"
+                :onUpdate="onJobCardChanges"
+                :animation="150"
+                ghostClass="ghost"
+                :onAdd="(event) => onCardStatusAdd(event, column)"
+              >
+                <v-card
+                  @click="clickedEvent(item)"
+                  v-for="item in column.cards"
+                  :key="item.id"
+                  variant="flat"
+                  elevation="3"
+                  draggable="true"
+                  aria-grabbed="true"
+                  role="option"
+                >
+                  <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
+                    ><b>{{ 'Invoice #' + item.invoiceNumber }}</b>
+                  </v-card-item>
+                  <v-card-item
+                    ><v-chip
+                      :color="column.colour"
+                      variant="elevated"
+                      rounded="sm"
+                      density="comfortable"
                     >
-                      <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
-                        ><b>{{ 'Invoice #' + item.invoiceNumber }}</b>
-                      </v-card-item>
-                      <v-card-item
-                        ><v-chip
-                          :color="column.colour"
-                          variant="elevated"
-                          rounded="sm"
-                          density="comfortable"
-                        >
-                          <b>{{ column.status }}</b></v-chip
-                        ></v-card-item
-                      >
+                      <b>{{ column.status }}</b></v-chip
+                    ></v-card-item
+                  >
 
-                      <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                        <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-user-large' }}</v-icon>
-                        {{ item.clientName }}</v-card-item
-                      ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                        <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
-                        {{ 'Invoice date: ' + item.invoiceDate }}</v-card-item
-                      ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                        <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
-                        {{ 'Payment date: ' + item.paymentDate }}</v-card-item
-                      >
-                      <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                        <v-icon color="kanbanIconColor">{{
-                          'fa: fa-solid fa-cash-register'
-                        }}</v-icon>
-                        {{ 'Amount Due: ' + item.total }}</v-card-item
-                      >
-                    </v-card>
-                  </VueDraggable>
-                </v-card-text>
-              </template>
-            </v-virtual-scroll>
+                  <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-user-large' }}</v-icon>
+                    {{ item.clientName }}</v-card-item
+                  ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
+                    {{ 'Invoice date: ' + item.invoiceDate }}</v-card-item
+                  ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
+                    {{ 'Payment date: ' + item.paymentDate }}</v-card-item
+                  >
+                  <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-cash-register' }}</v-icon>
+                    {{ 'Amount Due: ' + item.total }}</v-card-item
+                  >
+                </v-card>
+              </VueDraggable>
+            </v-card-text>
           </v-card>
         </v-col>
       </VueDraggable>
@@ -285,7 +278,6 @@
     <ViewJob @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
   </v-dialog>
 </template>
-7
 
 <script lang="ts">
 import type { InvoiceCardDataFormat, Column } from '../types'
@@ -312,19 +304,19 @@ export default {
       archive_status_id: '',
       columns: [
         {
-          _id: '1',
-          __v: 0,
-          status: 'Paid',
-          colour: '#00FF00', // Example color for paid status
-          companyId: 'company_1',
-          cards: []
-        },
-        {
           _id: '2',
           __v: 0,
           status: 'Unpaid',
           colour: '#FF0000', // Example color for unpaid status
           companyId: 'company_2',
+          cards: []
+        },
+        {
+          _id: '1',
+          __v: 0,
+          status: 'Paid',
+          colour: '#00FF00', // Example color for paid status
+          companyId: 'company_1',
           cards: []
         }
       ] as Column[],
@@ -346,6 +338,31 @@ export default {
     }
   },
   methods: {
+    async onCardStatusAdd(e: any, c: Column) {
+      console.log('hello there man')
+      console.log(e)
+      console.log(c)
+      console.log(e.clonedData.paid)
+      e.clonedData.status = c.status
+      const apiURL = await this.getRequestUrl()
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      console.log(e.clonedData.id)
+      try {
+        let res = await axios.patch(
+          apiURL + `invoice/${e.clonedData.id}`,
+          { paid: !e.clonedData.paid },
+          config
+        )
+        console.log(res)
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async onJobCardChanges(e: SortableEvent) {
       console.log(e)
     },
@@ -665,16 +682,6 @@ export default {
           config
         )
         console.log(loaded_tags_response.data.data)
-
-        // id: string // For ObjectId type in the API class
-        // invoiceNumber: number
-        // invoiceDate: string // Using ISO string format for Date
-        // paymentDate: string // ISO string format
-        // subTotal: number
-        // total: number
-        // paid: boolean
-        // clientId: string // For ObjectId type
-        // clientName: string
 
         let paid_cards = [] as InvoiceCardDataFormat[]
         let unpaid_cards = [] as InvoiceCardDataFormat[]

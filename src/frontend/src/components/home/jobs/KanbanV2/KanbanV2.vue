@@ -1,22 +1,15 @@
 <template>
   <v-container fluid>
-    <v-row justify="end"
-      ><v-col cols="auto">
-        <v-btn size="x-large" align="right" @click="redirectToArchivePage">
-          <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
-        </v-btn>
-      </v-col></v-row
-    >
-
-    <v-row class="d-flex flex-nowrap overflow-scroll">
+    <v-row>
       <VueDraggable
         ref="el"
         v-model="columns"
-        class="d-flex flex-nowrap overflow-scroll"
+        class="d-flex flex-nowrap overflow-scroll flex flex-col gap-2 p-4 w-300px h-800px m-auto bg-gray-500/5 rounded overflow-auto"
         :onUpdate="onColumnDragEnd"
         group="columns"
         :animation="150"
         ghostClass="ghost"
+        :scroll="true"
       >
         <v-col
           v-for="column in columns"
@@ -237,7 +230,9 @@
                 class="flex flex-col gap-2 p-4 w-300px h-300px m-auto bg-gray-500/5 rounded overflow-auto"
                 v-model="column.cards"
                 group="job-cards"
-                :onUpdate="onJobCardChanges"
+                :animation="150"
+                ghostClass="ghost"
+                :onAdd="(event) => onCardStatusAdd(event, column)"
               >
                 <v-card
                   v-for="item in column.cards"
@@ -245,15 +240,9 @@
                   @click="clickedEvent(item)"
                   variant="flat"
                   elevation="3"
-                  :animation="150"
-                  ghostClass="ghost"
-                  class="kanban-card mb-2"
                   draggable="true"
                   aria-grabbed="true"
                   role="option"
-                  @update="onUpdate"
-                  @add="onAdd"
-                  @remove="remove"
                 >
                   <v-card-item>
                     <v-img :src="item.coverImage"> </v-img>
@@ -302,7 +291,7 @@
                     ></v-card-item
                   >
 
-                  <v-card-text>
+                  <v-card-text v-if="item.tags.length != 0">
                     <v-chip
                       :color="item.tags[i].colour"
                       class=""
@@ -442,6 +431,31 @@ export default {
     }
   },
   methods: {
+    async onCardStatusAdd(e: any, c: Column) {
+      console.log('hello there man')
+      console.log(e)
+      console.log(c)
+      console.log(c.status)
+      e.clonedData.status.status = c.status
+      const apiURL = await this.getRequestUrl()
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      console.log(e.clonedData.jobId)
+      try {
+        let res = await axios.patch(
+          apiURL + `job/update/${e.clonedData.jobId}`,
+          { status: c._id },
+          config
+        )
+        console.log(res)
+      } catch (error) {
+        console.log(error)
+      }
+    },
     onUpdate() {
       console.log('update')
     },
