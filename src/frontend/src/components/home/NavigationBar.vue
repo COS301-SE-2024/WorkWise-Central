@@ -21,7 +21,7 @@ const clientSubItems = ref([
 const employeeSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'manageremployees' },
   { title: 'Teams', icon: 'fa: fa-solid fa-users', routeName: 'teams' },
-  { title: 'Employee Center', icon: 'fa: fa-solid fa-circle-user', routeName: 'employee-center' }
+  // { title: 'Employee Center', icon: 'fa: fa-solid fa-circle-user', routeName: 'employee-center' }
 ])
 const teamSubItems = ref([{ title: 'Management' }])
 const jobSubItems = ref([
@@ -45,7 +45,7 @@ const inventorySubItems = ref([
 ])
 const invoicesSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'invoices' },
-  { title: 'Invoice Center', icon: 'fa: fa-solid fa-file-invoice', routeName: 'invoice-center' },
+  // { title: 'Invoice Center', icon: 'fa: fa-solid fa-file-invoice', routeName: 'invoice-center' },
   { title: 'Invoice Board', icon: 'fa: fa-solid fa-table', routeName: '404' }
 ])
 
