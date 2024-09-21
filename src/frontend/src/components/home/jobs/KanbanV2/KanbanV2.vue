@@ -15,14 +15,12 @@
         class="d-flex flex-nowrap overflow-scroll"
         :onUpdate="onColumnDragEnd"
         group="columns"
+        animation="150"
+        ghostClass="ghost"
       >
         <v-col
           v-for="column in columns"
           :key="column._id"
-          :class="{ 'drop-target': isDropTarget(column) }"
-          @dragover.prevent="onDragOver(column)"
-          @dragleave="onDragLeave"
-          @drop="onDrop(column)"
           role="listbox"
           aria-dropeffect="move"
           :lg="3"
@@ -227,98 +225,97 @@
               </v-menu>
             </v-card-item>
 
-            <v-virtual-scroll
-              :items="column.cards"
-              class="kanban-column-scroller"
-              :max-height="850"
-              :max-width="500"
-            >
-              <template #default="{ item }">
-                <v-card-text>
-                  <VueDraggable
-                    v-model="column.cards"
-                    group="job-cards"
-                    :onUpdate="onJobCardChanges"
-                  >
-                    <v-card
-                      @click="clickedEvent(item)"
-                      variant="flat"
-                      elevation="3"
-                      class="kanban-card mb-2"
-                      draggable="true"
-                      :class="{ dragging: isDragging(item) }"
-                      @dragstart="onDragStart(item, column)"
-                      @dragend="onDragEnd"
-                      @drop="onDrop(column)"
-                      aria-grabbed="true"
-                      role="option"
+            <!--            <v-virtual-scroll-->
+            <!--              :items="column.cards"-->
+            <!--              class="kanban-column-scroller"-->
+            <!--              :max-height="700"-->
+            <!--              :max-width="500"-->
+            <!--            >-->
+            <!--              <template #default="{ item }">-->
+            <v-card-text>
+              <VueDraggable
+                class="flex flex-col gap-2 p-4 w-300px h-300px m-auto bg-gray-500/5 rounded overflow-auto"
+                v-model="column.cards"
+                group="job-cards"
+                :onUpdate="onJobCardChanges"
+              >
+                <v-card
+                  v-for="item in column.cards"
+                  :key="item.jobId"
+                  @click="clickedEvent(item)"
+                  variant="flat"
+                  elevation="3"
+                  animation="150"
+                  ghostClass="ghost"
+                  class="kanban-card mb-2"
+                  draggable="true"
+                  aria-grabbed="true"
+                  role="option"
+                  @update="onUpdate"
+                  @add="onAdd"
+                  @remove="remove"
+                >
+                  <v-card-item>
+                    <v-img :src="item.coverImage"> </v-img>
+                  </v-card-item>
+                  <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
+                    ><b>{{ item.heading }}</b>
+                    <v-menu align="left">
+                      <template v-slot:activator="{ props }">
+                        <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
+                      </template>
+                      <v-list :border="true" bg-color="background" rounded="lg">
+                        <v-list-item>
+                          <v-btn :elevation="0" @click="ArchiveJob(item)">
+                            <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
+                            {{ 'Archive' }}
+                          </v-btn>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </v-card-item>
+                  <v-card-item v-if="item.status.status === column.status"
+                    ><v-chip
+                      :color="column.colour"
+                      variant="elevated"
+                      rounded="sm"
+                      density="comfortable"
                     >
-                      <v-card-item>
-                        <v-img :src="item.coverImage"> </v-img>
-                      </v-card-item>
-                      <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
-                        ><b>{{ item.heading }}</b>
-                        <v-menu align="left">
-                          <template v-slot:activator="{ props }">
-                            <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
-                          </template>
-                          <v-list :border="true" bg-color="background" rounded="lg">
-                            <v-list-item>
-                              <v-btn :elevation="0" @click="ArchiveJob(item)">
-                                <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
-                                {{ 'Archive' }}
-                              </v-btn>
-                            </v-list-item>
-                          </v-list>
-                        </v-menu>
-                      </v-card-item>
-                      <v-card-item v-if="item.status.status === column.status"
-                        ><v-chip
-                          :color="column.colour"
-                          variant="elevated"
-                          rounded="sm"
-                          density="comfortable"
-                        >
-                          <b>{{ item.status.status }}</b></v-chip
-                        ></v-card-item
-                      >
+                      <b>{{ item.status.status }}</b></v-chip
+                    ></v-card-item
+                  >
 
-                      <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                        <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-user-large' }}</v-icon>
-                        {{ item.clientName }}</v-card-item
-                      ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                        <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
-                        {{ item.startDate }}</v-card-item
-                      ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                        <v-icon color="kanbanIconColor">{{
-                          'fa: fa-solid fa-location-dot'
-                        }}</v-icon>
-                        {{ item.city + ', ' + item.suburb }}</v-card-item
-                      >
+                  <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-user-large' }}</v-icon>
+                    {{ item.clientName }}</v-card-item
+                  ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
+                    {{ item.startDate }}</v-card-item
+                  ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-location-dot' }}</v-icon>
+                    {{ item.city + ', ' + item.suburb }}</v-card-item
+                  >
 
-                      <v-card-item v-if="item.priorityTag != null"
-                        ><v-chip
-                          :color="item.priorityTag.colour"
-                          variant="tonal"
-                          density="comfortable"
-                          ><b>Priority: {{ item.priorityTag.label }}</b></v-chip
-                        ></v-card-item
-                      >
+                  <v-card-item v-if="item.priorityTag != null"
+                    ><v-chip :color="item.priorityTag.colour" variant="tonal" density="comfortable"
+                      ><b>Priority: {{ item.priorityTag.label }}</b></v-chip
+                    ></v-card-item
+                  >
 
-                      <v-card-text>
-                        <v-chip
-                          :color="item.tags[i].colour"
-                          class=""
-                          v-for="(n, i) in item.tags.length"
-                          :key="i"
-                          ><b>{{ item.tags[i].label }}</b></v-chip
-                        >
-                      </v-card-text>
-                    </v-card>
-                  </VueDraggable>
-                </v-card-text>
-              </template>
-            </v-virtual-scroll>
+                  <v-card-text>
+                    <v-chip
+                      :color="item.tags[i].colour"
+                      class=""
+                      v-for="(n, i) in item.tags.length"
+                      :key="i"
+                      ><b>{{ item.tags[i].label }}</b></v-chip
+                    >
+                  </v-card-text>
+                </v-card>
+              </VueDraggable>
+            </v-card-text>
+            <!--              </template>-->
+            <!--            </v-virtual-scroll>-->
           </v-card>
         </v-col>
         <v-col cols="auto">
@@ -445,6 +442,15 @@ export default {
     }
   },
   methods: {
+    onUpdate() {
+      console.log('update')
+    },
+    onAdd() {
+      console.log('add')
+    },
+    remove() {
+      console.log('remove')
+    },
     async onJobCardChanges(e: SortableEvent) {
       console.log(e)
     },
