@@ -5,57 +5,63 @@
         <h2 class="text-xl font-semibold">Meetings</h2>
       </v-col>
       <v-divider></v-divider>
-      <v-col cols="12">
-        <v-btn color="primary" @click="openDialog" variant="outlined"> Create New Meeting </v-btn>
+      <v-col cols="12"  class="text-center">
+        <v-btn color="primary" block @click="openDialog" variant="outlined"> Create New Meeting </v-btn>
       </v-col>
     </v-row>
-    <v-row>
-      <!-- Recently Created Appointments Section -->
-      <v-col cols="12" lg="6" order="last" order-lg="first">
-        <h3>Recently Created Meetings</h3>
-        <v-card
-          v-for="appointment in recentAppointments"
-          :key="appointment.id"
-          class="mb-4"
-          color="success"
-        >
-          <v-card-title>{{ appointment.title }}</v-card-title>
-          <v-card-subtitle class="bg-cardColor">{{ formatDate(appointment.date) }}</v-card-subtitle>
-          <v-card-text>{{ appointment.details }}</v-card-text>
-          <v-card-actions class="bg-cardColor">
-            <v-btn color="primary" @click="editAppointment(appointment.id)"
-              ><v-icon icon="fa:fa-solid fa-pencil"></v-icon
-            ></v-btn>
-            <v-btn color="error" @click="deleteAppointment(appointment.id)"
-              ><v-icon icon="fa:fa-solid fa-trash"></v-icon
-            ></v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
+    <v-card rounded="md" class="pa-0 ma-3 bg-background" border="md">
+      <v-row>
+        <!-- Recently Created Appointments Section -->
+        <v-col cols="12" lg="6" order="last" order-lg="first">
+          <h3 class="pa-0 ma-5">Recently Created Meetings</h3>
+          <v-card
+            v-for="appointment in recentAppointments"
+            :key="appointment.id"
+            class="pa-1 ma-5 bg-background"
+            color="success"
+          >
+            <v-card-title>{{ appointment.title }}</v-card-title>
+            <v-card-subtitle class="bg-cardColor">{{
+              formatDate(appointment.date)
+            }}</v-card-subtitle>
+            <v-card-text>{{ appointment.details }}</v-card-text>
+            <v-card-actions class="bg-cardColor">
+              <v-btn color="primary" @click="editAppointment(appointment.id)"
+                ><v-icon icon="fa:fa-solid fa-pencil"></v-icon
+              ></v-btn>
+              <v-btn color="error" @click="deleteAppointment(appointment.id)"
+                ><v-icon icon="fa:fa-solid fa-trash"></v-icon
+              ></v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
 
-      <!-- Most Important Appointments Section -->
-      <v-col cols="12" lg="6" order="first" order-lg="last">
-        <h3>Most Important Meetings</h3>
-        <v-card
-          v-for="appointment in importantAppointments"
-          :key="appointment.id"
-          class="mb-4"
-          color="warning"
-        >
-          <v-card-title>{{ appointment.title }}</v-card-title>
-          <v-card-subtitle class="bg-cardColor">{{ formatDate(appointment.date) }}</v-card-subtitle>
-          <v-card-text>{{ appointment.details }}</v-card-text>
-          <v-card-actions class="bg-cardColor">
-            <v-btn color="primary" @click="editAppointment(appointment.id)"
-              ><v-icon icon="fa:fa-solid fa-pencil"></v-icon
-            ></v-btn>
-            <v-btn color="error" @click="deleteAppointment(appointment.id)"
-              ><v-icon icon="fa:fa-solid fa-trash"></v-icon
-            ></v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
+        <!-- Most Important Appointments Section -->
+        <v-col cols="12" lg="6" order="first" order-lg="last">
+          <h3 class="pa-0 ma-5">Most Important Meetings</h3>
+          <v-card
+            v-for="appointment in importantAppointments"
+            :key="appointment.id"
+            class="pa-1 ma-5 bg-background"
+            color="warning"
+          >
+            <v-card-title>{{ appointment.title }}</v-card-title>
+            <v-card-subtitle class="bg-cardColor">{{
+              formatDate(appointment.date)
+            }}</v-card-subtitle>
+            <v-card-text>{{ appointment.details }}</v-card-text>
+            <v-card-actions class="bg-cardColor">
+              <v-btn color="primary" @click="editAppointment(appointment.id)"
+                ><v-icon icon="fa:fa-solid fa-pencil"></v-icon
+              ></v-btn>
+              <v-btn color="error" @click="deleteAppointment(appointment.id)"
+                ><v-icon icon="fa:fa-solid fa-trash"></v-icon
+              ></v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-card>
   </v-container>
 
   <!-- Dialog for Creating/Editing Appointment -->

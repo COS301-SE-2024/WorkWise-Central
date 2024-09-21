@@ -68,19 +68,17 @@ export class StockMovementsController {
   @Get('/all/:currentEmployeeId')
   async findAllInCompany(@Headers() headers: any, @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId) {
     console.log('In findAllInCompany');
+    console.log('id', currentEmployeeId);
+
     if (!currentEmployeeId) {
       throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
     }
     validateObjectId(currentEmployeeId, 'currentEmployee');
-    console.log('In findAllInCompany');
-    // console.log('id', id);
+
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
-    console.log('currentEmployee', currentEmployee);
-    if (currentEmployee.role.permissionSuite.includes('view all StockMovements')) {
-      console.log('in if');
+    if (currentEmployee.role.permissionSuite.includes('view all stock movements')) {
       let data;
       try {
-        console.log('in try');
         data = await this.stockMovementsService.findAllInCompany(currentEmployee.companyId);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
