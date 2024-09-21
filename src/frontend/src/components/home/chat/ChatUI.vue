@@ -359,9 +359,23 @@ export default {
         this.chats.splice(index, 1)
       }
     },
-    async editMessage({ messageId, chatId, action }) {
+    async editMessage({ messageId, chatId, action, textContent, attachments }) {
       console.log(messageId)
       console.log(action)
+      socket
+        .emitWithAck('update-message', {
+          jwt: localStorage['access_token'],
+          chatId: chatId,
+          messageId: messageId,
+          body: textContent,
+          attachments: attachments
+        })
+        .then((data) => {
+          console.log('Edit message success', data)
+          // if (data.success === true) {
+          //   //show toast
+          // }
+        })
     },
     async deleteMessage({ messageId, chatId, action }) {
       console.log(messageId)
