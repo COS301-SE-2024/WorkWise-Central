@@ -11,7 +11,7 @@ import {
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto, UpdateCompanyJobStatuses } from './dto/update-company.dto';
 import { FlattenMaps, Types } from 'mongoose';
-import { Company } from './entities/company.entity';
+import { Company, CompanyAccountDetailsObject } from './entities/company.entity';
 import { JoinedCompany } from '../users/entities/user.entity';
 import { AddUserFromInviteDto, AddUserToCompanyDto } from './dto/add-user-to-company.dto';
 import { CompanyRepository } from './company.repository';
@@ -29,11 +29,15 @@ import { InventoryService } from '../inventory/inventory.service';
 import { TeamService } from '../team/team.service';
 import { NotificationService } from '../notification/notification.service';
 import { Message } from '../notification/entities/notification.entity';
+import * as crypto from 'crypto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CompanyService {
   constructor(
     private readonly companyRepository: CompanyRepository,
+
+    private configService: ConfigService,
 
     @Inject(forwardRef(() => EmployeeService))
     private readonly employeeService: EmployeeService,
@@ -87,7 +91,7 @@ export class CompanyService {
     await this.roleService.createDefaultRoles(createdCompany._id);
 
     //Create Default JobStatuses in company
-    await this.jobService.createDefaultStatuses(createdCompany._id).then((s) => {
+    this.jobService.createDefaultStatuses(createdCompany._id).then((s) => {
       const arr: Types.ObjectId[] = [];
       for (const status of s) {
         arr.push(status._id);
@@ -96,7 +100,7 @@ export class CompanyService {
     });
 
     //Create Default JobPriorityTags in Company
-    await this.jobService.createDefaultPriorityTags(createdCompany._id);
+    this.jobService.createDefaultPriorityTags(createdCompany._id);
 
     //Assign Owner to user
     console.log('Assign Owner to user');
@@ -107,10 +111,10 @@ export class CompanyService {
     const user = await this.usersService.getUserById(createCompanyDto.userId);
     ///
 
-    const currentEmployeeId = user.joinedCompanies[0].employeeId;
+    const currentEmployeeId = user.joinedCompanies[0]?.employeeId;
 
     console.log('Create Employee');
-    const employee = await this.employeeService.create({
+    const employee = await this.employeeService.createOwner({
       currentEmployeeId: currentEmployeeId,
       userId: createCompanyDto.userId,
       companyId: createdCompany._id,
@@ -154,6 +158,10 @@ export class CompanyService {
     return this.companyRepository.registrationNumberExists(registerNumber);
   }
 
+  async companyNameExists(name: string): Promise<boolean> {
+    return this.companyRepository.nameExists(name);
+  }
+
   async companyVatNumberExists(vatNumber: string): Promise<boolean> {
     return this.companyRepository.VatNumberExists(vatNumber);
   }
@@ -184,6 +192,24 @@ export class CompanyService {
 
     if (result == null) {
       throw new ConflictException('Company not found');
+    }
+
+    return result;
+  }
+
+  async getCompanyAccountDetails(identifier: Types.ObjectId) {
+    const company = await this.companyRepository.findById(identifier);
+    const result = new CompanyAccountDetailsObject();
+    if (company.accountDetails != null) {
+      if (company.accountDetails.merchantId != null) {
+        result.merchantId = this.decrypt(company.accountDetails.merchantId);
+      }
+      if (company.accountDetails.merchantKey != null) {
+        result.merchantKey = this.decrypt(company.accountDetails.merchantKey);
+      }
+      if (company.accountDetails.passPhrase != null) {
+        result.passPhrase = this.decrypt(company.accountDetails.passPhrase);
+      }
     }
 
     return result;
@@ -400,6 +426,55 @@ export class CompanyService {
     return true;
   }
 
+  encrypt(data: string) {
+    console.log('In encryption function: ', data);
+    const payKey = this.configService.get<string>('PAY_KEY');
+    console.log('Secret: ', payKey);
+
+    let ENCRYPTION_KEY = Buffer.from(payKey, 'base64');
+
+    // If the key is not 32 bytes, adjust the length
+    if (ENCRYPTION_KEY.length !== 32) {
+      ENCRYPTION_KEY = Buffer.concat([ENCRYPTION_KEY], 32); // Pads or truncates to 32 bytes
+    }
+
+    console.log('ENCRYPTION_KEY length: ', ENCRYPTION_KEY.length); // Should be 32
+    console.log('ENCRYPTION_KEY: ', ENCRYPTION_KEY);
+
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv('aes-256-cbc', ENCRYPTION_KEY, iv);
+    let encrypted = cipher.update(data, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+
+    console.log('Encrypted data: ', encrypted);
+
+    return iv.toString('hex') + ':' + encrypted;
+  }
+
+  decrypt(data: string) {
+    const payKey = this.configService.get<string>('PAY_KEY');
+    let ENCRYPTION_KEY = Buffer.from(payKey, 'base64');
+
+    // Ensure the key is 32 bytes long, padding or truncating as necessary
+    if (ENCRYPTION_KEY.length !== 32) {
+      ENCRYPTION_KEY = Buffer.concat([ENCRYPTION_KEY], 32); // Pad or truncate to 32 bytes
+    }
+
+    // Split the data into IV and encrypted text
+    const textParts = data.split(':');
+    const iv = Buffer.from(textParts.shift() as string, 'hex'); // Extract the IV
+    const encrypted = Buffer.from(textParts.join(':'), 'hex'); // Extract the encrypted text
+
+    // Create a decipher instance with AES-256-CBC, the encryption key, and IV
+    const decipher = crypto.createDecipheriv('aes-256-cbc', ENCRYPTION_KEY, iv);
+
+    // Decrypt the encrypted text
+    decipher.update(encrypted);
+    const result = decipher.final('utf8');
+
+    return result;
+  }
+
   async update(userId: Types.ObjectId, companyId: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
     const inputValidated = await this.companyUpdateIsValid(userId, companyId, updateCompanyDto);
     if (!inputValidated.isValid) {
@@ -417,6 +492,22 @@ export class CompanyService {
         updateCompanyDto.logo = picture.secure_url;
       } else throw new InternalServerErrorException('file upload failed');
     }
+    console.log('Before encryption: ', updateCompanyDto);
+
+    //checking if accountDetails are being updated and encrypting the details
+    if (updateCompanyDto.accountDetails.merchantId) {
+      updateCompanyDto.accountDetails.merchantId = this.encrypt(updateCompanyDto.accountDetails.merchantId);
+    }
+
+    if (updateCompanyDto.accountDetails.merchantKey) {
+      updateCompanyDto.accountDetails.merchantKey = this.encrypt(updateCompanyDto.accountDetails.merchantKey);
+    }
+
+    if (updateCompanyDto.accountDetails.passPhrase) {
+      updateCompanyDto.accountDetails.passPhrase = this.encrypt(updateCompanyDto.accountDetails.passPhrase);
+    }
+
+    console.log('After encryption: ', updateCompanyDto);
 
     const updatedCompany = await this.companyRepository.update(companyId, updateCompanyDto);
     console.log(updatedCompany);
@@ -548,6 +639,10 @@ export class CompanyService {
       }
     }
 
+    if (await this.companyNameExists(company.name)) {
+      return new ValidationResult(false, `Company with ${company.name} already exists`);
+    }
+
     return new ValidationResult(true);
   }
 
@@ -655,7 +750,12 @@ export class CompanyService {
     const company = await this.getCompanyById(employee.companyId);
     if (company.jobStatuses.length != updateCompanyJobStatuses.jobStatuses.length)
       throw new BadRequestException('Invalid number of columns');
-
+    const noStat = await this.jobService.getStatusByLabel(employee.companyId, 'No Status');
+    if (!noStat) throw new NotFoundException('No Status not found');
+    updateCompanyJobStatuses.jobStatuses = updateCompanyJobStatuses.jobStatuses.filter(
+      (id) => id.toString() !== noStat._id.toString(),
+    );
+    updateCompanyJobStatuses.jobStatuses.unshift(noStat._id);
     return this.companyRepository.updateStatuses(employee.companyId, updateCompanyJobStatuses.jobStatuses);
   }
 
@@ -667,6 +767,16 @@ export class CompanyService {
   async internalFindAllStatusesInCompany(companyId: Types.ObjectId) {
     return this.companyRepository.findAllStatusesInCompany(companyId);
   }
+
+  async getCompanyStatusNames(companyId: Types.ObjectId) {
+    const statArr = await this.companyRepository.findAllStatusNamesInCompany(companyId);
+    console.log(statArr);
+    return statArr;
+  }
+
+  // async getCompanyAccountDetails(companyId: Types.ObjectId) {
+  //   return this.companyRepository.findCompanyAccountDetails(companyId);
+  // }
 
   private eradicateCompany(companyId: Types.ObjectId) {
     this.companyRepository.eradicateCompany(companyId).then((r) => console.log('acknowledged', r.acknowledged));

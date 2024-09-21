@@ -69,6 +69,9 @@ export class AccountDetails {
   @IsOptional()
   @IsString()
   merchantKey?: string;
+  @IsOptional()
+  @IsString()
+  passPhrase?: string;
 }
 
 export class UpdateCompanyDto {

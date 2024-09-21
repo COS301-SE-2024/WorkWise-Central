@@ -114,7 +114,7 @@ export class ChatService {
       'You were added to a new chat',
       `${user.personalInfo.firstName} ${user.personalInfo.surname} added you to a new chat`,
     );
-    this.notificationService.create({ recipientIds: addUsersDto.userIds, message: message });
+    this.notificationService.create({ recipientIds: addUsersDto.userIds, message: message, isJobRelated: false });
     return chat;
   }
 

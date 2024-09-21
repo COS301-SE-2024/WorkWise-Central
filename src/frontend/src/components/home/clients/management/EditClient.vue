@@ -265,7 +265,7 @@ export default {
           }
         }
       }
-console.log(data)
+      console.log(data)
       try {
         const response = await axios.patch(
           `http://localhost:3000/client/${this._clientID}`,

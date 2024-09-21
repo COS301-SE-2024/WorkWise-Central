@@ -44,14 +44,8 @@
               :header-props="{ class: 'bg-secondRowColor h6' }"
               class="bg-cardColor"
             >
-              <template v-slot:[`item.actions`]="{ item }">
-                <v-btn color="success" @click="showChart(item)" block>
-                  <v-icon icon="fa: fa-solid fa-chart-simple" color="success"></v-icon> Show Stock
-                  Chart
-                </v-btn>
-                <v-btn color="error" @click="selectItem(item)" block>
-                  <v-icon icon="fa: fa-solid fa-clipboard" color="error"></v-icon> Record Stock
-                </v-btn>
+              <template v-slot:[`item.reorderLevel`]="{ item }">
+                <v-text-field type="number" v-model="item.reorderLevel"> </v-text-field>
               </template>
             </v-data-table>
 
@@ -168,17 +162,12 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import axios from 'axios'
 import Chart from 'primevue/chart'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
-interface InventoryItem {
-  _id: string
-  name: string
-  currentStockLevel: number
-  updatedStock: number
-}
+
 export default {
   data() {
     return {
@@ -191,9 +180,10 @@ export default {
       stockTakeDate: new Date(),
       headers: [
         { title: 'Name', value: 'name' },
-        { title: 'Cost Price', value: 'costPrice' },
+
         { title: 'Current Stock Level', value: 'currentStockLevel' },
-        { title: 'Actions', value: 'actions', sortable: false }
+        { title: 'Reorder Level', value: 'reorderLevel' },
+        { title: '', value: 'actions', sortable: false }
       ],
       sortOptions: [
         { title: 'Name (A-Z)', value: 'name' },
@@ -209,49 +199,29 @@ export default {
         reorderLevel: 0,
         images: ''
       },
-      nameRules: [(v: string) => !!v || 'Name is required'],
-      descriptionRules: [(v: string) => !!v || 'Description is required'],
+      nameRules: [(v) => !!v || 'Name is required'],
+      descriptionRules: [(v) => !!v || 'Description is required'],
       costPriceRules: [
-        (v: string) => !!v || 'Cost Price is required',
-        (v: string) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Cost Price must be a valid number',
-        (v: string) => parseFloat(v) > 0 || 'Cost Price must be greater than 0',
-        (v: string) => !/^0\d/.test(v) || 'Cost Price cannot have leading zeros'
+        (v) => !!v || 'Cost Price is required',
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Cost Price must be a valid number',
+        (v) => parseFloat(v) > 0 || 'Cost Price must be greater than 0',
+        (v) => !/^0\d/.test(v) || 'Cost Price cannot have leading zeros'
       ],
       currentStockLevelRules: [
-        (v: string) => !!v || 'Current Stock Level is required',
-        (v: string) =>
-          /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Current Stock Level must be a valid number',
-        (v: string) => !/^0\d/.test(v) || 'Current Stock Level cannot have leading zeros'
+        (v) => !!v || 'Current Stock Level is required',
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Current Stock Level must be a valid number',
+        (v) => !/^0\d/.test(v) || 'Current Stock Level cannot have leading zeros'
       ],
       reorderLevelRules: [
-        (v: string) => !!v || 'Reorder Level is required',
-        (v: string) =>
-          /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Reorder Level must be a valid number',
-        (v: string) => !/^0\d/.test(v) || 'Reorder Level cannot have leading zeros'
+        (v) => !!v || 'Reorder Level is required',
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Reorder Level must be a valid number',
+        (v) => !/^0\d/.test(v) || 'Reorder Level cannot have leading zeros'
       ],
       inventoryItems: [
-        {
-          _id: '1',
-          name: 'Item 1',
-          costPrice: 100,
-          currentStockLevel: 50
-        },
-        {
-          _id: '2',
-          name: 'Item 2',
-          costPrice: 150,
-          currentStockLevel: 30
-        },
-        {
-          _id: '3',
-          name: 'Item 3',
-          costPrice: 200,
-          currentStockLevel: 20
-        }
         // Add more items as needed
       ],
       chartDialog: false,
-      selectedItem: '' as any,
+      selectedItem: '',
       chartData: {
         labels: [],
         datasets: []
@@ -269,7 +239,7 @@ export default {
     }
   },
   methods: {
-    async updateStock(item: InventoryItem) {
+    async updateStock(item) {
       this.isUpdating = true
       const config = {
         headers: {
@@ -300,7 +270,7 @@ export default {
         this.isUpdating = false
       }
     },
-    getRowProps(index: any) {
+    getRowProps(index) {
       return {
         class: index % 2 === 0 ? 'bg-secondRowColor' : ''
       }
@@ -376,17 +346,17 @@ export default {
         images: ''
       }
     },
-    selectItem(item: any) {
+    selectItem(item) {
       this.selectedItem = item
       this.showDialog = true
     },
-    handleImageUpload(event: Event) {
-      const target = event.target as HTMLInputElement
+    handleImageUpload(event) {
+      const target = event.target
       if (target.files && target.files[0]) {
-        const file: File = target.files[0]
+        const file = target.files[0]
         const reader = new FileReader()
 
-        reader.onload = (e: ProgressEvent<FileReader>) => {
+        reader.onload = (e) => {
           if (e.target && typeof e.target.result === 'string') {
             // this.selectItem.images = e.target.result
           }
@@ -394,7 +364,7 @@ export default {
         reader.readAsDataURL(file)
       }
     },
-    showChart(item: any) {
+    showChart(item) {
       console.log('Showing chart for:', item)
       this.selectedItem = item
 
@@ -403,14 +373,14 @@ export default {
 
       // Prepare the chart data
       this.chartData = {
-        labels: ['Current Stock Level', 'Suggested Reorder Level'] as any,
+        labels: ['Current Stock Level', 'Suggested Reorder Level'],
         datasets: [
           {
             label: item.name,
             backgroundColor: '#42A5F5',
             data: [item.currentStockLevel, reorderLevel]
           }
-        ] as any
+        ]
       }
 
       // Show the chart dialog
@@ -539,7 +509,7 @@ export default {
       )
       if (confirmed) {
         for (const item of this.filteredInventoryItems) {
-          await this.updateStock(item as any)
+          await this.updateStock(item)
         }
       }
       // Generate and download the report
@@ -567,7 +537,7 @@ export default {
         console.error(error)
       }
     },
-    async isLocalAvailable(localUrl: string) {
+    async isLocalAvailable(localUrl) {
       try {
         const res = await axios.get(localUrl)
         return res.status < 300 && res.status > 199

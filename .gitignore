@@ -46,3 +46,4 @@ component.js
 component-index.html
 /src/api-gateway/uploads/
 /uploads/
+!/src/frontend/.env.production

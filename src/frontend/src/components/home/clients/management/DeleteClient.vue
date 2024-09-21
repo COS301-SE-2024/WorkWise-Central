@@ -51,10 +51,8 @@ import Toast from 'primevue/toast'
 export default {
   name: 'DeleteClient',
   props: {
-
     client_id: Number,
     client: Object
-  
   },
   components: { Toast },
   data() {

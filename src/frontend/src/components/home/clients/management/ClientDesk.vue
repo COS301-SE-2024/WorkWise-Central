@@ -53,6 +53,7 @@
                 <AddClient
                   v-show="checkPermission('add new clients')"
                   :showDialog="addClientVisibility"
+                  @createClient="getClients"
                   @close="addClientVisibility = false"
                 />
               </v-dialog>
@@ -483,15 +484,9 @@ export default defineComponent({
           console.log(response.data)
           this.clients = response.data.data
           console.log(this.clients)
-          if (this.clients.length === 0) {
-            this.clientDetails = []
-            this.$toast.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'No clients found',
-              life: 3000
-            })
-          }
+
+          this.clearClientDetailsArray()
+          this.clearClientIdsArray()
           for (let i = 0; i < this.clients.length; i++) {
             this.clientIds[i] = this.clients[i]._id
             console.log(this.clientIds[i])
@@ -503,6 +498,12 @@ export default defineComponent({
         .catch((error) => {
           console.error('Failed to fetch clients:', error)
         })
+    },
+    clearClientDetailsArray() {
+      this.clientDetails = []
+    },
+    clearClientIdsArray() {
+      this.clientIds = []
     },
     async getEmployeeDetails() {
       const config = {

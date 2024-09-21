@@ -1,11 +1,12 @@
 <template>
   <v-container fluid>
-    <v-row>
-      <v-col>
-        <v-col :cols="12">
-          <h4 class="text-center" style="font-size: 25px; font-weight: lighter">SUPPORT</h4></v-col
-        >
+    <v-row class="justify-center align-center">
+      <v-col cols="12" class="text-center">
+        <h2 class="text-xl font-semibold">Support</h2>
       </v-col>
+      <v-divider></v-divider>
+    </v-row>
+    <v-row>
       <v-col :cols="12">
         <v-tabs v-model="tab" align-tabs="center" color="primary" bg-color="secondary">
           <v-tab :value="1">FAQ</v-tab>

@@ -3,40 +3,29 @@
     <!-- Invoice Summary Card -->
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
-        <h2 class="text-xl font-semibold">Invoice Summary</h2>
+        <h2 class="text-xl font-semibold">Invoice Center</h2>
         <v-divider></v-divider>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12">
-        <v-tabs v-model="currentInvoiceType" bg-color="secondary" dark>
-          <v-tab v-for="tab in tabs" :key="tab.value" @click="changeTab(tab.value)">{{
-            tab.text
-          }}</v-tab>
-        </v-tabs>
-
-        <v-tabs-items v-model="currentInvoiceType">
-          <v-tab-item v-for="tab in tabs" :key="tab.value" :value="tab.value">
-            <v-card v-if="currentTab === tab.value">
-              <v-card-title>{{ tab.title }}</v-card-title>
-              <v-card-subtitle>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" lg="6">
-                      <Chart type="bar" :data="chartData" />
-                    </v-col>
-                    <v-col cols="12" lg="6">
-                      <Chart :type="chartType" :data="chartData" />
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-subtitle>
-            </v-card>
-          </v-tab-item>
-        </v-tabs-items>
+        <v-card>
+          <v-card-subtitle>
+            <v-container>
+              <v-row>
+                <v-col cols="12" lg="6">
+                  <Chart type="bar" :data="chartData" />
+                </v-col>
+                <v-col cols="12" lg="6">
+                  <Chart :type="chartType" :data="chartData" />
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-subtitle>
+        </v-card>
       </v-col>
     </v-row>
-
+    <v-spacer></v-spacer>
     <!-- Invoice Status Filter -->
 
     <!-- Client-Specific Invoice Table -->
@@ -46,11 +35,28 @@
         <v-divider></v-divider>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col>
-        <v-btn @click="filterInvoices('all')">All</v-btn>
-        <v-btn @click="filterInvoices('paid')">Paid</v-btn>
-        <v-btn @click="filterInvoices('unpaid')">Unpaid</v-btn>
+    <v-card>
+      <v-card-title>
+        <v-container
+          ><v-row
+            ><v-col cols="12" lg="3">
+              <v-btn @click="filterInvoices('all')" block variant="elevated">All</v-btn></v-col
+            ><v-col cols="12" lg="3">
+              <v-btn @click="filterInvoices('true')" block variant="elevated">Paid</v-btn></v-col
+            >
+            <v-col cols="12" lg="3"
+              ><v-btn @click="filterInvoices('false')" block variant="elevated"
+                >Unpaid</v-btn
+              ></v-col
+            >
+            <v-col cols="12" lg="3">
+              <v-btn @click="exportInvoices" block variant="elevated">Export Invoices</v-btn>
+            </v-col></v-row
+          ></v-container
+        >
+      </v-card-title>
+
+      <v-card-text>
         <v-data-table
           :headers="headers"
           :items="filteredInvoices"
@@ -58,16 +64,15 @@
           :row-props="getRowProps"
         >
           <template v-slot:[`item.status`]="{ item }">
-            <v-chip :color="item.status === 'paid' ? 'green' : 'red'" dark>{{
-              item.status
-            }}</v-chip>
+            <v-chip :color="item.status === 'false' ? 'green' : 'red'">{{ item.status }}</v-chip>
           </template>
+          <template v-slot:[`item.total`]="{ item }"> R{{ item.total }} </template>
         </v-data-table>
-      </v-col>
-    </v-row>
-
+      </v-card-text>
+    </v-card>
+<v-spacer></v-spacer>
     <!-- Payment History Timeline -->
-    <v-row class="justify-center align-center">
+    <!-- <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
         <h2 class="text-xl font-semibold">Payment History</h2>
         <v-divider></v-divider>
@@ -81,23 +86,30 @@
           </v-timeline-item>
         </v-timeline>
       </v-col>
-    </v-row>
+    </v-row> -->
 
     <!-- Revenue Chart -->
-    <v-row class="justify-center align-center">
-      <v-col cols="12" class="text-center">
-        <h2>Revenue Chart</h2>
-        <p>Description: A chart visualizing the paid and unpaid amounts over time.</p>
-        <v-divider></v-divider>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <div class="chart-container">
-          <Chart type="bar" :data="data" :options="chartOptions" />
-        </div>
-      </v-col>
-    </v-row>
+    <v-spacer></v-spacer>
+    <v-card>
+      <v-row class="justify-center align-center">
+        <v-col cols="12" class="text-center">
+          <h2>Revenue Chart</h2>
+          <p>Description: A chart visualizing the paid and unpaid amounts over time.</p>
+          <v-divider></v-divider>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-btn @click="createInvoice" block variant="text">Create New Invoice</v-btn>
+        <v-btn @click="markAsPaid" block variant="text">Mark as Paid</v-btn>
+        <v-btn @click="sendReminder" block variant="text">Send Payment Reminder</v-btn>
+      </v-row>
+      <v-row>
+        <v-col>
+          <div class="chart-container">
+            <Chart type="bar" :data="data" :options="chartOptions" />
+          </div>
+        </v-col> </v-row
+    ></v-card>
 
     <!-- Invoice Details Modal -->
     <v-dialog v-model="showInvoiceModal">
@@ -105,9 +117,9 @@
         <v-card-title>Invoice Details</v-card-title>
         <v-card-text>
           <p>Invoice #: {{ selectedInvoice.invoiceNumber }}</p>
-          <p>Client: {{ selectedInvoice.clientName }}</p>
-          <p>Status: {{ selectedInvoice.status }}</p>
-          <p>Amount: {{ selectedInvoice.amount }}</p>
+          <p>Date: {{ selectedInvoice.creationDate }}</p>
+          <p>Status: {{ selectedInvoice.paid }}</p>
+          <p>Amount: {{ selectedInvoice.total }}</p>
           <!-- More details can be added here -->
         </v-card-text>
         <v-card-actions>
@@ -117,47 +129,25 @@
     </v-dialog>
 
     <!-- Export and Reporting Tools -->
-    <v-row>
-      <v-col>
-        <v-btn @click="exportInvoices">Export Invoices</v-btn>
-      </v-col>
-    </v-row>
-
-    <!-- Invoice Aging Report -->
-    <v-row>
-      <v-col>
-        <v-card class="bg-cardColor">
-          <v-card-title>Invoice Aging Report</v-card-title>
-          <v-card-text>
-            <v-list>
-              <v-list-item v-for="aging in invoiceAgingReport" :key="aging.daysOverdue">
-                {{ aging.daysOverdue }} days overdue: {{ aging.count }} invoices
-              </v-list-item>
-            </v-list>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
 
     <!-- Quick Action Buttons -->
-    <v-row>
-      <v-btn @click="createInvoice">Create New Invoice</v-btn>
-      <v-btn @click="markAsPaid">Mark as Paid</v-btn>
-      <v-btn @click="sendReminder">Send Payment Reminder</v-btn>
-    </v-row>
   </v-container>
 </template>
 
 <script lang="ts">
 import Chart from 'primevue/chart'
+import axios from 'axios'
 
 // Define interfaces
 interface Invoice {
-  id: number
+  _id: string
   invoiceNumber: string
+  creationDate: string
+  paymentDate: string
+  total: number
+  paid: boolean
   clientName: string
-  status: string
-  amount: number
+  jobTitle: string
 }
 
 interface Client {
@@ -182,9 +172,9 @@ interface AgingReport {
 export default {
   data() {
     return {
-      invoices: [] as Invoice[],
-      clients: [] as Client[],
-      payments: [] as Payment[],
+      invoices: [] as any[],
+      clients: [] as any[],
+      payments: [] as any[],
       data: {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
         datasets: [
@@ -275,17 +265,22 @@ export default {
         }
       },
       invoiceAgingReport: [] as AgingReport[],
-      filteredInvoices: [] as Invoice[],
+      currentEmployee: '',
+      companyId: '',
+      filteredInvoices: [] as any[],
       showInvoiceModal: false,
       selectedInvoice: {} as Partial<Invoice>,
       totalInvoices2: 0,
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      invoiceItems: [] as Invoice[],
       totalPaid2: 0,
       totalUnpaid2: 0,
       headers: [
         { title: 'Invoice Number', value: 'invoiceNumber' },
         { title: 'Client Name', value: 'clientName' },
-        { title: 'Status', value: 'status' },
-        { title: 'Amount', value: 'amount' }
+        { title: 'Paid', value: 'paid' },
+        { title: 'Total', value: 'total' }
       ],
       chartData: {
         labels: ['Paid', 'Unpaid'],
@@ -307,42 +302,16 @@ export default {
       this.currentTab = tab
     },
     initializeData() {
-      this.invoices = [
-        { id: 1, invoiceNumber: 'INV-001', clientName: 'Client A', status: 'paid', amount: 1000 },
-        { id: 2, invoiceNumber: 'INV-002', clientName: 'Client B', status: 'unpaid', amount: 2000 },
-        { id: 3, invoiceNumber: 'INV-003', clientName: 'Client A', status: 'unpaid', amount: 1500 }
-      ]
-
-      this.clients = [
-        { id: 1, name: 'Client A', totalInvoices: 2, totalPaid: 1, totalUnpaid: 1 },
-        { id: 2, name: 'Client B', totalInvoices: 1, totalPaid: 0, totalUnpaid: 1 }
-      ]
-
-      this.payments = [
-        { date: '2024-08-01', amount: 1000, invoiceNumber: 'INV-001' },
-        { date: '2024-08-05', amount: 2000, invoiceNumber: 'INV-002' }
-      ]
-
-      // this.chartOptions = {
-      //   series: [1500, 2500] as number[],
-      //   labels: ['Paid', 'Unpaid']
-      // }
-
-      this.invoiceAgingReport = [
-        { daysOverdue: 30, count: 2 },
-        { daysOverdue: 60, count: 1 }
-      ]
-
       this.filteredInvoices = this.invoices
       this.totalInvoices = this.invoices.length
-      this.totalPaid = this.invoices.filter((invoice) => invoice.status === 'paid').length
-      this.totalUnpaid = this.invoices.filter((invoice) => invoice.status === 'unpaid').length
+      this.totalPaid = this.invoices.filter((invoice) => invoice.paid === 'true').length
+      this.totalUnpaid = this.invoices.filter((invoice) => invoice.paid === 'false').length
     },
     filterInvoices(status: string) {
       if (status === 'all') {
         this.filteredInvoices = this.invoices
       } else {
-        this.filteredInvoices = this.invoices.filter((invoice) => invoice.status === status)
+        this.filteredInvoices = this.invoices.filter((invoice) => invoice.paid === status)
       }
     },
     getRowProps(index: any) {
@@ -350,25 +319,119 @@ export default {
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
     },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status >= 200 && res.status < 300
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async getRequests() {
+      // Getting all the jobs for the company
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const url = await this.getRequestUrl()
+      if (localStorage.getItem('currentCompany') !== null) {
+        this.companyId = localStorage.getItem('currentCompany') as string
+      }
+      if (localStorage.getItem('employeeId') !== null) {
+        this.currentEmployee = localStorage.getItem('employeeId') as string
+      }
+      await axios
+        .get(`${url}invoice/all/detailed/${this.currentEmployee}`, config)
+        .then((response) => {
+          console.log('response: ', response)
+          for (const invoice of response.data.data) {
+            this.invoices.push({
+              _id: invoice._id,
+              invoiceNumber: invoice.invoiceNumber,
+              creationDate: invoice.invoiceDate,
+              paymentDate: invoice.paymentDate,
+              total: invoice.total,
+              paid: invoice.paid,
+              clientName:
+                invoice.clientId.details.firstName + ' ' + invoice.clientId.details.lastName,
+              jobTitle: invoice.jobId.details.heading
+            })
+          }
+          console.log('this.invoiceItems: ', this.invoiceItems)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    },
     exportInvoices() {
-      // Mock export functionality
-      console.log('Exporting invoices...')
+      // Implement mock export functionality
+      const exportedData = this.filteredInvoices.map((invoice) => ({
+        InvoiceNumber: invoice.number,
+        Date: invoice.date,
+        Status: invoice.status,
+        Amount: invoice.amount
+      }))
+
+      const blob = new Blob([JSON.stringify(exportedData)], { type: 'application/json' })
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(blob)
+      link.download = 'invoices.json'
+      link.click()
+
+      console.log('Exporting invoices...', exportedData)
     },
     createInvoice() {
-      // Mock create invoice functionality
-      console.log('Creating new invoice...')
+      // Implement mock create invoice functionality
+      const newInvoice = {
+        id: this.invoices.length + 1,
+        invoiceNumber: `INV-00${this.invoices.length + 1}`,
+        clientName: 'New Client',
+        status: 'unpaid',
+        amount: Math.floor(Math.random() * 5000) + 500 // Random amount between 500 and 5000
+      }
+
+      this.invoices.push(newInvoice)
+      this.filteredInvoices.push(newInvoice) // Update filtered list if not filtered
+      console.log('Creating new invoice...', newInvoice)
     },
     markAsPaid() {
-      // Mock mark as paid functionality
-      console.log('Marking invoice as paid...')
+      // Implement mock mark as paid functionality
+      const unpaidInvoice = this.invoices.find((invoice) => invoice.status === 'unpaid')
+      if (unpaidInvoice) {
+        unpaidInvoice.status = 'paid'
+        this.filteredInvoices = this.filteredInvoices.filter(
+          (invoice) => invoice._id !== unpaidInvoice.id
+        ) // Refresh filtered list
+        console.log('Marking invoice as paid...', unpaidInvoice)
+      } else {
+        console.log('No unpaid invoices to mark as paid.')
+      }
     },
     sendReminder() {
-      // Mock send reminder functionality
-      console.log('Sending payment reminder...')
+      // Implement mock send reminder functionality
+      const unpaidInvoices = this.invoices.filter((invoice) => invoice.status === 'unpaid')
+      if (unpaidInvoices.length > 0) {
+        unpaidInvoices.forEach((invoice) => {
+          console.log(
+            `Sending reminder for invoice: ${invoice.invoiceNumber} to ${invoice.clientName}`
+          )
+        })
+      } else {
+        console.log('No unpaid invoices to send reminders for.')
+      }
     }
   },
   created() {
     this.initializeData()
+  },
+  mounted() {
+    this.getRequests()
   }
 }
 </script>

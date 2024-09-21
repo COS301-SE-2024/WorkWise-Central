@@ -133,23 +133,41 @@ export class InventoryService {
   }
 
   async update(id: Types.ObjectId, updateInventoryDto: ExternalInventoryUpdateDto) {
+    console.log('In update inventory');
     const validation = await this.validateUpdateInventory(id);
     if (!validation.isValid) {
+      console.log('validation failed');
       throw new Error(validation.message);
     }
     const inventory = await this.findById(id);
-    const dto = new CreateStockMovementsDto();
-    dto.companyId = inventory.companyId;
-    dto.inventoryId = id;
-    dto.movementDate = new Date();
-    dto.employeeId = updateInventoryDto.currentEmployeeId;
-    if (updateInventoryDto.updateInventoryDto.reason) {
-      dto.reason = updateInventoryDto.updateInventoryDto.reason;
-    } else {
-      dto.reason = 'Inventory Update';
-    }
+    console.log(
+      'updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel: ',
+      updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel,
+    );
+    if (
+      updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel > 0 ||
+      updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel < 0
+    ) {
+      const dto = new CreateStockMovementsDto();
+      dto.movementDate = new Date();
+      if (updateInventoryDto.updateInventoryDto.reason) {
+        dto.reason = updateInventoryDto.updateInventoryDto.reason;
+      } else {
+        dto.reason = 'Inventory Update';
+      }
+      if (updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel > 0) {
+        dto.movement = updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel;
+      }
+      if (updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel < 0) {
+        dto.movement = -(updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel);
+      }
+      dto.companyId = new Types.ObjectId(inventory.companyId.toString());
+      dto.employeeId = new Types.ObjectId(updateInventoryDto.currentEmployeeId.toString());
+      dto.inventoryId = new Types.ObjectId(id.toString());
 
-    await this.stockMovementsService.create(dto);
+      console.log('dto for stockmovements: ', dto);
+      await this.stockMovementsService.create(dto);
+    }
 
     if (updateInventoryDto.updateInventoryDto.name) {
       await this.stockTakeService.updateInventoryReference(id, updateInventoryDto.updateInventoryDto.name);
