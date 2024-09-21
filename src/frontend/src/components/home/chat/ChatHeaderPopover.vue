@@ -7,6 +7,7 @@
           <TabList>
             <Tab value="0">{{ options[0].name }}</Tab>
             <Tab value="1">{{ options[1].name }}</Tab>
+            <Tab value="2">{{ options[2].name }}</Tab>
           </TabList>
           <TabPanels>
             <TabPanel value="0">
@@ -174,12 +175,12 @@ const props = defineProps(['chat', 'participants'])
 //const defaultChatPic = 'https://img.icons8.com/?size=100&id=105326&format=png&color=000000'
 const emit = defineEmits(['edit-chat', 'delete-chat'])
 
-const tempImage = 'https://picsum.photos/200/300'
+const tempImage = 'http://www.gravatar.com/avatar/?d=mp'
 const selectedOption = ref()
 const options = ref([
   { name: 'Overview', code: 'NY' },
-  { name: 'Members', code: 'RM' }
-  // { name: 'London', code: 'LDN' }
+  { name: 'Members', code: 'RM' },
+  { name: 'Settings', code: 'NL' }
 ])
 
 const deleteChat = () => {

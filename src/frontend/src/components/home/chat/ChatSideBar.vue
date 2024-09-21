@@ -174,7 +174,7 @@ const createNewChat = () => {
 <style scoped>
 .chat-sidebar {
   width: 300px;
-  background-color: #f4f4f4;
+  background-color: rgba(172, 211, 223, 0.2);
   border-right: 1px solid #e0e0e0;
   padding: 1rem;
   height: 100%;
