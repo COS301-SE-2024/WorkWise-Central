@@ -28,9 +28,12 @@
           class="participant-card"
         >
           <v-card border="md">
-            <v-img
+            <video
               v-if="participant.cameraOn"
-              :src="participant.videoStream"
+              ref="participant.videoRef"
+              :srcObject="participant.videoStream"
+              autoplay
+              playsinline
               height="200px"
               class="participant-video"
             />
@@ -81,9 +84,12 @@
                 >
                   <img :src="participant.profilePic" alt="Profile Picture" />
                 </v-avatar>
-                <v-img
+                <video
                   v-else
-                  :src="participant.videoStream"
+                  ref="participant.videoRef"
+                  :srcObject="participant.videoStream"
+                  autoplay
+                  playsinline
                   height="75px"
                   class="participant-video"
                 />
@@ -105,8 +111,6 @@
         </v-col>
       </v-row>
 
-      <!-- Toast Notifications -->
-
       <!-- User Controls -->
       <v-row class="d-flex justify-center">
         <v-btn @click="handleMute">Toggle Mute</v-btn>
@@ -117,20 +121,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Toast from 'primevue/toast'
+import { defineComponent, ref } from 'vue';
+import Toast from 'primevue/toast';
 interface Participant {
-  id: number
-  profilePic: string
-  videoStream: string
-  isMuted: boolean
-  cameraOn: boolean
+  id: number;
+  profilePic: string;
+  videoStream: MediaStream | null;
+  isMuted: boolean;
+  cameraOn: boolean;
+  videoRef: any;
 }
 
 export default defineComponent({
   name: 'VideoConferencing',
   components: {
-    Toast
+    Toast,
   },
   data() {
     return {
@@ -138,54 +143,73 @@ export default defineComponent({
         {
           id: 1,
           profilePic: 'https://randomuser.me/api/portraits',
-          videoStream: 'https://source.unsplash.com/random/800x600',
+          videoStream: null,
           isMuted: false,
-          cameraOn: true
-        }
-        // Your participants array
+          cameraOn: true,
+          videoRef: ref(null),
+        },
       ] as Participant[],
       isUserMuted: false,
       isUserCameraOn: true,
       meetingName: 'Weekly Standup Meeting',
-      layout: 'grid' // Default layout is grid
-    }
+      layout: 'grid', // Default layout is grid
+      localStream: null as MediaStream | null,
+    };
   },
   methods: {
+    async initWebRTC() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        this.localStream = stream;
+        this.participants.forEach((participant) => {
+          participant.videoStream = stream;
+          if (participant.videoRef) {
+            participant.videoRef.srcObject = stream;
+          }
+        });
+      } catch (error) {
+        console.error('Error accessing media devices.', error);
+      }
+    },
     toggleMute(participantId: number) {
-      const participant = this.participants.find((p) => p.id === participantId)
-      if (participant) {
-        participant.isMuted = !participant.isMuted
+      const participant = this.participants.find((p) => p.id === participantId);
+      if (participant && this.localStream) {
+        const audioTrack = this.localStream.getAudioTracks()[0];
+        audioTrack.enabled = !audioTrack.enabled;
+        participant.isMuted = !audioTrack.enabled;
         this.$toast.add({
           severity: participant.isMuted ? 'info' : 'warn',
           summary: 'Audio',
           detail: participant.isMuted ? 'Muted' : 'Unmuted',
-          life: 3000
-        })
+          life: 3000,
+        });
       }
     },
     switchCamera(participantId: number) {
-      const participant = this.participants.find((p) => p.id === participantId)
-      if (participant) {
-        participant.cameraOn = !participant.cameraOn
-        this.$toast.add({
-          severity: 'info',
-          summary: 'Camera',
-          detail: participant.cameraOn ? 'Camera On' : 'Camera Off',
-          life: 3000
-        })
-      }
+      // Implement camera switching logic
     },
     handleMute() {
-      this.isUserMuted = !this.isUserMuted
+      if (this.localStream) {
+        const audioTrack = this.localStream.getAudioTracks()[0];
+        audioTrack.enabled = !audioTrack.enabled;
+        this.isUserMuted = !audioTrack.enabled;
+      }
     },
     handleCamera() {
-      this.isUserCameraOn = !this.isUserCameraOn
+      if (this.localStream) {
+        const videoTrack = this.localStream.getVideoTracks()[0];
+        videoTrack.enabled = !videoTrack.enabled;
+        this.isUserCameraOn = !videoTrack.enabled;
+      }
     },
     toggleLayout() {
-      this.layout = this.layout === 'grid' ? 'list' : 'grid'
-    }
-  }
-})
+      this.layout = this.layout === 'grid' ? 'list' : 'grid';
+    },
+  },
+  mounted() {
+    this.initWebRTC();
+  },
+});
 </script>
 
 <style scoped>

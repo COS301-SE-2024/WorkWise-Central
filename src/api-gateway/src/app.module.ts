@@ -22,6 +22,7 @@ import { TimeTrackerModule } from './time-tracker/time-tracker.module';
 import { StockMovementsModule } from './stockmovements/stockmovements.module';
 import { InvoiceModule } from './invoices/invoice.module';
 import { PayfastModule } from 'src/payfast/payfast.module';
+import { VideoConferencingModule } from './video-conferencing/video-conferencing.module';
 
 const rootPath = join(__dirname, '..', '../../uploads');
 
@@ -51,6 +52,7 @@ const rootPath = join(__dirname, '..', '../../uploads');
     TimeTrackerModule,
     StockMovementsModule,
     PayfastModule,
+    VideoConferencingModule,
   ],
 })
 export class AppModule {}
