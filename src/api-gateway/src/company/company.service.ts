@@ -753,7 +753,7 @@ export class CompanyService {
     const noStat = await this.jobService.getStatusByLabel(employee.companyId, 'No Status');
     if (!noStat) throw new NotFoundException('No Status not found');
     updateCompanyJobStatuses.jobStatuses = updateCompanyJobStatuses.jobStatuses.filter(
-      (id) => id.toString() == noStat._id.toString(),
+      (id) => id.toString() !== noStat._id.toString(),
     );
     updateCompanyJobStatuses.jobStatuses.unshift(noStat._id);
     return this.companyRepository.updateStatuses(employee.companyId, updateCompanyJobStatuses.jobStatuses);
