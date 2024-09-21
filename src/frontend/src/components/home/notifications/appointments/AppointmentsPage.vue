@@ -69,7 +69,7 @@
     <v-card class="bg-cardColor">
       <v-card-title>
         <span class="headline">{{
-          isEditing ? 'Edit Appointment' : 'Create New Appointment'
+          isEditing ? 'Edit Appointment' : 'Create a new meeting'
         }}</span>
       </v-card-title>
       <v-card-text>
@@ -77,6 +77,7 @@
           <v-container>
             <v-row>
               <v-col cols="12">
+                <h6>Meeting Title</h6>
                 <v-text-field
                   v-model="newAppointment.title"
                   label="Title"
@@ -85,6 +86,7 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
+                <h6>Meeting Date</h6>
                 <v-text-field
                   v-model="newAppointment.date"
                   label="Date"
@@ -94,10 +96,21 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
+                <h6>Details</h6>
                 <v-text-field v-model="newAppointment.details" label="Details"></v-text-field>
               </v-col>
-              <v-col cols="12">
-                <v-checkbox v-model="newAppointment.important" label="Important"></v-checkbox>
+              <v-col :cols="12">
+                <h6>Choose Participants</h6>
+                <v-select
+                  clearable
+                  label="Participants"
+                  hint="Select the employee you'd like to join the meeting"
+                  persistent-hint
+                  item-value="employeeId"
+                  item-title="name"
+                  bg-color="background"
+                  variant="solo"
+                ></v-select>
               </v-col>
             </v-row>
           </v-container>

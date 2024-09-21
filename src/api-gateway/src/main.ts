@@ -31,9 +31,9 @@ async function bootstrap() {
   app.use(urlencoded({ limit: '50mb', extended: true }));
   app.use(compression());
   const corsOptions: CorsOptions = {
-    origin: '*',
-    methods: 'GET,POST',
-    allowedHeaders: 'Content-Type,Authorization',
+    origin: '*', //['http://localhost:5173', 'https://tuksui.sharpsoftwaresolutions.net/'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
   };
   app.enableCors(corsOptions);
   await app.listen(3000);
