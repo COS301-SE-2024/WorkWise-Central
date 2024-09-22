@@ -24,10 +24,11 @@
     </template>
   </v-combobox>
 
-  <v-btn color="success" class="mt-4" @click="openCreateDialog" block>
-    <v-icon class="fas fa-plus"></v-icon>
-    Create Tag
-  </v-btn>
+<!--  <v-btn color="success" class="mt-4" @click="openCreateDialog" block>-->
+<!--    <v-icon class="fas fa-plus"></v-icon>-->
+<!--    Create Tag-->
+<!--  </v-btn>-->
+  <Button label="Create Tag" icon="fa: fa-solid fa-plus" class="mt-4 p-button-success" @click="openCreateDialog" />
   <!-- Label Creation/Edit Dialog -->
   <v-dialog v-model="dialog" max-width="400px">
     <v-card class="bg-cardColor">
@@ -88,6 +89,7 @@
 import { ref, defineProps, onMounted } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
+import Button from 'primevue/button'
 
 const toast = useToast()
 

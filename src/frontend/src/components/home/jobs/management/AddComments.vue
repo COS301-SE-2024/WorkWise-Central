@@ -31,9 +31,10 @@
         </v-col>
         <v-col cols="1">
           <!-- Delete comment button -->
-          <v-btn @click="deleteComment(index)">
-            <v-icon color="red" class="fa fa-trash pt-1"></v-icon>
-          </v-btn>
+<!--          <v-btn @click="deleteComment(index)">-->
+<!--            <v-icon color="red" class="fa fa-trash pt-1"></v-icon>-->
+<!--          </v-btn>-->
+          <Button icon="fa: fa-solid fa-trash" class="p-button-danger" @click="deleteComment(index)" />
         </v-col>
       </v-row>
 
@@ -58,7 +59,10 @@
       ></v-textarea>
 
       <!-- Submit button -->
-      <v-btn color="success" @click="addComment" prepend-icon="mdi-comment-plus">Comment</v-btn>
+<!--      <v-btn color="success" @click="addComment" prepend-icon="mdi-comment-plus">Comment</v-btn>-->
+      <div class="pt-2">
+        <Button label="Comment" icon="mdi mdi-comment-plus" class="p-button-success" @click="addComment" />
+      </div>
     </v-container>
   </div>
 </template>
@@ -67,6 +71,8 @@
 import { defineProps, ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
+import Button from 'primevue/button'
+
 
 const toast = useToast()
 
