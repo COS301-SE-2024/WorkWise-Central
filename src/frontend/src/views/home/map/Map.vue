@@ -6,7 +6,7 @@
 
 <template>
   <GoogleMap
-    api-key="ABC"
+    :api-key="apiKey"
     style="width: 100%; height: 500px"
     :center="{ lat: lat, lng: lng }"
     :zoom="15"
@@ -66,6 +66,7 @@
 <script>
 import { GoogleMap, InfoWindow, Marker, Polyline /*, AdvancedMarker*/ } from 'vue3-google-map'
 import axios from 'axios'
+import { GOOGLE_MAPS_API_KEY } from '@/main'
 export default {
   name: 'SystemMap',
   components: {
@@ -86,7 +87,7 @@ export default {
       actionsDialog: false,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
-      apiKey: 'ABC',
+      apiKey: GOOGLE_MAPS_API_KEY,
       companyLocation: null,
       currentLocation: null,
       vehicleLocations: [],

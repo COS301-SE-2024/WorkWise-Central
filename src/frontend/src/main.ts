@@ -15,6 +15,7 @@ import Vue3Geolocation from 'vue3-geolocation'
 
 //To refer to API in Dev and Prod
 export const API_URL: string = import.meta.env.VITE_SERVER_API
+export const GOOGLE_MAPS_API_KEY: string = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 
 const app = createApp(App)
 //app.config.globalProperties.$messaging = firebaseMessaging
