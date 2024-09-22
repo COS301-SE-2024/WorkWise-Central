@@ -100,7 +100,7 @@
                   hint="Select the employee you'd like to join the meeting"
                   persistent-hint
                   @update:model-value="selected_participants"
-                  v-model="req_obj.participants"
+                  v-model="newAppointment.participants"
                   item-value="employeeId"
                   item-title="name"
                   :items="teamMemberNames"
@@ -150,6 +150,7 @@ interface Appointment {
   date: string
   details: string
   important: boolean
+  participants: string[]
 }
 type EmployeeInformation = {
   name: string
@@ -183,7 +184,8 @@ export default defineComponent({
         title: '',
         date: '',
         details: '',
-        important: false
+        important: false,
+        participants: []
       } as Appointment,
       recentAppointments: [
         {
@@ -268,7 +270,8 @@ export default defineComponent({
         title: '',
         date: '',
         details: '',
-        important: false
+        important: false,
+        participants: []
       }
     },
     joiningRoom(appointment: Appointment) {
@@ -283,8 +286,10 @@ export default defineComponent({
         title: '',
         date: '',
         details: '',
-        important: false
+        important: false,
+        participants: []
       }
+      this.req_obj.participants = []
     },
     leavingRoom() {
       this.joinRoom = true
@@ -312,7 +317,8 @@ export default defineComponent({
           title: this.newAppointment.title,
           date: this.newAppointment.date,
           details: this.newAppointment.details,
-          important: this.newAppointment.important
+          important: this.newAppointment.important,
+          participants: this.newAppointment.participants
         }
         const id = this.newAppointment.id
 
@@ -341,7 +347,8 @@ export default defineComponent({
           title: this.newAppointment.title,
           date: this.newAppointment.date,
           details: this.newAppointment.details,
-          important: this.newAppointment.important
+          important: this.newAppointment.important,
+          participants: this.newAppointment.participants
         }
 
         await axios
