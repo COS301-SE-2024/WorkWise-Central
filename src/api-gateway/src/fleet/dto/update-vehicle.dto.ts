@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsDate,
   IsEnum,
   IsMongoId,
@@ -95,6 +96,11 @@ export class UpdateVehicleDto {
   @IsOptional()
   @IsNumber()
   modelYear?: number;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  images?: string[] = [];
 
   @IsOptional()
   @IsString()

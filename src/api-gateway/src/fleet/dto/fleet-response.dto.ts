@@ -5,6 +5,7 @@ export class VehicleWithId {
   companyId: string;
   vin: string;
   name: VehicleName;
+  images?: string[] = [];
   modelYear: number;
   licensePlate: string;
   availability: VehicleAvailability;

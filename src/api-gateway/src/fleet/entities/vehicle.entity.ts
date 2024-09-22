@@ -83,6 +83,9 @@ export class Vehicle {
   @Prop({ type: VehicleName, required: true })
   name: VehicleName;
 
+  @Prop({ type: [String], required: false, default: [] })
+  images?: string[] = [];
+
   @Prop({ type: Number, required: true })
   modelYear: number;
 
@@ -124,6 +127,7 @@ export class Vehicle {
     if (createVehicleDto.vin) this.vin = createVehicleDto.vin;
     this.name = createVehicleDto.name;
     this.modelYear = createVehicleDto.modelYear;
+    this.images = createVehicleDto.images;
     this.licensePlate = createVehicleDto.licensePlate;
     this.availability = createVehicleDto.availability;
     this.mileage = createVehicleDto.mileage;

@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString, Min, ValidateNested } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString, Min, ValidateNested } from 'class-validator';
 import { Prop } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 import { FuelType, VehicleAvailabilityEnum } from '../entities/vehicle.entity';
@@ -82,6 +82,11 @@ export class CreateVehicleDto {
   @IsNotEmpty()
   @IsNumber()
   modelYear: number;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  images?: string[] = [];
 
   @IsOptional()
   @IsString()
