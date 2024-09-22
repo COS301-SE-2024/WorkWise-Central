@@ -34,9 +34,19 @@ import { UpdateVideoCallDto } from './dto/update-video-call.dto';
 const className = 'Video Calls';
 
 @ApiTags('VideoCalls')
-@Controller('video-calls')
+@Controller('videoCalls')
 export class VideoCallController {
   constructor(private readonly videoCallService: VideoCallService) {}
+
+  //********Endpoints for test purposes - Start**********/
+  @ApiOperation({
+    summary: `Used for testing. DO NOT USE IN PRODUCTION`,
+  })
+  @Get()
+  hello() {
+    return { message: 'Refer to /documentation for details on the API' };
+  }
+  //********Endpoints for test purposes - End**********/
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
@@ -113,7 +123,13 @@ export class VideoCallController {
   @Post('create')
   @UseGuards(AuthGuard)
   async create(@Body() createVideoCallDto: CreateVideoCallDto) {
-    return this.videoCallService.create(createVideoCallDto);
+    console.log('createVideoCallDto', createVideoCallDto);
+    try {
+      return this.videoCallService.create(createVideoCallDto);
+    } catch (e) {
+      console.log('Error', e);
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
   }
 
   @UseGuards(AuthGuard)

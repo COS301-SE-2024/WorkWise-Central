@@ -1,9 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Document, SchemaTypes, Types } from 'mongoose';
+import { SchemaTypes, Types } from 'mongoose';
+import { CreateVideoCallDto } from '../dto/create-video-call.dto';
 
 @Schema()
-export class VideoCall extends Document {
+export class VideoCall {
+  constructor(createTeamDto: CreateVideoCallDto) {
+    this.title = createTeamDto.title;
+    this.scheduledTime = createTeamDto.scheduledTime;
+    this.participants = createTeamDto.participants;
+    this.companyId = createTeamDto.companyId;
+    this.details = createTeamDto.details;
+    this.createdAt = new Date();
+  }
   @ApiProperty()
   @Prop({ required: true })
   title: string;

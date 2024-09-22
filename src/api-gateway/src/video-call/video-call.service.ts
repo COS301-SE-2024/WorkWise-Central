@@ -30,6 +30,8 @@ export class VideoCallService {
         return new ValidationResult(false, `Participant not found`);
       }
     }
+
+    return new ValidationResult(true, 'All good');
   }
 
   async validateUpdateVideoCall(updateVideoCallDto: UpdateVideoCallDto) {
@@ -45,17 +47,20 @@ export class VideoCallService {
 
   async create(createVideoCallDto: CreateVideoCallDto) {
     const validation = await this.validateCreateVideoCall(createVideoCallDto);
+    console.log(validation);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
 
-    const videoCall = new VideoCall();
+    const videoCall = new VideoCall(createVideoCallDto);
+    console.log('checkpoint 1');
     videoCall.title = createVideoCallDto.title;
     videoCall.scheduledTime = createVideoCallDto.scheduledTime;
     videoCall.participants = createVideoCallDto.participants;
     videoCall.details = createVideoCallDto.details;
     videoCall.companyId = createVideoCallDto.companyId;
     videoCall.roomId = await this.generateRoomId();
+    console.log('videoCall: ', videoCall);
     return await this.videoCallRepository.save(videoCall);
   }
 
@@ -67,7 +72,7 @@ export class VideoCallService {
     while (await this.roomIdExists(id)) {
       id = crypto.randomUUID();
     }
-    return '';
+    return id;
   }
 
   async roomIdExists(roomId: string) {
