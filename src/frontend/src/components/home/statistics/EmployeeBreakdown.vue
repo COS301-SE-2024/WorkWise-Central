@@ -18,6 +18,7 @@
         label="Search Employees"
         class="mb-4"
       />
+
       <!-- Employee Stats Table -->
       <v-data-table :items="employees" :headers="employeeHeaders" class="bg-background">
         <!-- Stats for Each Employee -->
@@ -32,39 +33,9 @@
             <!-- Employee Breakdown Menu -->
             <v-list>
               <v-list-item>
-                <v-btn @click="showJobCard(item)">
-                  <v-icon icon="fa: fa-solid fa-briefcase"></v-icon>Active Jobs ({{
-                    item.activeJobs
-                  }})
-                </v-btn>
-              </v-list-item>
-              <v-list-item>
-                <v-btn>
-                  <v-icon icon="fa: fa-solid fa-clipboard-check"></v-icon>Total Jobs:
-                  {{ item.totalJobs }} 
-                </v-btn>
-              </v-list-item>
-              <v-list-item>
-                <v-btn>
-                  <v-icon icon="fa: fa-solid fa-check-circle"></v-icon>Completed Jobs:
-                  {{ item.completedJobs }}
-                </v-btn>
-              </v-list-item>
-              <v-list-item>
-                <v-btn>
-                  <v-icon icon="fa: fa-solid fa-clock"></v-icon>Completed On Time:
-                  {{ item.onTimeJobs }} / {{ item.totalJobs }}
-                </v-btn>
-              </v-list-item>
-              <v-list-item>
-                <v-btn @click="showMonthlyHours(item)">
-                  <v-icon icon="fa: fa-solid fa-calendar-alt"></v-icon>Monthly Hours (Select Month)
-                </v-btn>
-              </v-list-item>
-              <v-list-item>
-                <v-btn>
-                  <v-icon icon="fa: fa-solid fa-star"></v-icon>Average Rating:
-                  {{ item.averageRating }}
+                <v-btn @click="showBreakdown(item)">
+                  <v-icon icon="fa: fa-solid fa-chart-simple"></v-icon>
+                  View Breakdown
                 </v-btn>
               </v-list-item>
             </v-list>
@@ -72,59 +43,151 @@
         </template>
       </v-data-table>
 
-      <!-- Additional Charts/Details can appear below the table when a button is clicked -->
-      <v-card v-if="showStats">
-        <v-card-title>Job Details for {{ selectedEmployee.name }}</v-card-title>
-        <v-card-text>
-          <!-- Active Jobs Information (Clickable) -->
-          <div v-if="selectedEmployee.activeJobs.length">
-            <p><strong>Active Jobs:</strong></p>
-            <v-list>
-              <v-list-item v-for="job in selectedEmployee.activeJobs" :key="job.id">
-                {{ job.name }}
-              </v-list-item>
-            </v-list>
-          </div>
+      <!-- Employee Breakdown Charts -->
+      <div v-if="showStats">
+        <v-container>
+          <v-row>
+            <v-col cols="12" lg="6"
+              ><p>Combined Employee and Job Stats:</p>
+              <Chart type="bar" :data="combinedChartData" :options="chartOptions" height="300px"
+            /></v-col>
+            <v-col cols="12" lg="6"
+              ><p>Jobs Completed On Time vs Not:</p>
+              <Chart type="pie" :data="onTimeJobsChartData" :options="chartOptions" height="300px"
+            /></v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <p>Monthly Hours:</p>
+              <v-select
+                v-model="selectedMonth"
+                :items="months"
+                variant="outlined"
+                color="primary"
+                label="Select Month"
+                @change="fetchMonthlyHours"
+            /></v-col>
+          </v-row>
 
-          <!-- Monthly Hours Selection -->
-          <v-select
-            v-if="showMonthlyHours"
-            v-model="selectedMonth"
-            :items="months"
-            label="Select Month"
-          />
-          <p v-if="selectedMonth">
-            Monthly Hours for {{ selectedMonth }}:
-            {{ selectedEmployee.monthlyHours[selectedMonth] }} hours
-          </p>
-        </v-card-text>
-      </v-card>
+          <Chart type="bar" :data="monthlyHoursChartData" :options="chartOptions" height="300px"
+        /></v-container>
+
+        <v-container>
+          <v-row>
+            <p>Average Ratings:</p>
+            <v-col>
+              <v-card
+                class="d-flex flex-column mx-auto py-4"
+                elevation="10"
+                height="auto"
+                width="360"
+              >
+                <div class="d-flex justify-center mt-auto text-h5">Customer Service Rating</div>
+                <div class="d-flex align-center flex-column my-auto">
+                  <div class="text-h2 mt-5">
+                    {{ overallRating }}
+                    <span class="text-h6 ml-n3">/5</span>
+                  </div>
+                  <v-rating
+                    :model-value="overallRating"
+                    color="yellow-darken-3"
+                    half-increments
+                  ></v-rating>
+                  <div class="px-3">{{ totalRatings }} ratings</div>
+                </div>
+                <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
+                  <v-list-item v-for="(rating, i) in 5" :key="i">
+                    <v-progress-linear
+                      :model-value="rating * ratingValueFactor"
+                      class="mx-n5"
+                      color="yellow-darken-3"
+                      height="20"
+                      rounded
+                    ></v-progress-linear>
+                    <template v-slot:prepend>
+                      <span>{{ rating }}</span>
+                      <v-icon class="mx-3" icon="mdi-star"></v-icon>
+                    </template>
+                    <template v-slot:append>
+                      <div class="rating-values">
+                        <span class="d-flex justify-end">{{ ratingCounts[i] }}</span>
+                      </div>
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </v-card>
+            </v-col>
+            <v-col>
+              <v-card
+                class="d-flex flex-column mx-auto py-4"
+                elevation="10"
+                height="auto"
+                width="360"
+              >
+                <div class="d-flex justify-center mt-auto text-h5">Work Performance Rating</div>
+                <div class="d-flex align-center flex-column my-auto">
+                  <div class="text-h2 mt-5">
+                    {{ overallRating }}
+                    <span class="text-h6 ml-n3">/5</span>
+                  </div>
+                  <v-rating
+                    :model-value="overallRating"
+                    color="yellow-darken-3"
+                    half-increments
+                  ></v-rating>
+                  <div class="px-3">{{ totalRatings }} ratings</div>
+                </div>
+                <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
+                  <v-list-item v-for="(rating, i) in 5" :key="i">
+                    <v-progress-linear
+                      :model-value="rating * ratingValueFactor"
+                      class="mx-n5"
+                      color="yellow-darken-3"
+                      height="20"
+                      rounded
+                    ></v-progress-linear>
+                    <template v-slot:prepend>
+                      <span>{{ rating }}</span>
+                      <v-icon class="mx-3" icon="mdi-star"></v-icon>
+                    </template>
+                    <template v-slot:append>
+                      <div class="rating-values">
+                        <span class="d-flex justify-end">{{ ratingCounts[i] }}</span>
+                      </div>
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </div>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
 import axios from 'axios'
+import Chart from 'primevue/chart'
+
 export default {
-  components: {},
+  components: {
+    Chart
+  },
   data() {
     return {
-      currentTab: 'Employee Breakdown', // Example tab name
-      totalEmployees: 100, // Example total employees, replace with actual data
+      currentTab: 'Employee Breakdown',
+      totalEmployees: 100,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
-      employees: [], // Array to hold employee data
+      employees: [],
       employeeHeaders: [
         { title: 'First Name', value: 'userInfo.firstName' },
         { title: 'Last Name', value: 'userInfo.surname' },
-
         { title: 'Actions', value: 'actions', sortable: false }
       ],
-      activeEmployeesChartData: {}, // Data for polar area chart, bind actual data here
-      chartOptions: {}, // Options for the chart
-      selectedEmployee: null, // To hold the selected employee's details
-      showStats: false, // To show job card and additional stats
-      selectedMonth: null, // For monthly hours selection
+      showStats: false,
+      selectedMonth: null,
       months: [
         'January',
         'February',
@@ -138,17 +201,62 @@ export default {
         'October',
         'November',
         'December'
-      ]
+      ],
+      // Mock Chart Data
+      combinedChartData: {
+        labels: ['Total Employees', 'Active Jobs', 'Total Jobs', 'Completed Jobs'],
+        datasets: [
+          {
+            label: 'Count',
+            data: [80, 25, 150, 100], // Replace with actual values
+            backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726', '#AB47BC']
+          }
+        ]
+      },
+      chartOptions: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      },
+      onTimeJobsChartData: {
+        labels: ['On Time', 'Late'],
+        datasets: [
+          {
+            label: 'Jobs Completed On Time vs Not',
+            data: [70, 30], // 70 On Time, 30 Late
+            backgroundColor: ['#66BB6A', '#EF5350']
+          }
+        ]
+      },
+      monthlyHoursChartData: {
+        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+        datasets: [
+          {
+            label: 'Hours Worked',
+            data: [40, 35, 45, 50], // Example hours for each week
+            backgroundColor: ['#42A5F5']
+          }
+        ]
+      },
+      overallRating: 4.5, // Example overall rating
+      totalRatings: 120, // Example total ratings
+      ratingCounts: [10, 30, 50, 20, 10], // Example counts for each rating
+      ratingValueFactor: 20 // Example factor to scale the rating
     }
   },
   methods: {
-    showJobCard(employee) {
+    showBreakdown(employee) {
       this.selectedEmployee = employee
       this.showStats = true
+      //this.fetchChartsData() // Fetch data for charts here
     },
-    showMonthlyHours(employee) {
-      this.selectedEmployee = employee
-      this.showMonthlyHours = true
+    async fetchMonthlyHours() {
+      // Fetch monthly hours data based on selectedMonth
+      this.monthlyHoursChartData = {
+        /* your data */
+      }
     },
     async isLocalAvailable(localUrl) {
       try {
