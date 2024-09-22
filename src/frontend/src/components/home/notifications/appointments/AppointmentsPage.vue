@@ -61,7 +61,7 @@
   </v-container>
 
   <!-- Dialog for Creating/Editing Appointment -->
-  <v-dialog v-model="showDialog" persistent max-width="600px">
+  <v-dialog v-model="showDialog" persistent max-width="800px">
     <v-card class="bg-cardColor">
       <v-card-title>
         <span class="headline">{{ isEditing ? 'Edit Appointment' : 'Create a new meeting' }}</span>
@@ -77,53 +77,52 @@
                   label="Title"
                   :rules="titleRules"
                   required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-row>
-                  <h6>Meeting Date</h6>
-                  <v-row>
-                    <v-col align="center" cols="12" md="6">
-                      <v-date-picker
-                        title="SELECT START DATE"
-                        header="Meeting start date"
-                        border="md"
-                        width="unset"
-                        max-width="350"
-                        v-model="startDate"
-                        elevation="5"
-                        required
-                        :rules="startDateRule"
-                        :min="minDate"
-                        class="mb-4"
-                      ></v-date-picker>
-                    </v-col>
-                    <v-col cols="12" md="6" align="center">
-                      <v-time-picker
-                        format="24hr"
-                        :allowed-hours="allowedHours"
-                        :allowed-minutes="allowedMinutes"
-                        v-model="newAppointment.startTime"
-                        class="mb-4"
-                      ></v-time-picker>
-                    </v-col>
-                    <v-col cols="12" md="6" align="center">
-                      <v-time-picker
-                        :allowed-hours="allowedHours2"
-                        :allowed-minutes="allowedMinutes2"
-                        format="24hr"
-                        v-model="newAppointment.endTime"
-                      ></v-time-picker>
-                    </v-col>
-                  </v-row>
-                </v-row>
-              </v-col>
+                ></v-text-field
+              ></v-col>
+              <v-col cols="12" align="center"
+                ><h6>Meeting Date</h6>
 
+                <v-date-picker
+                  title="SELECT START DATE"
+                  header="Meeting start date"
+                  border="md"
+                  width="unset"
+                  max-width="350"
+                  v-model="startDate"
+                  elevation="5"
+                  required
+                  :rules="startDateRule"
+                  :min="minDate"
+                  class="mb-4"
+                ></v-date-picker>
+              </v-col>
+              <v-row
+                ><v-col cols="6"
+                  ><h6>Start Time</h6>
+                  <v-time-picker
+                    format="24hr"
+                    :allowed-hours="allowedHours"
+                    :allowed-minutes="allowedMinutes"
+                    v-model="newAppointment.startTime"
+                    class="mb-4"
+                  ></v-time-picker
+                ></v-col>
+                <v-col cols="6"
+                  ><h6>End Time</h6>
+                  <v-time-picker
+                    :allowed-hours="allowedHours2"
+                    :allowed-minutes="allowedMinutes2"
+                    format="24hr"
+                    v-model="newAppointment.endTime"
+                  ></v-time-picker
+                ></v-col>
+              </v-row>
               <v-col cols="12">
                 <h6>Details</h6>
-                <v-text-field v-model="newAppointment.details" label="Details"></v-text-field>
-              </v-col>
-              <v-col :cols="12">
+                <v-text-field v-model="newAppointment.details" label="Details"></v-text-field
+              ></v-col>
+
+              <v-col cols="12">
                 <h6>Choose Participants</h6>
                 <v-select
                   clearable
@@ -139,8 +138,8 @@
                   chips
                   bg-color="background"
                   variant="solo"
-                ></v-select>
-              </v-col>
+                ></v-select
+              ></v-col>
             </v-row>
           </v-container>
         </v-form>
