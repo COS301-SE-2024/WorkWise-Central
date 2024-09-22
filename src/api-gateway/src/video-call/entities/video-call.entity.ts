@@ -13,11 +13,11 @@ export class VideoCall extends Document {
   scheduledTime: Date;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [], ref: 'Employee' })
   participants: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: true })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Company' })
   companyId: Types.ObjectId;
 
   @ApiProperty()
