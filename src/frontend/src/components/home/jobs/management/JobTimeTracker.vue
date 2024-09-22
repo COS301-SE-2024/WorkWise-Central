@@ -10,9 +10,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import {ref, computed, defineProps} from 'vue';
 import Button from 'primevue/button';
 
+const props = defineProps<{ jobID: string }>()
 const isCheckedIn = ref(false);
 const isRunning = ref(false);
 const elapsedTime = ref(0);

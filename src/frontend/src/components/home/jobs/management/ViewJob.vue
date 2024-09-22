@@ -196,10 +196,10 @@
               <GenerateInvoice />
             </v-col>
             <v-divider>
-              <h5 ref="timeTrackerSection">Time tracking</h5>
+              <h5 ref="jobTimeTrackerSection">Time tracking</h5>
             </v-divider>
             <v-col>
-              <JobTimeTracker/>
+              <JobTimeTracker :jobID="props.passedInJob?._id"/>
             </v-col>
             <v-divider>
               <h5 ref="historySection">View Job History</h5>
