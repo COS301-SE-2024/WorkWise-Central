@@ -1,4 +1,4 @@
-import { IsDate, IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsDate, IsDateString, IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
 import { Types } from 'mongoose';
 
 export class CreateTimeTrackerDto {
@@ -37,11 +37,11 @@ export class GetTimeTrackersDto {
   employeeId: Types.ObjectId;
 
   @IsNotEmpty()
-  @IsDate()
+  @IsDateString()
   fromDate: Date;
 
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   toDate?: Date;
 }
 
