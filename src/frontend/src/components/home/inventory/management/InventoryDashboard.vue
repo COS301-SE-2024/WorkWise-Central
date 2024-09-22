@@ -102,6 +102,7 @@ import DeleteInventory from './DeleteInventory.vue'
 import EditInventory from './EditInventory.vue'
 import InventoryDetails from './InventoryDetails.vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 interface Inventory {
   _id: string
@@ -194,10 +195,9 @@ export default defineComponent({
           currentEmployee: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}inventory/all/${localStorage.getItem('employeeId')}`,
+          `${API_URL}inventory/all/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response.data.data)
@@ -229,9 +229,8 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       axios
-        .get(`${apiURL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
+        .get(`${API_URL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
         .then((response) => {
           console.log(response.data.data.role.permissionSuite)
           this.employeePermissions = response.data.data.role.permissionSuite

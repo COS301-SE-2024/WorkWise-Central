@@ -98,6 +98,8 @@
 <script lang="js">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   props: {
     EmployeeDetails: { type: Object, required: true }
@@ -124,19 +126,18 @@ export default defineComponent({
         }
       }
       console.log(localStorage['employeeId'])
-      const apiURL = await this.getRequestUrl()
 
       if (this.EmployeeDetails === undefined) return
 
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/id/${this.EmployeeDetails.employeeId}`,
+          API_URL + `employee/id/${this.EmployeeDetails.employeeId}`,
           config
         )
         console.log(employee_response)
         for (let i = 0; i < employee_response.data.data.subordinates.length; i++) {
           const res_res = await axios.get(
-            apiURL + `employee/id/${employee_response.data.data.subordinates[0]}`,
+            API_URL + `employee/id/${employee_response.data.data.subordinates[0]}`,
             config
           )
           this.subnames.push(
@@ -145,7 +146,7 @@ export default defineComponent({
         }
 
         const res_res = await axios.get(
-          apiURL + `employee/id/${employee_response.data.data.superiorId}`,
+          API_URL + `employee/id/${employee_response.data.data.superiorId}`,
           config
         )
 

@@ -45,6 +45,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   name: 'DeleteStatus',
   props: {
@@ -88,9 +90,8 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
-        const res = await axios.delete(`${apiURL}role/${this.roleId}`, config)
+        const res = await axios.delete(`${API_URL}role/${this.roleId}`, config)
         if (res.status === 200) {
           console.log(res.data)
           this.isDeleting = true

@@ -113,7 +113,8 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import type { EmployeeInformation2, RoleItem, Role } from '@/components/home/employees/types'
-// import router from '@/router'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   name: 'RegisterCompanyModal',
   components: {
@@ -159,10 +160,10 @@ export default defineComponent({
     },
     async loadSubordinates() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const sub_res = await axios.get(
-          apiURL + `employee/detailed/all/${localStorage.getItem('employeeId')}`,
+          API_URL + `employee/detailed/all/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(sub_res)
@@ -187,11 +188,11 @@ export default defineComponent({
     },
     async loadRoles() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
+
+      console.log(API_URL)
       try {
         let roles_response = await axios.get(
-          apiURL + `role/all/${localStorage['currentCompany']}`,
+          API_URL + `role/all/${localStorage['currentCompany']}`,
           config
         )
         console.log(roles_response)
@@ -215,10 +216,10 @@ export default defineComponent({
       //if the username that was entered exists
       // in the company, waiting on jess to create endpoint
       // const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      // const apiURL = await this.getRequestUrl()
+      //
       // try {
       //   const res = await axios.post(
-      //     apiURL + 'employee/exists/username',
+      //     API_URL + 'employee/exists/username',
       //     { username: this.req_obj.newUserUsername },
       //     config
       //   )
@@ -248,9 +249,9 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       axios
-        .post(apiURL + 'admin/invite/create', this.req_obj, config)
+        .post(API_URL + 'admin/invite/create', this.req_obj, config)
         .then((response) => {
           this.request_load = false
           console.log(response)

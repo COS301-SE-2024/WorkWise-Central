@@ -92,6 +92,7 @@
 import { ref, defineProps, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
+import { API_URL } from '@/main'
 
 const toast = useToast()
 interface Image {
@@ -133,9 +134,9 @@ const getRequestUrl = async (): Promise<string> => {
 
 const getJobData = async () => {
   console.log('Getting job data', props.id)
-  const apiUrl = await getRequestUrl()
+
   try {
-    const response = await axios.get(`${apiUrl}job/id/${props.id}`, config)
+    const response = await axios.get(`${API_URL}job/id/${props.id}`, config)
     const job = response.data.data
     job.attachments.forEach((attachment: string) => {
       images.value.push({
@@ -162,14 +163,14 @@ const handleFileChange = async () => {
         // Upload the image
         const formData = new FormData()
         formData.append('files', file)
-        const apiUrl = await getRequestUrl()
+
         const config = {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${localStorage.getItem('access_token')}`
           }
         }
-        const url = `${apiUrl}job/add/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`
+        const url = `${API_URL}job/add/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`
         try {
           const response = await axios.patch(url, formData, config)
           if (response.status === 200) {
@@ -228,14 +229,14 @@ const changeImage = (index: number): void => {
           // Upload the new image
           const formData = new FormData()
           formData.append('files', file)
-          const apiUrl = await getRequestUrl()
+
           const config = {
             headers: {
               'Content-Type': 'multipart/form-data',
               Authorization: `Bearer ${localStorage.getItem('access_token')}`
             }
           }
-          const url = `${apiUrl}job/add/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`
+          const url = `${API_URL}job/add/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`
           try {
             const response = await axios.patch(url, formData, config)
             if (response.status === 200) {
@@ -284,8 +285,8 @@ const deleteImage = async (index: number): Promise<void> => {
   }
   console.log('Body:', body)
   // Get the API URL
-  const apiUrl = await getRequestUrl()
-  const url = `${apiUrl}job/updateAttachments`
+
+  const url = `${API_URL}job/updateAttachments`
   const config = {
     headers: {
       'Content-Type': 'application/json',

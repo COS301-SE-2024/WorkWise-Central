@@ -131,6 +131,7 @@
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import type { EmployeeInformation2, RoleItem, Role } from '@/components/home/employees/types'
+import { API_URL } from '@/main'
 
 type EmployeeUpdate = {
   currentEmployeeId: string
@@ -272,10 +273,9 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const sub_res = await axios.get(
-          apiURL + `employee/listPotentialSubordinates/${this.editedItem.employeeId}`,
+          API_URL + `employee/listPotentialSubordinates/${this.editedItem.employeeId}`,
           config
         )
         console.log(sub_res)
@@ -296,7 +296,7 @@ export default {
         }
 
         const current_subs = await axios.get(
-          apiURL + `employee/detailed/id/${this.editedItem.employeeId}`,
+          API_URL + `employee/detailed/id/${this.editedItem.employeeId}`,
           config
         )
         console.log(current_subs.data.data)
@@ -318,10 +318,9 @@ export default {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` },
         params: { currentEmployeeId: localStorage['employeeId'] }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const sup_res = await axios.get(
-          apiURL + `employee/listPotentialSuperiors/${this.editedItem.employeeId}`,
+          API_URL + `employee/listPotentialSuperiors/${this.editedItem.employeeId}`,
           config
         )
         console.log(sup_res)
@@ -348,11 +347,10 @@ export default {
     },
     async loadRoles() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
+      console.log(API_URL)
       try {
         let roles_response = await axios.get(
-          apiURL + `role/all/${localStorage['currentCompany']}`,
+          API_URL + `role/all/${localStorage['currentCompany']}`,
           config
         )
         let roles_data: Role[] = roles_response.data.data
@@ -378,7 +376,7 @@ export default {
       this.isDeleting = true // Indicate the start of the deletion process
       console.log(this.req_obj)
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      let apiURL = await this.getRequestUrl()
+      let API_URL = await this.getRequestUrl()
       console.log(this.localEditedItem.employeeId)
       let add_object = {
         currentEmployeeId: localStorage['employeeId'],
@@ -388,7 +386,7 @@ export default {
 
       axios
         .patch(
-          apiURL + `employee/${this.localEditedItem.employeeId}`,
+          API_URL + `employee/${this.localEditedItem.employeeId}`,
           {
             currentEmployeeId: localStorage['employeeId'],
             superiorId: this.req_obj.updateEmployeeDto.superiorId,
@@ -404,7 +402,7 @@ export default {
 
       axios
         .patch(
-          apiURL + `employee/addSubordinate/${this.localEditedItem.employeeId}`,
+          API_URL + `employee/addSubordinate/${this.localEditedItem.employeeId}`,
           add_object,
           config
         )
@@ -419,7 +417,7 @@ export default {
       )
       axios
         .patch(
-          apiURL + `employee/removeSubordinate/${this.localEditedItem.employeeId}`,
+          API_URL + `employee/removeSubordinate/${this.localEditedItem.employeeId}`,
           {
             currentEmployeeId: localStorage['employeeId'],
             subordinatesToBeRemoved: to_be_removed

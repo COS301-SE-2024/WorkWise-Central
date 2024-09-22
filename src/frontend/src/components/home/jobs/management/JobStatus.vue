@@ -24,6 +24,7 @@
 <script setup lang="ts">
 import { ref, defineProps, onMounted } from 'vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 interface Status {
   _id: string
@@ -76,10 +77,9 @@ const getAllStatuses = async () => {
 }
 
 const updateStatus = async () => {
-  const apiUrl = await getRequestUrl()
   try {
     const response = await axios.patch(
-      `${apiUrl}job/update/${props.jobID}`,
+      `${API_URL}job/update/${props.jobID}`,
       { status: selectedStatus.value },
       config
     )
