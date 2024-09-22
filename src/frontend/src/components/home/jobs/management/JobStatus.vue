@@ -76,10 +76,9 @@ const getAllStatuses = async () => {
 }
 
 const updateStatus = async () => {
-  const apiUrl = await getRequestUrl()
   try {
     const response = await axios.patch(
-      `${apiUrl}job/update/${props.jobID}`,
+      `${API_URL}job/update/${props.jobID}`,
       { status: selectedStatus.value },
       config
     )

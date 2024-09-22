@@ -448,6 +448,7 @@ import type {
   JobStatuses
 } from '../types'
 import AddClient from '@/components/home/clients/management/AddClient.vue'
+import { API_URL } from '@/main'
 
 type JobDetails = {
   heading: string
@@ -701,11 +702,11 @@ export default defineComponent({
     },
     async handleSubmission() {
       console.log(this.req_obj)
-      const apiURL = await this.getRequestUrl()
+
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       console.log('before the request')
       axios
-        .post(apiURL + 'job/create', this.req_obj, config)
+        .post(API_URL + 'job/create', this.req_obj, config)
         .then((res) => {
           console.log('request has gone through')
           if (this.req_obj.assignedEmployees.employeeIds === undefined) {
@@ -720,7 +721,7 @@ export default defineComponent({
           }
           axios
             .put(
-              apiURL + 'job/employees',
+              API_URL + 'job/employees',
               {
                 employeeId: localStorage['employeeId'],
                 employeesToAssignIds: this.req_obj.assignedEmployees.employeeIds,
@@ -770,10 +771,10 @@ export default defineComponent({
           currentEmployeeId: localStorage['employeeId']
         }
       }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
+
+      console.log(API_URL)
       axios
-        .get(apiURL + `client/all/${localStorage['currentCompany']}`, config)
+        .get(API_URL + `client/all/${localStorage['currentCompany']}`, config)
         .then((res) => {
           console.log(res)
 
@@ -806,10 +807,10 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/detailed/all/${localStorage['employeeId']}`,
+          API_URL + `employee/detailed/all/${localStorage['employeeId']}`,
           config
         )
 
@@ -858,10 +859,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const loaded_priorities_response = await axios.get(
-          apiURL + `job/tags/p/${localStorage['currentCompany']}`,
+          API_URL + `job/tags/p/${localStorage['currentCompany']}`,
           config
         )
         this.priorityOptionsArray = loaded_priorities_response.data.data
@@ -876,10 +877,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const loaded_tags_response = await axios.get(
-          apiURL + `job/tags/${localStorage['currentCompany']}`,
+          API_URL + `job/tags/${localStorage['currentCompany']}`,
           config
         )
         this.tagOptionsArray = loaded_tags_response.data.data
@@ -894,10 +895,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const statuses_response = await axios.get(
-          apiURL + `company/status/all/${localStorage['currentCompany']}`,
+          API_URL + `company/status/all/${localStorage['currentCompany']}`,
           config
         )
         this.statusOptionsArray = statuses_response.data.data.jobStatuses

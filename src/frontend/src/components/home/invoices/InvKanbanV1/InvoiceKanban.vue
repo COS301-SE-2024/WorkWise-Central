@@ -285,8 +285,8 @@ import type { InvoiceCardDataFormat, Column } from '../types'
 import '@mdi/font/css/materialdesignicons.css'
 import ViewJob from '@/components/home/jobs/management/ViewJob.vue'
 import { type SortableEvent, VueDraggable } from 'vue-draggable-plus'
-
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default {
   name: 'InvoiceKanban',
@@ -345,7 +345,7 @@ export default {
       console.log(c)
       console.log(e.clonedData.paid)
       e.clonedData.status = c.status
-      const apiURL = await this.getRequestUrl()
+
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -355,7 +355,7 @@ export default {
       console.log(e.clonedData.id)
       try {
         let res = await axios.patch(
-          apiURL + `invoice/${e.clonedData.id}`,
+          API_URL + `invoice/${e.clonedData.id}`,
           { paid: !e.clonedData.paid },
           config
         )
@@ -382,10 +382,10 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       console.log(this.columns)
       axios
-        .patch(apiURL + 'company/statuses', req, config)
+        .patch(API_URL + 'company/statuses', req, config)
         .then((res) => {
           console.log(`this is me and this is the response: ${res}`)
         })
@@ -402,9 +402,9 @@ export default {
       }
       console.log(this.archive_status_id)
       console.log(payload)
-      const apiURL = await this.getRequestUrl()
+
       axios
-        .patch(apiURL + `job/update/${payload.id}`, { status: this.archive_status_id }, config)
+        .patch(API_URL + `job/update/${payload.id}`, { status: this.archive_status_id }, config)
         .then((res) => {
           console.log(res.data.data)
           window.location.reload()
@@ -419,11 +419,11 @@ export default {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`
           }
         }
-        const apiURL = await this.getRequestUrl()
+
         for (let i = 0; i < col.cards.length; i++) {
           axios
             .patch(
-              apiURL + `job/update/${col.cards[i].id}`,
+              API_URL + `job/update/${col.cards[i].id}`,
               { status: this.archive_status_id },
               config
             )
@@ -453,8 +453,8 @@ export default {
             employeeId: localStorage['employeeId']
           }
         }
-        const apiURL = await this.getRequestUrl()
-        let res = await axios.delete(apiURL + 'job/status', config)
+
+        let res = await axios.delete(API_URL + 'job/status', config)
 
         // for (let i = 0; i < col.cards.length; i++) {
         //   this.columns[0].cards.push(col.cards[i])
@@ -493,9 +493,9 @@ export default {
               Authorization: `Bearer ${localStorage.getItem('access_token')}`
             }
           }
-          const apiURL = await this.getRequestUrl()
+
           let res = await axios.patch(
-            apiURL + 'job/status',
+            API_URL + 'job/status',
             {
               statusId: col._id,
               status: this.new_column_name,
@@ -523,9 +523,9 @@ export default {
               Authorization: `Bearer ${localStorage.getItem('access_token')}`
             }
           }
-          const apiURL = await this.getRequestUrl()
+
           let res = await axios.patch(
-            apiURL + 'job/status',
+            API_URL + 'job/status',
             {
               statusId: col._id,
               status: this.new_column_name,
@@ -552,9 +552,9 @@ export default {
               Authorization: `Bearer ${localStorage.getItem('access_token')}`
             }
           }
-          const apiURL = await this.getRequestUrl()
+
           let res = await axios.patch(
-            apiURL + 'job/status',
+            API_URL + 'job/status',
             {
               statusId: col._id,
               colour: this.column_color,
@@ -597,9 +597,9 @@ export default {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`
           }
         }
-        const apiURL = await this.getRequestUrl()
+
         let res = await axios.post(
-          apiURL + 'job/status',
+          API_URL + 'job/status',
           {
             status: this.new_column_name,
             colour: this.column_color,
@@ -630,10 +630,10 @@ export default {
         }
       }
 
-      // const apiURL = await this.getRequestUrl()
+      //
       //
       // try {
-      //   const response = await axios.get(apiURL + `job/id/${payload.id}`, config)
+      //   const response = await axios.get(API_URL + `job/id/${payload.id}`, config)
       //   console.log(response)
       //   this.SelectedEvent = response.data.data
       //   this.openJobCard()
@@ -676,10 +676,10 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const loaded_tags_response = await axios.get(
-          apiURL + `invoice/all/detailed/${localStorage['employeeId']}`,
+          API_URL + `invoice/all/detailed/${localStorage['employeeId']}`,
           config
         )
         console.log(loaded_tags_response.data.data)
@@ -754,7 +754,7 @@ export default {
 
           const jobid = this.draggedCard.id
           // this.draggedCard.status.status = targetColumn.status
-          const apiURL = await this.getRequestUrl()
+
           const config = {
             headers: {
               'Content-Type': 'application/json',
@@ -764,7 +764,7 @@ export default {
           console.log(jobid)
           try {
             let res = await axios.patch(
-              apiURL + `job/update/${jobid}`,
+              API_URL + `job/update/${jobid}`,
               { status: targetColumn._id },
               config
             )

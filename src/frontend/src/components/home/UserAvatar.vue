@@ -55,6 +55,8 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 // import avatarImage from '@/assets/images/profile/avatar.jpg'
 
 const firstName = ref('')
@@ -105,7 +107,6 @@ const getUserData = async () => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-  const apiUrl = await getRequestUrl()
   const userId = localStorage.getItem('id')
 
   try {
