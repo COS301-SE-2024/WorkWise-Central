@@ -231,96 +231,162 @@ export default {
   },
   data() {
     return {
-      company: null,
-      companyLogo: 'https://http.cat/status/102',
-      googleLink: 'https://maps.googleapis.com/maps/api/geocode/json?',
-      isDarkMode: localStorage['theme'] !== 'false',
-      actionsDialog: false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       apiKey: GOOGLE_MAPS_API_KEY,
+      apiUrl: API_URL,
+      company: null,
       companyLocation: null,
       currentLocation: null,
-      vehicleLocations: [],
-      lat: null,
-      lng: null,
-      polyOptions: null
+      mapCenter: { lat: 0, lng: 0 },
+      routePolyline: null,
+      dialogVisible: false,
+      vehicles: [],
+      editingRows: [],
+      availabilityStatuses: Object.entries(VehicleAvailabilityEnum).map(([key, value]) => ({
+        label: value,
+        value: value
+      })),
+      fuelTypes: Object.entries(FuelType).map(([key, value]) => ({ label: value, value: value })),
+      currentDrivers: [],
+      recentAlerts: [],
+      totalDistanceToday: 0,
+      averageFuelConsumption: 0,
+      vehiclesDueForService: 0
     }
   },
   created() {
-    this.$getLocation()
-      .then((coordinates) => {
-        console.log(coordinates)
-        this.lat = coordinates.lat
-        this.lng = coordinates.lng
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    this.getCurrentLocation()
+    this.getCompanyData()
+    this.getVehiclesData()
+    this.loadFleetData()
+  },
+  mounted() {
+    //VehicleService.getVehicles().then((data) => (this.vehicles = data))
+  },
+  computed: {
+    activeVehicles() {
+      return this.vehicles.filter((v) => v.availability.status === VehicleAvailabilityEnum.IN_USE)
+        .length
+    },
+    inactiveVehicles() {
+      return this.vehicles.length - this.activeVehicles
+    }
   },
   methods: {
-    async getCompanyAddress() {
-      const config = {
+    async getCurrentLocation() {
+      try {
+        const coordinates = await this.$getLocation()
+        this.currentLocation = { lat: coordinates.lat, lng: coordinates.lng }
+        this.mapCenter = this.currentLocation
+      } catch (error) {
+        console.error('Error getting current location:', error)
+      }
+    },
+    async getCompanyData() {
+      try {
+        const response = await axios.get(
+          `${this.apiUrl}company/id/${localStorage['currentCompany']}`,
+          this.getAuthConfig()
+        )
+        this.company = response.data.data
+        this.companyLocation = await this.getGeocode(this.company.address)
+      } catch (error) {
+        console.error('Error fetching company data:', error)
+      }
+    },
+    async getVehiclesData() {
+      try {
+        const response = await axios.get(`${this.apiUrl}fleet/all`, this.getAuthConfig())
+        this.vehicles = await Promise.all(
+          response.data.data.map(async (vehicle) => ({
+            ...vehicle,
+            location: await this.getGeocode(vehicle.location)
+          }))
+        )
+      } catch (error) {
+        console.error('Error fetching vehicles data:', error)
+      }
+    },
+    async getGeocode(address) {
+      const queryString = this.formatAddressForGeocoding(address)
+      try {
+        const result = await axios.get(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${queryString}&key=${this.apiKey}`
+        )
+        return result.data.results[0].geometry.location
+      } catch (error) {
+        console.error('Error geocoding address:', error)
+        return null
+      }
+    },
+    formatAddressForGeocoding(address) {
+      return Object.values(address).join('+').replace(/\s+/g, '+')
+    },
+    formatAddress(address) {
+      return Object.values(address).join(', ')
+    },
+    getAuthConfig() {
+      return {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+    },
+    onRowEditSave(event) {
+      let { newData, index } = event
+      // Here you would typically send an update request to your backend
+      // For now, we'll just update the local data
+      this.vehicles[index] = newData
+      // Optionally, you can call a method to update the backend
+      // this.updateVehicle(newData);
+    },
+    getStatusSeverity(status) {
+      switch (status) {
+        case VehicleAvailabilityEnum.AVAILABLE:
+          return 'success'
+        case VehicleAvailabilityEnum.IN_USE:
+          return 'info'
+        case VehicleAvailabilityEnum.IN_MAINTENANCE:
+          return 'warn'
+        case VehicleAvailabilityEnum.OUT_OF_SERVICE:
+          return 'danger'
+        default:
+          return null
+      }
+    },
+    async loadFleetData() {
       try {
-        const response = await axios.get(
-          apiURL + `company/id/${localStorage['currentCompany']}`,
-          config
-        )
-        console.log('Company Data: ', response.data.data)
-        this.company = response.data.data
-        const addr = response.data.data.address
-        const queryString = this.formatAddressForGeocoding(addr)
-        const result = await axios.get(
-          this.googleLink + `address=${queryString}&key=${this.apiKey}`
-        )
-        console.log(result.data.results[0].geometry.location)
-        this.companyLocation = result.data.results[0].geometry.location
-        this.addPolyOptions()
+        const data = await VehicleService.getFleetData()
+        this.vehicles = data.vehicles
+        this.currentDrivers = data.currentDrivers
+        this.recentAlerts = data.recentAlerts
+        this.totalDistanceToday = data.totalDistanceToday
+        this.averageFuelConsumption = data.averageFuelConsumption
+        this.vehiclesDueForService = data.vehiclesDueForService
+        this.updateMapCenter()
       } catch (error) {
-        console.log(error)
+        console.error('Error loading fleet data:', error)
       }
     },
-    formatAddressForGeocoding(address) {
-      const { street, suburb, city, province, postalCode } = address
-      return `${street}+${suburb}+${city}+${province}+${postalCode}`.replace(/\s+/g, '+')
-    },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
+    getVehicleIcon(status) {
+      switch (status) {
+        case VehicleAvailabilityEnum.IN_USE:
+          return '⛔ Vehicle is In Use'
+        case VehicleAvailabilityEnum.AVAILABLE:
+          return '✔️ Vehicle is Available'
+        case VehicleAvailabilityEnum.IN_MAINTENANCE:
+          return '🛠 Vehicle is in Maintenance'
+        default:
+          return '❓'
       }
-    },
-    addPolyOptions() {
-      if (this.lat && this.lng && this.company) {
-        this.polyOptions = {
-          path: [
-            { lat: this.lat, lng: this.lng },
-            { lat: this.companyLocation.lat, lng: this.companyLocation.lng }
-          ],
-          geodesic: true,
-          strokeColor: '#FF0000',
-          strokeOpacity: 1.0,
-          strokeWeight: 2
-        }
-        alert('Done')
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     }
-  },
-  mounted() {
-    this.getCompanyAddress()
-    this.addPolyOptions()
+    // updateVehicle(vehicle) {
+    //     VehicleService.updateVehicle(vehicle).then(() => {
+    //         // Handle successful update
+    //     }).catch(error => {
+    //         // Handle error
+    //     });
+    // }
   }
 }
 </script>
@@ -328,13 +394,8 @@ export default {
 <style scoped>
 .centered {
   display: block;
-  margin-left: auto;
-  margin-right: auto;
-  /*
-  //width: 50%;
-  */
-  margin-top: 8px;
-  /*  //object-fit: contain;*/
-  max-width: min-content;
+  margin: 8px auto;
+  max-width: 100%;
+  height: auto;
 }
 </style>
