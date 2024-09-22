@@ -196,6 +196,12 @@
               <GenerateInvoice />
             </v-col>
             <v-divider>
+              <h5 ref="timeTrackerSection">Time tracking</h5>
+            </v-divider>
+            <v-col>
+              <JobTimeTracker/>
+            </v-col>
+            <v-divider>
               <h5 ref="historySection">View Job History</h5>
             </v-divider>
             <v-col>
@@ -315,6 +321,20 @@
                   class="d-flex justify-start"
                   border="md"
                   elevation="5"
+                  @click="scrollToSection('jobTimeTrackerSection')"
+              >
+                <v-icon left>
+                  {{ 'fa: fa-solid fa-clock' }}
+                </v-icon>
+                Time Tracking
+              </v-btn>
+            </v-col>
+            <v-col>
+              <v-btn
+                  width="100%"
+                  class="d-flex justify-start"
+                  border="md"
+                  elevation="5"
                   @click="scrollToSection('historySection')"
               >
                 <v-icon left>
@@ -346,6 +366,7 @@ import JobHistory from './JobHistory.vue'
 import JobStatus from './JobStatus.vue'
 import LogJobInventory from './LogJobInventory.vue'
 import GenerateInvoice from './GenerateInvoice.vue'
+import JobTimeTracker from './JobTimeTracker.vue'
 import axios from 'axios'
 
 const props = defineProps<{ passedInJob: any }>()
@@ -361,6 +382,7 @@ const jobStatusSection = ref<HTMLElement | null>(null)
 const jobTagsSection = ref<HTMLElement | null>(null)
 const jobInventorySection = ref<HTMLElement | null>(null)
 const jobInvoiceSection = ref<HTMLElement | null>(null)
+const jobTimeTrackerSection = ref<HTMLElement | null>(null)
 const viewJobDialog = ref(false) // Dialog state
 const checklistSection = ref(null)
 const inventorySection = ref(null)
@@ -402,6 +424,7 @@ function scrollToSection(
         | 'jobTagsSection'
         | 'jobInventorySection'
         | 'jobInvoiceSection'
+        | 'jobTimeTrackerSection'
 ) {
   let sectionRef = null
 
@@ -425,6 +448,8 @@ function scrollToSection(
     sectionRef = jobInventorySection
   } else if (section === 'jobInvoiceSection') {
     sectionRef = jobInvoiceSection
+  } else if (section === 'jobTimeTrackerSection') {
+    sectionRef = jobTimeTrackerSection
   }
 
   if (sectionRef && sectionRef.value) {
