@@ -179,6 +179,8 @@ import Toast from 'primevue/toast'
 import Panel from 'primevue/panel'
 import { format } from 'date-fns'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 export default {
   data() {
     return {
@@ -273,10 +275,10 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       const user_id = localStorage.getItem('id')
       await axios
-        .get(`${apiURL}users/id/${user_id}`, config)
+        .get(`${API_URL}users/id/${user_id}`, config)
         .then((response) => {
           console.log('Response from fetch', response.data.data.joinedCompanies)
           console.log(response.data.data.joinedCompanies)
@@ -413,9 +415,8 @@ export default {
             }
           }
 
-          const apiURL = await this.getRequestUrl()
           try {
-            await axios.patch(`${apiURL}notification/markAsRead/${_id}`, {}, config)
+            await axios.patch(`${API_URL}notification/markAsRead/${_id}`, {}, config)
             for (let i = 0; i < this.notifications.length; i++) {
               if (this.notifications[i]._id === _id) {
                 this.read.push(this.notifications[i]._id)
@@ -455,9 +456,8 @@ export default {
             }
           }
 
-          const apiURL = await this.getRequestUrl()
           try {
-            await axios.patch(`${apiURL}notification/markAsUnread/${_id}`, {}, config)
+            await axios.patch(`${API_URL}notification/markAsUnread/${_id}`, {}, config)
             for (let i = 0; i < this.notifications.length; i++) {
               if (this.notifications[i]._id === _id) {
                 this.read.push(this.notifications[i]._id)
@@ -521,10 +521,10 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       const user_id = localStorage.getItem('id')
       try {
-        const res = await axios.get(`${apiURL}notification/user?userId=${user_id}`, config)
+        const res = await axios.get(`${API_URL}notification/user?userId=${user_id}`, config)
         //console.log('User Notifications', res)
         //this.items = res.data.data
         for (const datum of res.data.data) {

@@ -94,6 +94,7 @@
 import { defineProps, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 const toast = useToast()
 const inventoryDialog = ref(false)
@@ -186,8 +187,6 @@ const logInventoryItems = async () => {
     }
   }
 
-  const apiUrl = await getRequestUrl()
-
   const updatedInventory = inventory.value.map((item) => ({
     inventoryItemId: '', // Provide or retrieve this from somewhere
     inventoryItemName: item.name,
@@ -195,7 +194,7 @@ const logInventoryItems = async () => {
   }))
 
   try {
-    const response = await axios.patch(`${apiUrl}job/${props.jobID}`, updatedInventory, config)
+    const response = await axios.patch(`${API_URL}job/${props.jobID}`, updatedInventory, config)
     console.log(response)
     showInventoryLogSuccess()
   } catch (error) {

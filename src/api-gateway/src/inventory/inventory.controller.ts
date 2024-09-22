@@ -60,6 +60,8 @@ export class InventoryController {
 
   async validateRequestWithEmployeeId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
     const user = await this.userService.getUserById(userId);
+    console.log('user', user);
+    console.log('currentEmployeeId: ', currentEmployeeId);
     if (!user.joinedCompanies.find((joined) => joined.employeeId.toString() === currentEmployeeId.toString())) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
@@ -238,6 +240,8 @@ export class InventoryController {
     @Body()
     externalInventoryUpdateDto: ExternalInventoryUpdateDto,
   ) {
+    console.log('\n IN THE UPDATE ENDPOINT');
+    console.log('externalInventoryUpdateDto: ', externalInventoryUpdateDto);
     const userId = await extractUserId(this.jwtService, headers);
     await this.validateRequestWithEmployeeId(userId, externalInventoryUpdateDto.currentEmployeeId);
 

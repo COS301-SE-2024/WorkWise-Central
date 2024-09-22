@@ -74,6 +74,7 @@ import { ref, defineProps, onMounted } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import { API_URL } from '@/main'
 
 interface Client {
   _id: string
@@ -143,10 +144,9 @@ const showClientChangeError = () => {
 }
 
 const getClients = async () => {
-  const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(
-      `${apiUrl}client/all/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
+      `${API_URL}client/all/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
       config
     )
     if (response.status < 300 && response.status > 199) {
@@ -162,9 +162,8 @@ const getClients = async () => {
 }
 
 const getCurrentClient = async () => {
-  const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}job/id/${props.jobID}`, config)
+    const response = await axios.get(`${API_URL}job/id/${props.jobID}`, config)
     if (response.status > 199 && response.status < 300) {
       console.log('Client job data', response.data.data.clientId)
       selectedClient.value = {
@@ -187,10 +186,9 @@ const openClientDialogAndFetchClients = () => {
 }
 
 const saveClient = async () => {
-  const apiUrl = await getRequestUrl()
   try {
     const response = await axios.patch(
-      `${apiUrl}job/update/${props.jobID}`,
+      `${API_URL}job/update/${props.jobID}`,
       { clientId: selectedClient.value },
       config
     )
