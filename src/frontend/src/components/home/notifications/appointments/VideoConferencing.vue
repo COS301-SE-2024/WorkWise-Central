@@ -33,12 +33,12 @@
         ><v-container
           ><v-row>
             <v-col cols="12" lg="3">
-              <v-btn @click="toggleAudio" :color=" isAudioEnabled ? 'success' : 'error'" block>
+              <v-btn @click="toggleAudio" :color="isAudioEnabled ? 'success' : 'error'" block>
                 <v-icon
                   :icon="
                     isAudioEnabled ? 'fa: fa-solid fa-volume-high' : 'fa: fa-solid fa-volume-xmark'
                   "
-                  :color=" isAudioEnabled ? 'success' : 'error'"
+                  :color="isAudioEnabled ? 'success' : 'error'"
                 ></v-icon>
                 {{ isAudioEnabled ? 'Mute' : 'Unmute' }}
               </v-btn>
@@ -53,8 +53,15 @@
               </v-btn>
             </v-col>
             <v-col cols="12" lg="3">
-              <v-btn @click="toggleScreenShare" :color="isScreenSharing ? 'error' : 'success'" block>
-                <v-icon icon="fa: fa-solid fa-share" :color="isScreenSharing ? 'error' : 'success'"></v-icon
+              <v-btn
+                @click="toggleScreenShare"
+                :color="isScreenSharing ? 'error' : 'success'"
+                block
+              >
+                <v-icon
+                  icon="fa: fa-solid fa-share"
+                  :color="isScreenSharing ? 'error' : 'success'"
+                ></v-icon
                 >{{ isScreenSharing ? 'Stop Sharing' : 'Share Screen' }}
               </v-btn>
             </v-col>
@@ -74,7 +81,8 @@
 import { defineComponent, ref, onMounted, onUnmounted, nextTick } from 'vue'
 import axios from 'axios'
 import { io, Socket } from 'socket.io-client'
-import { props } from 'node_modules/cypress/types/bluebird';
+
+import router from '@/router'
 
 export default defineComponent({
   props: {
@@ -97,7 +105,7 @@ export default defineComponent({
     let localStream: MediaStream | null = null
     const localUrl = 'http://localhost:3000/'
     const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
-    const roomId = props.roomId
+    const roomId = localStorage.getItem('RoomId')
     const employeeId = ref('employee-id')
 
     const configuration = {
@@ -225,7 +233,7 @@ export default defineComponent({
         if (localVideo.value) {
           localVideo.value.srcObject = localStream
         }
-        
+
         socket.emit('join-room', roomId) // Replace with actual room ID
         inCall.value = true
 
@@ -353,6 +361,7 @@ export default defineComponent({
       }
       inCall.value = false
       emit('return')
+      router.push('/appointments')
     }
 
     return {
