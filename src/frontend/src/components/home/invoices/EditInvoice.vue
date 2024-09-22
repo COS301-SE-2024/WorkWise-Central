@@ -80,6 +80,8 @@
 <script lang="ts">
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 interface Invoice {
   _id: string
   invoiceNumber: string
@@ -138,10 +140,9 @@ export default {
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` }
       }
-      const apiURL = this.getRequestUrl()
 
       axios
-        .patch(`${apiURL}/invoices/${this.invoice_id}`, this.localEditedInvoice, config)
+        .patch(`${API_URL}/invoices/${this.invoice_id}`, this.localEditedInvoice, config)
         .then((response) => {
           this.$toast.add({
             severity: 'success',

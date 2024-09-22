@@ -52,6 +52,7 @@
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   name: 'DeleteInventory',
@@ -84,9 +85,8 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
-        await axios.delete(`${apiURL}inventory/${this.inventory_id}`, config).then((response) => {
+        await axios.delete(`${API_URL}inventory/${this.inventory_id}`, config).then((response) => {
           console.log(response.data)
           this.$toast.add({
             severity: 'success',

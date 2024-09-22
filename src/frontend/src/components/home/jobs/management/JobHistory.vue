@@ -44,6 +44,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { formatDistanceToNow } from 'date-fns'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 // Define the type for an event
 interface Event {
@@ -101,9 +102,8 @@ const paginatedEvents = computed(() => {
 })
 
 const refreshHistory = async () => {
-  const apiUrl = await getRequestUrl()
   try {
-    const res = await axios.get(`${apiUrl}job/id/${props.jobID}`)
+    const res = await axios.get(`${API_URL}job/id/${props.jobID}`)
     events.value = res.data.data.history
     console.log('History updated:', res)
   } catch (error) {

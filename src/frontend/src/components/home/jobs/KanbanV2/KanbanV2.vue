@@ -7,22 +7,20 @@
         </v-btn>
       </v-col></v-row
     >
-
-    <v-row class="d-flex flex-nowrap overflow-scroll">
+    <v-row>
       <VueDraggable
         ref="el"
         v-model="columns"
-        class="d-flex flex-nowrap overflow-scroll"
+        class="d-flex flex-nowrap overflow-scroll flex flex-col gap-2 p-4 w-300px h-800px m-auto bg-gray-500/5 rounded overflow-auto"
         :onUpdate="onColumnDragEnd"
         group="columns"
+        :animation="150"
+        ghostClass="ghost"
+        :scroll="true"
       >
         <v-col
           v-for="column in columns"
           :key="column._id"
-          :class="{ 'drop-target': isDropTarget(column) }"
-          @dragover.prevent="onDragOver(column)"
-          @dragleave="onDragLeave"
-          @drop="onDrop(column)"
           role="listbox"
           aria-dropeffect="move"
           :lg="3"
@@ -227,98 +225,93 @@
               </v-menu>
             </v-card-item>
 
-            <v-virtual-scroll
-              :items="column.cards"
-              class="kanban-column-scroller"
-              :max-height="850"
-              :max-width="500"
-            >
-              <template #default="{ item }">
-                <v-card-text>
-                  <VueDraggable
-                    v-model="column.cards"
-                    group="job-cards"
-                    :onUpdate="onJobCardChanges"
-                  >
-                    <v-card
-                      @click="clickedEvent(item)"
-                      variant="flat"
-                      elevation="3"
-                      class="kanban-card mb-2"
-                      draggable="true"
-                      :class="{ dragging: isDragging(item) }"
-                      @dragstart="onDragStart(item, column)"
-                      @dragend="onDragEnd"
-                      @drop="onDrop(column)"
-                      aria-grabbed="true"
-                      role="option"
+            <!--            <v-virtual-scroll-->
+            <!--              :items="column.cards"-->
+            <!--              class="kanban-column-scroller"-->
+            <!--              :max-height="700"-->
+            <!--              :max-width="500"-->
+            <!--            >-->
+            <!--              <template #default="{ item }">-->
+            <v-card-text>
+              <VueDraggable
+                class="flex flex-col gap-2 p-4 w-300px h-300px m-auto bg-gray-500/5 rounded overflow-auto"
+                v-model="column.cards"
+                group="job-cards"
+                :animation="150"
+                ghostClass="ghost"
+                :onAdd="(event) => onCardStatusAdd(event, column)"
+              >
+                <v-card
+                  v-for="item in column.cards"
+                  :key="item.jobId"
+                  @click="clickedEvent(item)"
+                  variant="flat"
+                  elevation="3"
+                  draggable="true"
+                  aria-grabbed="true"
+                  role="option"
+                >
+                  <v-card-item>
+                    <v-img :src="item.coverImage"> </v-img>
+                  </v-card-item>
+                  <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
+                    ><b>{{ item.heading }}</b>
+                    <v-menu align="left">
+                      <template v-slot:activator="{ props }">
+                        <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
+                      </template>
+                      <v-list :border="true" bg-color="background" rounded="lg">
+                        <v-list-item>
+                          <v-btn :elevation="0" @click="ArchiveJob(item)">
+                            <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
+                            {{ 'Archive' }}
+                          </v-btn>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </v-card-item>
+                  <v-card-item v-if="item.status.status === column.status"
+                    ><v-chip
+                      :color="column.colour"
+                      variant="elevated"
+                      rounded="sm"
+                      density="comfortable"
                     >
-                      <v-card-item>
-                        <v-img :src="item.coverImage"> </v-img>
-                      </v-card-item>
-                      <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
-                        ><b>{{ item.heading }}</b>
-                        <v-menu align="left">
-                          <template v-slot:activator="{ props }">
-                            <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
-                          </template>
-                          <v-list :border="true" bg-color="background" rounded="lg">
-                            <v-list-item>
-                              <v-btn :elevation="0" @click="ArchiveJob(item)">
-                                <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
-                                {{ 'Archive' }}
-                              </v-btn>
-                            </v-list-item>
-                          </v-list>
-                        </v-menu>
-                      </v-card-item>
-                      <v-card-item v-if="item.status.status === column.status"
-                        ><v-chip
-                          :color="column.colour"
-                          variant="elevated"
-                          rounded="sm"
-                          density="comfortable"
-                        >
-                          <b>{{ item.status.status }}</b></v-chip
-                        ></v-card-item
-                      >
+                      <b>{{ item.status.status }}</b></v-chip
+                    ></v-card-item
+                  >
 
-                      <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                        <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-user-large' }}</v-icon>
-                        {{ item.clientName }}</v-card-item
-                      ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                        <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
-                        {{ item.startDate }}</v-card-item
-                      ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                        <v-icon color="kanbanIconColor">{{
-                          'fa: fa-solid fa-location-dot'
-                        }}</v-icon>
-                        {{ item.city + ', ' + item.suburb }}</v-card-item
-                      >
+                  <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-user-large' }}</v-icon>
+                    {{ item.clientName }}</v-card-item
+                  ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
+                    {{ item.startDate }}</v-card-item
+                  ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-location-dot' }}</v-icon>
+                    {{ item.city + ', ' + item.suburb }}</v-card-item
+                  >
 
-                      <v-card-item v-if="item.priorityTag != null"
-                        ><v-chip
-                          :color="item.priorityTag.colour"
-                          variant="tonal"
-                          density="comfortable"
-                          ><b>Priority: {{ item.priorityTag.label }}</b></v-chip
-                        ></v-card-item
-                      >
+                  <v-card-item v-if="item.priorityTag != null"
+                    ><v-chip :color="item.priorityTag.colour" variant="tonal" density="comfortable"
+                      ><b>Priority: {{ item.priorityTag.label }}</b></v-chip
+                    ></v-card-item
+                  >
 
-                      <v-card-text>
-                        <v-chip
-                          :color="item.tags[i].colour"
-                          class=""
-                          v-for="(n, i) in item.tags.length"
-                          :key="i"
-                          ><b>{{ item.tags[i].label }}</b></v-chip
-                        >
-                      </v-card-text>
-                    </v-card>
-                  </VueDraggable>
-                </v-card-text>
-              </template>
-            </v-virtual-scroll>
+                  <v-card-text v-if="item.tags.length != 0">
+                    <v-chip
+                      :color="item.tags[i].colour"
+                      class=""
+                      v-for="(n, i) in item.tags.length"
+                      :key="i"
+                      ><b>{{ item.tags[i].label }}</b></v-chip
+                    >
+                  </v-card-text>
+                </v-card>
+              </VueDraggable>
+            </v-card-text>
+            <!--              </template>-->
+            <!--            </v-virtual-scroll>-->
           </v-card>
         </v-col>
         <v-col cols="auto">
@@ -402,13 +395,13 @@
     <ViewJob @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
   </v-dialog>
 </template>
-7
 
 <script lang="ts">
 import type { JobCardDataFormat, Column } from '../types'
 import '@mdi/font/css/materialdesignicons.css'
 import ViewJob from '@/components/home/jobs/management/ViewJob.vue'
 import { type SortableEvent, VueDraggable } from 'vue-draggable-plus'
+import { API_URL } from '@/main'
 
 import axios from 'axios'
 
@@ -445,6 +438,40 @@ export default {
     }
   },
   methods: {
+    async onCardStatusAdd(e: any, c: Column) {
+      console.log('hello there man')
+      console.log(e)
+      console.log(c)
+      console.log(c.status)
+      e.clonedData.status.status = c.status
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      console.log(e.clonedData.jobId)
+      try {
+        let res = await axios.patch(
+          API_URL + `job/update/${e.clonedData.jobId}`,
+          { status: c._id },
+          config
+        )
+        console.log(res)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    onUpdate() {
+      console.log('update')
+    },
+    onAdd() {
+      console.log('add')
+    },
+    remove() {
+      console.log('remove')
+    },
     async onJobCardChanges(e: SortableEvent) {
       console.log(e)
     },
@@ -463,10 +490,10 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       console.log(this.columns)
       axios
-        .patch(apiURL + 'company/statuses', req, config)
+        .patch(API_URL + 'company/statuses', req, config)
         .then((res) => {
           console.log(`this is me and this is the response: ${res}`)
         })
@@ -483,9 +510,9 @@ export default {
       }
       console.log(this.archive_status_id)
       console.log(payload)
-      const apiURL = await this.getRequestUrl()
+
       axios
-        .patch(apiURL + `job/update/${payload.jobId}`, { status: this.archive_status_id }, config)
+        .patch(API_URL + `job/update/${payload.jobId}`, { status: this.archive_status_id }, config)
         .then((res) => {
           console.log(res.data.data)
           window.location.reload()
@@ -500,11 +527,11 @@ export default {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`
           }
         }
-        const apiURL = await this.getRequestUrl()
+
         for (let i = 0; i < col.cards.length; i++) {
           axios
             .patch(
-              apiURL + `job/update/${col.cards[i].jobId}`,
+              API_URL + `job/update/${col.cards[i].jobId}`,
               { status: this.archive_status_id },
               config
             )
@@ -534,8 +561,8 @@ export default {
             employeeId: localStorage['employeeId']
           }
         }
-        const apiURL = await this.getRequestUrl()
-        let res = await axios.delete(apiURL + 'job/status', config)
+
+        let res = await axios.delete(API_URL + 'job/status', config)
 
         for (let i = 0; i < col.cards.length; i++) {
           this.columns[0].cards.push(col.cards[i])
@@ -579,9 +606,9 @@ export default {
               Authorization: `Bearer ${localStorage.getItem('access_token')}`
             }
           }
-          const apiURL = await this.getRequestUrl()
+
           let res = await axios.patch(
-            apiURL + 'job/status',
+            API_URL + 'job/status',
             {
               statusId: col._id,
               status: this.new_column_name,
@@ -609,9 +636,9 @@ export default {
               Authorization: `Bearer ${localStorage.getItem('access_token')}`
             }
           }
-          const apiURL = await this.getRequestUrl()
+
           let res = await axios.patch(
-            apiURL + 'job/status',
+            API_URL + 'job/status',
             {
               statusId: col._id,
               status: this.new_column_name,
@@ -638,9 +665,9 @@ export default {
               Authorization: `Bearer ${localStorage.getItem('access_token')}`
             }
           }
-          const apiURL = await this.getRequestUrl()
+
           let res = await axios.patch(
-            apiURL + 'job/status',
+            API_URL + 'job/status',
             {
               statusId: col._id,
               colour: this.column_color,
@@ -688,9 +715,9 @@ export default {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`
           }
         }
-        const apiURL = await this.getRequestUrl()
+
         let res = await axios.post(
-          apiURL + 'job/status',
+          API_URL + 'job/status',
           {
             status: this.new_column_name,
             colour: this.column_color,
@@ -724,10 +751,8 @@ export default {
         }
       }
 
-      const apiURL = await this.getRequestUrl()
-
       try {
-        const response = await axios.get(apiURL + `job/id/${payload.jobId}`, config)
+        const response = await axios.get(API_URL + `job/id/${payload.jobId}`, config)
         console.log(response)
         this.SelectedEvent = response.data.data
         this.openJobCard()
@@ -771,10 +796,10 @@ export default {
       //     Authorization: `Bearer ${localStorage.getItem('access_token')}`
       //   }
       // }
-      // const apiURL = await this.getRequestUrl()
+      //
       // try {
       //   const loaded_tags_response = await axios.get(
-      //     apiURL + `job/status/all/${localStorage['currentCompany']}`,
+      //     API_URL + `job/status/all/${localStorage['currentCompany']}`,
       //     config
       //   )
       //   console.log(loaded_tags_response)
@@ -803,10 +828,10 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const loaded_tags_response = await axios.get(
-          apiURL + `company/status/all/${localStorage['currentCompany']}`,
+          API_URL + `company/status/all/${localStorage['currentCompany']}`,
           config
         )
         console.log(loaded_tags_response.data.data)
@@ -836,10 +861,10 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const loaded_tags_response = await axios.get(
-          apiURL + `company/status/all/${localStorage['currentCompany']}`,
+          API_URL + `company/status/all/${localStorage['currentCompany']}`,
           config
         )
         console.log(loaded_tags_response.data.data)
@@ -860,10 +885,10 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const loaded_tags_response = await axios.get(
-          apiURL + `job/all/company/detailed/${localStorage['currentCompany']}`,
+          API_URL + `job/all/company/detailed/${localStorage['currentCompany']}`,
           config
         )
         console.log(loaded_tags_response)
@@ -961,7 +986,7 @@ export default {
           })
           const jobid = this.draggedCard.jobId
           this.draggedCard.status.status = targetColumn.status
-          const apiURL = await this.getRequestUrl()
+
           const config = {
             headers: {
               'Content-Type': 'application/json',
@@ -971,7 +996,7 @@ export default {
           console.log(jobid)
           try {
             let res = await axios.patch(
-              apiURL + `job/update/${jobid}`,
+              API_URL + `job/update/${jobid}`,
               { status: targetColumn._id },
               config
             )

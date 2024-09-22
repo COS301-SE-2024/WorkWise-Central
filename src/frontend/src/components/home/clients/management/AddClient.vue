@@ -265,6 +265,7 @@ import axios from 'axios'
 const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
 
 interface ContactInfo {
   email?: string
@@ -524,9 +525,8 @@ export default defineComponent({
     async handleSubmission() {
       console.log(JSON.stringify(this.req_obj))
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
       axios
-        .post(apiURL + 'client/create', this.req_obj, config)
+        .post(API_URL + 'client/create', this.req_obj, config)
         .then((res) => {
           console.log(res)
           this.$toast.add({

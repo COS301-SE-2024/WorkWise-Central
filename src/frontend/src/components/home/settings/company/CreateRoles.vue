@@ -58,6 +58,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 interface Role {
   roleName: string
@@ -96,10 +97,9 @@ export default defineComponent({
         },
         currentEmployeeId: localStorage.getItem('employeeId')
       }
-      const apiURL = await this.getRequestUrl()
       console.log(this.Role)
       await axios
-        .post(`${apiURL}role/create`, data, config)
+        .post(`${API_URL}role/create`, data, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
