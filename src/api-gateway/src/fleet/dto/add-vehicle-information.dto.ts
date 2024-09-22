@@ -1,9 +1,8 @@
-import { IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { FuelType } from '../entities/vehicle.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class VehicleName {
+export class AddVehicleInformationDto {
   @IsString()
   @IsNotEmpty()
   make: string;
@@ -11,12 +10,6 @@ export class VehicleName {
   @IsString()
   @IsNotEmpty()
   model: string;
-}
-
-export class AddVehicleInformationDto {
-  @ValidateNested()
-  @Type(() => VehicleName)
-  name: VehicleName;
 
   @IsNotEmpty()
   @IsNumber()
