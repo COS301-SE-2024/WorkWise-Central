@@ -44,7 +44,7 @@ const inventorySubItems = ref([
 ])
 const invoicesSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'invoices' },
-  { title: 'Invoice Board', icon: 'fa: fa-solid fa-table', routeName: '404' }
+  { title: 'Invoice Board', icon: 'fa: fa-solid fa-table', routeName: 'invoice-kanban' }
 ])
 
 const inboxSubItems = ref([
