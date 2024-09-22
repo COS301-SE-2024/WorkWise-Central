@@ -74,10 +74,11 @@ const makeApiCall = async (endpoint: string, action: string) => {
       jobId: props.jobID
     }, config);
 
-    if (response.status === 200) {
+    if (response.status > 199 && response.status < 300) {
       console.log(`${action} successful`);
       return true;
     } else {
+      console.log('Response:', response.status)
       console.error(`${action} failed`);
       return false;
     }
