@@ -106,7 +106,7 @@ export default defineComponent({
     const localUrl = 'http://localhost:3000/'
     const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
     const roomId = localStorage.getItem('RoomId')
-    const employeeId = ref('employee-id')
+    const employeeId = localStorage.getItem('employeeId')
 
     const configuration = {
       iceServers: [
@@ -204,6 +204,7 @@ export default defineComponent({
     }
 
     const joinCall = async () => {
+      console.log('Joining call:', roomId)
       try {
         await navigator.mediaDevices
           .getUserMedia({ video: true, audio: true })
@@ -238,7 +239,7 @@ export default defineComponent({
         inCall.value = true
 
         // Emit user joined event
-        socket.emit('user-joined', employeeId.value) // Replace with actual user ID
+        socket.emit('user-joined', employeeId) // Replace with actual user ID
       } catch (error) {
         console.error('Failed to join call:', error)
       }

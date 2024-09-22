@@ -25,6 +25,7 @@ export class WebRTCGateway implements OnModuleInit {
 
   @SubscribeMessage('join-room')
   handleJoinRoom(client: Socket, roomId: string) {
+    console.log(`Client ${client.id} joined room ${roomId}`);
     client.join(roomId);
     if (!this.rooms.has(roomId)) {
       this.rooms.set(roomId, new Set());
@@ -35,11 +36,13 @@ export class WebRTCGateway implements OnModuleInit {
 
   @SubscribeMessage('leave-room')
   handleLeaveRoom(client: Socket, roomId: string) {
+    console.log(`Client ${client.id} left room ${roomId}`);
     this.handleRoomLeave(client, roomId);
   }
 
   @SubscribeMessage('offer')
   handleOffer(client: Socket, payload: { target: string; offer: RTCSessionDescriptionInit }) {
+    console.log(`Client ${client.id} sent offer to ${payload.target}`);
     this.server.to(payload.target).emit('offer', {
       offer: payload.offer,
       offerSenderId: client.id,
@@ -48,6 +51,7 @@ export class WebRTCGateway implements OnModuleInit {
 
   @SubscribeMessage('answer')
   handleAnswer(client: Socket, payload: { target: string; answer: RTCSessionDescriptionInit }) {
+    console.log(`Client ${client.id} sent answer to ${payload.target}`);
     this.server.to(payload.target).emit('answer', {
       answer: payload.answer,
       answerSenderId: client.id,
@@ -56,6 +60,7 @@ export class WebRTCGateway implements OnModuleInit {
 
   @SubscribeMessage('ice-candidate')
   handleIceCandidate(client: Socket, payload: { target: string; candidate: RTCIceCandidate }) {
+    console.log(`Client ${client.id} sent ICE candidate to ${payload.target}`);
     this.server.to(payload.target).emit('ice-candidate', {
       candidate: payload.candidate,
       candidateSenderId: client.id,

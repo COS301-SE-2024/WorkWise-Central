@@ -58,6 +58,7 @@
     </v-card>
 
     <!-- <VideoConferencing :roomId="selectedRoom.id" v-show="conference" @return="leavingRoom" /> -->
+    <!-- <VideoConferencing :roomId="selectedRoom.id" v-show="conference" @return="leavingRoom" /> -->
   </v-container>
 
   <!-- Dialog for Creating/Editing Appointment -->
