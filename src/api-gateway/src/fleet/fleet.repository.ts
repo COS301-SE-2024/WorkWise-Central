@@ -65,6 +65,11 @@ export class FleetRepository {
       vehicle.markModified('vin');
     }
 
+    if (updateVehicleDto.images !== undefined) {
+      vehicle.images = updateVehicleDto.images;
+      vehicle.markModified('images');
+    }
+
     if (updateVehicleDto.modelYear !== undefined) {
       vehicle.modelYear = updateVehicleDto.modelYear;
       vehicle.markModified('modelYear');

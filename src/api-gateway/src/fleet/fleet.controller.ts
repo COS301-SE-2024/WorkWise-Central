@@ -28,35 +28,29 @@ export class FleetController {
   }
 
   @ApiOperation({
-    summary: `Create a new ${className}`,
+    summary: `Create a new vehicle within a Fleet`,
     description: 'Further details',
   })
   @ApiResponse({
     status: 201,
     type: FleetVehicleResponseDto,
-    description: `The access token and ${className}'s Id used for querying.`,
+    description: `The access token and Vehicle's Id used for querying.`,
   })
   @Post('/create')
   async create(@Headers() headers: any, @Body() createVehicleDto: CreateVehicleDto) {
     const userId = extractUserId(this.jwtService, headers);
-
-    // if (createVehicleDto.logo) {
-    //   if (!isBase64Uri(createVehicleDto.logo)) {
-    //     throw new BadRequestException('Profile picture is invalid, it must be base64 encoded');
-    //   }
-    // }
     return { data: await this.fleetService.create(userId, createVehicleDto) };
   }
 
   @ApiOperation({
-    summary: `Get all ${className} objects`,
+    summary: `Get all Vehicle instances in every company's fleet`,
   })
   @ApiOkResponse({
     type: FleetVehiclesResponseDto,
-    description: `An array of mongodb objects of the ${className} class`,
+    description: `An array of mongodb objects of the Vehicle class`,
   })
   @Get('/all')
-  async findAllNames(@Headers() headers: any) {
+  async findAll(@Headers() headers: any) {
     try {
       const userId = extractUserId(this.jwtService, headers);
       return { data: await this.fleetService.getAllVehicles(userId) };
@@ -65,29 +59,29 @@ export class FleetController {
     }
   }
 
-  @ApiOperation({ summary: `Find a ${className}` })
+  @ApiOperation({ summary: `Find a specific Vehicle within a ${className}` })
   @ApiOkResponse({
     type: FleetVehicleResponseDto,
     description: `The mongodb object of the ${className}, with an _id attribute`,
   })
-  @Get('id/:id')
-  async findOne(@Headers() headers: any, @Param('id') id: string) {
+  @Get('id/:vid')
+  async findOne(@Headers() headers: any, @Param('vid') vId: string) {
     try {
-      validateObjectId(id);
+      validateObjectId(vId);
       const userId = extractUserId(this.jwtService, headers);
-
+      const vehicleId = new Types.ObjectId(vId);
       return {
-        data: await this.fleetService.getById(userId, new Types.ObjectId(id)),
+        data: await this.fleetService.getById(userId, vehicleId),
       };
     } catch (e) {
       throw e;
     }
   }
 
-  @ApiOperation({ summary: `Find a ${className} by vin number` })
+  @ApiOperation({ summary: `Find a Vehicle in a Fleet by its vin number` })
   @ApiOkResponse({
     type: FleetVehicleResponseDto,
-    description: `The mongodb object of the ${className}, with an _id attribute`,
+    description: `The mongodb object of the Vehicle, with an _id attribute`,
   })
   @Get('vin/:vin')
   async findByVinNumber(@Headers() headers: any, @Param('vin') vin: string) {
@@ -102,7 +96,7 @@ export class FleetController {
     }
   }
 
-  @ApiOperation({ summary: `Update a ${className}` })
+  @ApiOperation({ summary: `Update a Vehicle in a ${className}` })
   @ApiOkResponse({
     type: FleetVehicleResponseDto,
     description: `The mongodb object of the ${className}, with an _id attribute`,
