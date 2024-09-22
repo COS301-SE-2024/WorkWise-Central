@@ -237,6 +237,7 @@
                   draggable="true"
                   aria-grabbed="true"
                   role="option"
+                  class="ga-2"
                 >
                   <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
                     ><b>{{ 'Invoice #' + item.invoiceNumber }}</b>
@@ -629,16 +630,16 @@ export default {
         }
       }
 
-      const apiURL = await this.getRequestUrl()
-
-      try {
-        const response = await axios.get(apiURL + `job/id/${payload.id}`, config)
-        console.log(response)
-        this.SelectedEvent = response.data.data
-        this.openJobCard()
-      } catch (error) {
-        console.log('Error fetching data: ' + error)
-      }
+      // const apiURL = await this.getRequestUrl()
+      //
+      // try {
+      //   const response = await axios.get(apiURL + `job/id/${payload.id}`, config)
+      //   console.log(response)
+      //   this.SelectedEvent = response.data.data
+      //   this.openJobCard()
+      // } catch (error) {
+      //   console.log('Error fetching data: ' + error)
+      // }
     },
     openJobCard() {
       console.log('edit button clicked')
