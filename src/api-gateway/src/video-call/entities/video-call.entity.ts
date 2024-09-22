@@ -17,12 +17,16 @@ export class VideoCall extends Document {
   participants: Types.ObjectId[];
 
   @ApiProperty()
-  @Prop({ required: true })
-  callId: string;
+  @Prop({ type: SchemaTypes.ObjectId, required: true })
+  companyId: Types.ObjectId;
 
   @ApiProperty()
   @Prop({ required: true })
   details: string;
+
+  @ApiHideProperty()
+  @Prop({ required: true })
+  roomId: string;
 
   @ApiHideProperty()
   @Prop({ required: true, default: new Date() })

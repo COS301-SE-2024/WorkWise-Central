@@ -5,14 +5,17 @@
         <h2 class="text-xl font-semibold">Meetings</h2>
       </v-col>
       <v-divider></v-divider>
-      <v-col cols="12"  class="text-center">
-        <v-btn color="primary" block @click="openDialog" variant="outlined"> Create New Meeting </v-btn>
+      <v-col cols="12" class="text-center">
+        <v-btn color="primary" block @click="openDialog" variant="outlined">
+          Create New Meeting
+        </v-btn>
       </v-col>
     </v-row>
-    <v-card rounded="md" class="pa-0 ma-3 bg-background" border="md">
+
+    <v-card rounded="md" class="pa-0 ma-3 bg-background" border="md" v-show="joinRoom">
       <v-row>
         <!-- Recently Created Appointments Section -->
-        <v-col cols="12" lg="6" order="last" order-lg="first">
+        <v-col cols="12" order="last" order-lg="first">
           <h3 class="pa-0 ma-5">Recently Created Meetings</h3>
           <v-card
             v-for="appointment in recentAppointments"
@@ -26,51 +29,41 @@
             }}</v-card-subtitle>
             <v-card-text>{{ appointment.details }}</v-card-text>
             <v-card-actions class="bg-cardColor">
-              <v-btn color="primary" @click="editAppointment(appointment.id)"
-                ><v-icon icon="fa:fa-solid fa-pencil"></v-icon
-              ></v-btn>
-              <v-btn color="error" @click="deleteAppointment(appointment.id)"
-                ><v-icon icon="fa:fa-solid fa-trash"></v-icon
-              ></v-btn>
+              <v-container
+                ><v-row
+                  ><v-col cols="12" lg="4"
+                    ><v-btn color="primary" @click="editAppointment(appointment.id)" block
+                      ><v-icon icon="fa:fa-solid fa-pencil" color="primary"></v-icon>Edit</v-btn
+                    ></v-col
+                  ></v-row
+                ></v-container
+              >
+              <v-col cols="12" lg="4">
+                <v-btn color="error" @click="deleteAppointment(appointment.id)" block
+                  ><v-icon icon="fa:fa-solid fa-trash" color="error"></v-icon>Delete</v-btn
+                ></v-col
+              >
+              <v-col cols="12" lg="4">
+                <v-btn @click="joiningRoom" color="success" block>
+                  <v-icon icon="fa:fa-solid fa-right-to-bracket" color="success"></v-icon>Join Room
+                </v-btn>
+              </v-col>
             </v-card-actions>
           </v-card>
         </v-col>
 
         <!-- Most Important Appointments Section -->
-        <v-col cols="12" lg="6" order="first" order-lg="last">
-          <h3 class="pa-0 ma-5">Most Important Meetings</h3>
-          <v-card
-            v-for="appointment in importantAppointments"
-            :key="appointment.id"
-            class="pa-1 ma-5 bg-background"
-            color="warning"
-          >
-            <v-card-title>{{ appointment.title }}</v-card-title>
-            <v-card-subtitle class="bg-cardColor">{{
-              formatDate(appointment.date)
-            }}</v-card-subtitle>
-            <v-card-text>{{ appointment.details }}</v-card-text>
-            <v-card-actions class="bg-cardColor">
-              <v-btn color="primary" @click="editAppointment(appointment.id)"
-                ><v-icon icon="fa:fa-solid fa-pencil"></v-icon
-              ></v-btn>
-              <v-btn color="error" @click="deleteAppointment(appointment.id)"
-                ><v-icon icon="fa:fa-solid fa-trash"></v-icon
-              ></v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-col>
       </v-row>
     </v-card>
+
+    <VideoConferencing :roomId="selectedRoom.id" v-show="conference" @return="leavingRoom" />
   </v-container>
 
   <!-- Dialog for Creating/Editing Appointment -->
   <v-dialog v-model="showDialog" persistent max-width="600px">
     <v-card class="bg-cardColor">
       <v-card-title>
-        <span class="headline">{{
-          isEditing ? 'Edit Appointment' : 'Create a new meeting'
-        }}</span>
+        <span class="headline">{{ isEditing ? 'Edit Appointment' : 'Create a new meeting' }}</span>
       </v-card-title>
       <v-card-text>
         <v-form v-model="valid">
@@ -144,8 +137,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import VideoConferencing from './VideoConferencing.vue'
 interface Appointment {
-  id: number
+  id: string
   title: string
   date: string
   details: string
@@ -153,15 +147,23 @@ interface Appointment {
 }
 export default defineComponent({
   name: 'AppointmentsPage',
+  components: {
+    VideoConferencing
+  },
   data() {
     return {
       showDialog: false,
+      selectedRoom: {
+        id: ''
+      },
       isEditing: false,
+      joinRoom: true,
+      conference: false,
       editIndex: 0,
       valid: false,
       isGenerating: false,
       newAppointment: {
-        id: 0,
+        id: '',
         title: '',
         date: '',
         details: '',
@@ -169,73 +171,40 @@ export default defineComponent({
       },
       recentAppointments: [
         {
-          id: 1,
+          id: '1',
           title: 'Meeting with John Doe',
           date: '2021-10-15',
           details: 'Discuss project timeline and deliverables'
         },
         {
-          id: 2,
+          id: '2',
           title: 'Dentist Appointment',
           date: '2021-10-20',
           details: 'Annual checkup and cleaning'
         },
         {
-          id: 3,
+          id: '3',
           title: 'Team Standup Meeting',
           date: '2021-10-22',
           details: 'Daily sync with the development team'
         },
         {
-          id: 4,
+          id: '4',
           title: 'Project Review with Clients',
           date: '2021-10-23',
           details: 'Review milestones and gather feedback'
         },
         {
-          id: 5,
+          id: '5',
           title: 'Doctor Appointment',
           date: '2021-10-24',
           details: 'Follow-up on health checkup results'
         },
         {
-          id: 6,
+          id: '6',
           title: 'Lunch with Partner',
           date: '2021-10-26',
           details: 'Discuss partnership opportunities'
-        }
-      ],
-
-      importantAppointments: [
-        {
-          id: 7,
-          title: 'Client Presentation',
-          date: '2021-10-25',
-          details: 'Present new marketing strategy'
-        },
-        {
-          id: 8,
-          title: 'Quarterly Budget Meeting',
-          date: '2021-10-28',
-          details: 'Discuss and finalize the quarterly budget'
-        },
-        {
-          id: 9,
-          title: 'Board Meeting',
-          date: '2021-10-30',
-          details: 'Present annual report and future plans'
-        },
-        {
-          id: 10,
-          title: 'Strategy Planning Session',
-          date: '2021-11-01',
-          details: 'Plan next quarter’s goals and initiatives'
-        },
-        {
-          id: 11,
-          title: 'Investor Meeting',
-          date: '2021-11-05',
-          details: 'Discuss funding and growth strategies'
         }
       ],
 
@@ -255,55 +224,45 @@ export default defineComponent({
       this.isEditing = false
       this.showDialog = true
       this.newAppointment = {
-        id: 0,
+        id: '',
         title: '',
         date: '',
         details: '',
         important: false
       }
     },
+    joiningRoom(appointment: Appointment) {
+      this.selectedRoom.id = appointment.id
+      console.log(this.selectedRoom.id)
+      this.joinRoom = false
+      this.conference = true
+    },
+    leavingRoom() {
+      this.joinRoom = true
+      this.conference = false
+    },
     saveAppointment() {
       this.isGenerating = true
       if (this.isEditing && this.editIndex !== null) {
         // Update existing appointment
         this.recentAppointments.splice(this.editIndex, 1, { ...this.newAppointment })
-        this.updateImportantAppointments(this.newAppointment)
       } else {
         // Add new appointment
         const newId = this.recentAppointments.length + 1
-        const appointment = { ...this.newAppointment, id: newId }
+        const appointment = { ...this.newAppointment}
         this.recentAppointments.push(appointment)
-        if (appointment.important) {
-          this.importantAppointments.push(appointment)
-        }
       }
       this.showDialog = false
       this.isGenerating = false
     },
-    editAppointment(appointment: number) {
+    editAppointment(appointment: string) {
       this.isEditing = true
       this.showDialog = true
     },
-    deleteAppointment(id: number) {
+    deleteAppointment(id: string) {
       this.recentAppointments = this.recentAppointments.filter(
         (appointment) => appointment.id !== id
       )
-      this.importantAppointments = this.importantAppointments.filter(
-        (appointment) => appointment.id !== id
-      )
-    },
-    updateImportantAppointments(appointment: Appointment) {
-      this.isGenerating = true
-      const index = this.importantAppointments.findIndex((a) => a.id === appointment.id)
-      if (appointment.important && index === -1) {
-        this.importantAppointments.push(appointment)
-      } else if (!appointment.important && index !== -1) {
-        this.importantAppointments.splice(index, 1)
-      } else if (index !== -1) {
-        this.importantAppointments.splice(index, 1, appointment)
-      }
-      this.isGenerating = false
-      this.showDialog = false
     }
   }
 })

@@ -2,11 +2,16 @@
   <div>
     <div class="video-container">
       <div class="local-video">
-        <video :ref="
+        <video
+          :ref="
             (el) => {
               if (el) localVideo = el as HTMLVideoElement
             }
-          " autoplay muted playsinline></video>
+          "
+          autoplay
+          muted
+          playsinline
+        ></video>
       </div>
       <div v-for="peer in peers" :key="peer.id" class="remote-video">
         <video
@@ -37,7 +42,13 @@ import axios from 'axios'
 import { io, Socket } from 'socket.io-client'
 
 export default defineComponent({
-  setup() {
+  props: {
+    roomId: {
+      type: String,
+      required: true
+    }
+  },
+  setup(_, { emit }) {
     const title = ref('')
     const scheduledTime = ref('')
     const inCall = ref(false)
@@ -56,7 +67,7 @@ export default defineComponent({
 
     const configuration = {
       iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' }//STUN server
+        { urls: 'stun:stun.l.google.com:19302' } //STUN server
         //TURN server - none found
       ]
     }
@@ -306,6 +317,7 @@ export default defineComponent({
         localStream.getTracks().forEach((track) => track.stop())
       }
       inCall.value = false
+      emit('return')
     }
 
     return {
