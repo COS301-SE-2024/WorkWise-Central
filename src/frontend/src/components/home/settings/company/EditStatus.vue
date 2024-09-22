@@ -255,7 +255,7 @@ export default defineComponent({
       const user_id = localStorage.getItem('id')
       try {
         const res = await axios.get(
-          `${apiURL}job/status/all/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}job/status/all/${localStorage.getItem('currentCompany')}`,
           config
         )
         this.items = res.data.data
@@ -300,7 +300,7 @@ export default defineComponent({
       }
       console.log(this.selectedItem)
       await axios
-        .patch(`${apiURL}job/status`, this.selectedItem, config)
+        .patch(`${API_URL}job/status`, this.selectedItem, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({

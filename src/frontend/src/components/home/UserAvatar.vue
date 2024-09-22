@@ -110,7 +110,7 @@ const getUserData = async () => {
   const userId = localStorage.getItem('id')
 
   try {
-    const response = await axios.get(`${apiUrl}users/id/${userId}`, config)
+    const response = await axios.get(`${API_URL}users/id/${userId}`, config)
     const data = response.data.data
 
     firstName.value = data.personalInfo.firstName

@@ -24,6 +24,7 @@
 <script setup lang="ts">
 import { ref, defineProps, onMounted } from 'vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 interface Status {
   _id: string
