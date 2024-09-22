@@ -172,6 +172,7 @@ export default defineComponent({
       conference: false,
       teamLeaderIds: [] as string[],
       teamMemberNames: [] as string[],
+      participants: [] as string[],
       editIndex: 0,
       valid: false,
       isGenerating: false,
@@ -203,7 +204,7 @@ export default defineComponent({
       titleRules: [(v: string) => !!v || 'Title is required'],
       dateRules: [
         (v: string) => !!v || 'Date is required',
-        (v: string) => v >= new Date().toISOString().substr(0, 10) || 'Date cannot be in the past',
+        (v: string) => v >= new Date().toISOString().substr(0, 10) || 'Date cannot be in the past'
       ]
     }
   },
@@ -290,7 +291,6 @@ export default defineComponent({
       if (this.isEditing && this.editIndex !== null) {
         // Update existing appointment
         this.recentAppointments.splice(this.editIndex, 1, { ...this.newAppointment })
-
         //Integrate with backend
         const config = {
           headers: {
@@ -308,10 +308,10 @@ export default defineComponent({
           scheduledTime: new Date(this.newAppointment.date).toISOString(),
           details: this.newAppointment.details,
           important: this.newAppointment.important,
-          participants: this.newAppointment.participants
+          participants: await this.selectTeamMembers()
         }
         const id = this.newAppointment.id
-
+        console.log(data)
         await axios
           .patch(`${url}videoCalls/${id}`, data, config)
           .then((response) => {
@@ -324,7 +324,6 @@ export default defineComponent({
         // Add new appointment
         const appointment = { ...this.newAppointment }
         this.recentAppointments.push(appointment)
-
         //Integrate with backend
         const config = {
           headers: {
@@ -338,9 +337,9 @@ export default defineComponent({
           scheduledTime: new Date(this.newAppointment.date).toISOString(),
           details: this.newAppointment.details,
           important: this.newAppointment.important,
-          participants: this.newAppointment.participants
+          participants: await this.selectTeamMembers()
         }
-
+        console.log(data)
         await axios
           .post(`${url}videoCalls/create`, data, config)
           .then((response) => {
@@ -363,7 +362,6 @@ export default defineComponent({
       this.newAppointment = appointment
       this.isEditing = true
       this.showDialog = true
-
       //populating the form with the selected appointment
     },
     cancel() {
@@ -374,6 +372,14 @@ export default defineComponent({
       this.recentAppointments = this.recentAppointments.filter(
         (appointment) => appointment.id !== id
       )
+    },
+    async selectTeamMembers() {
+      for (const member of this.newAppointment.participants) {
+        console.log(member)
+        this.participants.push(this.teamLeaderIds[this.newAppointment.participants.indexOf(member)])
+      }
+      console.log(this.participants)
+      return this.participants
     }
   },
   mounted() {
