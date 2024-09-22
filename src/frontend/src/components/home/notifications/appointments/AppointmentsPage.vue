@@ -5,7 +5,7 @@
         <h2 class="text-xl font-semibold">Meetings</h2>
       </v-col>
       <v-divider></v-divider>
-      <v-col cols="12" class="text-center">
+      <v-col cols="12" class="text-center" v-show="joinRoom">
         <v-btn color="primary" block @click="openDialog" variant="outlined">
           Create New Meeting
         </v-btn>
@@ -21,7 +21,7 @@
             v-for="appointment in recentAppointments"
             :key="appointment.id"
             class="pa-1 ma-5 bg-background"
-            color="success"
+            color="cardColor"
           >
             <v-card-title>{{ appointment.title }}</v-card-title>
             <v-card-subtitle class="bg-cardColor">{{
@@ -32,7 +32,7 @@
               <v-container
                 ><v-row
                   ><v-col cols="12" lg="4"
-                    ><v-btn color="primary" @click="editAppointment(appointment.id)" block
+                    ><v-btn color="primary" @click="editAppointment(appointment)" block
                       ><v-icon icon="fa:fa-solid fa-pencil" color="primary"></v-icon>Edit</v-btn
                     ></v-col
                   ></v-row
@@ -100,10 +100,12 @@
                   hint="Select the employee you'd like to join the meeting"
                   persistent-hint
                   @update:model-value="selected_participants"
-                  :items="filteredParticipantNames"
                   v-model="req_obj.participants"
                   item-value="employeeId"
                   item-title="name"
+                  :items="teamMemberNames"
+                  multiple
+                  chips
                   bg-color="background"
                   variant="solo"
                 ></v-select>
@@ -116,7 +118,7 @@
         <v-container>
           <v-row>
             <v-col cols="12" lg="6">
-              <v-btn color="error" @click="showDialog = false" block>
+              <v-btn color="error" @click="cancel" block>
                 <v-icon icon="fa: fa-solid fa-cancel" color="error" start></v-icon>Cancel
               </v-btn>
             </v-col>
@@ -167,6 +169,8 @@ export default defineComponent({
       isEditing: false,
       joinRoom: true,
       conference: false,
+      teamLeaderIds: [] as string[],
+      teamMemberNames: [] as string[],
       editIndex: 0,
       valid: false,
       isGenerating: false,
@@ -180,18 +184,20 @@ export default defineComponent({
         date: '',
         details: '',
         important: false
-      },
+      } as Appointment,
       recentAppointments: [
         {
           id: '1',
           title: 'Meeting with John Doe',
           date: '2021-10-15',
+
           details: 'Discuss project timeline and deliverables'
         }
-      ],
+      ] as Appointment[],
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       companyId: '',
+
       titleRules: [(v: string) => !!v || 'Title is required'],
       dateRules: [
         (v: string) => !!v || 'Date is required',
@@ -204,15 +210,15 @@ export default defineComponent({
     selected_participants(a: any) {
       console.log(a)
     },
-    filteredParticipantNames() {
-      return this.participantsItemNames.filter(
-        (sub: EmployeeInformation) =>
-          !(
-            // this.req_obj.updateEmployeeDto.superiorId &&
-            // this.req_obj.updateEmployeeDto.superiorId === sub.employeeId
-          )
-      )
-    },
+    // filteredParticipantNames() {
+    //   return this.participantsItemNames.filter(
+    //     (sub: EmployeeInformation) =>
+    //       !(
+    //         // this.req_obj.updateEmployeeDto.superiorId &&
+    //         // this.req_obj.updateEmployeeDto.superiorId === sub.employeeId
+    //       )
+    //   )
+    // },
     async isLocalAvailable(localUrl: string) {
       try {
         const res = await axios.get(localUrl)
@@ -231,18 +237,25 @@ export default defineComponent({
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const url = await this.getRequestUrl()
-      const companyId = localStorage.getItem('currentCompany')
-      await axios
-        .get(`${url}employees/${companyId}`, config)
-        .then((response) => {
-          console.log('response: ', response)
-        })
-        .catch((error) => {
-          console.error(error)
-        })
+      const apiURL = await this.getRequestUrl()
+      try {
+        const response = await axios.get(
+          `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
+          config
+        )
+        console.log(response.data.data)
+        for (const employee of response.data.data) {
+          this.teamMemberNames.push(employee.userInfo.displayName)
+          this.teamLeaderIds.push(employee._id)
+        }
+      } catch (error) {
+        console.error(error)
+      }
     },
     formatDate(date: string) {
       return new Date(date).toDateString()
@@ -263,6 +276,15 @@ export default defineComponent({
       console.log(this.selectedRoom.id)
       this.joinRoom = false
       this.conference = true
+    },
+    clearFields() {
+      this.newAppointment = {
+        id: '',
+        title: '',
+        date: '',
+        details: '',
+        important: false
+      }
     },
     leavingRoom() {
       this.joinRoom = true
@@ -333,18 +355,27 @@ export default defineComponent({
       }
       this.showDialog = false
       this.isGenerating = false
+      this.clearFields()
     },
-    editAppointment(appointment: string) {
+    editAppointment(appointment: Appointment) {
+      this.newAppointment = appointment
       this.isEditing = true
       this.showDialog = true
 
       //populating the form with the selected appointment
+    },
+    cancel() {
+      this.showDialog = false
+      this.clearFields()
     },
     deleteAppointment(id: string) {
       this.recentAppointments = this.recentAppointments.filter(
         (appointment) => appointment.id !== id
       )
     }
+  },
+  mounted() {
+    this.getEmployees()
   }
 })
 </script>

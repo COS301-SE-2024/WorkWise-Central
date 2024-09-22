@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Document, FlattenMaps, Model, Types } from 'mongoose';
+import { Document, Model, Types } from 'mongoose';
 import { VideoCall } from './entities/video-call.entity';
 import { UpdateVideoCallDto } from './dto/update-video-call.dto';
 import { User } from '../users/entities/user.entity';
@@ -19,7 +19,7 @@ export class VideoCallRepository {
   }
 
   async findById(identifier: Types.ObjectId) {
-    const result: FlattenMaps<VideoCall> & { _id: Types.ObjectId } = await this.VideoCallModel.findOne({
+    const result = await this.VideoCallModel.findOne({
       $and: [
         { _id: identifier },
         {
@@ -32,7 +32,7 @@ export class VideoCallRepository {
   }
 
   async findAllInCompany(identifier: Types.ObjectId) {
-    const result: (FlattenMaps<VideoCall> & { _id: Types.ObjectId })[] = await this.VideoCallModel.find({
+    const result = await this.VideoCallModel.find({
       $and: [
         {
           companyId: identifier,
@@ -47,7 +47,7 @@ export class VideoCallRepository {
   }
 
   async findAllForEmployee(identifier: Types.ObjectId) {
-    const result: (FlattenMaps<VideoCall> & { _id: Types.ObjectId })[] = await this.VideoCallModel.find({
+    const result = await this.VideoCallModel.find({
       $and: [
         {
           participants: identifier,

@@ -1,52 +1,72 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col cols="12" md="6" lg="3" class="local-video">
-        <video
-          :ref="
-            (el) => {
-              if (el) localVideo = el as HTMLVideoElement
-            }
-          "
-          autoplay
-          muted
-          playsinline
-        ></video>
-      </v-col>
+    <v-card class="bg-cardColor">
+      <v-card-text
+        ><v-row>
+          <v-col cols="12" md="6" lg="3" class="local-video">
+            <video
+              :ref="
+                (el) => {
+                  if (el) localVideo = el as HTMLVideoElement
+                }
+              "
+              autoplay
+              muted
+              playsinline
+            ></video>
+          </v-col>
 
-      <v-col v-for="peer in peers" :key="peer.id" cols="12" md="6" lg="3" class="remote-video">
-        <video
-          :ref="
-            (el) => {
-              if (el) remoteVideos[peer.id] = el as HTMLVideoElement
-            }
-          "
-          autoplay
-          playsinline
-        ></video>
-      </v-col>
-    </v-row>
+          <v-col v-for="peer in peers" :key="peer.id" cols="12" md="6" lg="3" class="remote-video">
+            <video
+              :ref="
+                (el) => {
+                  if (el) remoteVideos[peer.id] = el as HTMLVideoElement
+                }
+              "
+              autoplay
+              playsinline
+            ></video>
+          </v-col> </v-row
+      ></v-card-text>
 
-    <v-row class="controls">
-      <v-col cols="auto">
-        <v-btn @click="toggleAudio" color="primary">
-          {{ isAudioEnabled ? 'Mute' : 'Unmute' }}
-        </v-btn>
-      </v-col>
-      <v-col cols="auto">
-        <v-btn @click="toggleVideo" color="primary">
-          {{ isVideoEnabled ? 'Stop Video' : 'Start Video' }}
-        </v-btn>
-      </v-col>
-      <v-col cols="auto">
-        <v-btn @click="toggleScreenShare" color="primary">
-          {{ isScreenSharing ? 'Stop Sharing' : 'Share Screen' }}
-        </v-btn>
-      </v-col>
-      <v-col cols="auto">
-        <v-btn @click="endCall" color="error"> End Call </v-btn>
-      </v-col>
-    </v-row>
+      <v-card-actions
+        ><v-container
+          ><v-row>
+            <v-col cols="12" lg="3">
+              <v-btn @click="toggleAudio" :color=" isAudioEnabled ? 'success' : 'error'" block>
+                <v-icon
+                  :icon="
+                    isAudioEnabled ? 'fa: fa-solid fa-volume-high' : 'fa: fa-solid fa-volume-xmark'
+                  "
+                  :color=" isAudioEnabled ? 'success' : 'error'"
+                ></v-icon>
+                {{ isAudioEnabled ? 'Mute' : 'Unmute' }}
+              </v-btn>
+            </v-col>
+            <v-col cols="12" lg="3">
+              <v-btn @click="toggleVideo" :color="isVideoEnabled ? 'error' : 'success'" block>
+                <v-icon
+                  :icon="isVideoEnabled ? 'fa: fa-solid fa-video-slash' : 'fa: fa-solid fa-video'"
+                  :color="isVideoEnabled ? 'error' : 'success'"
+                ></v-icon
+                >{{ isVideoEnabled ? 'Stop Video' : 'Start Video' }}
+              </v-btn>
+            </v-col>
+            <v-col cols="12" lg="3">
+              <v-btn @click="toggleScreenShare" :color="isScreenSharing ? 'error' : 'success'" block>
+                <v-icon icon="fa: fa-solid fa-share" :color="isScreenSharing ? 'error' : 'success'"></v-icon
+                >{{ isScreenSharing ? 'Stop Sharing' : 'Share Screen' }}
+              </v-btn>
+            </v-col>
+            <v-col cols="12" lg="3">
+              <v-btn @click="endCall" color="error" block
+                ><v-icon icon="fa: fa-solid fa-door-open" color="error"></v-icon> End Call
+              </v-btn>
+            </v-col>
+          </v-row></v-container
+        ></v-card-actions
+      >
+    </v-card>
   </v-container>
 </template>
 
