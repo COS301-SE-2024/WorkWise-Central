@@ -33,190 +33,6 @@
               <v-chip class="text-subtitle-1 font-weight-black" variant="tonal">
                 {{ column.cards.length }}
               </v-chip>
-              <!--              <v-menu align="left">-->
-              <!--                <template v-slot:activator="{ props }">-->
-              <!--                  <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>-->
-              <!--                </template>-->
-
-              <!--                <v-list :border="true" bg-color="background" rounded="lg">-->
-              <!--                  <v-list-subheader>Jobs</v-list-subheader>-->
-
-              <!--                  <v-list-item>-->
-              <!--                    <v-btn :elevation="0" @click="columnArchiveAll(column)">-->
-              <!--                      <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>-->
-              <!--                      {{ 'Archive all' }}-->
-              <!--                    </v-btn>-->
-              <!--                  </v-list-item>-->
-              <!--                  <v-list-item>-->
-              <!--                    <v-dialog v-model="delete_all_jobs_dialog" max-width="500px">-->
-              <!--                      <template v-slot:activator="{ props }">-->
-              <!--                        <v-btn :elevation="0" v-bind="props">-->
-              <!--                          <v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon>-->
-              <!--                          {{ 'Delete all' }}-->
-              <!--                        </v-btn>-->
-              <!--                      </template>-->
-              <!--                      <v-card color="background">-->
-              <!--                        <v-card-title>-->
-              <!--                          <span class="headline">Delete {{ column.status }}</span>-->
-              <!--                        </v-card-title>-->
-              <!--                        <v-card-text>-->
-              <!--                          <v-container>-->
-              <!--                            <v-row>-->
-              <!--                              <p>-->
-              <!--                                Are you sure you want to delete all the jobs in the-->
-              <!--                                <strong>{{-->
-              <!--                                  column.status.charAt(0).toUpperCase() + column.status.slice(1)-->
-              <!--                                }}</strong>-->
-              <!--                                column. all the jobs within it will be permanently removed through-->
-              <!--                                out the company.-->
-              <!--                              </p>-->
-              <!--                              <strong> This action cannot be reversed. </strong>-->
-              <!--                            </v-row>-->
-              <!--                          </v-container>-->
-              <!--                        </v-card-text>-->
-              <!--                        <v-card-actions>-->
-              <!--                          <v-spacer></v-spacer>-->
-              <!--                          <v-btn-->
-              <!--                            @click="columnDeleteAllJobs(column)"-->
-              <!--                            color="success"-->
-              <!--                            variant="text"-->
-              <!--                          >-->
-              <!--                            {{ 'Delete' }}-->
-              <!--                          </v-btn>-->
-
-              <!--                          <v-btn-->
-              <!--                            color="error"-->
-              <!--                            variant="text"-->
-              <!--                            @click="delete_all_jobs_dialog = false"-->
-              <!--                            >Cancel</v-btn-->
-              <!--                          >-->
-              <!--                        </v-card-actions>-->
-              <!--                      </v-card>-->
-              <!--                    </v-dialog>-->
-              <!--                  </v-list-item>-->
-              <!--                  <v-list-subheader v-if="column.status !== 'No Status'">Column</v-list-subheader>-->
-
-              <!--                  <v-list-item v-if="column.status !== 'No Status'">-->
-              <!--                    <v-dialog max-height="700" max-width="500" v-model="edit_column_details_dialog">-->
-              <!--                      <template v-slot:activator="{ props }">-->
-              <!--                        <v-btn :elevation="0" v-bind="props"-->
-              <!--                          ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon-->
-              <!--                          >{{ 'Edit details' }}-->
-              <!--                        </v-btn>-->
-              <!--                      </template>-->
-              <!--                      <v-card elevation="14" rounded="md" max-height="100%" max-width="900">-->
-              <!--                        <v-card-title class="text-center">Edit {{ column.status }}</v-card-title>-->
-              <!--                        <v-card-text>-->
-              <!--                          &lt;!&ndash;              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">&ndash;&gt;-->
-              <!--                          <v-col>-->
-              <!--                            <v-spacer></v-spacer>-->
-              <!--                            <v-col>-->
-              <!--                              <v-col align="center">-->
-              <!--                                <v-icon :color="column_color" :size="40">-->
-              <!--                                  {{ 'fa: fa-solid fa-cube' }}-->
-              <!--                                </v-icon>-->
-              <!--                              </v-col>-->
-              <!--                              <v-col>-->
-              <!--                                <label style="font-size: 14px; font-weight: lighter"-->
-              <!--                                  >Column Name</label-->
-              <!--                                >-->
-              <!--                                <v-text-field-->
-              <!--                                  density="compact"-->
-              <!--                                  color="grey-lighten-4"-->
-              <!--                                  placeholder="Enter the name of the new column"-->
-              <!--                                  rounded="md"-->
-              <!--                                  variant="solo"-->
-              <!--                                  v-model="new_column_name"-->
-              <!--                                  :rules="column_name_rule"-->
-              <!--                                  required-->
-              <!--                                  data-testid="job-title-field"-->
-              <!--                                ></v-text-field-->
-              <!--                              ></v-col>-->
-              <!--                              <v-col align="center">-->
-              <!--                                <label style="font-size: 14px; font-weight: lighter">Color</label>-->
-              <!--                                <v-color-picker-->
-              <!--                                  v-model="column_color"-->
-              <!--                                  hide-inputs-->
-              <!--                                  show-swatches-->
-              <!--                                  @update:modelValue="addColorPickerUpdate"-->
-              <!--                                ></v-color-picker>-->
-              <!--                              </v-col>-->
-              <!--                            </v-col>-->
-              <!--                          </v-col>-->
-              <!--                          <v-col align="center">-->
-              <!--                            <label style="{color:red}">{{ error_message }}</label>-->
-              <!--                          </v-col>-->
-              <!--                          <v-col cols="8" offset="2" align="center">-->
-              <!--                            <v-btn-->
-              <!--                              color="success"-->
-              <!--                              rounded="md"-->
-              <!--                              type="submit"-->
-              <!--                              boarder="md"-->
-              <!--                              width="100%"-->
-              <!--                              height="35"-->
-              <!--                              variant="text"-->
-              <!--                              @click="editColumnButtonClickedSave(column)"-->
-              <!--                              data-testid="create-btn"-->
-              <!--                              >Save-->
-              <!--                            </v-btn>-->
-              <!--                            <v-btn-->
-              <!--                              color="error"-->
-              <!--                              rounded="md"-->
-              <!--                              boarder="md"-->
-              <!--                              width="100%"-->
-              <!--                              height="35"-->
-              <!--                              variant="text"-->
-              <!--                              @click="edit_column_details_dialog = false"-->
-              <!--                              data-testid="cancel-btn"-->
-              <!--                              >Cancel-->
-              <!--                            </v-btn>-->
-              <!--                          </v-col>-->
-              <!--                        </v-card-text>-->
-              <!--                      </v-card>-->
-              <!--                    </v-dialog>-->
-              <!--                  </v-list-item>-->
-              <!--                  <v-list-item v-if="column.status !== 'No Status'">-->
-              <!--                    <v-dialog v-model="delete_column_dialog" max-width="500px">-->
-              <!--                      <template v-slot:activator="{ props }">-->
-              <!--                        <v-btn :elevation="0" v-bind="props"-->
-              <!--                          ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon-->
-              <!--                          >{{ 'Delete' }}</v-btn-->
-              <!--                        >-->
-              <!--                      </template>-->
-              <!--                      <v-card color="background">-->
-              <!--                        <v-card-title>-->
-              <!--                          <span class="headline">Delete {{ column.status }}</span>-->
-              <!--                        </v-card-title>-->
-              <!--                        <v-card-text>-->
-              <!--                          <v-container>-->
-              <!--                            <v-row>-->
-              <!--                              <p>-->
-              <!--                                Are you sure you want to delete the-->
-              <!--                                <strong>{{-->
-              <!--                                  column.status.charAt(0).toUpperCase() + column.status.slice(1)-->
-              <!--                                }}</strong>-->
-              <!--                                column, all jobs within it will be moved to the-->
-              <!--                                <b>No Status</b> column.-->
-              <!--                              </p>-->
-              <!--                              <strong> This action cannot be reversed. </strong>-->
-              <!--                            </v-row>-->
-              <!--                          </v-container>-->
-              <!--                        </v-card-text>-->
-              <!--                        <v-card-actions>-->
-              <!--                          <v-spacer></v-spacer>-->
-              <!--                          <v-btn @click="columnDelete(column)" color="success" variant="text">-->
-              <!--                            {{ 'Delete' }}-->
-              <!--                          </v-btn>-->
-
-              <!--                          <v-btn color="error" variant="text" @click="delete_column_dialog = false"-->
-              <!--                            >Cancel</v-btn-->
-              <!--                          >-->
-              <!--                        </v-card-actions>-->
-              <!--                      </v-card>-->
-              <!--                    </v-dialog>-->
-              <!--                  </v-list-item>-->
-              <!--                </v-list>-->
-              <!--              </v-menu>-->
             </v-card-item>
             <v-card-text>
               <VueDraggable
@@ -274,6 +90,7 @@
         </v-col>
       </VueDraggable>
     </v-row>
+    <iframe v-if="pdfSrc" :src="pdfSrc" style="width: 100%; height: 500px"></iframe>
   </v-container>
   <v-dialog v-model="JobCardVisibility" max-width="1000px">
     <ViewJob @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
@@ -286,6 +103,7 @@ import '@mdi/font/css/materialdesignicons.css'
 import ViewJob from '@/components/home/jobs/management/ViewJob.vue'
 import { type SortableEvent, VueDraggable } from 'vue-draggable-plus'
 import axios from 'axios'
+import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template'
 import { API_URL } from '@/main'
 
 export default {
@@ -296,6 +114,7 @@ export default {
   },
   data() {
     return {
+      pdfSrc: '',
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       delete_all_jobs_dialog: false,
@@ -627,19 +446,107 @@ export default {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
 
-      //
-      //
-      // try {
-      //   const response = await axios.get(API_URL + `job/id/${payload.id}`, config)
-      //   console.log(response)
-      //   this.SelectedEvent = response.data.data
-      //   this.openJobCard()
-      // } catch (error) {
-      //   console.log('Error fetching data: ' + error)
-      // }
+      try {
+        const response = await axios.get(API_URL + `invoice/id/${payload.id}`, config)
+        const company_res = await axios.get(
+          API_URL + `company/id/${localStorage['currentCompany']}`,
+          config
+        )
+        console.log(payload)
+        const data = {
+          outputType: OutputType.Save, // Generate the PDF as a Blob to embed it
+          fileName: 'Invoice_2021',
+          orientationLandscape: false,
+          compress: true,
+          logo: {
+            src: payload.companyLogo,
+            type: 'PNG',
+            width: 53.33,
+            height: 26.66,
+            margin: {
+              top: 0,
+              left: 0
+            }
+          },
+          stamp: {
+            inAllPages: true,
+            src: payload.companyLogo,
+            type: 'JPG',
+            width: 20,
+            height: 20,
+            margin: {
+              top: 0,
+              left: 0
+            }
+          },
+          business: {
+            name: payload.companyName,
+            address: payload.companyAddress,
+            phone: payload.companyPhoneNumber,
+            email: payload.companyEmail
+          },
+          contact: {
+            label: 'Invoice issued for:',
+            name: payload.clientName,
+            address: payload.clientAddress,
+            phone: payload.clientPhoneNumber,
+            email: payload.clientEmail,
+            otherInfo: 'www.website.al'
+          },
+          invoice: {
+            label: `Invoice #: ${payload.invoiceNumber}`,
+            num: 19,
+            invDate: `Payment Date: ${this.formatDate(payload.paymentDate)}`,
+            invGenDate: `Invoice Date:  ${this.formatDate(payload.invoiceDate)}`,
+            headerBorder: false,
+            tableBodyBorder: false,
+            header: [{ title: 'Paid' }, { title: 'Total' }],
+            table: [[payload.paid, payload.total]],
+            additionalRows: [
+              {
+                col1: 'Total:',
+                col2: `${payload.total}`,
+                col3: 'R',
+                style: {
+                  fontSize: 14
+                }
+              },
+              {
+                col1: 'VAT:',
+                col2: '20',
+                col3: '%',
+                style: {
+                  fontSize: 10
+                }
+              },
+              {
+                col1: 'SubTotal:',
+                col2: `${payload.subTotal}`,
+                col3: 'R',
+                style: {
+                  fontSize: 10
+                }
+              }
+            ],
+            invDescLabel: 'Invoice Note',
+            invDesc: 'Thank you for your business. Please make the payment by the due date.'
+          },
+          footer: {
+            text: 'The invoice is created on a computer and is valid without the signature and stamp.'
+          },
+          pageEnable: true,
+          pageLabel: 'Page '
+        }
+        this.pdfSrc = URL.createObjectURL(jsPDFInvoiceTemplate(data).blob)
+      } catch (error) {
+        console.log('Error fetching data: ' + error)
+      }
     },
     openJobCard() {
       console.log('edit button clicked')
@@ -695,9 +602,38 @@ export default {
               paymentDate: this.formatDate(card.paymentDate),
               subTotal: card.subTotal,
               total: card.total,
+              taxAmount: card.taxAmount,
+              taxPercentage: card.taxPercentage,
               paid: card.paid,
               clientId: card.clientId._id,
-              clientName: card.clientId.details.firstName + ' ' + card.clientId.details.lastName
+              clientName: card.clientId.details.firstName + ' ' + card.clientId.details.lastName,
+              jobName: card.jobId.details.heading,
+              clientAddress:
+                card.clientId.details.address.province +
+                ', ' +
+                card.clientId.details.address.city +
+                ', ' +
+                card.clientId.details.address.suburb +
+                ', ' +
+                card.clientId.details.address.street +
+                ', ' +
+                card.clientId.details.address.postalCode,
+              clientEmail: card.clientId.details.contactInfo.email,
+              clientPhoneNumber: card.clientId.details.contactInfo.phoneNumber,
+              companyName: card.companyId.name,
+              companyAddress:
+                card.clientId.details.address.province +
+                ', ' +
+                card.companyId.address.city +
+                ', ' +
+                card.companyId.address.suburb +
+                ', ' +
+                card.companyId.address.street +
+                ', ' +
+                card.companyId.address.postalCode,
+              companyEmail: card.companyId.contactDetails.email,
+              companyPhoneNumber: card.companyId.contactDetails.phoneNumber,
+              companyLogo: card.companyId.logo
             })
           else
             unpaid_cards.push({
@@ -707,9 +643,38 @@ export default {
               paymentDate: this.formatDate(card.paymentDate),
               subTotal: card.subTotal,
               total: card.total,
+              taxAmount: card.taxAmount,
+              taxPercentage: card.taxPercentage,
               paid: card.paid,
               clientId: card.clientId._id,
-              clientName: card.clientId.details.firstName + ' ' + card.clientId.details.lastName
+              clientName: card.clientId.details.firstName + ' ' + card.clientId.details.lastName,
+              jobName: card.jobId.details.heading,
+              clientAddress:
+                card.clientId.details.address.province +
+                ', ' +
+                card.clientId.details.address.city +
+                ', ' +
+                card.clientId.details.address.suburb +
+                ', ' +
+                card.clientId.details.address.street +
+                ', ' +
+                card.clientId.details.address.postalCode,
+              clientEmail: card.clientId.details.contactInfo.email,
+              clientPhoneNumber: card.clientId.details.contactInfo.phoneNumber,
+              companyName: card.companyId.name,
+              companyAddress:
+                card.clientId.details.address.province +
+                ', ' +
+                card.companyId.address.city +
+                ', ' +
+                card.companyId.address.suburb +
+                ', ' +
+                card.companyId.address.street +
+                ', ' +
+                card.companyId.address.postalCode,
+              companyEmail: card.companyId.contactDetails.email,
+              companyPhoneNumber: card.companyId.contactDetails.phoneNumber,
+              companyLogo: card.companyId.logo
             })
         })
         this.columns[0].cards = unpaid_cards
