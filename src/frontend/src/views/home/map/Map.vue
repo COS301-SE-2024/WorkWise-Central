@@ -165,30 +165,50 @@
           </InfoWindow>
         </Marker>
 
-    <!-- Current Location Marker -->
-    <Marker :options="{ position: { lat: lat, lng: lng } }">
-      <div style="text-align: center">
-        <div style="font-size: 1.125rem; color: red"></div>
-      </div>
-      <InfoWindow>
-        <div id="content">
-          <div id="siteNotice"></div>
-          <h1 id="firstHeading" class="" style="color: black">You Are Here</h1>
-          <div id="bodyContent" style="color: black">
-            <p></p>
-          </div>
-        </div>
-      </InfoWindow>
-    </Marker>
+        <!-- Current Location Marker -->
+        <Marker :options="{ position: currentLocation }">
+          <InfoWindow>
+            <div id="content">
+              <h1 id="firstHeading" style="color: black">You Are Here</h1>
+            </div>
+          </InfoWindow>
+        </Marker>
 
-    <Polyline v-if="polyOptions" :options="polyOptions" />
-  </GoogleMap>
+        <!-- Vehicle Markers -->
+        <Marker
+          v-for="vehicle in vehicles"
+          :key="vehicle.id"
+          :options="{ position: vehicle.location, label: vehicle.driver }"
+        >
+          <InfoWindow>
+            <div style="color: black">
+              <h4>{{ vehicle.name.make }} {{ vehicle.name.model }}</h4>
+              <p><strong>Driver:</strong> {{ vehicle.employeeId }}</p>
+              <p><strong>Status:</strong> {{ vehicle.availability.status }}</p>
+              <p>Mileage: {{ vehicle.mileage }} km</p>
+            </div>
+          </InfoWindow>
+        </Marker>
+
+        <Polyline v-if="routePolyline" :options="routePolyline" />
+      </GoogleMap>
+    </SplitterPanel>
+  </Splitter>
 </template>
 
 <script>
-import { GoogleMap, InfoWindow, Marker, Polyline /*, AdvancedMarker*/ } from 'vue3-google-map'
+import { GoogleMap, InfoWindow, Marker, Polyline } from 'vue3-google-map'
 import axios from 'axios'
-import { GOOGLE_MAPS_API_KEY } from '@/main'
+import { API_URL, GOOGLE_MAPS_API_KEY } from '@/main'
+import Splitter from 'primevue/splitter'
+import SplitterPanel from 'primevue/splitterpanel'
+import Dialog from 'primevue/dialog'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Button from 'primevue/button'
+import Image from 'primevue/image'
+import { VehicleAvailabilityEnum, FuelType } from './models/vehicles'
+
 export default {
   name: 'SystemMap',
   components: {
@@ -197,8 +217,17 @@ export default {
     Marker,
     InfoWindow,
     // eslint-disable-next-line vue/no-reserved-component-names
-    Polyline
-    //AdvancedMarker,
+    Polyline,
+    Splitter,
+    SplitterPanel,
+    // eslint-disable-next-line vue/no-reserved-component-names
+    Dialog,
+    DataTable,
+    Column,
+    // eslint-disable-next-line vue/no-reserved-component-names
+    Button,
+    // eslint-disable-next-line vue/no-reserved-component-names
+    Image
   },
   data() {
     return {
