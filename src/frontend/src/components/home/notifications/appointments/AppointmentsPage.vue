@@ -246,6 +246,7 @@ export default defineComponent({
           this.teamMemberNames.push(employee.userInfo.displayName)
           this.teamLeaderIds.push(employee._id)
         }
+        this.companyId = response.data.data[0].companyId
       } catch (error) {
         console.error(error)
       }
@@ -307,8 +308,8 @@ export default defineComponent({
           title: this.newAppointment.title,
           scheduledTime: new Date(this.newAppointment.date).toISOString(),
           details: this.newAppointment.details,
-          important: this.newAppointment.important,
-          participants: await this.selectTeamMembers()
+          participants: await this.selectTeamMembers(),
+          companyId: this.companyId
         }
         const id = this.newAppointment.id
         console.log(data)
@@ -336,8 +337,8 @@ export default defineComponent({
           title: this.newAppointment.title,
           scheduledTime: new Date(this.newAppointment.date).toISOString(),
           details: this.newAppointment.details,
-          important: this.newAppointment.important,
-          participants: await this.selectTeamMembers()
+          participants: await this.selectTeamMembers(),
+          companyId: this.companyId
         }
         console.log(data)
         await axios
