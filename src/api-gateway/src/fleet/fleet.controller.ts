@@ -3,7 +3,7 @@ import { FleetService } from './fleet.service';
 import { JwtService } from '@nestjs/jwt';
 import { EmployeeService } from '../employee/employee.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { ApiOkResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { extractUserId, validateObjectId } from '../utils/Utils';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { FleetVehicleResponseDto, FleetVehiclesResponseDto } from './dto/fleet-response.dto';
@@ -12,6 +12,7 @@ import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 
 const className = 'Fleet';
 
+@ApiTags('Fleet')
 @Controller('fleet')
 export class FleetController {
   constructor(

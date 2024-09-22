@@ -16,6 +16,8 @@ import { StockTakeModule } from '../stocktake/stocktake.module';
 import { StockMovementsModule } from '../stockmovements/stockmovements.module';
 import { Vehicle, VehicleSchema } from './entities/vehicle.entity';
 import { FleetRepository } from './fleet.repository';
+import { VehicleModule } from './vehicle.module';
+import { VehicleInformationService } from './vehicle-information.service';
 
 @Module({
   imports: [
@@ -32,9 +34,10 @@ import { FleetRepository } from './fleet.repository';
     forwardRef(() => EmployeeModule),
     forwardRef(() => StockTakeModule),
     forwardRef(() => StockMovementsModule),
+    forwardRef(() => VehicleModule),
   ],
   controllers: [FleetController],
-  providers: [FleetService, FleetRepository],
+  providers: [FleetService, FleetRepository, VehicleInformationService],
   exports: [FleetService, FleetRepository, MongooseModule],
 })
 export class FleetModule {}
