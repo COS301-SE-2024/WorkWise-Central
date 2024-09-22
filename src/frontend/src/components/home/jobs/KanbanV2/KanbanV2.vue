@@ -1,5 +1,12 @@
 <template>
   <v-container fluid>
+    <v-row justify="end"
+      ><v-col cols="auto">
+        <v-btn size="x-large" align="right" @click="redirectToArchivePage">
+          <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
+        </v-btn>
+      </v-col></v-row
+    >
     <v-row>
       <VueDraggable
         ref="el"
