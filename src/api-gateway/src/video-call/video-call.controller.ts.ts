@@ -33,7 +33,7 @@ import { CreateVideoCallDto, VideoCallResponseDto, VideoCallForEmployeeResponseD
 import { UpdateVideoCallDto } from './dto/update-video-call.dto';
 const className = 'Video Calls';
 
-@ApiTags('Video Calls')
+@ApiTags('VideoCalls')
 @Controller('video-calls')
 export class VideoCallController {
   constructor(private readonly videoCallService: VideoCallService) {}

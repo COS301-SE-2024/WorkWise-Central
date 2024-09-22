@@ -99,6 +99,9 @@
                   label="Participants"
                   hint="Select the employee you'd like to join the meeting"
                   persistent-hint
+                  @update:model-value="selected_participants"
+                  :items="filteredParticipantNames"
+                  v-model="req_obj.participants"
                   item-value="employeeId"
                   item-title="name"
                   bg-color="background"
@@ -138,12 +141,17 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import VideoConferencing from './VideoConferencing.vue'
+import axios from 'axios'
 interface Appointment {
   id: string
   title: string
   date: string
   details: string
   important: boolean
+}
+type EmployeeInformation = {
+  name: string
+  employeeId: string
 }
 export default defineComponent({
   name: 'AppointmentsPage',
@@ -162,6 +170,10 @@ export default defineComponent({
       editIndex: 0,
       valid: false,
       isGenerating: false,
+      participantsItemNames: [] as EmployeeInformation[],
+      req_obj: {
+        participants: [] as string[]
+      },
       newAppointment: {
         id: '',
         title: '',
@@ -175,39 +187,11 @@ export default defineComponent({
           title: 'Meeting with John Doe',
           date: '2021-10-15',
           details: 'Discuss project timeline and deliverables'
-        },
-        {
-          id: '2',
-          title: 'Dentist Appointment',
-          date: '2021-10-20',
-          details: 'Annual checkup and cleaning'
-        },
-        {
-          id: '3',
-          title: 'Team Standup Meeting',
-          date: '2021-10-22',
-          details: 'Daily sync with the development team'
-        },
-        {
-          id: '4',
-          title: 'Project Review with Clients',
-          date: '2021-10-23',
-          details: 'Review milestones and gather feedback'
-        },
-        {
-          id: '5',
-          title: 'Doctor Appointment',
-          date: '2021-10-24',
-          details: 'Follow-up on health checkup results'
-        },
-        {
-          id: '6',
-          title: 'Lunch with Partner',
-          date: '2021-10-26',
-          details: 'Discuss partnership opportunities'
         }
       ],
-
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      companyId: '',
       titleRules: [(v: string) => !!v || 'Title is required'],
       dateRules: [
         (v: string) => !!v || 'Date is required',
@@ -217,6 +201,49 @@ export default defineComponent({
     }
   },
   methods: {
+    selected_participants(a: any) {
+      console.log(a)
+    },
+    filteredParticipantNames() {
+      return this.participantsItemNames.filter(
+        (sub: EmployeeInformation) =>
+          !(
+            // this.req_obj.updateEmployeeDto.superiorId &&
+            // this.req_obj.updateEmployeeDto.superiorId === sub.employeeId
+          )
+      )
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status >= 200 && res.status < 300
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+
+    async getEmployees() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const url = await this.getRequestUrl()
+      const companyId = localStorage.getItem('currentCompany')
+      await axios
+        .get(`${url}employees/${companyId}`, config)
+        .then((response) => {
+          console.log('response: ', response)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    },
     formatDate(date: string) {
       return new Date(date).toDateString()
     },
@@ -241,16 +268,68 @@ export default defineComponent({
       this.joinRoom = true
       this.conference = false
     },
-    saveAppointment() {
+    async saveAppointment() {
       this.isGenerating = true
       if (this.isEditing && this.editIndex !== null) {
         // Update existing appointment
         this.recentAppointments.splice(this.editIndex, 1, { ...this.newAppointment })
+
+        //Integrate with backend
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
+        const url = await this.getRequestUrl()
+        if (localStorage.getItem('currentCompany') !== null) {
+          this.companyId = localStorage.getItem('currentCompany') as string
+        }
+
+        const data = {
+          title: this.newAppointment.title,
+          date: this.newAppointment.date,
+          details: this.newAppointment.details,
+          important: this.newAppointment.important
+        }
+        const id = this.newAppointment.id
+
+        await axios
+          .patch(`${url}video-calls/${id}`, data, config)
+          .then((response) => {
+            console.log('response: ', response)
+          })
+          .catch((error) => {
+            console.error(error)
+          })
       } else {
         // Add new appointment
-        const newId = this.recentAppointments.length + 1
-        const appointment = { ...this.newAppointment}
+        const appointment = { ...this.newAppointment }
         this.recentAppointments.push(appointment)
+
+        //Integrate with backend
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
+        const url = await this.getRequestUrl()
+        const data = {
+          title: this.newAppointment.title,
+          date: this.newAppointment.date,
+          details: this.newAppointment.details,
+          important: this.newAppointment.important
+        }
+
+        await axios
+          .post(`${url}video-calls/create`, data, config)
+          .then((response) => {
+            console.log('response: ', response)
+          })
+          .catch((error) => {
+            console.error(error)
+          })
       }
       this.showDialog = false
       this.isGenerating = false
@@ -258,6 +337,8 @@ export default defineComponent({
     editAppointment(appointment: string) {
       this.isEditing = true
       this.showDialog = true
+
+      //populating the form with the selected appointment
     },
     deleteAppointment(id: string) {
       this.recentAppointments = this.recentAppointments.filter(
