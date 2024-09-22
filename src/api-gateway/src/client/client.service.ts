@@ -85,6 +85,11 @@ export class ClientService {
     return client;
   }
 
+  async getClientByIdForClientPortal(clientId: Types.ObjectId): Promise<FlattenMaps<Client>> {
+    const client = await this.clientRepository.findClientById(clientId);
+    return client;
+  }
+
   async getClientByIdInternal(clientId: Types.ObjectId): Promise<FlattenMaps<Client & { _id: Types.ObjectId }>> {
     return await this.clientRepository.findClientById(clientId);
   }
@@ -305,5 +310,19 @@ export class ClientService {
         customerServiceRating: feedbackDto.customerServiceRating,
       },
     });
+  }
+
+  async getCompanyAccountDetails(clientId: Types.ObjectId) {
+    const client = await this.getClientByIdInternal(clientId);
+    if (!client) throw new NotFoundException('Client not found');
+    const company = await this.companyService.getCompanyById(client.details.companyId);
+    if (!company) throw new NotFoundException('Company not found');
+    return company.accountDetails;
+  }
+
+  async getCompanyStatusNames(clientId: Types.ObjectId) {
+    const client = await this.getClientByIdInternal(clientId);
+    if (!client) throw new NotFoundException('Client not found');
+    return this.companyService.getCompanyStatusNames(client.details.companyId);
   }
 }

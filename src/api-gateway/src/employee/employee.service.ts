@@ -14,7 +14,7 @@ import { EmployeeRepository } from './employee.repository';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { ClientService } from '../client/client.service';
 import { UpdateRoleDto } from '../role/dto/update-role.dto';
-import { Nodes, Edges } from 'v-network-graph';
+import { Edges, Nodes } from 'v-network-graph';
 import { Exception } from 'handlebars';
 import { StockMovementsService } from '../stockmovements/stockmovements.service';
 
@@ -35,6 +35,7 @@ export class EmployeeService {
     @Inject(forwardRef(() => JobService))
     private readonly jobService: JobService,
 
+    @Inject(forwardRef(() => TeamService))
     private teamService: TeamService,
 
     @Inject(forwardRef(() => ClientService))
@@ -157,6 +158,39 @@ export class EmployeeService {
     await this.addSubordinates(savedEmployee.superiorId, dto);
 
     return savedEmployee;
+  }
+
+  async createOwner(createEmployeeDto: ExternalCreateEmployeeDto) {
+    const newEmployee = new Employee();
+    newEmployee.userId = createEmployeeDto.userId;
+    newEmployee.companyId = createEmployeeDto.companyId;
+
+    if (createEmployeeDto.userInfo) {
+      newEmployee.userInfo.displayImage = createEmployeeDto.userInfo.displayImage;
+      newEmployee.userInfo.displayName = createEmployeeDto.userInfo.displayName;
+      newEmployee.userInfo.firstName = createEmployeeDto.userInfo.firstName;
+      newEmployee.userInfo.surname = createEmployeeDto.userInfo.surname;
+      newEmployee.userInfo.username = createEmployeeDto.userInfo.username;
+    }
+    if (createEmployeeDto.roleId) {
+      const role = await this.roleService.findById(createEmployeeDto.roleId);
+      newEmployee.role.roleId = new Types.ObjectId(role._id);
+      newEmployee.role.permissionSuite = role.permissionSuite;
+      newEmployee.role.roleName = role.roleName;
+    } else {
+      const role = await this.roleService.findOneInCompany('Default', createEmployeeDto.companyId);
+      newEmployee.role.roleId = role._id;
+      newEmployee.role.permissionSuite = role.permissionSuite;
+    }
+
+    if (createEmployeeDto.hourlyRate) {
+      newEmployee.hourlyRate = createEmployeeDto.hourlyRate;
+    } else {
+      const role = await this.roleService.findById(newEmployee.role.roleId);
+      newEmployee.hourlyRate = role.hourlyRate;
+    }
+
+    return (await this.employeeRepository.save(newEmployee)).toObject();
   }
 
   async findAll() {

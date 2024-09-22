@@ -104,7 +104,7 @@
                       </template>
 
                       <template v-slot:[`item.startDate`]="{ item }">
-                        {{ item?.details?.startDate }}
+                        {{ formatDate(item?.details?.startDate) }}
                       </template>
 
                       <template v-slot:[`item.endDate`]="{ item }">
@@ -471,7 +471,7 @@ const openDialog = (job: Job) => {
 const closeDialog = () => {}
 
 const formatDate = (dateString: string): string => {
-  const options: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', year: '2-digit' }
+  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' }
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', options)
 }

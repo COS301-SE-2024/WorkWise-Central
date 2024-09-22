@@ -22,6 +22,7 @@ export class StockMovementsRepository {
   }
 
   async findAllInCompany(identifier: Types.ObjectId) {
+    console.log('identifier', identifier);
     return await this.StockMovementsModel.find({
       $and: [
         {

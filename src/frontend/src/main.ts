@@ -13,6 +13,9 @@ import 'vuetify/dist/vuetify.min.css'
 //import firebaseMessaging from '@/store/firebase'
 import Vue3Geolocation from 'vue3-geolocation'
 
+//To refer to API in Dev and Prod
+export const API_URL: string = import.meta.env.VITE_SERVER_API
+
 const app = createApp(App)
 //app.config.globalProperties.$messaging = firebaseMessaging
 app.use(KanbanPlugin)
@@ -22,6 +25,5 @@ app.use(router)
 app.use(ToastService)
 app.use(PrimeVue, { theme: { preset: Aura } })
 app.use(VNetworkGraph)
-
 // app.use(store)
 app.mount('#app')
