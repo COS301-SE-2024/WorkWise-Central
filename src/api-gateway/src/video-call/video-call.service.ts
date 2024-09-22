@@ -55,7 +55,8 @@ export class VideoCallService {
     const videoCall = new VideoCall(createVideoCallDto);
     console.log('checkpoint 1');
     videoCall.title = createVideoCallDto.title;
-    videoCall.scheduledTime = createVideoCallDto.scheduledTime;
+    videoCall.scheduledStartTime = createVideoCallDto.scheduledStartTime;
+    videoCall.scheduledEndTime = createVideoCallDto.scheduledEndTime;
     videoCall.participants = createVideoCallDto.participants;
     videoCall.details = createVideoCallDto.details;
     videoCall.companyId = createVideoCallDto.companyId;

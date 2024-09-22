@@ -24,9 +24,10 @@
             color="cardColor"
           >
             <v-card-title>{{ appointment.title }}</v-card-title>
-            <v-card-subtitle class="bg-cardColor">{{
-              formatDate(appointment.date)
-            }}</v-card-subtitle>
+            <v-card-subtitle class="bg-cardColor"
+              >Date: {{ formatDate(appointment.date) }}, {{ formatTime(appointment.startTime) }} -
+              {{ formatTime(appointment.endTime) }}</v-card-subtitle
+            >
             <v-card-text>{{ appointment.details }}</v-card-text>
             <v-card-actions class="bg-cardColor">
               <v-container
@@ -79,15 +80,45 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
-                <h6>Meeting Date</h6>
-                <v-text-field
-                  v-model="newAppointment.date"
-                  label="Date"
-                  type="date"
-                  :rules="dateRules"
-                  required
-                ></v-text-field>
+                <v-row>
+                  <h6>Meeting Date</h6>
+                  <v-row>
+                    <v-col align="center" cols="12" md="6">
+                      <v-date-picker
+                        title="SELECT START DATE"
+                        header="Meeting start date"
+                        border="md"
+                        width="unset"
+                        max-width="350"
+                        v-model="startDate"
+                        elevation="5"
+                        required
+                        :rules="startDateRule"
+                        :min="minDate"
+                        class="mb-4"
+                      ></v-date-picker>
+                    </v-col>
+                    <v-col cols="12" md="6" align="center">
+                      <v-time-picker
+                        format="24hr"
+                        :allowed-hours="allowedHours"
+                        :allowed-minutes="allowedMinutes"
+                        v-model="newAppointment.startTime"
+                        class="mb-4"
+                      ></v-time-picker>
+                    </v-col>
+                    <v-col cols="12" md="6" align="center">
+                      <v-time-picker
+                        :allowed-hours="allowedHours2"
+                        :allowed-minutes="allowedMinutes2"
+                        format="24hr"
+                        v-model="newAppointment.endTime"
+                      ></v-time-picker>
+                    </v-col>
+                  </v-row>
+                </v-row>
               </v-col>
+
               <v-col cols="12">
                 <h6>Details</h6>
                 <v-text-field v-model="newAppointment.details" label="Details"></v-text-field>
@@ -144,12 +175,14 @@
 import { defineComponent } from 'vue'
 import VideoConferencing from './VideoConferencing.vue'
 import axios from 'axios'
+import App from '@/App.vue'
 interface Appointment {
   id: string
   title: string
   date: string
+  startTime: string
+  endTime: string
   details: string
-  important: boolean
   participants: string[]
 }
 type EmployeeInformation = {
@@ -184,25 +217,26 @@ export default defineComponent({
         id: '',
         title: '',
         date: '',
+        startTime: '',
+        endTime: '',
         details: '',
         important: false,
         participants: []
       } as Appointment,
-      recentAppointments: [
-        {
-          id: '1',
-          title: 'Meeting with John Doe',
-          date: '2021-10-15',
-
-          details: 'Discuss project timeline and deliverables'
-        }
-      ] as Appointment[],
+      recentAppointments: [] as Appointment[],
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       companyId: '',
-
+      startDate: null as string | null,
+      minDate: new Date().toISOString().substr(0, 10),
+      selectedDate: '',
+      selectedTime: '',
+      allowedHours: ((hour: number) => true) as (hour: number) => boolean,
+      allowedMinutes: ((minute: number) => true) as (minute: number) => boolean,
+      allowedHours2: ((hour: number) => true) as (hour: number) => boolean,
+      allowedMinutes2: ((minute: number) => true) as (minute: number) => boolean,
       titleRules: [(v: string) => !!v || 'Title is required'],
-      dateRules: [
+      startDateRule: [
         (v: string) => !!v || 'Date is required',
         (v: string) => v >= new Date().toISOString().substr(0, 10) || 'Date cannot be in the past'
       ]
@@ -225,7 +259,7 @@ export default defineComponent({
       return localAvailable ? this.localUrl : this.remoteUrl
     },
 
-    async getEmployees() {
+    async getRequests() {
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -250,9 +284,35 @@ export default defineComponent({
       } catch (error) {
         console.error(error)
       }
+
+      //getting the meeting for the current employee
+      try {
+        const response = await axios.get(
+          `${apiURL}videoCalls/forEmployee/${localStorage.getItem('employeeId')}`,
+          config
+        )
+        console.log(response.data.data)
+        for (const appointment of response.data.data) {
+          const participants = appointment.participants.map((participant: any) => participant.name)
+          this.recentAppointments.push({
+            id: appointment._id,
+            title: appointment.title,
+            date: appointment.scheduledStartTime,
+            startTime: appointment.scheduledStartTime,
+            endTime: appointment.scheduledEndTime,
+            details: appointment.details,
+            participants: participants
+          })
+        }
+      } catch (error) {
+        console.error(error)
+      }
     },
     formatDate(date: string) {
       return new Date(date).toDateString()
+    },
+    formatTime(time: string) {
+      return new Date(time).toLocaleTimeString()
     },
     openDialog() {
       this.isEditing = false
@@ -261,8 +321,9 @@ export default defineComponent({
         id: '',
         title: '',
         date: '',
+        startTime: '',
+        endTime: '',
         details: '',
-        important: false,
         participants: []
       }
     },
@@ -277,8 +338,9 @@ export default defineComponent({
         id: '',
         title: '',
         date: '',
+        startTime: '',
+        endTime: '',
         details: '',
-        important: false,
         participants: []
       }
       this.req_obj.participants = []
@@ -287,7 +349,22 @@ export default defineComponent({
       this.joinRoom = true
       this.conference = false
     },
+    formatStartDateAndTime(date: Date, time: string) {
+      const [hrs, min] = time.split(':').map(Number)
+      date.setHours(hrs)
+      date.setMinutes(min)
+      console.log(date.toISOString())
+      return date.toISOString()
+    },
+    formatEndDateAndTime(date: Date, time: string) {
+      const [hrs, min] = time.split(':').map(Number)
+      date.setHours(hrs)
+      date.setMinutes(min)
+      console.log(date.toISOString())
+      return date.toISOString()
+    },
     async saveAppointment() {
+      this.newAppointment.date = this.startDate as string
       this.isGenerating = true
       if (this.isEditing && this.editIndex !== null) {
         // Update existing appointment
@@ -333,9 +410,18 @@ export default defineComponent({
           }
         }
         const url = await this.getRequestUrl()
+
+        console.log('this.newAppointment: ', this.newAppointment)
         const data = {
           title: this.newAppointment.title,
-          scheduledTime: new Date(this.newAppointment.date).toISOString(),
+          scheduledStartTime: this.formatStartDateAndTime(
+            new Date(this.newAppointment.date),
+            this.newAppointment.startTime
+          ),
+          scheduledEndTime: this.formatEndDateAndTime(
+            new Date(this.newAppointment.date),
+            this.newAppointment.endTime
+          ),
           details: this.newAppointment.details,
           participants: await this.selectTeamMembers(),
           companyId: this.companyId
@@ -384,7 +470,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.getEmployees()
+    this.getRequests()
   }
 })
 </script>

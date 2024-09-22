@@ -7,7 +7,8 @@ import { CreateVideoCallDto } from '../dto/create-video-call.dto';
 export class VideoCall {
   constructor(createTeamDto: CreateVideoCallDto) {
     this.title = createTeamDto.title;
-    this.scheduledTime = createTeamDto.scheduledTime;
+    this.scheduledStartTime = createTeamDto.scheduledStartTime;
+    this.scheduledEndTime = createTeamDto.scheduledEndTime;
     this.participants = createTeamDto.participants;
     this.companyId = createTeamDto.companyId;
     this.details = createTeamDto.details;
@@ -19,7 +20,11 @@ export class VideoCall {
 
   @ApiProperty()
   @Prop({ required: true })
-  scheduledTime: Date;
+  scheduledStartTime: Date;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  scheduledEndTime: Date;
 
   @ApiProperty()
   @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [], ref: 'Employee' })
