@@ -1,47 +1,169 @@
-<script setup>
-//const center = { lat: 40.689247, lng: -74.044502 }
-// const markerOptions = { position: center, label: 'L', title: 'LADY LIBERTY' }
-// const pinOptions = { background: '#FBBC04' }
-</script>
-
 <template>
-  <GoogleMap
-    :api-key="apiKey"
-    style="width: 100%; height: 500px"
-    :center="{ lat: lat, lng: lng }"
-    :zoom="15"
-  >
-    <!--    <Marker :options="markerOptions" :pin-options="pinOptions" :center="{ lat: lat, lng: lng }" />-->
-    <!--    <Marker :options="{ position: { lat: lat + 0.001, lng: lng } }" />-->
-
-    <!-- Company Marker -->
-    <Marker v-if="company != null" :options="{ position: companyLocation }">
-      <!--      <div style="text-align: center">
-        <div style="font-size: 1.125rem">{{ company.name }}</div>
-        <img v-if="company.logo" :src="company.logo" style="margin-top: 8px" alt="Company Logo" />
-      </div>-->
-      <InfoWindow>
-        <div id="companyContent">
-          <div></div>
-          <img
-            class="centered"
-            v-if="company.logo"
-            :src="company.logo"
-            style=""
-            alt="Company Logo"
-          />
-          <h6 style="color: black">{{ company.name }}</h6>
-          <br />
-          <div style="color: black">
-            <p><strong>Street:</strong> {{ company.address.street }}</p>
-            <p><strong>Suburb:</strong> {{ company.address.suburb }}</p>
-            <p><strong>City:</strong> {{ company.address.city }}</p>
-            <p><strong>Province:</strong> {{ company.address.province }}</p>
-            <p><strong>Postal Code:</strong> {{ company.address.postalCode }}</p>
+  <Splitter style="height: 100%">
+    <SplitterPanel class="flex items-center justify-center" :size="25" :minSize="10">
+      <div class="sidebar">
+        <!--        <Image src="https://picsum.photos/200/300" alt="Image" width="100%" height="20%" />-->
+        <h2>Fleet Overview</h2>
+        <div class="status-cards">
+          <div class="status-card active">
+            <h3>Active Vehicles</h3>
+            <p>{{ activeVehicles }}</p>
+          </div>
+          <div class="status-card inactive">
+            <h3>Inactive Vehicles</h3>
+            <p>{{ inactiveVehicles }}</p>
           </div>
         </div>
-      </InfoWindow>
-    </Marker>
+        <div class="driver-list">
+          <h3>Current Drivers</h3>
+          <ul>
+            <li v-for="driver in currentDrivers" :key="driver.id">
+              {{ driver.name }} - {{ driver.vehicleLicensePlate }}
+            </li>
+          </ul>
+        </div>
+        <div class="fleet-stats">
+          <h3>Fleet Statistics</h3>
+          <p>Total Distance Today: {{ totalDistanceToday }} km</p>
+          <p>Average Fuel Consumption: {{ averageFuelConsumption }} L/100km</p>
+          <p>Vehicles Due for Service: {{ vehiclesDueForService }}</p>
+        </div>
+        <div class="alerts">
+          <h3>Alerts</h3>
+          <ul>
+            <li v-for="alert in recentAlerts" :key="alert.id" :class="alert.severity">
+              {{ alert.message }}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <Button
+          label="Show All Vehicle Data"
+          icon="pi pi-external-link"
+          @click="dialogVisible = true"
+        />
+        <Dialog
+          v-model:visible="dialogVisible"
+          header="Flex Scroll"
+          :style="{ width: '75vw' }"
+          maximizable
+          modal
+          :contentStyle="{ height: '300px' }"
+        >
+          <DataTable
+            v-model:editingRows="editingRows"
+            :value="vehicles"
+            editMode="row"
+            dataKey="_id"
+            @row-edit-save="onRowEditSave"
+            :pt="{
+              table: { style: 'min-width: 50rem' },
+              column: {
+                bodycell: ({ state }) => ({
+                  style: state['d_editing'] && 'padding-top: 0.75rem; padding-bottom: 0.75rem'
+                })
+              }
+            }"
+          >
+            <Column field="name.make" header="Make" style="width: 15%">
+              <template #editor="{ data, field }">
+                <InputText v-model="data.name.make" fluid />
+              </template>
+            </Column>
+            <Column field="name.model" header="Model" style="width: 15%">
+              <template #editor="{ data, field }">
+                <InputText v-model="data.name.model" fluid />
+              </template>
+            </Column>
+            <Column field="modelYear" header="Year" style="width: 10%">
+              <template #editor="{ data, field }">
+                <InputNumber v-model="data[field]" fluid />
+              </template>
+            </Column>
+            <Column header="Image">
+              <!--TODO: Add Image Column Properly-->
+              <template #body="slotProps">
+                <img
+                  :src="`https://primefaces.org/cdn/primevue/images/product/${slotProps.data.image}`"
+                  :alt="slotProps.data.image"
+                  class="w-24 rounded"
+                />
+              </template>
+            </Column>
+            <Column field="licensePlate" header="License Plate" style="width: 15%">
+              <template #editor="{ data, field }">
+                <InputText v-model="data[field]" fluid />
+              </template>
+            </Column>
+            <Column field="availability.status" header="Status" style="width: 15%">
+              <template #editor="{ data }">
+                <Select
+                  v-model="data.availability.status"
+                  :options="availabilityStatuses"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select Status"
+                  fluid
+                >
+                  <template #option="slotProps">
+                    <Tag
+                      :value="slotProps.option.value"
+                      :severity="getStatusSeverity(slotProps.option.value)"
+                    />
+                  </template>
+                </Select>
+              </template>
+              <template #body="slotProps">
+                <Tag
+                  :value="slotProps.data.availability.status"
+                  :severity="getStatusSeverity(slotProps.data.availability.status)"
+                />
+              </template>
+            </Column>
+            <Column field="mileage" header="Mileage" style="width: 15%">
+              <template #editor="{ data, field }">
+                <InputNumber v-model="data[field]" fluid />
+              </template>
+            </Column>
+            <Column field="fuelType" header="Fuel Type" style="width: 15%">
+              <template #editor="{ data, field }">
+                <Select
+                  v-model="data[field]"
+                  :options="fuelTypes"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select Fuel Type"
+                  fluid
+                />
+              </template>
+            </Column>
+            <Column
+              :rowEditor="true"
+              style="width: 10%; min-width: 8rem"
+              bodyStyle="text-align:center"
+            ></Column>
+          </DataTable>
+          <template #footer>
+            <Button label="Close" icon="pi pi-check" @click="dialogVisible = false" />
+          </template>
+        </Dialog>
+      </div>
+    </SplitterPanel>
+    <SplitterPanel class="flex items-center justify-center" :size="75">
+      <GoogleMap :api-key="apiKey" style="width: 100%; height: 100%" :center="mapCenter" :zoom="12">
+        <!-- Company Marker -->
+        <Marker v-if="company" :options="{ position: companyLocation }">
+          <InfoWindow>
+            <div id="companyContent">
+              <img class="centered" v-if="company.logo" :src="company.logo" alt="Company Logo" />
+              <h6 style="color: black">{{ company.name }}</h6>
+              <div style="color: black">
+                <p><strong>Address:</strong> {{ formatAddress(company.address) }}</p>
+              </div>
+            </div>
+          </InfoWindow>
+        </Marker>
 
     <!-- Current Location Marker -->
     <Marker :options="{ position: { lat: lat, lng: lng } }">
