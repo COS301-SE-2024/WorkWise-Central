@@ -184,6 +184,7 @@ interface Appointment {
   endTime: string
   details: string
   participants: string[]
+  roomId?: string
 }
 type EmployeeInformation = {
   name: string
@@ -301,7 +302,8 @@ export default defineComponent({
             startTime: appointment.scheduledStartTime,
             endTime: appointment.scheduledEndTime,
             details: appointment.details,
-            participants: participants
+            participants: participants,
+            roomId: appointment.roomId
           })
         }
       } catch (error) {
@@ -328,7 +330,7 @@ export default defineComponent({
       }
     },
     joiningRoom(appointment: Appointment) {
-      this.selectedRoom.id = appointment.id
+      this.selectedRoom.id = appointment.roomId as string
       console.log(this.selectedRoom.id)
       this.joinRoom = false
       this.conference = true
@@ -456,6 +458,23 @@ export default defineComponent({
       this.clearFields()
     },
     deleteAppointment(id: string) {
+      //Integrate with backend
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const url = this.getRequestUrl()
+      axios
+        .delete(`${url}videoCalls/${id}`, config)
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+
       this.recentAppointments = this.recentAppointments.filter(
         (appointment) => appointment.id !== id
       )

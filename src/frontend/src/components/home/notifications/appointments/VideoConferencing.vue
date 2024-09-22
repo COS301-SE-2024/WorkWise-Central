@@ -74,6 +74,7 @@
 import { defineComponent, ref, onMounted, onUnmounted, nextTick } from 'vue'
 import axios from 'axios'
 import { io, Socket } from 'socket.io-client'
+import { props } from 'node_modules/cypress/types/bluebird';
 
 export default defineComponent({
   props: {
@@ -82,7 +83,7 @@ export default defineComponent({
       required: true
     }
   },
-  setup(_, { emit }) {
+  setup(props, { emit }) {
     const title = ref('')
     const scheduledTime = ref('')
     const inCall = ref(false)
@@ -96,7 +97,7 @@ export default defineComponent({
     let localStream: MediaStream | null = null
     const localUrl = 'http://localhost:3000/'
     const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
-    const roomId = ref('room-id')
+    const roomId = props.roomId
     const employeeId = ref('employee-id')
 
     const configuration = {
@@ -144,6 +145,8 @@ export default defineComponent({
           await peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
         }
       })
+
+      joinCall()
     })
 
     onUnmounted(() => {
@@ -222,8 +225,8 @@ export default defineComponent({
         if (localVideo.value) {
           localVideo.value.srcObject = localStream
         }
-
-        socket.emit('join-room', roomId.value) // Replace with actual room ID
+        
+        socket.emit('join-room', roomId) // Replace with actual room ID
         inCall.value = true
 
         // Emit user joined event
