@@ -144,8 +144,6 @@ export default defineComponent({
           await peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
         }
       })
-
-      joinCall()
     })
 
     onUnmounted(() => {

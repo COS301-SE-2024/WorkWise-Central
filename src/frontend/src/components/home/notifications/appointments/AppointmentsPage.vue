@@ -203,8 +203,7 @@ export default defineComponent({
       titleRules: [(v: string) => !!v || 'Title is required'],
       dateRules: [
         (v: string) => !!v || 'Date is required',
-        (v: string) => v <= new Date().toISOString().substr(0, 10) || 'Date cannot be in the past',
-        (v: string) => v >= new Date().toISOString().substr(0, 10) || 'Date cannot be in the future'
+        (v: string) => v >= new Date().toISOString().substr(0, 10) || 'Date cannot be in the past',
       ]
     }
   },
@@ -212,15 +211,6 @@ export default defineComponent({
     selected_participants(a: any) {
       console.log(a)
     },
-    // filteredParticipantNames() {
-    //   return this.participantsItemNames.filter(
-    //     (sub: EmployeeInformation) =>
-    //       !(
-    //         // this.req_obj.updateEmployeeDto.superiorId &&
-    //         // this.req_obj.updateEmployeeDto.superiorId === sub.employeeId
-    //       )
-    //   )
-    // },
     async isLocalAvailable(localUrl: string) {
       try {
         const res = await axios.get(localUrl)
@@ -315,7 +305,7 @@ export default defineComponent({
 
         const data = {
           title: this.newAppointment.title,
-          date: this.newAppointment.date,
+          scheduledTime: new Date(this.newAppointment.date).toISOString(),
           details: this.newAppointment.details,
           important: this.newAppointment.important,
           participants: this.newAppointment.participants
@@ -323,7 +313,7 @@ export default defineComponent({
         const id = this.newAppointment.id
 
         await axios
-          .patch(`${url}video-calls/${id}`, data, config)
+          .patch(`${url}videoCalls/${id}`, data, config)
           .then((response) => {
             console.log('response: ', response)
           })
@@ -345,16 +335,21 @@ export default defineComponent({
         const url = await this.getRequestUrl()
         const data = {
           title: this.newAppointment.title,
-          date: this.newAppointment.date,
+          scheduledTime: new Date(this.newAppointment.date).toISOString(),
           details: this.newAppointment.details,
           important: this.newAppointment.important,
           participants: this.newAppointment.participants
         }
 
         await axios
-          .post(`${url}video-calls/create`, data, config)
+          .post(`${url}videoCalls/create`, data, config)
           .then((response) => {
-            console.log('response: ', response)
+            console.log(response)
+            this.$toast.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Review Submitted'
+            })
           })
           .catch((error) => {
             console.error(error)
