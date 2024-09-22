@@ -56,7 +56,7 @@ export class InvoiceRepository {
         },
       ],
     })
-      .populate(['clientId', 'jobId'])
+      .populate(['clientId', 'jobId', 'companyId'])
       .lean();
 
     return result;
