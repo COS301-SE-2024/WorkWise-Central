@@ -75,6 +75,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 interface Tag {
   label: string
@@ -153,9 +154,8 @@ export default defineComponent({
       this.isDeleting = true // Indicate the start of the deletion process
       console.log(this.tag)
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
       await axios
-        .post(`${apiURL}job/tags/add`, this.tag, config)
+        .post(`${API_URL}job/tags/add`, this.tag, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({

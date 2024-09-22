@@ -240,8 +240,6 @@ export default {
         }
       }
 
-      // const apiURL = await this.getRequestUrl();
-
       const data = {
         // registrationNumber: this.localEditedItem.registrationNumber,
         currentEmployeeId: localStorage.getItem('employeeId'),

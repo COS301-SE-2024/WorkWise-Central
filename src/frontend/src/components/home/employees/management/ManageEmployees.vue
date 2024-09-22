@@ -157,6 +157,7 @@ import type {
   Person,
   EmployeePersonalInfo
 } from '@/components/home/employees/types'
+import { API_URL } from '@/main'
 
 export default {
   name: 'ClientDesk',
@@ -292,11 +293,10 @@ export default {
         }
       }
       console.log(localStorage['employeeId'])
-      const apiURL = await this.getRequestUrl()
 
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/id/${localStorage['employeeId']}`,
+          API_URL + `employee/id/${localStorage['employeeId']}`,
           config
         )
         console.log(employee_response.data.data)
@@ -316,11 +316,10 @@ export default {
         }
       }
       console.log(localStorage['employeeId'])
-      const apiURL = await this.getRequestUrl()
 
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/detailed/all/${localStorage['employeeId']}`,
+          API_URL + `employee/detailed/all/${localStorage['employeeId']}`,
           config
         )
 

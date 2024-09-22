@@ -26,8 +26,6 @@ export type InvoiceCardDataFormat = {
   paid: boolean
   clientId: string // For ObjectId type
   clientName: string
-  inventoryItems: Item[]
-  laborItems: Item[]
 }
 
 type Item = {

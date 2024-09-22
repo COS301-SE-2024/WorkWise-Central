@@ -41,6 +41,8 @@ import axios from 'axios'
 import type { Event, JobCardDataFormat } from '@/components/home/dashboard/types'
 import ViewJob from '@/components/home/jobs/management/ViewJob.vue'
 import type { Job } from '../types'
+import { API_URL } from '@/main'
+
 export default {
   name: 'CalendarComponent',
   components: {
@@ -980,9 +982,9 @@ export default {
       }
       console.log('Job Id:', ev.id)
       console.log(req_obj)
-      // const apiURL = await this.getRequestUrl()
+
       // axios
-      //   .patch(apiURL + `job/${ev.id}`, req_obj, this.request_config)
+      //   .patch(API_URL + `job/${ev.id}`, req_obj, this.request_config)
       //   .then((res) => {
       //     console.log('Job time Updated')
       //     console.log(res)
@@ -995,9 +997,9 @@ export default {
       console.log(payload_event_id)
       console.log('event deleted')
       // uncomment this when youre ready to run an event delete
-      // const apiURL = await this.getRequestUrl()
+      // const API_URL = await this.getRequestUrl()
       // axios
-      //   .delete(apiURL + `job/${payload_event_id}`, this.request_config)
+      //   .delete(API_URL + `job/${payload_event_id}`, this.request_config)
       //   .then((res) => {
       //     console.log('event deleted')
       //   })
@@ -1007,9 +1009,9 @@ export default {
       console.log('event clickedEvent')
       console.log(ev.clickedEvent.id)
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
+
       try {
-        const sub_res = await axios.get(apiURL + `job/id/${ev.clickedEvent.id}`, config)
+        const sub_res = await axios.get(API_URL + `job/id/${ev.clickedEvent.id}`, config)
         this.SelectedEvent = sub_res.data.data
         this.openJobCard()
       } catch (error) {
@@ -1018,10 +1020,10 @@ export default {
     },
     async loadJobs() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const employee_jobs = await axios(
-          apiURL + `job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
+          API_URL + `job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
           config
         )
 

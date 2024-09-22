@@ -228,6 +228,7 @@ import dashboard from '@/assets/images/paymentGateway/payfast-dashboard.png'
 import enterDetails from '@/assets/images/paymentGateway/payfast-enter-detailspng.png'
 import axios from 'axios'
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
 
 export default {
   name: 'SetupPaymentGateway',
@@ -300,7 +301,6 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      // const apiURL = await this.getRequestUrl()
       const company_id = localStorage.getItem('currentCompany')
       await axios
         .get(`http://localhost:3000/company/id/${company_id}/accountDetails`, config)
@@ -346,7 +346,6 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
       const data = {
         currentEmployeeId: localStorage.getItem('employeeId'),
         updateCompanyDto: this.company
@@ -354,7 +353,7 @@ export default {
       console.log('Data: ', data)
 
       await axios
-        .patch(`${apiURL}company/update/${localStorage.getItem('currentCompany')}`, data, config)
+        .patch(`${API_URL}company/update/${localStorage.getItem('currentCompany')}`, data, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({

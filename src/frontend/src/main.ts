@@ -11,9 +11,11 @@ import 'v-network-graph/lib/style.css'
 import './assets/styles.css'
 import 'vuetify/dist/vuetify.min.css'
 
-//import firebaseMessaging from '@/store/firebase'
 //To refer to API in Dev and Prod
-export const API_URL: string = import.meta.env.VITE_SERVER_API
+export const API_URL: string =
+  import.meta.env.ENVIRONMENT == 'prod'
+    ? import.meta.env.VITE_SERVER_API_PROD
+    : import.meta.env.VITE_SERVER_API_DEV
 
 const app = createApp(App)
 //app.config.globalProperties.$messaging = firebaseMessaging

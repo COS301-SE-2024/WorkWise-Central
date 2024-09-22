@@ -340,6 +340,7 @@ import JobStatus from './JobStatus.vue'
 import LogJobInventory from './LogJobInventory.vue'
 import GenerateInvoice from './GenerateInvoice.vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 const props = defineProps<{ passedInJob: any }>()
 const emits = defineEmits(['close'])
@@ -439,13 +440,12 @@ const changeImage = async (event: Event) => {
     reader.onload = async (e) => {
       imageSrc.value = e.target?.result as string
       setCardBackgroundColor(imageSrc.value)
-      const apiUrl = await getRequestUrl()
       try {
         console.log('Image src value:', imageSrc.value)
         console.log('Passed in job:', props.passedInJob)
         console.log('Job id:', props.passedInJob._id)
         await axios.patch(
-          `${apiUrl}job/update/${props.passedInJob._id}`,
+          `${API_URL}job/update/${props.passedInJob._id}`,
           {
             coverImage: imageSrc.value
           },

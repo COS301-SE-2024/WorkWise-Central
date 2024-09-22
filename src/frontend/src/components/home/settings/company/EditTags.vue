@@ -124,6 +124,7 @@ import DeleteTags from './DeleteTags.vue'
 
 import CreateTags from './CreateTags.vue'
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   data: () => ({
@@ -232,11 +233,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
       const user_id = localStorage.getItem('id')
       try {
         const res = await axios.get(
-          `${apiURL}job/tags/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}job/tags/${localStorage.getItem('currentCompany')}`,
           config
         )
         console.log(res)
@@ -275,9 +275,8 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
       axios
-        .patch(`${apiURL}job/tags/`, this.selectedItem, config)
+        .patch(`${API_URL}job/tags/`, this.selectedItem, config)
         .then((res) => {
           console.log(res)
           this.$toast.add({

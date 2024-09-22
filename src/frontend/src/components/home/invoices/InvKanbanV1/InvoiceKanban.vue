@@ -1,20 +1,20 @@
 <template>
   <v-container fluid>
-    <v-row class="d-flex flex-nowrap overflow-scroll">
+    <v-row>
       <VueDraggable
+        class="d-flex flex-nowrap overflow-scroll flex flex-col gap-2 p-4 w-300px h-800px m-auto bg-gray-500/5 rounded overflow-auto"
         ref="el"
         v-model="columns"
-        class="d-flex flex-nowrap overflow-scroll"
         :onUpdate="onColumnDragEnd"
         group="columns"
+        :animation="150"
+        ghostClass="ghost"
+        :scroll="true"
+        :disabled="true"
       >
         <v-col
           v-for="column in columns"
           :key="column._id"
-          :class="{ 'drop-target': isDropTarget(column) }"
-          @dragover.prevent="onDragOver(column)"
-          @dragleave="onDragLeave"
-          @drop="onDrop(column)"
           role="listbox"
           aria-dropeffect="move"
           :lg="3"
@@ -33,264 +33,243 @@
               <v-chip class="text-subtitle-1 font-weight-black" variant="tonal">
                 {{ column.cards.length }}
               </v-chip>
-              <v-menu align="left">
-                <template v-slot:activator="{ props }">
-                  <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
-                </template>
+              <!--              <v-menu align="left">-->
+              <!--                <template v-slot:activator="{ props }">-->
+              <!--                  <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>-->
+              <!--                </template>-->
 
-                <v-list :border="true" bg-color="background" rounded="lg">
-                  <v-list-subheader>Jobs</v-list-subheader>
+              <!--                <v-list :border="true" bg-color="background" rounded="lg">-->
+              <!--                  <v-list-subheader>Jobs</v-list-subheader>-->
 
-                  <v-list-item>
-                    <v-btn :elevation="0" @click="columnArchiveAll(column)">
-                      <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
-                      {{ 'Archive all' }}
-                    </v-btn>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-dialog v-model="delete_all_jobs_dialog" max-width="500px">
-                      <template v-slot:activator="{ props }">
-                        <v-btn :elevation="0" v-bind="props">
-                          <v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon>
-                          {{ 'Delete all' }}
-                        </v-btn>
-                      </template>
-                      <v-card color="background">
-                        <v-card-title>
-                          <span class="headline">Delete {{ column.status }}</span>
-                        </v-card-title>
-                        <v-card-text>
-                          <v-container>
-                            <v-row>
-                              <p>
-                                Are you sure you want to delete all the jobs in the
-                                <strong>{{
-                                  column.status.charAt(0).toUpperCase() + column.status.slice(1)
-                                }}</strong>
-                                column. all the jobs within it will be permanently removed through
-                                out the company.
-                              </p>
-                              <strong> This action cannot be reversed. </strong>
-                            </v-row>
-                          </v-container>
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn
-                            @click="columnDeleteAllJobs(column)"
-                            color="success"
-                            variant="text"
-                          >
-                            {{ 'Delete' }}
-                          </v-btn>
+              <!--                  <v-list-item>-->
+              <!--                    <v-btn :elevation="0" @click="columnArchiveAll(column)">-->
+              <!--                      <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>-->
+              <!--                      {{ 'Archive all' }}-->
+              <!--                    </v-btn>-->
+              <!--                  </v-list-item>-->
+              <!--                  <v-list-item>-->
+              <!--                    <v-dialog v-model="delete_all_jobs_dialog" max-width="500px">-->
+              <!--                      <template v-slot:activator="{ props }">-->
+              <!--                        <v-btn :elevation="0" v-bind="props">-->
+              <!--                          <v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon>-->
+              <!--                          {{ 'Delete all' }}-->
+              <!--                        </v-btn>-->
+              <!--                      </template>-->
+              <!--                      <v-card color="background">-->
+              <!--                        <v-card-title>-->
+              <!--                          <span class="headline">Delete {{ column.status }}</span>-->
+              <!--                        </v-card-title>-->
+              <!--                        <v-card-text>-->
+              <!--                          <v-container>-->
+              <!--                            <v-row>-->
+              <!--                              <p>-->
+              <!--                                Are you sure you want to delete all the jobs in the-->
+              <!--                                <strong>{{-->
+              <!--                                  column.status.charAt(0).toUpperCase() + column.status.slice(1)-->
+              <!--                                }}</strong>-->
+              <!--                                column. all the jobs within it will be permanently removed through-->
+              <!--                                out the company.-->
+              <!--                              </p>-->
+              <!--                              <strong> This action cannot be reversed. </strong>-->
+              <!--                            </v-row>-->
+              <!--                          </v-container>-->
+              <!--                        </v-card-text>-->
+              <!--                        <v-card-actions>-->
+              <!--                          <v-spacer></v-spacer>-->
+              <!--                          <v-btn-->
+              <!--                            @click="columnDeleteAllJobs(column)"-->
+              <!--                            color="success"-->
+              <!--                            variant="text"-->
+              <!--                          >-->
+              <!--                            {{ 'Delete' }}-->
+              <!--                          </v-btn>-->
 
-                          <v-btn
-                            color="error"
-                            variant="text"
-                            @click="delete_all_jobs_dialog = false"
-                            >Cancel</v-btn
-                          >
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
-                  </v-list-item>
-                  <v-list-subheader v-if="column.status !== 'No Status'">Column</v-list-subheader>
+              <!--                          <v-btn-->
+              <!--                            color="error"-->
+              <!--                            variant="text"-->
+              <!--                            @click="delete_all_jobs_dialog = false"-->
+              <!--                            >Cancel</v-btn-->
+              <!--                          >-->
+              <!--                        </v-card-actions>-->
+              <!--                      </v-card>-->
+              <!--                    </v-dialog>-->
+              <!--                  </v-list-item>-->
+              <!--                  <v-list-subheader v-if="column.status !== 'No Status'">Column</v-list-subheader>-->
 
-                  <v-list-item v-if="column.status !== 'No Status'">
-                    <v-dialog max-height="700" max-width="500" v-model="edit_column_details_dialog">
-                      <template v-slot:activator="{ props }">
-                        <v-btn :elevation="0" v-bind="props"
-                          ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
-                          >{{ 'Edit details' }}
-                        </v-btn>
-                      </template>
-                      <v-card elevation="14" rounded="md" max-height="100%" max-width="900">
-                        <v-card-title class="text-center">Edit {{ column.status }}</v-card-title>
-                        <v-card-text>
-                          <!--              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">-->
-                          <v-col>
-                            <v-spacer></v-spacer>
-                            <v-col>
-                              <v-col align="center">
-                                <v-icon :color="column_color" :size="40">
-                                  {{ 'fa: fa-solid fa-cube' }}
-                                </v-icon>
-                              </v-col>
-                              <v-col>
-                                <label style="font-size: 14px; font-weight: lighter"
-                                  >Column Name</label
-                                >
-                                <v-text-field
-                                  density="compact"
-                                  color="grey-lighten-4"
-                                  placeholder="Enter the name of the new column"
-                                  rounded="md"
-                                  variant="solo"
-                                  v-model="new_column_name"
-                                  :rules="column_name_rule"
-                                  required
-                                  data-testid="job-title-field"
-                                ></v-text-field
-                              ></v-col>
-                              <v-col align="center">
-                                <label style="font-size: 14px; font-weight: lighter">Color</label>
-                                <v-color-picker
-                                  v-model="column_color"
-                                  hide-inputs
-                                  show-swatches
-                                  @update:modelValue="addColorPickerUpdate"
-                                ></v-color-picker>
-                              </v-col>
-                            </v-col>
-                          </v-col>
-                          <v-col align="center">
-                            <label style="{color:red}">{{ error_message }}</label>
-                          </v-col>
-                          <v-col cols="8" offset="2" align="center">
-                            <v-btn
-                              color="success"
-                              rounded="md"
-                              type="submit"
-                              boarder="md"
-                              width="100%"
-                              height="35"
-                              variant="text"
-                              @click="editColumnButtonClickedSave(column)"
-                              data-testid="create-btn"
-                              >Save
-                            </v-btn>
-                            <v-btn
-                              color="error"
-                              rounded="md"
-                              boarder="md"
-                              width="100%"
-                              height="35"
-                              variant="text"
-                              @click="edit_column_details_dialog = false"
-                              data-testid="cancel-btn"
-                              >Cancel
-                            </v-btn>
-                          </v-col>
-                        </v-card-text>
-                      </v-card>
-                    </v-dialog>
-                  </v-list-item>
-                  <v-list-item v-if="column.status !== 'No Status'">
-                    <v-dialog v-model="delete_column_dialog" max-width="500px">
-                      <template v-slot:activator="{ props }">
-                        <v-btn :elevation="0" v-bind="props"
-                          ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
-                          >{{ 'Delete' }}</v-btn
-                        >
-                      </template>
-                      <v-card color="background">
-                        <v-card-title>
-                          <span class="headline">Delete {{ column.status }}</span>
-                        </v-card-title>
-                        <v-card-text>
-                          <v-container>
-                            <v-row>
-                              <p>
-                                Are you sure you want to delete the
-                                <strong>{{
-                                  column.status.charAt(0).toUpperCase() + column.status.slice(1)
-                                }}</strong>
-                                column, all jobs within it will be moved to the
-                                <b>No Status</b> column.
-                              </p>
-                              <strong> This action cannot be reversed. </strong>
-                            </v-row>
-                          </v-container>
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn @click="columnDelete(column)" color="success" variant="text">
-                            {{ 'Delete' }}
-                          </v-btn>
+              <!--                  <v-list-item v-if="column.status !== 'No Status'">-->
+              <!--                    <v-dialog max-height="700" max-width="500" v-model="edit_column_details_dialog">-->
+              <!--                      <template v-slot:activator="{ props }">-->
+              <!--                        <v-btn :elevation="0" v-bind="props"-->
+              <!--                          ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon-->
+              <!--                          >{{ 'Edit details' }}-->
+              <!--                        </v-btn>-->
+              <!--                      </template>-->
+              <!--                      <v-card elevation="14" rounded="md" max-height="100%" max-width="900">-->
+              <!--                        <v-card-title class="text-center">Edit {{ column.status }}</v-card-title>-->
+              <!--                        <v-card-text>-->
+              <!--                          &lt;!&ndash;              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">&ndash;&gt;-->
+              <!--                          <v-col>-->
+              <!--                            <v-spacer></v-spacer>-->
+              <!--                            <v-col>-->
+              <!--                              <v-col align="center">-->
+              <!--                                <v-icon :color="column_color" :size="40">-->
+              <!--                                  {{ 'fa: fa-solid fa-cube' }}-->
+              <!--                                </v-icon>-->
+              <!--                              </v-col>-->
+              <!--                              <v-col>-->
+              <!--                                <label style="font-size: 14px; font-weight: lighter"-->
+              <!--                                  >Column Name</label-->
+              <!--                                >-->
+              <!--                                <v-text-field-->
+              <!--                                  density="compact"-->
+              <!--                                  color="grey-lighten-4"-->
+              <!--                                  placeholder="Enter the name of the new column"-->
+              <!--                                  rounded="md"-->
+              <!--                                  variant="solo"-->
+              <!--                                  v-model="new_column_name"-->
+              <!--                                  :rules="column_name_rule"-->
+              <!--                                  required-->
+              <!--                                  data-testid="job-title-field"-->
+              <!--                                ></v-text-field-->
+              <!--                              ></v-col>-->
+              <!--                              <v-col align="center">-->
+              <!--                                <label style="font-size: 14px; font-weight: lighter">Color</label>-->
+              <!--                                <v-color-picker-->
+              <!--                                  v-model="column_color"-->
+              <!--                                  hide-inputs-->
+              <!--                                  show-swatches-->
+              <!--                                  @update:modelValue="addColorPickerUpdate"-->
+              <!--                                ></v-color-picker>-->
+              <!--                              </v-col>-->
+              <!--                            </v-col>-->
+              <!--                          </v-col>-->
+              <!--                          <v-col align="center">-->
+              <!--                            <label style="{color:red}">{{ error_message }}</label>-->
+              <!--                          </v-col>-->
+              <!--                          <v-col cols="8" offset="2" align="center">-->
+              <!--                            <v-btn-->
+              <!--                              color="success"-->
+              <!--                              rounded="md"-->
+              <!--                              type="submit"-->
+              <!--                              boarder="md"-->
+              <!--                              width="100%"-->
+              <!--                              height="35"-->
+              <!--                              variant="text"-->
+              <!--                              @click="editColumnButtonClickedSave(column)"-->
+              <!--                              data-testid="create-btn"-->
+              <!--                              >Save-->
+              <!--                            </v-btn>-->
+              <!--                            <v-btn-->
+              <!--                              color="error"-->
+              <!--                              rounded="md"-->
+              <!--                              boarder="md"-->
+              <!--                              width="100%"-->
+              <!--                              height="35"-->
+              <!--                              variant="text"-->
+              <!--                              @click="edit_column_details_dialog = false"-->
+              <!--                              data-testid="cancel-btn"-->
+              <!--                              >Cancel-->
+              <!--                            </v-btn>-->
+              <!--                          </v-col>-->
+              <!--                        </v-card-text>-->
+              <!--                      </v-card>-->
+              <!--                    </v-dialog>-->
+              <!--                  </v-list-item>-->
+              <!--                  <v-list-item v-if="column.status !== 'No Status'">-->
+              <!--                    <v-dialog v-model="delete_column_dialog" max-width="500px">-->
+              <!--                      <template v-slot:activator="{ props }">-->
+              <!--                        <v-btn :elevation="0" v-bind="props"-->
+              <!--                          ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon-->
+              <!--                          >{{ 'Delete' }}</v-btn-->
+              <!--                        >-->
+              <!--                      </template>-->
+              <!--                      <v-card color="background">-->
+              <!--                        <v-card-title>-->
+              <!--                          <span class="headline">Delete {{ column.status }}</span>-->
+              <!--                        </v-card-title>-->
+              <!--                        <v-card-text>-->
+              <!--                          <v-container>-->
+              <!--                            <v-row>-->
+              <!--                              <p>-->
+              <!--                                Are you sure you want to delete the-->
+              <!--                                <strong>{{-->
+              <!--                                  column.status.charAt(0).toUpperCase() + column.status.slice(1)-->
+              <!--                                }}</strong>-->
+              <!--                                column, all jobs within it will be moved to the-->
+              <!--                                <b>No Status</b> column.-->
+              <!--                              </p>-->
+              <!--                              <strong> This action cannot be reversed. </strong>-->
+              <!--                            </v-row>-->
+              <!--                          </v-container>-->
+              <!--                        </v-card-text>-->
+              <!--                        <v-card-actions>-->
+              <!--                          <v-spacer></v-spacer>-->
+              <!--                          <v-btn @click="columnDelete(column)" color="success" variant="text">-->
+              <!--                            {{ 'Delete' }}-->
+              <!--                          </v-btn>-->
 
-                          <v-btn color="error" variant="text" @click="delete_column_dialog = false"
-                            >Cancel</v-btn
-                          >
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
+              <!--                          <v-btn color="error" variant="text" @click="delete_column_dialog = false"-->
+              <!--                            >Cancel</v-btn-->
+              <!--                          >-->
+              <!--                        </v-card-actions>-->
+              <!--                      </v-card>-->
+              <!--                    </v-dialog>-->
+              <!--                  </v-list-item>-->
+              <!--                </v-list>-->
+              <!--              </v-menu>-->
             </v-card-item>
-
-            <v-virtual-scroll
-              :items="column.cards"
-              class="kanban-column-scroller"
-              :max-height="850"
-              :max-width="500"
-            >
-              <template #default="{ item }">
-                <v-card-text>
-                  <VueDraggable
-                    v-model="column.cards"
-                    group="job-cards"
-                    :onUpdate="onJobCardChanges"
-                  >
-                    <v-card
-                      @click="clickedEvent(item)"
-                      variant="flat"
-                      elevation="3"
-                      class="kanban-card mb-2"
-                      draggable="true"
-                      :class="{ dragging: isDragging(item) }"
-                      @dragstart="onDragStart(item, column)"
-                      @dragend="onDragEnd"
-                      @drop="onDrop(column)"
-                      aria-grabbed="true"
-                      role="option"
+            <v-card-text>
+              <VueDraggable
+                class="flex flex-col gap-2 p-4 w-300px h-300px m-auto bg-gray-500/5 rounded overflow-auto"
+                v-model="column.cards"
+                group="job-cards"
+                :onUpdate="onJobCardChanges"
+                :animation="150"
+                ghostClass="ghost"
+                :onAdd="(event) => onCardStatusAdd(event, column)"
+              >
+                <v-card
+                  @click="clickedEvent(item)"
+                  v-for="item in column.cards"
+                  :key="item.id"
+                  variant="flat"
+                  elevation="3"
+                  draggable="true"
+                  aria-grabbed="true"
+                  role="option"
+                  class="ga-2"
+                >
+                  <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
+                    ><b>{{ 'Invoice #' + item.invoiceNumber }}</b>
+                  </v-card-item>
+                  <v-card-item
+                    ><v-chip
+                      :color="column.colour"
+                      variant="elevated"
+                      rounded="sm"
+                      density="comfortable"
                     >
-                      <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
-                        ><b>{{ item.invoiceNumber }}</b>
-                        <v-menu align="left">
-                          <template v-slot:activator="{ props }">
-                            <v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
-                          </template>
-                          <v-list :border="true" bg-color="background" rounded="lg">
-                            <v-list-item>
-                              <v-btn :elevation="0" @click="ArchiveJob(item)">
-                                <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
-                                {{ 'Archive' }}
-                              </v-btn>
-                            </v-list-item>
-                          </v-list>
-                        </v-menu>
-                      </v-card-item>
-                      <v-card-item
-                        ><v-chip
-                          :color="column.colour"
-                          variant="elevated"
-                          rounded="sm"
-                          density="comfortable"
-                        >
-                          <b>{{ column.status }}</b></v-chip
-                        ></v-card-item
-                      >
+                      <b>{{ column.status }}</b></v-chip
+                    ></v-card-item
+                  >
 
-                      <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                        <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-user-large' }}</v-icon>
-                        {{ item.clientName }}</v-card-item
-                      ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                        <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
-                        {{ 'Invoice date: ' + item.invoiceDate }}</v-card-item
-                      ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                        <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
-                        {{ 'Payment date: ' + item.paymentDate }}</v-card-item
-                      >
-                      <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
-                        <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
-                        {{ 'Amount Due: ' + item.total }}</v-card-item
-                      >
-                    </v-card>
-                  </VueDraggable>
-                </v-card-text>
-              </template>
-            </v-virtual-scroll>
+                  <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-user-large' }}</v-icon>
+                    {{ item.clientName }}</v-card-item
+                  ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
+                    {{ 'Invoice date: ' + item.invoiceDate }}</v-card-item
+                  ><v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-clock' }}</v-icon>
+                    {{ 'Payment date: ' + item.paymentDate }}</v-card-item
+                  >
+                  <v-card-item class="text-body-1" style="font-family: 'Nunito', sans-serif">
+                    <v-icon color="kanbanIconColor">{{ 'fa: fa-solid fa-cash-register' }}</v-icon>
+                    {{ 'Amount Due: ' + item.total }}</v-card-item
+                  >
+                </v-card>
+              </VueDraggable>
+            </v-card-text>
           </v-card>
         </v-col>
       </VueDraggable>
@@ -300,15 +279,14 @@
     <ViewJob @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
   </v-dialog>
 </template>
-7
 
 <script lang="ts">
 import type { InvoiceCardDataFormat, Column } from '../types'
 import '@mdi/font/css/materialdesignicons.css'
 import ViewJob from '@/components/home/jobs/management/ViewJob.vue'
 import { type SortableEvent, VueDraggable } from 'vue-draggable-plus'
-
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default {
   name: 'InvoiceKanban',
@@ -325,7 +303,24 @@ export default {
       delete_column_dialog: false,
       edit_column_details_dialog: false,
       archive_status_id: '',
-      columns: [] as Column[],
+      columns: [
+        {
+          _id: '2',
+          __v: 0,
+          status: 'Unpaid',
+          colour: '#FF0000', // Example color for unpaid status
+          companyId: 'company_2',
+          cards: []
+        },
+        {
+          _id: '1',
+          __v: 0,
+          status: 'Paid',
+          colour: '#00FF00', // Example color for paid status
+          companyId: 'company_1',
+          cards: []
+        }
+      ] as Column[],
       archive_id: '',
       new_column_name: '',
       error_message: '',
@@ -340,80 +335,35 @@ export default {
       column_name_rule: [
         (v: string) => !!v || 'Column name is required',
         (v: string) => (v && v.length <= 20) || 'Column name must be less than 20 characters'
-      ],
-      invoices: [
-        {
-          id: '64872d9a9f2c9e001f5aabc1',
-          invoiceNumber: 1001,
-          invoiceDate: '2024-09-01T08:30:00Z',
-          paymentDate: '2024-09-15T08:30:00Z',
-          subTotal: 5000,
-          total: 5500,
-          paid: true,
-          clientId: '6472d1b99c0f3e001d5aa009',
-          clientName: 'ABC Corp',
-          inventoryItems: [
-            { description: 'Laptop', quantity: 2, unitPrice: 1000 },
-            { description: 'Monitor', quantity: 2, unitPrice: 300 }
-          ],
-          laborItems: [{ description: 'Installation Service', quantity: 5, unitPrice: 100 }]
-        },
-        {
-          id: '64872d9a9f2c9e001f5aabc2',
-          invoiceNumber: 1002,
-          invoiceDate: '2024-09-02T10:00:00Z',
-          paymentDate: '2024-09-16T10:00:00Z',
-          subTotal: 2000,
-          total: 2100,
-          paid: false,
-          clientId: '6472d1b99c0f3e001d5aa010',
-          clientName: 'XYZ Solutions',
-          inventoryItems: [{ description: 'Desktop', quantity: 3, unitPrice: 600 }],
-          laborItems: [{ description: 'Configuration Service', quantity: 2, unitPrice: 50 }]
-        },
-        {
-          id: '64872d9a9f2c9e001f5aabc3',
-          invoiceNumber: 1003,
-          invoiceDate: '2024-09-03T14:00:00Z',
-          paymentDate: '2024-09-17T14:00:00Z',
-          subTotal: 3500,
-          total: 3850,
-          paid: false,
-          clientId: '6472d1b99c0f3e001d5aa011',
-          clientName: 'DEF Industries',
-          inventoryItems: [{ description: 'Router', quantity: 4, unitPrice: 150 }],
-          laborItems: [{ description: 'Network Setup', quantity: 10, unitPrice: 100 }]
-        },
-        {
-          id: '64872d9a9f2c9e001f5aabc4',
-          invoiceNumber: 1004,
-          invoiceDate: '2024-09-04T12:00:00Z',
-          paymentDate: '2024-09-18T12:00:00Z',
-          subTotal: 4500,
-          total: 5000,
-          paid: true,
-          clientId: '6472d1b99c0f3e001d5aa012',
-          clientName: 'GHI Innovations',
-          inventoryItems: [{ description: 'Server', quantity: 1, unitPrice: 4000 }],
-          laborItems: [{ description: 'Server Installation', quantity: 5, unitPrice: 100 }]
-        },
-        {
-          id: '64872d9a9f2c9e001f5aabc5',
-          invoiceNumber: 1005,
-          invoiceDate: '2024-09-05T16:00:00Z',
-          paymentDate: '2024-09-19T16:00:00Z',
-          subTotal: 3000,
-          total: 3300,
-          paid: false,
-          clientId: '6472d1b99c0f3e001d5aa013',
-          clientName: 'JKL Technologies',
-          inventoryItems: [{ description: 'Printer', quantity: 5, unitPrice: 500 }],
-          laborItems: [{ description: 'Printer Setup', quantity: 6, unitPrice: 50 }]
-        }
-      ] as InvoiceCardDataFormat[]
+      ]
     }
   },
   methods: {
+    async onCardStatusAdd(e: any, c: Column) {
+      console.log('hello there man')
+      console.log(e)
+      console.log(c)
+      console.log(e.clonedData.paid)
+      e.clonedData.status = c.status
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      console.log(e.clonedData.id)
+      try {
+        let res = await axios.patch(
+          API_URL + `invoice/${e.clonedData.id}`,
+          { paid: !e.clonedData.paid },
+          config
+        )
+        console.log(res)
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async onJobCardChanges(e: SortableEvent) {
       console.log(e)
     },
@@ -432,10 +382,10 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       console.log(this.columns)
       axios
-        .patch(apiURL + 'company/statuses', req, config)
+        .patch(API_URL + 'company/statuses', req, config)
         .then((res) => {
           console.log(`this is me and this is the response: ${res}`)
         })
@@ -452,9 +402,9 @@ export default {
       }
       console.log(this.archive_status_id)
       console.log(payload)
-      const apiURL = await this.getRequestUrl()
+
       axios
-        .patch(apiURL + `job/update/${payload.id}`, { status: this.archive_status_id }, config)
+        .patch(API_URL + `job/update/${payload.id}`, { status: this.archive_status_id }, config)
         .then((res) => {
           console.log(res.data.data)
           window.location.reload()
@@ -469,11 +419,11 @@ export default {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`
           }
         }
-        const apiURL = await this.getRequestUrl()
+
         for (let i = 0; i < col.cards.length; i++) {
           axios
             .patch(
-              apiURL + `job/update/${col.cards[i].id}`,
+              API_URL + `job/update/${col.cards[i].id}`,
               { status: this.archive_status_id },
               config
             )
@@ -503,8 +453,8 @@ export default {
             employeeId: localStorage['employeeId']
           }
         }
-        const apiURL = await this.getRequestUrl()
-        let res = await axios.delete(apiURL + 'job/status', config)
+
+        let res = await axios.delete(API_URL + 'job/status', config)
 
         // for (let i = 0; i < col.cards.length; i++) {
         //   this.columns[0].cards.push(col.cards[i])
@@ -543,9 +493,9 @@ export default {
               Authorization: `Bearer ${localStorage.getItem('access_token')}`
             }
           }
-          const apiURL = await this.getRequestUrl()
+
           let res = await axios.patch(
-            apiURL + 'job/status',
+            API_URL + 'job/status',
             {
               statusId: col._id,
               status: this.new_column_name,
@@ -573,9 +523,9 @@ export default {
               Authorization: `Bearer ${localStorage.getItem('access_token')}`
             }
           }
-          const apiURL = await this.getRequestUrl()
+
           let res = await axios.patch(
-            apiURL + 'job/status',
+            API_URL + 'job/status',
             {
               statusId: col._id,
               status: this.new_column_name,
@@ -602,9 +552,9 @@ export default {
               Authorization: `Bearer ${localStorage.getItem('access_token')}`
             }
           }
-          const apiURL = await this.getRequestUrl()
+
           let res = await axios.patch(
-            apiURL + 'job/status',
+            API_URL + 'job/status',
             {
               statusId: col._id,
               colour: this.column_color,
@@ -639,12 +589,7 @@ export default {
         this.error_message = 'A color should be selected'
         return
       }
-      // const column: Column = {
-      //   id: this.columns.length + 1,
-      //   status: this.new_column_name,
-      //   color: this.column_color,
-      //   cards: []
-      // }
+
       try {
         const config = {
           headers: {
@@ -652,9 +597,9 @@ export default {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`
           }
         }
-        const apiURL = await this.getRequestUrl()
+
         let res = await axios.post(
-          apiURL + 'job/status',
+          API_URL + 'job/status',
           {
             status: this.new_column_name,
             colour: this.column_color,
@@ -677,9 +622,6 @@ export default {
     addColorPickerUpdate() {
       console.log(this.column_color)
     },
-    addColumnButtonClicked() {
-      console.log('Add button clicked')
-    },
     async clickedEvent(payload: InvoiceCardDataFormat) {
       const config = {
         headers: {
@@ -688,16 +630,16 @@ export default {
         }
       }
 
-      const apiURL = await this.getRequestUrl()
-
-      try {
-        const response = await axios.get(apiURL + `job/id/${payload.id}`, config)
-        console.log(response)
-        this.SelectedEvent = response.data.data
-        this.openJobCard()
-      } catch (error) {
-        console.log('Error fetching data: ' + error)
-      }
+      //
+      //
+      // try {
+      //   const response = await axios.get(API_URL + `job/id/${payload.id}`, config)
+      //   console.log(response)
+      //   this.SelectedEvent = response.data.data
+      //   this.openJobCard()
+      // } catch (error) {
+      //   console.log('Error fetching data: ' + error)
+      // }
     },
     openJobCard() {
       console.log('edit button clicked')
@@ -727,72 +669,6 @@ export default {
       // })
       console.log(this.columns[0].cards.length)
     },
-    async loadColumns() {
-      console.log('load Column request')
-      // const config = {
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     Authorization: `Bearer ${localStorage.getItem('access_token')}`
-      //   }
-      // }
-      // const apiURL = await this.getRequestUrl()
-      // try {
-      //   const loaded_tags_response = await axios.get(
-      //     apiURL + `job/status/all/${localStorage['currentCompany']}`,
-      //     config
-      //   )
-      //   console.log(loaded_tags_response)
-      //   loaded_tags_response.data.data.map((status: any) => {
-      //     console.log(status)
-      //     if (status.status === 'Archive') {
-      //       this.archive_status_id = status._id
-      //       return null
-      //     }
-      //     this.columns.push({
-      //       _id: status._id,
-      //       __v: status.__v,
-      //       status: status.status,
-      //       colour: status.colour,
-      //       companyId: status.companyId,
-      //       cards: [] as InvoiceCardDataFormat[]
-      //     })
-      //   })
-      // } catch (error) {
-      //   console.log('Error fetching data:', error)
-      // }
-
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
-      }
-      const apiURL = await this.getRequestUrl()
-      try {
-        const loaded_tags_response = await axios.get(
-          apiURL + `company/status/all/${localStorage['currentCompany']}`,
-          config
-        )
-        console.log(loaded_tags_response.data.data)
-        // loaded_tags_response.data.data.jobStatuses.forEach((col: any) => {
-        //   col['cards'] = [] as InvoiceCardDataFormat[]
-        // })
-
-        let archive_index = -1
-        for (let i = 0; i < loaded_tags_response.data.data.jobStatuses.length; i++) {
-          if (loaded_tags_response.data.data.jobStatuses[i].status === 'Archive') {
-            archive_index = i
-          }
-          loaded_tags_response.data.data.jobStatuses[i]['cards'] = []
-        }
-
-        this.archive_status_id = loaded_tags_response.data.data.jobStatuses[archive_index]._id
-        loaded_tags_response.data.data.jobStatuses.splice(archive_index, 1)
-        this.columns = loaded_tags_response.data.data.jobStatuses
-      } catch (error) {
-        console.log(error)
-      }
-    },
     async loadData() {
       const config = {
         headers: {
@@ -800,93 +676,48 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const loaded_tags_response = await axios.get(
-          apiURL + `company/status/all/${localStorage['currentCompany']}`,
+          API_URL + `invoice/all/detailed/${localStorage['employeeId']}`,
           config
         )
         console.log(loaded_tags_response.data.data)
-        loaded_tags_response.data.data.forEach((col: any) => {
-          col['cards'] = [] as InvoiceCardDataFormat[]
+
+        let paid_cards = [] as InvoiceCardDataFormat[]
+        let unpaid_cards = [] as InvoiceCardDataFormat[]
+        loaded_tags_response.data.data.forEach((card: any) => {
+          if (card.paid)
+            paid_cards.push({
+              id: card._id,
+              invoiceNumber: card.invoiceNumber,
+              invoiceDate: this.formatDate(card.invoiceDate),
+              paymentDate: this.formatDate(card.paymentDate),
+              subTotal: card.subTotal,
+              total: card.total,
+              paid: card.paid,
+              clientId: card.clientId._id,
+              clientName: card.clientId.details.firstName + ' ' + card.clientId.details.lastName
+            })
+          else
+            unpaid_cards.push({
+              id: card._id,
+              invoiceNumber: card.invoiceNumber,
+              invoiceDate: this.formatDate(card.invoiceDate),
+              paymentDate: this.formatDate(card.paymentDate),
+              subTotal: card.subTotal,
+              total: card.total,
+              paid: card.paid,
+              clientId: card.clientId._id,
+              clientName: card.clientId.details.firstName + ' ' + card.clientId.details.lastName
+            })
         })
-        this.columns = loaded_tags_response.data.data
+        this.columns[0].cards = unpaid_cards
+        this.columns[1].cards = paid_cards
         console.log(loaded_tags_response.data.data)
       } catch (error) {
         console.log(error)
       }
-    },
-    async loadJobs() {
-      console.log('load jobs request')
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
-      }
-      const apiURL = await this.getRequestUrl()
-      try {
-        const loaded_tags_response = await axios.get(
-          apiURL + `job/all/company/detailed/${localStorage['currentCompany']}`,
-          config
-        )
-        console.log(loaded_tags_response)
-        let loaded_tags_res = loaded_tags_response.data.data
-        for (let i = 0; i < loaded_tags_res.length; i++) {
-          if (loaded_tags_res[i].status.status === 'Archive') continue
-          // if (
-          //   loaded_tags_res[i]._id === undefined ||
-          //   loaded_tags_res[i].details.heading === undefined ||
-          //   loaded_tags_res[i].details.description === undefined ||
-          //   loaded_tags_res[i].details.startDate === undefined ||
-          //   loaded_tags_res[i].details.endDate === undefined ||
-          //   loaded_tags_res[i].status === undefined ||
-          //   loaded_tags_res[i].clientId === undefined ||
-          //   loaded_tags_res[i].clientId.details === undefined ||
-          //   loaded_tags_res[i].details.address === undefined ||
-          //   loaded_tags_res[i].details.address.street === undefined ||
-          //   loaded_tags_res[i].details.address.suburb === undefined ||
-          //   loaded_tags_res[i].details.address.city === undefined ||
-          //   loaded_tags_res[i].details.address.street.postalCode === undefined ||
-          //   loaded_tags_res[i].recordedDetails.imagesTaken === undefined ||
-          //   loaded_tags_res[i].recordedDetails.inventoryUsed === undefined ||
-          //   loaded_tags_res[i].taskList === undefined ||
-          //   loaded_tags_res[i].comments === undefined ||
-          //   loaded_tags_res[i].priorityTag === undefined ||
-          //   loaded_tags_res[i].tags === undefined ||
-          //   loaded_tags_res[i].coverImage === undefined
-          // )
-          //   continue
-
-          // this.starting_cards.push({
-          //   id: loaded_tags_res[i]._id,
-          //   heading: loaded_tags_res[i].details.heading,
-          //   jobDescription: loaded_tags_res[i].details.description,
-          //   startDate: this.formatDate(loaded_tags_res[i].details.startDate),
-          //   endDate: this.formatDate(loaded_tags_res[i].details.endDate),
-          //   status: loaded_tags_res[i].status,
-          //   clientName:
-          //     loaded_tags_res[i].clientId.details.firstName +
-          //     ' ' +
-          //     loaded_tags_res[i].clientId.details.lastName,
-          //   street: loaded_tags_res[i].details.address.street,
-          //   suburb: loaded_tags_res[i].details.address.suburb,
-          //   city: loaded_tags_res[i].details.address.city,
-          //   postalCode: loaded_tags_res[i].details.address.street.postalCode,
-          //   taskList: loaded_tags_res[i].taskList,
-          //   comments: loaded_tags_res[i].comments,
-          //   priorityTag: loaded_tags_res[i].priorityTag,
-          //   tags: loaded_tags_res[i].tags,
-          //   coverImage: loaded_tags_res[i].coverImage
-          // })
-        }
-        console.log(this.starting_cards)
-      } catch (error) {
-        console.log('Error fetching data:', error)
-      }
-    },
-    loadCardsInRespectiveColumns(card: InvoiceCardDataFormat, column: Column) {
-      column.cards.push(card)
     },
     formatDate(date: string) {
       const date_passed_in = new Date(date)
@@ -923,7 +754,7 @@ export default {
 
           const jobid = this.draggedCard.id
           // this.draggedCard.status.status = targetColumn.status
-          const apiURL = await this.getRequestUrl()
+
           const config = {
             headers: {
               'Content-Type': 'application/json',
@@ -933,7 +764,7 @@ export default {
           console.log(jobid)
           try {
             let res = await axios.patch(
-              apiURL + `job/update/${jobid}`,
+              API_URL + `job/update/${jobid}`,
               { status: targetColumn._id },
               config
             )
@@ -968,6 +799,7 @@ export default {
   },
   mounted() {
     // this.loadColumns().then(() => this.loadJobs().then(() => this.loading(this.starting_cards)))
+    this.loadData()
   }
 }
 </script>

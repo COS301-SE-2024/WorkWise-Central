@@ -55,6 +55,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   name: 'DeleteTags',
   props: {
@@ -88,9 +90,8 @@ export default defineComponent({
           companyId: localStorage.getItem('currentCompany')
         }
       }
-      const apiURL = await this.getRequestUrl()
       axios
-        .delete(`${apiURL}job/tags/p`, config)
+        .delete(`${API_URL}job/tags/p`, config)
         .then((response) => {
           this.isDeleting = true
           this.$toast.add({
