@@ -29,28 +29,14 @@ import {
 } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
-import { extractUserId } from '../utils/Utils';
-import { JwtService } from '@nestjs/jwt';
-import { EmployeeService } from '../employee/employee.service';
-import { UsersService } from '../users/users.service';
-import {
-  CreateVideoCallDto,
-  createVideoCallResponseDto,
-  VideoCallForEmployeeResponseDto,
-} from './dto/create-video-call.dto';
-import { UpdateInvoiceDto } from 'src/invoices/dto/update-invoice.dto';
-import { InvoiceResponseDto } from 'src/invoices/entities/invoice.entity';
+import { CreateVideoCallDto, VideoCallResponseDto, VideoCallForEmployeeResponseDto } from './dto/create-video-call.dto';
+import { UpdateVideoCallDto } from './dto/update-video-call.dto';
 const className = 'Video Calls';
 
 @ApiTags('Video Calls')
 @Controller('video-calls')
 export class VideoCallController {
-  constructor(
-    private readonly videoCallService: VideoCallService,
-    private readonly jwtService: JwtService,
-    private readonly employeeService: EmployeeService,
-    private readonly userService: UsersService,
-  ) {}
+  constructor(private readonly videoCallService: VideoCallService) {}
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
@@ -122,7 +108,7 @@ export class VideoCallController {
   @ApiBody({ type: CreateVideoCallDto })
   @ApiResponse({
     status: 201,
-    type: createVideoCallResponseDto,
+    type: VideoCallResponseDto,
   })
   @Post('create')
   @UseGuards(AuthGuard)
@@ -141,27 +127,23 @@ export class VideoCallController {
     description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
   })
   @ApiOkResponse({
-    type: InvoiceResponseDto,
+    type: VideoCallResponseDto,
     description: `The updated ${className} object`,
   })
   @ApiParam({
     name: 'id',
     description: `The _id attribute of the ${className} to be updated.`,
   })
-  @ApiBody({ type: UpdateInvoiceDto })
+  @ApiBody({ type: UpdateVideoCallDto })
   @Patch(':id')
   async update(
     @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
-    @Body()
-    body: {
-      currentEmployeeId: Types.ObjectId;
-      updateInvoiceDto: UpdateInvoiceDto;
-    },
+    @Body() updateVideoCallDto: UpdateVideoCallDto,
   ) {
     let data;
     try {
-      data = await this.invoiceService.update(id, body.updateInvoiceDto);
+      data = await this.videoCallService.update(id, updateVideoCallDto);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
@@ -200,21 +182,12 @@ export class VideoCallController {
     description: `A boolean value indicating whether or not the deletion was a success`,
   })
   @ApiParam({
-    name: 'meetingId',
+    name: 'videoCallId',
     description: `The _id attribute of the ${className} to be deleted.`,
     type: String,
   })
-  @Delete(':meetingId')
-  async remove(@Headers() headers: any, @Param('meetingId') meetingId: Types.ObjectId) {
-    const userId = extractUserId(headers.authorization);
-    const employee = await this.employeeService.getEmployeeByUserId(userId);
-    const meeting = await this.videoCallService.getMeetingById(meetingId);
-    if (!meeting) {
-      throw new HttpException(`Meeting not found`, HttpStatus.NOT_FOUND);
-    }
-    if (employee._id.toString() !== meeting.employeeId.toString()) {
-      throw new HttpException(`You are not authorized to delete this meeting`, HttpStatus.FORBIDDEN);
-    }
-    return this.videoCallService.remove(meetingId);
+  @Delete(':videoCallId')
+  async remove(@Headers() headers: any, @Param('videoCallId') videoCallId: Types.ObjectId) {
+    return this.videoCallService.remove(videoCallId);
   }
 }

@@ -31,7 +31,7 @@ export class CreateVideoCallDto {
   details: string;
 }
 
-export class createVideoCallResponseDto {
+export class VideoCallResponseDto {
   response: { access_token: string; id: Types.ObjectId };
   constructor(message: { access_token: string; id: Types.ObjectId }) {
     this.response = message;
