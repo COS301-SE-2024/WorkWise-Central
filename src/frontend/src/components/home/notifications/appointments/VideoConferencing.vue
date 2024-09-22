@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <div class="video-container">
-      <div class="local-video">
+  <v-container>
+    <v-row>
+      <v-col cols="12" md="6" lg="3" class="local-video">
         <video
           :ref="
             (el) => {
@@ -12,8 +12,9 @@
           muted
           playsinline
         ></video>
-      </div>
-      <div v-for="peer in peers" :key="peer.id" class="remote-video">
+      </v-col>
+
+      <v-col v-for="peer in peers" :key="peer.id" cols="12" md="6" lg="3" class="remote-video">
         <video
           :ref="
             (el) => {
@@ -23,17 +24,30 @@
           autoplay
           playsinline
         ></video>
-      </div>
-      <div class="controls">
-        <button @click="toggleAudio">{{ isAudioEnabled ? 'Mute' : 'Unmute' }}</button>
-        <button @click="toggleVideo">{{ isVideoEnabled ? 'Stop Video' : 'Start Video' }}</button>
-        <button @click="toggleScreenShare">
+      </v-col>
+    </v-row>
+
+    <v-row class="controls">
+      <v-col cols="auto">
+        <v-btn @click="toggleAudio" color="primary">
+          {{ isAudioEnabled ? 'Mute' : 'Unmute' }}
+        </v-btn>
+      </v-col>
+      <v-col cols="auto">
+        <v-btn @click="toggleVideo" color="primary">
+          {{ isVideoEnabled ? 'Stop Video' : 'Start Video' }}
+        </v-btn>
+      </v-col>
+      <v-col cols="auto">
+        <v-btn @click="toggleScreenShare" color="primary">
           {{ isScreenSharing ? 'Stop Sharing' : 'Share Screen' }}
-        </button>
-        <button @click="endCall">End Call</button>
-      </div>
-    </div>
-  </div>
+        </v-btn>
+      </v-col>
+      <v-col cols="auto">
+        <v-btn @click="endCall" color="error"> End Call </v-btn>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -343,23 +357,21 @@ export default defineComponent({
 
 <style scoped>
 .video-container {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-gap: 10px;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  padding: 10px;
+  height: calc(100vh - 60px); /* Leaving space for the controls */
 }
 
-.local-video {
-  width: 200px;
-  height: 150px;
-  margin: 10px;
-}
-
+.local-video,
 .remote-video {
-  width: 400px;
-  height: 300px;
-  margin: 10px;
+  width: 100%;
+  height: 100%;
+  max-width: 400px; /* Adjust max size of video */
+  max-height: 300px;
 }
 
 video {
