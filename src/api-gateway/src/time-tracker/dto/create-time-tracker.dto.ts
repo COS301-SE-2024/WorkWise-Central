@@ -1,4 +1,4 @@
-import { IsDate, IsDateString, IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsDateString, IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
 import { Types } from 'mongoose';
 
 export class CreateTimeTrackerDto {
