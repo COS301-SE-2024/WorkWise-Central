@@ -19,7 +19,7 @@
           <h3 class="pa-0 ma-5">Recently Created Meetings</h3>
           <v-card
             v-for="appointment in recentAppointments"
-            :key="appointment.id"
+            :key="appointment._id"
             class="pa-1 ma-5 bg-background"
             color="cardColor"
           >
@@ -40,12 +40,12 @@
                 ></v-container
               >
               <v-col cols="12" lg="4">
-                <v-btn color="error" @click="deleteAppointment(appointment.id)" block
+                <v-btn color="error" @click="deleteAppointment(appointment._id)" block
                   ><v-icon icon="fa:fa-solid fa-trash" color="error"></v-icon>Delete</v-btn
                 ></v-col
               >
               <v-col cols="12" lg="4">
-                <v-btn @click="joiningRoom" color="success" block>
+                <v-btn @click="joiningRoom(appointment)" color="success" block>
                   <v-icon icon="fa:fa-solid fa-right-to-bracket" color="success"></v-icon>Join Room
                 </v-btn>
               </v-col>
@@ -57,7 +57,7 @@
       </v-row>
     </v-card>
 
-    <VideoConferencing :roomId="selectedRoom.id" v-show="conference" @return="leavingRoom" />
+    <!-- <VideoConferencing :roomId="selectedRoom.id" v-show="conference" @return="leavingRoom" /> -->
   </v-container>
 
   <!-- Dialog for Creating/Editing Appointment -->
@@ -172,11 +172,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import VideoConferencing from './VideoConferencing.vue'
+
 import axios from 'axios'
-import App from '@/App.vue'
+
 interface Appointment {
-  id: string
+  _id: string
   title: string
   date: string
   startTime: string
@@ -191,15 +191,11 @@ type EmployeeInformation = {
 }
 export default defineComponent({
   name: 'AppointmentsPage',
-  components: {
-    VideoConferencing
-  },
+  components: {},
   data() {
     return {
       showDialog: false,
-      selectedRoom: {
-        id: ''
-      },
+      selectedRoom: {} as any,
       isEditing: false,
       joinRoom: true,
       conference: false,
@@ -214,7 +210,7 @@ export default defineComponent({
         participants: [] as string[]
       },
       newAppointment: {
-        id: '',
+        _id: '',
         title: '',
         date: '',
         startTime: '',
@@ -295,7 +291,7 @@ export default defineComponent({
         for (const appointment of response.data.data) {
           const participants = appointment.participants.map((participant: any) => participant.name)
           this.recentAppointments.push({
-            id: appointment._id,
+            _id: appointment._id,
             title: appointment.title,
             date: appointment.scheduledStartTime,
             startTime: appointment.scheduledStartTime,
@@ -319,7 +315,7 @@ export default defineComponent({
       this.isEditing = false
       this.showDialog = true
       this.newAppointment = {
-        id: '',
+        _id: '',
         title: '',
         date: '',
         startTime: '',
@@ -328,17 +324,19 @@ export default defineComponent({
         participants: []
       }
     },
-    joiningRoom(appointment: Appointment) {
-      this.selectedRoom.id = appointment.roomId as string
-      localStorage.setItem('RoomId', this.selectedRoom.id)
+    joiningRoom(appointment: any) {
+      console.log(appointment._id)
+      this.selectedRoom = appointment
+      console.log(this.selectedRoom)
+      localStorage.setItem('RoomId', this.selectedRoom.roomId)
       this.$router.push('/video-meetings')
-      console.log(this.selectedRoom.id)
+
       this.joinRoom = false
       this.conference = true
     },
     clearFields() {
       this.newAppointment = {
-        id: '',
+        _id: '',
         title: '',
         date: '',
         startTime: '',
@@ -391,7 +389,7 @@ export default defineComponent({
           participants: await this.selectTeamMembers(),
           companyId: this.companyId
         }
-        const id = this.newAppointment.id
+        const id = this.newAppointment._id
         console.log(data)
         await axios
           .patch(`${url}videoCalls/${id}`, data, config)
@@ -477,7 +475,7 @@ export default defineComponent({
         })
 
       this.recentAppointments = this.recentAppointments.filter(
-        (appointment) => appointment.id !== id
+        (appointment) => appointment._id !== id
       )
     },
     async selectTeamMembers() {
