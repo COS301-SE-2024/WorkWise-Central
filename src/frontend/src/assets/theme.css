@@ -1,0 +1,121 @@
+:root {
+    /* Light Theme */
+    --background: #F7F8F9;
+    --primary-color: #F0984D;
+    --secondary-color: #227D9B;
+    --accent-color: #82B1FF;
+    --error-color: #E63946;
+    --info-color: #2196F3;
+    --success-color: #1F845A;
+    --warning-color: #E2B203;
+    --card-color: #F1F2F4;
+    --element-text-color: #4C9FC3;
+    --heading-text-color: #091E42;
+    --n-element-text-color: #8C9BAB;
+    --chip-color: #FAF9F6;
+    --highlighter-color: #DEE4EA;
+    --table-row-color: #8C9BAB;
+    --first-place-color: #E2B203;
+    --second-place-color: #626F86;
+    --third-place-color: #533F04;
+    --kanban-icon-color: #161A1D;
+    --second-row-color: #F7F8F9;
+    --button-text-color: #F7F8F9;
+    --faq-question-color: #E8E9EB;
+}
+
+body.dark-mode {
+    /* Dark Theme */
+    --background: #161A1D;
+    --primary-color: #F38A3F;
+    --secondary-color: #4C9FC3;
+    --accent-color: #448AFF;
+    --error-color: #E63946;
+    --info-color: #64B5F6;
+    --success-color: #81C784;
+    --warning-color: #FFD54F;
+    --card-color: #22272B;
+    --element-text-color: #B6C2CF;
+    --heading-text-color: #DCDFE4;
+    --n-element-text-color: #8C9BAB;
+    --highlighter-color: #DEE4EA;
+    --table-row-color: #454f55;
+    --first-place-color: #FFD700;
+    --second-place-color: #C0C0C0;
+    --third-place-color: #CD7F32;
+    --kanban-icon-color: #DCDFE4;
+    --second-row-color: #161A1D;
+    --button-text-color: #F7F8F9;
+    --faq-question-color: #2C3135;
+}
+
+/* PrimeVue Component Theming */
+.p-button {
+    background-color: var(--secondary-color);
+    color: var(--button-text-color);
+    border: 1px solid var(--accent-color); /* Outline */
+}
+
+.p-button:hover {
+    background-color: #1A6A8D; /* Replace with a manually chosen darker shade */
+}
+
+.p-card, .p-fileupload-content, .p-listbox, .p-confirm-popup, .p-panel .p-panel-header, .p-contextmenu, .p-dialog .p-dialog-header, .p-dialog .p-dialog-footer {
+    background-color: var(--card-color);
+    color: var(--element-text-color);
+}
+
+.p-dialog .p-dialog-content, .p-carousel, .p-image-preview-container, .p-tabview .p-tabview-nav {
+    background-color: var(--background);
+    color: var(--element-text-color);
+}
+
+.p-dialog .p-dialog-header-close, .p-tooltip {
+    color: var(--element-text-color);
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+    background-color: var(--table-row-color);
+    color: var(--element-text-color);
+}
+
+.p-chip, .p-tag {
+    background-color: var(--chip-color);
+    color: var(--n-element-text-color);
+}
+
+.p-avatar {
+    background-color: var(--secondary-color);
+    color: var(--button-text-color);
+}
+
+.p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+    background-color: var(--secondary-color);
+    color: var(--button-text-color);
+}
+
+.p-dialog-mask {
+    background-color: rgba(0, 0, 0, 0.8); /* Slightly darker overlay for dark mode */
+}
+
+body.dark-mode .p-dialog .p-dialog-header, body.dark-mode .p-dialog .p-dialog-footer {
+    background-color: var(--card-color); /* Dark theme consistency */
+}
+
+body.dark-mode .p-dialog .p-dialog-content {
+    background-color: var(--background); /* Dark theme content background */
+}
+
+.sidebar {
+    background-color: var(--card-color);
+    color: var(--element-text-color);
+}
+
+.sidebar .item:hover {
+    background-color: rgba(34, 125, 155, 0.1); /* Light hover effect */
+}
+
+/* List Items Hover */
+.p-listbox .item:hover {
+    background-color: grey; /* Change to grey on hover */
+}

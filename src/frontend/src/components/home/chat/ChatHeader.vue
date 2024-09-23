@@ -65,23 +65,39 @@ const togglePopover = (event) => {
   console.log(childComponentRef)
   childComponentRef.value.toggle(event)
 }
+
+const isDarkMode = ref(false);
+
+function toggleTheme() {
+  const body = document.body;
+  if (isDarkMode.value) {
+    body.classList.add('dark-mode');
+  } else {
+    body.classList.remove('dark-mode');
+  }
+}
 </script>
 
-<style>
+<style scoped>
 .chat-header {
+  background-color: var(--background); /* Use theme background */
+  padding: 10px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
-  background-color: #f0f0f0;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--highlighter-color); /* Adapted border for theme */
+  transition: background-color 0.3s ease;
 }
 
 .chat-header:hover {
-  background-color: #4cafa7;
+  background-color: var(--primary-color); /* Change background on hover */
+  cursor: pointer;
 }
 
 .chat-header h2 {
   margin-left: 1rem;
   font-size: 1.2rem;
+  color: var(--heading-text-color); /* Use theme heading color */
 }
 
 .hover-orange {
@@ -93,7 +109,6 @@ const togglePopover = (event) => {
   display: flex;
   align-items: flex-end;
   align-content: end;
-  left: 0;
 }
 
 .participant {
@@ -103,4 +118,22 @@ const togglePopover = (event) => {
   align-items: flex-end;
   align-content: end;
 }
+
+.p-avatar {
+  border: 2px solid var(--element-text-color); /* Border for avatar */
+}
+
+.p-avatar-group .p-avatar {
+  margin-right: 5px; /* Spacing for avatars in the group */
+}
+
+.p-avatar-group {
+  align-items: center;
+}
+
+.p-tooltip {
+  background-color: var(--highlighter-color); /* Tooltip background color */
+  color: var(--element-text-color); /* Tooltip text color */
+}
 </style>
+

@@ -1,7 +1,7 @@
 <template>
   <div class="card flex justify-center">
     <!--    <Button type="button" icon="fa: fa-thin fa-square-plus" label="More options" @click="toggle" />-->
-    <Popover ref="op" style="max-height: 800px; overflow-y: auto;">
+    <Popover ref="op" :style="{ backgroundColor: 'var(--card-color)', maxHeight: '800px', overflowY: 'auto' }">
       <div class="card">
         <Tabs value="0">
           <TabList>
@@ -11,7 +11,7 @@
           </TabList>
           <TabPanels>
             <TabPanel value="0">
-              <Card style="width: 100%; overflow: hidden">
+              <Card :style="{ width: '100%', overflow: 'hidden', backgroundColor: 'var(--card-color)' }">
                 <template #header>
                   <Image
                     :src="chat.image ? chat.image : tempImage"
@@ -21,11 +21,11 @@
                   />
                 </template>
                 <template #title
-                  ><h1>{{ chat?.name }}</h1></template
+                  ><h1 :style="{ color: 'var(--heading-text-color)' }">{{ chat?.name }}>{{ chat?.name }}</h1></template
                 >
                 <template #subtitle>Created by {{}}</template>
                 <template #content>
-                  <Panel header="Description" toggleable>
+                  <Panel header="Description" toggleable :style="{ color: 'var(--element-text-color)' }">
                     <p class="m-0">
                       {{ chat?.description ? chat?.description : 'None' }}
                     </p>
@@ -71,11 +71,13 @@
                         class="w-8 h-8"
                         size="medium"
                         shape="circle"
+                        :style="{ backgroundColor: 'var(--kanban-icon-color)' }"
                       />
                       {{ participant?.profile.displayName }}
                       <Tag
                         :value="participant?._id === chat?.admin ? 'Admin' : 'Member'"
                         :severity="participant?._id === chat?.admin ? 'info' : null"
+                        :style="{ backgroundColor: participant?._id === chat?.admin ? 'var(--primary-color)' : 'var(--secondary-color)' }"
                       />
                     </div>
                   </li>
@@ -157,8 +159,8 @@
                     <h3 class="text-lg font-semibold mb-2">Manage Participants</h3>
                   </v-col>
                   <v-col cols="12">
-                    <DataTable :value="editedChat.participants" :paginator="true" :rows="5" :rowsPerPageOptions="[5, 10, 20]">
-                      <Column field="profile.displayName" header="Name"></Column>
+                    <DataTable :value="editedChat.participants" :paginator="true" :rows="5" :rowsPerPageOptions="[5, 10, 20]" :style="{ backgroundColor: 'var(--card-color)' }">
+                      <Column field="profile.displayName" header="Name" :headerStyle="{ color: 'var(--heading-text-color)' }"></Column>
                       <Column header="Role" :body="roleBodyTemplate"></Column>
                       <Column header="Actions" :body="actionBodyTemplate"></Column>
                     </DataTable>
