@@ -15,7 +15,7 @@
     <v-card rounded="md" class="pa-0 ma-3 bg-background" border="md" v-show="joinRoom">
       <v-row>
         <!-- Recently Created Appointments Section -->
-        <v-col cols="12" order="last" order-lg="first">
+        <v-col cols="12">
           <h3 class="pa-0 ma-5">Recently Created Meetings</h3>
           <v-card
             v-for="appointment in recentAppointments"
@@ -36,19 +36,20 @@
                     ><v-btn color="primary" @click="editAppointment(appointment)" block
                       ><v-icon icon="fa:fa-solid fa-pencil" color="primary"></v-icon>Edit</v-btn
                     ></v-col
-                  ></v-row
+                  >
+                  <v-col cols="12" lg="4">
+                    <v-btn color="error" @click="deleteAppointment(appointment._id)" block
+                      ><v-icon icon="fa:fa-solid fa-trash" color="error"></v-icon>Delete</v-btn
+                    ></v-col
+                  >
+                  <v-col cols="12" lg="4">
+                    <v-btn @click="joiningRoom(appointment)" color="success" block>
+                      <v-icon icon="fa:fa-solid fa-right-to-bracket" color="success"></v-icon>Join
+                      Room
+                    </v-btn>
+                  </v-col></v-row
                 ></v-container
               >
-              <v-col cols="12" lg="4">
-                <v-btn color="error" @click="deleteAppointment(appointment._id)" block
-                  ><v-icon icon="fa:fa-solid fa-trash" color="error"></v-icon>Delete</v-btn
-                ></v-col
-              >
-              <v-col cols="12" lg="4">
-                <v-btn @click="joiningRoom(appointment)" color="success" block>
-                  <v-icon icon="fa:fa-solid fa-right-to-bracket" color="success"></v-icon>Join Room
-                </v-btn>
-              </v-col>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -330,6 +331,7 @@ export default defineComponent({
       this.selectedRoom = appointment
       console.log(this.selectedRoom)
       localStorage.setItem('RoomId', this.selectedRoom.roomId)
+      localStorage.setItem('RoomName',this.selectedRoom.title)
       this.$router.push('/video-meetings')
 
       this.joinRoom = false

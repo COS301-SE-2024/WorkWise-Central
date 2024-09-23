@@ -67,7 +67,7 @@
                   <v-card-text
                     ><v-container
                       ><v-row
-                        ><v-col cols="12" lg="6">
+                        ><v-col cols="12">
                           <v-label style="display: block; margin-bottom: 10px">Job Rating</v-label>
                           <v-rating
                             v-model="feedback.jobRating"
@@ -75,7 +75,7 @@
                             color="orange-lighten-1"
                             readonly
                           ></v-rating></v-col
-                        ><v-col cols="12" lg="6"
+                        ><v-col cols="12"
                           ><v-label style="display: block; margin-bottom: 10px"
                             >Customer Service Rating</v-label
                           >
@@ -136,7 +136,6 @@ export default defineComponent({
     }
   },
   methods: {
-   
     getFeedbackDetails(feedback: Feedback) {
       console.log(feedback)
     },

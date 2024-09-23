@@ -220,6 +220,7 @@ export default defineComponent({
       selectedNodes: [],
       selectedEdges: [],
       subordinateItemNames: [],
+      superiorItemNames: [],
       roleItems: [],
       loading: false,
       nodeSize,
@@ -466,17 +467,49 @@ export default defineComponent({
     },
     async loadSubordinates() {
       const config = {
-        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
-        params: { currentEmployeeId: localStorage['employeeId'] }
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
       }
-
-      console.log(this.selectedEmployee._id)
       try {
         const sub_res = await axios.get(
-          API_URL + `employee/listPotentialSubordinates/${this.selectedEmployee.employeeId}`,
+          API_URL + `employee/listPotentialSubordinates/${this.selectedItem.id}`,
           config
         )
         console.log(sub_res)
+        for (let i = 0; i < sub_res.data.data.length; i++) {
+          console.log(sub_res.data)
+          let company_employee = {
+            name:
+              sub_res.data.data[i].userInfo.firstName +
+              ' ' +
+              sub_res.data.data[i].userInfo.surname +
+              ' (' +
+              sub_res.data.data[i].role.roleName +
+              ')',
+            employeeId: sub_res.data.data[i]._id
+          }
+
+          this.subordinateItemNames.push(company_employee)
+        }
+
+        const current_subs = await axios.get(
+          API_URL + `employee/detailed/id/${this.selectedItem.id}`,
+          config
+        )
+        console.log(current_subs.data.data)
+        for (let i = 0; i < current_subs.data.data.length; i++) {
+          if (this.req_obj.updateEmployeeDto.subordinates != undefined)
+            this.req_obj.updateEmployeeDto.subordinates.push(
+              current_subs.data.data[i].subordinates._id
+            )
+          this.req_obj.updateEmployeeDto.superiorId = current_subs.data.data.superiorId
+        }
+
         this.loading = false
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -487,14 +520,28 @@ export default defineComponent({
         headers: { Authorization: `Bearer ${localStorage['access_token']}` },
         params: { currentEmployeeId: localStorage['employeeId'] }
       }
-
-      console.log(this.selectedEmployee._id)
       try {
         const sup_res = await axios.get(
-          API_URL + `employee/listPotentialSuperiors/${this.selectedEmployee._id}`,
+          API_URL + `employee/listPotentialSuperiors/${this.selectedItem.id}`,
           config
         )
         console.log(sup_res)
+
+        for (let i = 0; i < sup_res.data.data.length; i++) {
+          console.log(sup_res.data)
+          let company_employee = {
+            name:
+              sup_res.data.data[i].userInfo.firstName +
+              ' ' +
+              sup_res.data.data[i].userInfo.surname +
+              ' (' +
+              sup_res.data.data[i].role.roleName +
+              ')',
+            employeeId: sup_res.data.data[i]._id
+          }
+
+          this.superiorItemNames.push(company_employee)
+        }
         this.loading = false
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -535,7 +582,7 @@ export default defineComponent({
       let API_URL = await this.getRequestUrl()
       console.log(this.this.selectedItem.id)
       axios
-        .patch(API_URL + `employee/${this.this.selectedItem.id}`, this.req_obj, config)
+        .patch(API_URL + `employee/${this.selectedItem.id}`, this.req_obj, config)
         .then((res) => {
           this.$toast.add({
             severity: 'success',

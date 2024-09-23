@@ -45,6 +45,12 @@
           class="bg-cardColor"
         >
           <template v-slot:[`item.total`]="{ item }">R{{ item.total }}</template>
+          <template v-slot:[`item.creationDate`]="{ item }">{{
+            formatDate(item.creationDate)
+          }}</template>
+          <template v-slot:[`item.paymentDate`]="{ item }">{{
+            formatDate(item.paymentDate)
+          }}</template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu max-width="500px">
               <template v-slot:activator="{ props }">
@@ -65,7 +71,7 @@
                   <EditInvoice :editedInvoice="selectedItem" :invoice_id="selectedItem._id" />
                 </v-list-item>
                 <v-list-item>
-                  <DeleteInvoice :invoice_id="selectedItem._id" />
+                  <DeleteInvoice :invoice_id="selectedItem._id" @InvoiceDeleted="getRequests" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -86,8 +92,8 @@ import ViewInvoice from './ViewInvoices.vue'
 interface Invoice {
   _id: string
   invoiceNumber: string
-  creationDate: string
-  paymentDate: string
+  creationDate: Date
+  paymentDate: Date
   total: number
   paid: boolean
   clientName: string
@@ -180,6 +186,9 @@ export default defineComponent({
       return {
         class: index % 2 === 0 ? 'bg-secondRowColor' : ''
       }
+    },
+    formatDate(date: any) {
+      return new Date(date).toDateString()
     }
   },
   mounted() {

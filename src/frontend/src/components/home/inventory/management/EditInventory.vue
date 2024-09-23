@@ -79,7 +79,7 @@
                   color="error"
                   start
                   size="small"
-                  :loading="isDeleting"
+             
                 ></v-icon
                 >Cancel</v-btn
               ></v-col
@@ -111,6 +111,7 @@
 <script>
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default {
   name: 'EditInventory',

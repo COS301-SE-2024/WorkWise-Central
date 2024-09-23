@@ -8,6 +8,25 @@
     </v-row>
     <v-row>
       <v-col cols="12">
+        <!-- Date Picker for filtering with native date type -->
+        <v-row>
+          <v-col cols="6">
+            <v-text-field
+              v-model="startDate"
+              label="Start Date"
+              type="date"
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="6">
+            <v-text-field
+              v-model="endDate"
+              label="End Date"
+              type="date"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+
         <v-tabs-items v-model="activeTab">
           <!-- Stock Movement Report -->
           <v-card class="bg-cardColor">
@@ -19,7 +38,7 @@
                     color="primary"
                     block
                     :loading="isGenerating"
-                    @click="generatePDF()"
+                    @click="generatePDF"
                     ><v-icon color="secondary" icon="fa:fa-solid fa-file"></v-icon>Generate
                     PDF</v-btn
                   ></v-col
@@ -28,10 +47,12 @@
             </v-card-text>
             <v-data-table
               :headers="stockMovementHeaders"
-              :items="stockMovements"
+              :items="filteredStockMovements"
               class="elevation-1 bg-cardColor"
               :header-props="{ class: 'bg-cardColor h6' }"
-            />
+            >
+              <template v-slot:[`item.date`]="{ item }"> {{ formatDate(item.date) }} </template>
+            </v-data-table>
           </v-card>
         </v-tabs-items>
       </v-col>
@@ -42,7 +63,6 @@
 <script>
 import { defineComponent } from 'vue'
 import axios from 'axios'
-
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { API_URL } from '@/main'
@@ -63,7 +83,23 @@ export default defineComponent({
         { title: 'Employee', value: 'employee' },
         { title: 'Date', value: 'date' }
       ],
-      stockMovements: []
+      stockMovements: [],
+      startDate: null,
+      endDate: null
+    }
+  },
+  computed: {
+    filteredStockMovements() {
+      // Filter movements based on selected date range
+      if (this.startDate && this.endDate) {
+        const start = new Date(this.startDate);
+        const end = new Date(this.endDate);
+        return this.stockMovements.filter((movement) => {
+          const movementDate = new Date(movement.date);
+          return movementDate >= start && movementDate <= end;
+        });
+      }
+      return this.stockMovements;
     }
   },
   methods: {
@@ -78,7 +114,7 @@ export default defineComponent({
       let tableRows = []
 
       tableColumns = ['Item', 'Reason', 'Quantity', 'Employee', 'Date']
-      tableRows = this.stockMovements.map((item) => [
+      tableRows = this.filteredStockMovements.map((item) => [
         item.item,
         item.reason,
         item.quantity,
@@ -94,7 +130,7 @@ export default defineComponent({
       })
 
       // Save the PDF
-      doc.save(`${reportType.toLowerCase().replace(/ /g, '_')}_report.pdf`)
+      doc.save(`${'stock_movement_report'}.pdf`)
       this.isGenerating = false
     },
     async isLocalAvailable(localUrl) {
@@ -109,6 +145,9 @@ export default defineComponent({
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     },
+    formatDate(date) {
+      return new Date(date).toDateString()
+    },
     async getRequests() {
       const config = {
         headers: {
@@ -121,9 +160,7 @@ export default defineComponent({
           `${API_URL}StockMovements/all/${localStorage.getItem('employeeId')}`,
           config
         )
-        console.log('response.data.data: ', response.data.data)
         for (const item of response.data.data) {
-          console.log('item: ', item)
           this.stockMovements.push({
             date: item.movementDate,
             type: item.type,

@@ -1,9 +1,14 @@
 <template>
   <v-container>
+    <v-row class="justify-center align-center">
+      <v-col cols="12" class="text-center">
+        <h2 class="text-xl font-semibold">{{ roomName }}</h2>
+      </v-col>
+    </v-row>
     <v-card class="bg-cardColor">
       <v-card-text
         ><v-row>
-          <v-col cols="12" md="6" lg="3" class="local-video">
+          <v-col cols="12" lg="6" class="local-video">
             <video
               :ref="
                 (el) => {
@@ -16,7 +21,7 @@
             ></video>
           </v-col>
 
-          <v-col v-for="peer in peers" :key="peer.id" cols="12" md="6" lg="3" class="remote-video">
+          <v-col v-for="peer in peers" :key="peer.id" cols="12" lg="6" class="remote-video">
             <video
               :ref="
                 (el) => {
@@ -107,6 +112,7 @@ export default defineComponent({
     const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
     const roomId = localStorage.getItem('RoomId')
     const employeeId = localStorage.getItem('employeeId')
+    const roomName = ref(localStorage.getItem('RoomName') || 'Default Room Name')
 
     const configuration = {
       iceServers: [
@@ -380,7 +386,8 @@ export default defineComponent({
       toggleAudio,
       toggleVideo,
       toggleScreenShare,
-      endCall
+      endCall,
+      roomName
     }
   }
 })
@@ -401,8 +408,8 @@ export default defineComponent({
 .remote-video {
   width: 100%;
   height: 100%;
-  max-width: 400px; /* Adjust max size of video */
-  max-height: 300px;
+  max-width: 600px; /* Adjust max size of video */
+  max-height: 500px;
 }
 
 video {
