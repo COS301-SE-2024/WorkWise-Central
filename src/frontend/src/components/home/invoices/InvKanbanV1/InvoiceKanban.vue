@@ -95,11 +95,11 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
-import type { InvoiceCardDataFormat, Column } from '../types'
+<script lang="js">
+// import type { InvoiceCardDataFormat, Column } from '../types'
 import '@mdi/font/css/materialdesignicons.css'
 import ViewJob from '@/components/home/jobs/management/ViewJob.vue'
-import { type SortableEvent, VueDraggable } from 'vue-draggable-plus'
+// import { type SortableEvent, VueDraggable } from 'vue-draggable-plus'
 import axios from 'axios'
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template'
 import { API_URL } from '@/main'
@@ -137,26 +137,26 @@ export default {
           companyId: 'company_1',
           cards: []
         }
-      ] as Column[],
+      ],
       archive_id: '',
       new_column_name: '',
       error_message: '',
       column_color: '',
-      SelectedEvent: {} as InvoiceCardDataFormat,
+      SelectedEvent: {},
       JobCardVisibility: false,
       order_of_sorting_in_columns: ['High', 'Medium', 'Low'],
-      draggedCard: null as InvoiceCardDataFormat | null,
-      sourceColumn: null as Column | null,
-      dropTarget: null as Column | null,
-      starting_cards: [] as InvoiceCardDataFormat[],
+      draggedCard: null,
+      sourceColumn: null,
+      dropTarget: null,
+      starting_cards: [],
       column_name_rule: [
-        (v: string) => !!v || 'Column name is required',
-        (v: string) => (v && v.length <= 20) || 'Column name must be less than 20 characters'
+        (v) => !!v || 'Column name is required',
+        (v) => (v && v.length <= 20) || 'Column name must be less than 20 characters'
       ]
     }
   },
   methods: {
-    async onCardStatusAdd(e: any, c: Column) {
+    async onCardStatusAdd(e, c) {
       console.log('hello there man')
       console.log(e)
       console.log(c)
@@ -181,13 +181,13 @@ export default {
         console.log(error)
       }
     },
-    async onJobCardChanges(e: SortableEvent) {
+    async onJobCardChanges(e) {
       console.log(e)
     },
-    async onColumnDragEnd(e: SortableEvent) {
+    async onColumnDragEnd(e) {
       console.log('column dragged')
-      let list = [] as string[]
-      this.columns.map((col: Column) => {
+      let list = []
+      this.columns.map((col) => {
         list.push(col._id)
       })
       list.push(this.archive_status_id)
@@ -210,7 +210,7 @@ export default {
           console.log(error)
         })
     },
-    async ArchiveJob(payload: InvoiceCardDataFormat) {
+    async ArchiveJob(payload) {
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -228,7 +228,7 @@ export default {
         })
         .catch((error) => console.log(error))
     },
-    async columnArchiveAll(col: Column) {
+    async columnArchiveAll(col) {
       try {
         const config = {
           headers: {
@@ -257,7 +257,7 @@ export default {
     redirectToArchivePage() {
       this.$router.push('/backlog/archive')
     },
-    async columnDelete(col: Column) {
+    async columnDelete(col) {
       try {
         const config = {
           headers: {
@@ -287,13 +287,13 @@ export default {
         console.log(error)
       }
     },
-    columnDeleteAllJobs(col: Column) {
+    columnDeleteAllJobs(col) {
       //add a modal that will ask the user if they are sure they want to delete all the cards in a job column
       col.cards.splice(0, col.cards.length)
       this.delete_all_jobs_dialog = false
       //
     },
-    async editColumnButtonClickedSave(col: Column) {
+    async editColumnButtonClickedSave(col) {
       if (this.new_column_name === '' && this.column_color === '') {
         this.error_message = 'No changes were made'
         return
@@ -439,7 +439,7 @@ export default {
     addColorPickerUpdate() {
       console.log(this.column_color)
     },
-    async clickedEvent(payload: InvoiceCardDataFormat) {
+    async clickedEvent(payload) {
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -550,7 +550,7 @@ export default {
       console.log('edit button clicked')
       this.JobCardVisibility = true
     },
-    loading(cards: InvoiceCardDataFormat[]) {
+    loading(cards) {
       console.log(cards.length)
       let hit = false
       // for (let i = 0; i < cards.length; i++) {
@@ -589,9 +589,9 @@ export default {
         )
         console.log(loaded_tags_response.data.data)
 
-        let paid_cards = [] as InvoiceCardDataFormat[]
-        let unpaid_cards = [] as InvoiceCardDataFormat[]
-        loaded_tags_response.data.data.forEach((card: any) => {
+        let paid_cards = []
+        let unpaid_cards = []
+        loaded_tags_response.data.data.forEach((card) => {
           if (card.paid)
             paid_cards.push({
               id: card._id,
@@ -682,7 +682,7 @@ export default {
         console.log(error)
       }
     },
-    formatDate(date: string) {
+    formatDate(date) {
       const date_passed_in = new Date(date)
       const y = date_passed_in.getFullYear()
       const m = String(date_passed_in.getMonth() + 1).padStart(2, '0')
@@ -692,7 +692,7 @@ export default {
       const f_date = `${y}-${m}-${d} ${h}:${mn}`
       return f_date
     },
-    onDragStart(card: InvoiceCardDataFormat, column: Column) {
+    onDragStart(card, column) {
       this.draggedCard = card
       this.sourceColumn = column
     },
@@ -700,17 +700,17 @@ export default {
       this.draggedCard = null
       this.dropTarget = null
     },
-    onDragOver(column: Column) {
+    onDragOver(column) {
       this.dropTarget = column
     },
     onDragLeave() {
       this.dropTarget = null
     },
-    async onDrop(targetColumn: Column) {
+    async onDrop(targetColumn) {
       if (this.draggedCard && this.sourceColumn) {
         console.log(this.draggedCard)
         this.sourceColumn.cards = this.sourceColumn.cards.filter(
-          (c) => c.id !== this.draggedCard!.id
+          (c) => c.id !== this.draggedCard.id
         )
         {
           targetColumn.cards.push(this.draggedCard)
@@ -741,13 +741,13 @@ export default {
         this.dropTarget = null
       }
     },
-    isDropTarget(column: Column) {
+    isDropTarget(column) {
       return this.dropTarget === column
     },
-    isDragging(card: InvoiceCardDataFormat) {
+    isDragging(card) {
       return this.draggedCard === card
     },
-    async isLocalAvailable(localUrl: string) {
+    async isLocalAvailable(localUrl) {
       try {
         const res = await axios.get(localUrl)
         return res.status < 300 && res.status > 199
