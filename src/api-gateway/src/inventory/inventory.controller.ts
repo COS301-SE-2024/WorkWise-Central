@@ -33,7 +33,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { InventoryListResponseDto, InventoryResponseDto } from './entities/inventory.entity';
+import { InventoryListResponseDto, InventoryResponseDto, InventoryUsedResponseDto } from './entities/inventory.entity';
 import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { CreateInventoryDto, CreateInventoryOuterDto, CreateInventoryResponseDto } from './dto/create-inventory.dto';
@@ -45,6 +45,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UsersService } from '../users/users.service';
 import { CurrentEmployeeDto } from '../shared/dtos/current-employee.dto';
 import { ListOfUpdatesForUsedInventory, ListOfUsedInventory } from './dto/use-inventory.dto';
+import { InventoryUsedService } from '../inventory-used/inventory-used.service';
 
 const className = 'Inventory';
 
@@ -56,6 +57,7 @@ export class InventoryController {
     private readonly jwtService: JwtService,
     private readonly employeeService: EmployeeService,
     private readonly userService: UsersService,
+    private readonly inventoryUsedService: InventoryUsedService,
   ) {}
 
   async validateRequestWithEmployeeId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
@@ -333,6 +335,34 @@ export class InventoryController {
       return { data: data };
     } else {
       throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiOperation({
+    summary: `Find an ${className}`,
+    description: `Returns the Inventory used for a given job.`,
+  })
+  @ApiOkResponse({
+    type: InventoryUsedResponseDto,
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'jobId',
+    description: `The _id attribute of the Job for which to retrieve the inventory used.`,
+  })
+  @Get('stockUsed/:jobId')
+  async getStockUsed(@Headers() headers: any, @Param('jobId') jobId: Types.ObjectId) {
+    try {
+      const data = await this.inventoryUsedService.findAllForJob(jobId);
+      return { data: data };
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
   }
 

@@ -2,9 +2,10 @@
   <v-container>
     <!-- Button to create a new task -->
     <v-row class="justify-center mb-4">
-      <v-btn color="primary" @click="createNewTask" prepend-icon="mdi-plus"
-        >Create New Task List</v-btn
-      >
+<!--      <v-btn color="primary" @click="createNewTask" prepend-icon="mdi-plus"-->
+<!--        >Create New Task List</v-btn-->
+<!--      >-->
+      <Button label="Create New Task List" icon="fa: fa-solid fa-plus" @click="createNewTask" class="p-button-success" />
     </v-row>
 
     <!-- Loop through tasks with pagination -->
@@ -25,10 +26,12 @@
             class="mb-4"
           ></v-textarea>
           <template v-if="task.title.trim() !== ''">
-            <v-btn color="error" outlined class="pl-10 pt-5" @click="deleteTask(taskIndex)">
-              <v-icon color="error">{{ 'fa: fa-solid fa-trash' }}</v-icon>
-              Delete
-            </v-btn>
+<!--            <v-btn color="error" outlined class="pl-10 pt-5" @click="deleteTask(taskIndex)">-->
+<!--              <v-icon color="error">{{ 'fa: fa-solid fa-trash' }}</v-icon>-->
+<!--            </v-btn>-->
+              <v-col cols="1">
+                <Button icon="fa: fa-solid fa-trash" @click="deleteTask(taskIndex)" class="p-button-danger" />
+              </v-col>
           </template>
         </v-row>
 
@@ -177,22 +180,29 @@
                 rows="3"
                 class="mb-4"
               ></v-textarea>
-              <v-btn color="success" @click="addItem(taskIndex)" prepend-icon="mdi-plus"
-                >Add Item</v-btn
-              >
+<!--              <v-btn color="success" @click="addItem(taskIndex)" prepend-icon="mdi-plus"-->
+<!--                >Add Item</v-btn-->
+<!--              >-->
+              <Button label="Add Item" icon="fa: fa-solid fa-plus" @click="addItem(taskIndex)" class="p-button-success" />
             </v-col>
           </v-row>
 
           <!-- Save Task Button -->
           <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
             <v-row class="justify-center">
-              <v-btn
-                color="success"
-                @click="saveTask(taskIndex)"
-                prepend-icon="fa: fa-solid fa-save"
-              >
-                Save Task
-              </v-btn>
+<!--              <v-btn-->
+<!--                color="success"-->
+<!--                @click="saveTask(taskIndex)"-->
+<!--                prepend-icon="fa: fa-solid fa-save"-->
+<!--              >-->
+<!--                Save Task-->
+<!--              </v-btn>-->
+              <Button
+                  label="Save Task"
+                  icon="fa: fa-solid fa-save"
+                  @click="saveTask(taskIndex)"
+                  class="p-button-success"
+              />
             </v-row>
           </v-defaults-provider>
         </template>
@@ -213,7 +223,9 @@
 
 <script setup lang="ts">
 import { ref, computed, defineProps, onMounted } from 'vue'
+import Button from 'primevue/button'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 interface Task {
   title: string
@@ -296,14 +308,14 @@ const addItem = async (taskIndex: number) => {
     task.newItemText = ''
     task.isSaveVisible = true
   }
-  const apiUrl = await getRequestUrl()
+
   try {
     const body = {
       employeeId: localStorage.getItem('employeeId') || '',
       jobId: props.jobID,
       taskId: taskList.value[taskIndex]._id
     }
-    const response = await axios.put(`${apiUrl}job/taskItem`, body, config)
+    const response = await axios.put(`${API_URL}job/taskItem`, body, config)
     console.log(response.data.data)
     if (response.status > 199 && response.status < 300) {
       const currentDate = new Date().toISOString()
@@ -326,7 +338,7 @@ const addItem = async (taskIndex: number) => {
       }
       console.log('Description', body2.description)
       console.log(body2)
-      const response2 = await axios.patch(`${apiUrl}job/taskItem`, body2, config)
+      const response2 = await axios.patch(`${API_URL}job/taskItem`, body2, config)
       console.log(response2.data.data)
     }
   } catch (error) {
@@ -335,9 +347,8 @@ const addItem = async (taskIndex: number) => {
 }
 
 const getJobTasks = async () => {
-  const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}job/id/${props.jobID}`)
+    const response = await axios.get(`${API_URL}job/id/${props.jobID}`)
     const tasks = response.data.data.taskList.map((task: any) => ({
       title: task.title,
       items: task.items,
@@ -354,32 +365,29 @@ const getJobTasks = async () => {
 }
 
 const createTaskIntegration = async (taskIndex: number) => {
-  const apiUrl = await getRequestUrl()
   const body = {
     employeeId: localStorage.getItem('employeeId') || '',
     jobId: props.jobID,
     title: taskList.value[taskIndex].title
   }
-  const response = await axios.put(`${apiUrl}job/task`, body, config)
+  const response = await axios.put(`${API_URL}job/task`, body, config)
   taskList.value[taskIndex]._id =
     response.data.data.taskList[response.data.data.taskList.length - 1]._id
   console.log('New task called', response.data.data)
 }
 
 const updateTaskIntegration = async (taskIndex: number) => {
-  const apiUrl = await getRequestUrl()
   const body = {
     employeeId: localStorage.getItem('employeeId') || '',
     jobId: props.jobID,
     taskId: taskList.value[taskIndex]._id,
     title: taskList.value[taskIndex].title
   }
-  const response = await axios.patch(`${apiUrl}job/task`, body, config)
+  const response = await axios.patch(`${API_URL}job/task`, body, config)
   console.log('Task updated', response.data.data)
 }
 
 const saveTask = async (taskIndex: number) => {
-  const apiUrl = await getRequestUrl()
   try {
     if (taskList.value[taskIndex]._id === '') {
       await createTaskIntegration(taskIndex)
@@ -392,10 +400,9 @@ const saveTask = async (taskIndex: number) => {
 }
 
 const getTeamMembers = async () => {
-  const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(
-      `${apiUrl}employee/detailed/all/${localStorage.getItem('employeeId')}`,
+      `${API_URL}employee/detailed/all/${localStorage.getItem('employeeId')}`,
       config
     )
     if (response.status > 199 && response.status < 300) {
@@ -418,7 +425,6 @@ const getTeamMembers = async () => {
 }
 
 const saveMembers = async (taskIndex: number, itemIndex: number) => {
-  const apiUrl = await getRequestUrl()
   try {
     // Find members to remove
     const membersToRemove = originalSelectedMembers.value.filter(
@@ -429,7 +435,7 @@ const saveMembers = async (taskIndex: number, itemIndex: number) => {
     // Remove unselected members
     for (const member of membersToRemove) {
       const response = await axios.patch(
-        `${apiUrl}job/employee/taskItem`,
+        `${API_URL}job/employee/taskItem`,
         {
           employeeId: localStorage.getItem('employeeId'),
           employeeToAssignId: member._id,
@@ -461,7 +467,7 @@ const saveMembers = async (taskIndex: number, itemIndex: number) => {
         }
         console.log('Member view', membervia)
         const response = await axios.put(
-          `${apiUrl}job/employee`,
+          `${API_URL}job/employee`,
           {
             employeeId: localStorage.getItem('employeeId'),
             employeeToAssignId: member,
@@ -486,9 +492,8 @@ const saveMembers = async (taskIndex: number, itemIndex: number) => {
 }
 
 const getAssignedEmployees = async () => {
-  const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}job/id/${props.jobID}`, config)
+    const response = await axios.get(`${API_URL}job/id/${props.jobID}`, config)
     if (response.status > 199 && response.status < 300) {
       console.log(response)
       const employees = response.data.data.assignedEmployees.employeeIds
@@ -525,14 +530,14 @@ function openCheckActionsDialog(itemIndex: number) {
 }
 
 const deleteTask = async (taskIndex: number) => {
-  const apiUrl = getRequestUrl()
+  const API_URL = getRequestUrl()
   try {
     const body = {
       employeeId: localStorage.getItem('employeeId') || '',
       jobId: props.jobID,
       taskId: taskList.value[taskIndex]._id
     }
-    const response = await axios.delete(`${apiUrl}job/task`, {
+    const response = await axios.delete(`${API_URL}job/task`, {
       data: body,
       headers: config.headers
     })

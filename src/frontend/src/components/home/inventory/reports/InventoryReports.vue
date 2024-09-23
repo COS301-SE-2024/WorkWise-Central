@@ -45,6 +45,8 @@ import axios from 'axios'
 
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   data() {
     return {
@@ -114,10 +116,9 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}StockMovements/all/${localStorage.getItem('employeeId')}`,
+          `${API_URL}StockMovements/all/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log('response.data.data: ', response.data.data)

@@ -44,14 +44,13 @@ const inventorySubItems = ref([
 ])
 const invoicesSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'invoices' },
-  { title: 'Invoice Board', icon: 'fa: fa-solid fa-table', routeName: '404' }
+  { title: 'Invoice Board', icon: 'fa: fa-solid fa-table', routeName: 'invoice-kanban' }
 ])
 
 const inboxSubItems = ref([
   { title: 'Notifications', icon: 'fa: fa-solid fa-bell', routeName: 'notifications' },
   // { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: 'messages' },
-  { title: 'Meetings', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' },
-  { title: 'Video Conferencing', icon: 'fa: fa-solid fa-video', routeName: 'video-meetings' }
+  { title: 'Meetings', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' }
 ])
 
 const supportSubItems = ref([
@@ -85,6 +84,7 @@ import ProfilePage from './settings/profile/ProfilePage.vue'
 import DarkModeToggleVue from './settings/DarkModeToggle.vue'
 import CompanyMain from './settings/company/CompanyMain.vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   name: 'NavigationBar',
@@ -134,9 +134,8 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       axios
-        .get(`${apiURL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
+        .get(`${API_URL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
         .then((response) => {
           console.log(response)
           console.log(response.data.data)
@@ -216,7 +215,7 @@ export default defineComponent({
           ></v-list-item>
         </v-list-group>
       </v-list>
-      
+
       <v-list
         v-model:open="open"
         v-show="checkPermission('view all clients') || checkPermission('view clients under me')"

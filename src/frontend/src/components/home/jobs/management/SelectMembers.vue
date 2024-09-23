@@ -70,6 +70,7 @@
 import { ref, defineProps, onMounted } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
+import { API_URL } from '@/main'
 
 interface Member {
   _id: string
@@ -135,10 +136,9 @@ const showAssignEmployeesError = () => {
 }
 
 const getTeamMembers = async () => {
-  const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(
-      `${apiUrl}employee/detailed/all/${localStorage.getItem('employeeId')}`,
+      `${API_URL}employee/detailed/all/${localStorage.getItem('employeeId')}`,
       config
     )
     if (response.status > 199 && response.status < 300) {
@@ -161,7 +161,6 @@ const getTeamMembers = async () => {
 }
 
 const saveMembers = async () => {
-  const apiUrl = await getRequestUrl()
   try {
     // Find members to remove
     const membersToRemove = originalSelectedMembers.value.filter(
@@ -172,7 +171,7 @@ const saveMembers = async () => {
     // Remove unselected members
     for (const member of membersToRemove) {
       const response = await axios.patch(
-        `${apiUrl}job/employee`,
+        `${API_URL}job/employee`,
         {
           employeeId: localStorage.getItem('employeeId'),
           employeeToAssignId: member._id,
@@ -202,7 +201,7 @@ const saveMembers = async () => {
         }
         console.log('Member view', membervia)
         const response = await axios.put(
-          `${apiUrl}job/employee`,
+          `${API_URL}job/employee`,
           {
             employeeId: localStorage.getItem('employeeId'),
             employeeToAssignId: member,
@@ -230,9 +229,8 @@ const saveMembers = async () => {
 }
 
 const getAssignedEmployees = async () => {
-  const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}job/id/${props.jobID}`, config)
+    const response = await axios.get(`${API_URL}job/id/${props.jobID}`, config)
     if (response.status > 199 && response.status < 300) {
       console.log(response)
       const employees = response.data.data.assignedEmployees.employeeIds

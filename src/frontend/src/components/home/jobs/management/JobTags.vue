@@ -1,36 +1,34 @@
 <template>
   <v-combobox
-    v-model="selectedTags"
-    :items="companyLabels"
-    item-value="_id"
-    item-title="label"
-    label="Select some tags you would like to assign to this job"
-    multiple
-    required
-    color="primary"
-    variant="solo"
-    clearable
-    data-testid="tags-multi-select"
-    searchable
+      v-model="selectedTags"
+      :items="companyLabels"
+      item-value="_id"
+      item-title="label"
+      label="Select some tags you would like to assign to this job"
+      multiple
+      required
+      color="primary"
+      variant="solo"
+      clearable
+      data-testid="tags-multi-select"
+      searchable
+      @update:modelValue="saveTags"
   >
     <template #selection="{ item }">
       <v-chip
-        :style="{ backgroundColor: item.raw.colour, color: getContrastingColor(item.raw.colour) }"
-        @click="openEditDialog(item)"
+          :style="{ backgroundColor: item.raw.colour, color: getContrastingColor(item.raw.colour) }"
+          @click="openEditDialog(item)"
       >
         {{ item.title }}
       </v-chip>
     </template>
   </v-combobox>
 
-  <v-btn color="success" width="100%" @click="saveTags">
-    <v-icon class="fas fa-save"></v-icon>
-    Save Tags
-  </v-btn>
-  <v-btn color="success" class="mt-4" @click="openCreateDialog" block>
-    <v-icon class="fas fa-plus"></v-icon>
-    Create Tag
-  </v-btn>
+<!--  <v-btn color="success" class="mt-4" @click="openCreateDialog" block>-->
+<!--    <v-icon class="fas fa-plus"></v-icon>-->
+<!--    Create Tag-->
+<!--  </v-btn>-->
+  <Button label="Create Tag" icon="fa: fa-solid fa-plus" class="mt-4 p-button-success" @click="openCreateDialog" />
   <!-- Label Creation/Edit Dialog -->
   <v-dialog v-model="dialog" max-width="400px">
     <v-card class="bg-cardColor">
@@ -40,13 +38,13 @@
         <!-- Title Input -->
         <v-label class="pb-0">Title</v-label>
         <v-text-field
-          v-model="labelTitle"
-          label="Label Title"
-          outlined
-          dense
-          class="mt-4 pt-0"
-          hint="Enter the title for the label"
-          persistent-hint
+            v-model="labelTitle"
+            label="Label Title"
+            outlined
+            dense
+            class="mt-4 pt-0"
+            hint="Enter the title for the label"
+            persistent-hint
         ></v-text-field>
 
         <!-- Color Palette -->
@@ -59,9 +57,9 @@
 
         <!-- Selected Color Block with Label Title -->
         <div
-          v-if="labelTitle"
-          class="d-flex justify-center align-center mt-4"
-          :style="{
+            v-if="labelTitle"
+            class="d-flex justify-center align-center mt-4"
+            :style="{
             backgroundColor: selectedColor,
             color: getContrastingColor(selectedColor),
             width: '100%',
@@ -91,6 +89,7 @@
 import { ref, defineProps, onMounted } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
+import Button from 'primevue/button'
 
 const toast = useToast()
 

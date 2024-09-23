@@ -1,5 +1,5 @@
 <template>
-  <v-app :style="isDarkMode === true ? 'dark' : 'light'">
+  <v-app :style="isDarkMode === true ? 'dark' : 'light'" class="pl-5 pr-5">
     <v-container fluid fill-height>
       <v-row justify="center" xs="6" sm="6" md="12">
         <v-col cols="12">
@@ -226,6 +226,7 @@ import ManagerJobCard from './ManagerJobCard.vue'
 import ViewJob from './ViewJob.vue'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import { API_URL } from '@/main'
 
 const toast = useToast()
 
@@ -435,10 +436,9 @@ const fetchData = async () => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-  const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(
-      `${apiUrl}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
+      `${API_URL}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
       config
     )
     if (response.status > 199 && response.status < 300) {
@@ -485,9 +485,8 @@ const confirmDelete = async () => {
         Authorization: `Bearer ${localStorage.getItem('access_token')}`
       }
     }
-    const apiUrl = await getRequestUrl()
     try {
-      const response = await axios.delete(`${apiUrl}job/full/${selectedJob.value._id}`, config)
+      const response = await axios.delete(`${API_URL}job/full/${selectedJob.value._id}`, config)
       detailedJobData.value = detailedJobData.value.filter(
         (job) => job._id !== selectedJob.value!._id
       )

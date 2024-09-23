@@ -131,6 +131,8 @@
 
 <script lang="ts">
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 export default {
   name: 'HourlyRate',
 
@@ -234,10 +236,9 @@ export default {
           hourlyRate: this.currentEmployee.hourlyRate
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.patch(
-          `${apiURL}employee/${this.currentEmployee.employeeId}`,
+          `${API_URL}employee/${this.currentEmployee.employeeId}`,
           config
         )
         console.log(response.data.data)
@@ -256,10 +257,9 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
+          `${API_URL}employee/all/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response.data.data)

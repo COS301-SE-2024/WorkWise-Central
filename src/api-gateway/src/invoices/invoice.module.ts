@@ -19,6 +19,7 @@ import { StockTakeService } from '../stocktake/stocktake.service';
 import { InventoryModule } from '../inventory/inventory.module';
 import { TimeTrackerModule } from '../time-tracker/time-tracker.module';
 import { StockMovementsModule } from '../stockmovements/stockmovements.module';
+import { InventoryUsedModule } from '../inventory-used/inventory-used.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { StockMovementsModule } from '../stockmovements/stockmovements.module';
     forwardRef(() => InventoryModule),
     forwardRef(() => TimeTrackerModule),
     forwardRef(() => StockMovementsModule),
+    forwardRef(() => InventoryUsedModule),
   ],
   controllers: [InvoiceController],
   providers: [InvoiceService, InvoiceRepository, JobService, EmployeeService, StockTakeService],

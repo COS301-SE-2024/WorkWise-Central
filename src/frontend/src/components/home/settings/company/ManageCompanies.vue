@@ -95,82 +95,6 @@
               </v-card>
             </v-tab-item>
 
-            <v-tab-item v-if="currentTab === 'Recently Left Companies'">
-              <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
-                <v-card-title>
-                  <v-row align="center" justify="space-between">
-                    <v-col cols="12" lg="4" class="d-flex justify-start align-center">
-                      <v-icon icon="fa: fa-solid fa-building"></v-icon>
-                      <v-label
-                        class="ms-2 h4 font-family-Nunito text-headingTextColor"
-                        height="auto"
-                        width="auto"
-                        >Recently Left Companies</v-label
-                      >
-                    </v-col>
-
-                    <v-col cols="12" lg="4" class="d-flex justify-center">
-                      <v-text-field
-                        v-model="search"
-                        density="compact"
-                        label="Search"
-                        prepend-inner-icon="mdi-magnify"
-                        variant="outlined"
-                        flat
-                        color="primary"
-                        style="
-                          font-family: 'Lato', sans-serif;
-                          font-size: 15px;
-                          font-weight: lighter;
-                        "
-                        hide-details
-                        single-line
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" lg="4">
-                      <RegisterCompanyModal :buttonColor="'secondary'"
-                    /></v-col>
-                  </v-row>
-                </v-card-title>
-                <v-card-text>
-                  <v-divider></v-divider>
-                  <v-data-table
-                    :items="leftCompanies"
-                    :headers="leftCompanyHeaders"
-                    height="auto"
-                    rounded="xl"
-                    class="bg-cardColor"
-                    :row-props="getRowProps"
-                  >
-                    <template #[`item.actions`]="{ item }">
-                      <v-menu max-width="500px">
-                        <template v-slot:activator="{ props }">
-                          <v-btn rounded="xl" variant="plain" v-bind="props">
-                            <v-icon color="primary">mdi-dots-horizontal</v-icon>
-                          </v-btn>
-                        </template>
-                        <v-list>
-                          <v-list-item>
-                            <v-btn @click="rejoinCompany(item)" color="success">
-                              <v-icon left color="success">{{
-                                'fa: fa-solid fa-exchange-alt'
-                              }}</v-icon>
-                              Rejoin the company
-                            </v-btn></v-list-item
-                          >
-                          <v-list-item>
-                            <v-btn color="red" @click="permanentlyLeaveCompany(item)">
-                              <v-icon left color="red">{{ 'fa: fa-solid fa-sign-out-alt' }}</v-icon>
-                              Permanently leave the company
-                            </v-btn></v-list-item
-                          >
-                        </v-list>
-                      </v-menu>
-                    </template>
-                  </v-data-table></v-card-text
-                >
-              </v-card>
-            </v-tab-item>
             <v-tab-item v-if="currentTab === 'Company Invites'">
               <InvitePage />
             </v-tab-item>
@@ -201,6 +125,7 @@ import InvitePage from '../user/InvitePage.vue'
 import RegisterCompanyModal from '@/components/signup/RegisterCompanyModal.vue'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import { API_URL } from '@/main'
 
 // Interfaces
 interface Company {
@@ -272,9 +197,8 @@ const changeTab = (tab: string) => {
 
 // Company management actions
 const setUserCompanies = async () => {
-  const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}users/id/${localStorage.getItem('id')}`, config)
+    const response = await axios.get(`${API_URL}users/id/${localStorage.getItem('id')}`, config)
     if (response.status >= 200 && response.status < 300) {
       const companiesData = response.data.data.joinedCompanies
       console.log('Company data:', companiesData)
@@ -314,14 +238,13 @@ const leaveCompany = async (company: Company) => {
     leftCompanies.value = leftCompanies.value.filter((c) => c.companyId !== company.companyId)
   }, 30000)
 
-  const apiUrl = await getRequestUrl()
   try {
     const body = {
       currentEmployee: company.employeeId,
       companyToLeaveId: company.companyId,
       reason: ''
     }
-    const response = await axios.patch(`${apiUrl}company/leave/`, body, config)
+    const response = await axios.patch(`${API_URL}company/leave/`, body, config)
     if (response.status >= 200 && response.status < 300) {
       leaveCompanyToast(company.name)
       if (joinedCompanies.value.length > 0) {
@@ -384,9 +307,9 @@ const switchCompany = async (company: Company) => {
   localStorage.setItem('currentCompany', company.companyId)
   localStorage.setItem('employeeId', company.employeeId)
   localStorage.setItem('currentCompanyName', company.name)
-  const apiUrl = getRequestUrl()
+  const API_URL = getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}employee/id/${company.employeeId}`, config)
+    const response = await axios.get(`${API_URL}employee/id/${company.employeeId}`, config)
     console.log('Returned employee', response)
     // const roleId = response.data.data.role.roleId
     // localStorage.setItem('roleId', roleId)

@@ -117,7 +117,7 @@ export default {
   props: {
     editedItem: Object,
     item: Object,
-    inventory_id: String,
+    inventory_id: String
   },
   components: {
     Toast
@@ -174,20 +174,21 @@ export default {
       const config = {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       }
-      const apiURL = await this.getRequestUrl()
 
-      const data = {currentEmployeeId: localStorage.getItem('employeeId'),
+      const data = {
+        currentEmployeeId: localStorage.getItem('employeeId'),
         updateInventoryDto: {
           name: this.localEditedItem.name,
           description: this.localEditedItem.description,
           costPrice: this.localEditedItem.costPrice,
           salePrice: this.localEditedItem.salePrice,
           currentStockLevel: this.localEditedItem.currentStockLevel,
-          reorderLevel: this.localEditedItem.reorderLevel,
-        }}
+          reorderLevel: this.localEditedItem.reorderLevel
+        }
+      }
       try {
         console.log(data)
-        const response = await axios.patch(`${apiURL}inventory/${this.inventory_id}`, data, config)
+        const response = await axios.patch(`${API_URL}inventory/${this.inventory_id}`, data, config)
         console.log(response)
         this.$toast.add({
           severity: 'success',

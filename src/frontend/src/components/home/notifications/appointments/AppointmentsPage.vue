@@ -5,100 +5,142 @@
         <h2 class="text-xl font-semibold">Meetings</h2>
       </v-col>
       <v-divider></v-divider>
-      <v-col cols="12"  class="text-center">
-        <v-btn color="primary" block @click="openDialog" variant="outlined"> Create New Meeting </v-btn>
+      <v-col cols="12" class="text-center" v-show="joinRoom">
+        <v-btn color="primary" block @click="openDialog" variant="outlined">
+          Create New Meeting
+        </v-btn>
       </v-col>
     </v-row>
-    <v-card rounded="md" class="pa-0 ma-3 bg-background" border="md">
+
+    <v-card rounded="md" class="pa-0 ma-3 bg-background" border="md" v-show="joinRoom">
       <v-row>
         <!-- Recently Created Appointments Section -->
-        <v-col cols="12" lg="6" order="last" order-lg="first">
+        <v-col cols="12" order="last" order-lg="first">
           <h3 class="pa-0 ma-5">Recently Created Meetings</h3>
           <v-card
             v-for="appointment in recentAppointments"
-            :key="appointment.id"
+            :key="appointment._id"
             class="pa-1 ma-5 bg-background"
-            color="success"
+            color="cardColor"
           >
             <v-card-title>{{ appointment.title }}</v-card-title>
-            <v-card-subtitle class="bg-cardColor">{{
-              formatDate(appointment.date)
-            }}</v-card-subtitle>
+            <v-card-subtitle class="bg-cardColor"
+              >Date: {{ formatDate(appointment.date) }}, {{ formatTime(appointment.startTime) }} -
+              {{ formatTime(appointment.endTime) }}</v-card-subtitle
+            >
             <v-card-text>{{ appointment.details }}</v-card-text>
             <v-card-actions class="bg-cardColor">
-              <v-btn color="primary" @click="editAppointment(appointment.id)"
-                ><v-icon icon="fa:fa-solid fa-pencil"></v-icon
-              ></v-btn>
-              <v-btn color="error" @click="deleteAppointment(appointment.id)"
-                ><v-icon icon="fa:fa-solid fa-trash"></v-icon
-              ></v-btn>
+              <v-container
+                ><v-row
+                  ><v-col cols="12" lg="4"
+                    ><v-btn color="primary" @click="editAppointment(appointment)" block
+                      ><v-icon icon="fa:fa-solid fa-pencil" color="primary"></v-icon>Edit</v-btn
+                    ></v-col
+                  ></v-row
+                ></v-container
+              >
+              <v-col cols="12" lg="4">
+                <v-btn color="error" @click="deleteAppointment(appointment._id)" block
+                  ><v-icon icon="fa:fa-solid fa-trash" color="error"></v-icon>Delete</v-btn
+                ></v-col
+              >
+              <v-col cols="12" lg="4">
+                <v-btn @click="joiningRoom(appointment)" color="success" block>
+                  <v-icon icon="fa:fa-solid fa-right-to-bracket" color="success"></v-icon>Join Room
+                </v-btn>
+              </v-col>
             </v-card-actions>
           </v-card>
         </v-col>
 
         <!-- Most Important Appointments Section -->
-        <v-col cols="12" lg="6" order="first" order-lg="last">
-          <h3 class="pa-0 ma-5">Most Important Meetings</h3>
-          <v-card
-            v-for="appointment in importantAppointments"
-            :key="appointment.id"
-            class="pa-1 ma-5 bg-background"
-            color="warning"
-          >
-            <v-card-title>{{ appointment.title }}</v-card-title>
-            <v-card-subtitle class="bg-cardColor">{{
-              formatDate(appointment.date)
-            }}</v-card-subtitle>
-            <v-card-text>{{ appointment.details }}</v-card-text>
-            <v-card-actions class="bg-cardColor">
-              <v-btn color="primary" @click="editAppointment(appointment.id)"
-                ><v-icon icon="fa:fa-solid fa-pencil"></v-icon
-              ></v-btn>
-              <v-btn color="error" @click="deleteAppointment(appointment.id)"
-                ><v-icon icon="fa:fa-solid fa-trash"></v-icon
-              ></v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-col>
       </v-row>
     </v-card>
+
+    <!-- <VideoConferencing :roomId="selectedRoom.id" v-show="conference" @return="leavingRoom" /> -->
+    <!-- <VideoConferencing :roomId="selectedRoom.id" v-show="conference" @return="leavingRoom" /> -->
   </v-container>
 
   <!-- Dialog for Creating/Editing Appointment -->
-  <v-dialog v-model="showDialog" persistent max-width="600px">
+  <v-dialog v-model="showDialog" persistent max-width="800px">
     <v-card class="bg-cardColor">
       <v-card-title>
-        <span class="headline">{{
-          isEditing ? 'Edit Appointment' : 'Create New Appointment'
-        }}</span>
+        <span class="headline">{{ isEditing ? 'Edit Appointment' : 'Create a new meeting' }}</span>
       </v-card-title>
       <v-card-text>
         <v-form v-model="valid">
           <v-container>
             <v-row>
               <v-col cols="12">
+                <h6>Meeting Title</h6>
                 <v-text-field
                   v-model="newAppointment.title"
                   label="Title"
                   :rules="titleRules"
                   required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="newAppointment.date"
-                  label="Date"
-                  type="date"
-                  :rules="dateRules"
+                ></v-text-field
+              ></v-col>
+              <v-col cols="12" align="center"
+                ><h6>Meeting Date</h6>
+
+                <v-date-picker
+                  title="SELECT START DATE"
+                  header="Meeting start date"
+                  border="md"
+                  width="unset"
+                  max-width="350"
+                  v-model="startDate"
+                  elevation="5"
                   required
-                ></v-text-field>
+                  :rules="startDateRule"
+                  :min="minDate"
+                  class="mb-4"
+                ></v-date-picker>
               </v-col>
+              <v-row
+                ><v-col cols="6"
+                  ><h6>Start Time</h6>
+                  <v-time-picker
+                    format="24hr"
+                    :allowed-hours="allowedHours"
+                    :allowed-minutes="allowedMinutes"
+                    v-model="newAppointment.startTime"
+                    class="mb-4"
+                  ></v-time-picker
+                ></v-col>
+                <v-col cols="6"
+                  ><h6>End Time</h6>
+                  <v-time-picker
+                    :allowed-hours="allowedHours2"
+                    :allowed-minutes="allowedMinutes2"
+                    format="24hr"
+                    v-model="newAppointment.endTime"
+                  ></v-time-picker
+                ></v-col>
+              </v-row>
               <v-col cols="12">
-                <v-text-field v-model="newAppointment.details" label="Details"></v-text-field>
-              </v-col>
+                <h6>Details</h6>
+                <v-text-field v-model="newAppointment.details" label="Details"></v-text-field
+              ></v-col>
+
               <v-col cols="12">
-                <v-checkbox v-model="newAppointment.important" label="Important"></v-checkbox>
-              </v-col>
+                <h6>Choose Participants</h6>
+                <v-select
+                  clearable
+                  label="Participants"
+                  hint="Select the employee you'd like to join the meeting"
+                  persistent-hint
+                  @update:model-value="selected_participants"
+                  v-model="newAppointment.participants"
+                  item-value="employeeId"
+                  item-title="name"
+                  :items="teamMemberNames"
+                  multiple
+                  chips
+                  bg-color="background"
+                  variant="solo"
+                ></v-select
+              ></v-col>
             </v-row>
           </v-container>
         </v-form>
@@ -107,7 +149,7 @@
         <v-container>
           <v-row>
             <v-col cols="12" lg="6">
-              <v-btn color="error" @click="showDialog = false" block>
+              <v-btn color="error" @click="cancel" block>
                 <v-icon icon="fa: fa-solid fa-cancel" color="error" start></v-icon>Cancel
               </v-btn>
             </v-col>
@@ -131,167 +173,323 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+
+import axios from 'axios'
+
 interface Appointment {
-  id: number
+  _id: string
   title: string
   date: string
+  startTime: string
+  endTime: string
   details: string
-  important: boolean
+  participants: string[]
+  roomId?: string
+}
+type EmployeeInformation = {
+  name: string
+  employeeId: string
 }
 export default defineComponent({
   name: 'AppointmentsPage',
+  components: {},
   data() {
     return {
       showDialog: false,
+      selectedRoom: {} as any,
       isEditing: false,
+      joinRoom: true,
+      conference: false,
+      teamLeaderIds: [] as string[],
+      teamMemberNames: [] as string[],
+      participants: [] as string[],
       editIndex: 0,
       valid: false,
       isGenerating: false,
+      participantsItemNames: [] as EmployeeInformation[],
+      req_obj: {
+        participants: [] as string[]
+      },
       newAppointment: {
-        id: 0,
+        _id: '',
         title: '',
         date: '',
+        startTime: '',
+        endTime: '',
         details: '',
-        important: false
-      },
-      recentAppointments: [
-        {
-          id: 1,
-          title: 'Meeting with John Doe',
-          date: '2021-10-15',
-          details: 'Discuss project timeline and deliverables'
-        },
-        {
-          id: 2,
-          title: 'Dentist Appointment',
-          date: '2021-10-20',
-          details: 'Annual checkup and cleaning'
-        },
-        {
-          id: 3,
-          title: 'Team Standup Meeting',
-          date: '2021-10-22',
-          details: 'Daily sync with the development team'
-        },
-        {
-          id: 4,
-          title: 'Project Review with Clients',
-          date: '2021-10-23',
-          details: 'Review milestones and gather feedback'
-        },
-        {
-          id: 5,
-          title: 'Doctor Appointment',
-          date: '2021-10-24',
-          details: 'Follow-up on health checkup results'
-        },
-        {
-          id: 6,
-          title: 'Lunch with Partner',
-          date: '2021-10-26',
-          details: 'Discuss partnership opportunities'
-        }
-      ],
-
-      importantAppointments: [
-        {
-          id: 7,
-          title: 'Client Presentation',
-          date: '2021-10-25',
-          details: 'Present new marketing strategy'
-        },
-        {
-          id: 8,
-          title: 'Quarterly Budget Meeting',
-          date: '2021-10-28',
-          details: 'Discuss and finalize the quarterly budget'
-        },
-        {
-          id: 9,
-          title: 'Board Meeting',
-          date: '2021-10-30',
-          details: 'Present annual report and future plans'
-        },
-        {
-          id: 10,
-          title: 'Strategy Planning Session',
-          date: '2021-11-01',
-          details: 'Plan next quarter’s goals and initiatives'
-        },
-        {
-          id: 11,
-          title: 'Investor Meeting',
-          date: '2021-11-05',
-          details: 'Discuss funding and growth strategies'
-        }
-      ],
-
+        important: false,
+        participants: []
+      } as Appointment,
+      recentAppointments: [] as Appointment[],
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      companyId: '',
+      startDate: null as string | null,
+      minDate: new Date().toISOString().substr(0, 10),
+      selectedDate: '',
+      selectedTime: '',
+      allowedHours: ((hour: number) => true) as (hour: number) => boolean,
+      allowedMinutes: ((minute: number) => true) as (minute: number) => boolean,
+      allowedHours2: ((hour: number) => true) as (hour: number) => boolean,
+      allowedMinutes2: ((minute: number) => true) as (minute: number) => boolean,
       titleRules: [(v: string) => !!v || 'Title is required'],
-      dateRules: [
+      startDateRule: [
         (v: string) => !!v || 'Date is required',
-        (v: string) => v <= new Date().toISOString().substr(0, 10) || 'Date cannot be in the past',
-        (v: string) => v >= new Date().toISOString().substr(0, 10) || 'Date cannot be in the future'
+        (v: string) => v >= new Date().toISOString().substr(0, 10) || 'Date cannot be in the past'
       ]
     }
   },
   methods: {
+    selected_participants(a: any) {
+      console.log(a)
+    },
+    async isLocalAvailable(localUrl: string) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status >= 200 && res.status < 300
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+
+    async getRequests() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      try {
+        const response = await axios.get(
+          `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
+          config
+        )
+        console.log(response.data.data)
+        for (const employee of response.data.data) {
+          this.teamMemberNames.push(employee.userInfo.displayName)
+          this.teamLeaderIds.push(employee._id)
+        }
+        this.companyId = response.data.data[0].companyId
+      } catch (error) {
+        console.error(error)
+      }
+
+      //getting the meeting for the current employee
+      try {
+        const response = await axios.get(
+          `${apiURL}videoCalls/forEmployee/${localStorage.getItem('employeeId')}`,
+          config
+        )
+        console.log(response.data.data)
+        for (const appointment of response.data.data) {
+          const participants = appointment.participants.map((participant: any) => participant.name)
+          this.recentAppointments.push({
+            _id: appointment._id,
+            title: appointment.title,
+            date: appointment.scheduledStartTime,
+            startTime: appointment.scheduledStartTime,
+            endTime: appointment.scheduledEndTime,
+            details: appointment.details,
+            participants: participants,
+            roomId: appointment.roomId
+          })
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    },
     formatDate(date: string) {
       return new Date(date).toDateString()
+    },
+    formatTime(time: string) {
+      return new Date(time).toLocaleTimeString()
     },
     openDialog() {
       this.isEditing = false
       this.showDialog = true
       this.newAppointment = {
-        id: 0,
+        _id: '',
         title: '',
         date: '',
+        startTime: '',
+        endTime: '',
         details: '',
-        important: false
+        participants: []
       }
     },
-    saveAppointment() {
+    joiningRoom(appointment: any) {
+      console.log(appointment._id)
+      this.selectedRoom = appointment
+      console.log(this.selectedRoom)
+      localStorage.setItem('RoomId', this.selectedRoom.roomId)
+      this.$router.push('/video-meetings')
+
+      this.joinRoom = false
+      this.conference = true
+    },
+    clearFields() {
+      this.newAppointment = {
+        _id: '',
+        title: '',
+        date: '',
+        startTime: '',
+        endTime: '',
+        details: '',
+        participants: []
+      }
+      this.req_obj.participants = []
+    },
+    leavingRoom() {
+      this.joinRoom = true
+      this.conference = false
+    },
+    formatStartDateAndTime(date: Date, time: string) {
+      const [hrs, min] = time.split(':').map(Number)
+      date.setHours(hrs)
+      date.setMinutes(min)
+      console.log(date.toISOString())
+      return date.toISOString()
+    },
+    formatEndDateAndTime(date: Date, time: string) {
+      const [hrs, min] = time.split(':').map(Number)
+      date.setHours(hrs)
+      date.setMinutes(min)
+      console.log(date.toISOString())
+      return date.toISOString()
+    },
+    async saveAppointment() {
+      this.newAppointment.date = this.startDate as string
       this.isGenerating = true
       if (this.isEditing && this.editIndex !== null) {
         // Update existing appointment
         this.recentAppointments.splice(this.editIndex, 1, { ...this.newAppointment })
-        this.updateImportantAppointments(this.newAppointment)
+        //Integrate with backend
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
+        const url = await this.getRequestUrl()
+        if (localStorage.getItem('currentCompany') !== null) {
+          this.companyId = localStorage.getItem('currentCompany') as string
+        }
+
+        const data = {
+          title: this.newAppointment.title,
+          scheduledTime: new Date(this.newAppointment.date).toISOString(),
+          details: this.newAppointment.details,
+          participants: await this.selectTeamMembers(),
+          companyId: this.companyId
+        }
+        const id = this.newAppointment._id
+        console.log(data)
+        await axios
+          .patch(`${url}videoCalls/${id}`, data, config)
+          .then((response) => {
+            console.log('response: ', response)
+          })
+          .catch((error) => {
+            console.error(error)
+          })
       } else {
         // Add new appointment
-        const newId = this.recentAppointments.length + 1
-        const appointment = { ...this.newAppointment, id: newId }
+        const appointment = { ...this.newAppointment }
         this.recentAppointments.push(appointment)
-        if (appointment.important) {
-          this.importantAppointments.push(appointment)
+        //Integrate with backend
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
         }
+        const url = await this.getRequestUrl()
+
+        console.log('this.newAppointment: ', this.newAppointment)
+        const data = {
+          title: this.newAppointment.title,
+          scheduledStartTime: this.formatStartDateAndTime(
+            new Date(this.newAppointment.date),
+            this.newAppointment.startTime
+          ),
+          scheduledEndTime: this.formatEndDateAndTime(
+            new Date(this.newAppointment.date),
+            this.newAppointment.endTime
+          ),
+          details: this.newAppointment.details,
+          participants: await this.selectTeamMembers(),
+          companyId: this.companyId
+        }
+        console.log(data)
+        await axios
+          .post(`${url}videoCalls/create`, data, config)
+          .then((response) => {
+            console.log(response)
+            this.$toast.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Review Submitted'
+            })
+          })
+          .catch((error) => {
+            console.error(error)
+          })
       }
       this.showDialog = false
       this.isGenerating = false
+      this.clearFields()
     },
-    editAppointment(appointment: number) {
+    editAppointment(appointment: Appointment) {
+      this.newAppointment = appointment
       this.isEditing = true
       this.showDialog = true
+      //populating the form with the selected appointment
     },
-    deleteAppointment(id: number) {
-      this.recentAppointments = this.recentAppointments.filter(
-        (appointment) => appointment.id !== id
-      )
-      this.importantAppointments = this.importantAppointments.filter(
-        (appointment) => appointment.id !== id
-      )
-    },
-    updateImportantAppointments(appointment: Appointment) {
-      this.isGenerating = true
-      const index = this.importantAppointments.findIndex((a) => a.id === appointment.id)
-      if (appointment.important && index === -1) {
-        this.importantAppointments.push(appointment)
-      } else if (!appointment.important && index !== -1) {
-        this.importantAppointments.splice(index, 1)
-      } else if (index !== -1) {
-        this.importantAppointments.splice(index, 1, appointment)
-      }
-      this.isGenerating = false
+    cancel() {
       this.showDialog = false
+      this.clearFields()
+    },
+    deleteAppointment(id: string) {
+      //Integrate with backend
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const url = this.getRequestUrl()
+      axios
+        .delete(`${url}videoCalls/${id}`, config)
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+
+      this.recentAppointments = this.recentAppointments.filter(
+        (appointment) => appointment._id !== id
+      )
+    },
+    async selectTeamMembers() {
+      for (const member of this.newAppointment.participants) {
+        console.log(member)
+        this.participants.push(this.teamLeaderIds[this.newAppointment.participants.indexOf(member)])
+      }
+      console.log(this.participants)
+      return this.participants
     }
+  },
+  mounted() {
+    this.getRequests()
   }
 })
 </script>

@@ -76,6 +76,8 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
+
 interface Status {
   status: string
   colour: string
@@ -155,9 +157,8 @@ export default defineComponent({
     async createStatus() {
       this.isDeleting = true // Indicate the start of the deletion process
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
       await axios
-        .post(`${apiURL}job/status`, this.status, config)
+        .post(`${API_URL}job/status`, this.status, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
