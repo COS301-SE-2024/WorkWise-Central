@@ -11,6 +11,7 @@ import { ClientService } from '../client/client.service';
 import { InventoryService } from '../inventory/inventory.service';
 import { TimeTrackerService } from '../time-tracker/time-tracker.service';
 import { EmployeeService } from '../employee/employee.service';
+import { InventoryUsedService } from '../inventory-used/inventory-used.service';
 
 @Injectable()
 export class InvoiceService {
@@ -35,6 +36,9 @@ export class InvoiceService {
 
     @Inject(forwardRef(() => EmployeeService))
     private readonly employeeService: EmployeeService,
+
+    @Inject(forwardRef(() => InventoryUsedService))
+    private readonly inventoryUsedService: InventoryUsedService,
   ) {}
 
   async validateCreateInvoice(Invoice: CreateInvoiceDto) {
@@ -92,11 +96,12 @@ export class InvoiceService {
     let total = 0;
 
     //Adding the inventory items used for the job
-    for (const inventory of job.recordedDetails.inventoryUsed) {
-      const inventoryItem = await this.inventoryService.findById(inventory.inventoryItemId);
+    const inventoryUsedList = await this.inventoryUsedService.findAllForJob(jobId);
+    for (const inventoryUsed of inventoryUsedList) {
+      const inventoryItem = await this.inventoryService.findById(inventoryUsed.inventoryId);
       const item = new Items();
-      item.description = inventory.inventoryItemName;
-      item.quantity = inventory.quantityUsed;
+      item.description = inventoryItem.name;
+      item.quantity = inventoryUsed.amount;
       if (inventoryItem.salePrice) {
         item.unitPrice = inventoryItem.salePrice;
       } else if (inventoryItem.costPrice) {
