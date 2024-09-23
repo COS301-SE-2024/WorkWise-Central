@@ -99,7 +99,10 @@ export default {
       this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` },
-        data: employee_to_be_deleted
+        data: employee_to_be_deleted,
+        params: {
+          currentEmployeeId: localStorage['employeeId']
+        }
       }
       axios
         .delete(API_URL + `employee/${this.details.employeeId}`, config)
