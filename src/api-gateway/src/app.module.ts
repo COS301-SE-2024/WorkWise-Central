@@ -23,6 +23,7 @@ import { StockMovementsModule } from './stockmovements/stockmovements.module';
 import { InvoiceModule } from './invoices/invoice.module';
 import { PayfastModule } from 'src/payfast/payfast.module';
 import { InventoryUsedModule } from './inventory-used/inventory-used.module';
+import { VideoCallModule } from './video-call/video-call.module';
 
 const rootPath = join(__dirname, '..', '../../uploads');
 
@@ -52,6 +53,7 @@ const rootPath = join(__dirname, '..', '../../uploads');
     TimeTrackerModule,
     StockMovementsModule,
     PayfastModule,
+    VideoCallModule,
     InventoryUsedModule,
   ],
 })
