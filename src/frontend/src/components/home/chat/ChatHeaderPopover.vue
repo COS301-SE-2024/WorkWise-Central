@@ -85,9 +85,69 @@
               </div>
             </TabPanel>
 
-            <!--            <TabPanel value="2">-->
-            <!--              <p class="m-0"></p>-->
-            <!--            </TabPanel>-->
+            <TabPanel value="2">
+              <div class="p-4">
+                <h2 class="text-xl font-bold mb-4">Chat Settings</h2>
+
+                <!-- Chat Name -->
+                <div class="mb-4">
+                  <label for="chatName" class="block text-sm font-medium text-gray-700 mb-1">Chat Name</label>
+                  <InputText id="chatName" v-model="editedChat.name" class="w-full" />
+                </div>
+
+                <!-- Chat Description -->
+                <div class="mb-4">
+                  <label for="chatDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <Textarea id="chatDescription" v-model="editedChat.description" rows="3" class="w-full" />
+                </div>
+
+                <!-- Chat Logo -->
+                <div class="mb-4">
+                  <label for="chatLogo" class="block text-sm font-medium text-gray-700 mb-1">Chat Logo</label>
+                  <FileUpload
+                      mode="basic"
+                      name="chatLogo[]"
+                      url="/api/upload"
+                      accept="image/*"
+                      :maxFileSize="1000000"
+                      @upload="onLogoUpload"
+                      :auto="true"
+                  />
+                </div>
+
+                <!-- Chat Admin -->
+                <div class="mb-4">
+                  <label for="chatAdmin" class="block text-sm font-medium text-gray-700 mb-1">Chat Admin</label>
+                  <Listbox
+                      v-model="editedChat.adminId"
+                      :options="participants"
+                      optionLabel="profile.displayName"
+                      optionValue="_id"
+                      class="w-full"
+                  >
+                    <template #option="slotProps">
+                      <div class="flex align-items-center">
+                        <Avatar :image="slotProps.option.profile.avatar" shape="circle" class="mr-2" />
+                        <div>{{ slotProps.option.profile.displayName }}</div>
+                      </div>
+                    </template>
+                  </Listbox>
+                </div>
+
+                <!-- Participants Management -->
+                <div class="mb-4">
+                  <h3 class="text-lg font-semibold mb-2">Manage Participants</h3>
+                  <DataTable :value="editedChat.participants" :paginator="true" :rows="5" :rowsPerPageOptions="[5, 10, 20]">
+                    <Column field="profile.displayName" header="Name"></Column>
+                    <Column header="Role" :body="roleBodyTemplate"></Column>
+                    <Column header="Actions" :body="actionBodyTemplate"></Column>
+                  </DataTable>
+                </div>
+
+                <!-- Save Changes Button -->
+                <Button label="Save Changes" icon="pi pi-check" @click="saveChanges" class="p-button-primary" />
+              </div>
+            </TabPanel>
           </TabPanels>
         </Tabs>
       </div></Popover
@@ -96,7 +156,7 @@
 </template>
 
 <script setup>
-import { defineEmits, defineProps, ref } from 'vue'
+import { defineEmits, defineProps, ref, computed, reactive } from 'vue'
 import Popover from 'primevue/popover'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
@@ -110,10 +170,18 @@ import ContextMenu from 'primevue/contextmenu'
 import { useToast } from 'primevue/usetoast'
 import Avatar from 'primevue/avatar'
 import Tag from 'primevue/tag'
+import InputText from 'primevue/inputtext'
+import Textarea from 'primevue/textarea'
+import FileUpload from 'primevue/fileupload'
+import Listbox from 'primevue/listbox'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Button from 'primevue/button'
 
 const toast = useToast()
 const selectedUser = ref()
 const menu = ref()
+
 const users = ref([
   { id: 0, name: 'Amy Elsner', image: 'amyelsner.png', role: 'Admin' },
   { id: 1, name: 'Anna Fali', image: 'annafali.png', role: 'Member' },
@@ -121,6 +189,69 @@ const users = ref([
   { id: 3, name: 'Bernardo Dominic', image: 'bernardodominic.png', role: 'Guest' },
   { id: 4, name: 'Elwin Sharvill', image: 'elwinsharvill.png', role: 'Member' }
 ])
+
+const props = defineProps(['chat', 'participants'])
+//const defaultChatPic = 'https://img.icons8.com/?size=100&id=105326&format=png&color=000000'
+const emit = defineEmits(['edit-chat', 'delete-chat'])
+
+const editedChat = reactive({
+  name: props.chat.name,
+  description: props.chat.description,
+  adminId: props.chat.adminId,
+  participants: [...props.chat.participants],
+})
+
+const formattedParticipants = computed(() =>
+    editedChat.participants.map(p => ({
+      _id: p._id,
+      profile: {
+        displayName: p.profile.displayName,
+        avatar: p.profile.avatar || 'path/to/default/avatar.png'
+      }
+    }))
+)
+
+const onLogoUpload = (event) => {
+  // Handle logo upload
+}
+
+const roleBodyTemplate = (rowData) => {
+  return rowData._id === editedChat.adminId ? 'Admin' : 'Member'
+}
+
+const actionBodyTemplate = (rowData) => {
+  return h('div', [
+    h(Button, {
+      label: rowData._id === editedChat.adminId ? 'Remove Admin' : 'Make Admin',
+      class: 'p-button-text',
+      onClick: () => toggleAdmin(rowData)
+    }),
+    h(Button, {
+      label: 'Remove',
+      class: 'p-button-text p-button-danger',
+      onClick: () => removeParticipant(rowData)
+    })
+  ])
+}
+
+const toggleAdmin = (participant) => {
+  editedChat.adminId = participant._id === editedChat.adminId ? null : participant._id
+}
+
+const removeParticipant = (participant) => {
+  const index = editedChat.participants.findIndex(p => p._id === participant._id)
+  if (index > -1) {
+    editedChat.participants.splice(index, 1)
+    if (participant._id === editedChat.adminId) {
+      editedChat.adminId = null
+    }
+  }
+}
+
+const saveChanges = () => {
+  // Emit updated chat data to parent component
+  emit('update-chat', editedChat)
+}
 
 const items = ref([
   {
@@ -171,9 +302,6 @@ const op = ref()
 const toggle = (event) => {
   op.value.toggle(event)
 }
-const props = defineProps(['chat', 'participants'])
-//const defaultChatPic = 'https://img.icons8.com/?size=100&id=105326&format=png&color=000000'
-const emit = defineEmits(['edit-chat', 'delete-chat'])
 
 const tempImage = 'http://www.gravatar.com/avatar/?d=mp'
 const selectedOption = ref()
