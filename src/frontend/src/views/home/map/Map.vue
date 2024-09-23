@@ -67,12 +67,12 @@
             }"
           >
             <Column field="name.make" header="Make" style="width: 15%">
-              <template #editor="{ data, field }">
+              <template #editor="{ data /*, field*/ }">
                 <InputText v-model="data.name.make" fluid />
               </template>
             </Column>
             <Column field="name.model" header="Model" style="width: 15%">
-              <template #editor="{ data, field }">
+              <template #editor="{ data /*, field*/ }">
                 <InputText v-model="data.name.model" fluid />
               </template>
             </Column>
