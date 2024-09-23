@@ -18,7 +18,7 @@
           <h3>Current Drivers</h3>
           <ul>
             <li v-for="driver in currentDrivers" :key="driver.id">
-              {{ driver.name }} - {{ driver.vehicleLicensePlate }}
+              {{ driver.profile.displayName }}
             </li>
           </ul>
         </div>
@@ -288,6 +288,7 @@ export default {
         )
         this.company = response.data.data
         this.companyLocation = await this.getGeocode(this.company.address)
+        //console.log('Company', this.company)
       } catch (error) {
         console.error('Error fetching company data:', error)
       }
