@@ -42,7 +42,7 @@ export class TimeTracker {
   checkOutTime?: Date = null;
 
   @ApiProperty()
-  @Prop({ type: TimeInterval, required: true, default: [] })
+  @Prop({ type: TimeInterval, required: false, default: [] })
   pauses: TimeInterval[] = [];
 
   @ApiProperty()

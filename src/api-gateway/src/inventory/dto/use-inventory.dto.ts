@@ -16,6 +16,10 @@ export class UsedInventory {
 export class UpdateUsedInventory {
   @IsNotEmpty()
   @IsMongoId()
+  inventoryUsedId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
   inventoryId: Types.ObjectId;
 
   @IsNotEmpty()
@@ -32,6 +36,10 @@ export class ListOfUsedInventory {
   @IsNotEmpty()
   @IsMongoId()
   jobId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  companyId: Types.ObjectId;
 
   @IsNotEmpty()
   @IsArray()
