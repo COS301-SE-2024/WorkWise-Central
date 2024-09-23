@@ -98,36 +98,7 @@ export default defineComponent({
     changeTab(tab: string) {
       this.currentTab = tab
     },
-    async getClients() {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        params: {
-          currentEmployeeId: localStorage.getItem('employeeId')
-        }
-      }
-      const apiURL = await this.getRequestUrl()
-      axios
-        .get(`${apiURL}client/all/${localStorage.getItem('currentCompany')}`, config)
-        .then((response: any) => {
-          console.log(response.data)
-          this.clients = response.data.data
-          console.log(this.clients)
 
-          for (let i = 0; i < this.clients.length; i++) {
-            this.clientIds[i] = this.clients[i]._id
-            console.log(this.clientIds[i])
-            this.clientDetails[i] = this.clients[i].details
-            console.log(this.clientDetails[i])
-          }
-          console.log(this.clientDetails)
-        })
-        .catch((error: any) => {
-          console.error('Failed to fetch clients:', error)
-        })
-    },
     async isLocalAvailable(localUrl: any) {
       try {
         const res = await axios.get(localUrl)
@@ -139,71 +110,6 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
-    },
-    async getInventoryItems() {
-      // Fetch inventory items from the backend
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        params: {
-          currentEmployee: localStorage.getItem('employeeId')
-        }
-      }
-      const apiURL = await this.getRequestUrl()
-      try {
-        const response = await axios.get(
-          `${apiURL}inventory/all/${localStorage.getItem('employeeId')}`,
-          config
-        )
-        console.log(response.data.data)
-        this.inventoryItems = response.data.data
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    async getTeams() {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
-      }
-      const apiURL = await this.getRequestUrl()
-      try {
-        const response = await axios.get(
-          `${apiURL}team/detailed/all/${localStorage.getItem('currentCompany')}`,
-          config
-        )
-        console.log(response.data.data)
-        this.teamItems = response.data.data
-        this.teamLeaderId = response.data.data.teamLeaderId
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    async getEmployees() {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        params: {
-          currentEmployeeId: localStorage.getItem('employeeId')
-        }
-      }
-      const apiURL = await this.getRequestUrl()
-      try {
-        const response = await axios.get(
-          `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
-          config
-        )
-        console.log(response.data.data)
-        this.employees = response.data.data
-      } catch (error) {
-        console.error(error)
-      }
     }
   },
   mounted() {
